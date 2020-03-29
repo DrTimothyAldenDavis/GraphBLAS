@@ -205,8 +205,12 @@ void mexFunction
 
     if (A->type == Complex)
     {
+        #if HAVE_COMPLEX
         // C = A'*B, complex case
         METHOD (adotb_complex (Context)) ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {

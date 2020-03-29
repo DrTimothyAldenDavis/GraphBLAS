@@ -10754,10 +10754,10 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     JOBS=32 CC=gcc make \end{verbatim} }
 
 %----------------------------------------
-\subsection{On Microsoft Windows (v3.1.2 only)}
+\subsection{On Microsoft Windows}
 %----------------------------------------
 
-SuiteSparse:GraphBLAS v3.1.2 is now ported to Microsoft Visual Studio.  That
+SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  However, that
 compiler is not ANSI C11 compliant.  It does not support the \verb'_Generic'
 keyword, required for the polymorphic GraphBLAS functions.  So for example, you
 will need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.
@@ -10774,29 +10774,34 @@ The following instructions apply to Windows 10, CMake 3.16, and
 Visual Studio 2019, but may work for earlier versions.
 
 \begin{enumerate}
+
+\item Install CMake 3.16 or later, if not already installed.
+    See \url{https://cmake.org/} for details.
+
+\item Install Microsoft Visual Studio, if not already installed.
+    See \url{https://visualstudio.microsoft.com/} for details.
+    Version 2019 is preferred, but earlier versions may also work.
+
 \item
-Open a terminal window and type the following in the
-\verb'SuiteSparse/GraphBLAS/build' folder.
+    Open a terminal window and type the following in the
+    \verb'SuiteSparse/GraphBLAS/build' folder.
 
     {\small
     \begin{verbatim}
     cmake ..  \end{verbatim} }
 
 \item This generates many files in \verb'SuiteSparse/GraphBLAS/build',
-and the file \verb'graphblas.sln' in particular.
-Open the generated \verb'graphblas.sln' file in Visual Studio.
-Alternatively, type this command in the terminal window:
+    and the file \verb'graphblas.sln' in particular.
+    Open the generated \verb'graphblas.sln' file in Visual Studio.
+    Alternatively, type this command in the terminal window:
 
     {\small
     \begin{verbatim}
-    devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim} }
+    devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim}}
 
     This should create a folder called \verb'Release' and place the compiled
     DLL and LIB file there.  Please be patient; some files may take a while to
     compile and sometimes may appear to be stalled.  Just wait.
-
-% \item Move the DLL and LIB files from the \verb'Release' folder
-    % to the \verb'GraphBLAS/build' folder.
 
 \item Add the \verb'GraphBLAS/build/Release' folder to the Windows System path.
     (TODO: is this necessary)? % TODO

@@ -147,10 +147,14 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (mxIsComplex (Amatrix))
     {
+        #if HAVE_COMPLEX
         // use the user-defined Complex type
         atype_in  = Complex ;
         atype_out = Complex ;
         deep_copy = true ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {

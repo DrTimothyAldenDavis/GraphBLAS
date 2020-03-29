@@ -14,7 +14,7 @@
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&A) ;               \
-    GB_FREE_MEMORY (Xtemp, nvals, sizeof (double complex)) ; \
+    GB_FREE_MEMORY (Xtemp, nvals, 2 * sizeof (double)) ; \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -67,7 +67,7 @@ void mexFunction
         // create Xtemp
         if (nargout > 2)
         {
-            GB_MALLOC_MEMORY (Xtemp, nvals, sizeof (double complex)) ;
+            GB_MALLOC_MEMORY (Xtemp, nvals, 2 * sizeof (double)) ;
         }
     }
     else

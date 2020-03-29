@@ -38,6 +38,7 @@ void GB_mx_mxArray_to_array    // convert mxArray to array
 
     if (mxIsComplex (Xmatlab))
     {
+        #if HAVE_COMPLEX
         // user-defined Complex type
         // make a deep copy of the MATLAB complex dense matrix
         int64_t nel = mxGetNumberOfElements (Xmatlab) ;
@@ -46,6 +47,9 @@ void GB_mx_mxArray_to_array    // convert mxArray to array
         *X = XX ;
         *xclass = mxDOUBLE_CLASS ;
         *xtype = Complex ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {

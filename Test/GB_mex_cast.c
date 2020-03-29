@@ -62,12 +62,16 @@ void mexFunction
     // create C
     if (xtype == Complex)
     {
+        #if HAVE_COMPLEX
         // ignore cclass, just copy the Complex X to the mxArray output
         pargout [0] = mxCreateNumericMatrix (nrows, ncols, mxDOUBLE_CLASS,
             mxCOMPLEX) ;
         GB_mx_complex_split (nrows*ncols, X, pargout [0]) ;
         // X is a deep copy that must be freed
-        GB_FREE_MEMORY (X, nrows*ncols, sizeof (double complex)) ;
+        GB_FREE_MEMORY (X, nrows*ncols, 2 * sizeof (double)) ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {

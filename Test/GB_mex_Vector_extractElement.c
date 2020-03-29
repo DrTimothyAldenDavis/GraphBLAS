@@ -14,7 +14,7 @@
 #define FREE_ALL                        \
 {                                       \
     GrB_free (&v) ;                     \
-    GB_FREE_MEMORY (Xtemp, ni, sizeof (double complex)) ; \
+    GB_FREE_MEMORY (Xtemp, ni, 2 * sizeof (double)) ; \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -73,7 +73,7 @@ void mexFunction
         xtype = Complex ;
         xclass = mxDOUBLE_CLASS ;
         // create X
-        GB_CALLOC_MEMORY (Xtemp, ni, sizeof (double complex)) ;
+        GB_CALLOC_MEMORY (Xtemp, ni, 2 * sizeof (double)) ;
     }
     else
     {
@@ -89,7 +89,7 @@ void mexFunction
         Y = mxGetData (pargout [0]) ;
     }
 
-    size_t s = sizeof (double complex) ;
+    size_t s = 2 * sizeof (double) ;
 
     // x = v (i)
     switch (xtype->code)

@@ -67,7 +67,6 @@
 
 void f1 (double *z, uint32_t *x) ;
 void f2 (int32_t *z, uint8_t *x, int16_t *y) ;
-void f3 (double complex *z, double complex *x, double *y) ;
 bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
     GrB_Index ncols, const double *x, const double *k) ;
 
@@ -81,10 +80,13 @@ void f2 (int32_t *z, uint8_t *x, int16_t *y)
     (*z) = (*x) + (*y) + 1 ;
 }
 
+#if HAVE_COMPLEX
+void f3 (double complex *z, double complex *x, double *y) ;
 void f3 (double complex *z, double complex *x, double *y)
 {
     (*z) = (*x) + CMPLX (0,(*y))  ;
 }
+#endif
 
 bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
     GrB_Index ncols, const double *x, const double *k)
@@ -172,7 +174,9 @@ void mexFunction
     uint64_t    x_uint64 ;
     float       x_float ;
     double      x_double, x = 0 ;
+    #if HAVE_COMPLEX
     double complex c ;
+    #endif
 
     void *pp = NULL ;
 
@@ -277,7 +281,13 @@ void mexFunction
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
 
-    for (GB_Type_code tcode = 0 ; tcode <= GB_UDT_code ; tcode++)
+    #if HAVE_COMPLEX
+    #define LAST_CODE GB_UDT_code 
+    #else
+    #define LAST_CODE GB_FP64_code 
+    #endif
+
+    for (GB_Type_code tcode = 0 ; tcode <= LAST_CODE ; tcode++)
     {
         GrB_Type utype = Complex ;
         GrB_Type ttype = GB_code_type (tcode, utype) ;
@@ -1001,7 +1011,9 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Vector_build (v, I, X, 5, GrB_LE_FP64)) ;
+    #if HAVE_COMPLEX
     ERR (GrB_Vector_build (v, I, X, 5, Complex_plus)) ;
+    #endif
     ERR (GrB_Vector_build (v, I, (void *) X, 5, GrB_PLUS_FP64)) ;
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
@@ -1449,7 +1461,9 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Matrix_build (A, I, J,          X, 5, GrB_LE_FP64)) ;
+    #if HAVE_COMPLEX
     ERR (GrB_Matrix_build (A, I, J,          X, 5, Complex_plus)) ;
+    #endif
     ERR (GrB_Matrix_build (A, I, J, (void *) X, 5, GrB_PLUS_FP64)) ;
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
@@ -1855,13 +1869,17 @@ void mexFunction
     OK (random_matrix (&C, false, false, 3, 2,  4, 0, false)) ;
     OK (random_matrix (&E, false, false, 3, 2,  4, 0, false)) ;
     OK (random_matrix (&F, false, false, 3, 2,  4, 0, false)) ;
+    #if HAVE_COMPLEX
     OK (random_matrix (&Z, false, false, 3, 2,  8, 0, true)) ;   // Z complex
+    #endif
 
     OK (GrB_Vector_new (&v, GrB_FP64, 5)) ;
     OK (GrB_Vector_new (&u, GrB_FP64, 5)) ;
 
+    #if HAVE_COMPLEX
     printf ("complex vector:\n") ;
     OK (GrB_Vector_new (&z, Complex, 5)) ;
+    #endif
 
     OK (GrB_Descriptor_new (&dnt)) ;
     OK (GxB_set (dnt, GrB_INP1, GrB_TRAN)) ;
@@ -1933,11 +1951,13 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
     ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
     ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
     ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
     ERR (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
+    #endif
 
     printf ("here we are, last error was %s\n", GrB_error ( )) ;
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
@@ -2132,6 +2152,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     ERR (GrB_eWiseAdd  (A , NULL, NULL, o2 , Z , A , d0)) ;
     ERR (GrB_eWiseAdd  (A , NULL, NULL, o2 , A , Z , d0)) ;
     ERR (GrB_eWiseAdd  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
@@ -2145,6 +2166,7 @@ void mexFunction
     ERR (GrB_eWiseAdd  (Z , NULL, op3 , o2 , A , A , d0)) ;
     ERR (GrB_eWiseAdd  (A , NULL, op3 , o2 , A , A , d0)) ;
     ERR (GrB_eWiseAdd  (A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -2196,12 +2218,14 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     ERR (GxB_kron  (A , NULL, NULL, o2 , Z , A , d0)) ;
     ERR (GxB_kron  (A , NULL, NULL, o2 , A , Z , d0)) ;
     ERR (GxB_kron  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
     ERR (GxB_kron  (A , NULL, NULL, Complex_plus, A , Z , d0)) ;
     ERR (GxB_kron  (A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
     ERR (GxB_kron  (Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -2268,6 +2292,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     ERR (GrB_extract (v, z, NULL, u, I, 0, d0)) ;              // vector extract
     ERR (GrB_extract (v, NULL, Complex_plus, u, I, 0, d0)) ;
     ERR (GrB_extract (v, NULL, Complex_plus, z, I, 0, d0)) ;
@@ -2285,6 +2310,7 @@ void mexFunction
     ERR (GrB_extract (A, NULL, Complex_plus, Z, I, 0, J, 0, d0)) ;
     ERR (GrB_extract (Z, NULL, o2 , A, I, 0, J, 0, d0)) ;
     ERR (GrB_extract (A, NULL, o2 , Z, I, 0, J, 0, d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -2587,6 +2613,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     op0 = Complex_plus ;
 
     ERR (GxB_subassign (v, z , NULL, v, I, 0, d0)) ;            // vector assign
@@ -2630,6 +2657,7 @@ void mexFunction
     ERR (GxB_subassign (Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     ERR (GxB_subassign (A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GxB_subassign (A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -2957,6 +2985,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     op0 = Complex_plus ;
 
     ERR (GrB_assign (v, z , NULL, v, I, 0, d0)) ;               // vector assign
@@ -3000,6 +3029,7 @@ void mexFunction
     ERR (GrB_assign (Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     ERR (GrB_assign (A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GrB_assign (A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -3080,6 +3110,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     o2  = Complex_plus ;
 
     ERR (GrB_apply (A, Z   , NULL, GrB_AINV_FP64, A, NULL)) ;
@@ -3088,6 +3119,7 @@ void mexFunction
     ERR (GrB_apply (A, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
     ERR (GrB_apply (Z, NULL, NULL, GrB_AINV_FP64, A, NULL)) ;
     ERR (GrB_apply (Z, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
+    #endif
 
     v0 = NULL ;
     A0 = NULL ;
@@ -3149,13 +3181,14 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    o2  = Complex_plus ;
-
     double thresh = 42 ;
 
     GxB_Scalar Thunk = NULL ;
     OK (GxB_Scalar_new (&Thunk, GrB_FP64)) ;
     OK (GxB_Scalar_setElement (Thunk, thresh)) ;
+
+    #if HAVE_COMPLEX
+    o2  = Complex_plus ;
 
     ERR (GxB_select (A, Z   , NULL, selectop, A, Thunk, NULL)) ;
     ERR (GxB_select (A, NULL, o2  , selectop, A, Thunk, NULL)) ;
@@ -3163,6 +3196,7 @@ void mexFunction
     ERR (GxB_select (A, NULL, NULL, selectop, Z, Thunk, NULL)) ;
     ERR (GxB_select (Z, NULL, NULL, selectop, A, Thunk, NULL)) ;
     ERR (GxB_select (Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
+    #endif
 
     v0 = NULL ;
     A0 = NULL ;
@@ -3403,13 +3437,14 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     o2  = Complex_plus ;
-
     ERR (GrB_reduce (&x, op0 , GxB_PLUS_FP64_MONOID , Z , d0)) ;
     ERR (GrB_reduce (&x, op0 , Complex_plus_monoid  , Z , d0)) ;
     ERR (GrB_reduce (&x, op0 , Complex_plus_monoid  , A , d0)) ;
     ERR (GrB_reduce (&x, o2  , Complex_plus_monoid  , Z , d0)) ;
     ERR (GrB_reduce (&c, o2  , Complex_plus_monoid  , A , d0)) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // reduce to vector
@@ -3460,8 +3495,8 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     o2 = Complex_plus ;
-
     ERR (GrB_reduce (v, z   , NULL, GrB_PLUS_FP64, A, d0)) ;
     ERR (GrB_reduce (z, NULL, NULL, GrB_PLUS_FP64, A, d0)) ;
     ERR (GrB_reduce (v, NULL, o2  , GrB_PLUS_FP64, A, d0)) ;
@@ -3472,6 +3507,7 @@ void mexFunction
     ERR (GrB_reduce (z, NULL, NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR (GrB_reduce (v, NULL, o2  , GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR (GrB_reduce (v, NULL, NULL, GxB_PLUS_FP64_MONOID, Z, d0)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -3501,8 +3537,8 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
+    #if HAVE_COMPLEX
     o2 = Complex_plus ;
-
     ERR (GrB_transpose (A   , Z   , NULL, A, NULL)) ;
     ERR (GrB_transpose (A   , NULL, NULL, Z, NULL)) ;
     ERR (GrB_transpose (A   , NULL, NULL, Z, NULL)) ;
@@ -3510,6 +3546,7 @@ void mexFunction
     ERR (GrB_transpose (A   , NULL, o2  , A, NULL)) ;
     ERR (GrB_transpose (A   , NULL, o2  , Z, NULL)) ;
     ERR (GrB_transpose (Z   , NULL, o2  , A, NULL)) ;
+    #endif
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -3766,10 +3803,12 @@ void mexFunction
         Context)) ;
     monoidb->op = GrB_TIMES_INT32 ;
 
+    #if HAVE_COMPLEX
     OK (GB_Monoid_check (Complex_plus_monoid, "complex plus monoid", GB3, ff,
         Context)) ;
     OK (GB_Monoid_check (Complex_times_monoid, "complex times monoid", GB3, ff,
         Context)) ;
+    #endif
 
     printf ("\nAll GB_Monoid_check tests passed (errors expected)\n") ;
 

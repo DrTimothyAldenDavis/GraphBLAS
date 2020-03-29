@@ -22,7 +22,7 @@
     }                                   \
     if (ctype == Complex)               \
     {                                   \
-        GB_FREE_MEMORY (c, 1, sizeof (double complex)) ; \
+        GB_FREE_MEMORY (c, 1, 2 * sizeof (double)) ; \
     }                                   \
     GB_mx_put_global (true, 0) ;        \
 }

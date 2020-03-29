@@ -29,6 +29,12 @@ void mexFunction
 )
 {
 
+#if !HAVE_COMPLEX
+
+    mexErrMsgTxt ("complex type not available") ;
+
+#else
+
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Info info ;
     GrB_Matrix A = NULL ;
@@ -89,5 +95,6 @@ void mexFunction
     GB_mx_complex_split (1, (double *) (&c), pargout [0]) ;
 
     FREE_ALL ;
+#endif
 }
 

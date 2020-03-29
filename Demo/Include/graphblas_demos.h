@@ -34,6 +34,14 @@
 #pragma GCC diagnostic error "-Wswitch-default"
 #endif
 
+#ifndef GB_MICROSOFT
+#if ( _MSC_VER && !__INTEL_COMPILER )
+#define GB_MICROSOFT 1
+#else
+#define GB_MICROSOFT 0
+#endif
+#endif
+
 #include "GraphBLAS.h"
 #include "simple_rand.h"
 #include "simple_timer.h"

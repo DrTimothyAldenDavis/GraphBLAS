@@ -23,9 +23,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    if (op_ztype == Complex) GB_FREE_MEMORY (Z, nx+1, sizeof (double complex));\
-    if (X_type   == Complex) GB_FREE_MEMORY (X, nx+1, sizeof (double complex));\
-    if (Y_type   == Complex) GB_FREE_MEMORY (Y, ny+1, sizeof (double complex));\
+    if (op_ztype == Complex) GB_FREE_MEMORY (Z, nx+1, 2*sizeof (double)) ; \
+    if (X_type   == Complex) GB_FREE_MEMORY (X, nx+1, 2*sizeof (double)) ; \
+    if (Y_type   == Complex) GB_FREE_MEMORY (Y, ny+1, 2*sizeof (double)) ; \
     GB_mx_put_global (do_cover, 0) ;    \
 }
 
@@ -77,6 +77,10 @@ void mexFunction
     // check for complex case
     bool XisComplex = mxIsComplex (pargin [1]) ;
     bool YisComplex = (nargin > 2) ? mxIsComplex (pargin [2]) : false ;
+
+    #if !HAVE_COMPLEX
+    if (XisComplex || YisComplex) mexErrMsgTxt ("complex type not available") ;
+    #endif
 
     if (nargin > 2)
     {
@@ -175,7 +179,7 @@ void mexFunction
     else if (op_ztype == Complex)
     {
         // Z is complex, create a temporary array
-        GB_MALLOC_MEMORY (Z, nx + 1, sizeof (double complex)) ;
+        GB_MALLOC_MEMORY (Z, nx + 1, 2 * sizeof (double)) ;
         // Z must be copied into the MATLAB pargout [0] when done, then freed
     }
     else

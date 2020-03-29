@@ -9,7 +9,46 @@
 
 #include "usercomplex.h"
 
-#if HAVE_COMPLEX
+GrB_BinaryOp Complex_first = NULL, Complex_second = NULL, Complex_min = NULL,
+             Complex_max   = NULL, Complex_plus   = NULL, Complex_minus = NULL,
+             Complex_times = NULL, Complex_div    = NULL, Complex_rminus = NULL,
+             Complex_rdiv  = NULL, Complex_pair   = NULL ;
+
+GrB_BinaryOp Complex_iseq = NULL, Complex_isne = NULL,
+             Complex_isgt = NULL, Complex_islt = NULL,
+             Complex_isge = NULL, Complex_isle = NULL ;
+
+GrB_BinaryOp Complex_or = NULL, Complex_and = NULL, Complex_xor = NULL ;
+
+GrB_BinaryOp Complex_eq = NULL, Complex_ne = NULL,
+             Complex_gt = NULL, Complex_lt = NULL,
+             Complex_ge = NULL, Complex_le = NULL ;
+
+GrB_BinaryOp Complex_complex = NULL ;
+
+GrB_UnaryOp  Complex_identity = NULL, Complex_ainv = NULL, Complex_minv = NULL,
+             Complex_not = NULL,      Complex_conj = NULL,
+             Complex_one = NULL,      Complex_abs  = NULL ;
+
+GrB_UnaryOp Complex_real = NULL, Complex_imag = NULL,
+            Complex_cabs = NULL, Complex_angle = NULL ;
+
+GrB_UnaryOp Complex_complex_real = NULL, Complex_complex_imag = NULL ;
+
+GrB_Type Complex = NULL ;
+GrB_Monoid   Complex_plus_monoid = NULL, Complex_times_monoid = NULL ;
+GrB_Semiring Complex_plus_times = NULL ;
+
+#if !HAVE_COMPLEX
+
+#define ONE  0
+#define ZERO 1
+#define C double
+
+C Complex_1  = ONE ;
+C Complex_0 = ZERO ;
+
+#else
 
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
@@ -100,11 +139,6 @@ void complex_max (C Z, const C X, const C Y)
     }
 }
 
-GrB_BinaryOp Complex_first = NULL, Complex_second = NULL, Complex_min = NULL,
-             Complex_max   = NULL, Complex_plus   = NULL, Complex_minus = NULL,
-             Complex_times = NULL, Complex_div    = NULL, Complex_rminus = NULL,
-             Complex_rdiv  = NULL, Complex_pair   = NULL ;
-
 //------------------------------------------------------------------------------
 // 6 binary functions, z=f(x,y), where CxC -> C ; (1,0) = true, (0,0) = false
 //------------------------------------------------------------------------------
@@ -119,10 +153,6 @@ void complex_isgt (C Z, const C X, const C Y) { Z = (R(X) >  R(Y)) ? T : F ; }
 void complex_islt (C Z, const C X, const C Y) { Z = (R(X) <  R(Y)) ? T : F ; }
 void complex_isge (C Z, const C X, const C Y) { Z = (R(X) >= R(Y)) ? T : F ; }
 void complex_isle (C Z, const C X, const C Y) { Z = (R(X) <= R(Y)) ? T : F ; }
-
-GrB_BinaryOp Complex_iseq = NULL, Complex_isne = NULL,
-             Complex_isgt = NULL, Complex_islt = NULL,
-             Complex_isge = NULL, Complex_isle = NULL ;
 
 //------------------------------------------------------------------------------
 // binary boolean functions, z=f(x,y), where CxC -> C
@@ -143,8 +173,6 @@ void complex_xor (C Z, const C X, const C Y)
     Z = (BOOL (X) != BOOL (Y)) ? T : F ;
 }
 
-GrB_BinaryOp Complex_or = NULL, Complex_and = NULL, Complex_xor = NULL ;
-
 //------------------------------------------------------------------------------
 // 6 binary functions, z=f(x,y), where CxC -> bool
 //------------------------------------------------------------------------------
@@ -158,17 +186,11 @@ void complex_lt (bool Z, const C X, const C Y) { Z = (R (X) <  R (Y)) ;}
 void complex_ge (bool Z, const C X, const C Y) { Z = (R (X) >= R (Y)) ;}
 void complex_le (bool Z, const C X, const C Y) { Z = (R (X) <= R (Y)) ;}
 
-GrB_BinaryOp Complex_eq = NULL, Complex_ne = NULL,
-             Complex_gt = NULL, Complex_lt = NULL,
-             Complex_ge = NULL, Complex_le = NULL ;
-
 //------------------------------------------------------------------------------
 // binary functions, z=f(x,y), where double x double -> complex
 //------------------------------------------------------------------------------
 
 void complex_complex (C Z, const double X, const double Y) { Z = CMPLX (X,Y) ; }
-
-GrB_BinaryOp Complex_complex = NULL ;
 
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where C -> C
@@ -182,10 +204,6 @@ void complex_minv     (C Z, const C X) { Z =  1. / X  ; }
 void complex_not      (C Z, const C X) { Z = BOOL (X) ? F : T ; }
 void complex_conj     (C Z, const C X) { Z = conj (X) ; }
 
-GrB_UnaryOp  Complex_identity = NULL, Complex_ainv = NULL, Complex_minv = NULL,
-             Complex_not = NULL,      Complex_conj = NULL,
-             Complex_one = NULL,      Complex_abs  = NULL ;
-
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where C -> double
 //------------------------------------------------------------------------------
@@ -195,9 +213,6 @@ void complex_imag  (double Z, const C X) { Z = cimag (X) ; }
 void complex_cabs  (double Z, const C X) { Z = cabs  (X) ; }
 void complex_angle (double Z, const C X) { Z = carg  (X) ; }
 
-GrB_UnaryOp Complex_real = NULL, Complex_imag = NULL,
-            Complex_cabs = NULL, Complex_angle = NULL ;
-
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where double -> C
 //------------------------------------------------------------------------------
@@ -205,17 +220,7 @@ GrB_UnaryOp Complex_real = NULL, Complex_imag = NULL,
 void complex_complex_real (C Z, const double X) { Z = CMPLX (X, 0) ; }
 void complex_complex_imag (C Z, const double X) { Z = CMPLX (0, X) ; }
 
-GrB_UnaryOp Complex_complex_real = NULL, Complex_complex_imag = NULL ;
-
-//------------------------------------------------------------------------------
-// Complex type, scalars, monoids, and semiring
-//------------------------------------------------------------------------------
-
-GrB_Type Complex = NULL ;
-GrB_Monoid   Complex_plus_monoid = NULL, Complex_times_monoid = NULL ;
-GrB_Semiring Complex_plus_times = NULL ;
-C Complex_1  = ONE ;
-C Complex_0 = ZERO ;
+#endif
 
 #define OK(method)              \
     info = method ;             \
@@ -237,6 +242,8 @@ GrB_Info Complex_init ( )
     //--------------------------------------------------------------------------
     // create the Complex type
     //--------------------------------------------------------------------------
+
+#if HAVE_COMPLEX
 
     OK (GrB_Type_new (&Complex, sizeof (C))) ;    
 
@@ -339,6 +346,7 @@ GrB_Info Complex_init ( )
     // more could be created, but this suffices for testing GraphBLAS
     OK (GrB_Semiring_new
         (&Complex_plus_times, Complex_plus_monoid, Complex_times)) ;
+#endif
 
     return (GrB_SUCCESS) ;
 }
@@ -350,6 +358,8 @@ GrB_Info Complex_init ( )
 
 GrB_Info Complex_finalize ( )
 {
+
+#if HAVE_COMPLEX
 
     //--------------------------------------------------------------------------
     // free the Complex plus-times semiring
@@ -441,9 +451,9 @@ GrB_Info Complex_finalize ( )
     //--------------------------------------------------------------------------
 
     GrB_Type_free (&Complex) ;
+#endif
 
     return (GrB_SUCCESS) ;
 }
 
-#endif
 

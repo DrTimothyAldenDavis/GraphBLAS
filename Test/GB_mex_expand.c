@@ -63,12 +63,16 @@ void mexFunction
     }
     else if (mxIsComplex (pargin [1]))
     {
+        #if HAVE_COMPLEX
         // complex case
         double xcomplex [2] ;
         GB_mx_complex_merge (1, xcomplex, pargin [1]) ;
         GrB_Matrix_new (&C, Complex, nrows, ncols) ;
         GxB_Matrix_subassign_UDT (C, M, NULL, (void *) xcomplex,
             GrB_ALL, nrows, GrB_ALL, ncols, GrB_DESC_RS) ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {

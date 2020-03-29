@@ -252,7 +252,11 @@ void mexFunction
 
     if (A->type == Complex)
     {
+        #if HAVE_COMPLEX
         METHOD (axb_complex (Context)) ;
+        #else
+        mexErrMsgTxt ("complex type not available") ;
+        #endif
     }
     else
     {
