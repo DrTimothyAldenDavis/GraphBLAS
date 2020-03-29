@@ -60,8 +60,7 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
 
             // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
 
-            uint8_t *GB_RESTRICT
-                Hf = (uint8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+            int8_t *GB_RESTRICT Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf;
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
             for (int64_t i = istart ; i < iend ; i++)

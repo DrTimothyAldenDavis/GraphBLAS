@@ -1,5 +1,5 @@
 
-    GrB.burble (1)
+GrB.burble (1)
 A = GrB (ones (3))
 % C = A*A
 x = GrB ([1 2 3]')

@@ -427,10 +427,6 @@ break ;
 
     #endif
 
-// was:
-//          while (!__atomic_compare_exchange (px, &xold, &xnew,
-//              true, __ATOMIC_RELAXED, __ATOMIC_RELAXED))
-
 #else
 
     // Hx [i] += t can only be done inside the critical section

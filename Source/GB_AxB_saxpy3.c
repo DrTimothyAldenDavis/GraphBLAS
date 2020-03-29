@@ -59,7 +59,7 @@
 // table size for the task, and C is m-by-n (assuming all matrices are CSC; if
 // CSR, then m is replaced with n).
 //
-//      fine Gustavson task (shared):   uint8_t Hf [m] ; ctype Hx [m] ;
+//      fine Gustavson task (shared):   int8_t  Hf [m] ; ctype Hx [m] ;
 //      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
 //      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
 //      coarse hash task:               int64_t Hf [s] ; ctype Hx [s] ;
@@ -956,7 +956,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         if (is_fine && use_Gustavson)
         { 
-            // Hf is uint8_t for the fine Gustavson tasks, but round up
+            // Hf is int8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
             Hf_size_total += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
@@ -1028,7 +1028,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         if (is_fine && use_Gustavson)
         { 
-            // Hf is uint8_t for the fine Gustavson method
+            // Hf is int8_t for the fine Gustavson method
             Hf_split += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else

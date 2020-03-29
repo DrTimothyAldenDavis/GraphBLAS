@@ -138,8 +138,8 @@ void GB_AxB_saxpy3_symbolic
                 // Scatter the values of M(:,j) into Hf.  No atomics needed
                 // since all indices i in M(;,j) are unique.
 
-                uint8_t *GB_RESTRICT
-                    Hf = (uint8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                int8_t *GB_RESTRICT
+                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 GB_SCATTER_M_j (mystart, myend, 1) ;
 
             }
@@ -576,8 +576,8 @@ void GB_AxB_saxpy3_symbolic
             if (use_Gustavson)
             {
                 // phase1: fine Gustavson task, C<M>=A*B or C<!M>=A*B
-                uint8_t *GB_RESTRICT
-                    Hf = (uint8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                int8_t *GB_RESTRICT
+                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij ;                    // get M(i,j)

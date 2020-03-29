@@ -114,7 +114,7 @@
 // thread-local.  SuiteSparse:GraphBLAS uses three atomic captures,
 // defined below, of the form:
 //
-//      { result = target ; target = value ; }      for int64_t and uint8_t
+//      { result = target ; target = value ; }      for int64_t and int8_t
 //      { result = target ; target |= value ; }     for int64_t
 //
 // OpenMP 4.0 and later supports atomic captures with a "capture" clause: 
@@ -145,8 +145,8 @@
 
         #define GB_ATOMIC_CAPTURE_INT64(result, target, value)          \
         {                                                               \
-            result = (int64_t) _InterlockedExchange64                   \
-                ((int64_t volatile *) (&(target)), (int64_t) (value)) ; \
+            result = _InterlockedExchange64                             \
+                ((int64_t volatile *) (&(target)), value) ;             \
         }
 
     #else
@@ -163,23 +163,23 @@
     #endif
 
     //--------------------------------------------------------------------------
-    // atomic capture for uint8_t
+    // atomic capture for int8_t
     //--------------------------------------------------------------------------
 
-    // uint8_t result, target, value ;
+    // int8_t result, target, value ;
     // do this atomically: { result = target ; target = value ; }
 
     #if GB_MICROSOFT
 
-        #define GB_ATOMIC_CAPTURE_UINT8(result, target, value)          \
+        #define GB_ATOMIC_CAPTURE_INT8(result, target, value)           \
         {                                                               \
-            result = (uint8_t) _InterlockedExchange8                    \
-                ((char volatile *) &(target), (char) (value)) ;         \
+            result = _InterlockedExchange8                              \
+                ((char volatile *) &(target), value) ;                  \
         }
 
     #else
 
-        #define GB_ATOMIC_CAPTURE_UINT8(result, target, value)          \
+        #define GB_ATOMIC_CAPTURE_INT8(result, target, value)           \
         {                                                               \
             GB_PRAGMA (omp atomic capture)                              \
             {                                                           \
@@ -201,8 +201,8 @@
 
         #define GB_ATOMIC_CAPTURE_INT64_OR(result, target, value)       \
         {                                                               \
-            result = (int64_t) _InterlockedOr64                         \
-                ((int64_t volatile *) (&(target)), (int64_t) (value)) ; \
+            result = _InterlockedOr64                                   \
+                ((int64_t volatile *) (&(target)), value) ;             \
         }
 
     #else
@@ -222,8 +222,10 @@
 // atomic compare-and-exchange
 //------------------------------------------------------------------------------
 
-// Ideally, OpenMP would be used for this atomic operation, but it is not
-// supported.  So compiler-specific functions are used instead.
+// Atomic compare-and-exchange is used to implement the MAX, MIN and EQ
+// monoids, for the fine-grain saxpy-style matrix multiplication.  Ideally,
+// OpenMP would be used for these atomic operation, but they are not supported.
+// So compiler-specific functions are used instead.
 
 // In gcc and icc, the atomic compare-and-exchange function
 // __atomic_compare_exchange computes the following, as a single atomic
@@ -272,8 +274,8 @@
 
 // Microsoft Visual Studio provides similar but not identical functionality in
 // the _InterlockedCompareExchange functions, but they are named differently
-// for different types.  For the int64_t case, the following is performed
-// atomically:
+// for different types.  Only int8_t, int16_t, int32_t, and int64_t types are
+// supported.  For the int64_t case, the following is performed atomically:
 //
 //      int64_t _InterlockedCompareExchange64
 //      (
@@ -295,49 +297,67 @@
 // boolean result, but instead returns the original value of (*target).
 // However, this can be compared with the expected value to obtain the
 // same boolean result as __atomic_compare_exchange.
-
+//
+// Type punning is used to extend these signed integer types to unsigned
+// integers of the same number of bytes, and to float and double.
 
 #if GB_MICROSOFT
 
-    // for MS Visual Studio: bool, int8_t, and uint8_t
-    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
-    (                                                                   \
-        ((uint8_t) (expected)) == _InterlockedCompareExchange8          \
-            ((uint8_t volatile *) (target),                             \
-             (uint8_t) (desired),                                       \
-             (uint8_t) (expected))                                      \
+    //--------------------------------------------------------------------------
+    // GB_PUN: type punning
+    //--------------------------------------------------------------------------
+
+    // With type punning, a value is treated as a different type, but with no
+    // typecasting.  The address of the variable is first typecasted to a (type
+    // *) pointer, and then the pointer is dereferenced.  Type punning is only
+    // needed to extend the atomic compare/exchange functions for Microsoft
+    // Visual Studio.
+
+    #define GB_PUN(type,value) (*((type *) (&(value))))
+
+    //--------------------------------------------------------------------------
+    // compare/exchange for MS Visual Studio
+    //--------------------------------------------------------------------------
+
+    // bool, int8_t, and uint8_t
+    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)         \
+    (                                                                       \
+        GB_PUN (int8_t, expected) ==                                        \
+            _InterlockedCompareExchange8 ((int8_t volatile *) (target),     \
+                GB_PUN (int8_t, desired), GB_PUN (int8_t, expected))        \
     )
 
     // int16_t and uint16_t
-    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)    \
-    (                                                                   \
-        ((uint16_t) (expected)) == _InterlockedCompareExchange16        \
-            ((uint16_t volatile *) (target),                            \
-             (uint16_t) (desired),                                      \
-             (uint16_t) (expected))                                     \
+    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)        \
+    (                                                                       \
+        GB_PUN (int16_t, expected) ==                                       \
+            _InterlockedCompareExchange16 ((int16_t volatile *) (target),   \
+            GB_PUN (int16_t, desired), GB_PUN (int16_t, expected))          \
     )
 
     // float, int32_t, and uint32_t
-    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)    \
-    (                                                                   \
-        ((uint32_t) (expected)) == _InterlockedCompareExchange          \
-            ((uint32_t volatile *) (target),                            \
-             (uint32_t) (desired),                                      \
-             (uint32_t) (expected))                                     \
+    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)        \
+    (                                                                       \
+        GB_PUN (int32_t, expected) ==                                       \
+            _InterlockedCompareExchange ((int32_t volatile *) (target),     \
+            GB_PUN (int32_t, desired), GB_PUN (int32_t, expected))          \
     )
 
     // double, int64_t, and uint64_t
-    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
-    (                                                                   \
-        ((uint64_t) (expected)) == _InterlockedCompareExchange64        \
-            ((uint64_t volatile *) (target),                            \
-             (uint64_t) (desired),                                      \
-             (uint64_t) (expected))                                     \
+    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)        \
+    (                                                                       \
+        GB_PUN (int64_t, expected) ==                                       \
+            _InterlockedCompareExchange64 ((int64_t volatile *) (target),   \
+            GB_PUN (int64_t, desired), GB_PUN (int64_t, expected))          \
     )
 
 #else
 
-    // for gcc and icc, the function is generic for any type
+    //--------------------------------------------------------------------------
+    // compare/exchange for gcc, icc, and clang
+    //--------------------------------------------------------------------------
+
+    // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
         __atomic_compare_exchange (target, &expected, &desired,         \
             true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)                   \
