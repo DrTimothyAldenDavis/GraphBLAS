@@ -122,6 +122,12 @@ for k = 1:length (hfiles)
     htime = max (htime, t) ;
 end
 
+if (ispc)
+    obj_extension = '.obj' ;
+else
+    obj_extension = '.o' ;
+end
+
 % compile any source files that need compiling
 any_c_compiled = false ;
 objlist = '' ;
