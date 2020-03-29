@@ -23,6 +23,6 @@
 
 int gb_flush ( void )       // flush mexPrintf output to MATLAB Command Window
 {
-    return (mexEvalString ("drawnow ; pause (0.0001) ;")) ;
+    return (mexEvalString ("drawnow ; pause (1e-8) ;")) ;
 }
 

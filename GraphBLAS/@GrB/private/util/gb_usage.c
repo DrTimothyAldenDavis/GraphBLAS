@@ -30,9 +30,6 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // must use mexPrintf to print to MATLAB Command Window
         GB_printf_function = mexPrintf ;
 
-        // flush the mexPrintf output to the MATLAB Command Window
-        GB_flush_function = gb_flush ;
-
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
             false)) ;
 
