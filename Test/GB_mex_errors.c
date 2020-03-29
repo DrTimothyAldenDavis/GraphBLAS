@@ -4348,7 +4348,8 @@ void mexFunction
 
     OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL, Context)) ;
     AP->type = NULL ;
-    ERR (GB_Matrix_check (Eleven, "Eleven invalid pending type", GB2, NULL, Context)) ;
+    ERR (GB_Matrix_check (Eleven, "Eleven invalid pending type", GB2, NULL,
+        Context)) ;
     ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid pending type", GB2, ff)) ;
     AP->type = tsave ;
     OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL, Context)) ;

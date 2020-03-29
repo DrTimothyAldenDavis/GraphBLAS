@@ -284,12 +284,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB2) ;
-    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB2) ;
-    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB2) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB2) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
     int64_t *GB_RESTRICT Hi_all = NULL ;
@@ -1067,12 +1067,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // phase1: symbolic analysis
     //==========================================================================
 
-    GBBURBLE ("\nsaxpy3 symbolic phase:\n") ;       // TODO
-
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, A, B, TaskList,
         ntasks, nfine, nthreads) ;
-
-    GBBURBLE ("\nsaxpy3 numeric phase:\n") ;       // TODO
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
@@ -1133,7 +1129,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB2) ; }
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

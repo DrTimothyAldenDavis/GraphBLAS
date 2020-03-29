@@ -32,14 +32,12 @@
 // set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
 // -DGB_BURBLE=1.  This setting can also be added at the top of any individual
 // Source/* files, before #including any other files.
-// TODO Burble is on
 #ifndef GB_BURBLE
-#define GB_BURBLE 1
+#define GB_BURBLE 0
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// TODO Debug is on
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1

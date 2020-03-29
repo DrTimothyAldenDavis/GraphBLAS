@@ -17,8 +17,12 @@ function make (what)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isempty (strfind (pwd, 'GraphBLAS/Test')))
-    % make with no arguments should only be done in GraphBLAS/Test
+here = pwd ;
+if (ispc)
+    here = strrep (here, filesep, '/') ;
+end
+if (isempty (strfind (here, 'GraphBLAS/Test')))
+    % this function should only be done in GraphBLAS/Test
     error ('make should be used in Test directory only') ;
 end
 

@@ -1,0 +1,16 @@
+TODO: for Microsoft Windows:
+
+ * MS Visual Studio can't build the demos. "cannot open
+        Release\graphblasdemo.lib".  The build/Release folder contains
+        graphblas.dll and graphblas.lib, but only
+        graphblasdemo.dll, graphblasdemo_static.lib.
+
+ * MATLAB mexFunctions can't find the graphblas.dll (or .lib) in
+        GraphBLAS/build/Release, even though that folder is in the
+        system path.  To get this to work, the GraphBLAS library can
+        be loaded via the following, in the MATLAB Command Window:
+            cd build/Release ; GrB(1)
+        but this is awkward.
+
+ * GraphBLAS/Test and GraphBLAS/Tcov are not yet ported to MS Visual Studio.
+
