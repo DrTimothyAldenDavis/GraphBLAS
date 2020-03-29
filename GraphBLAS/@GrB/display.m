@@ -13,13 +13,5 @@ name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
-% TODO
-% gnz = nnz (G)
-'display: get S'
-S = G.opaque
-'display: get nnz'
-gnz = nnz (G)
-% gbdisp (G.opaque, nnz (G), 2) ;
-'display: result'
-gbdisp (S, gnz, 2) ;
-'here'
+gbdisp (G.opaque, nnz (G), 2) ;
+

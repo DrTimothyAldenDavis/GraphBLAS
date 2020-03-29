@@ -35,12 +35,12 @@
 // simple illustration.  Use the LAGraph_bfs_pushpull for benchmarking and
 // production use.
 
-#define FREE_ALL            \
-    GrB_Vector_free (&v) ;         \
-    GrB_Vector_free (&q) ;         \
+#define FREE_ALL                    \
+    GrB_Vector_free (&v) ;          \
+    GrB_Vector_free (&q) ;          \
     GrB_Descriptor_free (&desc) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // bfs5m: breadth first search using a Boolean semiring

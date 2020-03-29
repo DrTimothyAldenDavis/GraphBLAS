@@ -55,7 +55,7 @@
     FREEWORK ;                  \
 }
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // irowscale: C = D*A + I*0 where D(i,i) = ZSCALE/sum(A(i,:)

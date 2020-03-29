@@ -53,7 +53,7 @@
     FREEWORK ;                  \
 }
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // drowscale: C = D*A + I*0 where D(i,i) = 1/sum(A(i,:)

@@ -15,7 +15,7 @@
     GrB_Descriptor_free (&desc) ;  \
     GrB_Matrix_free (&Mask) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 GrB_Info get_matrix         // get a matrix from stdin, or create random one
 (

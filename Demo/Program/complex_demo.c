@@ -11,7 +11,7 @@
 // complex matrices and vectors.  Run the output of this program in MATLAB
 // to check the results.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 #if HAVE_COMPLEX
 

@@ -26,7 +26,7 @@
 // simple illustration.  Use the LAGraph_bfs_pushpull for benchmarking and
 // production use.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // bfs5m: breadth first search using a Boolean semiring

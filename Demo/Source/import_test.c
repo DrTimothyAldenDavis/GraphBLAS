@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 556)

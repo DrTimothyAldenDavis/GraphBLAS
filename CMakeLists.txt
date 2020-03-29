@@ -95,7 +95,7 @@ endif ( )
 # or use cmake with -DBUILD_GRB_STATIC_LIBRARY=1
 
 if ( BUILD_GRB_STATIC_LIBRARY )
-    message ( STATUS "Building both static and dynamic GraphBLAS libraries" )
+    message ( STATUS "Building all GraphBLAS libraries (static and dynamic)" )
 else ( )
     message ( STATUS "Building dynamic GraphBLAS library only" )
 endif ( )
@@ -432,16 +432,14 @@ add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
-    C_STANDARD_REQUIRED 11
-    PUBLIC_HEADER "Demo/Include/demos.h" )
+    C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
 
 add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-    C_STANDARD_REQUIRED 11
-    PUBLIC_HEADER "Demo/Include/demos.h" )
+    C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo_static  graphblas_static )
 
@@ -471,7 +469,7 @@ target_link_libraries ( openmp_demo   graphblas graphblasdemo )
 target_link_libraries ( mis_demo      graphblas graphblasdemo )
 target_link_libraries ( complex_demo  graphblas graphblasdemo )
 target_link_libraries ( kron_demo     graphblas graphblasdemo )
-target_link_libraries ( simple_demo   graphblasdemo )
+target_link_libraries ( simple_demo             graphblasdemo )
 target_link_libraries ( wildtype_demo graphblas )
 target_link_libraries ( reduce_demo   graphblas )
 target_link_libraries ( import_demo   graphblas graphblasdemo )
@@ -483,15 +481,15 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 if ( BUILD_GRB_STATIC_LIBRARY )
 
     # install both the dynamic and static libraries
-    install ( TARGETS graphblas  graphblas_static graphblasdemo graphblasdemo_static
+    install ( TARGETS graphblas  graphblas_static
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 
 else ( )
 
-    # only install the dynamic library
-    install ( TARGETS graphblas graphblasdemo graphblasdemo_static
+    # only install the dynamic graphblas library
+    install ( TARGETS graphblas
          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )

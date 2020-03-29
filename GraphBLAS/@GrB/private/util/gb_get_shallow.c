@@ -58,8 +58,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
 
-        printf ("get struct:\n") ;      // TODO
-
         // get the type
         mxArray *mx_type = mxGetField (X, 0, "GraphBLAS") ;
         CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
@@ -258,8 +256,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     // return the result
     //--------------------------------------------------------------------------
 
-    printf ("got shallow\n") ;      // TODO
-    GxB_Matrix_fprint (A,"A",3,NULL) ;  // TODO
     return (A) ;
 }
 

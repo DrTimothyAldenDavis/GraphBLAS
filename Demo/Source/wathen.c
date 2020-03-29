@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 // Create a finite-element matrix on an nx-by-ny 2D mesh, as computed by
 // wathen.m in MATLAB.  To view the wathen.m file, use this command in MATLAB:

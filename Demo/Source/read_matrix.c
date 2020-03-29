@@ -30,7 +30,7 @@
     GrB_Matrix_free (&B) ;          \
     GrB_Matrix_free (&C) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // unary operator to divide by 2

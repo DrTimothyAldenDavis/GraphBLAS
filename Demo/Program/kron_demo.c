@@ -22,7 +22,7 @@
 // indices that appear in the files.  The file C.tsv is the filename of the
 // output file for C=kron(A,B), also with 1-based indices.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \

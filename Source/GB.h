@@ -38,6 +38,7 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
+// TODO Debug is on
 #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
@@ -744,28 +745,105 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #include "GB_Global.h"
 
 //------------------------------------------------------------------------------
-// GB_printf: printing control
+// printing control
 //------------------------------------------------------------------------------
 
-#include "GB_printf.h"
+GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
+GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 
-#if GB_MICROSOFT
-#define GB_FLUSH_STDOUT
-#else
-#define GB_FLUSH_STDOUT fflush (stdout)
-#endif
-
-#define GBPRINT(...)                            \
+// print to the standard output, and flush the result.  This function can
+// print to the MATLAB command window.  No error check is done.  This function
+// is meant only for debugging.
+#define GBDUMP(...)                             \
 {                                               \
     if (GB_printf_function != NULL)             \
     {                                           \
         GB_printf_function (__VA_ARGS__) ;      \
+        if (GB_flush_function != NULL)          \
+        {                                       \
+            GB_flush_function ( ) ;             \
+        }                                       \
     }                                           \
     else                                        \
     {                                           \
         printf (__VA_ARGS__) ;                  \
-        GB_FLUSH_STDOUT ;                       \
+        fflush (stdout) ;                       \
     }                                           \
+}
+
+// print to a file f, or to stdout if f is NULL, and check the result.  This
+// macro is used by all user-callable GxB_*print and GB_*check functions. 
+#define GBPR(...)                                                           \
+{                                                                           \
+    int printf_result = 0 ;                                                 \
+    if (f == NULL)                                                          \
+    {                                                                       \
+        if (GB_printf_function != NULL)                                     \
+        {                                                                   \
+            printf_result = GB_printf_function (__VA_ARGS__) ;              \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            printf_result = printf (__VA_ARGS__) ;                          \
+        }                                                                   \
+        if (GB_flush_function != NULL)                                      \
+        {                                                                   \
+            GB_flush_function ( ) ;                                         \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            fflush (stdout) ;                                               \
+        }                                                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        printf_result = fprintf (f, __VA_ARGS__)  ;                         \
+        fflush (f) ;                                                        \
+    }                                                                       \
+    if (printf_result < 0)                                                  \
+    {                                                                       \
+        int err = errno ;                                                   \
+        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,                       \
+            "File output error (%d): %s", err, strerror (err)))) ;          \
+    }                                                                       \
+}
+
+// print if the print level is greater than zero
+#define GBPR0(...)                  \
+{                                   \
+    if (pr > 0)                     \
+    {                               \
+        GBPR (__VA_ARGS__) ;        \
+    }                               \
+}
+
+// check object->magic and print an error if invalid
+#define GB_CHECK_MAGIC(object,kind)                                     \
+{                                                                       \
+    switch (object->magic)                                              \
+    {                                                                   \
+        case GB_MAGIC :                                                 \
+            /* the object is valid */                                   \
+            break ;                                                     \
+                                                                        \
+        case GB_FREED :                                                 \
+            /* dangling pointer! */                                     \
+            GBPR0 ("already freed!\n") ;                                \
+            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
+                "%s is freed: [%s]", kind, name))) ;                    \
+                                                                        \
+        case GB_MAGIC2 :                                                \
+            /* invalid */                                               \
+            GBPR0 ("invalid\n") ;                                       \
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
+                "%s is invalid: [%s]", kind, name))) ;                  \
+                                                                        \
+        default :                                                       \
+            /* uninitialized */                                         \
+            GBPR0 ("uninititialized\n") ;                               \
+            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
+                "%s is uninitialized: [%s]", kind, name))) ;            \
+    }                                                                   \
 }
 
 //------------------------------------------------------------------------------
@@ -792,7 +870,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     bool burble = GB_Global_burble_get ( ) ;        \
     if (burble)                                     \
     {                                               \
-        GBPRINT (__VA_ARGS__) ;                     \
+        GBDUMP (__VA_ARGS__) ;                      \
     }                                               \
 }
 
@@ -863,7 +941,7 @@ bool burble = GB_Global_burble_get ( ) ;            \
     {                                                                       \
         if (!(X))                                                           \
         {                                                                   \
-            GBPRINT ("assert(" GB_STR(X) ") failed: "                       \
+            GBDUMP ("assert(" GB_STR(X) ") failed: "                        \
                 __FILE__ " line %d\n", __LINE__) ;                          \
             GB_Global_abort_function ( ) ;                                  \
         }                                                                   \
@@ -911,18 +989,18 @@ bool burble = GB_Global_burble_get ( ) ;            \
 #define GB_GOTCHA                                                   \
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBPRINT ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;         \
+    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
 }
 #else
 #define GB_GOTCHA                                                   \
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBPRINT ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;         \
+    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
     GB_Global_abort_function ( ) ;                                  \
 }
 #endif
 
-#define GB_HERE GBPRINT ("%2d: Here: " __FILE__ " line: %d\n",  \
+#define GB_HERE GBDUMP ("%2d: Here: " __FILE__ " line: %d\n",       \
     GB_OPENMP_THREAD_ID, __LINE__) ;
 
 // ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
@@ -1827,7 +1905,7 @@ void GB_free_memory
 
 #define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
 {                                                                             \
-    GBPRINT("\nmatrix new:                   %s = new (%s, vlen = "GBd        \
+    GBDUMP("\nmatrix new:                   %s = new (%s, vlen = "GBd         \
         ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd")"             \
         " line %d file %s\n", GB_STR(A), GB_STR(type),                        \
         (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
@@ -1838,7 +1916,7 @@ void GB_free_memory
 
 #define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
 {                                                                             \
-    GBPRINT("\nmatrix create:                %s = new (%s, vlen = "GBd        \
+    GBDUMP("\nmatrix create:                %s = new (%s, vlen = "GBd         \
         ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd", anz:"GBd     \
         " numeric:%d) line %d file %s\n", GB_STR(A), GB_STR(type),            \
         (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
@@ -1850,7 +1928,7 @@ void GB_free_memory
 #define GB_MATRIX_FREE(A)                                                     \
 {                                                                             \
     if (A != NULL && *(A) != NULL)                                            \
-        GBPRINT("\nmatrix free:                  "                            \
+        GBDUMP("\nmatrix free:                  "                             \
         "matrix_free (%s) line %d file %s\n", GB_STR(A), __LINE__, __FILE__) ;\
     if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
 }
@@ -1858,7 +1936,7 @@ void GB_free_memory
 #define GB_VECTOR_FREE(v)                                                     \
 {                                                                             \
     if (v != NULL && *(v) != NULL)                                            \
-        GBPRINT("\nvector free:                  "                            \
+        GBDUMP("\nvector free:                  "                             \
         "vector_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
@@ -1866,28 +1944,28 @@ void GB_free_memory
 #define GB_SCALAR_FREE(v)                                                     \
 {                                                                             \
     if (v != NULL && *(v) != NULL)                                            \
-        GBPRINT("\nscalar free:                  "                            \
+        GBDUMP("\nscalar free:                  "                             \
         "scalar_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
-    GBPRINT("\nCalloc:                       "                                \
+    GBDUMP("\nCalloc:                       "                                 \
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
     p = GB_calloc_memory (n, s) ;
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
-    GBPRINT("\nMalloc:                       "                                \
+    GBDUMP("\nMalloc:                       "                                 \
     "%s = malloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
     p = GB_malloc_memory (n, s) ;
 
-#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                    \
+#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
 {                                                                             \
-    GBPRINT("\nRealloc: %14p       "                                          \
+    GBDUMP("\nRealloc: %14p       "                                           \
     "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
     p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
     GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
@@ -1897,7 +1975,7 @@ void GB_free_memory
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \
     if (p)                                                                    \
-    GBPRINT("\nFree:               "                                          \
+    GBDUMP("\nFree:               "                                           \
     "(%s, %s = "GBd", %s = "GBd") line %d file %s\n",                         \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \

@@ -102,7 +102,7 @@ library and is thus not thread-safe.
 in Demo/Include:
 --------------------------------------------------------------------------------
 
-    demos.h                 include file for all demos
+    graphblas_demos.h       include file for all demos
     simple_rand.h           include file for simple_rand.c
     simple_timer.h          include file for simple_timer
     usercomplex.h           include file for usercomplex.h

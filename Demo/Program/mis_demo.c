@@ -30,7 +30,7 @@
 // The 3rd usage (mis_demo 1 ...) creates a finite-element matrix on an
 // nx-by-ny grid.  Method is 0 to 3; refer to wathen.c for details.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \

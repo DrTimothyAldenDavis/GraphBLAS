@@ -40,7 +40,7 @@
     GrB_Vector_free (&is_reachable) ; \
     GrB_Monoid_free (&max_monoid) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 int main (int argc, char **argv)
 {

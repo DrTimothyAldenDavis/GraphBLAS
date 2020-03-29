@@ -31,9 +31,9 @@
     #define Boolean         GxB_LOR_LAND_BOOL
 #endif
 
-// "OK(x)" macro defined in demos.h calls a GraphBLAS method, and if it fails,
-// prints the error, frees workspace, and returns to the caller.  It uses the
-// FREE_ALL macro to free the workspace.
+// "OK(x)" macro defined in graphblas_demos.h calls a GraphBLAS method, and if
+// it fails, prints the error, frees workspace, and returns to the caller.  It
+// uses the FREE_ALL macro to free the workspace.
 #define FREE_ALL                \
     GrB_Vector_free (&iset) ;          \
     GrB_Vector_free (&prob) ;          \
@@ -53,7 +53,7 @@
     GrB_Vector_free (&X) ;             \
     prand_finalize ( ) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // mis_check: maximal independent set, with error checking

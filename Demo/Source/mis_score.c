@@ -14,7 +14,7 @@
 // No copyright claim is made for this particular file; the above copyright
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // mis_score: set the random score of a node

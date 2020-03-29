@@ -19,7 +19,7 @@
 // NaN equality (like isequalwithequalnans in MATLAB), use isequal_type with a
 // user-defined operator f(x,y) that returns true if x and y are both NaN.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 // call a GraphBLAS method and return if an error occurs
 #undef  OK

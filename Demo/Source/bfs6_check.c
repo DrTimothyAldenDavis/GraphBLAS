@@ -43,7 +43,7 @@
     GrB_Descriptor_free (&desc) ;          \
     GrB_UnaryOp_free (&apply_level) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // bfs_level2: for unary operator

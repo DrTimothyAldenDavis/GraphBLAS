@@ -43,7 +43,7 @@
     GrB_Matrix_free (&L) ;             \
     GrB_Matrix_free (&U) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 int main (int argc, char **argv)
 {

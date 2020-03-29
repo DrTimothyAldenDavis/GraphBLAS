@@ -35,7 +35,7 @@
     if (P2 != NULL) free (P2) ;     \
 }
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 int main (int argc, char **argv)
 {

@@ -17,7 +17,7 @@
 // This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.  It
 // now uses GrB_vxm instead of GrB_mxv.
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // mis: maximal independent set

@@ -17,7 +17,7 @@
     if (J != NULL) free (J) ;     \
     if (X != NULL) free (X) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // create a random matrix

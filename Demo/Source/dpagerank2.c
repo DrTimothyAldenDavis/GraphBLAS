@@ -58,7 +58,7 @@
     FREEWORK ;                  \
 }
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // scalar types and operators

@@ -40,7 +40,7 @@
     FREEWORK ;                  \
 }
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // scalar operators

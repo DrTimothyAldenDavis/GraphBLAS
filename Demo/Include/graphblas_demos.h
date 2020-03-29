@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Include/demos.h: include file for all demo programs
+// GraphBLAS/Demo/Include/graphblas_demos.h: include file for all demo programs
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

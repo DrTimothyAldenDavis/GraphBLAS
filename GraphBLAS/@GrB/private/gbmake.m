@@ -201,3 +201,7 @@ else
     fprintf ('  addpath (''%s/build'') ;\n', pwd) ;
 end
 
+fprintf ('\nTo test GraphBLAS, type the following commands:\n\n') ;
+fprintf ('  cd GraphBLAS/test\n') ;
+fprintf ('  gbtest\n') ;
+

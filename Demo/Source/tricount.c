@@ -61,7 +61,7 @@
     GrB_Matrix_free (&S) ;             \
     GrB_Matrix_free (&C) ;
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // two:  unary function for GrB_apply
