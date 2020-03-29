@@ -96,6 +96,10 @@ if (ismac)
 %   flags = [ flags   ' CFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
 %   flags = [ flags ' CXXFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
 %   flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp"' ] ;
+elseif (ispc)
+    % Windows
+    libraries = '-L../build/Release -L. -lgraphblas' ;
+    flags = [ flags ' CFLAGS="$CXXFLAGS -wd"4244" -wd"4146" -wd"4018" -wd"4996" -wd"4047" -wd"4554"'] ;
 else
     % Linux
     libraries = '-L../build -L. -lgraphblas' ;
