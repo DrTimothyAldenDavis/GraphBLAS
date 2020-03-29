@@ -1299,8 +1299,9 @@
     if (cjnz_max > 0)
     {
         int64_t *GB_RESTRICT W = NULL ;
-        bool parallel_sort = (cjnz_max > GB_BASECASE && nthreads > 1) ;
-        if (parallel_sort)
+        int nthreads_msort = GB_MSORT_NTHREADS (nthreads) ;
+        if (cjnz_max <= GB_BASECASE) nthreads_msort = 1 ;
+        if (nthreads_msort > 1)
         {
             // allocate workspace for parallel mergesort
             GB_MALLOC_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
@@ -1332,17 +1333,8 @@
                 int64_t cjnz = Cp [kk+1] - Cp [kk] ;
 
                 // sort the pattern of C(:,j)
-                int nth = GB_nthreads (cjnz, chunk, nthreads) ;
-                if (parallel_sort && nth > 1)
-                { 
-                    // parallel mergesort
-                    GB_msort_1 (Ci + Cp [kk], W, cjnz, nth) ;
-                }
-                else
-                { 
-                    // sequential quicksort
-                    GB_qsort_1a (Ci + Cp [kk], cjnz) ;
-                }
+                int nth = GB_nthreads (cjnz, chunk, nthreads_msort) ;
+                GB_msort_1 (Ci + Cp [kk], W, cjnz, nth) ;
 
                 #if !GB_IS_ANY_PAIR_SEMIRING
 
