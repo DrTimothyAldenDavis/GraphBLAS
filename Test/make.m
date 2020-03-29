@@ -155,6 +155,7 @@ for k = 1:length (cfiles)
         if (dryrun)
             fprintf ('%s\n', mexcmd) ;
         else
+            fprintf ('%s\n', mexcmd) ;
             eval (mexcmd) ;
         end
         any_c_compiled = true ;
@@ -189,6 +190,7 @@ for k = 1:length (mexfunctions)
         if (dryrun)
             fprintf ('%s\n', mexcmd) ;
         else
+            fprintf ('%s\n', mexcmd) ;
             eval (mexcmd) ;
         end
     end

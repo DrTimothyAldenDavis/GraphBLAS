@@ -24,7 +24,7 @@
 #include "GB_sort.h"
 #include "GB_apply.h"
 
-#include "demos.h"
+#include "graphblas_demos.h"
 
 // demos.h use mxMalloc, etc, and so do the MATLAB Test/* mexFunctions,
 // but the tests here need to distinguish between mxMalloc and malloc.
