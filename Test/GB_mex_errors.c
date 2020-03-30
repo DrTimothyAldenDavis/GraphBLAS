@@ -178,7 +178,7 @@ void mexFunction
     double complex c ;
     #endif
 
-    void *pp = NULL ;
+    GB_void *pp = NULL ;
 
     GxB_SelectOp selectop = NULL, selectopgunk = NULL, sel0 ;
 
@@ -209,7 +209,8 @@ void mexFunction
 
     // can't call it twice
     expected = GrB_PANIC ;
-    ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
+    ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
+        false)) ;
     GB_Global_GrB_init_called_set (false) ;
 
     // invalid mode

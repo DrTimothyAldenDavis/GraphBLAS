@@ -119,9 +119,9 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
 
     GrB_Matrix A = NULL ;
-    void *Y ;
+    GB_void *Y ;
     GrB_Type xtype ;
-    void *Xtemp = NULL ;
+    GB_void *Xtemp = NULL ;
     GrB_Index *I = NULL, ni = 0, I_range [3] ;
     GrB_Index *J = NULL, nj = 0, J_range [3] ;
     bool is_list ;

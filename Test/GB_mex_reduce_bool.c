@@ -106,7 +106,7 @@ void mexFunction
 
     // return result to MATLAB as a boolean scalar
     pargout [0] = mxCreateNumericMatrix (1, 1, mxLOGICAL_CLASS, mxREAL) ;
-    void *p = mxGetData (pargout [0]) ;
+    GB_void *p = mxGetData (pargout [0]) ;
     memcpy (p, &result, sizeof (bool)) ;
 
     FREE_ALL ;

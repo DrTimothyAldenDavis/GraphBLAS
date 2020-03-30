@@ -176,7 +176,7 @@ void GB_mx_mxArray_to_array     // convert mxArray to array
 (
     const mxArray *Xmatlab,     // input MATLAB array
     // output:
-    void **X,                   // pointer to numerical values
+    GB_void **X,                // pointer to numerical values
     int64_t *nrows,             // number of rows of X
     int64_t *ncols,             // number of columns of X
     mxClassID *xclass,          // MATLAB class of X

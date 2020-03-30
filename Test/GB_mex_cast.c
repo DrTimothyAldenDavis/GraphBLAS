@@ -41,7 +41,7 @@ void mexFunction
     }
 
     // get X
-    void *X ;
+    GB_void *X ;
     int64_t nrows, ncols ;
     mxClassID xclass ;
     GrB_Type xtype ;
@@ -77,7 +77,7 @@ void mexFunction
     {
         // typecast the shallow MATLAB X into the output C
         pargout [0] = mxCreateNumericMatrix (nrows, ncols, cclass, mxREAL) ;
-        void *C = mxGetData (pargout [0]) ;
+        GB_void *C = mxGetData (pargout [0]) ;
 
         // cast the data from X to C
         GB_cast_array (C, ctype->code, X, xtype->code, nrows*ncols, Context) ;

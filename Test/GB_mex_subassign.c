@@ -134,7 +134,7 @@ GrB_Info assign (GB_Context Context)
     if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
     {
         // scalar expansion to matrix or vector
-        void *Ax = A->x ;
+        GB_void *Ax = A->x ;
 
         if (ni == 1 && nj == 1 && M == NULL && I != GrB_ALL && J != GrB_ALL
             && GB_op_is_second (accum, C->type) && A->type->code <= GB_FP64_code
@@ -624,7 +624,7 @@ void mexFunction
                 type c = 0 ;                                                 \
                 GrB_Matrix_reduce ## suffix (&c, NULL, reduce, C, NULL) ;    \
                 pargout [1] = mxCreateNumericMatrix (1, 1, cclass, mxREAL) ; \
-                void *p = mxGetData (pargout [1]) ;                          \
+                GB_void *p = mxGetData (pargout [1]) ;                       \
                 memcpy (p, &c, sizeof (type)) ;                              \
                 double d = 0 ;                                               \
                 GrB_Matrix_reduce_FP64 (&d, NULL, GxB_PLUS_FP64_MONOID,      \

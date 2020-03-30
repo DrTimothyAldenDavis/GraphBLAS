@@ -29,9 +29,9 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
-    void *Y = NULL ;
-    void *Xtemp = NULL ;
-    void *X = NULL ;
+    GB_void *Y = NULL ;
+    GB_void *Xtemp = NULL ;
+    GB_void *X = NULL ;
     GrB_Index nvals = 0 ;
 
     // check inputs
@@ -84,7 +84,7 @@ void mexFunction
         if (nargout > 2)
         {
             pargout [2] = mxCreateNumericMatrix (nvals, 1, xclass, mxREAL) ;
-            X = (void *) mxGetData (pargout [2]) ;
+            X = (GB_void *) mxGetData (pargout [2]) ;
         }
     }
 

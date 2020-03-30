@@ -90,7 +90,7 @@ GrB_Info builder
     GrB_Index ncols,
     GrB_Index *I,
     GrB_Index *J,
-    void *X,
+    GB_void *X,
     GrB_Index ni,
     GrB_BinaryOp dup,
     bool C_is_csc,
@@ -112,7 +112,7 @@ GrB_Info builder
     GrB_Index ncols,
     GrB_Index *I,
     GrB_Index *J,
-    void *X,
+    GB_void *X,
     GrB_Index ni,
     GrB_BinaryOp dup,
     bool C_is_csc,
@@ -279,7 +279,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("X cannot be sparse") ;
     }
-    void *X = mxGetData (pargin [X_ARG]) ;
+    GB_void *X = mxGetData (pargin [X_ARG]) ;
     mxClassID xclass = mxGetClassID (pargin [X_ARG]) ;
     GrB_Type xtype = GB_mx_classID_to_Type (xclass) ;
     if (xtype == NULL)

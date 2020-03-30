@@ -484,7 +484,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GB_Global_malloc_tracking_set (false) ;
-    void *p = GB_malloc_memory (4, sizeof (int64_t)) ;
+    GB_void *p = GB_malloc_memory (4, sizeof (int64_t)) ;
     CHECK (p != NULL) ;
     GB_free_memory (p, 4, sizeof (int64_t)) ;
     p = GB_calloc_memory (4, sizeof (int64_t)) ;

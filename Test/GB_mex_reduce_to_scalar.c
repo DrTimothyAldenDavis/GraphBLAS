@@ -52,7 +52,7 @@ void mexFunction
     #define FREE_DEEP_COPY ;
 
     // get the scalar c
-    void *c ;
+    GB_void *c ;
     int64_t cnrows, cncols ;
     mxClassID cclass ;
     GrB_Type ctype ;
@@ -128,11 +128,11 @@ void mexFunction
         {
             GrB_Vector V ;
             V = (GrB_Vector) A ;
-            METHOD (GrB_Vector_reduce_UDT ((void *) c, accum, reduce, V, d)) ;
+            METHOD (GrB_Vector_reduce_UDT (c, accum, reduce, V, d)) ;
         }
         else
         {
-            METHOD (GrB_Matrix_reduce_UDT ((void *) c, accum, reduce, A, d)) ;
+            METHOD (GrB_Matrix_reduce_UDT (c, accum, reduce, A, d)) ;
         }
     }
     else
@@ -217,7 +217,7 @@ void mexFunction
     else
     {
         pargout [0] = mxCreateNumericMatrix (1, 1, cclass, mxREAL) ;
-        void *p = mxGetData (pargout [0]) ;
+        GB_void *p = mxGetData (pargout [0]) ;
         memcpy (p, c, ctype->size) ;
     }
 

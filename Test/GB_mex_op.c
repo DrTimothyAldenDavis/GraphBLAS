@@ -38,7 +38,7 @@ void mexFunction
 )
 {
 
-    void *X = NULL, *Y = NULL, *Z = NULL ;
+    GB_void *X = NULL, *Y = NULL, *Z = NULL ;
     GrB_Type X_type = NULL, Y_type = NULL ;
     int64_t nrows = 0, ncols = 0, nx = 0, ny = 0, nrows2 = 0, ncols2 = 0 ;
     size_t Y_size = 1 ;
@@ -194,8 +194,8 @@ void mexFunction
     // get scalar workspace
     //--------------------------------------------------------------------------
 
-    char xwork [op_xsize] ;
-    char ywork [op_ysize] ;
+    char xwork [GB_VLA (op_xsize)] ;
+    char ywork [GB_VLA (op_ysize)] ;
 
     GB_cast_function cast_X = GB_cast_factory (op_xtype->code, X_type->code) ;
 

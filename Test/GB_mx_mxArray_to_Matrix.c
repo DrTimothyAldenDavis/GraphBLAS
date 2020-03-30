@@ -172,7 +172,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     int64_t *Mp = (int64_t *) mxGetJc (Amatrix) ;
     int64_t *Mi = (int64_t *) mxGetIr (Amatrix) ;
     int64_t anz = Mp [ncols] ;
-    void *Mx = mxGetData (Amatrix) ;
+    GB_void *Mx = mxGetData (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // look for A.values
