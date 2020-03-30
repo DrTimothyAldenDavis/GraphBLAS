@@ -157,7 +157,7 @@ logstat ('test00',s);   % GB_mex_mis (single threaded)
 logstat ('test76',t) ;  % GxB_resize
 logstat ('test88',t) ;  % hypersparse matrices with heap-based method
 logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
-logstat ('test143',t) ;  % mxm, special cases
+logstat ('test143',t) ; % mxm, special cases
 logstat ('test99',t) ;  % GB_mex_transpose with explicit zeros in the Mask
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
@@ -177,31 +177,14 @@ if (malloc_debugging)
     fclose (f) ;
 end
 
-%80
 logstat ('test10',t) ;  % GrB_apply
-
-%79
 logstat ('test134',t) ; % quick test of GxB_select
-
-%292
-logstat ('test75b',t) ;  % test GrB_mxm A'*B (quicker than test75)
-
-%96: only single-threaded is needed
+logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
 logstat ('test21',s) ;  % quick test of GB_mex_subassign
-
-%92
 logstat ('test16',t) ;  % user-defined complex operators
-
-%103
 logstat ('test81',t) ;  % GrB_Matrix_extract with stride, range, backwards
-
-%102
 logstat ('test21b',t) ; % quick test of GB_mex_assign
-
-%149
 logstat ('test18',t) ;  % quick tests of GrB_eWiseAdd and eWiseMult
-
-%322 seconds, 11 statements covered
 logstat ('test20',t) ;  % quick test of GB_mex_mxm on a few semirings
 
 %-------------------------------------------------------------------------------
