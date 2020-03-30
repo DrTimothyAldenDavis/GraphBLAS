@@ -1684,6 +1684,7 @@ GrB_Info GB_free                // free a matrix
     GrB_Matrix *matrix_handle   // handle of matrix to free
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_Type_compatible         // check if two types can be typecast
 (
     const GrB_Type atype,
@@ -1707,6 +1708,7 @@ void GB_cast_array              // typecast an array
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 (
     const GB_Type_code code1,      // the type of z, the output value
