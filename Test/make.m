@@ -99,7 +99,7 @@ if (ismac)
 elseif (ispc)
     % Windows
     libraries = '-L../build/Release -L. -lgraphblas' ;
-    flags = [ flags ' CFLAGS="$CXXFLAGS -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"" '] ;
+    flags = [ flags ' CFLAGS="$CXXFLAGS -wd\"4244\" -wd\"4146\" -wd\"4217\" -wd\"4286\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"" '] ;
 else
     % Linux
     libraries = '-L../build -L. -lgraphblas' ;
