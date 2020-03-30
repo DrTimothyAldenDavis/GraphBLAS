@@ -89,6 +89,7 @@ void     GB_Global_malloc_debug_set (bool malloc_debug) ;
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool     GB_Global_malloc_debug_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
 
