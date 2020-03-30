@@ -17,12 +17,14 @@
     if (J != NULL) free (J) ;     \
     if (X != NULL) free (X) ;
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // create a random matrix
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info random_matrix      // create a random double-precision matrix
 (
     GrB_Matrix *A_output,   // handle of matrix to create
@@ -53,7 +55,7 @@ GrB_Info random_matrix      // create a random double-precision matrix
 
     if (A_complex)
     {
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
         // Areal = real random matrix
         OK (random_matrix (&Areal, make_symmetric, no_self_edges, nrows,
             ncols, nedges, method, false)) ;

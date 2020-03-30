@@ -53,12 +53,14 @@
     FREEWORK ;                  \
 }
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // drowscale: C = D*A + I*0 where D(i,i) = 1/sum(A(i,:)
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info drowscale          // GrB_SUCCESS or error condition
 (
     GrB_Matrix *Chandle,    // output matrix C = rowscale (A)

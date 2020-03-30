@@ -40,6 +40,7 @@
     FREEWORK ;                  \
 }
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -80,6 +81,7 @@ int compar (const void *x, const void *y)
 // dpagerank: compute the PageRank of all nodes in a graph
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info dpagerank          // GrB_SUCCESS or error condition
 (
     PageRank **Phandle,     // output: pointer to array of PageRank structs

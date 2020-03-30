@@ -62,7 +62,7 @@ setEl (FP32   , float         ) ;
 setEl (FP64   , double        ) ;
 #undef  AMPERSAND
 #define AMPERSAND(x) &x
-#if HAVE_COMPLEX
+#if GxB_STDC_VERSION >= 201112L
 setEl (UDT    , double complex) ;
 #endif
 #undef  AMPERSAND
@@ -102,7 +102,7 @@ vsetEl (FP32   , float         ) ;
 vsetEl (FP64   , double        ) ;
 #undef  AMPERSAND
 #define AMPERSAND(x) &x
-#if HAVE_COMPLEX
+#if GxB_STDC_VERSION >= 201112L
 vsetEl (UDT    , double complex) ;
 #endif
 #undef  AMPERSAND
@@ -195,7 +195,7 @@ void mexFunction
 
     if (mxIsComplex (pargin [3]))
     {
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
         // copy the MATLAB complex
         xtype = Complex ;
         GB_MALLOC_MEMORY (Xtemp, ni, sizeof (double complex)) ;
@@ -244,7 +244,7 @@ void mexFunction
             case GB_UINT64_code : METHOD (vset_UINT64 (A, Y, I, ni)) ; break ;
             case GB_FP32_code   : METHOD (vset_FP32   (A, Y, I, ni)) ; break ;
             case GB_FP64_code   : METHOD (vset_FP64   (A, Y, I, ni)) ; break ;
-            #if HAVE_COMPLEX
+            #if GxB_STDC_VERSION >= 201112L
             case GB_UDT_code    : METHOD (vset_UDT    (A, Y, I, ni)) ; break ;
             #endif
             default:
@@ -268,7 +268,7 @@ void mexFunction
             case GB_UINT64_code : METHOD (set_UINT64 (A, Y, I, J, ni)) ; break ;
             case GB_FP32_code   : METHOD (set_FP32   (A, Y, I, J, ni)) ; break ;
             case GB_FP64_code   : METHOD (set_FP64   (A, Y, I, J, ni)) ; break ;
-            #if HAVE_COMPLEX
+            #if GxB_STDC_VERSION >= 201112L
             case GB_UDT_code    : METHOD (set_UDT    (A, Y, I, J, ni)) ; break ;
             #endif
             default:

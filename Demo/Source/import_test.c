@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 #if defined __INTEL_COMPILER
@@ -58,6 +59,7 @@
 
 #include "../Source/GB.h"
 
+GB_PUBLIC
 GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
 {
     

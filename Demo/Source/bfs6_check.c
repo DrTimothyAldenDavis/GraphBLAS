@@ -43,6 +43,7 @@
     GrB_Descriptor_free (&desc) ;          \
     GrB_UnaryOp_free (&apply_level) ;
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -80,6 +81,7 @@ void bfs_level2 (void *result, const void *element)
 // v should be empty on input.)  The graph A need not be Boolean on input;
 // if it isn't Boolean, the semiring will properly typecast it to Boolean.
 
+GB_PUBLIC
 GrB_Info bfs6_check         // BFS of a graph (using apply)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph

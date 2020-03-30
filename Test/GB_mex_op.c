@@ -78,7 +78,7 @@ void mexFunction
     bool XisComplex = mxIsComplex (pargin [1]) ;
     bool YisComplex = (nargin > 2) ? mxIsComplex (pargin [2]) : false ;
 
-    #if !HAVE_COMPLEX
+    #if GxB_STDC_VERSION < 201112L
     if (XisComplex || YisComplex) mexErrMsgTxt ("complex type not available") ;
     #endif
 

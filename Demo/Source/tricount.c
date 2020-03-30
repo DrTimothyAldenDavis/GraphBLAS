@@ -61,6 +61,7 @@
     GrB_Matrix_free (&S) ;             \
     GrB_Matrix_free (&C) ;
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -76,6 +77,7 @@ void two (uint32_t *z, const uint32_t *x)
 // tricount: count the number of triangles in a graph
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info tricount           // count # of triangles
 (
     int64_t *p_ntri,        // # of trianagles

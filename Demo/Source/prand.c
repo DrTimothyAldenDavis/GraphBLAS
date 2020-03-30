@@ -9,7 +9,8 @@
 
 // A simple thread-safe parallel pseudo-random nuumber generator.
 
-#include "prand.h"
+#define GB_LIBRARY
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // prand macros
@@ -41,6 +42,7 @@ GrB_BinaryOp prand_dup_op = NULL ;
 
 // z = f(x), where x is the old seed and z is the new seed.
 
+GB_PUBLIC
 void prand_next_f (prand_t *z, const prand_t *x)
 {
     for (int k = 0 ; k < 5 ; k++)
@@ -56,6 +58,7 @@ void prand_next_f (prand_t *z, const prand_t *x)
 // z = f(x), where x is a random seed, and z is an unsigned 64-bit
 // pseudo-random number constructed from the seed.
 
+GB_PUBLIC
 void prand_iget_f (uint64_t *z, const prand_t *x)
 {
     uint64_t i = 0 ;
@@ -73,6 +76,7 @@ void prand_iget_f (uint64_t *z, const prand_t *x)
 // z = f(x), where x is a random seed, and z is a double precision
 // pseudo-random number constructed from the seed, in the range 0 to 1.
 
+GB_PUBLIC
 void prand_xget_f (double *z, prand_t *x)
 {
     uint64_t i ;
@@ -95,6 +99,7 @@ void prand_xget_f (double *z, prand_t *x)
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+GB_PUBLIC
 void prand_dup_f (prand_t *z, /* unused: */ const prand_t *x, const prand_t *y)
 {
     (*z) = (*y) ;
@@ -125,6 +130,7 @@ void prand_dup_f (prand_t *z, /* unused: */ const prand_t *x, const prand_t *y)
     }                                                       \
 }
 
+GB_PUBLIC
 GrB_Info prand_init ( )
 {
     prand_type = NULL ;
@@ -148,6 +154,7 @@ GrB_Info prand_init ( )
 // prand_finalize:  free the random seed type and its operators
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info prand_finalize ( )
 {
     PRAND_FREE_ALL ;
@@ -158,6 +165,7 @@ GrB_Info prand_finalize ( )
 // prand_next: get the next random numbers
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info prand_next
 (
     GrB_Vector Seed
@@ -185,6 +193,7 @@ GrB_Info prand_next
     GrB_Vector_free (Seed) ;                                \
 }
 
+GB_PUBLIC
 GrB_Info prand_seed
 (
     GrB_Vector *Seed,   // vector of random number seeds
@@ -252,6 +261,7 @@ GrB_Info prand_seed
 #undef  PRAND_FREE_ALL
 #define PRAND_FREE_ALL ;
 
+GB_PUBLIC
 GrB_Info prand_print
 (
     GrB_Vector Seed,
@@ -286,6 +296,7 @@ GrB_Info prand_print
 // prand_iget: return a vector of random uint64 integers
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info prand_iget
 (
     GrB_Vector X,
@@ -300,6 +311,7 @@ GrB_Info prand_iget
 // prand_xget: return a vector of random doubles, in range 0 to 1 inclusive
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info prand_xget
 (
     GrB_Vector X,

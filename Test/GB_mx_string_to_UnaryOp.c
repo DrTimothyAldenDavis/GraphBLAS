@@ -66,7 +66,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         // X complex
         //----------------------------------------------------------------------
     
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
 
         // user-defined Complex unary operator
         opcode  = GB_USER_opcode ;      // user-defined opcode
@@ -130,7 +130,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         // 2 unary operators z=f(x) where x is double and z is Complex
         else if (MATCH (opname, "complex_real"))
         { 
-            #if HAVE_COMPLEX
+            #if GxB_STDC_VERSION >= 201112L
             // z = cmplx (x,0), convert x double to real part of Complex z
             op = Complex_complex_real ;
             opcode = GB_USER_opcode ;
@@ -141,7 +141,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         }
         else if (MATCH (opname, "complex_imag" ))
         { 
-            #if HAVE_COMPLEX
+            #if GxB_STDC_VERSION >= 201112L
             // z = cmplx (0,x), convert x double to imag part of Complex z
             op = Complex_complex_imag ;
             opcode = GB_USER_opcode ;

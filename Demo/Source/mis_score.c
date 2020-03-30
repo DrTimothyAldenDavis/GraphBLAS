@@ -14,6 +14,7 @@
 // No copyright claim is made for this particular file; the above copyright
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -25,6 +26,7 @@
 // selected and larger sets are selected.
 
 // this unary operator was used in V2.3.4, but it is not thread-safe
+GB_PUBLIC
 void mis_score (void *result, const void *degree)
 {
     // add 1 to prevent divide by zero
@@ -35,6 +37,7 @@ void mis_score (void *result, const void *degree)
 
 // a binary operator is thread-safe, where xrand is an entry from a
 // vector of random numbers
+GB_PUBLIC
 void mis_score2 (void *result, const void *degree, const void *xrand)
 {
     uint32_t deg = (*((uint32_t *) degree)) ;

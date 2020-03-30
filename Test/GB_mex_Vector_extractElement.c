@@ -11,11 +11,11 @@
 
 #define USAGE "x = GB_mex_Vector_extractElement v, I, xclass)"
 
-#define FREE_ALL                        \
-{                                       \
-    GrB_free (&v) ;                     \
-    GB_FREE_MEMORY (Xtemp, ni, 2 * sizeof (double)) ; \
-    GB_mx_put_global (true, 0) ;        \
+#define FREE_ALL                                        \
+{                                                       \
+    GrB_Vector_free (&v) ;                              \
+    GB_FREE_MEMORY (Xtemp, ni, 2 * sizeof (double)) ;   \
+    GB_mx_put_global (true, 0) ;                        \
 }
 
 void mexFunction
@@ -99,7 +99,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 bool *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_BOOL (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -108,7 +108,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int8_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_INT8 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -117,7 +117,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint8_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_UINT8 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -126,7 +126,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int16_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_INT16 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -135,7 +135,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint16_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_UINT16 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -144,7 +144,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int32_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_INT32 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -153,7 +153,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint32_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_UINT32 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -162,7 +162,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int64_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_INT64 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -171,7 +171,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint64_t *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_UINT64 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -180,7 +180,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 float *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_FP32 (&X [k], v, I [k])) ;
             }
             break ;
 
@@ -189,7 +189,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 double *X = Y ;
-                METHOD (GrB_Vector_extractElement (&X [k], v, I [k])) ;
+                METHOD (GrB_Vector_extractElement_FP64 (&X [k], v, I [k])) ;
             }
             break;
 
@@ -198,7 +198,8 @@ void mexFunction
                 // user-defined complex type
                 for (int64_t k = 0 ; k < ni ; k++)
                 {
-                    METHOD (GrB_Vector_extractElement (Xtemp +(k*s), v, I [k]));
+                    METHOD (GrB_Vector_extractElement_UDT
+                        (Xtemp +(k*s), v, I [k])) ;
                 }
             }
             break;

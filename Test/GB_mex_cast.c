@@ -62,7 +62,7 @@ void mexFunction
     // create C
     if (xtype == Complex)
     {
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
         // ignore cclass, just copy the Complex X to the mxArray output
         pargout [0] = mxCreateNumericMatrix (nrows, ncols, mxDOUBLE_CLASS,
             mxCOMPLEX) ;

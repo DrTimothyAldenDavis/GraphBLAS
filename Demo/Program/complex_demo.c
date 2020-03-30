@@ -13,7 +13,7 @@
 
 #include "graphblas_demos.h"
 
-#if HAVE_COMPLEX
+#if GxB_STDC_VERSION >= 201112L
 
 //------------------------------------------------------------------------------
 // print a complex matrix
@@ -111,13 +111,9 @@ int main (int argc, char **argv)
 
 #else
 
-// See the following link for C complex math support in Microsoft Visual Studio.
-// https://docs.microsoft.com/en-us/cpp/c-runtime-library/complex-math-support?view=vs-2019
-// The complex data type is not supported for this demo, in MS Visual Studio.
-
 int main ( )
 {
-    printf ("complex data type not available\n") ;
+    printf ("complex data type not available (ANSI C11 or higher required)\n") ;
 }
 
 #endif

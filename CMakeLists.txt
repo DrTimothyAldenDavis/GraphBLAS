@@ -436,12 +436,14 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
 
-add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
-SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
-    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-    C_STANDARD_REQUIRED 11 )
-set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo_static  graphblas_static )
+if ( BUILD_GRB_STATIC_LIBRARY )
+    add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
+    SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
+        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+        C_STANDARD_REQUIRED 11 )
+    set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
+    target_link_libraries ( graphblasdemo_static  graphblas_static )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # Demo programs

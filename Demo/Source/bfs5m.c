@@ -26,6 +26,7 @@
 // simple illustration.  Use the LAGraph_bfs_pushpull for benchmarking and
 // production use.
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -38,6 +39,7 @@
 // v should be empty on input.)  The graph A need not be Boolean on input;
 // if it isn't Boolean, the semiring will properly typecast it to Boolean.
 
+GB_PUBLIC
 GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph

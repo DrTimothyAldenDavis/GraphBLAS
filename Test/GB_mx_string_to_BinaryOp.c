@@ -72,7 +72,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
         // X or Y complex
         //----------------------------------------------------------------------
 
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
 
         // user-defined Complex binary operator
         opcode  = GB_USER_opcode ;      // user-defined opcode
@@ -182,7 +182,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
         // 1 user-defined Complex operator z=f(x,y), x,y double and z Complex
         else if (MATCH (opname, "complex" ))
         {
-            #if HAVE_COMPLEX
+            #if GxB_STDC_VERSION >= 201112L
             // z = complex(x,y) = x + i*y
             op = Complex_complex ;
             opcode = GB_USER_opcode ;

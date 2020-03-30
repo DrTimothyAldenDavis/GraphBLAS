@@ -17,10 +17,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    #if HAVE_COMPLEX
-        pargout [0] = mxCreateLogicalScalar (true) ;
-    #else
-        pargout [0] = mxCreateLogicalScalar (false) ;
-    #endif
+    // 'double complex' requires ANSI C11 or greater
+    pargout [0] = mxCreateLogicalScalar (GxB_STDC_VERSION >= 201112L) ;
 }
 

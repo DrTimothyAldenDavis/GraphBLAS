@@ -40,6 +40,7 @@
     FREEWORK ;                  \
 }
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -91,6 +92,7 @@ int icompar (const void *x, const void *y)
 // ipagerank: compute the iPageRank of all nodes in a graph
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info ipagerank          // GrB_SUCCESS or error condition
 (
     iPageRank **Phandle,    // output: pointer to array of iPageRank structs

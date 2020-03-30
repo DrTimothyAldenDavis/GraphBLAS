@@ -479,6 +479,7 @@ void GB_Global_nmalloc_clear (void)
     GB_Global.nmalloc = 0 ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t GB_Global_nmalloc_get (void)
 { 
     return (GB_Global.nmalloc) ;
@@ -498,6 +499,7 @@ int64_t GB_Global_nmalloc_decrement (void)
 // malloc_debug
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_malloc_debug_set (bool malloc_debug)
 { 
     GB_Global.malloc_debug = malloc_debug ;
@@ -512,6 +514,7 @@ bool GB_Global_malloc_debug_get (void)
 // malloc_debug_count
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
 { 
     GB_Global.malloc_debug_count = malloc_debug_count ;

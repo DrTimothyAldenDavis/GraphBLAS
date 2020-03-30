@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 // Create a finite-element matrix on an nx-by-ny 2D mesh, as computed by
@@ -28,6 +29,7 @@ void rho_scale (double *f, const double *e)
 // Wathen function
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info wathen             // construct a random Wathen matrix
 (
     GrB_Matrix *A_output,   // output matrix

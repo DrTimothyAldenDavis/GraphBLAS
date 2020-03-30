@@ -62,6 +62,7 @@
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
+GB_PUBLIC
 GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
@@ -69,6 +70,7 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     GrB_Index s             // starting node of the BFS
 ) ;
 
+GB_PUBLIC
 GrB_Info bfs5m_check        // BFS of a graph (using vector assign & reduce)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
@@ -76,6 +78,7 @@ GrB_Info bfs5m_check        // BFS of a graph (using vector assign & reduce)
     GrB_Index s             // starting node of the BFS
 ) ;
 
+GB_PUBLIC
 GrB_Info bfs6               // BFS of a graph (using apply)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
@@ -83,6 +86,7 @@ GrB_Info bfs6               // BFS of a graph (using apply)
     GrB_Index s             // starting node of the BFS
 ) ;
 
+GB_PUBLIC
 GrB_Info bfs6_check         // BFS of a graph (using apply)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
@@ -90,6 +94,7 @@ GrB_Info bfs6_check         // BFS of a graph (using apply)
     GrB_Index s             // starting node of the BFS
 ) ;
 
+GB_PUBLIC
 GrB_Info read_matrix        // read a double-precision matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
@@ -101,6 +106,7 @@ GrB_Info read_matrix        // read a double-precision matrix
     bool printstuff         // if true, print status to stdout
 ) ;
 
+GB_PUBLIC
 GrB_Info mis                    // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set
@@ -108,6 +114,7 @@ GrB_Info mis                    // compute a maximal independent set
     int64_t seed                // random number seed
 ) ;
 
+GB_PUBLIC
 GrB_Info mis_check              // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set
@@ -115,9 +122,13 @@ GrB_Info mis_check              // compute a maximal independent set
     int64_t seed                // random number seed
 ) ;
 
+GB_PUBLIC
 void mis_score  (void *result, const void *degree) ;
+
+GB_PUBLIC
 void mis_score2 (void *result, const void *degree, const void *xrand) ;
 
+GB_PUBLIC
 GrB_Info random_matrix      // create a random double-precision matrix
 (
     GrB_Matrix *A_output,   // handle of matrix to create
@@ -130,6 +141,7 @@ GrB_Info random_matrix      // create a random double-precision matrix
     bool A_complex          // if true, create a Complex matrix
 ) ;
 
+GB_PUBLIC
 GrB_Info get_matrix         // get a matrix from stdin, or create random one
 (
     GrB_Matrix *A_output,   // matrix to create
@@ -139,6 +151,7 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
     bool boolean            // if true, file is read as GrB_BOOL, else GrB_FP64
 ) ;
 
+GB_PUBLIC
 GrB_Info wathen             // construct a random Wathen matrix
 (
     GrB_Matrix *A_output,   // output matrix
@@ -149,12 +162,14 @@ GrB_Info wathen             // construct a random Wathen matrix
     double *rho_given       // nx-by-ny dense matrix, if NULL use random rho
 ) ;
 
+GB_PUBLIC
 GrB_Info triu               // C = triu (A,1)
 (
     GrB_Matrix *C_output,   // output matrix
     const GrB_Matrix A      // input matrix, boolean or double
 ) ;
 
+GB_PUBLIC
 GrB_Info tricount           // count # of triangles
 (
     int64_t *ntri,          // # of triangles in the graph
@@ -166,6 +181,7 @@ GrB_Info tricount           // count # of triangles
     double t [2]            // t [0]: multiply time, t [1]: reduce time
 ) ;
 
+GB_PUBLIC
 GrB_Info isequal_type       // return GrB_SUCCESS if successful
 (
     bool *result,           // true if A == B, false if A != B or error
@@ -174,6 +190,7 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
     GrB_BinaryOp op         // should be GrB_EQ_<type>, for the type of A and B
 ) ;
 
+GB_PUBLIC
 GrB_Info isequal            // return GrB_SUCCESS if successful
 (
     bool *result,           // true if A == B, false if A != B or error
@@ -204,6 +221,7 @@ typedef struct
 iPageRank ;
 
 // using a standard semiring and FP64 arithmetic
+GB_PUBLIC
 GrB_Info dpagerank          // GrB_SUCCESS or error condition
 (
     PageRank **Phandle,     // output: pointer to array of PageRank structs
@@ -222,18 +240,21 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     GrB_Desc_Value method   // method to use for GrB_vxm (for testing only)
 ) ;
 
+GB_PUBLIC
 GrB_Info drowscale          // GrB_SUCCESS or error condition
 (
     GrB_Matrix *Chandle,    // output matrix C = rowscale (A)
     GrB_Matrix A            // input matrix, not modified
 ) ;
 
+GB_PUBLIC
 GrB_Info ipagerank          // GrB_SUCCESS or error condition
 (
     iPageRank **Phandle,    // output: pointer to array of iPageRank structs
     GrB_Matrix A            // input graph, not modified
 ) ;
 
+GB_PUBLIC
 GrB_Info irowscale          // GrB_SUCCESS or error condition
 (
     GrB_Matrix *Chandle,    // output matrix C = rowscale (A)
@@ -247,6 +268,7 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
 // import/export test
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump) ;
 
 //------------------------------------------------------------------------------

@@ -30,6 +30,7 @@
     GrB_Matrix_free (&B) ;          \
     GrB_Matrix_free (&C) ;
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -45,6 +46,7 @@ void scale2 (double *z, const double *x)
 // read a matrix from a file
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info read_matrix        // read a double-precision or boolean matrix
 (
     GrB_Matrix *A_output,   // handle of matrix to create

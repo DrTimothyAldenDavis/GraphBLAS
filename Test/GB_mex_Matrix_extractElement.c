@@ -93,7 +93,7 @@ void mexFunction
 
     if (A->type == Complex)
     {
-        #if HAVE_COMPLEX
+        #if GxB_STDC_VERSION >= 201112L
         // input argument xclass is ignored
         xtype = Complex ;
         xclass = mxDOUBLE_CLASS ;
@@ -127,7 +127,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 bool *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_BOOL
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -136,7 +137,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int8_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_INT8
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -145,7 +147,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint8_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_UINT8
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -154,7 +157,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int16_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_INT16
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -163,7 +167,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint16_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_UINT16
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -172,7 +177,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int32_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_INT32
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -181,7 +187,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint32_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_UINT32
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -190,7 +197,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 int64_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_INT64
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -199,7 +207,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 uint64_t *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_UINT64
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -208,7 +217,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 float *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_FP32
+                    (&X [k], A, I [k], J [k])) ;
             }
             break ;
 
@@ -217,7 +227,8 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 double *X = Y ;
-                METHOD (GrB_Matrix_extractElement (&X [k], A, I [k], J [k])) ;
+                METHOD (GrB_Matrix_extractElement_FP64
+                    (&X [k], A, I [k], J [k])) ;
             }
             break;
 
@@ -226,8 +237,8 @@ void mexFunction
                 // user-defined complex type
                 for (int64_t k = 0 ; k < ni ; k++)
                 {
-                    METHOD (GrB_Matrix_extractElement (Xtemp +(k*s),
-                        A, I [k], J [k])) ;
+                    METHOD (GrB_Matrix_extractElement_UDT
+                        (Xtemp +(k*s), A, I [k], J [k])) ;
                 }
             }
             break;

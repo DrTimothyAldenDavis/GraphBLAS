@@ -17,6 +17,7 @@
 // This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.  It
 // now uses GrB_vxm instead of GrB_mxv.
 
+#define GB_LIBRARY
 #include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
@@ -39,6 +40,7 @@
 // selected and cause the method to stall.  To avoid this case they are removed
 // from the candidate set at the begining, and added to the iset.
 
+GB_PUBLIC
 GrB_Info mis                    // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set

@@ -20,6 +20,7 @@
 // This version also relies on predefined monoids and semirings, just to
 // give an example of their use.
 
+#define GB_LIBRARY
 #include "GraphBLAS.h"
 
 #ifdef GxB_SUITESPARSE_GRAPHBLAS
@@ -75,6 +76,7 @@
 // selected and cause the method to stall.  To avoid this case they are removed
 // from the candidate set at the begining, and added to the iset.
 
+#define  GB_LIBRARY
 GrB_Info mis_check              // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set
