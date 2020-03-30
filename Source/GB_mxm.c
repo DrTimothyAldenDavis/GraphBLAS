@@ -12,8 +12,6 @@
 // This function is not user-callable.  It does the work for user-callable
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_accum_mask.h"
 
