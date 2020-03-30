@@ -18,12 +18,14 @@
 
 #define GB_BASECASE (64 * 1024)
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_qsort_1a    // sort array A of size 1-by-n
 (
     int64_t *GB_RESTRICT A_0,      // size n array
     const int64_t n
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
@@ -32,6 +34,7 @@ void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
     const int64_t n
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
@@ -39,6 +42,7 @@ void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
     const int64_t n
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
