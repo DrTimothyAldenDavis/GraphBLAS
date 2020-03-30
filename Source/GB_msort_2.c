@@ -361,6 +361,7 @@ void GB_mergesort_2 // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 // GB_msort_2: gateway for parallel merge sort
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_msort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *GB_RESTRICT A_0,   // size n array
