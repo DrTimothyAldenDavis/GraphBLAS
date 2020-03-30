@@ -583,6 +583,7 @@ void GB_Global_burble_set (bool burble)
     GB_Global.burble = burble ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_Global_burble_get (void)
 { 
     return (GB_Global.burble) ;
