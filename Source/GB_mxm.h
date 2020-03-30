@@ -47,6 +47,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M
