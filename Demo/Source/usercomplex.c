@@ -10,7 +10,7 @@
 #include "GraphBLAS.h"
 #undef GB_PUBLIC
 #define GB_LIBRARY
-#include "usercomplex.h"
+#include "graphblas_demos.h"
 
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
@@ -261,6 +261,7 @@ void complex_complex_imag (C Z, const double X) { Z = CMPLX (0, X) ; }
 // OK: check if a method fails
 //------------------------------------------------------------------------------
 
+#undef OK
 #define OK(method)              \
     info = method ;             \
     if (info != GrB_SUCCESS)    \
