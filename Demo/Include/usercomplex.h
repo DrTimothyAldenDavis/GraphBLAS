@@ -111,8 +111,8 @@ GB_PUBLIC GrB_UnaryOp Complex_complex_real, Complex_complex_imag ;
 GB_PUBLIC GrB_Type Complex ;
 GB_PUBLIC GrB_Monoid   Complex_plus_monoid, Complex_times_monoid ;
 GB_PUBLIC GrB_Semiring Complex_plus_times ;
-GrB_Info Complex_init ( ) ;
-GrB_Info Complex_finalize ( ) ;
+GB_PUBLIC GrB_Info Complex_init ( ) ;
+GB_PUBLIC GrB_Info Complex_finalize ( ) ;
 
 #endif
 

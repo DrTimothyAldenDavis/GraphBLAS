@@ -230,6 +230,7 @@ GrB_Info dpagerank          // GrB_SUCCESS or error condition
 
 // like dpagerank but with user-defined type, operators, and semiring;
 // also a stopping critirion
+GB_PUBLIC
 GrB_Info dpagerank2         // GrB_SUCCESS or error condition
 (
     PageRank **Phandle,     // output: pointer to array of PageRank structs

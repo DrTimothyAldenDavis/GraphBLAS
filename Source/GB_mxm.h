@@ -119,7 +119,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
@@ -147,6 +147,7 @@ bool GB_is_diagonal             // true if A is diagonal
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix

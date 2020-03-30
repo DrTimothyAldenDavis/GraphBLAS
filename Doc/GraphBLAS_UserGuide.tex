@@ -5300,7 +5300,7 @@ need not be an array:
 %   large gather/scatter workspace.  The heap has size $b$, equal to the
 %   maximum number of entries in any one vector of \verb'B'.
 
-    \item \verb'GxB_AxB_HASH':  a hash-based method, based on 
+    \item \verb'GxB_AxB_HASH':  a hash-based method, based on
         \cite{10.1145/3229710.3229720}.  Very efficient for hypersparse
         matrices, matrix-vector-multiply, and when $|{\bf B}|$ is small.
 
@@ -5671,7 +5671,7 @@ on the amount of time or memory taken.
 
 \item \verb'GxB_set (GrB_Descriptor desc, field, value)' is another way to
     set the value of a field in a \verb'GrB_Descriptor'.  It is identical to \\
-    \verb'GrB_Descriptor_set', just with a generic name. 
+    \verb'GrB_Descriptor_set', just with a generic name.
 
 \end{itemize}
 
@@ -5733,7 +5733,7 @@ is a \verb'double'.
     {\footnotesize
     \begin{verbatim}
     GrB_Descriptor desc ;
-    GrB_Descriptor_new (&desc) 
+    GrB_Descriptor_new (&desc)
     int nthreads_max = 40 ;
     GxB_set (desc, GxB_NTHREADS, nthreads_max) ;
     double chunk = 20000 ;
@@ -10001,7 +10001,7 @@ candidate set:
 
     while (nvals > 0)
     {
-        // sparsify the random number seeds (just keep it for each candidate) 
+        // sparsify the random number seeds (just keep it for each candidate)
         GrB_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, r_desc) ;
         // compute a random probability scaled by inverse of degree
         prand_xget (X, Seed) ;  // two calls to GrB_apply
@@ -10790,17 +10790,24 @@ Visual Studio 2019, but may work for earlier versions.
     \begin{verbatim}
     cmake ..  \end{verbatim} }
 
-\item This generates many files in \verb'SuiteSparse/GraphBLAS/build',
-    and the file \verb'graphblas.sln' in particular.
-    Open the generated \verb'graphblas.sln' file in Visual Studio.
-    Alternatively, type this command in the terminal window:
+\item This generates many files in \verb'SuiteSparse/GraphBLAS/build', and the
+    file \verb'graphblas.sln' in particular.  Open the generated
+    \verb'graphblas.sln' file in Visual Studio.
 
-    {\small
-    \begin{verbatim}
-    devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim}}
+\item Optionally: right-click \verb'graphblas' in the left panel (Solution
+    Explorer) and select properties; then navigate to \verb'Configuration'
+    \verb'Properties', \verb'C/C++', \verb'General' and change the parameter
+    \verb'Multiprocessor Compilation' to \verb'Yes (/MP)'.  Click \verb'OK'.
+    This will significantly speed up the compilation of GraphBLAS.
 
+\item Select the \verb'Build' menu item at the top of the window and
+    select \verb'Build Solution'.
+    % Alternatively, type this command in the terminal window:
+    % {\small
+    % \begin{verbatim}
+    % devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim}}
     This should create a folder called \verb'Release' and place the compiled
-    DLL and LIB file there.  Please be patient; some files may take a while to
+    DLL and LIB files there.  Please be patient; some files may take a while to
     compile and sometimes may appear to be stalled.  Just wait.
 
 \item Add the \verb'GraphBLAS/build/Release' folder to the Windows System path.
@@ -10828,6 +10835,31 @@ subsections.  Next:
 \item Follow the remaining instructions in the
     \verb'GraphBLAS/GraphBLAS/README.md' file, to revise your
     MATLAB path and \verb'startup.m' file.
+
+\item As a quick test, try the MATLAB command \verb'GrB(1)', which
+    creates a 1-by-1 GraphBLAS matrix.  For a longer test, do the following:
+
+    {\small
+    \begin{verbatim}
+    cd GraphBLAS/GraphBLAS/test
+    gbtest \end{verbatim} }
+
+\item In Windows, if the tests fail with an error stating that the module
+    could not be loaded, it likely means that your Windows System path is
+    not set properly, or it is not recognizing the \verb'GraphBLAS/build/Release'
+    folder.  Or, you might not have permission to change your Windows System path.
+    In this case, do the following in the MATLAB Command Window:
+
+    {\small
+    \begin{verbatim}
+    cd GraphBLAS/build/Release
+    GrB(1) \end{verbatim} }
+
+    After this step, the GraphBLAS library will be loaded into MATLAB.  You may
+    need to add the above lines in your \verb'Documents/MATLAB/startup.m'
+    file, so that they are done each time MATLAB starts.  You will also need
+    to do this after \verb'clear all', since that MATLAB command clears all
+    loaded libraries.
 
 \end{enumerate}
 
