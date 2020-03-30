@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 #include "GraphBLAS.h"
+#undef GB_PUBLIC
+#define GB_LIBRARY
+#include "usercomplex.h"
 
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
@@ -15,9 +18,6 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 #endif
-
-#define GB_LIBRARY
-#include "usercomplex.h"
 
 GrB_BinaryOp Complex_first = NULL, Complex_second = NULL, Complex_min = NULL,
              Complex_max   = NULL, Complex_plus   = NULL, Complex_minus = NULL,

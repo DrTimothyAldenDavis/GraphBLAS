@@ -15,6 +15,7 @@
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
 #include "GraphBLAS.h"
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

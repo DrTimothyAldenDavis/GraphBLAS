@@ -42,6 +42,7 @@
     GrB_Vector_free (&q) ;          \
     GrB_Descriptor_free (&desc) ;
 
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

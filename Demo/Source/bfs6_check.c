@@ -45,6 +45,7 @@
     GrB_Descriptor_free (&desc) ;       \
     GrB_UnaryOp_free (&apply_level) ;
 
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

@@ -13,6 +13,7 @@
 //      type private/wathen
 
 #include "GraphBLAS.h"
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

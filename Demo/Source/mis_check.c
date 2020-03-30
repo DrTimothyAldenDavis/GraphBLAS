@@ -53,6 +53,7 @@
     GrB_Vector_free (&X) ;              \
     prand_finalize ( ) ;
 
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

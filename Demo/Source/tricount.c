@@ -63,6 +63,7 @@
     GrB_Matrix_free (&S) ;      \
     GrB_Matrix_free (&C) ;
 
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

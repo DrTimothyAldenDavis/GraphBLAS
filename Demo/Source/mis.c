@@ -18,6 +18,7 @@
 // now uses GrB_vxm instead of GrB_mxv.
 
 #include "GraphBLAS.h"
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

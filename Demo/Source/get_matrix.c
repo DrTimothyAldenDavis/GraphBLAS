@@ -17,6 +17,7 @@
     GrB_Descriptor_free (&desc) ;   \
     GrB_Matrix_free (&Mask) ;
 
+#undef GB_PUBLIC
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 
