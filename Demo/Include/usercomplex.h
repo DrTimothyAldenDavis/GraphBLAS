@@ -10,8 +10,6 @@
 #ifndef USERCOMPLEX_H
 #define USERCOMPLEX_H
 
-#include "GraphBLAS.h"
-
 //------------------------------------------------------------------------------
 // ANSI C11 is required for the 'double complex' type
 //------------------------------------------------------------------------------
@@ -30,10 +28,10 @@
 
 // This macro is defined but cannot be used without ANSI C11:
 #ifndef CMPLX
-#define CMPLX(real,imag) \
-    ( \
-    (double complex)((double)(real)) + \
-    (double complex)((double)(imag) * _Complex_I) \
+#define CMPLX(real,imag)                                \
+    (                                                   \
+        (double complex)((double)(real)) +              \
+        (double complex)((double)(imag) * _Complex_I)   \
     )
 #endif
 
