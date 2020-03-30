@@ -33,6 +33,7 @@ void     GB_Global_nthreads_max_set (int nthreads_max) ;
 GB_PUBLIC   // accessed by the MATLAB interface only
 int      GB_Global_nthreads_max_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int      GB_Global_omp_get_max_threads (void) ;
 
 GB_PUBLIC   // accessed by the MATLAB interface only
