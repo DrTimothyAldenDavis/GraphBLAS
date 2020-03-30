@@ -205,3 +205,11 @@ end
 % compile GB_spones_mex
 mex -O -R2018a GB_spones_mex.c
 
+% load the library
+if (ispc)
+    cd ../build/Release
+    GrB (1)
+    cd ../../Test
+    pwd
+end
+
