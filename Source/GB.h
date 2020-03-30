@@ -2300,6 +2300,7 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_op_is_second    // return true if op is SECOND, of the right type
 (
     GrB_BinaryOp op,
