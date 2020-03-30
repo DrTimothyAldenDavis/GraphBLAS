@@ -11,6 +11,7 @@
 
 #include "GB.h"
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Vector_check    // check a GraphBLAS vector
 (
     const GrB_Vector v,     // GraphBLAS vector to print and check

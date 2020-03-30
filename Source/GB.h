@@ -1319,6 +1319,7 @@ GrB_Info GB_error           // log an error in thread-local-storage
 // a NULL name is treated as the empty string
 #define GB_NAME ((name != NULL) ? name : "")
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_entry_check     // print a single value
 (
     const GrB_Type type,    // type of value to print
@@ -1438,6 +1439,7 @@ GrB_Info GB_Matrix_check    // check a GraphBLAS matrix
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Vector_check    // check a GraphBLAS vector
 (
     const GrB_Vector v,     // GraphBLAS vector to print and check
@@ -1635,6 +1637,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
@@ -1654,11 +1657,13 @@ GrB_Info GB_ix_resize           // resize a matrix
 #define GB_IX_FREE(A)                                                       \
     if (GB_ix_free (A) == GrB_PANIC) GB_PANIC
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_free             // free A->i and A->x of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_ph_free                 // free A->p and A->h of a matrix
 (
     GrB_Matrix A                // matrix with content to free
@@ -1875,6 +1880,7 @@ GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 size_t GB_code_size             // return the size of a type, given its code
 (
     const GB_Type_code code,    // input code of the type to find the size of
@@ -2041,6 +2047,7 @@ void GB_free_memory
 
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 (
     const GB_Type_code code,    // type code to convert
@@ -2099,6 +2106,7 @@ void GB_cumsum                      // cumulative sum of an array
     int nthreads
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 (
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
@@ -2159,6 +2167,7 @@ bool GB_Index_multiply      // true if ok, false if overflow
     const int64_t b
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_size_t_multiply     // true if ok, false if overflow
 (
     size_t *c,              // c = a*b, or zero if overflow occurs
@@ -2311,6 +2320,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 (
     GrB_Matrix A,
@@ -2327,6 +2337,7 @@ bool GB_op_is_second    // return true if op is SECOND, of the right type
 
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 char *GB_code_string            // return a static string for a type name
 (
     const GB_Type_code code     // code to convert to string
@@ -2340,6 +2351,7 @@ GrB_Info GB_resize              // change the size of a matrix
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
     const GrB_Matrix A,         // input matrix to examine
@@ -2353,6 +2365,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_to_hyper        // convert a matrix to hypersparse
 (
     GrB_Matrix A,           // matrix to convert to hypersparse

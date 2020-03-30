@@ -14,9 +14,12 @@
 #ifndef GB_GLOBAL_H
 #define GB_GLOBAL_H
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_queue_head_set (void *p) ;
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void  *  GB_Global_queue_head_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_mode_set (GrB_Mode mode) ;
 GrB_Mode GB_Global_mode_get (void) ;
 

@@ -192,11 +192,13 @@ GB_Global_struct GB_Global =
 // queue_head
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_queue_head_set (void *p)
 { 
     GB_Global.queue_head = p ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_Global_queue_head_get (void)
 { 
     return (GB_Global.queue_head) ;
