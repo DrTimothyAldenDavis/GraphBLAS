@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#include "GraphBLAS.h"
+
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 
@@ -16,7 +18,7 @@
 
 #define FREE_ALL                    \
 {                                   \
-    GrB_Matrix_free (C_handle) ;           \
+    GrB_Matrix_free (C_handle) ;    \
     if (Ap != NULL) free (Ap) ;     \
     if (Ah != NULL) free (Ah) ;     \
     if (Ai != NULL) free (Ai) ;     \
@@ -25,7 +27,7 @@
 }
 
 // typecast the values to the exported type
-#define GETVAL \
+#define GETVAL                                                  \
 {                                                               \
     if      (type == GrB_BOOL  ) Ax_bool   = (bool     *) Ax ;  \
     else if (type == GrB_INT8  ) Ax_int8   = (int8_t   *) Ax ;  \
@@ -42,7 +44,7 @@
 }
 
 // print a value
-#define PRINTVAL(p) \
+#define PRINTVAL(p)                                                      \
 {                                                                        \
     if      (type == GrB_BOOL  ) printf ("%g", (double) Ax_bool   [p]) ; \
     else if (type == GrB_INT8  ) printf ("%g", (double) Ax_int8   [p]) ; \

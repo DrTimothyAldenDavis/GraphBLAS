@@ -24,31 +24,33 @@
 // Acknowledgements:  this method was written with input from Richard Veras,
 // Franz Franchetti, and Scott McMillan, Carnegie Mellon University.
 
+#include "GraphBLAS.h"
+
 //------------------------------------------------------------------------------
 // helper macros
 //------------------------------------------------------------------------------
 
 // free all workspace
-#define FREEWORK                    \
-{                                   \
-    GrB_Vector_free (&rdouble) ;           \
-    GrB_Vector_free (&r) ;                 \
-    GrB_Vector_free (&rnew) ;              \
-    GrB_Vector_free (&dout) ;              \
-    GrB_Vector_free (&rdiff) ;             \
-    GrB_Descriptor_free (&desc) ;              \
-    if (I != NULL) free (I) ;       \
-    if (X != NULL) free (X) ;       \
-    GrB_BinaryOp_free (&PageRank_accum) ;    \
-    GrB_BinaryOp_free (&PageRank_add) ;      \
-    GrB_Monoid_free (&PageRank_monoid) ;   \
-    GrB_BinaryOp_free (&PageRank_multiply) ; \
-    GrB_Semiring_free (&PageRank_semiring) ; \
-    GrB_BinaryOp_free (&PageRank_diff) ;     \
-    GrB_Type_free (&PageRank_type) ;     \
-    GrB_UnaryOp_free (&PageRank_div) ;      \
-    GrB_UnaryOp_free (&PageRank_get) ;      \
-    GrB_UnaryOp_free (&PageRank_init) ;     \
+#define FREEWORK                                \
+{                                               \
+    GrB_Vector_free (&rdouble) ;                \
+    GrB_Vector_free (&r) ;                      \
+    GrB_Vector_free (&rnew) ;                   \
+    GrB_Vector_free (&dout) ;                   \
+    GrB_Vector_free (&rdiff) ;                  \
+    GrB_Descriptor_free (&desc) ;               \
+    if (I != NULL) free (I) ;                   \
+    if (X != NULL) free (X) ;                   \
+    GrB_BinaryOp_free (&PageRank_accum) ;       \
+    GrB_BinaryOp_free (&PageRank_add) ;         \
+    GrB_Monoid_free (&PageRank_monoid) ;        \
+    GrB_BinaryOp_free (&PageRank_multiply) ;    \
+    GrB_Semiring_free (&PageRank_semiring) ;    \
+    GrB_BinaryOp_free (&PageRank_diff) ;        \
+    GrB_Type_free (&PageRank_type) ;            \
+    GrB_UnaryOp_free (&PageRank_div) ;          \
+    GrB_UnaryOp_free (&PageRank_get) ;          \
+    GrB_UnaryOp_free (&PageRank_init) ;         \
 }
 
 // error handler: free output P and all workspace (used by CHECK and OK macros)

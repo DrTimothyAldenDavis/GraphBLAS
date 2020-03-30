@@ -9,12 +9,14 @@
 
 // Creates a random sparse matrix, using either setElement or build.
 
-#define FREE_ALL                  \
-    GrB_Matrix_free (&A) ;               \
-    GrB_Matrix_free (&Areal) ;           \
-    GrB_Matrix_free (&Aimag) ;           \
-    if (I != NULL) free (I) ;     \
-    if (J != NULL) free (J) ;     \
+#include "GraphBLAS.h"
+
+#define FREE_ALL                    \
+    GrB_Matrix_free (&A) ;          \
+    GrB_Matrix_free (&Areal) ;      \
+    GrB_Matrix_free (&Aimag) ;      \
+    if (I != NULL) free (I) ;       \
+    if (J != NULL) free (J) ;       \
     if (X != NULL) free (X) ;
 
 #define GB_LIBRARY

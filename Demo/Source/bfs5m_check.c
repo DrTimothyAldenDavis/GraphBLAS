@@ -35,6 +35,8 @@
 // simple illustration.  Use the LAGraph_bfs_pushpull for benchmarking and
 // production use.
 
+#include "GraphBLAS.h"
+
 #define FREE_ALL                    \
     GrB_Vector_free (&v) ;          \
     GrB_Vector_free (&q) ;          \

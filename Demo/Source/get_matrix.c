@@ -10,9 +10,11 @@
 // Creates a symmetric matrix, either from a file or by creating a random
 // matrix.  If reading from a file, the file is assumed to be 0-based.
 
-#define FREE_ALL        \
-    GrB_Matrix_free (&A) ;     \
-    GrB_Descriptor_free (&desc) ;  \
+#include "GraphBLAS.h"
+
+#define FREE_ALL                    \
+    GrB_Matrix_free (&A) ;          \
+    GrB_Descriptor_free (&desc) ;   \
     GrB_Matrix_free (&Mask) ;
 
 #define GB_LIBRARY

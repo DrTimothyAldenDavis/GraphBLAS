@@ -7,13 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_LIBRARY
-#include "graphblas_demos.h"
-
 // Create a finite-element matrix on an nx-by-ny 2D mesh, as computed by
 // wathen.m in MATLAB.  To view the wathen.m file, use this command in MATLAB:
 //
 //      type private/wathen
+
+#include "GraphBLAS.h"
+#define GB_LIBRARY
+#include "graphblas_demos.h"
 
 //------------------------------------------------------------------------------
 // scale by rho

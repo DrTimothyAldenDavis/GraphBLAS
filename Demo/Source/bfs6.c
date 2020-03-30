@@ -28,6 +28,7 @@
 // simple illustration.  Use the LAGraph_bfs_pushpull for benchmarking and
 // production use.
 
+#include "GraphBLAS.h"
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

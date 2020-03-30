@@ -11,11 +11,11 @@
 //
 //  mis_demo < infile
 
-#include "graphblas_demos.h"
-
 // macro used by OK(...) to free workspace if an error occurs
-#define FREE_ALL                \
-    GrB_Matrix_free (&A) ;             \
+#define FREE_ALL            \
+    GrB_Matrix_free (&A) ;  \
+
+#include "graphblas_demos.h"
 
 int main (int argc, char **argv)
 {

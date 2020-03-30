@@ -14,6 +14,7 @@
 // No copyright claim is made for this particular file; the above copyright
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
+#include "GraphBLAS.h"
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

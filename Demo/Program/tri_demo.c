@@ -36,11 +36,11 @@
 // nx-by-ny grid.  Method is 0 to 3; refer to wathen.c for details.
 
 // macro used by OK(...) to free workspace if an error occurs
-#define FREE_ALL                \
-    GxB_Scalar_free (&Thunk) ;         \
-    GrB_Matrix_free (&C) ;             \
-    GrB_Matrix_free (&A) ;             \
-    GrB_Matrix_free (&L) ;             \
+#define FREE_ALL                    \
+    GxB_Scalar_free (&Thunk) ;      \
+    GrB_Matrix_free (&C) ;          \
+    GrB_Matrix_free (&A) ;          \
+    GrB_Matrix_free (&L) ;          \
     GrB_Matrix_free (&U) ;
 
 #include "graphblas_demos.h"

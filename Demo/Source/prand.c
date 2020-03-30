@@ -9,6 +9,7 @@
 
 // A simple thread-safe parallel pseudo-random nuumber generator.
 
+#include "GraphBLAS.h"
 #define GB_LIBRARY
 #include "graphblas_demos.h"
 

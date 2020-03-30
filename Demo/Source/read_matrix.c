@@ -15,6 +15,8 @@
 // where i and j are the row and column indices, and x is the value.
 // The matrix is read in double precision.
 
+#include "GraphBLAS.h"
+
 // free all workspace; this used by the OK(...) macro if an error occurs
 #define FREE_ALL                    \
     if (I  != NULL) free (I) ;      \

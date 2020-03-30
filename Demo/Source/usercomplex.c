@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#include "GraphBLAS.h"
+
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
 #elif defined __GNUC__
@@ -245,12 +247,19 @@ void complex_complex_imag (C Z, const double X) { Z = CMPLX (0, X) ; }
 
 #else
 
+//------------------------------------------------------------------------------
 // Pre-ANSI C11: just make to easier to write this file
+//------------------------------------------------------------------------------
+
 #define ONE  0
 #define ZERO 1
 #define C double
 
 #endif
+
+//------------------------------------------------------------------------------
+// OK: check if a method fails
+//------------------------------------------------------------------------------
 
 #define OK(method)              \
     info = method ;             \
@@ -268,14 +277,13 @@ GB_PUBLIC
 GrB_Info Complex_init ( )
 {
 
-    GrB_Info info ;
-
     //--------------------------------------------------------------------------
     // create the Complex type
     //--------------------------------------------------------------------------
 
 #if GxB_STDC_VERSION >= 201112L
 
+    GrB_Info info ;
     OK (GrB_Type_new (&Complex, sizeof (C))) ;    
 
     #undef C
