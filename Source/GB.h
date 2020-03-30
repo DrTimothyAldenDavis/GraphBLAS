@@ -1528,6 +1528,7 @@ typedef enum                    // input parameter to GB_new and GB_create
 }
 GB_Ap_code ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
@@ -1880,6 +1881,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
     size_t size_of_item     // sizeof each item
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_realloc_memory     // pointer to reallocated block of memory, or
                             // to original block if the realloc failed.
 (
@@ -1890,6 +1892,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     bool *ok                // true if successful, false otherwise
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_memory
 (
     void *p,                // pointer to allocated block of memory to free
