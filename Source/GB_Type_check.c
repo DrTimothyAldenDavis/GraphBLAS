@@ -14,6 +14,7 @@
 
 #include "GB.h"
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Type_check      // check a GraphBLAS Type
 (
     const GrB_Type type,    // GraphBLAS type to print and check

@@ -446,11 +446,13 @@ void GB_Global_free_function (void *p)
 // malloc_is_thread_safe
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe)
 { 
     GB_Global.malloc_is_thread_safe = malloc_is_thread_safe ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_Global_malloc_is_thread_safe_get (void)
 { 
     return (GB_Global.malloc_is_thread_safe) ;
@@ -564,11 +566,13 @@ int64_t GB_Global_maxused_get (void)
 // hack: for setting an internal value for development only
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_hack_set (int64_t hack)
 { 
     GB_Global.hack = hack ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;

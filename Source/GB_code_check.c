@@ -11,6 +11,7 @@
 
 #include "GB.h"
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_code_check          // print an entry using a type code
 (
     const GB_Type_code code,    // type code of value to print

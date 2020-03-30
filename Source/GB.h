@@ -1016,6 +1016,7 @@ bool burble = GB_Global_burble_get ( ) ;            \
 // more restrictive.
 
 // GB_aliased also checks the content of A and B
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_aliased             // determine if A and B are aliased
 (
     GrB_Matrix A,           // input A matrix
@@ -1282,8 +1283,10 @@ static inline int GB_nthreads   // return # of threads to use
 // encountered the error, the error status (GrB_INDEX_OUT_OF_BOUNDS), the
 // details ("Row index 102 out of bounds, must be < 100").
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 const char *GB_status_code (GrB_Info info) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_error           // log an error in thread-local-storage
 (
     GrB_Info info,          // error return code from a GraphBLAS function
@@ -1324,6 +1327,7 @@ GrB_Info GB_entry_check     // print a single value
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_code_check          // print and check an entry using a type code
 (
     const GB_Type_code code,    // type code of value to print
@@ -1332,6 +1336,7 @@ GrB_Info GB_code_check          // print and check an entry using a type code
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Type_check      // check a GraphBLAS Type
 (
     const GrB_Type type,    // GraphBLAS type to print and check
@@ -1342,6 +1347,7 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (
     const GrB_BinaryOp op,  // GraphBLAS operator to print and check
@@ -1352,6 +1358,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 (
     const GrB_UnaryOp op,   // GraphBLAS operator to print and check
@@ -1362,6 +1369,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 (
     const GxB_SelectOp op,  // GraphBLAS operator to print and check
@@ -1372,6 +1380,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 (
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
@@ -1382,6 +1391,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
 (
     const GrB_Semiring semiring,    // GraphBLAS semiring to print and check
@@ -1392,6 +1402,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 (
     const GrB_Descriptor D,     // GraphBLAS descriptor to print and check
@@ -1402,6 +1413,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
@@ -1792,6 +1804,7 @@ GrB_Info GB_ewise_slice
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_slice_vector
 (
     // output: return i, pA, and pB
@@ -2033,6 +2046,7 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
     const GrB_Type type         // user type if code is GB_UDT_code
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
 (
     GrB_Matrix B,       // matrix to slice
@@ -2042,6 +2056,7 @@ GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 (
     int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
