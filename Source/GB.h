@@ -1612,6 +1612,7 @@ GrB_Info GB_matvec_type            // get the type of a matrix
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
@@ -1658,6 +1659,7 @@ GrB_Info GB_phix_free           // free all content of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_free                // free a matrix
 (
     GrB_Matrix *matrix_handle   // handle of matrix to free
@@ -1675,6 +1677,7 @@ bool GB_code_compatible         // check if two types can be typecast
     const GB_Type_code bcode
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cast_array              // typecast an array
 (
     GB_void *Cx,                // output array
@@ -1863,12 +1866,14 @@ size_t GB_code_size             // return the size of a type, given its code
     const size_t usize          // known size of user-defined type
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item     // sizeof each item
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
@@ -2181,6 +2186,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_wait                // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
@@ -2319,6 +2325,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     GB_Context Context
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
 (
     GrB_Matrix A,           // matrix to convert to non-hypersparse

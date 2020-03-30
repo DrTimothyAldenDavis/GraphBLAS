@@ -75,6 +75,7 @@ void     GB_Global_malloc_is_thread_safe_set
          ) ;
 bool     GB_Global_malloc_is_thread_safe_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get (void) ;
 
@@ -82,6 +83,7 @@ void     GB_Global_nmalloc_clear (void) ;
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t  GB_Global_nmalloc_get (void) ;
 int64_t  GB_Global_nmalloc_increment (void) ;
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t  GB_Global_nmalloc_decrement (void) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -96,7 +98,9 @@ bool     GB_Global_malloc_debug_count_decrement (void) ;
 void     GB_Global_inuse_clear (void) ;
 void     GB_Global_inuse_increment (int64_t s) ;
 void     GB_Global_inuse_decrement (int64_t s) ;
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t  GB_Global_inuse_get (void) ;
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t  GB_Global_maxused_get (void) ;
 
 void     GB_Global_hack_set (int64_t hack) ;
