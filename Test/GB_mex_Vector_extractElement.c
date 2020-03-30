@@ -29,8 +29,8 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Vector v = NULL ;
-    void *Y = NULL ;
-    void *Xtemp = NULL ;
+    GB_void *Y = NULL ;
+    GB_void *Xtemp = NULL ;
     mxClassID xclass ;
     GrB_Type xtype ;
     GrB_Index *I = NULL, ni = 0, I_range [3] ;
