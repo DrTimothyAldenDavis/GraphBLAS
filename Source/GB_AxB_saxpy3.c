@@ -925,8 +925,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // For both coarse methods:
     //
     //      Hf starts out all zero (via calloc), and mark starts out as 1.  To
-    //      clear all of Hf, mark is incremented, so that all entries in Hf are
-    //      not equal to mark.
+    //      clear Hf, mark is incremented, so that all entries in Hf are not
+    //      equal to mark.
 
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.

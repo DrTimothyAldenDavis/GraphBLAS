@@ -443,7 +443,7 @@ as a result it can do both methods above equally as fast as the MATLAB
 \label{accummask}
 
 Most GraphBLAS operations can be modified via transposing input matrices, using
-an accumulator operator, applying a mask or its complement, and by clear all
+an accumulator operator, applying a mask or its complement, and by clearing all
 entries the matrix \verb'C' after using it in the accumulator operator but
 before the final results are written back into it.  All of these steps are
 optional, and are controlled by a descriptor object that holds parameter
@@ -10875,10 +10875,10 @@ subsections.  Next:
     GrB(1) \end{verbatim} }
 
     After this step, the GraphBLAS library will be loaded into MATLAB.  You may
-    need to add the above lines in your \verb'Documents/MATLAB/startup.m'
-    file, so that they are done each time MATLAB starts.  You will also need
-    to do this after \verb'clear all', since that MATLAB command clears all
-    loaded libraries.
+    need to add the above lines in your \verb'Documents/MATLAB/startup.m' file,
+    so that they are done each time MATLAB starts.  You will also need to do
+    this after \verb'clear all' or \verb'clear mex', since those MATLAB
+    commands remove all loaded libraries from MATLAB.
 
 \end{enumerate}
 
