@@ -10755,6 +10755,7 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
 
 %----------------------------------------
 \subsection{On Microsoft Windows}
+\label{sec:windows}
 %----------------------------------------
 
 SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  However, that
@@ -10824,9 +10825,34 @@ Visual Studio 2019, but may work for earlier versions.
     % \begin{verbatim}
     % devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim}}
 
-\item Add the \verb'GraphBLAS/build/Release' folder to the Windows System path.
-    The \verb'GraphBLAS/Include/GraphBLAS.h' file must be included in user
-    applications via \verb'#include "GraphBLAS.h"'
+\item Add the \verb'GraphBLAS/build/Release' folder to the Windows System path:
+
+    \begin{itemize}
+    \item Open the \verb'Start Menu' and type \verb'Control Panel'.
+    \item Select the \verb'Control Panel' app.
+    \item When the app opens, select \verb'System'.
+    \item From the top left side of the \verb'System' window, select
+        \verb'Advanced System Settings'.  You may have to authenticate
+        at this step.
+    \item The \verb'Systems Properties' window should appear with the
+        \verb'Advanced' tab selected;
+        select \verb'Environment Variables'.
+    \item The \verb'Environment Variables' window displays 2 sections, one for
+        \verb'User' variables and the other for \verb'System' variables.  Under
+        the \verb'Systems' variable section, scroll to and select \verb'Path',
+        then select \verb'Edit'.   A editor window appears allowing to add,
+        modify, delete or re-order the parts of the \verb'Path'.
+    \item Add the full path of the \verb'GraphBLAS\build\Release' folder
+        (typically starting with \verb'C:\Users\you\'..., where \verb'you' is
+        your Windows username) to the \verb'Path'.
+    \item If the above steps do not work, you can instead copy the
+        \verb'graphblas.*' files from \verb'GraphBLAS\build\Release' into any
+        existing folder listed in your \verb'Path'. 
+    \end{itemize}
+
+\item The \verb'GraphBLAS/Include/GraphBLAS.h' file must be included in user
+    applications via \verb'#include "GraphBLAS.h"'.  This is already done for
+    you in the MATLAB interface discussed in the next section.
 
 \end{enumerate}
 
@@ -10861,13 +10887,14 @@ subsections.  Next:
     gbtest \end{verbatim} }
 
 \item In Windows, if the tests fail with an error stating that the
-    mex file is invalide because the module could not be found, it means
+    mex file is invalid because the module could not be found, it means
     that MATLAB could not find the compiled \verb'graphblas.lib', \verb'*.dll'
     or \verb'*.exp' files in the \verb'build/Release' folder.  This can happen
     if your Windows System path is not set properly, or if Windows is not
-    recognizing the \verb'GraphBLAS/build/Release' folder.  Or, you might not
-    have permission to change your Windows System path.  In this case, do the
-    following in the MATLAB Command Window:
+    recognizing the \verb'GraphBLAS/build/Release' folder (see
+    Section~\ref{sec:windows})  Or, you might p have permission to change your
+    Windows System path.  In this case, do the following in the MATLAB Command
+    Window:
 
     {\small
     \begin{verbatim}

@@ -228,10 +228,10 @@ static inline void GB_create_coarse_task
     }
 
     // check the parallel computation
-    #if NDEBUG
+    #ifdef GB_DEBUG
     int64_t flmax2 = 1 ;
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
-    { 
+    {
         int64_t fl = Bflops [kk+1] - Bflops [kk] ;
         flmax2 = GB_IMAX (flmax2, fl) ;
     }

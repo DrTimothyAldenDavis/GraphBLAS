@@ -1,4 +1,4 @@
-Version 3.2.2, Mar 30, 2020 (not yet released)
+Version 3.2.2, Apr 2, 2020
 
     * (16) bug fix to MATLAB interface: for matrices with dimension > 2^53.
         Note that MATLAB will not display the size correctly in 'whos', which

@@ -81,7 +81,6 @@ logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
 logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
 logstat ('test139',s) ; % merge sort, special cases
 logstat ('test72',t) ;  % several special cases
-logstat ('test72',s) ;  % several special cases
 logstat ('test09',t) ;  % duplicate I,J test of GB_mex_subassign
 logstat ('test109',t) ; % terminal monoid with user-defined type
 logstat ('test109',s);  % terminal monoid with user-defined type
