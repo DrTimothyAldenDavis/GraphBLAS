@@ -104,10 +104,16 @@ error messages during the test.  This is expected.
     singleton expansion
     3D and higher dimensional matrices:
         this might be done by converting the higher dimensioal
-        indices down to a large 2D space, ad relying on hypersparsity.
+        indices down to a large 2D space, and relying on hypersparsity.
     saturating element-wise binary and unary operators for integers 
 
 The last two features don't exist for MATLAB sparse matrices.
+
+These features are supported, but are not as fast as they could be:
+
+    concatenation: [A B], [A;B], and the built-in functions:
+    bandwidth, istriu, istril, eps, ceil, floor, round, fix
+    isfinite, isinf, isnan, spfun, and A.^B.
 
 For Windows: Microsoft Visual Studio does not support OpenMP tasking,
     which means that the internal sort is not parallel, but sequential.
