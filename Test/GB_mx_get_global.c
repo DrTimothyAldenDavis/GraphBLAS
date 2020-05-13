@@ -29,7 +29,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     if (debug_matlab == NULL || mxIsEmpty (debug_matlab))
     {
         // doesn't exist; create it and set it to false
-        debug_matlab = mxCreateNumericMatrix (1, 1, mxLOGICAL_CLASS, mxREAL) ;
+        debug_matlab = GB_mx_create_full (1, 1, GrB_BOOL) ;
         debug = (bool *) mxGetData (debug_matlab) ;
         if (debug == NULL) mexErrMsgTxt ("debug_matlab null?!") ;
         debug [0] = false ;
@@ -81,7 +81,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     if (nthreads_matlab == NULL || mxIsEmpty (nthreads_matlab))
     {
         // doesn't exist; create it and set it to 1
-        nthreads_matlab = mxCreateNumericMatrix (1, 1, mxINT32_CLASS, mxREAL) ;
+        nthreads_matlab = GB_mx_create_full (1, 1, GrB_INT32) ;
         nthreads = (int32_t *) mxGetData (nthreads_matlab) ;
         if (nthreads == NULL) mexErrMsgTxt ("nthreads_matlab null?!") ;
         nthreads [0] = 1 ;
@@ -106,7 +106,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     if (chunk_matlab == NULL || mxIsEmpty (chunk_matlab))
     {
         // doesn't exist; create it and set it to GB_CHUNK_DEFAULT
-        chunk_matlab = mxCreateNumericMatrix (1, 1, mxDOUBLE_CLASS, mxREAL) ;
+        chunk_matlab = GB_mx_create_full (1, 1, GrB_FP64) ;
         chunk = (double *) mxGetData (chunk_matlab) ;
         if (chunk == NULL) mexErrMsgTxt ("chunk_matlab null?!") ;
         chunk [0] = GB_CHUNK_DEFAULT ;
@@ -122,10 +122,37 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GxB_Global_Option_set (GxB_CHUNK, chunk [0]) ;
 
     //--------------------------------------------------------------------------
-    // allocate the complex type and operators
+    // get GraphBLAS_complex flag and allocate the complex type and operators
     //--------------------------------------------------------------------------
 
-    Complex_init ( ) ;
+    bool *builtin_complex = NULL ;
+    const mxArray *builtin_complex_matlab = NULL ;
+    builtin_complex_matlab =
+        mexGetVariablePtr ("global", "GraphBLAS_builtin_complex") ;
+    if (builtin_complex_matlab == NULL || mxIsEmpty (builtin_complex_matlab))
+    {
+        // doesn't exist; create it and set it to TRUE
+        builtin_complex_matlab = GB_mx_create_full (1, 1, GrB_BOOL) ;
+        builtin_complex = (bool *) mxGetData (builtin_complex_matlab) ;
+        if (builtin_complex == NULL)
+        {
+            mexErrMsgTxt ("builtin_complex_matlab null?!") ;
+        }
+        builtin_complex [0] = true ;
+        // copy it into the global workspace
+        mexPutVariable ("global", "GraphBLAS_builtin_complex",
+            builtin_complex_matlab) ;
+    }
+    else
+    {
+        builtin_complex = (bool *) mxGetData (builtin_complex_matlab) ;
+        if (builtin_complex == NULL)
+        {
+            mexErrMsgTxt ("builtin_complex_matlab null!") ;
+        }
+    }
+
+    Complex_init (builtin_complex [0]) ;
 
     //--------------------------------------------------------------------------
     // return malloc debug status

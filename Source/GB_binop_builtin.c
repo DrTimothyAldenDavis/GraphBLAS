@@ -29,7 +29,8 @@ bool GB_binop_builtin               // true if binary operator is builtin
     const bool flipxy,              // true if z=op(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
     GB_Opcode *opcode,              // opcode for the binary operator
-    GB_Type_code *xycode,           // type code for x and y inputs
+    GB_Type_code *xcode,            // type code for x input
+    GB_Type_code *ycode,            // type code for y input
     GB_Type_code *zcode             // type code for z output
 )
 {
@@ -105,13 +106,15 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // rename redundant boolean operators
     //--------------------------------------------------------------------------
 
-    (*xycode) = op_xtype->code ;
-    (*zcode)  = op_ztype->code ;
+    (*xcode) = op_xtype->code ;
+    (*ycode) = op_ytype->code ;
+    (*zcode) = op_ztype->code ;
 
-    ASSERT ((*xycode) <= GB_UDT_code) ;
-    ASSERT ((*zcode)  <= GB_UDT_code) ;
+    ASSERT ((*xcode) < GB_UDT_code) ;
+    ASSERT ((*ycode) < GB_UDT_code) ;
+    ASSERT ((*zcode) < GB_UDT_code) ;
 
-    if ((*xycode) == GB_BOOL_code)
+    if ((*xcode) == GB_BOOL_code)
     { 
         // z = op(x,y) where both x and y are boolean.
         // DIV becomes FIRST
@@ -128,7 +131,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     }
 
     // built-in binary operators always have this property.
-    ASSERT ((*zcode) == GB_BOOL_code || (*zcode) == (*xycode)) ;
+    ASSERT ((*zcode) == GB_BOOL_code || (*zcode) == (*xcode)) ;
 
     //--------------------------------------------------------------------------
     // handle the flipxy

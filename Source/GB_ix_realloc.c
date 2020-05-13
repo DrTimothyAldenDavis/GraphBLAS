@@ -38,7 +38,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // This function tolerates pending tuples and zombies
     ASSERT (GB_PENDING_OK (A)) ; ASSERT (GB_ZOMBIES_OK (A)) ;
 
-    if (nzmax > GB_INDEX_MAX)
+    if (nzmax > GxB_INDEX_MAX)
     { 
         // problem too large
         return (GB_OUT_OF_MEMORY) ;

@@ -36,6 +36,8 @@ GrB_Info apply (bool is_matrix)
 {
     GrB_Info info ;
 
+//  GxB_print (op, 3) ;
+
     if (is_matrix)
     {
         info = GrB_Matrix_apply (C, Mask, accum, op, A, desc) ;
@@ -79,7 +81,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("C failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // get Mask (shallow copy)
     Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", false, false) ;
@@ -97,21 +98,26 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
 
-    // get accum; default: NOP, default class is class(C)
+    // get accum, if present
+    bool user_complex = (Complex != GxB_FC64)
+        && (C->type == Complex || A->type == Complex) ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [2], "accum",
-        GB_NOP_opcode, cclass, C->type == Complex, A->type == Complex))
+        C->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("accum failed") ;
     }
 
-    // get op; default: NOP, default class is class(C)
+    // get op
     if (!GB_mx_mxArray_to_UnaryOp (&op, pargin [3], "op",
-        GB_NOP_opcode, cclass, A->type == Complex)) 
+        A->type, user_complex) || op == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("UnaryOp failed") ;
     }
+
+//  printf ("got the op\n") ;
+//  GxB_print (op, 3) ;
 
     // get desc
     if (!GB_mx_mxArray_to_Descriptor (&desc, PARGIN (5), "desc"))

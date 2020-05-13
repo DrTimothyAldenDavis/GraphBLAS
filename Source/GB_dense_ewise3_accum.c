@@ -70,9 +70,9 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode ;
-    GB_Type_code xycode, zcode ;
+    GB_Type_code xcode, ycode, zcode ;
     if (GB_binop_builtin (A->type, false, B->type, false, op, false,
-        &opcode, &xycode, &zcode))
+        &opcode, &xcode, &ycode, &zcode))
     { 
         #define GB_BINOP_SUBSET
         #include "GB_binop_factory.c"

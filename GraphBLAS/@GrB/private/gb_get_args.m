@@ -15,6 +15,9 @@ function [args, is_GrB] = gb_get_args (varargin)
 % then the underlying mexFunction returns a GraphBLAS struct, which is then
 % converted above to a GraphBLAS object.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 % get the args and extract any GraphBLAS matrix structs
 args = varargin ;
 for k = 1:length (args)

@@ -14,7 +14,8 @@ function test06 (A,B,fulltests,method_list)
 
 fprintf ('test06: GrB_mxm on all semirings\n') ;
 
-[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
 
 if (nargin < 3)
     fprintf ('\n-------------- GrB_mxm on all semirings\n') ;
@@ -130,12 +131,12 @@ dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 n_semirings = 0 ;
 
 if (fulltests)
-    k1_list = 1:length(mult_ops) ;
-    k2_list = 1:length(add_ops) ;
-    k3_list = 1:length (classes) ;
+    k1_list = 1:length (mult_ops) ;
+    k2_list = 1:length (add_ops) ;
+    k3_list = 1:length (types.real) ;
 else
     % just use plus-times-double semiring
-    k1_list = 8 ;
+    k1_list = 4 ;
     k2_list = 3 ;
     k3_list = 11 ;
 end
@@ -151,8 +152,8 @@ for k1 = k1_list % 1:length(mult_ops)
     for k2 = k2_list % 1:length(add_ops)
         addop = add_ops {k2} ;
 
-        for k3 = k3_list % 1:length (classes)
-            clas = classes {k3} ;
+        for k3 = k3_list % 1:length (types.real)
+            clas = types.real {k3} ;
             if (n <= 500)
                fprintf ('.') ;
             end
@@ -165,9 +166,9 @@ for k1 = k1_list % 1:length(mult_ops)
             % monoids can only be used when z is boolean for z=mult(x,y).
             try
                 [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                [mult_opname mult_opclass zclass] = GB_spec_operator (mult_op) ;
-                [ add_opname  add_opclass] = GB_spec_operator (add_op) ;
-                identity = GB_spec_identity (semiring.add, add_opclass) ;
+                [mult_opname mult_optype zclass] = GB_spec_operator (mult_op) ;
+                [ add_opname  add_optype] = GB_spec_operator (add_op) ;
+                identity = GB_spec_identity (semiring.add, add_optype) ;
             catch me
                 if (~isempty (strfind (me.message, 'gotcha')))
                     semiring

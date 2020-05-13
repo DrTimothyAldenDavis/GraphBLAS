@@ -74,24 +74,6 @@ void mexFunction
 
     GB_WHERE (USAGE) ;
 
-    printf ("table of codes:\n") ;
-    printf ("bool  code: %d class: %d\n", GB_BOOL_code   , mxLOGICAL_CLASS) ;
-    printf ("int8  code: %d class: %d\n", GB_INT8_code   , mxINT8_CLASS   ) ;
-    printf ("uint8 code: %d class: %d\n", GB_UINT8_code  , mxUINT8_CLASS  ) ;
-    printf ("int16 code: %d class: %d\n", GB_INT16_code  , mxINT16_CLASS  ) ;
-    printf ("uin16 code: %d class: %d\n", GB_UINT16_code , mxUINT16_CLASS ) ;
-    printf ("int32 code: %d class: %d\n", GB_INT32_code  , mxINT32_CLASS  ) ;
-    printf ("uin32 code: %d class: %d\n", GB_UINT32_code , mxUINT32_CLASS ) ;
-    printf ("in64  code: %d class: %d\n", GB_INT64_code  , mxINT64_CLASS  ) ;
-    printf ("uin64 code: %d class: %d\n", GB_UINT64_code , mxUINT64_CLASS ) ;
-    printf ("fp32  code: %d class: %d\n", GB_FP32_code   , mxSINGLE_CLASS ) ;
-    printf ("fp64  code: %d class: %d\n", GB_FP64_code   , mxDOUBLE_CLASS ) ;
-    printf ("struct   class: %d\n", mxSTRUCT_CLASS) ;
-    printf ("cell     class: %d\n", mxCELL_CLASS) ;
-    printf ("void     class: %d\n", mxVOID_CLASS) ;
-    printf ("function class: %d\n", mxFUNCTION_CLASS) ;
-    printf ("unknown mxClassID: %d\n", mxUNKNOWN_CLASS ) ;
-
     printf ("in %s:\n%s", __FILE__, GrB_error ( )) ;
 
     printf ("sizeof (struct GB_Type_opaque) %d\n",
@@ -367,18 +349,18 @@ void mexFunction
     float    f32 = 3.14 ;
     double   f64 = 99.4 ;
 
-    GB_code_check (GB_BOOL_code,   &b  , stdout, Context) ; printf ("\n");
-    GB_code_check (GB_INT8_code,   &i8 , stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UINT8_code,  &u8 , stdout, Context) ; printf ("\n");
-    GB_code_check (GB_INT16_code,  &i16, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UINT16_code, &u16, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_INT32_code,  &i32, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UINT32_code, &u32, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_INT64_code,  &i64, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UINT64_code, &u64, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_FP32_code,   &f32, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_FP64_code,   &f64, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UDT_code,    &f64, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_BOOL_code,   &b  , 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_INT8_code,   &i8 , 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_UINT8_code,  &u8 , 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_INT16_code,  &i16, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_UINT16_code, &u16, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_INT32_code,  &i32, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_UINT32_code, &u32, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_INT64_code,  &i64, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_UINT64_code, &u64, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_FP32_code,   &f32, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_FP64_code,   &f64, 5, stdout, Context) ; printf ("\n");
+    GB_code_check (GB_UDT_code,    &f64, 5, stdout, Context) ; printf ("\n");
 
     for (int i = 0 ; i <= GrB_PANIC + 1 ; i++)
     {
@@ -773,10 +755,8 @@ void mexFunction
 
     printf ("\nprint in one-based, long format:\n") ;
     GB_Global_print_one_based_set (true) ;
-    GB_Global_print_format_set (1) ;
-    OK (GxB_Matrix_fprint (C, "C", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C", GxB_COMPLETE_VERBOSE, NULL)) ;
     GB_Global_print_one_based_set (false) ;
-    GB_Global_print_format_set (0) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Matrix_select (C, NULL, NULL, selectop, A, NULL, NULL)) ;

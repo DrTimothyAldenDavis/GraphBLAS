@@ -82,7 +82,7 @@ int main (void)
         #if defined ( _OPENMP )
         double t = omp_get_wtime ( ) ;
         #endif
-        GrB_Matrix_reduce_UINT64 (&result, NULL, GxB_PLUS_INT64_MONOID,
+        GrB_Matrix_reduce_UINT64 (&result, NULL, GrB_PLUS_MONOID_INT64,
             A, NULL) ;
         #if defined ( _OPENMP )
         t = omp_get_wtime ( ) - t ;

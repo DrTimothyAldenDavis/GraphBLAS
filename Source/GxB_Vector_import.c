@@ -34,17 +34,17 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (n > GB_INDEX_MAX)
+    if (n > GxB_INDEX_MAX)
     { 
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "problem too large: n "GBu" exceeds "GBu,
-            n, GB_INDEX_MAX))) ;
+            n, GxB_INDEX_MAX))) ;
     }
-    if (nvals > GB_INDEX_MAX)
+    if (nvals > GxB_INDEX_MAX)
     { 
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "problem too large: nvals "GBu" exceeds "GBu,
-            nvals, GB_INDEX_MAX))) ;
+            nvals, GxB_INDEX_MAX))) ;
     }
 
     if (nvals > 0)

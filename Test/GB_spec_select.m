@@ -31,8 +31,7 @@ if (Atrans)
     A.pattern = A.pattern' ;
 end
 
-[m n] = size (A.matrix) ;
-T.matrix = zeros (m, n, A.class) ;
+T.matrix = GB_spec_zeros (size (A.matrix), A.class) ;
 thunk = full (thunk) ;
 xthunk = GB_mex_cast (thunk, A.class) ;
 

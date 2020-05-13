@@ -3,9 +3,7 @@ function gbtest
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
-% with the number of cores in your system).  Next, go to the
-% GraphBLAS/GraphBLAS/@GrB/private folder, and type the following in the MATLAB
-% command window:
+% with the number of cores in your system).  Next, do the following in MATLAB:
 %
 % Example:
 %
@@ -111,6 +109,14 @@ gbtest70  % test GrB.random
 gbtest71  % test GrB.selectopinfo
 gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
+gbtest74  % test bitwise operators
+gbtest75  % test bitshift
+
+gbtest79  % test power
+gbtest80  % test complex division and power
+
+gbtest81  % test complex operators
+gbtest82  %  test complex A*B, A'*B, A*B', A'*B', A+B
 
 gbtest99  % test GrB.bfs and plot (graph (G))
 

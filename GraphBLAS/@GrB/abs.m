@@ -1,10 +1,14 @@
 function C = abs (G)
 %ABS Absolute value of a GraphBLAS matrix.
 %
-% See also sign.
+% See also GrB/sign.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB.apply ('abs', G) ;
+if (GrB.issigned (G))
+    C = GrB.apply ('abs', G) ;
+else
+    C = G ;
+end
 

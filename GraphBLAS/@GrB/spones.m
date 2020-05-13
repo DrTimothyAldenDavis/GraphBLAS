@@ -7,18 +7,28 @@ function C = spones (G, type)
 % C(i,j)=1.  Explicit zero entries never appear in a MATLAB sparse
 % matrix.
 %
-% C = spones (G) returns C as the same type as G.
+% C = spones (G) returns C as the same type as G if G is real.
+% If G is complex, C has the underlying real type of G ('single' if
+% G is 'single complex', or 'double' if G is 'double complex').
+%
 % C = spones (G,type) returns C in the requested type ('double',
 % 'single', 'int8', ...).  For example, use C = spones (G, 'logical') to
 % return the pattern of G as a sparse logical matrix.
 %
-% See also spfun, GrB.apply.
+% See also GrB/spfun, GrB.apply.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 1)
-    C = GrB.apply ('1', G) ;
+    type = GrB.type (G) ;
+    if (isequal (type, 'single complex'))
+        C = GrB.apply ('1.single', G) ;
+    elseif (isequal (type, 'double complex'))
+        C = GrB.apply ('1.double', G) ;
+    else
+        C = GrB.apply ('1', G) ;
+    end
 else
     if (~ischar (type))
         gb_error ('type must be a string') ;

@@ -30,6 +30,8 @@
         case GB_UINT64_code : GB_1TYPE_WORKER (_uint64)
         case GB_FP32_code   : GB_1TYPE_WORKER (_fp32  )
         case GB_FP64_code   : GB_1TYPE_WORKER (_fp64  )
+        case GB_FC32_code   : // TODO
+        case GB_FC64_code   : // TODO
         default: ;
     }
 }

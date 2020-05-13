@@ -199,12 +199,14 @@ void mexFunction
     { 
         OK (GrB_Matrix_build_FP64 (S, Si, Sj, Ax, anz, GrB_PLUS_FP64)) ;
     }
-    #ifdef GB_COMPLEX_TYPE
-    else if (atype == gb_complex_type)
-    {
-        OK (GrB_Matrix_build_UDT (S, Si, Sj, Ax, anz, ...)) ;
+    else if (atype == GxB_FC32)
+    { 
+        OK (GxB_Matrix_build_FC32 (S, Si, Sj, Ax, anz, GxB_PLUS_FC32)) ;
     }
-    #endif
+    else if (atype == GxB_FC64)
+    { 
+        OK (GxB_Matrix_build_FC64 (S, Si, Sj, Ax, anz, GxB_PLUS_FC64)) ;
+    }
     else
     {
         ERROR ("unsupported type") ;

@@ -10,10 +10,10 @@ function init
 % calling any SuiteSparse:GraphBLAS function in MATLAB.  Its use is now
 % optional in this version of SuiteSparse:GraphBLAS.
 %
-% See also: GrB.clear, GrB.finalize, startup.
+% See also GrB.clear, GrB.finalize, startup.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 gbsetup ;
 

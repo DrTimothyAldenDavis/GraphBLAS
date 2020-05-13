@@ -6,5 +6,8 @@ function s = isbycol (X)
 %
 % See also GrB.isbyrow, GrB.format.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 s = isequal (GrB.format (X), 'by col')  ;
 

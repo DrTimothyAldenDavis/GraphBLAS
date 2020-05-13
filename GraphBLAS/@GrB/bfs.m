@@ -57,12 +57,12 @@ function [v, parent] = bfs (A, s, varargin)
 %
 % See also graph/bfsearch, graph/shortestpathtree, treeplot.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------
 % initializations
-%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------
 
 [m, n] = size (A) ;
 if (m ~= n)
@@ -107,22 +107,24 @@ else
     end
 end
 
-% determine the integer type to use, and initialize v as a full integer vector
+% determine the integer type to use
 int_type = 'int64' ;
 if (n < intmax ('int32'))
     int_type = 'int32' ;
 end
+
+% initialize v as a full integer vector
 v = full (GrB (1, n, int_type)) ;
 
-%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------
 % do the BFS
-%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------
 
 if (nargout == 1)
 
-    %---------------------------------------------------------------------------
+    %---------------------------------------------------------------------
     % just compute the level of each node
-    %---------------------------------------------------------------------------
+    %---------------------------------------------------------------------
 
     q = GrB (1, n, 'logical') ;                  % q = sparse (1,n)
     q = GrB.subassign (q, { s }, true) ;         % q (s) = 1
@@ -137,9 +139,9 @@ if (nargout == 1)
 
 else
 
-    %---------------------------------------------------------------------------
+    %---------------------------------------------------------------------
     % compute both the level and the parent
-    %---------------------------------------------------------------------------
+    %---------------------------------------------------------------------
 
     parent = full (GrB (1, n, int_type)) ;       % parent = zeros (1,n)
     parent = GrB.subassign (parent, { s }, s) ;  % parent (s) = s

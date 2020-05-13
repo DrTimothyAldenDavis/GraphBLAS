@@ -9,10 +9,10 @@ rng ('default') ;
 
 fprintf ('\n-------------- GrB_resize\n') ;
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
-for k1 = 1:length(classes)
-    clas = classes {k1} ;
+for k1 = 1:length(types.real)
+    clas = types.real {k1} ;
     for nrows_old = [1 2 5 10]
         for ncols_old = [1 2 5 10]
 

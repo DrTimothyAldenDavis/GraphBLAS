@@ -6,7 +6,7 @@ function test25
 
 fprintf ('\ntest25: GxB_select tests\n') ;
 
-[~, ~, ~, classes, ~, select_ops] = GB_spec_opsall ;
+[~, ~, ~, types, ~, select_ops] = GB_spec_opsall ;
 
 rng ('default') ;
 
@@ -14,8 +14,8 @@ m = 10 ;
 n = 6 ;
 dt = struct ('inp0', 'tran') ;
 
-for k1 = 1:length(classes)
-    aclass = classes {k1} ;
+for k1 = 1:length(types.real)
+    aclass = types.real {k1} ;
     fprintf ('%s: ', aclass) ;
 
     for A_is_hyper = 0:1

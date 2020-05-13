@@ -1,10 +1,11 @@
-function test141
+% function test141
 %TEST141 test GrB_eWiseAdd (all types and operators) for dense matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[bin_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+bin_ops = [binops.all binops.real] ;
 
 fprintf ('test141 ------------ GrB_eWiseAdd with dense matrices\n') ;
 
@@ -29,13 +30,16 @@ E.matrix = Emat ; E.class = 'see below' ;
 
 for k2 = 1:length(bin_ops)
     binop = bin_ops {k2}  ;
+    if (isequal (binop, 'pow'))
+        continue ;
+    end
     fprintf ('%s', binop) ;
 
-    for k1 = 1:length (classes)
-        clas = classes {k1}  ;
+    for k1 = 1:length (types.real)
+        clas = types.real {k1}  ;
 
         op.opname = binop ;
-        op.opclass = clas ;
+        op.optype = clas ;
         fprintf ('.') ;
 
         A.class = clas ;

@@ -43,8 +43,8 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-% flags = '-g' ;
-  flags = '-O' ;
+  flags = '-g -R2018a' ;    % TODO
+% flags = '-O -R2018a' ;
 
 try
     if (strncmp (computer, 'GLNX', 4))
@@ -107,8 +107,6 @@ else
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
-
-flags = [flags ' -largeArrayDims'] ;
 
 %-------------------------------------------------------------------------------
 

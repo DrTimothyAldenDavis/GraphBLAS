@@ -29,10 +29,10 @@ function C = sprandsym (G, varargin)
 %   [i,j,x] = find (C) ;
 %   histogram (x, 'BinMethod', 'integers') ;
 %
-% See also sprand, sprandn, GrB/sprand, GrB.random.
+% See also GrB/sprand, GrB/sprandn, GrB.random.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % make the default 'normal' instead of 'uniform'
 have_dist = false ;

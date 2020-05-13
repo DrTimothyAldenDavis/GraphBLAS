@@ -11,34 +11,6 @@
 #define USERCOMPLEX_H
 
 //------------------------------------------------------------------------------
-// ANSI C11 is required for the 'double complex' type
-//------------------------------------------------------------------------------
-
-// See the following link for complex math support in Microsoft Visual Studio:
-// https://docs.microsoft.com/en-us/cpp/c-runtime-library/complex-math-support?view=vs-2019
-// The complex data type is not supported for this demo, when compiling with MS
-// Visual Studio.
-
-// The GraphBLAS objects defined here are still visible if 'double complex'
-// is not supported, but they are all NULL in that case.
-
-#if GxB_STDC_VERSION >= 201112L
-#include <complex.h>
-#endif
-
-// This macro is defined but cannot be used without ANSI C11:
-#ifndef CMPLX
-#define CMPLX(real,imag)                                \
-    (                                                   \
-        (double complex)((double)(real)) +              \
-        (double complex)((double)(imag) * _Complex_I)   \
-    )
-#endif
-
-// "I" is used in GraphBLAS to denote a list of row indices; remove it here
-#undef I
-
-//------------------------------------------------------------------------------
 // 10 binary functions, z=f(x,y), where CxC -> C
 //------------------------------------------------------------------------------
 
@@ -109,7 +81,7 @@ GB_PUBLIC GrB_UnaryOp Complex_complex_real, Complex_complex_imag ;
 GB_PUBLIC GrB_Type Complex ;
 GB_PUBLIC GrB_Monoid   Complex_plus_monoid, Complex_times_monoid ;
 GB_PUBLIC GrB_Semiring Complex_plus_times ;
-GB_PUBLIC GrB_Info Complex_init ( ) ;
+GB_PUBLIC GrB_Info Complex_init (bool builtin_complex) ;
 GB_PUBLIC GrB_Info Complex_finalize ( ) ;
 
 #endif

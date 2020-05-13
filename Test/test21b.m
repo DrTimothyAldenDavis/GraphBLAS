@@ -9,7 +9,8 @@ if (nargin < 1)
     fulltest = 0 ;
 end
 
-[accum_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+accum_ops = [binops.all binops.real] ;
 
 dn = struct ;
 dt = struct ( 'inp0', 'tran' ) ;
@@ -28,26 +29,26 @@ quick = 0 ;
 for k1 = k1test
     if (k1 == 0)
         accum_op = ''  ;
-        nclasses = 1 ;
+        ntypes = 1 ;
     else
         accum_op = accum_ops {k1}  ;
-        nclasses = length (classes) ;
+        ntypes = length (types.real) ;
     end
     fprintf ('\naccum: [%s]', accum_op) ;
 
     if (fulltest)
-        k2test = 1:nclasses ;
+        k2test = 1:ntypes ;
     else
         k2test = [1 11] ; % Was [1 2 11] ;
     end
 
-    % try all classes
-    for k2 = k2test % 1:nclasses
+    % try all types.real
+    for k2 = k2test % 1:ntypes
         clear accum
         if (~isempty (accum_op))
-            accum_class = classes {k2}  ;
+            accum_class = types.real {k2}  ;
             accum.opname = accum_op ;
-            accum.opclass = accum_class ;
+            accum.optype = accum_class ;
         else
             accum = '' ;
             accum_class = '' ;
@@ -76,11 +77,11 @@ for k1 = k1test
                     dt.outp = 'default' ;
                 end
 
-                kk3 = randperm (length (classes), 1) ;
+                kk3 = randperm (length (types.real), 1) ;
 
-                % try all matrix classes, to test casting
-                for k3 = kk3 % 1:length (classes)
-                    aclas = classes {k3}  ;
+                % try all matrix types.real, to test casting
+                for k3 = kk3 % 1:length (types.real)
+                    aclas = types.real {k3}  ;
 
                     % try some matrices
                     for m = [1 5 10 ]

@@ -1,11 +1,10 @@
 function gbtest56
 %GBTEST56 test GrB.empty
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 for m1 = -1:5
-
     for n1 = -1:5
         
         m = max (m1, 0) ;
@@ -23,7 +22,6 @@ for m1 = -1:5
         assert (isequal (C0, C1)) ;
         assert (isequal (C0, C2)) ;
         assert (isequal (C0, C3)) ;
-
     end
 end
 

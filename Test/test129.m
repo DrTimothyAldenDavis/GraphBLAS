@@ -8,23 +8,26 @@ function test129
 
 fprintf ('\ntest129: GxB_select tests (tril and nonzero)\n') ;
 
-[~, ~, ~, classes, ~, select_ops] = GB_spec_opsall ;
+[~, ~, ~, ~, ~, select_ops] = GB_spec_opsall ;
 
 rng ('default') ;
 
 fprintf ('\n---------- Trigger an intentional error (domain mismatch):\n\n') ;
+builtin_complex_set (0) ;
 try
-    % this must fail; thunk cannot be complex for tril
+    % this must fail; the scalar thunk cannot be user-defined for tril
     C = sparse (1i) ;
     C = GB_mex_select (C, [ ], [ ], 'tril', C, C, [ ]) ;
     % ack! The call to GB_mex_select was supposed to have failed.
     ok = false ;
-catch
+catch me
     % GB_mex_select correctly returned an error
+    fprintf ('Intentional error: %s\n', me.message) ;
     ok = true ;
 end
 assert (ok) ;
 fprintf ('---------- Domain mismatch error above is expected\n\n') ;
+builtin_complex_set (1) ;
 
 m = 10 ;
 n = 6 ;

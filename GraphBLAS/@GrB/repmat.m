@@ -4,10 +4,10 @@ function C = repmat (G, m, n)
 % C = repmat (G, [m n]) % same as C = repmat (A, m, n)
 % C = repmat (G, n)     % constructs an n-by-n tiling of the GrB matrix G
 %
-% See also kron, GrB.kronecker.
+% See also GrB/kron, GrB.kronecker.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 3)
     R = ones (m, n, 'logical') ;

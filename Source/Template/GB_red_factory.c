@@ -76,6 +76,8 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT64_code : GB_RED_WORKER (_plus, _uint64, uint64_t)
                 case GB_FP32_code   : GB_RED_WORKER (_plus, _fp32,   float   )
                 case GB_FP64_code   : GB_RED_WORKER (_plus, _fp64,   double  )
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
             }
             break ;
@@ -94,6 +96,8 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT64_code : GB_RED_WORKER (_times, _uint64, uint64_t)
                 case GB_FP32_code   : GB_RED_WORKER (_times, _fp32,   float   )
                 case GB_FP64_code   : GB_RED_WORKER (_times, _fp64,   double  )
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
             }
             break ;
@@ -112,6 +116,8 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT64_code : GB_RED_WORKER (_any, _uint64, uint64_t)
                 case GB_FP32_code   : GB_RED_WORKER (_any, _fp32,   float   )
                 case GB_FP64_code   : GB_RED_WORKER (_any, _fp64,   double  )
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
             }
             break ;
@@ -136,6 +142,8 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT64_code : GB_RED_WORKER (_first, _uint64, uint64_t)
                 case GB_FP32_code   : GB_RED_WORKER (_first, _fp32,   float   )
                 case GB_FP64_code   : GB_RED_WORKER (_first, _fp64,   double  )
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
             }
             break ;
@@ -154,6 +162,8 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT64_code : GB_RED_WORKER (_second, _uint64, uint64_t)
                 case GB_FP32_code   : GB_RED_WORKER (_second, _fp32,   float   )
                 case GB_FP64_code   : GB_RED_WORKER (_second, _fp64,   double  )
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
             }
             break ;

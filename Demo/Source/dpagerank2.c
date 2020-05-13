@@ -376,7 +376,7 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     GrB_Vector_free (&r) ;
 
     // pagerank_rsum = sum (rdouble)
-    OK (GrB_Vector_reduce_FP64 (&pagerank_rsum, NULL, GxB_PLUS_FP64_MONOID,
+    OK (GrB_Vector_reduce_FP64 (&pagerank_rsum, NULL, GrB_PLUS_MONOID_FP64,
         rdouble, NULL)) ;
 
     // could also do this with GrB_vxm, with a 1-by-1 matrix

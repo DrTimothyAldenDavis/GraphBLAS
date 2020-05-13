@@ -4,12 +4,12 @@ function s = issymmetric (G, option)
 % issymmetric (G, 'skew') is true if G equals -G.' and false otherwise.
 % issymmetric (G, 'nonskew') is the same as issymmetric (G).
 %
-% See also ishermitian.
+% See also GrB/ishermitian.
 
 % FUTURE: this will be much faster.  See CHOLMOD/MATLAB/spsym.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n] = size (G) ;
 if (m ~= n)

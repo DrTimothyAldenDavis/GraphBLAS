@@ -347,10 +347,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool is_any_pair_semiring = false ;
     #else
     GB_Opcode mult_opcode, add_opcode ;
-    GB_Type_code xycode, zcode ;
+    GB_Type_code xcode, ycode, zcode ;
     bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
-        B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xycode,
-        &zcode) ;
+        B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
+        &ycode, &zcode) ;
     bool is_any_pair_semiring = builtin_semiring
         && (add_opcode == GB_ANY_opcode)
         && (mult_opcode == GB_PAIR_opcode) ;
@@ -958,7 +958,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         { 
             // Hf is int8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
-            Hf_size_total += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
+            Hf_size_total += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
         { 
@@ -1029,7 +1029,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (is_fine && use_Gustavson)
         { 
             // Hf is int8_t for the fine Gustavson method
-            Hf_split += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
+            Hf_split += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
         { 

@@ -9,10 +9,9 @@
 
 // Convert a MATLAB sparse matrix or struct to a GraphBLAS sparse matrix.  The
 // mxArray is either a struct containing two terms: a sparse matrix or vector,
-// and class (a string, "logical", "double", etc), or it is just a plain sparse
-// matrix.  The matrix must be sparse and real, either logical or double.  If
-// A.class is present, it is used to typecast the MATLAB matrix into the
-// corresponding type in GraphBLAS.
+// and type (a string, "logical", "double", etc), or it is just a plain sparse
+// matrix.  If A.class is present, it is used to typecast the MATLAB matrix
+// into the corresponding type in GraphBLAS.
 
 // That is:
 // A = sparse (...) ;   % a sparse double or logical GraphBLAS matrix
@@ -24,8 +23,12 @@
 // The MATLAB matrix or struct is not modified.  If deep_copy is true, the
 // GraphBLAS matrix is always a deep copy and can be modified by GraphBLAS.
 // Otherwise, its pattern (A->p, A->h, and A->i) may be a shallow copy, and
-// A->x is a shallow copy if the MATLAB matrix is 'logical' or 'double'.  A->x
-// is always a deep copy for other types, since it must be typecasted from
+// A->x is a shallow copy if the MATLAB matrix is 'logical' or 'double'. 
+
+// If the MATLAB matrix is double complex, it becomes a GraphBLAS
+// Complex or GxB_FC64 matrix.
+
+// A->x is always a deep copy for other types, since it must be typecasted from
 // MATLAB to GraphBLAS.
 
 // Like GB_mx_Matrix_to_mxArray, this could be done using only user-callable
@@ -84,8 +87,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the matrix
     //--------------------------------------------------------------------------
 
+
     const mxArray *Amatrix = NULL ;
-    mxClassID aclass_in, aclass_out ;
+    GrB_Type atype_in, atype_out ;
+    GB_Type_code atype_in_code, atype_out_code ;
+
 
     if (mxIsStruct (A_matlab))
     {
@@ -114,22 +120,24 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             }
         }
 
-        // get the class: defaults to class (Amatrix)
+        // get the type
         ASSERT (Amatrix != NULL) ;
 
-        aclass_out = aclass_in = mxGetClassID (Amatrix) ;
+        atype_in = GB_mx_Type (Amatrix) ;
+        atype_out = atype_in ;
         fieldnumber = mxGetFieldNumber (A_matlab, "class") ;
         if (fieldnumber >= 0)
         {
-            aclass_out = GB_mx_string_to_classID (aclass_in,
-                mxGetFieldByNumber (A_matlab, 0, fieldnumber)) ;
+            mxArray *s = mxGetFieldByNumber (A_matlab, 0, fieldnumber) ;
+            atype_out = GB_mx_string_to_Type (s, atype_in) ;
         }
     }
     else
     {
-        // just a matrix; use the class as-is
+        // just a matrix
         Amatrix = A_matlab ;
-        aclass_out = aclass_in = mxGetClassID (Amatrix) ;
+        atype_in = GB_mx_Type (Amatrix) ;
+        atype_out = atype_in ;
     }
 
     if (!mxIsSparse (Amatrix))
@@ -143,24 +151,25 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the matrix type
     //--------------------------------------------------------------------------
 
-    GrB_Type atype_in, atype_out ;
-
-    if (mxIsComplex (Amatrix))
+    if (atype_in == Complex)
     {
-        #if GxB_STDC_VERSION >= 201112L
-        // use the user-defined Complex type
-        atype_in  = Complex ;
+        // use the user-defined Complex type (may equal GxB_FC64)
         atype_out = Complex ;
-        deep_copy = true ;
-        #else
-        mexErrMsgTxt ("complex type not available") ;
-        #endif
+
+        // the user-defined Complex and GxB_FC64 are identical, in terms
+        // of their content.  Can use GB_cast_array, which is based on the
+        // type code, not the type itself.
+        atype_in_code  = GB_FC64_code ;
+        atype_out_code = GB_FC64_code ;
+
     }
     else
     {
-        // get the GraphBLAS types
-        atype_in  = GB_mx_classID_to_Type (aclass_in) ;
-        atype_out = GB_mx_classID_to_Type (aclass_out) ;
+        // get the GraphBLAS codes
+
+        // and their codes
+        atype_in_code  = atype_in->code ;
+        atype_out_code = atype_out->code ;
     }
 
     //--------------------------------------------------------------------------
@@ -172,7 +181,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     int64_t *Mp = (int64_t *) mxGetJc (Amatrix) ;
     int64_t *Mi = (int64_t *) mxGetIr (Amatrix) ;
     int64_t anz = Mp [ncols] ;
-    GB_void *Mx = mxGetData (Amatrix) ;
+    GB_void *Mx = mxGetData (Amatrix) ;     // OK:any type
+    int64_t anzmax = mxGetNzmax (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // look for A.values
@@ -180,15 +190,21 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (mxIsStruct (A_matlab))
     {
+        // this is used for int64 and uint64 only
         int fieldnumber = mxGetFieldNumber (A_matlab, "values") ;
         if (fieldnumber >= 0)
         {
             mxArray *values = mxGetFieldByNumber (A_matlab, 0, fieldnumber) ;
+            if (mxIsComplex (values))
+            {
+                mexErrMsgTxt ("A.values must be real") ;
+            }
             if (mxGetNumberOfElements (values) >= anz)
             {
-                Mx = mxGetData (values) ;
-                aclass_in = mxGetClassID (values) ;
-                atype_in = GB_mx_classID_to_Type (aclass_in) ;
+                Mx = mxGetData (values) ;       // OK:any type
+                atype_in = GB_mx_Type (values) ;
+                atype_in_code = atype_in->code ;
+                anzmax = mxGetNumberOfElements (values) ;
             }
         }
     }
@@ -269,16 +285,17 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     A->x_shallow = (!deep_copy &&
-           ((atype_out->code == GB_BOOL_code ||
-             atype_out->code == GB_FP64_code)
-         && (atype_out->code == atype_in->code))) ;
+           ((atype_out_code == GB_BOOL_code ||
+             atype_out_code == GB_FP64_code ||
+             atype_out_code == GB_FC64_code)
+         && (atype_out_code == atype_in_code))) ;
 
     if (A->x_shallow)
     {
-        // the MATLAB matrix and GraphBLAS matrix have the same type;
-        // (logical or double), and a deep copy is not requested.
-        // Just make a shallow copy.
-        A->nzmax = mxGetNzmax (Amatrix) ;
+        // the MATLAB matrix and GraphBLAS matrix have the same type; (logical,
+        // double, or double complex), and a deep copy is not requested.  Just
+        // make a shallow copy.
+        A->nzmax = anzmax ;
         A->x = Mx ;
     }
     else
@@ -295,16 +312,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 return (NULL) ;
             }
         }
-        if (atype_in == Complex)
-        {
-            // copy the real part (Mx) and imaginary part (Mz) into A->x
-            GB_mx_complex_merge (anz, (double *) (A->x), Amatrix) ;
-        }
-        else
-        {
-            GB_cast_array (A->x, atype_out->code, Mx, atype_in->code, anz,
-                Context) ;
-        }
+        GB_cast_array (A->x, atype_out_code, Mx, atype_in_code, anz, Context) ;
     }
 
     //--------------------------------------------------------------------------

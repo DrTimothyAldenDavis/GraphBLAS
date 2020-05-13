@@ -1,22 +1,18 @@
 function C = isinf (G)
-%ISINF True for infinite elements.
+%ISINF true for infinite elements.
 % C = isinf (G) returns a GraphBLAS logical matrix where C(i,j) = true
 % if G(i,j) is infinite.
 %
-% See also isnan, isfinite.
+% See also GrB/isnan, GrB/isfinite.
 
-% FUTURE: this will be much faster as a mexFunction.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-[m, n] = size (G) ;
 if (isfloat (G) && GrB.entries (G) > 0)
-    desc.base = 'zero-based' ;
-    [i, j, x] = GrB.extracttuples (G, desc) ;
-    C = GrB.build (i, j, isinf (x), m, n, desc) ;
+    C = GrB.apply ('isinf', G) ;
 else
     % C is all false
+    [m, n] = size (G) ;
     C = GrB (m, n, 'logical') ;
 end
 

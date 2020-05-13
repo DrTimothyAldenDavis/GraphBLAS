@@ -26,6 +26,8 @@ function semiringinfo (s, type)
 % since it is neither associative nor commutative.  Thus, <.*.double is
 % not a valid semiring.
 %
+% TODO fix this description
+%
 % Example:
 %
 %   % valid semirings
@@ -38,10 +40,8 @@ function semiringinfo (s, type)
 % See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
 % GrB.selectopinfo, GrB.unopinfo.
 
-% FUTURE: add complex semirings
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 0)
     help GrB.semiringinfo

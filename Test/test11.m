@@ -4,18 +4,18 @@ function test11
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 fprintf ('\n ------------ testing GrB_extractTuples\n') ;
 
 % class of the output X
-for k1 = 1:length (classes)
-    xclass = classes {k1}  ;
+for k1 = 1:length (types.real)
+    xclass = types.real {k1}  ;
     fprintf ('\n%s', xclass) ;
 
     % class of the matrix A
-    for k2 = 1:length (classes)
-        aclass = classes {k2}  ;
+    for k2 = 1:length (types.real)
+        aclass = types.real {k2}  ;
 
         % create a matrix
         for m = [1 10 25]

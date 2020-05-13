@@ -18,7 +18,7 @@ function gbmake (what)
 % GraphBLAS, just as GrB.clear does.  It then calls GrB.init to initialize
 % GraphBLAS.
 %
-% See also: mex, version, GrB.clear
+% See also mex, version, GrB.clear.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -190,6 +190,8 @@ try
 catch
 end
 
+%{
+% TODO uncomment this when done:
 fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n') ;
 cd ../..
@@ -204,4 +206,4 @@ end
 fprintf ('\nTo test GraphBLAS, type the following commands:\n\n') ;
 fprintf ('  cd GraphBLAS/test\n') ;
 fprintf ('  gbtest\n') ;
-
+%}

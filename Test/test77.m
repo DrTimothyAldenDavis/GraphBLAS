@@ -4,7 +4,8 @@ function test77 (fulltest)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[bin_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+bin_ops = [binops.all binops.real] ;
 
 if (nargin < 1)
     fulltest = 0 ;
@@ -12,7 +13,7 @@ end
 
 if (fulltest)
     fprintf ('--------------lengthy tests of GxB_kron\n') ;
-    k1test = 1:length(classes) ;
+    k1test = 1:length(types.real) ;
 else
     fprintf ('--------------quick tests of GxB_kron\n') ;
     k1test = 11 ; % Was [1 2 4 10 11] ;
@@ -26,8 +27,8 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 n_semirings = 0 ;
-for k1 = k1test % 1:length (classes)
-    clas = classes {k1}  ;
+for k1 = k1test % 1:length (types.real)
+    clas = types.real {k1}  ;
 
     fprintf ('\n%s:\n', clas) ;
 
@@ -43,7 +44,7 @@ for k1 = k1test % 1:length (classes)
         fprintf (' %s', binop) ;
 
         op.opname = binop ;
-        op.opclass = clas ;
+        op.optype = clas ;
         fprintf (' binary op: [ %s %s ] ', binop, clas) ;
 
         for k4 = randi([0,length(bin_ops)]) % 0:length(bin_ops)
@@ -51,19 +52,19 @@ for k1 = k1test % 1:length (classes)
             clear accum
             if (k4 == 0)
                 accum = ''  ;
-                nclasses = 1 ;
+                ntypes = 1 ;
                 fprintf ('accum: [ none ]') ;
             else
                 accum.opname = bin_ops {k4}  ;
-                nclasses = length (classes) ;
+                ntypes = length (types.real) ;
                 fprintf ('accum: %s ', accum.opname) ;
             end
 
-            for k5 = randi ([1 nclasses]) % nclasses
+            for k5 = randi ([1 ntypes]) % ntypes
 
                 if (k4 > 0)
-                    accum.opclass = classes {k5}  ;
-                    fprintf ('%s\n', accum.opclass) ;
+                    accum.optype = types.real {k5}  ;
+                    fprintf ('%s\n', accum.optype) ;
                 else
                     fprintf ('\n') ;
                 end

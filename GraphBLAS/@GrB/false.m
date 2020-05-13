@@ -3,10 +3,10 @@ function C = false (varargin)
 % C = false (m, n, 'like', G) or C = false ([m n], 'like', G) constructs
 % a logical GraphBLAS matrix of size m-by-n with no entries.
 %
-% See also ones, true, zeros.
+% See also GrB/ones, GrB/true, GrB/zeros.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 arg1 = varargin {1} ;
 if (length (arg1) == 2)

@@ -23,17 +23,17 @@ if (isstruct (cin) || issparse (cin) || ~isscalar (cin))
     error ('cin must be a dense scalar') ;
 end
 
-cin_class = class (cin) ;
+cin_class = GB_spec_type (cin) ;
 
-% get the class of A
+% get the type of A
 if (isstruct (A))
-    aclass = A.class ;
+    atype = A.class ;
 else
-    aclass = class (A) ;
+    atype = GB_spec_type (A) ;
 end
 
-% get the reduce operator. default class is the class of A
-[reduce_op reduce_class] = GB_spec_operator (reduce, aclass) ;
+% get the reduce operator. default type is the type of A
+[reduce_op reduce_class] = GB_spec_operator (reduce, atype) ;
 
 % get the identity
 identity = GB_spec_identity (reduce_op, reduce_class) ;
@@ -44,7 +44,7 @@ end
 % get the input matrix
 A = GB_spec_matrix (A, identity) ;
 
-% get the accumulator and its 2 classes.
+% get the accumulator and its 2 types.
 % accum_class is the class of x and y, and zclass is the class of z,
 % for z = accum(x,y)
 [accum_op  accum_class zclass ] = GB_spec_operator (accum, cin_class) ;

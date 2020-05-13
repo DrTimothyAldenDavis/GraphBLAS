@@ -14,7 +14,8 @@ else
     fprintf ('\n==== test53: quick test for GrB_Matrix_extract:\n') ;
 end
 
-[mult_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+accum_ops = [binops.all binops.real] ;
 
 problems = [
     10,    1,    7,  -5, 100
@@ -65,14 +66,14 @@ for k0 = 1:size (problems,1) ;
         nrows, ncols, nnz, min (Y), max (Y)) ;
 
     if (fulltests)
-        k1_list = [1:length(classes)] ;
+        k1_list = [1:length(types.real)] ;
     else
         k1_list = 11 ;
     end
 
     % try every class for A
-    for k1 = k1_list % 1:length(classes)
-        aclass = classes {k1} ;
+    for k1 = k1_list % 1:length(types.real)
+        aclass = types.real {k1} ;
         A.class = aclass ;
         Cempty.class = aclass ;
         Cempty2.class = aclass ;
@@ -126,44 +127,44 @@ for k0 = 1:size (problems,1) ;
         end
 
         if (fulltests)
-            k2_list = [1:length(classes)] ;
+            k2_list = [1:length(types.real)] ;
         else
-            k2_list = unique ([11 irand(2,length(classes),1,1)]) ;
+            k2_list = unique ([11 irand(2,length(types.real),1,1)]) ;
         end
 
         % try every class for Cin
         for k2 = k2_list
-            cinclass = classes {k2} ;
+            cinclass = types.real {k2} ;
             Cin2.class = cinclass ;
             Cin.class = cinclass ;
 
             fprintf ('%s', cinclass) ;
 
             if (fulltests)
-                k3_list = 1:length (mult_ops) ;
+                k3_list = 1:length (accum_ops) ;
             else
-                k3_list = unique ([1 5 irand(2,length(mult_ops),1,1)]) ;
+                k3_list = unique ([1 5 irand(2,length(accum_ops),1,1)]) ;
             end
 
             % try every operator
             for k3 = k3_list
-                op = mult_ops {k3} ;
+                op = accum_ops {k3} ;
                 fprintf ('.') ;
 
                 if (fulltests)
-                    k4_list = [1:length(classes)] ;
+                    k4_list = [1:length(types.real)] ;
                 else
-                    k4_list = unique ([11 irand(2,length(classes),1,1)]) ;
+                    k4_list = unique ([11 irand(2,length(types.real),1,1)]) ;
                 end
 
                 % try every operator class
                 for k4 = k4_list
-                    opclass = classes {k4} ;
+                    optype = types.real {k4} ;
 
                     clear accum
                     accum.opname = op ;
-                    accum.opclass = opclass ;
-                    z = cast (1, opclass) ;
+                    accum.optype = optype ;
+                    z = cast (1, optype) ;
                     opint = isinteger (z) || islogical (z) ;
 
                     % try several I's
@@ -310,7 +311,7 @@ for k0 = 1:size (problems,1) ;
                             % double)
 
                             for k7 = [1 11]
-                                mask_class = classes {k7} ;
+                                mask_class = types.real {k7} ;
                                 M = cast (Mask, mask_class) ;
                                 Msub  = M (1:ni, 1:nj) ;
 

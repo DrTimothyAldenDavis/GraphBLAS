@@ -15,19 +15,24 @@ function C = max (varargin)
 % is not yet supported.  The max (..., nanflag) option is
 % not yet supported; only the 'omitnan' behavior is supported.
 %
-% See also min.
+% Complex matrices are not supported.
+%
+% See also GrB/min.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = varargin {1} ;
-[m, n] = size (G) ;
-if (isequal (GrB.type (G), 'logical'))
+type = GrB.type (G) ;
+if (contains (type, 'complex'))
+    error ('complex matrices not supported') ;
+elseif (isequal (type, 'logical'))
     op = '|.logical' ;
 else
     op = 'max' ;
 end
 
+[m, n] = size (G) ;
 desc = struct ('in0', 'transpose') ;
 
 if (nargin == 1)
@@ -53,21 +58,22 @@ elseif (nargin == 2)
     % C = max (A,B)
     A = varargin {1} ;
     B = varargin {2} ;
+    ctype = GrB.optype (A, B) ;
     if (isscalar (A))
         if (isscalar (B))
             % both A and B are scalars.  Result is also a scalar.
-            C = gb_sparse_comparator (A, op, B) ;
+            C = gb_union_op (op, A, B) ;
         else
             % A is a scalar, B is a matrix
             if (gb_get_scalar (A) > 0)
                 % since A > 0, the result is full
                 [m, n] = size (B) ;
-                % A (1:m,1:n) = A and cast to the type of B
-                A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
+                % A (1:m,1:n) = A and cast to ctype
+                A = GrB.subassign (GrB (m, n, ctype), A) ;
             else
                 % since A <= 0, the result is sparse.  Expand the scalar A
                 % to the pattern of B.
-                A = GrB.expand (A, B) ;
+                A = GrB.expand (GrB (A, ctype), B) ;
             end
             C = GrB.eadd (A, op, B) ;
         end
@@ -77,17 +83,17 @@ elseif (nargin == 2)
             if (gb_get_scalar (B) > 0)
                 % since B > 0, the result is full
                 [m, n] = size (A) ;
-                % B (1:m,1:n) = B and cast to the type of A
-                B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
+                % B (1:m,1:n) = B and cast to ctype
+                B = GrB.subassign (GrB (m, n, ctype), B) ;
             else
                 % since B <= 0, the result is sparse.  Expand the scalar B
                 % to the pattern of A.
-                B = GrB.expand (B, A) ;
+                B = GrB.expand (GrB (B, ctype), A) ;
             end
             C = GrB.eadd (A, op, B) ;
         else
             % both A and B are matrices.  Result is sparse.
-            C = gb_sparse_comparator (A, op, B) ;
+            C = gb_union_op (op, A, B) ;
         end
     end
 

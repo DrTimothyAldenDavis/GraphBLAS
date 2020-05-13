@@ -19,23 +19,23 @@
     GB_RETURN_IF_NULL (A) ;                                     \
     (*A) = NULL ;                                               \
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;                        \
-    if (nrows > GB_INDEX_MAX)                                   \
+    if (nrows > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
             "problem too large: nrows "GBu" exceeds "GBu,       \
-            nrows, GB_INDEX_MAX))) ;                            \
+            nrows, GxB_INDEX_MAX))) ;                           \
     }                                                           \
-    if (ncols > GB_INDEX_MAX)                                   \
+    if (ncols > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
             "problem too large: ncols "GBu" exceeds "GBu,       \
-            ncols, GB_INDEX_MAX))) ;                            \
+            ncols, GxB_INDEX_MAX))) ;                           \
     }                                                           \
-    if (nvals > GB_INDEX_MAX)                                   \
+    if (nvals > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
             "problem too large: nvals "GBu" exceeds "GBu,       \
-            nvals, GB_INDEX_MAX))) ;                            \
+            nvals, GxB_INDEX_MAX))) ;                           \
     }                                                           \
     /* get the descriptor */                                    \
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;

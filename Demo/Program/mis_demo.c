@@ -77,7 +77,7 @@ GrB_Info mis_check_results
     //--------------------------------------------------------------------------
 
     int64_t isize ;
-    OK (GrB_Vector_reduce_INT64 (&isize, NULL, GxB_PLUS_INT64_MONOID,
+    OK (GrB_Vector_reduce_INT64 (&isize, NULL, GrB_PLUS_MONOID_INT64,
         iset, NULL)) ;
     (*p_isize) = isize ;
 

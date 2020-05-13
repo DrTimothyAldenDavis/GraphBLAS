@@ -1,9 +1,8 @@
 function gbtest70
 %GBTEST70 test GrB.random
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 rng ('default') ; A = sprand (4, 5, 0.5) ;
 rng ('default') ; C0 = sprand (A) ;
@@ -20,7 +19,7 @@ for k = 1:length(types)
     rng ('default') ;
     G = GrB.random (30, 40, 0.6) ; %#ok<*NASGU>
 
-    r = cast ([3 40], type) ;
+    r = gbtest_cast ([3 40], type) ;
     G = GrB.random (300, 400, 0.6, 'range', r) ;
     assert (isequal (GrB.type (G), type)) ;
 
@@ -29,7 +28,7 @@ for k = 1:length(types)
         if (isinteger (r))
             assert (min (r) == min (r)) ;
             assert (max (r) == max (r)) ;
-        else
+        elseif (isreal (r))
             d = min (x) - min (r) ; assert (d > 0 && d < 0.01) ;
             d = max (r) - max (x) ; assert (d > 0 && d < 0.01) ;
         end
@@ -70,6 +69,10 @@ for k = 1:length(types)
 
     G = GrB.random (30, 0.6, 'normal', 'range', r, 'symmetric') ;
     assert (issymmetric (G)) ;
+    assert (isequal (GrB.type (G), type)) ;
+
+    G = GrB.random (30, 0.6, 'normal', 'range', r, 'hermitian') ;
+    assert (ishermitian (G)) ;
     assert (isequal (GrB.type (G), type)) ;
 
     S = sprandsym (30, 0.6) ;

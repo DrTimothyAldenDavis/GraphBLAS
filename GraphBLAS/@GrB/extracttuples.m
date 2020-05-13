@@ -33,10 +33,10 @@ function [I,J,X] = extracttuples (varargin)
 % This function corresponds to the GrB_*_extractTuples_* functions in
 % GraphBLAS.
 %
-% See also find, GrB/build.
+% See also GrB/find, GrB/build.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, ~] = gb_get_args (varargin {:}) ;
 if (nargout == 3)

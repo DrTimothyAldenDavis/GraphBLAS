@@ -49,8 +49,8 @@ function result = entries (A, varargin)
 %
 % See also GrB.nonz, nnz, GrB/nnz, nonzeros, GrB/nonzeros.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'

@@ -266,10 +266,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GB_Opcode mult_opcode, add_opcode ;
-    GB_Type_code xycode, zcode ;
+    GB_Type_code xcode, ycode, zcode ;
 
     if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
-        flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
+        flipxy, &mult_opcode, &add_opcode, &xcode, &ycode, &zcode))
     { 
         #include "GB_AxB_factory.c"
     }

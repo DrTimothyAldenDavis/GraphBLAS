@@ -35,10 +35,10 @@ function Cout = mxm (varargin)
 % The semiring is a required string defining the semiring to use, in the
 % form 'add.mult.type', where '.type' is optional.  For example,
 % '+.*.double' is the conventional semiring for numerical linear algebra,
-% used in MATLAB for C=A*B when A and B are double.  If A or B are
-% complex, then the '+.*.complex' semiring is used (once complex matrice
-% are supported).  GraphBLAS has many more semirings it can use.  See
-% 'help GrB.semiringinfo' for more details.
+% used in MATLAB for C=A*B when A and B are double.  If A or B are double
+% complex, then the '+.*.double complex' semiring is used. GraphBLAS has
+% many more semirings it can use.  See 'help GrB.semiringinfo' for more
+% details.
 %
 % A and B are the input matrices.  They are transposed on input if
 % desc.in0 = 'transpose' (which transposes A), and/or desc.in1 =
@@ -64,10 +64,10 @@ function Cout = mxm (varargin)
 %   C3 = E ; AB = A*B ; C3 (M) = C3 (M) + AB (M) ;
 %   norm (C2-C3,1)
 %
-% See also GrB.descriptorinfo, GrB.add, mtimes.
+% See also GrB.descriptorinfo, GrB.add, GrB/mtimes.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

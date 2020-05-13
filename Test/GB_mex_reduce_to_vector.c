@@ -24,7 +24,7 @@
     GrB_Vector_free (&w) ;              \
     GrB_Vector_free (&mask) ;           \
     GrB_Descriptor_free (&desc) ;       \
-    if (!reduce_is_complex)             \
+    if (!user_complex)                  \
     {                                   \
         GrB_Monoid_free (&reduce) ;     \
     }                                   \
@@ -46,7 +46,7 @@ void mexFunction
     GrB_Vector mask = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Monoid reduce = NULL ;
-    bool reduce_is_complex = false ;
+    bool user_complex = false ;
 
     // check inputs
     GB_WHERE (USAGE) ;
@@ -65,7 +65,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("w failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (w->type) ;
 
     // get mask (shallow copy)
     mask = GB_mx_mxArray_to_Vector (pargin [1], "mask", false, false) ;
@@ -83,25 +82,32 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
 
-    // get reduce operator; default: NOP, default class is class(w)
+    // get reduce operator
+    user_complex = (Complex != GxB_FC64) && (A->type == Complex) ;
     GrB_BinaryOp reduceop ;
     if (!GB_mx_mxArray_to_BinaryOp (&reduceop, pargin [3], "reduceop",
-        GB_NOP_opcode, cclass, A->type == Complex, A->type == Complex))
+        w->type, user_complex) || reduceop == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("reduceop failed") ;
     }
 
     // get the reduce monoid
-    if (reduceop == Complex_plus)
+    if (user_complex)
     {
-        reduce_is_complex = true ;
-        reduce = Complex_plus_monoid ;
-    }
-    else if (reduceop == Complex_times)
-    {
-        reduce_is_complex = true ;
-        reduce = Complex_times_monoid ;
+        if (reduceop == Complex_plus)
+        {
+            reduce = Complex_plus_monoid ;
+        }
+        else if (reduceop == Complex_times)
+        {
+            reduce = Complex_times_monoid ;
+        }
+        else
+        {
+            FREE_ALL ;
+            mexErrMsgTxt ("reduce failed") ;
+        }
     }
     else
     {
@@ -113,10 +119,11 @@ void mexFunction
         }
     }
 
-    // get accum; default: NOP, default class is class(C)
+    // get accum, if present
+    user_complex = (Complex != GxB_FC64) && (w->type == Complex) ;
     GrB_BinaryOp accum ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [2], "accum",
-        GB_NOP_opcode, cclass, w->type == Complex, reduce_is_complex))
+        w->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("accum failed") ;

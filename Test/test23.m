@@ -4,7 +4,7 @@ function test23(fulltest)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 if (nargin < 1)
     % do a short test, by default
@@ -68,9 +68,9 @@ for k0 = 1:size (problems,1) ;
         fprintf ('%s', op.opname) ;
 
         % try every operator class
-        for k2 = 1:length (classes)
-            op.opclass = classes {k2} ;
-            z = cast (1, op.opclass) ;
+        for k2 = 1:length (types.real)
+            op.optype = types.real {k2} ;
+            z = cast (1, op.optype) ;
             opint = isinteger (z) || islogical (z) ;
 
             % the non-boolean logical operators are not associative
@@ -78,37 +78,37 @@ for k0 = 1:size (problems,1) ;
                 isequal (op.opname, 'and')  || ...
                 isequal (op.opname, 'iseq')  || ...
                 isequal (op.opname, 'xor'))
-                if (~isequal (op.opclass, 'logical'))
+                if (~isequal (op.optype, 'logical'))
                     is_associative = false ;
                 end
             end
 
             if (fulltest)
-                k3list = 1:length(classes) ;
+                k3list = 1:length(types.real) ;
             else
                 k3list = unique ([k2 randperm(11,2)]) ;
             end
 
             % try every class for X
-            for k3 = k3list % 1:length (classes)
-                xclass = classes {k3} ;
+            for k3 = k3list % 1:length (types.real)
+                xclass = types.real {k3} ;
                 X = cast (Y, xclass) ;
                 fprintf ('.') ;
 
                 if (fulltest)
-                    k4list = 1:length(classes) ;
+                    k4list = 1:length(types.real) ;
                 else
                     k4list = unique ([k3 randperm(11,2)]) ;
                 end
 
                 % try every class for the result
-                for k4 = k4list % 1:length (classes)
-                    cclass = classes {k4} ;
+                for k4 = k4list % 1:length (types.real)
+                    cclass = types.real {k4} ;
 
                     % build the matrix in the natural order
                     % fprintf ('\n-------------------------------op: %s ', ...
                     % op.opname) ;
-                    % fprintf ('opclass: %s ', op.opclass) ;
+                    % fprintf ('optype: %s ', op.optype) ;
                     % fprintf ('xclass: %s ', xclass) ;
 
                     for A_is_csc   = 0:1
@@ -144,7 +144,7 @@ for k0 = 1:size (problems,1) ;
                                 end
                             else
                                 % floating point is approximately associative
-                                tol = norm (double (S2.matrix)) * eps (op.opclass) ;
+                                tol = norm (double (S2.matrix)) * eps (op.optype) ;
                                 ok = isequal (isnan (A.matrix), isnan (S2.matrix)) ;
                                 A.matrix (isnan (A.matrix)) = 0 ;
                                 S2.matrix (isnan (S2.matrix)) = 0 ;
@@ -159,7 +159,7 @@ for k0 = 1:size (problems,1) ;
 
                     % build a vector in the natural order (discard J)
                     % fprintf ('\n-------------------------------op: %s ', op) ;
-                    % fprintf ('opclass: %s ', opclass) ;
+                    % fprintf ('optype: %s ', optype) ;
                     % fprintf ('xclass: %s\n', xclass) ;
                     A = GB_mex_Vector_build (I, X, nrows, op, cclass) ;
                     % A is sparse but may have explicit zeros

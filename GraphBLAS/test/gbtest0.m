@@ -1,6 +1,9 @@
 function gbtest0
 %GBTEST0 test GrB.clear
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 GrB.clear
 
 assert (isequal (GrB.format, 'by col')) ;

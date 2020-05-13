@@ -28,12 +28,12 @@ function C = subsref (A, S)
 %   C = H (J, J)                % this is very fast
 %   E = H (1:1e13, 1:1e13)      % but this is not possible 
 %
-% See also subsasgn, GrB.subassign, GrB.assign, GrB.extract.
+% See also GrB/subsasgn, GrB.subassign, GrB.assign, GrB.extract.
 
 % FUTURE: add linear indexing.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (length (S) > 1)
     error ('GrB:unsupported', 'nested indexing not supported') ;

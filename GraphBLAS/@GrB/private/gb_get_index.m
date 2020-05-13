@@ -1,6 +1,11 @@
 function [I, whole] = gb_get_index (I_input)
 %GB_GET_INDEX helper function for subsref and subsasgn
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
+% TODO handle the case where I_input is a GrB matrix
+
 whole = isequal (I_input, {':'}) & ischar (I_input {1}) ;
 if (whole)
     % C (:)

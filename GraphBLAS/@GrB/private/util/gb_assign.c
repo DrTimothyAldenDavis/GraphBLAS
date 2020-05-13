@@ -92,7 +92,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     if (nstrings == 1)
     { 
-        accum = gb_mxstring_to_binop (String [0], ctype) ;
+        accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
     }
 
     //--------------------------------------------------------------------------

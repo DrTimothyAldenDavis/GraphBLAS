@@ -4,12 +4,12 @@ function [arg1, arg2] = bandwidth (G, uplo)
 % lo = bandwidth (G, 'lower') returns just the lower bandwidth.
 % hi = bandwidth (G, 'upper') returns just the upper bandwidth.
 %
-% See also isbanded, isdiag, istril, istriu.
+% See also GrB/isbanded, GrB/isdiag, GrB/istril, GrB/istriu.
 
 % FUTURE: this will be much faster when implemented in a mexFunction.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (GrB.entries (G) == 0)
     % matrix is empty

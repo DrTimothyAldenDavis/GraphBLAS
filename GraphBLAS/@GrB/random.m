@@ -18,13 +18,13 @@ function C = random (varargin)
 % Optional parameters may be used, in any order, after the A or m,n,d
 % arguments:
 %
-%   C = GrB.random (..., 'uniform') uses a uniform distribution
+%   C = GrB.random (..., 'uniform', ...) uses a uniform distribution
 %           of values, with entries greater than zero and less than one.
 %
-%   C = GrB.random (..., 'normal') uses a normal distribution, like
+%   C = GrB.random (..., 'normal', ...) uses a normal distribution, like
 %           the built-in MATLAB sprandn.
 %
-%   C = GrB.random (..., 'range', [lo hi]) changes the range of
+%   C = GrB.random (..., 'range', [lo hi], ...) changes the range of
 %           the random numbers.  If 'range' is not present, the default
 %           is double ([0 1]).  The class of [lo hi] determines the type
 %           of the random matrix C.  If [lo hi] is logical, all entries
@@ -33,19 +33,27 @@ function C = random (varargin)
 %           a double random value of x, it is scaled to (hi-lo)*x+lo.  If
 %           [lo hi] is integer, then x becomes floor ((hi-lo+1)*x + lo),
 %           which is then typecasted to the requested. integer type. This
-%           scaling applies to both the 'uniform' and 'normal' distribution.  
+%           scaling applies to both the 'uniform' and 'normal'
+%           distribution.  To construct a random complex matrix, pass in
+%           [lo hi] as a single complex or double complex parameter.
+%
 %           With the normal distribution, [lo hi] specifies the mean (lo)
 %           and the standard deviation (hi) of the final distribution.
 %
-%   C = GrB.random (A, 'symmetric') creates a symmetric matrix, like
+%   C = GrB.random (A, 'symmetric', ...) creates a symmetric matrix, like
 %           the built-in C = sprandsym (A), except that the default
 %           distribution is 'uniform'.  The input matrix A must be
 %           square.  Only tril(A) is used to construct C.
 %
-%   C = GrB.random (n, d, 'symmetric') creates an n-by-n symmetric
+%   C = GrB.random (n, d, 'symmetric', ...) creates an n-by-n symmetric
 %           matrix C, with a uniform distribution of values.  To create
 %           a matrix like C = srandsym (n,d) with the built-in MATLAB
 %           sprandym, use C = GrB.random (n, d, 'symmetric', 'normal').
+%           Note that the pair of arguments (m, n, ...) do not appear;
+%           just a single dimension (n, ...).
+%
+%   To construct a Hermitian matrix instead, use 'hermitian' in place of
+%   'symmetric'.
 %
 % The rc option of the built-in MATLAB sprand and sprandn is not supported.
 %
@@ -86,10 +94,10 @@ function C = random (varargin)
 %   [i,j,x] = find (C) ;
 %   histogram (x)
 %
-% See also sprand, sprandn, sprandsym, GrB/sprand, GrB/sprandn, GrB/sprandsym.
+% See also GrB/sprand, GrB/sprandn, GrB/sprandsym.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % defaults
 dist = 'uniform' ;
@@ -102,6 +110,7 @@ firstchar = nargin + 1 ;
 for k = 1:nargin
     arg = varargin {k} ;
     if (ischar (arg))
+        arg = lower (arg) ;
         firstchar = min (firstchar, k) ;
         switch arg
             case { 'uniform', 'normal' }
@@ -109,7 +118,7 @@ for k = 1:nargin
             case 'range'
                 range = varargin {k+1} ;
                 type = GrB.type (range) ;
-            case { 'unsymmetric', 'symmetric' }
+            case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
                 gb_error ('unknown option') ;
@@ -118,6 +127,7 @@ for k = 1:nargin
 end
 
 symmetric = isequal (sym_option, 'symmetric') ;
+hermitian = isequal (sym_option, 'hermitian') ;
 desc.base = 'zero-based' ;
 
 % construct the pattern
@@ -125,16 +135,17 @@ if (firstchar == 2)
     % C = GrB.random (A, ...) ;
     A = varargin {1} ;
     [m, n] = size (A) ;
-    if (symmetric && (m ~= n))
+    if ((symmetric || hermitian) && (m ~= n))
         gb_error ('input matrix must be square') ;
     end
     [I, J] = GrB.extracttuples (A, desc) ;
     e = length (I) ;
-elseif (firstchar == (4 - symmetric))
+elseif (firstchar == (4 - (symmetric || hermitian)))
     % C = GrB.random (m, n, d, ...)
     % C = GrB.random (n, d, ... 'symmetric')
+    % C = GrB.random (n, d, ... 'hermitian')
     m = varargin {1} ;
-    if (symmetric)
+    if (symmetric || hermitian)
         n = m ;
         d = varargin {2} ;
     else
@@ -155,7 +166,8 @@ else
 end
 
 % construct the values
-if (islogical (range))
+if (isequal (type, 'logical'))
+    % X is logical: just pass a single logical 'true' to GrB.build
     X = true ;
 else
     if (isequal (dist, 'uniform'))
@@ -166,10 +178,27 @@ else
     if (~isempty (range))
         lo = min (double (range)) ;
         hi = max (double (range)) ;
-        if (isinteger (range))
+        if (contains (type, 'int'))
+            % X is signed or unsigned integer
             X = cast (floor ((hi - lo + 1) * X + lo), type) ;
-        else
+        elseif (~contains (type, 'complex'))
+            % X is single or double real
             X = cast ((hi - lo) * X + lo, type) ;
+        else
+            % X is complex: compute random imaginary values
+            if (isequal (dist, 'uniform'))
+                Y = rand (e, 1) ;
+            else
+                Y = randn (e, 1) ;
+            end
+            X = (hi - lo) * X + lo ;
+            Y = (hi - lo) * Y + lo ;
+            if (isequal (type, 'single complex'))
+                % X is single complex
+                X = single (X) ;
+                Y = single (Y) ;
+            end
+            X = complex (X, Y) ;
         end
     end
 end
@@ -177,8 +206,11 @@ end
 % build the matrix
 C = GrB.build (I, J, X, m, n, '2nd', desc) ;
 
-% make it symmetric, if requested
+% make it symmetric or hermitian, if requested
 if (symmetric)
-    C = tril (C) + tril (C, -1)' ;
+    C = tril (C) + tril (C, -1).' ;
+elseif (hermitian)
+    L = tril (C, -1) ;
+    C = L + L' + real (GrB.select ('diag', C, 0)) ;
 end
 

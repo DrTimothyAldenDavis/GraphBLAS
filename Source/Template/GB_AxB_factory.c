@@ -10,7 +10,7 @@
 // This is used by GB_AxB_Gustavson_builtin.c, GB_AxB_dot.c and GB_AxB_heap.c
 // to create built-in versions of sparse matrix-matrix multiplication.  The
 // #include'ing file defines the GB_AxB_WORKER macro, and mult_opcode,
-// add_opcode, xycode, and zcode.
+// add_opcode, xcode, ycode, and zcode.
 
 // Two 2nd level switch factories are used:
 
@@ -40,6 +40,7 @@
             // 44 semirings: (min,max,plus,times) for non-boolean, and
             // (or,and,xor,eq) for boolean
             #define GB_MULT_NAME _first
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -51,6 +52,7 @@
             // 44 semirings: (min,max,plus,times) for non-boolean, and
             // (or,and,xor,eq) for boolean
             #define GB_MULT_NAME _second
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -65,6 +67,7 @@
             // (or,and,xor,eq) for boolean
             #define GB_MULT_IS_PAIR_OPERATOR
             #define GB_MULT_NAME _pair
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             #undef  GB_MULT_IS_PAIR_OPERATOR
             break ;
@@ -99,6 +102,7 @@
             // MAX == PLUS == OR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _plus
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -110,6 +114,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _minus
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -121,6 +126,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _rminus
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -132,6 +138,7 @@
             // MIN == TIMES == AND for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _times
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -144,6 +151,7 @@
             // See Source/GB.h for discusion on integer division
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _div
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 
@@ -156,6 +164,7 @@
             // See Source/GB.h for discusion on integer division
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _rdiv
+            #define GB_COMPLEX
             #include "GB_AxB_type_factory.c"
             break ;
 

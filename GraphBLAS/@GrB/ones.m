@@ -4,10 +4,10 @@ function C = ones (varargin)
 % m-by-n GraphBLAS matrix C with all entries equal to one.  C has the
 % same type as G.
 %
-% See also zeros, false, true.
+% See also GrB/zeros, GrB/false, GrB/true.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 C = GrB.subassign (zeros (varargin {:}), 1) ;
 

@@ -157,10 +157,10 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     #ifndef GBCOMPACT
 
         GB_Opcode opcode ;
-        GB_Type_code xycode, zcode ;
+        GB_Type_code xcode, ycode, zcode ;
 
         if (GB_binop_builtin (A->type, A_is_pattern, B->type, A_is_pattern, op,
-            false, &opcode, &xycode, &zcode) && ccode == zcode)
+            false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
         { 
             #include "GB_binop_factory.c"
             ASSERT (done) ;

@@ -44,12 +44,12 @@ end
 % and can be any valid GraphBLAS binary operator.
 [mult multclass zclass] = GB_spec_operator (semiring.multiply, semiring.class);
 multiply_op.opname =  mult ;
-multiply_op.opclass = multclass ;
+multiply_op.optype = multclass ;
 
 % create the add operator
-[add_opname add_opclass] = GB_spec_operator (semiring.add, zclass) ;
+[add_opname add_optype] = GB_spec_operator (semiring.add, zclass) ;
 add_op.opname = add_opname ;
-add_op.opclass = add_opclass ;
+add_op.optype = add_optype ;
 
 % get the identity of the add operator
 identity = GB_spec_identity (add_op) ;
@@ -108,7 +108,7 @@ switch mult
     case 'le'         % z = (x <= y)
         ;
 
-    % 3 boolean ops, class of x, y, z are semiring.class (not just logical)
+    % 3 boolean ops, class of x, y, z are semiring.class
     case 'or'         % z = x || y
         ;
     case 'and'        % z = x && y
@@ -122,7 +122,7 @@ end
 
 zbool = isequal (zclass, 'logical') ;
 
-% min, max, plus, times, any monoids: valid for all 11 classes
+% min, max, plus, times, any monoids: valid for all 11 real types
 % or, and, xor, eq monoids:  valid only for logical
 switch add_opname
     case 'min'

@@ -6,12 +6,12 @@ function C = empty (arg1, arg2)
 % one of m or n must be zero.
 %
 % All matrices are constructed with the 'double' type.  Use GrB (m,n,type)
-% to construct empty single, int*, uint*, and logical m-by-n matrices.
+% to construct empty matrices of with different types.
 %
 % See also GrB.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 m = 0 ;
 n = 0 ;

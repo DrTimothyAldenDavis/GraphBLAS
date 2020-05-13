@@ -49,7 +49,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    mxClassID aclass = GB_mx_Type_to_classID (A->type) ;
 
     // output matrix has same type as input matrix
     GrB_Type ctype = A->type ;

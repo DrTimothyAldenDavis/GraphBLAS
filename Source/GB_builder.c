@@ -1264,11 +1264,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
             GB_cast_function cast_T_to_X = GB_cast_factory (xcode, tcode) ;
             GB_cast_function cast_Z_to_T = GB_cast_factory (tcode, zcode) ;
 
-            ASSERT (scode <= GB_FP64_code) ;
-            ASSERT (tcode <= GB_FP64_code) ;
-            ASSERT (xcode <= GB_FP64_code) ;
-            ASSERT (ycode <= GB_FP64_code) ;
-            ASSERT (zcode <= GB_FP64_code) ;
+            ASSERT (scode <= GB_FC64_code) ;
+            ASSERT (tcode <= GB_FC64_code) ;
+            ASSERT (xcode <= GB_FC64_code) ;
+            ASSERT (ycode <= GB_FC64_code) ;
+            ASSERT (zcode <= GB_FC64_code) ;
 
             // Tx [p] = (ttype) S [k], with typecasting
             #undef  GB_CAST_ARRAY_TO_ARRAY

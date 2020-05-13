@@ -61,7 +61,7 @@ void mexFunction
 
     // get the op (always boolean)
     if (!GB_mx_mxArray_to_BinaryOp (&reduceop, pargin [1], "reduceop",
-        GB_NOP_opcode, mxLOGICAL_CLASS, false, false))
+        GrB_BOOL, false) || reduceop == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("reduceop failed") ;
@@ -105,7 +105,7 @@ void mexFunction
     }
 
     // return result to MATLAB as a boolean scalar
-    pargout [0] = mxCreateNumericMatrix (1, 1, mxLOGICAL_CLASS, mxREAL) ;
+    pargout [0] = GB_mx_create_full (1, 1, GrB_BOOL) ;
     GB_void *p = mxGetData (pargout [0]) ;
     memcpy (p, &result, sizeof (bool)) ;
 

@@ -9,13 +9,14 @@ function C = expand (scalar, S)
 %
 % See also GrB.assign.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% FUTURE: as much as possible, replace scalar expansion with binary operators
-% used in a unary apply, when it becomes part of the C API.
+% FUTURE: as much as possible, replace scalar expansion with binary
+% operators used in a unary apply, when they are added to
+% SuiteSparse:GraphBLAS from the v1.3 C API.
 
 [m, n] = size (S) ;
 desc.mask = 'structure' ;
-C = GrB.assign (GrB (m, n, GrB.type (S)), S, scalar, desc) ;
+C = GrB.assign (GrB (m, n, GrB.type (scalar)), S, scalar, desc) ;
 

@@ -40,9 +40,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
+    GrB_Matrix T = NULL ;
     if (type != xtype)
     { 
-        GrB_Matrix T = gb_typecast (type, GxB_BY_COL, X) ;
+        T = gb_typecast (type, GxB_BY_COL, X) ;
         OK (GrB_Matrix_free (&X)) ;
         X = T ;
     }

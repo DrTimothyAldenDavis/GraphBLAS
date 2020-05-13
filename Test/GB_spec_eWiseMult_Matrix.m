@@ -43,8 +43,7 @@ if (Btrans)
 end
 
 % T = A.*B, with typecasting
-[nrows, ncols] = size (A.matrix) ;
-T.matrix = zeros (nrows, ncols, zclass) ;
+T.matrix = GB_spec_zeros (size (A.matrix), zclass) ;
 
 % apply the mult to entries in the intersection of A and B
 p = A.pattern & B.pattern ;
@@ -58,7 +57,7 @@ T.matrix (p) = GB_spec_op (mult, A1, B1) ;
 % the pattern of T is the intersection of both A and B
 T.pattern = p ;
 
-assert (isequal (zclass, class (T.matrix))) ;
+assert (isequal (zclass, GB_spec_type (T.matrix))) ;
 T.class = zclass ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result

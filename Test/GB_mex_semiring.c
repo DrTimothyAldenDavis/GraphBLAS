@@ -35,8 +35,7 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    GB_mx_mxArray_to_Semiring (&semiring, pargin [0], "semiring",
-        mxDOUBLE_CLASS) ;
+    GB_mx_mxArray_to_Semiring (&semiring, pargin [0], "semiring", GrB_FP64) ;
 
     GrB_Info info = GB_Semiring_check (semiring, "semiring", GxB_COMPLETE,
         NULL, NULL) ;

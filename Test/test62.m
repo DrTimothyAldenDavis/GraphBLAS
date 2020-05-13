@@ -8,18 +8,20 @@ fprintf ('\n ------------ testing GrB_apply\n') ;
 
 rng ('default')
 
-[accum_ops, unary_ops, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, unary_ops, ~, types, ~, ~] = GB_spec_opsall ;
+ops = [unary_ops.all unary_ops.real] ;
+accum_ops = [binops.all binops.real] ;
 
 dt = struct ('inp0', 'tran') ;
 
 % class of the matrix C
-for k1 = 1:length (classes)
-    cclass = classes {k1}  ;
+for k1 = 1:length (types.real)
+    cclass = types.real {k1}  ;
     fprintf ('\n%s', cclass) ;
 
     % class of the matrix A
-    for k2 = 1:length (classes)
-        aclass = classes {k2}  ;
+    for k2 = 1:length (types.real)
+        aclass = types.real {k2} ;
 
         % create a matrix
         for m = [1 10 25]
@@ -50,19 +52,18 @@ for k1 = 1:length (classes)
                 Cin2.matrix = sprandn (m*n, 1, 0.1) ;
                 Cin2.class = cclass ;
 
-
                 % unary operator
-                for k3 = 1:length(unary_ops)
-                    unary_op = unary_ops {k3}  ;
-                    nclasses = 1;length (classes) ;
+                for k3 = 1:length(ops)
+                    unary_op = ops {k3}  ;
+                    ntypes = 1;length (types.real) ;
                     % fprintf ('unary: %s\n', unary_op) ;
                     % unary operator class
-                    for k4 = nclasses
+                    for k4 = ntypes
                         clear unary
                         if (~isempty (unary_op))
-                            unary_class = classes {k4}  ;
+                            unary_class = types.real {k4}  ;
                             unary.opname = unary_op ;
-                            unary.opclass = unary_class ;
+                            unary.optype = unary_class ;
                         else
                             unary = '' ;
                             unary_class = '' ;
@@ -72,18 +73,18 @@ for k1 = 1:length (classes)
                         for k5 = 0:length(accum_ops)
                             if (k5 == 0)
                                 accum_op = ''  ;
-                                nclasses = 1 ;
+                                ntypes = 1 ;
                             else
                                 accum_op = accum_ops {k5}  ;
-                                nclasses = 1;length (classes) ;
+                                ntypes = 1;length (types.real) ;
                             end
                             % accum operator class
-                            for k6 = nclasses
+                            for k6 = ntypes
                                 clear accum
                                 if (~isempty (accum_op))
-                                    accum_class = classes {k6}  ;
+                                    accum_class = types.real {k6}  ;
                                     accum.opname = accum_op ;
-                                    accum.opclass = accum_class ;
+                                    accum.optype = accum_class ;
                                 else
                                     accum = '' ;
                                     accum_class = '' ;

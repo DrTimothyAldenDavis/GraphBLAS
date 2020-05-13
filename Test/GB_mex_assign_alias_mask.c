@@ -49,7 +49,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("C failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // get A (shallow copy)
     A = GB_mx_mxArray_to_Matrix (pargin [1], "A input", false, true) ;

@@ -5,8 +5,8 @@ function C = zeros (varargin)
 %
 % See also GrB/ones, GrB/false, GrB/true.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = varargin {end} ;
 if (nargin == 4)

@@ -2,12 +2,11 @@ function C = and (A, B)
 %& logical AND of GraphBLAS matrices.
 % C = (A & B) is the element-by-element logical AND of A and B.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
-% GraphBLAS and MATLAB matrices may be combined.
 %
-% See also GrB/or, GrB/xor.
+% See also GrB/or, GrB/xor, GrB/not.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isscalar (A))
     if (isscalar (B))

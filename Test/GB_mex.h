@@ -61,23 +61,20 @@ void GB_mx_abort (void) ;               // assertion failure
 
 bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 (
-    GrB_BinaryOp *handle,               // the binary op
+    GrB_BinaryOp *op_handle,            // the binary op
     const mxArray *op_matlab,           // MATLAB version of op
     const char *name,                   // name of the argument
-    const GB_Opcode default_opcode,     // default operator
-    const mxClassID default_opclass,    // default operator class
-    const bool XisComplex,              // true if X is complex
-    const bool YisComplex               // true if X is complex
+    const GrB_Type default_optype,      // default operator type
+    const bool user_complex             // if true, use user-defined Complex
 ) ;
 
 bool GB_mx_mxArray_to_UnaryOp           // true if successful
 (
-    GrB_UnaryOp *handle,                // returns GraphBLAS version of op
+    GrB_UnaryOp *op_handle,             // the unary op
     const mxArray *op_matlab,           // MATLAB version of op
     const char *name,                   // name of the argument
-    const GB_Opcode default_opcode,     // default operator
-    const mxClassID default_opclass,    // default operator class
-    const bool XisComplex               // true if X is complex
+    const GrB_Type default_optype,      // default operator type
+    const bool user_complex             // if true, use user-defined Complex
 ) ;
 
 bool GB_mx_mxArray_to_SelectOp          // true if successful
@@ -87,29 +84,22 @@ bool GB_mx_mxArray_to_SelectOp          // true if successful
     const char *name                    // name of the argument
 ) ;
 
-bool GB_mx_string_to_BinaryOp           // true if successful, false otherwise
+bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
 (
-    GrB_BinaryOp *handle,               // the binary op
-    const GB_Opcode default_opcode,     // default operator
-    const mxClassID default_opclass,    // default operator class
-    const mxArray *opname_mx,           // MATLAB string with operator name
-    const mxArray *opclass_mx,          // MATLAB string with operator class
-    GB_Opcode *opcode_return,           // opcode
-    mxClassID *opclass_return,          // opclass
-    const bool XisComplex,              // true if X is complex
-    const bool YisComplex               // true if X is complex
+    GrB_BinaryOp *op_handle,        // the binary op
+    const GrB_Type default_optype,  // default operator type
+    const mxArray *opname_mx,       // MATLAB string with operator name
+    const mxArray *optype_mx,       // MATLAB string with operator type
+    const bool user_complex         // if true, use user-defined Complex op
 ) ;
 
 bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
 (
-    GrB_UnaryOp *handle,                // the unary op
-    const GB_Opcode default_opcode,     // default operator
-    const mxClassID default_opclass,    // default operator class
+    GrB_UnaryOp *op_handle,             // the unary op
+    const GrB_Type default_optype,      // default operator type
     const mxArray *opname_mx,           // MATLAB string with operator name
-    const mxArray *opclass_mx,          // MATLAB string with operator class
-    GB_Opcode *opcode_return,           // opcode
-    mxClassID *opclass_return,          // opclass
-    const bool XisComplex               // true if X is complex
+    const mxArray *optype_mx,           // MATLAB string with operator type
+    const bool user_complex             // true if X is complex
 ) ;
 
 mxArray *GB_mx_Vector_to_mxArray    // returns the MATLAB mxArray
@@ -151,35 +141,18 @@ GrB_Vector GB_mx_mxArray_to_Vector     // returns GraphBLAS version of V
                         // if true, a 0-by-0 matrix is returned.
 ) ;
 
-mxClassID GB_mx_string_to_classID       // returns the MATLAB class ID
+GrB_Type GB_mx_Type                    // returns a GraphBLAS type
 (
-    const mxClassID class_default,      // default if string is NULL
-    const mxArray *class_mx             // string with class name
+    const mxArray *X                   // MATLAB matrix to query
 ) ;
 
-mxArray *GB_mx_classID_to_string        // returns a MATLAB string
-(
-    const mxClassID classID             // MATLAB class ID to convert to string
-) ;
-
-GrB_Type GB_mx_classID_to_Type          // returns a GraphBLAS type
-(
-    const mxClassID xclass              // MATLAB class ID to convert
-) ;
-
-mxClassID GB_mx_Type_to_classID         // returns a MATLAB class ID
-(
-    const GrB_Type type                 // GraphBLAS type to convert
-) ;
-
-void GB_mx_mxArray_to_array     // convert mxArray to array
+void GB_mx_mxArray_to_array    // convert mxArray to array
 (
     const mxArray *Xmatlab,     // input MATLAB array
     // output:
-    GB_void **X,                // pointer to numerical values
+    GB_void **X,                // pointer to numerical values (shallow)
     int64_t *nrows,             // number of rows of X
     int64_t *ncols,             // number of columns of X
-    mxClassID *xclass,          // MATLAB class of X
     GrB_Type *xtype             // GraphBLAS type of X, NULL if error
 ) ;
 
@@ -197,12 +170,12 @@ bool GB_mx_mxArray_to_Descriptor    // true if successful, false otherwise
     const char *name                // name of the descriptor
 ) ;
 
-bool GB_mx_mxArray_to_Semiring          // true if successful
+bool GB_mx_mxArray_to_Semiring         // true if successful
 (
     GrB_Semiring *handle,               // the semiring
     const mxArray *semiring_matlab,     // MATLAB version of semiring
     const char *name,                   // name of the argument
-    const mxClassID default_class       // default operator class
+    const GrB_Type default_optype       // default operator type
 ) ;
 
 GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
@@ -241,24 +214,6 @@ void GB_mx_put_global
 (   
     bool cover,
     GrB_Desc_Value AxB_method_used
-) ;
-
-void GB_mx_complex_merge    // merge real/imag parts of MATLAB array
-(
-    int64_t n,
-    // output:
-    double *X,          // size 2*n, real and imaginary parts interleaved
-    // input:
-    const mxArray *Y    // MATLAB array with n elements
-) ;
-
-void GB_mx_complex_split    // split complex array to real/imag part for MATLAB
-(
-    int64_t n,
-    // input:
-    const double *X,    // size 2*n, real and imaginary parts interleaved
-    // output:
-    mxArray *Y          // MATLAB array with n elements
 ) ;
 
 bool GB_mx_same     // true if arrays X and Y are the same
@@ -312,6 +267,24 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
     GrB_Matrix arg1,        // first possible alias
     char *arg2_name,        // name of 2nd possible alias
     GrB_Matrix arg2         // second possible alias
+) ;
+
+mxArray *GB_mx_create_full      // return new MATLAB full matrix
+(
+    const GrB_Index nrows,
+    const GrB_Index ncols,
+    GrB_Type type               // type of the matrix to create
+) ;
+
+mxArray *GB_mx_Type_to_mxstring        // returns a MATLAB string
+(
+    const GrB_Type type
+) ;
+
+GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
+(
+    const mxArray *type_mx,         // string with type name
+    const GrB_Type default_type     // default type if string empty
 ) ;
 
 //------------------------------------------------------------------------------

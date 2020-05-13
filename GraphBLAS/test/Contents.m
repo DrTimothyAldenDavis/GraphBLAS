@@ -1,6 +1,6 @@
-% SuiteSparse/GraphBLAS/GraphBLAS/test: tests for GraphBLAS MATLAB interface
+% SuiteSparse/GraphBLAS/GraphBLAS/test: testing GraphBLAS MATLAB interface
 %
-%  gbtest    - test GraphBLAS MATLAB interface (runs all tests listed below)
+%  gbtest    - test GraphBLAS MATLAB interface (runs all tests below)
 %
 %  gbtest0   - test GrB.clear
 %  gbtest1   - test GrB
@@ -35,7 +35,7 @@
 %  gbtest30  - test colon notation
 %  gbtest31  - test GrB and casting
 %  gbtest32  - test nonzeros
-%  gbtest33  - test spones, numel, nzmax, size, length, isempty, issparse, ...
+%  gbtest33  - test spones, numel, nzmax, size, length, is*, ...
 %  gbtest34  - test repmat
 %  gbtest35  - test reshape
 %  gbtest36  - test abs, sign
@@ -76,16 +76,19 @@
 %  gbtest71  - test GrB.selectopinfo
 %  gbtest72  - test any-pair semiring
 %  gbtest73  - test GrB.normdiff
+%  gbtest80  - test complex division and power
+%  gbtest81  - test complex operators
+%  gbtest82  - test complex A*B, A'*B, A*B', A'*B', A+B
 %  gbtest97  - test A*x performance
 %  gbtest98  - test A'*x performance
 %  gbtest99  - test GrB.bfs and plot (graph (G))
 %
 % Utilities:
 %
-%  gbtest_binops - return a cell array of strings, listing all binary operators
+%  gbtest_binops - list of all binary operators
 %  gbtest_types  - return a cell array of strings, listing all types
 %  gbtest_eq     - tests if A and B are equal, after dropping zeros.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 

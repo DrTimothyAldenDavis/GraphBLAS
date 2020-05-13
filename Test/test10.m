@@ -6,7 +6,7 @@ function test10
 
 fprintf ('\nquick GrB_apply tests\n') ;
 
-[~, unary_ops, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, unary_ops, ~, types, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 
@@ -15,8 +15,8 @@ n = 4 ;
 dt = struct ('inp0', 'tran') ;
 dr = struct ('outp', 'replace') ;
 
-for k1 = 1:length(classes)
-    aclass = classes {k1} ;
+for k1 = 1:length(types.real)
+    aclass = types.real {k1} ;
     fprintf ('%s: ', aclass) ;
 
     A   = GB_spec_random (m, n, 0.3, 100, aclass) ;
@@ -45,13 +45,14 @@ for k1 = 1:length(classes)
     B.is_csc    = A_is_csc ; B.is_hyper    = A_is_hyper ;
     Mask.is_csc = M_is_csc ; Mask.is_hyper = M_is_hyper ;
 
-    for k2 = 1:length(unary_ops)
-        op.opname = unary_ops {k2} ;
+    ops = [unary_ops.all unary_ops.real] ;
+    for k2 = 1:length(ops)
+        op.opname = ops {k2} ;
         % fprintf ('%s ', op.opname) ;
         fprintf ('.') ;
 
-        for k3 = 1:length(classes)
-            op.opclass = classes {k3} ;
+        for k3 = 1:length(types.real)
+            op.optype = types.real {k3} ;
 
             % no mask
             C1 = GB_spec_apply (Cin, [], [], op, A, []) ;

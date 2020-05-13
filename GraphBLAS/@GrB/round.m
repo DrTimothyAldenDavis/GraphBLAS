@@ -3,18 +3,18 @@ function C = round (G)
 % C = round (G) rounds the entries in the GraphBLAS matrix G to the
 % nearest integers.
 %
-% See also ceil, floor, fix.
+% Note: the additional parameters of the built-in MATLAB round function,
+% round(x,n) and round (x,n,type), are not supported.
+%
+% See also GrB/ceil, GrB/floor, GrB/fix.
 
-% FUTURE: this will be much faster as a mexFunction.
+% FUTURE: round (x,n) and round (x,n,type)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isfloat (G) && GrB.entries (G) > 0)
-    [m, n] = size (G) ;
-    desc.base = 'zero-based' ;
-    [i, j, x] = GrB.extracttuples (G, desc) ;
-    C = GrB.build (i, j, round (x), m, n, desc) ;
+    C = GrB.apply ('round', G) ;
 else
     C = G ;
 end

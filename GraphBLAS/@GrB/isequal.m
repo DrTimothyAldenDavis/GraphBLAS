@@ -15,6 +15,9 @@ function s = isequal (A, B)
 %
 % See also isequal, GrB/eq, isequaln.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 if (isa (A, 'GrB'))
     A = A.opaque ;
 end

@@ -1,14 +1,14 @@
 function L = laplacian (A, type, check)
 %GRB.LAPLACIAN Graph Laplacian matrix
-% L = laplacian (A) is the graph Laplacian of the matrix A.  spones(A) must be
-% symmetric with no diagonal entries. The diagonal of L is the degree of the
-% nodes.  That is, L(j,j) = sum (spones (A (:,j))).  For off-diagonal entries,
-% L(i,j) = L(j,i) = -1 if the edge (i,j) exists in A.
+% L = laplacian (A) is the graph Laplacian of the matrix A.  spones(A) must
+% be symmetric with no diagonal entries. The diagonal of L is the degree of
+% the nodes.  That is, L(j,j) = sum (spones (A (:,j))).  For off-diagonal
+% entries, L(i,j) = L(j,i) = -1 if the edge (i,j) exists in A.
 %
-% The type of L defaults to double.  With a second argument, the type of L can
-% be specified, as L = laplacian (A,type); type may be 'double', 'single',
-% 'int8', 'int16', 'int32', or 'int64'.  Be aware that integer overflow may
-% occur with the smaller integer types.
+% The type of L defaults to double.  With a second argument, the type of L
+% can be specified, as L = laplacian (A,type); type may be 'double',
+% 'single', 'int8', 'int16', 'int32', or 'int64'.  Be aware that integer
+% overflow may occur with the smaller integer types.
 %
 % To check the input matrix, use GrB.laplacian (A, 'double', 'check') ;
 %
@@ -21,8 +21,8 @@ function L = laplacian (A, type, check)
 %
 % See also graph/laplacian.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin < 2)
     type = 'double' ;

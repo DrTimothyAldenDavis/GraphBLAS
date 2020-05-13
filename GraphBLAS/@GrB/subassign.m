@@ -50,10 +50,10 @@ function Cout = subassign (varargin)
 %
 % Refer to GrB.assign for a description of the other input/outputs.
 %
-% See also GrB.assign, subsasgn.
+% See also GrB.assign, GrB/subsasgn.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

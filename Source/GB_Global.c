@@ -130,7 +130,6 @@ typedef struct
     //--------------------------------------------------------------------------
 
     bool print_one_based ;          // if true, print 1-based indices
-    int print_format ;              // for printing values
 
 }
 GB_Global_struct ;
@@ -181,7 +180,6 @@ GB_Global_struct GB_Global =
 
     // for MATLAB interface only
     .print_one_based = false,       // if true, print 1-based indices
-    .print_format = 0               // for printing values
 } ;
 
 //==============================================================================
@@ -610,17 +608,5 @@ GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;
-}
-
-GB_PUBLIC   // accessed by the MATLAB interface only
-void GB_Global_print_format_set (int f)
-{ 
-    GB_Global.print_format = f ;
-}
-
-GB_PUBLIC   // accessed by the MATLAB interface only
-int GB_Global_print_format_get (void)
-{ 
-    return (GB_Global.print_format) ;
 }
 

@@ -65,6 +65,8 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test151',t) ; % test bitwise operators
+
 logstat ('test07b',t) ; % quick test GB_mex_assign
 logstat ('test01',t) ;  % error handling
 logstat ('test01',s) ;  % error handling

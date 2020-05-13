@@ -1,12 +1,13 @@
 function Y = dnn (W, bias, Y0)
 %GRB.DNN Sparse deep neural network in GraphBLAS.
-% Performs ReLU inference using input feature vector(s) Y0, DNN weights W, and
-% bias vectors.  The input features are in a matrix Y0 of size nfeatures-by-
-% nneurons.  The DNN weights W is a cell array with W{k} being the kth layer of
-% the DNN, so that the number of layers is nlayers = length (W).  W{k} is a
-% matrix of size nneurons-by-nneurons.  The bais variable is a cell array of
-% length nlayers.  Each bias{k} is a diagonal matrix of size nneurons-by-
-% nneurons, which gives the bias values of each neuron in the kth layer.
+% Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
+% and bias vectors.  The input features are in a matrix Y0 of size
+% nfeatures-by- nneurons.  The DNN weights W is a cell array with W{k}
+% being the kth layer of the DNN, so that the number of layers is nlayers =
+% length (W).  W{k} is a matrix of size nneurons-by-nneurons.  The bais
+% variable is a cell array of length nlayers.  Each bias{k} is a diagonal
+% matrix of size nneurons-by- nneurons, which gives the bias values of each
+% neuron in the kth layer.
 %
 % Usage:
 %
@@ -16,9 +17,9 @@ function Y = dnn (W, bias, Y0)
 % is significantly faster.  For the 2019 GraphChallenge, all matrices can be
 % 'single', and the same results are obtained.
 %
-% In the MATLAB reference implementation, the bias{k} is a row vector of size
-% 1-by-nneurons.  The MATLAB reference inputs can be converted to GraphBLAS
-% matrices with the following code:
+% In the MATLAB reference implementation, the bias{k} is a row vector of
+% size 1-by-nneurons.  The MATLAB reference inputs can be converted to
+% GraphBLAS matrices with the following code:
 %
 %   d = struct ('format', 'by row') ;
 %   n = size (Y0, 2) ;
@@ -33,8 +34,8 @@ function Y = dnn (W, bias, Y0)
 %
 % See also dnn_matlab, dnn_mat2gb.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 Y = Y0 ;
 for k = 1:length(W)

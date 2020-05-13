@@ -14,10 +14,6 @@ function [z tol] = GB_user_op (op, x, y)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (~GB_mex_have_complex)
-    error ('complex type not available') ;
-end
-
 tol = false ;
 
 switch op
@@ -26,17 +22,19 @@ switch op
     % binary operators
     %---------------------------------------------------------------------------
 
+    % TODO: add pow
+
     % x,y,z all complex:
     case 'first'
         z = x ;
     case 'second'
         z = y ;
     case 'pair'
-        z = ones (size (x), class (x)) ;
-    case 'min'
-        z = min (x,y,'includenan') ;
-    case 'max'
-        z = max (x,y,'includenan') ;
+        z = GB_spec_ones (size (x), GB_spec_type (x)) ;
+%   case 'min'
+%       z = min (x,y,'includenan') ;
+%   case 'max'
+%       z = max (x,y,'includenan') ;
     case 'plus'
         z = x+y ;
     case 'minus'
@@ -107,14 +105,13 @@ switch op
 
     % x,z complex
     case 'one'
-        [m n] = size (x) ;
-        z = complex (ones (m,n),0) ;
+        z = GB_spec_ones (size (x), GB_spec_type (x))  ;
     case 'identity'
         z = x ;
     case 'ainv'
         z = -x ;
     case 'abs'
-        z = complex (abs (x), 0) ;
+        z = abs (x) ;
         tol = true ;
     case 'minv'
         z = 1./x ;
@@ -122,8 +119,8 @@ switch op
             z (isnan (z)) = complex (nan,nan) ;
         end
         tol = true ;
-    case 'not'
-        z = complex (double (~(x ~= 0)), 0) ;
+%   case 'not'
+%       z = complex (double (~(x ~= 0)), 0) ;
     case 'conj'
         z = conj (x) ;
 
@@ -132,18 +129,19 @@ switch op
         z = real (x) ;
     case 'imag'
         z = imag (x) ;
-    case 'cabs'
-        z = abs (x) ;
-        tol = true ;
-    case 'angle'
+    case { 'angle', 'carg' }
         z = angle (x) ;
         tol = true ;
 
-    % x real, z complex
-    case 'complex_real'
-        z = complex (x,0) ;
-    case 'complex_imag'
-        z = complex (0,x) ;
+%   case 'abs'
+%       complex (abs (x), 0) ;
+%   case 'cabs'
+%       z = abs (x) ;
+%       tol = true ;
+%   case 'complex_real'
+%       z = complex (x,0) ;
+%   case 'complex_imag'
+%       z = complex (0,x) ;
 
     otherwise
         error ('unrecognized complex operator')

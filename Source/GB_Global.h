@@ -122,10 +122,6 @@ GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_print_one_based_set (bool onebased) ;
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool     GB_Global_print_one_based_get (void) ;
-GB_PUBLIC   // accessed by the MATLAB interface only
-void     GB_Global_print_format_set (int print_format) ;
-GB_PUBLIC   // accessed by the MATLAB interface only
-int      GB_Global_print_format_get (void) ;
 
 #endif
 

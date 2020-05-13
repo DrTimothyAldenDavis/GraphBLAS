@@ -12,8 +12,9 @@ function s = tricount (A, arg2, arg3)
 % the degrees first.
 %
 % See also GrB.ktruss, GrB.entries.
-%
-% ADDED: sort if warranted.  See LAGraph_tricount.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n] = size (A) ;
 if (m ~= n)
@@ -66,10 +67,8 @@ if (n > 1000 && GrB.entries (A) >= 10*n)
     sample = d (randperm (n, 1000)) ;
     dmean = full (mean (sample)) ;
     dmed  = full (median (sample)) ;
-    % fprintf ('mean degree: %g median: %g\n', dmean, dmed) ;
     if (dmean > 4 * dmed)
         % sort if the average degree is very high compared to the median
-        % fprintf ('sorting A first\n') ;
         [~, p] = sort (d, 'descend') ;
         A = A (p,p) ;
         clear p

@@ -31,11 +31,11 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (n > GB_INDEX_MAX)
+    if (n > GxB_INDEX_MAX)
     { 
         // problem too large
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: n "GBu" exceeds "GBu, n, GB_INDEX_MAX))) ;
+            "problem too large: n "GBu" exceeds "GBu, n, GxB_INDEX_MAX))) ;
     }
 
     //--------------------------------------------------------------------------

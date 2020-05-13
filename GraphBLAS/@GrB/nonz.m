@@ -47,10 +47,10 @@ function result = nonz (A, varargin)
 %   GrB.nonz (S)
 %   GrB.nonz (S, 'list')
 %
-% See also GrB.entries, nnz, GrB/nnz, nonzeros, GrB/nonzeros, GrB.prune.
+% See also GrB.entries, GrB/nnz, GrB/nonzeros, GrB.prune.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % issparse (G) is overloaded for a GraphBLAS matrix, and always returns
 % true.  Here, we need to know if A is truly a MATLAB sparse matrix, not

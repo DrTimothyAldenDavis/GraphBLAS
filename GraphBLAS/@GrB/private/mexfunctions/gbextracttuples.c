@@ -178,17 +178,24 @@ void mexFunction
             pargout [2] = gb_export_to_mxfull (&X, nvals, 1, GrB_FP64) ;
         }
     }
-    #ifdef GB_COMPLEX_TYPE
-    else if (xtype == gb_complex_type)
+    else if (xtype == GxB_FC32)
     {
-        double *X = extract_X ? mxMalloc (s * sizeof (double complex)) : NULL ;
-        OK (GrB_Matrix_extractTuples_UDT (I, J, X, &nvals, A)) ;
+        GxB_FC32_t *X = extract_X ? mxMalloc (s * sizeof (GxB_FC32_t)) : NULL ;
+        OK (GxB_Matrix_extractTuples_FC32 (I, J, X, &nvals, A)) ;
         if (extract_X)
-        {
-            pargout [2] = gb_export_to_mxfull (&X, nvals, 1, gb_complex_type) ;
+        { 
+            pargout [2] = gb_export_to_mxfull (&X, nvals, 1, GxB_FC32) ;
         }
     }
-    #endif
+    else if (xtype == GxB_FC64)
+    {
+        GxB_FC64_t *X = extract_X ? mxMalloc (s * sizeof (GxB_FC64_t)) : NULL ;
+        OK (GxB_Matrix_extractTuples_FC64 (I, J, X, &nvals, A)) ;
+        if (extract_X)
+        { 
+            pargout [2] = gb_export_to_mxfull (&X, nvals, 1, GxB_FC64) ;
+        }
+    }
     else
     {
         ERROR ("unsupported type") ;

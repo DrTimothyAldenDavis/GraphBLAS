@@ -4,10 +4,10 @@ function C = reshape (G, arg1, arg2)
 % matrix whose elements are taken columnwise from G.  The matrix G must
 % have numel (G) == m*n.  That is numel (G) == numel (C) must be true.
 %
-% See also numel, squeeze.
+% See also GrB/numel, squeeze.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [mold, nold] = size (G) ;
 mold = int64 (mold) ;

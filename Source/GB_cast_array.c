@@ -41,8 +41,8 @@ void GB_cast_array              // typecast an array
     ASSERT (Cx != NULL) ;
     ASSERT (Ax != NULL) ;
     ASSERT (anz > 0) ;
-    ASSERT (code1 <= GB_FP64_code) ;
-    ASSERT (code2 <= GB_FP64_code) ;
+    ASSERT (code1 <= GB_FC64_code) ;
+    ASSERT (code2 <= GB_FC64_code) ;
     ASSERT (GB_code_compatible (code1, code2)) ;
 
     //--------------------------------------------------------------------------

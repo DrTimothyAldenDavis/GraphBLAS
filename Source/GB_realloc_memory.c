@@ -68,7 +68,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_of_item = GB_IMAX (1, size_of_item) ;
 
     (*ok1) = GB_size_t_multiply (&size, nitems_new, size_of_item) ;
-    if (!(*ok1) || nitems_new > GB_INDEX_MAX || size_of_item > GB_INDEX_MAX)
+    if (!(*ok1) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
         // overflow
         (*ok1) = false ;

@@ -32,8 +32,8 @@ function [C, I, J] = compact (A, id)
 %
 % See also GrB.entries, GrB.nonz, GrB.prune.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin > 1)
     id = gb_get_scalar (id) ;

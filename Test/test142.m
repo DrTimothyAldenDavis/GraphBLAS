@@ -4,7 +4,8 @@ function test142
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[bin_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+bin_ops = [binops.all binops.real] ;
 
 fprintf ('test142 ------------ GrB_assign with dense matrices\n') ;
 
@@ -29,8 +30,8 @@ S.matrix = Smat ; S.class = 'see below' ;
 X.matrix = Xmat ; X.class = 'see below' ;
 Bmask = logical (Bmat) ;
 
-for k1 = 1:length (classes)
-    clas = classes {k1}  ;
+for k1 = 1:length (types.real)
+    clas = types.real {k1}  ;
     fprintf ('%s', clas) ;
 
     A.class = clas ;
@@ -117,9 +118,12 @@ for k1 = 1:length (classes)
 
         for k2 = 1:length(bin_ops)
             binop = bin_ops {k2}  ;
+            if (isequal (binop, 'pow'))
+                continue ;
+            end
 
             op.opname = binop ;
-            op.opclass = clas ;
+            op.optype = clas ;
             fprintf ('.') ;
 
             %---------------------------------------

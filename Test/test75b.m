@@ -4,7 +4,8 @@ function test75b
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
 
 % cstart = grb_get_coverage ;
 % fprintf ('coverage start: %d\n', cstart) ;
@@ -92,8 +93,8 @@ for k1 = 1:length(mult_ops)
     for k2 = 1:length(add_ops)
         addop = add_ops {k2} ;
 
-        for k3 = 1:length (classes)
-            clas = classes {k3} ;
+        for k3 = 1:length (types.real)
+            clas = types.real {k3} ;
 
             semiring.multiply = mulop ;
             semiring.add = addop ;
@@ -103,9 +104,9 @@ for k1 = 1:length(mult_ops)
             % monoids can only be used when z is boolean for z=mult(x,y).
             try
                 [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                [mult_opname mult_opclass zclass] = GB_spec_operator (mult_op) ;
-                [ add_opname  add_opclass] = GB_spec_operator (add_op) ;
-                identity = GB_spec_identity (semiring.add, add_opclass) ;
+                [mult_opname mult_optype zclass] = GB_spec_operator (mult_op) ;
+                [ add_opname  add_optype] = GB_spec_operator (add_op) ;
+                identity = GB_spec_identity (semiring.add, add_optype) ;
             catch me
                 if (~isempty (strfind (me.message, 'gotcha')))
                     semiring
@@ -118,7 +119,7 @@ for k1 = 1:length(mult_ops)
             B.class = clas ;
             X.class = clas ;
             Y.class = clas ;
-            D.class = add_op.opclass ;
+            D.class = add_op.optype ;
 
             n_semirings = n_semirings + 1 ;
             fprintf ('.') ;

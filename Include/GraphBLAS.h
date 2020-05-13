@@ -107,10 +107,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 2, 2020"
+#define GxB_IMPLEMENTATION_DATE "May 1, 2020"
 #define GxB_IMPLEMENTATION_MAJOR 3
-#define GxB_IMPLEMENTATION_MINOR 2
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_MINOR 3
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "May 18, 2018"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 2
@@ -205,7 +205,57 @@
 #include <math.h>
 #include <stdarg.h>
 
-// select the user threading model:
+//------------------------------------------------------------------------------
+// definitions for complex types
+//------------------------------------------------------------------------------
+
+#include <complex.h>
+#undef I
+#if ( _MSC_VER && !__INTEL_COMPILER )
+
+    // Microsoft Windows complex types
+    typedef _Fcomplex GxB_FC32_t ;
+    typedef _Dcomplex GxB_FC64_t ;
+
+    #define GxB_CMPLXF(real,imag) (_FCbuild (real, imag))
+    #define GxB_CMPLX(real,imag)  ( _Cbuild (real, imag))
+
+#else
+
+    // ANSI C11 complex types
+    typedef float  complex GxB_FC32_t ;
+    typedef double complex GxB_FC64_t ;
+
+    #ifndef CMPLX
+        // gcc 6.2 on the the Mac doesn't #define CMPLX
+        #define GxB_CMPLX(real,imag) \
+        ( \
+            (double complex)((double)(real)) + \
+            (double complex)((double)(imag) * _Complex_I) \
+        )
+    #else
+        // use the ANSI C11 CMPLX macro
+        #define GxB_CMPLX(real,imag)  (CMPLX  (real, imag))
+    #endif
+
+    #ifndef CMPLXF
+        // gcc 6.2 on the the Mac doesn't #define CMPLXF
+        #define GxB_CMPLXF(real,imag) \
+        ( \
+            (float complex)((float)(real)) + \
+            (float complex)((float)(imag) * _Complex_I) \
+        )
+    #else
+        // use the ANSI C11 CMPLX macro
+        #define GxB_CMPLXF(real,imag) (CMPLXF (real, imag))
+    #endif
+
+#endif
+
+//------------------------------------------------------------------------------
+// user threading model
+//------------------------------------------------------------------------------
+
 #if defined (USER_POSIX_THREADS)
 // POSIX pthreads
 #include <pthread.h>
@@ -234,6 +284,15 @@
 // for row and column indices, or matrix and vector dimensions.
 
 typedef uint64_t GrB_Index ;
+
+// The largest valid dimension permitted in this implementation is 2^60.
+// Matrices with that many rows and/or columns can be actually be easily
+// created, particularly if they are hypersparse since in that case O(nrows) or
+// O(ncols) memory is not needed.  For the standard formats, O(ncols) space is
+// needed for CSC and O(nrows) space is needed for CSR.  For hypersparse
+// matrices, the time complexity does not depend on O(nrows) or O(ncols).
+
+#define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
 
 //------------------------------------------------------------------------------
 // GraphBLAS error and informational codes
@@ -427,28 +486,31 @@ const char *GrB_error (void) ;     // return a string describing the last error
 
 // A GraphBLAS GrB_Type defines the type of scalar values that a matrix
 // contains, and the type of scalar operands for a unary or binary operator.
-// There are eleven built-in types, and a user application can define any types
-// of its own as well.  The built-in types correspond to built-in types in C
-// (#include <stdbool.h> #include <stdint.h>), and the classes in MATLAB, as
-// listed below.  The user application can also define new types based on any
-// typedef in the C language whose values are held in a contiguous region of
-// memory.
+// There are 13 built-in types, and a user application can define any types of
+// its own as well.  The built-in types correspond to built-in types in C and
+// the classes in MATLAB, as listed below.  The user application can also
+// define new types based on any typedef in the C language whose values are
+// held in a contiguous region of memory.
 
 typedef struct GB_Type_opaque *GrB_Type ;
 
-// GraphBLAS predefined types and the counterparts in pure C and in MATLAB
+// GraphBLAS predefined types and their counterparts in pure C and in MATLAB
 GB_PUBLIC GrB_Type
-    GrB_BOOL   ,        // in C: bool       in MATLAB: logical
-    GrB_INT8   ,        // in C: int8_t     in MATLAB: int8
-    GrB_UINT8  ,        // in C: uint8_t    in MATLAB: uint8
-    GrB_INT16  ,        // in C: int16_t    in MATLAB: int16
-    GrB_UINT16 ,        // in C: uint16_t   in MATLAB: uint16
-    GrB_INT32  ,        // in C: int32_t    in MATLAB: int32
-    GrB_UINT32 ,        // in C: uint32_t   in MATLAB: uint32
-    GrB_INT64  ,        // in C: int64_t    in MATLAB: int64
-    GrB_UINT64 ,        // in C: uint64_t   in MATLAB: uint64
-    GrB_FP32   ,        // in C: float      in MATLAB: single
-    GrB_FP64   ;        // in C: double     in MATLAB: double
+    GrB_BOOL   ,        // in C: bool               in MATLAB: logical
+    GrB_INT8   ,        // in C: int8_t             in MATLAB: int8
+    GrB_INT16  ,        // in C: int16_t            in MATLAB: int16
+    GrB_INT32  ,        // in C: int32_t            in MATLAB: int32
+    GrB_INT64  ,        // in C: int64_t            in MATLAB: int64
+    GrB_UINT8  ,        // in C: uint8_t            in MATLAB: uint8
+    GrB_UINT16 ,        // in C: uint16_t           in MATLAB: uint16
+    GrB_UINT32 ,        // in C: uint32_t           in MATLAB: uint32
+    GrB_UINT64 ,        // in C: uint64_t           in MATLAB: uint64
+    GrB_FP32   ,        // in C: float              in MATLAB: single
+    GrB_FP64   ,        // in C: double             in MATLAB: double
+    GxB_FC32   ,        // in C: float complex      in MATLAB: single complex
+    GxB_FC64   ;        // in C: double complex     in MATLAB: double complex
+
+// SPEC: complex types are an extension to the spec.
 
 // GrB_Type_new is implemented both as a macro and a function.  Both are
 // user-callable.  The default is to use the macro, since this allows the name
@@ -517,12 +579,9 @@ GrB_Info GrB_Type_free          // free a user-defined type
 // GraphBLAS defines built-in unary and binary operators, and the user may also
 // define new ones via function pointers.  When a user function z=f(x,y) or
 // z=f(x) is called by GraphBLAS, the pointers x, y, and z are guaranteed to be
-// non-NULL and to point to unique valid space of the expected type.
-
-// SuiteSparse:GraphBLAS provides 278 built-in binary operators z=f(x,y) and 45
-// built-in unary operators z=f(x) that operate on the 11 built-in types.
-// Built-in types are statically allocated and need not be freed when the
-// application finishes.
+// non-NULL and to point to unique valid space of the expected type.  Built-in
+// types are statically allocated and need not be freed when the application
+// finishes.
 
 //------------------------------------------------------------------------------
 // unary operators
@@ -542,48 +601,179 @@ typedef struct GB_UnaryOp_opaque *GrB_UnaryOp ;
 // built-in unary operators, z = f(x)
 //------------------------------------------------------------------------------
 
-// There are 67 unary operators: 6 kinds * 11 types and GrB_LNOT.
-
-// SPEC: ONE and ABS unary operators are extensions to the spec
-// as are the LNOT_TYPE operators.
-
 GB_PUBLIC GrB_UnaryOp
-    // For these three functions z=f(x), z and x have the same type.
+    // For these functions z=f(x), z and x have the same type.
     // The suffix in the name is the type of x and z.
     // z = x             z = -x             z = 1/x             z = ! (x != 0)
     // identity          additive           multiplicative      logical
     //                   inverse            inverse             negation
     GrB_IDENTITY_BOOL,   GrB_AINV_BOOL,     GrB_MINV_BOOL,      GxB_LNOT_BOOL,
     GrB_IDENTITY_INT8,   GrB_AINV_INT8,     GrB_MINV_INT8,      GxB_LNOT_INT8,
-    GrB_IDENTITY_UINT8,  GrB_AINV_UINT8,    GrB_MINV_UINT8,     GxB_LNOT_UINT8,
     GrB_IDENTITY_INT16,  GrB_AINV_INT16,    GrB_MINV_INT16,     GxB_LNOT_INT16,
-    GrB_IDENTITY_UINT16, GrB_AINV_UINT16,   GrB_MINV_UINT16,    GxB_LNOT_UINT16,
     GrB_IDENTITY_INT32,  GrB_AINV_INT32,    GrB_MINV_INT32,     GxB_LNOT_INT32,
-    GrB_IDENTITY_UINT32, GrB_AINV_UINT32,   GrB_MINV_UINT32,    GxB_LNOT_UINT32,
     GrB_IDENTITY_INT64,  GrB_AINV_INT64,    GrB_MINV_INT64,     GxB_LNOT_INT64,
+    GrB_IDENTITY_UINT8,  GrB_AINV_UINT8,    GrB_MINV_UINT8,     GxB_LNOT_UINT8,
+    GrB_IDENTITY_UINT16, GrB_AINV_UINT16,   GrB_MINV_UINT16,    GxB_LNOT_UINT16,
+    GrB_IDENTITY_UINT32, GrB_AINV_UINT32,   GrB_MINV_UINT32,    GxB_LNOT_UINT32,
     GrB_IDENTITY_UINT64, GrB_AINV_UINT64,   GrB_MINV_UINT64,    GxB_LNOT_UINT64,
     GrB_IDENTITY_FP32,   GrB_AINV_FP32,     GrB_MINV_FP32,      GxB_LNOT_FP32,
     GrB_IDENTITY_FP64,   GrB_AINV_FP64,     GrB_MINV_FP64,      GxB_LNOT_FP64,
+    // complex unary operators:
+    GxB_IDENTITY_FC32,   GxB_AINV_FC32,     GxB_MINV_FC32,      // no LNOT
+    GxB_IDENTITY_FC64,   GxB_AINV_FC64,     GxB_MINV_FC64,      // for complex
 
-    // z = 1             z = abs(x)
-    // one               absolute value
-    //
-    GxB_ONE_BOOL,        GxB_ABS_BOOL,
-    GxB_ONE_INT8,        GxB_ABS_INT8,
-    GxB_ONE_UINT8,       GxB_ABS_UINT8,
-    GxB_ONE_INT16,       GxB_ABS_INT16,
-    GxB_ONE_UINT16,      GxB_ABS_UINT16,
-    GxB_ONE_INT32,       GxB_ABS_INT32,
-    GxB_ONE_UINT32,      GxB_ABS_UINT32,
-    GxB_ONE_INT64,       GxB_ABS_INT64,
-    GxB_ONE_UINT64,      GxB_ABS_UINT64,
-    GxB_ONE_FP32,        GxB_ABS_FP32,
-    GxB_ONE_FP64,        GxB_ABS_FP64,
+    // z = 1             z = abs(x)         z = bnot(x)
+    // one               absolute value     bitwise negation
+    GxB_ONE_BOOL,        GrB_ABS_BOOL,
+    GxB_ONE_INT8,        GrB_ABS_INT8,      GrB_BNOT_INT8,
+    GxB_ONE_INT16,       GrB_ABS_INT16,     GrB_BNOT_INT16,
+    GxB_ONE_INT32,       GrB_ABS_INT32,     GrB_BNOT_INT32,
+    GxB_ONE_INT64,       GrB_ABS_INT64,     GrB_BNOT_INT64,
+    GxB_ONE_UINT8,       GrB_ABS_UINT8,     GrB_BNOT_UINT8,
+    GxB_ONE_UINT16,      GrB_ABS_UINT16,    GrB_BNOT_UINT16,
+    GxB_ONE_UINT32,      GrB_ABS_UINT32,    GrB_BNOT_UINT32,
+    GxB_ONE_UINT64,      GrB_ABS_UINT64,    GrB_BNOT_UINT64,
+    GxB_ONE_FP32,        GrB_ABS_FP32,
+    GxB_ONE_FP64,        GrB_ABS_FP64,
+    // complex unary operators:
+    GxB_ONE_FC32,        // for complex types, z = abs(x) returns z as real;
+    GxB_ONE_FC64,        // so they are listed below.
 
-    // Boolean negation, z = !x, where both x and x are boolean.  There is no
+    // Boolean negation, z = !x, where both z and x are boolean.  There is no
     // suffix since z and x are only boolean.  This operator is identical to
     // GxB_LNOT_BOOL; it just has a different name.
     GrB_LNOT ;
+
+//------------------------------------------------------------------------------
+// operators for backward compatibilty
+//------------------------------------------------------------------------------
+
+// Now with GrB* names in the current specification.  Kept for backward
+// compatibility.
+
+GB_PUBLIC GrB_UnaryOp
+
+    // z = abs(x)
+    GxB_ABS_BOOL,
+    GxB_ABS_INT8,
+    GxB_ABS_INT16,
+    GxB_ABS_INT32,
+    GxB_ABS_INT64,
+    GxB_ABS_UINT8,
+    GxB_ABS_UINT16,
+    GxB_ABS_UINT32,
+    GxB_ABS_UINT64,
+    GxB_ABS_FP32,
+    GxB_ABS_FP64 ;
+
+//------------------------------------------------------------------------------
+// Unary operators for floating-point types only
+//------------------------------------------------------------------------------
+
+// The following floating-point unary operators and their ANSI C11 equivalents,
+// are only defined for floating-point (real and complex) types.
+
+GB_PUBLIC GrB_UnaryOp
+
+    //--------------------------------------------------------------------------
+    // z = f(x) where z and x have the same type (all 4 floating-point types)
+    //--------------------------------------------------------------------------
+
+    // z = sqrt (x)     z = log (x)         z = exp (x)         z = log2 (x)
+    GxB_SQRT_FP32,      GxB_LOG_FP32,       GxB_EXP_FP32,       GxB_LOG2_FP32,
+    GxB_SQRT_FP64,      GxB_LOG_FP64,       GxB_EXP_FP64,       GxB_LOG2_FP64,
+    GxB_SQRT_FC32,      GxB_LOG_FC32,       GxB_EXP_FC32,       GxB_LOG2_FC32,
+    GxB_SQRT_FC64,      GxB_LOG_FC64,       GxB_EXP_FC64,       GxB_LOG2_FC64,
+
+    // z = sin (x)      z = cos (x)         z = tan (x)
+    GxB_SIN_FP32,       GxB_COS_FP32,       GxB_TAN_FP32,
+    GxB_SIN_FP64,       GxB_COS_FP64,       GxB_TAN_FP64,
+    GxB_SIN_FC32,       GxB_COS_FC32,       GxB_TAN_FC32,
+    GxB_SIN_FC64,       GxB_COS_FC64,       GxB_TAN_FC64,
+
+    // z = acos (x)     z = asin (x)        z = atan (x)
+    GxB_ACOS_FP32,      GxB_ASIN_FP32,      GxB_ATAN_FP32,
+    GxB_ACOS_FP64,      GxB_ASIN_FP64,      GxB_ATAN_FP64,
+    GxB_ACOS_FC32,      GxB_ASIN_FC32,      GxB_ATAN_FC32,
+    GxB_ACOS_FC64,      GxB_ASIN_FC64,      GxB_ATAN_FC64,
+
+    // z = sinh (x)     z = cosh (x)        z = tanh (x)
+    GxB_SINH_FP32,      GxB_COSH_FP32,      GxB_TANH_FP32,
+    GxB_SINH_FP64,      GxB_COSH_FP64,      GxB_TANH_FP64,
+    GxB_SINH_FC32,      GxB_COSH_FC32,      GxB_TANH_FC32,
+    GxB_SINH_FC64,      GxB_COSH_FC64,      GxB_TANH_FC64,
+
+    // z = acosh (x)    z = asinh (x)       z = atanh (x)
+    GxB_ACOSH_FP32,     GxB_ASINH_FP32,     GxB_ATANH_FP32,
+    GxB_ACOSH_FP64,     GxB_ASINH_FP64,     GxB_ATANH_FP64,
+    GxB_ACOSH_FC32,     GxB_ASINH_FC32,     GxB_ATANH_FC32,
+    GxB_ACOSH_FC64,     GxB_ASINH_FC64,     GxB_ATANH_FC64,
+
+    // z = ceil (x)     z = floor (x)       z = round (x)       z = trunc (x)
+    GxB_CEIL_FP32,      GxB_FLOOR_FP32,     GxB_ROUND_FP32,     GxB_TRUNC_FP32,
+    GxB_CEIL_FP64,      GxB_FLOOR_FP64,     GxB_ROUND_FP64,     GxB_TRUNC_FP64,
+    GxB_CEIL_FC32,      GxB_FLOOR_FC32,     GxB_ROUND_FC32,     GxB_TRUNC_FC32,
+    GxB_CEIL_FC64,      GxB_FLOOR_FC64,     GxB_ROUND_FC64,     GxB_TRUNC_FC64,
+
+    // z = exp2 (x)     z = expm1 (x)       z = log10 (x)       z = log1p (x)
+    GxB_EXP2_FP32,      GxB_EXPM1_FP32,     GxB_LOG10_FP32,     GxB_LOG1P_FP32,
+    GxB_EXP2_FP64,      GxB_EXPM1_FP64,     GxB_LOG10_FP64,     GxB_LOG1P_FP64,
+    GxB_EXP2_FC32,      GxB_EXPM1_FC32,     GxB_LOG10_FC32,     GxB_LOG1P_FC32,
+    GxB_EXP2_FC64,      GxB_EXPM1_FC64,     GxB_LOG10_FC64,     GxB_LOG1P_FC64,
+
+    //--------------------------------------------------------------------------
+    // z = f(x) where z and x are the same type (floating-point real only)
+    //--------------------------------------------------------------------------
+
+    // z = lgamma (x)   z = tgamma (x)      z = erf (x)         z = erfc (x)
+    GxB_LGAMMA_FP32,    GxB_TGAMMA_FP32,    GxB_ERF_FP32,       GxB_ERFC_FP32,
+    GxB_LGAMMA_FP64,    GxB_TGAMMA_FP64,    GxB_ERF_FP64,       GxB_ERFC_FP64,
+
+    // frexpx and frexpe return the mantissa and exponent, respectively,
+    // from the ANSI C11 frexp function.  The exponent is returned as a
+    // floating-point value, not an integer.
+
+    // z = frexpx (x)   z = frexpe (x)
+    GxB_FREXPX_FP32,    GxB_FREXPE_FP32,
+    GxB_FREXPX_FP64,    GxB_FREXPE_FP64,
+
+    //--------------------------------------------------------------------------
+    // z = f(x) where z and x are the same type (complex only)
+    //--------------------------------------------------------------------------
+
+    // z = conj (x)
+    GxB_CONJ_FC32,
+    GxB_CONJ_FC64,
+
+    //--------------------------------------------------------------------------
+    // z = f(x) where z is real and x is complex:
+    //--------------------------------------------------------------------------
+
+    // z = creal (x)    z = cimag (x)       z = carg (x)       z = abs (x)
+    GxB_CREAL_FC32,     GxB_CIMAG_FC32,     GxB_CARG_FC32,     GxB_ABS_FC32,
+    GxB_CREAL_FC64,     GxB_CIMAG_FC64,     GxB_CARG_FC64,     GxB_ABS_FC64,
+
+    //--------------------------------------------------------------------------
+    // z = f(x) where z is bool and x is any floating-point type
+    //--------------------------------------------------------------------------
+
+    // z = isinf (x)
+    GxB_ISINF_FP32,
+    GxB_ISINF_FP64,
+    GxB_ISINF_FC32,     // isinf (creal (x)) || isinf (cimag (x))
+    GxB_ISINF_FC64,     // isinf (creal (x)) || isinf (cimag (x))
+
+    // z = isnan (x)
+    GxB_ISNAN_FP32,
+    GxB_ISNAN_FP64,
+    GxB_ISNAN_FC32,     // isnan (creal (x)) || isnan (cimag (x))
+    GxB_ISNAN_FC64,     // isnan (creal (x)) || isnan (cimag (x))
+
+    // z = isfinite (x)
+    GxB_ISFINITE_FP32,
+    GxB_ISFINITE_FP64,
+    GxB_ISFINITE_FC32,  // isfinite (real (x)) && isfinite (cimag (x))
+    GxB_ISFINITE_FC64 ; // isfinite (real (x)) && isfinite (cimag (x))
 
 //------------------------------------------------------------------------------
 // methods for unary operators
@@ -659,189 +849,272 @@ GrB_Info GrB_UnaryOp_free           // free a user-created unary operator
 typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 
 //------------------------------------------------------------------------------
-// built-in binary operators, z = f(x,y)
+// built-in binary operators, z = f(x,y), where x,y,z all have the same type
 //------------------------------------------------------------------------------
 
-// There are three sets of built-in binary operators.  For the first set of
-// 21 kinds of operators, x,y,z all have the same type, and they are available
-// for all 11 types, for a total of 21*21 = 231 operators.  All of them have
-// a "_TYPE" suffix that denotes the type of x,y,z:
-
-//      12 general: FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES,
-//              DIV, RDIV, PAIR, ANY
-//      6 comparison: ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE
-//      3 logical: LOR, LAND, LXOR
-
-// For the second set, there are 6 comparison operators where, x,y have the
-// same type but z is always boolean, for a total of 6*11 = 66 operators.
-// All of them have a "_TYPE" suffix that denotes the type of x,y (not z):
-
-//      6 comparison: EQ, NE, GT, LT, GE, LE
-
-// The final set of operators is for boolean x,y,z only, and they have no
-// suffix:
-
-//      3 logical: LOR, LAND, LXOR
-
-// Thus there are 231+66+3 = 300 built-in binary operators.  Some are redundant
-// but are included to keep the name space of operators uniform.
-
-// For 12 binary operators z=f(x,y), x, y, and z are all the same type:
-// FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV, PAIR, ANY,
-// for all 11 types.
-
 GB_PUBLIC GrB_BinaryOp
-    // z = x            z = y               z = min(x,y)        z = max (x,y)
-    GrB_FIRST_BOOL,     GrB_SECOND_BOOL,    GrB_MIN_BOOL,       GrB_MAX_BOOL,
-    GrB_FIRST_INT8,     GrB_SECOND_INT8,    GrB_MIN_INT8,       GrB_MAX_INT8,
-    GrB_FIRST_UINT8,    GrB_SECOND_UINT8,   GrB_MIN_UINT8,      GrB_MAX_UINT8,
-    GrB_FIRST_INT16,    GrB_SECOND_INT16,   GrB_MIN_INT16,      GrB_MAX_INT16,
-    GrB_FIRST_UINT16,   GrB_SECOND_UINT16,  GrB_MIN_UINT16,     GrB_MAX_UINT16,
-    GrB_FIRST_INT32,    GrB_SECOND_INT32,   GrB_MIN_INT32,      GrB_MAX_INT32,
-    GrB_FIRST_UINT32,   GrB_SECOND_UINT32,  GrB_MIN_UINT32,     GrB_MAX_UINT32,
-    GrB_FIRST_INT64,    GrB_SECOND_INT64,   GrB_MIN_INT64,      GrB_MAX_INT64,
-    GrB_FIRST_UINT64,   GrB_SECOND_UINT64,  GrB_MIN_UINT64,     GrB_MAX_UINT64,
-    GrB_FIRST_FP32,     GrB_SECOND_FP32,    GrB_MIN_FP32,       GrB_MAX_FP32,
-    GrB_FIRST_FP64,     GrB_SECOND_FP64,    GrB_MIN_FP64,       GrB_MAX_FP64,
+
+    // operators for all 13 types (including complex):
+
+    // z = x            z = y               z = pow (x,y)
+    GrB_FIRST_BOOL,     GrB_SECOND_BOOL,    GxB_POW_BOOL,
+    GrB_FIRST_INT8,     GrB_SECOND_INT8,    GxB_POW_INT8,
+    GrB_FIRST_INT16,    GrB_SECOND_INT16,   GxB_POW_INT16,
+    GrB_FIRST_INT32,    GrB_SECOND_INT32,   GxB_POW_INT32,
+    GrB_FIRST_INT64,    GrB_SECOND_INT64,   GxB_POW_INT64,
+    GrB_FIRST_UINT8,    GrB_SECOND_UINT8,   GxB_POW_UINT8,
+    GrB_FIRST_UINT16,   GrB_SECOND_UINT16,  GxB_POW_UINT16,
+    GrB_FIRST_UINT32,   GrB_SECOND_UINT32,  GxB_POW_UINT32,
+    GrB_FIRST_UINT64,   GrB_SECOND_UINT64,  GxB_POW_UINT64,
+    GrB_FIRST_FP32,     GrB_SECOND_FP32,    GxB_POW_FP32,
+    GrB_FIRST_FP64,     GrB_SECOND_FP64,    GxB_POW_FP64,
+    // complex:
+    GxB_FIRST_FC32,     GxB_SECOND_FC32,    GxB_POW_FC32,
+    GxB_FIRST_FC64,     GxB_SECOND_FC64,    GxB_POW_FC64,
 
     // z = x+y          z = x-y             z = x*y             z = x/y
     GrB_PLUS_BOOL,      GrB_MINUS_BOOL,     GrB_TIMES_BOOL,     GrB_DIV_BOOL,
     GrB_PLUS_INT8,      GrB_MINUS_INT8,     GrB_TIMES_INT8,     GrB_DIV_INT8,
-    GrB_PLUS_UINT8,     GrB_MINUS_UINT8,    GrB_TIMES_UINT8,    GrB_DIV_UINT8,
     GrB_PLUS_INT16,     GrB_MINUS_INT16,    GrB_TIMES_INT16,    GrB_DIV_INT16,
-    GrB_PLUS_UINT16,    GrB_MINUS_UINT16,   GrB_TIMES_UINT16,   GrB_DIV_UINT16,
     GrB_PLUS_INT32,     GrB_MINUS_INT32,    GrB_TIMES_INT32,    GrB_DIV_INT32,
-    GrB_PLUS_UINT32,    GrB_MINUS_UINT32,   GrB_TIMES_UINT32,   GrB_DIV_UINT32,
     GrB_PLUS_INT64,     GrB_MINUS_INT64,    GrB_TIMES_INT64,    GrB_DIV_INT64,
+    GrB_PLUS_UINT8,     GrB_MINUS_UINT8,    GrB_TIMES_UINT8,    GrB_DIV_UINT8,
+    GrB_PLUS_UINT16,    GrB_MINUS_UINT16,   GrB_TIMES_UINT16,   GrB_DIV_UINT16,
+    GrB_PLUS_UINT32,    GrB_MINUS_UINT32,   GrB_TIMES_UINT32,   GrB_DIV_UINT32,
     GrB_PLUS_UINT64,    GrB_MINUS_UINT64,   GrB_TIMES_UINT64,   GrB_DIV_UINT64,
     GrB_PLUS_FP32,      GrB_MINUS_FP32,     GrB_TIMES_FP32,     GrB_DIV_FP32,
     GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64,
+    // complex:
+    GxB_PLUS_FC32,      GxB_MINUS_FC32,     GxB_TIMES_FC32,     GxB_DIV_FC32,
+    GxB_PLUS_FC64,      GxB_MINUS_FC64,     GxB_TIMES_FC64,     GxB_DIV_FC64,
 
-    // z = y-x          z = y/x             z = 1               z = pick(x,y)
+    // z = y-x          z = y/x             z = 1               z = any(x,y)
     GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      GxB_PAIR_BOOL,      GxB_ANY_BOOL,
     GxB_RMINUS_INT8,    GxB_RDIV_INT8,      GxB_PAIR_INT8,      GxB_ANY_INT8,
-    GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,     GxB_PAIR_UINT8,     GxB_ANY_UINT8,
     GxB_RMINUS_INT16,   GxB_RDIV_INT16,     GxB_PAIR_INT16,     GxB_ANY_INT16,
-    GxB_RMINUS_UINT16,  GxB_RDIV_UINT16,    GxB_PAIR_UINT16,    GxB_ANY_UINT16,
     GxB_RMINUS_INT32,   GxB_RDIV_INT32,     GxB_PAIR_INT32,     GxB_ANY_INT32,
-    GxB_RMINUS_UINT32,  GxB_RDIV_UINT32,    GxB_PAIR_UINT32,    GxB_ANY_UINT32,
     GxB_RMINUS_INT64,   GxB_RDIV_INT64,     GxB_PAIR_INT64,     GxB_ANY_INT64,
+    GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,     GxB_PAIR_UINT8,     GxB_ANY_UINT8,
+    GxB_RMINUS_UINT16,  GxB_RDIV_UINT16,    GxB_PAIR_UINT16,    GxB_ANY_UINT16,
+    GxB_RMINUS_UINT32,  GxB_RDIV_UINT32,    GxB_PAIR_UINT32,    GxB_ANY_UINT32,
     GxB_RMINUS_UINT64,  GxB_RDIV_UINT64,    GxB_PAIR_UINT64,    GxB_ANY_UINT64,
     GxB_RMINUS_FP32,    GxB_RDIV_FP32,      GxB_PAIR_FP32,      GxB_ANY_FP32,
     GxB_RMINUS_FP64,    GxB_RDIV_FP64,      GxB_PAIR_FP64,      GxB_ANY_FP64,
+    // complex:
+    GxB_RMINUS_FC32,    GxB_RDIV_FC32,      GxB_PAIR_FC32,      GxB_ANY_FC32,
+    GxB_RMINUS_FC64,    GxB_RDIV_FC64,      GxB_PAIR_FC64,      GxB_ANY_FC64,
 
-// Six comparison operators z=f(x,y) return the same type as their inputs.
-// Each of them compute z = (x OP y), where x, y, and z all have the same type.
-// The value z is either 1 for true or 0 for false, but it is a value with the
-// same type as x and y.  Z is not bool (unless x and y are also bool).  These
-// operators compute the same thing as the 6 sets of EQ, NE, GT, LT, GE, and LE
-// operators.  They just return their result z as the same type as x and y,
-// instead of returning a value z that is boolean.  Since their ztype is
-// non-boolean, they can be used as multiply operators in a semring with
-// non-boolean monoids (PLUS, for example).
+    // The GxB_IS* comparison operators z=f(x,y) return the same type as their
+    // inputs.  Each of them compute z = (x OP y), where x, y, and z all have
+    // the same type.  The value z is either 1 for true or 0 for false, but it
+    // is a value with the same type as x and y.  Z is not bool (unless x and y
+    // are also bool).  These operators compute the same thing as the 6 sets of
+    // EQ, NE, GT, LT, GE, and LE operators.  They just return their result z
+    // as the same type as x and y, instead of returning a value z that is
+    // boolean.  Since their ztype is non-boolean, they can be used as multiply
+    // operators in a semring with non-boolean monoids (PLUS, for example).
 
-    // z = (x == y)     z = (x != y)        z = (x > y)         z = (x < y)
-    GxB_ISEQ_BOOL,      GxB_ISNE_BOOL,      GxB_ISGT_BOOL,      GxB_ISLT_BOOL,
-    GxB_ISEQ_INT8,      GxB_ISNE_INT8,      GxB_ISGT_INT8,      GxB_ISLT_INT8,
-    GxB_ISEQ_UINT8,     GxB_ISNE_UINT8,     GxB_ISGT_UINT8,     GxB_ISLT_UINT8,
-    GxB_ISEQ_INT16,     GxB_ISNE_INT16,     GxB_ISGT_INT16,     GxB_ISLT_INT16,
-    GxB_ISEQ_UINT16,    GxB_ISNE_UINT16,    GxB_ISGT_UINT16,    GxB_ISLT_UINT16,
-    GxB_ISEQ_INT32,     GxB_ISNE_INT32,     GxB_ISGT_INT32,     GxB_ISLT_INT32,
-    GxB_ISEQ_UINT32,    GxB_ISNE_UINT32,    GxB_ISGT_UINT32,    GxB_ISLT_UINT32,
-    GxB_ISEQ_INT64,     GxB_ISNE_INT64,     GxB_ISGT_INT64,     GxB_ISLT_INT64,
-    GxB_ISEQ_UINT64,    GxB_ISNE_UINT64,    GxB_ISGT_UINT64,    GxB_ISLT_UINT64,
-    GxB_ISEQ_FP32,      GxB_ISNE_FP32,      GxB_ISGT_FP32,      GxB_ISLT_FP32,
-    GxB_ISEQ_FP64,      GxB_ISNE_FP64,      GxB_ISGT_FP64,      GxB_ISLT_FP64,
+    // z = (x == y)     z = (x != y)        
+    GxB_ISEQ_BOOL,      GxB_ISNE_BOOL,      
+    GxB_ISEQ_INT8,      GxB_ISNE_INT8,      
+    GxB_ISEQ_INT16,     GxB_ISNE_INT16,     
+    GxB_ISEQ_INT32,     GxB_ISNE_INT32,     
+    GxB_ISEQ_INT64,     GxB_ISNE_INT64,     
+    GxB_ISEQ_UINT8,     GxB_ISNE_UINT8,     
+    GxB_ISEQ_UINT16,    GxB_ISNE_UINT16,    
+    GxB_ISEQ_UINT32,    GxB_ISNE_UINT32,    
+    GxB_ISEQ_UINT64,    GxB_ISNE_UINT64,    
+    GxB_ISEQ_FP32,      GxB_ISNE_FP32,      
+    GxB_ISEQ_FP64,      GxB_ISNE_FP64,      
+    // complex:
+    GxB_ISEQ_FC32,      GxB_ISNE_FC32,
+    GxB_ISEQ_FC64,      GxB_ISNE_FC64,
 
-    // z = (x >= y)     z = (x <= y)
-    GxB_ISGE_BOOL,      GxB_ISLE_BOOL,
-    GxB_ISGE_INT8,      GxB_ISLE_INT8,
-    GxB_ISGE_UINT8,     GxB_ISLE_UINT8,
-    GxB_ISGE_INT16,     GxB_ISLE_INT16,
-    GxB_ISGE_UINT16,    GxB_ISLE_UINT16,
-    GxB_ISGE_INT32,     GxB_ISLE_INT32,
-    GxB_ISGE_UINT32,    GxB_ISLE_UINT32,
-    GxB_ISGE_INT64,     GxB_ISLE_INT64,
-    GxB_ISGE_UINT64,    GxB_ISLE_UINT64,
-    GxB_ISGE_FP32,      GxB_ISLE_FP32,
-    GxB_ISGE_FP64,      GxB_ISLE_FP64,
+    // The following operators are not defined for complex types:
 
-// Six comparison operators z=f(x,y) return their result as boolean, but where
-// x and y have the same type (any one of the 11 built-in types).  The suffix
-// in their names refers to the type of x and y since z is always boolean.  If
-// used as multiply operators in a semiring, they can only be combined with
-// boolean monoids.  The _BOOL versions of these operators give the same
-// results as their IS*_BOOL counterparts.
+    // z = (x > y)      z = (x < y)         z = (x >= y)     z = (x <= y)
+    GxB_ISGT_BOOL,      GxB_ISLT_BOOL,      GxB_ISGE_BOOL,      GxB_ISLE_BOOL,
+    GxB_ISGT_INT8,      GxB_ISLT_INT8,      GxB_ISGE_INT8,      GxB_ISLE_INT8,
+    GxB_ISGT_INT16,     GxB_ISLT_INT16,     GxB_ISGE_INT16,     GxB_ISLE_INT16,
+    GxB_ISGT_INT32,     GxB_ISLT_INT32,     GxB_ISGE_INT32,     GxB_ISLE_INT32,
+    GxB_ISGT_INT64,     GxB_ISLT_INT64,     GxB_ISGE_INT64,     GxB_ISLE_INT64,
+    GxB_ISGT_UINT8,     GxB_ISLT_UINT8,     GxB_ISGE_UINT8,     GxB_ISLE_UINT8,
+    GxB_ISGT_UINT16,    GxB_ISLT_UINT16,    GxB_ISGE_UINT16,    GxB_ISLE_UINT16,
+    GxB_ISGT_UINT32,    GxB_ISLT_UINT32,    GxB_ISGE_UINT32,    GxB_ISLE_UINT32,
+    GxB_ISGT_UINT64,    GxB_ISLT_UINT64,    GxB_ISGE_UINT64,    GxB_ISLE_UINT64,
+    GxB_ISGT_FP32,      GxB_ISLT_FP32,      GxB_ISGE_FP32,      GxB_ISLE_FP32,
+    GxB_ISGT_FP64,      GxB_ISLT_FP64,      GxB_ISGE_FP64,      GxB_ISLE_FP64,
 
-    // z = (x == y)     z = (x != y)        z = (x > y)         z = (x < y)
-    GrB_EQ_BOOL,        GrB_NE_BOOL,        GrB_GT_BOOL,        GrB_LT_BOOL,
-    GrB_EQ_INT8,        GrB_NE_INT8,        GrB_GT_INT8,        GrB_LT_INT8,
-    GrB_EQ_UINT8,       GrB_NE_UINT8,       GrB_GT_UINT8,       GrB_LT_UINT8,
-    GrB_EQ_INT16,       GrB_NE_INT16,       GrB_GT_INT16,       GrB_LT_INT16,
-    GrB_EQ_UINT16,      GrB_NE_UINT16,      GrB_GT_UINT16,      GrB_LT_UINT16,
-    GrB_EQ_INT32,       GrB_NE_INT32,       GrB_GT_INT32,       GrB_LT_INT32,
-    GrB_EQ_UINT32,      GrB_NE_UINT32,      GrB_GT_UINT32,      GrB_LT_UINT32,
-    GrB_EQ_INT64,       GrB_NE_INT64,       GrB_GT_INT64,       GrB_LT_INT64,
-    GrB_EQ_UINT64,      GrB_NE_UINT64,      GrB_GT_UINT64,      GrB_LT_UINT64,
-    GrB_EQ_FP32,        GrB_NE_FP32,        GrB_GT_FP32,        GrB_LT_FP32,
-    GrB_EQ_FP64,        GrB_NE_FP64,        GrB_GT_FP64,        GrB_LT_FP64,
+    // z = min(x,y)     z = max (x,y)
+    GrB_MIN_BOOL,       GrB_MAX_BOOL,
+    GrB_MIN_INT8,       GrB_MAX_INT8,
+    GrB_MIN_INT16,      GrB_MAX_INT16,
+    GrB_MIN_INT32,      GrB_MAX_INT32,
+    GrB_MIN_INT64,      GrB_MAX_INT64,
+    GrB_MIN_UINT8,      GrB_MAX_UINT8,
+    GrB_MIN_UINT16,     GrB_MAX_UINT16,
+    GrB_MIN_UINT32,     GrB_MAX_UINT32,
+    GrB_MIN_UINT64,     GrB_MAX_UINT64,
+    GrB_MIN_FP32,       GrB_MAX_FP32,
+    GrB_MIN_FP64,       GrB_MAX_FP64,
 
-    // z = (x >= y)     z = (x <= y)
-    GrB_GE_BOOL,        GrB_LE_BOOL,
-    GrB_GE_INT8,        GrB_LE_INT8,
-    GrB_GE_UINT8,       GrB_LE_UINT8,
-    GrB_GE_INT16,       GrB_LE_INT16,
-    GrB_GE_UINT16,      GrB_LE_UINT16,
-    GrB_GE_INT32,       GrB_LE_INT32,
-    GrB_GE_UINT32,      GrB_LE_UINT32,
-    GrB_GE_INT64,       GrB_LE_INT64,
-    GrB_GE_UINT64,      GrB_LE_UINT64,
-    GrB_GE_FP32,        GrB_LE_FP32,
-    GrB_GE_FP64,        GrB_LE_FP64,
-
-// Three binary operators operate on each of the types, converting them
-// internally to boolean and returning a value 1 or 0 in the same type, for
-// true or false.  Each of them compute z = ((x != 0) OP (y != 0)), where x, y,
-// and z all the same type.  These operators are useful as multiply operators
-// when combined with non-boolean monoids of the same type.
+    // Binary operators for each of the 11 real types:
+    
+    // The operators convert non-boolean types internally to boolean and return
+    // a value 1 or 0 in the same type, for true or false.  Each computes z =
+    // ((x != 0) OP (y != 0)), where x, y, and z all the same type.  These
+    // operators are useful as multiplicative operators when combined with
+    // non-boolean monoids of the same type.
 
     // z = (x || y)     z = (x && y)        z = (x != y)
     GxB_LOR_BOOL,       GxB_LAND_BOOL,      GxB_LXOR_BOOL,
     GxB_LOR_INT8,       GxB_LAND_INT8,      GxB_LXOR_INT8,
-    GxB_LOR_UINT8,      GxB_LAND_UINT8,     GxB_LXOR_UINT8,
     GxB_LOR_INT16,      GxB_LAND_INT16,     GxB_LXOR_INT16,
-    GxB_LOR_UINT16,     GxB_LAND_UINT16,    GxB_LXOR_UINT16,
     GxB_LOR_INT32,      GxB_LAND_INT32,     GxB_LXOR_INT32,
-    GxB_LOR_UINT32,     GxB_LAND_UINT32,    GxB_LXOR_UINT32,
     GxB_LOR_INT64,      GxB_LAND_INT64,     GxB_LXOR_INT64,
+    GxB_LOR_UINT8,      GxB_LAND_UINT8,     GxB_LXOR_UINT8,
+    GxB_LOR_UINT16,     GxB_LAND_UINT16,    GxB_LXOR_UINT16,
+    GxB_LOR_UINT32,     GxB_LAND_UINT32,    GxB_LXOR_UINT32,
     GxB_LOR_UINT64,     GxB_LAND_UINT64,    GxB_LXOR_UINT64,
     GxB_LOR_FP32,       GxB_LAND_FP32,      GxB_LXOR_FP32,
     GxB_LOR_FP64,       GxB_LAND_FP64,      GxB_LXOR_FP64,
 
-// Finally, three binary operate only on boolean types: LOR, LAND, LXOR.  The
-// naming convention differs (_BOOL is not appended to the name).  They are
-// the same as GxB_LOR_BOOL, GxB_LAND_BOOL, and GxB_LXOR_BOOL; they just
-// have a simpler name.
+    // Binary operators operate only on boolean types: LOR, LAND, LXOR, and
+    // LXNOR.  The naming convention differs (_BOOL is not appended to the
+    // name).  They are the same as GxB_LOR_BOOL, GxB_LAND_BOOL, and
+    // GxB_LXOR_BOOL, and GrB_EQ_BOOL, respectively.
 
+    // z = (x || y)     z = (x && y)        z = (x != y)        z = (x == y)
+    GrB_LOR,            GrB_LAND,           GrB_LXOR,           GrB_LXNOR,
 
-    // z = (x || y)     z = (x && y)        z = (x != y)
-    GrB_LOR,            GrB_LAND,           GrB_LXOR ;
+    // Operators for floating-point reals:
+
+    // z = atan2(x,y)   z = hypot(x,y)      z = fmod(x,y)   z = remainder(x,y)
+    GxB_ATAN2_FP32,     GxB_HYPOT_FP32,     GxB_FMOD_FP32,  GxB_REMAINDER_FP32,
+    GxB_ATAN2_FP64,     GxB_HYPOT_FP64,     GxB_FMOD_FP64,  GxB_REMAINDER_FP64,
+
+    // z = ldexp(x,y)   z = copysign (x,y)
+    GxB_LDEXP_FP32,     GxB_COPYSIGN_FP32,
+    GxB_LDEXP_FP64,     GxB_COPYSIGN_FP64,
+
+    // Bitwise operations on signed and unsigned integers: note that
+    // bitwise operations on signed integers can lead to different results,
+    // depending on your compiler; results are implementation-defined.
+
+    // z = (x | y)      z = (x & y)         z = (x ^ y)        z = ~(x ^ y)
+    GrB_BOR_INT8,       GrB_BAND_INT8,      GrB_BXOR_INT8,     GrB_BXNOR_INT8,
+    GrB_BOR_INT16,      GrB_BAND_INT16,     GrB_BXOR_INT16,    GrB_BXNOR_INT16,
+    GrB_BOR_INT32,      GrB_BAND_INT32,     GrB_BXOR_INT32,    GrB_BXNOR_INT32,
+    GrB_BOR_INT64,      GrB_BAND_INT64,     GrB_BXOR_INT64,    GrB_BXNOR_INT64,
+    GrB_BOR_UINT8,      GrB_BAND_UINT8,     GrB_BXOR_UINT8,    GrB_BXNOR_UINT8,
+    GrB_BOR_UINT16,     GrB_BAND_UINT16,    GrB_BXOR_UINT16,   GrB_BXNOR_UINT16,
+    GrB_BOR_UINT32,     GrB_BAND_UINT32,    GrB_BXOR_UINT32,   GrB_BXNOR_UINT32,
+    GrB_BOR_UINT64,     GrB_BAND_UINT64,    GrB_BXOR_UINT64,   GrB_BXNOR_UINT64,
+
+    // z = bitget(x,y)  z = bitset(x,y)     z = bitclr(x,y)
+    GxB_BGET_INT8,      GxB_BSET_INT8,      GxB_BCLR_INT8,
+    GxB_BGET_INT16,     GxB_BSET_INT16,     GxB_BCLR_INT16,
+    GxB_BGET_INT32,     GxB_BSET_INT32,     GxB_BCLR_INT32,
+    GxB_BGET_INT64,     GxB_BSET_INT64,     GxB_BCLR_INT64,
+    GxB_BGET_UINT8,     GxB_BSET_UINT8,     GxB_BCLR_UINT8,
+    GxB_BGET_UINT16,    GxB_BSET_UINT16,    GxB_BCLR_UINT16,
+    GxB_BGET_UINT32,    GxB_BSET_UINT32,    GxB_BCLR_UINT32,
+    GxB_BGET_UINT64,    GxB_BSET_UINT64,    GxB_BCLR_UINT64 ;
+
+//------------------------------------------------------------------------------
+// z=f(x,y) where x and z have the same type, but y is GrB_INT8
+//------------------------------------------------------------------------------
+
+    // z = bitshift (x,y) computes z = x left-shifted by y bits if y >= 0, or z
+    // = x right-shifted by (-y) bits if y < 0.  z is equal to x if y is zero.
+    // z and x have the same type, as given by the suffix on the operator name.
+    // Since y must be signed, it cannot have the same type as x when x is
+    // unsigned; it is always GrB_INT8 for all 8 versions of this operator.
+    // The GxB_BSHIFT_* operators compute the arithmetic shift, and produce the
+    // same results as the MATLAB BITSHIFT function, for all possible inputs.
+
+GB_PUBLIC GrB_BinaryOp
+
+    // z = bitshift(x,y)
+    GxB_BSHIFT_INT8,
+    GxB_BSHIFT_INT16,
+    GxB_BSHIFT_INT32,
+    GxB_BSHIFT_INT64,
+    GxB_BSHIFT_UINT8,
+    GxB_BSHIFT_UINT16,
+    GxB_BSHIFT_UINT32,
+    GxB_BSHIFT_UINT64 ;
+
+//------------------------------------------------------------------------------
+// z=f(x,y) where z is BOOL and the type of x,y is given by the suffix
+//------------------------------------------------------------------------------
+
+GB_PUBLIC GrB_BinaryOp
+
+    // Six comparison operators z=f(x,y) return their result as boolean, but
+    // where x and y have the same type.  The suffix in their names refers to
+    // the type of x and y since z is always boolean.  If used as multiply
+    // operators in a semiring, they can only be combined with boolean monoids.
+    // The _BOOL versions of these operators give the same results as their
+    // IS*_BOOL counterparts.
+
+    // z = (x == y)     z = (x != y)        z = (x > y)         z = (x < y)
+    GrB_EQ_BOOL,        GrB_NE_BOOL,        GrB_GT_BOOL,        GrB_LT_BOOL,
+    GrB_EQ_INT8,        GrB_NE_INT8,        GrB_GT_INT8,        GrB_LT_INT8,
+    GrB_EQ_INT16,       GrB_NE_INT16,       GrB_GT_INT16,       GrB_LT_INT16,
+    GrB_EQ_INT32,       GrB_NE_INT32,       GrB_GT_INT32,       GrB_LT_INT32,
+    GrB_EQ_INT64,       GrB_NE_INT64,       GrB_GT_INT64,       GrB_LT_INT64,
+    GrB_EQ_UINT8,       GrB_NE_UINT8,       GrB_GT_UINT8,       GrB_LT_UINT8,
+    GrB_EQ_UINT16,      GrB_NE_UINT16,      GrB_GT_UINT16,      GrB_LT_UINT16,
+    GrB_EQ_UINT32,      GrB_NE_UINT32,      GrB_GT_UINT32,      GrB_LT_UINT32,
+    GrB_EQ_UINT64,      GrB_NE_UINT64,      GrB_GT_UINT64,      GrB_LT_UINT64,
+    GrB_EQ_FP32,        GrB_NE_FP32,        GrB_GT_FP32,        GrB_LT_FP32,
+    GrB_EQ_FP64,        GrB_NE_FP64,        GrB_GT_FP64,        GrB_LT_FP64,
+    // complex:
+    GxB_EQ_FC32,        GxB_NE_FC32,
+    GxB_EQ_FC64,        GxB_NE_FC64,
+
+    // z = (x >= y)     z = (x <= y)
+    GrB_GE_BOOL,        GrB_LE_BOOL,
+    GrB_GE_INT8,        GrB_LE_INT8,
+    GrB_GE_INT16,       GrB_LE_INT16,
+    GrB_GE_INT32,       GrB_LE_INT32,
+    GrB_GE_INT64,       GrB_LE_INT64,
+    GrB_GE_UINT8,       GrB_LE_UINT8,
+    GrB_GE_UINT16,      GrB_LE_UINT16,
+    GrB_GE_UINT32,      GrB_LE_UINT32,
+    GrB_GE_UINT64,      GrB_LE_UINT64,
+    GrB_GE_FP32,        GrB_LE_FP32,
+    GrB_GE_FP64,        GrB_LE_FP64 ;
+
+//------------------------------------------------------------------------------
+// z=f(x,y) where z is complex and the type of x,y is given by the suffix
+//------------------------------------------------------------------------------
+
+GB_PUBLIC GrB_BinaryOp
+
+    // z = cmplx (x,y)
+    GxB_CMPLX_FP32,
+    GxB_CMPLX_FP64 ;
+
+//------------------------------------------------------------------------------
+// About boolean operators
+//------------------------------------------------------------------------------
 
 // Some of the boolean operators compute the same thing but have unique names.
 // For example, x*y and x&&y give the same results for boolean x and y.
 // Operations such as x < y when x and y are boolean are treated as if true=1
-// and false=0.  Below is the truth table for all 17 binary operators with
-// boolean inputs.  This table is defined by how C typecasts boolean values for
+// and false=0.  Below is the truth table for all binary operators with boolean
+// inputs.  This table is defined by how C typecasts boolean values for
 // non-boolean operations.  For example, if x, y, and z are boolean, x = true,
 // and y = true, then z = x + y = true + true = true.  DIV (x/y) is defined
 // below.  RDIV (y/x) is shown as \ in the table; it is the same as 2nd.
 
-//                                                   is  is  is  is  is  is
-//  x y  1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le rdiv
-//  0 0  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
-//  0 1  0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1
-//  1 0  1   0   0   1   1   1   0   1   1   0   1   0   1   1   0   1   0  0
-//  1 1  1   1   1   1   1   0   1   1   1   1   0   1   0   0   0   1   1  1
+//  x y  1st 2nd min max +  -  *  /  or and xor eq ne > < ge le \ pow pair
+//  0 0  0   0   0   0   0  0  0  0  0  0   0   1  0  0 0 1  1  0 1   1
+//  0 1  0   1   0   1   1  1  0  0  1  0   1   0  1  0 1 0  1  1 0   1
+//  1 0  1   0   0   1   1  1  0  1  1  0   1   0  1  1 0 1  0  0 1   1
+//  1 1  1   1   1   1   1  0  1  1  1  1   0   1  0  0 0 1  1  1 1   1
 
 // SPEC: the definition of divide-by-zero is an extension to the spec
 
@@ -863,29 +1136,43 @@ GB_PUBLIC GrB_BinaryOp
 // GrB_IDENTITY_BOOL, GrB_AINV_BOOL, and GrB_MINV_BOOL all give the same result
 // (z = x).
 
-// With this convention for boolean "division", there are 11 unique binary
-// operators that are purely boolean; 13 *_BOOL operators are redundant but are
-// included in GraphBLAS so that the name space of operators is complete:
+// With this convention for boolean "division", there are 13 unique binary
+// operators that are purely boolean.  The other *_BOOL operators are redundant
+// but are included in GraphBLAS so that the name space of operators is
+// complete.  Below is a list of all operators and their equivalents.
 
-//      z = 1           PAIR
-//      z = x           FIRST, DIV
-//      z = y           SECOND, RDIV
-//      z = (x && y)    AND, MIN, TIMES
-//      z = (x || y)    OR, MAX, PLUS
-//      z = (x != y)    XOR, MINUS, RMINUS, NE, ISNE
-//      z = (x == y)    EQ, ISEQ
-//      z = (x >  y)    GT, ISGT
-//      z = (x <  y)    LT, ISLT
-//      z = (x >= y)    GE, ISGE
-//      z = (x >= y)    LE, ISLE
+//                   x: 0 0 1 1
+//                   y: 0 1 0 1
+//                   z: see below
+//
+//      z = 0           0 0 0 0     (zero function, not predefined)
+//      z = (x && y)    0 0 0 1     AND, MIN, TIMES
+//      z = (x >  y)    0 0 1 0     GT, ISGT
+//      z = x           0 0 1 1     FIRST, DIV
+//
+//      z = (x <  y)    0 1 0 0     LT, ISLT
+//      z = y           0 1 0 1     SECOND, RDIV
+//      z = (x != y)    0 1 1 0     XOR, MINUS, RMINUS, NE, ISNE
+//      z = (x || y)    0 1 1 1     OR, MAX, PLUS
+//
+//      z = ~(x || y)   1 0 0 0     (nor(x,y) function, not predefined)
+//      z = (x == y)    1 0 0 1     EQ, ISEQ, LXNOR
+//      z = ~y          1 0 1 0     (not(y), not predefined)
+//      z = (x >= y)    1 0 1 1     GE, ISGE, POW
+//
+//      z = ~x          1 1 0 0     (not(x), not predefined)
+//      z = (x >= y)    1 1 0 1     LE, ISLE
+//      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
+//      z = 1           1 1 1 1     PAIR
+//
+//      z = any(x,y)    . . . .     ANY (pick x or y arbitrarily)
 
-// Three more that have no_BOOL suffix are also redundant with the operators
-// of the form GxB_*_BOOL.
-// (GrB_LOR, GrB_LAND, and GrB_LXOR).
+// Four more that have no_BOOL suffix are also redundant with the operators
+// of the form GxB_*_BOOL (GrB_LOR, GrB_LAND, GrB_LXOR, and GrB_LXNOR).
 
-// There are thus 278 built-in binary operators with unique names, 18 of which
-// are redundant, giving 260 built-in binary operators that compute unique
-// results.
+// Note that the boolean binary operator space is not complete.  Four other
+// boolean functions could be pre-defined as well:  z = 0, nor(x,y),
+// nand(x,y), not(x), and not(y).
 
 //------------------------------------------------------------------------------
 // methods for binary operators
@@ -1047,7 +1334,7 @@ GB_PUBLIC GxB_SelectOp
 // all user-defined types.
 
 // GxB_GT_*, GxB_GE_*, GxB_LT_*, and GxB_LE_* only work on the 11 built-in
-// types.  They cannot be used for user-defined types.
+// types (not complex).  They cannot be used for user-defined types.
 
 //------------------------------------------------------------------------------
 // select operators
@@ -1215,6 +1502,22 @@ GrB_Info GrB_Monoid_new_FP64        // create a new double monoid
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Monoid_new_FC32        // create a new float complex monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    GrB_BinaryOp op,                // binary operator of the monoid
+    GxB_FC32_t identity             // identity value of the monoid
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Monoid_new_FC64        // create a new double complex monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    GrB_BinaryOp op,                // binary operator of the monoid
+    GxB_FC64_t identity             // identity value of the monoid
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
 (
     GrB_Monoid *monoid,             // handle of monoid to create
@@ -1263,6 +1566,10 @@ GrB_Info GrB_Monoid_new             // create a monoid
               float    : GrB_Monoid_new_FP32   ,    \
         const double   : GrB_Monoid_new_FP64   ,    \
               double   : GrB_Monoid_new_FP64   ,    \
+        const GxB_FC32_t : GxB_Monoid_new_FC32 ,    \
+              GxB_FC32_t : GxB_Monoid_new_FC32 ,    \
+        const GxB_FC64_t : GxB_Monoid_new_FC64 ,    \
+              GxB_FC64_t : GxB_Monoid_new_FC64 ,    \
         const void *   : GrB_Monoid_new_UDT    ,    \
               void *   : GrB_Monoid_new_UDT         \
     )                                               \
@@ -1374,6 +1681,24 @@ GrB_Info GxB_Monoid_terminal_new_FP64        // create a new double monoid
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Monoid_terminal_new_FC32   // create a new float complex monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    GrB_BinaryOp op,                // binary operator of the monoid
+    GxB_FC32_t identity,            // identity value of the monoid
+    GxB_FC32_t terminal             // terminal value of the monoid
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Monoid_terminal_new_FC64   // create a new double complex monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    GrB_BinaryOp op,                // binary operator of the monoid
+    GxB_FC64_t identity,            // identity value of the monoid
+    GxB_FC64_t terminal             // terminal value of the monoid
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Monoid_terminal_new_UDT    // create a monoid with a user type
 (
     GrB_Monoid *monoid,             // handle of monoid to create
@@ -1424,6 +1749,10 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
               float    : GxB_Monoid_terminal_new_FP32   ,       \
         const double   : GxB_Monoid_terminal_new_FP64   ,       \
               double   : GxB_Monoid_terminal_new_FP64   ,       \
+        const GxB_FC32_t : GxB_Monoid_terminal_new_FC32 ,       \
+              GxB_FC32_t : GxB_Monoid_terminal_new_FC32 ,       \
+        const GxB_FC64_t : GxB_Monoid_terminal_new_FC64 ,       \
+              GxB_FC64_t : GxB_Monoid_terminal_new_FC64 ,       \
         const void *   : GxB_Monoid_terminal_new_UDT    ,       \
               void *   : GxB_Monoid_terminal_new_UDT            \
     )                                                           \
@@ -1668,6 +1997,20 @@ GrB_Info GxB_Scalar_setElement_FP64     // s = x
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Scalar_setElement_FC32     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    GxB_FC32_t x                        // user scalar to assign to s
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Scalar_setElement_FC64     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    GxB_FC64_t x                        // user scalar to assign to s
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Scalar_setElement_UDT      // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
@@ -1689,10 +2032,10 @@ GrB_Info GxB_Scalar_setElement          // s = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Scalar_setElement(s,x)                  \
-    _Generic                                        \
-    (                                               \
-        (x),                                        \
+#define GxB_Scalar_setElement(s,x)                        \
+    _Generic                                              \
+    (                                                     \
+        (x),                                              \
         const bool      : GxB_Scalar_setElement_BOOL   ,  \
               bool      : GxB_Scalar_setElement_BOOL   ,  \
         const int8_t    : GxB_Scalar_setElement_INT8   ,  \
@@ -1715,10 +2058,14 @@ GrB_Info GxB_Scalar_setElement          // s = x
               float     : GxB_Scalar_setElement_FP32   ,  \
         const double    : GxB_Scalar_setElement_FP64   ,  \
               double    : GxB_Scalar_setElement_FP64   ,  \
+        const GxB_FC32_t : GxB_Scalar_setElement_FC32  ,  \
+              GxB_FC32_t : GxB_Scalar_setElement_FC32  ,  \
+        const GxB_FC64_t : GxB_Scalar_setElement_FC64  ,  \
+              GxB_FC64_t : GxB_Scalar_setElement_FC64  ,  \
         const void *    : GxB_Scalar_setElement_UDT    ,  \
               void *    : GxB_Scalar_setElement_UDT       \
-    )                                               \
-    (s, x)    
+    )                                                     \
+    (s, x)
 #endif
 
 //------------------------------------------------------------------------------
@@ -1809,6 +2156,20 @@ GrB_Info GxB_Scalar_extractElement_FP64     // x = s
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Scalar_extractElement_FC32     // x = s
+(
+    GxB_FC32_t *x,                  // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Scalar_extractElement_FC64     // x = s
+(
+    GxB_FC64_t *x,                  // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Scalar_extractElement_UDT      // x = s
 (
     void *x,                        // user scalar extracted
@@ -1845,6 +2206,8 @@ GrB_Info GxB_Scalar_extractElement  // x = s
         uint64_t *: GxB_Scalar_extractElement_UINT64 ,  \
         float    *: GxB_Scalar_extractElement_FP32   ,  \
         double   *: GxB_Scalar_extractElement_FP64   ,  \
+        GxB_FC32_t *: GxB_Scalar_extractElement_FC32 ,  \
+        GxB_FC64_t *: GxB_Scalar_extractElement_FC64 ,  \
         void     *: GxB_Scalar_extractElement_UDT       \
     )                                                   \
     (x, s)
@@ -1922,8 +2285,8 @@ GrB_Info GrB_Vector_free    // free a vector
 // type of the dup operator, as needed (user-defined types cannot be cast).
 // Duplicates are assembled together with the dup operator.  If two tuples
 // (i,x1) and (i,x2) have the same row index, then w(i) = dup (x1,x2).  All
-// three types of dup must be the same.  The types of C, X, and dup must be
-// compatible.
+// three types of x,y,z of z=dup(x,y) must be the same.  The types of C, X, and
+// dup must be compatible.
 
 // SPEC: extension: well-defined behavior of a non-associative dup operator.
 
@@ -2049,6 +2412,26 @@ GrB_Info GrB_Vector_build_FP64      // build a vector from (I,X) tuples
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_build_FC32      // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const GrB_Index *I,             // array of row indices of tuples
+    const GxB_FC32_t *X,            // array of values of tuples
+    GrB_Index nvals,                // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_build_FC64      // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const GrB_Index *I,             // array of row indices of tuples
+    const GxB_FC64_t *X,            // array of values of tuples
+    GrB_Index nvals,                // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_build_UDT       // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
@@ -2102,6 +2485,10 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
               float     *: GrB_Vector_build_FP32   ,    \
         const double    *: GrB_Vector_build_FP64   ,    \
               double    *: GrB_Vector_build_FP64   ,    \
+        const GxB_FC32_t *: GxB_Vector_build_FC32  ,    \
+              GxB_FC32_t *: GxB_Vector_build_FC32  ,    \
+        const GxB_FC64_t *: GxB_Vector_build_FC64  ,    \
+              GxB_FC64_t *: GxB_Vector_build_FC64  ,    \
         const void      *: GrB_Vector_build_UDT    ,    \
               void      *: GrB_Vector_build_UDT         \
     )                                                   \
@@ -2204,6 +2591,22 @@ GrB_Info GrB_Vector_setElement_FP64     // w(i) = x
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_setElement_FC32     // w(i) = x
+(
+    GrB_Vector w,                       // vector to modify
+    GxB_FC32_t x,                       // scalar to assign to w(i)
+    GrB_Index i                         // row index
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_setElement_FC64     // w(i) = x
+(
+    GrB_Vector w,                       // vector to modify
+    GxB_FC64_t x,                       // scalar to assign to w(i)
+    GrB_Index i                         // row index
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_setElement_UDT      // w(i) = x
 (
     GrB_Vector w,                       // vector to modify
@@ -2227,10 +2630,10 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_setElement(w,x,i)                \
-    _Generic                                        \
-    (                                               \
-        (x),                                        \
+#define GrB_Vector_setElement(w,x,i)                      \
+    _Generic                                              \
+    (                                                     \
+        (x),                                              \
         const bool      : GrB_Vector_setElement_BOOL   ,  \
               bool      : GrB_Vector_setElement_BOOL   ,  \
         const int8_t    : GrB_Vector_setElement_INT8   ,  \
@@ -2253,9 +2656,13 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
               float     : GrB_Vector_setElement_FP32   ,  \
         const double    : GrB_Vector_setElement_FP64   ,  \
               double    : GrB_Vector_setElement_FP64   ,  \
+        const GxB_FC32_t : GxB_Vector_setElement_FC32  ,  \
+              GxB_FC32_t : GxB_Vector_setElement_FC32  ,  \
+        const GxB_FC64_t : GxB_Vector_setElement_FC64  ,  \
+              GxB_FC64_t : GxB_Vector_setElement_FC64  ,  \
         const void *    : GrB_Vector_setElement_UDT    ,  \
               void *    : GrB_Vector_setElement_UDT       \
-    )                                               \
+    )                                                     \
     (w, x, i)
 #endif
 
@@ -2358,6 +2765,22 @@ GrB_Info GrB_Vector_extractElement_FP64     // x = v(i)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_extractElement_FC32     // x = v(i)
+(
+    GxB_FC32_t *x,                  // scalar extracted
+    const GrB_Vector v,             // vector to extract an entry from
+    GrB_Index i                     // row index
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_extractElement_FC64     // x = v(i)
+(
+    GxB_FC64_t *x,                  // scalar extracted
+    const GrB_Vector v,             // vector to extract an entry from
+    GrB_Index i                     // row index
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_extractElement_UDT      // x = v(i)
 (
     void *x,                        // scalar extracted
@@ -2396,6 +2819,8 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
         uint64_t *: GrB_Vector_extractElement_UINT64 ,  \
         float    *: GrB_Vector_extractElement_FP32   ,  \
         double   *: GrB_Vector_extractElement_FP64   ,  \
+        GxB_FC32_t *: GxB_Vector_extractElement_FC32 ,  \
+        GxB_FC64_t *: GxB_Vector_extractElement_FC64 ,  \
         void     *: GrB_Vector_extractElement_UDT       \
     )                                                   \
     (x, v, i)
@@ -2516,6 +2941,24 @@ GrB_Info GrB_Vector_extractTuples_FP64      // [I,~,X] = find (v)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_extractTuples_FC32      // [I,~,X] = find (v)
+(
+    GrB_Index *I,               // array for returning row indices of tuples
+    GxB_FC32_t *X,              // array for returning values of tuples
+    GrB_Index *nvals,           // I, X size on input; # tuples on output
+    const GrB_Vector v          // vector to extract tuples from
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_extractTuples_FC64      // [I,~,X] = find (v)
+(
+    GrB_Index *I,               // array for returning row indices of tuples
+    GxB_FC64_t *X,              // array for returning values of tuples
+    GrB_Index *nvals,           // I, X size on input; # tuples on output
+    const GrB_Vector v          // vector to extract tuples from
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_extractTuples_UDT       // [I,~,X] = find (v)
 (
     GrB_Index *I,               // array for returning row indices of tuples
@@ -2556,6 +2999,8 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
         uint64_t *: GrB_Vector_extractTuples_UINT64 ,   \
         float    *: GrB_Vector_extractTuples_FP32   ,   \
         double   *: GrB_Vector_extractTuples_FP64   ,   \
+        GxB_FC32_t *: GxB_Vector_extractTuples_FC32 ,   \
+        GxB_FC64_t *: GxB_Vector_extractTuples_FC64 ,   \
         void     *: GrB_Vector_extractTuples_UDT        \
     )                                                   \
     (I, X, nvals, v)
@@ -2641,8 +3086,8 @@ GrB_Info GrB_Matrix_free    // free a matrix
 // appear in any order.  Values are typecasted from X into the type of C, as
 // needed (user-defined types cannot be cast).  Duplicates are assembled
 // together with the dup operator.  If two tuples (i,j,x1) and (i,j,x2) have
-// the same row index, then C(i,j) = dup(x1,x2).  All three types of dup must
-// be the same, and dup, C, and X must be compatible.
+// the same row index, then C(i,j) = dup(x1,x2).  All three types of x,y,z
+// for z=dup(x,y) must be the same; and dup, C, and X must be compatible.
 
 // SPEC: extension: well-defined behavior of a non-associative dup operator.
 
@@ -2773,6 +3218,28 @@ GrB_Info GrB_Matrix_build_FP64      // build a matrix from (I,J,X) tuples
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_build_FC32      // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const GrB_Index *I,             // array of row indices of tuples
+    const GrB_Index *J,             // array of column indices of tuples
+    const GxB_FC32_t *X,            // array of values of tuples
+    GrB_Index nvals,                // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_build_FC64      // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const GrB_Index *I,             // array of row indices of tuples
+    const GrB_Index *J,             // array of column indices of tuples
+    const GxB_FC64_t *X,            // array of values of tuples
+    GrB_Index nvals,                // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_build_UDT       // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
@@ -2828,6 +3295,10 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
               float     *: GrB_Matrix_build_FP32   ,    \
         const double    *: GrB_Matrix_build_FP64   ,    \
               double    *: GrB_Matrix_build_FP64   ,    \
+        const GxB_FC32_t *: GxB_Matrix_build_FC32  ,    \
+              GxB_FC32_t *: GxB_Matrix_build_FC32  ,    \
+        const GxB_FC64_t *: GxB_Matrix_build_FC64  ,    \
+              GxB_FC64_t *: GxB_Matrix_build_FC64  ,    \
         const void      *: GrB_Matrix_build_UDT    ,    \
               void      *: GrB_Matrix_build_UDT         \
     )                                                   \
@@ -2941,6 +3412,24 @@ GrB_Info GrB_Matrix_setElement_FP64     // C (i,j) = x
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_setElement_FC32     // C (i,j) = x
+(
+    GrB_Matrix C,                       // matrix to modify
+    GxB_FC32_t x,                       // scalar to assign to C(i,j)
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_setElement_FC64     // C (i,j) = x
+(
+    GrB_Matrix C,                       // matrix to modify
+    GxB_FC64_t x,                       // scalar to assign to C(i,j)
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_setElement_UDT      // C (i,j) = x
 (
     GrB_Matrix C,                       // matrix to modify
@@ -2992,6 +3481,10 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
               float     : GrB_Matrix_setElement_FP32   ,  \
         const double    : GrB_Matrix_setElement_FP64   ,  \
               double    : GrB_Matrix_setElement_FP64   ,  \
+        const GxB_FC32_t : GxB_Matrix_setElement_FC32  ,  \
+              GxB_FC32_t : GxB_Matrix_setElement_FC32  ,  \
+        const GxB_FC64_t : GxB_Matrix_setElement_FC64  ,  \
+              GxB_FC64_t : GxB_Matrix_setElement_FC64  ,  \
         const void *    : GrB_Matrix_setElement_UDT    ,  \
               void *    : GrB_Matrix_setElement_UDT       \
     )                                                     \
@@ -3108,6 +3601,24 @@ GrB_Info GrB_Matrix_extractElement_FP64     // x = A(i,j)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_extractElement_FC32     // x = A(i,j)
+(
+    GxB_FC32_t *x,                      // extracted scalar
+    const GrB_Matrix A,                 // matrix to extract a scalar from
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_extractElement_FC64     // x = A(i,j)
+(
+    GxB_FC64_t *x,                      // extracted scalar
+    const GrB_Matrix A,                 // matrix to extract a scalar from
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_extractElement_UDT      // x = A(i,j)
 (
     void *x,                            // extracted scalar
@@ -3148,6 +3659,8 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
         uint64_t *: GrB_Matrix_extractElement_UINT64 ,  \
         float    *: GrB_Matrix_extractElement_FP32   ,  \
         double   *: GrB_Matrix_extractElement_FP64   ,  \
+        GxB_FC32_t *: GxB_Matrix_extractElement_FC32 ,  \
+        GxB_FC64_t *: GxB_Matrix_extractElement_FC64 ,  \
         void     *: GrB_Matrix_extractElement_UDT       \
     )                                                   \
     (x, A, i, j)
@@ -3279,6 +3792,26 @@ GrB_Info GrB_Matrix_extractTuples_FP64      // [I,J,X] = find (A)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_extractTuples_FC32      // [I,J,X] = find (A)
+(
+    GrB_Index *I,               // array for returning row indices of tuples
+    GrB_Index *J,               // array for returning col indices of tuples
+    GxB_FC32_t *X,              // array for returning values of tuples
+    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
+    const GrB_Matrix A          // matrix to extract tuples from
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_extractTuples_FC64      // [I,J,X] = find (A)
+(
+    GrB_Index *I,               // array for returning row indices of tuples
+    GrB_Index *J,               // array for returning col indices of tuples
+    GxB_FC64_t *X,              // array for returning values of tuples
+    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
+    const GrB_Matrix A          // matrix to extract tuples from
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_extractTuples_UDT       // [I,J,X] = find (A)
 (
     GrB_Index *I,               // array for returning row indices of tuples
@@ -3321,6 +3854,8 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
         uint64_t *: GrB_Matrix_extractTuples_UINT64 ,   \
         float    *: GrB_Matrix_extractTuples_FP32   ,   \
         double   *: GrB_Matrix_extractTuples_FP64   ,   \
+        GxB_FC32_t *: GxB_Matrix_extractTuples_FC32 ,   \
+        GxB_FC64_t *: GxB_Matrix_extractTuples_FC64 ,   \
         void     *: GrB_Matrix_extractTuples_UDT        \
     )                                                   \
     (I, J, X, nvals, A)
@@ -3543,42 +4078,42 @@ GrB_Descriptor     // OUTP         MASK           MASK       INP0      INP1
 
 // GrB_NULL        // -            -              -          -         -
 GrB_DESC_T1      , // -            -              -          -         GrB_TRAN
-GrB_DESC_T0      , // -            -              -          GrB_TRAN  -       
+GrB_DESC_T0      , // -            -              -          GrB_TRAN  -
 GrB_DESC_T0T1    , // -            -              -          GrB_TRAN  GrB_TRAN
 
-GrB_DESC_C       , // -            -              GrB_COMP   -         -       
+GrB_DESC_C       , // -            -              GrB_COMP   -         -
 GrB_DESC_CT1     , // -            -              GrB_COMP   -         GrB_TRAN
-GrB_DESC_CT0     , // -            -              GrB_COMP   GrB_TRAN  -       
+GrB_DESC_CT0     , // -            -              GrB_COMP   GrB_TRAN  -
 GrB_DESC_CT0T1   , // -            -              GrB_COMP   GrB_TRAN  GrB_TRAN
 
-GrB_DESC_S       , // -            GrB_STRUCTURE  -          -         -       
+GrB_DESC_S       , // -            GrB_STRUCTURE  -          -         -
 GrB_DESC_ST1     , // -            GrB_STRUCTURE  -          -         GrB_TRAN
-GrB_DESC_ST0     , // -            GrB_STRUCTURE  -          GrB_TRAN  -       
+GrB_DESC_ST0     , // -            GrB_STRUCTURE  -          GrB_TRAN  -
 GrB_DESC_ST0T1   , // -            GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
 
-GrB_DESC_SC      , // -            GrB_STRUCTURE  GrB_COMP   -         -       
+GrB_DESC_SC      , // -            GrB_STRUCTURE  GrB_COMP   -         -
 GrB_DESC_SCT1    , // -            GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
-GrB_DESC_SCT0    , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -       
+GrB_DESC_SCT0    , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
 GrB_DESC_SCT0T1  , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 
-GrB_DESC_R       , // GrB_REPLACE  -              -          -         -       
+GrB_DESC_R       , // GrB_REPLACE  -              -          -         -
 GrB_DESC_RT1     , // GrB_REPLACE  -              -          -         GrB_TRAN
-GrB_DESC_RT0     , // GrB_REPLACE  -              -          GrB_TRAN  -       
+GrB_DESC_RT0     , // GrB_REPLACE  -              -          GrB_TRAN  -
 GrB_DESC_RT0T1   , // GrB_REPLACE  -              -          GrB_TRAN  GrB_TRAN
 
-GrB_DESC_RC      , // GrB_REPLACE  -              GrB_COMP   -         -       
+GrB_DESC_RC      , // GrB_REPLACE  -              GrB_COMP   -         -
 GrB_DESC_RCT1    , // GrB_REPLACE  -              GrB_COMP   -         GrB_TRAN
-GrB_DESC_RCT0    , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  -       
+GrB_DESC_RCT0    , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  -
 GrB_DESC_RCT0T1  , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  GrB_TRAN
 
-GrB_DESC_RS      , // GrB_REPLACE  GrB_STRUCTURE  -          -         -       
+GrB_DESC_RS      , // GrB_REPLACE  GrB_STRUCTURE  -          -         -
 GrB_DESC_RST1    , // GrB_REPLACE  GrB_STRUCTURE  -          -         GrB_TRAN
-GrB_DESC_RST0    , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  -       
+GrB_DESC_RST0    , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  -
 GrB_DESC_RST0T1  , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
 
-GrB_DESC_RSC     , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         -       
+GrB_DESC_RSC     , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         -
 GrB_DESC_RSCT1   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
-GrB_DESC_RSCT0   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -       
+GrB_DESC_RSCT0   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
 GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 
 // GrB_NULL is the default descriptor, with all settings at their defaults:
@@ -4649,6 +5184,30 @@ GrB_Info GxB_Vector_subassign_FP64     // w(I)<mask> = accum (w(I),x)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_subassign_FC32     // w(I)<mask> = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    GxB_FC32_t x,                   // scalar to assign to w(I)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w(I) and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_subassign_FC64     // w(I)<mask> = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    GxB_FC64_t x,                   // scalar to assign to w(I)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w(I) and mask
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Vector_subassign_UDT      // w(I)<mask> = accum (w(I),x)
 (
     GrB_Vector w,                   // input/output vector for results
@@ -4825,6 +5384,34 @@ GrB_Info GxB_Matrix_subassign_FP64     // C(I,J)<Mask> = accum (C(I,J),x)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_subassign_FC32     // C(I,J)<Mask> = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    GxB_FC32_t x,                   // scalar to assign to C(I,J)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_subassign_FC64     // C(I,J)<Mask> = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    GxB_FC64_t x,                   // scalar to assign to C(I,J)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -4854,13 +5441,13 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)               \
-    _Generic                                                    \
-    (                                                           \
-        (arg1),                                                 \
-        GrB_Vector :                                            \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
+    _Generic                                                       \
+    (                                                              \
+        (arg1),                                                    \
+        GrB_Vector :                                               \
+            _Generic                                               \
+            (                                                      \
+                (arg4),                                            \
                 const bool       : GxB_Vector_subassign_BOOL   ,   \
                       bool       : GxB_Vector_subassign_BOOL   ,   \
                 const int8_t     : GxB_Vector_subassign_INT8   ,   \
@@ -4883,14 +5470,18 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
                       float      : GxB_Vector_subassign_FP32   ,   \
                 const double     : GxB_Vector_subassign_FP64   ,   \
                       double     : GxB_Vector_subassign_FP64   ,   \
+                const GxB_FC32_t : GxB_Vector_subassign_FC32   ,   \
+                      GxB_FC32_t : GxB_Vector_subassign_FC32   ,   \
+                const GxB_FC64_t : GxB_Vector_subassign_FC64   ,   \
+                      GxB_FC64_t : GxB_Vector_subassign_FC64   ,   \
                 const void *     : GxB_Vector_subassign_UDT    ,   \
                       void *     : GxB_Vector_subassign_UDT    ,   \
                 default          : GxB_Vector_subassign            \
-            ),                                                  \
-        default :                                               \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
+            ),                                                     \
+        default :                                                  \
+            _Generic                                               \
+            (                                                      \
+                (arg4),                                            \
                 const bool       : GxB_Matrix_subassign_BOOL   ,   \
                       bool       : GxB_Matrix_subassign_BOOL   ,   \
                 const int8_t     : GxB_Matrix_subassign_INT8   ,   \
@@ -4913,27 +5504,31 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
                       float      : GxB_Matrix_subassign_FP32   ,   \
                 const double     : GxB_Matrix_subassign_FP64   ,   \
                       double     : GxB_Matrix_subassign_FP64   ,   \
+                const GxB_FC32_t : GxB_Matrix_subassign_FC32   ,   \
+                      GxB_FC32_t : GxB_Matrix_subassign_FC32   ,   \
+                const GxB_FC64_t : GxB_Matrix_subassign_FC64   ,   \
+                      GxB_FC64_t : GxB_Matrix_subassign_FC64   ,   \
                 const void *     : GxB_Matrix_subassign_UDT    ,   \
                       void *     : GxB_Matrix_subassign_UDT    ,   \
-                const GrB_Vector :                              \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
+                const GrB_Vector :                                 \
+                    _Generic                                       \
+                    (                                              \
+                        (arg5),                                    \
                         const GrB_Index *: GxB_Col_subassign ,     \
                               GrB_Index *: GxB_Col_subassign ,     \
                         default          : GxB_Row_subassign       \
-                    ),                                          \
-                GrB_Vector :                                    \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
+                    ),                                             \
+                GrB_Vector :                                       \
+                    _Generic                                       \
+                    (                                              \
+                        (arg5),                                    \
                         const GrB_Index *: GxB_Col_subassign ,     \
                               GrB_Index *: GxB_Col_subassign ,     \
                         default          : GxB_Row_subassign       \
-                    ),                                          \
+                    ),                                             \
                 default    : GxB_Matrix_subassign                  \
-            )                                                   \
-    )                                                           \
+            )                                                      \
+    )                                                              \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
 #endif
 
@@ -5139,6 +5734,30 @@ GrB_Info GrB_Vector_assign_FP64     // w<mask>(I) = accum (w(I),x)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_assign_FC32     // w<mask>(I) = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    GxB_FC32_t x,                   // scalar to assign to w(I)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_assign_FC64     // w<mask>(I) = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    GxB_FC64_t x,                   // scalar to assign to w(I)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_assign_UDT      // w<mask>(I) = accum (w(I),x)
 (
     GrB_Vector w,                   // input/output vector for results
@@ -5315,6 +5934,34 @@ GrB_Info GrB_Matrix_assign_FP64     // C<Mask>(I,J) = accum (C(I,J),x)
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_assign_FC32     // C<Mask>(I,J) = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    GxB_FC32_t x,                   // scalar to assign to C(I,J)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C and Mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_assign_FC64     // C<Mask>(I,J) = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    GxB_FC64_t x,                   // scalar to assign to C(I,J)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C and Mask
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -5373,6 +6020,10 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
                       float      : GrB_Vector_assign_FP32   ,   \
                 const double     : GrB_Vector_assign_FP64   ,   \
                       double     : GrB_Vector_assign_FP64   ,   \
+                const GxB_FC32_t : GxB_Vector_assign_FC32   ,   \
+                      GxB_FC32_t : GxB_Vector_assign_FC32   ,   \
+                const GxB_FC64_t : GxB_Vector_assign_FC64   ,   \
+                      GxB_FC64_t : GxB_Vector_assign_FC64   ,   \
                 const void *     : GrB_Vector_assign_UDT    ,   \
                       void *     : GrB_Vector_assign_UDT    ,   \
                 default          : GrB_Vector_assign            \
@@ -5403,6 +6054,10 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
                       float      : GrB_Matrix_assign_FP32   ,   \
                 const double     : GrB_Matrix_assign_FP64   ,   \
                       double     : GrB_Matrix_assign_FP64   ,   \
+                const GxB_FC32_t : GxB_Matrix_assign_FC32   ,   \
+                      GxB_FC32_t : GxB_Matrix_assign_FC32   ,   \
+                const GxB_FC64_t : GxB_Matrix_assign_FC64   ,   \
+                      GxB_FC64_t : GxB_Matrix_assign_FC64   ,   \
                 const void *     : GrB_Matrix_assign_UDT    ,   \
                       void *     : GrB_Matrix_assign_UDT    ,   \
                 const GrB_Vector :                              \
@@ -5699,6 +6354,26 @@ GrB_Info GrB_Vector_reduce_FP64     // c = accum (c, reduce_to_scalar (u))
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_reduce_FC32     // c = accum (c, reduce_to_scalar (u))
+(
+    GxB_FC32_t *c,                  // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_Monoid monoid,        // monoid to do the reduction
+    const GrB_Vector u,             // vector to reduce
+    const GrB_Descriptor desc       // descriptor (currently unused)
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_reduce_FC64     // c = accum (c, reduce_to_scalar (u))
+(
+    GxB_FC64_t *c,                  // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_Monoid monoid,        // monoid to do the reduction
+    const GrB_Vector u,             // vector to reduce
+    const GrB_Descriptor desc       // descriptor (currently unused)
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
 (
     void *c,                        // result scalar
@@ -5833,6 +6508,26 @@ GrB_Info GrB_Matrix_reduce_FP64     // c = accum (c, reduce_to_scalar (A))
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_reduce_FC32     // c = accum (c, reduce_to_scalar (A))
+(
+    GxB_FC32_t *c,                  // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_Monoid monoid,        // monoid to do the reduction
+    const GrB_Matrix A,             // matrix to reduce
+    const GrB_Descriptor desc       // descriptor (currently unused)
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_reduce_FC64     // c = accum (c, reduce_to_scalar (A))
+(
+    GxB_FC64_t *c,                  // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_Monoid monoid,        // monoid to do the reduction
+    const GrB_Matrix A,             // matrix to reduce
+    const GrB_Descriptor desc       // descriptor (currently unused)
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 (
     void *c,                        // result scalar
@@ -5876,6 +6571,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
                 uint64_t * : GrB_Vector_reduce_UINT64 ,     \
                 float    * : GrB_Vector_reduce_FP32   ,     \
                 double   * : GrB_Vector_reduce_FP64   ,     \
+                GxB_FC32_t * : GxB_Vector_reduce_FC32 ,     \
+                GxB_FC64_t * : GxB_Vector_reduce_FC64 ,     \
                 default    : GrB_Vector_reduce_UDT          \
             ),                                              \
         GrB_Vector :                                        \
@@ -5893,6 +6590,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
                 uint64_t * : GrB_Vector_reduce_UINT64 ,     \
                 float    * : GrB_Vector_reduce_FP32   ,     \
                 double   * : GrB_Vector_reduce_FP64   ,     \
+                GxB_FC32_t * : GxB_Vector_reduce_FC32 ,     \
+                GxB_FC64_t * : GxB_Vector_reduce_FC64 ,     \
                 default    : GrB_Vector_reduce_UDT          \
             ),                                              \
         const GrB_Matrix :                                  \
@@ -5910,6 +6609,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
                 uint64_t * : GrB_Matrix_reduce_UINT64 ,     \
                 float    * : GrB_Matrix_reduce_FP32   ,     \
                 double   * : GrB_Matrix_reduce_FP64   ,     \
+                GxB_FC32_t * : GxB_Matrix_reduce_FC32 ,     \
+                GxB_FC64_t * : GxB_Matrix_reduce_FC64 ,     \
                 default    : GrB_Matrix_reduce_UDT          \
             ),                                              \
         GrB_Matrix :                                        \
@@ -5927,6 +6628,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
                 uint64_t * : GrB_Matrix_reduce_UINT64 ,     \
                 float    * : GrB_Matrix_reduce_FP32   ,     \
                 double   * : GrB_Matrix_reduce_FP64   ,     \
+                GxB_FC32_t * : GxB_Matrix_reduce_FC32 ,     \
+                GxB_FC64_t * : GxB_Matrix_reduce_FC64 ,     \
                 default    : GrB_Matrix_reduce_UDT          \
             ),                                              \
         const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,   \
@@ -5961,20 +6664,35 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 // additional predefined objects
 //==============================================================================
 
-// SPEC: predefined monoids and semirings are extensions to the spec
+// SPEC: predefined monoids and semirings are extensions to the spec.
+// The v1.3 spec added many GrB_*_MONOIDs; these are listed below.
+// Prior GxB_* monoids are kept for backward compatbility.
 
 //------------------------------------------------------------------------------
 // built-in monoids
 //------------------------------------------------------------------------------
 
-// 55 monoids can be constructed using built-in types and operators, all of
-// which are defined below.  Five operators (min, max, plus, times, any) are
-// available for each of the 10 non-Boolean types, plus five purely Boolean
-// monoids are available.
+// 77 monoids constructed using built-in types and operators are defined below.
+// Five operators (min, max, plus, times, any) are available for each of the 10
+// real non-Boolean types, plus five purely Boolean monoids are available.
+// Three operators (plus, times, any) are available for both complex types.
+// Sixteen monoids are pre-defined for bitwise operators (only for unsigned
+// integers).
+
+// 44 pre-defined monoids now appear with GrB_* names in the v1.3 C API.
+// These are identical to the 44 GxB* monoids listed below, just with different
+// names.  The GrB* names are preferred.
+
+// Bitwise monoids can be constructed for signed integer types, but these are
+// not well-defined by the ANSI C specification, so they are excluded from the
+// pre-defined monoids in SuiteSparse:GraphBLAS.
 
 GB_PUBLIC GrB_Monoid
 
-    // MIN monoids:
+    //--------------------------------------------------------------------------
+    // 10 MIN monoids: (not for complex types)
+    //--------------------------------------------------------------------------
+
     GxB_MIN_INT8_MONOID,          // identity: INT8_MAX     terminal: INT8_MIN
     GxB_MIN_INT16_MONOID,         // identity: INT16_MAX    terminal: INT16_MIN
     GxB_MIN_INT32_MONOID,         // identity: INT32_MAX    terminal: INT32_MIN
@@ -5986,7 +6704,23 @@ GB_PUBLIC GrB_Monoid
     GxB_MIN_FP32_MONOID,          // identity: INFINITY     terminal: -INFINITY
     GxB_MIN_FP64_MONOID,          // identity: INFINITY     terminal: -INFINITY
 
-    // MAX monoids:
+    // all of the MIN monoids are now in the v1.3 spec with GrB_* names.
+    // The are identical to the GxB_* versions above.
+    GrB_MIN_MONOID_INT8,
+    GrB_MIN_MONOID_INT16,
+    GrB_MIN_MONOID_INT32,
+    GrB_MIN_MONOID_INT64,
+    GrB_MIN_MONOID_UINT8,
+    GrB_MIN_MONOID_UINT16,
+    GrB_MIN_MONOID_UINT32,
+    GrB_MIN_MONOID_UINT64,
+    GrB_MIN_MONOID_FP32,
+    GrB_MIN_MONOID_FP64,
+
+    //--------------------------------------------------------------------------
+    // 10 MAX monoids:
+    //--------------------------------------------------------------------------
+
     GxB_MAX_INT8_MONOID,          // identity: INT8_MIN     terminal: INT8_MAX
     GxB_MAX_INT16_MONOID,         // identity: INT16_MIN    terminal: INT16_MAX
     GxB_MAX_INT32_MONOID,         // identity: INT32_MIN    terminal: INT32_MAX
@@ -5998,7 +6732,22 @@ GB_PUBLIC GrB_Monoid
     GxB_MAX_FP32_MONOID,          // identity: -INFINITY    terminal: INFINITY
     GxB_MAX_FP64_MONOID,          // identity: -INFINITY    terminal: INFINITY
 
-    // PLUS monoids:
+    // identical monoids now in the v1.3 spec:
+    GrB_MAX_MONOID_INT8,
+    GrB_MAX_MONOID_INT16,
+    GrB_MAX_MONOID_INT32,
+    GrB_MAX_MONOID_INT64,
+    GrB_MAX_MONOID_UINT8,
+    GrB_MAX_MONOID_UINT16,
+    GrB_MAX_MONOID_UINT32,
+    GrB_MAX_MONOID_UINT64,
+    GrB_MAX_MONOID_FP32,
+    GrB_MAX_MONOID_FP64,
+
+    //--------------------------------------------------------------------------
+    // 12 PLUS monoids:
+    //--------------------------------------------------------------------------
+
     GxB_PLUS_INT8_MONOID,         // identity: 0            terminal: none
     GxB_PLUS_INT16_MONOID,        // identity: 0            terminal: none
     GxB_PLUS_INT32_MONOID,        // identity: 0            terminal: none
@@ -6009,8 +6758,27 @@ GB_PUBLIC GrB_Monoid
     GxB_PLUS_UINT64_MONOID,       // identity: 0            terminal: none
     GxB_PLUS_FP32_MONOID,         // identity: 0            terminal: none
     GxB_PLUS_FP64_MONOID,         // identity: 0            terminal: none
+    GxB_PLUS_FC32_MONOID,         // identity: 0            terminal: none
+    GxB_PLUS_FC64_MONOID,         // identity: 0            terminal: none
 
-    // TIMES monoids:
+    // identical monoids now in the v1.3 spec:  note the complex monoids
+    // do not appear in the v1.3 spec.  They are SuiteSparse:GraphBLAS
+    // extensions only.
+    GrB_PLUS_MONOID_INT8,
+    GrB_PLUS_MONOID_INT16,
+    GrB_PLUS_MONOID_INT32,
+    GrB_PLUS_MONOID_INT64,
+    GrB_PLUS_MONOID_UINT8,
+    GrB_PLUS_MONOID_UINT16,
+    GrB_PLUS_MONOID_UINT32,
+    GrB_PLUS_MONOID_UINT64,
+    GrB_PLUS_MONOID_FP32,
+    GrB_PLUS_MONOID_FP64,
+
+    //--------------------------------------------------------------------------
+    // 12 TIMES monoids:
+    //--------------------------------------------------------------------------
+
     GxB_TIMES_INT8_MONOID,        // identity: 1            terminal: 0
     GxB_TIMES_INT16_MONOID,       // identity: 1            terminal: 0
     GxB_TIMES_INT32_MONOID,       // identity: 1            terminal: 0
@@ -6021,8 +6789,30 @@ GB_PUBLIC GrB_Monoid
     GxB_TIMES_UINT64_MONOID,      // identity: 1            terminal: 0
     GxB_TIMES_FP32_MONOID,        // identity: 1            terminal: none
     GxB_TIMES_FP64_MONOID,        // identity: 1            terminal: none
+    GxB_TIMES_FC32_MONOID,        // identity: 1            terminal: none
+    GxB_TIMES_FC64_MONOID,        // identity: 1            terminal: none
 
-    // ANY monoids:
+    // identical monoids now in the v1.3 spec:  note the complex monoids
+    // do not appear in the v1.3 spec.  They are SuiteSparse:GraphBLAS
+    // extensions only.
+    GrB_TIMES_MONOID_INT8,
+    GrB_TIMES_MONOID_INT16,
+    GrB_TIMES_MONOID_INT32,
+    GrB_TIMES_MONOID_INT64,
+    GrB_TIMES_MONOID_UINT8,
+    GrB_TIMES_MONOID_UINT16,
+    GrB_TIMES_MONOID_UINT32,
+    GrB_TIMES_MONOID_UINT64,
+    GrB_TIMES_MONOID_FP32,
+    GrB_TIMES_MONOID_FP64,
+
+    //--------------------------------------------------------------------------
+    // 12 ANY monoids: (excluding boolean, listed below)
+    //--------------------------------------------------------------------------
+
+    // These do not appear in the v1.3 C API of the GraphBLAS Specification,
+    // since the ANY operator is a SuiteSparse:GraphBLAS extension.
+
     GxB_ANY_INT8_MONOID,          // identity: any value    terminal: any value
     GxB_ANY_INT16_MONOID,         // identity: any value    terminal: any value
     GxB_ANY_INT32_MONOID,         // identity: any value    terminal: any value
@@ -6033,52 +6823,112 @@ GB_PUBLIC GrB_Monoid
     GxB_ANY_UINT64_MONOID,        // identity: any value    terminal: any value
     GxB_ANY_FP32_MONOID,          // identity: any value    terminal: any value
     GxB_ANY_FP64_MONOID,          // identity: any value    terminal: any value
+    GxB_ANY_FC32_MONOID,          // identity: any value    terminal: any value
+    GxB_ANY_FC64_MONOID,          // identity: any value    terminal: any value
 
-    // Boolean monoids:
+    //--------------------------------------------------------------------------
+    // 5 Boolean monoids:
+    //--------------------------------------------------------------------------
+
     GxB_ANY_BOOL_MONOID,          // identity: any value    terminal: any value
     GxB_LOR_BOOL_MONOID,          // identity: false        terminal: true
     GxB_LAND_BOOL_MONOID,         // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,         // identity: false
-    GxB_EQ_BOOL_MONOID ;          // identity: true
+    GxB_LXNOR_BOOL_MONOID,        // identity: true
+    GxB_EQ_BOOL_MONOID,           // identity: true (same as LXNOR monoid)
+
+    // the LOR, LAND, LXOR, and LXNOR monoids now appear in the v1.3 C API:
+    GrB_LOR_MONOID_BOOL,
+    GrB_LAND_MONOID_BOOL,
+    GrB_LXOR_MONOID_BOOL,
+    GrB_LXNOR_MONOID_BOOL,
+
+    //--------------------------------------------------------------------------
+    // 16 Bitwise-or monoids:
+    //--------------------------------------------------------------------------
+
+    // The v1.3 specification adds the bitwise operators, but no predefined
+    // monoids or semirings that use them.
+
+    // BOR monoids (bitwise or):
+    GxB_BOR_UINT8_MONOID,         // identity: 0   terminal: 0xFF
+    GxB_BOR_UINT16_MONOID,        // identity: 0   terminal: 0xFFFF
+    GxB_BOR_UINT32_MONOID,        // identity: 0   terminal: 0xFFFFFFFF
+    GxB_BOR_UINT64_MONOID,        // identity: 0   terminal: 0xFFFFFFFFFFFFFFFF
+
+    // BAND monoids (bitwise and):
+    GxB_BAND_UINT8_MONOID,        // identity: 0xFF               terminal: 0
+    GxB_BAND_UINT16_MONOID,       // identity: 0xFFFF             terminal: 0
+    GxB_BAND_UINT32_MONOID,       // identity: 0xFFFFFFFF         terminal: 0
+    GxB_BAND_UINT64_MONOID,       // identity: 0xFFFFFFFFFFFFFFFF terminal: 0
+
+    // BXOR monoids (bitwise xor):
+    GxB_BXOR_UINT8_MONOID,        // identity: 0
+    GxB_BXOR_UINT16_MONOID,       // identity: 0
+    GxB_BXOR_UINT32_MONOID,       // identity: 0
+    GxB_BXOR_UINT64_MONOID,       // identity: 0
+
+    // BXNOR monoids (bitwise xnor):
+    GxB_BXNOR_UINT8_MONOID,       // identity: 0xFF
+    GxB_BXNOR_UINT16_MONOID,      // identity: 0xFFFF
+    GxB_BXNOR_UINT32_MONOID,      // identity: 0xFFFFFFFF
+    GxB_BXNOR_UINT64_MONOID ;     // identity: 0xFFFFFFFFFFFFFFFF
 
 //------------------------------------------------------------------------------
 // built-in semirings
 //------------------------------------------------------------------------------
 
-// Using built-in types and operators, 1355 unique semirings can be built.
-// This count excludes redundant semirings (for example GxB_TIMES_BOOL and
-// GxB_LAND_BOOL are different operators but they are redundant since they
-// always return the same result).
+// Using built-in types and operators, SuiteSparse:GraphBLAS provides
+// 1473 built-in semirings:
 
 // 1000 semirings with a multiply operator TxT -> T where T is non-Boolean,
 // from the complete cross product of:
 
-//      5 add monoids: MIN, MAX, PLUS, TIMES, ANY
+//      5 monoids: MIN, MAX, PLUS, TIMES, ANY
+//      10 non-Boolean real types, T
 //      20 multiply operators:
-//           FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
-//           ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
-//           LOR, LAND, LXOR
-//      10 non-Boolean types, T
+//          FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+//          ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
+//          LOR, LAND, LXOR
 
 // 300 semirings with a comparison operator TxT -> bool, where T is
 // non-Boolean, from the complete cross product of:
 
-//      5 Boolean add monoids: LAND, LOR, LXOR, EQ, ANY
+//      5 Boolean monoids: LAND, LOR, LXOR, EQ, ANY
+//      10 non-Boolean real types, T
 //      6 multiply operators: EQ, NE, GT, LT, GE, LE
-//      10 non-Boolean types, T
 
 // 55 semirings with purely Boolean types, bool x bool -> bool, from the
 // complete cross product of:
 
-//      5 Boolean add monoids LAND, LOR, LXOR, EQ, ANY
+//      5 Boolean monoids LAND, LOR, LXOR, EQ, ANY
 //      11 multiply operators:
 //          FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE, PAIR
+
+// 54 complex semirings: TxT -> T where T is float complex or double complex:
+
+//      3 complex monoids: PLUS, TIMES, ANY
+//      2 complex types
+//      9 complex multiply operators:
+//          FIRST, SECOND, PAIR, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+
+// 64 bitwise semirings: TxT -> T where T is an unsigned integer:
+
+//      4 bitwise monoids: BOR, BAND, BXOR, BXNOR
+//      4 bitwise multiply operators: BOR, BAND, BXOR, BXNOR
+//      4 unsigned integer types: UINT8, UINT16, UINT32, UINT64
 
 // The ANY operator is also valid to use as a multiplicative operator in a
 // semiring, but serves no purpose in that case.  The ANY operator is meant as
 // a fast additive operator for a monoid, that terminates, or short-circuits,
 // as soon as any value is found.  A valid user semiring can be constructed
 // with ANY as the multiply operator, but they are not predefined below.
+
+// Likewise, additional built-in operators can be used as multiplicative
+// operators for floating-point semirings (POW, ATAN2, HYPOT, ...) and many
+// more semirings can be constructed from bitwise monoids and many integer
+// binary (non-bitwise) multiplicative operators, but these are not
+// pre-defined.
 
 // In the names below, each semiring has a name of the form GxB_add_mult_T
 // where add is the additive monoid, mult is the multiply operator, and T is
@@ -6094,338 +6944,595 @@ GB_PUBLIC GrB_Semiring
 //------------------------------------------------------------------------------
 
     // semirings with multiply op: z = FIRST (x,y), all types x,y,z the same:
-    GxB_MIN_FIRST_INT8     , GxB_MAX_FIRST_INT8     , GxB_PLUS_FIRST_INT8    , GxB_TIMES_FIRST_INT8   , GxB_ANY_FIRST_INT8     , 
-    GxB_MIN_FIRST_UINT8    , GxB_MAX_FIRST_UINT8    , GxB_PLUS_FIRST_UINT8   , GxB_TIMES_FIRST_UINT8  , GxB_ANY_FIRST_UINT8    , 
-    GxB_MIN_FIRST_INT16    , GxB_MAX_FIRST_INT16    , GxB_PLUS_FIRST_INT16   , GxB_TIMES_FIRST_INT16  , GxB_ANY_FIRST_INT16    , 
-    GxB_MIN_FIRST_UINT16   , GxB_MAX_FIRST_UINT16   , GxB_PLUS_FIRST_UINT16  , GxB_TIMES_FIRST_UINT16 , GxB_ANY_FIRST_UINT16   , 
-    GxB_MIN_FIRST_INT32    , GxB_MAX_FIRST_INT32    , GxB_PLUS_FIRST_INT32   , GxB_TIMES_FIRST_INT32  , GxB_ANY_FIRST_INT32    , 
-    GxB_MIN_FIRST_UINT32   , GxB_MAX_FIRST_UINT32   , GxB_PLUS_FIRST_UINT32  , GxB_TIMES_FIRST_UINT32 , GxB_ANY_FIRST_UINT32   , 
-    GxB_MIN_FIRST_INT64    , GxB_MAX_FIRST_INT64    , GxB_PLUS_FIRST_INT64   , GxB_TIMES_FIRST_INT64  , GxB_ANY_FIRST_INT64    , 
-    GxB_MIN_FIRST_UINT64   , GxB_MAX_FIRST_UINT64   , GxB_PLUS_FIRST_UINT64  , GxB_TIMES_FIRST_UINT64 , GxB_ANY_FIRST_UINT64   , 
-    GxB_MIN_FIRST_FP32     , GxB_MAX_FIRST_FP32     , GxB_PLUS_FIRST_FP32    , GxB_TIMES_FIRST_FP32   , GxB_ANY_FIRST_FP32     , 
-    GxB_MIN_FIRST_FP64     , GxB_MAX_FIRST_FP64     , GxB_PLUS_FIRST_FP64    , GxB_TIMES_FIRST_FP64   , GxB_ANY_FIRST_FP64     , 
+    GxB_MIN_FIRST_INT8     , GxB_MAX_FIRST_INT8     , GxB_PLUS_FIRST_INT8    , GxB_TIMES_FIRST_INT8   , GxB_ANY_FIRST_INT8     ,
+    GxB_MIN_FIRST_INT16    , GxB_MAX_FIRST_INT16    , GxB_PLUS_FIRST_INT16   , GxB_TIMES_FIRST_INT16  , GxB_ANY_FIRST_INT16    ,
+    GxB_MIN_FIRST_INT32    , GxB_MAX_FIRST_INT32    , GxB_PLUS_FIRST_INT32   , GxB_TIMES_FIRST_INT32  , GxB_ANY_FIRST_INT32    ,
+    GxB_MIN_FIRST_INT64    , GxB_MAX_FIRST_INT64    , GxB_PLUS_FIRST_INT64   , GxB_TIMES_FIRST_INT64  , GxB_ANY_FIRST_INT64    ,
+    GxB_MIN_FIRST_UINT8    , GxB_MAX_FIRST_UINT8    , GxB_PLUS_FIRST_UINT8   , GxB_TIMES_FIRST_UINT8  , GxB_ANY_FIRST_UINT8    ,
+    GxB_MIN_FIRST_UINT16   , GxB_MAX_FIRST_UINT16   , GxB_PLUS_FIRST_UINT16  , GxB_TIMES_FIRST_UINT16 , GxB_ANY_FIRST_UINT16   ,
+    GxB_MIN_FIRST_UINT32   , GxB_MAX_FIRST_UINT32   , GxB_PLUS_FIRST_UINT32  , GxB_TIMES_FIRST_UINT32 , GxB_ANY_FIRST_UINT32   ,
+    GxB_MIN_FIRST_UINT64   , GxB_MAX_FIRST_UINT64   , GxB_PLUS_FIRST_UINT64  , GxB_TIMES_FIRST_UINT64 , GxB_ANY_FIRST_UINT64   ,
+    GxB_MIN_FIRST_FP32     , GxB_MAX_FIRST_FP32     , GxB_PLUS_FIRST_FP32    , GxB_TIMES_FIRST_FP32   , GxB_ANY_FIRST_FP32     ,
+    GxB_MIN_FIRST_FP64     , GxB_MAX_FIRST_FP64     , GxB_PLUS_FIRST_FP64    , GxB_TIMES_FIRST_FP64   , GxB_ANY_FIRST_FP64     ,
 
     // semirings with multiply op: z = SECOND (x,y), all types x,y,z the same:
-    GxB_MIN_SECOND_INT8    , GxB_MAX_SECOND_INT8    , GxB_PLUS_SECOND_INT8   , GxB_TIMES_SECOND_INT8  , GxB_ANY_SECOND_INT8    , 
-    GxB_MIN_SECOND_UINT8   , GxB_MAX_SECOND_UINT8   , GxB_PLUS_SECOND_UINT8  , GxB_TIMES_SECOND_UINT8 , GxB_ANY_SECOND_UINT8   , 
-    GxB_MIN_SECOND_INT16   , GxB_MAX_SECOND_INT16   , GxB_PLUS_SECOND_INT16  , GxB_TIMES_SECOND_INT16 , GxB_ANY_SECOND_INT16   , 
-    GxB_MIN_SECOND_UINT16  , GxB_MAX_SECOND_UINT16  , GxB_PLUS_SECOND_UINT16 , GxB_TIMES_SECOND_UINT16, GxB_ANY_SECOND_UINT16  , 
-    GxB_MIN_SECOND_INT32   , GxB_MAX_SECOND_INT32   , GxB_PLUS_SECOND_INT32  , GxB_TIMES_SECOND_INT32 , GxB_ANY_SECOND_INT32   , 
-    GxB_MIN_SECOND_UINT32  , GxB_MAX_SECOND_UINT32  , GxB_PLUS_SECOND_UINT32 , GxB_TIMES_SECOND_UINT32, GxB_ANY_SECOND_UINT32  , 
-    GxB_MIN_SECOND_INT64   , GxB_MAX_SECOND_INT64   , GxB_PLUS_SECOND_INT64  , GxB_TIMES_SECOND_INT64 , GxB_ANY_SECOND_INT64   , 
-    GxB_MIN_SECOND_UINT64  , GxB_MAX_SECOND_UINT64  , GxB_PLUS_SECOND_UINT64 , GxB_TIMES_SECOND_UINT64, GxB_ANY_SECOND_UINT64  , 
-    GxB_MIN_SECOND_FP32    , GxB_MAX_SECOND_FP32    , GxB_PLUS_SECOND_FP32   , GxB_TIMES_SECOND_FP32  , GxB_ANY_SECOND_FP32    , 
-    GxB_MIN_SECOND_FP64    , GxB_MAX_SECOND_FP64    , GxB_PLUS_SECOND_FP64   , GxB_TIMES_SECOND_FP64  , GxB_ANY_SECOND_FP64    , 
+    GxB_MIN_SECOND_INT8    , GxB_MAX_SECOND_INT8    , GxB_PLUS_SECOND_INT8   , GxB_TIMES_SECOND_INT8  , GxB_ANY_SECOND_INT8    ,
+    GxB_MIN_SECOND_INT16   , GxB_MAX_SECOND_INT16   , GxB_PLUS_SECOND_INT16  , GxB_TIMES_SECOND_INT16 , GxB_ANY_SECOND_INT16   ,
+    GxB_MIN_SECOND_INT32   , GxB_MAX_SECOND_INT32   , GxB_PLUS_SECOND_INT32  , GxB_TIMES_SECOND_INT32 , GxB_ANY_SECOND_INT32   ,
+    GxB_MIN_SECOND_INT64   , GxB_MAX_SECOND_INT64   , GxB_PLUS_SECOND_INT64  , GxB_TIMES_SECOND_INT64 , GxB_ANY_SECOND_INT64   ,
+    GxB_MIN_SECOND_UINT8   , GxB_MAX_SECOND_UINT8   , GxB_PLUS_SECOND_UINT8  , GxB_TIMES_SECOND_UINT8 , GxB_ANY_SECOND_UINT8   ,
+    GxB_MIN_SECOND_UINT16  , GxB_MAX_SECOND_UINT16  , GxB_PLUS_SECOND_UINT16 , GxB_TIMES_SECOND_UINT16, GxB_ANY_SECOND_UINT16  ,
+    GxB_MIN_SECOND_UINT32  , GxB_MAX_SECOND_UINT32  , GxB_PLUS_SECOND_UINT32 , GxB_TIMES_SECOND_UINT32, GxB_ANY_SECOND_UINT32  ,
+    GxB_MIN_SECOND_UINT64  , GxB_MAX_SECOND_UINT64  , GxB_PLUS_SECOND_UINT64 , GxB_TIMES_SECOND_UINT64, GxB_ANY_SECOND_UINT64  ,
+    GxB_MIN_SECOND_FP32    , GxB_MAX_SECOND_FP32    , GxB_PLUS_SECOND_FP32   , GxB_TIMES_SECOND_FP32  , GxB_ANY_SECOND_FP32    ,
+    GxB_MIN_SECOND_FP64    , GxB_MAX_SECOND_FP64    , GxB_PLUS_SECOND_FP64   , GxB_TIMES_SECOND_FP64  , GxB_ANY_SECOND_FP64    ,
 
     // semirings with multiply op: z = PAIR (x,y), all types x,y,z the same:
-    GxB_MIN_PAIR_INT8      , GxB_MAX_PAIR_INT8      , GxB_PLUS_PAIR_INT8     , GxB_TIMES_PAIR_INT8    , GxB_ANY_PAIR_INT8      , 
-    GxB_MIN_PAIR_UINT8     , GxB_MAX_PAIR_UINT8     , GxB_PLUS_PAIR_UINT8    , GxB_TIMES_PAIR_UINT8   , GxB_ANY_PAIR_UINT8     , 
-    GxB_MIN_PAIR_INT16     , GxB_MAX_PAIR_INT16     , GxB_PLUS_PAIR_INT16    , GxB_TIMES_PAIR_INT16   , GxB_ANY_PAIR_INT16     , 
-    GxB_MIN_PAIR_UINT16    , GxB_MAX_PAIR_UINT16    , GxB_PLUS_PAIR_UINT16   , GxB_TIMES_PAIR_UINT16  , GxB_ANY_PAIR_UINT16    , 
-    GxB_MIN_PAIR_INT32     , GxB_MAX_PAIR_INT32     , GxB_PLUS_PAIR_INT32    , GxB_TIMES_PAIR_INT32   , GxB_ANY_PAIR_INT32     , 
-    GxB_MIN_PAIR_UINT32    , GxB_MAX_PAIR_UINT32    , GxB_PLUS_PAIR_UINT32   , GxB_TIMES_PAIR_UINT32  , GxB_ANY_PAIR_UINT32    , 
-    GxB_MIN_PAIR_INT64     , GxB_MAX_PAIR_INT64     , GxB_PLUS_PAIR_INT64    , GxB_TIMES_PAIR_INT64   , GxB_ANY_PAIR_INT64     , 
-    GxB_MIN_PAIR_UINT64    , GxB_MAX_PAIR_UINT64    , GxB_PLUS_PAIR_UINT64   , GxB_TIMES_PAIR_UINT64  , GxB_ANY_PAIR_UINT64    , 
-    GxB_MIN_PAIR_FP32      , GxB_MAX_PAIR_FP32      , GxB_PLUS_PAIR_FP32     , GxB_TIMES_PAIR_FP32    , GxB_ANY_PAIR_FP32      , 
-    GxB_MIN_PAIR_FP64      , GxB_MAX_PAIR_FP64      , GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64    , GxB_ANY_PAIR_FP64      , 
+    GxB_MIN_PAIR_INT8      , GxB_MAX_PAIR_INT8      , GxB_PLUS_PAIR_INT8     , GxB_TIMES_PAIR_INT8    , GxB_ANY_PAIR_INT8      ,
+    GxB_MIN_PAIR_INT16     , GxB_MAX_PAIR_INT16     , GxB_PLUS_PAIR_INT16    , GxB_TIMES_PAIR_INT16   , GxB_ANY_PAIR_INT16     ,
+    GxB_MIN_PAIR_INT32     , GxB_MAX_PAIR_INT32     , GxB_PLUS_PAIR_INT32    , GxB_TIMES_PAIR_INT32   , GxB_ANY_PAIR_INT32     ,
+    GxB_MIN_PAIR_INT64     , GxB_MAX_PAIR_INT64     , GxB_PLUS_PAIR_INT64    , GxB_TIMES_PAIR_INT64   , GxB_ANY_PAIR_INT64     ,
+    GxB_MIN_PAIR_UINT8     , GxB_MAX_PAIR_UINT8     , GxB_PLUS_PAIR_UINT8    , GxB_TIMES_PAIR_UINT8   , GxB_ANY_PAIR_UINT8     ,
+    GxB_MIN_PAIR_UINT16    , GxB_MAX_PAIR_UINT16    , GxB_PLUS_PAIR_UINT16   , GxB_TIMES_PAIR_UINT16  , GxB_ANY_PAIR_UINT16    ,
+    GxB_MIN_PAIR_UINT32    , GxB_MAX_PAIR_UINT32    , GxB_PLUS_PAIR_UINT32   , GxB_TIMES_PAIR_UINT32  , GxB_ANY_PAIR_UINT32    ,
+    GxB_MIN_PAIR_UINT64    , GxB_MAX_PAIR_UINT64    , GxB_PLUS_PAIR_UINT64   , GxB_TIMES_PAIR_UINT64  , GxB_ANY_PAIR_UINT64    ,
+    GxB_MIN_PAIR_FP32      , GxB_MAX_PAIR_FP32      , GxB_PLUS_PAIR_FP32     , GxB_TIMES_PAIR_FP32    , GxB_ANY_PAIR_FP32      ,
+    GxB_MIN_PAIR_FP64      , GxB_MAX_PAIR_FP64      , GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64    , GxB_ANY_PAIR_FP64      ,
 
     // semirings with multiply op: z = MIN (x,y), all types x,y,z the same:
-    GxB_MIN_MIN_INT8       , GxB_MAX_MIN_INT8       , GxB_PLUS_MIN_INT8      , GxB_TIMES_MIN_INT8     , GxB_ANY_MIN_INT8       , 
-    GxB_MIN_MIN_UINT8      , GxB_MAX_MIN_UINT8      , GxB_PLUS_MIN_UINT8     , GxB_TIMES_MIN_UINT8    , GxB_ANY_MIN_UINT8      , 
-    GxB_MIN_MIN_INT16      , GxB_MAX_MIN_INT16      , GxB_PLUS_MIN_INT16     , GxB_TIMES_MIN_INT16    , GxB_ANY_MIN_INT16      , 
-    GxB_MIN_MIN_UINT16     , GxB_MAX_MIN_UINT16     , GxB_PLUS_MIN_UINT16    , GxB_TIMES_MIN_UINT16   , GxB_ANY_MIN_UINT16     , 
-    GxB_MIN_MIN_INT32      , GxB_MAX_MIN_INT32      , GxB_PLUS_MIN_INT32     , GxB_TIMES_MIN_INT32    , GxB_ANY_MIN_INT32      , 
-    GxB_MIN_MIN_UINT32     , GxB_MAX_MIN_UINT32     , GxB_PLUS_MIN_UINT32    , GxB_TIMES_MIN_UINT32   , GxB_ANY_MIN_UINT32     , 
-    GxB_MIN_MIN_INT64      , GxB_MAX_MIN_INT64      , GxB_PLUS_MIN_INT64     , GxB_TIMES_MIN_INT64    , GxB_ANY_MIN_INT64      , 
-    GxB_MIN_MIN_UINT64     , GxB_MAX_MIN_UINT64     , GxB_PLUS_MIN_UINT64    , GxB_TIMES_MIN_UINT64   , GxB_ANY_MIN_UINT64     , 
-    GxB_MIN_MIN_FP32       , GxB_MAX_MIN_FP32       , GxB_PLUS_MIN_FP32      , GxB_TIMES_MIN_FP32     , GxB_ANY_MIN_FP32       , 
-    GxB_MIN_MIN_FP64       , GxB_MAX_MIN_FP64       , GxB_PLUS_MIN_FP64      , GxB_TIMES_MIN_FP64     , GxB_ANY_MIN_FP64       , 
+    GxB_MIN_MIN_INT8       , GxB_MAX_MIN_INT8       , GxB_PLUS_MIN_INT8      , GxB_TIMES_MIN_INT8     , GxB_ANY_MIN_INT8       ,
+    GxB_MIN_MIN_INT16      , GxB_MAX_MIN_INT16      , GxB_PLUS_MIN_INT16     , GxB_TIMES_MIN_INT16    , GxB_ANY_MIN_INT16      ,
+    GxB_MIN_MIN_INT32      , GxB_MAX_MIN_INT32      , GxB_PLUS_MIN_INT32     , GxB_TIMES_MIN_INT32    , GxB_ANY_MIN_INT32      ,
+    GxB_MIN_MIN_INT64      , GxB_MAX_MIN_INT64      , GxB_PLUS_MIN_INT64     , GxB_TIMES_MIN_INT64    , GxB_ANY_MIN_INT64      ,
+    GxB_MIN_MIN_UINT8      , GxB_MAX_MIN_UINT8      , GxB_PLUS_MIN_UINT8     , GxB_TIMES_MIN_UINT8    , GxB_ANY_MIN_UINT8      ,
+    GxB_MIN_MIN_UINT16     , GxB_MAX_MIN_UINT16     , GxB_PLUS_MIN_UINT16    , GxB_TIMES_MIN_UINT16   , GxB_ANY_MIN_UINT16     ,
+    GxB_MIN_MIN_UINT32     , GxB_MAX_MIN_UINT32     , GxB_PLUS_MIN_UINT32    , GxB_TIMES_MIN_UINT32   , GxB_ANY_MIN_UINT32     ,
+    GxB_MIN_MIN_UINT64     , GxB_MAX_MIN_UINT64     , GxB_PLUS_MIN_UINT64    , GxB_TIMES_MIN_UINT64   , GxB_ANY_MIN_UINT64     ,
+    GxB_MIN_MIN_FP32       , GxB_MAX_MIN_FP32       , GxB_PLUS_MIN_FP32      , GxB_TIMES_MIN_FP32     , GxB_ANY_MIN_FP32       ,
+    GxB_MIN_MIN_FP64       , GxB_MAX_MIN_FP64       , GxB_PLUS_MIN_FP64      , GxB_TIMES_MIN_FP64     , GxB_ANY_MIN_FP64       ,
 
     // semirings with multiply op: z = MAX (x,y), all types x,y,z the same:
-    GxB_MIN_MAX_INT8       , GxB_MAX_MAX_INT8       , GxB_PLUS_MAX_INT8      , GxB_TIMES_MAX_INT8     , GxB_ANY_MAX_INT8       , 
-    GxB_MIN_MAX_UINT8      , GxB_MAX_MAX_UINT8      , GxB_PLUS_MAX_UINT8     , GxB_TIMES_MAX_UINT8    , GxB_ANY_MAX_UINT8      , 
-    GxB_MIN_MAX_INT16      , GxB_MAX_MAX_INT16      , GxB_PLUS_MAX_INT16     , GxB_TIMES_MAX_INT16    , GxB_ANY_MAX_INT16      , 
-    GxB_MIN_MAX_UINT16     , GxB_MAX_MAX_UINT16     , GxB_PLUS_MAX_UINT16    , GxB_TIMES_MAX_UINT16   , GxB_ANY_MAX_UINT16     , 
-    GxB_MIN_MAX_INT32      , GxB_MAX_MAX_INT32      , GxB_PLUS_MAX_INT32     , GxB_TIMES_MAX_INT32    , GxB_ANY_MAX_INT32      , 
-    GxB_MIN_MAX_UINT32     , GxB_MAX_MAX_UINT32     , GxB_PLUS_MAX_UINT32    , GxB_TIMES_MAX_UINT32   , GxB_ANY_MAX_UINT32     , 
-    GxB_MIN_MAX_INT64      , GxB_MAX_MAX_INT64      , GxB_PLUS_MAX_INT64     , GxB_TIMES_MAX_INT64    , GxB_ANY_MAX_INT64      , 
-    GxB_MIN_MAX_UINT64     , GxB_MAX_MAX_UINT64     , GxB_PLUS_MAX_UINT64    , GxB_TIMES_MAX_UINT64   , GxB_ANY_MAX_UINT64     , 
-    GxB_MIN_MAX_FP32       , GxB_MAX_MAX_FP32       , GxB_PLUS_MAX_FP32      , GxB_TIMES_MAX_FP32     , GxB_ANY_MAX_FP32       , 
-    GxB_MIN_MAX_FP64       , GxB_MAX_MAX_FP64       , GxB_PLUS_MAX_FP64      , GxB_TIMES_MAX_FP64     , GxB_ANY_MAX_FP64       , 
+    GxB_MIN_MAX_INT8       , GxB_MAX_MAX_INT8       , GxB_PLUS_MAX_INT8      , GxB_TIMES_MAX_INT8     , GxB_ANY_MAX_INT8       ,
+    GxB_MIN_MAX_INT16      , GxB_MAX_MAX_INT16      , GxB_PLUS_MAX_INT16     , GxB_TIMES_MAX_INT16    , GxB_ANY_MAX_INT16      ,
+    GxB_MIN_MAX_INT32      , GxB_MAX_MAX_INT32      , GxB_PLUS_MAX_INT32     , GxB_TIMES_MAX_INT32    , GxB_ANY_MAX_INT32      ,
+    GxB_MIN_MAX_INT64      , GxB_MAX_MAX_INT64      , GxB_PLUS_MAX_INT64     , GxB_TIMES_MAX_INT64    , GxB_ANY_MAX_INT64      ,
+    GxB_MIN_MAX_UINT8      , GxB_MAX_MAX_UINT8      , GxB_PLUS_MAX_UINT8     , GxB_TIMES_MAX_UINT8    , GxB_ANY_MAX_UINT8      ,
+    GxB_MIN_MAX_UINT16     , GxB_MAX_MAX_UINT16     , GxB_PLUS_MAX_UINT16    , GxB_TIMES_MAX_UINT16   , GxB_ANY_MAX_UINT16     ,
+    GxB_MIN_MAX_UINT32     , GxB_MAX_MAX_UINT32     , GxB_PLUS_MAX_UINT32    , GxB_TIMES_MAX_UINT32   , GxB_ANY_MAX_UINT32     ,
+    GxB_MIN_MAX_UINT64     , GxB_MAX_MAX_UINT64     , GxB_PLUS_MAX_UINT64    , GxB_TIMES_MAX_UINT64   , GxB_ANY_MAX_UINT64     ,
+    GxB_MIN_MAX_FP32       , GxB_MAX_MAX_FP32       , GxB_PLUS_MAX_FP32      , GxB_TIMES_MAX_FP32     , GxB_ANY_MAX_FP32       ,
+    GxB_MIN_MAX_FP64       , GxB_MAX_MAX_FP64       , GxB_PLUS_MAX_FP64      , GxB_TIMES_MAX_FP64     , GxB_ANY_MAX_FP64       ,
 
     // semirings with multiply op: z = PLUS (x,y), all types x,y,z the same:
-    GxB_MIN_PLUS_INT8      , GxB_MAX_PLUS_INT8      , GxB_PLUS_PLUS_INT8     , GxB_TIMES_PLUS_INT8    , GxB_ANY_PLUS_INT8      , 
-    GxB_MIN_PLUS_UINT8     , GxB_MAX_PLUS_UINT8     , GxB_PLUS_PLUS_UINT8    , GxB_TIMES_PLUS_UINT8   , GxB_ANY_PLUS_UINT8     , 
-    GxB_MIN_PLUS_INT16     , GxB_MAX_PLUS_INT16     , GxB_PLUS_PLUS_INT16    , GxB_TIMES_PLUS_INT16   , GxB_ANY_PLUS_INT16     , 
-    GxB_MIN_PLUS_UINT16    , GxB_MAX_PLUS_UINT16    , GxB_PLUS_PLUS_UINT16   , GxB_TIMES_PLUS_UINT16  , GxB_ANY_PLUS_UINT16    , 
-    GxB_MIN_PLUS_INT32     , GxB_MAX_PLUS_INT32     , GxB_PLUS_PLUS_INT32    , GxB_TIMES_PLUS_INT32   , GxB_ANY_PLUS_INT32     , 
-    GxB_MIN_PLUS_UINT32    , GxB_MAX_PLUS_UINT32    , GxB_PLUS_PLUS_UINT32   , GxB_TIMES_PLUS_UINT32  , GxB_ANY_PLUS_UINT32    , 
-    GxB_MIN_PLUS_INT64     , GxB_MAX_PLUS_INT64     , GxB_PLUS_PLUS_INT64    , GxB_TIMES_PLUS_INT64   , GxB_ANY_PLUS_INT64     , 
-    GxB_MIN_PLUS_UINT64    , GxB_MAX_PLUS_UINT64    , GxB_PLUS_PLUS_UINT64   , GxB_TIMES_PLUS_UINT64  , GxB_ANY_PLUS_UINT64    , 
-    GxB_MIN_PLUS_FP32      , GxB_MAX_PLUS_FP32      , GxB_PLUS_PLUS_FP32     , GxB_TIMES_PLUS_FP32    , GxB_ANY_PLUS_FP32      , 
-    GxB_MIN_PLUS_FP64      , GxB_MAX_PLUS_FP64      , GxB_PLUS_PLUS_FP64     , GxB_TIMES_PLUS_FP64    , GxB_ANY_PLUS_FP64      , 
+    GxB_MIN_PLUS_INT8      , GxB_MAX_PLUS_INT8      , GxB_PLUS_PLUS_INT8     , GxB_TIMES_PLUS_INT8    , GxB_ANY_PLUS_INT8      ,
+    GxB_MIN_PLUS_INT16     , GxB_MAX_PLUS_INT16     , GxB_PLUS_PLUS_INT16    , GxB_TIMES_PLUS_INT16   , GxB_ANY_PLUS_INT16     ,
+    GxB_MIN_PLUS_INT32     , GxB_MAX_PLUS_INT32     , GxB_PLUS_PLUS_INT32    , GxB_TIMES_PLUS_INT32   , GxB_ANY_PLUS_INT32     ,
+    GxB_MIN_PLUS_INT64     , GxB_MAX_PLUS_INT64     , GxB_PLUS_PLUS_INT64    , GxB_TIMES_PLUS_INT64   , GxB_ANY_PLUS_INT64     ,
+    GxB_MIN_PLUS_UINT8     , GxB_MAX_PLUS_UINT8     , GxB_PLUS_PLUS_UINT8    , GxB_TIMES_PLUS_UINT8   , GxB_ANY_PLUS_UINT8     ,
+    GxB_MIN_PLUS_UINT16    , GxB_MAX_PLUS_UINT16    , GxB_PLUS_PLUS_UINT16   , GxB_TIMES_PLUS_UINT16  , GxB_ANY_PLUS_UINT16    ,
+    GxB_MIN_PLUS_UINT32    , GxB_MAX_PLUS_UINT32    , GxB_PLUS_PLUS_UINT32   , GxB_TIMES_PLUS_UINT32  , GxB_ANY_PLUS_UINT32    ,
+    GxB_MIN_PLUS_UINT64    , GxB_MAX_PLUS_UINT64    , GxB_PLUS_PLUS_UINT64   , GxB_TIMES_PLUS_UINT64  , GxB_ANY_PLUS_UINT64    ,
+    GxB_MIN_PLUS_FP32      , GxB_MAX_PLUS_FP32      , GxB_PLUS_PLUS_FP32     , GxB_TIMES_PLUS_FP32    , GxB_ANY_PLUS_FP32      ,
+    GxB_MIN_PLUS_FP64      , GxB_MAX_PLUS_FP64      , GxB_PLUS_PLUS_FP64     , GxB_TIMES_PLUS_FP64    , GxB_ANY_PLUS_FP64      ,
 
     // semirings with multiply op: z = MINUS (x,y), all types x,y,z the same:
-    GxB_MIN_MINUS_INT8     , GxB_MAX_MINUS_INT8     , GxB_PLUS_MINUS_INT8    , GxB_TIMES_MINUS_INT8   , GxB_ANY_MINUS_INT8     , 
-    GxB_MIN_MINUS_UINT8    , GxB_MAX_MINUS_UINT8    , GxB_PLUS_MINUS_UINT8   , GxB_TIMES_MINUS_UINT8  , GxB_ANY_MINUS_UINT8    , 
-    GxB_MIN_MINUS_INT16    , GxB_MAX_MINUS_INT16    , GxB_PLUS_MINUS_INT16   , GxB_TIMES_MINUS_INT16  , GxB_ANY_MINUS_INT16    , 
-    GxB_MIN_MINUS_UINT16   , GxB_MAX_MINUS_UINT16   , GxB_PLUS_MINUS_UINT16  , GxB_TIMES_MINUS_UINT16 , GxB_ANY_MINUS_UINT16   , 
-    GxB_MIN_MINUS_INT32    , GxB_MAX_MINUS_INT32    , GxB_PLUS_MINUS_INT32   , GxB_TIMES_MINUS_INT32  , GxB_ANY_MINUS_INT32    , 
-    GxB_MIN_MINUS_UINT32   , GxB_MAX_MINUS_UINT32   , GxB_PLUS_MINUS_UINT32  , GxB_TIMES_MINUS_UINT32 , GxB_ANY_MINUS_UINT32   , 
-    GxB_MIN_MINUS_INT64    , GxB_MAX_MINUS_INT64    , GxB_PLUS_MINUS_INT64   , GxB_TIMES_MINUS_INT64  , GxB_ANY_MINUS_INT64    , 
-    GxB_MIN_MINUS_UINT64   , GxB_MAX_MINUS_UINT64   , GxB_PLUS_MINUS_UINT64  , GxB_TIMES_MINUS_UINT64 , GxB_ANY_MINUS_UINT64   , 
-    GxB_MIN_MINUS_FP32     , GxB_MAX_MINUS_FP32     , GxB_PLUS_MINUS_FP32    , GxB_TIMES_MINUS_FP32   , GxB_ANY_MINUS_FP32     , 
-    GxB_MIN_MINUS_FP64     , GxB_MAX_MINUS_FP64     , GxB_PLUS_MINUS_FP64    , GxB_TIMES_MINUS_FP64   , GxB_ANY_MINUS_FP64     , 
+    GxB_MIN_MINUS_INT8     , GxB_MAX_MINUS_INT8     , GxB_PLUS_MINUS_INT8    , GxB_TIMES_MINUS_INT8   , GxB_ANY_MINUS_INT8     ,
+    GxB_MIN_MINUS_INT16    , GxB_MAX_MINUS_INT16    , GxB_PLUS_MINUS_INT16   , GxB_TIMES_MINUS_INT16  , GxB_ANY_MINUS_INT16    ,
+    GxB_MIN_MINUS_INT32    , GxB_MAX_MINUS_INT32    , GxB_PLUS_MINUS_INT32   , GxB_TIMES_MINUS_INT32  , GxB_ANY_MINUS_INT32    ,
+    GxB_MIN_MINUS_INT64    , GxB_MAX_MINUS_INT64    , GxB_PLUS_MINUS_INT64   , GxB_TIMES_MINUS_INT64  , GxB_ANY_MINUS_INT64    ,
+    GxB_MIN_MINUS_UINT8    , GxB_MAX_MINUS_UINT8    , GxB_PLUS_MINUS_UINT8   , GxB_TIMES_MINUS_UINT8  , GxB_ANY_MINUS_UINT8    ,
+    GxB_MIN_MINUS_UINT16   , GxB_MAX_MINUS_UINT16   , GxB_PLUS_MINUS_UINT16  , GxB_TIMES_MINUS_UINT16 , GxB_ANY_MINUS_UINT16   ,
+    GxB_MIN_MINUS_UINT32   , GxB_MAX_MINUS_UINT32   , GxB_PLUS_MINUS_UINT32  , GxB_TIMES_MINUS_UINT32 , GxB_ANY_MINUS_UINT32   ,
+    GxB_MIN_MINUS_UINT64   , GxB_MAX_MINUS_UINT64   , GxB_PLUS_MINUS_UINT64  , GxB_TIMES_MINUS_UINT64 , GxB_ANY_MINUS_UINT64   ,
+    GxB_MIN_MINUS_FP32     , GxB_MAX_MINUS_FP32     , GxB_PLUS_MINUS_FP32    , GxB_TIMES_MINUS_FP32   , GxB_ANY_MINUS_FP32     ,
+    GxB_MIN_MINUS_FP64     , GxB_MAX_MINUS_FP64     , GxB_PLUS_MINUS_FP64    , GxB_TIMES_MINUS_FP64   , GxB_ANY_MINUS_FP64     ,
 
     // semirings with multiply op: z = TIMES (x,y), all types x,y,z the same:
-    GxB_MIN_TIMES_INT8     , GxB_MAX_TIMES_INT8     , GxB_PLUS_TIMES_INT8    , GxB_TIMES_TIMES_INT8   , GxB_ANY_TIMES_INT8     , 
-    GxB_MIN_TIMES_UINT8    , GxB_MAX_TIMES_UINT8    , GxB_PLUS_TIMES_UINT8   , GxB_TIMES_TIMES_UINT8  , GxB_ANY_TIMES_UINT8    , 
-    GxB_MIN_TIMES_INT16    , GxB_MAX_TIMES_INT16    , GxB_PLUS_TIMES_INT16   , GxB_TIMES_TIMES_INT16  , GxB_ANY_TIMES_INT16    , 
-    GxB_MIN_TIMES_UINT16   , GxB_MAX_TIMES_UINT16   , GxB_PLUS_TIMES_UINT16  , GxB_TIMES_TIMES_UINT16 , GxB_ANY_TIMES_UINT16   , 
-    GxB_MIN_TIMES_INT32    , GxB_MAX_TIMES_INT32    , GxB_PLUS_TIMES_INT32   , GxB_TIMES_TIMES_INT32  , GxB_ANY_TIMES_INT32    , 
-    GxB_MIN_TIMES_UINT32   , GxB_MAX_TIMES_UINT32   , GxB_PLUS_TIMES_UINT32  , GxB_TIMES_TIMES_UINT32 , GxB_ANY_TIMES_UINT32   , 
-    GxB_MIN_TIMES_INT64    , GxB_MAX_TIMES_INT64    , GxB_PLUS_TIMES_INT64   , GxB_TIMES_TIMES_INT64  , GxB_ANY_TIMES_INT64    , 
-    GxB_MIN_TIMES_UINT64   , GxB_MAX_TIMES_UINT64   , GxB_PLUS_TIMES_UINT64  , GxB_TIMES_TIMES_UINT64 , GxB_ANY_TIMES_UINT64   , 
-    GxB_MIN_TIMES_FP32     , GxB_MAX_TIMES_FP32     , GxB_PLUS_TIMES_FP32    , GxB_TIMES_TIMES_FP32   , GxB_ANY_TIMES_FP32     , 
-    GxB_MIN_TIMES_FP64     , GxB_MAX_TIMES_FP64     , GxB_PLUS_TIMES_FP64    , GxB_TIMES_TIMES_FP64   , GxB_ANY_TIMES_FP64     , 
+    GxB_MIN_TIMES_INT8     , GxB_MAX_TIMES_INT8     , GxB_PLUS_TIMES_INT8    , GxB_TIMES_TIMES_INT8   , GxB_ANY_TIMES_INT8     ,
+    GxB_MIN_TIMES_INT16    , GxB_MAX_TIMES_INT16    , GxB_PLUS_TIMES_INT16   , GxB_TIMES_TIMES_INT16  , GxB_ANY_TIMES_INT16    ,
+    GxB_MIN_TIMES_INT32    , GxB_MAX_TIMES_INT32    , GxB_PLUS_TIMES_INT32   , GxB_TIMES_TIMES_INT32  , GxB_ANY_TIMES_INT32    ,
+    GxB_MIN_TIMES_INT64    , GxB_MAX_TIMES_INT64    , GxB_PLUS_TIMES_INT64   , GxB_TIMES_TIMES_INT64  , GxB_ANY_TIMES_INT64    ,
+    GxB_MIN_TIMES_UINT8    , GxB_MAX_TIMES_UINT8    , GxB_PLUS_TIMES_UINT8   , GxB_TIMES_TIMES_UINT8  , GxB_ANY_TIMES_UINT8    ,
+    GxB_MIN_TIMES_UINT16   , GxB_MAX_TIMES_UINT16   , GxB_PLUS_TIMES_UINT16  , GxB_TIMES_TIMES_UINT16 , GxB_ANY_TIMES_UINT16   ,
+    GxB_MIN_TIMES_UINT32   , GxB_MAX_TIMES_UINT32   , GxB_PLUS_TIMES_UINT32  , GxB_TIMES_TIMES_UINT32 , GxB_ANY_TIMES_UINT32   ,
+    GxB_MIN_TIMES_UINT64   , GxB_MAX_TIMES_UINT64   , GxB_PLUS_TIMES_UINT64  , GxB_TIMES_TIMES_UINT64 , GxB_ANY_TIMES_UINT64   ,
+    GxB_MIN_TIMES_FP32     , GxB_MAX_TIMES_FP32     , GxB_PLUS_TIMES_FP32    , GxB_TIMES_TIMES_FP32   , GxB_ANY_TIMES_FP32     ,
+    GxB_MIN_TIMES_FP64     , GxB_MAX_TIMES_FP64     , GxB_PLUS_TIMES_FP64    , GxB_TIMES_TIMES_FP64   , GxB_ANY_TIMES_FP64     ,
 
     // semirings with multiply op: z = DIV (x,y), all types x,y,z the same:
-    GxB_MIN_DIV_INT8       , GxB_MAX_DIV_INT8       , GxB_PLUS_DIV_INT8      , GxB_TIMES_DIV_INT8     , GxB_ANY_DIV_INT8       , 
-    GxB_MIN_DIV_UINT8      , GxB_MAX_DIV_UINT8      , GxB_PLUS_DIV_UINT8     , GxB_TIMES_DIV_UINT8    , GxB_ANY_DIV_UINT8      , 
-    GxB_MIN_DIV_INT16      , GxB_MAX_DIV_INT16      , GxB_PLUS_DIV_INT16     , GxB_TIMES_DIV_INT16    , GxB_ANY_DIV_INT16      , 
-    GxB_MIN_DIV_UINT16     , GxB_MAX_DIV_UINT16     , GxB_PLUS_DIV_UINT16    , GxB_TIMES_DIV_UINT16   , GxB_ANY_DIV_UINT16     , 
-    GxB_MIN_DIV_INT32      , GxB_MAX_DIV_INT32      , GxB_PLUS_DIV_INT32     , GxB_TIMES_DIV_INT32    , GxB_ANY_DIV_INT32      , 
-    GxB_MIN_DIV_UINT32     , GxB_MAX_DIV_UINT32     , GxB_PLUS_DIV_UINT32    , GxB_TIMES_DIV_UINT32   , GxB_ANY_DIV_UINT32     , 
-    GxB_MIN_DIV_INT64      , GxB_MAX_DIV_INT64      , GxB_PLUS_DIV_INT64     , GxB_TIMES_DIV_INT64    , GxB_ANY_DIV_INT64      , 
-    GxB_MIN_DIV_UINT64     , GxB_MAX_DIV_UINT64     , GxB_PLUS_DIV_UINT64    , GxB_TIMES_DIV_UINT64   , GxB_ANY_DIV_UINT64     , 
-    GxB_MIN_DIV_FP32       , GxB_MAX_DIV_FP32       , GxB_PLUS_DIV_FP32      , GxB_TIMES_DIV_FP32     , GxB_ANY_DIV_FP32       , 
-    GxB_MIN_DIV_FP64       , GxB_MAX_DIV_FP64       , GxB_PLUS_DIV_FP64      , GxB_TIMES_DIV_FP64     , GxB_ANY_DIV_FP64       , 
+    GxB_MIN_DIV_INT8       , GxB_MAX_DIV_INT8       , GxB_PLUS_DIV_INT8      , GxB_TIMES_DIV_INT8     , GxB_ANY_DIV_INT8       ,
+    GxB_MIN_DIV_INT16      , GxB_MAX_DIV_INT16      , GxB_PLUS_DIV_INT16     , GxB_TIMES_DIV_INT16    , GxB_ANY_DIV_INT16      ,
+    GxB_MIN_DIV_INT32      , GxB_MAX_DIV_INT32      , GxB_PLUS_DIV_INT32     , GxB_TIMES_DIV_INT32    , GxB_ANY_DIV_INT32      ,
+    GxB_MIN_DIV_INT64      , GxB_MAX_DIV_INT64      , GxB_PLUS_DIV_INT64     , GxB_TIMES_DIV_INT64    , GxB_ANY_DIV_INT64      ,
+    GxB_MIN_DIV_UINT8      , GxB_MAX_DIV_UINT8      , GxB_PLUS_DIV_UINT8     , GxB_TIMES_DIV_UINT8    , GxB_ANY_DIV_UINT8      ,
+    GxB_MIN_DIV_UINT16     , GxB_MAX_DIV_UINT16     , GxB_PLUS_DIV_UINT16    , GxB_TIMES_DIV_UINT16   , GxB_ANY_DIV_UINT16     ,
+    GxB_MIN_DIV_UINT32     , GxB_MAX_DIV_UINT32     , GxB_PLUS_DIV_UINT32    , GxB_TIMES_DIV_UINT32   , GxB_ANY_DIV_UINT32     ,
+    GxB_MIN_DIV_UINT64     , GxB_MAX_DIV_UINT64     , GxB_PLUS_DIV_UINT64    , GxB_TIMES_DIV_UINT64   , GxB_ANY_DIV_UINT64     ,
+    GxB_MIN_DIV_FP32       , GxB_MAX_DIV_FP32       , GxB_PLUS_DIV_FP32      , GxB_TIMES_DIV_FP32     , GxB_ANY_DIV_FP32       ,
+    GxB_MIN_DIV_FP64       , GxB_MAX_DIV_FP64       , GxB_PLUS_DIV_FP64      , GxB_TIMES_DIV_FP64     , GxB_ANY_DIV_FP64       ,
 
     // semirings with multiply op: z = RDIV (x,y), all types x,y,z the same:
-    GxB_MIN_RDIV_INT8      , GxB_MAX_RDIV_INT8      , GxB_PLUS_RDIV_INT8     , GxB_TIMES_RDIV_INT8    , GxB_ANY_RDIV_INT8      , 
-    GxB_MIN_RDIV_UINT8     , GxB_MAX_RDIV_UINT8     , GxB_PLUS_RDIV_UINT8    , GxB_TIMES_RDIV_UINT8   , GxB_ANY_RDIV_UINT8     , 
-    GxB_MIN_RDIV_INT16     , GxB_MAX_RDIV_INT16     , GxB_PLUS_RDIV_INT16    , GxB_TIMES_RDIV_INT16   , GxB_ANY_RDIV_INT16     , 
-    GxB_MIN_RDIV_UINT16    , GxB_MAX_RDIV_UINT16    , GxB_PLUS_RDIV_UINT16   , GxB_TIMES_RDIV_UINT16  , GxB_ANY_RDIV_UINT16    , 
-    GxB_MIN_RDIV_INT32     , GxB_MAX_RDIV_INT32     , GxB_PLUS_RDIV_INT32    , GxB_TIMES_RDIV_INT32   , GxB_ANY_RDIV_INT32     , 
-    GxB_MIN_RDIV_UINT32    , GxB_MAX_RDIV_UINT32    , GxB_PLUS_RDIV_UINT32   , GxB_TIMES_RDIV_UINT32  , GxB_ANY_RDIV_UINT32    , 
-    GxB_MIN_RDIV_INT64     , GxB_MAX_RDIV_INT64     , GxB_PLUS_RDIV_INT64    , GxB_TIMES_RDIV_INT64   , GxB_ANY_RDIV_INT64     , 
-    GxB_MIN_RDIV_UINT64    , GxB_MAX_RDIV_UINT64    , GxB_PLUS_RDIV_UINT64   , GxB_TIMES_RDIV_UINT64  , GxB_ANY_RDIV_UINT64    , 
-    GxB_MIN_RDIV_FP32      , GxB_MAX_RDIV_FP32      , GxB_PLUS_RDIV_FP32     , GxB_TIMES_RDIV_FP32    , GxB_ANY_RDIV_FP32      , 
-    GxB_MIN_RDIV_FP64      , GxB_MAX_RDIV_FP64      , GxB_PLUS_RDIV_FP64     , GxB_TIMES_RDIV_FP64    , GxB_ANY_RDIV_FP64      , 
+    GxB_MIN_RDIV_INT8      , GxB_MAX_RDIV_INT8      , GxB_PLUS_RDIV_INT8     , GxB_TIMES_RDIV_INT8    , GxB_ANY_RDIV_INT8      ,
+    GxB_MIN_RDIV_INT16     , GxB_MAX_RDIV_INT16     , GxB_PLUS_RDIV_INT16    , GxB_TIMES_RDIV_INT16   , GxB_ANY_RDIV_INT16     ,
+    GxB_MIN_RDIV_INT32     , GxB_MAX_RDIV_INT32     , GxB_PLUS_RDIV_INT32    , GxB_TIMES_RDIV_INT32   , GxB_ANY_RDIV_INT32     ,
+    GxB_MIN_RDIV_INT64     , GxB_MAX_RDIV_INT64     , GxB_PLUS_RDIV_INT64    , GxB_TIMES_RDIV_INT64   , GxB_ANY_RDIV_INT64     ,
+    GxB_MIN_RDIV_UINT8     , GxB_MAX_RDIV_UINT8     , GxB_PLUS_RDIV_UINT8    , GxB_TIMES_RDIV_UINT8   , GxB_ANY_RDIV_UINT8     ,
+    GxB_MIN_RDIV_UINT16    , GxB_MAX_RDIV_UINT16    , GxB_PLUS_RDIV_UINT16   , GxB_TIMES_RDIV_UINT16  , GxB_ANY_RDIV_UINT16    ,
+    GxB_MIN_RDIV_UINT32    , GxB_MAX_RDIV_UINT32    , GxB_PLUS_RDIV_UINT32   , GxB_TIMES_RDIV_UINT32  , GxB_ANY_RDIV_UINT32    ,
+    GxB_MIN_RDIV_UINT64    , GxB_MAX_RDIV_UINT64    , GxB_PLUS_RDIV_UINT64   , GxB_TIMES_RDIV_UINT64  , GxB_ANY_RDIV_UINT64    ,
+    GxB_MIN_RDIV_FP32      , GxB_MAX_RDIV_FP32      , GxB_PLUS_RDIV_FP32     , GxB_TIMES_RDIV_FP32    , GxB_ANY_RDIV_FP32      ,
+    GxB_MIN_RDIV_FP64      , GxB_MAX_RDIV_FP64      , GxB_PLUS_RDIV_FP64     , GxB_TIMES_RDIV_FP64    , GxB_ANY_RDIV_FP64      ,
 
     // semirings with multiply op: z = RMINUS (x,y), all types x,y,z the same:
-    GxB_MIN_RMINUS_INT8    , GxB_MAX_RMINUS_INT8    , GxB_PLUS_RMINUS_INT8   , GxB_TIMES_RMINUS_INT8  , GxB_ANY_RMINUS_INT8    , 
-    GxB_MIN_RMINUS_UINT8   , GxB_MAX_RMINUS_UINT8   , GxB_PLUS_RMINUS_UINT8  , GxB_TIMES_RMINUS_UINT8 , GxB_ANY_RMINUS_UINT8   , 
-    GxB_MIN_RMINUS_INT16   , GxB_MAX_RMINUS_INT16   , GxB_PLUS_RMINUS_INT16  , GxB_TIMES_RMINUS_INT16 , GxB_ANY_RMINUS_INT16   , 
-    GxB_MIN_RMINUS_UINT16  , GxB_MAX_RMINUS_UINT16  , GxB_PLUS_RMINUS_UINT16 , GxB_TIMES_RMINUS_UINT16, GxB_ANY_RMINUS_UINT16  , 
-    GxB_MIN_RMINUS_INT32   , GxB_MAX_RMINUS_INT32   , GxB_PLUS_RMINUS_INT32  , GxB_TIMES_RMINUS_INT32 , GxB_ANY_RMINUS_INT32   , 
-    GxB_MIN_RMINUS_UINT32  , GxB_MAX_RMINUS_UINT32  , GxB_PLUS_RMINUS_UINT32 , GxB_TIMES_RMINUS_UINT32, GxB_ANY_RMINUS_UINT32  , 
-    GxB_MIN_RMINUS_INT64   , GxB_MAX_RMINUS_INT64   , GxB_PLUS_RMINUS_INT64  , GxB_TIMES_RMINUS_INT64 , GxB_ANY_RMINUS_INT64   , 
-    GxB_MIN_RMINUS_UINT64  , GxB_MAX_RMINUS_UINT64  , GxB_PLUS_RMINUS_UINT64 , GxB_TIMES_RMINUS_UINT64, GxB_ANY_RMINUS_UINT64  , 
-    GxB_MIN_RMINUS_FP32    , GxB_MAX_RMINUS_FP32    , GxB_PLUS_RMINUS_FP32   , GxB_TIMES_RMINUS_FP32  , GxB_ANY_RMINUS_FP32    , 
-    GxB_MIN_RMINUS_FP64    , GxB_MAX_RMINUS_FP64    , GxB_PLUS_RMINUS_FP64   , GxB_TIMES_RMINUS_FP64  , GxB_ANY_RMINUS_FP64    , 
+    GxB_MIN_RMINUS_INT8    , GxB_MAX_RMINUS_INT8    , GxB_PLUS_RMINUS_INT8   , GxB_TIMES_RMINUS_INT8  , GxB_ANY_RMINUS_INT8    ,
+    GxB_MIN_RMINUS_INT16   , GxB_MAX_RMINUS_INT16   , GxB_PLUS_RMINUS_INT16  , GxB_TIMES_RMINUS_INT16 , GxB_ANY_RMINUS_INT16   ,
+    GxB_MIN_RMINUS_INT32   , GxB_MAX_RMINUS_INT32   , GxB_PLUS_RMINUS_INT32  , GxB_TIMES_RMINUS_INT32 , GxB_ANY_RMINUS_INT32   ,
+    GxB_MIN_RMINUS_INT64   , GxB_MAX_RMINUS_INT64   , GxB_PLUS_RMINUS_INT64  , GxB_TIMES_RMINUS_INT64 , GxB_ANY_RMINUS_INT64   ,
+    GxB_MIN_RMINUS_UINT8   , GxB_MAX_RMINUS_UINT8   , GxB_PLUS_RMINUS_UINT8  , GxB_TIMES_RMINUS_UINT8 , GxB_ANY_RMINUS_UINT8   ,
+    GxB_MIN_RMINUS_UINT16  , GxB_MAX_RMINUS_UINT16  , GxB_PLUS_RMINUS_UINT16 , GxB_TIMES_RMINUS_UINT16, GxB_ANY_RMINUS_UINT16  ,
+    GxB_MIN_RMINUS_UINT32  , GxB_MAX_RMINUS_UINT32  , GxB_PLUS_RMINUS_UINT32 , GxB_TIMES_RMINUS_UINT32, GxB_ANY_RMINUS_UINT32  ,
+    GxB_MIN_RMINUS_UINT64  , GxB_MAX_RMINUS_UINT64  , GxB_PLUS_RMINUS_UINT64 , GxB_TIMES_RMINUS_UINT64, GxB_ANY_RMINUS_UINT64  ,
+    GxB_MIN_RMINUS_FP32    , GxB_MAX_RMINUS_FP32    , GxB_PLUS_RMINUS_FP32   , GxB_TIMES_RMINUS_FP32  , GxB_ANY_RMINUS_FP32    ,
+    GxB_MIN_RMINUS_FP64    , GxB_MAX_RMINUS_FP64    , GxB_PLUS_RMINUS_FP64   , GxB_TIMES_RMINUS_FP64  , GxB_ANY_RMINUS_FP64    ,
 
     // semirings with multiply op: z = ISEQ (x,y), all types x,y,z the same:
-    GxB_MIN_ISEQ_INT8      , GxB_MAX_ISEQ_INT8      , GxB_PLUS_ISEQ_INT8     , GxB_TIMES_ISEQ_INT8    , GxB_ANY_ISEQ_INT8      , 
-    GxB_MIN_ISEQ_UINT8     , GxB_MAX_ISEQ_UINT8     , GxB_PLUS_ISEQ_UINT8    , GxB_TIMES_ISEQ_UINT8   , GxB_ANY_ISEQ_UINT8     , 
-    GxB_MIN_ISEQ_INT16     , GxB_MAX_ISEQ_INT16     , GxB_PLUS_ISEQ_INT16    , GxB_TIMES_ISEQ_INT16   , GxB_ANY_ISEQ_INT16     , 
-    GxB_MIN_ISEQ_UINT16    , GxB_MAX_ISEQ_UINT16    , GxB_PLUS_ISEQ_UINT16   , GxB_TIMES_ISEQ_UINT16  , GxB_ANY_ISEQ_UINT16    , 
-    GxB_MIN_ISEQ_INT32     , GxB_MAX_ISEQ_INT32     , GxB_PLUS_ISEQ_INT32    , GxB_TIMES_ISEQ_INT32   , GxB_ANY_ISEQ_INT32     , 
-    GxB_MIN_ISEQ_UINT32    , GxB_MAX_ISEQ_UINT32    , GxB_PLUS_ISEQ_UINT32   , GxB_TIMES_ISEQ_UINT32  , GxB_ANY_ISEQ_UINT32    , 
-    GxB_MIN_ISEQ_INT64     , GxB_MAX_ISEQ_INT64     , GxB_PLUS_ISEQ_INT64    , GxB_TIMES_ISEQ_INT64   , GxB_ANY_ISEQ_INT64     , 
-    GxB_MIN_ISEQ_UINT64    , GxB_MAX_ISEQ_UINT64    , GxB_PLUS_ISEQ_UINT64   , GxB_TIMES_ISEQ_UINT64  , GxB_ANY_ISEQ_UINT64    , 
-    GxB_MIN_ISEQ_FP32      , GxB_MAX_ISEQ_FP32      , GxB_PLUS_ISEQ_FP32     , GxB_TIMES_ISEQ_FP32    , GxB_ANY_ISEQ_FP32      , 
-    GxB_MIN_ISEQ_FP64      , GxB_MAX_ISEQ_FP64      , GxB_PLUS_ISEQ_FP64     , GxB_TIMES_ISEQ_FP64    , GxB_ANY_ISEQ_FP64      , 
+    GxB_MIN_ISEQ_INT8      , GxB_MAX_ISEQ_INT8      , GxB_PLUS_ISEQ_INT8     , GxB_TIMES_ISEQ_INT8    , GxB_ANY_ISEQ_INT8      ,
+    GxB_MIN_ISEQ_INT16     , GxB_MAX_ISEQ_INT16     , GxB_PLUS_ISEQ_INT16    , GxB_TIMES_ISEQ_INT16   , GxB_ANY_ISEQ_INT16     ,
+    GxB_MIN_ISEQ_INT32     , GxB_MAX_ISEQ_INT32     , GxB_PLUS_ISEQ_INT32    , GxB_TIMES_ISEQ_INT32   , GxB_ANY_ISEQ_INT32     ,
+    GxB_MIN_ISEQ_INT64     , GxB_MAX_ISEQ_INT64     , GxB_PLUS_ISEQ_INT64    , GxB_TIMES_ISEQ_INT64   , GxB_ANY_ISEQ_INT64     ,
+    GxB_MIN_ISEQ_UINT8     , GxB_MAX_ISEQ_UINT8     , GxB_PLUS_ISEQ_UINT8    , GxB_TIMES_ISEQ_UINT8   , GxB_ANY_ISEQ_UINT8     ,
+    GxB_MIN_ISEQ_UINT16    , GxB_MAX_ISEQ_UINT16    , GxB_PLUS_ISEQ_UINT16   , GxB_TIMES_ISEQ_UINT16  , GxB_ANY_ISEQ_UINT16    ,
+    GxB_MIN_ISEQ_UINT32    , GxB_MAX_ISEQ_UINT32    , GxB_PLUS_ISEQ_UINT32   , GxB_TIMES_ISEQ_UINT32  , GxB_ANY_ISEQ_UINT32    ,
+    GxB_MIN_ISEQ_UINT64    , GxB_MAX_ISEQ_UINT64    , GxB_PLUS_ISEQ_UINT64   , GxB_TIMES_ISEQ_UINT64  , GxB_ANY_ISEQ_UINT64    ,
+    GxB_MIN_ISEQ_FP32      , GxB_MAX_ISEQ_FP32      , GxB_PLUS_ISEQ_FP32     , GxB_TIMES_ISEQ_FP32    , GxB_ANY_ISEQ_FP32      ,
+    GxB_MIN_ISEQ_FP64      , GxB_MAX_ISEQ_FP64      , GxB_PLUS_ISEQ_FP64     , GxB_TIMES_ISEQ_FP64    , GxB_ANY_ISEQ_FP64      ,
 
     // semirings with multiply op: z = ISNE (x,y), all types x,y,z the same:
-    GxB_MIN_ISNE_INT8      , GxB_MAX_ISNE_INT8      , GxB_PLUS_ISNE_INT8     , GxB_TIMES_ISNE_INT8    , GxB_ANY_ISNE_INT8      , 
-    GxB_MIN_ISNE_UINT8     , GxB_MAX_ISNE_UINT8     , GxB_PLUS_ISNE_UINT8    , GxB_TIMES_ISNE_UINT8   , GxB_ANY_ISNE_UINT8     , 
-    GxB_MIN_ISNE_INT16     , GxB_MAX_ISNE_INT16     , GxB_PLUS_ISNE_INT16    , GxB_TIMES_ISNE_INT16   , GxB_ANY_ISNE_INT16     , 
-    GxB_MIN_ISNE_UINT16    , GxB_MAX_ISNE_UINT16    , GxB_PLUS_ISNE_UINT16   , GxB_TIMES_ISNE_UINT16  , GxB_ANY_ISNE_UINT16    , 
-    GxB_MIN_ISNE_INT32     , GxB_MAX_ISNE_INT32     , GxB_PLUS_ISNE_INT32    , GxB_TIMES_ISNE_INT32   , GxB_ANY_ISNE_INT32     , 
-    GxB_MIN_ISNE_UINT32    , GxB_MAX_ISNE_UINT32    , GxB_PLUS_ISNE_UINT32   , GxB_TIMES_ISNE_UINT32  , GxB_ANY_ISNE_UINT32    , 
-    GxB_MIN_ISNE_INT64     , GxB_MAX_ISNE_INT64     , GxB_PLUS_ISNE_INT64    , GxB_TIMES_ISNE_INT64   , GxB_ANY_ISNE_INT64     , 
-    GxB_MIN_ISNE_UINT64    , GxB_MAX_ISNE_UINT64    , GxB_PLUS_ISNE_UINT64   , GxB_TIMES_ISNE_UINT64  , GxB_ANY_ISNE_UINT64    , 
-    GxB_MIN_ISNE_FP32      , GxB_MAX_ISNE_FP32      , GxB_PLUS_ISNE_FP32     , GxB_TIMES_ISNE_FP32    , GxB_ANY_ISNE_FP32      , 
-    GxB_MIN_ISNE_FP64      , GxB_MAX_ISNE_FP64      , GxB_PLUS_ISNE_FP64     , GxB_TIMES_ISNE_FP64    , GxB_ANY_ISNE_FP64      , 
+    GxB_MIN_ISNE_INT8      , GxB_MAX_ISNE_INT8      , GxB_PLUS_ISNE_INT8     , GxB_TIMES_ISNE_INT8    , GxB_ANY_ISNE_INT8      ,
+    GxB_MIN_ISNE_INT16     , GxB_MAX_ISNE_INT16     , GxB_PLUS_ISNE_INT16    , GxB_TIMES_ISNE_INT16   , GxB_ANY_ISNE_INT16     ,
+    GxB_MIN_ISNE_INT32     , GxB_MAX_ISNE_INT32     , GxB_PLUS_ISNE_INT32    , GxB_TIMES_ISNE_INT32   , GxB_ANY_ISNE_INT32     ,
+    GxB_MIN_ISNE_INT64     , GxB_MAX_ISNE_INT64     , GxB_PLUS_ISNE_INT64    , GxB_TIMES_ISNE_INT64   , GxB_ANY_ISNE_INT64     ,
+    GxB_MIN_ISNE_UINT8     , GxB_MAX_ISNE_UINT8     , GxB_PLUS_ISNE_UINT8    , GxB_TIMES_ISNE_UINT8   , GxB_ANY_ISNE_UINT8     ,
+    GxB_MIN_ISNE_UINT16    , GxB_MAX_ISNE_UINT16    , GxB_PLUS_ISNE_UINT16   , GxB_TIMES_ISNE_UINT16  , GxB_ANY_ISNE_UINT16    ,
+    GxB_MIN_ISNE_UINT32    , GxB_MAX_ISNE_UINT32    , GxB_PLUS_ISNE_UINT32   , GxB_TIMES_ISNE_UINT32  , GxB_ANY_ISNE_UINT32    ,
+    GxB_MIN_ISNE_UINT64    , GxB_MAX_ISNE_UINT64    , GxB_PLUS_ISNE_UINT64   , GxB_TIMES_ISNE_UINT64  , GxB_ANY_ISNE_UINT64    ,
+    GxB_MIN_ISNE_FP32      , GxB_MAX_ISNE_FP32      , GxB_PLUS_ISNE_FP32     , GxB_TIMES_ISNE_FP32    , GxB_ANY_ISNE_FP32      ,
+    GxB_MIN_ISNE_FP64      , GxB_MAX_ISNE_FP64      , GxB_PLUS_ISNE_FP64     , GxB_TIMES_ISNE_FP64    , GxB_ANY_ISNE_FP64      ,
 
     // semirings with multiply op: z = ISGT (x,y), all types x,y,z the same:
-    GxB_MIN_ISGT_INT8      , GxB_MAX_ISGT_INT8      , GxB_PLUS_ISGT_INT8     , GxB_TIMES_ISGT_INT8    , GxB_ANY_ISGT_INT8      , 
-    GxB_MIN_ISGT_UINT8     , GxB_MAX_ISGT_UINT8     , GxB_PLUS_ISGT_UINT8    , GxB_TIMES_ISGT_UINT8   , GxB_ANY_ISGT_UINT8     , 
-    GxB_MIN_ISGT_INT16     , GxB_MAX_ISGT_INT16     , GxB_PLUS_ISGT_INT16    , GxB_TIMES_ISGT_INT16   , GxB_ANY_ISGT_INT16     , 
-    GxB_MIN_ISGT_UINT16    , GxB_MAX_ISGT_UINT16    , GxB_PLUS_ISGT_UINT16   , GxB_TIMES_ISGT_UINT16  , GxB_ANY_ISGT_UINT16    , 
-    GxB_MIN_ISGT_INT32     , GxB_MAX_ISGT_INT32     , GxB_PLUS_ISGT_INT32    , GxB_TIMES_ISGT_INT32   , GxB_ANY_ISGT_INT32     , 
-    GxB_MIN_ISGT_UINT32    , GxB_MAX_ISGT_UINT32    , GxB_PLUS_ISGT_UINT32   , GxB_TIMES_ISGT_UINT32  , GxB_ANY_ISGT_UINT32    , 
-    GxB_MIN_ISGT_INT64     , GxB_MAX_ISGT_INT64     , GxB_PLUS_ISGT_INT64    , GxB_TIMES_ISGT_INT64   , GxB_ANY_ISGT_INT64     , 
-    GxB_MIN_ISGT_UINT64    , GxB_MAX_ISGT_UINT64    , GxB_PLUS_ISGT_UINT64   , GxB_TIMES_ISGT_UINT64  , GxB_ANY_ISGT_UINT64    , 
-    GxB_MIN_ISGT_FP32      , GxB_MAX_ISGT_FP32      , GxB_PLUS_ISGT_FP32     , GxB_TIMES_ISGT_FP32    , GxB_ANY_ISGT_FP32      , 
-    GxB_MIN_ISGT_FP64      , GxB_MAX_ISGT_FP64      , GxB_PLUS_ISGT_FP64     , GxB_TIMES_ISGT_FP64    , GxB_ANY_ISGT_FP64      , 
+    GxB_MIN_ISGT_INT8      , GxB_MAX_ISGT_INT8      , GxB_PLUS_ISGT_INT8     , GxB_TIMES_ISGT_INT8    , GxB_ANY_ISGT_INT8      ,
+    GxB_MIN_ISGT_INT16     , GxB_MAX_ISGT_INT16     , GxB_PLUS_ISGT_INT16    , GxB_TIMES_ISGT_INT16   , GxB_ANY_ISGT_INT16     ,
+    GxB_MIN_ISGT_INT32     , GxB_MAX_ISGT_INT32     , GxB_PLUS_ISGT_INT32    , GxB_TIMES_ISGT_INT32   , GxB_ANY_ISGT_INT32     ,
+    GxB_MIN_ISGT_INT64     , GxB_MAX_ISGT_INT64     , GxB_PLUS_ISGT_INT64    , GxB_TIMES_ISGT_INT64   , GxB_ANY_ISGT_INT64     ,
+    GxB_MIN_ISGT_UINT8     , GxB_MAX_ISGT_UINT8     , GxB_PLUS_ISGT_UINT8    , GxB_TIMES_ISGT_UINT8   , GxB_ANY_ISGT_UINT8     ,
+    GxB_MIN_ISGT_UINT16    , GxB_MAX_ISGT_UINT16    , GxB_PLUS_ISGT_UINT16   , GxB_TIMES_ISGT_UINT16  , GxB_ANY_ISGT_UINT16    ,
+    GxB_MIN_ISGT_UINT32    , GxB_MAX_ISGT_UINT32    , GxB_PLUS_ISGT_UINT32   , GxB_TIMES_ISGT_UINT32  , GxB_ANY_ISGT_UINT32    ,
+    GxB_MIN_ISGT_UINT64    , GxB_MAX_ISGT_UINT64    , GxB_PLUS_ISGT_UINT64   , GxB_TIMES_ISGT_UINT64  , GxB_ANY_ISGT_UINT64    ,
+    GxB_MIN_ISGT_FP32      , GxB_MAX_ISGT_FP32      , GxB_PLUS_ISGT_FP32     , GxB_TIMES_ISGT_FP32    , GxB_ANY_ISGT_FP32      ,
+    GxB_MIN_ISGT_FP64      , GxB_MAX_ISGT_FP64      , GxB_PLUS_ISGT_FP64     , GxB_TIMES_ISGT_FP64    , GxB_ANY_ISGT_FP64      ,
 
     // semirings with multiply op: z = ISLT (x,y), all types x,y,z the same:
-    GxB_MIN_ISLT_INT8      , GxB_MAX_ISLT_INT8      , GxB_PLUS_ISLT_INT8     , GxB_TIMES_ISLT_INT8    , GxB_ANY_ISLT_INT8      , 
-    GxB_MIN_ISLT_UINT8     , GxB_MAX_ISLT_UINT8     , GxB_PLUS_ISLT_UINT8    , GxB_TIMES_ISLT_UINT8   , GxB_ANY_ISLT_UINT8     , 
-    GxB_MIN_ISLT_INT16     , GxB_MAX_ISLT_INT16     , GxB_PLUS_ISLT_INT16    , GxB_TIMES_ISLT_INT16   , GxB_ANY_ISLT_INT16     , 
-    GxB_MIN_ISLT_UINT16    , GxB_MAX_ISLT_UINT16    , GxB_PLUS_ISLT_UINT16   , GxB_TIMES_ISLT_UINT16  , GxB_ANY_ISLT_UINT16    , 
-    GxB_MIN_ISLT_INT32     , GxB_MAX_ISLT_INT32     , GxB_PLUS_ISLT_INT32    , GxB_TIMES_ISLT_INT32   , GxB_ANY_ISLT_INT32     , 
-    GxB_MIN_ISLT_UINT32    , GxB_MAX_ISLT_UINT32    , GxB_PLUS_ISLT_UINT32   , GxB_TIMES_ISLT_UINT32  , GxB_ANY_ISLT_UINT32    , 
-    GxB_MIN_ISLT_INT64     , GxB_MAX_ISLT_INT64     , GxB_PLUS_ISLT_INT64    , GxB_TIMES_ISLT_INT64   , GxB_ANY_ISLT_INT64     , 
-    GxB_MIN_ISLT_UINT64    , GxB_MAX_ISLT_UINT64    , GxB_PLUS_ISLT_UINT64   , GxB_TIMES_ISLT_UINT64  , GxB_ANY_ISLT_UINT64    , 
-    GxB_MIN_ISLT_FP32      , GxB_MAX_ISLT_FP32      , GxB_PLUS_ISLT_FP32     , GxB_TIMES_ISLT_FP32    , GxB_ANY_ISLT_FP32      , 
-    GxB_MIN_ISLT_FP64      , GxB_MAX_ISLT_FP64      , GxB_PLUS_ISLT_FP64     , GxB_TIMES_ISLT_FP64    , GxB_ANY_ISLT_FP64      , 
+    GxB_MIN_ISLT_INT8      , GxB_MAX_ISLT_INT8      , GxB_PLUS_ISLT_INT8     , GxB_TIMES_ISLT_INT8    , GxB_ANY_ISLT_INT8      ,
+    GxB_MIN_ISLT_INT16     , GxB_MAX_ISLT_INT16     , GxB_PLUS_ISLT_INT16    , GxB_TIMES_ISLT_INT16   , GxB_ANY_ISLT_INT16     ,
+    GxB_MIN_ISLT_INT32     , GxB_MAX_ISLT_INT32     , GxB_PLUS_ISLT_INT32    , GxB_TIMES_ISLT_INT32   , GxB_ANY_ISLT_INT32     ,
+    GxB_MIN_ISLT_INT64     , GxB_MAX_ISLT_INT64     , GxB_PLUS_ISLT_INT64    , GxB_TIMES_ISLT_INT64   , GxB_ANY_ISLT_INT64     ,
+    GxB_MIN_ISLT_UINT8     , GxB_MAX_ISLT_UINT8     , GxB_PLUS_ISLT_UINT8    , GxB_TIMES_ISLT_UINT8   , GxB_ANY_ISLT_UINT8     ,
+    GxB_MIN_ISLT_UINT16    , GxB_MAX_ISLT_UINT16    , GxB_PLUS_ISLT_UINT16   , GxB_TIMES_ISLT_UINT16  , GxB_ANY_ISLT_UINT16    ,
+    GxB_MIN_ISLT_UINT32    , GxB_MAX_ISLT_UINT32    , GxB_PLUS_ISLT_UINT32   , GxB_TIMES_ISLT_UINT32  , GxB_ANY_ISLT_UINT32    ,
+    GxB_MIN_ISLT_UINT64    , GxB_MAX_ISLT_UINT64    , GxB_PLUS_ISLT_UINT64   , GxB_TIMES_ISLT_UINT64  , GxB_ANY_ISLT_UINT64    ,
+    GxB_MIN_ISLT_FP32      , GxB_MAX_ISLT_FP32      , GxB_PLUS_ISLT_FP32     , GxB_TIMES_ISLT_FP32    , GxB_ANY_ISLT_FP32      ,
+    GxB_MIN_ISLT_FP64      , GxB_MAX_ISLT_FP64      , GxB_PLUS_ISLT_FP64     , GxB_TIMES_ISLT_FP64    , GxB_ANY_ISLT_FP64      ,
 
     // semirings with multiply op: z = ISGE (x,y), all types x,y,z the same:
-    GxB_MIN_ISGE_INT8      , GxB_MAX_ISGE_INT8      , GxB_PLUS_ISGE_INT8     , GxB_TIMES_ISGE_INT8    , GxB_ANY_ISGE_INT8      , 
-    GxB_MIN_ISGE_UINT8     , GxB_MAX_ISGE_UINT8     , GxB_PLUS_ISGE_UINT8    , GxB_TIMES_ISGE_UINT8   , GxB_ANY_ISGE_UINT8     , 
-    GxB_MIN_ISGE_INT16     , GxB_MAX_ISGE_INT16     , GxB_PLUS_ISGE_INT16    , GxB_TIMES_ISGE_INT16   , GxB_ANY_ISGE_INT16     , 
-    GxB_MIN_ISGE_UINT16    , GxB_MAX_ISGE_UINT16    , GxB_PLUS_ISGE_UINT16   , GxB_TIMES_ISGE_UINT16  , GxB_ANY_ISGE_UINT16    , 
-    GxB_MIN_ISGE_INT32     , GxB_MAX_ISGE_INT32     , GxB_PLUS_ISGE_INT32    , GxB_TIMES_ISGE_INT32   , GxB_ANY_ISGE_INT32     , 
-    GxB_MIN_ISGE_UINT32    , GxB_MAX_ISGE_UINT32    , GxB_PLUS_ISGE_UINT32   , GxB_TIMES_ISGE_UINT32  , GxB_ANY_ISGE_UINT32    , 
-    GxB_MIN_ISGE_INT64     , GxB_MAX_ISGE_INT64     , GxB_PLUS_ISGE_INT64    , GxB_TIMES_ISGE_INT64   , GxB_ANY_ISGE_INT64     , 
-    GxB_MIN_ISGE_UINT64    , GxB_MAX_ISGE_UINT64    , GxB_PLUS_ISGE_UINT64   , GxB_TIMES_ISGE_UINT64  , GxB_ANY_ISGE_UINT64    , 
-    GxB_MIN_ISGE_FP32      , GxB_MAX_ISGE_FP32      , GxB_PLUS_ISGE_FP32     , GxB_TIMES_ISGE_FP32    , GxB_ANY_ISGE_FP32      , 
-    GxB_MIN_ISGE_FP64      , GxB_MAX_ISGE_FP64      , GxB_PLUS_ISGE_FP64     , GxB_TIMES_ISGE_FP64    , GxB_ANY_ISGE_FP64      , 
+    GxB_MIN_ISGE_INT8      , GxB_MAX_ISGE_INT8      , GxB_PLUS_ISGE_INT8     , GxB_TIMES_ISGE_INT8    , GxB_ANY_ISGE_INT8      ,
+    GxB_MIN_ISGE_INT16     , GxB_MAX_ISGE_INT16     , GxB_PLUS_ISGE_INT16    , GxB_TIMES_ISGE_INT16   , GxB_ANY_ISGE_INT16     ,
+    GxB_MIN_ISGE_INT32     , GxB_MAX_ISGE_INT32     , GxB_PLUS_ISGE_INT32    , GxB_TIMES_ISGE_INT32   , GxB_ANY_ISGE_INT32     ,
+    GxB_MIN_ISGE_INT64     , GxB_MAX_ISGE_INT64     , GxB_PLUS_ISGE_INT64    , GxB_TIMES_ISGE_INT64   , GxB_ANY_ISGE_INT64     ,
+    GxB_MIN_ISGE_UINT8     , GxB_MAX_ISGE_UINT8     , GxB_PLUS_ISGE_UINT8    , GxB_TIMES_ISGE_UINT8   , GxB_ANY_ISGE_UINT8     ,
+    GxB_MIN_ISGE_UINT16    , GxB_MAX_ISGE_UINT16    , GxB_PLUS_ISGE_UINT16   , GxB_TIMES_ISGE_UINT16  , GxB_ANY_ISGE_UINT16    ,
+    GxB_MIN_ISGE_UINT32    , GxB_MAX_ISGE_UINT32    , GxB_PLUS_ISGE_UINT32   , GxB_TIMES_ISGE_UINT32  , GxB_ANY_ISGE_UINT32    ,
+    GxB_MIN_ISGE_UINT64    , GxB_MAX_ISGE_UINT64    , GxB_PLUS_ISGE_UINT64   , GxB_TIMES_ISGE_UINT64  , GxB_ANY_ISGE_UINT64    ,
+    GxB_MIN_ISGE_FP32      , GxB_MAX_ISGE_FP32      , GxB_PLUS_ISGE_FP32     , GxB_TIMES_ISGE_FP32    , GxB_ANY_ISGE_FP32      ,
+    GxB_MIN_ISGE_FP64      , GxB_MAX_ISGE_FP64      , GxB_PLUS_ISGE_FP64     , GxB_TIMES_ISGE_FP64    , GxB_ANY_ISGE_FP64      ,
 
     // semirings with multiply op: z = ISLE (x,y), all types x,y,z the same:
-    GxB_MIN_ISLE_INT8      , GxB_MAX_ISLE_INT8      , GxB_PLUS_ISLE_INT8     , GxB_TIMES_ISLE_INT8    , GxB_ANY_ISLE_INT8      , 
-    GxB_MIN_ISLE_UINT8     , GxB_MAX_ISLE_UINT8     , GxB_PLUS_ISLE_UINT8    , GxB_TIMES_ISLE_UINT8   , GxB_ANY_ISLE_UINT8     , 
-    GxB_MIN_ISLE_INT16     , GxB_MAX_ISLE_INT16     , GxB_PLUS_ISLE_INT16    , GxB_TIMES_ISLE_INT16   , GxB_ANY_ISLE_INT16     , 
-    GxB_MIN_ISLE_UINT16    , GxB_MAX_ISLE_UINT16    , GxB_PLUS_ISLE_UINT16   , GxB_TIMES_ISLE_UINT16  , GxB_ANY_ISLE_UINT16    , 
-    GxB_MIN_ISLE_INT32     , GxB_MAX_ISLE_INT32     , GxB_PLUS_ISLE_INT32    , GxB_TIMES_ISLE_INT32   , GxB_ANY_ISLE_INT32     , 
-    GxB_MIN_ISLE_UINT32    , GxB_MAX_ISLE_UINT32    , GxB_PLUS_ISLE_UINT32   , GxB_TIMES_ISLE_UINT32  , GxB_ANY_ISLE_UINT32    , 
-    GxB_MIN_ISLE_INT64     , GxB_MAX_ISLE_INT64     , GxB_PLUS_ISLE_INT64    , GxB_TIMES_ISLE_INT64   , GxB_ANY_ISLE_INT64     , 
-    GxB_MIN_ISLE_UINT64    , GxB_MAX_ISLE_UINT64    , GxB_PLUS_ISLE_UINT64   , GxB_TIMES_ISLE_UINT64  , GxB_ANY_ISLE_UINT64    , 
-    GxB_MIN_ISLE_FP32      , GxB_MAX_ISLE_FP32      , GxB_PLUS_ISLE_FP32     , GxB_TIMES_ISLE_FP32    , GxB_ANY_ISLE_FP32      , 
-    GxB_MIN_ISLE_FP64      , GxB_MAX_ISLE_FP64      , GxB_PLUS_ISLE_FP64     , GxB_TIMES_ISLE_FP64    , GxB_ANY_ISLE_FP64      , 
+    GxB_MIN_ISLE_INT8      , GxB_MAX_ISLE_INT8      , GxB_PLUS_ISLE_INT8     , GxB_TIMES_ISLE_INT8    , GxB_ANY_ISLE_INT8      ,
+    GxB_MIN_ISLE_INT16     , GxB_MAX_ISLE_INT16     , GxB_PLUS_ISLE_INT16    , GxB_TIMES_ISLE_INT16   , GxB_ANY_ISLE_INT16     ,
+    GxB_MIN_ISLE_INT32     , GxB_MAX_ISLE_INT32     , GxB_PLUS_ISLE_INT32    , GxB_TIMES_ISLE_INT32   , GxB_ANY_ISLE_INT32     ,
+    GxB_MIN_ISLE_INT64     , GxB_MAX_ISLE_INT64     , GxB_PLUS_ISLE_INT64    , GxB_TIMES_ISLE_INT64   , GxB_ANY_ISLE_INT64     ,
+    GxB_MIN_ISLE_UINT8     , GxB_MAX_ISLE_UINT8     , GxB_PLUS_ISLE_UINT8    , GxB_TIMES_ISLE_UINT8   , GxB_ANY_ISLE_UINT8     ,
+    GxB_MIN_ISLE_UINT16    , GxB_MAX_ISLE_UINT16    , GxB_PLUS_ISLE_UINT16   , GxB_TIMES_ISLE_UINT16  , GxB_ANY_ISLE_UINT16    ,
+    GxB_MIN_ISLE_UINT32    , GxB_MAX_ISLE_UINT32    , GxB_PLUS_ISLE_UINT32   , GxB_TIMES_ISLE_UINT32  , GxB_ANY_ISLE_UINT32    ,
+    GxB_MIN_ISLE_UINT64    , GxB_MAX_ISLE_UINT64    , GxB_PLUS_ISLE_UINT64   , GxB_TIMES_ISLE_UINT64  , GxB_ANY_ISLE_UINT64    ,
+    GxB_MIN_ISLE_FP32      , GxB_MAX_ISLE_FP32      , GxB_PLUS_ISLE_FP32     , GxB_TIMES_ISLE_FP32    , GxB_ANY_ISLE_FP32      ,
+    GxB_MIN_ISLE_FP64      , GxB_MAX_ISLE_FP64      , GxB_PLUS_ISLE_FP64     , GxB_TIMES_ISLE_FP64    , GxB_ANY_ISLE_FP64      ,
 
     // semirings with multiply op: z = LOR (x,y), all types x,y,z the same:
-    GxB_MIN_LOR_INT8       , GxB_MAX_LOR_INT8       , GxB_PLUS_LOR_INT8      , GxB_TIMES_LOR_INT8     , GxB_ANY_LOR_INT8       , 
-    GxB_MIN_LOR_UINT8      , GxB_MAX_LOR_UINT8      , GxB_PLUS_LOR_UINT8     , GxB_TIMES_LOR_UINT8    , GxB_ANY_LOR_UINT8      , 
-    GxB_MIN_LOR_INT16      , GxB_MAX_LOR_INT16      , GxB_PLUS_LOR_INT16     , GxB_TIMES_LOR_INT16    , GxB_ANY_LOR_INT16      , 
-    GxB_MIN_LOR_UINT16     , GxB_MAX_LOR_UINT16     , GxB_PLUS_LOR_UINT16    , GxB_TIMES_LOR_UINT16   , GxB_ANY_LOR_UINT16     , 
-    GxB_MIN_LOR_INT32      , GxB_MAX_LOR_INT32      , GxB_PLUS_LOR_INT32     , GxB_TIMES_LOR_INT32    , GxB_ANY_LOR_INT32      , 
-    GxB_MIN_LOR_UINT32     , GxB_MAX_LOR_UINT32     , GxB_PLUS_LOR_UINT32    , GxB_TIMES_LOR_UINT32   , GxB_ANY_LOR_UINT32     , 
-    GxB_MIN_LOR_INT64      , GxB_MAX_LOR_INT64      , GxB_PLUS_LOR_INT64     , GxB_TIMES_LOR_INT64    , GxB_ANY_LOR_INT64      , 
-    GxB_MIN_LOR_UINT64     , GxB_MAX_LOR_UINT64     , GxB_PLUS_LOR_UINT64    , GxB_TIMES_LOR_UINT64   , GxB_ANY_LOR_UINT64     , 
-    GxB_MIN_LOR_FP32       , GxB_MAX_LOR_FP32       , GxB_PLUS_LOR_FP32      , GxB_TIMES_LOR_FP32     , GxB_ANY_LOR_FP32       , 
-    GxB_MIN_LOR_FP64       , GxB_MAX_LOR_FP64       , GxB_PLUS_LOR_FP64      , GxB_TIMES_LOR_FP64     , GxB_ANY_LOR_FP64       , 
+    GxB_MIN_LOR_INT8       , GxB_MAX_LOR_INT8       , GxB_PLUS_LOR_INT8      , GxB_TIMES_LOR_INT8     , GxB_ANY_LOR_INT8       ,
+    GxB_MIN_LOR_INT16      , GxB_MAX_LOR_INT16      , GxB_PLUS_LOR_INT16     , GxB_TIMES_LOR_INT16    , GxB_ANY_LOR_INT16      ,
+    GxB_MIN_LOR_INT32      , GxB_MAX_LOR_INT32      , GxB_PLUS_LOR_INT32     , GxB_TIMES_LOR_INT32    , GxB_ANY_LOR_INT32      ,
+    GxB_MIN_LOR_INT64      , GxB_MAX_LOR_INT64      , GxB_PLUS_LOR_INT64     , GxB_TIMES_LOR_INT64    , GxB_ANY_LOR_INT64      ,
+    GxB_MIN_LOR_UINT8      , GxB_MAX_LOR_UINT8      , GxB_PLUS_LOR_UINT8     , GxB_TIMES_LOR_UINT8    , GxB_ANY_LOR_UINT8      ,
+    GxB_MIN_LOR_UINT16     , GxB_MAX_LOR_UINT16     , GxB_PLUS_LOR_UINT16    , GxB_TIMES_LOR_UINT16   , GxB_ANY_LOR_UINT16     ,
+    GxB_MIN_LOR_UINT32     , GxB_MAX_LOR_UINT32     , GxB_PLUS_LOR_UINT32    , GxB_TIMES_LOR_UINT32   , GxB_ANY_LOR_UINT32     ,
+    GxB_MIN_LOR_UINT64     , GxB_MAX_LOR_UINT64     , GxB_PLUS_LOR_UINT64    , GxB_TIMES_LOR_UINT64   , GxB_ANY_LOR_UINT64     ,
+    GxB_MIN_LOR_FP32       , GxB_MAX_LOR_FP32       , GxB_PLUS_LOR_FP32      , GxB_TIMES_LOR_FP32     , GxB_ANY_LOR_FP32       ,
+    GxB_MIN_LOR_FP64       , GxB_MAX_LOR_FP64       , GxB_PLUS_LOR_FP64      , GxB_TIMES_LOR_FP64     , GxB_ANY_LOR_FP64       ,
 
     // semirings with multiply op: z = LAND (x,y), all types x,y,z the same:
-    GxB_MIN_LAND_INT8      , GxB_MAX_LAND_INT8      , GxB_PLUS_LAND_INT8     , GxB_TIMES_LAND_INT8    , GxB_ANY_LAND_INT8      , 
-    GxB_MIN_LAND_UINT8     , GxB_MAX_LAND_UINT8     , GxB_PLUS_LAND_UINT8    , GxB_TIMES_LAND_UINT8   , GxB_ANY_LAND_UINT8     , 
-    GxB_MIN_LAND_INT16     , GxB_MAX_LAND_INT16     , GxB_PLUS_LAND_INT16    , GxB_TIMES_LAND_INT16   , GxB_ANY_LAND_INT16     , 
-    GxB_MIN_LAND_UINT16    , GxB_MAX_LAND_UINT16    , GxB_PLUS_LAND_UINT16   , GxB_TIMES_LAND_UINT16  , GxB_ANY_LAND_UINT16    , 
-    GxB_MIN_LAND_INT32     , GxB_MAX_LAND_INT32     , GxB_PLUS_LAND_INT32    , GxB_TIMES_LAND_INT32   , GxB_ANY_LAND_INT32     , 
-    GxB_MIN_LAND_UINT32    , GxB_MAX_LAND_UINT32    , GxB_PLUS_LAND_UINT32   , GxB_TIMES_LAND_UINT32  , GxB_ANY_LAND_UINT32    , 
-    GxB_MIN_LAND_INT64     , GxB_MAX_LAND_INT64     , GxB_PLUS_LAND_INT64    , GxB_TIMES_LAND_INT64   , GxB_ANY_LAND_INT64     , 
-    GxB_MIN_LAND_UINT64    , GxB_MAX_LAND_UINT64    , GxB_PLUS_LAND_UINT64   , GxB_TIMES_LAND_UINT64  , GxB_ANY_LAND_UINT64    , 
-    GxB_MIN_LAND_FP32      , GxB_MAX_LAND_FP32      , GxB_PLUS_LAND_FP32     , GxB_TIMES_LAND_FP32    , GxB_ANY_LAND_FP32      , 
-    GxB_MIN_LAND_FP64      , GxB_MAX_LAND_FP64      , GxB_PLUS_LAND_FP64     , GxB_TIMES_LAND_FP64    , GxB_ANY_LAND_FP64      , 
+    GxB_MIN_LAND_INT8      , GxB_MAX_LAND_INT8      , GxB_PLUS_LAND_INT8     , GxB_TIMES_LAND_INT8    , GxB_ANY_LAND_INT8      ,
+    GxB_MIN_LAND_INT16     , GxB_MAX_LAND_INT16     , GxB_PLUS_LAND_INT16    , GxB_TIMES_LAND_INT16   , GxB_ANY_LAND_INT16     ,
+    GxB_MIN_LAND_INT32     , GxB_MAX_LAND_INT32     , GxB_PLUS_LAND_INT32    , GxB_TIMES_LAND_INT32   , GxB_ANY_LAND_INT32     ,
+    GxB_MIN_LAND_INT64     , GxB_MAX_LAND_INT64     , GxB_PLUS_LAND_INT64    , GxB_TIMES_LAND_INT64   , GxB_ANY_LAND_INT64     ,
+    GxB_MIN_LAND_UINT8     , GxB_MAX_LAND_UINT8     , GxB_PLUS_LAND_UINT8    , GxB_TIMES_LAND_UINT8   , GxB_ANY_LAND_UINT8     ,
+    GxB_MIN_LAND_UINT16    , GxB_MAX_LAND_UINT16    , GxB_PLUS_LAND_UINT16   , GxB_TIMES_LAND_UINT16  , GxB_ANY_LAND_UINT16    ,
+    GxB_MIN_LAND_UINT32    , GxB_MAX_LAND_UINT32    , GxB_PLUS_LAND_UINT32   , GxB_TIMES_LAND_UINT32  , GxB_ANY_LAND_UINT32    ,
+    GxB_MIN_LAND_UINT64    , GxB_MAX_LAND_UINT64    , GxB_PLUS_LAND_UINT64   , GxB_TIMES_LAND_UINT64  , GxB_ANY_LAND_UINT64    ,
+    GxB_MIN_LAND_FP32      , GxB_MAX_LAND_FP32      , GxB_PLUS_LAND_FP32     , GxB_TIMES_LAND_FP32    , GxB_ANY_LAND_FP32      ,
+    GxB_MIN_LAND_FP64      , GxB_MAX_LAND_FP64      , GxB_PLUS_LAND_FP64     , GxB_TIMES_LAND_FP64    , GxB_ANY_LAND_FP64      ,
 
     // semirings with multiply op: z = LXOR (x,y), all types x,y,z the same:
-    GxB_MIN_LXOR_INT8      , GxB_MAX_LXOR_INT8      , GxB_PLUS_LXOR_INT8     , GxB_TIMES_LXOR_INT8    , GxB_ANY_LXOR_INT8      , 
-    GxB_MIN_LXOR_UINT8     , GxB_MAX_LXOR_UINT8     , GxB_PLUS_LXOR_UINT8    , GxB_TIMES_LXOR_UINT8   , GxB_ANY_LXOR_UINT8     , 
-    GxB_MIN_LXOR_INT16     , GxB_MAX_LXOR_INT16     , GxB_PLUS_LXOR_INT16    , GxB_TIMES_LXOR_INT16   , GxB_ANY_LXOR_INT16     , 
-    GxB_MIN_LXOR_UINT16    , GxB_MAX_LXOR_UINT16    , GxB_PLUS_LXOR_UINT16   , GxB_TIMES_LXOR_UINT16  , GxB_ANY_LXOR_UINT16    , 
-    GxB_MIN_LXOR_INT32     , GxB_MAX_LXOR_INT32     , GxB_PLUS_LXOR_INT32    , GxB_TIMES_LXOR_INT32   , GxB_ANY_LXOR_INT32     , 
-    GxB_MIN_LXOR_UINT32    , GxB_MAX_LXOR_UINT32    , GxB_PLUS_LXOR_UINT32   , GxB_TIMES_LXOR_UINT32  , GxB_ANY_LXOR_UINT32    , 
-    GxB_MIN_LXOR_INT64     , GxB_MAX_LXOR_INT64     , GxB_PLUS_LXOR_INT64    , GxB_TIMES_LXOR_INT64   , GxB_ANY_LXOR_INT64     , 
-    GxB_MIN_LXOR_UINT64    , GxB_MAX_LXOR_UINT64    , GxB_PLUS_LXOR_UINT64   , GxB_TIMES_LXOR_UINT64  , GxB_ANY_LXOR_UINT64    , 
-    GxB_MIN_LXOR_FP32      , GxB_MAX_LXOR_FP32      , GxB_PLUS_LXOR_FP32     , GxB_TIMES_LXOR_FP32    , GxB_ANY_LXOR_FP32      , 
-    GxB_MIN_LXOR_FP64      , GxB_MAX_LXOR_FP64      , GxB_PLUS_LXOR_FP64     , GxB_TIMES_LXOR_FP64    , GxB_ANY_LXOR_FP64      , 
+    GxB_MIN_LXOR_INT8      , GxB_MAX_LXOR_INT8      , GxB_PLUS_LXOR_INT8     , GxB_TIMES_LXOR_INT8    , GxB_ANY_LXOR_INT8      ,
+    GxB_MIN_LXOR_INT16     , GxB_MAX_LXOR_INT16     , GxB_PLUS_LXOR_INT16    , GxB_TIMES_LXOR_INT16   , GxB_ANY_LXOR_INT16     ,
+    GxB_MIN_LXOR_INT32     , GxB_MAX_LXOR_INT32     , GxB_PLUS_LXOR_INT32    , GxB_TIMES_LXOR_INT32   , GxB_ANY_LXOR_INT32     ,
+    GxB_MIN_LXOR_INT64     , GxB_MAX_LXOR_INT64     , GxB_PLUS_LXOR_INT64    , GxB_TIMES_LXOR_INT64   , GxB_ANY_LXOR_INT64     ,
+    GxB_MIN_LXOR_UINT8     , GxB_MAX_LXOR_UINT8     , GxB_PLUS_LXOR_UINT8    , GxB_TIMES_LXOR_UINT8   , GxB_ANY_LXOR_UINT8     ,
+    GxB_MIN_LXOR_UINT16    , GxB_MAX_LXOR_UINT16    , GxB_PLUS_LXOR_UINT16   , GxB_TIMES_LXOR_UINT16  , GxB_ANY_LXOR_UINT16    ,
+    GxB_MIN_LXOR_UINT32    , GxB_MAX_LXOR_UINT32    , GxB_PLUS_LXOR_UINT32   , GxB_TIMES_LXOR_UINT32  , GxB_ANY_LXOR_UINT32    ,
+    GxB_MIN_LXOR_UINT64    , GxB_MAX_LXOR_UINT64    , GxB_PLUS_LXOR_UINT64   , GxB_TIMES_LXOR_UINT64  , GxB_ANY_LXOR_UINT64    ,
+    GxB_MIN_LXOR_FP32      , GxB_MAX_LXOR_FP32      , GxB_PLUS_LXOR_FP32     , GxB_TIMES_LXOR_FP32    , GxB_ANY_LXOR_FP32      ,
+    GxB_MIN_LXOR_FP64      , GxB_MAX_LXOR_FP64      , GxB_PLUS_LXOR_FP64     , GxB_TIMES_LXOR_FP64    , GxB_ANY_LXOR_FP64      ,
 
 //------------------------------------------------------------------------------
 // 300 semirings with a comparison operator TxT -> bool, where T is non-Boolean
 //------------------------------------------------------------------------------
 
     // semirings with multiply op: z = EQ (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_EQ_INT8        , GxB_LAND_EQ_INT8       , GxB_LXOR_EQ_INT8       , GxB_EQ_EQ_INT8         , GxB_ANY_EQ_INT8        , 
-    GxB_LOR_EQ_UINT8       , GxB_LAND_EQ_UINT8      , GxB_LXOR_EQ_UINT8      , GxB_EQ_EQ_UINT8        , GxB_ANY_EQ_UINT8       , 
-    GxB_LOR_EQ_INT16       , GxB_LAND_EQ_INT16      , GxB_LXOR_EQ_INT16      , GxB_EQ_EQ_INT16        , GxB_ANY_EQ_INT16       , 
-    GxB_LOR_EQ_UINT16      , GxB_LAND_EQ_UINT16     , GxB_LXOR_EQ_UINT16     , GxB_EQ_EQ_UINT16       , GxB_ANY_EQ_UINT16      , 
-    GxB_LOR_EQ_INT32       , GxB_LAND_EQ_INT32      , GxB_LXOR_EQ_INT32      , GxB_EQ_EQ_INT32        , GxB_ANY_EQ_INT32       , 
-    GxB_LOR_EQ_UINT32      , GxB_LAND_EQ_UINT32     , GxB_LXOR_EQ_UINT32     , GxB_EQ_EQ_UINT32       , GxB_ANY_EQ_UINT32      , 
-    GxB_LOR_EQ_INT64       , GxB_LAND_EQ_INT64      , GxB_LXOR_EQ_INT64      , GxB_EQ_EQ_INT64        , GxB_ANY_EQ_INT64       , 
-    GxB_LOR_EQ_UINT64      , GxB_LAND_EQ_UINT64     , GxB_LXOR_EQ_UINT64     , GxB_EQ_EQ_UINT64       , GxB_ANY_EQ_UINT64      , 
-    GxB_LOR_EQ_FP32        , GxB_LAND_EQ_FP32       , GxB_LXOR_EQ_FP32       , GxB_EQ_EQ_FP32         , GxB_ANY_EQ_FP32        , 
-    GxB_LOR_EQ_FP64        , GxB_LAND_EQ_FP64       , GxB_LXOR_EQ_FP64       , GxB_EQ_EQ_FP64         , GxB_ANY_EQ_FP64        , 
+    GxB_LOR_EQ_INT8        , GxB_LAND_EQ_INT8       , GxB_LXOR_EQ_INT8       , GxB_EQ_EQ_INT8         , GxB_ANY_EQ_INT8        ,
+    GxB_LOR_EQ_INT16       , GxB_LAND_EQ_INT16      , GxB_LXOR_EQ_INT16      , GxB_EQ_EQ_INT16        , GxB_ANY_EQ_INT16       ,
+    GxB_LOR_EQ_INT32       , GxB_LAND_EQ_INT32      , GxB_LXOR_EQ_INT32      , GxB_EQ_EQ_INT32        , GxB_ANY_EQ_INT32       ,
+    GxB_LOR_EQ_INT64       , GxB_LAND_EQ_INT64      , GxB_LXOR_EQ_INT64      , GxB_EQ_EQ_INT64        , GxB_ANY_EQ_INT64       ,
+    GxB_LOR_EQ_UINT8       , GxB_LAND_EQ_UINT8      , GxB_LXOR_EQ_UINT8      , GxB_EQ_EQ_UINT8        , GxB_ANY_EQ_UINT8       ,
+    GxB_LOR_EQ_UINT16      , GxB_LAND_EQ_UINT16     , GxB_LXOR_EQ_UINT16     , GxB_EQ_EQ_UINT16       , GxB_ANY_EQ_UINT16      ,
+    GxB_LOR_EQ_UINT32      , GxB_LAND_EQ_UINT32     , GxB_LXOR_EQ_UINT32     , GxB_EQ_EQ_UINT32       , GxB_ANY_EQ_UINT32      ,
+    GxB_LOR_EQ_UINT64      , GxB_LAND_EQ_UINT64     , GxB_LXOR_EQ_UINT64     , GxB_EQ_EQ_UINT64       , GxB_ANY_EQ_UINT64      ,
+    GxB_LOR_EQ_FP32        , GxB_LAND_EQ_FP32       , GxB_LXOR_EQ_FP32       , GxB_EQ_EQ_FP32         , GxB_ANY_EQ_FP32        ,
+    GxB_LOR_EQ_FP64        , GxB_LAND_EQ_FP64       , GxB_LXOR_EQ_FP64       , GxB_EQ_EQ_FP64         , GxB_ANY_EQ_FP64        ,
 
     // semirings with multiply op: z = NE (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_NE_INT8        , GxB_LAND_NE_INT8       , GxB_LXOR_NE_INT8       , GxB_EQ_NE_INT8         , GxB_ANY_NE_INT8        , 
-    GxB_LOR_NE_UINT8       , GxB_LAND_NE_UINT8      , GxB_LXOR_NE_UINT8      , GxB_EQ_NE_UINT8        , GxB_ANY_NE_UINT8       , 
-    GxB_LOR_NE_INT16       , GxB_LAND_NE_INT16      , GxB_LXOR_NE_INT16      , GxB_EQ_NE_INT16        , GxB_ANY_NE_INT16       , 
-    GxB_LOR_NE_UINT16      , GxB_LAND_NE_UINT16     , GxB_LXOR_NE_UINT16     , GxB_EQ_NE_UINT16       , GxB_ANY_NE_UINT16      , 
-    GxB_LOR_NE_INT32       , GxB_LAND_NE_INT32      , GxB_LXOR_NE_INT32      , GxB_EQ_NE_INT32        , GxB_ANY_NE_INT32       , 
-    GxB_LOR_NE_UINT32      , GxB_LAND_NE_UINT32     , GxB_LXOR_NE_UINT32     , GxB_EQ_NE_UINT32       , GxB_ANY_NE_UINT32      , 
-    GxB_LOR_NE_INT64       , GxB_LAND_NE_INT64      , GxB_LXOR_NE_INT64      , GxB_EQ_NE_INT64        , GxB_ANY_NE_INT64       , 
-    GxB_LOR_NE_UINT64      , GxB_LAND_NE_UINT64     , GxB_LXOR_NE_UINT64     , GxB_EQ_NE_UINT64       , GxB_ANY_NE_UINT64      , 
-    GxB_LOR_NE_FP32        , GxB_LAND_NE_FP32       , GxB_LXOR_NE_FP32       , GxB_EQ_NE_FP32         , GxB_ANY_NE_FP32        , 
-    GxB_LOR_NE_FP64        , GxB_LAND_NE_FP64       , GxB_LXOR_NE_FP64       , GxB_EQ_NE_FP64         , GxB_ANY_NE_FP64        , 
+    GxB_LOR_NE_INT8        , GxB_LAND_NE_INT8       , GxB_LXOR_NE_INT8       , GxB_EQ_NE_INT8         , GxB_ANY_NE_INT8        ,
+    GxB_LOR_NE_INT16       , GxB_LAND_NE_INT16      , GxB_LXOR_NE_INT16      , GxB_EQ_NE_INT16        , GxB_ANY_NE_INT16       ,
+    GxB_LOR_NE_INT32       , GxB_LAND_NE_INT32      , GxB_LXOR_NE_INT32      , GxB_EQ_NE_INT32        , GxB_ANY_NE_INT32       ,
+    GxB_LOR_NE_INT64       , GxB_LAND_NE_INT64      , GxB_LXOR_NE_INT64      , GxB_EQ_NE_INT64        , GxB_ANY_NE_INT64       ,
+    GxB_LOR_NE_UINT8       , GxB_LAND_NE_UINT8      , GxB_LXOR_NE_UINT8      , GxB_EQ_NE_UINT8        , GxB_ANY_NE_UINT8       ,
+    GxB_LOR_NE_UINT16      , GxB_LAND_NE_UINT16     , GxB_LXOR_NE_UINT16     , GxB_EQ_NE_UINT16       , GxB_ANY_NE_UINT16      ,
+    GxB_LOR_NE_UINT32      , GxB_LAND_NE_UINT32     , GxB_LXOR_NE_UINT32     , GxB_EQ_NE_UINT32       , GxB_ANY_NE_UINT32      ,
+    GxB_LOR_NE_UINT64      , GxB_LAND_NE_UINT64     , GxB_LXOR_NE_UINT64     , GxB_EQ_NE_UINT64       , GxB_ANY_NE_UINT64      ,
+    GxB_LOR_NE_FP32        , GxB_LAND_NE_FP32       , GxB_LXOR_NE_FP32       , GxB_EQ_NE_FP32         , GxB_ANY_NE_FP32        ,
+    GxB_LOR_NE_FP64        , GxB_LAND_NE_FP64       , GxB_LXOR_NE_FP64       , GxB_EQ_NE_FP64         , GxB_ANY_NE_FP64        ,
 
     // semirings with multiply op: z = GT (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_GT_INT8        , GxB_LAND_GT_INT8       , GxB_LXOR_GT_INT8       , GxB_EQ_GT_INT8         , GxB_ANY_GT_INT8        , 
-    GxB_LOR_GT_UINT8       , GxB_LAND_GT_UINT8      , GxB_LXOR_GT_UINT8      , GxB_EQ_GT_UINT8        , GxB_ANY_GT_UINT8       , 
-    GxB_LOR_GT_INT16       , GxB_LAND_GT_INT16      , GxB_LXOR_GT_INT16      , GxB_EQ_GT_INT16        , GxB_ANY_GT_INT16       , 
-    GxB_LOR_GT_UINT16      , GxB_LAND_GT_UINT16     , GxB_LXOR_GT_UINT16     , GxB_EQ_GT_UINT16       , GxB_ANY_GT_UINT16      , 
-    GxB_LOR_GT_INT32       , GxB_LAND_GT_INT32      , GxB_LXOR_GT_INT32      , GxB_EQ_GT_INT32        , GxB_ANY_GT_INT32       , 
-    GxB_LOR_GT_UINT32      , GxB_LAND_GT_UINT32     , GxB_LXOR_GT_UINT32     , GxB_EQ_GT_UINT32       , GxB_ANY_GT_UINT32      , 
-    GxB_LOR_GT_INT64       , GxB_LAND_GT_INT64      , GxB_LXOR_GT_INT64      , GxB_EQ_GT_INT64        , GxB_ANY_GT_INT64       , 
-    GxB_LOR_GT_UINT64      , GxB_LAND_GT_UINT64     , GxB_LXOR_GT_UINT64     , GxB_EQ_GT_UINT64       , GxB_ANY_GT_UINT64      , 
-    GxB_LOR_GT_FP32        , GxB_LAND_GT_FP32       , GxB_LXOR_GT_FP32       , GxB_EQ_GT_FP32         , GxB_ANY_GT_FP32        , 
-    GxB_LOR_GT_FP64        , GxB_LAND_GT_FP64       , GxB_LXOR_GT_FP64       , GxB_EQ_GT_FP64         , GxB_ANY_GT_FP64        , 
+    GxB_LOR_GT_INT8        , GxB_LAND_GT_INT8       , GxB_LXOR_GT_INT8       , GxB_EQ_GT_INT8         , GxB_ANY_GT_INT8        ,
+    GxB_LOR_GT_INT16       , GxB_LAND_GT_INT16      , GxB_LXOR_GT_INT16      , GxB_EQ_GT_INT16        , GxB_ANY_GT_INT16       ,
+    GxB_LOR_GT_INT32       , GxB_LAND_GT_INT32      , GxB_LXOR_GT_INT32      , GxB_EQ_GT_INT32        , GxB_ANY_GT_INT32       ,
+    GxB_LOR_GT_INT64       , GxB_LAND_GT_INT64      , GxB_LXOR_GT_INT64      , GxB_EQ_GT_INT64        , GxB_ANY_GT_INT64       ,
+    GxB_LOR_GT_UINT8       , GxB_LAND_GT_UINT8      , GxB_LXOR_GT_UINT8      , GxB_EQ_GT_UINT8        , GxB_ANY_GT_UINT8       ,
+    GxB_LOR_GT_UINT16      , GxB_LAND_GT_UINT16     , GxB_LXOR_GT_UINT16     , GxB_EQ_GT_UINT16       , GxB_ANY_GT_UINT16      ,
+    GxB_LOR_GT_UINT32      , GxB_LAND_GT_UINT32     , GxB_LXOR_GT_UINT32     , GxB_EQ_GT_UINT32       , GxB_ANY_GT_UINT32      ,
+    GxB_LOR_GT_UINT64      , GxB_LAND_GT_UINT64     , GxB_LXOR_GT_UINT64     , GxB_EQ_GT_UINT64       , GxB_ANY_GT_UINT64      ,
+    GxB_LOR_GT_FP32        , GxB_LAND_GT_FP32       , GxB_LXOR_GT_FP32       , GxB_EQ_GT_FP32         , GxB_ANY_GT_FP32        ,
+    GxB_LOR_GT_FP64        , GxB_LAND_GT_FP64       , GxB_LXOR_GT_FP64       , GxB_EQ_GT_FP64         , GxB_ANY_GT_FP64        ,
 
     // semirings with multiply op: z = LT (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_LT_INT8        , GxB_LAND_LT_INT8       , GxB_LXOR_LT_INT8       , GxB_EQ_LT_INT8         , GxB_ANY_LT_INT8        , 
-    GxB_LOR_LT_UINT8       , GxB_LAND_LT_UINT8      , GxB_LXOR_LT_UINT8      , GxB_EQ_LT_UINT8        , GxB_ANY_LT_UINT8       , 
-    GxB_LOR_LT_INT16       , GxB_LAND_LT_INT16      , GxB_LXOR_LT_INT16      , GxB_EQ_LT_INT16        , GxB_ANY_LT_INT16       , 
-    GxB_LOR_LT_UINT16      , GxB_LAND_LT_UINT16     , GxB_LXOR_LT_UINT16     , GxB_EQ_LT_UINT16       , GxB_ANY_LT_UINT16      , 
-    GxB_LOR_LT_INT32       , GxB_LAND_LT_INT32      , GxB_LXOR_LT_INT32      , GxB_EQ_LT_INT32        , GxB_ANY_LT_INT32       , 
-    GxB_LOR_LT_UINT32      , GxB_LAND_LT_UINT32     , GxB_LXOR_LT_UINT32     , GxB_EQ_LT_UINT32       , GxB_ANY_LT_UINT32      , 
-    GxB_LOR_LT_INT64       , GxB_LAND_LT_INT64      , GxB_LXOR_LT_INT64      , GxB_EQ_LT_INT64        , GxB_ANY_LT_INT64       , 
-    GxB_LOR_LT_UINT64      , GxB_LAND_LT_UINT64     , GxB_LXOR_LT_UINT64     , GxB_EQ_LT_UINT64       , GxB_ANY_LT_UINT64      , 
-    GxB_LOR_LT_FP32        , GxB_LAND_LT_FP32       , GxB_LXOR_LT_FP32       , GxB_EQ_LT_FP32         , GxB_ANY_LT_FP32        , 
-    GxB_LOR_LT_FP64        , GxB_LAND_LT_FP64       , GxB_LXOR_LT_FP64       , GxB_EQ_LT_FP64         , GxB_ANY_LT_FP64        , 
+    GxB_LOR_LT_INT8        , GxB_LAND_LT_INT8       , GxB_LXOR_LT_INT8       , GxB_EQ_LT_INT8         , GxB_ANY_LT_INT8        ,
+    GxB_LOR_LT_INT16       , GxB_LAND_LT_INT16      , GxB_LXOR_LT_INT16      , GxB_EQ_LT_INT16        , GxB_ANY_LT_INT16       ,
+    GxB_LOR_LT_INT32       , GxB_LAND_LT_INT32      , GxB_LXOR_LT_INT32      , GxB_EQ_LT_INT32        , GxB_ANY_LT_INT32       ,
+    GxB_LOR_LT_INT64       , GxB_LAND_LT_INT64      , GxB_LXOR_LT_INT64      , GxB_EQ_LT_INT64        , GxB_ANY_LT_INT64       ,
+    GxB_LOR_LT_UINT8       , GxB_LAND_LT_UINT8      , GxB_LXOR_LT_UINT8      , GxB_EQ_LT_UINT8        , GxB_ANY_LT_UINT8       ,
+    GxB_LOR_LT_UINT16      , GxB_LAND_LT_UINT16     , GxB_LXOR_LT_UINT16     , GxB_EQ_LT_UINT16       , GxB_ANY_LT_UINT16      ,
+    GxB_LOR_LT_UINT32      , GxB_LAND_LT_UINT32     , GxB_LXOR_LT_UINT32     , GxB_EQ_LT_UINT32       , GxB_ANY_LT_UINT32      ,
+    GxB_LOR_LT_UINT64      , GxB_LAND_LT_UINT64     , GxB_LXOR_LT_UINT64     , GxB_EQ_LT_UINT64       , GxB_ANY_LT_UINT64      ,
+    GxB_LOR_LT_FP32        , GxB_LAND_LT_FP32       , GxB_LXOR_LT_FP32       , GxB_EQ_LT_FP32         , GxB_ANY_LT_FP32        ,
+    GxB_LOR_LT_FP64        , GxB_LAND_LT_FP64       , GxB_LXOR_LT_FP64       , GxB_EQ_LT_FP64         , GxB_ANY_LT_FP64        ,
 
     // semirings with multiply op: z = GE (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_GE_INT8        , GxB_LAND_GE_INT8       , GxB_LXOR_GE_INT8       , GxB_EQ_GE_INT8         , GxB_ANY_GE_INT8        , 
-    GxB_LOR_GE_UINT8       , GxB_LAND_GE_UINT8      , GxB_LXOR_GE_UINT8      , GxB_EQ_GE_UINT8        , GxB_ANY_GE_UINT8       , 
-    GxB_LOR_GE_INT16       , GxB_LAND_GE_INT16      , GxB_LXOR_GE_INT16      , GxB_EQ_GE_INT16        , GxB_ANY_GE_INT16       , 
-    GxB_LOR_GE_UINT16      , GxB_LAND_GE_UINT16     , GxB_LXOR_GE_UINT16     , GxB_EQ_GE_UINT16       , GxB_ANY_GE_UINT16      , 
-    GxB_LOR_GE_INT32       , GxB_LAND_GE_INT32      , GxB_LXOR_GE_INT32      , GxB_EQ_GE_INT32        , GxB_ANY_GE_INT32       , 
-    GxB_LOR_GE_UINT32      , GxB_LAND_GE_UINT32     , GxB_LXOR_GE_UINT32     , GxB_EQ_GE_UINT32       , GxB_ANY_GE_UINT32      , 
-    GxB_LOR_GE_INT64       , GxB_LAND_GE_INT64      , GxB_LXOR_GE_INT64      , GxB_EQ_GE_INT64        , GxB_ANY_GE_INT64       , 
-    GxB_LOR_GE_UINT64      , GxB_LAND_GE_UINT64     , GxB_LXOR_GE_UINT64     , GxB_EQ_GE_UINT64       , GxB_ANY_GE_UINT64      , 
-    GxB_LOR_GE_FP32        , GxB_LAND_GE_FP32       , GxB_LXOR_GE_FP32       , GxB_EQ_GE_FP32         , GxB_ANY_GE_FP32        , 
-    GxB_LOR_GE_FP64        , GxB_LAND_GE_FP64       , GxB_LXOR_GE_FP64       , GxB_EQ_GE_FP64         , GxB_ANY_GE_FP64        , 
+    GxB_LOR_GE_INT8        , GxB_LAND_GE_INT8       , GxB_LXOR_GE_INT8       , GxB_EQ_GE_INT8         , GxB_ANY_GE_INT8        ,
+    GxB_LOR_GE_INT16       , GxB_LAND_GE_INT16      , GxB_LXOR_GE_INT16      , GxB_EQ_GE_INT16        , GxB_ANY_GE_INT16       ,
+    GxB_LOR_GE_INT32       , GxB_LAND_GE_INT32      , GxB_LXOR_GE_INT32      , GxB_EQ_GE_INT32        , GxB_ANY_GE_INT32       ,
+    GxB_LOR_GE_INT64       , GxB_LAND_GE_INT64      , GxB_LXOR_GE_INT64      , GxB_EQ_GE_INT64        , GxB_ANY_GE_INT64       ,
+    GxB_LOR_GE_UINT8       , GxB_LAND_GE_UINT8      , GxB_LXOR_GE_UINT8      , GxB_EQ_GE_UINT8        , GxB_ANY_GE_UINT8       ,
+    GxB_LOR_GE_UINT16      , GxB_LAND_GE_UINT16     , GxB_LXOR_GE_UINT16     , GxB_EQ_GE_UINT16       , GxB_ANY_GE_UINT16      ,
+    GxB_LOR_GE_UINT32      , GxB_LAND_GE_UINT32     , GxB_LXOR_GE_UINT32     , GxB_EQ_GE_UINT32       , GxB_ANY_GE_UINT32      ,
+    GxB_LOR_GE_UINT64      , GxB_LAND_GE_UINT64     , GxB_LXOR_GE_UINT64     , GxB_EQ_GE_UINT64       , GxB_ANY_GE_UINT64      ,
+    GxB_LOR_GE_FP32        , GxB_LAND_GE_FP32       , GxB_LXOR_GE_FP32       , GxB_EQ_GE_FP32         , GxB_ANY_GE_FP32        ,
+    GxB_LOR_GE_FP64        , GxB_LAND_GE_FP64       , GxB_LXOR_GE_FP64       , GxB_EQ_GE_FP64         , GxB_ANY_GE_FP64        ,
 
     // semirings with multiply op: z = LE (x,y), where z is boolean and x,y are given by the suffix:
-    GxB_LOR_LE_INT8        , GxB_LAND_LE_INT8       , GxB_LXOR_LE_INT8       , GxB_EQ_LE_INT8         , GxB_ANY_LE_INT8        , 
-    GxB_LOR_LE_UINT8       , GxB_LAND_LE_UINT8      , GxB_LXOR_LE_UINT8      , GxB_EQ_LE_UINT8        , GxB_ANY_LE_UINT8       , 
-    GxB_LOR_LE_INT16       , GxB_LAND_LE_INT16      , GxB_LXOR_LE_INT16      , GxB_EQ_LE_INT16        , GxB_ANY_LE_INT16       , 
-    GxB_LOR_LE_UINT16      , GxB_LAND_LE_UINT16     , GxB_LXOR_LE_UINT16     , GxB_EQ_LE_UINT16       , GxB_ANY_LE_UINT16      , 
-    GxB_LOR_LE_INT32       , GxB_LAND_LE_INT32      , GxB_LXOR_LE_INT32      , GxB_EQ_LE_INT32        , GxB_ANY_LE_INT32       , 
-    GxB_LOR_LE_UINT32      , GxB_LAND_LE_UINT32     , GxB_LXOR_LE_UINT32     , GxB_EQ_LE_UINT32       , GxB_ANY_LE_UINT32      , 
-    GxB_LOR_LE_INT64       , GxB_LAND_LE_INT64      , GxB_LXOR_LE_INT64      , GxB_EQ_LE_INT64        , GxB_ANY_LE_INT64       , 
-    GxB_LOR_LE_UINT64      , GxB_LAND_LE_UINT64     , GxB_LXOR_LE_UINT64     , GxB_EQ_LE_UINT64       , GxB_ANY_LE_UINT64      , 
-    GxB_LOR_LE_FP32        , GxB_LAND_LE_FP32       , GxB_LXOR_LE_FP32       , GxB_EQ_LE_FP32         , GxB_ANY_LE_FP32        , 
-    GxB_LOR_LE_FP64        , GxB_LAND_LE_FP64       , GxB_LXOR_LE_FP64       , GxB_EQ_LE_FP64         , GxB_ANY_LE_FP64        , 
+    GxB_LOR_LE_INT8        , GxB_LAND_LE_INT8       , GxB_LXOR_LE_INT8       , GxB_EQ_LE_INT8         , GxB_ANY_LE_INT8        ,
+    GxB_LOR_LE_INT16       , GxB_LAND_LE_INT16      , GxB_LXOR_LE_INT16      , GxB_EQ_LE_INT16        , GxB_ANY_LE_INT16       ,
+    GxB_LOR_LE_INT32       , GxB_LAND_LE_INT32      , GxB_LXOR_LE_INT32      , GxB_EQ_LE_INT32        , GxB_ANY_LE_INT32       ,
+    GxB_LOR_LE_INT64       , GxB_LAND_LE_INT64      , GxB_LXOR_LE_INT64      , GxB_EQ_LE_INT64        , GxB_ANY_LE_INT64       ,
+    GxB_LOR_LE_UINT8       , GxB_LAND_LE_UINT8      , GxB_LXOR_LE_UINT8      , GxB_EQ_LE_UINT8        , GxB_ANY_LE_UINT8       ,
+    GxB_LOR_LE_UINT16      , GxB_LAND_LE_UINT16     , GxB_LXOR_LE_UINT16     , GxB_EQ_LE_UINT16       , GxB_ANY_LE_UINT16      ,
+    GxB_LOR_LE_UINT32      , GxB_LAND_LE_UINT32     , GxB_LXOR_LE_UINT32     , GxB_EQ_LE_UINT32       , GxB_ANY_LE_UINT32      ,
+    GxB_LOR_LE_UINT64      , GxB_LAND_LE_UINT64     , GxB_LXOR_LE_UINT64     , GxB_EQ_LE_UINT64       , GxB_ANY_LE_UINT64      ,
+    GxB_LOR_LE_FP32        , GxB_LAND_LE_FP32       , GxB_LXOR_LE_FP32       , GxB_EQ_LE_FP32         , GxB_ANY_LE_FP32        ,
+    GxB_LOR_LE_FP64        , GxB_LAND_LE_FP64       , GxB_LXOR_LE_FP64       , GxB_EQ_LE_FP64         , GxB_ANY_LE_FP64        ,
 
 //------------------------------------------------------------------------------
 // 55 semirings with purely Boolean types, bool x bool -> bool
 //------------------------------------------------------------------------------
 
     // purely boolean semirings (in the form GxB_(add monoid)_(multipy operator)_BOOL:
-    GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     , 
-    GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , GxB_ANY_SECOND_BOOL    , 
-    GxB_LOR_PAIR_BOOL      , GxB_LAND_PAIR_BOOL     , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL       , GxB_ANY_PAIR_BOOL      , 
-    GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        , GxB_ANY_LOR_BOOL       , 
-    GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       , GxB_ANY_LAND_BOOL      , 
-    GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       , GxB_ANY_LXOR_BOOL      , 
-    GxB_LOR_EQ_BOOL        , GxB_LAND_EQ_BOOL       , GxB_LXOR_EQ_BOOL       , GxB_EQ_EQ_BOOL         , GxB_ANY_EQ_BOOL        , 
-    GxB_LOR_GT_BOOL        , GxB_LAND_GT_BOOL       , GxB_LXOR_GT_BOOL       , GxB_EQ_GT_BOOL         , GxB_ANY_GT_BOOL        , 
-    GxB_LOR_LT_BOOL        , GxB_LAND_LT_BOOL       , GxB_LXOR_LT_BOOL       , GxB_EQ_LT_BOOL         , GxB_ANY_LT_BOOL        , 
-    GxB_LOR_GE_BOOL        , GxB_LAND_GE_BOOL       , GxB_LXOR_GE_BOOL       , GxB_EQ_GE_BOOL         , GxB_ANY_GE_BOOL        , 
-    GxB_LOR_LE_BOOL        , GxB_LAND_LE_BOOL       , GxB_LXOR_LE_BOOL       , GxB_EQ_LE_BOOL         , GxB_ANY_LE_BOOL        ; 
+    GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     ,
+    GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , GxB_ANY_SECOND_BOOL    ,
+    GxB_LOR_PAIR_BOOL      , GxB_LAND_PAIR_BOOL     , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL       , GxB_ANY_PAIR_BOOL      ,
+    GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        , GxB_ANY_LOR_BOOL       ,
+    GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       , GxB_ANY_LAND_BOOL      ,
+    GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       , GxB_ANY_LXOR_BOOL      ,
+    GxB_LOR_EQ_BOOL        , GxB_LAND_EQ_BOOL       , GxB_LXOR_EQ_BOOL       , GxB_EQ_EQ_BOOL         , GxB_ANY_EQ_BOOL        ,
+    GxB_LOR_GT_BOOL        , GxB_LAND_GT_BOOL       , GxB_LXOR_GT_BOOL       , GxB_EQ_GT_BOOL         , GxB_ANY_GT_BOOL        ,
+    GxB_LOR_LT_BOOL        , GxB_LAND_LT_BOOL       , GxB_LXOR_LT_BOOL       , GxB_EQ_LT_BOOL         , GxB_ANY_LT_BOOL        ,
+    GxB_LOR_GE_BOOL        , GxB_LAND_GE_BOOL       , GxB_LXOR_GE_BOOL       , GxB_EQ_GE_BOOL         , GxB_ANY_GE_BOOL        ,
+    GxB_LOR_LE_BOOL        , GxB_LAND_LE_BOOL       , GxB_LXOR_LE_BOOL       , GxB_EQ_LE_BOOL         , GxB_ANY_LE_BOOL        ,
 
+//------------------------------------------------------------------------------
+// 54 complex semirings
+//------------------------------------------------------------------------------
+
+    // 3 monoids (plus, times, any), 2 types (FC32 and FC64), and 9
+    // multiplicative operators.  This list is not exhaustive, since it is
+    // possible to build complex semirings POW, ANY, ISEQ, and ISNE as the
+    // multiplicative operators.
+
+    GxB_PLUS_FIRST_FC32    , GxB_TIMES_FIRST_FC32   , GxB_ANY_FIRST_FC32     ,
+    GxB_PLUS_FIRST_FC64    , GxB_TIMES_FIRST_FC64   , GxB_ANY_FIRST_FC64     ,
+
+    GxB_PLUS_SECOND_FC32   , GxB_TIMES_SECOND_FC32  , GxB_ANY_SECOND_FC32    ,
+    GxB_PLUS_SECOND_FC64   , GxB_TIMES_SECOND_FC64  , GxB_ANY_SECOND_FC64    ,
+
+    GxB_PLUS_PAIR_FC32     , GxB_TIMES_PAIR_FC32    , GxB_ANY_PAIR_FC32      ,
+    GxB_PLUS_PAIR_FC64     , GxB_TIMES_PAIR_FC64    , GxB_ANY_PAIR_FC64      ,
+
+    GxB_PLUS_PLUS_FC32     , GxB_TIMES_PLUS_FC32    , GxB_ANY_PLUS_FC32      ,
+    GxB_PLUS_PLUS_FC64     , GxB_TIMES_PLUS_FC64    , GxB_ANY_PLUS_FC64      ,
+
+    GxB_PLUS_MINUS_FC32    , GxB_TIMES_MINUS_FC32   , GxB_ANY_MINUS_FC32     ,
+    GxB_PLUS_MINUS_FC64    , GxB_TIMES_MINUS_FC64   , GxB_ANY_MINUS_FC64     ,
+
+    GxB_PLUS_TIMES_FC32    , GxB_TIMES_TIMES_FC32   , GxB_ANY_TIMES_FC32     ,
+    GxB_PLUS_TIMES_FC64    , GxB_TIMES_TIMES_FC64   , GxB_ANY_TIMES_FC64     ,
+
+    GxB_PLUS_DIV_FC32      , GxB_TIMES_DIV_FC32     , GxB_ANY_DIV_FC32       ,
+    GxB_PLUS_DIV_FC64      , GxB_TIMES_DIV_FC64     , GxB_ANY_DIV_FC64       ,
+
+    GxB_PLUS_RDIV_FC32     , GxB_TIMES_RDIV_FC32    , GxB_ANY_RDIV_FC32      ,
+    GxB_PLUS_RDIV_FC64     , GxB_TIMES_RDIV_FC64    , GxB_ANY_RDIV_FC64      ,
+
+    GxB_PLUS_RMINUS_FC32   , GxB_TIMES_RMINUS_FC32  , GxB_ANY_RMINUS_FC32    ,
+    GxB_PLUS_RMINUS_FC64   , GxB_TIMES_RMINUS_FC64  , GxB_ANY_RMINUS_FC64    ,
+
+//------------------------------------------------------------------------------
+// 64 bitwise semirings
+//------------------------------------------------------------------------------
+
+    // monoids: (BOR, BAND, BXOR, BXNOR) x 
+    // mult:    (BOR, BAND, BXOR, BXNOR) x 
+    // types:   (UINT8, UINT16, UINT32, UINT64)
+
+    // Many other bitwise semirings can be constructed using predefined types
+    // and operators.  Bitwise monoids can be constructed for signed integer
+    // types, but these are not well-defined by the ANSI C specification, so
+    // they are excluded from the pre-defined monoids in SuiteSparse:GraphBLAS.
+    // Additional semirings can also be constructed with a multiplicative
+    // binary operator on any signed or unsigned integer type, as well.
+
+    GxB_BOR_BOR_UINT8      , GxB_BOR_BOR_UINT16     , GxB_BOR_BOR_UINT32     , GxB_BOR_BOR_UINT64     ,
+    GxB_BOR_BAND_UINT8     , GxB_BOR_BAND_UINT16    , GxB_BOR_BAND_UINT32    , GxB_BOR_BAND_UINT64    ,
+    GxB_BOR_BXOR_UINT8     , GxB_BOR_BXOR_UINT16    , GxB_BOR_BXOR_UINT32    , GxB_BOR_BXOR_UINT64    ,
+    GxB_BOR_BXNOR_UINT8    , GxB_BOR_BXNOR_UINT16   , GxB_BOR_BXNOR_UINT32   , GxB_BOR_BXNOR_UINT64   ,
+
+    GxB_BAND_BOR_UINT8     , GxB_BAND_BOR_UINT16    , GxB_BAND_BOR_UINT32    , GxB_BAND_BOR_UINT64    ,
+    GxB_BAND_BAND_UINT8    , GxB_BAND_BAND_UINT16   , GxB_BAND_BAND_UINT32   , GxB_BAND_BAND_UINT64   ,
+    GxB_BAND_BXOR_UINT8    , GxB_BAND_BXOR_UINT16   , GxB_BAND_BXOR_UINT32   , GxB_BAND_BXOR_UINT64   ,
+    GxB_BAND_BXNOR_UINT8   , GxB_BAND_BXNOR_UINT16  , GxB_BAND_BXNOR_UINT32  , GxB_BAND_BXNOR_UINT64  ,
+
+    GxB_BXOR_BOR_UINT8     , GxB_BXOR_BOR_UINT16    , GxB_BXOR_BOR_UINT32    , GxB_BXOR_BOR_UINT64    ,
+    GxB_BXOR_BAND_UINT8    , GxB_BXOR_BAND_UINT16   , GxB_BXOR_BAND_UINT32   , GxB_BXOR_BAND_UINT64   ,
+    GxB_BXOR_BXOR_UINT8    , GxB_BXOR_BXOR_UINT16   , GxB_BXOR_BXOR_UINT32   , GxB_BXOR_BXOR_UINT64   ,
+    GxB_BXOR_BXNOR_UINT8   , GxB_BXOR_BXNOR_UINT16  , GxB_BXOR_BXNOR_UINT32  , GxB_BXOR_BXNOR_UINT64  ,
+
+    GxB_BXNOR_BOR_UINT8    , GxB_BXNOR_BOR_UINT16   , GxB_BXNOR_BOR_UINT32   , GxB_BXNOR_BOR_UINT64   ,
+    GxB_BXNOR_BAND_UINT8   , GxB_BXNOR_BAND_UINT16  , GxB_BXNOR_BAND_UINT32  , GxB_BXNOR_BAND_UINT64  ,
+    GxB_BXNOR_BXOR_UINT8   , GxB_BXNOR_BXOR_UINT16  , GxB_BXNOR_BXOR_UINT32  , GxB_BXNOR_BXOR_UINT64  ,
+    GxB_BXNOR_BXNOR_UINT8  , GxB_BXNOR_BXNOR_UINT16 , GxB_BXNOR_BXNOR_UINT32 , GxB_BXNOR_BXNOR_UINT64 ;
+
+//------------------------------------------------------------------------------
+// GrB_* semirings in the specification
+//------------------------------------------------------------------------------
+
+// The v1.3 C API for GraphBLAS adds the following 124 predefined semirings,
+// with GrB* names.  They are identical to 124 GxB* semirings defined above,
+// with the same name, except that GrB_LXNOR_LOR_SEMIRING_BOOL is identical to
+// GxB_EQ_LOR_BOOL (since GrB_EQ_BOOL == GrB_LXNOR).  The old names are listed
+// below alongside each new name; the new names are preferred.
+
+// 12 kinds of GrB* semirings are available for all 10 real, non-boolean types:
+
+    // PLUS_TIMES, PLUS_MIN,
+    // MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, MIN_MAX,
+    // MAX_PLUS, MAX_TIMES, MAX_FIRST, MAX_SECOND, MAX_MIN
+
+// and 4 semirings for boolean only: 
+
+    // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
+
+GB_PUBLIC GrB_Semiring
+
+    //--------------------------------------------------------------------------
+    // 20 semirings with PLUS monoids
+    //--------------------------------------------------------------------------
+
+    // PLUS_TIMES semirings for all 10 real, non-boolean types:
+    GrB_PLUS_TIMES_SEMIRING_INT8,       // GxB_PLUS_TIMES_INT8
+    GrB_PLUS_TIMES_SEMIRING_INT16,      // GxB_PLUS_TIMES_INT16
+    GrB_PLUS_TIMES_SEMIRING_INT32,      // GxB_PLUS_TIMES_INT32
+    GrB_PLUS_TIMES_SEMIRING_INT64,      // GxB_PLUS_TIMES_INT64
+    GrB_PLUS_TIMES_SEMIRING_UINT8,      // GxB_PLUS_TIMES_UINT8
+    GrB_PLUS_TIMES_SEMIRING_UINT16,     // GxB_PLUS_TIMES_UINT16
+    GrB_PLUS_TIMES_SEMIRING_UINT32,     // GxB_PLUS_TIMES_UINT32
+    GrB_PLUS_TIMES_SEMIRING_UINT64,     // GxB_PLUS_TIMES_UINT64
+    GrB_PLUS_TIMES_SEMIRING_FP32,       // GxB_PLUS_TIMES_FP32  
+    GrB_PLUS_TIMES_SEMIRING_FP64,       // GxB_PLUS_TIMES_FP64  
+
+    // PLUS_MIN semirings for all 10 real, non-boolean types:
+    GrB_PLUS_MIN_SEMIRING_INT8,         // GxB_PLUS_MIN_INT8
+    GrB_PLUS_MIN_SEMIRING_INT16,        // GxB_PLUS_MIN_INT16
+    GrB_PLUS_MIN_SEMIRING_INT32,        // GxB_PLUS_MIN_INT32
+    GrB_PLUS_MIN_SEMIRING_INT64,        // GxB_PLUS_MIN_INT64
+    GrB_PLUS_MIN_SEMIRING_UINT8,        // GxB_PLUS_MIN_UINT8
+    GrB_PLUS_MIN_SEMIRING_UINT16,       // GxB_PLUS_MIN_UINT16
+    GrB_PLUS_MIN_SEMIRING_UINT32,       // GxB_PLUS_MIN_UINT32
+    GrB_PLUS_MIN_SEMIRING_UINT64,       // GxB_PLUS_MIN_UINT64
+    GrB_PLUS_MIN_SEMIRING_FP32,         // GxB_PLUS_MIN_FP32  
+    GrB_PLUS_MIN_SEMIRING_FP64,         // GxB_PLUS_MIN_FP64  
+
+    //--------------------------------------------------------------------------
+    // 50 semirings with MIN monoids
+    //--------------------------------------------------------------------------
+
+    // MIN_PLUS semirings for all 10 real, non-boolean types:
+    GrB_MIN_PLUS_SEMIRING_INT8,         // GxB_MIN_PLUS_INT8
+    GrB_MIN_PLUS_SEMIRING_INT16,        // GxB_MIN_PLUS_INT16
+    GrB_MIN_PLUS_SEMIRING_INT32,        // GxB_MIN_PLUS_INT32
+    GrB_MIN_PLUS_SEMIRING_INT64,        // GxB_MIN_PLUS_INT64
+    GrB_MIN_PLUS_SEMIRING_UINT8,        // GxB_MIN_PLUS_UINT8
+    GrB_MIN_PLUS_SEMIRING_UINT16,       // GxB_MIN_PLUS_UINT16
+    GrB_MIN_PLUS_SEMIRING_UINT32,       // GxB_MIN_PLUS_UINT32
+    GrB_MIN_PLUS_SEMIRING_UINT64,       // GxB_MIN_PLUS_UINT64
+    GrB_MIN_PLUS_SEMIRING_FP32,         // GxB_MIN_PLUS_FP32  
+    GrB_MIN_PLUS_SEMIRING_FP64,         // GxB_MIN_PLUS_FP64  
+
+    // MIN_TIMES semirings for all 10 real, non-boolean types:
+    GrB_MIN_TIMES_SEMIRING_INT8,        // GxB_MIN_TIMES_INT8
+    GrB_MIN_TIMES_SEMIRING_INT16,       // GxB_MIN_TIMES_INT16
+    GrB_MIN_TIMES_SEMIRING_INT32,       // GxB_MIN_TIMES_INT32
+    GrB_MIN_TIMES_SEMIRING_INT64,       // GxB_MIN_TIMES_INT64
+    GrB_MIN_TIMES_SEMIRING_UINT8,       // GxB_MIN_TIMES_UINT8
+    GrB_MIN_TIMES_SEMIRING_UINT16,      // GxB_MIN_TIMES_UINT16
+    GrB_MIN_TIMES_SEMIRING_UINT32,      // GxB_MIN_TIMES_UINT32
+    GrB_MIN_TIMES_SEMIRING_UINT64,      // GxB_MIN_TIMES_UINT64
+    GrB_MIN_TIMES_SEMIRING_FP32,        // GxB_MIN_TIMES_FP32  
+    GrB_MIN_TIMES_SEMIRING_FP64,        // GxB_MIN_PLUS_FP64  
+
+    // MIN_FIRST semirings for all 10 real, non-boolean types:
+    GrB_MIN_FIRST_SEMIRING_INT8,        // GxB_MIN_FIRST_INT8
+    GrB_MIN_FIRST_SEMIRING_INT16,       // GxB_MIN_FIRST_INT16
+    GrB_MIN_FIRST_SEMIRING_INT32,       // GxB_MIN_FIRST_INT32
+    GrB_MIN_FIRST_SEMIRING_INT64,       // GxB_MIN_FIRST_INT64
+    GrB_MIN_FIRST_SEMIRING_UINT8,       // GxB_MIN_FIRST_UINT8
+    GrB_MIN_FIRST_SEMIRING_UINT16,      // GxB_MIN_FIRST_UINT16
+    GrB_MIN_FIRST_SEMIRING_UINT32,      // GxB_MIN_FIRST_UINT32
+    GrB_MIN_FIRST_SEMIRING_UINT64,      // GxB_MIN_FIRST_UINT64
+    GrB_MIN_FIRST_SEMIRING_FP32,        // GxB_MIN_FIRST_FP32  
+    GrB_MIN_FIRST_SEMIRING_FP64,        // GxB_MIN_FIRST_FP64  
+
+    // MIN_SECOND semirings for all 10 real, non-boolean types:
+    GrB_MIN_SECOND_SEMIRING_INT8,       // GxB_MIN_SECOND_INT8
+    GrB_MIN_SECOND_SEMIRING_INT16,      // GxB_MIN_SECOND_INT16
+    GrB_MIN_SECOND_SEMIRING_INT32,      // GxB_MIN_SECOND_INT32
+    GrB_MIN_SECOND_SEMIRING_INT64,      // GxB_MIN_SECOND_INT64
+    GrB_MIN_SECOND_SEMIRING_UINT8,      // GxB_MIN_SECOND_UINT8
+    GrB_MIN_SECOND_SEMIRING_UINT16,     // GxB_MIN_SECOND_UINT16
+    GrB_MIN_SECOND_SEMIRING_UINT32,     // GxB_MIN_SECOND_UINT32
+    GrB_MIN_SECOND_SEMIRING_UINT64,     // GxB_MIN_SECOND_UINT64
+    GrB_MIN_SECOND_SEMIRING_FP32,       // GxB_MIN_SECOND_FP32  
+    GrB_MIN_SECOND_SEMIRING_FP64,       // GxB_MIN_SECOND_FP64  
+
+    // MIN_MAX semirings for all 10 real, non-boolean types:
+    GrB_MIN_MAX_SEMIRING_INT8,          // GxB_MIN_MAX_INT8
+    GrB_MIN_MAX_SEMIRING_INT16,         // GxB_MIN_MAX_INT16
+    GrB_MIN_MAX_SEMIRING_INT32,         // GxB_MIN_MAX_INT32
+    GrB_MIN_MAX_SEMIRING_INT64,         // GxB_MIN_MAX_INT64
+    GrB_MIN_MAX_SEMIRING_UINT8,         // GxB_MIN_MAX_UINT8
+    GrB_MIN_MAX_SEMIRING_UINT16,        // GxB_MIN_MAX_UINT16
+    GrB_MIN_MAX_SEMIRING_UINT32,        // GxB_MIN_MAX_UINT32
+    GrB_MIN_MAX_SEMIRING_UINT64,        // GxB_MIN_MAX_UINT64
+    GrB_MIN_MAX_SEMIRING_FP32,          // GxB_MIN_MAX_FP32  
+    GrB_MIN_MAX_SEMIRING_FP64,          // GxB_MIN_MAX_FP64  
+
+    //--------------------------------------------------------------------------
+    // 50 semirings with MAX monoids
+    //--------------------------------------------------------------------------
+
+    // MAX_PLUS semirings for all 10 real, non-boolean types
+    GrB_MAX_PLUS_SEMIRING_INT8,         // GxB_MAX_PLUS_INT8
+    GrB_MAX_PLUS_SEMIRING_INT16,        // GxB_MAX_PLUS_INT16
+    GrB_MAX_PLUS_SEMIRING_INT32,        // GxB_MAX_PLUS_INT32
+    GrB_MAX_PLUS_SEMIRING_INT64,        // GxB_MAX_PLUS_INT64
+    GrB_MAX_PLUS_SEMIRING_UINT8,        // GxB_MAX_PLUS_UINT8
+    GrB_MAX_PLUS_SEMIRING_UINT16,       // GxB_MAX_PLUS_UINT16
+    GrB_MAX_PLUS_SEMIRING_UINT32,       // GxB_MAX_PLUS_UINT32
+    GrB_MAX_PLUS_SEMIRING_UINT64,       // GxB_MAX_PLUS_UINT64
+    GrB_MAX_PLUS_SEMIRING_FP32,         // GxB_MAX_PLUS_FP32  
+    GrB_MAX_PLUS_SEMIRING_FP64,         // GxB_MAX_PLUS_FP64  
+
+    // MAX_TIMES semirings for all 10 real, non-boolean types:
+    GrB_MAX_TIMES_SEMIRING_INT8,        // GxB_MAX_TIMES_INT8
+    GrB_MAX_TIMES_SEMIRING_INT16,       // GxB_MAX_TIMES_INT16
+    GrB_MAX_TIMES_SEMIRING_INT32,       // GxB_MAX_TIMES_INT32
+    GrB_MAX_TIMES_SEMIRING_INT64,       // GxB_MAX_TIMES_INT64
+    GrB_MAX_TIMES_SEMIRING_UINT8,       // GxB_MAX_TIMES_UINT8
+    GrB_MAX_TIMES_SEMIRING_UINT16,      // GxB_MAX_TIMES_UINT16
+    GrB_MAX_TIMES_SEMIRING_UINT32,      // GxB_MAX_TIMES_UINT32
+    GrB_MAX_TIMES_SEMIRING_UINT64,      // GxB_MAX_TIMES_UINT64
+    GrB_MAX_TIMES_SEMIRING_FP32,        // GxB_MAX_TIMES_FP32  
+    GrB_MAX_TIMES_SEMIRING_FP64,        // GxB_MAX_TIMES_FP64  
+
+    // MAX_FIRST semirings for all 10 real, non-boolean types:
+    GrB_MAX_FIRST_SEMIRING_INT8,        // GxB_MAX_FIRST_INT8
+    GrB_MAX_FIRST_SEMIRING_INT16,       // GxB_MAX_FIRST_INT16
+    GrB_MAX_FIRST_SEMIRING_INT32,       // GxB_MAX_FIRST_INT32
+    GrB_MAX_FIRST_SEMIRING_INT64,       // GxB_MAX_FIRST_INT64
+    GrB_MAX_FIRST_SEMIRING_UINT8,       // GxB_MAX_FIRST_UINT8
+    GrB_MAX_FIRST_SEMIRING_UINT16,      // GxB_MAX_FIRST_UINT16
+    GrB_MAX_FIRST_SEMIRING_UINT32,      // GxB_MAX_FIRST_UINT32
+    GrB_MAX_FIRST_SEMIRING_UINT64,      // GxB_MAX_FIRST_UINT64
+    GrB_MAX_FIRST_SEMIRING_FP32,        // GxB_MAX_FIRST_FP32  
+    GrB_MAX_FIRST_SEMIRING_FP64,        // GxB_MAX_FIRST_FP64  
+
+    // MAX_SECOND semirings for all 10 real, non-boolean types:
+    GrB_MAX_SECOND_SEMIRING_INT8,       // GxB_MAX_SECOND_INT8
+    GrB_MAX_SECOND_SEMIRING_INT16,      // GxB_MAX_SECOND_INT16
+    GrB_MAX_SECOND_SEMIRING_INT32,      // GxB_MAX_SECOND_INT32
+    GrB_MAX_SECOND_SEMIRING_INT64,      // GxB_MAX_SECOND_INT64
+    GrB_MAX_SECOND_SEMIRING_UINT8,      // GxB_MAX_SECOND_UINT8
+    GrB_MAX_SECOND_SEMIRING_UINT16,     // GxB_MAX_SECOND_UINT16
+    GrB_MAX_SECOND_SEMIRING_UINT32,     // GxB_MAX_SECOND_UINT32
+    GrB_MAX_SECOND_SEMIRING_UINT64,     // GxB_MAX_SECOND_UINT64
+    GrB_MAX_SECOND_SEMIRING_FP32,       // GxB_MAX_SECOND_FP32  
+    GrB_MAX_SECOND_SEMIRING_FP64,       // GxB_MAX_SECOND_FP64  
+
+    // MAX_MIN semirings for all 10 real, non-boolean types:
+    GrB_MAX_MIN_SEMIRING_INT8,          // GxB_MAX_MIN_INT8
+    GrB_MAX_MIN_SEMIRING_INT16,         // GxB_MAX_MIN_INT16
+    GrB_MAX_MIN_SEMIRING_INT32,         // GxB_MAX_MIN_INT32
+    GrB_MAX_MIN_SEMIRING_INT64,         // GxB_MAX_MIN_INT64
+    GrB_MAX_MIN_SEMIRING_UINT8,         // GxB_MAX_MIN_UINT8
+    GrB_MAX_MIN_SEMIRING_UINT16,        // GxB_MAX_MIN_UINT16
+    GrB_MAX_MIN_SEMIRING_UINT32,        // GxB_MAX_MIN_UINT32
+    GrB_MAX_MIN_SEMIRING_UINT64,        // GxB_MAX_MIN_UINT64
+    GrB_MAX_MIN_SEMIRING_FP32,          // GxB_MAX_MIN_FP32  
+    GrB_MAX_MIN_SEMIRING_FP64,          // GxB_MAX_MIN_FP64  
+
+    //--------------------------------------------------------------------------
+    // 4 boolean semirings:
+    //--------------------------------------------------------------------------
+
+    GrB_LOR_LAND_SEMIRING_BOOL,         // GxB_LOR_LAND_BOOL
+    GrB_LAND_LOR_SEMIRING_BOOL,         // GxB_LAND_LOR_BOOL
+    GrB_LXOR_LAND_SEMIRING_BOOL,        // GxB_LXOR_LAND_BOOL
+    GrB_LXNOR_LOR_SEMIRING_BOOL ;       // GxB_EQ_LOR_BOOL (note EQ == LXNOR)
 
 //------------------------------------------------------------------------------
 // GxB_resize:  change the size of a matrix or vector
@@ -6531,7 +7638,9 @@ typedef enum
     GxB_SILENT = 0,     // nothing is printed, just check the object
     GxB_SUMMARY = 1,    // print a terse summary
     GxB_SHORT = 2,      // short description, about 30 entries of a matrix
-    GxB_COMPLETE = 3    // print the entire contents of the object
+    GxB_COMPLETE = 3,   // print the entire contents of the object
+    GxB_SHORT_VERBOSE = 4,    // GxB_SHORT but with "%.15g" for doubles
+    GxB_COMPLETE_VERBOSE = 5  // GxB_COMPLETE but with "%.15g" for doubles
 }
 GxB_Print_Level ;
 

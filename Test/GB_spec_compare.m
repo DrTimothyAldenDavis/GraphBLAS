@@ -23,7 +23,7 @@ end
 
 if (nargin < 4)
     if (isfloat (identity))
-        tol = 64*eps (class (identity)) ;
+        tol = 64*eps (class (identity)) ;   % not GB_spec_type.
     else
         tol = 0 ;
     end
@@ -90,5 +90,4 @@ end
 if (nargout == 0)
     assert (ok_matrix && ok_pattern && ok_class) ;
 end
-
 

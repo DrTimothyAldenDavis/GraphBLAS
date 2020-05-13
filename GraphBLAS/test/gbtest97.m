@@ -1,6 +1,9 @@
 function gbtest97
 %GBTEST97 test A*x performance
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 max_nthreads = GrB.threads ;
 threads = [1 2 4 8 16 20 32 40 64] ;
 

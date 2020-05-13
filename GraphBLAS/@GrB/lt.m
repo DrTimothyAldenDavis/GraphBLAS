@@ -4,7 +4,7 @@ function C = lt (A, B)
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
+% any combination.  C is returned as a logical GraphBLAS matrix.
 %
 % See also GrB/le, GrB/gt, GrB/ge, GrB/ne, GrB/eq.
 
@@ -13,27 +13,39 @@ function C = lt (A, B)
 % A scalar, B matrix:  C is full if A<0, otherwise C is a subset of B.
 % B scalar, A matrix:  C is full if B>0, otherwise C is a subset of A.
 % A matrix, B matrix:  C has the pattern of the set union, A+B.
-% Zeroes are then dropped from C after it is computed.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
+if (~isreal (A))
+    A = real (A) ;
+end
+
+if (~isreal (B))
+    B = real (B) ;
+end
+
+ctype = GrB.optype (A, B) ;
 
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars
-        C = GrB.emult (A, '<', B) ;
+        C = gb_union_op ('<', A, B) ;
     else
         % A is a scalar, B is a matrix
+        [m, n] = size (B) ;
         if (gb_get_scalar (A) < 0)
-            % since a < 0, entries not present in B result in a true
-            % value, so the result is dense.  Expand A to a dense matrix.
-            [m, n] = size (B) ;
-            % A (1:m,1:n) = A and cast to the type of B
-            A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
-            if (~GrB.isfull (B))
-                B = full (B) ;
+            if (~GrB.issigned (B))
+                % a < 0, and B has an unsigned type.  C is all true.
+                C = true (m, n, 'like', GrB (true)) ;
+            else
+                % since a < 0, entries not present in B result in a true
+                % value, so the result is dense.  Expand A to dense.
+                % A (1:m,1:n) = A and cast ctype
+                A = GrB.subassign (GrB (m, n, ctype), A) ;
+                B = gb_full (B, ctype) ;
+                C = GrB.emult (A, '<', B) ;
             end
-            C = GrB.emult (A, '<', B) ;
         else
             % since a >= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
@@ -44,15 +56,17 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) > 0)
+        [m, n] = size (A) ;
+        b = gb_get_scalar (B) ;
+        if (b < 0 && ~GrB.issigned (A))
+            % b is negative, and A has an unsigned type.  C is all false.
+            C = GrB (m, n, 'logical') ;
+        elseif (b > 0)
             % since b > 0, entries not present in A result in a true
             % value, so the result is dense.  Expand B to a dense matrix.
-            [m, n] = size (A) ;
-            % B (1:m,1:n) = B and cast to the type of A
-            B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
-            if (~GrB.isfull (A))
-                A = full (A) ;
-            end
+            % B (1:m,1:n) = B and cast to ctype
+            B = GrB.subassign (GrB (m, n, ctype), B) ;
+            A = gb_full (A, ctype) ;
             C = GrB.emult (A, '<', B) ;
         else
             % since b <= 0, entries not present in A result in a false
@@ -62,7 +76,7 @@ else
         end
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = gb_sparse_comparator (A, '<', B) ;
+        C = gb_union_op ('<', A, B) ;
     end
 end
 

@@ -55,9 +55,9 @@ A1 = GB_mex_cast (A.matrix, xyclass) ;
 B1 = GB_mex_cast (B.matrix, xyclass) ;
 
 % do the values
-T.matrix  = zeros (cnrows, cncols, zclass) ;
+T.matrix  = GB_spec_zeros ([cnrows cncols], zclass) ;
 T.pattern = false (cnrows, cncols) ;
-S = zeros (bnrows, bncols, xyclass) ;
+S = GB_spec_zeros ([bnrows bncols], xyclass) ;
 for j = 1:ancols
     for i = 1:anrows
         if A.pattern (i,j)
@@ -66,7 +66,7 @@ for j = 1:ancols
             cj = (j-1) * bncols + 1 ;
             p = B.pattern ;
             K = GB_spec_op (mult, S(p), B1(p)) ;
-            Tblock = zeros (bnrows, bncols) ;
+            Tblock = GB_spec_zeros ([bnrows bncols], zclass) ;
             Tblock (p) = K ;
             T.matrix  (ci:ci+bnrows-1, cj:cj+bncols-1) = Tblock ;
             T.pattern (ci:ci+bnrows-1, cj:cj+bncols-1) = B.pattern ;
@@ -74,7 +74,7 @@ for j = 1:ancols
     end
 end
 
-assert (isequal (zclass, class (T.matrix))) ;
+assert (isequal (zclass, GB_spec_type (T.matrix))) ;
 T.class = zclass ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result

@@ -30,12 +30,12 @@ function C = subsasgn (C, S, A)
 % not possible, because MATLAB creates I and J as explicit lists first.
 % See GrB.subassign instead.  See also the example with 'help GrB.extract'.
 %
-% See also subsref, GrB.assign, GrB.subassign.
+% See also GrB/subsref, GrB.assign, GrB.subassign.
 
 % FUTURE: add linear indexing, and allow the matrix to grow in size.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (~isequal (S.type, '()'))
     error ('GrB:unsupported', 'index type %s not supported', S.type) ;

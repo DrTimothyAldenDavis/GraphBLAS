@@ -95,7 +95,6 @@ GrB_Info axb (GB_Context Context)
             GrB_Matrix_free (&C) ;
             return (info) ;
         }
-        // GxB_print (C, 3) ;
     }
 
     // C = A*B or C += A*B

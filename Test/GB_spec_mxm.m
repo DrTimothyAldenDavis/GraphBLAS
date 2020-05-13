@@ -54,7 +54,7 @@ if (nargout > 1 || nargin ~= 7)
     error ('usage: C = GB_spec_mxm (C, Mask, accum, semiring, A, B, descriptor)') ;
 end
 
-% Convert inputs to dense matrices with explicit patterns and classes,
+% Convert inputs to dense matrices with explicit patterns and types,
 % and with where X(~X.pattern)==identity for all matrices A, B, and C.
 [multiply add identity tclass] = GB_spec_semiring (semiring) ;
 if (isempty (identity))
@@ -86,7 +86,7 @@ end
 % T = A*B
 [m s] = size (A.matrix) ;
 [s n] = size (B.matrix) ;
-T.matrix = zeros (m, n, tclass) ;
+T.matrix = GB_spec_zeros ([m n], tclass) ;
 T.pattern = zeros (m, n, 'logical') ;
 T.matrix (:,:) = identity ;
 T.class = tclass ;

@@ -45,7 +45,7 @@ void mexFunction
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;
+    GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type, type) ;
     OK (GxB_Semiring_fprint (semiring, opstring, GxB_COMPLETE, NULL)) ;
     GB_WRAPUP ;
 }

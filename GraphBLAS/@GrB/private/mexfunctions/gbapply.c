@@ -99,7 +99,7 @@ void mexFunction
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum  = gb_mxstring_to_binop (String [0], ctype) ;
+        accum  = gb_mxstring_to_binop (String [0], ctype, ctype) ;
         op     = gb_mxstring_to_unop  (String [1], atype) ;
     }
 

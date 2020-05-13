@@ -46,7 +46,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("C failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // get vlen_new
     int64_t GET_SCALAR (1, int64_t, vlen_new, C->vlen) ;

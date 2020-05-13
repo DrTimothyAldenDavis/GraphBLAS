@@ -33,7 +33,7 @@
 // -DGB_BURBLE=1.  This setting can also be added at the top of any individual
 // Source/* files, before #including any other files.
 #ifndef GB_BURBLE
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
@@ -41,7 +41,8 @@
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// #define GBCOMPACT 1
+// TODO compact is on
+#define GBCOMPACT 1
 
 // for code development only
 // #define GB_DEVELOPER 1
@@ -321,7 +322,13 @@
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
 // ceiling of a/b for two integers a and b
-#define GB_CEIL(a,b) (((a) + (b) - 1) / (b))
+#define GB_ICEIL(a,b) (((a) + (b) - 1) / (b))
+
+//------------------------------------------------------------------------------
+// complex types, and both complex and real mathematical functions
+//------------------------------------------------------------------------------
+
+#include "GB_math.h"
 
 //------------------------------------------------------------------------------
 // for coverage tests in Tcov/
@@ -397,9 +404,9 @@ typedef struct GB_Pending_struct *GB_Pending ;
 
 typedef enum
 {
-    // the 12 scalar types
+    // the 14 scalar types: 13 built-in types, and one user-defined type code
     GB_ignore_code  = 0,
-    GB_BOOL_code    = 0,
+    GB_BOOL_code    = 0,        // 'logical' in MATLAB
     GB_INT8_code    = 1,
     GB_UINT8_code   = 2,
     GB_INT16_code   = 3,
@@ -408,9 +415,11 @@ typedef enum
     GB_UINT32_code  = 6,
     GB_INT64_code   = 7,
     GB_UINT64_code  = 8,
-    GB_FP32_code    = 9,
-    GB_FP64_code    = 10,
-    GB_UDT_code     = 11        // void *, user-defined type
+    GB_FP32_code    = 9,        // float ('single' in MATLAB)
+    GB_FP64_code    = 10,       // double
+    GB_FC32_code    = 11,       // float complex ('single complex' in MATLAB)
+    GB_FC64_code    = 12,       // double complex
+    GB_UDT_code     = 13        // void *, user-defined type
 }
 GB_Type_code ;                  // enumerated type code
 
@@ -425,68 +434,159 @@ typedef enum
     //--------------------------------------------------------------------------
 
     // a placeholder; not an actual operator
-    GB_NOP_opcode,      //  0: nop
+    GB_NOP_opcode,      // nop
 
     //--------------------------------------------------------------------------
-    // T -> T
+    // primary unary operators x=f(x)
     //--------------------------------------------------------------------------
 
-    // 6 unary operators x=f(x) that return the same type as their input
-    GB_ONE_opcode,      //  1: z = 1
-    GB_IDENTITY_opcode, //  2: z = x
-    GB_AINV_opcode,     //  3: z = -x
-    GB_ABS_opcode,      //  4: z = abs(x)
-    GB_MINV_opcode,     //  5: z = 1/x ; special cases for bool and integers
-    GB_LNOT_opcode,     //  6: z = !x
+    GB_ONE_opcode,      // z = 1
+    GB_IDENTITY_opcode, // z = x
+    GB_AINV_opcode,     // z = -x
+    GB_ABS_opcode,      // z = abs(x) ; except z is real if x is complex
+    GB_MINV_opcode,     // z = 1/x ; special cases for bool and integers
+    GB_LNOT_opcode,     // z = !x
+    GB_BNOT_opcode,     // z = ~x (bitwise complement)
 
     //--------------------------------------------------------------------------
-    // TxT -> T
+    // unary operators for floating-point types (real and complex)
     //--------------------------------------------------------------------------
 
-    // 12 binary operators z=f(x,y) that return the same type as their inputs
-    GB_FIRST_opcode,    //  7: z = x
-    GB_SECOND_opcode,   //  8: z = y
-    GB_PAIR_opcode,     //  9: z = 1
-    GB_ANY_opcode,      // 10: z = 1
-    GB_MIN_opcode,      // 11: z = min(x,y)
-    GB_MAX_opcode,      // 12: z = max(x,y)
-    GB_PLUS_opcode,     // 13: z = x + y
-    GB_MINUS_opcode,    // 14: z = x - y
-    GB_RMINUS_opcode,   // 15: z = y - x
-    GB_TIMES_opcode,    // 16: z = x * y
-    GB_DIV_opcode,      // 17: z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode,     // 18: z = y / x ; special cases for bool and ints
+    GB_SQRT_opcode,     // z = sqrt (x)
+    GB_LOG_opcode,      // z = log (x)
+    GB_EXP_opcode,      // z = exp (x)
 
-    // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 19: z = (x == y)
-    GB_ISNE_opcode,     // 20: z = (x != y)
-    GB_ISGT_opcode,     // 21: z = (x >  y)
-    GB_ISLT_opcode,     // 22: z = (x <  y)
-    GB_ISGE_opcode,     // 23: z = (x >= y)
-    GB_ISLE_opcode,     // 24: z = (x <= y)
+    GB_SIN_opcode,      // z = sin (x)
+    GB_COS_opcode,      // z = cos (x)
+    GB_TAN_opcode,      // z = tan (x)
 
-    // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 25: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 26: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 27: z = (x != 0) != (y != 0)
+    GB_ASIN_opcode,     // z = asin (x)
+    GB_ACOS_opcode,     // z = acos (x)
+    GB_ATAN_opcode,     // z = atan (x)
+
+    GB_SINH_opcode,     // z = sinh (x)
+    GB_COSH_opcode,     // z = cosh (x)
+    GB_TANH_opcode,     // z = tanh (x)
+
+    GB_ASINH_opcode,    // z = asinh (x)
+    GB_ACOSH_opcode,    // z = acosh (x)
+    GB_ATANH_opcode,    // z = atanh (x)
+
+    GB_CEIL_opcode,     // z = ceil (x)
+    GB_FLOOR_opcode,    // z = floor (x)
+    GB_ROUND_opcode,    // z = round (x)
+    GB_TRUNC_opcode,    // z = trunc (x)
+
+    GB_EXP2_opcode,     // z = exp2 (x)
+    GB_EXPM1_opcode,    // z = expm1 (x)
+    GB_LOG10_opcode,    // z = log10 (x)
+    GB_LOG1P_opcode,    // z = log1P (x)
+    GB_LOG2_opcode,     // z = log2 (x)
 
     //--------------------------------------------------------------------------
-    // TxT -> bool
+    // unary operators for real floating-point types
     //--------------------------------------------------------------------------
 
-    // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 28: z = (x == y)
-    GB_NE_opcode,       // 29: z = (x != y)
-    GB_GT_opcode,       // 30: z = (x >  y)
-    GB_LT_opcode,       // 31: z = (x <  y)
-    GB_GE_opcode,       // 32: z = (x >= y)
-    GB_LE_opcode,       // 33: z = (x <= y)
+    GB_LGAMMA_opcode,   // z = lgamma (x)
+    GB_TGAMMA_opcode,   // z = tgamma (x)
+    GB_ERF_opcode,      // z = erf (x)
+    GB_ERFC_opcode,     // z = erfc (x)
+    GB_FREXPX_opcode,   // z = frexpx (x), mantissa from ANSI C11 frexp
+    GB_FREXPE_opcode,   // z = frexpe (x), exponent from ANSI C11 frexp
+
+    //--------------------------------------------------------------------------
+    // unary operators for complex types only
+    //--------------------------------------------------------------------------
+
+    GB_CONJ_opcode,     // z = conj (x)
+
+    //--------------------------------------------------------------------------
+    // unary operators where z is real and x is complex
+    //--------------------------------------------------------------------------
+
+    GB_CREAL_opcode,    // z = creal (x)
+    GB_CIMAG_opcode,    // z = cimag (x)
+    GB_CARG_opcode,     // z = carg (x)
+
+    //--------------------------------------------------------------------------
+    // unary operators where z is bool and x is any floating-point type
+    //--------------------------------------------------------------------------
+
+    GB_ISINF_opcode,    // z = isinf (x)
+    GB_ISNAN_opcode,    // z = isnan (x)
+    GB_ISFINITE_opcode, // z = isfinite (x)
+
+    //--------------------------------------------------------------------------
+    // binary operators z=f(x,y) that return the same type as their inputs
+    //--------------------------------------------------------------------------
+
+    GB_FIRST_opcode,    // z = x
+    GB_SECOND_opcode,   // z = y
+    GB_ANY_opcode,      // z = x or y, selected arbitrarily
+    GB_PAIR_opcode,     // z = 1
+    GB_MIN_opcode,      // z = min(x,y)
+    GB_MAX_opcode,      // z = max(x,y)
+    GB_PLUS_opcode,     // z = x + y
+    GB_MINUS_opcode,    // z = x - y
+    GB_RMINUS_opcode,   // z = y - x
+    GB_TIMES_opcode,    // z = x * y
+    GB_DIV_opcode,      // z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // z = y / x ; special cases for bool and ints
+    GB_POW_opcode,      // z = pow (x,y)
+
+    GB_ISEQ_opcode,     // z = (x == y)
+    GB_ISNE_opcode,     // z = (x != y)
+    GB_ISGT_opcode,     // z = (x >  y)
+    GB_ISLT_opcode,     // z = (x <  y)
+    GB_ISGE_opcode,     // z = (x >= y)
+    GB_ISLE_opcode,     // z = (x <= y)
+
+    GB_LOR_opcode,      // z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // z = (x != 0) != (y != 0)
+
+    GB_BOR_opcode,      // z = (x | y), bitwise or
+    GB_BAND_opcode,     // z = (x & y), bitwise and
+    GB_BXOR_opcode,     // z = (x ^ y), bitwise xor
+    GB_BXNOR_opcode,    // z = ~(x ^ y), bitwise xnor
+    GB_BGET_opcode,     // z = bitget (x,y)
+    GB_BSET_opcode,     // z = bitset (x,y)
+    GB_BCLR_opcode,     // z = bitclr (x,y)
+    GB_BSHIFT_opcode,   // z = bitshift (x,y)
+
+    //--------------------------------------------------------------------------
+    // binary operators z=f(x,y) that return bool (TxT -> bool)
+    //--------------------------------------------------------------------------
+
+    GB_EQ_opcode,       // z = (x == y)
+    GB_NE_opcode,       // z = (x != y)
+    GB_GT_opcode,       // z = (x >  y)
+    GB_LT_opcode,       // z = (x <  y)
+    GB_GE_opcode,       // z = (x >= y)
+    GB_LE_opcode,       // z = (x <= y)
+
+    //--------------------------------------------------------------------------
+    // binary operators for real floating-point types (TxT -> T)
+    //--------------------------------------------------------------------------
+
+    GB_ATAN2_opcode,        // z = atan2 (x,y)
+    GB_HYPOT_opcode,        // z = hypot (x,y)
+    GB_FMOD_opcode,         // z = fmod (x,y)
+    GB_REMAINDER_opcode,    // z = remainder (x,y)
+    GB_COPYSIGN_opcode,     // z = copysign (x,y)
+    GB_LDEXP_opcode,        // z = ldexp (x,y)
+
+    //--------------------------------------------------------------------------
+    // binary operator z=f(x,y) where z is complex, x,y real:
+    //--------------------------------------------------------------------------
+
+    GB_CMPLX_opcode,        // z = cmplx (x,y)
 
     //--------------------------------------------------------------------------
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
-    GB_USER_opcode      // 34: user-defined operator
+    GB_USER_opcode          // user-defined operator
 }
 GB_Opcode ;
 
@@ -713,21 +813,6 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // A GxB_Vector is a GrB_Vector of length 1
 #define GB_SCALAR_OK(v) (GB_VECTOR_OK(v) && ((v)->vlen == 1))
 
-//------------------------------------------------------------------------------
-// GB_INDEX_MAX
-//------------------------------------------------------------------------------
-
-// The largest valid dimension permitted in this implementation is 2^60.
-// Matrices with that many rows and/or columns can be actually be easily
-// created, particularly if they are hypersparse since in that case O(nrows) or
-// O(ncols) memory is not needed.  For the standard formats, O(ncols) space is
-// needed for CSC and O(nrows) space is needed for CSR.  For hypersparse
-// matrices, the time complexity does not depend on O(nrows) or O(ncols).
-
-#ifndef GB_INDEX_MAX
-#define GB_INDEX_MAX ((GrB_Index) (1ULL << 60))
-#endif
-
 // format strings, normally %llu and %lld, for GrB_Index values
 #define GBu "%" PRIu64
 #define GBd "%" PRId64
@@ -770,7 +855,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 }
 
 // print to a file f, or to stdout if f is NULL, and check the result.  This
-// macro is used by all user-callable GxB_*print and GB_*check functions. 
+// macro is used by all user-callable GxB_*print and GB_*check functions.
 #define GBPR(...)                                                           \
 {                                                                           \
     int printf_result = 0 ;                                                 \
@@ -809,7 +894,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 // print if the print level is greater than zero
 #define GBPR0(...)                  \
 {                                   \
-    if (pr > 0)                     \
+    if (pr != GxB_SILENT)           \
     {                               \
         GBPR (__VA_ARGS__) ;        \
     }                               \
@@ -1058,7 +1143,9 @@ GB_PUBLIC struct GB_Type_opaque
     GB_opaque_GrB_INT64  ,
     GB_opaque_GrB_UINT64 ,
     GB_opaque_GrB_FP32   ,
-    GB_opaque_GrB_FP64   ;
+    GB_opaque_GrB_FP64   ,
+    GB_opaque_GxB_FC32   ,
+    GB_opaque_GxB_FC64   ;
 
 //------------------------------------------------------------------------------
 // monoid structs
@@ -1101,6 +1188,8 @@ GB_PUBLIC struct GB_Monoid_opaque
     GB_opaque_GxB_PLUS_UINT64_MONOID,       // identity: 0
     GB_opaque_GxB_PLUS_FP32_MONOID,         // identity: 0
     GB_opaque_GxB_PLUS_FP64_MONOID,         // identity: 0
+    GB_opaque_GxB_PLUS_FC32_MONOID,         // identity: 0
+    GB_opaque_GxB_PLUS_FC64_MONOID,         // identity: 0
 
     // TIMES monoids:
     GB_opaque_GxB_TIMES_INT8_MONOID,        // identity: 1
@@ -1113,12 +1202,53 @@ GB_PUBLIC struct GB_Monoid_opaque
     GB_opaque_GxB_TIMES_UINT64_MONOID,      // identity: 1
     GB_opaque_GxB_TIMES_FP32_MONOID,        // identity: 1
     GB_opaque_GxB_TIMES_FP64_MONOID,        // identity: 1
+    GB_opaque_GxB_TIMES_FC32_MONOID,        // identity: 1
+    GB_opaque_GxB_TIMES_FC64_MONOID,        // identity: 1
+
+    // ANY monoids:
+    GB_opaque_GxB_ANY_INT8_MONOID,
+    GB_opaque_GxB_ANY_UINT8_MONOID,
+    GB_opaque_GxB_ANY_INT16_MONOID,
+    GB_opaque_GxB_ANY_UINT16_MONOID,
+    GB_opaque_GxB_ANY_INT32_MONOID,
+    GB_opaque_GxB_ANY_UINT32_MONOID,
+    GB_opaque_GxB_ANY_INT64_MONOID,
+    GB_opaque_GxB_ANY_UINT64_MONOID,
+    GB_opaque_GxB_ANY_FP32_MONOID,
+    GB_opaque_GxB_ANY_FP64_MONOID,
+    GB_opaque_GxB_ANY_FC32_MONOID,
+    GB_opaque_GxB_ANY_FC64_MONOID,
 
     // Boolean monoids:
+    GB_opaque_GxB_ANY_BOOL_MONOID,
     GB_opaque_GxB_LOR_BOOL_MONOID,          // identity: false
     GB_opaque_GxB_LAND_BOOL_MONOID,         // identity: true
     GB_opaque_GxB_LXOR_BOOL_MONOID,         // identity: false
-    GB_opaque_GxB_EQ_BOOL_MONOID ;          // identity: true
+    GB_opaque_GxB_EQ_BOOL_MONOID,           // identity: true
+
+    // BOR monoids: (bitwise OR)
+    GB_opaque_GxB_BOR_UINT8_MONOID,
+    GB_opaque_GxB_BOR_UINT16_MONOID,
+    GB_opaque_GxB_BOR_UINT32_MONOID,
+    GB_opaque_GxB_BOR_UINT64_MONOID,
+
+    // BAND monoids: (bitwise and)
+    GB_opaque_GxB_BAND_UINT8_MONOID,
+    GB_opaque_GxB_BAND_UINT16_MONOID,
+    GB_opaque_GxB_BAND_UINT32_MONOID,
+    GB_opaque_GxB_BAND_UINT64_MONOID,
+
+    // BXOR monoids: (bitwise xor)
+    GB_opaque_GxB_BXOR_UINT8_MONOID,
+    GB_opaque_GxB_BXOR_UINT16_MONOID,
+    GB_opaque_GxB_BXOR_UINT32_MONOID,
+    GB_opaque_GxB_BXOR_UINT64_MONOID,
+
+    // BXNOR monoids: (bitwise xnor)
+    GB_opaque_GxB_BXNOR_UINT8_MONOID,
+    GB_opaque_GxB_BXNOR_UINT16_MONOID,
+    GB_opaque_GxB_BXNOR_UINT32_MONOID,
+    GB_opaque_GxB_BXNOR_UINT64_MONOID ;
 
 //------------------------------------------------------------------------------
 // select structs
@@ -1315,6 +1445,8 @@ GrB_Info GB_error           // log an error in thread-local-storage
 #define GB1 GxB_SUMMARY
 #define GB2 GxB_SHORT
 #define GB3 GxB_COMPLETE
+#define GB4 GxB_SHORT_VERBOSE
+#define GB5 GxB_COMPLETE_VERBOSE
 
 // a NULL name is treated as the empty string
 #define GB_NAME ((name != NULL) ? name : "")
@@ -1324,6 +1456,7 @@ GrB_Info GB_entry_check     // print a single value
 (
     const GrB_Type type,    // type of value to print
     const void *x,          // value to print
+    int pr,                 // print level
     FILE *f,                // file to print to
     GB_Context Context
 ) ;
@@ -1333,6 +1466,7 @@ GrB_Info GB_code_check          // print and check an entry using a type code
 (
     const GB_Type_code code,    // type code of value to print
     const void *x,              // entry to print
+    int pr,                     // print level
     FILE *f,                    // file to print to
     GB_Context Context
 ) ;
@@ -1342,8 +1476,7 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
 (
     const GrB_Type type,    // GraphBLAS type to print and check
     const char *name,       // name of the type from the caller; optional
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1353,8 +1486,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (
     const GrB_BinaryOp op,  // GraphBLAS operator to print and check
     const char *name,       // name of the operator
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1364,8 +1496,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 (
     const GrB_UnaryOp op,   // GraphBLAS operator to print and check
     const char *name,       // name of the operator
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1375,8 +1506,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 (
     const GxB_SelectOp op,  // GraphBLAS operator to print and check
     const char *name,       // name of the operator
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1386,8 +1516,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 (
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
     const char *name,           // name of the monoid, optional
-    int pr,                     // 0: print nothing, 1: print header and errors,
-                                // 2: print brief, 3: print all
+    int pr,                     // print level
     FILE *f,                    // file for output
     GB_Context Context
 ) ;
@@ -1397,8 +1526,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
 (
     const GrB_Semiring semiring,    // GraphBLAS semiring to print and check
     const char *name,               // name of the semiring, optional
-    int pr,                         // 0: print nothing, 1: print header and
-                                    // errors, 2: print brief, 3: print all
+    int pr,                         // print level
     FILE *f,                        // file for output
     GB_Context Context
 ) ;
@@ -1408,8 +1536,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 (
     const GrB_Descriptor D,     // GraphBLAS descriptor to print and check
     const char *name,           // name of the descriptor, optional
-    int pr,                     // 0: print nothing, 1: print header and
-                                // errors, 2: print brief, 3: print all
+    int pr,                     // print level
     FILE *f,                    // file for output
     GB_Context Context
 ) ;
@@ -1419,9 +1546,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
-                            // if negative, ignore queue conditions
+    int pr,                 // print level; // if negative, ignore queue,
                             // and use GB_FLIP(pr) for diagnostic printing.
     FILE *f,                // file for output
     const char *kind,       // "matrix" or "vector"
@@ -1433,8 +1558,7 @@ GrB_Info GB_Matrix_check    // check a GraphBLAS matrix
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1444,8 +1568,7 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
 (
     const GrB_Vector v,     // GraphBLAS vector to print and check
     const char *name,       // name of the vector
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1454,8 +1577,7 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
 (
     const GxB_Scalar v,     // GraphBLAS GxB_Scalar to print and check
     const char *name,       // name of the GxB_Scalar
-    int pr,                 // 0: print nothing, 1: print header and errors,
-                            // 2: print brief, 3: print all
+    int pr,                 // print level
     FILE *f,                // file for output
     GB_Context Context
 ) ;
@@ -1599,7 +1721,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
 GrB_Info GB_dup2            // make an exact copy of a matrix
 (
-    GrB_Matrix *Chandle,    // handle of output matrix to create 
+    GrB_Matrix *Chandle,    // handle of output matrix to create
     const GrB_Matrix A,     // input matrix to copy
     const bool numeric,     // if true, duplicate the numeric values
     const GrB_Type ctype,   // type of C, if numeric is false
@@ -2095,7 +2217,8 @@ bool GB_binop_builtin               // true if binary operator is builtin
     const bool flipxy,              // true if z=op(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
     GB_Opcode *opcode,              // opcode for the binary operator
-    GB_Type_code *xycode,           // type code for x and y inputs
+    GB_Type_code *xcode,            // type code for x input
+    GB_Type_code *ycode,            // type code for y input
     GB_Type_code *zcode             // type code for z output
 ) ;
 
@@ -3018,6 +3141,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 //------------------------------------------------------------------------------
 
 #define GB_TYPE             bool
+#define GB_REAL
 #define GB_BOOLEAN
 #define GB(x)               GB_ ## x ## _BOOL
 #define GB_CAST_NAME(x)     GB_cast_bool_ ## x
@@ -3025,76 +3149,110 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int8_t
+#define GB_REAL
+#define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT8
 #define GB_CAST_NAME(x)     GB_cast_int8_t_ ## x
 #define GB_BITS             8
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint8_t
-#define GB_UNSIGNED
+#define GB_REAL
+#define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT8
 #define GB_CAST_NAME(x)     GB_cast_uint8_t_ ## x
 #define GB_BITS             8
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int16_t
+#define GB_REAL
+#define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT16
 #define GB_CAST_NAME(x)     GB_cast_int16_t_ ## x
 #define GB_BITS             16
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint16_t
-#define GB_UNSIGNED
+#define GB_REAL
+#define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT16
 #define GB_CAST_NAME(x)     GB_cast_uint16_t_ ## x
 #define GB_BITS             16
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int32_t
+#define GB_REAL
+#define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT32
 #define GB_CAST_NAME(x)     GB_cast_int32_t_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint32_t
-#define GB_UNSIGNED
+#define GB_REAL
+#define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT32
 #define GB_CAST_NAME(x)     GB_cast_uint32_t_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int64_t
+#define GB_REAL
+#define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT64
 #define GB_CAST_NAME(x)     GB_cast_int64_t_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint64_t
-#define GB_UNSIGNED
+#define GB_REAL
+#define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT64
 #define GB_CAST_NAME(x)     GB_cast_uint64_t_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
 #define GB_TYPE             float
+#define GB_REAL
 #define GB_FLOATING_POINT
+#define GB_FLOAT
 #define GB(x)               GB_ ## x ## _FP32
 #define GB_CAST_NAME(x)     GB_cast_float_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             double
+#define GB_REAL
 #define GB_FLOATING_POINT
-#define GB_FLOATING_POINT_DOUBLE
+#define GB_DOUBLE
 #define GB(x)               GB_ ## x ## _FP64
 #define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
-#define GB_opaque_GrB_LNOT GB_opaque_GxB_LNOT_BOOL
-#define GB_opaque_GrB_LOR  GB_opaque_GxB_LOR_BOOL
-#define GB_opaque_GrB_LAND GB_opaque_GxB_LAND_BOOL
-#define GB_opaque_GrB_LXOR GB_opaque_GxB_LXOR_BOOL
+#define GB_TYPE             GxB_FC32_t
+#define GB_COMPLEX
+#define GB_FLOATING_POINT
+#define GB_FLOAT_COMPLEX
+#define GB(x)               GB_ ## x ## _FC32
+#define GB_CAST_NAME(x)     GB_cast_GxB_FC32_t_ ## x
+#define GB_BITS             64
+#include "GB_ops_template.h"
+
+#define GB_TYPE             GxB_FC64_t
+#define GB_COMPLEX
+#define GB_FLOATING_POINT
+#define GB_DOUBLE_COMPLEX
+#define GB(x)               GB_ ## x ## _FC64
+#define GB_CAST_NAME(x)     GB_cast_GxB_FC64_t_ ## x
+#define GB_BITS             128
+#include "GB_ops_template.h"
+
+#define GB_opaque_GrB_LNOT  GB_opaque_GxB_LNOT_BOOL
+#define GB_opaque_GrB_LOR   GB_opaque_GxB_LOR_BOOL
+#define GB_opaque_GrB_LAND  GB_opaque_GxB_LAND_BOOL
+#define GB_opaque_GrB_LXOR  GB_opaque_GxB_LXOR_BOOL
+#define GB_opaque_GrB_LXNOR GB_opaque_GxB_LXNOR_BOOL
 
 #endif
 

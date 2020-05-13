@@ -76,9 +76,9 @@ GrB_Info GB_Monoid_new          // create a monoid
         // ISNE, NE, MINUS, RMINUS, and XOR are the same for boolean:
         op = GrB_LXOR ;
     }
-    else if (op == GxB_ISEQ_BOOL)
+    else if (op == GxB_ISEQ_BOOL || op == GrB_LXNOR)
     { 
-        // ISEQ, EQ are the same for boolean:
+        // LXNOR, ISEQ, EQ are the same for boolean:
         op = GrB_EQ_BOOL ;
     }
     else if (op == GxB_ISGT_BOOL)
@@ -237,8 +237,8 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT32_code : GB_IT (uint32_t, UINT32_MAX, 0         )
                 case GB_UINT64_code : GB_IT (uint64_t, UINT64_MAX, 0         )
                 case GB_FP32_code   : GB_IT (float   , INFINITY  , -INFINITY )
-                case GB_FP64_code   : GB_IT (double  , ((double) INFINITY)  ,
-                                                       ((double) -INFINITY) )
+                case GB_FP64_code   : GB_IT (double  , ((double)  INFINITY)  ,
+                                                       ((double) -INFINITY)  )
                 default: ;
             }
             break ;
@@ -258,7 +258,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IT (uint64_t, 0         , UINT64_MAX)
                 case GB_FP32_code   : GB_IT (float   , -INFINITY , INFINITY  )
                 case GB_FP64_code   : GB_IT (double  , ((double) -INFINITY)  ,
-                                                       ((double) INFINITY) )
+                                                       ((double)  INFINITY)  )
                 default: ;
             }
             break ;
@@ -278,6 +278,8 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IN (uint64_t, 0 )
                 case GB_FP32_code   : GB_IN (float   , 0 )
                 case GB_FP64_code   : GB_IN (double  , 0 )
+                case GB_FC32_code   : GB_IN (GxB_FC32_t, GxB_CMPLXF(0,0) )
+                case GB_FC64_code   : GB_IN (GxB_FC32_t, GxB_CMPLX(0,0) )
                 default: ;
             }
             break ;
@@ -297,6 +299,32 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IN (uint64_t, 1 )
                 case GB_FP32_code   : GB_IN (float   , 1 )
                 case GB_FP64_code   : GB_IN (double  , 1 )
+                case GB_FC32_code   : GB_IN (GxB_FC32_t, GxB_CMPLXF(1,0) )
+                case GB_FC64_code   : GB_IN (GxB_FC32_t, GxB_CMPLX(1,0) )
+                default: ;
+            }
+            break ;
+
+        case GB_ANY_opcode :
+
+            // ANY monoid:  identity is anything, terminal value is anything
+            switch (zcode)
+            {
+                case GB_BOOL_code   : GB_IT (bool    , 0, 0 )
+                case GB_INT8_code   : GB_IT (int8_t  , 0, 0 )
+                case GB_INT16_code  : GB_IT (int16_t , 0, 0 )
+                case GB_INT32_code  : GB_IT (int32_t , 0, 0 )
+                case GB_INT64_code  : GB_IT (int64_t , 0, 0 )
+                case GB_UINT8_code  : GB_IT (uint8_t , 0, 0 )
+                case GB_UINT16_code : GB_IT (uint16_t, 0, 0 )
+                case GB_UINT32_code : GB_IT (uint32_t, 0, 0 )
+                case GB_UINT64_code : GB_IT (uint64_t, 0, 0 )
+                case GB_FP32_code   : GB_IT (float   , 0, 0 )
+                case GB_FP64_code   : GB_IT (double  , 0, 0 )
+                case GB_FC32_code   :
+                    GB_IT (GxB_FC32_t, GxB_CMPLXF(0,0), GxB_CMPLXF(0,0))
+                case GB_FC64_code   :
+                    GB_IT (GxB_FC64_t, GxB_CMPLX(0,0), GxB_CMPLX(0,0))
                 default: ;
             }
             break ;

@@ -48,7 +48,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     if (type == GrB_BOOL)
     { 
         F = mxCreateLogicalMatrix (0, 0) ;
-        mxSetData (F, X) ;
+        mxSetData (F, X) ;      // OK:bool
     }
     else if (type == GrB_FP32)
     { 
@@ -100,13 +100,16 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
         F = mxCreateNumericMatrix (0, 0, mxUINT64_CLASS, mxREAL) ;
         mxSetUint64s (F, X) ;
     }
-    #ifdef GB_COMPLEX_TYPE
-    else if (type == gb_complex_type)
+    else if (type == GxB_FC32)
+    {
+        F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxCOMPLEX) ;
+        mxSetComplexSingles (F, X) ;
+    }
+    else if (type == GxB_FC64)
     {
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxCOMPLEX) ;
-        mxSetComplexDouble (F, X) ;
+        mxSetComplexDoubles (F, X) ;
     }
-    #endif
     else
     {
         ERROR ("unsupported type") ;

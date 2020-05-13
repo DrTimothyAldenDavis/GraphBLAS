@@ -1,6 +1,9 @@
 function gbtest98
 %GBTEST98 test A'*x performance
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 max_nthreads = GrB.threads ;
 threads = [1 2 4 8 16 20 32 40 64] ;
 desc = struct ('in0', 'transpose') ;
@@ -17,7 +20,7 @@ y = GrB (rand (2)) * GrB (rand (2)) ;
 
 degree = sum (spones (G)) ;
 nempty = length (find (degree == 0)) ;
-fprintf ('matrix: n: %d nnz: %d  # empty columns: %d\n', n, nnz (A), nempty) ;
+fprintf ('matrix: n: %d nnz: %d  # empty cols: %d\n', n, nnz (A), nempty) ;
 
 ntrials = 1 ;
 
@@ -96,3 +99,4 @@ for test = 1:4
 end
 
 GrB.burble (0) ;
+

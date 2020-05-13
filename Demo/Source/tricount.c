@@ -122,7 +122,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_UnaryOp_new (&Two, two, GrB_UINT32, GrB_UINT32)) ;
             OK (GrB_Matrix_new (&S, GrB_UINT32, n, ne)) ;
             OK (GrB_Matrix_apply (S, NULL, NULL, Two, C, NULL)) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 S, NULL)) ;
             ntri /= 3 ;
             break ;
@@ -136,7 +136,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, A, A, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             ntri /= 6 ;
             break ;
@@ -150,7 +150,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             ntri /= 2 ;
             break ;
@@ -163,7 +163,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             break ;
 
@@ -176,7 +176,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             break ;
 
@@ -191,7 +191,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             break ;
 
@@ -206,7 +206,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,
                 C, NULL)) ;
             break ;
 

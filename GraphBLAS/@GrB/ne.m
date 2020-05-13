@@ -15,13 +15,15 @@ function C = ne (A, B)
 % A matrix, B matrix:  C is sparse, with the pattern of A+B.
 % Zeroes are then dropped from C after it is computed.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
+ctype = GrB.optype (A, B) ;
 
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  C is sparse.
-        C = gb_sparse_comparator (A, '~=', B) ;
+        C = gb_union_op ('~=', A, B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) ~= 0)
@@ -29,10 +31,8 @@ if (isscalar (A))
             % value, so the result is dense.  Expand A to a dense matrix.
             [m, n] = size (B) ;
             % A (1:m,1:n) = A and cast to the type of B
-            A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
-            if (~GrB.isfull (B))
-                B = full (B) ;
-            end
+            A = GrB.subassign (GrB (m, n, ctype), A) ;
+            B = gb_full (B, ctype) ;
             C = GrB.emult (A, '~=', B) ;
         else
             % since a == 0, entries not present in B result in a false
@@ -48,11 +48,9 @@ else
             % since b ~= 0, entries not present in A result in a true
             % value, so the result is dense.  Expand B to a dense matrix.
             [m, n] = size (A) ;
-            % B (1:m,1:n) = B and cast to the type of A
-            B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
-            if (~GrB.isfull (A))
-                A = full (A) ;
-            end
+            % B (1:m,1:n) = B and cast to ctype
+            B = GrB.subassign (GrB (m, n, ctype), B) ;
+            A = gb_full (A, ctype) ;
             C = GrB.emult (A, '~=', B) ;
         else
             % since b == 0, entries not present in A result in a false
@@ -62,7 +60,7 @@ else
         end
     else
         % both A and B are matrices.  C is sparse.
-        C = gb_sparse_comparator (A, '~=', B) ;
+        C = gb_union_op ('~=', A, B) ;
     end
 end
 

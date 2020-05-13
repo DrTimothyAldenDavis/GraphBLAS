@@ -22,8 +22,8 @@ function C = prod (G, option)
 %
 % See also GrB/max, GrB/min, GrB/sum.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n] = size (G) ;
 desc = struct ('in0', 'transpose') ;
@@ -46,7 +46,7 @@ if (nargin == 1)
         % C = prod (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         coldegree = GrB.entries (G, 'col', 'degree') ;
-        C = (GrB.vreduce (op, G, desc) .* (coldegree == m))' ;
+        C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
     end
 elseif (isequal (option, 'all'))
     % C = prod (G, 'all'), reducing all entries to a scalar
@@ -59,7 +59,7 @@ elseif (isequal (option, 1))
     % C = prod (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
     coldegree = GrB.entries (G, 'col', 'degree') ;
-    C = (GrB.vreduce (op, G, desc) .* (coldegree == m))' ;
+    C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
 elseif (isequal (option, 2))
     % C = prod (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.

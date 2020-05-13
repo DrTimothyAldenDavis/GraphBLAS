@@ -4,7 +4,7 @@ function test29
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 fprintf ('\ntest29: ----------------- GrB_reduce with zombies\n') ;
 
@@ -13,8 +13,8 @@ for m = [1 5 10]
 
         rng ('default') ;
 
-        for k3 = 1:length (classes)
-            aclas = classes {k3}  ;
+        for k3 = 1:length (types.real)
+            aclas = types.real {k3}  ;
 
             clear C
             C.matrix = 100 * sparse (rand (m,n)) ;
@@ -47,7 +47,7 @@ for m = [1 5 10]
                 end
 
                 op.opname = 'plus' ;
-                op.opclass = 'double' ;
+                op.optype = 'double' ;
                 c4 = GB_mex_reduce_to_scalar (0, '', op, C3) ;
 
                 if (isfloat (c3))

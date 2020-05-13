@@ -16,10 +16,13 @@ function Cout = trans (varargin)
 % any combination.  Cout is returned as a GraphBLAS matrix, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
-% See also transpose, ctranspose.
+% For complex matrices, GrB.trans computes the array transpose, not the
+% matrix (complex conjugate) transpose.
+%
+% See also GrB/transpose, GrB/ctranspose, GrB/conj.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

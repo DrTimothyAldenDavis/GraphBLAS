@@ -49,7 +49,7 @@ fprintf ('MATLAB prod: %g\n', tm) ;
 S.matrix = A ;
 S.pattern = logical (spones (A)) ;
 
-[mult_ops unary_ops add_ops classes semirings selops] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 ops = { 'or', 'and', 'xor', 'eq' } ;
 for k1 = 1:4
@@ -81,7 +81,7 @@ for k1 = 1:4
     op = ops {k1} ;
     fprintf ('\nGraphBLAS: op %s\n', op) ;
     for k2 = 2:11
-        aclass = classes {k2} ;
+        aclass = types.real {k2} ;
         S.class = aclass ;
         fprintf ('\ntype: %s\n', aclass) ;
         switch aclass

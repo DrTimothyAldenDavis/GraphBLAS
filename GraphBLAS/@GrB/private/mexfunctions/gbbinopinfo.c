@@ -45,7 +45,7 @@ void mexFunction
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    GrB_BinaryOp op = gb_mxstring_to_binop (pargin [0], type) ;
+    GrB_BinaryOp op = gb_mxstring_to_binop (pargin [0], type, type) ;
     OK (GxB_BinaryOp_fprint (op, opstring, GxB_COMPLETE, NULL)) ;
     GB_WRAPUP ;
 }

@@ -46,7 +46,7 @@ dr = struct ('outp', 'replace') ;
 
         fprintf ('.') ;
 
-            op.opclass = 'double' ;
+            op.optype = 'double' ;
 
             % no mask
             C1 = GB_spec_apply (Cin, [], [], op, A, []) ;

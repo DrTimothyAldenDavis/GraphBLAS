@@ -89,7 +89,7 @@ void mexFunction
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum  = gb_mxstring_to_binop  (String [0], ctype) ;
+        accum  = gb_mxstring_to_binop  (String [0], ctype, ctype) ;
         monoid = gb_mxstring_to_monoid (String [1], atype) ;
     }
 
@@ -214,15 +214,20 @@ void mexFunction
         OK (GrB_Matrix_reduce_FP64 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_FP64 (C, c, 0, 0)) ;
     }
-    #ifdef GB_COMPLEX_TYPE
-    else if (ctype == gb_complex_type)
-    {
-        double complex c = 0 ;
-        OK (GrB_Matrix_extractElement_UDT (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_UDT (&c, accum, monoid, A, desc)) ;
-        OK (GrB_Matrix_setElement_UDT (C, c, 0, 0)) ;
+    else if (ctype == GxB_FC32)
+    { 
+        GxB_FC32_t c = GxB_CMPLXF (0,0) ;
+        OK (GxB_Matrix_extractElement_FC32 (&c, C, 0, 0)) ;
+        OK (GxB_Matrix_reduce_FC32 (&c, accum, monoid, A, desc)) ;
+        OK (GxB_Matrix_setElement_FC32 (C, c, 0, 0)) ;
     }
-    #endif
+    else if (ctype == GxB_FC64)
+    { 
+        GxB_FC64_t c = GxB_CMPLX (0,0) ;
+        OK (GxB_Matrix_extractElement_FC64 (&c, C, 0, 0)) ;
+        OK (GxB_Matrix_reduce_FC64 (&c, accum, monoid, A, desc)) ;
+        OK (GxB_Matrix_setElement_FC64 (C, c, 0, 0)) ;
+    }
     else
     {
         ERROR ("unsupported type") ;

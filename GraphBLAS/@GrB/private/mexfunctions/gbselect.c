@@ -28,9 +28,9 @@
 // not present, is determined by the ztype of the accum, if present, or
 // otherwise it has the same time as A.
 
-// If op is '==' or '~=' and b is a NaN, and A has type GrB_FP32 or GrB_FP64,
-// then a user-defined operator is used instead of GxB_EQ_THUNK or
-// GxB_NE_THUNK.
+// If op is '==' or '~=' and b is a NaN, and A has type GrB_FP32, GrB_FP64,
+// GxB_FC32, or GxB_FC64, then a user-defined operator is used instead of
+// GxB_EQ_THUNK or GxB_NE_THUNK.
 
 // The 'tril', 'triu', 'diag', 'offdiag', and 2-input operators all require
 // the b scalar.  The b scalar must not appear for the '*0' operators.
@@ -66,6 +66,36 @@ bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     double aij = * ((double *) x) ;
     return (!isnan (aij)) ;
 }
+
+bool gb_isnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b)
+{ 
+    GxB_FC32_t aij = * ((GxB_FC32_t *) x) ;
+    return (isnan (crealf (aij)) || isnan (cimagf (aij))) ;
+}
+
+bool gb_isnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b)
+{ 
+    GxB_FC64_t aij = * ((GxB_FC64_t *) x) ;
+    return (isnan (creal (aij)) || isnan (cimag (aij))) ;
+}
+
+bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b)
+{ 
+    GxB_FC32_t aij = * ((GxB_FC32_t *) x) ;
+    return (!isnan (crealf (aij)) && !isnan (cimagf (aij))) ;
+}
+
+bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b)
+{ 
+    GxB_FC64_t aij = * ((GxB_FC64_t *) x) ;
+    return (!isnan (creal (aij)) && !isnan (cimag (aij))) ;
+}
+
+
 
 void mexFunction
 (
@@ -180,7 +210,7 @@ void mexFunction
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum = gb_mxstring_to_binop (String [0], ctype) ;
+        accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -246,23 +276,52 @@ void mexFunction
             // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
             // These operators do not need a b input, since it is now known
             // to be a NaN.
-            if (op == GxB_EQ_THUNK && atype == GrB_FP32)
-            { 
-                OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
+
+            if (op == GxB_EQ_THUNK)
+            {
+                if (atype == GrB_FP32)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnan32,
+                        GrB_FP32, NULL)) ;
+                }
+                else if (atype == GrB_FP64)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnan64,
+                        GrB_FP64, NULL)) ;
+                }
+                else if (atype == GxB_FC32)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnanfc32,
+                        GxB_FC32, NULL)) ;
+                }
+                else if (atype == GxB_FC64)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnanfc64,
+                        GxB_FC64, NULL)) ;
+                }
             }
-            else if (op == GxB_EQ_THUNK && atype == GrB_FP64)
-            { 
-                OK (GxB_SelectOp_new (&nan_test, gb_isnan64, GrB_FP64, NULL)) ;
-            }
-            else if (op == GxB_NE_THUNK && atype == GrB_FP32)
-            { 
-                OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32, GrB_FP32,
-                    NULL)) ;
-            }
-            else if (op == GxB_NE_THUNK && atype == GrB_FP64)
-            { 
-                OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64, GrB_FP64,
-                    NULL)) ;
+            else if (op == GxB_NE_THUNK)
+            {
+                if (atype == GrB_FP32)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32,
+                        GrB_FP32, NULL)) ;
+                }
+                else if (atype == GrB_FP64)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64,
+                        GrB_FP64, NULL)) ;
+                }
+                else if (atype == GxB_FC32)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnotnanfc32,
+                        GxB_FC32, NULL)) ;
+                }
+                else if (atype == GxB_FC64)
+                { 
+                    OK (GxB_SelectOp_new (&nan_test, gb_isnotnanfc64,
+                        GxB_FC64, NULL)) ;
+                }
             }
         }
 

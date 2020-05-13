@@ -35,7 +35,7 @@ ASSERT (zcode == GB_BOOL_code) ;
 
         case GB_LOR_opcode     :
 
-            switch (xycode)
+            switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
                 case GB_BOOL_code   : GB_AxB_WORKER (_lor, GB_MULT_NAME, _bool  )
@@ -56,7 +56,7 @@ ASSERT (zcode == GB_BOOL_code) ;
 
         case GB_LAND_opcode    :
 
-            switch (xycode)
+            switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
                 case GB_BOOL_code   : GB_AxB_WORKER (_land, GB_MULT_NAME, _bool  )
@@ -77,7 +77,7 @@ ASSERT (zcode == GB_BOOL_code) ;
 
         case GB_LXOR_opcode    :
 
-            switch (xycode)
+            switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
                 case GB_BOOL_code   : GB_AxB_WORKER (_lxor, GB_MULT_NAME, _bool  )
@@ -98,7 +98,7 @@ ASSERT (zcode == GB_BOOL_code) ;
 
         case GB_EQ_opcode    :
 
-            switch (xycode)
+            switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
                 case GB_BOOL_code   : GB_AxB_WORKER (_eq, GB_MULT_NAME, _bool  )
@@ -119,7 +119,7 @@ ASSERT (zcode == GB_BOOL_code) ;
 
         case GB_ANY_opcode    :
 
-            switch (xycode)
+            switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
                 case GB_BOOL_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _bool  )

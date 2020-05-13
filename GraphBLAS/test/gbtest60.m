@@ -1,10 +1,15 @@
 function gbtest60
 %GBTEST60 test GrB.issigned
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-signed_types   = { 'double', 'single', 'int8', 'int16', 'int32', 'int64' } ;
+% 8 signed types:
+signed_types   = { 'double', 'single', ...
+    'int8', 'int16', 'int32', 'int64', ...
+    'single complex', 'double complex' } ;
+
+% 5 unsigned types:
 unsigned_types = { 'logical', 'uint8', 'uint16', 'uint32', 'uint64' } ;
 
 for k = 1:length (signed_types)

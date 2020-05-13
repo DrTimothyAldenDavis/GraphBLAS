@@ -1,14 +1,14 @@
 function DiGraph = digraph (G, option)
 %GRAPH convert a GraphBLAS matrix into a MATLAB directed DiGraph.
-% DiGraph = digraph (G) converts a GraphBLAS matrix G into a directed MATLAB
-% DiGraph.  G must be square.  If G is logical, then no weights are added to
-% the DiGraph.  If G is single or double, these become the weights of the
-% MATLAB DiGraph.  If G is integer, the DiGraph is constructed with weights of
-% type double.  An optional string argument can appear after G:
+% DiGraph = digraph (G) converts a GraphBLAS matrix G into a directed
+% MATLAB DiGraph.  G must be square.  If G is logical, then no weights are
+% added to the DiGraph.  If G is single or double, these become the weights
+% of the MATLAB DiGraph.  If G is integer, the DiGraph is constructed with
+% weights of type double.  An optional string argument can appear after G:
 %
-%   DiGraph = digraph (G, 'omitselfloops') ignores the diagonal of G, and the
-%   resulting MATLAB DiGraph has no self-edges.  The default is that self-edges
-%   are created from any diagonal entries of G.
+% DiGraph = digraph (G, 'omitselfloops') ignores the diagonal of G, and the
+% resulting MATLAB DiGraph has no self-edges.  The default is that
+% self-edges are created from any diagonal entries of G.
 %
 % Example:
 %
@@ -24,8 +24,8 @@ function DiGraph = digraph (G, option)
 %
 % See also graph, digraph, GrB/graph, plot.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 type = GrB.type (G) ;
 [m, n] = size (G) ;

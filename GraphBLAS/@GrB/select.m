@@ -84,10 +84,10 @@ function Cout = select (varargin)
 % any combination.  Cout is returned as a GraphBLAS matrix, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
-% See also tril, triu, diag.
+% See also GrB/tril, GrB/triu, GrB/diag.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

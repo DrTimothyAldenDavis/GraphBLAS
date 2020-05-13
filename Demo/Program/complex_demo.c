@@ -69,7 +69,7 @@ int main (int argc, char **argv)
     int nthreads ;
     GxB_Global_Option_get (GxB_NTHREADS, &nthreads) ;
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
-    Complex_init ( ) ;
+    Complex_init (false) ;  // user-defined, not GxB_FC64, just as a demo
 
     // generate random matrices A and B
     simple_rand_seed (1) ;

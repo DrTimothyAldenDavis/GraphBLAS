@@ -4,7 +4,8 @@ function test127
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[bin_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+bin_ops = [binops.all binops.real] ;
 
 fprintf ('test127 ------------tests of GrB_eWiseAdd and eWiseMult (all ops)\n') ;
 
@@ -68,14 +69,17 @@ clear T i j x
 ATmat = Amat' ;
 BTmat = Bmat' ;
 
-for k1 = 1:length (classes)
-    clas = classes {k1}  ;
+for k1 = 1:length (types.real)
+    clas = types.real {k1}  ;
 
     for k2 = 1:length(bin_ops)
         binop = bin_ops {k2}  ;
+        if (isequal (binop, 'pow'))
+            continue ;
+        end
 
         op.opname = binop ;
-        op.opclass = clas ;
+        op.optype = clas ;
         fprintf ('.') ;
 
         for A_is_hyper = 0 % 0:1
@@ -92,7 +96,7 @@ for k1 = 1:length (classes)
         A.is_hyper = A_is_hyper ;
         A.is_csc   = A_is_csc   ;
         if (native)
-            A.class = op.opclass ;
+            A.class = op.optype ;
         end
 
         clear AT
@@ -100,7 +104,7 @@ for k1 = 1:length (classes)
         AT.is_hyper = A_is_hyper ;
         AT.is_csc   = A_is_csc   ;
         if (native)
-            AT.class = op.opclass ;
+            AT.class = op.optype ;
         end
 
         clear B
@@ -108,7 +112,7 @@ for k1 = 1:length (classes)
         B.is_hyper = B_is_hyper ;
         B.is_csc   = B_is_csc   ;
         if (native)
-            B.class = op.opclass ;
+            B.class = op.optype ;
         end
 
         clear BT
@@ -116,7 +120,7 @@ for k1 = 1:length (classes)
         BT.is_hyper = B_is_hyper ;
         BT.is_csc   = B_is_csc   ;
         if (native)
-            BT.class = op.opclass ;
+            BT.class = op.optype ;
         end
 
         clear C
@@ -128,14 +132,14 @@ for k1 = 1:length (classes)
         u.matrix = uvec ;
         u.is_csc = true ;
         if (native)
-            u.class = op.opclass ;
+            u.class = op.optype ;
         end
 
         clear v
         v.matrix = vvec ;
         v.is_csc = true ;
         if (native)
-            v.class = op.opclass ;
+            v.class = op.optype ;
         end
 
         %---------------------------------------

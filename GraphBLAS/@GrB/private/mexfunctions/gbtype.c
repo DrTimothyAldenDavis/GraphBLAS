@@ -33,6 +33,7 @@ void mexFunction
 
     mxArray *c = NULL ;
     mxClassID class = mxGetClassID (pargin [0]) ;
+    bool is_complex = mxIsComplex (pargin [0]) ;
 
     if (class == mxSTRUCT_CLASS)
     {
@@ -41,21 +42,8 @@ void mexFunction
         { 
             // X is a GraphBLAS G.opaque struct; get its type
             GrB_Type type = gb_mxstring_to_type (mx_type) ;
-                 if (type == GrB_BOOL  ) c = mxCreateString ("logical") ;
-            else if (type == GrB_INT8  ) c = mxCreateString ("int8") ;
-            else if (type == GrB_INT16 ) c = mxCreateString ("int16") ;
-            else if (type == GrB_INT32 ) c = mxCreateString ("int32") ;
-            else if (type == GrB_INT64 ) c = mxCreateString ("int64") ;
-            else if (type == GrB_UINT8 ) c = mxCreateString ("uint8") ;
-            else if (type == GrB_UINT16) c = mxCreateString ("uint16") ;
-            else if (type == GrB_UINT32) c = mxCreateString ("uint32") ;
-            else if (type == GrB_UINT64) c = mxCreateString ("uint64") ;
-            else if (type == GrB_FP32  ) c = mxCreateString ("single") ;
-            else if (type == GrB_FP64  ) c = mxCreateString ("double") ;
-            #ifdef GB_COMPLEX_TYPE
-            else if (type == gb_complex_type) c = mxCreateString ("complex") ;
-            #endif
-            else ERROR ("unknown GraphBLAS type") ;
+            c = gb_type_to_mxstring (type) ;
+            CHECK_ERROR (c == NULL, "unknown type") ;
         }
     }
 
@@ -75,8 +63,28 @@ void mexFunction
             case mxUINT16_CLASS   : c = mxCreateString ("uint16") ;   break ;
             case mxUINT32_CLASS   : c = mxCreateString ("uint32") ;   break ;
             case mxUINT64_CLASS   : c = mxCreateString ("uint64") ;   break ;
-            case mxSINGLE_CLASS   : c = mxCreateString ("single") ;   break ;
-            case mxDOUBLE_CLASS   : c = mxCreateString ("double") ;   break ;
+
+            case mxSINGLE_CLASS   :
+                if (is_complex)
+                {
+                    c = mxCreateString ("single complex") ;
+                }
+                else
+                {
+                    c = mxCreateString ("single") ;
+                }
+                break ;
+
+            case mxDOUBLE_CLASS   :
+                if (is_complex)
+                {
+                    c = mxCreateString ("double complex") ;
+                }
+                else
+                {
+                    c = mxCreateString ("double") ;
+                }
+                break ;
 
             // a MATLAB struct, cell, char, void, function, or unknown
             case mxSTRUCT_CLASS   : c = mxCreateString ("struct") ;   break ;

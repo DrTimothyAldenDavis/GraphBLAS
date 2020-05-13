@@ -14,6 +14,11 @@
 // If the operator is FIRST, SECOND, or PAIR, this function is called for the
 // cast function on the unused argument, but the result is then unused. 
 
+// This function returns one of ((13*13) + 1) pointers to a typecasting/copy
+// function.  13*13 is the set of functions named GB_cast_ZTYPE_XTYPE, for each
+// pair of built-in types (ZTYPE, XTYPE).  The last pointer is the function
+// GB_copy_user_user.
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -38,6 +43,7 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 
     // switch factory for two built-in types; user types are skipped.
     // no generic worker so the switch factory cannot be disabled.
+    #define GB_COMPLEX
     #include "GB_2type_factory.c"
 
     //--------------------------------------------------------------------------

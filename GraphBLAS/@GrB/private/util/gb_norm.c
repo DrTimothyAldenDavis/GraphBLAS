@@ -34,16 +34,39 @@ double gb_norm              // compute norm (A,kind)
     GrB_Monoid sumop, maxop, minop ;
     GrB_Vector t = NULL ;
     GrB_Matrix X = NULL ;
+    bool is_complex = false ;
 
     if (atype == GrB_FP32)
     {
         // if A is FP32, use the FP32 type and operators
         xtype = GrB_FP32 ;
         absop = GxB_ABS_FP32 ;
-        sumop = GxB_PLUS_FP32_MONOID ;
+        sumop = GrB_PLUS_MONOID_FP32 ;
         timesop = GrB_TIMES_FP32 ;
-        maxop = GxB_MAX_FP32_MONOID ;
-        minop = GxB_MIN_FP32_MONOID ;
+        maxop = GrB_MAX_MONOID_FP32 ;
+        minop = GrB_MIN_MONOID_FP32 ;
+    }
+    else if (atype == GxB_FC32)
+    {
+        // if A is FC32, use the FP32/FC32 type and operators
+        is_complex = true ;
+        xtype = GrB_FP32 ;
+        absop = GxB_ABS_FC32 ;
+        sumop = GrB_PLUS_MONOID_FP32 ;
+        timesop = GrB_TIMES_FP32 ;
+        maxop = GrB_MAX_MONOID_FP32 ;
+        minop = GrB_MIN_MONOID_FP32 ;
+    }
+    else if (atype == GxB_FC64)
+    {
+        // if A is FC64, use the FP64/FC64 type and operators
+        is_complex = true ;
+        xtype = GrB_FP64 ;
+        absop = GxB_ABS_FC64 ;
+        sumop = GrB_PLUS_MONOID_FP64 ;
+        timesop = GrB_TIMES_FP64 ;
+        maxop = GrB_MAX_MONOID_FP64 ;
+        minop = GrB_MIN_MONOID_FP64 ;
     }
     else
     {
@@ -51,10 +74,10 @@ double gb_norm              // compute norm (A,kind)
         // input matrix to FP64 if A is not of that type.
         xtype = GrB_FP64 ;
         absop = GxB_ABS_FP64 ;
-        sumop = GxB_PLUS_FP64_MONOID ;
+        sumop = GrB_PLUS_MONOID_FP64 ;
         timesop = GrB_TIMES_FP64 ;
-        maxop = GxB_MAX_FP64_MONOID ;
-        minop = GxB_MIN_FP64_MONOID ;
+        maxop = GrB_MAX_MONOID_FP64 ;
+        minop = GrB_MIN_MONOID_FP64 ;
     }
 
     OK (GrB_Matrix_new (&X, xtype, nrows, ncols)) ;
@@ -78,9 +101,20 @@ double gb_norm              // compute norm (A,kind)
             case 0:     // Frobenius norm
             case 2:     // 2-norm
 
-                // X = A .* A
-                OK (GrB_eWiseMult_Matrix_BinaryOp (X, NULL, NULL, timesop,
-                    A, A, NULL)) ;
+                if (is_complex)
+                {
+                    // X = abs (A)
+                    OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
+                    // X = X .* X
+                    OK (GrB_eWiseMult_Matrix_BinaryOp (X, NULL, NULL, timesop,
+                        X, X, NULL)) ;
+                }
+                else
+                {
+                    // X = A .* A
+                    OK (GrB_eWiseMult_Matrix_BinaryOp (X, NULL, NULL, timesop,
+                        A, A, NULL)) ;
+                }
                 // s = sum (X)
                 OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;
                 s = sqrt (s) ;
@@ -104,7 +138,7 @@ double gb_norm              // compute norm (A,kind)
 
             case INT64_MIN:     // (-inf)-norm
 
-                if (!GB_is_dense (A))
+                if (GB_is_dense (A))
                 {
                     // X = abs (A)
                     OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;

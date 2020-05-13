@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// The #include'ing file defines the GB_BINOP_WORKER macro, and opcode, xycode,
-// and zcode
+// The #include'ing file defines the GB_BINOP_WORKER macro, and opcode, xcode,
+// ycode, and zcode
 
 {
     //--------------------------------------------------------------------------
@@ -25,6 +25,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _first
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -34,6 +35,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _second
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -42,6 +44,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _pair
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -74,6 +77,7 @@
             // MAX == PLUS == OR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _plus
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -84,6 +88,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _minus
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -94,6 +99,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _rminus
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -104,6 +110,7 @@
             // MIN == TIMES == AND for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _times
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -114,6 +121,7 @@
             // FIRST == DIV for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _div
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -124,6 +132,7 @@
             // SECOND == RDIV for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _rdiv
+            #define GB_COMPLEX
             #include "GB_binop_type_factory.c"
             break ;
 
@@ -262,6 +271,60 @@
             #define GB_BINOP_NAME _lxor
             #include "GB_binop_type_factory.c"
             break ;
+
+#if 0
+
+        //----------------------------------------------------------------------
+        case GB_ATAN2_opcode    :    // z = atan2 (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _atan2 // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_HYPOT_opcode    :    // z = hypot (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _hypot // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_FMOD_opcode    :    // z = fmod (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _fmod // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_REMAINDER_opcode    :    // z = remainder (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _remainder // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_COPYSIGN_opcode    :    // z = copysign (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _copysign // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_CMPLX_opcode    :    // z = cmplx (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _cmplx // TODO
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_POW_opcode    :    // z = pow (x,y)
+        //----------------------------------------------------------------------
+
+            // #define GB_BINOP_NAME _cmplx // TODO
+            break ;
+
+#endif
+
 #endif
 
         default: ;

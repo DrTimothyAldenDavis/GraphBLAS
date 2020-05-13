@@ -40,6 +40,8 @@
                 case GB_UINT64_code : GB_WORKER (_one, _uint64, uint64_t, _uint64, uint64_t)
                 case GB_FP32_code   : GB_WORKER (_one, _fp32,   float,    _fp32,   float)
                 case GB_FP64_code   : GB_WORKER (_one, _fp64,   double,   _fp64,   double)
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
                 default: ;
                 break ;
             }
@@ -74,6 +76,8 @@
             #define GB_OPNAME _lnot
             #include "GB_2type_factory.c"
             break ;
+
+        // TODO add new unary operators here
 
         default: ;
     }

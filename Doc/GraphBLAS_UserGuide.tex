@@ -105,6 +105,17 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
+\item Version 3.3.0 (TODO, 2020).
+    Added complex types (\verb'GxB_FC32' and \verb'GxB_FC64'), many unary
+    operators, binary operators, monoids, and semirings.  Added bitwise
+    operators, and their monoids and semirings.  Added the 44 predefined
+    monoids and 62 predefined monoids from the v1.3 spec.  MATLAB
+    interface: added complex matrices and operators, and changed
+    behavior of integer operations to more closely match the
+    behavior on MATLAB integer matrices.
+
+% TODO: describe new types, binary/unary ops, monoids, semirings
+
 \item Version 3.2.0 (Feb 20, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
     \verb'GrB_vxm', and faster operations on dense matrices/vectors.  Removed
     compile-time user objects (\verb'GxB_*_define'), since these were not
@@ -814,54 +825,8 @@ A+B    A-B   A*B    A.*B   A./B   A.\B   A.^b    A/b    C=A(I,J)
 -A     +A    ~A     A'     A.'    A&B    A|B     b\A    C(I,J)=A
 A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  A(1:end,1:end) \end{verbatim}}
 
-{\footnotesize
-\begin{verbatim}
-                    fix             isreal          single
-    abs             flip            isscalar        size
-    all             floor           issparse        sparse
-    amd             fprintf         issymmetric     spfun
-    and             full            istril          spones
-    any             graph           istriu          sprand
-    assert          int16           isvector        sprandn
-    bandwidth       int32           kron            sprandsym
-    ceil            int64           length          sprintf
-    colamd          int8            logical         sqrt
-    complex         isa             max             sum
-    conj            isbanded        min             symamd
-    diag            isdiag          nnz             symrcm
-    digraph         isempty         nonzeros        tril
-    disp            isequal         norm            triu
-    display         isfinite        numel           true
-    dmperm          isfloat         nzmax           uint16
-    double          ishermitian     ones            uint32
-    eig             isinf           prod            uint64
-    end             isinteger       real            uint8
-    eps             islogical       repmat          xor
-    etree           ismatrix        reshape         zeros
-    false           isnan           round
-    find            isnumeric       sign \end{verbatim}}
-
-The static methods (used in the form \verb'GrB.method') provide direct access
-to GraphBLAS functions and can be used on both MATLAB and GraphBLAS matrices,
-or any combination.  Once the \verb'GraphBLAS/GraphBLAS' folder is in your
-MATLAB path, type \verb'help graphblas' and \verb'help GrB' in MATLAB
-for more help.
-
-{\footnotesize
-\begin{verbatim}
-    init            finalize
-    apply           emult           kronecker       select          
-    assign          entries         ktruss          selectopinfo    
-    bfs             expand          laplacian       semiringinfo    
-    binopinfo       extract         mis             speye           
-    build           extracttuples   monoidinfo      subassign       
-    chunk           eye             mxm             threads         
-    clear           format          nonz            trans           
-    compact         incidence       offdiag         tricount        
-    descriptorinfo  isbycol         pagerank        type            
-    dnn             isbyrow         prune           unopinfo        
-    eadd            isfull          random          vreduce         
-    empty           issigned        reduce  \end{verbatim}}
+For a list of overloaded operations and static methods, type
+\verb'methods GrB' in MATLAB, or \verb'help GrB' for more details.
 
 {\bf Limitations:}
 Some features for MATLAB sparse matrices are not yet available for
@@ -881,7 +846,6 @@ GraphBLAS matrices.  Some of these may be added in future releases.
         technically possible but not permitted by the MATLAB API.
     \item Linear indexing, or \verb'A(:)' for a 2D matrix, and
         a single output of \verb'I=find(A)'.
-    \item Complex matrices.
     \item The second output for \verb'min' and \verb'max',
         and the \verb'includenan' option.
     \item Singleton expansion.
@@ -9353,7 +9317,9 @@ typedef enum
     GxB_SILENT = 0,     // nothing is printed, just check the object
     GxB_SUMMARY = 1,    // print a terse summary
     GxB_SHORT = 2,      // short description, about 30 entries of a matrix
-    GxB_COMPLETE = 3    // print the entire contents of the object
+    GxB_COMPLETE = 3,   // print the entire contents of the object
+    GxB_SHORT_VERBOSE = 4,    // GxB_SHORT but with "%.15g" for doubles
+    GxB_COMPLETE_VERBOSE = 5  // GxB_COMPLETE but with "%.15g" for doubles
 }
 GxB_Print_Level ; \end{verbatim}}
 
@@ -9365,10 +9331,8 @@ more easily identified in the output.  For the type-generic methods
 name of the object itself.
 
 If the file \verb'f' is \verb'NULL', nothing is printed (\verb'pr' is
-effectively \verb'GxB_SILENT') If \verb'pr' is outside the bounds 0 to 3,
-negative values are treated as \verb'GxB_SILENT', and values larger than 3 are
-treated as \verb'GxB_COMPLETE'.  If \verb'name' is \verb'NULL', it is treated
-as the empty string.  None of these are error conditions.
+effectively \verb'GxB_SILENT').  If \verb'name' is \verb'NULL', it is treated
+as the empty string.  These are not error conditions.
 
 The methods check their input objects carefully and extensively, even when
 \verb'pr' is equal to \verb'GxB_SILENT'.  The following error codes can be
@@ -9597,8 +9561,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
 ) ;
 \end{verbatim} } \end{mdframed}
 
-For example,
-\verb'GxB_Matrix_fprint (A, "my matrix", GxB_SHORT, f)'
+For example, \verb'GxB_Matrix_fprint (A, "my matrix", GxB_SHORT, f)'
 prints about 30 entries from the matrix \verb'A' to the file \verb'f'.
 
 
@@ -9618,8 +9581,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 ) ;
 \end{verbatim} } \end{mdframed}
 
-For example,
-\verb'GxB_Vector_fprint (v, "my vector", GxB_SHORT, f)'
+For example, \verb'GxB_Vector_fprint (v, "my vector", GxB_SHORT, f)'
 prints about 30 entries from the vector \verb'v' to the file \verb'f'.
 
 %===============================================================================
@@ -9638,8 +9600,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 ) ;
 \end{verbatim} } \end{mdframed}
 
-For example,
-\verb'GxB_Scalar_fprint (s, "my scalar", GxB_SHORT, f)'
+For example, \verb'GxB_Scalar_fprint (s, "my scalar", GxB_SHORT, f)'
 prints a short description of the sparse scalar \verb's' to the file \verb'f'.
 
 \newpage
@@ -10570,10 +10531,11 @@ user-defined \verb'typedef' called \verb'wildtype' with a \verb'struct'
 containing a string and a 4-by-4 \verb'float' matrix.
 
 {\bf Double Complex:}
-GraphBLAS does not have a native complex type, but this can be easily added
+Prior to v3.3, GraphBLAS did not have a native complex type.  It now appears as
+the \verb'GxB_FC64' predefined type, but a complex type can also easily added
 as a user-defined type.  The \verb'Complex_init' function in the
-\verb'usercomplex.c' file in the \verb'Demo' folder creates the
-\verb'Complex' type based on the ANSI C11 \verb'double complex' type.
+\verb'usercomplex.c' file in the \verb'Demo' folder creates the \verb'Complex'
+type based on the ANSI C11 \verb'double complex' type.
 
     {\footnotesize
     \begin{verbatim}

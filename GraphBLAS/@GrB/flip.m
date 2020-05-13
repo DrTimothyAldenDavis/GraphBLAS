@@ -5,10 +5,10 @@ function C = flip (G, dim)
 % so that flip (G,1) and flip (G) are the same thing, and flip (G,2) flips
 % the columns so that C = G (:,end:-1,1).
 %
-% See also transpose.
+% See also GrB/transpose.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin < 2)
     if (isrow (G))

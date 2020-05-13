@@ -222,7 +222,7 @@ assert (n == 1000) ;
 
 % 300: x,y nonboolean, z boolean: 6 * 4 * 10
 
-fprintf ('    else if (xycode != GB_BOOL_code)\n') ;
+fprintf ('    else if (xcode != GB_BOOL_code)\n') ;
 fprintf ('    {\n') ;
 fprintf ('        switch (mult_opcode)\n') ;
 fprintf ('        {\n') ;
@@ -237,7 +237,7 @@ for mult = { 'eq', 'ne', 'gt', 'lt', 'ge', 'le' }
         fprintf ('\n') ;
         fprintf ('                    case GB_%s_opcode :\n', upper (ad)) ;
         fprintf ('\n') ;
-        fprintf ('                        switch (xycode)\n') ;
+        fprintf ('                        switch (xcode)\n') ;
         fprintf ('                        {\n') ;
         for c = nonbool
             n = n + 1 ;

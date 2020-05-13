@@ -23,10 +23,10 @@ function Cout = apply (varargin)
 % is 'transpose' then A is transposed before applying the operator, as
 % C<M> = accum (C, f(A')) where f(...) is the unary operator.
 %
-% See also spfun.
+% See also GrB/spfun.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

@@ -172,7 +172,7 @@ void mexFunction
     GrB_BinaryOp dup = NULL ;
     if (nargin > 5)
     { 
-        dup = gb_mxstring_to_binop (pargin [5], xtype) ;
+        dup = gb_mxstring_to_binop (pargin [5], xtype, xtype) ;
     }
 
     // if dup is NULL, defaults to plus.xtype, below.
@@ -208,7 +208,7 @@ void mexFunction
     if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
-        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
+        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;  // OK:bool
         if (dup == NULL) dup = GrB_LOR ;
         if (expandx)
         { 
@@ -348,21 +348,34 @@ void mexFunction
         }
         OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
     }
-    #ifdef GB_COMPLEX_TYPE
-    else if (xtype == gb_complex_type)
-    {
-        double empty = 0 ;
-        double *X = (nvals == 0) ? &empty : mxGetComplexDoubles (pargin [2]) ;
-        if (dup == NULL) dup = ... ;
+    else if (xtype == GxB_FC32)
+    { 
+        GxB_FC32_t empty = GxB_CMPLXF (0,0) ;
+        GxB_FC32_t *X = &empty ;
+        if (nvals > 0) X = (GxB_FC32_t *) mxGetComplexSingles (pargin [2]) ;
+        if (dup == NULL) dup = GxB_PLUS_FC32 ;
         if (expandx)
-        {
-            X2 = mxMalloc (nvals * sizeof (double complex)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (double complex)) ;
-            X = (double complex *) X2 ;
+        { 
+            X2 = mxMalloc (nvals * sizeof (GxB_FC32_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (GxB_FC32_t)) ;
+            X = (GxB_FC32_t *) X2 ;
         }
-        OK (GrB_Matrix_build_UDT (A, I, J, X, nvals, dup)) ;
+        OK (GxB_Matrix_build_FC32 (A, I, J, X, nvals, dup)) ;
     }
-    #endif
+    else if (xtype == GxB_FC64)
+    { 
+        GxB_FC64_t empty = GxB_CMPLX (0,0) ;
+        GxB_FC64_t *X = &empty ;
+        if (nvals > 0) X = (GxB_FC64_t *) mxGetComplexDoubles (pargin [2]) ;
+        if (dup == NULL) dup = GxB_PLUS_FC64 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (GxB_FC64_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (GxB_FC64_t)) ;
+            X = (GxB_FC64_t *) X2 ;
+        }
+        OK (GxB_Matrix_build_FC64 (A, I, J, X, nvals, dup)) ;
+    }
     else
     {
         ERROR ("unsupported type") ;

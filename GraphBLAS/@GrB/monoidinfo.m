@@ -16,10 +16,9 @@ function monoidinfo (monoid, type)
 % GrB.monoidinfo ('+.double'), or in the second argument,
 % GrB.monoidinfo ('+', 'double').
 %
-% The MATLAB interface to GraphBLAS provides for 44 different
-% monoids.  The valid monoids are: '+', '*', 'max', and 'min' for all
-% but the 'logical' type, and '|', '&', 'xor', and 'eq' for the
-% 'logical' type.
+% The valid monoids for real non-logical types are: '+', '*', 'max', 'min',
+% and 'any'.  For the 'logical' type: '|', '&', 'xor', 'eq', and 'any'.
+% For complex types: '+', '*', and 'any'.
 %
 % Example:
 %
@@ -34,10 +33,8 @@ function monoidinfo (monoid, type)
 % See also GrB.binopinfo, GrB.descriptorinfo, % GrB.selectopinfo,
 % GrB.semiringinfo, GrB.unopinfo.
 
-% FUTURE: add complex monoids
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 0)
     help GrB.monoidinfo

@@ -112,6 +112,8 @@ GrB_Info GB_subassign_05e
         case GB_UINT64_code : GB_WORKER (uint64_t) ;
         case GB_FP32_code   : GB_WORKER (float) ;
         case GB_FP64_code   : GB_WORKER (double) ;
+        case GB_FC32_code   : GB_WORKER (GxB_FC32_t) ;
+        case GB_FC64_code   : GB_WORKER (GxB_FC64_t) ;
         default:
             {
                 // worker for all user-defined types

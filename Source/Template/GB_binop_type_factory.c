@@ -13,7 +13,7 @@
 // #include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*).
 
 {
-    switch (xycode)
+    switch (xcode)
     {
         #ifndef GB_NO_BOOLEAN
         case GB_BOOL_code   : GB_BINOP_WORKER (GB_BINOP_NAME, _bool  )
@@ -28,6 +28,10 @@
         case GB_UINT64_code : GB_BINOP_WORKER (GB_BINOP_NAME, _uint64)
         case GB_FP32_code   : GB_BINOP_WORKER (GB_BINOP_NAME, _fp32  )
         case GB_FP64_code   : GB_BINOP_WORKER (GB_BINOP_NAME, _fp64  )
+        #ifdef GB_COMPLEX
+        case GB_FP32_code   : // TODO
+        case GB_FP64_code   : // TODO
+        #endif
         default: ;
     }
     break ;
@@ -35,4 +39,5 @@
 
 #undef GB_NO_BOOLEAN
 #undef GB_BINOP_NAME
+#undef GB_COMPLEX
 

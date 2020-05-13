@@ -37,7 +37,7 @@
 %   GB_spec_mxv                   - a MATLAB mimic of GrB_mxv
 %   GB_spec_op                    - apply a unary or binary operator
 %   GB_spec_operator              - get the contents of an operator
-%   GB_spec_opsall                - return a list of all operators, classes, and semirings
+%   GB_spec_opsall                - return a list of all operators, types, and semirings
 %   GB_spec_random                - generate random matrix
 %   GB_spec_reduce_to_scalar      - a MATLAB mimic of GrB_reduce (to scalar)
 %   GB_spec_reduce_to_vector      - a MATLAB mimic of GrB_reduce (to vector)

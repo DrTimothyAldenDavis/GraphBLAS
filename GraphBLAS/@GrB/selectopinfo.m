@@ -27,8 +27,8 @@ function selectopinfo (op)
 %   '<'                     C = A (A <  b)
 %   '<='                    C = A (A <= b)
 %
-% All select operators are type-generic, so no '.' appears, as they
-% do for other operators.
+% All select operators are type-generic, so no '.' appears, as they do for
+% other operators.
 %
 % Example:
 %
@@ -38,8 +38,8 @@ function selectopinfo (op)
 % See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
 % GrB.semiringinfo, GrB.unopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 0)
     help GrB.selectopinfo

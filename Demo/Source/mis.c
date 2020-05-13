@@ -57,10 +57,7 @@ GrB_Info mis                    // compute a maximal independent set
     GrB_Vector new_members = NULL ;     // set of new members to iset
     GrB_Vector new_neighbors = NULL ;   // new neighbors to new iset members
     GrB_Vector candidates = NULL ;      // candidate members to iset
-    GrB_Monoid Max = NULL ;
     GrB_Semiring maxSelect1st = NULL ;  // Max/Select1st "semiring"
-    GrB_Monoid Lor = NULL ;
-    GrB_Semiring Boolean = NULL ;       // Boolean semiring
     GrB_Descriptor r_desc = NULL ;
     GrB_Descriptor sr_desc = NULL ;
     GrB_BinaryOp set_random = NULL ;
@@ -80,12 +77,7 @@ GrB_Info mis                    // compute a maximal independent set
     GrB_Vector_new (&iset, GrB_BOOL, n) ;
 
     // create the maxSelect1st semiring
-    GrB_Monoid_new_FP64 (&Max, GrB_MAX_FP64, (double) 0.0) ;
-    GrB_Semiring_new (&maxSelect1st, Max, GrB_FIRST_FP64) ;
-
-    // create the OR-AND-BOOL semiring
-    GrB_Monoid_new_BOOL (&Lor, GrB_LOR, (bool) false) ;
-    GrB_Semiring_new (&Boolean, Lor, GrB_LAND) ;
+    GrB_Semiring_new (&maxSelect1st, GrB_MAX_MONOID_FP64, GrB_FIRST_FP64) ;
 
     // descriptor: C_replace
     GrB_Descriptor_new (&r_desc) ;
@@ -155,7 +147,7 @@ GrB_Info mis                    // compute a maximal independent set
         if (nvals == 0) { break ; }                  // early exit condition
 
         // Neighbors of new members can also be removed from candidates
-        GrB_vxm (new_neighbors, candidates, NULL, Boolean,
+        GrB_vxm (new_neighbors, candidates, NULL, GrB_LOR_LAND_SEMIRING_BOOL,
             new_members, A, NULL) ;
         GrB_Vector_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
             candidates, sr_desc) ;
@@ -179,10 +171,7 @@ GrB_Info mis                    // compute a maximal independent set
     GrB_Vector_free (&new_members) ;
     GrB_Vector_free (&new_neighbors) ;
     GrB_Vector_free (&candidates) ;
-    GrB_Monoid_free (&Max) ;
     GrB_Semiring_free (&maxSelect1st) ;
-    GrB_Monoid_free (&Lor) ;
-    GrB_Semiring_free (&Boolean) ;
     GrB_Descriptor_free (&r_desc) ;
     GrB_Descriptor_free (&sr_desc) ;
     GrB_BinaryOp_free (&set_random) ;

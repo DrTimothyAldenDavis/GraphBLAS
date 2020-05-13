@@ -8,8 +8,8 @@ function C = ge (A, B)
 %
 % See also GrB/lt, GrB/le, GrB/gt, GrB/ne, GrB/eq.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 C = le (B, A) ;
 

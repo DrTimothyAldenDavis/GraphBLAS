@@ -1,7 +1,12 @@
 function codegen_unop_method (unop, op, fcast, ztype, xtype)
 %CODEGEN_UNOP_METHOD create a function to compute C=unop(cast(A))
 %
-% codegen_unop_method (unop, op, ztype, xtype)
+% codegen_unop_method (unop, op, fcast, ztype, xtype)
+%
+%   unop: the name of the operator
+%   op: a string defining the computation
+%   ztype: the type of z for z=f(x)
+%   xtype: the type of x for z=f(x)
 
 f = fopen ('control.m4', 'w') ;
 

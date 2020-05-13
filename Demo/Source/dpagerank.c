@@ -147,7 +147,7 @@ GrB_Info dpagerank          // GrB_SUCCESS or error condition
         // r = ((c*r) * C) + (a * sum (r)) ;
 
         // s = a * sum (r) ;
-        OK (GrB_Vector_reduce_FP64 (&s, NULL, GxB_PLUS_FP64_MONOID, r, NULL)) ;
+        OK (GrB_Vector_reduce_FP64 (&s, NULL, GrB_PLUS_MONOID_FP64, r, NULL)) ;
         s *= a ;
 
         // r = c * r
@@ -166,7 +166,7 @@ GrB_Info dpagerank          // GrB_SUCCESS or error condition
     //--------------------------------------------------------------------------
 
     // s = sum (r)
-    OK (GrB_Vector_reduce_FP64 (&s, NULL, GxB_PLUS_FP64_MONOID, r, NULL)) ;
+    OK (GrB_Vector_reduce_FP64 (&s, NULL, GrB_PLUS_MONOID_FP64, r, NULL)) ;
 
     // r = r / s
     OK (GrB_Vector_apply (r, NULL, NULL, op_div, r, NULL)) ;

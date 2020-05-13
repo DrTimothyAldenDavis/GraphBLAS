@@ -33,8 +33,7 @@ if (Atrans)
 end
 
 % T = op(A)
-[m n] = size (A.matrix) ;
-T.matrix = zeros (m, n, zclass) ;
+T.matrix = GB_spec_zeros (size (A.matrix), zclass) ;
 T.pattern = A.pattern ;
 T.class = zclass ;
 

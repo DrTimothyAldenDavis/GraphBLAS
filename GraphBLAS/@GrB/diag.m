@@ -29,10 +29,10 @@ function C = diag (G, k)
 %   G = diag(GrB(-m:m)) + diag(GrB(f),1) + diag(GrB(f),-1)
 %   nothing = double (A-G)
 %
-% See also diag, spdiags, tril, triu, GrB.select.
+% See also GrB/diag, spdiags, GrB/tril, GrB/triu, GrB.select.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin < 2)
     k = 0 ;

@@ -22,10 +22,10 @@ end
 if (isstruct (A))
     aclass = A.class ;
 else
-    aclass = class (A) ;
+    aclass = GB_spec_type (A) ;
 end
 
-% get the reduce operator. default class is the class of A
+% get the reduce operator. default type is the type of A
 if (isempty (reduce))
     reduce = 'plus'
 end
@@ -60,7 +60,7 @@ end
 
 tclass = reduce_class ;
 [m n] = size (A.matrix) ;
-T.matrix = zeros (m, 1, tclass) ;
+T.matrix = GB_spec_zeros ([m 1], tclass) ;
 T.pattern = zeros (m, 1, 'logical') ;
 T.matrix (:,:) = identity ;
 T.class = tclass ;

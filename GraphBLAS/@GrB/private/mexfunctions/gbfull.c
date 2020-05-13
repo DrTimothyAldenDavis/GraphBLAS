@@ -26,7 +26,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin >= 2 && nargin <= 4 && nargout <= 1,
-        "usage: C = GrB.full (A, type, id, desc)") ;
+        "usage: C = gbfull (A, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
     // get a shallow copy of the input matrix
@@ -86,14 +86,35 @@ void mexFunction
         false) ;
 
     //--------------------------------------------------------------------------
-    // C = first (A, B)
+    // typecast A from float to integer using the MATLAB rules
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix S, T = NULL ;
+    GrB_Type atype ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (gb_is_integer (type) && gb_is_float (atype))
+    {
+        // T = (type) round (A)
+        OK (GrB_Matrix_new (&T, type, nrows, ncols)) ;
+        OK (GxB_Matrix_Option_set (T, GxB_FORMAT, fmt)) ;
+        OK (GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A, NULL)) ;
+        S = T ;
+    }
+    else
+    {
+        // T = A, and let GrB_eWiseAdd do the typecasting
+        S = A ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C = first (S, B)
     //--------------------------------------------------------------------------
 
     GrB_Matrix C ;
     OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
     OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     OK (GrB_eWiseAdd_Matrix_BinaryOp (C, NULL, NULL,
-        gb_first_binop (type), A, B, NULL)) ;
+        gb_first_binop (type), S, B, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace
@@ -102,6 +123,7 @@ void mexFunction
     OK (GrB_Matrix_free (&id)) ;
     OK (GrB_Matrix_free (&B)) ;
     OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Matrix_free (&T)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_dup (A, cclass, method)"
+#define USAGE "C = GB_mex_dup (A, type, method)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -51,26 +51,9 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    mxClassID aclass = GB_mx_Type_to_classID (A->type) ;
 
-    // get cclass and ctype of output matrix
-    mxClassID cclass ;
-    GrB_Type ctype ;
-    if (A->type == Complex)
-    {
-        ctype = Complex ;
-        cclass = mxDOUBLE_CLASS ;
-    }
-    else
-    {
-        cclass = GB_mx_string_to_classID (aclass, PARGIN (1)) ;
-        ctype = GB_mx_classID_to_Type (cclass) ;
-        if (ctype == NULL)
-        {
-            FREE_ALL ;
-            mexErrMsgTxt ("C must be numeric") ;
-        }
-    }
+    // get ctype of output matrix
+    GrB_Type ctype = GB_mx_string_to_Type (PARGIN (1), A->type) ;
 
     // get method
     int GET_SCALAR (2, int, method, 0) ;
@@ -121,6 +104,10 @@ void mexFunction
     else
     {
         // typecast
+        if (A->type == Complex && Complex != GxB_FC64)
+        {
+            A->type = GxB_FC64 ;
+        }
 
         // C = (ctype) A
         // printf ("cast\n") ;

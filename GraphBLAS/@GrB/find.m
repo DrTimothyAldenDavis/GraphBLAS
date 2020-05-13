@@ -21,6 +21,9 @@ function [I, J, X] = find (G, k, search)
 %
 % See also sparse, GrB.build, GrB.extracttuples.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 % FUTURE: add linear indexing
 
 % FUTURE: find (G,k,'first') and find (G,k,'last') are slow, since as
@@ -29,9 +32,6 @@ function [I, J, X] = find (G, k, search)
 % faster to use a mexFunction that directly accesses the opaque content
 % of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
 % the entire matrix.
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin > 1 && ~GrB.isbycol (G))
     % find (G, k) assumes the matrix is stored by column, so reformat G

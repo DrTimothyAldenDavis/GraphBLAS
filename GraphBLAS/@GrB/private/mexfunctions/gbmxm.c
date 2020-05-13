@@ -58,7 +58,7 @@ void mexFunction
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, ctype = NULL ;
+    GrB_Type atype, btype, ctype = NULL ;
     GrB_Matrix C = NULL, M = NULL, A, B ;
 
     if (nmatrices == 2)
@@ -81,6 +81,7 @@ void mexFunction
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
+    OK (GxB_Matrix_type (&btype, B)) ;
     if (C != NULL)
     { 
         OK (GxB_Matrix_type (&ctype, C)) ;
@@ -95,14 +96,14 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        semiring = gb_mxstring_to_semiring (String [0], atype) ;
+        semiring = gb_mxstring_to_semiring (String [0], atype, btype) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum    = gb_mxstring_to_binop    (String [0], ctype) ;
-        semiring = gb_mxstring_to_semiring (String [1], atype) ;
+        accum    = gb_mxstring_to_binop    (String [0], ctype, ctype) ;
+        semiring = gb_mxstring_to_semiring (String [1], atype, btype) ;
     }
 
     //--------------------------------------------------------------------------

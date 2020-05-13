@@ -64,7 +64,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("C failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // get Mask (shallow copy)
     Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", false, false) ;
@@ -98,19 +97,20 @@ void mexFunction
     }
     else
     {
-        if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [3], "semiring",
-            cclass))
+        if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [3], "semiring",  
+            C->type))
         {
             FREE_ALL ;
             mexErrMsgTxt ("semiring failed") ;
         }
     }
 
-    // get accum; default: NOP, default class is class(C)
+    // get accum, if present
+    bool user_complex = (Complex != GxB_FC64)
+        && (C->type == Complex || semiring->add->op->ztype == Complex) ;
     GrB_BinaryOp accum ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [2], "accum",
-        GB_NOP_opcode, cclass, C->type == Complex,
-        semiring->add->op->ztype == Complex))
+        C->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("accum failed") ;

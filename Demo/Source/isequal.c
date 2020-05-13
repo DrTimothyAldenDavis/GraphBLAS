@@ -33,7 +33,6 @@
     {                                                       \
         /* error occured: free workspace and return */      \
         GrB_Matrix_free (&C) ;                              \
-        GrB_Monoid_free (&monoid) ;                         \
         return (info) ;                                     \
     }                                                       \
 }
@@ -53,7 +52,6 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
 {
 
     GrB_Matrix C = NULL ;
-    GrB_Monoid monoid = NULL ;
     GrB_Index nrows1, ncols1, nrows2, ncols2, nvals, nvals1, nvals2 ;
 
     if (result == NULL)
@@ -102,19 +100,11 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
         return (GrB_SUCCESS) ;
     }
 
-    #ifdef GxB_SUITESPARSE_GRAPHBLAS
-    // SuiteSparse has a predefined boolean AND monoid
-    monoid = GxB_LAND_BOOL_MONOID ;
-    #else
-    OK (GrB_Monoid_new_BOOL (&monoid, GrB_LAND, true)) ;
-    #endif
-
     // result = and (C)
-    OK (GrB_Matrix_reduce_BOOL (result, NULL, monoid, C, NULL)) ;
+    OK (GrB_Matrix_reduce_BOOL (result, NULL, GrB_LAND_MONOID_BOOL, C, NULL)) ;
 
     // free workspace and return result
     GrB_Matrix_free (&C) ;
-    GrB_Monoid_free (&monoid) ;
     return (GrB_SUCCESS) ;
 }
 
@@ -135,7 +125,6 @@ GrB_Info isequal            // return GrB_SUCCESS if successful
 )
 {
     GrB_Matrix C = NULL ;
-    GrB_Monoid monoid = NULL ;
     GrB_Type atype, btype ;
     GrB_BinaryOp op ;
 

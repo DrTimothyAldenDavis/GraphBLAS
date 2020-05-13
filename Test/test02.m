@@ -4,13 +4,13 @@ function test02
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 format long g
 
-for k1 = 1:length (classes)
-    aclass = classes {k1} ;
+for k1 = 1:length (types.all)
+    aclass = types.all {k1} ;
 
     for is_hyper = 0:1
         for is_csc = 0:1
@@ -24,8 +24,8 @@ for k1 = 1:length (classes)
             assert (spok (1*A.matrix) == 1) ;
             assert (spok (A.pattern) == 1) ;
 
-            for k2 = 1:length (classes)
-                cclass = classes {k2} ;
+            for k2 = 1:length (types.all)
+                cclass = types.all {k2} ;
                 % typecast to class C
 
                 C = GB_mex_dup (A, cclass) ;
@@ -50,18 +50,21 @@ for k1 = 1:length (classes)
     end
 end
 
-if (GB_mex_have_complex)
-    % duplicate a complex matrix (can't be typecasted)
+for k = [false true]
+    fprintf ('builtin_complex: %d\n', k) ;
+    builtin_complex_set (k) ;
+
+    % duplicate a complex matrix (user-defined can't be typecasted)
     A = GB_mex_random (4, 4, 10, 1) ;
     assert (spok (1*A) == 1) ;
 
     C = GB_mex_dup (A) ;
-    C_matrix = full (C.matrix) ;
+    % C_matrix = full (C.matrix) ;
     assert (isequal (A, C.matrix))  ;
     assert (spok (1*C.matrix) == 1) ;
 
-    C = GB_mex_dup (A, 'double', 1) ;
-    C_matrix = full (C.matrix) ;
+    C = GB_mex_dup (A, 'double complex', 1) ;
+    % C_matrix = full (C.matrix) ;
     assert (isequal (A, C.matrix))  ;
     assert (spok (1*C.matrix) == 1) ;
 end

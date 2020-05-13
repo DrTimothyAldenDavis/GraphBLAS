@@ -1,6 +1,9 @@
 function gbtest40
 %GBTEST40 test sum, prod, max, min, any, all, norm
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 rng ('default')
 
 old = verLessThan ('matlab', '9.6') ;

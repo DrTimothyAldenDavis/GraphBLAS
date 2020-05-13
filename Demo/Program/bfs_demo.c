@@ -142,21 +142,16 @@ int main (int argc, char **argv)
         OK (GrB_Vector_new (&is_reachable, GrB_BOOL, n)) ;
         OK (GrB_Vector_apply (is_reachable, NULL, NULL, GrB_IDENTITY_BOOL,
             v, NULL)) ;
-        OK (GrB_Vector_reduce_UINT64 (&nreachable, NULL, GxB_PLUS_INT32_MONOID,
+        OK (GrB_Vector_reduce_UINT64 (&nreachable, NULL, GrB_PLUS_MONOID_INT32,
             is_reachable, NULL)) ;
         OK (GrB_Vector_free (&is_reachable)) ;
         // OK (GrB_Vector_nvals (&nreachable, v)) ;
         printf ("nodes reachable from node %.16g: %.16g out of %.16g\n",
             (double) s, (double) nreachable, (double) n) ;
 
-//      // note the typecast to int32_t
-//      // using a predefined monoid instead, GrB_MAX_INT32_MONOID.
-//      OK (GrB_Monoid_new_INT32 (&max_monoid, GrB_MAX_INT32,
-//              (int32_t) INT32_MIN)) ;
-
         // find the max BFS level
         int64_t nlevels = -1 ;
-        OK (GrB_Vector_reduce_INT64 (&nlevels, NULL, GxB_MAX_INT32_MONOID,
+        OK (GrB_Vector_reduce_INT64 (&nlevels, NULL, GrB_MAX_MONOID_INT32,
             v, NULL)) ;
         printf ("max BFS level: %.16g\n", (double) nlevels) ;
 

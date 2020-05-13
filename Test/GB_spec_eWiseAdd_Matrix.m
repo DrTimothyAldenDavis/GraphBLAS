@@ -43,8 +43,7 @@ if (Btrans)
 end
 
 % T = A+B, with typecasting
-[nrows, ncols] = size (A.matrix) ;
-T.matrix = zeros (nrows, ncols, zclass) ;
+T.matrix = GB_spec_zeros (size (A.matrix), zclass) ;
 
 % apply the add to entries in the intersection of A and B
 p = A.pattern & B.pattern ;

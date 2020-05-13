@@ -1,21 +1,29 @@
 function gbtest47
 %GBTEST47 test GrB.entries, GrB.nonz, numel
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 rng ('default') ;
 
 A = 100 * rand (4) ;
+X = rand (4) ;
 types = gbtest_types ;
 for k = 1:length (types)
+    fprintf ('.') ;
     type = types {k} ;
-    B = cast (A, type) ;
+    if (isequal (type, 'single complex'))
+        B = complex (single (A), single (X)) ;
+    elseif (isequal (type, 'double complex'))
+        B = complex (A, X) ;
+    else
+        B = gbtest_cast (A, type) ;
+    end
     x1 = GrB.entries (B, 'list') ;
     x2 = unique (nonzeros (B)) ;
     assert (isequal (x1, x2)) ;
-    assert (isequal (type, class (x1))) ;
-    assert (isequal (type, class (x2))) ;
+    assert (isequal (type, GrB.type (x1))) ;
+    assert (isequal (type, GrB.type (x2))) ;
 end
 
 A = magic (4) ;

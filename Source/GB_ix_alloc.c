@@ -37,7 +37,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     // GB_new does not always initialize or even allocate A->p
     ASSERT (A != NULL) ;
 
-    if (nzmax > GB_INDEX_MAX)
+    if (nzmax > GxB_INDEX_MAX)
     { 
         // problem too large
         return (GB_OUT_OF_MEMORY) ;

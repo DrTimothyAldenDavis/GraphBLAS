@@ -21,8 +21,8 @@ function C = sum (G, option)
 %
 % See also GrB/prod, GrB/max, GrB/min.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isequal (GrB.type (G), 'logical'))
     op = '+.int64' ;

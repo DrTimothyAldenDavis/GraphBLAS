@@ -28,10 +28,10 @@ function Cout = vreduce (varargin)
 % any combination.  Cout is returned as a GraphBLAS matrix, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
-% See also GrB.reduce, sum, prod, max, min.
+% See also GrB.reduce, GrB/sum, GrB/prod, GrB/max, GrB/min.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

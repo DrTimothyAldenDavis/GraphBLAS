@@ -67,12 +67,12 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     ASSERT_BINARYOP_OK (dup, "dup operator for assembling duplicates", GB0) ;
     ASSERT (scode <= GB_UDT_code) ;
 
-    if (nvals > GB_INDEX_MAX)
+    if (nvals > GxB_INDEX_MAX)
     { 
         // problem too large
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "problem too large: nvals "GBu" exceeds "GBu,
-            nvals, GB_INDEX_MAX))) ;
+            nvals, GxB_INDEX_MAX))) ;
     }
 
     // check types of dup

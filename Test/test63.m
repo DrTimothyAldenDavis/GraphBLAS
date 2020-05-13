@@ -4,24 +4,25 @@ function test63
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[mult_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+ops = [binops.all binops.real] ;
 
 fprintf ('\n ---------------------------- testing GB_mex_op\n') ;
 
 rng ('default') ;
 
 n_operators = 0 ;
-for k2 = 1:length(mult_ops)
-    mulop = mult_ops {k2} ;
+for k2 = 1:length(ops)
+    mulop = ops {k2} ;
     fprintf ('[%s]', mulop) ;
 
-    for k1 = 1:length (classes)
-        clas = classes {k1} ;
+    for k1 = 1:length (types.real)
+        clas = types.real {k1} ;
 
         % create the op
         clear op
         op.opname = mulop ;
-        op.opclass = clas ;
+        op.optype = clas ;
         % GB_mex_binaryop (op) ;
         fprintf ('.') ;
 

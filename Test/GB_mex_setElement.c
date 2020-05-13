@@ -21,7 +21,6 @@ bool debug_wait = false ;
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&A) ;               \
-    GB_FREE_MEMORY (Xtemp, ni, 2 * sizeof (double)) ; \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -30,13 +29,13 @@ bool debug_wait = false ;
 #endif
 
 // set all elements of a matrix and return if an error is encountered
-#define setEl(name,type)                                                    \
+#define setEl(prefix,name,type)                                             \
 GrB_Info set_ ## name                                                       \
 (GrB_Matrix A, type *X, GrB_Index *I, GrB_Index *J, GrB_Index ni)           \
 {                                                                           \
     for (int64_t k = 0 ; k < ni ; k++)                                      \
     {                                                                       \
-        GrB_Info info = GrB_Matrix_setElement_ ## name                      \
+        GrB_Info info = prefix ## Matrix_setElement_ ## name                \
             (A, AMPERSAND (X [k]), I [k], J [k]) ;                          \
         if (info != GrB_SUCCESS) return (info) ;                            \
     }                                                                       \
@@ -49,34 +48,34 @@ GrB_Info set_ ## name                                                       \
 
 // create all the local set_TYPE functions
 #define AMPERSAND(x) x
-setEl (BOOL   , bool          ) ;
-setEl (INT8   , int8_t        ) ;
-setEl (UINT8  , uint8_t       ) ;
-setEl (INT16  , int16_t       ) ;
-setEl (UINT16 , uint16_t      ) ;
-setEl (INT32  , int32_t       ) ;
-setEl (UINT32 , uint32_t      ) ;
-setEl (INT64  , int64_t       ) ;
-setEl (UINT64 , uint64_t      ) ;
-setEl (FP32   , float         ) ;
-setEl (FP64   , double        ) ;
+setEl (GrB_, BOOL   , bool          ) ;
+setEl (GrB_, INT8   , int8_t        ) ;
+setEl (GrB_, UINT8  , uint8_t       ) ;
+setEl (GrB_, INT16  , int16_t       ) ;
+setEl (GrB_, UINT16 , uint16_t      ) ;
+setEl (GrB_, INT32  , int32_t       ) ;
+setEl (GrB_, UINT32 , uint32_t      ) ;
+setEl (GrB_, INT64  , int64_t       ) ;
+setEl (GrB_, UINT64 , uint64_t      ) ;
+setEl (GrB_, FP32   , float         ) ;
+setEl (GrB_, FP64   , double        ) ;
+setEl (GxB_, FC32   , GxB_FC32_t    ) ;
+setEl (GxB_, FC64   , GxB_FC64_t    ) ;
 #undef  AMPERSAND
 #define AMPERSAND(x) &x
-#if GxB_STDC_VERSION >= 201112L
-setEl (UDT    , double complex) ;
-#endif
+setEl (GrB_, UDT    , GxB_FC64_t) ;
 #undef  AMPERSAND
 
 
 // set all elements of a vector and return if an error is encountered
-#define vsetEl(name,type)                                                   \
+#define vsetEl(prefix,name,type)                                            \
 GrB_Info vset_ ## name                                                      \
 (GrB_Matrix A, type *X, GrB_Index *I, GrB_Index ni)                         \
 {                                                                           \
     GrB_Vector w = (GrB_Vector) A ;                                         \
     for (int64_t k = 0 ; k < ni ; k++)                                      \
     {                                                                       \
-        GrB_Info info = GrB_Vector_setElement_ ## name                      \
+        GrB_Info info = prefix ## Vector_setElement_ ## name                \
             (w, AMPERSAND (X [k]), I [k]) ;                                 \
         if (info != GrB_SUCCESS) return (info) ;                            \
     }                                                                       \
@@ -89,22 +88,22 @@ GrB_Info vset_ ## name                                                      \
 
 // create all the local set_TYPE functions
 #define AMPERSAND(x) x
-vsetEl (BOOL   , bool          ) ;
-vsetEl (INT8   , int8_t        ) ;
-vsetEl (UINT8  , uint8_t       ) ;
-vsetEl (INT16  , int16_t       ) ;
-vsetEl (UINT16 , uint16_t      ) ;
-vsetEl (INT32  , int32_t       ) ;
-vsetEl (UINT32 , uint32_t      ) ;
-vsetEl (INT64  , int64_t       ) ;
-vsetEl (UINT64 , uint64_t      ) ;
-vsetEl (FP32   , float         ) ;
-vsetEl (FP64   , double        ) ;
+vsetEl (GrB_, BOOL   , bool          ) ;
+vsetEl (GrB_, INT8   , int8_t        ) ;
+vsetEl (GrB_, UINT8  , uint8_t       ) ;
+vsetEl (GrB_, INT16  , int16_t       ) ;
+vsetEl (GrB_, UINT16 , uint16_t      ) ;
+vsetEl (GrB_, INT32  , int32_t       ) ;
+vsetEl (GrB_, UINT32 , uint32_t      ) ;
+vsetEl (GrB_, INT64  , int64_t       ) ;
+vsetEl (GrB_, UINT64 , uint64_t      ) ;
+vsetEl (GrB_, FP32   , float         ) ;
+vsetEl (GrB_, FP64   , double        ) ;
+vsetEl (GxB_, FC32   , GxB_FC32_t    ) ;
+vsetEl (GxB_, FC64   , GxB_FC64_t    ) ;
 #undef  AMPERSAND
 #define AMPERSAND(x) &x
-#if GxB_STDC_VERSION >= 201112L
-vsetEl (UDT    , double complex) ;
-#endif
+vsetEl (GrB_, UDT    , GxB_FC64_t) ;
 #undef  AMPERSAND
 
 void mexFunction
@@ -121,7 +120,6 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GB_void *Y ;
     GrB_Type xtype ;
-    GB_void *Xtemp = NULL ;
     GrB_Index *I = NULL, ni = 0, I_range [3] ;
     GrB_Index *J = NULL, nj = 0, J_range [3] ;
     bool is_list ;
@@ -143,7 +141,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    mxClassID aclass = GB_mx_Type_to_classID (A->type) ;
 
     // get I
     if (!GB_mx_mxArray_to_indices (&I, pargin [1], &ni, I_range, &is_list))
@@ -195,21 +192,13 @@ void mexFunction
 
     if (mxIsComplex (pargin [3]))
     {
-        #if GxB_STDC_VERSION >= 201112L
-        // copy the MATLAB complex
         xtype = Complex ;
-        GB_MALLOC_MEMORY (Xtemp, ni, sizeof (double complex)) ;
-        GB_mx_complex_merge (ni, Xtemp, pargin [3]) ;
-        Y = Xtemp ;
-        #else
-        mexErrMsgTxt ("complex type not available") ;
-        #endif
+        Y = mxGetComplexDoubles (pargin [3]) ;
     }
     else
     {
         Y = mxGetData (pargin [3]) ;
-        mxClassID xclass = mxGetClassID (pargin [3]) ;
-        xtype = GB_mx_classID_to_Type (xclass) ;
+        xtype = GB_mx_Type (pargin [3]) ;
         if (xtype == NULL)
         {
             FREE_ALL ;
@@ -244,12 +233,12 @@ void mexFunction
             case GB_UINT64_code : METHOD (vset_UINT64 (A, Y, I, ni)) ; break ;
             case GB_FP32_code   : METHOD (vset_FP32   (A, Y, I, ni)) ; break ;
             case GB_FP64_code   : METHOD (vset_FP64   (A, Y, I, ni)) ; break ;
-            #if GxB_STDC_VERSION >= 201112L
+            case GB_FC32_code   : METHOD (vset_FC32   (A, Y, I, ni)) ; break ;
+            case GB_FC64_code   : METHOD (vset_FC64   (A, Y, I, ni)) ; break ;
             case GB_UDT_code    : METHOD (vset_UDT    (A, Y, I, ni)) ; break ;
-            #endif
             default:
                 FREE_ALL ;
-                mexErrMsgTxt ("unsupported class") ;
+                mexErrMsgTxt ("unsupported type") ;
         }
     }
     else
@@ -268,12 +257,12 @@ void mexFunction
             case GB_UINT64_code : METHOD (set_UINT64 (A, Y, I, J, ni)) ; break ;
             case GB_FP32_code   : METHOD (set_FP32   (A, Y, I, J, ni)) ; break ;
             case GB_FP64_code   : METHOD (set_FP64   (A, Y, I, J, ni)) ; break ;
-            #if GxB_STDC_VERSION >= 201112L
+            case GB_FC32_code   : METHOD (set_FC32   (A, Y, I, J, ni)) ; break ;
+            case GB_FC64_code   : METHOD (set_FC64   (A, Y, I, J, ni)) ; break ;
             case GB_UDT_code    : METHOD (set_UDT    (A, Y, I, J, ni)) ; break ;
-            #endif
             default:
                 FREE_ALL ;
-                mexErrMsgTxt ("unsupported class") ;
+                mexErrMsgTxt ("unsupported type") ;
         }
     }
 

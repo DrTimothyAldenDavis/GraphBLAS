@@ -9,7 +9,8 @@ if (nargin < 1)
     fulltest = 0 ;
 end
 
-[mult_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
+bin_ops = [binops.all binops.real] ;
 
 if (fulltest)
     fprintf ('\n==== exhaustive test for GB_mex_transpose:\n') ;
@@ -66,8 +67,8 @@ for k0 = 1:size (problems,1) ;
         nrows, ncols, nnz, min (Y), max (Y)) ;
 
     % try every class for A
-    for k1 = 1:length (classes)
-        aclass = classes {k1} ;
+    for k1 = 1:length (types.real)
+        aclass = types.real {k1} ;
         A.class = aclass ;
         Cempty.class = aclass ;
         Cempty2.class = aclass ;
@@ -124,34 +125,34 @@ for k0 = 1:size (problems,1) ;
         end
 
         % try every class for Cin
-        for k2 = 1:length (classes)
-            cinclass = classes {k2} ;
+        for k2 = 1:length (types.real)
+            cinclass = types.real {k2} ;
             fprintf ('.') ;
             Cin2.class = cinclass ;
             Cin.class = cinclass ;
 
             % try every operator
-            for k3 = 0:size (mult_ops,1)
+            for k3 = 0:size (bin_ops,1)
                 if (k3 == 0)
                     op = '' ;
-                    nclasses = 1 ;
+                    ntypes = 1 ;
                 else
-                    op = mult_ops {k3,1} ;
-                    nclasses = length (classes) ;
+                    op = bin_ops {k3,1} ;
+                    ntypes = length (types.real) ;
                 end
 
                 % try every operator class
-                for k4 = 1:nclasses
+                for k4 = 1:ntypes
                     if (isempty (op))
-                        opclass = '' ;
+                        optype = '' ;
                     else
-                        opclass = classes {k4} ;
+                        optype = types.real {k4} ;
                     end
 
                     clear accum
                     accum.opname = op ;
-                    accum.opclass = opclass ;
-                    % z = cast (1, opclass) ;
+                    accum.optype = optype ;
+                    % z = cast (1, optype) ;
                     % opint = isinteger (z) || islogical (z) ;
 
                     % C = op (Cin2,A')
@@ -178,7 +179,7 @@ for k0 = 1:size (problems,1) ;
 
                     % try with a Mask (Mask must be sparse; logical and double)
                     for k5 = [1 11]
-                        mask_class = classes {k5} ;
+                        mask_class = types.real {k5} ;
                         M = cast (Mask, mask_class) ;
 
                         % C = op (Cin2,A')

@@ -14,7 +14,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "x = GB_mex_Matrix_extractElement (A, I, J, xclass)"
+#define USAGE "x = GB_mex_Matrix_extractElement (A, I, J, xtype)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -36,8 +36,6 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GB_void *Y = NULL ;
     GB_void *Xtemp = NULL ;
-    mxClassID xclass ;
-    GrB_Type xtype ;
     GrB_Index *I = NULL, ni = 0, I_range [3] ;
     GrB_Index *J = NULL, nj = 0, J_range [3] ;
     bool is_list ;
@@ -59,7 +57,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    mxClassID aclass = GB_mx_Type_to_classID (A->type) ;
 
     // get I
     if (!GB_mx_mxArray_to_indices (&I, pargin [1], &ni, I_range, &is_list))
@@ -89,33 +86,10 @@ void mexFunction
         mexErrMsgTxt ("I and J must be the same size") ;
     }
 
-    // get xclass, default is class (A), and the corresponding xtype
-
-    if (A->type == Complex)
-    {
-        #if GxB_STDC_VERSION >= 201112L
-        // input argument xclass is ignored
-        xtype = Complex ;
-        xclass = mxDOUBLE_CLASS ;
-        // create Xtemp
-        GB_CALLOC_MEMORY (Xtemp, ni, 2 * sizeof (double)) ;
-        #else
-        mexErrMsgTxt ("complex type not available") ;
-        #endif
-    }
-    else
-    {
-        xclass = GB_mx_string_to_classID (aclass, PARGIN (3)) ;
-        xtype = GB_mx_classID_to_Type (xclass) ;
-        if (xtype == NULL)
-        {
-            FREE_ALL ;
-            mexErrMsgTxt ("X must be numeric") ;
-        }
-        // create Y
-        pargout [0] = mxCreateNumericMatrix (ni, 1, xclass, mxREAL) ;
-        Y = mxGetData (pargout [0]) ;
-    }
+    // create Y
+    GrB_Type xtype = GB_mx_string_to_Type (PARGIN (3), A->type) ;
+    pargout [0] = GB_mx_create_full (ni, 1, xtype) ;
+    Y = mxGetData (pargout [0]) ;
 
     size_t s = 2 * sizeof (double) ;
 
@@ -232,28 +206,41 @@ void mexFunction
             }
             break;
 
-        case GB_UDT_code   :
+        case GB_FC32_code   :
+
+            for (int64_t k = 0 ; k < ni ; k++)
             {
-                // user-defined complex type
-                for (int64_t k = 0 ; k < ni ; k++)
-                {
-                    METHOD (GrB_Matrix_extractElement_UDT
-                        (Xtemp +(k*s), A, I [k], J [k])) ;
-                }
+                GxB_FC32_t *X = Y ;
+                METHOD (GxB_Matrix_extractElement_FC32
+                    (&X [k], A, I [k], J [k])) ;
+            }
+            break;
+
+        case GB_FC64_code   :
+
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                GxB_FC64_t *X = Y ;
+                METHOD (GxB_Matrix_extractElement_FC64
+                    (&X [k], A, I [k], J [k])) ;
+            }
+            break;
+
+        case GB_UDT_code   :
+
+            // user-defined Complex
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                GxB_FC64_t *X = Y ;
+                METHOD (GrB_Matrix_extractElement_UDT
+                    (&X [k], A, I [k], J [k])) ;
             }
             break;
 
         default              :
         
             FREE_ALL ;
-            mexErrMsgTxt ("unsupported class") ;
-    }
-
-    if (A->type == Complex)
-    {
-        // create the MATLAB complex X
-        pargout [0] = mxCreateNumericMatrix (ni, 1, mxDOUBLE_CLASS, mxCOMPLEX) ;
-        GB_mx_complex_split (ni, Xtemp, pargout [0]) ;
+            mexErrMsgTxt ("unsupported type") ;
     }
 
     FREE_ALL ;

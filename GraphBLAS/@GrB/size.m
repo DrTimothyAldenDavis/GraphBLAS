@@ -5,8 +5,8 @@ function [arg1, n] = size (G, dim)
 %
 % See also GrB/length, GrB/numel.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargout <= 1)
     arg1 = gbsize (G.opaque) ;

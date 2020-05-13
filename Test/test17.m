@@ -6,18 +6,18 @@ function test17
 
 fprintf ('\n ------------ testing GrB_extractElement\n') ;
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 
 % class of the output X
-for k1 = 4 % 1:length (classes)
-    xclass = classes {k1}  ;
+for k1 = 4 % 1:length (types.real)
+    xclass = types.real {k1}  ;
     fprintf ('\n%s', xclass) ;
 
     % class of the matrix A
-    for k2 = 3 % 1:length (classes)
-        aclass = classes {k2}  ;
+    for k2 = 3 % 1:length (types.real)
+        aclass = types.real {k2}  ;
 
         % create a matrix
         for m = [1 10] % [1 10 25 50]

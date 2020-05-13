@@ -214,13 +214,15 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
 (
     const mxArray *mxstring,            // MATLAB string
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type atype,               // type of A
+    const GrB_Type btype                // type of B
 ) ;
 
 GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 (
     char *opstring,                     // string defining the operator
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type atype,               // type of A
+    const GrB_Type btype                // type of B
 ) ;
 
 GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
@@ -232,14 +234,15 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string
 (
     const mxArray *mxstring,            // MATLAB string
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type atype,               // type of A
+    const GrB_Type btype                // type of B
 ) ;
 
 GrB_Semiring gb_string_to_semiring      // return a semiring from a string
 (
     char *semiring_string,              // string defining the semiring
-    const GrB_Type default_type         // default type if not in the string:
-                                        // type of x,y inputs to mult operator
+    const GrB_Type atype,               // type of A
+    const GrB_Type btype                // type of B
 ) ;
 
 GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
@@ -341,13 +344,13 @@ GrB_Monoid gb_binop_to_monoid           // return monoid from a binary op
 GrB_Monoid gb_string_to_monoid          // return monoid from a string
 (
     char *opstring,                     // string defining the operator
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type type                 // default type if not in the string
 ) ;
 
 GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
 (
     const mxArray *mxstring,            // MATLAB string
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type type                 // default type if not in the string
 ) ;
 
 GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
@@ -430,6 +433,18 @@ bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *b) ;
 
+bool gb_isnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b) ;
+
+bool gb_isnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b) ;
+
+bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b) ;
+
+bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *b) ;
+
 void gb_get_mxargs
 (
     // input:
@@ -457,6 +472,18 @@ double gb_norm              // compute norm (A,kind)
     GrB_Matrix A,
     int64_t norm_kind       // 0, 1, 2, INT64_MAX, or INT64_MIN
 ) ;
+
+GrB_Type gb_default_type        // return the default type to use
+(
+    const GrB_Type atype,       // type of the A matrix
+    const GrB_Type btype        // type of the B matrix
+) ;
+
+bool gb_is_integer (const GrB_Type type) ;
+
+bool gb_is_float (const GrB_Type type) ;
+
+GrB_BinaryOp gb_round_binop (const GrB_Type type) ;
 
 #endif
 

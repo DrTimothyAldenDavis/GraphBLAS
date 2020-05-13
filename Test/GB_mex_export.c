@@ -83,7 +83,7 @@ GrB_Info import_export (GB_Context Context)
             for (int64_t p = 0 ; p < nvals ; p++)
             {
                 printf ("  row %llu value ", Ai [p]) ;
-                GB_code_check (code, Ax + p * asize, stdout, Context) ;
+                GB_code_check (code, Ax + p*asize, 5, stdout, Context) ;
                 printf ("\n") ;
             }
         }
@@ -124,7 +124,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
+                        GB_code_check (code, Ax + p*asize, 5, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -161,7 +161,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p + asize, stdout, Context) ;
+                        GB_code_check (code, Ax + p*asize, 5, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -199,7 +199,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
+                        GB_code_check (code, Ax + p*asize, 5, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -236,7 +236,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
+                        GB_code_check (code, Ax + p*asize, 5, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -327,7 +327,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("C failed") ;
     }
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // import/export
     METHOD (import_export2 (Context)) ;

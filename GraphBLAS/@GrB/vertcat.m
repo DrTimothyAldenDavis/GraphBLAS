@@ -4,13 +4,18 @@ function C = vertcat (varargin)
 % A and B may be GraphBLAS or MATLAB matrices, in any combination.
 % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
 %
-% See also horzcat, GrB/horzcat.
+% If the matrices have different types, the type is determined
+% from the first matrix A.  This differs from MATLAB: S = [true ; pi]
+% is double, not logical.  S = [true ; pi ; int32(1) ; int8(1)] uses
+% the leftmost integer type, so S is int32.
+%
+% See also GrB/horzcat.
 
 % FUTURE: this will be much faster when it is a mexFunction.
 % The version below requires a sort in GrB.build.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % determine the size of each matrix and the size of the result
 nmatrices = length (varargin) ;

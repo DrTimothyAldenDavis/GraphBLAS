@@ -1,6 +1,9 @@
 function gbtest27
 %GBTEST27 test conversion to full
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
 types = gbtest_types ;
 
 rng ('default') ;

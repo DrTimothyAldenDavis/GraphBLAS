@@ -58,8 +58,6 @@ void mexFunction
         mexErrMsgTxt ("C failed") ;
     }
 
-    mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
-
     // get M (shallow copy)
     M = GB_mx_mxArray_to_Matrix (pargin [1], "M", false, false) ;
     if (M == NULL && !mxIsEmpty (pargin [1]))
@@ -76,10 +74,12 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
 
-    // get accum; default: NOP, default class is class(C)
+    // get accum, if present
+    bool user_complex = (Complex != GxB_FC64)
+        && (C->type == Complex || A->type == Complex) ;
     GrB_BinaryOp accum ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [2], "accum",
-        GB_NOP_opcode, cclass, C->type == Complex, A->type == Complex))
+        C->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("accum failed") ;

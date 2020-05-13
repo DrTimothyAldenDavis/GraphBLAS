@@ -124,9 +124,9 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     #ifndef GBCOMPACT
 
         GB_Opcode opcode ;
-        GB_Type_code xycode, zcode ;
+        GB_Type_code xcode, ycode, zcode ;
         if (GB_binop_builtin (C->type, false, A->type, false,
-            accum, false, &opcode, &xycode, &zcode))
+            accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator
             #include "GB_binop_factory.c"

@@ -194,7 +194,7 @@ GrB_Info ipagerank          // GrB_SUCCESS or error condition
 
         // s = ia * sum (r) ;
         uint64_t s ;
-        OK (GrB_Vector_reduce_UINT64 (&s, NULL, GxB_PLUS_UINT64_MONOID,
+        OK (GrB_Vector_reduce_UINT64 (&s, NULL, GrB_PLUS_MONOID_UINT64,
             r, NULL)) ;
         s = s * ia ;
 

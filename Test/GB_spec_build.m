@@ -105,7 +105,7 @@ end
 if (isempty (op))
     op = 'plus' ;
 end
-[opname opclass] = GB_spec_operator (op, class (X)) ;
+[opname optype] = GB_spec_operator (op, GB_spec_type (X)) ;
 
 % get the ordering
 if (nargin < 7)
@@ -129,9 +129,9 @@ J = J (p) ;
 X = X (p) ;
 
 % initialize the matrix S and its pattern
-S.matrix = zeros (nrows, ncols, opclass) ;
+S.matrix = GB_spec_zeros ([nrows ncols], optype) ;
 S.pattern = false (nrows, ncols) ;
-S.class = opclass ;
+S.class = optype ;
 
 % assemble the tuples into S
 for t = 1:nnz
@@ -139,24 +139,24 @@ for t = 1:nnz
     j = 1 + J (t) ;
     if (~S.pattern (i,j))
         % first time S(i,j) is modified: cast x into S
-        S.matrix (i,j) = GB_mex_cast (X (t), opclass) ;
+        S.matrix (i,j) = GB_mex_cast (X (t), optype) ;
         S.pattern (i,j) = true ;
     else
         % a duplicate entry to be assembled with the operator op
         % cast x into the class of S and the operator
-        x = GB_mex_cast (X (t), opclass) ;
-        % apply the operator, result is of class opclass
+        x = GB_mex_cast (X (t), optype) ;
+        % apply the operator, result is of class optype
         S.matrix (i,j) = GB_spec_op (op, S.matrix (i,j), x) ;
     end
 end
 
 % get the sclass
 if (nargin < 8)
-    sclass = opclass ;  % default is opclass
+    sclass = optype ;  % default is optype
 end
 
 % typecast S into the desired class
-if (~isequal (opclass, sclass))
+if (~isequal (optype, sclass))
     S.matrix = GB_mex_cast (S.matrix, sclass) ;
     S.class = sclass ;
 end

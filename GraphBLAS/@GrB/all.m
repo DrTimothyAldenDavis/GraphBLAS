@@ -4,14 +4,14 @@ function C = all (G, option)
 % C = all (G) is true if all entries G are nonzero or true.  If G is a
 % matrix, C is a row vector with C(j) = all (G (:,j)).
 %
-% C = all (G, 'all') is a scalar, true if all entries G are nonzero or true.
+% C = all (G, 'all') is a scalar, true if all entries G are nonzero or true
 % C = all (G, 1) is a row vector with C(j) = all (G (:,j))
 % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
 %
-% See also any, nnz, GrB.entries.
+% See also GrB/any, GrB/nnz, GrB.entries.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n] = size (G) ;
 desc = struct ('in0', 'transpose') ;

@@ -6,7 +6,7 @@ function test14
 
 fprintf ('\ntest14: reduce to column and scalar\n') ;
 
-[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 
@@ -14,8 +14,8 @@ m = 8 ;
 n = 4 ;
 dt = struct ('inp0', 'tran') ;
 
-for k1 = 1:length(classes)
-    aclass = classes {k1} ;
+for k1 = 1:length(types.real)
+    aclass = types.real {k1} ;
     fprintf ('.') ;
     A = GB_spec_random (m, n, 0.3, 100, aclass) ;
     B = GB_spec_random (n, m, 0.3, 100, aclass) ;

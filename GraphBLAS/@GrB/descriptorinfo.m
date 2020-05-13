@@ -20,14 +20,15 @@ function descriptorinfo (d)
 %
 %   d.mask  'default'       use M as the mask (if present)
 %           'complement'    use ~M as the mask
-%           'structural' or 'structure'   use the pattern of M, not its values
+%           'structural' or 'structure'   use the pattern of M
 %           'structural complement'       use the pattern of ~M
 %
-%   d.in0   'default' or 'transpose'    determines A or A' is used
-%   d.in1   'default' or 'transpose'    determines B or B' is used
+%   d.in0   'default' or 'transpose'    determines A or A.' is used
+%   d.in1   'default' or 'transpose'    determines B or B.' is used
+%           FUTURE: add 'conjugate transpose' option
 %
-%   d.axb   'default', 'Gustavson', 'heap', 'hash', or 'dot'.  Determines the
-%            method used in GrB.mxm.  The default is to let GraphBLAS
+%   d.axb   'default', 'Gustavson', 'heap', 'hash', or 'dot'.  Determines
+%            the method used in GrB.mxm.  The default is to let GraphBLAS
 %            determine the method automatically, via a heuristic.
 %
 %   d.kind   For most GrB.methods, this is a string equal to 'default',
@@ -47,10 +48,10 @@ function descriptorinfo (d)
 %               % with no d, or d.kind = 'default'
 %               S = double (GrB.method (...)) :
 %
-%   d.base  A string equal to 'default', 'zero-based', 'one-based',
-%           or 'one-based int'.  The default is 'one-based'.  If d.base is
-%           'zero-based', then indices are zero-based, in the range 0 to n-1,
-%           for a matrix of dimension n.
+%   d.base  A string equal to 'default', 'zero-based', 'one-based', or
+%           'one-based int'.  The default is 'one-based'.  If d.base is
+%           'zero-based', then indices are zero-based, in the range 0 to
+%           n-1, for a matrix of dimension n.
 %
 %   d.format a string, either 'by row' or 'by col', which defines the
 %           format of the GraphBLAS output matrix C.  The following rules
@@ -81,8 +82,8 @@ function descriptorinfo (d)
 % See also GrB.binopinfo, GrB.monoidinfo, GrB.selectopinfo,
 % GrB.semiringinfo, GrB.unopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 0)
     help GrB.descriptorinfo

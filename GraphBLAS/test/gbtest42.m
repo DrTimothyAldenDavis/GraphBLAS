@@ -1,8 +1,8 @@
 function gbtest42
 %GBTEST42 test for nan
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 rng ('default') ;
 types = { 'single', 'double' } ;
@@ -12,7 +12,7 @@ for trial = 1:40
 
     for k1 = 1:length(types)
         atype = types {k1} ;
-        A = cast (full (sprand (4,4,0.5)), atype) ;
+        A = gbtest_cast (full (sprand (4,4,0.5)), atype) ;
         A (A > 0.5) = nan ;
 
         A_nan = zeros (4, 4) ;
@@ -22,7 +22,7 @@ for trial = 1:40
 
         for k2 = 1:length(types)
             xtype = types {k2} ;
-            xnan = cast (nan, xtype) ;
+            xnan = gbtest_cast (nan, xtype) ;
 
             G = GrB.select (A, '==', xnan) ;
             X1 = full (double (G)) ;

@@ -34,6 +34,8 @@ function unopinfo (op, type)
 % tests the condition (x ~= 0), and returns the double value 1.0 if true,
 % or 0.0 if false.
 %
+% TODO fix this description
+%
 % Example:
 %
 %   % valid unary operators
@@ -46,10 +48,8 @@ function unopinfo (op, type)
 % See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
 % GrB.selectopinfo, GrB.semiringinfo.
 
-% FUTURE: add complex unary operators
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (nargin == 0)
     help GrB.unopinfo

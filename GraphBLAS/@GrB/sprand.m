@@ -7,7 +7,10 @@ function C = sprand (G)
 %
 % The entries in C will greater than zero and less than one.
 %
-% See also sprand, sprandn, sprandsym, GrB.random.
+% See also GrB/sprandn, GrB/sprandsym, GrB.random.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 C = GrB.random (G) ;
 

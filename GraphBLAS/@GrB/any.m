@@ -4,14 +4,14 @@ function C = any (G, option)
 % C = any (G) is true if any entry in G is nonzero or true.  If G is a
 % matrix, C is a row vector with C(j) = any (G (:,j)).
 %
-% C = any (G, 'all') is a scalar, true if any entry in G is nonzero or true.
+% C = any (G, 'all') is a scalar, true if any entry in G is nonzero or true
 % C = any (G, 1) is a row vector with C(j) = any (G (:,j))
 % C = any (G, 2) is a column vector with C(i) = any (G (i,:))
 %
-% See also all, nnz, GrB/nnz, GrB.entries, GrB.nonz.
+% See also GrB/all, GrB/nnz, GrB.entries, GrB.nonz.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 desc = struct ('in0', 'transpose') ;
 

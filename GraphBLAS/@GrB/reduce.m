@@ -13,6 +13,8 @@ function Cout = reduce (varargin)
 % type, and '|', '&', 'xor', and 'ne' for the 'logical' type.  See 'help
 % GrB.monoidinfo' for more details.
 %
+% TODO fix this description.
+%
 % The monoid and A arguments are required.  All others are optional.  The
 % op is applied to all entries of the matrix A to reduce them to a single
 % scalar result.
@@ -27,12 +29,10 @@ function Cout = reduce (varargin)
 % any combination.  cout is returned as a GraphBLAS scalar, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
-% See also GrB.vreduce; sum, prod, max, min.
+% See also GrB.vreduce, GrB/sum, GrB/prod, GrB/max, GrB/min.
 
-% FUTURE: add complex monoids.
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)

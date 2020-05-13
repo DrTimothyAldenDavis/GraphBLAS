@@ -4,8 +4,8 @@ function C = uminus (G)
 %
 % See also GrB.apply, GrB/minus, GrB/uplus.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 C = GrB.apply ('-', G) ;
 

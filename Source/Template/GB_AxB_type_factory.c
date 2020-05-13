@@ -17,7 +17,9 @@
 // For the PAIR multiply operator, the monoids MIN, MAX, TIMES, EQ, LAND, 
 // and LOR have been renamed to ANY_PAIR.  See GB_AxB_semiring_builtin.c.
 
-ASSERT (zcode == xycode) ;
+// the additive operator is a monoid, where all types of x,y,z are the same
+ASSERT (zcode == xcode) ;
+ASSERT (zcode == ycode) ;
 
 if (zcode != GB_BOOL_code)
 {
@@ -77,6 +79,10 @@ if (zcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp64  )
+                #if GB_COMPLEX
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
+                #endif
                 default: ;
             }
             break ;
@@ -97,6 +103,10 @@ if (zcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp64  )
+                #if GB_COMPLEX
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
+                #endif
                 default: ;
             }
             break ;
@@ -115,6 +125,10 @@ if (zcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp64  )
+                #if GB_COMPLEX
+                case GB_FC32_code   : // TODO
+                case GB_FC64_code   : // TODO
+                #endif
                 default: ;
             }
             break ;
@@ -143,4 +157,5 @@ else
 
 #undef GB_NO_BOOLEAN
 #undef GB_MULT_NAME
+#undef GB_COMPLEX
 

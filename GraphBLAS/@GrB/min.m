@@ -1,6 +1,5 @@
 function C = min (varargin)
 %MIN Minimum elements of a GraphBLAS or MATLAB matrix.
-%
 % C = min (G) is the smallest entry in the vector G.  If G is a matrix,
 % C is a row vector with C(j) = min (G (:,j)).
 %
@@ -12,23 +11,28 @@ function C = min (varargin)
 % C = min (G, [ ], 1) is a row vector with C(j) = min (G (:,j))
 % C = min (G, [ ], 2) is a column vector with C(i) = min (G (i,:))
 %
-% The indices of the minimum entry, or [C,I] = min (...) in the MATLAB
-% built-in min function, are not computed.  The min (..., nanflag) option
-% is not available; only the 'includenan' behavior is supported.
+% The 2nd output of [C,I] = min (...) in the MATLAB built-in min
+% is not yet supported.  The min (..., nanflag) option is
+% not yet supported; only the 'omitnan' behavior is supported.
 %
-% See also max.
+% Complex matrices are not supported.
+%
+% See also GrB/max.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = varargin {1} ;
-[m,n] = size (G) ;
-
-if (isequal (GrB.type (G), 'logical'))
+type = GrB.type (G) ;
+if (contains (type, 'complex'))
+    error ('complex matrices not supported') ;
+elseif (isequal (type, 'logical'))
     op = '&.logical' ;
 else
     op = 'min' ;
 end
+
+[m, n] = size (G) ;
 desc = struct ('in0', 'transpose') ;
 
 if (nargin == 1)
@@ -38,7 +42,7 @@ if (nargin == 1)
         % C = min (G) for a vector G results in a scalar C
         C = GrB.reduce (op, G) ;
         if (~GrB.isfull (G))
-            C = min (C, 0) ;
+            C = min (C, 0) ;    % recursively, on a scalar
         end
     else
         % C = min (G) reduces each column to a scalar,
@@ -54,21 +58,22 @@ elseif (nargin == 2)
     % C = min (A,B)
     A = varargin {1} ;
     B = varargin {2} ;
+    ctype = GrB.optype (A, B) ;
     if (isscalar (A))
         if (isscalar (B))
             % both A and B are scalars.  Result is also a scalar.
-            C = gb_sparse_comparator (A, op, B) ;
+            C = gb_union_op (op, A, B) ;
         else
             % A is a scalar, B is a matrix
             if (gb_get_scalar (A) < 0)
                 % since A < 0, the result is full
                 [m, n] = size (B) ;
-                % A (1:m,1:n) = A and cast to the type of B
-                A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
+                % A (1:m,1:n) = A and cast to ctype
+                A = GrB.subassign (GrB (m, n, ctype), A) ;
             else
                 % since A >= 0, the result is sparse.  Expand the scalar A
                 % to the pattern of B.
-                A = GrB.expand (A, B) ;
+                A = GrB.expand (GrB (A, ctype), B) ;
             end
             C = GrB.eadd (A, op, B) ;
         end
@@ -78,17 +83,17 @@ elseif (nargin == 2)
             if (gb_get_scalar (B) < 0)
                 % since B < 0, the result is full
                 [m, n] = size (A) ;
-                % B (1:m,1:n) = B and cast to the type of A
-                B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
+                % B (1:m,1:n) = B and cast to ctype
+                B = GrB.subassign (GrB (m, n, ctype), B) ;
             else
                 % since B >= 0, the result is sparse.  Expand the scalar B
                 % to the pattern of A.
-                B = GrB.expand (B, A) ;
+                B = GrB.expand (GrB (B, ctype), A) ;
             end
             C = GrB.eadd (A, op, B) ;
         else
             % both A and B are matrices.  Result is sparse.
-            C = gb_sparse_comparator (A, op, B) ;
+            C = gb_union_op (op, A, B) ;
         end
     end
 
