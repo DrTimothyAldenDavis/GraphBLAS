@@ -9,7 +9,7 @@ unsigned = (type (1) == 'u') ;
 switch (type)
     case 'bool'
         fname = 'bool' ;
-        bits = 1 ;
+        bits = 8 ;
     case 'int8_t'
         fname = 'int8' ;
         bits = 8 ;
