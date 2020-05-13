@@ -96,6 +96,12 @@
 #define GB_FC32_isne(x,y) GxB_CMPLXF ((float) GB_FC32_ne (x,y), 0)
 #define GB_FC64_isne(x,y) GxB_CMPLX  ((float) GB_FC64_ne (x,y), 0)
 
+#define GB_FC32_eq0(x) ((crealf(x) == 0) && (cimagf(x) == 0))
+#define GB_FC64_eq0(x) ((creal (x) == 0) && (cimag (x) == 0))
+
+#define GB_FC32_ne0(x) ((crealf(x) != 0) || (cimagf(x) != 0))
+#define GB_FC64_ne0(x) ((creal (x) != 0) || (cimag (x) != 0))
+
 //------------------------------------------------------------------------------
 // division by zero
 //------------------------------------------------------------------------------

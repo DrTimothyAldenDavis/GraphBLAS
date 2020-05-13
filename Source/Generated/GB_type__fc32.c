@@ -20,10 +20,10 @@
 // C<M>=x (C is dense): GB_Cdense_05d__fc32
 // C<A>=A (C is dense): GB_Cdense_06d__fc32
 
-// C type:   float complex
+// C type:   GxB_FC32_t
 
 #define GB_CTYPE \
-    float complex
+    GxB_FC32_t
 
 #define GB_CX(p) Cx [p]
 
@@ -63,7 +63,7 @@ GrB_Info GB_Cdense_05d__fc32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    float complex cwork = (*((float complex *) p_cwork)) ;
+    GxB_FC32_t cwork = (*((GxB_FC32_t *) p_cwork)) ;
     #include "GB_dense_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif

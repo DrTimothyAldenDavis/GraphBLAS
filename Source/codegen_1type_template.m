@@ -6,7 +6,7 @@ function codegen_1type_method (xtype)
 f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
-fprintf ('%-15s:  suffix: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
+fprintf ('%-11s:  suffix: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
 
 % function names
 fprintf (f, 'define(`GB_Cdense_05d'', `GB_Cdense_05d__%s'')\n', fname) ;

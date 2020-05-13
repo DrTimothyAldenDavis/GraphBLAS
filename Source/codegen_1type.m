@@ -29,8 +29,8 @@ codegen_1type_template ('uint32_t') ;
 codegen_1type_template ('uint64_t') ;
 codegen_1type_template ('float') ;
 codegen_1type_template ('double') ;
-codegen_1type_template ('float complex') ;
-codegen_1type_template ('double complex') ;
+codegen_1type_template ('GxB_FC32_t') ;
+codegen_1type_template ('GxB_FC64_t') ;
 
 fprintf ('\n') ;
 

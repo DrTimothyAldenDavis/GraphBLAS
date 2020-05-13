@@ -38,8 +38,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_nonzombie, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_nonzombie, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_nonzombie, _fp64  , double  )
-            case GB_FC32_code   : // TODO
-            case GB_FC64_code   : // TODO
+            case GB_FC32_code   : GB_SEL_WORKER (_nonzombie, _fc32, GxB_FC32_t)
+            case GB_FC64_code   : GB_SEL_WORKER (_nonzombie, _fc64, GxB_FC64_t)
             default             : GB_SEL_WORKER (_nonzombie, _any   , GB_void )
         }
         break ;
@@ -60,8 +60,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_nonzero, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_nonzero, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_nonzero, _fp64  , double  )
-            case GB_FC32_code   : // TODO
-            case GB_FC64_code   : // TODO
+            case GB_FC32_code   : GB_SEL_WORKER (_nonzero, _fc32, GxB_FC32_t)
+            case GB_FC64_code   : GB_SEL_WORKER (_nonzero, _fc64, GxB_FC64_t)
             default             : GB_SEL_WORKER (_nonzero, _any   , GB_void )
         }
         break ;
@@ -81,8 +81,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_eq_zero, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_eq_zero, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_eq_zero, _fp64  , double  )
-            case GB_FC32_code   : // TODO
-            case GB_FC64_code   : // TODO
+            case GB_FC32_code   : GB_SEL_WORKER (_eq_zero, _fc32, GxB_FC32_t)
+            case GB_FC64_code   : GB_SEL_WORKER (_eq_zero, _fc64, GxB_FC64_t)
             default             : GB_SEL_WORKER (_eq_zero, _any   , GB_void )
         }
         break ;
@@ -167,8 +167,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_ne_thunk, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_ne_thunk, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_ne_thunk, _fp64  , double  )
-            case GB_FC32_code   : // TODO
-            case GB_FC64_code   : // TODO
+            case GB_FC32_code   : GB_SEL_WORKER (_ne_thunk, _fc32, GxB_FC32_t)
+            case GB_FC64_code   : GB_SEL_WORKER (_ne_thunk, _fc64, GxB_FC64_t)
             default             : GB_SEL_WORKER (_ne_thunk, _any   , GB_void )
         }
         break ;
@@ -189,8 +189,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_eq_thunk, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_eq_thunk, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_eq_thunk, _fp64  , double  )
-            case GB_FC32_code   : // TODO
-            case GB_FC64_code   : // TODO
+            case GB_FC32_code   : GB_SEL_WORKER (_eq_thunk, _fc32, GxB_FC32_t)
+            case GB_FC64_code   : GB_SEL_WORKER (_eq_thunk, _fc64, GxB_FC64_t)
             default             : GB_SEL_WORKER (_eq_thunk, _any   , GB_void )
         }
         break ;
