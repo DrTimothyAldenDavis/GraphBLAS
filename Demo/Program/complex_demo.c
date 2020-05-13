@@ -36,9 +36,16 @@ void print_complex_matrix (GrB_Matrix A, char *name)
 
     GrB_Index *I = malloc (MAX (nentries,1) * sizeof (GrB_Index)) ;
     GrB_Index *J = malloc (MAX (nentries,1) * sizeof (GrB_Index)) ;
-    double complex *X = malloc (MAX (nentries,1) * sizeof (double complex)) ;
+    GxB_FC64_t *X = malloc (MAX (nentries,1) * sizeof (GxB_FC64_t)) ;
 
-    GrB_Matrix_extractTuples_UDT (I, J, X, &nentries, A) ;
+    if (Complex == GxB_FC64)
+    {
+        GxB_Matrix_extractTuples_FC64 (I, J, X, &nentries, A) ;
+    }
+    else
+    {
+        GrB_Matrix_extractTuples_UDT (I, J, X, &nentries, A) ;
+    }
 
     printf ("%s = sparse (%.16g,%.16g) ;\n", name,
         (double) nrows, (double) ncols) ;
@@ -69,7 +76,18 @@ int main (int argc, char **argv)
     int nthreads ;
     GxB_Global_Option_get (GxB_NTHREADS, &nthreads) ;
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
-    Complex_init (false) ;  // user-defined, not GxB_FC64, just as a demo
+
+    bool predefined = (argc > 1) ;
+    if (predefined)
+    {
+        fprintf (stderr, "Using pre-defined GxB_FC64 complex type\n") ;
+    }
+    else
+    {
+        fprintf (stderr, "Using user-defined Complex type\n") ;
+    }
+
+    Complex_init (predefined) ;
 
     // generate random matrices A and B
     simple_rand_seed (1) ;

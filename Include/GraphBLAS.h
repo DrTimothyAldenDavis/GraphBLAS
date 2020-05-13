@@ -107,7 +107,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 1, 2020"
+#define GxB_IMPLEMENTATION_DATE "May 13, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1022,7 +1022,7 @@ GB_PUBLIC GrB_BinaryOp
     GxB_BGET_UINT64,    GxB_BSET_UINT64,    GxB_BCLR_UINT64 ;
 
 //------------------------------------------------------------------------------
-// z=f(x,y) where x and z have the same type, but y is GrB_INT8
+// z=f(x,y) where z and x have the same type, but y is GrB_INT8
 //------------------------------------------------------------------------------
 
     // z = bitshift (x,y) computes z = x left-shifted by y bits if y >= 0, or z

@@ -84,7 +84,7 @@ inline void GB (MINV_f) (GB_TYPE *z, const GB_TYPE *x)
         (*z) = 1 / (*x) ;
     #elif defined ( GB_DOUBLE )
         (*z) = 1 / (*x) ;
-    #if defined ( GB_FLOAT_COMPLEX )
+    #elif defined ( GB_FLOAT_COMPLEX )
         (*z) = GB_FC32_minv (*x) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
         (*z) = GB_FC64_minv (*x) ;
@@ -557,7 +557,7 @@ inline void GB (POW_f) (GB_Z_X_Y_ARGS)
         #elif ( GB_BITS == 64)
             (*z) = GB_pow_int64 ((*x), (*y)) ;
         #endif
-    #else
+    #elif defined ( GB_UNSIGNED_INT )
         #if ( GB_BITS == 8)
             (*z) = GB_pow_uint8 ((*x), (*y)) ;
         #elif ( GB_BITS == 16)
@@ -766,7 +766,7 @@ GB_PUBLIC struct GB_BinaryOp_opaque
         #if defined ( GB_SIGNED_INT )
 
             #if ( GB_BITS == 8)
-                (*z) = GB_bitshift_int8 ((*x), k)
+                (*z) = GB_bitshift_int8 ((*x), k) ;
             #elif ( GB_BITS == 16)
                 (*z) = GB_bitshift_int16 ((*x), k) ;
             #elif ( GB_BITS == 32)

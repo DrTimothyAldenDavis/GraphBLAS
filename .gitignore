@@ -47,6 +47,7 @@ Demo/tri_demo.out
 Demo/wildtype_demo.out
 Demo/*.log
 Demo/complex_demo_out.m
+Demo/complex_demo_out2.m
 Demo/import_demo.out
 Demo/t1.out
 Demo/t2.out

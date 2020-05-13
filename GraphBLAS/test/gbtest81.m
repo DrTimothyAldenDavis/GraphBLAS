@@ -88,24 +88,8 @@ for m = [1 5 10 ]
                     (isequal (op, 'expm1') || isequal (op, 'log1p')))
                     % log1p and expm1 are not accurate in GraphBLAS
                     % for the complex case
-
-                    if (err >= 1e-5)
-                        op
-                        A
-                        C1
-                        C2
-                    end
-
                     assert (err < 1e-5)
                 else
-
-                    if (err >= 1e-13)
-                        op
-                        A
-                        C1
-                        C2
-                        save gunk op A C1 C2
-                    end
                     assert (err < 1e-13)
                 end
             end
@@ -169,7 +153,6 @@ for m = [1 5 10 ]
                         otherwise
                             error ('unknown') ;
                     end
-                    save gunk C1 C2 A B op
                     assert (gbtest_err (C1, C2) < 1e-12)
                 end
 

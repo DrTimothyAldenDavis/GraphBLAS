@@ -180,7 +180,6 @@ for trial = 1:21
     assert (gbtest_eq (b == MA, b == GA)) ;
     assert (gbtest_eq (b ~= MA, b ~= GA)) ;
     if (~islogical (MA))
-        save gunk b MA GA tol
         assert (gbtest_err (b .^ MA, b .^ GA) < tol) ;
     end
 
