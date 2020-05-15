@@ -136,25 +136,25 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     bool done = false ;
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
-
-    #define GB_AemultB(mult,xyname) GB_AemultB_ ## mult ## xyname
-
-    #define GB_BINOP_WORKER(mult,xyname)                            \
-    {                                                               \
-        info = GB_AemultB(mult,xyname) (C, M, Mask_struct, A, B,    \
-            C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
-        done = (info != GrB_NO_VALUE) ;                             \
-    }                                                               \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
     #ifndef GBCOMPACT
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_AemultB(mult,xyname) GB_AemultB_ ## mult ## xyname
+
+        #define GB_BINOP_WORKER(mult,xyname)                            \
+        {                                                               \
+            info = GB_AemultB(mult,xyname) (C, M, Mask_struct, A, B,    \
+                C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
+            done = (info != GrB_NO_VALUE) ;                             \
+        }                                                               \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
@@ -237,35 +237,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             return (info) ;
         }
     }
-
-#if 0
-    // see GB_hypermatrix_prune
-    if (C_is_hyper)
-    {
-        // create new Cp_new and Ch_new arrays, with no empty vectors
-        int64_t *GB_RESTRICT Cp_new = NULL ;
-        int64_t *GB_RESTRICT Ch_new = NULL ;
-        int64_t nvec_new ;
-        info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
-            Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_MATRIX_FREE (&C) ;
-            return (info) ;
-        }
-        // transplant the new hyperlist into C
-        GB_FREE_MEMORY (C->p, Cnvec+1, sizeof (int64_t)) ;
-        // do not free C->h since it is a shallow copy
-        ASSERT (C->h_shallow) ;
-        C->p = Cp_new ;
-        C->h = Ch_new ;
-        C->nvec = nvec_new ;
-        C->plen = nvec_new ;
-        C->h_shallow = false ;
-        ASSERT (C->nvec == C->nvec_nonempty) ;
-    }
-#endif
 
     //--------------------------------------------------------------------------
     // return result

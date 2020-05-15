@@ -845,12 +845,6 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
 
     //--------------------------------------------------------------------------
 
-            case GB_NOP_opcode  :
-            case GB_USER_opcode :
-
-                // no operation is requested so return NULL, or user-defined
-                break ;
-
             default : 
                 mexWarnMsgIdAndTxt ("GB:warn","unknown unary operator") ;
                 return (false) ;

@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumX__bshift_uint8
     #else
     
     { 
-        uint8_t ywork = (*((uint8_t *) p_ywork)) ;
+        int8_t ywork = (*((int8_t *) p_ywork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

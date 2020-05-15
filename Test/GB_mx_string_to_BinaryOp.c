@@ -1037,12 +1037,6 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
                 }
                 break ;
 
-            case GB_NOP_opcode  :
-            case GB_USER_opcode :
-
-                // no operation is requested so return NULL, or user-defined
-                break ;
-
             default : 
                 mexWarnMsgIdAndTxt ("GB:warn","unknown binary operator") ;
                 return (false) ;

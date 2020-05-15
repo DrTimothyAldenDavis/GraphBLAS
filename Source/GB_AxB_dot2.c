@@ -244,38 +244,38 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     bool done = false ;
 
-#ifndef GBCOMPACT
+    #ifndef GBCOMPACT
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-    #define GB_Adot2B(add,mult,xyname) GB_Adot2B_ ## add ## mult ## xyname
+        #define GB_Adot2B(add,mult,xyname) GB_Adot2B_ ## add ## mult ## xyname
 
-    #define GB_AxB_WORKER(add,mult,xyname)                              \
-    {                                                                   \
-        info = GB_Adot2B (add,mult,xyname) (C, M, Mask_struct,          \
-            Aslice, A_is_pattern, B, B_is_pattern, B_slice,             \
-            C_counts, nthreads, naslice, nbslice) ;                     \
-        done = (info != GrB_NO_VALUE) ;                                 \
-    }                                                                   \
-    break ;
+        #define GB_AxB_WORKER(add,mult,xyname)                              \
+        {                                                                   \
+            info = GB_Adot2B (add,mult,xyname) (C, M, Mask_struct,          \
+                Aslice, A_is_pattern, B, B_is_pattern, B_slice,             \
+                C_counts, nthreads, naslice, nbslice) ;                     \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
+        break ;
 
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
-    GB_Opcode mult_opcode, add_opcode ;
-    GB_Type_code xcode, ycode, zcode ;
+        GB_Opcode mult_opcode, add_opcode ;
+        GB_Type_code xcode, ycode, zcode ;
 
-    if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
-        flipxy, &mult_opcode, &add_opcode, &xcode, &ycode, &zcode))
-    { 
-        #include "GB_AxB_factory.c"
-    }
-    ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
+        if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
+            flipxy, &mult_opcode, &add_opcode, &xcode, &ycode, &zcode))
+        { 
+            #include "GB_AxB_factory.c"
+        }
+        ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
-#endif
+    #endif
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, with typecasting

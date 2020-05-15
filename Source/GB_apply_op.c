@@ -48,31 +48,37 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
-
-    // FUTURE:: these operators could be renamed:
-    // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
-    // GrB_MINV_BOOL to GxB_ONE_BOOL.
-    // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
-    // and then these workers would not need to be created.
-
-    #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
-
-    #define GB_WORKER(op,zname,ztype,aname,atype)                           \
-    {                                                                       \
-        GrB_Info info = GB_unop (op,zname,aname) ((ztype *) Cx,             \
-            (atype *) Ax, anz, nthreads) ;                                  \
-        if (info == GrB_SUCCESS) return ;                                   \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
+    // built-in unary operators
     //--------------------------------------------------------------------------
 
     #ifndef GBCOMPACT
-    #include "GB_unaryop_factory.c"
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        // FUTURE:: these operators could be renamed:
+        // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
+        // GrB_MINV_BOOL to GxB_ONE_BOOL.
+        // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
+        // and then these workers would not need to be created.
+
+        #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
+
+        #define GB_WORKER(op,zname,ztype,aname,atype)                   \
+        {                                                               \
+            GrB_Info info = GB_unop (op,zname,aname) ((ztype *) Cx,     \
+                (atype *) Ax, anz, nthreads) ;                          \
+            if (info == GrB_SUCCESS) return ;                           \
+        }                                                               \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        #include "GB_unaryop_factory.c"
+
     #endif
 
     //--------------------------------------------------------------------------

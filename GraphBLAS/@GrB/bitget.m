@@ -44,8 +44,15 @@ function C = bitget (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (A) || ~isreal (B))
+atype = GrB.type (A) ;
+btype = GrB.type (B) ;
+
+if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
+end
+
+if (isequal (atype, 'logical') || isequal (btype, 'logical'))
+    error ('inputs must not be logical') ;
 end
 
 if (nargin < 3)
@@ -57,14 +64,17 @@ if (~contains (assumedtype, 'int'))
 end
 
 % C will have the same type as A on input
-ctype = GrB.type (A) ;
+ctype = atype ;
 
 % determine the type of A
-if (isfloat (A))
+if (isequal (atype, 'double') || isequal (atype, 'single'))
     A = GrB (A, assumedtype) ;
     atype = assumedtype ;
-else
-    atype = GrB.type (A) ;
+end
+
+% ensure B has the right type
+if (~isequal (btype, atype))
+    B = GrB (B, atype) ;
 end
 
 % extract the bits from each entry of A

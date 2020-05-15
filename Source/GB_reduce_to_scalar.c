@@ -123,36 +123,30 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     {
 
         //----------------------------------------------------------------------
-        // sum up the entries; no typecasting needed
+        // reduce to scalar via built-in operator
         //----------------------------------------------------------------------
-
-        // There are 44 common cases of this function for built-in types and
-        // operators.  Four associative operators: MIN, MAX, PLUS, and TIMES
-        // with 10 types (int*, uint*, float, and double), and four logical
-        // operators (OR, AND, XOR, EQ) with a boolean type of C.  All 44 are
-        // hard-coded below via a switch factory.  If the case is not handled
-        // by the switch factory, 'done' remains false.  The hard-coded workers
-        // do no typecasting at all.
 
         bool done = false ;
 
-        // define the worker for the switch factory
-
-        #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
-
-        #define GB_RED_WORKER(opname,aname,atype)                       \
-        {                                                               \
-            info = GB_red (opname, aname) ((atype *) s, A, W,           \
-                ntasks, nthreads) ;                                     \
-            done = (info != GrB_NO_VALUE) ;                             \
-        }                                                               \
-        break ;
-
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
-
         #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
+
+            #define GB_RED_WORKER(opname,aname,atype)                       \
+            {                                                               \
+                info = GB_red (opname, aname) ((atype *) s, A, W,           \
+                    ntasks, nthreads) ;                                     \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
 
             // controlled by opcode and typecode
             GB_Opcode opcode = reduce->op->opcode ;

@@ -5,13 +5,15 @@ function gbtest42
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 rng ('default') ;
-types = { 'single', 'double' } ;
+types = { 'single', 'double', 'single complex', 'double complex' } ;
 
-for trial = 1:40
-    fprintf ('.') ;
+for k1 = 1:length(types)
+    atype = types {k1} ;
+    fprintf ('\n%s ', atype) ;
 
-    for k1 = 1:length(types)
-        atype = types {k1} ;
+    for trial = 1:40
+        fprintf ('.') ;
+
         A = gbtest_cast (full (sprand (4,4,0.5)), atype) ;
         A (A > 0.5) = nan ;
 

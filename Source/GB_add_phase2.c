@@ -140,33 +140,32 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
 #ifndef GBCOMPACT
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-    #define GB_AaddB(mult,xyname) GB_AaddB_ ## mult ## xyname
+        #define GB_AaddB(mult,xyname) GB_AaddB_ ## mult ## xyname
 
-    #define GB_BINOP_WORKER(mult,xyname)                            \
-    {                                                               \
-        info = GB_AaddB(mult,xyname) (C, M, Mask_struct, A, B, Ch_is_Mh, \
-            C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
-        done = (info != GrB_NO_VALUE) ;                             \
-    }                                                               \
-    break ;
+        #define GB_BINOP_WORKER(mult,xyname)                                 \
+        {                                                                    \
+            info = GB_AaddB(mult,xyname) (C, M, Mask_struct, A, B, Ch_is_Mh, \
+                C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;        \
+            done = (info != GrB_NO_VALUE) ;                                  \
+        }                                                                    \
+        break ;
 
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
-    GB_Opcode opcode ;
-    GB_Type_code xcode, ycode, zcode ;
-
-    if (GB_binop_builtin (A->type, false, B->type, false, op,
-        false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
-    { 
-        #include "GB_binop_factory.c"
-        ASSERT (done) ;
-    }
+        GB_Opcode opcode ;
+        GB_Type_code xcode, ycode, zcode ;
+        if (GB_binop_builtin (A->type, false, B->type, false, op,
+            false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
+        { 
+            #include "GB_binop_factory.c"
+            ASSERT (done) ;
+        }
 
 #endif
 

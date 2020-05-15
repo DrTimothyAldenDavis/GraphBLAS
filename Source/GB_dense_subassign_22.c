@@ -73,25 +73,30 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
     cast_A_to_Y (ywork, scalar, atype->size) ;
 
     //--------------------------------------------------------------------------
-    // define the worker for the switch factory
+    // C += x, scalar accum into dense, with built-in binary operators
     //--------------------------------------------------------------------------
 
     bool done = false ;
 
-    #define GB_Cdense_accumX(accum,xyname) GB_Cdense_accumX_ ## accum ## xyname
-
-    #define GB_BINOP_WORKER(accum,xyname)                                   \
-    {                                                                       \
-        info = GB_Cdense_accumX(accum,xyname) (C, ywork, nthreads) ;        \
-        done = (info != GrB_NO_VALUE) ;                                     \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
     #ifndef GBCOMPACT
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_Cdense_accumX(accum,xyname) \
+            GB_Cdense_accumX_ ## accum ## xyname
+
+        #define GB_BINOP_WORKER(accum,xyname)                               \
+        {                                                                   \
+            info = GB_Cdense_accumX(accum,xyname) (C, ywork, nthreads) ;    \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
@@ -99,6 +104,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
             &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator
+            printf ("GB_Cdense_accumX builtin:\n") ;
             #include "GB_binop_factory.c"
         }
 

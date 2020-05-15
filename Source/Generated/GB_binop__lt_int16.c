@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumX__lt_int16
     #else
     #if 0
     { 
-        bool ywork = (*((bool *) p_ywork)) ;
+        int16_t ywork = (*((int16_t *) p_ywork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

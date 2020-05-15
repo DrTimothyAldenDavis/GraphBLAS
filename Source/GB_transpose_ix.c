@@ -29,33 +29,38 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 )
 { 
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
-
     GrB_Info info ;
-
-    #define GB_tran(zname,aname) GB_tran__identity ## zname ## aname
-
-    #define GB_WORKER(ignore1,zname,ztype,aname,atype)                      \
-    {                                                                       \
-        info = GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice,       \
-            naslice) ;                                                      \
-        if (info == GrB_SUCCESS) return ;                                   \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
-    // switch factory for two types, controlled by code1 and code2
     GrB_Type ctype = C->type ;
     GB_Type_code code1 = ctype->code ;          // defines ztype
     GB_Type_code code2 = A->type->code ;        // defines atype
 
+    //--------------------------------------------------------------------------
+    // built-in worker: transpose and typecast
+    //--------------------------------------------------------------------------
+
     #ifndef GBCOMPACT
-    #include "GB_2type_factory.c"
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_tran(zname,aname) GB_tran__identity ## zname ## aname
+
+        #define GB_WORKER(ignore1,zname,ztype,aname,atype)                  \
+        {                                                                   \
+            info = GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice,   \
+                naslice) ;                                                  \
+            if (info == GrB_SUCCESS) return ;                               \
+        }                                                                   \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        // switch factory for two built-in types, controlled by code1 and code2
+        #include "GB_2type_factory.c"
+
     #endif
 
     //--------------------------------------------------------------------------

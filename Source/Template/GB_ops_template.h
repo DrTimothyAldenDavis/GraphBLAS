@@ -465,9 +465,9 @@ inline void GB (ANY_f) (GB_Z_X_Y_ARGS)      // same as SECOND
 inline void GB (PLUS_f) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_FC32_CplusC (*x,*y) ;
+        (*z) = GB_FC32_add (*x,*y) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_FC64_CplusC (*x,*y) ;
+        (*z) = GB_FC64_add (*x,*y) ;
     #else
         (*z) = (*x) + (*y) ;
     #endif
@@ -476,9 +476,9 @@ inline void GB (PLUS_f) (GB_Z_X_Y_ARGS)
 inline void GB (MINUS_f) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_FC32_CminusC (*x,*y) ;
+        (*z) = GB_FC32_minus (*x,*y) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_FC64_CminusC (*x,*y) ;
+        (*z) = GB_FC64_minus (*x,*y) ;
     #else
         (*z) = (*x) - (*y) ;
     #endif
@@ -487,9 +487,9 @@ inline void GB (MINUS_f) (GB_Z_X_Y_ARGS)
 inline void GB (RMINUS_f) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_FC32_CminusC (*y,*x) ;
+        (*z) = GB_FC32_minus (*y,*x) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_FC64_CminusC (*y,*x) ;
+        (*z) = GB_FC64_minus (*y,*x) ;
     #else
         (*z) = (*y) - (*x) ;
     #endif
@@ -498,9 +498,9 @@ inline void GB (RMINUS_f) (GB_Z_X_Y_ARGS)
 inline void GB (TIMES_f) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_FC32_CtimesC (*x,*y) ;
+        (*z) = GB_FC32_mul (*x,*y) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_FC64_CtimesC (*x,*y) ;
+        (*z) = GB_FC64_mul (*x,*y) ;
     #else
         (*z) = (*x) * (*y) ;
     #endif

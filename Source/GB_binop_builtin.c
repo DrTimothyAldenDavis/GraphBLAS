@@ -62,6 +62,12 @@ bool GB_binop_builtin               // true if binary operator is builtin
         op_ztype = op->ztype ;
     }
 
+    if (*opcode >= GB_USER_opcode)
+    { 
+        // the binary operator is user-defined
+        return (false) ;
+    }
+
     // This function requires A and B to have the same built-in type, and they
     // must match the types x,y for the binary operator.  If this condition
     // doesn't hold, punt to the generic function.
@@ -72,6 +78,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         { 
             // A is a user-defined type, or its type does not match the input
             // to the operator
+            printf ("A type wrong\n") ;
             return (false) ;
         }
     }
@@ -83,23 +90,9 @@ bool GB_binop_builtin               // true if binary operator is builtin
         { 
             // B is a user-defined type, or its type does not match the input
             // to the operator
+            printf ("A type wrong\n") ;
             return (false) ;
         }
-    }
-
-    if (!A_is_pattern && !B_is_pattern)
-    {
-        if (A_type != B_type)
-        { 
-            // the types of A and B must match
-            return (false) ;
-        }
-    }
-
-    if (*opcode >= GB_USER_opcode)
-    { 
-        // the binary operator is user-defined
-        return (false) ;
     }
 
     //--------------------------------------------------------------------------

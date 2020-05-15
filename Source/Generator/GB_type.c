@@ -25,6 +25,9 @@
 #define GB_CTYPE \
     GB_ctype
 
+// C must have the same type as A or the scalar x
+#define GB_ATYPE GB_CTYPE
+
 #define GB_CX(p) Cx [p]
 
 // Cx [p] = scalar
@@ -52,7 +55,7 @@ GrB_Info GB_Cdense_05d
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *p_cwork,     // scalar of type C->type
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -88,6 +91,7 @@ GrB_Info GB_Cdense_06d
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    ASSERT (C->type == A->type) ;
     #include "GB_dense_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -112,6 +116,7 @@ GrB_Info GB_Cdense_25
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    ASSERT (C->type == A->type) ;
     #include "GB_dense_subassign_25_template.c"
     return (GrB_SUCCESS) ;
     #endif

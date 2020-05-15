@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumX
     #else
     if_C_dense_update
     { 
-        GB_ctype ywork = (*((GB_ctype *) p_ywork)) ;
+        GB_btype ywork = (*((GB_btype *) p_ywork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

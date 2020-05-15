@@ -53,7 +53,7 @@ void GB_cast_array              // typecast an array
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // typecase the array
+    // typecast the array
     //--------------------------------------------------------------------------
 
     #ifndef GBCOMPACT

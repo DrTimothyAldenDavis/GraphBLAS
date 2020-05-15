@@ -95,34 +95,33 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
-    // C = D*B, row scale
+    // C = D*B, row scale, via built-in binary operators
     //--------------------------------------------------------------------------
 
     bool done = false ;
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
-
-    #define GB_DxB(mult,xyname) GB_DxB_ ## mult ## xyname
-
-    #define GB_BINOP_WORKER(mult,xyname)                                    \
-    {                                                                       \
-        info = GB_DxB(mult,xyname) (C, D, D_is_pattern, B, B_is_pattern,    \
-            nthreads) ;                                                     \
-        done = (info != GrB_NO_VALUE) ;                                     \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
     #ifndef GBCOMPACT
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_DxB(mult,xyname) GB_DxB_ ## mult ## xyname
+
+        #define GB_BINOP_WORKER(mult,xyname)                                  \
+        {                                                                     \
+            info = GB_DxB(mult,xyname) (C, D, D_is_pattern, B, B_is_pattern,  \
+                nthreads) ;                                                   \
+            done = (info != GrB_NO_VALUE) ;                                   \
+        }                                                                     \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
-
         if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
             mult, flipxy, &opcode, &xcode, &ycode, &zcode))
         { 

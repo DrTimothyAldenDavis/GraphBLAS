@@ -269,6 +269,18 @@ void mexFunction
             OK (GrB_Matrix_extractElement_FP64 (&b_value, b, 0, 0)) ;
             b_is_nan = isnan (b_value) ;
         }
+        else if (b_type == GxB_FC32)
+        {
+            GxB_FC32_t b_value = GxB_CMPLXF (0, 0) ;
+            OK (GxB_Matrix_extractElement_FC32 (&b_value, b, 0, 0)) ;
+            b_is_nan = GB_cisnanf (b_value) ;
+        }
+        else if (b_type == GxB_FC64)
+        {
+            GxB_FC64_t b_value = GxB_CMPLXF (0, 0) ;
+            OK (GxB_Matrix_extractElement_FC64 (&b_value, b, 0, 0)) ;
+            b_is_nan = GB_cisnan (b_value) ;
+        }
 
         if (b_is_nan)
         {

@@ -1076,33 +1076,34 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     bool done = false ;
 
-#ifndef GBCOMPACT
+    #ifndef GBCOMPACT
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-    #define GB_Asaxpy3B(add,mult,xyname) GB_Asaxpy3B_ ## add ## mult ## xyname
+        #define GB_Asaxpy3B(add,mult,xyname) \
+            GB_Asaxpy3B_ ## add ## mult ## xyname
 
-    #define GB_AxB_WORKER(add,mult,xyname)                              \
-    {                                                                   \
-        info = GB_Asaxpy3B (add,mult,xyname) (C, M, Mask_comp,          \
-            Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
-            TaskList, ntasks, nfine, nthreads, Context) ;               \
-        done = (info != GrB_NO_VALUE) ;                                 \
-    }                                                                   \
-    break ;
+        #define GB_AxB_WORKER(add,mult,xyname)                              \
+        {                                                                   \
+            info = GB_Asaxpy3B (add,mult,xyname) (C, M, Mask_comp,          \
+                Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
+                TaskList, ntasks, nfine, nthreads, Context) ;               \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
+        break ;
 
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
-    if (builtin_semiring)
-    { 
-        #include "GB_AxB_factory.c"
-    }
+        if (builtin_semiring)
+        { 
+            #include "GB_AxB_factory.c"
+        }
 
-#endif
+    #endif
 
     //==========================================================================
     // C = A*B, via the generic saxpy3 method, with typecasting

@@ -26,8 +26,15 @@ function C = bitshift (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (A) || ~isreal (B))
+atype = GrB.type (A) ;
+btype = GrB.type (B) ;
+
+if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
+end
+
+if (isequal (atype, 'logical') || isequal (btype, 'logical'))
+    error ('inputs must not be logical') ;
 end
 
 if (nargin < 3)
@@ -39,19 +46,17 @@ if (~contains (assumedtype, 'int'))
 end
 
 % C will have the same type as A on input
-ctype = GrB.type (A) ;
+ctype = atype ;
 
-if (isfloat (A))
+if (isequal (atype, 'double') || isequal (atype, 'single'))
     A = GrB (A, assumedtype) ;
+    atype = assumedtype ;
 end
-
-atype = GrB.type (A) ;
-btype = GrB.type (B) ;
 
 if (~isequal (btype, 'int8'))
     % convert B to int8, and ensure all values are in range -64:64
     % ensure all entries in B are <= 64
-    B = GrB.emult ('min', B, GrB.expand (GrB ( 64, btype), B)) ;
+    B = GrB.emult ('min', B, GrB.expand (GrB (64, btype), B)) ;
     if (GrB.issigned (B))
         % ensure all entries in B are >= -64
         B = GrB.emult ('max', B, GrB.expand (GrB (-64, btype), B)) ;

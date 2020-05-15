@@ -36,8 +36,6 @@ GrB_Info apply (bool is_matrix)
 {
     GrB_Info info ;
 
-//  GxB_print (op, 3) ;
-
     if (is_matrix)
     {
         info = GrB_Matrix_apply (C, Mask, accum, op, A, desc) ;
@@ -115,9 +113,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("UnaryOp failed") ;
     }
-
-//  printf ("got the op\n") ;
-//  GxB_print (op, 3) ;
 
     // get desc
     if (!GB_mx_mxArray_to_Descriptor (&desc, PARGIN (5), "desc"))

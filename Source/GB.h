@@ -41,8 +41,7 @@
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// TODO compact is on
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 // for code development only
 // #define GB_DEVELOPER 1
@@ -433,8 +432,7 @@ typedef enum
     // NOP
     //--------------------------------------------------------------------------
 
-    // a placeholder; not an actual operator
-    GB_NOP_opcode,      // nop
+    GB_NOP_opcode = 0,  // no operation
 
     //--------------------------------------------------------------------------
     // primary unary operators x=f(x)

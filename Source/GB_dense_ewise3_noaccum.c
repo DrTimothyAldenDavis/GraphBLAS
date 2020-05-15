@@ -92,6 +92,11 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     { 
         #include "GB_binop_factory.c"
     }
+    else
+    {
+        // this function is not called if the op cannot be applied
+        ASSERT (0) ;
+    }
 
     //--------------------------------------------------------------------------
     // return result

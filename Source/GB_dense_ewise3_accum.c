@@ -77,6 +77,11 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
         #define GB_BINOP_SUBSET
         #include "GB_binop_factory.c"
     }
+    else
+    {
+        // this function is not called if the op cannot be applied
+        ASSERT (0) ;
+    }
 
     //--------------------------------------------------------------------------
     // return result

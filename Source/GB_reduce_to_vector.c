@@ -296,12 +296,16 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         }
 
         //----------------------------------------------------------------------
-        // numeric phase: launch the switch factory
+        // reduce to vector with built-in operators
         //----------------------------------------------------------------------
 
         bool done = false ;
 
         #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
 
             #define GB_red(opname,aname) GB_red_eachvec_ ## opname ## aname
             #define GB_RED_WORKER(opname,aname,atype)                       \
@@ -483,29 +487,34 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_eslice (pstart_slice, anz, ntasks) ;
 
             //------------------------------------------------------------------
-            // sum across each index: T(i) = reduce (A (i,:))
+            // T(i) = reduce (A (i,:)), built-in operators
             //------------------------------------------------------------------
-
-            // Early exit cannot be exploited; ignore the terminal value.
-
-            #undef  GB_red
-            #define GB_red(opname,aname) GB_red_eachindex_ ## opname ## aname
-            #undef  GB_RED_WORKER
-            #define GB_RED_WORKER(opname,aname,atype)                       \
-            {                                                               \
-                info = GB_red (opname, aname) (&T, ttype, A, pstart_slice,  \
-                    ntasks, nthreads, Context) ;                            \
-                done = (info != GrB_NO_VALUE) ;                             \
-            }                                                               \
-            break ;
 
             bool done = false ;
 
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
-
             #ifndef GBCOMPACT
+
+                //--------------------------------------------------------------
+                // define the worker for the switch factory
+                //--------------------------------------------------------------
+
+                // Early exit cannot be exploited; ignore the terminal value.
+
+                #undef  GB_red
+                #define GB_red(opname,aname) \
+                    GB_red_eachindex_ ## opname ## aname
+                #undef  GB_RED_WORKER
+                #define GB_RED_WORKER(opname,aname,atype)                      \
+                {                                                              \
+                    info = GB_red (opname, aname) (&T, ttype, A, pstart_slice, \
+                        ntasks, nthreads, Context) ;                           \
+                    done = (info != GrB_NO_VALUE) ;                            \
+                }                                                              \
+                break ;
+
+                //--------------------------------------------------------------
+                // launch the switch factory
+                //--------------------------------------------------------------
 
                 if (nocasting)
                 { 
@@ -525,7 +534,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #endif
 
             //------------------------------------------------------------------
-            // generic worker
+            // T(i) = reduce (A (i,:)), generic worker
             //------------------------------------------------------------------
 
             if (!done)

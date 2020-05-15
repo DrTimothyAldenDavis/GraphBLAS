@@ -50,8 +50,15 @@ function C = bigset (A, B, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (A) || ~isreal (B))
+atype = GrB.type (A) ;
+btype = GrB.type (B) ;
+
+if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
+end
+
+if (isequal (atype, 'logical') || isequal (btype, 'logical'))
+    error ('inputs must not be logical') ;
 end
 
 % get the optional input arguments
@@ -76,14 +83,17 @@ if (~contains (assumedtype, 'int'))
 end
 
 % C will have the same type as A on input
-ctype = GrB.type (A) ;
+ctype = atype ;
 
 % determine the type of A
-if (isfloat (A))
+if (isequal (atype, 'double') || isequal (atype, 'single'))
     A = GrB (A, assumedtype) ;
     atype = assumedtype ;
-else
-    atype = GrB.type (A) ;
+end
+
+% ensure B has the same type as A
+if (~isequal (btype, atype))
+    B = GrB (B, atype) ;
 end
 
 if (isscalar (V))
@@ -129,7 +139,7 @@ else
     % pattern of bit positions B0 to set to 0 in A.  B0 is an m-by-n
     % matrix, if B is either an m-by-n matrix or a scalar.
     d.mask = 'complement' ;
-    B0 = GrB.assign (GrB (m, n, GrB.type (B)), V, B, d) ;
+    B0 = GrB.assign (GrB (m, n, atype), V, B, d) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
     C = GrB.eadd (['bitclr.', atype], C, B0) ;

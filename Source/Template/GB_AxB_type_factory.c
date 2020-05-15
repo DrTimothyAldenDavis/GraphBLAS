@@ -7,7 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// A template file #include'd in GB_AxB_factory.c
+// A template file #include'd in GB_AxB_factory.c, which calls up to 61
+// semirings.  Not all multiplicative operators and types are used with every
+// monoid.  The 2 complex types appear only in the times, plus, and any
+// monoids, for a subset of the multiply operators.
+
+//  min monoid:     10 real, non-boolean types
+//  max monoid:     10 real, non-boolean types
+//  times monoid:   10 real, non-boolean types (+2 if complex)
+//  plus monoid:    10 real, non-boolean types (+2 if complex)
+//  any monoid:     10 real, non-boolean types (+2 if complex)
+//  boolean:        5 monoids: lor, land, eq, lxor, any
 
 // GB_NO_BOOLEAN is defined for multiply operators in the #include'ing file
 // (min, max, plus, minus, rminus, times, div, rdiv, is*) since those multiply
@@ -20,6 +30,7 @@
 // the additive operator is a monoid, where all types of x,y,z are the same
 ASSERT (zcode == xcode) ;
 ASSERT (zcode == ycode) ;
+ASSERT (mult_opcode != GB_ANY_opcode) ;
 
 if (zcode != GB_BOOL_code)
 {
@@ -33,13 +44,14 @@ if (zcode != GB_BOOL_code)
 
             switch (zcode)
             {
+                // 10 real, non-boolean types
                 case GB_INT8_code   : GB_AxB_WORKER (_min, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint8 )
                 case GB_INT16_code  : GB_AxB_WORKER (_min, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint16)
                 case GB_INT32_code  : GB_AxB_WORKER (_min, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint32)
                 case GB_INT64_code  : GB_AxB_WORKER (_min, GB_MULT_NAME, _int64 )
+                case GB_UINT8_code  : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint8 )
+                case GB_UINT16_code : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint16)
+                case GB_UINT32_code : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint32)
                 case GB_UINT64_code : GB_AxB_WORKER (_min, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_min, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_min, GB_MULT_NAME, _fp64  )
@@ -51,13 +63,14 @@ if (zcode != GB_BOOL_code)
 
             switch (zcode)
             {
+                // 10 real, non-boolean types
                 case GB_INT8_code   : GB_AxB_WORKER (_max, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint8 )
                 case GB_INT16_code  : GB_AxB_WORKER (_max, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint16)
                 case GB_INT32_code  : GB_AxB_WORKER (_max, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint32)
                 case GB_INT64_code  : GB_AxB_WORKER (_max, GB_MULT_NAME, _int64 )
+                case GB_UINT8_code  : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint8 )
+                case GB_UINT16_code : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint16)
+                case GB_UINT32_code : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint32)
                 case GB_UINT64_code : GB_AxB_WORKER (_max, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_max, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_max, GB_MULT_NAME, _fp64  )
@@ -69,19 +82,20 @@ if (zcode != GB_BOOL_code)
 
             switch (zcode)
             {
+                // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint8 )
                 case GB_INT16_code  : GB_AxB_WORKER (_times, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint16)
                 case GB_INT32_code  : GB_AxB_WORKER (_times, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint32)
                 case GB_INT64_code  : GB_AxB_WORKER (_times, GB_MULT_NAME, _int64 )
+                case GB_UINT8_code  : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint8 )
+                case GB_UINT16_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint16)
+                case GB_UINT32_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint32)
                 case GB_UINT64_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp64  )
-                #if GB_COMPLEX
-                case GB_FC32_code   : // TODO
-                case GB_FC64_code   : // TODO
+                #if defined ( GB_COMPLEX )
+                case GB_FC32_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fc32  )
+                case GB_FC64_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fc64  )
                 #endif
                 default: ;
             }
@@ -93,19 +107,20 @@ if (zcode != GB_BOOL_code)
 
             switch (zcode)
             {
+                // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint8 )
                 case GB_INT16_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint16)
                 case GB_INT32_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint32)
                 case GB_INT64_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int64 )
+                case GB_UINT8_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint8 )
+                case GB_UINT16_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint16)
+                case GB_UINT32_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint32)
                 case GB_UINT64_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp64  )
-                #if GB_COMPLEX
-                case GB_FC32_code   : // TODO
-                case GB_FC64_code   : // TODO
+                #if defined ( GB_COMPLEX )
+                case GB_FC32_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fc32  )
+                case GB_FC64_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fc64  )
                 #endif
                 default: ;
             }
@@ -115,19 +130,20 @@ if (zcode != GB_BOOL_code)
 
             switch (zcode)
             {
+                // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint8 )
                 case GB_INT16_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint16)
                 case GB_INT32_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint32)
                 case GB_INT64_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int64 )
+                case GB_UINT8_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint8 )
+                case GB_UINT16_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint16)
+                case GB_UINT32_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint32)
                 case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp64  )
-                #if GB_COMPLEX
-                case GB_FC32_code   : // TODO
-                case GB_FC64_code   : // TODO
+                #if defined ( GB_COMPLEX )
+                case GB_FC32_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fc32  )
+                case GB_FC64_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fc64  )
                 #endif
                 default: ;
             }
@@ -142,8 +158,9 @@ else
 {
         switch (add_opcode)
         {
-            // EQ_PAIR, LOR_PAIR, LAND_PAIR, been renamed to ANY_PAIR
+            // 5 boolean monoids
             #ifndef GB_MULT_IS_PAIR_OPERATOR
+            // EQ_PAIR, LOR_PAIR, LAND_PAIR, been renamed to ANY_PAIR
             case GB_LOR_opcode  : GB_AxB_WORKER (_lor , GB_MULT_NAME, _bool)
             case GB_LAND_opcode : GB_AxB_WORKER (_land, GB_MULT_NAME, _bool)
             case GB_EQ_opcode   : GB_AxB_WORKER (_eq  , GB_MULT_NAME, _bool)

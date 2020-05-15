@@ -209,11 +209,24 @@
 // definitions for complex types
 //------------------------------------------------------------------------------
 
-#include <complex.h>
-#undef I
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#ifdef __cplusplus
+
+    // C++ complex types
+    #include <cmath>
+    #include <complex>
+    #undef I
+    using namespace std ;
+    typedef complex<float>  GxB_FC32_t ;
+    typedef complex<double> GxB_FC64_t ;
+
+    #define GxB_CMPLXF(real,imag) GxB_FC32_t(real, imag)
+    #define GxB_CMPLX(real,imag)  GxB_FC64_t(real, imag)
+
+#elif ( _MSC_VER && !__INTEL_COMPILER )
 
     // Microsoft Windows complex types
+    #include <complex.h>
+    #undef I
     typedef _Fcomplex GxB_FC32_t ;
     typedef _Dcomplex GxB_FC64_t ;
 
@@ -223,6 +236,8 @@
 #else
 
     // ANSI C11 complex types
+    #include <complex.h>
+    #undef I
     typedef float  complex GxB_FC32_t ;
     typedef double complex GxB_FC64_t ;
 
@@ -235,7 +250,7 @@
         )
     #else
         // use the ANSI C11 CMPLX macro
-        #define GxB_CMPLX(real,imag)  (CMPLX  (real, imag))
+        #define GxB_CMPLX(real,imag) (CMPLX (real, imag))
     #endif
 
     #ifndef CMPLXF
@@ -6879,7 +6894,7 @@ GB_PUBLIC GrB_Monoid
 //------------------------------------------------------------------------------
 
 // Using built-in types and operators, SuiteSparse:GraphBLAS provides
-// 1473 built-in semirings:
+// 1473 pre-defined, built-in semirings:
 
 // 1000 semirings with a multiply operator TxT -> T where T is non-Boolean,
 // from the complete cross product of:
@@ -6890,6 +6905,10 @@ GB_PUBLIC GrB_Monoid
 //          FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
 //          ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //          LOR, LAND, LXOR
+//
+//      Note that min_pair, max_pair, times_pair are all identical to any_pair.
+//      These 30 semirings are named below, but are internally remapped to
+//      their corresponding any_pair semiring.
 
 // 300 semirings with a comparison operator TxT -> bool, where T is
 // non-Boolean, from the complete cross product of:
@@ -6904,6 +6923,10 @@ GB_PUBLIC GrB_Monoid
 //      5 Boolean monoids LAND, LOR, LXOR, EQ, ANY
 //      11 multiply operators:
 //          FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE, PAIR
+//
+//      Note that lor_pair, land_pair, and eq_pair are all identical to any_pair.
+//      These 3 semirings are named below, but are internally remapped to
+//      any_pair_bool semiring.
 
 // 54 complex semirings: TxT -> T where T is float complex or double complex:
 
@@ -6911,6 +6934,10 @@ GB_PUBLIC GrB_Monoid
 //      2 complex types
 //      9 complex multiply operators:
 //          FIRST, SECOND, PAIR, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+//
+//      Note that times_pair is identical to any_pair.
+//      These 2 semirings are named below, but are internally remapped to
+//      their corresponding any_pair semiring.
 
 // 64 bitwise semirings: TxT -> T where T is an unsigned integer:
 
@@ -6936,6 +6963,12 @@ GB_PUBLIC GrB_Monoid
 // operator.  The monoid's three types and the ztype of the mult operator are
 // always the same.  This is the type T for the first set, and Boolean for
 // the second and third sets of semirngs.
+
+// 1473 = 1000 + 300 + 55 + 54 + 64 semirings are named below, but 35 = 30 + 3
+// + 2 are identical to the corresponding any_pair semirings of the same type.
+// There are thus 1438 unique semirings listed below.  The PAIR multiplier thus
+// appears in 26 unique semirings: 13 any_pair (one per 13 types), 12 plus_pair
+// (for all but bool), and lxor_pair for bool.
 
 GB_PUBLIC GrB_Semiring
 
@@ -6968,16 +7001,17 @@ GB_PUBLIC GrB_Semiring
     GxB_MIN_SECOND_FP64    , GxB_MAX_SECOND_FP64    , GxB_PLUS_SECOND_FP64   , GxB_TIMES_SECOND_FP64  , GxB_ANY_SECOND_FP64    ,
 
     // semirings with multiply op: z = PAIR (x,y), all types x,y,z the same:
-    GxB_MIN_PAIR_INT8      , GxB_MAX_PAIR_INT8      , GxB_PLUS_PAIR_INT8     , GxB_TIMES_PAIR_INT8    , GxB_ANY_PAIR_INT8      ,
-    GxB_MIN_PAIR_INT16     , GxB_MAX_PAIR_INT16     , GxB_PLUS_PAIR_INT16    , GxB_TIMES_PAIR_INT16   , GxB_ANY_PAIR_INT16     ,
-    GxB_MIN_PAIR_INT32     , GxB_MAX_PAIR_INT32     , GxB_PLUS_PAIR_INT32    , GxB_TIMES_PAIR_INT32   , GxB_ANY_PAIR_INT32     ,
-    GxB_MIN_PAIR_INT64     , GxB_MAX_PAIR_INT64     , GxB_PLUS_PAIR_INT64    , GxB_TIMES_PAIR_INT64   , GxB_ANY_PAIR_INT64     ,
-    GxB_MIN_PAIR_UINT8     , GxB_MAX_PAIR_UINT8     , GxB_PLUS_PAIR_UINT8    , GxB_TIMES_PAIR_UINT8   , GxB_ANY_PAIR_UINT8     ,
-    GxB_MIN_PAIR_UINT16    , GxB_MAX_PAIR_UINT16    , GxB_PLUS_PAIR_UINT16   , GxB_TIMES_PAIR_UINT16  , GxB_ANY_PAIR_UINT16    ,
-    GxB_MIN_PAIR_UINT32    , GxB_MAX_PAIR_UINT32    , GxB_PLUS_PAIR_UINT32   , GxB_TIMES_PAIR_UINT32  , GxB_ANY_PAIR_UINT32    ,
-    GxB_MIN_PAIR_UINT64    , GxB_MAX_PAIR_UINT64    , GxB_PLUS_PAIR_UINT64   , GxB_TIMES_PAIR_UINT64  , GxB_ANY_PAIR_UINT64    ,
-    GxB_MIN_PAIR_FP32      , GxB_MAX_PAIR_FP32      , GxB_PLUS_PAIR_FP32     , GxB_TIMES_PAIR_FP32    , GxB_ANY_PAIR_FP32      ,
-    GxB_MIN_PAIR_FP64      , GxB_MAX_PAIR_FP64      , GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64    , GxB_ANY_PAIR_FP64      ,
+    // (note that min_pair, max_pair, times_pair are all identical to any_pair, and are marked below)
+    GxB_MIN_PAIR_INT8  /**/, GxB_MAX_PAIR_INT8  /**/, GxB_PLUS_PAIR_INT8     , GxB_TIMES_PAIR_INT8  /**/, GxB_ANY_PAIR_INT8    ,
+    GxB_MIN_PAIR_INT16 /**/, GxB_MAX_PAIR_INT16 /**/, GxB_PLUS_PAIR_INT16    , GxB_TIMES_PAIR_INT16 /**/, GxB_ANY_PAIR_INT16   ,
+    GxB_MIN_PAIR_INT32 /**/, GxB_MAX_PAIR_INT32 /**/, GxB_PLUS_PAIR_INT32    , GxB_TIMES_PAIR_INT32 /**/, GxB_ANY_PAIR_INT32   ,
+    GxB_MIN_PAIR_INT64 /**/, GxB_MAX_PAIR_INT64 /**/, GxB_PLUS_PAIR_INT64    , GxB_TIMES_PAIR_INT64 /**/, GxB_ANY_PAIR_INT64   ,
+    GxB_MIN_PAIR_UINT8 /**/, GxB_MAX_PAIR_UINT8 /**/, GxB_PLUS_PAIR_UINT8    , GxB_TIMES_PAIR_UINT8 /**/, GxB_ANY_PAIR_UINT8   ,
+    GxB_MIN_PAIR_UINT16/**/, GxB_MAX_PAIR_UINT16/**/, GxB_PLUS_PAIR_UINT16   , GxB_TIMES_PAIR_UINT16/**/, GxB_ANY_PAIR_UINT16  ,
+    GxB_MIN_PAIR_UINT32/**/, GxB_MAX_PAIR_UINT32/**/, GxB_PLUS_PAIR_UINT32   , GxB_TIMES_PAIR_UINT32/**/, GxB_ANY_PAIR_UINT32  ,
+    GxB_MIN_PAIR_UINT64/**/, GxB_MAX_PAIR_UINT64/**/, GxB_PLUS_PAIR_UINT64   , GxB_TIMES_PAIR_UINT64/**/, GxB_ANY_PAIR_UINT64  ,
+    GxB_MIN_PAIR_FP32  /**/, GxB_MAX_PAIR_FP32  /**/, GxB_PLUS_PAIR_FP32     , GxB_TIMES_PAIR_FP32  /**/, GxB_ANY_PAIR_FP32    ,
+    GxB_MIN_PAIR_FP64  /**/, GxB_MAX_PAIR_FP64  /**/, GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64  /**/, GxB_ANY_PAIR_FP64    ,
 
     // semirings with multiply op: z = MIN (x,y), all types x,y,z the same:
     GxB_MIN_MIN_INT8       , GxB_MAX_MIN_INT8       , GxB_PLUS_MIN_INT8      , GxB_TIMES_MIN_INT8     , GxB_ANY_MIN_INT8       ,
@@ -7263,10 +7297,13 @@ GB_PUBLIC GrB_Semiring
 // 55 semirings with purely Boolean types, bool x bool -> bool
 //------------------------------------------------------------------------------
 
+    // Note that lor_pair, land_pair, and eq_pair are all identical to any_pair.
+    // These 3 are marked below.
+
     // purely boolean semirings (in the form GxB_(add monoid)_(multipy operator)_BOOL:
     GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     ,
     GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , GxB_ANY_SECOND_BOOL    ,
-    GxB_LOR_PAIR_BOOL      , GxB_LAND_PAIR_BOOL     , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL       , GxB_ANY_PAIR_BOOL      ,
+    GxB_LOR_PAIR_BOOL/**/  , GxB_LAND_PAIR_BOOL/**/ , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL/**/   , GxB_ANY_PAIR_BOOL      ,
     GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        , GxB_ANY_LOR_BOOL       ,
     GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       , GxB_ANY_LAND_BOOL      ,
     GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       , GxB_ANY_LXOR_BOOL      ,
@@ -7285,14 +7322,17 @@ GB_PUBLIC GrB_Semiring
     // possible to build complex semirings POW, ANY, ISEQ, and ISNE as the
     // multiplicative operators.
 
+    // Note that times_pair is identical to any_pair.
+    // These 2 are marked below.
+
     GxB_PLUS_FIRST_FC32    , GxB_TIMES_FIRST_FC32   , GxB_ANY_FIRST_FC32     ,
     GxB_PLUS_FIRST_FC64    , GxB_TIMES_FIRST_FC64   , GxB_ANY_FIRST_FC64     ,
 
     GxB_PLUS_SECOND_FC32   , GxB_TIMES_SECOND_FC32  , GxB_ANY_SECOND_FC32    ,
     GxB_PLUS_SECOND_FC64   , GxB_TIMES_SECOND_FC64  , GxB_ANY_SECOND_FC64    ,
 
-    GxB_PLUS_PAIR_FC32     , GxB_TIMES_PAIR_FC32    , GxB_ANY_PAIR_FC32      ,
-    GxB_PLUS_PAIR_FC64     , GxB_TIMES_PAIR_FC64    , GxB_ANY_PAIR_FC64      ,
+    GxB_PLUS_PAIR_FC32     , GxB_TIMES_PAIR_FC32/**/, GxB_ANY_PAIR_FC32      ,
+    GxB_PLUS_PAIR_FC64     , GxB_TIMES_PAIR_FC64/**/, GxB_ANY_PAIR_FC64      ,
 
     GxB_PLUS_PLUS_FC32     , GxB_TIMES_PLUS_FC32    , GxB_ANY_PLUS_FC32      ,
     GxB_PLUS_PLUS_FC64     , GxB_TIMES_PLUS_FC64    , GxB_ANY_PLUS_FC64      ,

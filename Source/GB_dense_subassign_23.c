@@ -102,26 +102,31 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     }
 
     //--------------------------------------------------------------------------
-    // define the worker for the switch factory
+    // C += A, sparse accum into dense, with built-in binary operators
     //--------------------------------------------------------------------------
 
     bool done = false ;
 
-    #define GB_Cdense_accumA(accum,xyname) GB_Cdense_accumA_ ## accum ## xyname
-
-    #define GB_BINOP_WORKER(accum,xyname)                                   \
-    {                                                                       \
-        info = GB_Cdense_accumA(accum,xyname) (C, A,                        \
-            kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;    \
-        done = (info != GrB_NO_VALUE) ;                                     \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
     #ifndef GBCOMPACT
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_Cdense_accumA(accum,xyname) \
+            GB_Cdense_accumA_ ## accum ## xyname
+
+        #define GB_BINOP_WORKER(accum,xyname)                                 \
+        {                                                                     \
+            info = GB_Cdense_accumA(accum,xyname) (C, A,                      \
+                kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;  \
+            done = (info != GrB_NO_VALUE) ;                                   \
+        }                                                                     \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;

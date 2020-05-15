@@ -17,12 +17,10 @@
     //--------------------------------------------------------------------------
 
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
-
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-
-    const GB_CTYPE *GB_RESTRICT Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
     const int64_t avlen = A->vlen ;
 
     //--------------------------------------------------------------------------

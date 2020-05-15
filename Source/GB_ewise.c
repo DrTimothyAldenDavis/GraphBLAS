@@ -195,7 +195,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             if (C_is_csc != M_is_csc)
             { 
                 GBBURBLE ("(M transpose) ") ;
-                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context));
+                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL,
+                    Context)) ;
                 M1 = MT ;
             }
             mask_applied = true ;

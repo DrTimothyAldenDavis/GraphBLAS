@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumX__ne_fp32
     #else
     #if 0
     { 
-        bool ywork = (*((bool *) p_ywork)) ;
+        float ywork = (*((float *) p_ywork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

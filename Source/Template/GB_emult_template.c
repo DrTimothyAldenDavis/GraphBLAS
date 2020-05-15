@@ -52,7 +52,7 @@
 
     #if defined ( GB_PHASE_2_OF_2 )
     const GB_ATYPE *GB_RESTRICT Ax = A->x ;
-    const GB_ATYPE *GB_RESTRICT Bx = B->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = B->x ;
     const int64_t  *GB_RESTRICT Cp = C->p ;
     const int64_t  *GB_RESTRICT Ch = C->h ;
           int64_t  *GB_RESTRICT Ci = C->i ;

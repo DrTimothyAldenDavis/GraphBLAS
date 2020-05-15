@@ -62,38 +62,37 @@ codegen_binop_template ('max',          ...
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
-
 codegen_binop_template ('plus',         ...
     [ ],                                ... % bool
     '(xarg + yarg)',                    ... % int, uint
     '(xarg + yarg)',                    ... % float
     '(xarg + yarg)',                    ... % double
-    'GB_FC32_CplusC (xarg, yarg)',      ... % GxB_FC32_t
-    'GB_FC64_CplusC (xarg, yarg)') ;    ... % GxB_FC64_t
+    'GB_FC32_add (xarg, yarg)',         ... % GxB_FC32_t
+    'GB_FC64_add (xarg, yarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('minus',        ...
     [ ],                                ... % bool
     '(xarg - yarg)',                    ... % int, uint
     '(xarg - yarg)',                    ... % float
     '(xarg - yarg)',                    ... % double
-    'GB_FC32_CminusC (xarg, yarg)',     ... % GxB_FC32_t
-    'GB_FC64_CminusC (xarg, yarg)') ;   ... % GxB_FC64_t
+    'GB_FC32_minus (xarg, yarg)',       ... % GxB_FC32_t
+    'GB_FC64_minus (xarg, yarg)') ;     ... % GxB_FC64_t
 
 codegen_binop_template ('rminus',       ...
     [ ],                                ... % bool
     '(yarg - xarg)',                    ... % int, uint
     '(yarg - xarg)',                    ... % float
     '(yarg - xarg)',                    ... % double
-    'GB_FC32_CminusC (yarg, xarg)',     ... % GxB_FC32_t
-    'GB_FC64_CminusC (yarg, xarg)') ;   ... % GxB_FC64_t
+    'GB_FC32_minus (yarg, xarg)',       ... % GxB_FC32_t
+    'GB_FC64_minus (yarg, xarg)') ;     ... % GxB_FC64_t
 
 codegen_binop_template ('times',        ...
     [ ],                                ... % bool
     '(xarg * yarg)',                    ... % int, uint
     '(xarg * yarg)',                    ... % float
     '(xarg * yarg)',                    ... % double
-    'GB_FC32_CtimesC (xarg, yarg)',     ... % GxB_FC32_t
-    'GB_FC64_CtimesC (xarg, yarg)') ;   ... % GxB_FC64_t
+    'GB_FC32_mul (xarg, yarg)',         ... % GxB_FC32_t
+    'GB_FC64_mul (xarg, yarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('div',          ...
     [ ],                                ... % bool

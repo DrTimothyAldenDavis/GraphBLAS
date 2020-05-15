@@ -24,23 +24,23 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_CtimesC(x,y) (_FCmulcc (x, y))
-    #define GB_FC64_CtimesC(x,y) ( _Cmulcc (x, y))
+    #define GB_FC32_mul(x,y) (_FCmulcc (x, y))
+    #define GB_FC64_mul(x,y) ( _Cmulcc (x, y))
 
     // complex-real multiply: z = x*y where x is complex and y is real
-    #define GB_FC32_CtimesR(x,y) (_FCmulcr (x, y))
-    #define GB_FC64_CtimesR(x,y) ( _Cmulcr (x, y))
+    #define GB_FC32_rmul(x,y) (_FCmulcr (x, y))
+    #define GB_FC64_rmul(x,y) ( _Cmulcr (x, y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_CplusC(x,y) \
+    #define GB_FC32_add(x,y) \
         GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))
-    #define GB_FC64_CplusC(x,y) \
+    #define GB_FC64_add(x,y) \
         GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_CminusC(x,y) \
+    #define GB_FC32_minus(x,y) \
         GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))
-    #define GB_FC64_CminusC(x,y) \
+    #define GB_FC64_minus(x,y) \
         GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))
 
     // complex negation: z = -x
@@ -54,20 +54,20 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_CtimesC(x,y) ((x) * (y))
-    #define GB_FC64_CtimesC(x,y) ((x) * (y))
+    #define GB_FC32_mul(x,y) ((x) * (y))
+    #define GB_FC64_mul(x,y) ((x) * (y))
 
     // complex-real multiply: z = x*y where x is complex and y is real
-    #define GB_FC32_CtimesR(x,y) ((x) * (y))
-    #define GB_FC64_CtimesR(x,y) ((x) * (y))
+    #define GB_FC32_rmul(x,y) ((x) * (y))
+    #define GB_FC64_rmul(x,y) ((x) * (y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_CplusC(x,y) ((x) + (y))
-    #define GB_FC64_CplusC(x,y) ((x) + (y))
+    #define GB_FC32_add(x,y) ((x) + (y))
+    #define GB_FC64_add(x,y) ((x) + (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_CminusC(x,y) ((x) - (y))
-    #define GB_FC64_CminusC(x,y) ((x) - (y))
+    #define GB_FC32_minus(x,y) ((x) - (y))
+    #define GB_FC64_minus(x,y) ((x) - (y))
 
     // complex negation
     #define GB_FC32_ainv(x) (-(x))
@@ -78,10 +78,6 @@
 // complex inverse: z = 1/x
 #define GB_FC32_minv(x) GB_FC32_div (GxB_CMPLXF (1,0), x)
 #define GB_FC64_minv(x) GB_FC64_div (GxB_CMPLX (1,0), x)
-
-// complex-real multiply: z = x*y where x is real and y is complex
-#define GB_FC32_RtimesC(x,y) GB_FC32_CtimesR(y,x) 
-#define GB_FC64_RtimesC(x,y) GB_FC64_CtimesR(y,x) 
 
 // complex comparisons
 #define GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))

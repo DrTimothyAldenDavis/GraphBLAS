@@ -1166,26 +1166,30 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             // Early exit cannot be exploited, so the terminal is ignored.
 
-            #define GB_INCLUDE_SECOND_OPERATOR
-
             bool done = false ;
 
-            #define GB_red(opname,aname) GB_red_build_ ## opname ## aname
-
-            #define GB_RED_WORKER(opname,aname,atype)                       \
-            {                                                               \
-                info = GB_red (opname, aname) ((atype *) Tx, Ti,            \
-                    (atype *) S, nvals, ndupl, I_work, K_work, tstart_slice,\
-                    tnz_slice, nthreads) ;                                  \
-                done = (info != GrB_NO_VALUE) ;                             \
-            }                                                               \
-            break ;
-
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
-
             #ifndef GBCOMPACT
+
+                //--------------------------------------------------------------
+                // define the worker for the switch factory
+                //--------------------------------------------------------------
+
+                #define GB_INCLUDE_SECOND_OPERATOR
+
+                #define GB_red(opname,aname) GB_red_build_ ## opname ## aname
+
+                #define GB_RED_WORKER(opname,aname,atype)                   \
+                {                                                           \
+                    info = GB_red (opname, aname) ((atype *) Tx, Ti,        \
+                        (atype *) S, nvals, ndupl, I_work, K_work,          \
+                        tstart_slice, tnz_slice, nthreads) ;                \
+                    done = (info != GrB_NO_VALUE) ;                         \
+                }                                                           \
+                break ;
+
+                //--------------------------------------------------------------
+                // launch the switch factory
+                //--------------------------------------------------------------
 
                 // controlled by opcode and typecode
                 GB_Type_code typecode = tcode ;

@@ -120,30 +120,30 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
-    // C = A*D, column scale
+    // C = A*D, column scale, via built-in binary operators
     //--------------------------------------------------------------------------
 
     bool done = false ;
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
-
-    #define GB_AxD(mult,xyname) GB_AxD_ ## mult ## xyname
-
-    #define GB_BINOP_WORKER(mult,xyname)                                    \
-    {                                                                       \
-        info = GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern,    \
-            kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;    \
-        done = (info != GrB_NO_VALUE) ;                                     \
-    }                                                                       \
-    break ;
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
-
     #ifndef GBCOMPACT
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_AxD(mult,xyname) GB_AxD_ ## mult ## xyname
+
+        #define GB_BINOP_WORKER(mult,xyname)                                 \
+        {                                                                    \
+            info = GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern, \
+                kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ; \
+            done = (info != GrB_NO_VALUE) ;                                  \
+        }                                                                    \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;

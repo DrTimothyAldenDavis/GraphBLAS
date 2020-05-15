@@ -30,7 +30,7 @@
 // C type:   GxB_FC32_t
 // A type:   GxB_FC32_t
 // B type:   GxB_FC32_t
-// BinaryOp: cij = GB_FC32_CtimesC (aij, bij)
+// BinaryOp: cij = GB_FC32_mul (aij, bij)
 
 #define GB_ATYPE \
     GxB_FC32_t
@@ -63,7 +63,7 @@
 
 // binary operator
 #define GB_BINOP(z, x, y)   \
-    z = GB_FC32_CtimesC (x, y) ;
+    z = GB_FC32_mul (x, y) ;
 
 // op is second
 #define GB_OP_IS_SECOND \

@@ -1,7 +1,12 @@
-function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
+function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
+    xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
+
+if (isempty (mult))
+    return
+end
 
 f = fopen ('control.m4', 'w') ;
 
@@ -11,7 +16,6 @@ is_pair     = isequal (multop, 'pair') ;
 is_any      = isequal (addop, 'any') ;
 is_eq       = isequal (addop, 'eq') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
-is_real     = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 
 switch (ztype)
     case { 'bool' }
@@ -32,8 +36,11 @@ switch (ztype)
     case { 'float' }
         nbits = 32 ;
         bits = '0' ;
-    case { 'double' }
+    case { 'double', 'GxB_FC32_t' }
         nbits = 64 ;
+        bits = '0' ;
+    case { 'GxB_FC64_t' }
+        nbits = 128 ;
         bits = '0' ;
     otherwise
         error ('unknown type') ;
@@ -44,10 +51,6 @@ fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
 fprintf (f, 'define(`GB_atomic_compare_exchange'', `GB_ATOMIC_COMPARE_EXCHANGE_%d'')\n', nbits) ;
-
-if isequal (addop, 'plus') && isequal (multop, 'times') && isequal (ztype, 'float')
-    % plus_times_fp32 semiring
-end
 
 if (is_pair)
     % these semirings are renamed to any_pair, and not thus created
@@ -112,8 +115,14 @@ else
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `GB_PRAGMA_SIMD'')\n') ;
 end
 
-% all built-in monoids are atomic
-fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+switch (ztype)
+    case { 'GxB_FC32_t', 'GxB_FC64_t' }
+        % all built-in real monoids are atomic
+        fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
+    otherwise
+        % complex monoids are not atomic
+        fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+end
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
 % in gcc and icc.  However, only PLUS and TIMES work with OpenMP atomics
