@@ -83,16 +83,15 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     bool C_is_hyper = (Ch != NULL) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
-    GB_CREATE (&C, ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (C_is_hyper), A->hyper_ratio, Cnvec, cnz, true,
-        Context) ;
+    GrB_Info info = GB_create (&C, ctype, A->vlen, A->vdim, GB_Ap_null,
+        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), A->hyper_ratio, Cnvec, cnz,
+        true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         // Ch must not be freed since Ch is always shallow
-        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
+        GB_FREE (Cp) ;
         return (info) ;
     }
 

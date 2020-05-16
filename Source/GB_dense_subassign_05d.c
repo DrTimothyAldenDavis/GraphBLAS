@@ -25,7 +25,7 @@
 
 #undef  GB_FREE_WORK
 #define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORK
@@ -36,7 +36,7 @@ GrB_Info GB_dense_subassign_05d
     // input:
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *scalar,
+    const void *scalar,
     const GrB_Type atype,
     GB_Context Context
 )

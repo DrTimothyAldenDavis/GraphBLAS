@@ -87,8 +87,8 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
-            "required size of output is "GBd"-by-"GBd"\n"
-            "but actual size output is  "GBd"-by-"GBd"\n",
+            "required size of output is " GBd "-by-" GBd "\n"
+            "but actual size output is  " GBd "-by-" GBd "\n",
             nRows, nCols, cnrows, cncols))) ;
     }
 

@@ -71,7 +71,7 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     { 
         // problem too large
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: nvals "GBu" exceeds "GBu,
+            "problem too large: nvals " GBu " exceeds " GBu,
             nvals, GxB_INDEX_MAX))) ;
     }
 

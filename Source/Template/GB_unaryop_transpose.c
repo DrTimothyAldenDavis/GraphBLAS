@@ -22,10 +22,10 @@
     const int64_t *GB_RESTRICT Ai = A->i ;
 
     #if defined ( GB_PHASE_2_OF_2 )
-    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     // int64_t  *GB_RESTRICT Cp = C->p ;
     int64_t  *GB_RESTRICT Ci = C->i ;
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

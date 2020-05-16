@@ -36,7 +36,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     { 
         // problem too large
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: nrows "GBu" exceeds "GBu,
+            "problem too large: nrows " GBu " exceeds " GBu,
             nrows, GxB_INDEX_MAX))) ;
     }
 
@@ -44,7 +44,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     { 
         // problem too large
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: ncols "GBu" exceeds "GBu,
+            "problem too large: ncols " GBu " exceeds " GBu,
             ncols, GxB_INDEX_MAX))) ;
     }
 
@@ -72,7 +72,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     }
 
     // *A == NULL ;                 // allocate a new header for A
-    GB_NEW (A, type, vlen, vdim, GB_Ap_calloc, A_is_csc,
+    info = GB_new (A, type, vlen, vdim, GB_Ap_calloc, A_is_csc,
         GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
     return (info) ;
 }

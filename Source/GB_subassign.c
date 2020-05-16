@@ -152,8 +152,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         if (mnrows != nRows || mncols != nCols)
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "M is "GBd"-by-"GBd"%s, "
-                "must match size of result C(I,J): "GBd"-by-"GBd"",
+                "M is " GBd "-by-" GBd "%s, "
+                "must match size of result C(I,J): " GBd "-by-" GBd "",
                 mnrows, mncols, M_transpose ? " (transposed)" : "",
                 nRows, nCols))) ;
         }
@@ -168,8 +168,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
                 "Dimensions not compatible:\n"
-                "C(Rows,Cols) is "GBd"-by-"GBd"\n"
-                "input is "GBd"-by-"GBd"%s",
+                "C(Rows,Cols) is " GBd "-by-" GBd "\n"
+                "input is " GBd "-by-" GBd "%s",
                 nRows, nCols, anrows, ancols,
                 A_transpose ? " (transposed)" : ""))) ;
         }
@@ -287,10 +287,9 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // is about to be cleared in GB_subassigner anyway, but a duplicate
             // is need.  Instead of duplicating it, create an empty matrix Z2.
             // This also prevents the C_replace_phase from being needed.
-            GB_NEW (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
+            GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
                 C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio,
-                1, Context) ;
-            GB_OK (info)  ;
+                1, Context)) ;
             GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
         }

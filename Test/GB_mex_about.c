@@ -468,17 +468,14 @@ void mexFunction
     GB_Global_malloc_tracking_set (false) ;
     GB_void *p = GB_malloc_memory (4, sizeof (int64_t)) ;
     CHECK (p != NULL) ;
-    GB_free_memory (p, 4, sizeof (int64_t)) ;
+    GB_FREE (p) ;
     p = GB_calloc_memory (4, sizeof (int64_t)) ;
     CHECK (p != NULL) ;
     bool ok = true ;
     p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &ok) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    GB_free_memory (p, 6, sizeof (int64_t)) ;
-    p = NULL ;
-    printf ("in use:   "GBd"\n", GB_Global_inuse_get ( )) ;
-    printf ("max used: "GBd"\n", GB_Global_maxused_get ( )) ;
+    GB_FREE (p) ;
 
     CHECK (!GB_Global_malloc_is_thread_safe_get ( )) ;
     GB_Global_malloc_is_thread_safe_set (true) ;
@@ -504,8 +501,7 @@ void mexFunction
     int64_t *Slice = NULL ;
     GB_pslice (&Slice, NULL, 0, 4) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
-    GB_free_memory (Slice, 5, sizeof (int64_t)) ;
-    Slice = NULL ;
+    GB_FREE (Slice) ;
 
     //--------------------------------------------------------------------------
     // renamed boolean monoids

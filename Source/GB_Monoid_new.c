@@ -137,7 +137,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    GB_CALLOC_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ;
+    (*monoid) = GB_CALLOC (1, struct GB_Monoid_opaque) ;
     if (*monoid == NULL)
     { 
         // out of memory
@@ -161,14 +161,14 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate both the identity and terminal value
     #define GB_ALLOC_IDENTITY_AND_TERMINAL                                  \
     {                                                                       \
-        GB_CALLOC_MEMORY (mon->identity, 1, zsize) ;                        \
-        GB_CALLOC_MEMORY (mon->terminal, 1, zsize) ;                        \
+        mon->identity = GB_CALLOC (zsize, GB_void) ;                        \
+        mon->terminal = GB_CALLOC (zsize, GB_void) ;                        \
         if (mon->identity == NULL || mon->terminal == NULL)                 \
         {                                                                   \
             /* out of memory */                                             \
-            GB_FREE_MEMORY (mon->identity, 1, zsize) ;                      \
-            GB_FREE_MEMORY (mon->terminal, 1, zsize) ;                      \
-            GB_FREE_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ; \
+            GB_FREE (mon->identity) ;                                       \
+            GB_FREE (mon->terminal) ;                                       \
+            GB_FREE (*monoid) ;                                             \
             return (GB_OUT_OF_MEMORY) ;                                     \
         }                                                                   \
     }
@@ -176,11 +176,11 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate just the identity, not the terminal
     #define GB_ALLOC_JUST_IDENTITY                                          \
     {                                                                       \
-        GB_CALLOC_MEMORY (mon->identity, 1, zsize) ;                        \
+        mon->identity = GB_CALLOC (zsize, GB_void) ;                        \
         if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
-            GB_FREE_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ; \
+            GB_FREE (*monoid) ;                                             \
             return (GB_OUT_OF_MEMORY) ;                                     \
         }                                                                   \
     }
@@ -202,8 +202,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     #define GB_IT(ztype,identity_value,terminal_value)                      \
     {                                                                       \
         GB_ALLOC_IDENTITY_AND_TERMINAL ;                                    \
-        ztype *identity = mon->identity ;                                   \
-        ztype *terminal = mon->terminal ;                                   \
+        ztype *identity = (ztype *) mon->identity ;                         \
+        ztype *terminal = (ztype *) mon->terminal ;                         \
         (*identity) = identity_value ;                                      \
         (*terminal) = terminal_value ;                                      \
         done = true ;                                                       \
@@ -215,7 +215,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     #define GB_IN(ztype,identity_value)                                     \
     {                                                                       \
         GB_ALLOC_JUST_IDENTITY ;                                            \
-        ztype *identity = mon->identity ;                                   \
+        ztype *identity = (ztype *) mon->identity ;                         \
         (*identity) = identity_value ;                                      \
         done = true ;                                                       \
     }                                                                       \

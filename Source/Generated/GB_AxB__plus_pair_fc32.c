@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = GxB_CMPLXF(1,0)
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    GxB_CMPLXF (1,0)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     z = GB_FC32_add (z, GxB_CMPLXF(1,0))

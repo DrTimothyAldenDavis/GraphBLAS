@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = GB_IDIV_UNSIGNED (y, x, 32)
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    ((uint32_t) 1)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     uint32_t x_op_y = GB_IDIV_UNSIGNED (y, x, 32) ; z = GB_IMAX (z, x_op_y)

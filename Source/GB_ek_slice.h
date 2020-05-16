@@ -33,10 +33,9 @@ bool GB_ek_slice        // true if successful, false if out of memory
 
 void GB_ek_slice_free
 (
-    int64_t *GB_RESTRICT *pstart_slice_handle, // size ntasks+1
-    int64_t *GB_RESTRICT *kfirst_slice_handle, // size ntasks
-    int64_t *GB_RESTRICT *klast_slice_handle,  // size ntasks
-    int ntasks                              // # of tasks
+    int64_t *GB_RESTRICT *pstart_slice_handle,
+    int64_t *GB_RESTRICT *kfirst_slice_handle,
+    int64_t *GB_RESTRICT *klast_slice_handle
 ) ;
 
 int64_t GB_search_for_vector        // return the vector k that contains p

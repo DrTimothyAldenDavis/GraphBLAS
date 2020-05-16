@@ -37,7 +37,8 @@
 #define GB_COPY_A_TO_C(Cx,p,Ax,pA) Cx [p] = Ax [pA]
 
 // test the mask condition with Ax [pA]
-#define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
+#define GB_AX_MASK(Ax,pA,asize) \
+    GB_ax_mask(Ax,pA,asize)
 
 // hard-coded loops can be vectorized
 #define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD

@@ -73,7 +73,7 @@
 
     #if defined ( GB_PHASE_2_OF_2 ) && defined ( GB_NUMERIC )
     ASSERT (C->type = A->type) ;
-    const GB_void *GB_RESTRICT Ax = A->x ;
+    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
     const int64_t asize = A->type->size ;
     #endif
 
@@ -83,7 +83,7 @@
 
     #if defined ( GB_PHASE_2_OF_2 )
     int64_t  *GB_RESTRICT Ci = C->i ;
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

@@ -24,7 +24,7 @@
 
 #undef  GB_FREE_WORK
 #define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORK
@@ -148,7 +148,7 @@ GrB_Info GB_dense_subassign_06d
 
         const size_t csize = C->type->size ;
         const size_t asize = A->type->size ;
-        const size_t acode = A->type->code ;
+        const GB_Type_code acode = A->type->code ;
         GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
         // Cx [p] = (ctype) Ax [pA]

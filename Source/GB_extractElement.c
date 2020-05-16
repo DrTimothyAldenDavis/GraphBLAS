@@ -42,13 +42,13 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
     if (row >= GB_NROWS (A))
     { 
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Row index "GBu" out of range; must be < "GBd,
+            "Row index " GBu " out of range; must be < " GBd,
             row, GB_NROWS (A)))) ;
     }
     if (col >= GB_NCOLS (A))
     { 
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Column index "GBu" out of range; must be < "GBd,
+            "Column index " GBu " out of range; must be < " GBd,
             col, GB_NCOLS (A)))) ;
     }
 
@@ -135,7 +135,7 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 
     if (found)
     {
-        GB_void *Ax = A->x ;
+        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
         size_t asize = A->type->size ;
         // found A (row,col), return its value
         if (xcode > GB_FP64_code || xcode == A->type->code)
@@ -146,8 +146,8 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
         else
         { 
             // typecast the value from A into x
-            GB_cast_array (x, xcode, Ax +(pleft*asize), A->type->code, 1,
-                Context) ;
+            GB_cast_array ((GB_void *) x, xcode, Ax +(pleft*asize),
+                A->type->code, 1, Context) ;
         }
         return (GrB_SUCCESS) ;
     }

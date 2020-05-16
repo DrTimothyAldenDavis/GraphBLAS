@@ -30,7 +30,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     //--------------------------------------------------------------------------
 
     // allocate the descriptor
-    GB_CALLOC_MEMORY (*descriptor, 1, sizeof (struct GB_Descriptor_opaque)) ;
+    (*descriptor) = GB_CALLOC (1, struct GB_Descriptor_opaque) ;
     if (*descriptor == NULL)
     { 
         // out of memory

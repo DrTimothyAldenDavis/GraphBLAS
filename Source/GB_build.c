@@ -153,7 +153,7 @@ GrB_Info GB_build               // build matrix
         ijcheck,        // true if I and J are to be checked
         (int64_t *) ((C->is_csc) ? I_input : J_input),
         (int64_t *) ((C->is_csc) ? J_input : I_input),
-        S_input,        // original values, each of size nvals, not modified
+        (const GB_void *) S_input,   // original values, each of size nvals
         nvals,          // number of tuples
         dup,            // operator to assemble duplicates
         scode,          // type of the S array

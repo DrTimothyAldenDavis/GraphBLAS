@@ -189,7 +189,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_nmalloc_clear ( ) ;
     GB_Global_malloc_debug_set (false) ;
     GB_Global_malloc_debug_count_set (0) ;
-    GB_Global_inuse_clear ( ) ;
 
     //--------------------------------------------------------------------------
     // development use only; controls diagnostic output

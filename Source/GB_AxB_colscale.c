@@ -14,7 +14,7 @@
 #endif
 
 #define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 (
@@ -185,7 +185,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         size_t aij_size = flipxy ? ysize : xsize ;
         size_t djj_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT Cx = C->x ;
+        GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
 
         GB_cast_function cast_A, cast_D ;
         if (flipxy)

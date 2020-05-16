@@ -16,9 +16,9 @@
     //--------------------------------------------------------------------------
 
     // any matrix may be aliased to any other (C==A, C==B, and/or A==B)
-    GB_ATYPE *Ax = A->x ;
-    GB_BTYPE *Bx = B->x ;
-    GB_CTYPE *Cx = C->x ;
+    GB_ATYPE *Ax = (GB_ATYPE *) A->x ;
+    GB_BTYPE *Bx = (GB_BTYPE *) B->x ;
+    GB_CTYPE *Cx = (GB_CTYPE *) C->x ;
     const int64_t cnz = GB_NNZ (C) ;
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;
@@ -29,12 +29,16 @@
     // C = A+B where all 3 matrices are dense
     //--------------------------------------------------------------------------
 
+    #if GB_CTYPE_IS_BTYPE
+
     if (C == B)
     {
 
         //----------------------------------------------------------------------
         // C = A+C where A and C are dense
         //----------------------------------------------------------------------
+
+        // C and B cannot be aliased if their types differ
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
 
@@ -56,7 +60,12 @@
         #endif
 
     }
-    else if (C == A)
+    else 
+    #endif
+
+    #if GB_CTYPE_IS_ATYPE
+
+    if (C == A)
     {
 
         //----------------------------------------------------------------------
@@ -84,6 +93,8 @@
 
     }
     else
+    #endif
+
     {
 
         //----------------------------------------------------------------------

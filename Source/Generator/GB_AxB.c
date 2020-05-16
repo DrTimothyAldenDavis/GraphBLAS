@@ -31,7 +31,7 @@
 // A type:   GB_atype
 // B type:   GB_btype
 
-// Multiply: GB_MULTIPLY(z,aik,bkj)
+// Multiply: GB_multiply(z,aik,bkj)
 // Add:      GB_add_update(cij, z)
 //           'any' monoid?  GB_is_any_monoid
 //           atomic?        GB_has_atomic
@@ -61,7 +61,11 @@
 
 // multiply operator
 #define GB_MULT(z, x, y) \
-    GB_MULTIPLY(z, x, y)
+    GB_multiply(z, x, y)
+
+// the scalar 1
+#define GB_CTYPE_ONE \
+    GB_ztype_one
 
 // multiply-add
 #define GB_MULTADD(z, x, y) \

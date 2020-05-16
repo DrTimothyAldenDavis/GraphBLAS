@@ -17,10 +17,10 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                                            \
-{                                                               \
-    GB_FREE_MEMORY (A_slice, naslice+1, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (B_slice, nbslice+1, sizeof (int64_t)) ;     \
+#define GB_FREE_WORK        \
+{                           \
+    GB_FREE (A_slice) ;     \
+    GB_FREE (B_slice) ;     \
 }
 
 GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
@@ -187,7 +187,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT terminal = add->terminal ;
+        GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -231,7 +231,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
             GB_void zwork [GB_VLA(csize)] ;                                 \
-            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
+            GB_FMULT (zwork, aki, bkj) ;                                    \
             fadd (cij, cij, zwork)
 
         // define cij for each task
@@ -259,15 +259,15 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
         if (flipxy)
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #define GB_FMULT(z,x,y) fmult (z,y,x)
             #include "GB_AxB_dot4_template.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
         else
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #define GB_FMULT(z,x,y) fmult (z,x,y)
             #include "GB_AxB_dot4_template.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
     }
 

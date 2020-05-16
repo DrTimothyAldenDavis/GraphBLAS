@@ -115,7 +115,8 @@ void mexFunction
     OK (GrB_finalize ( )) ;
 
     GB_Global_GrB_init_called_set (false) ;
-    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
+    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
+        false)) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
 

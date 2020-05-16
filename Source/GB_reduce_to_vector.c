@@ -20,11 +20,11 @@
 #include "GB_red__include.h"
 #endif
 
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE_MEMORY (Wfirst_space, ntasks, zsize) ;                          \
-    GB_FREE_MEMORY (Wlast_space,  ntasks, zsize) ;                          \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ; \
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    GB_FREE (Wfirst_space) ;                                            \
+    GB_FREE (Wlast_space) ;                                             \
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;     \
 }
 
 #define GB_FREE_ALL             \
@@ -112,8 +112,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         if (n != GB_NCOLS (A))
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "w=reduce(A'):  length of w is "GBd";\n"
-                "it must match the number of columns of A, which is "GBd".",
+                "w=reduce(A'):  length of w is " GBd ";\n"
+                "it must match the number of columns of A, which is " GBd ".",
                 n, GB_NCOLS (A)))) ;
         }
     }
@@ -122,8 +122,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         if (n != GB_NROWS(A))
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "w=reduce(A):  length of w is "GBd";\n"
-                "it must match the number of rows of A, which is "GBd".",
+                "w=reduce(A):  length of w is " GBd ";\n"
+                "it must match the number of rows of A, which is " GBd ".",
                 n, GB_NROWS (A)))) ;
         }
     }
@@ -183,7 +183,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     size_t asize = A->type->size ;
     GB_Type_code acode = A->type->code ;
     const int64_t *GB_RESTRICT Ai = A->i ;
-    const GB_void *GB_RESTRICT Ax = A->x ;
+    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
@@ -219,15 +219,14 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         //----------------------------------------------------------------------
 
         // since T is a GrB_Vector, it is CSC and not hypersparse
-        GB_CREATE (&T, ttype, n, 1, GB_Ap_calloc, true,
-            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context) ;
-        GB_OK (info) ;
+        GB_OK (GB_create (&T, ttype, n, 1, GB_Ap_calloc, true,
+            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
         T->p [0] = 0 ;
         T->p [1] = anvec ;
         int64_t *GB_RESTRICT Ti = T->i ;
-        GB_void *GB_RESTRICT Tx = T->x ;
+        GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;
         T->nvec_nonempty = (anvec > 0) ? 1 : 0 ;
         T->magic = GB_MAGIC ;
 
@@ -284,8 +283,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         ntasks = GB_IMIN (ntasks, anz) ;
         ntasks = GB_IMAX (ntasks, 1) ;
 
-        GB_MALLOC_MEMORY (Wfirst_space, ntasks, zsize) ;
-        GB_MALLOC_MEMORY (Wlast_space,  ntasks, zsize) ;
+        Wfirst_space = GB_MALLOC (ntasks * zsize, GB_void) ;
+        Wlast_space  = GB_MALLOC (ntasks * zsize, GB_void) ;
 
         if (Wfirst_space == NULL || Wlast_space == NULL ||
            !GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
@@ -429,9 +428,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // on n.
 
             // since T is a GrB_Vector, it is not hypersparse
-            GB_NEW (&T, ttype, n, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
-                GB_HYPER_DEFAULT, 1, Context) ;
-            GB_OK (info) ;
+            GB_OK (GB_new (&T, ttype, n, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
+                GB_HYPER_DEFAULT, 1, Context)) ;
 
             // GB_build treats Ai and Ax as read-only; they must not be modified
             GB_OK (GB_build
@@ -476,7 +474,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // Thread tid does entries pstart_slice [tid] to
             // pstart_slice [tid+1]-1.  No need to compute kfirst or klast.
 
-            GB_MALLOC_MEMORY (pstart_slice, ntasks+1, sizeof (int64_t)) ;
+            pstart_slice = GB_MALLOC (ntasks+1, int64_t) ;
             if (pstart_slice == NULL)
             { 
                 // out of memory

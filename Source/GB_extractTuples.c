@@ -70,8 +70,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     { 
         // output arrays are not big enough
         return (GB_ERROR (GrB_INSUFFICIENT_SPACE, (GB_LOG,
-            "output arrays I,J,X are not big enough: nvals "GBd" < "
-            "number of entries "GBd, nvals, anz))) ;
+            "output arrays I,J,X are not big enough: nvals " GBd " < "
+            "number of entries " GBd, nvals, anz))) ;
     }
 
     //--------------------------------------------------------------------------
@@ -125,6 +125,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (X != NULL)
     {
+        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
         if (xcode > GB_FP64_code || xcode == A->type->code)
         { 
             // Copy the values without typecasting.  For user-defined types,
@@ -132,12 +133,13 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             // user-defined type, but this can't be checked.  For built-in
             // types, xcode has already been determined by the type of X in the
             // function signature of the caller.
-            GB_memcpy (X, A->x, anz * A->type->size, nthreads) ;
+            GB_memcpy (X, Ax, anz * A->type->size, nthreads) ;
         }
         else
         { 
             // typecast the values from A into X, for built-in types only
-            GB_cast_array (X, xcode, A->x, A->type->code, anz, Context) ;
+            GB_cast_array ((GB_void *) X, xcode, Ax, A->type->code, anz,
+                Context) ;
         }
     }
 

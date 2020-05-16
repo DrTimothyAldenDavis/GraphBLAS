@@ -19,10 +19,10 @@
 
 #define FREE_WORK                       \
 {                                       \
-    GB_FREE_MEMORY (Cp, nvec+1, sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (Ch, nvec  , sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (Ci, nvals , sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (Cx, nvals , csize) ; \
+    GB_FREE (Cp) ;                      \
+    GB_FREE (Ch) ;                      \
+    GB_FREE (Ci) ;                      \
+    GB_FREE (Cx) ;                      \
     GB_MATRIX_FREE (&C) ;               \
 }
 

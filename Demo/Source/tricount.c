@@ -119,7 +119,8 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_mxm (C, NULL, NULL, GxB_PLUS_TIMES_UINT32, A, E, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_UnaryOp_new (&Two, two, GrB_UINT32, GrB_UINT32)) ;
+            OK (GrB_UnaryOp_new (&Two, 
+                (GxB_unary_function) two, GrB_UINT32, GrB_UINT32)) ;
             OK (GrB_Matrix_new (&S, GrB_UINT32, n, ne)) ;
             OK (GrB_Matrix_apply (S, NULL, NULL, Two, C, NULL)) ;
             OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GrB_PLUS_MONOID_INT64,

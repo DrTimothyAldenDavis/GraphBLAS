@@ -53,10 +53,10 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 
     // allocate the new A->x and A->i content
     A->nzmax = GB_IMAX (nzmax, 1) ;
-    GB_MALLOC_MEMORY (A->i, A->nzmax, sizeof (int64_t)) ;
+    A->i = GB_MALLOC (A->nzmax, int64_t) ;
     if (numeric)
     { 
-        GB_MALLOC_MEMORY (A->x, A->nzmax, A->type->size) ;
+        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
     }
 
     if (A->i == NULL || (numeric && A->x == NULL))

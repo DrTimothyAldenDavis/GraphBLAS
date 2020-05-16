@@ -168,10 +168,20 @@ if (~isempty (strfind (mult, 'IDIV')))
     mult = strrep (mult, ')', sprintf (', %d)', bits)) ;
 end
 
-% create the multiply operator
+% create the multiply operator (assignment)
 mult2 = strrep (mult,  'xarg', '`$2''') ;
 mult2 = strrep (mult2, 'yarg', '`$3''') ;
-fprintf (f, 'define(`GB_MULTIPLY'', `$1 = %s'')\n', mult2) ;
+fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
+
+% create the scalar 1
+switch (ztype)
+    case 'GxB_FC32_t'
+        fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLXF (1,0)'')\n') ;
+    case 'GxB_FC64_t'
+        fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLX (1,0)'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_ztype_one'', `((%s) 1)'')\n', ztype) ;
+end
 
 % create the add operator, of the form w += t
 add2 = strrep (add,  'w', '`$1''') ;
@@ -229,14 +239,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +30 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +31 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +30 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +31 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

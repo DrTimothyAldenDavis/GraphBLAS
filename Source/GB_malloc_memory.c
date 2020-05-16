@@ -9,15 +9,10 @@
 
 // A wrapper for malloc_function.  Space is not initialized.
 
-// This function is called via the GB_MALLOC_MEMORY(p,n,s) macro.
-
 // Parameters are the same as the POSIX calloc, except that asking to allocate
 // a block of zero size causes a block of size 1 to be allocated instead.  This
 // allows the return pointer p to be checked for the out-of-memory condition,
 // even when allocating an object of size zero.
-
-// to turn on memory usage debug printing, uncomment this line:
-// #define GB_PRINT_MALLOC 1
 
 #include "GB.h"
 
@@ -71,9 +66,6 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             // allocate the memory
             if (pretend_to_fail)
             { 
-                #ifdef GB_PRINT_MALLOC
-                printf ("pretend to fail\n") ;
-                #endif
                 p = NULL ;
             }
             else
@@ -86,32 +78,12 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             { 
                 // success
                 #undef GB_CRITICAL_SECTION
-
-                #ifdef GB_PRINT_MALLOC
-
-                    int nmalloc = 0 ;
-                    #define GB_CRITICAL_SECTION                             \
-                    {                                                       \
-                        nmalloc = GB_Global_nmalloc_increment ( ) ;         \
-                        GB_Global_inuse_increment (nitems * size_of_item) ; \
-                    }
-
-                #else
-
-                    #define GB_CRITICAL_SECTION                             \
-                    {                                                       \
-                        GB_Global_nmalloc_increment ( ) ;                   \
-                        GB_Global_inuse_increment (nitems * size_of_item) ; \
-                    }
-
-                #endif
+                #define GB_CRITICAL_SECTION                             \
+                {                                                       \
+                    GB_Global_nmalloc_increment ( ) ;                   \
+                }
 
                 #include "GB_critical_section.c"
-                #ifdef GB_PRINT_MALLOC
-                printf ("%14p Malloc:  %3d %1d n "GBd" size "GBd"\n", p,
-                    nmalloc, malloc_debug, (int64_t) nitems,
-                    (int64_t) size_of_item) ;
-                #endif
             }
 
         }

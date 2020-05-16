@@ -265,10 +265,9 @@ GrB_Info GB_mask                // C<M> = Z
                 // The C_cleared matrix has the same hypersparsity and CSC/CSR
                 // format as the orginal C matrix.
                 C_cleared = NULL;   // allocate a new header for C_cleared
-                GB_CREATE (&C_cleared, C_result->type, vlen, vdim,
+                GB_OK (GB_create (&C_cleared, C_result->type, vlen, vdim,
                     GB_Ap_calloc, R_is_csc, GB_AUTO_HYPER,
-                    C_result->hyper_ratio, 0, 0, true, Context) ;
-                GB_OK (info) ;
+                    C_result->hyper_ratio, 0, 0, true, Context)) ;
                 C = C_cleared ;
             }
             else

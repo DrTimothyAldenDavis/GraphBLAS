@@ -58,11 +58,11 @@
 
 #include "GB_add.h"
 
-#define GB_FREE_WORK                                            \
-{                                                               \
-    GB_FREE_MEMORY (kA_start, ntasks+1, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (kB_start, ntasks+1, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (kC_start, ntasks+1, sizeof (int64_t)) ;     \
+#define GB_FREE_WORK        \
+{                           \
+    GB_FREE (kA_start) ;    \
+    GB_FREE (kB_start) ;    \
+    GB_FREE (kC_start) ;    \
 }
 
 //------------------------------------------------------------------------------
@@ -81,22 +81,22 @@ static inline bool GB_allocate_result
     bool ok = true ;
     if (Ch_handle != NULL)
     { 
-        GB_MALLOC_MEMORY (*Ch_handle, Cnvec, sizeof (int64_t)) ;
+        (*Ch_handle) = GB_MALLOC (Cnvec, int64_t) ;
         ok = (*Ch_handle != NULL) ;
     }
     if (C_to_M_handle != NULL)
     { 
-        GB_MALLOC_MEMORY (*C_to_M_handle, Cnvec, sizeof (int64_t)) ;
+        (*C_to_M_handle) = GB_MALLOC (Cnvec, int64_t) ;
         ok = ok && (*C_to_M_handle != NULL) ;
     }
     if (C_to_A_handle != NULL)
     { 
-        GB_MALLOC_MEMORY (*C_to_A_handle, Cnvec, sizeof (int64_t)) ;
+        *C_to_A_handle = GB_MALLOC (Cnvec, int64_t) ;
         ok = ok && (*C_to_A_handle != NULL) ;
     }
     if (C_to_B_handle != NULL)
     { 
-        GB_MALLOC_MEMORY (*C_to_B_handle, Cnvec, sizeof (int64_t)) ;
+        *C_to_B_handle = GB_MALLOC (Cnvec, int64_t) ;
         ok = ok && (*C_to_B_handle != NULL) ;
     }
 
@@ -105,19 +105,19 @@ static inline bool GB_allocate_result
         // out of memory
         if (Ch_handle != NULL)
         { 
-            GB_FREE_MEMORY (*Ch_handle,     Cnvec, sizeof (int64_t)) ;
+            GB_FREE (*Ch_handle) ;
         }
         if (C_to_M_handle != NULL)
         { 
-            GB_FREE_MEMORY (*C_to_M_handle, Cnvec, sizeof (int64_t)) ;
+            GB_FREE (*C_to_M_handle) ;
         }
         if (C_to_A_handle != NULL)
         { 
-            GB_FREE_MEMORY (*C_to_A_handle, Cnvec, sizeof (int64_t)) ;
+            GB_FREE (*C_to_A_handle) ;
         }
         if (C_to_B_handle != NULL)
         { 
-            GB_FREE_MEMORY (*C_to_B_handle, Cnvec, sizeof (int64_t)) ;
+            GB_FREE (*C_to_B_handle) ;
         }
     }
     return (ok) ;
@@ -302,9 +302,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         ntasks = GB_IMIN (ntasks, work) ;
 
         // allocate workspace
-        GB_MALLOC_MEMORY (kA_start, ntasks+1, sizeof (int64_t)) ;
-        GB_MALLOC_MEMORY (kB_start, ntasks+1, sizeof (int64_t)) ;
-        GB_MALLOC_MEMORY (kC_start, ntasks+1, sizeof (int64_t)) ;
+        kA_start = GB_MALLOC (ntasks+1, int64_t) ;
+        kB_start = GB_MALLOC (ntasks+1, int64_t) ;
+        kC_start = GB_MALLOC (ntasks+1, int64_t) ;
         if (kA_start == NULL || kB_start == NULL || kC_start == NULL)
         {
             // out of memory

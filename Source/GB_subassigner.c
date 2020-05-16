@@ -49,15 +49,15 @@
 // can be changed by turning an entry into a zombie, or by bringing a zombie
 // back to life, but no entry in C->i moves in position.
 
-#define GB_FREE_WORK                                    \
-{                                                       \
-    GB_MATRIX_FREE (&S) ;                               \
-    GB_MATRIX_FREE (&A2) ;                              \
-    GB_MATRIX_FREE (&M2) ;                              \
-    GB_FREE_MEMORY (I2,  ni, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (I2k, ni, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (J2,  nj, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (J2k, nj, sizeof (GrB_Index)) ;      \
+#define GB_FREE_WORK            \
+{                               \
+    GB_MATRIX_FREE (&S) ;       \
+    GB_MATRIX_FREE (&A2) ;      \
+    GB_MATRIX_FREE (&M2) ;      \
+    GB_FREE (I2) ;              \
+    GB_FREE (I2k) ;             \
+    GB_FREE (J2) ;              \
+    GB_FREE (J2k) ;             \
 }
 
 #include "GB_subassign.h"
@@ -337,8 +337,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             M = M2 ;
         }
 
-        GB_FREE_MEMORY (I2k, ni, sizeof (GrB_Index)) ;
-        GB_FREE_MEMORY (J2k, nj, sizeof (GrB_Index)) ;
+        GB_FREE (I2k) ;
+        GB_FREE (J2k) ;
     }
 
     // I and J are now sorted, with no duplicate entries.  They are either
@@ -830,7 +830,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         #ifdef GB_DEBUG
         const int64_t *GB_RESTRICT Si = S->i ;
-        const int64_t *GB_RESTRICT Sx = S->x ;
+        const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
         // this body of code explains what S contains.
         // S is nI-by-nJ where nI = length (I) and nJ = length (J)
         GBI_for_each_vector (S)

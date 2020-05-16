@@ -58,8 +58,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
-            "output is "GBd"-by-"GBd"\n"
-            "input is "GBd"-by-"GBd"%s",
+            "output is " GBd "-by-" GBd "\n"
+            "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
             tnrows, tncols, (!A_transpose) ? " (transposed)" : ""))) ;
     }

@@ -22,19 +22,19 @@
     if (nrows > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
-            "problem too large: nrows "GBu" exceeds "GBu,       \
+            "problem too large: nrows " GBu " exceeds " GBu,    \
             nrows, GxB_INDEX_MAX))) ;                           \
     }                                                           \
     if (ncols > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
-            "problem too large: ncols "GBu" exceeds "GBu,       \
+            "problem too large: ncols " GBu " exceeds " GBu,    \
             ncols, GxB_INDEX_MAX))) ;                           \
     }                                                           \
     if (nvals > GxB_INDEX_MAX)                                  \
     {                                                           \
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,           \
-            "problem too large: nvals "GBu" exceeds "GBu,       \
+            "problem too large: nvals " GBu " exceeds " GBu,    \
             nvals, GxB_INDEX_MAX))) ;                           \
     }                                                           \
     /* get the descriptor */                                    \

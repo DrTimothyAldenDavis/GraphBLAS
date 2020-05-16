@@ -301,13 +301,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     #if GB_BURBLE
-    char *M_str = (M == NULL) ? "" : (Mask_comp ?  "<!M>" : "<M>") ;
+    const char *M_str = (M == NULL) ? "" : (Mask_comp ?  "<!M>" : "<M>") ;
     #define GB_PROP_LEN (GB_LEN+128)
     char A_str [GB_PROP_LEN+1] ;
     char B_str [GB_PROP_LEN+1] ;
-    snprintf (A_str, GB_PROP_LEN, "A: "GBd"-by-"GBd", %s, "GBd" entries",
+    snprintf (A_str, GB_PROP_LEN, "A: " GBd "-by-" GBd ", %s, " GBd " entries",
         GB_NROWS (A), GB_NCOLS (A), A->type->name, GB_NNZ (A)) ;
-    snprintf (B_str, GB_PROP_LEN, "B: "GBd"-by-"GBd", %s, "GBd" entries",
+    snprintf (B_str, GB_PROP_LEN, "B: " GBd "-by-" GBd ", %s, " GBd " entries",
         GB_NROWS (B), GB_NCOLS (B), B->type->name, GB_NNZ (B)) ;
     #endif
 

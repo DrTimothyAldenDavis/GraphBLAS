@@ -22,8 +22,6 @@ switch op
     % binary operators
     %---------------------------------------------------------------------------
 
-    % TODO: add pow
-
     % x,y,z all complex:
     case 'first'
         z = x ;
@@ -57,6 +55,9 @@ switch op
         if (any (isnan (z)))
             z (isnan (z)) = complex (nan,nan) ;
         end
+        tol = true ;
+    case 'pow'
+        z = y.^x ;
         tol = true ;
 
     % x,y,z all complex:
@@ -146,5 +147,4 @@ switch op
     otherwise
         error ('unrecognized complex operator')
 end
-
 

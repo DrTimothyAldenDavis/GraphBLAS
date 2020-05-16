@@ -96,18 +96,18 @@
 
 #define GB_FREE_WORK                                                \
 {                                                                   \
-    GB_FREE_MEMORY (tstart_slice, nthreads+1, sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (tnvec_slice,  nthreads+1, sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (tnz_slice,    nthreads+1, sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (kbad,         nthreads,   sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (ilast_slice,  nthreads,   sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (*I_work_handle, ijslen, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (*J_work_handle, ijslen, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (*S_work_handle, ijslen, ssize) ;                \
-    GB_FREE_MEMORY (K_work,         nvals,  sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (W0,             nvals,  sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (W1,             nvals,  sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (W1,             nvals,  sizeof (int64_t)) ;     \
+    GB_FREE (tstart_slice) ;        \
+    GB_FREE (tnvec_slice) ;         \
+    GB_FREE (tnz_slice) ;           \
+    GB_FREE (kbad) ;                \
+    GB_FREE (ilast_slice) ;         \
+    GB_FREE (*I_work_handle) ;      \
+    GB_FREE (*J_work_handle) ;      \
+    GB_FREE (*S_work_handle) ;      \
+    GB_FREE (K_work) ;              \
+    GB_FREE (W0) ;                  \
+    GB_FREE (W1) ;                  \
+    GB_FREE (W1) ;                  \
 }
 
 //------------------------------------------------------------------------------
@@ -208,11 +208,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT kbad = NULL ;             // size nthreads
     int64_t *GB_RESTRICT ilast_slice = NULL ;      // size [nthreads]
 
-    GB_CALLOC_MEMORY (tstart_slice, nthreads+1, sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (tnvec_slice,  nthreads+1, sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (tnz_slice,    nthreads+1, sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (kbad,         nthreads,   sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (ilast_slice,  nthreads,   sizeof (int64_t)) ;
+    tstart_slice = GB_CALLOC (nthreads+1, int64_t) ;
+    tnvec_slice  = GB_CALLOC (nthreads+1, int64_t) ;
+    tnz_slice    = GB_CALLOC (nthreads+1, int64_t) ;
+    kbad         = GB_CALLOC (nthreads,   int64_t) ;
+    ilast_slice  = GB_CALLOC (nthreads,   int64_t) ;
 
     if (tstart_slice == NULL || tnvec_slice == NULL || tnz_slice == NULL ||
         kbad == NULL || ilast_slice == NULL)
@@ -285,7 +285,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // freed in GB_builder.
 
         ASSERT (J_work == NULL) ;
-        GB_MALLOC_MEMORY (I_work, nvals, sizeof (int64_t)) ;
+        I_work = GB_MALLOC (nvals, int64_t) ;
         (*I_work_handle) = I_work ;
         ijslen = nvals ;
         if (I_work == NULL)
@@ -393,8 +393,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     int64_t ncols = is_csc ? vdim : vlen ;
                     GB_FREE_WORK ;
                     return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-                        "index ("GBd","GBd") out of bounds,"
-                        " must be < ("GBd", "GBd")", row, col, nrows, ncols))) ;
+                        "index (" GBd "," GBd ") out of bounds,"
+                        " must be < (" GBd ", " GBd ")",
+                        row, col, nrows, ncols))) ;
                 }
             }
 
@@ -410,7 +411,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (vdim > 1 && !known_sorted)
             {
                 // copy J_input into J_work, so the tuples can be sorted
-                GB_MALLOC_MEMORY (J_work, nvals, sizeof (int64_t)) ;
+                J_work = GB_MALLOC (nvals, int64_t) ;
                 (*J_work_handle) = J_work ;
                 if (J_work == NULL)
                 { 
@@ -488,7 +489,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     int64_t i = I_input [kbad [tid]] ;
                     GB_FREE_WORK ;
                     return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-                        "index ("GBd") out of bounds, must be < ("GBd")",
+                        "index (" GBd ") out of bounds, must be < (" GBd ")",
                         i, vlen))) ;
                 }
             }
@@ -536,7 +537,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
 
         // create the k part of each tuple
-        GB_MALLOC_MEMORY (K_work, nvals, sizeof (int64_t)) ;
+        K_work = GB_MALLOC (nvals, int64_t) ;
         if (K_work == NULL)
         { 
             // out of memory
@@ -572,9 +573,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (nth > 1)
             {
-                GB_MALLOC_MEMORY (W0, nvals, sizeof (int64_t)) ;
-                GB_MALLOC_MEMORY (W1, nvals, sizeof (int64_t)) ;
-                GB_MALLOC_MEMORY (W2, nvals, sizeof (int64_t)) ;
+                W0 = GB_MALLOC (nvals, int64_t) ;
+                W1 = GB_MALLOC (nvals, int64_t) ;
+                W2 = GB_MALLOC (nvals, int64_t) ;
                 if (W0 == NULL || W1 == NULL || W2 == NULL)
                 { 
                     // out of memory
@@ -595,8 +596,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (nth > 1)
             { 
-                GB_MALLOC_MEMORY (W0, nvals, sizeof (int64_t)) ;
-                GB_MALLOC_MEMORY (W1, nvals, sizeof (int64_t)) ;
+                W0 = GB_MALLOC (nvals, int64_t) ;
+                W1 = GB_MALLOC (nvals, int64_t) ;
                 if (W0 == NULL || W1 == NULL)
                 { 
                     // out of memory
@@ -608,9 +609,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             GB_msort_2 (I_work, K_work, W0, W1, nvals, nth) ;
         }
 
-        GB_FREE_MEMORY (W0, nvals, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (W1, nvals, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (W2, nvals, sizeof (int64_t)) ;
+        GB_FREE (W0) ;
+        GB_FREE (W1) ;
+        GB_FREE (W2) ;
     }
 
     //--------------------------------------------------------------------------
@@ -784,7 +785,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // [ allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
-    GB_NEW (&T, ttype, vlen, vdim, GB_Ap_malloc, is_csc, GB_FORCE_HYPER,
+    info = GB_new (&T, ttype, vlen, vdim, GB_Ap_malloc, is_csc, GB_FORCE_HYPER,
         GB_ALWAYS_HYPER, tnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -909,7 +910,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     ASSERT (J_work_handle != NULL) ;
-    GB_FREE_MEMORY (*J_work_handle, ijslen, sizeof (int64_t)) ;
+    GB_FREE (*J_work_handle) ;
     J_work = NULL ;
 
     //--------------------------------------------------------------------------
@@ -925,7 +926,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            GB_REALLOC_MEMORY (I_work, T->nzmax, ijslen, sizeof (int64_t), &ok);
+            I_work = GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
@@ -936,7 +937,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     else
     {
         // duplicates exist, so allocate a new T->i.  I_work must be freed later
-        GB_MALLOC_MEMORY (T->i, tnz, sizeof (int64_t)) ;
+        T->i = GB_MALLOC (tnz, int64_t) ;
         if (T->i == NULL)
         { 
             // out of memory
@@ -1106,7 +1107,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-        GB_MALLOC_MEMORY (T->x, tnz, ttype->size) ;
+        T->x = GB_MALLOC (tnz * ttype->size, GB_void) ;
         if (T->x == NULL)
         { 
             // out of memory
@@ -1115,7 +1116,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        GB_void *GB_RESTRICT Tx = T->x ;
+        GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;
 
         ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
 

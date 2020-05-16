@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = ((x != 0) != (y != 0))
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    ((float) 1)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     z = fminf (z, ((x != 0) != (y != 0)))

@@ -134,8 +134,7 @@ GrB_Info GB_resize              // change the size of a matrix
         if (vdim_new != vdim_old)
         {
             // change the size of A->p
-            GB_REALLOC_MEMORY (A->p, vdim_new+1, vdim_old+1, sizeof (int64_t),
-                &ok) ;
+            A->p = GB_REALLOC (A->p, vdim_new+1, vdim_old+1, int64_t, &ok) ;
             if (!ok)
             { 
                 // out of memory

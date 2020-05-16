@@ -51,8 +51,8 @@
             GB_MATRIX_FREE (& (Aslice [tid])) ;                 \
         }                                                       \
     }                                                           \
-    GB_FREE_MEMORY (Slice,  naslice+1, sizeof (int64_t)) ;      \
-    GB_FREE_MEMORY (Aslice, naslice+1, sizeof (int64_t)) ;      \
+    GB_FREE (Slice) ;                                           \
+    GB_FREE (Aslice) ;                                          \
 }
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
@@ -207,7 +207,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // slice A' by nz
         //----------------------------------------------------------------------
 
-        GB_CALLOC_MEMORY (Aslice, naslice+1, sizeof (GrB_Matrix)) ;
+        Aslice = GB_CALLOC (naslice+1, GrB_Matrix) ;
         if (Aslice == NULL || !GB_pslice (&Slice, A->p, A->nvec, naslice))
         { 
             // out of memory

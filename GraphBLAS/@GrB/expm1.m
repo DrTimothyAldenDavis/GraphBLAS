@@ -7,8 +7,6 @@ function C = expm1 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% FUTURE: GxB_EXPM1_FC* ops are not accurate for the complex case
-
 if (~isfloat (G))
     G = GrB (G, 'double') ;
 end

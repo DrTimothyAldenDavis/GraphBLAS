@@ -209,18 +209,23 @@
 // definitions for complex types
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
+// See:
+// https://www.drdobbs.com/complex-arithmetic-in-the-intersection-o/184401628#
 
-    // C++ complex types
-    #include <cmath>
-    #include <complex>
-    #undef I
-    using namespace std ;
-    typedef complex<float>  GxB_FC32_t ;
-    typedef complex<double> GxB_FC64_t ;
+#if defined ( __cplusplus )
 
-    #define GxB_CMPLXF(real,imag) GxB_FC32_t(real, imag)
-    #define GxB_CMPLX(real,imag)  GxB_FC64_t(real, imag)
+    extern "C++" {
+        // C++ complex types
+        #include <cmath>
+        #include <complex>
+        #undef I
+        using namespace std ;
+        typedef complex<float>  GxB_FC32_t ;
+        typedef complex<double> GxB_FC64_t ;
+    }
+
+    #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
+    #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
 
 #elif ( _MSC_VER && !__INTEL_COMPILER )
 
@@ -230,8 +235,8 @@
     typedef _Fcomplex GxB_FC32_t ;
     typedef _Dcomplex GxB_FC64_t ;
 
-    #define GxB_CMPLXF(real,imag) (_FCbuild (real, imag))
-    #define GxB_CMPLX(real,imag)  ( _Cbuild (real, imag))
+    #define GxB_CMPLXF(r,i) (_FCbuild (r,i))
+    #define GxB_CMPLX(r,i)  ( _Cbuild (r,i))
 
 #else
 
@@ -243,26 +248,20 @@
 
     #ifndef CMPLX
         // gcc 6.2 on the the Mac doesn't #define CMPLX
-        #define GxB_CMPLX(real,imag) \
-        ( \
-            (double complex)((double)(real)) + \
-            (double complex)((double)(imag) * _Complex_I) \
-        )
+        #define GxB_CMPLX(r,i) \
+        ((GxB_FC64_t)((double)(r)) + (GxB_FC64_t)((double)(i) * _Complex_I))
     #else
         // use the ANSI C11 CMPLX macro
-        #define GxB_CMPLX(real,imag) (CMPLX (real, imag))
+        #define GxB_CMPLX(r,i) CMPLX (r,i)
     #endif
 
     #ifndef CMPLXF
         // gcc 6.2 on the the Mac doesn't #define CMPLXF
-        #define GxB_CMPLXF(real,imag) \
-        ( \
-            (float complex)((float)(real)) + \
-            (float complex)((float)(imag) * _Complex_I) \
-        )
+        #define GxB_CMPLXF(r,i) \
+        ((GxB_FC32_t)((float)(r)) + (GxB_FC32_t)((float)(i) * _Complex_I))
     #else
         // use the ANSI C11 CMPLX macro
-        #define GxB_CMPLXF(real,imag) (CMPLXF (real, imag))
+        #define GxB_CMPLXF(r,i) CMPLXF (r,i)
     #endif
 
 #endif

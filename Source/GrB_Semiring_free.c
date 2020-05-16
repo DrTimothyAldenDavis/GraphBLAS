@@ -25,8 +25,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
                 // only user-defined semirings are freed.  predefined semirings
                 // are statically allocated and cannot be freed.
                 s->magic = GB_FREED ; // to help detect dangling pointers
-                GB_FREE_MEMORY (*semiring, 1,
-                    sizeof (struct GB_Semiring_opaque)) ;
+                GB_FREE (*semiring) ;
             }
             (*semiring) = NULL ;
         }

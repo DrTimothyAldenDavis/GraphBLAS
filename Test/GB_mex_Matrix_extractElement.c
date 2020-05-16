@@ -19,7 +19,7 @@
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&A) ;               \
-    GB_FREE_MEMORY (Xtemp, ni, 2 * sizeof (double)) ; \
+    GB_FREE (Xtemp) ;                   \
     GB_mx_put_global (true, 0) ;        \
 }
 

@@ -8,8 +8,6 @@ function C = log1p (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% FUTURE: the GxB_LOG1P_FC* ops are not accurate for the complex case
-
 if (isreal (G))
     if (GrB.issigned (G) && any (G < -1, 'all'))
         if (isequal (GrB.type (G), 'single'))

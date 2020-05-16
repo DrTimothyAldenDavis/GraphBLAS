@@ -37,19 +37,19 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
 
     const int64_t  *GB_RESTRICT Bp = B->p ;
     const int64_t  *GB_RESTRICT Bh = B->h ;
     const int64_t  *GB_RESTRICT Bi = B->i ;
-    const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
 
     const int64_t  *GB_RESTRICT Ap = A->p ;
     const int64_t  *GB_RESTRICT Ah = A->h ;
     const int64_t  *GB_RESTRICT Ai = A->i ;
-    const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     ASSERT (A->vlen == B->vlen) ;
 
     int ntasks = naslice * nbslice ;

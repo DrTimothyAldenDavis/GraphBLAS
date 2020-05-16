@@ -110,23 +110,23 @@ GrB_Info GB_code_check          // print an entry using a type code
 
         #else
 
-        case GB_BOOL_code   : i = *((bool     *) x) ; GBPR ("  "GBd, i) ;
+        case GB_BOOL_code   : i = *((bool     *) x) ; GBPR ("  " GBd, i) ;
             break ;
-        case GB_INT8_code   : i = *((int8_t   *) x) ; GBPR ("  "GBd, i) ;
+        case GB_INT8_code   : i = *((int8_t   *) x) ; GBPR ("  " GBd, i) ;
             break ;
-        case GB_UINT8_code  : u = *((uint8_t  *) x) ; GBPR ("  "GBu, u) ;
+        case GB_UINT8_code  : u = *((uint8_t  *) x) ; GBPR ("  " GBu, u) ;
             break ;
-        case GB_INT16_code  : i = *((int16_t  *) x) ; GBPR ("  "GBd, i) ;
+        case GB_INT16_code  : i = *((int16_t  *) x) ; GBPR ("  " GBd, i) ;
             break ;
-        case GB_UINT16_code : u = *((uint16_t *) x) ; GBPR ("  "GBu, u) ;
+        case GB_UINT16_code : u = *((uint16_t *) x) ; GBPR ("  " GBu, u) ;
             break ;
-        case GB_INT32_code  : i = *((int32_t  *) x) ; GBPR ("  "GBd, i) ;
+        case GB_INT32_code  : i = *((int32_t  *) x) ; GBPR ("  " GBd, i) ;
             break ;
-        case GB_UINT32_code : u = *((uint32_t *) x) ; GBPR ("  "GBu, u) ;
+        case GB_UINT32_code : u = *((uint32_t *) x) ; GBPR ("  " GBu, u) ;
             break ;
-        case GB_INT64_code  : i = *((int64_t  *) x) ; GBPR ("  "GBd, i) ;
+        case GB_INT64_code  : i = *((int64_t  *) x) ; GBPR ("  " GBd, i) ;
             break ;
-        case GB_UINT64_code : u = *((uint64_t *) x) ; GBPR ("  "GBu, u) ;
+        case GB_UINT64_code : u = *((uint64_t *) x) ; GBPR ("  " GBu, u) ;
             break ;
 
         case GB_FP32_code   :

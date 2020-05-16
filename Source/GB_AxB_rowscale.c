@@ -158,7 +158,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         size_t dii_size = flipxy ? ysize : xsize ;
         size_t bij_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT Cx = C->x ;
+        GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
 
         GB_cast_function cast_D, cast_B ;
         if (flipxy)

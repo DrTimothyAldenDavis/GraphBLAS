@@ -16,7 +16,9 @@
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
 #elif defined __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#if !defined ( __cplusplus )
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
 #endif
 
 GrB_BinaryOp Complex_first = NULL, Complex_second = NULL, Complex_min = NULL,
@@ -267,13 +269,13 @@ void complex_identity (C Z, const C X) { Z =       X  ; }
 GB_PUBLIC
 void complex_ainv     (C Z, const C X) { Z =      -X  ; }
 GB_PUBLIC
-void complex_abs      (C Z, const C X) { Z = GxB_CMPLX (cabs (X), 0) ; }
-GB_PUBLIC
 void complex_minv     (C Z, const C X) { Z =  1. / X  ; }
 GB_PUBLIC
 void complex_conj     (C Z, const C X) { Z = conj (X) ; }
 #endif
 
+GB_PUBLIC
+void complex_abs      (C Z, const C X) { Z = GxB_CMPLX (cabs (X), 0) ; }
 GB_PUBLIC
 void complex_not      (C Z, const C X) { Z = BOOL (X) ? F : T ; }
 
@@ -322,6 +324,9 @@ void complex_complex_imag (C Z, const double X) { Z = GxB_CMPLX (0, X) ; }
 #undef D
 #define C Complex
 #define D GrB_FP64
+
+#define U (GxB_unary_function)
+#define B (GxB_binary_function)
 
 GB_PUBLIC
 GrB_Info Complex_init (bool builtin_complex)
@@ -372,21 +377,21 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_BinaryOp_new (&Complex_first  , complex_first  , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_second , complex_second , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_pair   , complex_pair   , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_plus   , complex_plus   , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_minus  , complex_minus  , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_rminus , complex_rminus , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_times  , complex_times  , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_div    , complex_div    , C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_rdiv   , complex_rdiv   , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_first  , B complex_first  , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_second , B complex_second , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_pair   , B complex_pair   , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_plus   , B complex_plus   , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_minus  , B complex_minus  , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_rminus , B complex_rminus , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_times  , B complex_times  , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_div    , B complex_div    , C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_rdiv   , B complex_rdiv   , C, C, C)) ;
         #endif
     }
 
     // these are not built-in
-    OK (GrB_BinaryOp_new (&Complex_min    , complex_min    , C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_max    , complex_max    , C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_min    , B complex_min    , C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_max    , B complex_max    , C, C, C)) ;
 
     //--------------------------------------------------------------------------
     // create the Complex binary comparison operators, CxC -> C
@@ -402,25 +407,25 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_BinaryOp_new (&Complex_iseq , complex_iseq ,  C, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_isne , complex_isne ,  C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_iseq , B complex_iseq ,  C, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_isne , B complex_isne ,  C, C, C)) ;
         #endif
     }
 
     // these are not built-in
-    OK (GrB_BinaryOp_new (&Complex_isgt , complex_isgt ,  C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_islt , complex_islt ,  C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_isge , complex_isge ,  C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_isle , complex_isle ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_isgt , B complex_isgt ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_islt , B complex_islt ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_isge , B complex_isge ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_isle , B complex_isle ,  C, C, C)) ;
 
     //--------------------------------------------------------------------------
     // create the Complex boolean operators, CxC -> C
     //--------------------------------------------------------------------------
 
     // these are not built-in
-    OK (GrB_BinaryOp_new (&Complex_or  , complex_or  ,  C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_and , complex_and ,  C, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_xor , complex_xor ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_or  , B complex_or  ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_and , B complex_and ,  C, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_xor , B complex_xor ,  C, C, C)) ;
 
     //--------------------------------------------------------------------------
     // create the Complex binary operators, CxC -> bool
@@ -436,16 +441,16 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_BinaryOp_new (&Complex_eq , complex_eq ,  GrB_BOOL, C, C)) ;
-        OK (GrB_BinaryOp_new (&Complex_ne , complex_ne ,  GrB_BOOL, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_eq , B complex_eq ,  GrB_BOOL, C, C)) ;
+        OK (GrB_BinaryOp_new (&Complex_ne , B complex_ne ,  GrB_BOOL, C, C)) ;
         #endif
     }
 
     // these are not built-in
-    OK (GrB_BinaryOp_new (&Complex_gt , complex_gt ,  GrB_BOOL, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_lt , complex_lt ,  GrB_BOOL, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_ge , complex_ge ,  GrB_BOOL, C, C)) ;
-    OK (GrB_BinaryOp_new (&Complex_le , complex_le ,  GrB_BOOL, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_gt , B complex_gt ,  GrB_BOOL, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_lt , B complex_lt ,  GrB_BOOL, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_ge , B complex_ge ,  GrB_BOOL, C, C)) ;
+    OK (GrB_BinaryOp_new (&Complex_le , B complex_le ,  GrB_BOOL, C, C)) ;
 
     //--------------------------------------------------------------------------
     // create the Complex binary operator, double x double -> C
@@ -460,7 +465,7 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_BinaryOp_new (&Complex_complex, complex_complex, C, D, D)) ;
+        OK (GrB_BinaryOp_new (&Complex_complex, B complex_complex, C, D, D)) ;
         #endif
     }
 
@@ -481,17 +486,17 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_UnaryOp_new (&Complex_one     , complex_one     , C, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_identity, complex_identity, C, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_ainv    , complex_ainv    , C, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_minv    , complex_minv    , C, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_conj    , complex_conj    , C, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_one     , U complex_one     , C, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_identity, U complex_identity, C, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_ainv    , U complex_ainv    , C, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_minv    , U complex_minv    , C, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_conj    , U complex_conj    , C, C)) ;
         #endif
     }
 
     // these are not built-in
-    OK (GrB_UnaryOp_new (&Complex_abs     , complex_abs     , C, C)) ;
-    OK (GrB_UnaryOp_new (&Complex_not     , complex_not     , C, C)) ;
+    OK (GrB_UnaryOp_new (&Complex_abs     , U complex_abs     , C, C)) ;
+    OK (GrB_UnaryOp_new (&Complex_not     , U complex_not     , C, C)) ;
 
     //--------------------------------------------------------------------------
     // create the unary functions, C -> double
@@ -509,10 +514,10 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create user-defined versions
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_UnaryOp_new (&Complex_real  , complex_real  , D, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_imag  , complex_imag  , D, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_cabs  , complex_cabs  , D, C)) ;
-        OK (GrB_UnaryOp_new (&Complex_angle , complex_angle , D, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_real  , U complex_real  , D, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_imag  , U complex_imag  , D, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_cabs  , U complex_cabs  , D, C)) ;
+        OK (GrB_UnaryOp_new (&Complex_angle , U complex_angle , D, C)) ;
         #endif
     }
 
@@ -521,8 +526,8 @@ GrB_Info Complex_init (bool builtin_complex)
     //--------------------------------------------------------------------------
 
     // these are not built-in
-    OK (GrB_UnaryOp_new (&Complex_complex_real , complex_complex_real , C, D)) ;
-    OK (GrB_UnaryOp_new (&Complex_complex_imag , complex_complex_imag , C, D)) ;
+    OK (GrB_UnaryOp_new (&Complex_complex_real, U complex_complex_real, C, D)) ;
+    OK (GrB_UnaryOp_new (&Complex_complex_imag, U complex_complex_imag, C, D)) ;
 
     //--------------------------------------------------------------------------
     // create the Complex monoids

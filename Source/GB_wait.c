@@ -94,7 +94,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     if (nzombies > 0 || npending > 0)
     { 
-        GB_BURBLE_MATRIX (A, "wait (zombies: "GBd", pending: "GBd") ",
+        GB_BURBLE_MATRIX (A, "wait (zombies: " GBd ", pending: " GBd ") ",
             nzombies, npending) ;
     }
 
@@ -362,13 +362,13 @@ GrB_Info GB_wait                // finish all pending computations
         //----------------------------------------------------------------------
 
         int64_t *GB_RESTRICT Ai = A->i ;
-        GB_void *GB_RESTRICT Ax = A->x ;
+        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
         int64_t asize = A->type->size ;
 
         const int64_t *GB_RESTRICT Tp = T->p ;
         const int64_t *GB_RESTRICT Th = T->h ;
         const int64_t *GB_RESTRICT Ti = T->i ;
-        const GB_void *GB_RESTRICT Tx = T->x ;
+        const GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;
         int64_t tnvec = T->nvec ;
         int64_t tnz = GB_NNZ (T) ;
 

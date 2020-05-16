@@ -14,11 +14,11 @@
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&C) ;               \
-    GB_FREE_MEMORY (Ap, nvec+1, sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (Ah, nvec  , sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (Ai, nvals , sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (Aj, nvals , sizeof (int64_t)) ;     \
-    GB_FREE_MEMORY (Ax, nvals , asize) ; \
+    GB_FREE (Ap) ;                      \
+    GB_FREE (Ah) ;                      \
+    GB_FREE (Ai) ;                      \
+    GB_FREE (Aj) ;                      \
+    GB_FREE (Ax) ;                      \
     GB_mx_put_global (true, 0) ;        \
 }
 

@@ -53,7 +53,7 @@ int main (int argc, char **argv)
     double tic [2], r1, r2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
-    OK (GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
+    OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     fprintf (stderr, "tri_demo: nthreads %d\n", nthreads) ;
     printf ("--------------------------------------------------------------\n");
 
@@ -117,7 +117,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads) ;
 
         double t_dot [2] ;
         OK (tricount (&(ntri2 [nthreads]), 5, NULL, NULL, L, U, t_dot)) ;
@@ -170,7 +170,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads) ;
 
         double t_dot [2] ;
         OK (tricount (&(ntri2 [nthreads]), 6, NULL, NULL, L, U, t_dot)) ;
@@ -223,7 +223,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads) ;
 
         double t_mark [2] = { 0, 0 } ;
         OK (tricount (&ntri1 [nthreads], 3, NULL, NULL, L, NULL, t_mark)) ;

@@ -233,7 +233,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
 
         // create the GraphBLAS matrix
-        GB_NEW (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+        info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_calloc, is_csc, is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -263,7 +263,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // MATLAB matrix and must not be modified.
 
         // [ create the GraphBLAS matrix, do not allocate A->p
-        GB_NEW (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+        info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_null, is_csc, is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -304,7 +304,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             // allocate new space for the GraphBLAS values
             A->nzmax = GB_IMAX (anz, 1) ;
-            GB_MALLOC_MEMORY (A->x, A->nzmax, atype_out->size) ;
+            A->x = GB_MALLOC (A->nzmax * atype_out->size, GB_void) ;
             if (A->x == NULL)
             {
                 FREE_ALL ;

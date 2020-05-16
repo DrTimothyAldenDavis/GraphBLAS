@@ -43,8 +43,7 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-  flags = '-g -R2018a' ;    % TODO
-% flags = '-O -R2018a' ;
+flags = '-g -R2018a' ;
 
 try
     if (strncmp (computer, 'GLNX', 4))

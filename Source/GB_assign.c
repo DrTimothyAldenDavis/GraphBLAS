@@ -29,16 +29,16 @@
 #include "GB_subref.h"
 #include "GB_transpose.h"
 
-#define GB_FREE_ALL                                     \
-{                                                       \
-    GB_MATRIX_FREE (&Z2) ;                              \
-    GB_MATRIX_FREE (&AT) ;                              \
-    GB_MATRIX_FREE (&MT) ;                              \
-    GB_FREE_MEMORY (I2,  I2_size, sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (I2k, I2_size, sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (J2,  J2_size, sizeof (GrB_Index)) ; \
-    GB_FREE_MEMORY (J2k, J2_size, sizeof (GrB_Index)) ; \
-    GB_MATRIX_FREE (&SubMask) ;                         \
+#define GB_FREE_ALL             \
+{                               \
+    GB_MATRIX_FREE (&Z2) ;      \
+    GB_MATRIX_FREE (&AT) ;      \
+    GB_MATRIX_FREE (&MT) ;      \
+    GB_FREE (I2) ;              \
+    GB_FREE (I2k) ;             \
+    GB_FREE (J2) ;              \
+    GB_FREE (J2k) ;             \
+    GB_MATRIX_FREE (&SubMask) ; \
 }
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
@@ -184,8 +184,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NCOLS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask vector m length is "GBd"; must match the number of "
-                    "columns of C ("GBd")", GB_NROWS (M), GB_NCOLS (C)))) ;
+                    "mask vector m length is " GBd "; must match the number of "
+                    "columns of C (" GBd ")", GB_NROWS (M), GB_NCOLS (C)))) ;
             }
         }
         else if (col_assign)
@@ -198,8 +198,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NROWS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask vector m length is "GBd"; must match the number of "
-                    "rows of C ("GBd")", GB_NROWS (M), GB_NROWS (C)))) ;
+                    "mask vector m length is " GBd "; must match the number of "
+                    "rows of C (" GBd ")", GB_NROWS (M), GB_NROWS (C)))) ;
             }
         }
         else
@@ -210,8 +210,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NROWS (C) || GB_NCOLS (M) != GB_NCOLS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask M is "GBd"-by-"GBd"; "
-                    "must match result C ("GBd"-by-"GBd")",
+                    "mask M is " GBd "-by-" GBd "; "
+                    "must match result C (" GBd "-by-" GBd ")",
                     GB_NROWS (M), GB_NCOLS (M), GB_NROWS (C), GB_NCOLS (C)))) ;
             }
         }
@@ -226,8 +226,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
                 "Dimensions not compatible:\n"
-                "C(Rows,Cols) is "GBd"-by-"GBd"\n"
-                "input is "GBd"-by-"GBd"%s",
+                "C(Rows,Cols) is " GBd "-by-" GBd "\n"
+                "input is " GBd "-by-" GBd "%s",
                 nRows, nCols, anrows, ancols,
                 A_transpose ? " (transposed)" : ""))) ;
         }
@@ -593,9 +593,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // is needed because C is aliased with M or A.  Instead of
             // duplicating it, create an empty matrix Z2.  This also prevents
             // the C_replace_phase from being needed.
-            GB_NEW (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc, C->is_csc,
-                GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio, 1, Context) ;
-            GB_OK (info)  ;
+            GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
+                C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio, 1,
+                Context)) ;
             GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
             C_replace_phase = false ;

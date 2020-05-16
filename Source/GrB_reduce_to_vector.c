@@ -37,5 +37,5 @@ GB_MATRIX_TO_VECTOR (BinaryOp, reduce    , NULL)
 // Built-in monoids ignore the terminal parameter, and use the terminal value
 // based on the built-in operator.  User-defined monoids can be created with an
 // arbitrary non-NULL terminal value.
-GB_MATRIX_TO_VECTOR (Monoid  , reduce->op, reduce->terminal)
+GB_MATRIX_TO_VECTOR (Monoid  , reduce->op, (GB_void *) reduce->terminal)
 

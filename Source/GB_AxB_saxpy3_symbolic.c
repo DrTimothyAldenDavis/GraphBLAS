@@ -71,7 +71,7 @@ void GB_AxB_saxpy3_symbolic
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;
-        Mx = (Mask_struct ? NULL : (M->x)) ;
+        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
         M_is_hyper = M->is_hyper ;

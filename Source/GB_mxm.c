@@ -85,9 +85,9 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
-            "output is "GBd"-by-"GBd"\n"
-            "first input is "GBd"-by-"GBd"%s\n"
-            "second input is "GBd"-by-"GBd"%s",
+            "output is " GBd "-by-" GBd "\n"
+            "first input is " GBd "-by-" GBd "%s\n"
+            "second input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
             anrows, ancols, A_transpose ? " (transposed)" : "",
             bnrows, bncols, B_transpose ? " (transposed)" : ""))) ;

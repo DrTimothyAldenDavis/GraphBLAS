@@ -54,13 +54,13 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
             {
                 va_start (ap, field) ;
-                GxB_Format_Value format = va_arg (ap, GxB_Format_Value) ;
+                int format = va_arg (ap, int) ;
                 va_end (ap) ;
                 if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
                 { 
                     return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                             "unsupported format [%d], must be one of:\n"
-                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", (int) format,
+                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
                             (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
                 }
                 // the value is normally GxB_BY_ROW (0) or GxB_BY_COL (1), but

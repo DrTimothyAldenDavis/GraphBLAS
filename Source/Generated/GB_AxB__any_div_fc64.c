@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = GB_FC64_div (x, y)
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    GxB_CMPLX (1,0)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     GxB_FC64_t x_op_y = GB_FC64_div (x, y) ; z = x_op_y

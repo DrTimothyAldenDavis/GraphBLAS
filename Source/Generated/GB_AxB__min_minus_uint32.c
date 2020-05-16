@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = (x - y)
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    ((uint32_t) 1)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     uint32_t x_op_y = (x - y) ; z = GB_IMIN (z, x_op_y)

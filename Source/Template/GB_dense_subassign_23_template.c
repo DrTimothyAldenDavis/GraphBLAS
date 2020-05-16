@@ -18,8 +18,8 @@
     // get C and A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
 
     if (kfirst_slice == NULL)

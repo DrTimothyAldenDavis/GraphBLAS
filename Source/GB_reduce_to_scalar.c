@@ -90,8 +90,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_void *GB_RESTRICT W = NULL ;
-    GB_MALLOC_MEMORY (W, ntasks, zsize) ;
+    GB_void *GB_RESTRICT W = GB_MALLOC (ntasks * zsize, GB_void) ;
     if (W == NULL)
     { 
         // out of memory
@@ -107,7 +106,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     memcpy (s, reduce->identity, zsize) ;
 
     // get terminal value, if any
-    GB_void *GB_RESTRICT terminal = reduce->terminal ;
+    GB_void *GB_RESTRICT terminal = (GB_void *) reduce->terminal ;
 
     if (anz == 0)
     { 
@@ -306,7 +305,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_MEMORY (W, ntasks, zsize) ;
+    GB_FREE (W) ;
     return (GrB_SUCCESS) ;
 }
 

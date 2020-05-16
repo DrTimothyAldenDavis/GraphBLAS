@@ -55,7 +55,7 @@ int main (int argc, char **argv)
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
-    OK (GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
+    OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     fprintf (stderr, "bfs_demo: nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
@@ -92,7 +92,7 @@ int main (int argc, char **argv)
         // All methods give identical results, just using different methods
 
         GrB_Index s = 0 ;
-        GxB_Global_Option_set (GxB_NTHREADS, 2) ;
+        GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, 2) ;
 
         switch (method)
         {
@@ -191,8 +191,8 @@ int main (int argc, char **argv)
             {
                 fprintf (stderr, "test failure!\n") ;
                 printf  ("test failure!\n") ;
-                GxB_Vector_fprint (v0, "v0", 3, stdout) ;
-                GxB_Vector_fprint (v , "v",  3, stdout) ;
+                GxB_Vector_fprint (v0, "v0", GxB_COMPLETE, stdout) ;
+                GxB_Vector_fprint (v , "v",  GxB_COMPLETE, stdout) ;
                 exit (1) ;
             }
         }

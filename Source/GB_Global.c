@@ -100,10 +100,6 @@ typedef struct
     // increments the count it if is allocating a new block, but it does this
     // by calling GB_malloc_memory.
 
-    // inuse: the # of bytes currently in use by all threads
-
-    // maxused: the max value of inuse since the call to GrB_init
-
     // malloc_debug: this is used for testing only (GraphBLAS/Tcov).  If true,
     // then use malloc_debug_count for testing memory allocation and
     // out-of-memory conditions.  If malloc_debug_count > 0, the value is
@@ -115,8 +111,6 @@ typedef struct
     int64_t nmalloc ;               // number of blocks allocated but not freed
     bool malloc_debug ;             // if true, test memory handling
     int64_t malloc_debug_count ;    // for testing memory handling
-    int64_t inuse ;                 // memory space current in use
-    int64_t maxused ;               // high water memory usage
 
     //--------------------------------------------------------------------------
     // for testing and development
@@ -171,8 +165,6 @@ GB_Global_struct GB_Global =
     .nmalloc = 0,                // memory block counter
     .malloc_debug = false,       // do not test memory handling
     .malloc_debug_count = 0,     // counter for testing memory handling
-    .inuse = 0,                  // memory space current in use
-    .maxused = 0,                // high water memory usage
 
     // for testing and development
     .hack = 0,
@@ -295,17 +287,11 @@ double GB_Global_hyper_ratio_get (void)
 
 void GB_Global_is_csc_set (bool is_csc)
 { 
-    // FILE *f = NULL ;
-    // GB_Context Context = NULL ;
     GB_Global.is_csc = is_csc ;
-    // GBPR ("set GB_Global.is_csc to %d\n", (int) GB_Global.is_csc) ;
 }
 
 bool GB_Global_is_csc_get (void)
 { 
-    // FILE *f = NULL ;
-    // GB_Context Context = NULL ;
-    // GBPR ("get GB_Global.is_csc = %d\n", (int) GB_Global.is_csc) ;
     return (GB_Global.is_csc) ;
 }
 
@@ -497,6 +483,7 @@ int64_t GB_Global_nmalloc_increment (void)
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t GB_Global_nmalloc_decrement (void)
 { 
+    ASSERT (GB_Global.nmalloc > 0) ;
     return (--(GB_Global.nmalloc)) ;
 }
 
@@ -528,39 +515,6 @@ void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
 bool GB_Global_malloc_debug_count_decrement (void)
 { 
     return (GB_Global.malloc_debug_count-- <= 0) ;
-}
-
-//------------------------------------------------------------------------------
-// inuse and maxused
-//------------------------------------------------------------------------------
-
-void GB_Global_inuse_clear (void)
-{ 
-    GB_Global.inuse = 0 ;
-    GB_Global.maxused = 0 ;
-}
-
-void GB_Global_inuse_increment (int64_t s)
-{ 
-    GB_Global.inuse += s ;
-    GB_Global.maxused = GB_IMAX (GB_Global.maxused, GB_Global.inuse) ;
-}
-
-void GB_Global_inuse_decrement (int64_t s)
-{ 
-    GB_Global.inuse -= s ;
-}
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t GB_Global_inuse_get (void)
-{ 
-    return (GB_Global.inuse) ;
-}
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t GB_Global_maxused_get (void)
-{ 
-    return (GB_Global.maxused) ;
 }
 
 //------------------------------------------------------------------------------

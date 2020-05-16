@@ -58,7 +58,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // C has the exact same hypersparsity as A.
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
-    GB_NEW (&C, op->ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+    info = GB_new (&C, op->ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -127,7 +127,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 
     // allocate new space for the numerical values of C
     C->nzmax = GB_IMAX (anz,1) ;
-    GB_MALLOC_MEMORY (C->x, C->nzmax, C->type->size) ;
+    C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)
     { 
@@ -141,7 +141,9 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     // C->x = op ((op->xtype) Ax)
-    GB_apply_op (C->x, op, A->x, A->type, anz, Context) ;
+          GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    GB_apply_op (Cx, op, Ax, A->type, anz, Context) ;
 
     //--------------------------------------------------------------------------
     // return the result

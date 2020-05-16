@@ -45,16 +45,16 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
             {
                 va_start (ap, field) ;
-                GxB_Format_Value format = va_arg (ap, GxB_Format_Value) ;
+                int format = va_arg (ap, int) ;
                 va_end (ap) ;
                 if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
                 { 
                     return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                             "unsupported format [%d], must be one of:\n"
-                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", (int) format,
+                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
                             (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
                 }
-                GB_Global_is_csc_set (format != GxB_BY_ROW) ; 
+                GB_Global_is_csc_set (format != (int) GxB_BY_ROW) ; 
             }
             break ;
 

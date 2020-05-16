@@ -277,7 +277,7 @@ void mexFunction
         }
         else if (b_type == GxB_FC64)
         {
-            GxB_FC64_t b_value = GxB_CMPLXF (0, 0) ;
+            GxB_FC64_t b_value = GxB_CMPLX (0, 0) ;
             OK (GxB_Matrix_extractElement_FC64 (&b_value, b, 0, 0)) ;
             b_is_nan = GB_cisnan (b_value) ;
         }

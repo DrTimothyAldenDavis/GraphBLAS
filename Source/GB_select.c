@@ -96,8 +96,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
-            "output is "GBd"-by-"GBd"\n"
-            "input is "GBd"-by-"GBd"%s",
+            "output is " GBd "-by-" GBd "\n"
+            "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
             tnrows, tncols, A_transpose ? " (transposed)" : ""))) ;
     }
@@ -114,6 +114,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;
 
     int64_t nz_thunk = 0 ;
+    GB_void *GB_RESTRICT xthunk_in = NULL ;
 
     if (Thunk_in != NULL)
     {
@@ -152,6 +153,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 "input A type [%s] and Thunk type [%s] not compatible",
                 op->name, A->type->name, Thunk_in->type->name))) ;
         }
+
+        // get the pointer to the value of Thunk_in
+        xthunk_in = (GB_void *) Thunk_in->x ;
     }
 
     // if op is user-defined, Thunk must match the op->ttype exactly
@@ -234,10 +238,11 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // if A is boolean, get the value of Thunk typecasted to boolean
     bool bthunk = false ;
+
     if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
     { 
         GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
-            Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
+            xthunk_in, Thunk_in->type->code, 1, NULL) ;
     }
 
     int64_t ithunk = 0 ;        // ithunk = (int64_t) Thunk (0)
@@ -266,7 +271,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         { 
             // ithunk = - (int64_t) (Thunk_in (0)) ;
             GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
-                Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
+                xthunk_in, Thunk_in->type->code, 1, NULL) ;
         }
 
         if (flipij)
@@ -466,7 +471,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else if (is_empty)
     { 
         // selectop is always false, so T is an empty matrix
-        GB_NEW (&T, A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
+        info = GB_new (&T, A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
             GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
         GB_OK (info) ;
     }

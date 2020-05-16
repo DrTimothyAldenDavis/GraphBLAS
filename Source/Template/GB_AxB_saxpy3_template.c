@@ -38,7 +38,7 @@
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     // const int64_t bvlen = B->vlen ;
     // const int64_t bnvec = B->nvec ;
     // const bool B_is_hyper = B->is_hyper ;
@@ -48,7 +48,7 @@
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
-    const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -62,7 +62,7 @@
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;
-        Mx = (Mask_struct ? NULL : (M->x)) ;
+        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
         M_is_hyper = M->is_hyper ;
@@ -659,7 +659,7 @@
     }
 
     int64_t  *GB_RESTRICT Ci = C->i ;
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
     #if GB_IS_ANY_PAIR_SEMIRING
 
@@ -668,7 +668,7 @@
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (pC = 0 ; pC < cnz ; pC++)
         { 
-            Cx [pC] = 1 ;
+            Cx [pC] = GB_CTYPE_ONE ;
         }
 
         // Just a precaution; these variables are not used below.  Any attempt
@@ -1304,7 +1304,7 @@
         if (nthreads_msort > 1)
         {
             // allocate workspace for parallel mergesort
-            GB_MALLOC_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
+            W = GB_MALLOC (cjnz_max, int64_t) ;
             if (W == NULL)
             { 
                 // out of memory
@@ -1364,7 +1364,7 @@
         }
 
         // free workspace
-        GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
+        GB_FREE (W) ;
     }
 }
 

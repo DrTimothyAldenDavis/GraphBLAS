@@ -105,19 +105,19 @@
 // This workspace is not needed in the GB_Asaxpy3B* worker functions.
 #define GB_FREE_INITIAL_WORK                                                \
 {                                                                           \
-    GB_FREE_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;                \
-    GB_FREE_MEMORY (Coarse_Work, nthreads_max, sizeof (int64_t)) ;          \
-    GB_FREE_MEMORY (Coarse_initial, ntasks_initial+1, sizeof (int64_t)) ;   \
-    GB_FREE_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;               \
+    GB_FREE (Bflops2) ;                                                     \
+    GB_FREE (Coarse_Work) ;                                                 \
+    GB_FREE (Coarse_initial) ;                                              \
+    GB_FREE (Fine_slice) ;                                                  \
 }
 
 #define GB_FREE_WORK                                                        \
 {                                                                           \
     GB_FREE_INITIAL_WORK ;                                                  \
-    GB_FREE_MEMORY (TaskList, ntasks, sizeof (GB_saxpy3task_struct)) ;      \
-    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hx_all, Hx_size_total, 1) ;                             \
+    GB_FREE (TaskList) ;                                                    \
+    GB_FREE (Hi_all) ;                                                      \
+    GB_FREE (Hf_all) ;                                                      \
+    GB_FREE (Hx_all) ;                                                      \
 }
 
 #define GB_FREE_ALL                                                         \
@@ -394,7 +394,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
 
     // calloc Cp so it can be used as the Bflops workspace
-    GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
+    info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
         GB_SAME_HYPER_AS (B_is_hyper), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -485,7 +485,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;
-        // Mx = M->x ;
+        // Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         // msize = M->type->size ;
         mnvec = M->nvec ;
         M_is_hyper = M->is_hyper ;
@@ -625,13 +625,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    GB_CALLOC_MEMORY (TaskList, ntasks, sizeof (GB_saxpy3task_struct)) ;
-    GB_MALLOC_MEMORY (Coarse_Work, nthreads_max, sizeof (int64_t)) ;
+    TaskList    = GB_CALLOC (ntasks, GB_saxpy3task_struct) ;
+    Coarse_Work = GB_MALLOC (nthreads_max, int64_t) ;
     if (max_bjnz > 0)
     { 
         // also allocate workspace to construct fine tasks
-        GB_MALLOC_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;
-        GB_MALLOC_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;
+        Fine_slice = GB_MALLOC (ntasks+1  , int64_t) ;
+        Bflops2    = GB_MALLOC (max_bjnz+1, int64_t) ;
     }
 
     if (TaskList == NULL || Coarse_Work == NULL ||
@@ -981,15 +981,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate space for all hash tables
     if (Hi_size_total > 0)
     { 
-        GB_MALLOC_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;
+        Hi_all = GB_MALLOC (Hi_size_total, int64_t) ;
     }
     if (Hf_size_total > 0)
     { 
-        GB_CALLOC_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;
+        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
     }
     if (Hx_size_total > 0)
     { 
-        GB_MALLOC_MEMORY (Hx_all, Hx_size_total, 1) ;
+        Hx_all = GB_MALLOC (Hx_size_total, GB_void) ;
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
@@ -1016,7 +1016,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
 
         TaskList [taskid].Hi = Hi_split ;
-        TaskList [taskid].Hf = (void *) Hf_split ;
+        TaskList [taskid].Hf = (GB_void *) Hf_split ;
         TaskList [taskid].Hx = Hx_split ;
 
         int64_t hash_size = TaskList [taskid].hsize ;

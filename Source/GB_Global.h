@@ -101,14 +101,6 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
 
-void     GB_Global_inuse_clear (void) ;
-void     GB_Global_inuse_increment (int64_t s) ;
-void     GB_Global_inuse_decrement (int64_t s) ;
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t  GB_Global_inuse_get (void) ;
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t  GB_Global_maxused_get (void) ;
-
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_hack_set (int64_t hack) ;
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

@@ -22,7 +22,7 @@
 #endif
 
 #define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORK

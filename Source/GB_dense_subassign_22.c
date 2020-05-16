@@ -18,7 +18,7 @@
 GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar 
 (
     GrB_Matrix C,                   // input/output matrix
-    const GB_void *scalar,          // input scalar
+    const void *scalar,             // input scalar
     const GrB_Type atype,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Context Context
@@ -104,7 +104,6 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
             &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator
-            printf ("GB_Cdense_accumX builtin:\n") ;
             #include "GB_binop_factory.c"
         }
 

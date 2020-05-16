@@ -48,13 +48,13 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     if (row >= GB_NROWS (C))
     { 
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Row index "GBu" out of range; must be < "GBd,
+            "Row index " GBu " out of range; must be < " GBd,
             row, GB_NROWS (C)))) ;
     }
     if (col >= GB_NCOLS (C))
     { 
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Column index "GBu" out of range; must be < "GBd,
+            "Column index " GBu " out of range; must be < " GBd,
             col, GB_NCOLS (C)))) ;
     }
 
@@ -141,7 +141,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // found C (i,j), assign its value
         size_t csize = ctype->size ;
-        GB_void *Cx = C->x ;
+        GB_void *Cx = (GB_void *) C->x ;
         if (scalar_code >= GB_UDT_code || scalar_code == ccode)
         { 
             // copy the values without typecasting
@@ -150,8 +150,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else
         { 
             // typecast scalar into C
-            GB_cast_array (Cx +(pleft*csize), ccode, scalar, scalar_code, 1,
-                Context) ;
+            GB_cast_array (Cx +(pleft*csize), ccode, (GB_void *) scalar,
+                scalar_code, 1, Context) ;
         }
 
         if (is_zombie)
@@ -261,8 +261,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // becomes the type of this scalar, and the pending operator becomes
         // NULL, which is the implicit SECOND_ctype operator.
 
-        if (!GB_Pending_add (&(C->Pending), scalar, stype, NULL, i, j,
-            C->vdim > 1))
+        if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
+            stype, NULL, i, j, C->vdim > 1))
         { 
             // out of memory
             GB_PHIX_FREE (C) ;

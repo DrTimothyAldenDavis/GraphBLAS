@@ -41,6 +41,18 @@
 #define GB_CTYPE \
     GxB_FC32_t
 
+// true if the types of A and B are identical
+#define GB_ATYPE_IS_BTYPE \
+    1
+
+// true if the types of C and A are identical
+#define GB_CTYPE_IS_ATYPE \
+    1
+
+// true if the types of C and B are identical
+#define GB_CTYPE_IS_BTYPE \
+    1
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
     ;
@@ -54,10 +66,12 @@
     GxB_FC32_t t
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) cij = Ax [pA] ;
+#define GB_COPY_A_TO_C(cij,Ax,pA) \
+    cij = Ax [pA]
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) cij = Bx [pB] ;
+#define GB_COPY_B_TO_C(cij,Bx,pB) \
+    cij = Bx [pB]
 
 #define GB_CX(p) Cx [p]
 
@@ -203,7 +217,7 @@ GrB_Info GB_AxD__second_fc32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GxB_FC32_t *GB_RESTRICT Cx = C->x ;
+    GxB_FC32_t *GB_RESTRICT Cx = (GxB_FC32_t *) C->x ;
     #include "GB_AxB_colscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -224,7 +238,7 @@ GrB_Info GB_DxB__second_fc32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GxB_FC32_t *GB_RESTRICT Cx = C->x ;
+    GxB_FC32_t *GB_RESTRICT Cx = (GxB_FC32_t *) C->x ;
     #include "GB_AxB_rowscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif

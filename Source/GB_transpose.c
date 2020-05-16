@@ -38,10 +38,10 @@
 #include "GB_apply.h"
 
 
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;                    \
-}                                                                           \
+#define GB_FREE_WORK    \
+{                       \
+    GB_FREE (Count) ;   \
+}                       \
 
 // free prior content of A, if transpose is done in place
 #define GB_FREE_IN_PLACE_A                                                  \
@@ -50,10 +50,10 @@
     {                                                                       \
         /* A is being transposed in placed */                               \
         /* free prior content of A but not &A itself */                     \
-        if (!Ap_shallow) GB_FREE_MEMORY (Ap, aplen+1, sizeof (int64_t)) ;   \
-        if (!Ah_shallow) GB_FREE_MEMORY (Ah, aplen  , sizeof (int64_t)) ;   \
-        if (!Ai_shallow) GB_FREE_MEMORY (Ai, anzmax , sizeof (int64_t)) ;   \
-        if (!Ax_shallow) GB_FREE_MEMORY (Ax, anzmax , asize) ;              \
+        if (!Ap_shallow) GB_FREE (Ap) ;                                     \
+        if (!Ah_shallow) GB_FREE (Ah) ;                                     \
+        if (!Ai_shallow) GB_FREE (Ai) ;                                     \
+        if (!Ax_shallow) GB_FREE (Ax) ;                                     \
     }                                                                       \
     else                                                                    \
     {                                                                       \
@@ -204,7 +204,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
     int64_t *GB_RESTRICT Ai = A->i ;
-    GB_void *GB_RESTRICT Ax = A->x ;
+    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
 
     bool Ap_shallow = A->p_shallow ;
     bool Ah_shallow = A->h_shallow ;
@@ -225,7 +225,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     if (anz > 0 && avdim != 1 && avlen == 1)
     {
         // Count is only used in one case below
-        GB_CALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+        Count = GB_CALLOC (ntasks+1, int64_t) ;
         if (Count == NULL)
         { 
             // out of memory
@@ -293,7 +293,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // A is empty; create a new empty matrix C, with the new type and
         // dimensions.  C is hypersparse for now but may convert when
         // returned.
-        GB_CREATE (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
+        info = GB_create (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
             C_is_csc, GB_FORCE_HYPER, A_hyper_ratio, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -327,7 +327,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        GB_NEW (Chandle, ctype, 1, avlen, GB_Ap_null, C_is_csc,
+        info = GB_new (Chandle, ctype, 1, avlen, GB_Ap_null, C_is_csc,
             GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -349,21 +349,19 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate new space for the values and pattern
         GB_void *GB_RESTRICT Cx = NULL ;
-        int64_t *GB_RESTRICT Cp ;
-        int64_t *GB_RESTRICT Ci ;
-        GB_MALLOC_MEMORY (Cp, anz+1, sizeof (int64_t)) ;
-        GB_CALLOC_MEMORY (Ci, anz  , sizeof (int64_t)) ;
+        int64_t *GB_RESTRICT Cp = GB_MALLOC (anz+1, int64_t) ;
+        int64_t *GB_RESTRICT Ci = GB_CALLOC (anz  , int64_t) ;
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            GB_MALLOC_MEMORY (Cx, anz, ctype->size) ;
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
         }
         if (Cp == NULL || Ci == NULL || (allocate_new_Cx && (Cx == NULL)))
         { 
             // out of memory
-            GB_FREE_MEMORY (Cp, anz+1, sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Cx, anz  , csize) ;
+            GB_FREE (Cp) ;
+            GB_FREE (Ci) ;
+            GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
@@ -447,7 +445,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        GB_NEW (Chandle, ctype, avdim, 1, GB_Ap_null, C_is_csc,
+        info = GB_new (Chandle, ctype, avdim, 1, GB_Ap_null, C_is_csc,
             GB_FORCE_NONHYPER, A_hyper_ratio, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -471,29 +469,29 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_void *GB_RESTRICT Cx = NULL ;
         int64_t *GB_RESTRICT Cp ;
         int64_t *GB_RESTRICT Ci = NULL ;
-        GB_CALLOC_MEMORY (Cp, 2, sizeof (int64_t)) ;
+        Cp = GB_CALLOC (2, int64_t) ;
 
         bool allocate_new_Ci = (!A_is_hyper) ;
 
         if (allocate_new_Ci)
         { 
             // A is not hypersparse, so new space is needed for Ci
-            GB_MALLOC_MEMORY (Ci, anz, sizeof (int64_t)) ;
+            Ci = GB_MALLOC (anz, int64_t) ;
         }
 
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            GB_MALLOC_MEMORY (Cx, anz, ctype->size) ;
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
         }
 
         if (Cp == NULL || (allocate_new_Cx && (Cx == NULL))
                        || (allocate_new_Ci && (Ci == NULL)))
         { 
             // out of memory
-            GB_FREE_MEMORY (Cp, 2    , sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Cx, anz  , csize) ;
+            GB_FREE (Cp) ;
+            GB_FREE (Ci) ;
+            GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
@@ -711,9 +709,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             //------------------------------------------------------------------
 
             // allocate iwork of size anz
-            int64_t *iwork ;
-            GB_MALLOC_MEMORY (iwork, anz, sizeof (int64_t)) ;
-
+            int64_t *iwork = GB_MALLOC (anz, int64_t) ;
             if (iwork == NULL)
             { 
                 // out of memory
@@ -740,13 +736,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // allocate anything if in place.
 
             // if *Chandle == NULL, allocate a new header; otherwise reuse
-            GB_NEW (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+            info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
                 GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
                 ASSERT (!in_place) ;        // cannot fail if in place
-                GB_FREE_MEMORY (iwork, anz, sizeof (int64_t)) ;
+                GB_FREE (iwork) ;
                 GB_FREE_C ;
                 GB_FREE_WORK ;
                 return (info) ;
@@ -764,8 +760,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // if in_place, the prior Ap and Ah can now be freed
             if (in_place)
             { 
-                if (!Ap_shallow) GB_FREE_MEMORY (Ap, aplen+1, sizeof (int64_t));
-                if (!Ah_shallow) GB_FREE_MEMORY (Ah, aplen  , sizeof (int64_t));
+                if (!Ap_shallow) GB_FREE (Ap) ;
+                if (!Ah_shallow) GB_FREE (Ah) ;
             }
 
             int64_t *jwork = NULL ;
@@ -776,22 +772,22 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (!recycle_Ai)
             { 
                 // allocate jwork of size anz
-                GB_MALLOC_MEMORY (jwork, anz, sizeof (int64_t)) ;
+                jwork = GB_MALLOC (anz, int64_t) ;
             }
 
             if (op != NULL)
             { 
                 // allocate Swork of size anz * csize
-                GB_MALLOC_MEMORY (Swork, anz, csize) ;
+                Swork = GB_MALLOC (anz * csize, GB_void) ;
             }
 
             if ((!recycle_Ai && (jwork == NULL))
             || ((op != NULL) && (Swork == NULL)))
             { 
                 // out of memory
-                GB_FREE_MEMORY (iwork, anz, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (jwork, anz, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (Swork, anz, csize) ;
+                GB_FREE (iwork) ;
+                GB_FREE (jwork) ;
+                GB_FREE (Swork) ;
                 GB_FREE_A_AND_C ;
                 GB_FREE_WORK ;
                 return (GB_OUT_OF_MEMORY) ;
@@ -836,7 +832,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                     // However, in the current usage, when op is used, A is not
                     // transposed in place, so this step is not needed.
                     ASSERT (GB_DEAD_CODE) ;
-                    GB_FREE_MEMORY (Ax, anzmax , asize) ;
+                    GB_FREE (Ax) ;
                 }
                 #endif
             }

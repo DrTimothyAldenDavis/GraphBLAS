@@ -38,17 +38,17 @@
 
 #include "GB_transpose.h"
 
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    if (Rowcounts != NULL)                                                  \
-    {                                                                       \
-        for (int taskid = 0 ; taskid < naslice ; taskid++)                  \
-        {                                                                   \
-            GB_FREE_MEMORY (Rowcounts [taskid], vlen+1, sizeof (int64_t)) ; \
-        }                                                                   \
-    }                                                                       \
-    GB_FREE_MEMORY (Rowcounts, naslice, sizeof (int64_t *)) ;               \
-    GB_FREE_MEMORY (A_slice, naslice+1, sizeof (int64_t)) ;                 \
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    if (Rowcounts != NULL)                                              \
+    {                                                                   \
+        for (int taskid = 0 ; taskid < naslice ; taskid++)              \
+        {                                                               \
+            GB_FREE (Rowcounts [taskid]) ;                              \
+        }                                                               \
+    }                                                                   \
+    GB_FREE (Rowcounts) ;                                               \
+    GB_FREE (A_slice) ;                                                 \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -127,9 +127,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // [ C->p is allocated but not initialized.  It is NON-hypersparse.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
-    GB_CREATE (&C, ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GB_FORCE_NONHYPER, A->hyper_ratio, vlen, anz, true, Context) ;
-    GB_OK (info) ;
+    GB_OK (GB_create (&C, ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
+        GB_FORCE_NONHYPER, A->hyper_ratio, vlen, anz, true, Context)) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
 
@@ -137,7 +136,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_CALLOC_MEMORY (Rowcounts, naslice, sizeof (int64_t *)) ;
+    Rowcounts = GB_CALLOC (naslice, int64_t *) ;
     if (Rowcounts == NULL)
     { 
         // out of memory
@@ -147,8 +146,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
-        int64_t *rowcount = NULL ;
-        GB_CALLOC_MEMORY (rowcount, vlen + 1, sizeof (int64_t)) ;
+        int64_t *rowcount = GB_CALLOC (vlen + 1, int64_t) ;
         if (rowcount == NULL)
         { 
             // out of memory

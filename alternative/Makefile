@@ -8,16 +8,19 @@
 #-------------------------------------------------------------------------------
 
 VER1 = 3
-VER2 = 2
+VER2 = 3
 VER3 = 0
 
 # pick your compiler:
-  CC = gcc
+# CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
 # CC = gcc-8
 # CC = icc -mp1
+
+# this works but is not recommended.  Also remove the -std=c11 flag below.
+# CC = c++
 
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior.
 
@@ -27,6 +30,8 @@ SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm
 CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS
+# remove -std=c11 if using c++
+# CFLAGS = -O3 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
 SO_OPTS = $(LDFLAGS)
 
@@ -53,6 +58,8 @@ endif
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 default: $(SO_NAME)
+	ln -sf $(SO_NAME) $(SO_NAME0)
+	ln -sf $(SO_NAME) $(SO_NAME1)
 
 $(SO_NAME): $(OBJ)
 	$(CC) $(SO_OPTS) $^ -o $@
@@ -67,8 +74,8 @@ libgraphblas.a: $(OBJ)
 
 install: $(SO_NAME)
 	cp $(SO_NAME) /usr/local/lib
-	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME0)
-	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME1)
+	ln -sf /usr/local/lib/$(SO_NAME) /usr/local/lib/$(SO_NAME0)
+	ln -sf /usr/local/lib/$(SO_NAME) /usr/local/lib/$(SO_NAME1)
 	cp ../Include/GraphBLAS.h  /usr/local/include
 
 DINC = ../Demo/Include/*.h $(INC)
@@ -88,6 +95,8 @@ DOBJ = $(DSRC2:.c=.o)
 
 DEMO_PRG = $(notdir $(wildcard ../Demo/Program/*_demo.c))
 DEMO = $(DEMO_PRG:.c=)
+
+demo: $(DEMO)
 
 run: $(DEMO)
 	./altdemo

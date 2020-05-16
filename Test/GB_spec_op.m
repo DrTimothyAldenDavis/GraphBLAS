@@ -8,25 +8,34 @@ function C = GB_spec_op (op, A, B)
 % op or op.opname is a string with just the operator name.  Valid names of
 % binary operators are 'first', 'second', 'min', 'max', 'plus', 'minus',
 % 'rminus', 'times', 'div', 'rdiv', 'eq', 'ne', 'gt', 'lt', 'ge', 'le', 'or',
-% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair', 'any'
-% ... TODO
-%
-% Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', and 'not'
-% TODO ... sin, cos, etc.
+% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair', 'any',
+% 'pow', ('bitget' or 'bget'), ('bitset' or 'bset'), ('bitclr' or 'bclr'),
+% ('bitand' or 'band'), ('bitor' or 'bor'), ('bitxor' or 'bxor'), ('bitshift'
+% or 'bshift'), ('bitnot' or 'bitcmp'), 'atan2', 'hypot', ('ldexp' or 'pow2'),
+% ('complex', 'cmplx').  
+
+% Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', 'not', 'bnot',
+% 'sqrt', 'log', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh',
+% 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'ceil', 'floor', 'round', ('trunc'
+% or 'fix'), ('exp2' or 'fix'), 'expm1', 'log10', 'log2', ('lgamma' or
+% 'gammaln'), ('tgamma' or 'gamma'), 'erf', 'erfc', 'frexpx', 'frexpe', 'conj',
+% ('creal' or 'real'), ('cimag' or 'imag'), ('carg' or 'angle'), 'isinf',
+% 'isnan', 'isfinite'.
 %
 % op.optype: 'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32',
 %   'uint32', 'int64', 'uint64', 'single', 'double', 'single complex'
 %   or 'double complex'.
 %
-% The class of Z is the same as the class of the output of the operator,
-% which is op.optype except for 'eq', 'ne', 'gt', 'lt', 'ge', 'le',
-% in which case Z is logical.
+% The class of z is the same as the class of the output of the operator,
+% which is op.optype except for: (1) 'eq', 'ne', 'gt', 'lt', 'ge', 'le',
+% in which case z is logical, (2) 'complex', where x and y are real and
+% z is complex, (3) ...
 %
 % Intrinsic MATLAB operators are used as much as possible, so as to test
 % GraphBLAS operators.  Some must be done in GraphBLAS because the
 % divide-by-zero and overflow rules for integers differs between MATLAB and C.
-% Also, typecasting in MATLAB and GraphBLAS differs with underflow and
-% overflow conditions.
+% Also, typecasting in MATLAB and GraphBLAS differs with underflow and overflow
+% conditions.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -69,7 +78,7 @@ switch opname
         % min(x,y) in SuiteSparse:GraphBLAS is min(x,y,'omitnan') in MATLAB.
         % see discussion in SuiteSparse/GraphBLAS/Source/GB.h
         % z = min (x,y,'omitnan') ;
-        z = GB_mex_op (op, x, y) ;      %
+        z = GB_mex_op (op, x, y) ;
     case 'max'
         % z = max (x,y,'omitnan') ;
         z = GB_mex_op (op, x, y) ;
@@ -153,22 +162,38 @@ switch opname
         z = cast ((x ~= 0) ~= (y ~= 0), optype) ;
 
     % bitwise operators
-    case 'bitget'
+    case { 'bitget', 'bget' }
         z = bitget (x, y, optype) ;
-    case 'bitset'
+    case { 'bitset', 'bset' }
         z = bitset (x, y, optype) ;
-    case 'bitclr'
+    case { 'bitclr', 'bclr' }
         z = bitset (x, y, 0, optype) ;
-    case 'bitand'
+    case { 'bitand', 'band' }
         z = bitand (x, y, optype) ;
-    case 'bitor'
+    case { 'bitor', 'bor' }
         z = bitor (x, y, optype) ;
-    case 'bitxor'
+    case { 'bitxor', 'bxor' }
         z = bitxor (x, y, optype) ;
-    case 'bitshift'
+    case { 'bitshift', 'bshift' }
         z = bitshift (x, y, optype) ;
     case { 'bitnot', 'bitcmp' }
         z = bitcmp (x, optype) ;
+
+    case 'atan2'
+        z = atan2 (x,y) ;
+
+    case 'hypot'
+        z = hypot (x,y) ;
+
+    case { 'ldexp', 'pow2' }
+        z = pow2 (x,y) ;
+
+        % z = fmod (x,y)
+        % z = remainder (x,y)
+        % z = copysign (x,y)
+
+    case { 'complex', 'cmplx' }
+        z = complex (x,y) ;
 
     % unary operators (result is optype)
     case 'one'
@@ -195,6 +220,117 @@ switch opname
         end
     case 'not'
         z = cast (~(x ~= 0), optype) ;
+
+    case 'bnot'
+        z = bitcmp (x) ;
+
+    case 'sqrt'
+        z = sqrt (x) ;
+
+    case 'log'
+        z = log (x) ;
+
+    case 'exp'
+        z = exp (x) ;
+
+    case 'sin'
+        z = sin (x) ;
+
+    case 'cos'
+        z = cos (x) ;
+
+    case 'tan'
+        z = tan (x) ;
+
+    case 'asin'
+        z = asin (x) ;
+
+    case 'acos'
+        z = acos (x) ;
+
+    case 'atan'
+        z = atan (x) ;
+
+    case 'sinh'
+        z = sinh (x) ;
+
+    case 'cosh'
+        z = cosh (x) ;
+
+    case 'tanh'
+        z = tanh (x) ;
+
+    case 'asinh'
+        z = asinh (x) ;
+
+    case 'acosh'
+        z = acosh (x) ;
+
+    case 'atanh'
+        z = atanh (x) ;
+
+    case 'ceil'
+        z = ceil (x) ;
+
+    case 'floor'
+        z = floor (x) ;
+
+    case 'round'
+        z = round (x) ;
+
+    case { 'trunc', 'fix' }
+        z = fix (x) ;
+
+    case { 'exp2', 'fix' }
+        z = 2.^x ;
+
+    case 'expm1'
+        z = expm1 (x) ;
+
+    case 'log10'
+        z = log10 (x) ;
+
+    case 'log2'
+        z = log2 (x) ;
+
+    case { 'lgamma', 'gammaln' }
+        z = gammaln (x) ;
+
+    case { 'tgamma', 'gamma' }
+        z = gamma (x) ;
+
+    case 'erf'
+        z = erf (x) ;
+
+    case 'erfc'
+        z = erfc (x) ;
+
+    case 'frexpx'
+        [z,~] = log2 (x) ;
+
+    case 'frexpe'
+        [~,z] = log2 (x) ;
+
+    case 'conj'
+        z = conj (x) ;
+
+    case { 'creal', 'real' }
+        z = real (x) ;
+
+    case { 'cimag', 'imag' }
+        z = imag (x) ;
+
+    case { 'carg', 'angle' }
+        z = angle (x) ;
+
+    case 'isinf'
+        z = isinf (x) ;
+
+    case 'isnan'
+        z = isnan (x) ;
+
+    case 'isfinite'
+        z = isfinite (x) ;
 
     otherwise
         opname

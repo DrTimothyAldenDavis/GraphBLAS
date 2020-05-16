@@ -289,28 +289,11 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
 
 //------------------------------------------------------------------------------
 
-#ifdef GB_PRINT_MALLOC
-
-#define AS_IF_FREE(p)                       \
-{                                           \
-    GB_Global_nmalloc_decrement ( ) ;       \
-    printf ("\nfree: to MATLAB (%s) line %d file %s\n",\
-        GB_STR(p), __LINE__,__FILE__);      \
-    printf ("%14p as if free: %3d %1d\n",   \
-        p, GB_Global_nmalloc_get ( ),       \
-        GB_Global_malloc_debug_get ( )) ;   \
-    (p) = NULL ;                            \
-}
-
-#else
-
 #define AS_IF_FREE(p)                   \
 {                                       \
     GB_Global_nmalloc_decrement ( ) ;   \
     (p) = NULL ;                        \
 }
-
-#endif
 
 #ifdef GB_PRINT_MALLOC
 

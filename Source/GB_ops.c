@@ -54,13 +54,16 @@ GrB_Type
 // built-in descriptors
 //------------------------------------------------------------------------------
 
-#define o GxB_DEFAULT
+#define o ((GrB_Desc_Value) GxB_DEFAULT)
 
 #define GB_DESC(name,out,mask,in0,in1)                          \
 struct GB_Descriptor_opaque GB_opaque_desc_ ## name =           \
 {                                                               \
     GB_MAGIC,               /* initialized */                   \
-    out, mask, in0, in1,    /* settings in the spec */          \
+    (GrB_Desc_Value) (out),                                     \
+    (GrB_Desc_Value) (mask),                                    \
+    (GrB_Desc_Value) (in0),                                     \
+    (GrB_Desc_Value) (in1),                                     \
     o, o, o,                /* default: axb, #threads, chunk */ \
     true                    /* pre-defined */                   \
 } ;                                                             \
@@ -119,7 +122,9 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 //  144:  initialize with incompatible pointer
 #pragma warning (disable: 144 )
 #elif defined __GNUC__
+#if !defined ( __cplusplus )
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
 #endif
 
 // convert a GrB_object into the name of its opaque struct
@@ -133,7 +138,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         GB_MAGIC,                                                           \
         & GB_opaque (xtype),                                                \
         & GB_opaque (ztype),                                                \
-        & GB (op ## _f),                                                    \
+        (GxB_unary_function) (& GB (op ## _f)),                             \
         str,                                                                \
         GB_ ## op ## _opcode                                                \
     } ;                                                                     \
@@ -154,7 +159,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         & GB_opaque (xtype),                                                \
         & GB_opaque (ytype),                                                \
         & GB_opaque (ztype),                                                \
-        & GB (op ## _f),                                                    \
+        (GxB_binary_function) (& GB (op ## _f)),                            \
         str,                                                                \
         GB_ ## op ## _opcode                                                \
     } ;                                                                     \

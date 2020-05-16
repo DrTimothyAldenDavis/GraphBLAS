@@ -83,8 +83,8 @@ GrB_Info mis_check_results
 
     GrB_Index nvals ;
     OK (GrB_Vector_nvals (&nvals, iset)) ;
-    I = malloc (nvals * sizeof (GrB_Index)) ;
-    X = malloc (nvals * sizeof (float)) ;
+    I = (GrB_Index *) malloc (nvals * sizeof (GrB_Index)) ;
+    X = (float *) malloc (nvals * sizeof (float)) ;
 
     if (I == NULL || X == NULL)
     {
@@ -119,9 +119,9 @@ GrB_Info mis_check_results
     OK (GrB_Matrix_extract (C, NULL, NULL, A, I, isize, I, isize, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, C)) ;
 
-    I2 = malloc (nvals * sizeof (GrB_Index)) ;
-    J2 = malloc (nvals * sizeof (GrB_Index)) ;
-    X2 = malloc (nvals * sizeof (bool)) ;
+    I2 = (GrB_Index *) malloc (nvals * sizeof (GrB_Index)) ;
+    J2 = (GrB_Index *) malloc (nvals * sizeof (GrB_Index)) ;
+    X2 = (bool *) malloc (nvals * sizeof (bool)) ;
     if (I2 == NULL || J2 == NULL || X2 == NULL)
     {
         printf ("out of memory\n") ;
@@ -178,7 +178,7 @@ int main (int argc, char **argv)
     double tic [2], t1, t2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
-    OK (GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
+    OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     fprintf (stderr, "\nmis_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------

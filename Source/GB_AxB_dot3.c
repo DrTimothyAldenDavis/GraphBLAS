@@ -15,9 +15,9 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
+#define GB_FREE_WORK        \
+{                           \
+    GB_FREE (TaskList) ;    \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -103,7 +103,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
+    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
@@ -139,7 +139,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
 
-    GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
+    info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
@@ -286,7 +286,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
+    GB_FREE (TaskList) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 
@@ -358,7 +358,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT terminal = add->terminal ;
+        GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -401,12 +401,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         // C(i,j) = A(i,k) * B(k,j)
         #define GB_MULT(cij, aki, bkj)                                      \
-            GB_MULTIPLY (cij, aki, bkj)
+            GB_FMULT (cij, aki, bkj)
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
             GB_void zwork [GB_VLA(csize)] ;                                 \
-            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
+            GB_MULT (zwork, aki, bkj) ;                                     \
             fadd (cij, cij, zwork)
 
         // define cij for each task
@@ -430,15 +430,15 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         if (flipxy)
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #define GB_FMULT(z,x,y) fmult (z,y,x)
             #include "GB_AxB_dot3_template.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
         else
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #define GB_FMULT(z,x,y) fmult (z,x,y)
             #include "GB_AxB_dot3_template.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
     }
 

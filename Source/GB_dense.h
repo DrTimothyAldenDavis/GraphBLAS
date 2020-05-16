@@ -58,7 +58,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
 (
     GrB_Matrix C,                   // input/output matrix
-    const GB_void *scalar,          // input scalar
+    const void *scalar,             // input scalar
     const GrB_Type atype,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Context Context
@@ -71,7 +71,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
 GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 (
     GrB_Matrix C,                   // input/output matrix
-    const GB_void *scalar,          // input scalar
+    const void *scalar,             // input scalar
     const GrB_Type atype,           // type of the input scalar
     GB_Context Context
 ) ;
@@ -86,7 +86,7 @@ GrB_Info GB_dense_subassign_05d
     // input:
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *scalar,
+    const void *scalar,
     const GrB_Type atype,
     GB_Context Context
 ) ;

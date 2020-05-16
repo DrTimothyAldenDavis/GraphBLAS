@@ -50,7 +50,7 @@
 #else
 
     //--------------------------------------------------------------------------
-    // ANSI C99 with native complex type support
+    // native complex type support
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
@@ -72,6 +72,78 @@
     // complex negation
     #define GB_FC32_ainv(x) (-(x))
     #define GB_FC64_ainv(x) (-(x))
+
+#endif
+
+#if defined ( __cplusplus )
+
+    #define crealf(x)   real(x)
+    #define creal(x)    real(x)
+    #define cimagf(x)   imag(x)
+    #define cimag(x)    imag(x)
+    #define cpowf(x,y)  pow(x,y)
+    #define cpow(x,y)   pow(x,y)
+    #define powf(x,y)   pow(x,y)
+    #define cexpf(x)    exp(x)
+    #define cexp(x)     exp(x)
+    #define expf(x)     exp(x)
+
+    #define clogf(x)    log(x)
+    #define clog(x)     log(x)
+    #define logf(x)     log(x)
+
+    #define cabsf(x)    abs(x)
+    #define cabs(x)     abs(x)
+    #define absf(x)     abs(x)
+
+    #define csqrtf(x)    sqrt(x)
+    #define csqrt(x)     sqrt(x)
+    #define sqrtf(x)     sqrt(x)
+
+    #define conjf(x)    conj(x)
+
+    #define cargf(x)    arg(x)
+    #define carg(x)     arg(x)
+
+    #define csinf(x)    sin(x)
+    #define csin(x)     sin(x)
+    #define sinf(x)     sin(x)
+    #define ccosf(x)    cos(x)
+    #define ccos(x)     cos(x)
+    #define cosf(x)     cos(x)
+    #define ctanf(x)    tan(x)
+    #define ctan(x)     tan(x)
+    #define tanf(x)     tan(x)
+
+    #define casinf(x)   asin(x)
+    #define casin(x)    asin(x)
+    #define asinf(x)    asin(x)
+    #define cacosf(x)   acos(x)
+    #define cacos(x)    acos(x)
+    #define acosf(x)    acos(x)
+    #define catanf(x)   atan(x)
+    #define catan(x)    atan(x)
+    #define atanf(x)    atan(x)
+
+    #define csinhf(x)   sinh(x)
+    #define csinh(x)    sinh(x)
+    #define sinhf(x)    sinh(x)
+    #define ccoshf(x)   cosh(x)
+    #define ccosh(x)    cosh(x)
+    #define coshf(x)    cosh(x)
+    #define ctanhf(x)   tanh(x)
+    #define ctanh(x)    tanh(x)
+    #define tanhf(x)    tanh(x)
+
+    #define casinhf(x)  asinh(x)
+    #define casinh(x)   asinh(x)
+    #define asinhf(x)   asinh(x)
+    #define cacoshf(x)  acosh(x)
+    #define cacosh(x)   acosh(x)
+    #define acoshf(x)   acosh(x)
+    #define catanhf(x)  atanh(x)
+    #define catanh(x)   atanh(x)
+    #define atanhf(x)   atanh(x)
 
 #endif
 
@@ -409,7 +481,7 @@ inline GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)
     double zr, zi ;
     GB_divcomplex ((double) crealf (x), (double) cimagf (x),
                    (double) crealf (y), (double) cimagf (y), &zr, &zi) ;
-    return (GxB_CMPLX (zr, zi)) ;
+    return (GxB_CMPLXF (zr, zi)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1049,38 +1121,27 @@ inline GxB_FC64_t GB_cexp2 (GxB_FC64_t x)
 }
 
 //------------------------------------------------------------------------------
-// z = expm1 (x) for float complex
-//------------------------------------------------------------------------------
-
-inline GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
-{
-    // FUTURE: this is not accurate
-    // z = cexpf (x) - 1
-    GxB_FC32_t z = cexpf (x) ;
-    return (GxB_CMPLXF (crealf (z) - 1, cimagf (z))) ;
-}
-
-//------------------------------------------------------------------------------
 // z = expm1 (x) for double complex
 //------------------------------------------------------------------------------
 
 inline GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
 {
-    // FUTURE: this is not accurate
+    // FUTURE: GB_cexpm1 is not accurate
     // z = cexp (x) - 1
-    GxB_FC32_t z = cexp (x) ;
+    GxB_FC64_t z = cexp (x) ;
     return (GxB_CMPLX (creal (z) - 1, cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------
-// z = log1p (x) for float complex
+// z = expm1 (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
+inline GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
 {
-    // FUTURE: this is not accurate
-    // z = log (1+x)
-    return (clogf (GxB_CMPLXF (1 + crealf (x), cimagf (x)))) ;
+    // typecast to double and use GB_cexpm1
+    GxB_FC64_t z = GxB_CMPLX ((double) crealf (x), (double) cimagf (x)) ;
+    z = GB_cexpm1 (z) ;
+    return (GxB_CMPLXF ((float) creal (z), (float) cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1089,9 +1150,21 @@ inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
 
 inline GxB_FC64_t GB_clog1p (GxB_FC64_t x)
 {
-    // FUTURE: this is not accurate
-    // z = log (1+x)
+    // FUTURE: GB_clog1p is not accurate
+    // z = clog (1+x)
     return (clog (GxB_CMPLX (creal (x) + 1, cimag (x)))) ;
+}
+
+//------------------------------------------------------------------------------
+// z = log1p (x) for float complex
+//------------------------------------------------------------------------------
+
+inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
+{
+    // typecast to double and use GB_clog1p
+    GxB_FC64_t z = GxB_CMPLX ((double) crealf (x), (double) cimagf (x)) ;
+    z = GB_clog1p (z) ;
+    return (GxB_CMPLXF ((float) creal (z), (float) cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------

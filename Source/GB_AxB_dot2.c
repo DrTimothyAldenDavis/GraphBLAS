@@ -21,17 +21,17 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE_MEMORY (B_slice, nbslice+1, sizeof (int64_t)) ;                 \
-    if (C_counts != NULL)                                                   \
-    {                                                                       \
-        for (int taskid = 0 ; taskid < naslice ; taskid++)                  \
-        {                                                                   \
-            GB_FREE_MEMORY (C_counts [taskid], cnvec, sizeof (int64_t)) ;   \
-        }                                                                   \
-    }                                                                       \
-    GB_FREE_MEMORY (C_counts, naslice, sizeof (int64_t *)) ;                \
+#define GB_FREE_WORK                                            \
+{                                                               \
+    GB_FREE (B_slice) ;                                         \
+    if (C_counts != NULL)                                       \
+    {                                                           \
+        for (int taskid = 0 ; taskid < naslice ; taskid++)      \
+        {                                                       \
+            GB_FREE (C_counts [taskid]) ;                       \
+        }                                                       \
+    }                                                           \
+    GB_FREE (C_counts) ;                                        \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -147,7 +147,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
     }
 
-    GB_CALLOC_MEMORY (C_counts, naslice, sizeof (int64_t *)) ;
+    C_counts = GB_CALLOC (naslice, int64_t *) ;
     if (C_counts == NULL)
     { 
         // out of memory
@@ -157,8 +157,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
     {
-        int64_t *GB_RESTRICT C_count = NULL ;
-        GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t)) ;
+        int64_t *GB_RESTRICT C_count = GB_CALLOC (B->nvec, int64_t) ;
         if (C_count == NULL)
         { 
             // out of memory
@@ -181,7 +180,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     #include "GB_AxB_dot2_meta.c"
     #undef  GB_PHASE_1_OF_2
 
-    GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
+    info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (B->is_hyper), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -222,7 +221,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     }
 
     // free C_count for the first thread; it is no longer needed
-    GB_FREE_MEMORY (C_counts [0], cnvec, sizeof (int64_t)) ;
+    GB_FREE (C_counts [0]) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -306,7 +305,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT terminal = add->terminal ;
+        GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -349,12 +348,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         // C(i,j) = A(i,k) * B(k,j)
         #define GB_MULT(cij, aki, bkj)                                      \
-            GB_MULTIPLY (cij, aki, bkj)
+            GB_FMULT (cij, aki, bkj)
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
             GB_void zwork [GB_VLA(csize)] ;                                 \
-            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
+            GB_MULT (zwork, aki, bkj) ;                                     \
             fadd (cij, cij, zwork)
 
         // define cij for each task
@@ -380,15 +379,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         if (flipxy)
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #define GB_FMULT(z,x,y) fmult (z,y,x)
             #include "GB_AxB_dot2_meta.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
         else
         { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #define GB_FMULT(z,x,y) fmult (z,x,y)
             #include "GB_AxB_dot2_meta.c"
-            #undef GB_MULTIPLY
+            #undef GB_FMULT
         }
     }
 

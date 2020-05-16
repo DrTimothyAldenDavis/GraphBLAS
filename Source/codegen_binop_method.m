@@ -93,6 +93,10 @@ fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
 fprintf (f, 'define(`GB_atype'', `%s'')\n', xtype) ;
 fprintf (f, 'define(`GB_btype'', `%s'')\n', ytype) ;
 
+fprintf (f, 'define(`GB_atype_is_btype'', `%d'')\n', isequal (xtype, ytype)) ;
+fprintf (f, 'define(`GB_ctype_is_atype'', `%d'')\n', isequal (ztype, xtype)) ;
+fprintf (f, 'define(`GB_ctype_is_btype'', `%d'')\n', isequal (ztype, ytype)) ;
+
 % C_dense_update: operators z=f(x,y) where ztype and xtype match, and op is not 'first'
 if (isequal (xtype, ztype) && ~isequal (binop, 'first'))
     fprintf (f, 'define(`GB_C_dense_update'', `1'')\n') ;
@@ -118,6 +122,24 @@ if (isequal (binop, 'first') || isequal (binop, 'pair'))
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', ytype) ;
+end
+
+% to copy an entry from A to C
+if (isequal (xtype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
+    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = (crealf ($2 [$3]) != 0) || (cimagf ($2 [$3]) != 0)'')\n') ;
+elseif (isequal (xtype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
+    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = (creal ($2 [$3]) != 0) || (cimag ($2 [$3]) != 0)'')\n') ;
+else
+    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = $2 [$3]'')\n') ;
+end
+
+% to copy an entry from B to C
+if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
+    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = (crealf ($2 [$3]) != 0) || (cimagf ($2 [$3]) != 0)'')\n') ;
+elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
+    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = (creal ($2 [$3]) != 0) || (cimag ($2 [$3]) != 0)'')\n') ;
+else
+    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = $2 [$3]'')\n') ;
 end
 
 % type-specific IDIV
@@ -147,7 +169,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 25 ;
+trim = 30 ;
 
 % construct the *.c file
 cmd = sprintf (...

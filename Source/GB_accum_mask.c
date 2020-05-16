@@ -311,7 +311,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // [ Z is just the header; the rest can be allocated by the
             // transplant if needed.  Z has the same hypersparsity as T.
 
-            GB_NEW (&Z, C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
+            info = GB_new (&Z, C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
                 GB_SAME_HYPER_AS (T->is_hyper), T->hyper_ratio, T->plen,
                 Context) ;
             GB_OK (info) ;

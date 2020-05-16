@@ -15,6 +15,13 @@ fprintf (f, 'define(`GB_Cdense_25'', `GB_Cdense_25__%s'')\n', fname) ;
 
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', xtype) ;
 
+% mask macro
+if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))
+    fprintf (f, 'define(`GB_ax_mask'', `GB_mcast ((GB_void *) $1, $2, $3)'')\n') ;
+else
+    fprintf (f, 'define(`GB_ax_mask'', `($1 [$2] != 0)'')\n') ;
+end
+
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (fname)) ;
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
@@ -22,13 +29,13 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.c | m4 | tail -n +6 > Generated/GB_type__%s.c', ...
+'cat control.m4 Generator/GB_type.c | m4 | tail -n +7 > Generated/GB_type__%s.c', ...
 fname) ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.h | m4 | tail -n +6 >> Generated/GB_type__include.h') ;
+'cat control.m4 Generator/GB_type.h | m4 | tail -n +7 >> Generated/GB_type__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

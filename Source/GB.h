@@ -32,6 +32,7 @@
 // set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
 // -DGB_BURBLE=1.  This setting can also be added at the top of any individual
 // Source/* files, before #including any other files.
+// TODO burble on
 #ifndef GB_BURBLE
 #define GB_BURBLE 1
 #endif
@@ -51,9 +52,6 @@
 // #define USER_POSIX_THREADS
 // #define USER_OPENMP_THREADS
 // #define USER_NO_THREADS
-
-// to turn on memory usage debug printing, uncomment this line:
-// #define GB_PRINT_MALLOC 1
 
 //------------------------------------------------------------------------------
 // manage compiler warnings
@@ -115,7 +113,11 @@
 // disable warnings from -Wall -Wextra -Wpendantic
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
+#if defined ( __cplusplus )
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#else
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
 
 // See GB_unused.h, where these two pragmas are used:
 // #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
@@ -129,7 +131,9 @@
 
 // enable these warnings as errors
 #pragma GCC diagnostic error "-Wswitch-default"
+#if !defined ( __cplusplus )
 #pragma GCC diagnostic error "-Wmissing-prototypes"
+#endif
 
 // #pragma GCC diagnostic error "-Wdouble-promotion"
 
@@ -353,11 +357,11 @@ typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 // GB_mcast: cast a mask entry from any native type to boolean
 //------------------------------------------------------------------------------
 
-// The mask matrix M must be one of the native data types, which have size
-// 1, 2, 4, or 8 bytes.  The value could be properly typecasted to bool, but
-// this requires a function pointer to the proper GB_cast_function.  Instead,
-// it is faster to simply use type punning, based on the size of the data
-// type, and use the inline GB_mcast function instead.
+// The mask matrix M must be one of the native data types, which have sizes of
+// 1, 2, 4, 8, or 16 bytes.  The value could be properly typecasted to bool,
+// but this requires a function pointer to the proper GB_cast_function.
+// Instead, it is faster to simply use type punning, based on the size of the
+// data type, and use the inline GB_mcast function instead.
 
 static inline bool GB_mcast         // return the value of M(i,j)
 (
@@ -384,6 +388,11 @@ static inline bool GB_mcast         // return the value of M(i,j)
             case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
             case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
             case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+            case 16:
+            {
+                const uint64_t *GB_RESTRICT Zx = (uint64_t *) Mx ;
+                return (Zx [2*pM] != 0 || Zx [2*pM+1] != 0) ;
+            }
         }
     }
 }
@@ -1799,7 +1808,7 @@ GrB_Info GB_phix_free           // free all content of a matrix
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_free                // free a matrix
+GrB_Info GB_Matrix_free         // free a matrix
 (
     GrB_Matrix *matrix_handle   // handle of matrix to free
 ) ;
@@ -1878,38 +1887,37 @@ GB_task_struct ;
 // GB_REALLOC_TASK_LIST: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.
 
-#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                \
-{                                                                       \
-    if ((ntasks) >= max_ntasks)                                         \
-    {                                                                   \
-        bool ok ;                                                       \
-        int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;           \
-        int nnew = 2 * (ntasks) + 1 ;                                   \
-        GB_REALLOC_MEMORY (TaskList, nnew, nold,                        \
-            sizeof (GB_task_struct), &ok) ;                             \
-        if (!ok)                                                        \
-        {                                                               \
-            /* out of memory */                                         \
-            GB_FREE_ALL ;                                               \
-            return (GB_OUT_OF_MEMORY) ;                                 \
-        }                                                               \
-        for (int t = nold ; t < nnew ; t++)                             \
-        {                                                               \
-            TaskList [t].kfirst = -1 ;                                  \
-            TaskList [t].klast  = INT64_MIN ;                           \
-            TaskList [t].pA     = INT64_MIN ;                           \
-            TaskList [t].pA_end = INT64_MIN ;                           \
-            TaskList [t].pB     = INT64_MIN ;                           \
-            TaskList [t].pB_end = INT64_MIN ;                           \
-            TaskList [t].pC     = INT64_MIN ;                           \
-            TaskList [t].pC_end = INT64_MIN ;                           \
-            TaskList [t].pM     = INT64_MIN ;                           \
-            TaskList [t].pM_end = INT64_MIN ;                           \
-            TaskList [t].len    = INT64_MIN ;                           \
-        }                                                               \
-        max_ntasks = 2 * (ntasks) ;                                     \
-    }                                                                   \
-    ASSERT ((ntasks) < max_ntasks) ;                                    \
+#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                    \
+{                                                                           \
+    if ((ntasks) >= max_ntasks)                                             \
+    {                                                                       \
+        bool ok ;                                                           \
+        int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
+        int nnew = 2 * (ntasks) + 1 ;                                       \
+        TaskList = GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ; \
+        if (!ok)                                                            \
+        {                                                                   \
+            /* out of memory */                                             \
+            GB_FREE_ALL ;                                                   \
+            return (GB_OUT_OF_MEMORY) ;                                     \
+        }                                                                   \
+        for (int t = nold ; t < nnew ; t++)                                 \
+        {                                                                   \
+            TaskList [t].kfirst = -1 ;                                      \
+            TaskList [t].klast  = INT64_MIN ;                               \
+            TaskList [t].pA     = INT64_MIN ;                               \
+            TaskList [t].pA_end = INT64_MIN ;                               \
+            TaskList [t].pB     = INT64_MIN ;                               \
+            TaskList [t].pB_end = INT64_MIN ;                               \
+            TaskList [t].pC     = INT64_MIN ;                               \
+            TaskList [t].pC_end = INT64_MIN ;                               \
+            TaskList [t].pM     = INT64_MIN ;                               \
+            TaskList [t].pM_end = INT64_MIN ;                               \
+            TaskList [t].len    = INT64_MIN ;                               \
+        }                                                                   \
+        max_ntasks = 2 * (ntasks) ;                                         \
+    }                                                                       \
+    ASSERT ((ntasks) < max_ntasks) ;                                        \
 }
 
 GrB_Info GB_ewise_slice
@@ -2037,135 +2045,32 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_memory
 (
-    void *p,                // pointer to allocated block of memory to free
-    size_t nitems,          // number of items to free
-    size_t size_of_item     // sizeof each item
+    void *p                 // pointer to allocated block of memory to free
 ) ;
 
 //------------------------------------------------------------------------------
 // macros to create/free matrices, vectors, and generic memory
 //------------------------------------------------------------------------------
 
-// if GB_PRINT_MALLOC is defined, these macros print diagnostic
-// information, meant for development of SuiteSparse:GraphBLAS only
-
-#ifdef GB_PRINT_MALLOC
-
-#define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
-{                                                                             \
-    GBDUMP("\nmatrix new:                   %s = new (%s, vlen = "GBd         \
-        ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd")"             \
-        " line %d file %s\n", GB_STR(A), GB_STR(type),                        \
-        (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
-        (int64_t) plen, __LINE__, __FILE__) ;                                 \
-    info = GB_new (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,     \
-        Context) ;                                                            \
-}
-
-#define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
-{                                                                             \
-    GBDUMP("\nmatrix create:                %s = new (%s, vlen = "GBd         \
-        ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd", anz:"GBd     \
-        " numeric:%d) line %d file %s\n", GB_STR(A), GB_STR(type),            \
-        (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
-        (int64_t) plen, (int64_t) anz, numeric, __LINE__, __FILE__) ;         \
-    info = GB_create (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,  \
-        anz, numeric, Context) ;                                              \
-}
-
 #define GB_MATRIX_FREE(A)                                                     \
 {                                                                             \
-    if (A != NULL && *(A) != NULL)                                            \
-        GBDUMP("\nmatrix free:                  "                             \
-        "matrix_free (%s) line %d file %s\n", GB_STR(A), __LINE__, __FILE__) ;\
-    if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
-}
-
-#define GB_VECTOR_FREE(v)                                                     \
-{                                                                             \
-    if (v != NULL && *(v) != NULL)                                            \
-        GBDUMP("\nvector free:                  "                             \
-        "vector_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
-    if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
-}
-
-#define GB_SCALAR_FREE(v)                                                     \
-{                                                                             \
-    if (v != NULL && *(v) != NULL)                                            \
-        GBDUMP("\nscalar free:                  "                             \
-        "scalar_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
-    if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
-}
-
-#define GB_CALLOC_MEMORY(p,n,s)                                               \
-    GBDUMP("\nCalloc:                       "                                 \
-    "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
-    GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
-    __LINE__,__FILE__) ;                                                      \
-    p = GB_calloc_memory (n, s) ;
-
-#define GB_MALLOC_MEMORY(p,n,s)                                               \
-    GBDUMP("\nMalloc:                       "                                 \
-    "%s = malloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
-    GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
-    __LINE__,__FILE__) ;                                                      \
-    p = GB_malloc_memory (n, s) ;
-
-#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
-{                                                                             \
-    GBDUMP("\nRealloc: %14p       "                                           \
-    "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
-    p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
-    GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
-    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok) ;                   \
-}
-
-#define GB_FREE_MEMORY(p,n,s)                                                 \
-{                                                                             \
-    if (p)                                                                    \
-    GBDUMP("\nFree:               "                                           \
-    "(%s, %s = "GBd", %s = "GBd") line %d file %s\n",                         \
-    GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
-    __LINE__,__FILE__) ;                                                      \
-    GB_free_memory ((void *) p, n, s) ;                                       \
-    (p) = NULL ;                                                              \
-}
-
-#else
-
-#define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
-    info = GB_new (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,     \
-        Context)
-
-#define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
-    info = GB_create (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,  \
-        anz, numeric, Context)
-
-#define GB_MATRIX_FREE(A)                                                     \
-{                                                                             \
-    if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
+    if (GB_Matrix_free (A) == GrB_PANIC) GB_PANIC ;                           \
 }
 
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
-#define GB_SCALAR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
+#define GB_SCALAR_FREE(s) GB_MATRIX_FREE ((GrB_Matrix *) s)
 
-#define GB_CALLOC_MEMORY(p,n,s)                                               \
-    p = GB_calloc_memory (n, s)
-
-#define GB_MALLOC_MEMORY(p,n,s)                                               \
-    p = GB_malloc_memory (n, s)
-
-#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
-    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok)
-
-#define GB_FREE_MEMORY(p,n,s)                                                 \
+#define GB_FREE(p)                                                            \
 {                                                                             \
-    GB_free_memory ((void *) p, n, s) ;                                       \
+    GB_free_memory ((void *) p) ;                                             \
     (p) = NULL ;                                                              \
 }
 
-#endif
+#define GB_CALLOC(n,type) (type *) GB_calloc_memory (n, sizeof (type))
+#define GB_MALLOC(n,type) (type *) GB_malloc_memory (n, sizeof (type))
+#define GB_REALLOC(p,nnew,nold,type,ok) \
+    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *) p, ok)
 
 //------------------------------------------------------------------------------
 

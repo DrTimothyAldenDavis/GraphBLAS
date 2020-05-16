@@ -164,7 +164,7 @@ break ;
     // PAIR multiplier: t is always 1; no numeric work to do to compute t.
     // The LXOR_PAIR and PLUS_PAIR semirings need the value t = 1 to use in
     // their monoid operator, however.
-    #define t 1
+    #define t GB_CTYPE_ONE
     #define GB_MULT_A_ik_B_kj
 
 #else
@@ -484,10 +484,10 @@ break ;
 #undef  GB_FREE_TASKLIST_AND_HASH_TABLES
 #define GB_FREE_TASKLIST_AND_HASH_TABLES                                    \
 {                                                                           \
-    GB_FREE_MEMORY (*(TaskList_handle), ntasks, sizeof (GB_saxpy3task_struct));\
-    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hx_all, Hx_size_total, 1) ;                             \
+    GB_FREE (*(TaskList_handle)) ;                                          \
+    GB_FREE (Hi_all) ;                                                      \
+    GB_FREE (Hf_all) ;                                                      \
+    GB_FREE (Hx_all) ;                                                      \
 }
 
 #undef  GB_FREE_WORK

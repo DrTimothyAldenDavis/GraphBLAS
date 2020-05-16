@@ -63,6 +63,10 @@
 #define GB_MULT(z, x, y) \
     z = fmax (x, y)
 
+// the scalar 1
+#define GB_CTYPE_ONE \
+    ((double) 1)
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     z *= fmax (x, y)

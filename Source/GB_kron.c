@@ -85,9 +85,9 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     if (!ok || GB_NROWS (C) != cnrows || GB_NCOLS (C) != cncols)
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG, "%s:\n"
-            "output is "GBd"-by-"GBd"; must be "GBu"-by-"GBu"\n"
-            "first input is "GBd"-by-"GBd"%s with "GBd" entries\n"
-            "second input is "GBd"-by-"GBd"%s with "GBd" entries",
+            "output is " GBd "-by-" GBd "; must be " GBu "-by-" GBu "\n"
+            "first input is " GBd "-by-" GBd "%s with " GBd " entries\n"
+            "second input is " GBd "-by-" GBd "%s with " GBd " entries",
             ok ? "Dimensions not compatible:" : "Problem too large:",
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols,
             anrows, ancols, A_transpose ? " (transposed)" : "", GB_NNZ (A),

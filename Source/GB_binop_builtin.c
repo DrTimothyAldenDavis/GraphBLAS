@@ -78,7 +78,6 @@ bool GB_binop_builtin               // true if binary operator is builtin
         { 
             // A is a user-defined type, or its type does not match the input
             // to the operator
-            printf ("A type wrong\n") ;
             return (false) ;
         }
     }
@@ -90,7 +89,6 @@ bool GB_binop_builtin               // true if binary operator is builtin
         { 
             // B is a user-defined type, or its type does not match the input
             // to the operator
-            printf ("A type wrong\n") ;
             return (false) ;
         }
     }

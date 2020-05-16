@@ -16,11 +16,11 @@
     // get C, M, and A
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     const int64_t avlen = A->vlen ;
 
     //--------------------------------------------------------------------------

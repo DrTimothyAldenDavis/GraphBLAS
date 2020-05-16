@@ -71,8 +71,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
-            "output is "GBd"-by-"GBd"\n"
-            "input is "GBd"-by-"GBd"%s",
+            "output is " GBd "-by-" GBd "\n"
+            "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
             tnrows, tncols, A_transpose ? " (transposed)" : ""))) ;
     }
@@ -111,7 +111,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // C = op (C), operating on the values in place, with no typecasting
         // of the output of the operator with the matrix C.  Always succeeds.
         // FUTURE::: also handle C += op(C), with accum
-        GB_apply_op (C->x, op, C->x, C->type, GB_NNZ (C), Context) ;
+        GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+        GB_apply_op (Cx, op, Cx, C->type, GB_NNZ (C), Context) ;
         return (GrB_SUCCESS) ;
     }
     else
