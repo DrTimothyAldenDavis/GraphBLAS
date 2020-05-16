@@ -23,7 +23,7 @@ if (isstruct (cin) || issparse (cin) || ~isscalar (cin))
     error ('cin must be a dense scalar') ;
 end
 
-cin_class = GB_spec_type (cin) ;
+cin_type = GB_spec_type (cin) ;
 
 % get the type of A
 if (isstruct (A))
@@ -33,10 +33,12 @@ else
 end
 
 % get the reduce operator. default type is the type of A
-[reduce_op reduce_class] = GB_spec_operator (reduce, atype) ;
+[reduce_op reduce_optype zt xt yt] = GB_spec_operator (reduce, atype) ;
+assert (isequal (zt, xt)) ;
+assert (isequal (zt, yt)) ;
 
 % get the identity
-identity = GB_spec_identity (reduce_op, reduce_class) ;
+identity = GB_spec_identity (reduce_op, reduce_optype) ;
 if (isempty (identity))
     identity = 0 ;
 end
@@ -44,10 +46,8 @@ end
 % get the input matrix
 A = GB_spec_matrix (A, identity) ;
 
-% get the accumulator and its 2 types.
-% accum_class is the class of x and y, and zclass is the class of z,
-% for z = accum(x,y)
-[accum_op  accum_class zclass ] = GB_spec_operator (accum, cin_class) ;
+% get the accumulator and its types for z = accum(x,y)
+[accum_op accum_optype ztype xtype ytype ] = GB_spec_operator (accum, cin_type) ;
 
 %-------------------------------------------------------------------------------
 % do the work via a clean MATLAB interpretation of the entire GraphBLAS spec
@@ -57,7 +57,7 @@ A = GB_spec_matrix (A, identity) ;
 
 t = identity ;
 if (nnz (A.pattern) > 0)
-    X = GB_mex_cast (A.matrix (A.pattern), reduce_class) ;
+    X = GB_mex_cast (A.matrix (A.pattern), reduce_optype) ;
     for k = 1:length (X)
         t = GB_spec_op (reduce, t, X (k)) ;
     end
@@ -66,12 +66,12 @@ end
 % apply the accumulator.  no mask. t is a dense matrix so this is
 % different than GB_spec_accum.
 if (isempty (accum_op))
-    c = GB_mex_cast (t, cin_class) ;
+    c = GB_mex_cast (t, cin_type) ;
 else
     % c = cin "+" t, but typecast all the arguments
-    t   = GB_mex_cast (t,   accum_class) ;     % cast t to accum x class
-    cin = GB_mex_cast (cin, accum_class) ;     % cast cin to accum y class
-    z = GB_spec_op (accum, cin, t) ;           % z = accum (cin,t)
-    c = GB_mex_cast (z, cin_class) ;           % cast z to class of cin
+    t   = GB_mex_cast (t,   xtype) ;     % cast t to accum xtype
+    cin = GB_mex_cast (cin, ytype) ;     % cast cin to accum ytype
+    z = GB_spec_op (accum, cin, t) ;     % z = accum (cin,t)
+    c = GB_mex_cast (z, cin_type) ;      % cast z to type of cin
 end
 

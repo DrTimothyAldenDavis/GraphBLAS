@@ -68,12 +68,31 @@ for k1 = k1test % 1:length (types.real)
         for m = mlist
             for n = nlist
 
-                Amat = sparse (100 * sprandn (m,n, 0.2)) ;
-                Bmat = sparse (100 * sprandn (m,n, 0.2)) ;
-                Cmat = sparse (100 * sprandn (m,n, 0.2)) ;
-                w = sparse (100 * sprandn (m,1, 0.2)) ;
-                uvec = sparse (100 * sprandn (m,1, 0.2)) ;
-                vvec = sparse (100 * sprandn (m,1, 0.2)) ;
+                % avoid creating nans for testing pow
+                if (isequal (binop, 'pow'))
+                    scale = 2 ;
+                else
+                    scale = 100 ;
+                end
+
+                Amat = sparse (scale * sprandn (m,n, 0.2)) ;
+                Bmat = sparse (scale * sprandn (m,n, 0.2)) ;
+                Cmat = sparse (scale * sprandn (m,n, 0.2)) ;
+                w    = sparse (scale * sprandn (m,1, 0.2)) ;
+                uvec = sparse (scale * sprandn (m,1, 0.2)) ;
+                vvec = sparse (scale * sprandn (m,1, 0.2)) ;
+
+                % these tests do not convert real A and B into complex C for C
+                % = A.^B.  GrB.power handles that case.  So ensure the test
+                % matrices are all positive.
+                if (isequal (binop, 'pow'))
+                    Amat = abs (Amat) ;
+                    Bmat = abs (Bmat) ;
+                    Cmat = abs (Cmat) ;
+                    w    = abs (w) ;
+                    uvec = abs (uvec) ;
+                    vvec = abs (vvec) ;
+                end
 
                 Maskmat = sprandn (m,n,0.2) ~= 0 ;
                 maskvec = sprandn (m,1,0.2) ~= 0 ;

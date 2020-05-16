@@ -164,7 +164,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             { 
                 // remove from queue if no zombies or pending tuples
                 // FUTURE:: may thrash; see GrB_wait.
-                GB_CRITICAL (GB_queue_remove (C)) ;
+                if (!GB_queue_remove (C)) GB_PANIC ;
             }
         }
 
@@ -273,7 +273,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         ASSERT (GB_PENDING (C)) ;
         if (!(C->enqueued))
         { 
-            GB_CRITICAL (GB_queue_insert (C)) ;
+            if (!GB_queue_insert (C)) GB_PANIC ;
         }
 
         // if this was the first tuple, then the pending operator and

@@ -49,19 +49,12 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             // for memory usage testing only
             //------------------------------------------------------------------
 
-            // brutal memory debug; pretend to fail if (count-- <= 0)
+            // brutal memory debug; pretend to fail if (count-- <= 0).
             bool pretend_to_fail = false ;
-            bool malloc_debug = false ;
-            #define GB_CRITICAL_SECTION                                      \
-            {                                                                \
-                malloc_debug = GB_Global_malloc_debug_get ( ) ;              \
-                if (malloc_debug)                                            \
-                {                                                            \
-                    pretend_to_fail =                                        \
-                        GB_Global_malloc_debug_count_decrement ( ) ;         \
-                }                                                            \
+            if (GB_Global_malloc_debug_get ( ))
+            {
+                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
             }
-            #include "GB_critical_section.c"
 
             // allocate the memory
             if (pretend_to_fail)
@@ -77,13 +70,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             if (p != NULL)
             { 
                 // success
-                #undef GB_CRITICAL_SECTION
-                #define GB_CRITICAL_SECTION                             \
-                {                                                       \
-                    GB_Global_nmalloc_increment ( ) ;                   \
-                }
-
-                #include "GB_critical_section.c"
+                GB_Global_nmalloc_increment ( ) ;
             }
 
         }

@@ -26,6 +26,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
     if (len <  0) return (NULL) ;
     if (len == 0) return (default_type) ;
     if (MATCH (type, "logical")) return (GrB_BOOL) ;
+    if (MATCH (type, "bool"   )) return (GrB_BOOL) ;
     if (MATCH (type, "int8"   )) return (GrB_INT8) ;
     if (MATCH (type, "int16"  )) return (GrB_INT16) ;
     if (MATCH (type, "int32"  )) return (GrB_INT32) ;
@@ -38,6 +39,8 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
     if (MATCH (type, "double" )) return (GrB_FP64) ;
     if (MATCH (type, "single complex" )) return (GxB_FC32) ;
     if (MATCH (type, "double complex" )) return (Complex) ;
+    if (MATCH (type, "GxB_FC32_t" )) return (GxB_FC32) ;
+    if (MATCH (type, "GxB_FC64_t" )) return (GxB_FC64) ;
 
     return (NULL) ;
 }

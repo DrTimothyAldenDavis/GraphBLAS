@@ -40,11 +40,13 @@ pthread_mutex_t GB_sync ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads (not yet supported)
-CRITICAL_SECTION GB_sync ; 
+// CRITICAL_SECTION GB_sync ; 
+#error "Windows threading not yet supported"
 
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads (not yet supported)
-mtx_t GB_sync ;
+// mtx_t GB_sync ;
+#error "ANSI C11 threading not yet supported"
 
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // nothing to do for OpenMP, or for no user threading
@@ -132,24 +134,24 @@ GrB_Info GB_init            // start up GraphBLAS
         if (!ok) GB_PANIC ;
     }
 
-    #elif defined (USER_WINDOWS_THREADS)
-    {
+//  #elif defined (USER_WINDOWS_THREADS)
+//  {
         // initialize the critical section for Microsoft Windows.
         // This is not yet supported.  See:
         // https://docs.microsoft.com/en-us/windows/desktop/sync
         //  /using-critical-section-objects
-        bool ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
         // also do whatever Windows needs for thread-local-storage
-        if (!ok) GB_PANIC ;
-    }
+//      bool ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
+//      if (!ok) GB_PANIC ;
+//  }
 
-    #elif defined (USER_ANSI_THREADS)
-    {
+//  #elif defined (USER_ANSI_THREADS)
+//  {
         // initialize the critical section for ANSI C11 threads
         // This should work but is not yet supported.
-        bool ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
-        if (!ok) GB_PANIC ;
-    }
+//      bool ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
+//      if (!ok) GB_PANIC ;
+//  }
 
     #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
     { 

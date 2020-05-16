@@ -449,7 +449,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     if (C->nzombies > 0)
     {
         // C has been created with zombies, so place it in the queue
-        GB_CRITICAL (GB_queue_insert (C)) ;
+        if (!GB_queue_insert (C)) GB_PANIC ;
     }
 
     GB_FREE_WORK ;

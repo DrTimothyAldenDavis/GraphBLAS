@@ -1424,13 +1424,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // queue, and allow matrices to be in the queue even if they have no
         // unfinished computations.  See also GB_setElement.
 
-        GB_CRITICAL (GB_queue_remove (C)) ;
+        if (!GB_queue_remove (C)) GB_PANIC ;
     }
     else
     { 
         // If C has any zombies or pending tuples, it must be in the queue.
         // The queue insert does nothing if C is already in the queue.
-        GB_CRITICAL (GB_queue_insert (C)) ;
+        if (!GB_queue_insert (C)) GB_PANIC ;
     }
 
     //--------------------------------------------------------------------------

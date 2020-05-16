@@ -70,7 +70,7 @@ for k0 = 1:size (problems,1) ;
         % try every operator class
         for k2 = 1:length (types.real)
             op.optype = types.real {k2} ;
-            z = cast (1, op.optype) ;
+            z = GB_mex_cast (1, op.optype) ;
             opint = isinteger (z) || islogical (z) ;
 
             % the non-boolean logical operators are not associative
@@ -92,7 +92,7 @@ for k0 = 1:size (problems,1) ;
             % try every class for X
             for k3 = k3list % 1:length (types.real)
                 xclass = types.real {k3} ;
-                X = cast (Y, xclass) ;
+                X = GB_mex_cast (Y, xclass) ;
                 fprintf ('.') ;
 
                 if (fulltest)

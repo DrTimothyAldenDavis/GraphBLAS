@@ -21,7 +21,7 @@ end
 C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
 B = GB_spec_matrix (B) ;
-[mult_op xyclass zclass] = GB_spec_operator (mult, C.class) ;
+[mult_op optype ztype xtype ytype] = GB_spec_operator (mult, C.class) ;
 [C_replace Mask_comp Atrans Btrans Mask_struct] = ...
     GB_spec_descriptor (descriptor) ;
 Mask = GB_spec_getmask (Mask, Mask_struct) ;
@@ -43,22 +43,20 @@ if (Btrans)
 end
 
 % T = A.*B, with typecasting
-T.matrix = GB_spec_zeros (size (A.matrix), zclass) ;
+T.matrix = GB_spec_zeros (size (A.matrix), ztype) ;
 
 % apply the mult to entries in the intersection of A and B
 p = A.pattern & B.pattern ;
 % first cast the entries into the class of the operator
-% note that in the spec, all three domains z=op(x,y) can be different
-% here they are assumed to all be the same
-A1 = GB_mex_cast (A.matrix (p), xyclass) ;
-B1 = GB_mex_cast (B.matrix (p), xyclass) ;
+A1 = GB_mex_cast (A.matrix (p), xtype) ;
+B1 = GB_mex_cast (B.matrix (p), ytype) ;
 T.matrix (p) = GB_spec_op (mult, A1, B1) ;
 
 % the pattern of T is the intersection of both A and B
 T.pattern = p ;
 
-assert (isequal (zclass, GB_spec_type (T.matrix))) ;
-T.class = zclass ;
+assert (isequal (ztype, GB_spec_type (T.matrix))) ;
+T.class = ztype ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result
 C = GB_spec_accum_mask (C, Mask, accum, T, C_replace, Mask_comp, 0) ;

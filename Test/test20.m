@@ -252,6 +252,7 @@ for k1 = k1_list % 1:length(mult_ops)
                                             C = GB_spec_random (m,n,density,100,aclas, C_is_csc, C_is_hyper) ;
 
                                             % C = A'*B, no Mask
+save gunk C accum semiring A B dtn identity
                                             C0 = GB_spec_mxm (C, [ ], accum, semiring, A, B, dtn);
                                             C1 = GB_mex_mxm  (C, [ ], accum, semiring, A, B, dtn);
                                             GB_spec_compare (C0, C1, identity) ;

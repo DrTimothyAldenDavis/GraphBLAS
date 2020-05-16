@@ -7,12 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// All access to the global matrix queue, via GB_queue_* operations, must
-// be done through a critical section.  No other part of SuiteSparse:GraphBLAS
-// uses this critical section; it is only used for accessing the global matrix
-// queue via GB_queue_*.   All GB_queue_* operations use the GB_CRITICAL macro
-// to check the result, and if the critical section fails (ok == false),
-// they return GrB_PANIC.
+// This critical section is only used to protect the global queue of matrices
+// with pending operations, for GrB_wait ( ).
 
 // Critical sections for Windows threads and ANSI C11 threads are listed below
 // as drafts, but these threading models are not yet supported.
@@ -34,25 +30,26 @@
     // Microsoft Windows
     //--------------------------------------------------------------------------
 
-    #elif defined (USER_WINDOWS_THREADS)
-    {
-        // This should work, per the Windows spec, but is not yet supported.
-        EnterCriticalSection (&GB_sync) ;
-        GB_CRITICAL_SECTION ;
-        LeaveCriticalSection (&GB_sync) ;
-    }
+//  This should work, per the Windows spec, but is not yet supported.
+//  #elif defined (USER_WINDOWS_THREADS)
+//  {
+//      // This should work, per the Windows spec, but is not yet supported.
+//      EnterCriticalSection (&GB_sync) ;
+//      GB_CRITICAL_SECTION ;
+//      LeaveCriticalSection (&GB_sync) ;
+//  }
 
     //--------------------------------------------------------------------------
     // ANSI C11 threads
     //--------------------------------------------------------------------------
 
-    #elif defined (USER_ANSI_THREADS)
-    {
-        // This should work per the ANSI C11 Spec, but is not yet supported.
-        ok = (mtx_lock (&GB_sync) == thrd_success) ;
-        GB_CRITICAL_SECTION ;
-        ok = ok && (mtx_unlock (&GB_sync) == thrd_success) ;
-    }
+//  This should work per the ANSI C11 Spec, but is not yet supported.
+//  #elif defined (USER_ANSI_THREADS)
+//  {
+//      ok = (mtx_lock (&GB_sync) == thrd_success) ;
+//      GB_CRITICAL_SECTION ;
+//      ok = ok && (mtx_unlock (&GB_sync) == thrd_success) ;
+//  }
 
     //--------------------------------------------------------------------------
     // OpenMP

@@ -16,16 +16,16 @@ dt = struct ('inp0', 'tran') ;
 dr = struct ('outp', 'replace') ;
 
 for k1 = 1:length(types.real)
-    aclass = types.real {k1} ;
-    fprintf ('%s: ', aclass) ;
+    atype = types.real {k1} ;
+    fprintf ('%s: ', atype) ;
 
-    A   = GB_spec_random (m, n, 0.3, 100, aclass) ;
-    Cin = GB_spec_random (m, n, 0.3, 100, aclass) ;
-    B   = GB_spec_random (n, m, 0.3, 100, aclass) ;
-    cin = cast (0, aclass) ;
+    A   = GB_spec_random (m, n, 0.3, 100, atype) ;
+    Cin = GB_spec_random (m, n, 0.3, 100, atype) ;
+    B   = GB_spec_random (n, m, 0.3, 100, atype) ;
+    cin = GB_mex_cast (0, atype) ;
     Mask = GB_random_mask (m, n, 0.5, true, false) ;
 
-    if (isequal (aclass, 'double'))
+    if (isequal (atype, 'double'))
         hrange = [0 1] ;
         crange = [0 1] ;
     else

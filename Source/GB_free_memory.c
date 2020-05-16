@@ -27,14 +27,7 @@ void GB_free_memory
             // for memory usage testing only
             //------------------------------------------------------------------
 
-            #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
-            bool ok = true ;
-            #endif
-            #define GB_CRITICAL_SECTION                             \
-            {                                                       \
-                GB_Global_nmalloc_decrement ( ) ;                   \
-            }
-            #include "GB_critical_section.c"
+            GB_Global_nmalloc_decrement ( ) ;
         }
 
         //----------------------------------------------------------------------

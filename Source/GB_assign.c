@@ -285,7 +285,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         if (C->nzombies > 0)
         { 
             // make sure C is in the queue
-            GB_CRITICAL (GB_queue_insert (C)) ;
+            if (!GB_queue_insert (C)) GB_PANIC ;
         }
         // finalize C if blocking mode is enabled, and return result
         ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
@@ -828,7 +828,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // make sure C is in the queue.  GB_subassigner can place it in the
         // queue, but it might not need to if the matrix has no zombies or
         // pending tuples.  Zombies can be added by the C_replace_phase.
-        GB_CRITICAL (GB_queue_insert (C)) ;
+        if (!GB_queue_insert (C)) GB_PANIC ;
     }
 
     // finalize C if blocking mode is enabled, and return result

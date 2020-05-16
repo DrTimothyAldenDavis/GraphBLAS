@@ -9,7 +9,7 @@ function [Z simple] = GB_spec_accum (accum, C, T, identity)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % get the operator; of is type(C) if type is not present in the accum op
-[opname optype] = GB_spec_operator (accum, C.class) ;
+[opname optype ztype xtype ytype] = GB_spec_operator (accum, C.class) ;
 
 if (nargin < 4)
     identity = 0 ;
@@ -42,10 +42,8 @@ else
     % apply the operator to entries in the intersection of C and T
     p = T.pattern & C.pattern ;
     % first cast the entries into the class of the operator
-    % note that in the spec, all three domains z=op(x,y) can be different
-    % here they are assumed to all be the same
-    c = GB_mex_cast (C.matrix (p), optype) ;
-    t = GB_mex_cast (T.matrix (p), optype) ;
+    c = GB_mex_cast (C.matrix (p), xtype) ;
+    t = GB_mex_cast (T.matrix (p), ytype) ;
     z = GB_spec_op (accum, c, t) ;
     % cast the result z from optype into the class of C
     Z.matrix (p) = GB_mex_cast (z, C.class) ;

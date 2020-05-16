@@ -28,8 +28,8 @@ function [S,p] = GB_spec_build (I, J, X, nrows, ncols, op, order, sclass)
 % ncols: number of cols of S.  Default is ncols = max (J) + 1 ;
 % op: binary operator z=f(x,y) for assembling duplicates.  See
 %       GB_spec_operator.  The GraphBLAS spec requires op to be associative
-%       (min, max, plus, or times) but any binary operator will work; see
-%       the 'order' parameter.
+%       (min, max, plus, or times) but any binary operator with x,y,z
+%       types the same will work; see the 'order' parameter.
 % order: 'natural', or 'random'.  Default is 'natural'.
 %       The GraphBLAS spec does not state what order the duplicates are
 %       assembled.  It only guarantees the result if op is associative.  The
@@ -105,7 +105,10 @@ end
 if (isempty (op))
     op = 'plus' ;
 end
-[opname optype] = GB_spec_operator (op, GB_spec_type (X)) ;
+[opname optype ztype xtype ytype] = GB_spec_operator (op, GB_spec_type (X)) ;
+
+assert (isequal (ztype, xtype)) ;
+assert (isequal (ztype, ytype)) ;
 
 % get the ordering
 if (nargin < 7)

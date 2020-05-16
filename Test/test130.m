@@ -18,7 +18,7 @@ dr = struct ('outp', 'replace') ;
     A   = GB_spec_random (m, n, 0.3, 100, aclass) ;
     Cin = GB_spec_random (m, n, 0.3, 100, aclass) ;
     B   = GB_spec_random (n, m, 0.3, 100, aclass) ;
-    cin = cast (0, aclass) ;
+    cin = GB_mex_cast (0, aclass) ;
     Mask = GB_random_mask (m, n, 0.5, true, false) ;
 
     if (isequal (aclass, 'double'))

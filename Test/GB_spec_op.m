@@ -41,11 +41,11 @@ function C = GB_spec_op (op, A, B)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % get the operator name and class
-[opname optype] = GB_spec_operator (op, GB_spec_type (A)) ;
+[opname optype ztype xtype ytype] = GB_spec_operator (op, GB_spec_type (A)) ;
 
 % cast the inputs A and B to the inputs of the operator
-if (~isequal (GB_spec_type (A), optype))
-    x = GB_mex_cast (A, optype) ;
+if (~isequal (GB_spec_type (A), xtype))
+    x = GB_mex_cast (A, xtype) ;
 else
     x = A ;
 end
@@ -55,8 +55,8 @@ use_matlab = (isa (x, 'float') && ...
     (contains (optype, 'single') || contains (optype, 'double'))) ;
 
 if (nargin > 2)
-    if (~isequal (GB_spec_type (B), optype))
-        y = GB_mex_cast (B, optype) ;
+    if (~isequal (GB_spec_type (B), ytype))
+        y = GB_mex_cast (B, ytype) ;
     else
         y = B ;
     end
@@ -65,7 +65,7 @@ end
 
 switch opname
 
-    % binary operators, result is optype
+    % binary operators, result is ztype
     case 'first'
         z = x ;
     case 'second'
@@ -73,7 +73,7 @@ switch opname
     case 'any'
         z = y ;
     case 'pair'
-        z = GB_spec_ones (size (x), optype) ;
+        z = GB_spec_ones (size (x), ztype) ;
     case 'min'
         % min(x,y) in SuiteSparse:GraphBLAS is min(x,y,'omitnan') in MATLAB.
         % see discussion in SuiteSparse/GraphBLAS/Source/GB.h
@@ -120,24 +120,24 @@ switch opname
         end
     case 'pow'
         if (use_matlab)
-            z = y .^ x ;
+            z = x .^ y ;
         else
             z = GB_mex_op (op, x, y) ;
         end
 
-    % 6 binary comparison operators (result is same as optype)
+    % 6 binary comparison operators (result is ztype)
     case 'iseq'
-        z = cast (x == y, optype) ;
+        z = GB_mex_cast (x == y, ztype) ;
     case 'isne'
-        z = cast (x ~= y, optype) ;
+        z = GB_mex_cast (x ~= y, ztype) ;
     case 'isgt'
-        z = cast (x >  y, optype) ;
+        z = GB_mex_cast (x >  y, ztype) ;
     case 'islt'
-        z = cast (x <  y, optype) ;
+        z = GB_mex_cast (x <  y, ztype) ;
     case 'isge'
-        z = cast (x >= y, optype) ;
+        z = GB_mex_cast (x >= y, ztype) ;
     case 'isle'
-        z = cast (x <= y, optype) ;
+        z = GB_mex_cast (x <= y, ztype) ;
 
     % 6 binary comparison operators (result is boolean)
     case 'eq'
@@ -153,31 +153,31 @@ switch opname
     case 'le'
         z = (x <= y) ;
 
-    % 3 binary logical operators (result is optype)
+    % 3 binary logical operators (result is ztype)
     case 'or'
-        z = cast ((x ~= 0) | (y ~= 0), optype) ;
+        z = GB_mex_cast ((x ~= 0) | (y ~= 0), ztype) ;
     case 'and'
-        z = cast ((x ~= 0) & (y ~= 0), optype) ;
+        z = GB_mex_cast ((x ~= 0) & (y ~= 0), ztype) ;
     case 'xor'
-        z = cast ((x ~= 0) ~= (y ~= 0), optype) ;
+        z = GB_mex_cast ((x ~= 0) ~= (y ~= 0), ztype) ;
 
     % bitwise operators
     case { 'bitget', 'bget' }
-        z = bitget (x, y, optype) ;
+        z = bitget (x, y, ztype) ;
     case { 'bitset', 'bset' }
-        z = bitset (x, y, optype) ;
+        z = bitset (x, y, ztype) ;
     case { 'bitclr', 'bclr' }
-        z = bitset (x, y, 0, optype) ;
+        z = bitset (x, y, 0, ztype) ;
     case { 'bitand', 'band' }
-        z = bitand (x, y, optype) ;
+        z = bitand (x, y, ztype) ;
     case { 'bitor', 'bor' }
-        z = bitor (x, y, optype) ;
+        z = bitor (x, y, ztype) ;
     case { 'bitxor', 'bxor' }
-        z = bitxor (x, y, optype) ;
+        z = bitxor (x, y, ztype) ;
     case { 'bitshift', 'bshift' }
-        z = bitshift (x, y, optype) ;
+        z = bitshift (x, y, ztype) ;
     case { 'bitnot', 'bitcmp' }
-        z = bitcmp (x, optype) ;
+        z = bitcmp (x, ztype) ;
 
     case 'atan2'
         z = atan2 (x,y) ;
@@ -195,9 +195,9 @@ switch opname
     case { 'complex', 'cmplx' }
         z = complex (x,y) ;
 
-    % unary operators (result is optype)
+    % unary operators (result is ztype)
     case 'one'
-        z = cast (1, optype) ;
+        z = GB_mex_cast (1, ztype) ;
     case 'identity'
         z = x ;
     case 'ainv'
@@ -219,7 +219,7 @@ switch opname
             z = GB_mex_op (op, x) ;
         end
     case 'not'
-        z = cast (~(x ~= 0), optype) ;
+        z = GB_mex_cast (~(x ~= 0), ztype) ;
 
     case 'bnot'
         z = bitcmp (x) ;

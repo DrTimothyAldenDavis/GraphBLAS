@@ -41,7 +41,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
     void *p,                // old object to reallocate
-    bool *ok1               // true if successful, false otherwise
+    bool *ok                // true if successful, false otherwise
 )
 {
 
@@ -51,29 +51,25 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     nitems_old = GB_IMAX (1, nitems_old) ;
     nitems_new = GB_IMAX (1, nitems_new) ;
 
-    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
-    bool ok = true ;
-    #endif
-
     // make sure at least one byte is allocated
     size_of_item = GB_IMAX (1, size_of_item) ;
 
-    (*ok1) = GB_size_t_multiply (&size, nitems_new, size_of_item) ;
-    if (!(*ok1) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
+    (*ok) = GB_size_t_multiply (&size, nitems_new, size_of_item) ;
+    if (!(*ok) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
         // overflow
-        (*ok1) = false ;
+        (*ok) = false ;
     }
     else if (p == NULL)
     { 
         // a fresh object is being allocated
         p = (void *) GB_malloc_memory (nitems_new, size_of_item) ;
-        (*ok1) = (p != NULL) ;
+        (*ok) = (p != NULL) ;
     }
     else if (nitems_old == nitems_new)
     { 
         // the object does not change; do nothing
-        (*ok1) = true ;
+        (*ok) = true ;
     }
     else
     { 
@@ -84,22 +80,14 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         // for memory usage testing only
         //----------------------------------------------------------------------
 
-        bool malloc_tracking = GB_Global_malloc_tracking_get ( ) ;
         bool pretend_to_fail = false ;
-        bool malloc_debug = false ;
-        if (malloc_tracking)
+        if (GB_Global_malloc_tracking_get ( ))
         { 
-            // brutal memory debug; pretend to fail if (count-- <= 0)
-            #define GB_CRITICAL_SECTION                                  \
-            {                                                            \
-                malloc_debug = GB_Global_malloc_debug_get ( ) ;          \
-                if (malloc_debug)                                        \
-                {                                                        \
-                    pretend_to_fail =                                    \
-                        GB_Global_malloc_debug_count_decrement ( ) ;     \
-                }                                                        \
+            // brutal memory debug; pretend to fail if (count-- <= 0).
+            if (GB_Global_malloc_debug_get ( ))
+            {
+                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
             }
-            #include "GB_critical_section.c"
         }
 
         //----------------------------------------------------------------------
@@ -126,19 +114,19 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             {
                 // the attempt to reduce the size of the block failed, but
                 // the old block is unchanged.  So pretend to succeed.
-                (*ok1) = true ;
+                (*ok) = true ;
             }
             else
             { 
                 // out of memory
-                (*ok1) = false ;
+                (*ok) = false ;
             }
         }
         else
         {
             // success
             p = pnew ;
-            (*ok1) = true ;
+            (*ok) = true ;
         }
 
     }

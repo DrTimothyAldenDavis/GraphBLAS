@@ -280,11 +280,13 @@
 
 #elif defined (USER_WINDOWS_THREADS)
 // Windows threads
-#include <windows.h>
+// #include <windows.h>
+#error "Windows threading not yet supported"
 
 #elif defined (USER_ANSI_THREADS)
 // ANSI C11 threads
-#include <threads.h>
+//#include <threads.h>
+#error "ANSI C11 threading not yet supported"
 
 #else // USER_NO_THREADS
 // no user threads

@@ -28,8 +28,8 @@ for k = 1:8
         % dense case
 
         imax = double (intmax (type) / 4) ;
-        A = cast (imax * rand (4), type) ;
-        B = cast ((nbits-1) * rand (4), type) + 1 ;
+        A = GB_mex_cast (imax * rand (4), type) ;
+        B = GB_mex_cast ((nbits-1) * rand (4), type) + 1 ;
         clear A2 ; A2.matrix = sparse (double (A)) ; A2.class = type ;
         clear B2 ; B2.matrix = sparse (double (B)) ; B2.class = type ;
         A2.pattern = logical (spones (A)) ;
@@ -56,10 +56,10 @@ for k = 1:8
         % sparse case
 
         A = sprand (10, 10, 0.5) * imax ;
-        Afull = cast (full (A), type) ;
+        Afull = GB_mex_cast (full (A), type) ;
         % B ranges in value from 0 to 8
         B = round (sprand (10, 10, 0.5) * nbits) ;
-        Bfull = cast (full (B), type) ;
+        Bfull = GB_mex_cast (full (B), type) ;
         clear A2 ; A2.matrix = sparse (double (Afull)) ; A2.class = type ;
         clear B2 ; B2.matrix = sparse (double (Bfull)) ; B2.class = type ;
         A2.pattern = logical (spones (Afull)) ;

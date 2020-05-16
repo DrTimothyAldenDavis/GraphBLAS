@@ -164,7 +164,7 @@ for k0 = 1:size (problems,1) ;
                     clear accum
                     accum.opname = op ;
                     accum.optype = optype ;
-                    z = cast (1, optype) ;
+                    z = GB_mex_cast (1, optype) ;
                     opint = isinteger (z) || islogical (z) ;
 
                     % try several I's

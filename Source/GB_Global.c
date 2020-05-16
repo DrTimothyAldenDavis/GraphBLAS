@@ -14,7 +14,7 @@
 // non-blocking), for pointers to malloc/calloc/realloc/free functions, global
 // matrix options, and other settings.
 
-#include "GB.h"
+#include "GB_atomics.h"
 
 //------------------------------------------------------------------------------
 // Global storage: for all threads in a user application that uses GraphBLAS
@@ -330,11 +330,10 @@ void * GB_Global_malloc_function (size_t size)
     }
     else
     {
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            p = GB_Global.malloc_function (size) ;              \
+        #pragma omp critical(GB_malloc_protection)
+        {
+            p = GB_Global.malloc_function (size) ;
         }
-        #include "GB_critical_section.c"
     }
     return (ok ? p : NULL) ;
 }
@@ -358,12 +357,10 @@ void * GB_Global_calloc_function (size_t count, size_t size)
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            p = GB_Global.calloc_function (count, size) ;       \
+        #pragma omp critical(GB_malloc_protection)
+        {
+            p = GB_Global.calloc_function (count, size) ;
         }
-        #include "GB_critical_section.c"
     }
     return (ok ? p : NULL) ;
 }
@@ -390,12 +387,10 @@ void * GB_Global_realloc_function (void *p, size_t size)
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            pnew = GB_Global.realloc_function (p, size) ;       \
+        #pragma omp critical(GB_malloc_protection)
+        {
+            pnew = GB_Global.realloc_function (p, size) ;
         }
-        #include "GB_critical_section.c"
     }
     return (ok ? pnew : NULL) ;
 }
@@ -411,21 +406,16 @@ void GB_Global_free_function_set (void (* free_function) (void *))
 
 void GB_Global_free_function (void *p)
 { 
-    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
-    bool ok = true ;
-    #endif
     if (GB_Global.malloc_is_thread_safe)
     {
         GB_Global.free_function (p) ;
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            GB_Global.free_function (p) ;                       \
+        #pragma omp critical(GB_malloc_protection)
+        {
+            GB_Global.free_function (p) ;
         }
-        #include "GB_critical_section.c"
     }
 }
 
@@ -466,25 +456,30 @@ bool GB_Global_malloc_tracking_get (void)
 
 void GB_Global_nmalloc_clear (void)
 { 
+    GB_ATOMIC_WRITE
     GB_Global.nmalloc = 0 ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t GB_Global_nmalloc_get (void)
 { 
-    return (GB_Global.nmalloc) ;
+    int64_t nmalloc ;
+    GB_ATOMIC_READ
+    nmalloc = GB_Global.nmalloc ;
+    return (nmalloc) ;
 }
 
-int64_t GB_Global_nmalloc_increment (void)
+void GB_Global_nmalloc_increment (void)
 { 
-    return (++(GB_Global.nmalloc)) ;
+    GB_ATOMIC_UPDATE
+    GB_Global.nmalloc++ ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t GB_Global_nmalloc_decrement (void)
+void GB_Global_nmalloc_decrement (void)
 { 
-    ASSERT (GB_Global.nmalloc > 0) ;
-    return (--(GB_Global.nmalloc)) ;
+    GB_ATOMIC_UPDATE
+    GB_Global.nmalloc-- ;
 }
 
 //------------------------------------------------------------------------------
@@ -494,12 +489,16 @@ int64_t GB_Global_nmalloc_decrement (void)
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_malloc_debug_set (bool malloc_debug)
 { 
+    GB_ATOMIC_WRITE
     GB_Global.malloc_debug = malloc_debug ;
 }
 
 bool GB_Global_malloc_debug_get (void)
 { 
-    return (GB_Global.malloc_debug) ;
+    bool malloc_debug ;
+    GB_ATOMIC_READ
+    malloc_debug = GB_Global.malloc_debug ;
+    return (malloc_debug) ;
 }
 
 //------------------------------------------------------------------------------
@@ -509,12 +508,19 @@ bool GB_Global_malloc_debug_get (void)
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
 { 
+    GB_ATOMIC_WRITE
     GB_Global.malloc_debug_count = malloc_debug_count ;
 }
 
 bool GB_Global_malloc_debug_count_decrement (void)
 { 
-    return (GB_Global.malloc_debug_count-- <= 0) ;
+    GB_ATOMIC_UPDATE
+    GB_Global.malloc_debug_count-- ;
+
+    int64_t malloc_debug_count ;
+    GB_ATOMIC_READ
+    malloc_debug_count = GB_Global.malloc_debug_count ;
+    return (malloc_debug_count <= 0) ;
 }
 
 //------------------------------------------------------------------------------

@@ -104,7 +104,7 @@ for k1 = 1:length(mult_ops)
             % monoids can only be used when z is boolean for z=mult(x,y).
             try
                 [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                [mult_opname mult_optype zclass] = GB_spec_operator (mult_op) ;
+                [mult_opname mult_optype ztype xtype ytype] = GB_spec_operator (mult_op) ;
                 [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                 identity = GB_spec_identity (semiring.add, add_optype) ;
             catch me

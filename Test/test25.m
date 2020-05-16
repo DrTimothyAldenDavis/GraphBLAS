@@ -48,7 +48,7 @@ for k1 = 1:length(types.real)
     A.pattern (:,1) = true (m,1) ;
     Cin = GB_spec_random (m, n, 0.3, 100, aclass, C_is_csc, C_is_hyper, hc) ;
     B = GB_spec_random (n, m, 0.3, 100, aclass, A_is_csc, A_is_hyper, ha) ;
-    cin = cast (0, aclass) ;
+    cin = GB_mex_cast (0, aclass) ;
     % Mask = (sprand (m, n, 0.5) ~= 0) ;
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
     Mask.hyper_ratio = hm ;

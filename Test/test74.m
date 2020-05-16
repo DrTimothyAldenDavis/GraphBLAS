@@ -55,18 +55,18 @@ for k0 = 1:size(m_list,2)
             fprintf ('.') ;
 
             for k3 = 1:length (types.real)
-                clas = types.real {k3} ;
+                semiring_type = types.real {k3} ;
 
                 semiring.multiply = mulop ;
                 semiring.add = addop ;
-                semiring.class = clas ;
+                semiring.class = semiring_type ;
 
                 % create the semiring.  some are not valid because the
                 % or,and,xor monoids can only be used when z is boolean for
                 % z=mult(x,y).
                 try
                     [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                    [mult_opname mult_optype zclass] = ...
+                    [mult_opname mult_optype ztype xtype ytype] = ...
                         GB_spec_operator (mult_op);
                     [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                     identity = GB_spec_identity (semiring.add, add_optype) ;
@@ -75,10 +75,10 @@ for k0 = 1:size(m_list,2)
                 end
 
                 n_semirings = n_semirings + 1 ;
-                AT.class = clas ;
-                A.class = clas ;
-                B.class = clas ;
-                C.class = clas ;
+                AT.class = semiring_type ;
+                A.class = semiring_type ;
+                B.class = semiring_type ;
+                C.class = semiring_type ;
 
                 % C<M> = A'*B, with Mask, no typecasting
                 C1 = GB_mex_mxm  (C, M, [ ], semiring, AT, B, dtn);

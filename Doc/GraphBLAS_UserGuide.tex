@@ -1166,6 +1166,14 @@ use the MATLAB memory managers.  To do this, use the following instead of
     ...
     GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ; \end{verbatim}}
 
+Passing in the last parameter as \verb'false' requires that GraphBLAS be
+compiled with OpenMP.  Internally, SuiteSparse:GraphBLAS never calls any memory
+management function inside a parallel region.  Results are undefined if all
+three of the following conditions hold: (1) the user application calls
+GraphBLAS in parallel from multiple user-level threads, (2) the memory
+functions are not thread-safe, and (3) GraphBLAS is not compiled with OpenMP.
+Safety is guaranteed if at least one of those conditions is true.
+
 As another example, the scalable Intel TBB memory manager can be used:
 
     {\footnotesize

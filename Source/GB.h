@@ -2306,11 +2306,7 @@ static inline bool GB_is_dense
 //------------------------------------------------------------------------------
 
 // GB_queue_* can fail if the critical section fails.  This is an unrecoverable
-// error, so return a panic if it fails.  All GB_queue_* operations are used
-// via the GB_CRITICAL macro.  GrB_init uses GB_CRITICAL as well.
-
-// GB_CRITICAL: GB_queue_* inside a critical section, which 'cannot' fail
-#define GB_CRITICAL(op) if (!(op)) GB_PANIC ;
+// error, so return a GrB_PANIC if they return false.
 
 bool GB_queue_remove            // remove matrix from queue
 (
@@ -2442,7 +2438,7 @@ GrB_Info GB_hypermatrix_prune
 ) ;
 
 //------------------------------------------------------------------------------
-// critical section for user threads
+// critical section for user threads: for GrB_wait ( ) only
 //------------------------------------------------------------------------------
 
 // User-level threads may call GraphBLAS in parallel, so the access to the
@@ -2455,11 +2451,13 @@ GB_PUBLIC pthread_mutex_t GB_sync ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads (not yet supported)
-GB_PUBLIC CRITICAL_SECTION GB_sync ;
+// GB_PUBLIC CRITICAL_SECTION GB_sync ;
+#error "Windows threading not yet supported"
 
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads (not yet supported)
-GB_PUBLIC mtx_t GB_sync ;
+// GB_PUBLIC mtx_t GB_sync ;
+#error "ANSI C11 threading not yet supported"
 
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // nothing to do for OpenMP, or for no user threading

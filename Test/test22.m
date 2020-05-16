@@ -152,8 +152,6 @@ for k0 = 1:size (problems,1) ;
                     clear accum
                     accum.opname = op ;
                     accum.optype = optype ;
-                    % z = cast (1, optype) ;
-                    % opint = isinteger (z) || islogical (z) ;
 
                     % C = op (Cin2,A')
                     C = GB_mex_transpose  (Cin2, [ ], accum, A, [ ]) ;

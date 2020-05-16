@@ -20,7 +20,7 @@ for k1 = 1:length(types.real)
     A = GB_spec_random (m, n, 0.3, 100, aclass) ;
     B = GB_spec_random (n, m, 0.3, 100, aclass) ;
     w = GB_spec_random (m, 1, 0.3, 100, aclass) ;
-    cin = cast (0, aclass) ;
+    cin = GB_mex_cast (0, aclass) ;
     mask = GB_random_mask (m, 1, 0.5, true, false) ;
 
     if (isequal (aclass, 'logical'))

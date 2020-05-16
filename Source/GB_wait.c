@@ -129,7 +129,7 @@ GrB_Info GB_wait                // finish all pending computations
     { 
         // nothing more to do; remove the matrix from the queue
         ASSERT (!GB_PENDING (A)) ;
-        GB_CRITICAL (GB_queue_remove (A)) ;
+        if (!GB_queue_remove (A)) GB_PANIC ;
         ASSERT (!(A->enqueued)) ;
 
         // trim any significant extra space from the matrix, but allow for some
@@ -203,7 +203,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
-    GB_CRITICAL (GB_queue_remove (A)) ;
+    if (!GB_queue_remove (A)) GB_PANIC ;
 
     // No pending operations on A, and A is not in the queue, so
     // GB_Matrix_check can now see the conditions it expects.

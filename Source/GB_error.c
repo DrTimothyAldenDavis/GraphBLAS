@@ -18,8 +18,7 @@
 //  (1) a failure to create the critical section or the POSIX thread-local
 //      storage key in GrB_init.
 
-//  (2) a failure in the critical section (see GB_CRITICAL, GB_queue_*, and
-//      Template/GB_critical_section).
+//  (2) a failure in the critical section for GB_queue_*
 
 //  (3) a failure to allocate thread-local storage for GrB_error
 //      (see GB_thread_local_get).

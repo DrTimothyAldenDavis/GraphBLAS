@@ -690,7 +690,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GrB_Matrix head, prev, next ;
         bool enqd ;
 
-        GB_CRITICAL (GB_queue_status (A, &head, &prev, &next, &enqd)) ;
+        if (!GB_queue_status (A, &head, &prev, &next, &enqd)) GB_PANIC ;
 
         #if GB_DEVELOPER
         if (pr_short || pr_complete)

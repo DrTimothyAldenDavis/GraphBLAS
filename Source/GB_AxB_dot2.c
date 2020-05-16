@@ -176,6 +176,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         }
     }
 
+    // phase1 parallel region: each thread computes C_counts [taskid]
+    // for its slice.
     #define GB_PHASE_1_OF_2
     #include "GB_AxB_dot2_meta.c"
     #undef  GB_PHASE_1_OF_2

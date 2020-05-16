@@ -50,7 +50,7 @@ GrB_Info GrB_wait ( )       // finish all pending computations
     GrB_Matrix A = NULL ;
     while (true)
     { 
-        GB_CRITICAL (GB_queue_remove_head (&A)) ;
+        if (!GB_queue_remove_head (&A)) GB_PANIC ;
         if (A == NULL) break ;
         // A has been removed from the head of the queue but it still has
         // pending operations.  GB_Matrix_check expects it to be in the queue.

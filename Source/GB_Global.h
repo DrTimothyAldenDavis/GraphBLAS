@@ -88,9 +88,9 @@ bool     GB_Global_malloc_tracking_get (void) ;
 void     GB_Global_nmalloc_clear (void) ;
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 int64_t  GB_Global_nmalloc_get (void) ;
-int64_t  GB_Global_nmalloc_increment (void) ;
+void     GB_Global_nmalloc_increment (void) ;
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-int64_t  GB_Global_nmalloc_decrement (void) ;
+void     GB_Global_nmalloc_decrement (void) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_malloc_debug_set (bool malloc_debug) ;

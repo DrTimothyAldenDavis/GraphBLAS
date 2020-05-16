@@ -29,7 +29,7 @@ dt = struct ('inp0', 'tran') ;
 % class of the vector x
 for k1 = cset % 1:length (types.real)
     cclass = types.real {k1}  ;
-    cin = cast (2, cclass) ;
+    cin = GB_mex_cast (2, cclass) ;
     % fprintf ('\n===================================  c class: %s\n',cclass) ;
 
     % class of the matrix A

@@ -17,7 +17,7 @@ end
 
 C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
-[opname xyclass zclass] = GB_spec_operator (op, C.class) ;
+[opname optype ztype xtype] = GB_spec_operator (op, C.class) ;
 [C_replace Mask_comp Atrans Btrans Mask_struct] = ...
     GB_spec_descriptor (descriptor) ;
 Mask = GB_spec_getmask (Mask, Mask_struct) ;
@@ -33,11 +33,11 @@ if (Atrans)
 end
 
 % T = op(A)
-T.matrix = GB_spec_zeros (size (A.matrix), zclass) ;
+T.matrix = GB_spec_zeros (size (A.matrix), ztype) ;
 T.pattern = A.pattern ;
-T.class = zclass ;
+T.class = ztype ;
 
-A_matrix = GB_mex_cast (A.matrix, xyclass) ;
+A_matrix = GB_mex_cast (A.matrix, xtype) ;
 
 p = T.pattern ;
 T.matrix (p) = GB_spec_op (op, A.matrix (p)) ;
