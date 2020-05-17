@@ -17,19 +17,22 @@ VER3 = 0
 # CC = clang
 # CC = xlc
 # CC = gcc-8
+# note that -mp1 is essential for icc, for proper Inf and NaN behavior:
 # CC = icc -mp1
 
 # this works but is not recommended.  Also remove the -std=c11 flag below.
 # CC = c++
 
-# note that -mp1 is essential for icc, for proper Inf and NaN behavior.
+# from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html
+MKL_CFLAGS = -DMKL_ILP64 -m64 -I${MKLROOT}/include -DGB_HAS_CBLAS
+MKL_LDFLAGS= -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LDFLAGS = -fopenmp -lm
-CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS
+LDFLAGS = -fopenmp -lm $(MKL_LDFLAGS)
+CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
 # remove -std=c11 if using c++
 # CFLAGS = -O3 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator

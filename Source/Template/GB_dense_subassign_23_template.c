@@ -32,7 +32,7 @@
         ASSERT (GB_is_dense (A)) ;
         const int64_t cnz = GB_NNZ (C) ;
 
-        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
             // C += A via GB_cblas_daxpy or GB_cblas_saxpy
             GB_CBLAS_AXPY           // Y += alpha*X
@@ -44,7 +44,7 @@
                 nthreads            // maximum # of threads to use
             ) ;
 
-        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
             // C -= A via GB_cblas_daxpy or GB_cblas_saxpy
             GB_CBLAS_AXPY           // Y += alpha*X
@@ -122,7 +122,7 @@
                     // both C(:,j) and A(:,j) are dense
                     //----------------------------------------------------------
 
-                    #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+                    #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
                         // y += x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a
@@ -141,7 +141,7 @@
                             1                   // use a single thread
                         ) ;
 
-                    #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+                    #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
                         // y -= x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a

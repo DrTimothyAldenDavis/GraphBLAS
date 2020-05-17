@@ -179,7 +179,7 @@ GrB_Info assign ( )
                 case GB_UDT_code    :
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("GB_mex_assign: unknown type, setEl") ;
             }
 
             ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
@@ -214,14 +214,14 @@ GrB_Info assign ( )
                 case GB_FC32_code   : ASSIGN (GxB_, _FC32,   GxB_FC32_t) ;
                 case GB_FC64_code   : ASSIGN (GxB_, _FC64,   GxB_FC64_t) ;
                 case GB_UDT_code    :
-                {
-                    OK (GrB_Vector_assign_UDT ((GrB_Vector) C,
-                        (GrB_Vector) Mask, accum, Ax, I, ni, desc)) ;
-                }
-                break ;
+                    {
+                        OK (GrB_Vector_assign_UDT ((GrB_Vector) C,
+                            (GrB_Vector) Mask, accum, Ax, I, ni, desc)) ;
+                    }
+                    break ;
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("GB_mex_assign: unknown type") ;
             }
 
         }
@@ -261,7 +261,7 @@ GrB_Info assign ( )
 
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("unknown type: mtx assign") ;
             }
         }
     }

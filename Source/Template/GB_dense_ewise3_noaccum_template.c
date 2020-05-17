@@ -40,12 +40,14 @@
 
         // C and B cannot be aliased if their types differ
 
-        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
+            // C += A via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
 
-        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
+            // C -= A via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Ax, Cx, nthreads) ;  // C -= A
 
         #else
@@ -72,12 +74,14 @@
         // C = C+B where B and C are dense
         //----------------------------------------------------------------------
 
-        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
+            // C += B via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
-        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
+            // C -= B via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Bx, Cx, nthreads) ;  // C -= B
 
         #else
@@ -103,13 +107,15 @@
 
         // note that A and B may still be aliased to each other
 
-        #if GB_HAS_CBLAS && GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
+            // C = A+B via GB_cblas_saxpy or GB_cblas_daxpy
             GB_memcpy (Cx, Ax, cnz * sizeof (GB_CTYPE), nthreads) ; // C = A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
-        #elif GB_HAS_CBLAS && GB_OP_IS_MINUS_REAL
+        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
+            // C = A-B via GB_cblas_saxpy or GB_cblas_daxpy
             GB_memcpy (Cx, Ax, cnz * sizeof (GB_CTYPE), nthreads) ; // C = A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Bx, Cx, nthreads) ;  // C -= B
 

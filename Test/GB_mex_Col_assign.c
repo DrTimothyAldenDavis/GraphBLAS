@@ -121,7 +121,7 @@ GrB_Info assign ( )
                 case GB_UDT_code    :
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("unknown type: col setEl") ;
             }
 
             ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
@@ -163,7 +163,7 @@ GrB_Info assign ( )
                 break ;
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("unknown type: vec assign") ;
             }
 
         }
@@ -204,7 +204,7 @@ GrB_Info assign ( )
 
                 default:
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("unknown type: mtx assign") ;
             }
         }
 

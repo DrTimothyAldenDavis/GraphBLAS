@@ -44,7 +44,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
                 case GB_FP32_code   : return (GxB_MIN_FP32_MONOID     ) ;
                 case GB_FP64_code   : return (GxB_MIN_FP64_MONOID     ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type (MIN)") ;
                     return (NULL) ;
             }
             break ;
@@ -67,7 +67,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
                 case GB_FP32_code   : return (GxB_MAX_FP32_MONOID     ) ;
                 case GB_FP64_code   : return (GxB_MAX_FP64_MONOID     ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type (MAX)") ;
                     return (NULL) ;
             }
             break ;
@@ -89,8 +89,10 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
                 case GB_UINT64_code : return (GxB_PLUS_UINT64_MONOID  ) ;
                 case GB_FP32_code   : return (GxB_PLUS_FP32_MONOID    ) ;
                 case GB_FP64_code   : return (GxB_PLUS_FP64_MONOID    ) ;
+                case GB_FC32_code   : return (GxB_PLUS_FC32_MONOID    ) ;
+                case GB_FC64_code   : return (GxB_PLUS_FC64_MONOID    ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type (PLUS)") ;
                     return (NULL) ;
             }
             break ;
@@ -112,8 +114,10 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
                 case GB_UINT64_code : return (GxB_TIMES_UINT64_MONOID ) ;
                 case GB_FP32_code   : return (GxB_TIMES_FP32_MONOID   ) ;
                 case GB_FP64_code   : return (GxB_TIMES_FP64_MONOID   ) ;
+                case GB_FC32_code   : return (GxB_TIMES_FC32_MONOID   ) ;
+                case GB_FC64_code   : return (GxB_TIMES_FC64_MONOID   ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type (TIMES)") ;
                     return (NULL) ;
             }
             break ;
@@ -134,8 +138,10 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
                 case GB_UINT64_code : return (GxB_ANY_UINT64_MONOID ) ;
                 case GB_FP32_code   : return (GxB_ANY_FP32_MONOID   ) ;
                 case GB_FP64_code   : return (GxB_ANY_FP64_MONOID   ) ;
+                case GB_FC32_code   : return (GxB_ANY_FC32_MONOID   ) ;
+                case GB_FC64_code   : return (GxB_ANY_FC64_MONOID   ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type (ANY)") ;
                     return (NULL) ;
             }
             break ;
@@ -148,7 +154,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             {
                 case GB_BOOL_code   : return (GxB_LOR_BOOL_MONOID     ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid (OR)") ;
                     return (NULL) ;
             }
             break ;
@@ -161,7 +167,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             {
                 case GB_BOOL_code   : return (GxB_LAND_BOOL_MONOID    ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid (AND)") ;
                     return (NULL) ;
             }
             break ;
@@ -174,7 +180,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             {
                 case GB_BOOL_code   : return (GxB_LXOR_BOOL_MONOID    ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid (XOR)") ;
                     return (NULL) ;
             }
             break ;
@@ -189,7 +195,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             {
                 case GB_BOOL_code   : return (GxB_EQ_BOOL_MONOID      ) ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid (EQ)") ;
                     return (NULL) ;
             }
             break ;

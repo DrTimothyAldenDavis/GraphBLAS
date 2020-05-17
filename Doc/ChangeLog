@@ -3,8 +3,7 @@ Version 3.3.0, TODO, 2020
     * added complex types: GxB_FC32 and GxB_FC64, many unary operators,
         binary operators, monoids, and semirings
     * added bitwise operators: and their monoids and semirings
-    * added the 44 predefined GrB* monoids and 62 predefined monoids:
-        from the v1.3 spec.
+    * added predefined GrB* monoids and semirings: from the v1.3 spec.
     * MATLAB interface: added complex matrices and operators
 
 Version 3.2.2, Apr 2, 2020

@@ -131,6 +131,8 @@ unary_ops.complex = {
     'conj', 'real', 'imag', 'carg' } ;
 
 %-------------------------------------------------------------------------------
+% valid binary ops
+%-------------------------------------------------------------------------------
 
 add_ops = {
 % 4 monoids for any of 11 types.real (including logical)
@@ -147,6 +149,12 @@ add_ops = {
 'eq'         % z = (x==y)   ; identity is 1 (true)
 } ;
 
+add_ops = { ...
+    'min', 'max', ...                           % 11 real types only
+    'plus', 'times', 'any', ...                 % all 13 types
+    'or', 'and', 'xor', 'eq', ...               % just boolean
+    'bitor', 'bitand', 'bitxor', 'bitxnor' } ;  % just integer
+
 nonbool = {
 'int8' 
 'int16' 
@@ -160,7 +168,9 @@ nonbool = {
 'double'
 } ;
 
+%-------------------------------------------------------------------------------
 % create all unique semirings using built-in operators
+%-------------------------------------------------------------------------------
 
 n = 0 ;
 
@@ -242,6 +252,8 @@ for mult = {'first', 'second', 'pair', 'plus', 'minus', ...
     end
 end
 
+%-------------------------------------------------------------------------------
+% select operators
 %-------------------------------------------------------------------------------
 
 selops = { 'tril', 'triu', 'diag', 'offdiag', ...

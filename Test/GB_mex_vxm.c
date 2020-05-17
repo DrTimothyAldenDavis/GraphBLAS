@@ -90,19 +90,11 @@ void mexFunction
     }
 
     // get semiring
-    if (A->type == Complex)
+    if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [3], "semiring",
+        w->type))
     {
-        // semiring input argument is ignored and may be empty
-        semiring = Complex_plus_times ;
-    }
-    else
-    {
-        if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [3], "semiring",
-            w->type))
-        {
-            FREE_ALL ;
-            mexErrMsgTxt ("semiring failed") ;
-        }
+        FREE_ALL ;
+        mexErrMsgTxt ("semiring failed") ;
     }
 
     // get accum, if present

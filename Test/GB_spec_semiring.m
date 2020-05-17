@@ -47,6 +47,10 @@ end
 multiply_op.opname =  mult ;
 multiply_op.optype = mult_optype ;
 
+if (isequal (ytype, 'none'))
+    error ('invalid multiply op') ;
+end
+
 % create the add operator
 [add_opname add_optype add_ztype add_xtype add_ytype] = GB_spec_operator (semiring.add, ztype) ;
 add_op.opname = add_opname ;
@@ -55,105 +59,21 @@ add_op.optype = add_optype ;
 % get the identity of the add operator
 identity = GB_spec_identity (add_op) ;
 
-% TODO add more ops here
-
-switch mult
-
-    % 11, the monoid has the same type as x, y, and z
-    case 'first'      % z = x
-         ;
-    case 'second'     % z = y
-         ;
-    case 'pair'       % z = 1
-         ;
-    case 'min'        % z = min(x,y)
-         ;
-    case 'max'        % z = max(x,y)
-         ;
-    case 'plus'       % z = x + y
-         ;
-    case 'minus'      % z = x - y
-         ;
-    case 'rminus'     % z = y - x
-         ;
-    case 'times'      % z = x * y
-         ;
-    case 'rdiv'       % z = y / x
-         ;
-    case 'div'        % z = x / y
-         ;
-
-    % 6, the monoid has the same type as x, y, and z
-    case 'iseq'         % z = (x == y)
-         ;
-    case 'isne'         % z = (x != y)
-         ;
-    case 'isgt'         % z = (x >  y)
-         ;
-    case 'islt'         % z = (x <  y)
-         ;
-    case 'isge'         % z = (x >= y)
-         ;
-    case 'isle'         % z = (x <= y)
-         ;
-
-    % 6 ops, the type of x and y are semiring.class, but z logical
-    case 'eq'         % z = (x == y)
-        ;
-    case 'ne'         % z = (x != y)
-        ;
-    case 'gt'         % z = (x >  y)
-        ;
-    case 'lt'         % z = (x <  y)
-        ;
-    case 'ge'         % z = (x >= y)
-        ;
-    case 'le'         % z = (x <= y)
-        ;
-
-    % 3 boolean ops, type of x, y, z are semiring.class
-    case 'or'         % z = x || y
-        ;
-    case 'and'        % z = x && y
-        ;
-    case 'xor'        % z = x != y
-        ;
-
-    otherwise
-        error ('invalid multiply op for semiring') ;
+% make sure the monoid is valid
+if (~isequal (add_ztype, add_xtype) || ~isequal (add_ztype, add_xtype))
+    error ('invalid monoid') ;
 end
 
-zbool = isequal (ztype, 'logical') ;
-
-% min, max, plus, times, any monoids: valid for all 11 real types
-% or, and, xor, eq monoids:  valid only for logical
-switch add_opname
-    case 'min'
-        ok = 1 ;
-    case 'max'
-        ok = 1 ;
-    case 'plus'
-        ok = 1 ;
-    case 'times'
-        ok = 1 ;
-    case 'any'
-        ok = 1 ;
-    case 'or'
-        ok = zbool ;
-    case 'and'
-        ok = zbool ;
-    case 'xor'
-        ok = zbool ;
-    case 'eq'
-        ok = zbool ;
-    case 'iseq'
-        ok = zbool ;
+switch (add_opname)
+    case { 'min', 'max', 'plus', 'times', 'any', 'or', 'and', 'xor', 'eq', ...
+        'bitor', 'bitand', 'bitxor', 'bitxnor' }
+        % valid monoid
     otherwise
-        ok = false ;
-        error ('invalid add monoid for semiring') ;
+        error ('invalid monoid') ;
 end
 
-if (~ok)
-    error ([add_opname ' operator a valid monoid only for logical case']) ;
+% make sure the monoid matches the operator ztype
+if (~isequal (add_ztype, ztype))
+    error ('invalid monoid: must match ztype of multiplier') ;
 end
 

@@ -32,6 +32,11 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
 
     if (default_optype == Complex && Complex != GxB_FC64)
     {
+        // for the user-defined Complex type, only a single semiring
+        // is available
+        GxB_print (Complex, 3) ;
+        GxB_print (GxB_FC64, 3) ;
+        printf ("punt to user-defined Complex_plus_times\n") ;
         (*handle) = Complex_plus_times ;
         return (true) ;
     }

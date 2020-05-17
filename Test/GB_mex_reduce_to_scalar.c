@@ -170,7 +170,7 @@ void mexFunction
             case GB_FC64_code   : REDUCE (GxB_, _FC64, GxB_FC64_t) ; break ;
             default             :
                 FREE_ALL ;
-                mexErrMsgTxt ("unknown type") ;
+                mexErrMsgTxt ("unknown type: reduce to scalar") ;
         }
     }
 

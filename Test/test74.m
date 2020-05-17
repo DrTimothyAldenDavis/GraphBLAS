@@ -1,4 +1,4 @@
-function test74
+% function test74
 %TEST74 test GrB_mxm: all built-in semirings
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -20,6 +20,7 @@ dnn_hash = struct ( 'axb', 'hash' ) ;
 ntrials = 0 ;
 
 rng ('default') ;
+builtin_complex_set (1) ;
 
 m_list = [ 1  2    9  ] ;
 n_list = [ 1  2   10  ] ;
@@ -41,21 +42,21 @@ for k0 = 1:size(m_list,2)
 
     clear AT
     AT = A ;
-    AT.matrix  = A.matrix' ;
+    AT.matrix  = A.matrix.' ;
     AT.pattern = A.pattern' ;
     fprintf ('\nm %d n %d k %d: \n', m, n, k) ;
 
     for k1 = 1:length(mult_ops)
         mulop = mult_ops {k1} ;
 
-        fprintf ('%s', mulop) ;
+        fprintf ('\n%s', mulop) ;
 
         for k2 = 1:length(add_ops)
             addop = add_ops {k2} ;
             fprintf ('.') ;
 
-            for k3 = 1:length (types.real)
-                semiring_type = types.real {k3} ;
+            for k3 = 1:length (types.all)
+                semiring_type = types.all {k3} ;
 
                 semiring.multiply = mulop ;
                 semiring.add = addop ;
@@ -75,6 +76,8 @@ for k0 = 1:size(m_list,2)
                 end
 
                 n_semirings = n_semirings + 1 ;
+                fprintf ('[%s.%s.%s]\n', addop, mulop, semiring_type) ;
+
                 AT.class = semiring_type ;
                 A.class = semiring_type ;
                 B.class = semiring_type ;
@@ -86,6 +89,7 @@ for k0 = 1:size(m_list,2)
                 GB_spec_compare (C0, C1, identity) ;
 
                 % C = A'*B, no Mask, no typecasting
+save gunk C semiring AT B dtn identity
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, AT, B, dtn);
                 C0 = GB_spec_mxm (C, [ ], [ ], semiring, AT, B, dtn);
                 GB_spec_compare (C0, C1, identity) ;

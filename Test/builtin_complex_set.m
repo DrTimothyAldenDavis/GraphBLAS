@@ -12,11 +12,10 @@ function builtin_complex = builtin_complex_set (builtin_complex)
 
 global GraphBLAS_builtin_complex
 if (nargin > 0)
-    GraphBLAS_builtin_complex = builtin_complex ;
+    GraphBLAS_builtin_complex = logical (builtin_complex) ;
 elseif (isempty (GraphBLAS_builtin_complex))
     GraphBLAS_builtin_complex = true ;
 end
-if (nargout > 0)
-    builtin_complex = GraphBLAS_builtin_complex ;
-end
+
+builtin_complex = GraphBLAS_builtin_complex ;
 

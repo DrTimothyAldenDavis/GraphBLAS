@@ -40,8 +40,9 @@
         // NaNs.  In this case, don't bother to call the CBLAS if the op is
         // MINUS.
 
-        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
+            // C += 2*A via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 2, Ax, Cx, nthreads) ;   // C += 2*A
 
         #else
@@ -66,14 +67,15 @@
         // C += A+B where all 3 matrices are dense
         //----------------------------------------------------------------------
 
-        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
+            // C += A+B via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
-        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
 
-            // C -= (A-B)
+            // C -= (A-B) via GB_cblas_saxpy or GB_cblas_daxpy
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Ax, Cx, nthreads) ;  // C -= A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE)  1, Bx, Cx, nthreads) ;  // C += B
 

@@ -152,6 +152,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
         }
     }
 
+    printf ("complex init [%d]\n", builtin_complex [0]) ;
     Complex_init (builtin_complex [0]) ;
 
     //--------------------------------------------------------------------------

@@ -87,7 +87,7 @@ if (isstruct (Cin))
         xtype = Cin.class ;
         if (~issparse (X) && ~isequal (xtype, GB_spec_type (X)))
             % for a dense X, GB_spec_type (X) and Cin.class must match
-            error ('type(X) and Cin.class must match for dense X') ;
+            X = GB_mex_cast (X, xtype) ;
         end
     else
         % no Cin.class present, so get the type from X itself
@@ -134,6 +134,12 @@ end
 % in the dense X, entries not in the xpattern must be set to the identity
 X (~xpattern) = GB_mex_cast (identity, xtype) ;
 
+if (~isequal (xtype, GB_spec_type (X)))
+    % if X is complex, it may have been downgraded to real, if
+    % its imaginary part is zero
+    X = GB_mex_cast (X, xtype) ;
+end
+
 % return the output struct
 Cout.matrix = X ;
 Cout.pattern = xpattern ;
@@ -142,6 +148,5 @@ Cout.class = xtype ;
 % The output is now a struct with all 3 fields present, and Cout.matrix
 % is always dense.  Cout.class always matches type(Cout.matrix).
 assert (isstruct (Cout)) ;
-assert (isequal (Cout.class, GB_spec_type (Cout.matrix))) ;
 assert (~issparse (Cout.matrix)) ;
-% 
+

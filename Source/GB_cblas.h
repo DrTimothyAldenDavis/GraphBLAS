@@ -10,7 +10,7 @@
 #ifndef GB_CBLAS_H
 #define GB_CBLAS_H
 
-#ifdef GB_HAS_CBLAS
+#if defined ( GB_HAS_CBLAS )
 
     #ifdef MKL_ILP64
 

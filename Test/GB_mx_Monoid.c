@@ -100,7 +100,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32   (&M, add, (GxB_FC32_t) 0)) ;         break ;
                 case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64   (&M, add, (GxB_FC64_t) 0)) ;         break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (PLUS)") ;
                     return (false) ;
             }
             break ;
@@ -125,7 +125,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32   (&M, add, (GxB_FC32_t) 1)) ;         break ;
                 case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64   (&M, add, (GxB_FC64_t) 1)) ;         break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (TIMES)") ;
                     return (false) ;
             }
             break ;
@@ -149,7 +149,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32   (&M, add, (GxB_FC32_t) 0)) ;         break ;
                 case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64   (&M, add, (GxB_FC64_t) 0)) ;         break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (ANY)") ;
                     return (false) ;
             }
             break ;
@@ -161,7 +161,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             {
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new_BOOL (&M, add, (bool    ) false)) ;        break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (OR)") ;
                     return (false) ;
             }
             break ;
@@ -173,7 +173,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             {
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new_BOOL (&M, add, (bool    ) true)) ;        break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (AND)") ;
                     return (false) ;
             }
             break ;
@@ -185,7 +185,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             {
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new_BOOL (&M, add, (bool    ) false)) ;        break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (XOR)") ;
                     return (false) ;
             }
             break ;
@@ -198,7 +198,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             {
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new_BOOL (&M, add, (bool    ) true)) ;         break ;
                 default: 
-                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (EQ)") ;
                     return (false) ;
             }
             break ;

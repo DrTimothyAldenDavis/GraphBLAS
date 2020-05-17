@@ -72,13 +72,13 @@ Mask = GB_spec_getmask (Mask, Mask_struct) ;
 
 % apply the descriptor to A
 if (Atrans)
-    A.matrix = A.matrix' ;
+    A.matrix = A.matrix.' ;
     A.pattern = A.pattern' ;
 end
 
 % apply the descriptor to B
 if (Btrans)
-    B.matrix = B.matrix' ;
+    B.matrix = B.matrix.' ;
     B.pattern = B.pattern' ;
 end
 

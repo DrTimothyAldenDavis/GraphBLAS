@@ -681,7 +681,7 @@ void mexFunction
 
                 default             :
                     FREE_ALL ;
-                    mexErrMsgTxt ("unknown type") ;
+                    mexErrMsgTxt ("unknown type: subassign reduce") ;
             }
 
             GrB_Matrix_reduce_FP64 (&d, NULL, GxB_PLUS_FP64_MONOID, C, NULL) ;

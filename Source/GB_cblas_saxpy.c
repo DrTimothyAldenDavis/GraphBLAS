@@ -29,14 +29,15 @@ void GB_cblas_saxpy         // Y += alpha*X
     //--------------------------------------------------------------------------
 
     // The GB_cblas_* gateway functions always exist in the GraphBLAS library,
-    // but if GB_HAS_CBLAS is false at compile time, they become stubs that do
-    // nothing at all, and they are never called.
+    // but if GB_HAS_CBLAS is not defined at compile time, they become stubs
+    // that do nothing at all, and they are never called.
 
     ASSERT (Y != NULL) ;
     ASSERT (X != NULL) ;
     ASSERT (nthreads >= 1) ;
 
-    #if GB_HAS_CBLAS
+    #if defined ( GB_HAS_CBLAS )
+    GBBURBLE ("(cblas_saxpy) ") ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
