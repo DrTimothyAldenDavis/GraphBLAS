@@ -12,7 +12,6 @@
 // This function is not user-callable.  It does the work for user-callable
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
-#define GB_DEBUG
 #include "GB_mxm.h"
 #include "GB_accum_mask.h"
 
@@ -44,12 +43,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
-    ASSERT_MATRIX_OK (C, "C input for GB_mxm", GB3) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mxm", GB3) ;
-    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mxm", GB3) ;
-    ASSERT_SEMIRING_OK (semiring, "semiring for GB_mxm", GB3) ;
-    ASSERT_MATRIX_OK (A, "A for GB_mxm", GB3) ;
-    ASSERT_MATRIX_OK (B, "B for GB_mxm", GB3) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_mxm", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mxm", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mxm", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for GB_mxm", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_mxm", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_mxm", GB0) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = semiring->add->op->ztype ;
@@ -133,12 +132,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         // C<...>+=A*B has been computed in place; no more work to do
         GB_MATRIX_FREE (&MT) ;
-        ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB3) ;
+        ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
         return (info) ;
     }
 
-    ASSERT_MATRIX_OK (T, "T=A*B from GB_AxB_meta", GB3) ;
-    ASSERT_MATRIX_OK_OR_NULL (MT, "MT from GB_AxB_meta", GB3) ;
+    ASSERT_MATRIX_OK (T, "T=A*B from GB_AxB_meta", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (MT, "MT from GB_AxB_meta", GB0) ;
     ASSERT (GB_ZOMBIES_OK (T)) ;
     ASSERT (!GB_PENDING (T)) ;
 
@@ -182,7 +181,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         if (info == GrB_SUCCESS)
         {
             // C may be returned with zombies, but no pending tuples
-            ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB3) ;
+            ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB0) ;
             ASSERT (GB_ZOMBIES_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
         }
@@ -199,7 +198,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         if (info == GrB_SUCCESS)
         {
             // C may be returned with zombies and pending tuples
-            ASSERT_MATRIX_OK (C, "Final C from GB_mxm (accum_mask)", GB3) ;
+            ASSERT_MATRIX_OK (C, "Final C from GB_mxm (accum_mask)", GB0) ;
             ASSERT (GB_ZOMBIES_OK (C)) ;
             ASSERT (GB_PENDING_OK (C)) ;
         }
