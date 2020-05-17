@@ -54,6 +54,7 @@ Demo/t2.out
 
 alternative/*.out
 alternative/*_out.m
+alternative/*_out2.m
 alternative/*_demo
 
 Test/*.log
