@@ -128,31 +128,5 @@ GrB_Info GB_dense_subassign_25
     GB_Context Context
 ) ;
 
-//------------------------------------------------------------------------------
-// GB_cblas_saxpy: Y += alpha*X where X and Y are dense float arrays
-//------------------------------------------------------------------------------
-
-void GB_cblas_saxpy         // Y += alpha*X
-(
-    const int64_t n,        // length of X and Y (note the int64_t type)
-    const float alpha,      // scale factor
-    const float *X,         // the array X, always stride 1
-    float *Y,               // the array Y, always stride 1
-    int nthreads            // maximum # of threads to use
-) ;
-
-//------------------------------------------------------------------------------
-// GB_cblas_daxpy: Y += alpha*X where X and Y are dense double arrays
-//------------------------------------------------------------------------------
-
-void GB_cblas_daxpy         // Y += alpha*X
-(
-    const int64_t n,        // length of X and Y (note the int64_t type)
-    const double alpha,     // scale factor
-    const double *X,        // the array X, always stride 1
-    double *Y,              // the array Y, always stride 1
-    int nthreads            // maximum # of threads to use
-) ;
-
 #endif
 

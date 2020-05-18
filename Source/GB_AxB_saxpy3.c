@@ -83,6 +83,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #ifndef GBCOMPACT
@@ -284,13 +286,53 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB2) ;
+    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB2) ;
+    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB2) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB2) ;
     ASSERT (A->vdim == B->vlen) ;
+
+    (*Chandle) = NULL ;
+
+    //--------------------------------------------------------------------------
+    // use MKL_graph if it available and has this semiring
+    //--------------------------------------------------------------------------
+
+    // Note that GB_AxB_saxpy3 computes C=A*B where A and B treated as if CSC,
+    // but MKL views the matrices as CSR.  So they are flipped below:
+
+    #if GB_HAS_MKL_GRAPH
+
+        info = GB_AxB_saxpy3_mkl (
+            Chandle,            // output matrix to construct
+            M,                  // input mask M (may be NULL)
+            Mask_comp,          // true if M is complemented
+            Mask_struct,        // true if M is structural
+            B,                  // first input matrix
+            A,                  // second input matrix
+            semiring,           // semiring that defines C=A*B
+            !flipxy,            // true if multiply operator is flipped
+            mask_applied,       // if true, then mask was applied
+            Context) ;
+
+        if (info != GrB_NO_VALUE)
+        {
+            // MKL_graph supports this semiring, and has ether computed C=A*B,
+            // C<M>=A*B, or C<!M>=A*B, or has failed.
+            printf ("MKL info: %d\n", info) ;
+            return (info) ;
+        }
+
+        // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
+        // so fall through to use GraphBLAS, below.
+
+    #endif
+
+    //--------------------------------------------------------------------------
+    // define workspace
+    //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Hi_all = NULL ;
     int64_t *GB_RESTRICT Hf_all = NULL ;
@@ -315,33 +357,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
-
-    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
-    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
-    bool A_is_pattern = false ;
-    bool B_is_pattern = false ;
-
-    if (flipxy)
-    { 
-        // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  || op_is_pair ;
-        B_is_pattern = op_is_second || op_is_pair ;
-        ASSERT (GB_IMPLIES (!A_is_pattern,
-            GB_Type_compatible (A->type, mult->ytype))) ;
-        ASSERT (GB_IMPLIES (!B_is_pattern,
-            GB_Type_compatible (B->type, mult->xtype))) ;
-    }
-    else
-    { 
-        // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second || op_is_pair ;
-        B_is_pattern = op_is_first  || op_is_pair ;
-        ASSERT (GB_IMPLIES (!A_is_pattern,
-            GB_Type_compatible (A->type, mult->xtype))) ;
-        ASSERT (GB_IMPLIES (!B_is_pattern,
-            GB_Type_compatible (B->type, mult->ytype))) ;
-    }
+    bool A_is_pattern, B_is_pattern ;
+    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     #ifdef GBCOMPACT
     bool is_any_pair_semiring = false ;
@@ -355,8 +372,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         && (add_opcode == GB_ANY_opcode)
         && (mult_opcode == GB_PAIR_opcode) ;
     #endif
-
-    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // get A, and B
@@ -1130,7 +1145,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB2) ; }
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

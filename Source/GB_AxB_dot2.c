@@ -93,33 +93,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
-
-    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
-    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
-    bool A_is_pattern = false ;
-    bool B_is_pattern = false ;
-
-    if (flipxy)
-    { 
-        // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  || op_is_pair ;
-        B_is_pattern = op_is_second || op_is_pair ;
-        ASSERT (GB_IMPLIES (!A_is_pattern,
-            GB_Type_compatible (A->type, mult->ytype))) ;
-        ASSERT (GB_IMPLIES (!B_is_pattern,
-            GB_Type_compatible (B->type, mult->xtype))) ;
-    }
-    else
-    { 
-        // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second || op_is_pair ;
-        B_is_pattern = op_is_first  || op_is_pair ;
-        ASSERT (GB_IMPLIES (!A_is_pattern,
-            GB_Type_compatible (A->type, mult->xtype))) ;
-        ASSERT (GB_IMPLIES (!B_is_pattern,
-            GB_Type_compatible (B->type, mult->ytype))) ;
-    }
+    bool A_is_pattern, B_is_pattern ;
+    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     (*Chandle) = NULL ;
 

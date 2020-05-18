@@ -32,7 +32,7 @@ ASSERT (zcode == xcode) ;
 ASSERT (zcode == ycode) ;
 ASSERT (mult_opcode != GB_ANY_opcode) ;
 
-if (zcode != GB_BOOL_code)
+if (xcode != GB_BOOL_code)
 {
     switch (add_opcode)
     {
@@ -42,7 +42,7 @@ if (zcode != GB_BOOL_code)
 
         case GB_MIN_opcode:
 
-            switch (zcode)
+            switch (xcode)
             {
                 // 10 real, non-boolean types
                 case GB_INT8_code   : GB_AxB_WORKER (_min, GB_MULT_NAME, _int8  )
@@ -61,7 +61,7 @@ if (zcode != GB_BOOL_code)
 
         case GB_MAX_opcode:
 
-            switch (zcode)
+            switch (xcode)
             {
                 // 10 real, non-boolean types
                 case GB_INT8_code   : GB_AxB_WORKER (_max, GB_MULT_NAME, _int8  )
@@ -80,7 +80,7 @@ if (zcode != GB_BOOL_code)
 
         case GB_TIMES_opcode:
 
-            switch (zcode)
+            switch (xcode)
             {
                 // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _int8  )
@@ -105,7 +105,7 @@ if (zcode != GB_BOOL_code)
 
         case GB_PLUS_opcode:
 
-            switch (zcode)
+            switch (xcode)
             {
                 // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int8  )
@@ -128,7 +128,7 @@ if (zcode != GB_BOOL_code)
 
         case GB_ANY_opcode:
 
-            switch (zcode)
+            switch (xcode)
             {
                 // 10 real, non-boolean types, plus 2 complex
                 case GB_INT8_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _int8  )

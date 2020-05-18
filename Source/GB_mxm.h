@@ -212,5 +212,16 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_Context Context
 ) ;
 
+void GB_AxB_pattern
+(
+    // outputs:
+    bool *A_is_pattern,     // true if A is pattern-only, because of the mult
+    bool *B_is_pattern,     // true if B is pattern-only, because of the mult
+    // inputs:
+    const bool flipxy,      // if true,  z = mult (b,a) will be computed
+                            // if false, z = mult (a,b) will be computed
+    const GB_Opcode mult_opcode // opcode of multiply operator
+) ;
+
 #endif
 
