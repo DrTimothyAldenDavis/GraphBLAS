@@ -60,7 +60,7 @@
 
             if (Mx == NULL)
             {
-                GB_PRAGMA_VECTORIZE
+                GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
                     int64_t p = pC + Mi [pM] ;
@@ -69,7 +69,7 @@
             }
             else
             {
-                GB_PRAGMA_VECTORIZE
+                GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     if (GB_mcast (Mx, pM, msize))

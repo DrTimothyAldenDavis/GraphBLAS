@@ -252,6 +252,7 @@
                     cjnz = ajnz ;
                     #else
                     ASSERT (cjnz == ajnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         Ci [pC + p] = p + iA_first ;
@@ -273,6 +274,7 @@
                     cjnz = bjnz ;
                     #else
                     ASSERT (cjnz == bjnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         int64_t i = Bi [pB + p] ;
@@ -295,6 +297,7 @@
                     cjnz = ajnz ;
                     #else
                     ASSERT (cjnz == ajnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         int64_t i = Ai [pA + p] ;

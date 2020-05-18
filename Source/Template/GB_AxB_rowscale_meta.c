@@ -35,7 +35,7 @@
     {
         int64_t pstart, pend ;
         GB_PARTITION (pstart, pend, bnz, tid, ntasks) ;
-        GB_PRAGMA_VECTORIZE
+        GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
             int64_t i = Bi [p] ;                // get row index of B(i,j)

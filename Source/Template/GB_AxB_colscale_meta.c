@@ -58,7 +58,7 @@
             //------------------------------------------------------------------
 
             GB_GETB (djj, Dx, j) ;                  // djj = D (j,j)
-            GB_PRAGMA_VECTORIZE
+            GB_PRAGMA_SIMD_VECTORIZE
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
                 GB_GETA (aij, Ax, p) ;              // aij = A(i,j)

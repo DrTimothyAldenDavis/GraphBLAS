@@ -270,11 +270,7 @@
                     }
                     #endif
 
-                    #define GB_IKJ_VECTORIZE
-                    #define GB_IKJ_IVDEP
                     GB_SCAN_M_j_OR_A_k ;
-                    #undef GB_IKJ_VECTORIZE
-                    #undef GB_IKJ_IVDEP
                     #undef GB_IKJ
                 }
 
@@ -497,8 +493,6 @@
                     GB_GET_A_k ;                // get A(:,k)
                     GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
-                    #define GB_IKJ_VECTORIZE
-                    #define GB_IKJ_IVDEP
                     #define GB_IKJ                                             \
                     {                                                          \
                         GB_MULT_A_ik_B_kj ;      /* t = A(i,k) * B(k,j) */     \
@@ -543,8 +537,6 @@
                         }                                                      \
                     }
                     GB_SCAN_M_j_OR_A_k ;
-                    #undef GB_IKJ_VECTORIZE
-                    #undef GB_IKJ_IVDEP
                     #undef GB_IKJ
                 }
 
@@ -923,8 +915,6 @@
                                 GB_GET_A_k ;                // get A(:,k)
                                 GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
-                                #define GB_IKJ_VECTORIZE GB_PRAGMA_VECTORIZE
-                                #define GB_IKJ_IVDEP     GB_PRAGMA_IVDEP
                                 #define GB_IKJ                                 \
                                 {                                              \
                                     int64_t hf = Hf [i] ;                      \
@@ -943,8 +933,6 @@
                                     }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
-                                #undef GB_IKJ_VECTORIZE
-                                #undef GB_IKJ_IVDEP
                                 #undef GB_IKJ
                             }
                             GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
@@ -957,8 +945,6 @@
                                 GB_GET_A_k ;                // get A(:,k)
                                 GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
-                                #define GB_IKJ_VECTORIZE GB_PRAGMA_VECTORIZE
-                                #define GB_IKJ_IVDEP     GB_PRAGMA_IVDEP
                                 #define GB_IKJ                                 \
                                 {                                              \
                                     int64_t hf = Hf [i] ;                      \
@@ -978,8 +964,6 @@
                                     }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
-                                #undef GB_IKJ_VECTORIZE
-                                #undef GB_IKJ_IVDEP
                                 #undef GB_IKJ
                             }
                             GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
@@ -1187,8 +1171,6 @@
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             GB_GET_B_kj ;               // bkj = B(k,j)
-                            #define GB_IKJ_VECTORIZE
-                            #define GB_IKJ_IVDEP
                             #define GB_IKJ                                     \
                             {                                                  \
                                 for (GB_HASH (i))       /* find i in hash */   \
@@ -1215,8 +1197,6 @@
                                 }                                              \
                             }
                             GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ_VECTORIZE
-                            #undef GB_IKJ_IVDEP
                             #undef GB_IKJ
                         }
                         // found i if: Hf [hash] == mark1 and Hi [hash] == i

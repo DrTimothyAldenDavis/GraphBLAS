@@ -16,6 +16,7 @@ is_pair     = isequal (multop, 'pair') ;
 is_any      = isequal (addop, 'any') ;
 is_eq       = isequal (addop, 'eq') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
+ztype_is_real = ~contains (ztype, 'FC') ;
 
 switch (ztype)
     case { 'bool' }
@@ -112,16 +113,45 @@ elseif (~isempty (terminal))
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
-    fprintf (f, 'define(`GB_dot_simd_vectorize'', `GB_PRAGMA_SIMD'')\n') ;
+    op = '' ;
+    if (ztype_is_real)
+        switch (addop)
+            case { 'plus' }
+                op = '+' ;
+            case { 'times' }
+                op = '*' ;
+            case { 'lor' }
+                op = '||' ;
+            case { 'land' }
+                op = '&&' ;
+            case { 'lxor' }
+                op = '^' ;
+            case { 'lxor' }
+                op = '^' ;
+            case { 'bor' }
+                op = '|' ;
+            case { 'band' }
+                op = '&' ;
+            case { 'bxor' }
+                op = '^' ;
+            otherwise
+                op = '' ;
+        end
+    end
+    if (isempty (op))
+        fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
+    else
+        pragma = sprintf ('GB_PRAGMA_SIMD_REDUCTION (%s,$1)', op) ;
+        fprintf (f, 'define(`GB_dot_simd_vectorize'', `%s'')\n', pragma) ;
+    end
 end
 
-switch (ztype)
-    case { 'GxB_FC32_t', 'GxB_FC64_t' }
-        % all built-in real monoids are atomic
-        fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
-    otherwise
-        % complex monoids are not atomic
-        fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+if (ztype_is_real)
+    % all built-in real monoids are atomic
+    fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+else
+    % complex monoids are not atomic
+    fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
 end
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics

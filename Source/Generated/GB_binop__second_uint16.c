@@ -99,7 +99,7 @@
 #define GB_PHASE_2_OF_2
 
 // hard-coded loops can be vectorized
-#define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
+#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

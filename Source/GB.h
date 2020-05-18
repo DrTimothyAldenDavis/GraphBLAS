@@ -197,18 +197,35 @@
 // OpenMP pragmas and tasks
 //------------------------------------------------------------------------------
 
+// GB_PRAGMA(x) becomes "#pragma x", but the way to do this depends on the
+// compiler:
+#if GB_MICROSOFT
+    // MS Visual Studio is not ANSI C11 compliant, and uses __pragma:
+    #define GB_PRAGMA(x) __pragma (x)
+#else
+    // ANSI C11 compilers use _Pragma:
+    #define GB_PRAGMA(x) _Pragma (#x)
+#endif
+
+// construct pragmas for loop vectorization:
 #if GB_MICROSOFT
 
-    #define GB_PRAGMA(x) __pragma (x)
+    // no #pragma omp simd is available in MS Visual Studio
     #define GB_PRAGMA_SIMD
+    #define GB_PRAGMA_SIMD_REDUCTION(op,s)
 
 #else
 
-    #define GB_PRAGMA(x) _Pragma (#x)
+    // create two kinds of SIMD pragmas:
+    // GB_PRAGMA_SIMD becomes "#pragma omp simd"
+    // GB_PRAGMA_SIMD_REDUCTION (+,cij) becomes
+    // "#pragma omp simd reduction(+:cij)"
     #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
+    #define GB_PRAGMA_SIMD_REDUCTION(op,s) GB_PRAGMA (omp simd reduction(op:s))
 
 #endif
 
+// construct pragmas for OpenMP tasks, if available:
 #if GB_HAS_OPENMP_TASKS
 
     // Use OpenMP tasks

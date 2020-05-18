@@ -376,8 +376,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         #define GB_PHASE_2_OF_2
 
         // no vectorization
-        #define GB_PRAGMA_VECTORIZE
-        #define GB_PRAGMA_VECTORIZE_DOT
+        #define GB_PRAGMA_SIMD_VECTORIZE ;
+        #define GB_PRAGMA_SIMD_DOT(cij) ;
 
         if (flipxy)
         { 

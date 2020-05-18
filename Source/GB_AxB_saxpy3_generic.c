@@ -154,8 +154,7 @@ GrB_Info GB_AxB_saxpy3_generic
     #define GB_CTYPE GB_void
 
     // no vectorization
-    #define GB_PRAGMA_VECTORIZE
-    #define GB_PRAGMA_VECTORIZE_DOT
+    #define GB_PRAGMA_SIMD_VECTORIZE ;
 
     // definitions for GB_AxB_saxpy3_template.c
     #include "GB_AxB_saxpy3_template.h"

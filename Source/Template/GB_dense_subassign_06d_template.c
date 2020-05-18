@@ -59,7 +59,7 @@
 
             if (Mask_struct)
             {
-                GB_PRAGMA_VECTORIZE
+                GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 { 
                     int64_t p = pC + Ai [pA] ;
@@ -68,7 +68,7 @@
             }
             else
             {
-                GB_PRAGMA_VECTORIZE
+                GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
                     if (GB_AX_MASK (Ax, pA, sizeof (GB_ATYPE)))

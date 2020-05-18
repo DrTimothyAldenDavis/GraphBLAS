@@ -90,6 +90,8 @@ GB_PUBLIC GrB_Info Complex_finalize ( ) ;
 
 #if defined ( __cplusplus )
 
+    using namespace std ;
+
     #define crealf(x)   real(x)
     #define creal(x)    real(x)
     #define cimagf(x)   imag(x)
@@ -109,9 +111,9 @@ GB_PUBLIC GrB_Info Complex_finalize ( ) ;
     #define cabs(x)     abs(x)
     #define absf(x)     abs(x)
 
-    #define csqrtf(x)    sqrt(x)
-    #define csqrt(x)     sqrt(x)
-    #define sqrtf(x)     sqrt(x)
+    #define csqrtf(x)   sqrt(x)
+    #define csqrt(x)    sqrt(x)
+    #define sqrtf(x)    sqrt(x)
 
     #define conjf(x)    conj(x)
 

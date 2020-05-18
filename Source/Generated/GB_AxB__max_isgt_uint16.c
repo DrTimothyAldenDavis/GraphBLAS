@@ -80,11 +80,11 @@
     if (cij == UINT16_MAX) break ;
 
 // simd pragma for dot-product loop vectorization
-#define GB_PRAGMA_VECTORIZE_DOT \
+#define GB_PRAGMA_SIMD_DOT(cij) \
     ;
 
 // simd pragma for other loop vectorization
-#define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
+#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // declare the cij scalar
 #define GB_CIJ_DECLARE(cij) \

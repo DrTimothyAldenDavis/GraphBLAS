@@ -158,7 +158,7 @@ GrB_Info GB_dense_subassign_05d
         #define GB_CTYPE GB_void
 
         // no vectorization
-        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #include "GB_dense_subassign_05d_template.c"
     }

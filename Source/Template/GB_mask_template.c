@@ -745,7 +745,8 @@
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = Ci [pC] ;
-                                bool mij = false ;  // M(i,j) false if not present
+                                // M(i,j) false if not present
+                                bool mij = false ; 
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
                                 GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;

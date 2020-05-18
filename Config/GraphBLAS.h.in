@@ -219,9 +219,8 @@
         #include <cmath>
         #include <complex>
         #undef I
-        using namespace std ;
-        typedef complex<float>  GxB_FC32_t ;
-        typedef complex<double> GxB_FC64_t ;
+        typedef std::complex<float>  GxB_FC32_t ;
+        typedef std::complex<double> GxB_FC64_t ;
     }
 
     #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)

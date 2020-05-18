@@ -184,7 +184,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
         #define GB_CTYPE GB_void
 
         // no vectorization
-        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #define GB_BINARYOP(z,x,y) fadd (z,x,y)
         #include "GB_dense_subassign_23_template.c"

@@ -140,7 +140,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
         #define GB_CTYPE GB_void
 
         // no vectorization
-        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #include "GB_dense_subassign_22_template.c"
     }

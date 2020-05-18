@@ -80,11 +80,11 @@
     GB_terminal
 
 // simd pragma for dot-product loop vectorization
-#define GB_PRAGMA_VECTORIZE_DOT \
-    GB_dot_simd_vectorize
+#define GB_PRAGMA_SIMD_DOT(cij) \
+    GB_dot_simd_vectorize(cij)
 
 // simd pragma for other loop vectorization
-#define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
+#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // declare the cij scalar
 #define GB_CIJ_DECLARE(cij) \

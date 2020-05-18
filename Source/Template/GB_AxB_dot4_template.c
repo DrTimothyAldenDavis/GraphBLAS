@@ -161,7 +161,7 @@
                         // both A(:,i) and B(:,j) are dense
                         //------------------------------------------------------
 
-                        GB_PRAGMA_VECTORIZE_DOT
+                        GB_PRAGMA_SIMD_DOT (cij)
                         for (int64_t k = 0 ; k < bvlen ; k++)
                         { 
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
@@ -179,7 +179,7 @@
                         // A(:,i) is sparse and B(:,j) is dense
                         //------------------------------------------------------
 
-                        GB_PRAGMA_VECTORIZE_DOT
+                        GB_PRAGMA_SIMD_DOT (cij)
                         for (int64_t p = pA ; p < pA_end ; p++)
                         { 
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
@@ -261,7 +261,7 @@
 
                         #else
 
-                            GB_PRAGMA_VECTORIZE_DOT
+                            GB_PRAGMA_SIMD_DOT (cij)
                             for (int64_t p = pB ; p < pB_end ; p++)
                             { 
                                 GB_DOT_TERMINAL (cij) ;   // break if terminal

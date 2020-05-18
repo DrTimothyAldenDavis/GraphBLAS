@@ -584,7 +584,7 @@
                         // A dense, B == M
                         //------------------------------------------------------
 
-                        GB_PRAGMA_VECTORIZE
+                        GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t p = 0 ; p < mjnz ; p++)
                         {
                             int64_t pM = p + pM_start ;
@@ -606,7 +606,7 @@
                         // B dense, A == M
                         //------------------------------------------------------
 
-                        GB_PRAGMA_VECTORIZE
+                        GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t p = 0 ; p < mjnz ; p++)
                         {
                             int64_t pM = p + pM_start ;
@@ -628,7 +628,7 @@
                         // A == M == B: all three matrices are the same
                         //------------------------------------------------------
 
-                        GB_PRAGMA_VECTORIZE
+                        GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t p = 0 ; p < mjnz ; p++)
                         {
                             int64_t pM = p + pM_start ;

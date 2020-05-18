@@ -162,7 +162,7 @@
 
                     #else
 
-                        GB_PRAGMA_VECTORIZE
+                        GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
                         { 
                             int64_t i = pA - pA_start ;
@@ -183,7 +183,7 @@
                     // C(:,j) is dense; A(:,j) is sparse 
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_VECTORIZE
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
                     { 
                         int64_t i = Ai [pA] ;
