@@ -33,7 +33,6 @@
 //  This should work, per the Windows spec, but is not yet supported.
 //  #elif defined (USER_WINDOWS_THREADS)
 //  {
-//      // This should work, per the Windows spec, but is not yet supported.
 //      EnterCriticalSection (&GB_sync) ;
 //      GB_CRITICAL_SECTION ;
 //      LeaveCriticalSection (&GB_sync) ;

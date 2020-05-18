@@ -145,7 +145,7 @@
                 if (Mark [i])
                 {
                     // thread tid has a contribution to index i
-                    const GB_CTYPE *GB_RESTRICT Work = Works [tid] ;
+                    const GB_CTYPE *GB_RESTRICT Work = (GB_CTYPE *) Works [tid];
                     if (!Mark0 [i])
                     { 
                         // first time index i has been seen

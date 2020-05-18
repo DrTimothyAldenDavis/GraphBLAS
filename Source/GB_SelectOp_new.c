@@ -69,7 +69,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     {
         // see if the typecast "(GxB_select_function)" appears in the name
         char *p = NULL ;
-        p = strstr (name, "GxB_select_function") ;
+        p = strstr ((char *) name, "GxB_select_function") ;
         if (p != NULL)
         { 
             // skip past the typecast, the left parenthesis, and any whitespace

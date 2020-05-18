@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This function only computes C<M>=A'*B.  The mask must be present, and not
-// complemented.  The mask is always applied.
+// complemented, either valued or structural.  The mask is always applied.
 
 #include "GB_mxm.h"
 #ifndef GBCOMPACT
@@ -195,7 +195,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
-    int taskid;
+    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {

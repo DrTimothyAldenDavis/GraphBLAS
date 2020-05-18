@@ -73,7 +73,7 @@ GrB_Info GB_BinaryOp_new
     {
         // see if the typecast "(GxB_binary_function)" appears in the name
         char *p = NULL ;
-        p = strstr (name, "GxB_binary_function") ;
+        p = strstr ((char *) name, "GxB_binary_function") ;
         if (p != NULL)
         { 
             // skip past the typecast, the left parenthesis, and any whitespace

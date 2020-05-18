@@ -70,7 +70,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     {
         // see if the typecast "(GxB_unary_function)" appears in the name
         char *p = NULL ;
-        p = strstr (name, "GxB_unary_function") ;
+        p = strstr ((char *) name, "GxB_unary_function") ;
         if (p != NULL)
         { 
             // skip past the typecast, the left parenthesis, and any whitespace
