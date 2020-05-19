@@ -169,7 +169,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
         mkl_semiring, A_mkl, B_mkl, NULL,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    printf ("MKL time: %g\n", t) ;
+    printf ("MKL successful, time: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // get the contents of C
