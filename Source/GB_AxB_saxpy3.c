@@ -87,6 +87,7 @@
 
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
+#include "GB_mkl.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -279,6 +280,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    printf ("GB_AxB_saxpy3:\n") ;
 
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
     bool Mask_comp = Mask_comp_input ;

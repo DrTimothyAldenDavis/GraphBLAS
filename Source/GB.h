@@ -2967,11 +2967,5 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_opaque_GrB_LXOR  GB_opaque_GxB_LXOR_BOOL
 #define GB_opaque_GrB_LXNOR GB_opaque_GxB_LXNOR_BOOL
 
-//------------------------------------------------------------------------------
-// determine if the dense CBLAS and/or MKL_graph is available
-//------------------------------------------------------------------------------
-
-#include "GB_mkl.h"
-
 #endif
 

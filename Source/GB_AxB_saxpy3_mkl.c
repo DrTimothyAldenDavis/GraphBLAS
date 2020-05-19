@@ -16,6 +16,7 @@
 
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
+#include "GB_mkl.h"
 
 #if GB_HAS_MKL_GRAPH
 
@@ -162,6 +163,14 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     //--------------------------------------------------------------------------
 
     printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
+
+    printf ("calling MKL %d: %s.%s.%s  mask? %d %d %d\n",
+        mkl_semiring,
+        semiring->add->op->name,
+        semiring->multiply->name,
+        semiring->multiply->xtype->name,
+        (M != NULL), Mask_comp, Mask_struct) ;
+
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
     printf ("created C\n") ;
     double t = omp_get_wtime ( ) ;
@@ -169,7 +178,13 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
         mkl_semiring, A_mkl, B_mkl, NULL,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    printf ("MKL successful, time: %g\n", t) ;
+    printf ("MKL time: %g\n", t) ;
+
+    printf ("MKL claims to be successful: %s.%s.%s  mask? %d %d %d\n",
+        semiring->add->op->name,
+        semiring->multiply->name,
+        semiring->multiply->xtype->name,
+        (M != NULL), Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // get the contents of C
@@ -185,6 +200,16 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     GB_MKL_OK (mkl_graph_matrix_get_csr (C_mkl, &cnrows, &cncols,
         &Tp, &Tp_type, &Ti, &Ti_type, &Tx, &Tx_type)) ;
 
+    printf ("Tp %p Ti %p Tx %p\n", Tp, Ti, Tx) ;
+    if (Tp == NULL || Ti == NULL || Tx == NULL)
+    {
+        // bug in mkl_graph_mxm: returns MKL_GRAPH_STATUS_SUCCESS even if
+        // the semiring is not supported
+        printf ("Hey, T is NULL!\n") ;
+        GB_MKL_FREE_ALL ;
+        return (GrB_NO_VALUE) ;
+    }
+
     if (Tp_type != MKL_GRAPH_TYPE_INT64 ||
         Ti_type != MKL_GRAPH_TYPE_INT64 ||
         Tx_type != GB_type_mkl (ctype->code))
@@ -198,6 +223,10 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
             GB_type_mkl (ctype->code),
             Tp_type, Ti_type, Tx_type))) ;
     }
+
+    // if (Tp == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Tp null!"))) ;
+    // if (Ti == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Ti null!"))) ;
+    // if (Tx == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Tx null!"))) ;
 
     // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.
     cnvals = Tp [cnrows] ;
@@ -250,7 +279,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     C->i = Ci ;
     C->x = Cx ;
     C->nzmax = cnvals ;
-    C->plen = cncols ;
+    C->plen = cnrows ;
     C->nvec = cnrows ;
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = -1 ;
@@ -260,10 +289,17 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     //--------------------------------------------------------------------------
 
     info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB0) ; }
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB3) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = (M != NULL) ;
+
+    printf ("MKL success: %s.%s.%s  mask? %d %d %d\n",
+        semiring->add->op->name,
+        semiring->multiply->name,
+        semiring->multiply->xtype->name,
+        (M != NULL), Mask_comp, Mask_struct) ;
+
     return (info) ;
 }
 

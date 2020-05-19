@@ -11,7 +11,7 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
-#include "GB_dense.h"
+#include "GB_mkl.h"
 
 void GB_cblas_saxpy         // Y += alpha*X
 (
