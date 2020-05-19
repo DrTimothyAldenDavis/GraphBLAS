@@ -163,6 +163,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, L)) ;
             OK (GrB_Matrix_new (&C, ctype, n, n)) ;
             OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+GxB_print (d, 3) ;
             OK (GrB_mxm (C, L, NULL, semiring, L, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;

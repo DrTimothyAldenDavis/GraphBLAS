@@ -117,12 +117,14 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     }
 
     mkl_graph_semiring_t mkl_semiring = (mkl_graph_semiring_t) s ;
+    #if 0
     if (mkl_semiring != MKL_GRAPH_SEMIRING_PLUS_TIMES_INT32)
     {
         // MKL only supports a single semiring in mkl_graph_mxm
         printf ("MKL: not MKL semiring\n") ;
         return (GrB_NO_VALUE) ;
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -159,10 +161,15 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // C=A*B or C<M>=A*B via MKL
     //--------------------------------------------------------------------------
 
+    printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
+    printf ("created C\n") ;
+    double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxm (C_mkl, M_mkl, MKL_GRAPH_ACCUMULATOR_NONE,
         mkl_semiring, A_mkl, B_mkl, NULL,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
+    t = omp_get_wtime ( ) - t ;
+    printf ("MKL time: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // get the contents of C
@@ -184,7 +191,12 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     {
         GB_MKL_FREE_ALL ;
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "MKL returned result with wrong type"))) ;
+            "MKL returned result with wrong type."
+            "Expected [%d,%d,%d], got [%d,%d,%d]\n",
+            MKL_GRAPH_TYPE_INT64,
+            MKL_GRAPH_TYPE_INT64,
+            GB_type_mkl (ctype->code),
+            Tp_type, Ti_type, Tx_type))) ;
     }
 
     // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.
