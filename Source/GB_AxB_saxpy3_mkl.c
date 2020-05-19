@@ -190,9 +190,9 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // get the contents of C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Tp = NULL ;
-    const int64_t *GB_RESTRICT Ti = NULL ;
-    const GB_void *GB_RESTRICT Tx = NULL ;
+    int64_t *GB_RESTRICT Tp = NULL ;
+    int64_t *GB_RESTRICT Ti = NULL ;
+    GB_void *GB_RESTRICT Tx = NULL ;
     int64_t cnrows, cncols, cnvals ;
     GrB_Type ctype = mult->ztype ;
     mkl_graph_type_t Tp_type, Ti_type, Tx_type ;
@@ -224,12 +224,10 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
             Tp_type, Ti_type, Tx_type))) ;
     }
 
-    // if (Tp == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Tp null!"))) ;
-    // if (Ti == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Ti null!"))) ;
-    // if (Tx == NULL) return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "Tx null!"))) ;
-
-    // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.
     cnvals = Tp [cnrows] ;
+
+#if 0
+    // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.
     Cp = GB_MALLOC (cnrows+1, int64_t) ;
     Ci = GB_MALLOC (cnvals,   int64_t) ;
     Cx = GB_MALLOC (cnvals * ctype->size, GB_void) ;
@@ -244,6 +242,18 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     GB_memcpy (Cp, Tp, (cnrows+1) * sizeof (int64_t), nthreads_max) ;
     GB_memcpy (Ci, Ti, (cnvals  ) * sizeof (int64_t), nthreads_max) ;
     GB_memcpy (Cx, Tx, (cnvals  ) * ctype->size     , nthreads_max) ;
+#else
+
+    // a better solution: take them away from MKL
+    GB_MKL_OK (mkl_graph_matrix_set_csr (C_mkl, 0, 0,
+            NULL, Tp_type, NULL, Ti_type, NULL, Tx_type)) ;
+
+    // now I own them :-)
+    Cp = Tp ;
+    Ci = Ti ;
+    Cx = Tx ;
+
+#endif
 
     //--------------------------------------------------------------------------
     // free MKL matrices C, M, A, and B
@@ -288,7 +298,8 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // prune empty vectors, free workspace, and return result
     //--------------------------------------------------------------------------
 
-    info = GB_hypermatrix_prune (C, Context) ;
+    // MKL never computes C as hypersparse, so skip this step:
+    // info = GB_hypermatrix_prune (C, Context) ;
     if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB3) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

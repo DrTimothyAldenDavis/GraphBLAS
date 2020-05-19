@@ -1515,6 +1515,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
 
                     switch (xycode)         // LOR_NE semirings
                     {
+                        // LOR_NE_BOOL is just LOR_LXOR_BOOL
                         case GB_INT8_code   :
                         case GB_INT16_code  :
                         case GB_INT32_code  :
@@ -1677,6 +1678,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
 
                     switch (xycode)         // LAND_NE semirings
                     {
+                        // LAND_NE_BOOL is just LAND_LXOR_BOOL
                         case GB_INT8_code   :
                         case GB_INT16_code  :
                         case GB_INT32_code  :
@@ -1836,6 +1838,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
 
                     switch (xycode)         // EQ_NE semirings
                     {
+                        // EQ_NE_BOOL is just EQ_LXOR_BOOL
                         case GB_INT8_code   :
                         case GB_INT16_code  :
                         case GB_INT32_code  :
@@ -2004,6 +2007,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
 
                     switch (xycode)         // LXOR_NE semirings
                     {
+                        // LXOR_NE_BOOL is just LXOR_LXOR_BOOL
                         case GB_INT8_code   :
                         case GB_INT16_code  :
                         case GB_INT32_code  :
@@ -2434,6 +2438,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
 
                     switch (xycode)         // ANY_NE semirings
                     {
+                        // ANY_NE_BOOL is just ANY_LXOR_BOOL, below
                         case GB_INT8_code   :
                         case GB_INT16_code  :
                         case GB_INT32_code  :
