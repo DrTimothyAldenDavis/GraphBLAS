@@ -48,12 +48,17 @@ INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm $(MKL_LDFLAGS)
-# CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
-# CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
-# remove -std=c11 if using c++:
-# CFLAGS = -O3          -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
+CFLAGS = -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
+# pick the roptimization level:
+  CFLAGS += -O3
+# CFLAGS += -g
+ifneq ($(CC),c++)
+    # comment this out if using c++:
+    CFLAGS += -std=c11 
+endif
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
 SO_OPTS = $(LDFLAGS)
+CFLAGS += -Wno-pragmas
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Darwin)
