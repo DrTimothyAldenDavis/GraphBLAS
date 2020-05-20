@@ -12,8 +12,6 @@
 // This function is CSR/CSC agnostic, but the comments are writen as if
 // all matrices are in CSR format, to match how MKL_graph views its matrices.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
@@ -311,7 +309,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // MKL never computes C as hypersparse, so skip this step:
     // info = GB_hypermatrix_prune (C, Context) ;
     GBBURBLE ("(done) ") ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB2) ; }
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB0) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = (M != NULL) ;
