@@ -25,6 +25,7 @@
 // malloc/calloc/realloc/free functions to use.
 
 #include "GB_thread_local.h"
+#include "GB_mkl.h"
 
 //------------------------------------------------------------------------------
 // critical section for user threads
@@ -103,6 +104,14 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_realloc_function_set (realloc_function) ;
     GB_Global_free_function_set    (free_function   ) ;
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
+
+    #if GB_HAS_MKL_GRAPH
+    // also set the MKL allocator functions
+    i_malloc  = malloc_function ;
+    i_calloc  = calloc_function ;
+    i_realloc = realloc_function ;
+    i_free    = free_function ;
+    #endif
 
     //--------------------------------------------------------------------------
     // max number of threads

@@ -13,6 +13,7 @@
 
 #include "GB_mxm.h"
 #include "GB_unused.h"
+#include "GB_mkl.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -51,6 +52,60 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
+
+    //--------------------------------------------------------------------------
+    // use MKL_graph if it available and has this semiring
+    //--------------------------------------------------------------------------
+
+    // Note that GB_AxB_dot4 computes C+=A'*B where A and B treated as if CSC,
+    // but MKL views the matrices as CSR.  MKL only handles the case when B
+    // is a dense vector in mkl_graph_mxv, and A' in CSC format is the same
+    // as A in CSR.
+
+    #if 0
+    printf ("dot4: " GBd "\n", GB_Global_hack_get ( )) ;
+    GxB_print (semiring, 3) ;
+    GxB_print (A, 2) ;
+    GxB_print (B, 2) ;
+    printf ("flipxy %d\n", flipxy) ;
+    printf ("GB_is_dense (B) %d\n", GB_is_dense (B)) ;
+    printf ("GB_VECTOR_OK (B) %d\n", GB_VECTOR_OK (B)) ;
+    #endif
+
+    #if GB_HAS_MKL_GRAPH
+    // printf ("here\n") ;
+
+    if (GB_Global_hack_get ( ) != 0 &&
+        (semiring == GrB_PLUS_TIMES_SEMIRING_FP32 ||
+         semiring == GxB_PLUS_SECOND_FP32) && GB_VECTOR_OK (C)
+        && GB_is_dense (C) && GB_is_dense (B) && GB_VECTOR_OK (B) && !flipxy
+        && !GB_IS_HYPER (A))
+    {
+        printf ("\nTesting MKL mvx: C += A'*b where b is a dense vector\n") ;
+
+        info = // GrB_NO_VALUE ;
+        #if 1
+        GB_AxB_dot4_mkl (
+            (GrB_Vector) C,     // input/output (now a vector)
+            A,                  // first input matrix
+            (GrB_Vector) B,     // second input (now a vector)
+            semiring,           // semiring that defines C=A*B
+            Context) ;
+        #endif
+
+        if (info != GrB_NO_VALUE)
+        {
+            // MKL_graph supports this semiring, and has ether computed C=A*B,
+            // C<M>=A*B, or C<!M>=A*B, or has failed.
+            printf ("MKL info: %d\n", info) ;
+            return (info) ;
+        }
+
+        // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
+        // so fall through to use GraphBLAS, below.
+    }
+    #endif
+
 
     //--------------------------------------------------------------------------
     // get the semiring operators

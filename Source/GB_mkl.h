@@ -30,6 +30,7 @@
         #if ( INTEL_MKL_VERSION >= 20200001 )
             // use the Intel MKL_graph library
             #include "mkl_graph.h"
+            #include "i_malloc.h"
             #undef  GB_HAS_MKL_GRAPH
             #define GB_HAS_MKL_GRAPH 1
         #endif
@@ -86,22 +87,22 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
             break ;                                                         \
         case GrB_UNINITIALIZED_OBJECT :                                     \
             GB_MKL_FREE_ALL ;                                               \
-            printf ("MKL uninitialized\n") ; \
+            printf ("MKL uninitialized: %s line %d\n", __FILE__, __LINE__) ; \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph uninitialized"))) ; \
         case GrB_OUT_OF_MEMORY :                                            \
-            printf ("MKL out of memory\n") ; \
+            printf ("MKL out of memory %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_OUT_OF_MEMORY) ;                                     \
         case GrB_INVALID_VALUE :                                            \
-            printf ("MKL invalid\n") ; \
+            printf ("MKL invalid %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph invalid value"))) ; \
         case GrB_PANIC :                                                    \
-            printf ("MKL panic\n") ; \
+            printf ("MKL panic %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph panic"))) ;         \
         case GrB_NO_VALUE :                                                 \
-            printf ("MKL not supported\n") ; \
+            printf ("MKL not supported %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph not supported"))) ; \
         default :                                                           \
@@ -111,13 +112,25 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
 }
 
 //------------------------------------------------------------------------------
-// GB_MKL_GRAPH_MATRIX_DESTROY: free an MKL_graph matrix
+// GB_MKL_GRAPH_*_DESTROY: free an MKL_graph matrix, vector, or descriptor
 //------------------------------------------------------------------------------
 
 #define GB_MKL_GRAPH_MATRIX_DESTROY(A_mkl)                  \
 {                                                           \
     if (A_mkl != NULL) mkl_graph_matrix_destroy (A_mkl) ;   \
     A_mkl = NULL ;                                          \
+}
+
+#define GB_MKL_GRAPH_VECTOR_DESTROY(x_mkl)                  \
+{                                                           \
+    if (x_mkl != NULL) mkl_graph_vector_destroy (x_mkl) ;   \
+    x_mkl = NULL ;                                          \
+}
+
+#define GB_MKL_GRAPH_DESCRIPTOR_DESTROY(d_mkl)                  \
+{                                                               \
+    if (d_mkl != NULL) mkl_graph_descriptor_destroy (d_mkl) ;   \
+    d_mkl = NULL ;                                              \
 }
 
 //------------------------------------------------------------------------------
@@ -135,6 +148,19 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// GB_AxB_dot4_mkl: C+=A'*B where C and B are dense vectors
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
+(
+    GrB_Vector c,                   // input/output vector (dense)
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Vector b,             // input vector b (dense)
+    const GrB_Semiring semiring,    // semiring that defines C=A'*B
     GB_Context Context
 ) ;
 

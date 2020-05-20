@@ -118,7 +118,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     }
 
     mkl_graph_semiring_t mkl_semiring = (mkl_graph_semiring_t) s ;
-    #if 0
+    #if 1
     if (mkl_semiring != MKL_GRAPH_SEMIRING_PLUS_TIMES_INT32)
     {
         // MKL only supports a single semiring in mkl_graph_mxm
@@ -226,7 +226,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     cnvals = Tp [cnrows] ;
 
-#if 0
+#if 1
     // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.
     Cp = GB_MALLOC (cnrows+1, int64_t) ;
     Ci = GB_MALLOC (cnvals,   int64_t) ;
