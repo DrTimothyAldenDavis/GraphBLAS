@@ -20,10 +20,18 @@ VER3 = 0
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior:
 # CC = icc -mp1
 
-# A C++ compiler works but is not recommended.  SuiteSparse:GraphBLAS is
-# written in C, not C++.  However, it compiles just fine with a C++ compiler,
-# since it is written so that it uses the intersection of the two languages.
-# To use this, also remove the -std=c11 flag below:
+# A C++ compiler works but is not recommended for use in production,
+# particularly if SuiteSparse:GraphBLAS is used as -lgraphblas.
+# SuiteSparse:GraphBLAS is written in C, not C++.  However, it compiles just
+# fine with a C++ compiler, since it is written so that it uses the
+# intersection of the two languages.  This is helpful for two cases: (1)
+# SuiteSparse:GraphBLAS does a lot of typecasting, and C++ is very strict with
+# this.  Using C++ allows for an extra-careful 'lint' checking.  (2) The end-
+# user may wish to construct a pure C++ application, and embed a C++-compiled
+# GraphBLAS inside.  CMake cannot be used to compile a *.c code with a C++
+# compiler (it complains), and thus this option is only available in this
+# alternative/Makefile.  To use this option, also remove the -std=c11 flag
+# below, to avoid spurious warnings.
 # CC = c++
 
 # Using the Intel MKL (don't try this if CC=c++):
@@ -41,7 +49,7 @@ SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm $(MKL_LDFLAGS)
 # CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
-  CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
+# CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
 # remove -std=c11 if using c++:
 # CFLAGS = -O3          -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
