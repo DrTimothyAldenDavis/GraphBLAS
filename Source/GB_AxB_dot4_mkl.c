@@ -10,6 +10,8 @@
 // This function is CSR/CSC agnostic, but the comments are writen as if
 // all matrices are in CSR format, to match how MKL_graph views its matrices.
 
+#define GB_DEBUG
+
 #include "GB_mxm.h"
 #include "GB_mkl.h"
 
@@ -115,7 +117,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     {
         GB_MKL_OK (mkl_graph_descriptor_create (&mkl_desc)) ;
         GB_MKL_OK (mkl_graph_descriptor_set_field (mkl_desc,
-            MKL_GRAPH_MODIFIER_FIRST_INPUT, MKL_GRAPH_ONLY_STRUCTURE)) ;
+            GB_MKL_GRAPH_FIELD_FIRST_INPUT, GB_MKL_GRAPH_MOD_ONLY_STRUCTURE)) ;
     }
 
     GB_MKL_OK (mkl_graph_vector_create (&z_mkl)) ;
@@ -173,7 +175,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     //--------------------------------------------------------------------------
 
     GB_MKL_FREE_WORK ;
-    ASSERT_VECTOR_OK (c, "mkl mxv result", GB0) ;
+    ASSERT_VECTOR_OK (c, "mkl mxv result", GB2) ;
     return (info) ;
 }
 

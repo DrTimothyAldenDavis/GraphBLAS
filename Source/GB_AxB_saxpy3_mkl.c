@@ -12,6 +12,8 @@
 // This function is CSR/CSC agnostic, but the comments are writen as if
 // all matrices are in CSR format, to match how MKL_graph views its matrices.
 
+#define GB_DEBUG
+
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
@@ -172,6 +174,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 //      (M != NULL), Mask_comp, Mask_struct) ;
 
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
+    GBBURBLE ("(MKL start) ") ;
 //  printf ("created C\n") ;
     double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxm (C_mkl, M_mkl, MKL_GRAPH_ACCUMULATOR_NONE,
@@ -200,6 +203,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     GB_MKL_OK (mkl_graph_matrix_get_csr (C_mkl, &cnrows, &cncols,
         &Tp, &Tp_type, &Ti, &Ti_type, &Tx, &Tx_type)) ;
+    GBBURBLE ("(got csr) ") ;
 
 //  printf ("Tp %p Ti %p Tx %p\n", Tp, Ti, Tx) ;
     if (Tp == NULL || Ti == NULL || Tx == NULL)
@@ -261,7 +265,11 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // free MKL matrices C, M, A, and B
     //--------------------------------------------------------------------------
 
-    GB_MKL_FREE_WORK ;
+    GBBURBLE ("(copied) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (M_mkl) ; GBBURBLE ("(freed M) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ; GBBURBLE ("(freed A) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (B_mkl) ; GBBURBLE ("(freed B) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (C_mkl) ; GBBURBLE ("(freed C) ") ;
 
     //--------------------------------------------------------------------------
     // import result in C as a CSR matrix
@@ -302,7 +310,8 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     // MKL never computes C as hypersparse, so skip this step:
     // info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB0) ; }
+    GBBURBLE ("(done) ") ;
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB2) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = (M != NULL) ;

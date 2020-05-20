@@ -17,6 +17,7 @@
 //==============================================================================
 
 #define GB_HAS_MKL_GRAPH 0
+#define GB_INTEL_MKL_VERSION 0
 
 #if !defined ( GBCOMPACT )
 
@@ -27,12 +28,59 @@
         #define GB_CBLAS_INT MKL_INT
         #define GB_CBLAS_INT_MAX INT64_MAX
 
-        #if ( INTEL_MKL_VERSION >= 20200001 )
+        // INTEL_MKL_VERSION is broken in 2021.1.beta6 (it is 202101
+        // but should be 20210001).  See
+        // https://software.intel.com/content/www/us/en/develop/documentation/mkl-windows-developer-guide/top/coding-tips/using-predefined-preprocessor-symbols-for-intel-mkl-version-dependent-compilation.html
+        #undef  GB_INTEL_MKL_VERSION
+        // This definition follows that web page:
+        #define GB_INTEL_MKL_VERSION ((__INTEL_MKL__*100+__INTEL_MKL_MINOR__)*100+__INTEL_MKL_UPDATE__)
+
+        #if ( GB_INTEL_MKL_VERSION >= 20200001 )
             // use the Intel MKL_graph library
             #include "mkl_graph.h"
             #include "i_malloc.h"
             #undef  GB_HAS_MKL_GRAPH
             #define GB_HAS_MKL_GRAPH 1
+
+            // some of the definitions have changed:
+            #if ( GB_INTEL_MKL_VERSION == 20200001 )
+
+                // 202000001:
+                #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 (-1)
+
+                #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_MODIFIER_OUTPUT
+                #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_MODIFIER_FIRST_INPUT
+                #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_MODIFIER_SECOND_INPUT
+                #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_MODIFIER_MASK
+
+                #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_NO_MODIFIER
+                #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_STRUCTURE_COMPLEMENT
+                #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_TRANSPOSE
+                #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_REPLACE
+                #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_ONLY_STRUCTURE
+                #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_KEEP_MASK_STRUCTURE
+
+
+
+            #else
+
+                // 202100001:
+                #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32
+
+                #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_FIELD_OUTPUT
+                #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_FIELD_FIRST_INPUT
+                #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_FIELD_SECOND_INPUT
+                #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_FIELD_MASK
+
+                #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_MOD_NONE
+                #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT
+                #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_MOD_TRANSPOSE
+                #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_MOD_REPLACE
+                #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_MOD_ONLY_STRUCTURE
+                #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE
+
+            #endif
+
         #endif
 
     #elif defined ( GB_HAS_CBLAS )

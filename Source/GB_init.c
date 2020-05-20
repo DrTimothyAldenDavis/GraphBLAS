@@ -105,12 +105,15 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_free_function_set    (free_function   ) ;
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
+    printf ("MKL version: %d\n", INTEL_MKL_VERSION) ;
     #if GB_HAS_MKL_GRAPH
     // also set the MKL allocator functions
-    i_malloc  = malloc_function ;
-    i_calloc  = calloc_function ;
-    i_realloc = realloc_function ;
-    i_free    = free_function ;
+//  i_malloc  = malloc_function ;
+//  i_calloc  = calloc_function ;
+//  i_realloc = realloc_function ;
+//  i_free    = free_function ;
+    #else
+    printf ("no mkl graph!\n") ;
     #endif
 
     //--------------------------------------------------------------------------

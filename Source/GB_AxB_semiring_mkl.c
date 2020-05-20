@@ -62,6 +62,7 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
                         case GB_FC64_code   :
                         default             : return (no) ;
                     }
+#endif
 
                 case GB_SECOND_opcode  :    // z = y
 
@@ -74,13 +75,15 @@ int GB_AxB_semiring_mkl         // return the MKL semiring, or -1 if none.
                         case GB_UINT8_code  :
                         case GB_UINT16_code :
                         case GB_UINT32_code :
-                        case GB_UINT64_code :
-                        case GB_FP32_code   :
-                        case GB_FP64_code   :
+                        case GB_UINT64_code : return (no) ;
+                        case GB_FP32_code   : return (GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32) ;   // added in 2021.1.beta6
+                        case GB_FP64_code   : 
                         case GB_FC32_code   :
                         case GB_FC64_code   :
                         default             : return (no) ;
                     }
+
+#if 0
 
                 case GB_PAIR_opcode    :    // z = 1
 
