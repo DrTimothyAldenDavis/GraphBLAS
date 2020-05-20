@@ -83,8 +83,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
@@ -280,7 +278,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    printf ("GB_AxB_saxpy3:\n") ;
+//  printf ("GB_AxB_saxpy3:\n") ;
 
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
     bool Mask_comp = Mask_comp_input ;
@@ -309,7 +307,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (GB_Global_hack_get ( ) != 0)
     {
-        printf ("Testing MKL here:\n") ;
+//      printf ("Testing MKL here:\n") ;
 
         info = GB_AxB_saxpy3_mkl (
             Chandle,            // output matrix to construct
@@ -327,9 +325,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // MKL_graph supports this semiring, and has ether computed C=A*B,
             // C<M>=A*B, or C<!M>=A*B, or has failed.
-            printf ("MKL info: %d\n", info) ;
+//          printf ("MKL info: %d\n", info) ;
             return (info) ;
         }
+
+        GBBURBLE ("(MKL tried) ") ;
 
         // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
         // so fall through to use GraphBLAS, below.

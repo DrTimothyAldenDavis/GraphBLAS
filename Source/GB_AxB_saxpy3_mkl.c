@@ -12,8 +12,6 @@
 // This function is CSR/CSC agnostic, but the comments are writen as if
 // all matrices are in CSR format, to match how MKL_graph views its matrices.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
@@ -67,7 +65,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     if (GB_IS_HYPER (M) || GB_IS_HYPER( A) || GB_IS_HYPER (B))
     {
         // MKL does not handle hypersparsity
-        printf ("MKL: inputs hypersparse\n") ;
+//      printf ("MKL: inputs hypersparse\n") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -75,7 +73,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     {
         // MKL only does C=A*B or C<M>=A*B with M as a valued, non-complemented
         // mask.
-        printf ("MKL: M comp or struct\n") ;
+//      printf ("MKL: M comp or struct\n") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -105,7 +103,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     if (!builtin_semiring)
     {
         // not a GraphBLAS built-in semiring
-        printf ("MKL: not GrB semiring\n") ;
+//      printf ("MKL: not GrB semiring\n") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -113,7 +111,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     if (s < 0)
     {
         // MKL does not have this semiring in its mkl_graph_semiring_t enum
-        printf ("MKL: not MKL semiring enum\n") ;
+//      printf ("MKL: not MKL semiring enum\n") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -122,7 +120,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     if (mkl_semiring != MKL_GRAPH_SEMIRING_PLUS_TIMES_INT32)
     {
         // MKL only supports a single semiring in mkl_graph_mxm
-        printf ("MKL: not MKL semiring\n") ;
+//      printf ("MKL: not MKL semiring\n") ;
         return (GrB_NO_VALUE) ;
     }
     #endif
@@ -139,6 +137,8 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     if (M != NULL)
     {
+        // HACK: not actually supported!
+        return (GrB_NO_VALUE) ;
         GB_MKL_OK (mkl_graph_matrix_create (&M_mkl)) ;
         GB_MKL_OK (mkl_graph_matrix_set_csr (M_mkl, M->vdim, M->vlen,
             M->p, MKL_GRAPH_TYPE_INT64,
@@ -162,29 +162,30 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // C=A*B or C<M>=A*B via MKL
     //--------------------------------------------------------------------------
 
-    printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
+//  printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
 
-    printf ("calling MKL %d: %s.%s.%s  mask? %d %d %d\n",
-        mkl_semiring,
-        semiring->add->op->name,
-        semiring->multiply->name,
-        semiring->multiply->xtype->name,
-        (M != NULL), Mask_comp, Mask_struct) ;
+//  printf ("calling MKL %d: %s.%s.%s  mask? %d %d %d\n",
+//      mkl_semiring,
+//      semiring->add->op->name,
+//      semiring->multiply->name,
+//      semiring->multiply->xtype->name,
+//      (M != NULL), Mask_comp, Mask_struct) ;
 
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
-    printf ("created C\n") ;
+//  printf ("created C\n") ;
     double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxm (C_mkl, M_mkl, MKL_GRAPH_ACCUMULATOR_NONE,
         mkl_semiring, A_mkl, B_mkl, NULL,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    printf ("MKL time: %g\n", t) ;
+//  printf ("MKL time: %g\n", t) ;
+    GBBURBLE ("(MKL time: %g) ", t) ;
 
-    printf ("MKL claims to be successful: %s.%s.%s  mask? %d %d %d\n",
-        semiring->add->op->name,
-        semiring->multiply->name,
-        semiring->multiply->xtype->name,
-        (M != NULL), Mask_comp, Mask_struct) ;
+//  printf ("MKL claims to be successful: %s.%s.%s  mask? %d %d %d\n",
+//      semiring->add->op->name,
+//      semiring->multiply->name,
+//      semiring->multiply->xtype->name,
+//      (M != NULL), Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // get the contents of C
@@ -200,12 +201,12 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     GB_MKL_OK (mkl_graph_matrix_get_csr (C_mkl, &cnrows, &cncols,
         &Tp, &Tp_type, &Ti, &Ti_type, &Tx, &Tx_type)) ;
 
-    printf ("Tp %p Ti %p Tx %p\n", Tp, Ti, Tx) ;
+//  printf ("Tp %p Ti %p Tx %p\n", Tp, Ti, Tx) ;
     if (Tp == NULL || Ti == NULL || Tx == NULL)
     {
         // bug in mkl_graph_mxm: returns MKL_GRAPH_STATUS_SUCCESS even if
         // the semiring is not supported
-        printf ("Hey, T is NULL!\n") ;
+        printf ("Hey, T is NULL!\n") ; abort ( ) ;
         GB_MKL_FREE_ALL ;
         return (GrB_NO_VALUE) ;
     }
@@ -215,6 +216,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
         Tx_type != GB_type_mkl (ctype->code))
     {
         GB_MKL_FREE_ALL ;
+        printf ("Hey, T is wrong type!\n") ; abort ( ) ;
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "MKL returned result with wrong type."
             "Expected [%d,%d,%d], got [%d,%d,%d]\n",
@@ -300,16 +302,16 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     // MKL never computes C as hypersparse, so skip this step:
     // info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB3) ; }
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB0) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = (M != NULL) ;
 
-    printf ("MKL success: %s.%s.%s  mask? %d %d %d\n",
-        semiring->add->op->name,
-        semiring->multiply->name,
-        semiring->multiply->xtype->name,
-        (M != NULL), Mask_comp, Mask_struct) ;
+//  printf ("MKL success: %s.%s.%s  mask? %d %d %d\n",
+//      semiring->add->op->name,
+//      semiring->multiply->name,
+//      semiring->multiply->xtype->name,
+//      (M != NULL), Mask_comp, Mask_struct) ;
 
     return (info) ;
 }

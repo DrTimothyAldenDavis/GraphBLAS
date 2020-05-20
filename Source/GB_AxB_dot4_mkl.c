@@ -10,8 +10,6 @@
 // This function is CSR/CSC agnostic, but the comments are writen as if
 // all matrices are in CSR format, to match how MKL_graph views its matrices.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_mkl.h"
 
@@ -105,13 +103,13 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     // z=A*b via MKL
     //--------------------------------------------------------------------------
 
-    printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
+//  printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
 
-    printf ("calling MKL mxv %d: %s.%s.%s\n",
-        mkl_semiring,
-        semiring->add->op->name,
-        semiring->multiply->name,
-        semiring->multiply->xtype->name) ;
+//  printf ("calling MKL mxv %d: %s.%s.%s\n",
+//      mkl_semiring,
+//      semiring->add->op->name,
+//      semiring->multiply->name,
+//      semiring->multiply->xtype->name) ;
 
     if (mult_opcode == GB_SECOND_opcode)
     {
@@ -122,18 +120,18 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
 
     GB_MKL_OK (mkl_graph_vector_create (&z_mkl)) ;
 
-    printf ("created z\n") ;
+//  printf ("created z\n") ;
     double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxv (z_mkl, NULL, MKL_GRAPH_ACCUMULATOR_NONE,
         mkl_semiring, A_mkl, b_mkl, mkl_desc,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    printf ("MKL time: %g\n", t) ;
+    GBBURBLE ("(MKL mxv time: %g) ", t) ;
 
-    printf ("MKL claims to be successful: %s.%s.%s\n",
-        semiring->add->op->name,
-        semiring->multiply->name,
-        semiring->multiply->xtype->name) ;
+//  printf ("MKL claims to be successful: %s.%s.%s\n",
+//      semiring->add->op->name,
+//      semiring->multiply->name,
+//      semiring->multiply->xtype->name) ;
 
     //--------------------------------------------------------------------------
     // get the contents of z
@@ -144,18 +142,19 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     const float *GB_RESTRICT Zx = NULL ;
     GB_MKL_OK (mkl_graph_vector_get_dense (z_mkl, &znrows, &Zx, &Zx_type)) ;
 
-    printf ("Zx %p\n", Zx) ;
+//  printf ("Zx %p\n", Zx) ;
     if (Zx == NULL || znrows != n)
     {
         // bug in mkl_graph_mxm: returns MKL_GRAPH_STATUS_SUCCESS even if
         // the semiring is not supported
-        printf ("Hey, Z is NULL or znrows != n!\n") ;
+        printf ("Hey, Z is NULL or znrows != n!\n") ; abort ( ) ;
         GB_MKL_FREE_ALL ;
         return (GrB_NO_VALUE) ;
     }
 
     if (Zx_type != GB_type_mkl (c->type->code))
     {
+        printf ("Hey, Z is wrong type!\n") ; abort ( ) ;
         GB_MKL_FREE_ALL ;
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "MKL returned result with wrong type."
@@ -174,9 +173,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     //--------------------------------------------------------------------------
 
     GB_MKL_FREE_WORK ;
-
-    ASSERT_VECTOR_OK (c, "mkl mxv result", GB2) ;
-
+    ASSERT_VECTOR_OK (c, "mkl mxv result", GB0) ;
     return (info) ;
 }
 

@@ -81,7 +81,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         && GB_is_dense (C) && GB_is_dense (B) && GB_VECTOR_OK (B) && !flipxy
         && !GB_IS_HYPER (A))
     {
-        printf ("\nTesting MKL mvx: C += A'*b where b is a dense vector\n") ;
+//      printf ("\nTesting MKL mvx: C += A'*b where b is a dense vector\n") ;
 
         info = // GrB_NO_VALUE ;
         #if 1
@@ -97,7 +97,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         {
             // MKL_graph supports this semiring, and has ether computed C=A*B,
             // C<M>=A*B, or C<!M>=A*B, or has failed.
-            printf ("MKL info: %d\n", info) ;
+//          printf ("MKL info: %d\n", info) ;
             return (info) ;
         }
 
