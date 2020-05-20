@@ -12,7 +12,7 @@ VER2 = 3
 VER3 = 0
 
 # pick your compiler:
-# CC = gcc
+  CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
