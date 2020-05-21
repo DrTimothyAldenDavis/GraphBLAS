@@ -394,3 +394,9 @@ bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool is_slice ;         // true if the matrix is a slice or hyperslice
 
+//-----------------------------------------------------------------------------
+// MKL analysis, if available
+//-----------------------------------------------------------------------------
+
+void *mkl ;
+

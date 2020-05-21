@@ -8198,5 +8198,23 @@ GrB_Info GxB_Vector_export  // export and free a vector
 // first reformats the GrB_Matrix A into the desired format, and then exports
 // the result.
 
+//------------------------------------------------------------------------------
+// MKL optimization
+//------------------------------------------------------------------------------
+
+// This is a draft.
+
+GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
+(
+    GrB_Matrix A,                   // input/output matrix
+    int64_t ncalls,                 // estimate # of future calls to GrB_mxv
+    const GrB_Descriptor desc       // currently unused
+) ;
+
+GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
+(
+    GrB_Matrix A                    // input/output matrix
+) ;
+
 #endif
 

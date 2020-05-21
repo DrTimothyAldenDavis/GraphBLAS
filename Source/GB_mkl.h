@@ -41,46 +41,6 @@
             #include "i_malloc.h"
             #undef  GB_HAS_MKL_GRAPH
             #define GB_HAS_MKL_GRAPH 1
-
-            // some of the definitions have changed:
-            #if ( GB_INTEL_MKL_VERSION == 20200001 )
-
-                // 202000001:
-                #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 (-1)
-
-                #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_MODIFIER_OUTPUT
-                #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_MODIFIER_FIRST_INPUT
-                #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_MODIFIER_SECOND_INPUT
-                #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_MODIFIER_MASK
-
-                #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_NO_MODIFIER
-                #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_STRUCTURE_COMPLEMENT
-                #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_TRANSPOSE
-                #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_REPLACE
-                #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_ONLY_STRUCTURE
-                #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_KEEP_MASK_STRUCTURE
-
-
-
-            #else
-
-                // 202100001:
-                #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32
-
-                #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_FIELD_OUTPUT
-                #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_FIELD_FIRST_INPUT
-                #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_FIELD_SECOND_INPUT
-                #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_FIELD_MASK
-
-                #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_MOD_NONE
-                #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT
-                #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_MOD_TRANSPOSE
-                #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_MOD_REPLACE
-                #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_MOD_ONLY_STRUCTURE
-                #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE
-
-            #endif
-
         #endif
 
     #elif defined ( GB_HAS_CBLAS )
@@ -100,6 +60,58 @@
 //==============================================================================
 
 #if GB_HAS_MKL_GRAPH
+
+//------------------------------------------------------------------------------
+// semirings
+//------------------------------------------------------------------------------
+
+#if ( GB_INTEL_MKL_VERSION == 20200001 )
+
+    // 2020.1: does not have PLUS_SECOND
+    #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 (-1)
+
+#else
+
+    // 2021.1.beta6: added PLUS_SECOND
+    #define GB_MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32 \
+        MKL_GRAPH_SEMIRING_PLUS_SECOND_FP32
+
+#endif
+
+//------------------------------------------------------------------------------
+// descriptors
+//------------------------------------------------------------------------------
+
+#if ( GB_INTEL_MKL_VERSION == 20200001 )
+
+    #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_MODIFIER_OUTPUT
+    #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_MODIFIER_FIRST_INPUT
+    #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_MODIFIER_SECOND_INPUT
+    #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_MODIFIER_MASK
+
+    #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_NO_MODIFIER
+    #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_STRUCTURE_COMPLEMENT
+    #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_TRANSPOSE
+    #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_REPLACE
+    #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_ONLY_STRUCTURE
+    #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_KEEP_MASK_STRUCTURE
+
+#else
+
+    #define GB_MKL_GRAPH_FIELD_OUTPUT        MKL_GRAPH_FIELD_OUTPUT
+    #define GB_MKL_GRAPH_FIELD_FIRST_INPUT   MKL_GRAPH_FIELD_FIRST_INPUT
+    #define GB_MKL_GRAPH_FIELD_SECOND_INPUT  MKL_GRAPH_FIELD_SECOND_INPUT
+    #define GB_MKL_GRAPH_FIELD_MASK          MKL_GRAPH_FIELD_MASK
+
+    #define GB_MKL_GRAPH_MOD_NONE                   MKL_GRAPH_MOD_NONE
+    #define GB_MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT   MKL_GRAPH_MOD_STRUCTURE_COMPLEMENT
+    #define GB_MKL_GRAPH_MOD_TRANSPOSE              MKL_GRAPH_MOD_TRANSPOSE
+    #define GB_MKL_GRAPH_MOD_REPLACE                MKL_GRAPH_MOD_REPLACE
+    #define GB_MKL_GRAPH_MOD_ONLY_STRUCTURE         MKL_GRAPH_MOD_ONLY_STRUCTURE
+    #define GB_MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE    MKL_GRAPH_MOD_KEEP_MASK_STRUCTURE
+
+#endif
+
 
 //------------------------------------------------------------------------------
 // GB_info_mkl: map an Intel MKL status to a GraphBLAS GrB_Info
@@ -163,23 +175,49 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
 // GB_MKL_GRAPH_*_DESTROY: free an MKL_graph matrix, vector, or descriptor
 //------------------------------------------------------------------------------
 
-#define GB_MKL_GRAPH_MATRIX_DESTROY(A_mkl)                  \
-{                                                           \
-    if (A_mkl != NULL) mkl_graph_matrix_destroy (A_mkl) ;   \
-    A_mkl = NULL ;                                          \
-}
+#if ( GB_INTEL_MKL_VERSION == 20200001 )
 
-#define GB_MKL_GRAPH_VECTOR_DESTROY(x_mkl)                  \
-{                                                           \
-    if (x_mkl != NULL) mkl_graph_vector_destroy (x_mkl) ;   \
-    x_mkl = NULL ;                                          \
-}
+    // 2020.1: the arguments are pointers to the opaque structs
+    #define GB_MKL_GRAPH_MATRIX_DESTROY(A_mkl)                          \
+    {                                                                   \
+        if (A_mkl != NULL) mkl_graph_matrix_destroy (A_mkl) ;           \
+        A_mkl = NULL ;                                                  \
+    }
 
-#define GB_MKL_GRAPH_DESCRIPTOR_DESTROY(d_mkl)                  \
-{                                                               \
-    if (d_mkl != NULL) mkl_graph_descriptor_destroy (d_mkl) ;   \
-    d_mkl = NULL ;                                              \
-}
+    #define GB_MKL_GRAPH_VECTOR_DESTROY(x_mkl)                          \
+    {                                                                   \
+        if (x_mkl != NULL) mkl_graph_vector_destroy (x_mkl) ;           \
+        x_mkl = NULL ;                                                  \
+    }
+
+    #define GB_MKL_GRAPH_DESCRIPTOR_DESTROY(d_mkl)                      \
+    {                                                                   \
+        if (d_mkl != NULL) mkl_graph_descriptor_destroy (d_mkl) ;       \
+        d_mkl = NULL ;                                                  \
+    }
+
+#else
+
+    // 2021.1.beta6:  API has changed: now passing in a handle
+    #define GB_MKL_GRAPH_MATRIX_DESTROY(A_mkl)                          \
+    {                                                                   \
+        if (A_mkl != NULL) mkl_graph_matrix_destroy (&(A_mkl)) ;        \
+        A_mkl = NULL ;                                                  \
+    }
+
+    #define GB_MKL_GRAPH_VECTOR_DESTROY(x_mkl)                          \
+    {                                                                   \
+        if (x_mkl != NULL) mkl_graph_vector_destroy (&(x_mkl)) ;        \
+        x_mkl = NULL ;                                                  \
+    }
+
+    #define GB_MKL_GRAPH_DESCRIPTOR_DESTROY(d_mkl)                      \
+    {                                                                   \
+        if (d_mkl != NULL) mkl_graph_descriptor_destroy (&(d_mkl)) ;    \
+        d_mkl = NULL ;                                                  \
+    }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_mkl: C=A*B, C<M>=A*B, or C<!M>=A*B using Intel MKL_graph

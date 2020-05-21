@@ -16,12 +16,17 @@
 #if GB_HAS_MKL_GRAPH
 
 #define GB_MKL_FREE_WORK                            \
+    GB_FREE (Zx) ;                                  \
     GB_MKL_GRAPH_DESCRIPTOR_DESTROY (mkl_desc) ;    \
     GB_MKL_GRAPH_VECTOR_DESTROY (z_mkl) ;           \
-    GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ;           \
-    GB_MKL_GRAPH_VECTOR_DESTROY (b_mkl) ;
+    GB_MKL_GRAPH_VECTOR_DESTROY (b_mkl) ;           \
+    if (!A_preanalyzed)                             \
+    {                                               \
+        GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ;       \
+    }
 
-#define GB_MKL_FREE_ALL                         \
+#define GB_MKL_FREE_ALL                             \
+    GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;          \
     GB_MKL_FREE_WORK
 
 GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
@@ -46,6 +51,10 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     mkl_graph_vector_t b_mkl = NULL ;
 
     float *GB_RESTRICT Cx = (float *) c->x ;
+    float *GB_RESTRICT Zx = NULL ;
+
+    bool A_preanalyzed = (A->mkl != NULL) ;
+    // GxB_print (A,3) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators and types
@@ -76,6 +85,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     // determine the MKL_graph semiring
     //--------------------------------------------------------------------------
 
+    // PLUS_SECOND becomes PLUS_TIMES with a non-standard descriptor
     mkl_graph_semiring_t mkl_semiring = MKL_GRAPH_SEMIRING_PLUS_TIMES_FP32 ;
 
     //--------------------------------------------------------------------------
@@ -93,34 +103,48 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     GB_MKL_OK (mkl_graph_vector_set_dense (b_mkl, n,
         B->x, MKL_GRAPH_TYPE_FP32)) ;
 
-    GB_MKL_OK (mkl_graph_matrix_create (&A_mkl)) ;
-    GB_MKL_OK (mkl_graph_matrix_set_csr (A_mkl, A->vdim, A->vlen,
-        A->p, MKL_GRAPH_TYPE_INT64,
-        A->i, MKL_GRAPH_TYPE_INT64,
-        A->x, A_is_pattern ? MKL_GRAPH_TYPE_BOOL : GB_type_mkl (A->type->code)));
+    if (A_preanalyzed)
+    {
+        // A has already been imported into an MKL matrix and analyzed
+        A_mkl = A->mkl ;
+    }
+    else
+    {
+        // import A into an MKL version of the matrix, to be destroyed when done
+        GB_MKL_OK (mkl_graph_matrix_create (&A_mkl)) ;
+        GB_MKL_OK (mkl_graph_matrix_set_csr (A_mkl, A->vdim, A->vlen,
+            A->p, MKL_GRAPH_TYPE_INT64,
+            A->i, MKL_GRAPH_TYPE_INT64,
+            A->x, A_is_pattern ?
+            MKL_GRAPH_TYPE_BOOL : GB_type_mkl (A->type->code))) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // create z workspace
+    //--------------------------------------------------------------------------
+
+    Zx = (float *) GB_CALLOC (n, float) ;
+    if (Zx == NULL)
+    {
+        // out of memory
+        GB_MKL_FREE_ALL ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
+    GB_MKL_OK (mkl_graph_vector_create (&z_mkl)) ;
+    GB_MKL_OK (mkl_graph_vector_set_dense (z_mkl, n, Zx, MKL_GRAPH_TYPE_FP32)) ;
 
     //--------------------------------------------------------------------------
     // z=A*b via MKL
     //--------------------------------------------------------------------------
 
-//  printf ("calling MKL here, semiring %d\n", mkl_semiring) ;
-
-//  printf ("calling MKL mxv %d: %s.%s.%s\n",
-//      mkl_semiring,
-//      semiring->add->op->name,
-//      semiring->multiply->name,
-//      semiring->multiply->xtype->name) ;
-
     if (mult_opcode == GB_SECOND_opcode)
     {
+        // this fails, "not supported"
         GB_MKL_OK (mkl_graph_descriptor_create (&mkl_desc)) ;
         GB_MKL_OK (mkl_graph_descriptor_set_field (mkl_desc,
             GB_MKL_GRAPH_FIELD_FIRST_INPUT, GB_MKL_GRAPH_MOD_ONLY_STRUCTURE)) ;
     }
 
-    GB_MKL_OK (mkl_graph_vector_create (&z_mkl)) ;
-
-//  printf ("created z\n") ;
     double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxv (z_mkl, NULL, MKL_GRAPH_ACCUMULATOR_NONE,
         mkl_semiring, A_mkl, b_mkl, mkl_desc,
@@ -128,43 +152,11 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     t = omp_get_wtime ( ) - t ;
     GBBURBLE ("(MKL mxv time: %g) ", t) ;
 
-//  printf ("MKL claims to be successful: %s.%s.%s\n",
-//      semiring->add->op->name,
-//      semiring->multiply->name,
-//      semiring->multiply->xtype->name) ;
-
-    //--------------------------------------------------------------------------
-    // get the contents of z
-    //--------------------------------------------------------------------------
-
-    int64_t znrows = 0 ;
-    mkl_graph_type_t Zx_type = 0 ;
-    const float *GB_RESTRICT Zx = NULL ;
-    GB_MKL_OK (mkl_graph_vector_get_dense (z_mkl, &znrows, &Zx, &Zx_type)) ;
-
-//  printf ("Zx %p\n", Zx) ;
-    if (Zx == NULL || znrows != n)
-    {
-        // bug in mkl_graph_mxm: returns MKL_GRAPH_STATUS_SUCCESS even if
-        // the semiring is not supported
-        printf ("Hey, Z is NULL or znrows != n!\n") ; abort ( ) ;
-        GB_MKL_FREE_ALL ;
-        return (GrB_NO_VALUE) ;
-    }
-
-    if (Zx_type != GB_type_mkl (c->type->code))
-    {
-        printf ("Hey, Z is wrong type!\n") ; abort ( ) ;
-        GB_MKL_FREE_ALL ;
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "MKL returned result with wrong type."
-            "Expected [%d], got [%d]\n",
-            GB_type_mkl (c->type->code), Zx_type))) ;
-    }
-
     //--------------------------------------------------------------------------
     // c += z
     //--------------------------------------------------------------------------
+
+    // printf ("\nZx [%d] = %g\n", 0, Zx [0]) ;
 
     GB_cblas_saxpy (n, 1.0, Zx, Cx, nthreads_max) ;
 

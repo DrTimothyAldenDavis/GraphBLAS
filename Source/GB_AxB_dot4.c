@@ -62,15 +62,13 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // is a dense vector in mkl_graph_mxv, and A' in CSC format is the same
     // as A in CSR.
 
-    #if 0
-    printf ("dot4: " GBd "\n", GB_Global_hack_get ( )) ;
-    GxB_print (semiring, 3) ;
-    GxB_print (A, 2) ;
-    GxB_print (B, 2) ;
-    printf ("flipxy %d\n", flipxy) ;
-    printf ("GB_is_dense (B) %d\n", GB_is_dense (B)) ;
-    printf ("GB_VECTOR_OK (B) %d\n", GB_VECTOR_OK (B)) ;
-    #endif
+//  printf ("dot4: " GBd "\n", GB_Global_hack_get ( )) ;
+//  GxB_print (semiring, 3) ;
+//  GxB_print (A, 2) ;
+//  GxB_print (B, 2) ;
+//  printf ("flipxy %d\n", flipxy) ;
+//  printf ("GB_is_dense (B) %d\n", GB_is_dense (B)) ;
+//  printf ("GB_VECTOR_OK (B) %d\n", GB_VECTOR_OK (B)) ;
 
     #if GB_HAS_MKL_GRAPH
     // printf ("here\n") ;

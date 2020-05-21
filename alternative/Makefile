@@ -7,6 +7,18 @@
 
 #-------------------------------------------------------------------------------
 
+# To compile with 8 threads:
+#
+#   make -j8
+#
+# To install: do not just do 'sudo make install' since MKLROOT might be 
+# defined for the user but not for root.  Instead do:
+#
+#   make -j8
+#   sudo make install
+
+default: library
+
 VER1 = 3
 VER2 = 3
 VER3 = 0
@@ -30,16 +42,17 @@ VER3 = 0
 # user may wish to construct a pure C++ application, and embed a C++-compiled
 # GraphBLAS inside.  CMake cannot be used to compile a *.c code with a C++
 # compiler (it complains), and thus this option is only available in this
-# alternative/Makefile.  To use this option, also remove the -std=c11 flag
-# below, to avoid spurious warnings.
+# alternative/Makefile.
 # CC = c++
 
-# Using the Intel MKL (don't try this if CC=c++):
+# Using the Intel MKL (don't try this if CC=c++, it will likely break):
 # from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html
+# TODO comment this out for distro
   MKL_CFLAGS = -DMKL_ILP64 -m64 -I${MKLROOT}/include -DGB_HAS_CBLAS
   MKL_LDFLAGS= -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 
 # without the Intel MKL:
+# TODO uncomment this for distro
 # MKL_CFLAGS = 
 # MKL_LDFLAGS=
 
@@ -82,7 +95,7 @@ endif
 %.o: ../Source/Generated/%.c $(INC)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
-default: $(SO_NAME)
+library: $(SO_NAME)
 	ln -sf $(SO_NAME) $(SO_NAME0)
 	ln -sf $(SO_NAME) $(SO_NAME1)
 
@@ -97,7 +110,8 @@ libgraphblas.a: $(OBJ)
 	ar -rv $@ $^
 	- ranlib $@
 
-install: $(SO_NAME)
+# Do "make" first, and then "sudo make install" (to set MKLROOT properly)
+install: library
 	cp $(SO_NAME) /usr/local/lib
 	ln -sf /usr/local/lib/$(SO_NAME) /usr/local/lib/$(SO_NAME0)
 	ln -sf /usr/local/lib/$(SO_NAME) /usr/local/lib/$(SO_NAME1)

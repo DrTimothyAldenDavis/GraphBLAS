@@ -1,0 +1,99 @@
+//------------------------------------------------------------------------------
+// GxB_mxv_optimize: optimize a matrix for matrix-vector multiply
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+#include "GB_mxm.h"
+#include "GB_mkl.h"
+
+#undef  GB_MKL_OK
+#define GB_MKL_OK(status)                               \
+    if (status != MKL_GRAPH_STATUS_SUCCESS)             \
+    {                                                   \
+        /* if the analysis fails, return GrB_SUCCESS */ \
+        /* anyway, since the analysis is optional */    \
+        printf ("optim failed %d : %d\n", __LINE__, status) ;        \
+        GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;          \
+        return (GrB_SUCCESS) ;                          \
+    }
+
+GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
+(
+    GrB_Matrix A,                   // input/output matrix
+    int64_t ncalls,                 // estimate # of future calls to GrB_mxv
+    const GrB_Descriptor desc       // currently unused
+)
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE ("GxB_mxv_optimize (A, ncols, desc)") ;
+    GB_BURBLE_START ("GxB_mxv_optimize") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
+    // get the descriptor
+    GrB_Info info ;
+    // GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+    //     A_transpose, xx, AxB_method) ;
+
+    // delete any lingering zombies and assemble any pending tuples
+    GB_WAIT (A) ;
+
+    //--------------------------------------------------------------------------
+    // optimize the matrix for mkl_graph_mxv in MKL
+    //--------------------------------------------------------------------------
+
+    #if GB_HAS_MKL_GRAPH
+
+    if (GB_Global_hack_get ( ) != 0)
+    {
+
+        //----------------------------------------------------------------------
+        // free any existing MKL version of the matrix A and its optimization
+        //----------------------------------------------------------------------
+
+        GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
+
+        //----------------------------------------------------------------------
+        // create the MKL version of the matrix A, and analyze it
+        //----------------------------------------------------------------------
+
+        // TODO: doesn't the analysis depend on A'*x or A*x?
+
+        int A_mkl_type = GB_type_mkl (A->type->code) ;
+        if (!GB_IS_HYPER (A) && A_mkl_type >= 0)
+        {
+
+            // create the MKL version of the matrix
+            mkl_graph_matrix_t A_mkl = NULL ;
+            GB_MKL_OK (mkl_graph_matrix_create (&A_mkl)) ;
+            A->mkl = A_mkl ;
+
+            // import the data as shallow arrays into the MKL matrix
+            GB_MKL_OK (mkl_graph_matrix_set_csr (A_mkl, A->vdim, A->vlen,
+                A->p, MKL_GRAPH_TYPE_INT64,
+                A->i, MKL_GRAPH_TYPE_INT64,
+                A->x, A_mkl_type)) ;
+
+            // analyze the matrix for future calls to GrB_mxv
+            GB_MKL_OK (mkl_graph_optimize_mxv (A_mkl, ncalls)) ;
+
+            // save the analysis inside the GrB_Matrix
+            A->mkl = (void *) A_mkl ;
+        }
+
+        // TODO if A is modified, A->mkl needs to be freed.
+
+    }
+    #endif
+
+    GB_BURBLE_END ;
+    return (GrB_SUCCESS) ;
+}
+

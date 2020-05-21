@@ -138,6 +138,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->p_shallow = false ;
     A->h_shallow = false ;
     A->nvec_nonempty = 0 ;      // all vectors are empty
+    A->mkl = NULL ;             // no analysis from MKL yet
 
     // content that is freed or reset in GB_ix_free
     A->i = NULL ;
