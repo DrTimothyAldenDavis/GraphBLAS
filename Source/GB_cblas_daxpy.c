@@ -13,6 +13,8 @@
 
 #include "GB_mkl.h"
 
+#if defined ( GB_HAS_CBLAS )
+
 void GB_cblas_daxpy         // Y += alpha*X
 (
     const int64_t n,        // length of X and Y (note the int64_t type)
@@ -31,7 +33,6 @@ void GB_cblas_daxpy         // Y += alpha*X
     ASSERT (X != NULL) ;
     ASSERT (nthreads >= 1) ;
 
-    #if defined ( GB_HAS_CBLAS )
     GBBURBLE ("(cblas_daxpy) ") ;
 
     //--------------------------------------------------------------------------
@@ -90,6 +91,6 @@ void GB_cblas_daxpy         // Y += alpha*X
     mkl_set_num_threads_local (save_nthreads) ;
     #endif
 
-    #endif
 }
 
+#endif
