@@ -171,6 +171,8 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 //      semiring->multiply->xtype->name,
 //      (M != NULL), Mask_comp, Mask_struct) ;
 
+// TODO figure out how to call mkl_mxv for both dense and sparse v
+
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
     GBBURBLE ("(MKL start) ") ;
 //  printf ("created C\n") ;
