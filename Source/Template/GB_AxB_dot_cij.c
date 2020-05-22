@@ -336,17 +336,7 @@
         {
             int64_t ia = Ai [pA] ;
             int64_t ib = Bi [pB] ;
-            if (ia < ib)
-            { 
-                // A(ia,i) appears before B(ib,j)
-                pA++ ;
-            }
-            else if (ib < ia)
-            { 
-                // B(ib,j) appears before A(ia,i)
-                pB++ ;
-            }
-            else // ia == ib == k
+            if (ia == ib)
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 #if defined ( GB_PHASE_1_OF_2 )
@@ -359,6 +349,24 @@
                 pB++ ;
                 #endif
             }
+            else
+            { 
+                // advance either pA or pB with branchless code
+                pA += (ia < ib) ;
+                pB += (ib < ia) ;
+            }
+            #if 0
+            if (ia < ib)
+            { 
+                // A(ia,i) appears before B(ib,j)
+            }
+            else if (ib < ia)
+            { 
+                // B(ib,j) appears before A(ia,i)
+                pB++ ;
+            }
+            else // ia == ib == k
+            #endif
         }
     }
 
