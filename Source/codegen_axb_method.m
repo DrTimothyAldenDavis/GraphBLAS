@@ -10,13 +10,15 @@ end
 
 f = fopen ('control.m4', 'w') ;
 
-is_first    = isequal (multop, 'first') ;
-is_second   = isequal (multop, 'second') ;
-is_pair     = isequal (multop, 'pair') ;
-is_any      = isequal (addop, 'any') ;
-is_eq       = isequal (addop, 'eq') ;
-is_any_pair = is_any && isequal (multop, 'pair') ;
+is_first     = isequal (multop, 'first') ;
+is_second    = isequal (multop, 'second') ;
+is_pair      = isequal (multop, 'pair') ;
+is_any       = isequal (addop, 'any') ;
+is_eq        = isequal (addop, 'eq') ;
+is_any_pair  = is_any && isequal (multop, 'pair') ;
 ztype_is_real = ~contains (ztype, 'FC') ;
+is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
+    && ztype_is_real ;
 
 switch (ztype)
     case { 'bool' }
@@ -87,6 +89,12 @@ if (is_any_pair)
     fprintf (f, 'define(`GB_is_any_pair_semiring'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_any_pair_semiring'', `0'')\n') ;
+end
+
+if (is_plus_pair_real)
+    fprintf (f, 'define(`GB_is_plus_pair_real_semiring'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_plus_pair_real_semiring'', `0'')\n') ;
 end
 
 if (is_pair)
@@ -207,10 +215,13 @@ fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 switch (ztype)
     case 'GxB_FC32_t'
         fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLXF (1,0)'')\n') ;
+        fprintf (f, 'define(`GB_ztype_zero'', `GxB_CMPLXF (0,0)'')\n') ;
     case 'GxB_FC64_t'
         fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLX (1,0)'')\n') ;
+        fprintf (f, 'define(`GB_ztype_zero'', `GxB_CMPLX (0,0)'')\n') ;
     otherwise
         fprintf (f, 'define(`GB_ztype_one'', `((%s) 1)'')\n', ztype) ;
+        fprintf (f, 'define(`GB_ztype_zero'', `((%s) 1)'')\n', ztype) ;
 end
 
 % create the add operator, of the form w += t
@@ -269,14 +280,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +31 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +32 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +31 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +32 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

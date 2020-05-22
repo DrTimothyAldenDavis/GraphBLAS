@@ -67,6 +67,10 @@
 #define GB_CTYPE_ONE \
     GB_ztype_one
 
+// the scalar 0
+#define GB_CTYPE_ZERO \
+    GB_ztype_zero
+
 // multiply-add
 #define GB_MULTADD(z, x, y) \
     GB_multiply_add(z, x, y)
@@ -86,9 +90,20 @@
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
+// 1 for the PLUS_PAIR_(real) semirings, not for the complex case
+#define GB_IS_PLUS_PAIR_REAL_SEMIRING \
+    GB_is_plus_pair_real_semiring
+
 // declare the cij scalar
-#define GB_CIJ_DECLARE(cij) \
-    GB_ctype cij
+#if GB_IS_PLUS_PAIR_REAL_SEMIRING
+    // also initialize cij to zero
+    #define GB_CIJ_DECLARE(cij) \
+        GB_ctype cij = 0
+#else
+    // all other semirings: just declare cij, do not initialize it
+    #define GB_CIJ_DECLARE(cij) \
+        GB_ctype cij
+#endif
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij

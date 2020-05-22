@@ -112,8 +112,6 @@ GrB_Info GB_init            // start up GraphBLAS
     i_calloc  = calloc_function ;
     i_realloc = realloc_function ;
     i_free    = free_function ;
-    #else
-    printf ("no mkl graph!\n") ;
     #endif
 
     //--------------------------------------------------------------------------
