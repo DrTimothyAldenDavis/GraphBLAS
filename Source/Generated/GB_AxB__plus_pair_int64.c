@@ -649,7 +649,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
         #endif
 
     }
-    else if (ainz > 8 * bjnz)
+    else if (ainz > 32 * bjnz)
     {
 
         //----------------------------------------------------------------------
@@ -691,7 +691,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
         }
 
     }
-    else if (bjnz > 8 * ainz)
+    else if (bjnz > 32 * ainz)
     {
 
         //----------------------------------------------------------------------
@@ -756,91 +756,325 @@ GrB_Info GB_Adot3B__plus_pair_int64
                         pA++ ;
                         pB++ ;
                     }
+                    else if (ia < ib)
+                    {
+                        pA++ ;
+                    }
                     else
                     {
-                        pA += (ia < ib) ;
-                        pB += (ib < ia) ;
+                        pB++ ;
                     }
                 }
 
             #else
 
-            #define MUNCH_B \
-                pB += 2 ; \
-                if (pB_end - pB < 2) { break ; } else { continue ; }
+//          #define LOAD(x,X) for (int k = 0 ; k < 4 ; k++) x [k] = X ## i [p ## X + k] ;
+//          #define LOAD_A LOAD(a,A)
+//          #define LOAD_B LOAD(b,B)
 
-            #define MUNCH_A \
-                pA += 2 ; \
-                if (pA_end - pA < 2) { break ; } else { continue ; }
+            #define LOAD_A a [0] = Ai [pA], a [1] = Ai [pA+1], a [2] = Ai [pA+2], a [3] = Ai [pA+3]
+            #define LOAD_B b [0] = Bi [pB], b [1] = Bi [pB+1], b [2] = Bi [pB+2], b [3] = Bi [pB+3]
 
-            #define MUNCH_AB \
-                pA += 2 ; \
-                pB += 2 ; \
-                if (pA_end - pA < 2 || pB_end - pB < 2) { break ; }
+            #define MUNCH_A             \
+            {                           \
+                pA += 4 ;               \
+                if (pA_end - pA < 4)    \
+                {                       \
+                    break ;             \
+                }                       \
+                else                    \
+                {                       \
+                    LOAD_A ;            \
+                    continue ;          \
+                }                       \
+            }
+
+            #define MUNCH_B             \
+            {                           \
+                pB += 4 ;               \
+                if (pB_end - pB < 4)    \
+                {                       \
+                    break ;             \
+                }                       \
+                else                    \
+                {                       \
+                    LOAD_B ;            \
+                    continue ;          \
+                }                       \
+            }
+
+            #define MUNCH_AB                                \
+            {                                               \
+                pA += 4 ;                                   \
+                pB += 4 ;                                   \
+                if (pA_end - pA < 4 || pB_end - pB < 4)     \
+                {                                           \
+                    break ;                                 \
+                }                                           \
+                else                                        \
+                {                                           \
+                    LOAD_A ;                                \
+                    LOAD_B ;                                \
+                    continue ;                              \
+                }                                           \
+            }
+
+            #define MUNCH_A_OR_B        \
+            {                           \
+                if (a [3] < b [3])      \
+                {                       \
+                    MUNCH_A ;           \
+                }                       \
+                else                    \
+                {                       \
+                    MUNCH_B ;           \
+                }                       \
+            }
 
             // cij = the size of the set intersection of Ai [pA .. pA_end]
             // and Bi [pB .. pB_end]
             // printf ("\nainz: %d bjnz %d\n", ainz, bjnz) ;
             ASSERT (pA_end - pA == ainz) ;
             ASSERT (pB_end - pB == bjnz) ;
-            if (ainz > 1 && bjnz > 1)
+            if (ainz >= 4 && bjnz >= 4)
             {
+
+                int64_t a [4] ; LOAD_A ;
+                int64_t b [4] ; LOAD_B ;
 
                 while (1)
                 {
-                    // get the next 2 entries from each list
-                    // printf ("a left: "GBd "\n", pA_end - pA)  ;
-                    // printf ("b left: "GBd "\n", pB_end - pB)  ;
-                    ASSERT (pA_end - pA >= 2) ;
-                    ASSERT (pB_end - pB >= 2) ;
+                    // get the next 4 entries from each list
+                    ASSERT (pA_end - pA >= 4) ;
+                    ASSERT (pB_end - pB >= 4) ;
 
-                    int64_t a0 = Ai [pA  ] ;
-                    int64_t a1 = Ai [pA+1] ;
-                    int64_t b0 = Bi [pB  ] ;
-                    int64_t b1 = Bi [pB+1] ;
+                    if (a [3] < b [0]) MUNCH_A ;
+                    if (b [3] < a [0]) MUNCH_B ;
+//                  bool last_match = (a [3] == b [3]) ;
+
+//                  TODO: figure out how to vectorize this statement:
+//                  ------------------------------------------------------------
+                    cij +=
+                        (a [0] == b [0]) + (a [0] == b [1]) + (a [0] == b [2]) + (a [0] == b [3]) +
+                        (a [1] == b [0]) + (a [1] == b [1]) + (a [1] == b [2]) + (a [1] == b [3]) +
+                        (a [2] == b [0]) + (a [2] == b [1]) + (a [2] == b [2]) + (a [2] == b [3]) +
+                        (a [3] == b [0]) + (a [3] == b [1]) + (a [3] == b [2]) + (a [3] == b [3]) ;
+//                  ------------------------------------------------------------
+
+//                  TODO: extend this method to all semirings
+
+//                  this is slower:
+//                  for (int i = 0 ; i < 4 ; i++)
+//                  {
+//                      GB_PRAGMA_SIMD_REDUCTION(+,cij)
+//                      for (int k = 0 ; k < 4 ; k++) cij += (a [i] == b [k]) ;
+//                  }
+
+//                  this is slower:
+//                  GB_PRAGMA_SIMD_REDUCTION(+,cij)
+//                  for (int k = 0 ; k < 16 ; k++)
+//                  {
+//                      cij += a [k >> 2] == b [k & 3] ;
+//                  }
+
+
+#if 0
+                    // unrolled 3-by-3 method:
+
+                    if (a1 == b1)
+                    {
+//                      cij += (a0 == b0) + (   0    ) + (   0    ) +
+//                             (   0    ) + (   1    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (a2 == b2) ;
+                        if (a2 == b2)
+                        {
+                            cij += (a0 == b0) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   1    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                            MUNCH_AB ;
+                        }
+                        cij += (a0 == b0) + (   0    ) + (   0    ) +
+                               (   0    ) + (   1    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) ;
+                        MUNCH_A_OR_B ;
+                    }
+
+//                  ------------------------------------------------------------
+//                  cij += (a0 == b0) + (a0 == b1) + (a0 == b2) +
+//                         (a1 == b0) + (   0    ) + (a1 == b2) +
+//                         (a2 == b0) + (a2 == b1) + (a2 == b2) ;
+//                  ------------------------------------------------------------
+
+                    if (a2 == b2)
+                    {
+//                      cij += (a0 == b0) + (a0 == b1) + (   0    ) +
+//                             (a1 == b0) + (   0    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (   1    ) ;
+                        if (a0 == b0)
+                        {
+                            cij += (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                        }
+                        else if (a1 == b0)
+                        {
+                            cij += (   0    ) + (   0    ) + (   0    ) +
+                                   (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                        }
+                        else if (a0 == b1)
+                        {
+                            cij += (   0    ) + (   1    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                        }
+                        else
+                        {
+                            cij += (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                        }
+                        MUNCH_AB ;
+                    }
+
+//                  ------------------------------------------------------------
+//                  cij += (a0 == b0) + (a0 == b1) + (a0 == b2) +
+//                         (a1 == b0) + (   0    ) + (a1 == b2) +
+//                         (a2 == b0) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
 
                     if (a0 == b0)
                     {
-                        // a0 and b0 match, also need to consider a1,b1 below
-                        cij++ ;
+//                      cij += (   1    ) + (   0    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (a1 == b2) +
+//                             (   0    ) + (a2 == b1) + (a2 == b2) ;
+                        if (a2 == b2)
+                        {
+                            cij += (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) ;
+                            MUNCH_AB ;
+                        }
+//                      cij += (   1    ) + (   0    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (a1 == b2) +
+//                             (   0    ) + (a2 == b1) + (   0    ) ;
+                        if (a1 == b2)
+                        {
+                            cij += (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) +
+                                   (   0    ) + (   0    ) + (   0    ) ;
+                            MUNCH_B ;
+                        }
+//                      cij += (   1    ) + (   0    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (   0    ) +
+//                             (   0    ) + (a2 == b1) + (   0    ) ;
+                        if (a2 == b1)
+                        {
+                            cij += (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   1    ) + (   0    ) ;
+                            MUNCH_A ;
+                        }
+                        cij += (   1    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) ;
+                        MUNCH_A_OR_B ;
                     }
-                    else if (a0 == b1)
+
+//                  ------------------------------------------------------------
+//                  cij += (   0    ) + (a0 == b1) + (a0 == b2) +
+//                         (a1 == b0) + (   0    ) + (a1 == b2) +
+//                         (a2 == b0) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
+
+                    if (a2 == b0)
                     {
-                        // a0 matches b1, so ignore b0, and munch B
-                        cij++ ;
-                        MUNCH_B ;
-                    }
-                    else if (a1 == b0)
-                    {
-                        // a1 matches b0, so ignore a0, and munch A
-                        cij++ ;
+                        cij += (   0    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) +
+                               (   1    ) + (   0    ) + (   0    ) ;
                         MUNCH_A ;
                     }
 
-                    // now consider a1 and b1
-                    if (a1 == b1)
+//                  ------------------------------------------------------------
+//                  cij += (   0    ) + (a0 == b1) + (a0 == b2) +
+//                         (a1 == b0) + (   0    ) + (a1 == b2) +
+//                         (   0    ) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
+
+                    if (a0 == b2)
                     {
-                        // a0 matches b0 and a1 matches b1, so munch both
-                        cij++ ;
-                        MUNCH_AB ;
-                    }
-                    else if (a1 > b1)
-                    {
-                        // a0 matches b0 but a1 > b1, so munch B
+                        cij += (   0    ) + (   0    ) + (   1    ) +
+                               (   0    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) ;
                         MUNCH_B ;
                     }
-                    else
+
+//                  ------------------------------------------------------------
+                    cij += (   0    ) + (a0 == b1) + (   0    ) +
+                           (a1 == b0) + (   0    ) + (a1 == b2) +
+                           (   0    ) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
+
+#if 0
+                    if (a0 == b1)
                     {
-                        // a0 matches b0 but a1 < b1, so munch A
-                        MUNCH_A ;
+//                      cij += (   0    ) + (   1    ) + (   0    ) +
+//                             (   0    ) + (   0    ) + (a1 == b2) +
+//                             (   0    ) + (   0    ) + (   0    ) ;
+                        if (a1 == b2)
+                        {
+                            cij += (   0    ) + (   1    ) + (   0    ) +
+                                   (   0    ) + (   0    ) + (   1    ) +
+                                   (   0    ) + (   0    ) + (   0    ) ;
+                            MUNCH_B ;
+                        }
+                        cij += (   0    ) + (   1    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) ;
+                        MUNCH_A_OR_B ;
                     }
+
+//                  ------------------------------------------------------------
+//                  cij += (   0    ) + (   0    ) + (   0    ) +
+//                         (a1 == b0) + (   0    ) + (a1 == b2) +
+//                         (   0    ) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
+
+                    if (a1 == b0)
+                    {
+    //                  cij += (   0    ) + (   0    ) + (   0    ) +
+    //                         (   1    ) + (   0    ) + (   0    ) +
+    //                         (   0    ) + (a2 == b1) + (   0    ) ;
+                        if (a2 == b1)
+                        {
+                            cij += (   0    ) + (   0    ) + (   0    ) +
+                                   (   1    ) + (   0    ) + (   0    ) +
+                                   (   0    ) + (   1    ) + (   0    ) ;
+                            MUNCH_A ;
+                        }
+                        cij += (   0    ) + (   0    ) + (   0    ) +
+                               (   1    ) + (   0    ) + (   0    ) +
+                               (   0    ) + (   0    ) + (   0    ) ;
+                        MUNCH_A_OR_B ;
+                    }
+
+//                  ------------------------------------------------------------
+                    cij += (   0    ) + (   0    ) + (   0    ) +
+                           (   0    ) + (   0    ) + (a1 == b2) +
+                           (   0    ) + (a2 == b1) + (   0    ) ;
+//                  ------------------------------------------------------------
+
+#endif
+#endif
+
+//                  if (last_match) MUNCH_AB ;
+                    MUNCH_A_OR_B ;
 
                 }
             }
 
             // printf ("clean up %d %d\n", pA_end-pA, pB_end-pB) ;
-
-            // cleanup
+            /*
             while (pA < pA_end && pB < pB_end)
             {
                 int64_t ia = Ai [pA] ;
@@ -848,6 +1082,28 @@ GrB_Info GB_Adot3B__plus_pair_int64
                 cij += (ia == ib) ;
                 pA += (ia <= ib) ;
                 pB += (ib <= ia) ;
+            }
+            */
+
+            // cleanup
+            while (pA < pA_end && pB < pB_end)
+            {
+                int64_t ia = Ai [pA] ;
+                int64_t ib = Bi [pB] ;
+                if (ia == ib)
+                {
+                    cij++ ;
+                    pA++ ;
+                    pB++ ;
+                }
+                else if (ia < ib)
+                {
+                    pA++ ;
+                }
+                else
+                {
+                    pB++ ;
+                }
             }
 
             #endif
@@ -871,11 +1127,13 @@ GrB_Info GB_Adot3B__plus_pair_int64
                     pB++ ;
                     #endif
                 }
+                else if (ia < ib)
+                {
+                    pA++ ;
+                }
                 else
-                { 
-                    // advance either pA or pB with branchless code
-                    pA += (ia < ib) ;
-                    pB += (ib < ia) ;
+                {
+                    pB++ ;
                 }
             }
 
