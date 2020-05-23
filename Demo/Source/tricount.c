@@ -163,7 +163,6 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, L)) ;
             OK (GrB_Matrix_new (&C, ctype, n, n)) ;
             OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
-GxB_print (d, 3) ;
             OK (GrB_mxm (C, L, NULL, semiring, L, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
@@ -191,9 +190,7 @@ GxB_print (d, 3) ;
             OK (GrB_Descriptor_new (&d)) ;
             OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
-//            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
-// TODO hack
-            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_SAXPY)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
             OK (GrB_mxm (C, L, NULL, semiring, L, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
@@ -208,9 +205,7 @@ GxB_print (d, 3) ;
             OK (GrB_Descriptor_new (&d)) ;
             OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
-//          OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
-// TODO hack
-            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_SAXPY)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
             OK (GrB_mxm (C, U, NULL, semiring, U, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;

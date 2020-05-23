@@ -297,6 +297,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
+    // determine the # of threads to use, and the use_mkl flag
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    bool use_mkl = (Context == NULL) ? false : Context->use_mkl ;
+
+    //--------------------------------------------------------------------------
     // use MKL_graph if it available and has this semiring
     //--------------------------------------------------------------------------
 
@@ -305,10 +312,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #if GB_HAS_MKL_GRAPH
 
-    if (GB_Global_hack_get ( ) != 0)
+    if (use_mkl)
     {
-//      printf ("Testing MKL here:\n") ;
-
         info = GB_AxB_saxpy3_mkl (
             Chandle,            // output matrix to construct
             M,                  // input mask M (may be NULL)
@@ -397,12 +402,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = B->is_hyper ;
-
-    //--------------------------------------------------------------------------
-    // determine the # of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)

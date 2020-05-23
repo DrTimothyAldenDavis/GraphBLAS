@@ -3951,13 +3951,16 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          vector or matrix, or when C is tiny.  It is impossibly slow if C is
 //          large and the mask is not present, since it takes Omega(m*n) time
 //          if C is m-by-n.
+//
+// GxB_MKL: a boolean that controls the usage of the Intel MKL.  If true,
+//          then MKL may be used; if false, MKL is not called. 
 
-// GxB_NTHREADS and GxB_CHUNK are an enumerated value in both the
-// GrB_Desc_Field and the GxB_Option_Field.  They are defined with the same
-// integer value for both enums, so the user can use them for both.
-
+// The following are enumerated values in both the GrB_Desc_Field and the
+// GxB_Option_Field.  They are defined with the same integer value for both
+// enums, so the user can use them for both.
 #define GxB_NTHREADS 5
 #define GxB_CHUNK 7
+#define GxB_MKL 21
 
 // GxB_NTHREADS_MAX is no longer used, as of v3.2.0.
 #ifndef GxB_NTHREADS_MAX
@@ -3978,16 +3981,19 @@ typedef enum
     GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
                     // If <= GxB_DEFAULT, then the default is used.
 
+    GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL
+
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
     // conflict with future enum values added to the spec:
     GxB_AxB_METHOD = 1000   // descriptor for selecting C=A*B algorithm
 }
 GrB_Desc_Field ;
 
-// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK and GxB_AxB_* are extensions to
-// the spec.  In the spec, setting both GrB_COMP and GrB_STRUCTURE can be done
-// with two calls to GrB_Descriptor_set.  As an extension to the spec, they can
-// also be set with a single call, using the setting GrB_COMP+GrB_STRUCTURE.
+// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK, GxB_MKL, and GxB_AxB_* are
+// extensions.  In the spec, setting both GrB_COMP and GrB_STRUCTURE can be
+// done with two calls to GrB_Descriptor_set.  As an extension to the spec,
+// they can also be set with a single call, using the setting
+// GrB_COMP+GrB_STRUCTURE.
 
 typedef enum
 {
@@ -4167,6 +4173,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 //  GxB_get: queries a global option, a GrB_Matrix option or a GrB_Descriptor
 
 // ADDED in V3.0: GxB_CHUNK, GxB_LIBRARY_*, GxB_API_* options:
+// ADDED in V3.3: GxB_MKL
 
 typedef enum            // for global options or matrix options
 {
@@ -4208,7 +4215,9 @@ typedef enum            // for global options or matrix options
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
     GxB_API_URL = 19,               // URL for the API (char *)
-    GxB_BURBLE = 20                 // development only (bool *)
+    GxB_BURBLE = 20,                // development only (bool *)
+
+    GxB_GLOBAL_MKL = GxB_MKL        // control usage of Intel MKL
 
 } GxB_Option_Field ;
 
@@ -4326,6 +4335,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GxB_CHUNK, double chunk) ;
 //      GxB_get (GxB_CHUNK, double *chunk) ;
+//
+//      GxB_set (GxB_MKL, bool chunk) ;
+//      GxB_get (GxB_MKL, bool *chunk) ;
 
 // To get global options that can be queried but not modified:
 //
@@ -4380,6 +4392,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_MKL, bool chunk) ;
+//      GxB_get (GrB_Descriptor d, GxB_MKL, bool *chunk) ;
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \

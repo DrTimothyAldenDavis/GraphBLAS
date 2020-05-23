@@ -99,6 +99,10 @@ void mexFunction
     GxB_Global_Option_get (GxB_CHUNK, &chunk) ;
     pargout [14] = mxCreateDoubleScalar (chunk) ;
 
+    bool use_mkl ;
+    GxB_Global_Option_get (GxB_MKL, &use_mkl) ;
+    pargout [15] = mxCreateLogicalScalar (use_mkl) ;
+
     GrB_finalize ( ) ;
 }
 

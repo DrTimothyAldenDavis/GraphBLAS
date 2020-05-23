@@ -128,6 +128,12 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_chunk_set (GB_CHUNK_DEFAULT) ;
 
     //--------------------------------------------------------------------------
+    // control usage of Intel MKL
+    //--------------------------------------------------------------------------
+
+    GB_Global_use_mkl_set (false) ;
+
+    //--------------------------------------------------------------------------
     // initialize thread-local storage
     //--------------------------------------------------------------------------
 
@@ -143,26 +149,6 @@ GrB_Info GB_init            // start up GraphBLAS
         bool ok = (pthread_mutex_init (&GB_sync, NULL) == 0) ;
         if (!ok) GB_PANIC ;
     }
-
-//  #elif defined (USER_WINDOWS_THREADS)
-//  {
-        // initialize the critical section for Microsoft Windows.
-        // This is not yet supported.  See:
-        // https://docs.microsoft.com/en-us/windows/desktop/sync
-        //  /using-critical-section-objects
-        // also do whatever Windows needs for thread-local-storage
-//      bool ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
-//      if (!ok) GB_PANIC ;
-//  }
-
-//  #elif defined (USER_ANSI_THREADS)
-//  {
-        // initialize the critical section for ANSI C11 threads
-        // This should work but is not yet supported.
-//      bool ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
-//      if (!ok) GB_PANIC ;
-//  }
-
     #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
     { 
         // no need to initialize anything for OpenMP

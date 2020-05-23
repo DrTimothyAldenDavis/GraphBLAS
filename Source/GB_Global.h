@@ -47,6 +47,9 @@ double   GB_Global_hyper_ratio_get (void) ;
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;
 
+void     GB_Global_use_mkl_set (bool use_mkl) ;
+bool     GB_Global_use_mkl_get (void) ;
+
 GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
 GB_PUBLIC   // accessed by the MATLAB interface only

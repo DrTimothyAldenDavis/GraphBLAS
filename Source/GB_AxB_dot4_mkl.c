@@ -45,6 +45,8 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
 
     GrB_Info info ;
 
+    printf ("\n==== use_mkl: optimize Intel mxv\n") ;
+
     mkl_graph_descriptor_t mkl_desc = NULL ;
     mkl_graph_vector_t z_mkl = NULL ;
     mkl_graph_matrix_t A_mkl = NULL ;

@@ -746,6 +746,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
     double chunk ;          // chunk size for # of threads for small problems
     bool predefined ;       // if true, descriptor is predefined
+    bool use_mkl ;          // if true, use the Intel MKL
 } ;
 
 //------------------------------------------------------------------------------
@@ -1329,6 +1330,7 @@ typedef struct
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char details [GB_DLEN] ;    // error report
+    bool use_mkl ;              // control usage of Intel MKL
 }
 GB_Context_struct ;
 
@@ -1358,7 +1360,8 @@ typedef GB_Context_struct *GB_Context ;
     Context->where = where_string ;                                 \
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
-    Context->chunk = GB_Global_chunk_get ( )
+    Context->chunk = GB_Global_chunk_get ( ) ;                      \
+    Context->use_mkl = GB_Global_use_mkl_get ( )
 
 #define GB_WHERE(where_string)                                      \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -2531,7 +2534,7 @@ GB_PUBLIC pthread_mutex_t GB_sync ;
     GB_RETURN_IF_FAULTY (arg) ;
 
 // check the descriptor and extract its contents; also copies
-// nthreads_max and chunk from the descriptor to the Context
+// nthreads_max, chunk, and use_mkl from the descriptor to the Context
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
     GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \

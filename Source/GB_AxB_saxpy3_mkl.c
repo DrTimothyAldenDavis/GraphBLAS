@@ -51,6 +51,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    printf ("\n==== use_mkl: saxpy3 using Intel mxm\n") ;
 
     mkl_graph_matrix_t C_mkl = NULL ;
     mkl_graph_matrix_t M_mkl = NULL ;

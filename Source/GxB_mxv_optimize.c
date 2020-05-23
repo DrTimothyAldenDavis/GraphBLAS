@@ -37,10 +37,8 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     GB_BURBLE_START ("GxB_mxv_optimize") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
-    // get the descriptor
-    GrB_Info info ;
-    // GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-    //     A_transpose, xx, AxB_method) ;
+    // get the use_mkl flag from the descriptor
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     // delete any lingering zombies and assemble any pending tuples
     GB_WAIT (A) ;
@@ -51,8 +49,9 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
 
     #if GB_HAS_MKL_GRAPH
 
-    if (GB_Global_hack_get ( ) != 0)
+    if (use_mkl)
     {
+        printf ("\n==== use_mkl: optimize Intel mxv\n") ;
 
         //----------------------------------------------------------------------
         // free any existing MKL version of the matrix A and its optimization

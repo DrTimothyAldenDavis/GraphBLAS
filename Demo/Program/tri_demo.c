@@ -105,9 +105,6 @@ int main (int argc, char **argv)
     nthreads_max = omp_get_max_threads ( ) ;
     #endif
 
-    GxB_print (L, 2) ;
-    GxB_print (U, 2) ;
-
     //--------------------------------------------------------------------------
     // count the triangles via C<L> = L*U' (dot-produt)
     //--------------------------------------------------------------------------
@@ -120,28 +117,25 @@ int main (int argc, char **argv)
     int64_t ntri2 [NTHREADS_MAX+1], nt = -1 ;
     double t1 ;
 
-#if 0
-    // TODO
-    // for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
-    nthreads = nthreads_max ; 
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
         GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads) ;
 
         double t_dot [2] ;
         OK (tricount (&(ntri2 [nthreads]), 5, NULL, NULL, L, U, t_dot)) ;
 
-//      if (nthreads == 1)
+        if (nthreads == 1)
         {
             printf ("# triangles %.16g\n", (double) ntri2 [nthreads]) ;
             fprintf (stderr, "# triangles %.16g\n", (double) ntri2 [nthreads]) ;
             nt = ntri2 [1] ;
         }
-//      if (ntri2 [nthreads] != nt)
-//      {
-//          printf ("error!\n") ;
-//          fprintf (stderr, "error!\n") ;
-//          exit (1) ;
-//      }
+        if (ntri2 [nthreads] != nt)
+        {
+            printf ("error!\n") ;
+            fprintf (stderr, "error!\n") ;
+            exit (1) ;
+        }
 
         printf ("L*U' time (dot):   %14.6f sec", t_dot [0]) ;
         if (nthreads == 1)
@@ -224,25 +218,24 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // count the triangles via C<L> = L*L (saxpy)
     //--------------------------------------------------------------------------
-#endif
+
     printf ("\n----------------------------------- saxpy method:\n") ;
 
     int64_t ntri1 [NTHREADS_MAX+1] ;
 
-    // for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
-    nthreads = nthreads_max ;
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
         GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads) ;
 
         double t_mark [2] = { 0, 0 } ;
         OK (tricount (&ntri1 [nthreads], 3, NULL, NULL, L, NULL, t_mark)) ;
         printf ("triangles, method 3: %ld\n", ntri1 [nthreads]) ;
-//      if (ntri1 [nthreads] != nt)
-//      {
-//          printf ("error!\n") ;
-//          fprintf (stderr, "error!\n") ;
-//          exit (1) ;
-//      }
+        if (ntri1 [nthreads] != nt)
+        {
+            printf ("error!\n") ;
+            fprintf (stderr, "error!\n") ;
+            exit (1) ;
+        }
 
         printf ("C<L>=L*L time (saxpy):   %14.6f sec", t_mark [0]) ;
         if (nthreads == 1)

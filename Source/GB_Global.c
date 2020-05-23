@@ -56,6 +56,7 @@ typedef struct
 
     bool GrB_init_called ;      // true if GrB_init already called
 
+    bool use_mkl ;              // control usage of Intel MKL
     int nthreads_max ;          // max number of threads to use
     double chunk ;              // chunk size for determining # threads to use
 
@@ -142,6 +143,9 @@ GB_Global_struct GB_Global =
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
 
+    // Intel MKL control
+    .use_mkl = false,           // if true, exploit the Intel MKL
+
     // max number of threads and chunk size
     .nthreads_max = 1,
     .chunk = GB_CHUNK_DEFAULT,
@@ -166,12 +170,15 @@ GB_Global_struct GB_Global =
     .malloc_debug = false,       // do not test memory handling
     .malloc_debug_count = 0,     // counter for testing memory handling
 
-    // for testing and development
+    // for testing and development only
     .hack = 0,
+
+    // diagnostics
     .burble = false,
 
     // for MATLAB interface only
-    .print_one_based = false,       // if true, print 1-based indices
+    .print_one_based = false,   // if true, print 1-based indices
+
 } ;
 
 //==============================================================================
@@ -279,6 +286,20 @@ void GB_Global_hyper_ratio_set (double hyper_ratio)
 double GB_Global_hyper_ratio_get (void)
 { 
     return (GB_Global.hyper_ratio) ;
+}
+
+//------------------------------------------------------------------------------
+// use_mkl
+//------------------------------------------------------------------------------
+
+void GB_Global_use_mkl_set (bool use_mkl)
+{ 
+    GB_Global.use_mkl = use_mkl ;
+}
+
+bool GB_Global_use_mkl_get (void)
+{ 
+    return (GB_Global.use_mkl) ;
 }
 
 //------------------------------------------------------------------------------

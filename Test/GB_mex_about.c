@@ -413,6 +413,10 @@ void mexFunction
     GxB_Global_Option_get (GxB_CHUNK, &chunk) ;
     printf ("chunk: %g\n", chunk) ;
 
+    bool use_mkl ;
+    GxB_Global_Option_get (GxB_MKL, &use_mkl) ;
+    printf ("use mkl: %g\n", use_mkl) ;
+
     //--------------------------------------------------------------------------
     // check A and B aliased
     //--------------------------------------------------------------------------
@@ -444,11 +448,14 @@ void mexFunction
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Desc_set (desc, GxB_NTHREADS, 42)) ;
     OK (GxB_Desc_set (desc, GxB_CHUNK, (double) 12345)) ;
+    OK (GxB_Desc_set (desc, GxB_MKL, false)) ;
+    OK (GxB_Desc_get (desc, GxB_MKL, &use_mkl)) ;
     OK (GxB_Desc_get (desc, GxB_CHUNK, &chunk)) ;
     OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
     OK (GxB_Descriptor_fprint (desc, "desc", GxB_COMPLETE, NULL)) ;
     CHECK (chunk == 12345) ;
     CHECK (nthreads == 42) ;
+    CHECK (use_mkl == false) ;
     GrB_Descriptor_free (&desc) ;
 
     //--------------------------------------------------------------------------

@@ -54,6 +54,16 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     int64_t *GB_RESTRICT B_slice = NULL ;
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use, and the use_mkl flag
+    //--------------------------------------------------------------------------
+
+    int64_t anz = GB_NNZ (A) ;
+    int64_t bnz = GB_NNZ (B) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
+    bool use_mkl = (Context == NULL) ? false : Context->use_mkl ;
+
+    //--------------------------------------------------------------------------
     // use MKL_graph if it available and has this semiring
     //--------------------------------------------------------------------------
 
@@ -62,24 +72,14 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // is a dense vector in mkl_graph_mxv, and A' in CSC format is the same
     // as A in CSR.
 
-//  printf ("dot4: " GBd "\n", GB_Global_hack_get ( )) ;
-//  GxB_print (semiring, 3) ;
-//  GxB_print (A, 2) ;
-//  GxB_print (B, 2) ;
-//  printf ("flipxy %d\n", flipxy) ;
-//  printf ("GB_is_dense (B) %d\n", GB_is_dense (B)) ;
-//  printf ("GB_VECTOR_OK (B) %d\n", GB_VECTOR_OK (B)) ;
-
     #if GB_HAS_MKL_GRAPH
-    // printf ("here\n") ;
 
-    if (GB_Global_hack_get ( ) != 0 &&
+    if (use_mkl &&
         (semiring == GrB_PLUS_TIMES_SEMIRING_FP32 ||
          semiring == GxB_PLUS_SECOND_FP32) && GB_VECTOR_OK (C)
         && GB_is_dense (C) && GB_is_dense (B) && GB_VECTOR_OK (B) && !flipxy
         && !GB_IS_HYPER (A))
     {
-//      printf ("\nTesting MKL mvx: C += A'*b where b is a dense vector\n") ;
 
         info = // GrB_NO_VALUE ;
         #if 1
@@ -140,16 +140,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         ASSERT (GB_IMPLIES (!B_is_pattern,
             GB_Type_compatible (B->type, mult->ytype))) ;
     }
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    int64_t anz = GB_NNZ (A) ;
-    int64_t bnz = GB_NNZ (B) ;
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // slice A and B

@@ -90,14 +90,25 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        case GxB_GLOBAL_MKL :          // same as GxB_MKL
+
+            {
+                va_start (ap, field) ;
+                int use_mkl = va_arg (ap, int) ;
+                va_end (ap) ;
+                GB_Global_use_mkl_set (use_mkl != 0) ;
+            }
+            break ;
+
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                     "invalid option field [%d], must be one of:\n"
                     "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_NTHREADS [%d]"
-                    " or GxB_CHUNK [%d]",
+                    "GxB_CHUNK [%d], GxB_BURBLE [%d], or GxB_MKL [%d]",
                     (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_NTHREADS, (int) GxB_CHUNK))) ;
+                    (int) GxB_NTHREADS, (int) GxB_CHUNK,
+                    (int) GxB_BURBLE, (int) GxB_MKL))) ;
 
     }
 

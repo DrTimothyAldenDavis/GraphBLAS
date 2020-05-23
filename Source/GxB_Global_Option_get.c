@@ -312,6 +312,21 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+        // control usage of Intel MKL
+        //----------------------------------------------------------------------
+
+        case GxB_GLOBAL_MKL :           // same as GxB_MKL
+
+            {
+                va_start (ap, field) ;
+                int *use_mkl = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (use_mkl) ;
+                (*use_mkl) = GB_Global_use_mkl_get ( ) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // invalid option
         //----------------------------------------------------------------------
 
