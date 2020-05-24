@@ -649,7 +649,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
         #endif
 
     }
-    else if (ainz > 8 * bjnz)
+    else if (ainz > 16 * bjnz)
     {
 
         //----------------------------------------------------------------------
@@ -691,7 +691,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
         }
 
     }
-    else if (bjnz > 8 * ainz)
+    else if (bjnz > 16 * ainz)
     {
 
         //----------------------------------------------------------------------
@@ -765,18 +765,16 @@ GrB_Info GB_Adot3B__plus_pair_int64
 
                 #define LOAD_A              \
                     a [0] = Ai [pA  ] ;     \
-                    a [1] = Ai [pA+1] ;     \
-                    a [2] = Ai [pA+2]
+                    a [1] = Ai [pA+1]
 
                 #define LOAD_B              \
                     b [0] = Bi [pB  ] ;     \
-                    b [1] = Bi [pB+1] ;     \
-                    b [2] = Bi [pB+2]
+                    b [1] = Bi [pB+1]
 
                 #define MUNCH_A             \
                 {                           \
-                    pA += 3 ;               \
-                    if (pA_end - pA < 3)    \
+                    pA += 2 ;               \
+                    if (pA_end - pA < 2)    \
                     {                       \
                         break ;             \
                     }                       \
@@ -789,8 +787,8 @@ GrB_Info GB_Adot3B__plus_pair_int64
 
                 #define MUNCH_B             \
                 {                           \
-                    pB += 3 ;               \
-                    if (pB_end - pB < 3)    \
+                    pB += 2 ;               \
+                    if (pB_end - pB < 2)    \
                     {                       \
                         break ;             \
                     }                       \
@@ -803,9 +801,9 @@ GrB_Info GB_Adot3B__plus_pair_int64
 
                 #define MUNCH_AB            \
                 {                           \
-                    pA += 3 ;               \
-                    pB += 3 ;               \
-                    if ((pA_end - pA < 3) || (pB_end - pB < 3))    \
+                    pA += 2 ;               \
+                    pB += 2 ;               \
+                    if ((pA_end - pA < 2) || (pB_end - pB < 2))    \
                     {                       \
                         break ;             \
                     }                       \
@@ -821,40 +819,37 @@ GrB_Info GB_Adot3B__plus_pair_int64
                 // and Bi [pB .. pB_end]
                 ASSERT (pA_end - pA == ainz) ;
                 ASSERT (pB_end - pB == bjnz) ;
-                if (ainz >= 3 && bjnz >= 3)
+                if (ainz >= 2 && bjnz >= 2)
                 {
-                    int64_t a [3] ; LOAD_A ;
-                    int64_t b [3] ; LOAD_B ;
-                    // int c [3][3] ;
+                    int64_t a [2] ; LOAD_A ;
+                    int64_t b [2] ; LOAD_B ;
                     while (1)
                     {
-                        // get the next 3 entries from each list
-                        ASSERT (pA_end - pA >= 3) ;
-                        ASSERT (pB_end - pB >= 3) ;
-                        if (a [2] < b [0]) MUNCH_A ;
-                        if (b [2] < a [0]) MUNCH_B ;
-
-                        cij +=
-                            (a [0] == b [0]) + (a [0] == b [1]) + (a [0] == b [2]) +
-                            (a [1] == b [0]) + (a [1] == b [1]) + (a [1] == b [2]) +
-                            (a [2] == b [0]) + (a [2] == b [1]) + (a [2] == b [2]) ;
-
-                        if (a [2] < b [2]) MUNCH_A else MUNCH_B ;
+                        // get the next 2 entries from each list
+                        ASSERT (pA_end - pA >= 2) ;
+                        ASSERT (pB_end - pB >= 2) ;
+                        if (a [1] < b [0]) MUNCH_A ;
+                        if (b [1] < a [0]) MUNCH_B ;
 
                         /*
-                        if (c [1][1])
+                        cij +=
+                            (a [0] == b [0]) + (a [0] == b [1]) +
+                            (a [1] == b [0]) + (a [1] == b [1]) ;
+                        if (a [1] < b [1]) MUNCH_A
+                        else MUNCH_B ;
+                        */
+
+                        if (a [1] == b [1])
                         {
-                            cij += c [0][0] + 1 ;
+                            cij += (a [0] == b [0]) + 1 ;
                             MUNCH_AB ;
                         }
 
-                        c [0][1] = (a [0] == b [1]) ;
-                        c [1][0] = (a [1] == b [0]) ;
-
-                        cij += c [0][0] + c [0][1] + c [1][0] ;
-
+                        cij +=
+                            (a [0] == b [0]) + (a [0] == b [1]) +
+                            (a [1] == b [0]);//(a [1] == b [1]) ;
                         if (a [1] < b [1]) MUNCH_A else MUNCH_B ;
-                        */
+
                     }
                 }
 
