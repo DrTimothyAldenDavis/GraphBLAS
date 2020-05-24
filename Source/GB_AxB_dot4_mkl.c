@@ -56,7 +56,6 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     float *GB_RESTRICT Zx = NULL ;
 
     bool A_preanalyzed = (A->mkl != NULL) ;
-    // GxB_print (A,3) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators and types

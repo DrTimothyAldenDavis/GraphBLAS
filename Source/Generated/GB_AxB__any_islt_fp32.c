@@ -38,7 +38,7 @@
 //           OpenMP atomic? 0
 // MultAdd:  cij = (aik < bkj)
 // Identity: 0
-// Terminal: break ;
+// Terminal: { cij_is_terminal = true ; break ; }
 
 #define GB_ATYPE \
     float
@@ -48,6 +48,10 @@
 
 #define GB_CTYPE \
     float
+
+// true for int64, uint64, float, double, float complex, and double complex 
+#define GB_CTYPE_IGNORE_OVERFLOW \
+    1
 
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
@@ -63,9 +67,9 @@
 #define GB_MULT(z, x, y) \
     z = (x < y)
 
-// the scalar 1
-#define GB_CTYPE_ONE \
-    ((float) 1)
+// cast from a real scalar (or 2, if C is complex) to the type of C
+#define GB_CTYPE_CAST(x,y) \
+    ((float) x)
 
 // multiply-add
 #define GB_MULTADD(z, x, y) \
@@ -77,7 +81,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    break ;
+    { cij_is_terminal = true ; break ; }
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \
@@ -86,9 +90,20 @@
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
+// 1 for the PLUS_PAIR_(real) semirings, not for the complex case
+#define GB_IS_PLUS_PAIR_REAL_SEMIRING \
+    0
+
 // declare the cij scalar
-#define GB_CIJ_DECLARE(cij) \
-    float cij
+#if GB_IS_PLUS_PAIR_REAL_SEMIRING
+    // also initialize cij to zero
+    #define GB_CIJ_DECLARE(cij) \
+        float cij = 0
+#else
+    // all other semirings: just declare cij, do not initialize it
+    #define GB_CIJ_DECLARE(cij) \
+        float cij
+#endif
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij

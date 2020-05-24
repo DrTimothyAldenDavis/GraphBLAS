@@ -164,7 +164,7 @@ break ;
     // PAIR multiplier: t is always 1; no numeric work to do to compute t.
     // The LXOR_PAIR and PLUS_PAIR semirings need the value t = 1 to use in
     // their monoid operator, however.
-    #define t GB_CTYPE_ONE
+    #define t (GB_CTYPE_CAST (1, 0))
     #define GB_MULT_A_ik_B_kj
 
 #else

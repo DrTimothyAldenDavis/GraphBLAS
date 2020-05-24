@@ -47,14 +47,12 @@ VER3 = 0
 
 # Using the Intel MKL (don't try this if CC=c++, it will likely break):
 # from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html
-# TODO comment this out for distro
-  MKL_CFLAGS = -DMKL_ILP64 -m64 -I${MKLROOT}/include -DGB_HAS_CBLAS
-  MKL_LDFLAGS= -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+# MKL_CFLAGS = -DMKL_ILP64 -m64 -I${MKLROOT}/include -DGB_HAS_CBLAS
+# MKL_LDFLAGS= -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 
-# without the Intel MKL:
-# TODO uncomment this for distro
-# MKL_CFLAGS = 
-# MKL_LDFLAGS=
+# without the Intel MKL (default):
+  MKL_CFLAGS = 
+  MKL_LDFLAGS=
 
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 

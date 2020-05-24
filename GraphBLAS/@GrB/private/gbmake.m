@@ -147,7 +147,8 @@ for k = 1:length (cfiles)
     % compile the cfile if it is newer than its object file, or any hfile
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
-        fprintf ('%s\n', cfile) ;
+        % fprintf ('%s\n', cfile) ;
+        fprintf ('.') ;
         mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
         eval (mexcmd) ;
         any_c_compiled = true ;
@@ -179,10 +180,13 @@ for k = 1:length (mexfunctions)
         % compile the mexFunction
         mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s -lgraphblas', ...
             ldflags, flags, inc, mexfunction, objlist) ;
-        fprintf ('%s\n', mexcmd) ;
+        % fprintf ('%s\n', mexcmd) ;
+        fprintf (':') ;
         eval (mexcmd) ;
     end
 end
+
+fprintf ('\n') ;
 
 % start GraphBLAS
 try

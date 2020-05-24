@@ -22,27 +22,35 @@ is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
 
 switch (ztype)
     case { 'bool' }
+        ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0x1L' ;
     case { 'int8_t', 'uint8_t' }
+        ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0xffL' ;
     case { 'int16_t', 'uint16_t' }
+        ztype_ignore_overflow = false ;
         nbits = 16 ;
         bits = '0xffffL' ;
     case { 'int32_t', 'uint32_t' }
+        ztype_ignore_overflow = false ;
         nbits = 32 ;
         bits = '0xffffffffL' ;
     case { 'int64_t', 'uint64_t' }
+        ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
     case { 'float' }
+        ztype_ignore_overflow = true ;
         nbits = 32 ;
         bits = '0' ;
     case { 'double', 'GxB_FC32_t' }
+        ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
     case { 'GxB_FC64_t' }
+        ztype_ignore_overflow = true ;
         nbits = 128 ;
         bits = '0' ;
     otherwise
@@ -82,6 +90,19 @@ fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
 fprintf (f, 'define(`GB_atype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 
+% flag if ztype can ignore overflow in some computations
+fprintf (f, 'define(`GB_ctype_ignore_overflow'', `%d'')\n', ztype_ignore_overflow) ;
+
+% simple typecast from 1 (or 2) real scalars to any other type
+switch (ztype)
+    case { 'GxB_FC32_t' }
+        fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
+    case { 'GxB_FC64_t' }
+        fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_ctype_cast'', `((GB_ctype) $1)'')\n') ;
+end
+
 % identity and terminal values for the monoid
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
@@ -112,15 +133,16 @@ end
 if (is_any)
     % the ANY monoid terminates on the first entry seen
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
+    fprintf (f, 'define(`GB_terminal'', `{ cij_is_terminal = true ; break ; }'')\n') ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 elseif (~isempty (terminal))
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', terminal) ;
+    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) { cij_is_terminal = true ; break ; }'')\n', terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_terminal_flag'', `;'')\n') ;
     op = '' ;
     if (ztype_is_real)
         switch (addop)
@@ -132,8 +154,6 @@ else
                 op = '||' ;
             case { 'land' }
                 op = '&&' ;
-            case { 'lxor' }
-                op = '^' ;
             case { 'lxor' }
                 op = '^' ;
             case { 'bor' }
@@ -211,19 +231,6 @@ mult2 = strrep (mult,  'xarg', '`$2''') ;
 mult2 = strrep (mult2, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 
-% create the scalar 1
-switch (ztype)
-    case 'GxB_FC32_t'
-        fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLXF (1,0)'')\n') ;
-        fprintf (f, 'define(`GB_ztype_zero'', `GxB_CMPLXF (0,0)'')\n') ;
-    case 'GxB_FC64_t'
-        fprintf (f, 'define(`GB_ztype_one'', `GxB_CMPLX (1,0)'')\n') ;
-        fprintf (f, 'define(`GB_ztype_zero'', `GxB_CMPLX (0,0)'')\n') ;
-    otherwise
-        fprintf (f, 'define(`GB_ztype_one'', `((%s) 1)'')\n', ztype) ;
-        fprintf (f, 'define(`GB_ztype_zero'', `((%s) 1)'')\n', ztype) ;
-end
-
 % create the add operator, of the form w += t
 add2 = strrep (add,  'w', '`$1''') ;
 add2 = strrep (add2, 't', '`$2''') ;
@@ -280,14 +287,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +32 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +33 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +32 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +33 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

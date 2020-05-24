@@ -54,8 +54,10 @@ else
             C = GrB.emult (A, '~=', B) ;
         else
             % since b == 0, entries not present in A result in a false
-            % value, so the result is a sparse subset of A.  select all
-            % entries in A ~= 0, then convert to true.
+            % value, so the result is a sparse subset of A.  Simply typecast
+            % A to logical.  Explicit zeroes in A become explicit false
+            % entries.  Any other explicit entries not equal to zero become
+            % true.
             C = GrB (A, 'logical') ;
         end
     else

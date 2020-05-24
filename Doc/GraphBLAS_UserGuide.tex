@@ -1081,8 +1081,7 @@ object and return them into non-opaque user arrays always ensure that the
 computations for that object are completed when the method returns, namely:
 \verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
 and \verb'GrB_*_reduce' (to scalar).  These methods only ensure that the
-computations for a single object are completed.  Use \verb'GrB_wait'
-to ensure that all computations are completed (see Section~\ref{wait}).
+computations for a single object are completed.
 
 SuiteSparse:GraphBLAS is multithreaded internally, via OpenMP, and it is also
 safe to use in a multithreaded user application.  See Section~\ref{sec:install}
@@ -1091,7 +1090,7 @@ for details.
 User threads must not operate on the same matrices at the same time, with one
 exception.  Multiple threads can use the same matrices or vectors as read-only
 inputs to GraphBLAS operations or methods, but only if they have no pending
-operations (use \verb'GrB_Matrix_nvals' or \verb'GrB_wait' first).  User
+operations (use \verb'GrB_Matrix_nvals' first).  User
 threads cannot simultaneously modify a matrix or vector via any GraphBLAS
 operation or method.
 
@@ -1190,7 +1189,8 @@ As another example, the scalable Intel TBB memory manager can be used:
 
 \newpage
 %===============================================================================
-\subsection{{\sf GrB\_wait:} wait for pending operations to finish} %===========
+\subsection{{\sf GrB\_wait:} wait for pending operations to finish
+(MIGHT BE DEPRECATED)} %===========
 %===============================================================================
 \label{wait}
 
@@ -1198,8 +1198,11 @@ As another example, the scalable Intel TBB memory manager can be used:
 {\footnotesize
 \begin{verbatim}
 GrB_Info GrB_wait ( ) ;     // finish all pending computations
+
+NOTE: THIS FUNCTION MAY BE DEPRECATED.
 \end{verbatim}
 }\end{mdframed}
+
 
 \verb'GrB_wait' forces all pending operations to complete.
 Blocking mode acts as if \verb'GrB_wait' is called whenever a GraphBLAS

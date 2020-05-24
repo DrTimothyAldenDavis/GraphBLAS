@@ -132,7 +132,7 @@ int main (int argc, char **argv)
         }
         if (ntri2 [nthreads] != nt)
         {
-            printf ("error!\n") ;
+            printf ("error 5!\n") ;
             fprintf (stderr, "error!\n") ;
             exit (1) ;
         }
@@ -181,7 +181,7 @@ int main (int argc, char **argv)
 //      fprintf (stderr, "# triangles %.16g\n", (double) ntri2 [nthreads]) ;
         if (ntri2 [nthreads] != nt)
         {
-            printf ("error!\n") ;
+            printf ("error 6!\n") ;
             fprintf (stderr, "error!\n") ;
             exit (1) ;
         }
@@ -232,7 +232,7 @@ int main (int argc, char **argv)
         printf ("triangles, method 3: %ld\n", ntri1 [nthreads]) ;
         if (ntri1 [nthreads] != nt)
         {
-            printf ("error!\n") ;
+            printf ("error 3!\n") ;
             fprintf (stderr, "error!\n") ;
             exit (1) ;
         }

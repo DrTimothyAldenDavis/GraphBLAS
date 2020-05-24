@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -49,6 +50,10 @@
 #define GB_CTYPE \
     uint32_t
 
+// true for int64, uint64, float, double, float complex, and double complex 
+#define GB_CTYPE_IGNORE_OVERFLOW \
+    0
+
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
     uint32_t aik = Ax [pA]
@@ -63,9 +68,9 @@
 #define GB_MULT(z, x, y) \
     z = (x * y)
 
-// the scalar 1
-#define GB_CTYPE_ONE \
-    ((uint32_t) 1)
+// cast from a real scalar (or 2, if C is complex) to the type of C
+#define GB_CTYPE_CAST(x,y) \
+    ((uint32_t) x)
 
 // multiply-add
 #define GB_MULTADD(z, x, y) \
@@ -86,9 +91,20 @@
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
+// 1 for the PLUS_PAIR_(real) semirings, not for the complex case
+#define GB_IS_PLUS_PAIR_REAL_SEMIRING \
+    0
+
 // declare the cij scalar
-#define GB_CIJ_DECLARE(cij) \
-    uint32_t cij
+#if GB_IS_PLUS_PAIR_REAL_SEMIRING
+    // also initialize cij to zero
+    #define GB_CIJ_DECLARE(cij) \
+        uint32_t cij = 0
+#else
+    // all other semirings: just declare cij, do not initialize it
+    #define GB_CIJ_DECLARE(cij) \
+        uint32_t cij
+#endif
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij

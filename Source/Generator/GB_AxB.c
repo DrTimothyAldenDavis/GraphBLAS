@@ -49,6 +49,10 @@
 #define GB_CTYPE \
     GB_ctype
 
+// true for int64, uint64, float, double, float complex, and double complex 
+#define GB_CTYPE_IGNORE_OVERFLOW \
+    GB_ctype_ignore_overflow
+
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
     GB_geta(aik,Ax,pA)
@@ -63,13 +67,9 @@
 #define GB_MULT(z, x, y) \
     GB_multiply(z, x, y)
 
-// the scalar 1
-#define GB_CTYPE_ONE \
-    GB_ztype_one
-
-// the scalar 0
-#define GB_CTYPE_ZERO \
-    GB_ztype_zero
+// cast from a real scalar (or 2, if C is complex) to the type of C
+#define GB_CTYPE_CAST(x,y) \
+    GB_ctype_cast(x,y)
 
 // multiply-add
 #define GB_MULTADD(z, x, y) \

@@ -99,13 +99,13 @@ GrB_Info GB_code_check          // print an entry using a type code
 
         case GB_FC32_code:
             c = *((GxB_FC32_t *) x) ;
-            GBPR ("float complex (%.6g,%6.g)",
+            GBPR ("float complex (%.6g, %6.g)",
                 (double) crealf (c), (double) cimagf (c)) ;
             break ;
 
         case GB_FC64_code:
             z = *((GxB_FC64_t *) x) ;
-            GBPR ("double complex (%.15g,%.15g)", creal (z), cimag (z)) ;
+            GBPR ("double complex (%.15g, %.15g)", creal (z), cimag (z)) ;
             break ;
 
         #else

@@ -121,9 +121,6 @@ bool GB_binop_builtin               // true if binary operator is builtin
         (*opcode) = GB_boolean_rename (*opcode) ;
     }
 
-    // built-in binary operators always have this property.
-    ASSERT ((*zcode) == GB_BOOL_code || (*zcode) == (*xcode)) ;
-
     //--------------------------------------------------------------------------
     // handle the flipxy
     //--------------------------------------------------------------------------

@@ -660,7 +660,7 @@
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (pC = 0 ; pC < cnz ; pC++)
         { 
-            Cx [pC] = GB_CTYPE_ONE ;
+            Cx [pC] = GB_CTYPE_CAST (1, 0) ;
         }
 
         // Just a precaution; these variables are not used below.  Any attempt

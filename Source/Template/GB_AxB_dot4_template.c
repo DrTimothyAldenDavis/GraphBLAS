@@ -53,6 +53,7 @@
     ASSERT (A->vlen == B->vlen) ;
 
     int ntasks = naslice * nbslice ;
+    bool cij_is_terminal ;
 
     //--------------------------------------------------------------------------
     // C += A'*B

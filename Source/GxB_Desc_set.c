@@ -148,7 +148,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 
             {
                 va_start (ap, field) ;
-                desc->use_mkl = va_arg (ap, bool) ;
+                desc->use_mkl = va_arg (ap, int) ;
                 va_end (ap) ;
             }
             break ;
