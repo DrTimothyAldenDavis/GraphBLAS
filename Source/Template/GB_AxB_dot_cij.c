@@ -387,29 +387,6 @@
         // A(:,i) and B(:,j) have about the same sparsity
         //----------------------------------------------------------------------
 
-#if 0
-
-        while (pA < pA_end && pB < pB_end)
-        {
-            int64_t ia = Ai [pA] ;
-            int64_t ib = Bi [pB] ;
-            if (ia == ib)
-            { 
-                // A(k,i) and B(k,j) are the next entries to merge
-                GB_DOT (0, 0) ;
-                pA++ ;
-                pB++ ;
-            }
-            else
-            { 
-                // advance either pA or pB with branchless code
-                pA += (ia < ib) ;
-                pB += (ib < ia) ;
-            }
-        }
-
-#endif
-
         // load the next 3 entries of Ai [pA ...]
         #define GB_LOAD_A                   \
             a [0] = Ai [pA  ] ;             \
@@ -536,13 +513,13 @@
             }
         }
 
-        // cleanup for remaining entries of A(:,i)
         #if defined ( GB_PHASE_1_OF_2 )
             // symbolic phase: if C(i,j) already exists, skip the cleanup
             cij_is_terminal = GB_CIJ_EXISTS ;
         #endif
         if (!cij_is_terminal)
         {
+            // cleanup for remaining entries of A(:,i) and B(:,j)
             while (pA < pA_end && pB < pB_end)
             {
                 int64_t ia = Ai [pA] ;
