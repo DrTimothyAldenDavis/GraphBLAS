@@ -387,6 +387,7 @@
         // A(:,i) and B(:,j) have about the same sparsity
         //----------------------------------------------------------------------
 
+#if 0
         // load the next 3 entries of Ai [pA ...]
         #define GB_LOAD_A                   \
             a [0] = Ai [pA  ] ;             \
@@ -518,6 +519,7 @@
             cij_is_terminal = GB_CIJ_EXISTS ;
         #endif
         if (!cij_is_terminal)
+#endif
         {
             // cleanup for remaining entries of A(:,i) and B(:,j)
             while (pA < pA_end && pB < pB_end)
