@@ -183,7 +183,7 @@ GrB_Info GB_code_check          // print an entry using a type code
             { 
                 GBPR ("[user-defined value]") ;
                 // FUTURE: GraphBLAS does not have a method for the user to
-                // register a 'printf' function for a user-defined type.
+                // register a print function for a user-defined type.
             }
             break ;
         default: ;

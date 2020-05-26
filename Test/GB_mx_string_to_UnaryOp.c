@@ -41,11 +41,19 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
         return (false) ;
     }
 
+    // get the optype from the optype_mx string, if present
+    GrB_Type optype = GB_mx_string_to_Type (optype_mx, default_optype) ;
+    if (optype == NULL)
+    {
+        mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op type") ;
+        return (false) ;
+    }
+
     //--------------------------------------------------------------------------
     // convert the string to a GraphBLAS unary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    if (user_complex)
+    if (user_complex && optype == Complex)
     {
 
         //----------------------------------------------------------------------
@@ -63,6 +71,8 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
         else if (MATCH (opname, "ainv"    )) { op = Complex_ainv     ; }
         else if (MATCH (opname, "abs"     )) { op = Complex_abs      ; }
         else if (MATCH (opname, "minv"    )) { op = Complex_minv     ; }
+
+        // this is not built-in
         else if (MATCH (opname, "not"     )) { op = Complex_not      ; }
 
         else if (MATCH (opname, "conj"    )) { op = Complex_conj     ; }
@@ -140,18 +150,13 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
         else if (MATCH (opname, "isfinite")) { opcode = GB_ISFINITE_opcode ; }
 
         else if (MATCH (opname, "bitnot"  )) { opcode = GB_BNOT_opcode ; }
+        else if (MATCH (opname, "bitcmp"  )) { opcode = GB_BNOT_opcode ; }
+        else if (MATCH (opname, "bnot"    )) { opcode = GB_BNOT_opcode ; }
+        else if (MATCH (opname, "bcmp"    )) { opcode = GB_BNOT_opcode ; }
 
         else
         {
             mexWarnMsgIdAndTxt ("GB:warn", "unrecognized function name") ;
-            return (false) ;
-        }
-
-        // get the optype from the optype_mx string, if present
-        GrB_Type optype = GB_mx_string_to_Type (optype_mx, default_optype) ;
-        if (optype == NULL)
-        {
-            mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op type") ;
             return (false) ;
         }
 

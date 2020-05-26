@@ -92,7 +92,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     GrB_Type atype_in, atype_out ;
     GB_Type_code atype_in_code, atype_out_code ;
 
-
     if (mxIsStruct (A_matlab))
     {
         // look for A.matrix
@@ -151,26 +150,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the matrix type
     //--------------------------------------------------------------------------
 
-    if (atype_in == Complex)
-    {
-        // use the user-defined Complex type (may equal GxB_FC64)
-        atype_out = Complex ;
-
-        // the user-defined Complex and GxB_FC64 are identical, in terms
-        // of their content.  Can use GB_cast_array, which is based on the
-        // type code, not the type itself.
-        atype_in_code  = GB_FC64_code ;
-        atype_out_code = GB_FC64_code ;
-
-    }
-    else
-    {
-        // get the GraphBLAS codes
-
-        // and their codes
-        atype_in_code  = atype_in->code ;
-        atype_out_code = atype_out->code ;
-    }
+    atype_in_code  = atype_in->code ;
+    atype_out_code = atype_out->code ;
 
     //--------------------------------------------------------------------------
     // get the size and content of the MATLAB matrix
@@ -312,7 +293,13 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 return (NULL) ;
             }
         }
-        GB_cast_array (A->x, atype_out_code, Mx, atype_in_code, anz, Context) ;
+
+        GB_cast_array (
+            A->x,
+            (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code,
+            Mx,
+            (atype_in_code  == GB_UDT_code) ? GB_FC64_code : atype_in_code,
+            anz, Context) ;
     }
 
     //--------------------------------------------------------------------------

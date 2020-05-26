@@ -16,7 +16,6 @@
     {                                                   \
         /* if the analysis fails, return GrB_SUCCESS */ \
         /* anyway, since the analysis is optional */    \
-        printf ("optim failed %d : %d\n", __LINE__, status) ;        \
         GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;          \
         return (GrB_SUCCESS) ;                          \
     }
@@ -51,7 +50,6 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
 
     if (use_mkl)
     {
-        printf ("\n==== use_mkl: optimize Intel mxv\n") ;
 
         //----------------------------------------------------------------------
         // free any existing MKL version of the matrix A and its optimization

@@ -45,8 +45,6 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
 
     GrB_Info info ;
 
-    printf ("\n==== use_mkl: optimize Intel mxv\n") ;
-
     mkl_graph_descriptor_t mkl_desc = NULL ;
     mkl_graph_vector_t z_mkl = NULL ;
     mkl_graph_matrix_t A_mkl = NULL ;
@@ -157,24 +155,13 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     // c += z
     //--------------------------------------------------------------------------
 
-    // printf ("\nZx [%d] = %g\n", 0, Zx [0]) ;
-
     GB_cblas_saxpy (n, 1.0, Zx, Cx, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // free MKL matrices z, A, and b
     //--------------------------------------------------------------------------
 
-    GB_FREE (Zx) ;
-    GB_MKL_GRAPH_DESCRIPTOR_DESTROY (mkl_desc) ;
-    GB_MKL_GRAPH_VECTOR_DESTROY (z_mkl) ;
-    GB_MKL_GRAPH_VECTOR_DESTROY (b_mkl) ;
-    if (!A_preanalyzed)
-    {
-        GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ;
-    }
-
-    // GB_MKL_FREE_WORK ;
+    GB_MKL_FREE_WORK ;
     ASSERT_VECTOR_OK (c, "mkl mxv result", GB0) ;
     return (info) ;
 }

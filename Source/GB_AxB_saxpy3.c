@@ -278,7 +278,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-//  printf ("GB_AxB_saxpy3:\n") ;
 
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
     bool Mask_comp = Mask_comp_input ;
@@ -330,7 +329,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // MKL_graph supports this semiring, and has ether computed C=A*B,
             // C<M>=A*B, or C<!M>=A*B, or has failed.
-//          printf ("MKL info: %d\n", info) ;
             return (info) ;
         }
 

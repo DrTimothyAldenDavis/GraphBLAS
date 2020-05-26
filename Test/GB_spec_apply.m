@@ -37,10 +37,12 @@ T.matrix = GB_spec_zeros (size (A.matrix), ztype) ;
 T.pattern = A.pattern ;
 T.class = ztype ;
 
-A_matrix = GB_mex_cast (A.matrix, xtype) ;
-
 p = T.pattern ;
-T.matrix (p) = GB_spec_op (op, A.matrix (p)) ;
+x = A.matrix (p) ;
+
+z = GB_spec_op (op, x) ;
+
+T.matrix (p) = z ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result
 C = GB_spec_accum_mask (C, Mask, accum, T, C_replace, Mask_comp, 0) ;

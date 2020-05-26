@@ -57,7 +57,7 @@ if (is_logical)
 
     switch (opname)
 
-        case { 'div ' }
+        case { 'div' }
             opname = 'first' ;
 
         case { 'rdiv' }
@@ -70,7 +70,7 @@ if (is_logical)
             opname = 'or' ;
 
         case { 'minus', 'rminus', 'isne', 'ne' }
-            opname = 'or' ;
+            opname = 'xor' ;
 
         case { 'iseq' }
             opname = 'eq' ;
@@ -81,7 +81,7 @@ if (is_logical)
         case { 'islt' }
             opname = 'lt' ;
 
-        case { 'isge' }
+        case { 'isge', 'pow' }
             opname = 'ge' ;
 
         case { 'isle' }
@@ -140,7 +140,7 @@ switch opname
             error ('invalid op') ;
         end
 
-    case { 'cmplx' }
+    case { 'cmplx', 'complex' }
         % x and y are real (float or double).  z is the corresponding complex
         if (~is_real_float)
             error ('invalid op') ;
@@ -149,17 +149,38 @@ switch opname
         else
             ztype = 'double complex' ;
         end
+        opname = 'cmplx' ;
 
     %--------------------------------------------------------------------------
     % binary ops for integer only
     %--------------------------------------------------------------------------
 
     case { 'bitor', 'bitand', 'bitxor', 'bitxnor', ...
-           'bitget', 'bitset', 'bitclr' }
+           'bitget', 'bitset', 'bitclr', ...
+           'bor', 'band', 'bxor', 'bxnor', ...
+           'bget', 'bset', 'bclr' }
+
         % x,y,z types are all the same.
         % available for int and uint only
         if (~(is_int))
             error ('invalid op') ;
+        end
+
+        switch (opname)
+            case { 'bitor', 'bor' }
+                opname = 'bor' ;
+            case { 'bitand', 'band' }
+                opname = 'band' ;
+            case { 'bitxor', 'bxor' }
+                opname = 'bxor' ;
+            case { 'bitxnor', 'bxnor' }
+                opname = 'bxnor' ;
+            case { 'bitget', 'bget' }
+                opname = 'bget' ;
+            case { 'bitset', 'bset' }
+                opname = 'bset' ;
+            case { 'bitclr', 'bclr' }
+                opname = 'bclr' ;
         end
 
     case { 'bitshift' }
@@ -181,8 +202,10 @@ switch opname
         % x,y the same.  z is the same as x, except if x is complex
         if (isequal (optype, 'single complex'))
             ztype = 'single' ;
-        else
+        elseif (isequal (optype, 'double complex'))
             ztype = 'double' ;
+        else
+            ztype = xtype ;
         end
 
     %--------------------------------------------------------------------------
@@ -200,12 +223,13 @@ switch opname
     % unary ops for integer only
     %--------------------------------------------------------------------------
 
-    case { 'bitnot' }
+    case { 'bitnot', 'bnot', 'bitcmp', 'bcmp' }
         % x and z have the same type
         if (~is_int)
             error ('invalid op') ;
         end
         ytype = 'none' ;
+        opname = 'bnot' ;
 
     %--------------------------------------------------------------------------
     % unary ops for floating-point only (both real and complex)

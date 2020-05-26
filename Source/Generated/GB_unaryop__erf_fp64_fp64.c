@@ -22,7 +22,7 @@
 
 // C type:   double
 // A type:   double
-// cast:     double cij = (double) aij
+// cast:     double cij = aij
 // unaryop:  cij = erf (aij)
 
 #define GB_ATYPE \
@@ -32,18 +32,18 @@
     double
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA) \
     double aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
 // unary operator
-#define GB_OP(z, x)   \
+#define GB_OP(z, x) \
     z = erf (x) ;
 
 // casting
-#define GB_CASTING(z, aij) \
-    double z = (double) aij ;
+#define GB_CAST(z, aij) \
+    double z = aij ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,7 +51,7 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (z, aij) ;           \
+    GB_CAST (z, aij) ;              \
     GB_OP (GB_CX (pC), z) ;         \
 }
 

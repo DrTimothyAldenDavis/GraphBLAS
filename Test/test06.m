@@ -166,7 +166,8 @@ for k1 = k1_list % 1:length(mult_ops)
             % monoids can only be used when z is boolean for z=mult(x,y).
             try
                 [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                [mult_opname mult_optype ztype xtype ytype] = GB_spec_operator (mult_op) ;
+                [mult_opname mult_optype ztype xtype ytype] = ...
+                    GB_spec_operator (mult_op) ;
                 [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                 identity = GB_spec_identity (semiring.add, add_optype) ;
             catch me
@@ -176,24 +177,6 @@ for k1 = k1_list % 1:length(mult_ops)
                 end
                 continue
             end
-
-            % there are 1440 semirings that pass this test:
-            % 19 ops: 10:(1st, 2nd, min, max, plus, minus, rminus, times,
-            %            div, rdiv)
-            %         6:(is*)
-            %         3:(or,and,xor)
-            %       TxT->T
-            %       each has 44 monoids: all 11 types: max,min,plus,times
-            %       and 4 for boolean or,and,xor,eq
-            %       17*48 = 912
-            % 6 ops: eq,ne,gt,lt,ge,le
-            %       TxT->bool
-            %       each has 11 types
-            %       and 8 monoids (max,min,plus,times,or,and,xor,eq)
-            %       6*11*8 = 528
-            % 912 + 528 = 1440
-            % but only 1040 are unique.
-            % see GrB_AxB_builtin for details.
 
             n_semirings = n_semirings + 1 ;
 

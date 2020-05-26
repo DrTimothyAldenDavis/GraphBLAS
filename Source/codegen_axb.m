@@ -241,9 +241,7 @@ for i = 1:4
             else
                 tm = '0' ;
             end
-            if (isempty (identity))
-                id = [ ] ;
-            elseif (identity)
+            if (identity)
                 id = bits {k} ;
             else
                 id = '0' ;

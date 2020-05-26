@@ -147,22 +147,17 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
             break ;                                                         \
         case GrB_UNINITIALIZED_OBJECT :                                     \
             GB_MKL_FREE_ALL ;                                               \
-            printf ("MKL uninitialized: %s line %d\n", __FILE__, __LINE__) ; \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph uninitialized"))) ; \
         case GrB_OUT_OF_MEMORY :                                            \
-            printf ("MKL out of memory %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_OUT_OF_MEMORY) ;                                     \
         case GrB_INVALID_VALUE :                                            \
-            printf ("MKL invalid %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph invalid value"))) ; \
         case GrB_PANIC :                                                    \
-            printf ("MKL panic %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph panic"))) ;         \
         case GrB_NO_VALUE :                                                 \
-            printf ("MKL not supported %s line %d\n", __FILE__, __LINE__) ; \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph not supported"))) ; \
         default :                                                           \

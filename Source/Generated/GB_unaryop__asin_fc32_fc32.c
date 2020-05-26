@@ -22,7 +22,7 @@
 
 // C type:   GxB_FC32_t
 // A type:   GxB_FC32_t
-// cast:     GxB_FC32_t cij = (GxB_FC32_t) aij
+// cast:     GxB_FC32_t cij = aij
 // unaryop:  cij = casinf (aij)
 
 #define GB_ATYPE \
@@ -32,18 +32,18 @@
     GxB_FC32_t
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA) \
     GxB_FC32_t aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
 // unary operator
-#define GB_OP(z, x)   \
+#define GB_OP(z, x) \
     z = casinf (x) ;
 
 // casting
-#define GB_CASTING(z, aij) \
-    GxB_FC32_t z = (GxB_FC32_t) aij ;
+#define GB_CAST(z, aij) \
+    GxB_FC32_t z = aij ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,7 +51,7 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (z, aij) ;           \
+    GB_CAST (z, aij) ;              \
     GB_OP (GB_CX (pC), z) ;         \
 }
 

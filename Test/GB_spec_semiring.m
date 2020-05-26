@@ -65,8 +65,11 @@ if (~isequal (add_ztype, add_xtype) || ~isequal (add_ztype, add_xtype))
 end
 
 switch (add_opname)
-    case { 'min', 'max', 'plus', 'times', 'any', 'or', 'and', 'xor', 'eq', ...
-        'bitor', 'bitand', 'bitxor', 'bitxnor' }
+    case { 'min', 'max', 'plus', 'times', 'any', ...
+        'or', 'and', 'xor', 'eq', ...
+        'lor', 'land', 'lxor', 'lnxor', ...
+        'bitor', 'bitand', 'bitxor', 'bitxnor', ...
+        'bor', 'band', 'bxor', 'bxnor' }
         % valid monoid
     otherwise
         error ('invalid monoid') ;
@@ -75,5 +78,20 @@ end
 % make sure the monoid matches the operator ztype
 if (~isequal (add_ztype, ztype))
     error ('invalid monoid: must match ztype of multiplier') ;
+end
+
+%   semiring
+%   multiply_op
+%   add_op
+%   identity
+%   ztype
+%   xtype
+%   ytype
+
+% make sure the semiring is built-in
+try
+    GB_mex_semiring (semiring, 0) ;
+catch
+    error ('not builtin semiring: %s.%s.%s', add_opname, mult, xtype) ;
 end
 

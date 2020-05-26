@@ -72,7 +72,8 @@ GB_Opcode GB_boolean_rename     // renamed opcode
         case GB_ISLT_opcode    :            // z = (x < y)
             return (GB_LT_opcode) ;
 
-        // ISGE, GE are the same for boolean:
+        // POW, ISGE, GE are the same for boolean:
+        case GB_POW_opcode     :            // z = (x to the y)
         case GB_ISGE_opcode    :            // z = (x >= y)
             return (GB_GE_opcode) ;
 

@@ -1,13 +1,13 @@
-function A = GB_spec_random (m, n, d, scale, class, is_csc,is_hyper,hyper_ratio)
+function A = GB_spec_random (m, n, d, scale, type, is_csc,is_hyper,hyper_ratio)
 %GB_SPEC_RANDOM generate random matrix
 %
-% A = GB_spec_random (m, n, d, scale, class, is_csc, is_hyper, hyper_ratio)
+% A = GB_spec_random (m, n, d, scale, type, is_csc, is_hyper, hyper_ratio)
 %
 % m,n,d: parameters to sprandn (m,n,d)
 % m,n: defaults to 4
 % d: defaults to 0.5
 % scale: a double scalar, defaults to 1.0
-% class: a string; see "help classid". defaults to 'double'
+% type: a string; defaults to 'double'
 % is_csc: true for CSC, false for CSR; defaults to true
 % is_hyper: false for non-hypersparse, true for hypersparse, default false
 
@@ -31,7 +31,7 @@ if (nargin < 4)
 end
 
 if (nargin < 5)
-    class = 'double' ;
+    type = 'double' ;
 end
 
 if (nargin >= 6)
@@ -47,6 +47,11 @@ if (nargin >= 8)
 end
 
 A.matrix = scale * sprandn (m, n, d) ;
-A.class = class ;
+
+if (contains (type, 'complex'))
+    A.matrix = A.matrix + 1i * scale * sprandn (m, n, d) ;
+end
+
+A.class = type ;
 A.pattern = logical (spones (A.matrix)) ;
 

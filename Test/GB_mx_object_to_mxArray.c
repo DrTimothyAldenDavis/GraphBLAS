@@ -134,6 +134,15 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         memcpy (mxGetComplexDoubles (A), C->x, cnz * sizeof (GxB_FC64_t)) ;
 
     }
+    else if (C->type == GxB_FC32)
+    {
+
+        // C is single complex, typecast to sparse double complex
+        A = mxCreateSparse (C->vlen, C->vdim, C->nzmax, mxCOMPLEX) ;
+        GB_cast_array (mxGetComplexDoubles (A), GB_FC64_code,
+            C->x, C->type->code, cnz, Context) ;
+
+    }
     else
     {
 

@@ -31,7 +31,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     const int64_t *GB_RESTRICT A_slice,    // defines how A is sliced
     int naslice                         // # of slices of A
 )
-{ 
+{
 
     GrB_Info info ;
     GrB_Type Atype = A->type ;
@@ -40,28 +40,42 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     // built-in worker: transpose, typecast, and apply a built-in operator
     //--------------------------------------------------------------------------
 
+    // only two workers are allowed to do their own typecasting: IDENTITY and
+    // ONE.  For all others, the input type Atype must match the op->xtype of
+    // the operator.  If this check isn't done, abs.single with fc32 input will
+    // map to abs.fc32, based on the type of the input A, which is the wrong
+    // operator.
+
     #ifndef GBCOMPACT
 
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
+        bool no_typecasting = (Atype == op->xtype)
+            || (op->opcode == GB_IDENTITY_opcode)
+            || (op->opcode == GB_ONE_opcode) ;
 
-        #define GB_tran(opname,zname,aname) \
-            GB_tran_ ## opname ## zname ## aname
+        if (no_typecasting)
+        { 
 
-        #define GB_WORKER(opname,zname,ztype,aname,atype)                   \
-        {                                                                   \
-            info = GB_tran (opname,zname,aname) (C, A, Rowcounts, Iter,     \
-                    A_slice, naslice) ;                                     \
-            if (info == GrB_SUCCESS) return ;                               \
-        }                                                                   \
-        break ;
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
+            #define GB_tran(opname,zname,aname) \
+                GB_tran_ ## opname ## zname ## aname
 
-        #include "GB_unaryop_factory.c"
+            #define GB_WORKER(opname,zname,ztype,aname,atype)               \
+            {                                                               \
+                info = GB_tran (opname,zname,aname) (C, A, Rowcounts, Iter, \
+                        A_slice, naslice) ;                                 \
+                if (info == GrB_SUCCESS) return ;                           \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            #include "GB_unaryop_factory.c"
+        }
 
     #endif
 

@@ -176,7 +176,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_BOOL
 #define GrB_NAME(g,x)       g  ## x ## _BOOL
 #define GB(x)               GB_ ## x ## _BOOL
-#define GB_CAST_NAME(x)     GB_cast_bool_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             int8_t
@@ -184,7 +183,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_INT8
 #define GrB_NAME(g,x)       g ## x ## _INT8
 #define GB(x)               GB_ ## x ## _INT8
-#define GB_CAST_NAME(x)     GB_cast_int8_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             uint8_t
@@ -192,7 +190,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_UINT8
 #define GrB_NAME(g,x)       g ## x ## _UINT8
 #define GB(x)               GB_ ## x ## _UINT8
-#define GB_CAST_NAME(x)     GB_cast_uint8_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             int16_t
@@ -200,7 +197,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_INT16
 #define GrB_NAME(g,x)       g ## x ## _INT16
 #define GB(x)               GB_ ## x ## _INT16
-#define GB_CAST_NAME(x)     GB_cast_int16_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             uint16_t
@@ -208,7 +204,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_UINT16
 #define GrB_NAME(g,x)       g ## x ## _UINT16
 #define GB(x)               GB_ ## x ## _UINT16
-#define GB_CAST_NAME(x)     GB_cast_uint16_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             int32_t
@@ -216,7 +211,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_INT32
 #define GrB_NAME(g,x)       g ## x ## _INT32
 #define GB(x)               GB_ ## x ## _INT32
-#define GB_CAST_NAME(x)     GB_cast_int32_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             uint32_t
@@ -224,7 +218,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_UINT32
 #define GrB_NAME(g,x)       g ## x ## _UINT32
 #define GB(x)               GB_ ## x ## _UINT32
-#define GB_CAST_NAME(x)     GB_cast_uint32_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             int64_t
@@ -232,7 +225,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_INT64
 #define GrB_NAME(g,x)       g ## x ## _INT64
 #define GB(x)               GB_ ## x ## _INT64
-#define GB_CAST_NAME(x)     GB_cast_int64_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             uint64_t
@@ -240,7 +232,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_XTYPE            GrB_UINT64
 #define GrB_NAME(g,x)       g ## x ## _UINT64
 #define GB(x)               GB_ ## x ## _UINT64
-#define GB_CAST_NAME(x)     GB_cast_uint64_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             float
@@ -249,7 +240,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_FLOATING_POINT
 #define GrB_NAME(g,x)       g ## x ## _FP32
 #define GB(x)               GB_ ## x ## _FP32
-#define GB_CAST_NAME(x)     GB_cast_float_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             double
@@ -258,7 +248,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_FLOATING_POINT
 #define GrB_NAME(g,x)       g ## x ## _FP64
 #define GB(x)               GB_ ## x ## _FP64
-#define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             GxB_FC32_t
@@ -268,7 +257,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_FLOATING_POINT
 #define GrB_NAME(g,x)       g ## x ## _FC32
 #define GB(x)               GB_ ## x ## _FC32
-#define GB_CAST_NAME(x)     GB_cast_GxB_FC32_t_ ## x
 #include "GB_ops_template.c"
 
 #define GB_TYPE             GxB_FC64_t
@@ -278,7 +266,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #define GB_FLOATING_POINT
 #define GrB_NAME(g,x)       g ## x ## _FC64
 #define GB(x)               GB_ ## x ## _FC64
-#define GB_CAST_NAME(x)     GB_cast_GxB_FC64_t_ ## x
 #include "GB_ops_template.c"
 
 //------------------------------------------------------------------------------

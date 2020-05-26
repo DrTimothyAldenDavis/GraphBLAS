@@ -34,9 +34,10 @@ rng ('default') ;
     n_semirings = 0 ;
     A = GB_spec_random (n,n,0.3,100,'none') ;
     clear B
-    B.matrix = 100 * spdiags (rand (n,1), 0, n, n) ;
+    B1matrix = spdiags (rand (n,1), 0, n, n) ;
+    B.matrix = B1matrix ;
     B.class = 'none' ;
-    B.pattern = logical (spones (B.matrix)) ;
+    B.pattern = logical (spones (B1matrix)) ;
 
     C = GB_spec_random (n,n,0.3,100,'none') ;
     M = spones (sprandn (n, n, 0.3)) ;
@@ -44,25 +45,26 @@ rng ('default') ;
     for k1 = 1:length(mult_ops)
         mulop = mult_ops {k1} ;
 
-        fprintf ('%s', mulop) ;
-
         for k2 = 1:length(add_ops)
             addop = add_ops {k2} ;
-            fprintf ('.') ;
+            % fprintf ('.') ;
 
-            for k3 = 1:length (types.real)
-                clas = types.real {k3} ;
+            for k3 = 1:length (types.all)
+                clas = types.all {k3} ;
 
                 semiring.multiply = mulop ;
                 semiring.add = addop ;
                 semiring.class = clas ;
+
+                semiring
 
                 % create the semiring.  some are not valid because the
                 % or,and,xor monoids can only be used when z is boolean for
                 % z=mult(x,y).
                 try
                     [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                    [mult_opname mult_optype zclass] = GB_spec_operator (mult_op);
+                    [mult_opname mult_optype ztype xtype ytype] = ...
+                        GB_spec_operator (mult_op) ;
                     [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                     identity = GB_spec_identity (semiring.add, add_optype) ;
                 catch
@@ -88,6 +90,46 @@ rng ('default') ;
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, B, A, dnn);
                 C0 = GB_spec_mxm (C, [ ], [ ], semiring, B, A, dnn);
                 GB_spec_compare (C0, C1, identity) ;
+
+                % dump the semiring list to compare with Source/Generated
+                switch (xtype)
+                    case { 'logical' }
+                        xtype = 'bool' ;
+                    case { 'single complex' }
+                        xtype = 'fc32' ;
+                    case { 'double complex' }
+                        xtype = 'fc64' ;
+                    case { 'single' }
+                        xtype = 'fp32' ;
+                    case { 'double' }
+                        xtype = 'fp64' ;
+                end
+
+                switch (add_opname)
+                    case { 'xor' }
+                        add_opname = 'lxor' ;
+                    case { 'or' }
+                        add_opname = 'lor' ;
+                    case { 'and' }
+                        add_opname = 'land' ;
+                end
+
+                switch (mult_opname)
+                    case { 'xor' }
+                        mult_opname = 'lxor' ;
+                    case { 'or' }
+                        mult_opname = 'lor' ;
+                    case { 'and' }
+                        mult_opname = 'land' ;
+                    case { 'pair' }
+                        switch (add_opname)
+                            case { 'eq', 'land', 'lor', 'min', 'max', 'times' }
+                                add_opname = 'any' ;
+                        end
+                end
+
+%               This should produce a list of all files in Source/Generated.
+                fprintf ('GB_AxB__%s_%s_%s.c\n', add_opname, mult_opname, xtype) ;
 
             end
         end

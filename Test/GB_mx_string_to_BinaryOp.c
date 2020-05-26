@@ -14,7 +14,7 @@
 //  6: iseq, isne, isgt, islt, isge, isle,
 //  6: eq, ne, gt, lt, ge, le,
 //  3: or, and, xor
-//  ...
+//  ... and more
 
 // optype_mx: a MATLAB string defining one of 11 operator types:
 //  'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'int64',
@@ -55,11 +55,21 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         return (true) ;
     }
 
+    bool cmplx_op = MATCH (opname, "cmplx") || MATCH (opname, "complex" ) ;
+
+    // get the optype from the optype_mx string, if present
+    GrB_Type optype = GB_mx_string_to_Type (optype_mx, default_optype) ;
+    if (optype == NULL)
+    {
+        mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op type") ;
+        return (false) ;
+    }
+
     //--------------------------------------------------------------------------
     // convert the string to a GraphBLAS binary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    if (user_complex)
+    if (user_complex && (optype == Complex || cmplx_op))
     {
 
         //----------------------------------------------------------------------
@@ -101,6 +111,9 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         else if (MATCH (opname, "ge"      )) { op = Complex_ge     ; }
         else if (MATCH (opname, "le"      )) { op = Complex_le     ; }
 
+        // z is complex, x and y are real
+        else if (cmplx_op) { op = Complex_complex ; }
+
         else
         {
             mexWarnMsgIdAndTxt ("GB:warn", "Complex op unrecognized") ;
@@ -139,9 +152,12 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         else if (MATCH (opname, "isle"    )) { opcode = GB_ISLE_opcode ; }
 
         // 3 binary operators z=f(x,y), all x,y,x the same type
-        else if (MATCH (opname, "or"      )) { opcode = GB_LOR_opcode ; }
-        else if (MATCH (opname, "and"     )) { opcode = GB_LAND_opcode ; }
-        else if (MATCH (opname, "xor"     )) { opcode = GB_LXOR_opcode ; }
+        else if (MATCH (opname, "or"      ) ||
+                 MATCH (opname, "lor"     )) { opcode = GB_LOR_opcode ; }
+        else if (MATCH (opname, "and"     ) ||
+                 MATCH (opname, "land"    )) { opcode = GB_LAND_opcode ; }
+        else if (MATCH (opname, "xor"     ) ||
+                 MATCH (opname, "lxor"    )) { opcode = GB_LXOR_opcode ; }
 
         // 6 ops z=f(x,y), where x,y are the requested type but z is boolean
         else if (MATCH (opname, "eq"      )) { opcode = GB_EQ_opcode ; }
@@ -157,30 +173,32 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         else if (MATCH (opname,"remainder")) { opcode = GB_REMAINDER_opcode ; }
         else if (MATCH (opname, "copysign")) { opcode = GB_COPYSIGN_opcode ; }
         else if (MATCH (opname, "ldexp"   )) { opcode = GB_LDEXP_opcode ; }
-        else if (MATCH (opname, "cmplx"   )) { opcode = GB_CMPLX_opcode ; }
-        else if (MATCH (opname, "complex" )) { opcode = GB_CMPLX_opcode ; }
         else if (MATCH (opname, "pow"     )) { opcode = GB_POW_opcode ; }
 
-        else if (MATCH (opname, "bitor"   )) { opcode = GB_BOR_opcode ; }
-        else if (MATCH (opname, "bitand"  )) { opcode = GB_BAND_opcode ; }
-        else if (MATCH (opname, "bitxor"  )) { opcode = GB_BXOR_opcode ; }
-        else if (MATCH (opname, "bitxnor" )) { opcode = GB_BXNOR_opcode ; }
-        else if (MATCH (opname, "bitget"  )) { opcode = GB_BGET_opcode ; }
-        else if (MATCH (opname, "bitset"  )) { opcode = GB_BSET_opcode ; }
-        else if (MATCH (opname, "bitclr"  )) { opcode = GB_BCLR_opcode ; }
-        else if (MATCH (opname, "bitshift")) { opcode = GB_BSHIFT_opcode ; }
+        // z is complex, x and y are real
+        else if (cmplx_op                  ) { opcode = GB_CMPLX_opcode ; }
+
+        // bitwise operators
+        else if (MATCH (opname, "bitor"   ) ||
+                 MATCH (opname, "bor"     )) { opcode = GB_BOR_opcode ; }
+        else if (MATCH (opname, "bitand"  ) ||
+                 MATCH (opname, "band"    )) { opcode = GB_BAND_opcode ; }
+        else if (MATCH (opname, "bitxor"  ) ||
+                 MATCH (opname, "bxor"    )) { opcode = GB_BXOR_opcode ; }
+        else if (MATCH (opname, "bitxnor" ) ||
+                 MATCH (opname, "bxnor"   )) { opcode = GB_BXNOR_opcode ; }
+        else if (MATCH (opname, "bitget"  ) ||
+                 MATCH (opname, "bget"    )) { opcode = GB_BGET_opcode ; }
+        else if (MATCH (opname, "bitset"  ) ||
+                 MATCH (opname, "bset"    )) { opcode = GB_BSET_opcode ; }
+        else if (MATCH (opname, "bitclr"  ) ||
+                 MATCH (opname, "bclr"    )) { opcode = GB_BCLR_opcode ; }
+        else if (MATCH (opname, "bitshift") ||
+                 MATCH (opname, "bshift"  )) { opcode = GB_BSHIFT_opcode ; }
 
         else
         {
             mexWarnMsgIdAndTxt ("GB:warn", "unrecognized function name") ;
-            return (false) ;
-        }
-
-        // get the optype from the optype_mx string, if present
-        GrB_Type optype = GB_mx_string_to_Type (optype_mx, default_optype) ;
-        if (optype == NULL)
-        {
-            mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op type") ;
             return (false) ;
         }
 

@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Switch factory for applying a unary operator, where the input and output
-// types can differ (some workers do the typecasting).  This file is #include'd
-// into GB_apply_op.c and GB_transpose_op.c, which must define the GrB_UnaryOp
-// op and the GrB_Type Atype.
+// Switch factory for applying a unary operator.  This file is #include'd into
+// GB_apply_op.c and GB_transpose_op.c, which must define the GrB_UnaryOp op
+// and the GrB_Type Atype.
 
 // If the op is user-defined, or if the combinations of z and x type are not
 // handled by the built-in operator, then this switch factory falls through

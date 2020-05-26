@@ -5,6 +5,7 @@ Version 3.3.0, TODO, 2020
     * added bitwise operators: and their monoids and semirings
     * added predefined GrB* monoids and semirings: from the v1.3 spec.
     * MATLAB interface: added complex matrices and operators
+    * changed typecasting rules: for casting floating point types to integers
 
 Version 3.2.2, Apr 2, 2020
 

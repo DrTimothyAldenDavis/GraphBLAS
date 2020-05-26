@@ -106,7 +106,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
     #if GB_HAS_MKL_GRAPH
-    printf ("MKL version: %d\n", INTEL_MKL_VERSION) ;
+    printf ("MKL version: %d\n", GB_INTEL_MKL_VERSION) ;
     // also set the MKL allocator functions
     i_malloc  = malloc_function ;
     i_calloc  = calloc_function ;

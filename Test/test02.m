@@ -5,6 +5,7 @@ function test02
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+builtin_complex_set (1) ;
 
 rng ('default') ;
 format long g
@@ -50,8 +51,8 @@ for k1 = 1:length (types.all)
     end
 end
 
+% try with both built-in and user-defined 'double complex' types:
 for k = [false true]
-    fprintf ('builtin_complex: %d\n', k) ;
     builtin_complex_set (k) ;
 
     % duplicate a complex matrix (user-defined can't be typecasted)

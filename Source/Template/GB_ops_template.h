@@ -8,21 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This file is #include'd many times in GB.h to define the unary and binary
-// functions.  That file defines the GB(x) macro, which is GB_##x##_BOOL,
-// GB_##x##_INT8, etc.
-
-//------------------------------------------------------------------------------
-// GB_SCALAR: construct a real or complex scalar
-//------------------------------------------------------------------------------
-
-// construct a real or complex scalar
-#if defined ( GB_FLOAT_COMPLEX )
-#define GB_SCALAR(r,i) GxB_CMPLXF (((float) (r)), ((float) (i)))
-#elif defined ( GB_DOUBLE_COMPLEX )
-#define GB_SCALAR(r,i) GxB_CMPLX (((double) (r)), ((double) (i)))
-#else
-#define GB_SCALAR(r,i) ((GB_TYPE) (r))
-#endif
+// functions.
 
 //------------------------------------------------------------------------------
 // z = one (x)
@@ -32,7 +18,13 @@ GB_PUBLIC struct GB_UnaryOp_opaque GB (opaque_GxB_ONE) ;
 
 inline void GB (ONE_f) (GB_TYPE *z, const GB_TYPE *x)
 {
-    (*z) = GB_SCALAR (1,0) ;
+    #if defined ( GB_FLOAT_COMPLEX )
+    (*z) = GxB_CMPLXF (1,0) ;
+    #elif defined ( GB_DOUBLE_COMPLEX )
+    (*z) = GxB_CMPLX (1,0) ;
+    #else
+    (*z) = ((GB_TYPE) 1) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -986,191 +978,6 @@ inline void GB (NE_f) (GB_Zbool_X_Y_ARGS)
 
 #undef GB_Zbool_X_Y_ARGS
 
-//==============================================================================
-// unary typecast operators, used in GB_cast_factory.c
-//==============================================================================
-
-// construct the typecast function: z = (ztype) x, where x has type xtype.
-
-// GB_TYPE defined by the #include'ing file GB.h is the ztype.
-// xtype is defined below for each of the 13 built-in types.
-
-// GB_cast_ztype_xtype casts a single value ((xtype) x) into the result
-// ((ztype) z).  Functions with the xtype and ztype the same, such as
-// GB_cast_double_double, simply copy their input to their output.
-
-// The s parameter is not used in these functions.  It is present because one
-// function returned by GB_cast_factory requires it (GB_copy_user_user).
-
-#if defined ( GB_REAL )
-
-    //--------------------------------------------------------------------------
-    // typecast between real types only
-    //--------------------------------------------------------------------------
-
-    #define GB_CAST_FUNC(zz,xx) zz = (GB_TYPE) xx
-
-    #define GB_CAST_FUNCTION(xtype)                                         \
-    (                                                                       \
-        void *z,            /* typecasted output, of type ztype */          \
-        const void *x,      /* input value to typecast, of type xtype */    \
-        size_t s            /* size of type, for GB_copy_user_user only */  \
-    )                                                                       \
-    {                                                                       \
-        /* the types of z and x are known at compile time */                \
-        GB_TYPE zz ;                                                        \
-        xtype xx = (*((xtype *) x)) ;                                       \
-        GB_CAST_FUNC (zz, xx) ;                                             \
-        (*((GB_TYPE *) z)) = zz ;                                           \
-    }
-
-    // the argument is the xtype, and for these cases is not float or double,
-    // so use the ANSI C11 typecasting rules.
-    inline void GB_CAST_NAME (bool    ) GB_CAST_FUNCTION (bool    )
-    inline void GB_CAST_NAME (int8_t  ) GB_CAST_FUNCTION (int8_t  )
-    inline void GB_CAST_NAME (int16_t ) GB_CAST_FUNCTION (int16_t )
-    inline void GB_CAST_NAME (int32_t ) GB_CAST_FUNCTION (int32_t )
-    inline void GB_CAST_NAME (int64_t ) GB_CAST_FUNCTION (int64_t )
-    inline void GB_CAST_NAME (uint8_t ) GB_CAST_FUNCTION (uint8_t )
-    inline void GB_CAST_NAME (uint16_t) GB_CAST_FUNCTION (uint16_t)
-    inline void GB_CAST_NAME (uint32_t) GB_CAST_FUNCTION (uint32_t)
-    inline void GB_CAST_NAME (uint64_t) GB_CAST_FUNCTION (uint64_t)
-
-    // when xtype is float or double; check for typecasting to integer:
-    #if defined ( GB_UNSIGNED_INT )
-        // ztype is unsigned integer
-        #undef  GB_CAST_FUNC
-        #define GB_CAST_FUNC(zz,xx) GB_CAST_UNSIGNED(zz,xx,GB_BITS)
-    #elif defined ( GB_SIGNED_INT )
-        // ztype is signed integer
-        #undef  GB_CAST_FUNC
-        #define GB_CAST_FUNC(zz,xx) GB_CAST_SIGNED(zz,xx,GB_BITS)
-    #endif
-
-    // typecast from float or double
-    inline void GB_CAST_NAME (float ) GB_CAST_FUNCTION (float )
-    inline void GB_CAST_NAME (double) GB_CAST_FUNCTION (double)
-    #undef GB_CAST_FUNC
-
-    //--------------------------------------------------------------------------
-    // typecast to any real type from float complex
-    //--------------------------------------------------------------------------
-
-    inline void GB_CAST_NAME (GxB_FC32_t)
-    (
-        void *z,            // typecasted output, of type ztype
-        const void *x,      // input value to typecast, of type GxB_FC32_t
-        size_t s            // size of type, for GB_copy_user_user only
-    )
-    {
-        GB_TYPE zz ;
-        GxB_FC32_t xx = (*((GxB_FC32_t *) x)) ;
-        #if defined ( GB_BOOLEAN )
-        zz = (crealf (xx) != 0) || (cimagf (xx) != 0) ;
-        #elif defined ( GB_UNSIGNED_INT )
-        GB_CAST_UNSIGNED (zz, crealf (xx), GB_BITS) ;
-        #elif defined ( GB_SIGNED_INT )
-        GB_CAST_SIGNED   (zz, crealf (xx), GB_BITS) ;
-        #else
-        zz = (GB_TYPE) crealf (xx) ;
-        #endif
-        (*((GB_TYPE *) z)) = zz ;
-    }
-
-    //--------------------------------------------------------------------------
-    // typecast to any real type from double complex
-    //--------------------------------------------------------------------------
-
-    inline void GB_CAST_NAME (GxB_FC64_t)
-    (
-        void *z,            // typecasted output, of type ztype
-        const void *x,      // input value to typecast, of type GxB_FC64_t
-        size_t s            // size of type, for GB_copy_user_user only
-    )
-    {
-        GB_TYPE zz ;
-        GxB_FC64_t xx = (*((GxB_FC64_t *) x)) ;
-        #if defined ( GB_BOOLEAN )
-        zz = (creal (xx) != 0) || (cimag (xx) != 0) ;
-        #elif defined ( GB_SIGNED_INT )
-        GB_CAST_SIGNED   (zz, creal (xx), GB_BITS) ;
-        #elif defined ( GB_UNSIGNED_INT )
-        GB_CAST_UNSIGNED (zz, creal (xx), GB_BITS) ;
-        #else
-        zz = (GB_TYPE) creal (xx) ;
-        #endif
-        (*((GB_TYPE *) z)) = zz ;
-    }
-
-#else
-
-    //--------------------------------------------------------------------------
-    // typecast to any complex type from any real type
-    //--------------------------------------------------------------------------
-
-    // ztype is complex, xtype is any real type
-    #define GB_CAST_FUNCTION_RtoC(xtype)                                    \
-    (                                                                       \
-        void *z,            /* typecasted output, of type ztype */          \
-        const void *x,      /* input value to typecast, of type xtype */    \
-        size_t s            /* size of type, for GB_copy_user_user only */  \
-    )                                                                       \
-    {                                                                       \
-        /* the types of z and x are known at compile time */                \
-        GB_TYPE zz ;                                                        \
-        xtype xx = (*((xtype *) x)) ;                                       \
-        zz = GB_SCALAR (xx, 0) ;                                            \
-        (*((GB_TYPE *) z)) = zz ;                                           \
-    }
-
-    inline void GB_CAST_NAME (bool    ) GB_CAST_FUNCTION_RtoC (bool    )
-    inline void GB_CAST_NAME (int8_t  ) GB_CAST_FUNCTION_RtoC (int8_t  )
-    inline void GB_CAST_NAME (int16_t ) GB_CAST_FUNCTION_RtoC (int16_t )
-    inline void GB_CAST_NAME (int32_t ) GB_CAST_FUNCTION_RtoC (int32_t )
-    inline void GB_CAST_NAME (int64_t ) GB_CAST_FUNCTION_RtoC (int64_t )
-    inline void GB_CAST_NAME (uint8_t ) GB_CAST_FUNCTION_RtoC (uint8_t )
-    inline void GB_CAST_NAME (uint16_t) GB_CAST_FUNCTION_RtoC (uint16_t)
-    inline void GB_CAST_NAME (uint32_t) GB_CAST_FUNCTION_RtoC (uint32_t)
-    inline void GB_CAST_NAME (uint64_t) GB_CAST_FUNCTION_RtoC (uint64_t)
-    inline void GB_CAST_NAME (float   ) GB_CAST_FUNCTION_RtoC (float   )
-    inline void GB_CAST_NAME (double  ) GB_CAST_FUNCTION_RtoC (double  )
-
-    //--------------------------------------------------------------------------
-    // typecast to any complex type from float complex
-    //--------------------------------------------------------------------------
-
-    inline void GB_CAST_NAME (GxB_FC32_t)
-    (
-        void *z,            // typecasted output, of type ztype
-        const void *x,      // input value to typecast, of type GxB_FC32_t
-        size_t s            // size of type, for GB_copy_user_user only
-    )
-    {
-        GB_TYPE zz ;
-        GxB_FC32_t xx = (*((GxB_FC32_t *) x)) ;
-        zz = GB_SCALAR (crealf (xx), cimagf (xx)) ;
-        (*((GB_TYPE *) z)) = zz ;
-    }
-
-    //--------------------------------------------------------------------------
-    // typecast to any complex type from double complex
-    //--------------------------------------------------------------------------
-
-    inline void GB_CAST_NAME (GxB_FC64_t)
-    (
-        void *z,            // typecasted output, of type ztype
-        const void *x,      // input value to typecast, of type GxB_FC64_t
-        size_t s            // size of type, for GB_copy_user_user only
-    )
-    {
-        GB_TYPE zz ;
-        GxB_FC64_t xx = (*((GxB_FC64_t *) x)) ;
-        zz = GB_SCALAR (creal (xx), cimag (xx)) ;
-        (*((GB_TYPE *) z)) = zz ;
-    }
-
-#endif
-
 //------------------------------------------------------------------------------
 // clear macros for next use of this file
 //------------------------------------------------------------------------------
@@ -1178,9 +985,6 @@ inline void GB (NE_f) (GB_Zbool_X_Y_ARGS)
 #undef GB
 #undef GB_TYPE
 #undef GB_OP
-#undef GB_CAST_NAME
-#undef GB_CAST_FUNCTION
-#undef GB_CAST_FUNCTION_ANSI
 #undef GB_BOOLEAN
 #undef GB_FLOATING_POINT
 #undef GB_UNSIGNED_INT
@@ -1191,6 +995,5 @@ inline void GB (NE_f) (GB_Zbool_X_Y_ARGS)
 #undef GB_FLOAT
 #undef GB_DOUBLE_COMPLEX
 #undef GB_FLOAT_COMPLEX
-#undef GB_SCALAR
 #undef GB_COMPLEX
 

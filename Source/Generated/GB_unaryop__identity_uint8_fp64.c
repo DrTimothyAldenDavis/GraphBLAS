@@ -22,7 +22,7 @@
 
 // C type:   uint8_t
 // A type:   double
-// cast:     uint8_t cij ; GB_CAST_UNSIGNED(cij,aij,8)
+// cast:     uint8_t cij = GB_cast_to_uint8_t ((double) (aij))
 // unaryop:  cij = aij
 
 #define GB_ATYPE \
@@ -32,18 +32,18 @@
     uint8_t
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA) \
     double aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
 // unary operator
-#define GB_OP(z, x)   \
+#define GB_OP(z, x) \
     z = x ;
 
 // casting
-#define GB_CASTING(z, aij) \
-    uint8_t z ; GB_CAST_UNSIGNED(z,aij,8) ;
+#define GB_CAST(z, aij) \
+    uint8_t z = GB_cast_to_uint8_t ((double) (aij)) ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,7 +51,7 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (z, aij) ;           \
+    GB_CAST (z, aij) ;              \
     GB_OP (GB_CX (pC), z) ;         \
 }
 

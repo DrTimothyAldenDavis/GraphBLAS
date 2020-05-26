@@ -59,16 +59,17 @@ void mexFunction
         mexErrMsgTxt ("C failed") ;
     }
 
+    bool user_complex = (Complex != GxB_FC64) && (C->type == Complex) ;
+
     // get semiring
-    if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [2], "semiring", C->type))
+    if (!GB_mx_mxArray_to_Semiring (&semiring, pargin [2], "semiring",
+        C->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("semiring failed") ;
     }
 
     // get accum, if present
-    bool user_complex = (Complex != GxB_FC64)
-        && (C->type == Complex || semiring->add->op->ztype == Complex) ;
     GrB_BinaryOp accum ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [1], "accum",
         C->type, user_complex))

@@ -348,7 +348,9 @@
 // complex types, and both complex and real mathematical functions
 //------------------------------------------------------------------------------
 
+#include "GB_casting.h"
 #include "GB_math.h"
+#include "GB_bitwise.h"
 
 //------------------------------------------------------------------------------
 // for coverage tests in Tcov/
@@ -972,7 +974,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 
 #if GB_BURBLE
 
-// define the printf function to use to burble
+// define the function to use to burble
 #define GBBURBLE(...)                               \
 {                                                   \
     bool burble = GB_Global_burble_get ( ) ;        \
@@ -2860,7 +2862,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_BOOLEAN
 #define GB(x)               GB_ ## x ## _BOOL
-#define GB_CAST_NAME(x)     GB_cast_bool_ ## x
 #define GB_BITS             1
 #include "GB_ops_template.h"
 
@@ -2868,7 +2869,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT8
-#define GB_CAST_NAME(x)     GB_cast_int8_t_ ## x
 #define GB_BITS             8
 #include "GB_ops_template.h"
 
@@ -2876,7 +2876,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT8
-#define GB_CAST_NAME(x)     GB_cast_uint8_t_ ## x
 #define GB_BITS             8
 #include "GB_ops_template.h"
 
@@ -2884,7 +2883,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT16
-#define GB_CAST_NAME(x)     GB_cast_int16_t_ ## x
 #define GB_BITS             16
 #include "GB_ops_template.h"
 
@@ -2892,7 +2890,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT16
-#define GB_CAST_NAME(x)     GB_cast_uint16_t_ ## x
 #define GB_BITS             16
 #include "GB_ops_template.h"
 
@@ -2900,7 +2897,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT32
-#define GB_CAST_NAME(x)     GB_cast_int32_t_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
@@ -2908,7 +2904,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT32
-#define GB_CAST_NAME(x)     GB_cast_uint32_t_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
@@ -2916,7 +2911,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_SIGNED_INT
 #define GB(x)               GB_ ## x ## _INT64
-#define GB_CAST_NAME(x)     GB_cast_int64_t_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
@@ -2924,7 +2918,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_REAL
 #define GB_UNSIGNED_INT
 #define GB(x)               GB_ ## x ## _UINT64
-#define GB_CAST_NAME(x)     GB_cast_uint64_t_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
@@ -2933,7 +2926,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_FLOATING_POINT
 #define GB_FLOAT
 #define GB(x)               GB_ ## x ## _FP32
-#define GB_CAST_NAME(x)     GB_cast_float_ ## x
 #define GB_BITS             32
 #include "GB_ops_template.h"
 
@@ -2942,7 +2934,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_FLOATING_POINT
 #define GB_DOUBLE
 #define GB(x)               GB_ ## x ## _FP64
-#define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
@@ -2951,7 +2942,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_FLOATING_POINT
 #define GB_FLOAT_COMPLEX
 #define GB(x)               GB_ ## x ## _FC32
-#define GB_CAST_NAME(x)     GB_cast_GxB_FC32_t_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
 
@@ -2960,7 +2950,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_FLOATING_POINT
 #define GB_DOUBLE_COMPLEX
 #define GB(x)               GB_ ## x ## _FC64
-#define GB_CAST_NAME(x)     GB_cast_GxB_FC64_t_ ## x
 #define GB_BITS             128
 #include "GB_ops_template.h"
 

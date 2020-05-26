@@ -50,11 +50,11 @@ fprintf (f, 'define(`GB_UNARYOP'', `$1 = %s'')\n', op) ;
 % create the cast operator
 if (A_is_pattern)
     % cast (A(i,j)) is not needed
-    fprintf (f, 'define(`GB_CAST'', `;'')\n') ;
+    fprintf (f, 'define(`GB_cast'', `;'')\n') ;
 else
     fcast = strrep (fcast, 'zarg', '`$1''') ;
     fcast = strrep (fcast, 'xarg', '`$2''') ;
-    fprintf (f, 'define(`GB_CAST'', `%s'')\n', fcast) ;
+    fprintf (f, 'define(`GB_cast'', `%s'')\n', fcast) ;
 end
 
 % create the disable flag

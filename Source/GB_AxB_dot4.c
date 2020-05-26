@@ -95,7 +95,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         {
             // MKL_graph supports this semiring, and has ether computed C=A*B,
             // C<M>=A*B, or C<!M>=A*B, or has failed.
-//          printf ("MKL info: %d\n", info) ;
             return (info) ;
         }
 

@@ -22,7 +22,7 @@
 
 // C type:   int64_t
 // A type:   GxB_FC32_t
-// cast:     int64_t cij ; GB_CAST_SIGNED(cij,crealf(aij),64)
+// cast:     int64_t cij = GB_cast_to_int64_t ((double) crealf (aij))
 // unaryop:  cij = aij
 
 #define GB_ATYPE \
@@ -32,18 +32,18 @@
     int64_t
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA) \
     GxB_FC32_t aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
 // unary operator
-#define GB_OP(z, x)   \
+#define GB_OP(z, x) \
     z = x ;
 
 // casting
-#define GB_CASTING(z, aij) \
-    int64_t z ; GB_CAST_SIGNED(z,crealf(aij),64) ;
+#define GB_CAST(z, aij) \
+    int64_t z = GB_cast_to_int64_t ((double) crealf (aij)) ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,7 +51,7 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (z, aij) ;           \
+    GB_CAST (z, aij) ;              \
     GB_OP (GB_CX (pC), z) ;         \
 }
 

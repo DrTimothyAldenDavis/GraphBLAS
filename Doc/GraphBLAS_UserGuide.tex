@@ -108,11 +108,11 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \item Version 3.3.0 (TODO, 2020).
     Added complex types (\verb'GxB_FC32' and \verb'GxB_FC64'), many unary
     operators, binary operators, monoids, and semirings.  Added bitwise
-    operators, and their monoids and semirings.  Added the 44 predefined
-    monoids and 62 predefined monoids from the v1.3 spec.  MATLAB
-    interface: added complex matrices and operators, and changed
-    behavior of integer operations to more closely match the
-    behavior on MATLAB integer matrices.
+    operators, and their monoids and semirings.  Added the predefined monoids
+    and semirings from the v1.3 spec.  MATLAB interface: added complex matrices
+    and operators, and changed behavior of integer operations to more closely
+    match the behavior on MATLAB integer matrices.  The rules for typecasting
+    large floating point values to integers has changed.
 
 % TODO: describe new types, binary/unary ops, monoids, semirings
 
@@ -366,9 +366,11 @@ The user application can create any semiring based on any types, monoids,
 and multiply operators, as long these few rules are followed.
 
 Just considering built-in types and operators, GraphBLAS can perform
-\verb'C=A*B' in 1355 unique semirings.  With typecasting, any of these 1355
+\verb'C=A*B' in 1355 %TODO
+unique semirings.  With typecasting, any of these 1355 % TODO
 semirings can be applied to matrices \verb'C', \verb'A', and \verb'B' of any of
-the 11 types, in any combination.  This gives $1355 \times 11^3 = 1,803,505$
+the 11 types, in any combination.  This gives
+$1355 \times 11^3 = 1,803,505$ % TODO
 possible kinds of sparse matrix multiplication supported by GraphBLAS, and this
 is counting just built-in types and operators.  By contrast, MATLAB provides
 just two semirings for its sparse matrix multiplication \verb'C=A*B':
@@ -694,7 +696,7 @@ when one type cannot be typecast to another, the GraphBLAS function returns an
 error code, \verb'GrB_DOMAIN_MISMATCH' (refer to Section~\ref{error} for a
 complete list of error codes).  Typecasting can only be done between built-in
 types, and it follows the rules of the ANSI C language (not MATLAB) wherever
-the rules of ANSI C are well-defined.   In particular, a large integer outside
+the rules of ANSI C are well-defined.  In particular, a large integer outside
 the range of a smaller one is wrapped, modulo style.  This differs from MATLAB.
 
 However, unlike MATLAB, the C language specification states that the results of
@@ -702,12 +704,17 @@ typecasting a \verb'float' or \verb'double' to an integer type is not always
 defined.  In SuiteSparse:GraphBLAS, whenever C leaves the result undefined the
 rules used in MATLAB are followed.  In particular \verb'+Inf' converts to the
 largest integer value, \verb'-Inf' converts to the smallest (zero for unsigned
-integers), and \verb'NaN' converts to zero.  Other than these special cases,
-SuiteSparse:GraphBLAS trusts the C compiler for the rest of its typecasting.
+integers), and \verb'NaN' converts to zero.  Positive values outside the range
+of the integer are converted to the largest positive integer, and negative
+values less than the most negative integer are converted to that most negative
+integer.  Other than these special cases, SuiteSparse:GraphBLAS trusts the C
+compiler for the rest of its typecasting.
 
 Typecasting to \verb'bool' is fully defined in the C language specification,
 even for \verb'NaN'.  The result is \verb'false' if the value compares equal to
-zero, and true otherwise.  Thus \verb'NaN' converts to \verb'true'.
+zero, and true otherwise.  Thus \verb'NaN' converts to \verb'true'.  This is
+unlike MATLAB, which does not allow a typecast of a \verb'NaN' to the MATLAB
+logical type.
 
 \begin{spec}
 {\bf SPEC:} the GraphBLAS API states that typecasting follows the rules of ANSI
@@ -1462,10 +1469,6 @@ examine the content of the object directly; instead, they can pass the handle
 back to GraphBLAS which will do the work.  Assigning one handle to another
 is valid but it does not make a copy of the underlying object.
 
-GraphBLAS provides 11 built-in types and 157 built-in operators;
-SuiteSparse:GraphBLAS adds 143 additional built-in operators.  With these,
-55 unique monoids and 1355 unique semirings can be constructed.
-
 \begin{spec}
 {\bf SPEC:} SuiteSparse:GraphBLAS predefines all unique monoids and semirings
 that can be constructed from built-in types and operators, as an extension to
@@ -2045,7 +2048,7 @@ operators.  Without the \verb'_'$T$ suffix, the three operators \verb'GrB_LOR',
 \verb'GrB_LAND', and \verb'GrB_LXOR' operate purely in the Boolean domain,
 where all input and output types are \verb'GrB_BOOL'.  The second set
 (\verb'GxB_LOR_'$T$ \verb'GxB_LAND_'$T$ and \verb'GxB_LXOR_'$T$) provides
-Boolean operators to all 11 domains, implicitly typecasting their inputs from
+Boolean operators to all 11 real domains, implicitly typecasting their inputs from
 type $T$ to Boolean and returning a value of type $T$ that is 1 for true or
 zero for false.  The set of \verb'GxB_L*_'$T$ operators are useful since they
 can be combined with non-Boolean monoids in a semiring.
@@ -2813,7 +2816,7 @@ A {\em semiring} defines all the operators required to define the
 multiplication of two sparse matrices in GraphBLAS, ${\bf C=AB}$.  The ``add''
 operator is a commutative and associative monoid, and the binary ``multiply''
 operator defines a function $z=fmult(x,y)$ where the type of $z$ matches the
-exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1355
+exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1355 % TODO
 predefined built-in semirings, which are all those that can be constructed
 from built-in types and operators.  The next sections define the following
 methods for the \verb'GrB_Semiring' object:
@@ -2853,7 +2856,8 @@ additive monoid and \verb'multiply' being the binary ``multiply'' operator.  In
 addition to the standard error cases, the function returns
 \verb'GrB_DOMAIN_MISMATCH' if the output (\verb'ztype') domain of
 \verb'multiply' does not match the domain of the \verb'add' monoid.  Using
-built-in types and operators, 1355 semirings can be built.  This count
+built-in types and operators, 1355 % TODO
+semirings can be built.  This count
 excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL' and
 \verb'GrB_LAND' are different operators but they are redundant since they
 always return the same result).
@@ -2902,7 +2906,8 @@ always return the same result).
 \end{itemize}
 
 \vspace{-0.05in}
-SuiteSparse:GraphBLAS pre-defines all 1355 unique semirings that can be
+SuiteSparse:GraphBLAS pre-defines all 1355 % TODO
+unique semirings that can be
 constructed from built-in types and operators, as an extension to the spec.
 The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
 operator of the additive monoid, \verb'mult' is the multiply operator, and
@@ -11125,10 +11130,9 @@ and the National Science Foundation (1514406).
 \section{Additional Resources}
 %-------------------------------------------------------------------------------
 
-See \url{http://graphblas.org} for the GraphBLAS community page.
-See
-\url{https://github.com/szarnyasg/graphblas-pointers} for an up-to-date list
-of additional resources on GraphBLAS.
+See \url{http://graphblas.org} for the GraphBLAS community page.  See
+\url{https://github.com/GraphBLAS/GraphBLAS-Pointers} for an up-to-date list of
+additional resources on GraphBLAS, maintained by G{\'{a}}bor Sz{\'{a}}rnyas.
 
 \newpage
 %-------------------------------------------------------------------------------

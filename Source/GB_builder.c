@@ -1138,6 +1138,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // copy S into Tx.  S cannot be transplanted into T->x since
             // S_work is NULL and S_input cannot be modified by GB_builder.
 
+            GBBURBLE ("(memcpy S into T) ") ;
             ASSERT (S_work == NULL) ;
             ASSERT (S == S_input) ;
             GB_memcpy (Tx, S, nvals * tsize, nthreads) ;
@@ -1167,6 +1168,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             // Early exit cannot be exploited, so the terminal is ignored.
 
+            GBBURBLE ("(assemble S into T, no casting) ") ;
             bool done = false ;
 
             #ifndef GBCOMPACT

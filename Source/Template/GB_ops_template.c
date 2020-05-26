@@ -205,16 +205,16 @@ GB_OP2 (GxB_, POW    , "pow"   )
 
     // bitwise binary operators, added for v1.3 spec.  For integer only (int*,
     // and uint*), not for logical or floating-point types.
-    GB_OP2 (GrB_, BOR      , "bitwise_or"   ) ;
-    GB_OP2 (GrB_, BAND     , "bitwise_and"  ) ;
-    GB_OP2 (GrB_, BXOR     , "bitwise_xor"  ) ;
-    GB_OP2 (GrB_, BXNOR    , "bitwise_xnor" ) ;
+    GB_OP2 (GrB_, BOR      , "bitor"   ) ;
+    GB_OP2 (GrB_, BAND     , "bitand"  ) ;
+    GB_OP2 (GrB_, BXOR     , "bitxor"  ) ;
+    GB_OP2 (GrB_, BXNOR    , "bitxnor" ) ;
 
-    GB_OP2 (GxB_, BGET     , "bitwise_get"   ) ;
-    GB_OP2 (GxB_, BSET     , "bitwise_set"   ) ;
-    GB_OP2 (GxB_, BCLR     , "bitwise_clear" ) ;
+    GB_OP2 (GxB_, BGET     , "bitget"   ) ;
+    GB_OP2 (GxB_, BSET     , "bitset"   ) ;
+    GB_OP2 (GxB_, BCLR     , "bitclear" ) ;
 
-    GB_OP2shift (GxB_, BSHIFT, "bitwise_shift") ;
+    GB_OP2shift (GxB_, BSHIFT, "bitshift") ;
 
 #endif
 
@@ -255,25 +255,6 @@ GB_OP2 (GxB_, POW    , "pow"   )
 #endif
 
 //------------------------------------------------------------------------------
-// unary typecast operators, used in GB_cast_factory.c
-//------------------------------------------------------------------------------
-
-// z = cast (x) where ztype is given by GB_TYPE, and xtype is listed below
-extern void GB_CAST_NAME (bool    ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int8_t  ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint8_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int16_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint16_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int32_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint32_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int64_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint64_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (float   ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (double  ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (GxB_FC32_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (GxB_FC64_t) (void *z, const void *x, size_t s) ;
-
-//------------------------------------------------------------------------------
 // clear macros for next use of this file
 //------------------------------------------------------------------------------
 
@@ -281,7 +262,6 @@ extern void GB_CAST_NAME (GxB_FC64_t) (void *z, const void *x, size_t s) ;
 #undef GB_TYPE
 #undef GB_XTYPE
 #undef GrB_NAME
-#undef GB_CAST_NAME
 #undef GB_FLOATING_POINT
 #undef GB_COMPLEX
 #undef GB_FLOAT

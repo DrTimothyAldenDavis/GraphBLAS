@@ -1,4 +1,4 @@
-% function testc6
+function testc6
 %TESTC6 test complex apply
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

@@ -22,7 +22,7 @@
 
 // C type:   int16_t
 // A type:   int16_t
-// cast:     int16_t cij = (int16_t) aij
+// cast:     int16_t cij = aij
 // unaryop:  cij = GB_IMINV_SIGNED (aij, 16)
 
 #define GB_ATYPE \
@@ -32,18 +32,18 @@
     int16_t
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA) \
     int16_t aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
 // unary operator
-#define GB_OP(z, x)   \
+#define GB_OP(z, x) \
     z = GB_IMINV_SIGNED (x, 16) ;
 
 // casting
-#define GB_CASTING(z, aij) \
-    int16_t z = (int16_t) aij ;
+#define GB_CAST(z, aij) \
+    int16_t z = aij ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,7 +51,7 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (z, aij) ;           \
+    GB_CAST (z, aij) ;              \
     GB_OP (GB_CX (pC), z) ;         \
 }
 

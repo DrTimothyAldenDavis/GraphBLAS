@@ -175,16 +175,17 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
     GrB_Semiring *handle,               // the semiring
     const mxArray *semiring_matlab,     // MATLAB version of semiring
     const char *name,                   // name of the argument
-    const GrB_Type default_optype       // default operator type
+    const GrB_Type default_optype,      // default operator type
+    const bool user_complex         // if true, use user-defined Complex op
 ) ;
 
-GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
+GrB_Semiring GB_mx_semiring         // semiring, or NULL if error
 (
     const GrB_Monoid add_monoid,    // input monoid
     const GrB_BinaryOp mult         // input multiply operator
 ) ;
 
-GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
+GrB_Monoid GB_mx_BinaryOp_to_Monoid // monoid, or NULL if error
 (
     const GrB_BinaryOp add          // monoid operator
 ) ;

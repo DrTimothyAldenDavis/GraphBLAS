@@ -40,6 +40,9 @@ extra {2} = [1 1] ;
 % clear the statement coverage counts
 clear global GraphBLAS_grbcov
 
+% use built-in complex data types by default
+builtin_complex_set (1) ;
+
 % many of the tests use SuiteSparse/MATLAB_Tools/spok, a copy of which is
 % included here in GraphBLAS/Test/spok.
 addpath ('../Test/spok') ;

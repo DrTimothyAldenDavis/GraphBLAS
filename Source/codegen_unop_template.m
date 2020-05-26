@@ -100,18 +100,20 @@ for code1 = 1:ntypes
         % determine the casting function
         fcast = 'GB_ctype zarg = (GB_ctype) xarg' ;
 
-        if (isequal (atype, 'GxB_FC32_t'))
+        if (isequal (atype, ctype))
+
+            % no typecasting
+            fcast = 'GB_ctype zarg = xarg' ;
+
+        elseif (isequal (atype, 'GxB_FC32_t'))
 
             % typecasting from GxB_FC32_t
             if (isequal (ctype, 'bool')) 
                 % to bool from GxB_FC32_t 
                 fcast = 'GB_ctype zarg = (crealf (xarg) != 0) || (cimagf (xarg) != 0)' ;
-            elseif (ctype (1) == 'i')
-                % to int* from GxB_FC32_t 
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_SIGNED(zarg,crealf(xarg),%d)', cbits) ;
-            elseif (ctype (1) == 'u')
-                % to uint* from GxB_FC32_t 
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_UNSIGNED(zarg,crealf(xarg),%d)', cbits) ;
+            elseif (contains (ctype, 'int'))
+                % to integer from GxB_FC32_t 
+                fcast = sprintf ('GB_ctype zarg = GB_cast_to_%s ((double) crealf (xarg))', ctype) ;
             elseif (isequal (ctype, 'float') || isequal (ctype, 'double')) 
                 % to float or double from GxB_FC32_t 
                 fcast = 'GB_ctype zarg = (GB_ctype) crealf (xarg)' ;
@@ -126,12 +128,9 @@ for code1 = 1:ntypes
             if (isequal (ctype, 'bool')) 
                 % to bool from GxB_FC64_t 
                 fcast = 'GB_ctype zarg = (creal (xarg) != 0) || (cimag (xarg) != 0)' ;
-            elseif (ctype (1) == 'i')
-                % to int* from GxB_FC64_t 
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_SIGNED(zarg,creal(xarg),%d)', cbits) ;
-            elseif (ctype (1) == 'u')
-                % to uint* from GxB_FC64_t 
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_UNSIGNED(zarg,creal(xarg),%d)', cbits) ;
+            elseif (contains (ctype, 'int'))
+                % to integer from GxB_FC64_t 
+                fcast = sprintf ('GB_ctype zarg = GB_cast_to_%s (creal (xarg))', ctype) ;
             elseif (isequal (ctype, 'float') || isequal (ctype, 'double')) 
                 % to float or double from GxB_FC64_t 
                 fcast = 'GB_ctype zarg = (GB_ctype) creal (xarg)' ;
@@ -143,12 +142,12 @@ for code1 = 1:ntypes
         elseif (isequal (atype, 'float') || isequal (atype, 'double'))
 
             % typecasting from float or double
-            if (ctype (1) == 'i')
-                % to int* from float or double
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_SIGNED(zarg,xarg,%d)', cbits) ;
-            elseif (ctype (1) == 'u')
-                % to uint* from float or double
-                fcast = sprintf ('GB_ctype zarg ; GB_CAST_UNSIGNED(zarg,xarg,%d)', cbits) ;
+            if (isequal (ctype, 'bool')) 
+                % to bool from float or double 
+                fcast = 'GB_ctype zarg = (xarg != 0)' ;
+            elseif (contains (ctype, 'int'))
+                % to integer from float or double 
+                fcast = sprintf ('GB_ctype zarg = GB_cast_to_%s ((double) (xarg))', ctype) ;
             elseif (isequal (ctype, 'GxB_FC32_t'))
                 % to GxB_FC32_t from float or double
                 fcast = 'GB_ctype zarg = GxB_CMPLXF ((float) (xarg), 0)' ;

@@ -1960,7 +1960,6 @@ GrB_Info GB_subassign_emult_slice
                 int64_t jlast = (Pending_j != NULL) ? Pending_j [n-1] : 0 ; \
                 pending_sorted = pending_sorted &&                          \
                     ((jlast < j) || (jlast == j && ilast <= i)) ;           \
-                /* printf ("pending_sorted now %d\n", pending_sorted) ; */  \
             }                                                               \
         }                                                                   \
     }                                                                       \

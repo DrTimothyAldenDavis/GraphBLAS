@@ -1,4 +1,4 @@
-% function test141
+function test141
 %TEST141 test GrB_eWiseAdd (all types and operators) for dense matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

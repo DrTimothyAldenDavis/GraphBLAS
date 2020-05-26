@@ -10,17 +10,17 @@ function C = GB_spec_op (op, A, B)
 % 'rminus', 'times', 'div', 'rdiv', 'eq', 'ne', 'gt', 'lt', 'ge', 'le', 'or',
 % 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair', 'any',
 % 'pow', ('bitget' or 'bget'), ('bitset' or 'bset'), ('bitclr' or 'bclr'),
-% ('bitand' or 'band'), ('bitor' or 'bor'), ('bitxor' or 'bxor'), ('bitshift'
-% or 'bshift'), ('bitnot' or 'bitcmp'), 'atan2', 'hypot', ('ldexp' or 'pow2'),
-% ('complex', 'cmplx').  
-
+% ('bitand' or 'band'), ('bitor' or 'bor'), ('bitxor' or 'bxor'), ('bitxnor',
+% 'bxnor'), ('bitshift' or 'bshift'), ('bitnot' or 'bitcmp'), 'atan2', 'hypot',
+% ('ldexp' or 'pow2'), ('complex', 'cmplx').  
+%
 % Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', 'not', 'bnot',
 % 'sqrt', 'log', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh',
 % 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'ceil', 'floor', 'round', ('trunc'
-% or 'fix'), ('exp2' or 'fix'), 'expm1', 'log10', 'log2', ('lgamma' or
-% 'gammaln'), ('tgamma' or 'gamma'), 'erf', 'erfc', 'frexpx', 'frexpe', 'conj',
-% ('creal' or 'real'), ('cimag' or 'imag'), ('carg' or 'angle'), 'isinf',
-% 'isnan', 'isfinite'.
+% or 'fix'), 'exp2', 'expm1', 'log10', 'log2', ('lgamma' or 'gammaln'),
+% ('tgamma' or 'gamma'), 'erf', 'erfc', 'frexpx', 'frexpe', 'conj', ('creal' or
+% 'real'), ('cimag' or 'imag'), ('carg' or 'angle'), 'isinf', 'isnan',
+% 'isfinite'.
 %
 % op.optype: 'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32',
 %   'uint32', 'int64', 'uint64', 'single', 'double', 'single complex'
@@ -29,7 +29,7 @@ function C = GB_spec_op (op, A, B)
 % The class of z is the same as the class of the output of the operator,
 % which is op.optype except for: (1) 'eq', 'ne', 'gt', 'lt', 'ge', 'le',
 % in which case z is logical, (2) 'complex', where x and y are real and
-% z is complex, (3) ...
+% z is complex, (3) ... TODO
 %
 % Intrinsic MATLAB operators are used as much as possible, so as to test
 % GraphBLAS operators.  Some must be done in GraphBLAS because the
@@ -50,7 +50,6 @@ else
     x = A ;
 end
 
-% use GB_mex_op for integer and logical plus, minus, times, and div
 use_matlab = (isa (x, 'float') && ...
     (contains (optype, 'single') || contains (optype, 'double'))) ;
 
@@ -174,9 +173,11 @@ switch opname
         z = bitor (x, y, ztype) ;
     case { 'bitxor', 'bxor' }
         z = bitxor (x, y, ztype) ;
+    case { 'bitxnor', 'bxnor' }
+        z = bitcmp (bitxor (x, y, ztype), ztype) ;
     case { 'bitshift', 'bshift' }
         z = bitshift (x, y, ztype) ;
-    case { 'bitnot', 'bitcmp' }
+    case { 'bitnot', 'bitcmp', 'bnot', 'bcmp' }
         z = bitcmp (x, ztype) ;
 
     case 'atan2'
@@ -281,7 +282,7 @@ switch opname
     case { 'trunc', 'fix' }
         z = fix (x) ;
 
-    case { 'exp2', 'fix' }
+    case { 'exp2' }
         z = 2.^x ;
 
     case 'expm1'
@@ -292,6 +293,9 @@ switch opname
 
     case 'log2'
         z = log2 (x) ;
+
+    case 'log1p'
+        z = log1p (x) ;
 
     case { 'lgamma', 'gammaln' }
         z = gammaln (x) ;
@@ -338,5 +342,4 @@ switch opname
 end
 
 C = z ;
-
 

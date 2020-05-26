@@ -51,33 +51,47 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     // built-in unary operators
     //--------------------------------------------------------------------------
 
+    // only two workers are allowed to do their own typecasting: IDENTITY and
+    // ONE.  For all others, the input type Atype must match the op->xtype of
+    // the operator.  If this check isn't done, abs.single with fc32 input will
+    // map to abs.fc32, based on the type of the input A, which is the wrong
+    // operator.
+
     #ifndef GBCOMPACT
 
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
+        bool no_typecasting = (Atype == op->xtype)
+            || (op->opcode == GB_IDENTITY_opcode)
+            || (op->opcode == GB_ONE_opcode) ;
 
-        // FUTURE:: these operators could be renamed:
-        // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
-        // GrB_MINV_BOOL to GxB_ONE_BOOL.
-        // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
-        // and then these workers would not need to be created.
+        if (no_typecasting)
+        { 
 
-        #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
 
-        #define GB_WORKER(op,zname,ztype,aname,atype)                   \
-        {                                                               \
-            GrB_Info info = GB_unop (op,zname,aname) ((ztype *) Cx,     \
-                (atype *) Ax, anz, nthreads) ;                          \
-            if (info == GrB_SUCCESS) return ;                           \
-        }                                                               \
-        break ;
+            // FUTURE:: these operators could be renamed:
+            // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
+            // GrB_MINV_BOOL to GxB_ONE_BOOL.
+            // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
+            // and then these workers would not need to be created.
 
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
+            #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
 
-        #include "GB_unaryop_factory.c"
+            #define GB_WORKER(op,zname,ztype,aname,atype)                   \
+            {                                                               \
+                GrB_Info info = GB_unop (op,zname,aname) ((ztype *) Cx,     \
+                    (atype *) Ax, anz, nthreads) ;                          \
+                if (info == GrB_SUCCESS) return ;                           \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            #include "GB_unaryop_factory.c"
+        }
 
     #endif
 

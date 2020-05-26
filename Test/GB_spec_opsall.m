@@ -92,8 +92,8 @@ binops.complex = { } ;
 % unary ops
 %-------------------------------------------------------------------------------
 
-% 5 unary ops for all 13 types
-unary_ops.all = {
+% defined for all 13 types
+unary_ops.alltypes = {
 'one',       % z = 1
 'identity',  % z = x
 'ainv',      % z = -x
@@ -130,24 +130,13 @@ unary_ops.fpreal = {
 unary_ops.complex = {
     'conj', 'real', 'imag', 'carg' } ;
 
+% list of all unary ops
+unary_ops.all = [ unary_ops.alltypes, unary_ops.real, unary_ops.int, ...
+    unary_ops.float, unary_ops.fpreal, unary_ops.complex ] ;
+
 %-------------------------------------------------------------------------------
 % valid binary ops
 %-------------------------------------------------------------------------------
-
-add_ops = {
-% 4 monoids for any of 11 types.real (including logical)
-'min',       % z = min(x,y) : identity is +inf  (not for complex)
-'max',       % z = max(x,y) : identity is -inf  (not for complex)
-'plus',      % z = x + y    : identity is 0
-'times',     % z = x * y    : identity is 1
-'any',       % z = pick x or y: both sets
-%----------------------------
-% 4 monoids for just boolean
-'or',        % z = x || y   : identity is 0 (false)
-'and'        % z = x && y   : identity is 1 (true)
-'xor'        % z = x != y   : identity is 0 (false)
-'eq'         % z = (x==y)   ; identity is 1 (true)
-} ;
 
 add_ops = { ...
     'min', 'max', ...                           % 11 real types only
