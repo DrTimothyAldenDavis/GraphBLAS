@@ -6,7 +6,7 @@ function test151
 
 fprintf ('test151: test bitwise operators\n') ;
 
-[~, ~, ~, types ~, ~,] = GB_spec_opsall
+[~, ~, ~, types ~, ~,] = GB_spec_opsall ;
 
 ops2 = { 'bitget', 'bitset', 'bitclr', 'bitand', 'bitor', 'bitxor' } ;
 

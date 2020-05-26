@@ -47,5 +47,6 @@ anorm = norm (A, 1) ;
 if (nargin < 3)
     tol = 64*eps ;
 end
+anorm = max (anorm, 1) ;
 ok = (err == 0) || (err <= tol * anorm) ;
 

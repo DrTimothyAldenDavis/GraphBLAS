@@ -9,6 +9,7 @@ fprintf ('\ntest10: GrB_apply tests\n') ;
 [~, unary_ops, ~, types, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
+GrB.burble (0) ;
 
 m = 8 ;
 n = 4 ;
@@ -101,20 +102,24 @@ for k1 = 1:length(test_types)
             A.matrix = A_matrix ;
             B.matrix = B_matrix ;
 
-            if (contains (optype, 'complex'))
+            switch (opname)
+                % domain is ok, but limit it to avoid integer typecast
+                % failures from O(eps) errors, or overflow to inf
+                case { 'tanh', 'exp', 'sin', 'cos', 'tan', ...
+                    'sinh', 'cosh', 'asin', 'acos', 'acosh', 'asinh', ...
+                    'atanh', 'exp2', 'expm1', 'carg', 'atan' }
+                    A.matrix = A_5_matrix ;
+                    B.matrix = B_5_matrix ;
+                case { 'tgamma' }
+                    A.matrix = A_pos5_matrix ;
+                    B.matrix = B_pos5_matrix ;
+                otherwise
+                    % no change
+            end
 
-                switch (opname)
-                    % domain is ok, but limit it to avoid integer typecast
-                    % failures from O(eps) errors
-                    case { 'tanh', 'tgamma', 'exp' }
-                        A.matrix = A_5_matrix ;
-                        B.matrix = B_5_matrix ;
-                    otherwise
-                        % no change
-                end
+            if (~contains (optype, 'complex'))
 
-            else
-
+                % for real operators, avoiding complex results
                 switch (opname)
                     case { 'pow', 'sqrt', 'log', 'log10', 'log2', ...
                         'gammaln', 'lgamma' }
@@ -134,9 +139,6 @@ for k1 = 1:length(test_types)
                         % failures from O(eps) errors
                         A.matrix = A_5_matrix ;
                         B.matrix = B_5_matrix ;
-                    case { 'tgamma' }
-                        A.matrix = A_pos5_matrix ;
-                        B.matrix = B_pos5_matrix ;
                     otherwise
                         % no change
                 end
@@ -146,9 +148,9 @@ for k1 = 1:length(test_types)
             % op
 
             tol = 0 ;
-            if (contains (optype, 'single'))
+            if (contains (optype, 'single') || contains (atype, 'single'))
                 tol = 1e-5 ;
-            elseif (contains (optype, 'double'))
+            elseif (contains (optype, 'double') || contains (atype, 'double'))
                 tol = 1e-12 ;
             end
 
@@ -166,53 +168,60 @@ for k1 = 1:length(test_types)
             % no mask
             C1 = GB_spec_apply (Cin, [], [], op, A, []) ;
             C2 = GB_mex_apply  (Cin, [], [], op, A, []) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
-
-            % no mask, with accum
-save gunk Cin op A tol
-            C1 = GB_spec_apply (Cin, [], 'plus', op, A, []) ;
-            C2 = GB_mex_apply  (Cin, [], 'plus', op, A, []) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
 
             % with mask
             C1 = GB_spec_apply (Cin, Mask, [], op, A, []) ;
             C2 = GB_mex_apply  (Cin, Mask, [], op, A, []) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
-
-            % with mask and accum
-            C1 = GB_spec_apply (Cin, Mask, 'plus', op, A, []) ;
-            C2 = GB_mex_apply  (Cin, Mask, 'plus', op, A, []) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
 
             % with C == mask, and outp = replace
             C1 = GB_spec_apply (Cin, Cmask, [], op, A, dr) ;
             C2 = GB_mex_apply2 (Cin,        [], op, A, dr) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
-
-            % with C == mask and accum, and outp = replace
-            C1 = GB_spec_apply (Cin, Cmask, 'plus', op, A, dr) ;
-            C2 = GB_mex_apply2 (Cin,        'plus', op, A, dr) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
 
             % no mask, transpose
             C1 = GB_spec_apply (Cin, [], [], op, B, dt) ;
             C2 = GB_mex_apply  (Cin, [], [], op, B, dt) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
-
-            % no mask, with accum, transpose
-            C1 = GB_spec_apply (Cin, [], 'plus', op, B, dt) ;
-            C2 = GB_mex_apply  (Cin, [], 'plus', op, B, dt) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
 
             % with mask, transpose
             C1 = GB_spec_apply (Cin, Mask, [], op, B, dt) ;
             C2 = GB_mex_apply  (Cin, Mask, [], op, B, dt) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
+
+            switch (opname)
+                % the results from these operators must be check before summing
+                % their results with the accum operator, so skip the rest of
+                % the tests.
+                case { 'acos', 'asin', 'atan' 'acosh', 'asinh', 'atanh' }
+                    continue ;
+            end
+
+            % no mask, with accum
+            C1 = GB_spec_apply (Cin, [], 'plus', op, A, []) ;
+            C2 = GB_mex_apply  (Cin, [], 'plus', op, A, []) ;
+            test10_compare (op, C1, C2, tol) ;
+
+            % with mask and accum
+            C1 = GB_spec_apply (Cin, Mask, 'plus', op, A, []) ;
+            C2 = GB_mex_apply  (Cin, Mask, 'plus', op, A, []) ;
+            test10_compare (op, C1, C2, tol) ;
+
+            % with C == mask and accum, and outp = replace
+            C1 = GB_spec_apply (Cin, Cmask, 'plus', op, A, dr) ;
+            C2 = GB_mex_apply2 (Cin,        'plus', op, A, dr) ;
+            test10_compare (op, C1, C2, tol) ;
+
+            % no mask, with accum, transpose
+            C1 = GB_spec_apply (Cin, [], 'plus', op, B, dt) ;
+            C2 = GB_mex_apply  (Cin, [], 'plus', op, B, dt) ;
+            test10_compare (op, C1, C2, tol) ;
 
             % with mask and accum, transpose
             C1 = GB_spec_apply (Cin, Mask, 'plus', op, B, dt) ;
             C2 = GB_mex_apply  (Cin, Mask, 'plus', op, B, dt) ;
-            GB_spec_compare (C1, C2, 0, tol) ;
+            test10_compare (op, C1, C2, tol) ;
 
         end
     end

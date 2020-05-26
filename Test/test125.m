@@ -56,7 +56,7 @@ rng ('default') ;
                 semiring.add = addop ;
                 semiring.class = clas ;
 
-                semiring
+                % semiring
 
                 % create the semiring.  some are not valid because the
                 % or,and,xor monoids can only be used when z is boolean for
@@ -129,7 +129,8 @@ rng ('default') ;
                 end
 
 %               This should produce a list of all files in Source/Generated.
-                fprintf ('GB_AxB__%s_%s_%s.c\n', add_opname, mult_opname, xtype) ;
+%               fprintf ('GB_AxB__%s_%s_%s.c\n', ...
+%                   add_opname, mult_opname, xtype) ;
 
             end
         end

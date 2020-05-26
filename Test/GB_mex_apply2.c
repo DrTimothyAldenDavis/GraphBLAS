@@ -75,7 +75,7 @@ void mexFunction
     // get op
     GrB_UnaryOp op ;
     if (!GB_mx_mxArray_to_UnaryOp (&op, pargin [2], "op",
-        A->type, A->type == Complex) || op == NULL) 
+        A->type, user_complex) || op == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("UnaryOp failed") ;
