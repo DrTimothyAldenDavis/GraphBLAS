@@ -117,10 +117,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    // GB_WAIT (C) ;
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
-    GB_WAIT (B) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (B) ;
 
     //--------------------------------------------------------------------------
     // handle CSR and CSC formats

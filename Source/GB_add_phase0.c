@@ -16,8 +16,8 @@
 // not here.
 
 // The A matrix can be sparse, hypersparse, slice, or hyperslice.  The B matrix
-// can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
-// of the four formats.  In this case, no mask is present.
+// can only be sparse or hypersparse.  See GB_Matrix_wait, which can pass in A
+// as any of the four formats.  In this case, no mask is present.
 
 // On output, an integer (Cnvec) a boolean (Ch_to_Mh) and up to 3 arrays are
 // returned, either NULL or of size Cnvec.  Let n = A->vdim be the vector
@@ -235,9 +235,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // C is hypersparse, with the same vectors as the hypersparse M
         //----------------------------------------------------------------------
 
-        // This step is done for GB_add only, not GB_masker.
-        // GB_wait is the only place where A may be a slice, and it does not
-        // use a mask.  So this phase can ignore the case where A is a slice.
+        // This step is done for GB_add only, not GB_masker.  GB_Matrix_wait is
+        // the only place where A may be a slice, and it does not use a mask.
+        // So this phase can ignore the case where A is a slice.
 
         Cnvec = Mnvec ;
         nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;

@@ -26,11 +26,11 @@ if (nargin < 3)
     kind = 2 ;
 end
 
-if (isa (A, 'GrB'))
+if (isobject (A))
     A = A.opaque ;
 end
 
-if (isa (B, 'GrB'))
+if (isobject (B))
     B = B.opaque ;
 end
 

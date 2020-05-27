@@ -14,8 +14,8 @@
 // If C(row,col) is already present in the matrix, its value is overwritten
 // with the scalar.  Otherwise, if the mode determined by GrB_init is
 // non-blocking, the tuple (i,j,scalar) is appended to a list of pending tuples
-// to C.  When calling GrB_wait, these pending tuples are assembled.  They are
-// also assembled if the mode is blocking.
+// to C.  When calling GrB_Matrix_wait, these pending tuples are assembled.
+// They are also assembled if the mode is blocking.
 
 // GrB_setElement is the same as GrB_*assign with an implied SECOND accum
 // operator whose ztype, xtype, and ytype are the same as C, with I=i, J=1, a
@@ -26,6 +26,8 @@
 // Compare this function with GB_extractElement.
 
 #include "GB_Pending.h"
+
+#define GB_FREE_ALL ;
 
 GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 (
@@ -42,6 +44,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (C != NULL) ;
     GB_RETURN_IF_NULL (scalar) ;
 
@@ -163,7 +166,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             if (C->nzombies == 0 && C->Pending == NULL)
             { 
                 // remove from queue if no zombies or pending tuples
-                // FUTURE:: may thrash; see GrB_wait.
+                // FUTURE:: delete this
                 if (!GB_queue_remove (C)) GB_PANIC ;
             }
         }
@@ -233,7 +236,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             #endif
 
             // delete any lingering zombies and assemble the pending tuples
-            GB_WAIT (C) ;
+            GB_MATRIX_WAIT (C) ;
 
             #if GB_BURBLE
             if (burble)
@@ -286,7 +289,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // ASSERT_MATRIX_OK (C, "did C for setElement (not found)", GB0) ;
 
         #if GB_BURBLE
-        // only burble if GB_wait will be called
+        // only burble if GB_Matrix_wait will be called
         burble = (burble && GB_shall_block (C)) ;
         if (burble)
         {
@@ -297,7 +300,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         }
         #endif
 
-        GrB_Info info = GB_block (C, Context) ;
+        info = GB_block (C, Context) ;
 
         #if GB_BURBLE
         if (burble)

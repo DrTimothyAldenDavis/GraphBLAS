@@ -24,35 +24,9 @@
 // GxB_init is the same as GrB_init except that it also defines the
 // malloc/calloc/realloc/free functions to use.
 
+#include "GB.h"
 #include "GB_thread_local.h"
 #include "GB_mkl.h"
-
-//------------------------------------------------------------------------------
-// critical section for user threads
-//------------------------------------------------------------------------------
-
-// User-level threads may call GraphBLAS in parallel, so the access to the
-// global queue for GrB_wait must be protected by a critical section.  The
-// critical section method should match the user threading model.
-
-#if defined (USER_POSIX_THREADS)
-// for user applications that use POSIX pthreads
-pthread_mutex_t GB_sync ;
-
-#elif defined (USER_WINDOWS_THREADS)
-// for user applications that use Windows threads (not yet supported)
-// CRITICAL_SECTION GB_sync ; 
-#error "Windows threading not yet supported"
-
-#elif defined (USER_ANSI_THREADS)
-// for user applications that use ANSI C11 threads (not yet supported)
-// mtx_t GB_sync ;
-#error "ANSI C11 threading not yet supported"
-
-#else // USER_OPENMP_THREADS, or USER_NO_THREADS
-// nothing to do for OpenMP, or for no user threading
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_init

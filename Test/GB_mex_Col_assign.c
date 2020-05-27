@@ -223,7 +223,7 @@ GrB_Info assign ( )
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_wait ( )) ;
+    OK (GrB_Matrix_wait (&C)) ;
     return (info) ;
 }
 
@@ -349,7 +349,7 @@ GrB_Info many_assign
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_wait ( )) ;
+    OK (GrB_Matrix_wait (&C)) ;
     return (info) ;
 }
 

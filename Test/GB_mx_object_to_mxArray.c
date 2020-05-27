@@ -51,9 +51,9 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (!C->i_shallow && !C->x_shallow && !C->p_shallow && !C->h_shallow) ;
 
     // make sure there are no pending computations
-    GB_wait (C, Context) ;
+    GB_Matrix_wait (C, Context) ;
 
-    // must be done after GB_wait:
+    // must be done after GB_Matrix_wait:
     int64_t cnz = GB_NNZ (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;

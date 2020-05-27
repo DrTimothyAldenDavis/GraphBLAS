@@ -181,6 +181,55 @@
 #define GB_FC64_ne0(x) ((creal (x) != 0) || (cimag (x) != 0))
 
 //------------------------------------------------------------------------------
+// min, max, and NaN handling
+//------------------------------------------------------------------------------
+
+// For floating-point computations, SuiteSparse:GraphBLAS relies on the IEEE
+// 754 standard for the basic operations (+ - / *).  Comparison operators also
+// work as they should; any comparison with NaN is always false, even
+// eq(NaN,NaN) is false.  This follows the IEEE 754 standard.
+
+// For integer MIN and MAX, SuiteSparse:GraphBLAS relies on one comparison:
+
+// z = min(x,y) = (x < y) ? x : y
+// z = max(x,y) = (x > y) ? x : y
+
+// However, this is not suitable for floating-point x and y.  Comparisons with
+// NaN always return false, so if either x or y are NaN, then z = y, for both
+// min(x,y) and max(x,y).  In MATLAB, min(3,NaN), min(NaN,3), max(3,NaN), and
+// max(NaN,3) are all 3, which is another interpretation.  The MATLAB min and
+// max functions have a 3rd argument that specifies how NaNs are handled:
+// 'omitnan' (default) and 'includenan'.  In SuiteSparse:GraphBLAS 2.2.* and
+// earlier, the min and max functions were the same as 'includenan' in MATLAB.
+// As of version 2.3 and later, they are 'omitnan', to facilitate the terminal
+// exit of the MIN and MAX monoids for floating-point values.
+
+// The ANSI C11 fmin, fminf, fmax, and fmaxf functions have the 'omitnan'
+// behavior.  These are used in SuiteSparse:GraphBLAS v2.3.0 and later.
+
+// Below is a complete comparison of MATLAB and GraphBLAS.  Both tables are the
+// results for both min and max (they return the same results in these cases):
+
+//   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:    ANSI
+//           omitnan includenan             GraphBLAS       GraphBLAS       fmin
+//                                          v 2.2.x         this version
+//
+//   3    3     3        3          3        3              3               3
+//   3   NaN    3       NaN        NaN      NaN             3               3
+//  NaN   3     3       NaN         3       NaN             3               3
+//  NaN  NaN   NaN      NaN        NaN      NaN             NaN             NaN
+
+// for integers only:
+#define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
+
+// suitable for integers, and non-NaN floating point:
+#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
+#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
+
+// ceiling of a/b for two integers a and b
+#define GB_ICEIL(a,b) (((a) + (b) - 1) / (b))
+
+//------------------------------------------------------------------------------
 // division by zero
 //------------------------------------------------------------------------------
 

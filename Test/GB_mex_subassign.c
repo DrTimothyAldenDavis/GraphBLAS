@@ -429,7 +429,7 @@ GrB_Info many_subassign
         }
     }
 
-    OK (GrB_wait ( )) ;
+    OK (GrB_Matrix_wait (&C)) ;
     return (info) ;
 }
 
@@ -695,8 +695,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    GrB_wait ( ) ;
-    GB_MEX_TOC ;
+    GrB_Matrix_wait (&C) ;
 
     if (C == A) A = NULL ;      // do not free A if it is aliased to C
     if (C == M) M = NULL ;      // do not free M if it is aliased to C

@@ -93,6 +93,7 @@ for k1 = 1:length(mult_ops)
     for k2 = 1:length(add_ops)
         addop = add_ops {k2} ;
 
+        % TODO: add complex types
         for k3 = 1:length (types.real)
             clas = types.real {k3} ;
 

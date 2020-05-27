@@ -328,9 +328,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
         /* no malloc debugging; just call the method */                     \
         GB_MEX_TIC ;                                                        \
         GrB_Info info = GRAPHBLAS_OPERATION ;                               \
-        /* Finish the work since we're returning to MATLAB. */              \
-        /* This allows proper timing with grbresults.m */                   \
-        GrB_wait ( ) ;                                                      \
+        GrB_wait ( ) ;  /* TODO: remove this */                             \
         GB_MEX_TOC ;                                                        \
         if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;                    \
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \

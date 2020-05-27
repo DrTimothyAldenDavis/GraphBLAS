@@ -10,6 +10,8 @@
 #include "GB_mxm.h"
 #include "GB_mkl.h"
 
+#define GB_FREE_ALL ;
+
 #undef  GB_MKL_OK
 #define GB_MKL_OK(status)                               \
     if (status != MKL_GRAPH_STATUS_SUCCESS)             \
@@ -40,7 +42,7 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // optimize the matrix for mkl_graph_mxv in MKL

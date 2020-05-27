@@ -51,8 +51,9 @@ GrB_Info GB_selector
     // check inputs
     //--------------------------------------------------------------------------
 
-    // If the opcode is NONZOMBIE, then GB_wait has removed A from the queue.
-    // A will have zombies and pending tuples, but it is not in the queue.
+    // If the opcode is NONZOMBIE, then GB_Matrix_wait has removed A from the
+    // queue.  A will have zombies and pending tuples, but it is not in the
+    // queue.
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
@@ -367,7 +368,7 @@ GrB_Info GB_selector
         }
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
-        // is still nonzero.  It set to zero in GB_wait.
+        // is still nonzero.  It set to zero in GB_Matrix_wait.
         ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
 
     }

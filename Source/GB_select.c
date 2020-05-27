@@ -120,7 +120,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     {
 
         // finish any pending work on the Thunk
-        GB_WAIT (Thunk_in) ;
+        GB_SCALAR_WAIT (Thunk_in) ;
         nz_thunk = GB_NNZ (Thunk_in) ;
 
         // if present, Thunk_in must be 1-by-1
@@ -202,9 +202,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    // GB_WAIT (C) ;
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format and the transposed case

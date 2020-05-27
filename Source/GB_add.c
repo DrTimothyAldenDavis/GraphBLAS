@@ -29,11 +29,13 @@
 // ctype is the type of matrix C.  The pattern of C is the union of A and B.
 
 // op may be NULL.  In this case, the intersection of A and B must be empty.
-// This is used by GB_wait only, for merging the pending tuple matrix T into A.
-// Any duplicate pending tuples have already been summed in T, so the
+// This is used by GB_Matrix_wait only, for merging the pending tuple matrix T
+// into A.  Any duplicate pending tuples have already been summed in T, so the
 // intersection of T and A is always empty.
 
 #include "GB_add.h"
+
+#define GB_FREE_ALL ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_add             // C=A+B or C<M>=A+B
@@ -54,6 +56,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GBBURBLE ((M == NULL) ? "add " : "masked_add ") ;
 
     ASSERT (Chandle != NULL) ;
@@ -68,11 +71,9 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     }
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
-    GB_WAIT (B) ;
-
-    // FUTURE:: tolerate zombies in A (at least) for GB_wait.
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (B) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -90,7 +91,8 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     // phase0: determine the vectors in C(:,j)
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_add_phase0 (
+    // TODO: use GB_OK instead
+    info = GB_add_phase0 (
         // computed by by phase0:
         &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
         // original input:

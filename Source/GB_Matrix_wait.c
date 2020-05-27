@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_wait:  finish all pending computations on a single matrix
+// GB_Matrix_wait:  finish all pending computations on a single matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 // CALLS:     GB_builder
 
-// This function is typically called via the GB_WAIT(A) macro, except for
-// GB_assign, GB_subassign, and GB_mxm.
+// This function is typically called via the GB_MATRIX_WAIT(A) macro, except
+// for GB_assign, GB_subassign, and GB_mxm.
 
 // The matrix A has zombies and/or pending tuples placed there by
 // GrB_setElement, GrB_*assign, or GB_mxm.  Zombies must now be deleted, and
@@ -20,11 +20,6 @@
 // and all pending tuples and zombies have been deleted.  This is true even
 // the function fails due to lack of memory (in that case, the matrix is
 // cleared as well).
-
-// GrB_wait removes the head of the queue from the queue via
-// GB_queue_remove_head, and then passes the matrix to this function.  Thus is
-// is possible (and safe) for this matrix to operate on a matrix not in
-// the queue.
 
 // If A is hypersparse, the time taken is at most O(nnz(A) + t log t), where t
 // is the number of pending tuples in A, and nnz(A) includes both zombies and
@@ -51,7 +46,7 @@
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_wait                // finish all pending computations
+GrB_Info GB_Matrix_wait         // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
     GB_Context Context
@@ -331,7 +326,7 @@ GrB_Info GB_wait                // finish all pending computations
             Slice [2] = A->nvec ;   // A->nvec-1 is the last vector in A1
             GB_OK (GB_slice (A, 2, Slice, Aslice, Context)) ;
 
-            ASSERT_MATRIX_OK (Aslice [1], "A1 slice for GB_wait", GB0) ;
+            ASSERT_MATRIX_OK (Aslice [1], "A1 slice for GB_Matrix_wait", GB0) ;
 
             // free A0, which is not used
             GB_MATRIX_FREE (&(Aslice [0])) ;
@@ -396,7 +391,7 @@ GrB_Info GB_wait                // finish all pending computations
         // recompute the # of non-empty vectors
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
 
-        ASSERT_MATRIX_OK (A, "A after GB_wait:append", GB0) ;
+        ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 
         GB_MATRIX_FREE (&T) ;
 
@@ -421,7 +416,7 @@ GrB_Info GB_wait                // finish all pending computations
 
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, A, T, NULL, Context)) ;
         GB_MATRIX_FREE (&T) ;
-        ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
+        ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;
     }
 }

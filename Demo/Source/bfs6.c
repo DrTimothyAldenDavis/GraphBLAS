@@ -42,9 +42,6 @@
 // Note the operator accesses a global variable outside the control of
 // GraphBLAS.  This is safe, but care must be taken not to change the global
 // variable "level" while pending operations have yet to be completed.
-// See the User Guide on GrB_wait, which forces completion of pending work
-// on all matrices, and also methods that force completion on individual
-// matries (GrB_Matrix_nvals in particular).
 
 int32_t bfs_level_global = 0 ;
 

@@ -18,10 +18,10 @@ function s = isequal (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isa (A, 'GrB'))
+if (isobject (A))
     A = A.opaque ;
 end
-if (isa (B, 'GrB'))
+if (isobject (B))
     B = B.opaque ;
 end
 

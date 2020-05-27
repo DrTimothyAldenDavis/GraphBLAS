@@ -173,7 +173,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     if (GB_PENDING_OR_ZOMBIES (T))
     { 
         // if this fails, *Thandle must be freed
-        GB_OK (GB_wait (T, Context)) ;
+        GB_OK (GB_Matrix_wait (T, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -210,7 +210,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             if (GB_PENDING_OR_ZOMBIES (M))
             {
                 // remove zombies and pending tuples from M
-                GB_OK (GB_wait (M, Context)) ;
+                GB_OK (GB_Matrix_wait (M, Context)) ;
             }
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask

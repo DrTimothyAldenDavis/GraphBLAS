@@ -9,10 +9,9 @@
 
 // All Global storage is declared, initialized, and accessed here.  The
 // contents of the GB_Global struct are only accessible to functions in this
-// file.  Global storage is used to record a list of matrices with pending
-// operations (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
-// non-blocking), for pointers to malloc/calloc/realloc/free functions, global
-// matrix options, and other settings.
+// file.  Global storage is used to keep track of the GraphBLAS mode (blocking
+// or non-blocking), for pointers to malloc/calloc/realloc/free functions,
+// global matrix options, and other settings.
 
 #include "GB_atomics.h"
 
@@ -23,38 +22,18 @@
 typedef struct
 {
 
+    void *queue_head ;          // delete this for v4.0
+
     //--------------------------------------------------------------------------
-    // queue of matrices with work to do
+    // blocking/non-blocking mode, set by GrB_init
     //--------------------------------------------------------------------------
-
-    // In non-blocking mode, GraphBLAS needs to keep track of all matrices that
-    // have pending operations that have not yet been finished.  In the current
-    // implementation, these are matrices with pending tuples from
-    // GrB_setElement, GxB_subassign, and GrB_assign that haven't been added to
-    // the matrix yet.
-
-    // A matrix with no pending tuples is not in the list.  When a matrix gets
-    // its first pending tuple, it is added to the list.  A matrix is removed
-    // from the list when another operation needs to use the matrix; in that
-    // case the pending tuples are assembled for just that one matrix.  The
-    // GrB_wait operation iterates through the entire list and assembles all
-    // the pending tuples for all the matrices in the list, leaving the list
-    // empty.  A simple link list suffices for the list.  The links are in the
-    // matrices themselves so no additional memory needs to be allocated.  The
-    // list never needs to be searched; if a particular matrix is to be removed
-    // from the list, the GraphBLAS operation already been given the matrix
-    // handle, and the prev & next pointers it contains.  All of these
-    // operations can thus be done in O(1) time, except for GrB_wait which
-    // needs to traverse the whole list once and then the list is empty
-    // afterwards.
-
-    // The access of these variables must be protected in a critical section.
-
-    void *queue_head ;          // head pointer to matrix queue
 
     GrB_Mode mode ;             // GrB_NONBLOCKING or GrB_BLOCKING
-
     bool GrB_init_called ;      // true if GrB_init already called
+
+    //--------------------------------------------------------------------------
+    // threading and MKL control
+    //--------------------------------------------------------------------------
 
     bool use_mkl ;              // control usage of Intel MKL
     int nthreads_max ;          // max number of threads to use

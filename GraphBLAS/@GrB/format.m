@@ -88,7 +88,7 @@ if (nargin == 0)
     % f = GrB.format ; get the global format
     f = gbformat ;
 else
-    if (isa (arg, 'GrB'))
+    if (isobject (arg))
         % f = GrB.format (G) ; get the format of the matrix G
         f = gbformat (arg.opaque) ;
     else

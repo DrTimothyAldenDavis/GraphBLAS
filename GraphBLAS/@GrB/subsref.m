@@ -49,10 +49,10 @@ if (ndims == 1)
     if (isequal (GrB.type (S.subs {1}), 'logical'))
         % C = A (M) for a logical indexing
         M = S.subs {1} ;
-        if (isa (M, 'GrB'))
+        if (isobject (M))
             M = M.opaque ;
         end
-        if (isa (A, 'GrB'))
+        if (isobject (A))
             A = A.opaque ;
         end
         C = GrB (gblogextract (A, M)) ;

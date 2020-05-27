@@ -9,6 +9,8 @@
 
 #include "GB_transpose.h"
 
+#define GB_FREE_ALL ;
+
 GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 (
     GrB_Matrix A,                   // descriptor to modify
@@ -21,19 +23,19 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_SUCCESS ;
     GB_WHERE ("GxB_Matrix_Option_set (A, field, value)") ;
     GB_BURBLE_START ("GxB_set") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
 
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // set the matrix option
     //--------------------------------------------------------------------------
 
     va_list ap ;
-    GrB_Info info = GrB_SUCCESS ;
 
     switch (field)
     {

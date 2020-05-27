@@ -14,10 +14,10 @@ function C = power (A, B)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % ensure A and B are both GrB matrices
-if (~isa (A, 'GrB'))
+if (~isobject (A))
     A = GrB (A) ;
 end
-if (~isa (B, 'GrB'))
+if (~isobject (B))
     B = GrB (B) ;
 end
 

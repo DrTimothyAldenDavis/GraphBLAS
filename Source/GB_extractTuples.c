@@ -21,6 +21,8 @@
 
 #include "GB.h"
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
     GrB_Index *I_out,           // array for returning row indices of tuples
@@ -37,11 +39,12 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+
     // delete any lingering zombies and assemble any pending tuples
-    // do this as early as possible (see Table 2.4 in spec)
     ASSERT (A != NULL) ;
     ASSERT (p_nvals != NULL) ;
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;
     ASSERT (xcode <= GB_UDT_code) ;
 
     // xcode and A must be compatible

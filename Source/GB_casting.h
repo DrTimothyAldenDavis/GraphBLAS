@@ -11,6 +11,19 @@
 #define GB_CASTING_H
 
 //------------------------------------------------------------------------------
+// pointer casting function, returned by GB_cast_factory.
+//------------------------------------------------------------------------------
+
+typedef void (*GB_cast_function) (void *, const void *, size_t) ;
+
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
+(
+    const GB_Type_code code1,      // the type of z, the output value
+    const GB_Type_code code2       // the type of x, the input value
+) ;
+
+//------------------------------------------------------------------------------
 // typecasting from double to integer
 //------------------------------------------------------------------------------
 
@@ -95,6 +108,8 @@ inline uint64_t GB_cast_to_uint64_t (double x)
 
 // The s parameter is not used in these functions.  It is present because one
 // function returned by GB_cast_factory requires it (GB_copy_user_user).
+
+void GB_copy_user_user (void *z, const void *x, size_t s) ;
 
 #define GB_CAST_FUNCTION(ztype,xtype)                                   \
 inline void GB_cast_ ## ztype ## _ ## xtype                             \
@@ -446,5 +461,49 @@ GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC64_t)
 
 #undef  GB_CAST
 #undef  GB_CAST_FUNCTION
-#endif
 
+//------------------------------------------------------------------------------
+// GB_mcast: cast a mask entry from any native type to boolean
+//------------------------------------------------------------------------------
+
+// The mask matrix M must be one of the native data types, which have sizes of
+// 1, 2, 4, 8, or 16 bytes.  The value could be properly typecasted to bool,
+// but this requires a function pointer to the proper GB_cast_function.
+// Instead, it is faster to simply use type punning, based on the size of the
+// data type, and use the inline GB_mcast function instead.
+
+static inline bool GB_mcast         // return the value of M(i,j)
+(
+    const GB_void *GB_RESTRICT Mx,  // mask values
+    const int64_t pM,               // extract boolean value of Mx [pM]
+    const size_t msize              // size of each data type
+)
+{
+    if (Mx == NULL)
+    {
+        // If Mx is NULL, then values in the mask matrix M are ignored, and
+        // only the structural pattern is used.  This function is only called
+        // for entries M(i,j) in the structure of M, so the result is always
+        // true if Mx is NULL.
+        return (true) ;
+    }
+    else
+    {
+        // check the value of M(i,j)
+        switch (msize)
+        {
+            default:
+            case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
+            case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
+            case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
+            case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+            case 16:
+            {
+                const uint64_t *GB_RESTRICT Zx = (uint64_t *) Mx ;
+                return (Zx [2*pM] != 0 || Zx [2*pM+1] != 0) ;
+            }
+        }
+    }
+}
+
+#endif

@@ -207,9 +207,10 @@
                 if (A_and_B_are_disjoint)
                 { 
 
-                    // only used by GB_wait, which computes A+T where T is the
-                    // matrix of pending tuples for A.  The pattern of pending
-                    // tuples is always disjoint with the pattern of A.
+                    // only used by GB_Matrix_wait, which computes A+T where T
+                    // is the matrix of pending tuples for A.  The pattern of
+                    // pending tuples is always disjoint with the pattern of A.
+
                     cjnz = ajnz + bjnz ;
 
                 }

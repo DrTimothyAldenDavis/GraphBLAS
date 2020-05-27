@@ -277,16 +277,6 @@
 // OpenMP threads: this is the default, if OpenMP is available
 #include <omp.h>
 
-#elif defined (USER_WINDOWS_THREADS)
-// Windows threads
-// #include <windows.h>
-#error "Windows threading not yet supported"
-
-#elif defined (USER_ANSI_THREADS)
-// ANSI C11 threads
-//#include <threads.h>
-#error "ANSI C11 threading not yet supported"
-
 #else // USER_NO_THREADS
 // no user threads
 #endif
@@ -400,32 +390,6 @@ GrB_Info ;
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
 
-// The GrB_wait ( ) function forces all pending operations to complete.
-// Blocking mode is as if GrB_wait is called whenever a GraphBLAS method or
-// operation returns to the user.
-
-// The non-blocking mode is unpredictable if user-defined functions have side
-// effects or if they rely on global variables, which are not under the control
-// of GraphBLAS.  Suppose the user application creates a user-defined operator
-// that accesses a global variable.  That operator is then used in a GraphBLAS
-// operation, which is left pending.  If the user application then changes the
-// global variable before pending operations complete, the pending operations
-// will be eventually computed with this different value.
-
-// The non-blocking mode can have side effects if user-defined functions have
-// side effects or if they rely on global variables, which are not under the
-// control of GraphBLAS.  Suppose the user creates a user-defined operator that
-// accesses a global variable.  That operator is then used in a GraphBLAS
-// operation, which is left pending.  If the user then changes the global
-// variable before pending operations complete, the pending operations will be
-// eventually computed with this different value.
-
-// Worse yet, a user-defined operator might be freed before it is needed to
-// finish a pending operation.  This causes undefined behavior.  To avoid this,
-// call GrB_wait before modifying any global variables relied upon by
-// user-defined operators, or before freeing any user-defined types, operators,
-// monoids, or semirings.
-
 typedef enum
 {
     GrB_NONBLOCKING = 0,    // methods may return with pending computations
@@ -468,19 +432,11 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     bool user_malloc_is_thread_safe     // ADDED in V3.0: thread_safe arg
 ) ;
 
-// In non-blocking mode, GraphBLAS operations need not complete until their
-// results are required.  GrB_wait ensures all pending operations are finished.
-
-GB_PUBLIC
-GrB_Info GrB_wait (void) ;     // finish all pending computations
-
-// GrB_finalize does not call GrB_wait; any pending computations are abandoned.
-
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
 //==============================================================================
-//=== GraphBLAS sequence termination ===========================================
+//=== GraphBLAS error handling =================================================
 //==============================================================================
 
 // Each GraphBLAS method and operation returns a GrB_Info error code.
@@ -4185,9 +4141,7 @@ typedef enum            // for global options or matrix options
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
 
     GxB_THREAD_SAFETY = 3,  // thread library that allows GraphBLAS to
-                        // be thread-safe for user threads: this provides a
-                        // critical section for user threads for GrB_wait
-                        // and thread-local storage for GrB_error.
+                        // be thread-safe for user threads.
 
     GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
 
@@ -4455,6 +4409,50 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
     )                                            \
     (object)
 #endif
+
+//==============================================================================
+//=== GraphBLAS sequence termination ===========================================
+//==============================================================================
+
+// Finish all pending work in a specific object.
+
+GB_PUBLIC GrB_Info GrB_Type_wait       (GrB_Type       *type    ) ;
+GB_PUBLIC GrB_Info GrB_UnaryOp_wait    (GrB_UnaryOp    *op      ) ;
+GB_PUBLIC GrB_Info GrB_BinaryOp_wait   (GrB_BinaryOp   *op      ) ;
+GB_PUBLIC GrB_Info GxB_SelectOp_wait   (GxB_SelectOp   *op      ) ;
+GB_PUBLIC GrB_Info GrB_Monoid_wait     (GrB_Monoid     *monoid  ) ;
+GB_PUBLIC GrB_Info GrB_Semiring_wait   (GrB_Semiring   *semiring) ;
+GB_PUBLIC GrB_Info GrB_Descriptor_wait (GrB_Descriptor *desc    ) ;
+GB_PUBLIC GrB_Info GxB_Scalar_wait     (GxB_Scalar     *s       ) ;
+GB_PUBLIC GrB_Info GrB_Vector_wait     (GrB_Vector     *v       ) ;
+GB_PUBLIC GrB_Info GrB_Matrix_wait     (GrB_Matrix     *A       ) ;
+
+// The polymorphic GrB_wait (object) method will be added in v4.0 of
+// SuiteSparse:GraphBLAS.  It is not compatible with the no-argument
+// GrB_wait ( ), which must be removed before GrB_wait (&object) can be
+// added.
+
+GB_PUBLIC GrB_Info GrB_wait (void) ;        // DEPRECATED
+
+/*
+#define GrB_wait(object)                         \
+    _Generic                                     \
+    (                                            \
+        (object),                                \
+        GrB_Type       *: GrB_Type_wait       ,  \
+        GrB_UnaryOp    *: GrB_UnaryOp_wait    ,  \
+        GrB_BinaryOp   *: GrB_BinaryOp_wait   ,  \
+        GxB_SelectOp   *: GxB_SelectOp_wait   ,  \
+        GrB_Monoid     *: GrB_Monoid_wait     ,  \
+        GrB_Semiring   *: GrB_Semiring_wait   ,  \
+        GxB_Scalar     *: GxB_Scalar_wait     ,  \
+        GrB_Vector     *: GrB_Vector_wait     ,  \
+        GrB_Matrix     *: GrB_Matrix_wait     ,  \
+        GrB_Descriptor *: GrB_Descriptor_wait    \
+    )                                            \
+    (object)
+#endif
+*/
 
 //==============================================================================
 //=== GraphBLAS operations =====================================================

@@ -28,7 +28,7 @@ if (nargin == 1)
     kind = 2 ;
 end
 
-if (isa (G, 'GrB'))
+if (isobject (G)) ;
     G = G.opaque ;
 end
 

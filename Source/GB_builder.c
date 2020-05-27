@@ -7,13 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_build, GB_wait, and GB_transpose
+// CALLED BY: GB_build, GB_Matrix_wait, and GB_transpose
 // CALLS:     Generated/GB_red_build__* workers
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
-// or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
-// tuples, and by GB_transpose to transpose a matrix or vector.  Duplicates can
-// appear if called by GB_build or GB_wait, but not GB_transpose.
+// or GrB_Vector_build, by GB_Matrix_wait to build a matrix T from the list of
+// pending tuples, and by GB_transpose to transpose a matrix or vector.
+// Duplicates can appear if called by GB_build or GB_Matrix_wait, but not
+// GB_transpose.
 
 // The indices are provided either as (I_input,J_input) or (I_work,J_work), not
 // both.  The values are provided as S_input or S_work, not both.  On return,
@@ -62,15 +63,16 @@
 // does O(e/p) read/writes.  Step 4 takes no time.  Step 5 does O(e/p)
 // read/writes per thread.
 
-// For GB_wait:  the pending tuples are provided as I_work, J_work, and S_work,
-// so Step 1 is skipped (no need to check for invalid indices).  The input
-// J_work may be null (vdim can be anything, since GB_wait is used for both
-// vectors and matrices).  The tuples might be in sorted order already, which
-// is known precisely known from A->Pending->sorted.  Step 2 does O((e log e)/p)
-// work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
-// likely.  Step 3 does O(e/p) read/writes.  Step 4 does O(e/p) reads per
-// thread of (I_work,J_work), or just I_work.  Step 5 does O(e/p) read/writes
-// per thread, or O(1) time if S_work can be transplanted into T->x.
+// For GB_Matrix_wait:  the pending tuples are provided as I_work, J_work, and
+// S_work, so Step 1 is skipped (no need to check for invalid indices).  The
+// input J_work may be null (vdim can be anything, since GB_Matrix_wait is used
+// for both vectors and matrices).  The tuples might be in sorted order
+// already, which is known precisely known from A->Pending->sorted.  Step 2
+// does O((e log e)/p) work to sort the tuples.  Duplicates may appear, and
+// out-of-order tuples are likely.  Step 3 does O(e/p) read/writes.  Step 4
+// does O(e/p) reads per thread of (I_work,J_work), or just I_work.  Step 5
+// does O(e/p) read/writes per thread, or O(1) time if S_work can be
+// transplanted into T->x.
 
 // For GB_transpose: uses I_work, J_work, and either S_input (if no op applied
 // to the values) or S_work (if an op was applied to the A->x values).  This is
@@ -984,7 +986,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //      The type of S (scode) can different but must be compatible
     //          with T->type
 
-    // With GB_wait, there can be 1 to 5 different types:
+    // With GB_Matrix_wait, there can be 1 to 5 different types:
     //      The pending tuples are in S, of type scode which must be
     //          compatible with dup->ytype and T->type
     //      z = dup (x,y): can be NULL or have 1 to 3 different types
@@ -1089,7 +1091,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // order, and no duplicates appear.  All that is required is to copy S
         // into Tx.  S can be directly transplanted into T->x since S is
         // provided as S_work.  GB_builder must either transplant or free
-        // S_work.  The transplant can be used by GB_wait (whenever the tuples
+        // S_work.  The transplant can be used by GB_Matrix_wait (whenever the tuples
         // are already sorted, with no duplicates, and no typecasting is
         // needed, since S_work is always A->Pending->x).  This transplant can
         // rarely be used for GB_transpose (when op is NULL and the transposed
@@ -1160,8 +1162,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // (all but boolean; and OR, AND, XOR, and EQ for boolean.
 
             // In addition, the FIRST and SECOND operators are hard-coded, for
-            // another 22 workers, since SECOND is used by GB_wait and since
-            // FIRST is useful for keeping the first tuple seen.  It is
+            // another 22 workers, since SECOND is used by GB_Matrix_wait and
+            // since FIRST is useful for keeping the first tuple seen.  It is
             // controlled by the GB_INCLUDE_SECOND_OPERATOR definition, so they
             // do not appear in GB_reduce_to_* where the FIRST and SECOND
             // operators are not needed.

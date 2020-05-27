@@ -12,7 +12,7 @@
 
 // If the op is NULL, then it is the implicit GrB_SECOND_[A_type] operator.
 // This is a built-in operator for built-in types.  This feature is only used
-// by GB_wait.
+// by GB_Matrix_wait.
 
 #include "GB.h"
 

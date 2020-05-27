@@ -112,7 +112,7 @@ tm = toc ;
 
 D = struct ('inp0', 'tran') ;
 
-fprintf ('\nusing accum and subassign, then GB_wait:\n') ;
+fprintf ('\nusing accum and subassign, then GB_Matrix_wait:\n') ;
 tic
 C2 = GB_mex_transpose (A, [ ], 'plus', B, D) ;
 toc

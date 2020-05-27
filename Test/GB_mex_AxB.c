@@ -134,12 +134,26 @@ GrB_Info axb_complex (GB_Context Context)
     }
 
     // force completion
-    info = GrB_wait ( ) ;
-    if (info != GrB_SUCCESS)
+    if (Aconj != NULL)
     {
-        GrB_Matrix_free (&Aconj) ;
-        GrB_Matrix_free (&Bconj) ;
-        return (info) ;
+        info = GrB_Matrix_wait (&Aconj) ;
+        if (info != GrB_SUCCESS)
+        {
+            GrB_Matrix_free (&Aconj) ;
+            GrB_Matrix_free (&Bconj) ;
+            return (info) ;
+        }
+    }
+
+    if (Bconj != NULL)
+    {
+        info = GrB_Matrix_wait (&Bconj) ;
+        if (info != GrB_SUCCESS)
+        {
+            GrB_Matrix_free (&Aconj) ;
+            GrB_Matrix_free (&Bconj) ;
+            return (info) ;
+        }
     }
 
     info = GB_AxB_meta (&C,

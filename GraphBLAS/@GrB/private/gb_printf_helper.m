@@ -7,7 +7,7 @@ function result = gb_printf_helper (printf_function, varargin)
 % convert all GraphBLAS matrices to full MATLAB matrices
 for k = 2:nargin-1
     arg = varargin {k} ;
-    if (isa (arg, 'GrB'))
+    if (isobject (arg))
         % TODO FIXME for complex case
         varargin {k} = full (cast (full (arg), GrB.type (arg))) ;
     end

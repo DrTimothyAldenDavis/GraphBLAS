@@ -3,9 +3,9 @@ function Cout = emult (varargin)
 %
 % Usage:
 %
-%   Cout = GrB.emult (op, A, B, desc)
-%   Cout = GrB.emult (Cin, accum, op, A, B, desc)
-%   Cout = GrB.emult (Cin, M, op, A, B, desc)
+%   Cout = GrB.emult (               op, A, B, desc)
+%   Cout = GrB.emult (Cin,    accum, op, A, B, desc)
+%   Cout = GrB.emult (Cin, M,        op, A, B, desc)
 %   Cout = GrB.emult (Cin, M, accum, op, A, B, desc)
 %
 % GrB.emult computes the element-wise 'multiplication' T=A.*B.  The result
@@ -18,7 +18,7 @@ function Cout = emult (varargin)
 %
 % T is then accumulated into C via C<#M,replace> = accum (C,T).
 %
-% Cin, M, accum, and the descriptor desc are the same as all other
+% Cin, M, accum, and the optional descriptor desc are the same as all other
 % GrB.methods; see GrB.mxm and GrB.descriptorinfo for more details.  For the
 % binary operator, see GrB.binopinfo.
 %
@@ -32,9 +32,8 @@ function Cout = emult (varargin)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
+Cout = gbemult (args {:}) ;
 if (is_gb)
-    Cout = GrB (gbemult (args {:})) ;
-else
-    Cout = gbemult (args {:}) ;
+    Cout = GrB (Cout) ;
 end
 

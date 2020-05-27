@@ -279,9 +279,7 @@ GrB_Info assign ( )
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    // double tt [2], t ; simple_tic (tt) ;
-    OK (GrB_wait ( )) ;
-    // t = simple_toc (tt) ; printf ("wait %g sec\n", t) ;
+    OK (GrB_Matrix_wait (&C)) ;
     return (info) ;
 }
 
@@ -420,7 +418,7 @@ GrB_Info many_assign
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_wait ( )) ;
+    OK (GrB_Matrix_wait (&C)) ;
     return (info) ;
 }
 

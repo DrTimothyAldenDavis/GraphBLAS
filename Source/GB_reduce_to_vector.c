@@ -135,11 +135,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    // GB_WAIT (C) ;
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
-
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format of A
@@ -390,7 +387,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             ASSERT (GB_VECTOR_OK (T)) ;
             ASSERT (!GB_PENDING (T)) ;
             ASSERT (GB_ZOMBIES (T)) ;
-            GB_OK (GB_wait (T, Context)) ;
+            GB_OK (GB_Matrix_wait (T, Context)) ;
         }
 
         ASSERT_MATRIX_OK (T, "T output = reduce_each_vector (A)", GB0) ;

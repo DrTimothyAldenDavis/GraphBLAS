@@ -1,11 +1,13 @@
-function builtin_complex = builtin_complex_set (builtin_complex)
-%BUILTIN_COMPLEX_SET set a global flag to determine the GrB Complex type 
+function builtin_complex = GB_builtin_complex_set (builtin_complex)
+%GB_BUILTIN_COMPLEX_SET set a global flag to determine the GrB Complex type 
 %
-% builtin_complex = builtin_complex_set (builtin_complex)
+% builtin_complex = GB_builtin_complex_set (builtin_complex)
 %
 % Sets the GraphBLAS_builtin_complex flag.  If true, the Complex ==
 % GxB_FC64.  If false, the Complex GrB_Type is allocated as a user-defined
 % type.
+%
+% See also GB_builtin_complex_get.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

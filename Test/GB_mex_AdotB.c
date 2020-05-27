@@ -49,7 +49,7 @@ GrB_Info adotb_complex (GB_Context Context)
     }
 
     // force completion
-    info = GrB_wait ( ) ;
+    info = GrB_Matrix_wait (&Aconj) ;
     if (info != GrB_SUCCESS)
     {
         GrB_Matrix_free (&Aconj) ;

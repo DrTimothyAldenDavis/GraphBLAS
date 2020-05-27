@@ -16,12 +16,10 @@ function s = type (X)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isa (X, 'GrB'))
+if (isobject (X))
     % extract the GraphBLAS opaque matrix struct and then get its type
-    s = gbtype (X.opaque) ;
-elseif (isobject (X))
-    % the gbtype mexFunction cannot handle object inputs, so use class (X)
-    s = class (X) ;
+    x = X.opaque ;
+    s = gbtype (x) ;
 else
     % get the type of a MATLAB matrix, cell, char, function_handle, ...
     s = gbtype (X) ;

@@ -123,15 +123,15 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     ASSERT (!GB_aliased (C, M)) ;
     ASSERT (!GB_aliased (C, A)) ;
 
+    ASSERT_MATRIX_OK (C, "C input for subassigner", GB0) ;
+
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C input for subassigner", GB0) ;
-
     // subassign tolerates both zombies and pending tuples in C, but not M or A
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // check mask conditions
@@ -185,9 +185,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (C_is_empty)
     { 
         // C is completely empty.  C_replace is irrelevant, so set it to false.
-        // The burble for this case occurs below, after GB_wait (C), since C
-        // may become empty if it contains nothing but zombies, or after the
-        // GB_clear (C) below.
+        // The burble for this case occurs below, after GB_Matrix_wait (C),
+        // since C may become empty if it contains nothing but zombies, or
+        // after the GB_clear (C) below.
         C_replace = false ;
     }
 
@@ -639,7 +639,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
         ASSERT_MATRIX_OK (C, "C before wait", GB0) ;
-        GB_OK (GB_wait (C, Context)) ;
+        GB_OK (GB_Matrix_wait (C, Context)) ;
     }
 
     ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;
@@ -649,8 +649,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // check again if C is empty
     //--------------------------------------------------------------------------
 
-    // GB_clear or GB_wait, above, may have deleted all the zombies in C, so
-    // check again if C is empty.
+    // GB_clear or GB_Matrix_wait, above, may have deleted all the zombies in
+    // C, so check again if C is empty.
+
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
     { 
@@ -669,8 +670,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // now effectively false.  If C_replace was false on input, then the
         // "quick" case above has already been triggered.  However, if C is now
         // empty (either cleared with GB_clear, empty on input, or empty after
-        // GB_wait), then C_replace is now effectively false.  In this case,
-        // the "quick" case can be checked again.  No more work to do.
+        // GB_Matrix_wait), then C_replace is now effectively false.  In this
+        // case, the "quick" case can be checked again.  No more work to do.
         GBBURBLE ("quick ") ;
         return (GrB_SUCCESS) ;
     }

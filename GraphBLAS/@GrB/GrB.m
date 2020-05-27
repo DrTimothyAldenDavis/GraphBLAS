@@ -574,20 +574,20 @@ methods
     % C = GrB (m,n,format,type) ;  ditto
     %
     % See also sparse.
-    if (nargin == 1 && ...
-        (isstruct (varargin {1}) && isfield (varargin {1}, 'GraphBLAS')))
+    arg1 = varargin {1} ;
+    if (nargin == 1 && isstruct (arg1))
         % C = GrB (A), where the input A is a GraphBLAS struct as
         % returned by another GrB* function, but this usage is not meant
         % for the end-user.  It is only used internally in @GrB.  See for
         % example @GrB/mxm, which uses C = GrB (gbmxm (args)), and the
         % typecasting methods, C = double (C), etc.  The output of GrB is
         % a GraphBLAS object.
-        C.opaque = varargin {1} ;
+        C.opaque = arg1 ;
     else
-        if (isa (varargin {1}, 'GrB'))
+        if (isobject (arg1))
             % extract the contents of the GrB object as its opaque struct
             % so the gbnew mexFunction can access it.
-            varargin {1} = varargin {1}.opaque ;
+            varargin {1} = arg1.opaque ;
         end
         C.opaque = gbnew (varargin {:}) ;
     end

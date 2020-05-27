@@ -339,7 +339,7 @@ GB_Pending Pending ;        // list of pending tuples
 // in the right place in the matrix.  However, methods and operations in
 // GraphBLAS that cannot tolerate zombies in their input matries can check the
 // condition (A->nzombies > 0), and then delete all of them if they appear, via
-// GB_wait.
+// GB_Matrix_wait.
 
 int64_t nzombies ;      // number of zombies marked for deletion
 
@@ -350,15 +350,8 @@ int64_t nzombies ;      // number of zombies marked for deletion
 GrB_Desc_Value AxB_method_used ;    // last method used for C=A*B (this is C)
 
 //------------------------------------------------------------------------------
-// queue of matrices with work to do
+// queue of matrices (removed when GrB_wait(void) is gone)
 //------------------------------------------------------------------------------
-
-// The GrB_wait function tells GraphBLAS to finish all pending computations on
-// all matrices.  The function takes no arguments, so a list must be
-// maintained.  The list is implemented as a simple doubly-linked list.  All
-// matrices with either pending tuples, or zombies, or both, appear in this
-// list.  If a matrix has neither pending tuples nor zombies, then it does not
-// appear in this list.
 
 void *queue_next ;      // next matrix in the matrix queue
 void *queue_prev ;      // prev matrix in the matrix queue

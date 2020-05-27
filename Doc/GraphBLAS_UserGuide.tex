@@ -113,6 +113,9 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     and operators, and changed behavior of integer operations to more closely
     match the behavior on MATLAB integer matrices.  The rules for typecasting
     large floating point values to integers has changed.
+    The specific object-based \verb'GrB_Matrix_wait' and related functions
+    have been added, and the no-argument \verb'GrB_wait( )' has been
+    deprecated.
 
 % TODO: describe new types, binary/unary ops, monoids, semirings
 
@@ -1027,7 +1030,6 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_init'      & start up GraphBLAS                           & \ref{init} \\
 \verb'GxB_init'      & start up GraphBLAS with different \verb'malloc'
                                                                 & \ref{xinit} \\
-\verb'GrB_wait'      & force completion of pending operations       & \ref{wait}\\
 \verb'GrB_Info'      & status code returned by GraphBLAS functions  & \ref{info} \\
 \verb'GrB_error'     & get more details on the last error           & \ref{error} \\
 \verb'GrB_finalize'  & finish GraphBLAS                             & \ref{finalize} \\
@@ -1196,102 +1198,6 @@ As another example, the scalable Intel TBB memory manager can be used:
 
 \newpage
 %===============================================================================
-\subsection{{\sf GrB\_wait:} wait for pending operations to finish
-(MIGHT BE DEPRECATED)} %===========
-%===============================================================================
-\label{wait}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GrB_wait ( ) ;     // finish all pending computations
-
-NOTE: THIS FUNCTION MAY BE DEPRECATED.
-\end{verbatim}
-}\end{mdframed}
-
-
-\verb'GrB_wait' forces all pending operations to complete.
-Blocking mode acts as if \verb'GrB_wait' is called whenever a GraphBLAS
-method or operation returns to the user application.
-
-Unless specific rules are followed, non-blocking mode can be unpredictable if
-user-defined functions have side effects or if they rely on global variables
-not under the control of GraphBLAS.  Suppose the user application creates a
-user-defined operator that accesses a global variable.  That operator is then
-used in a GraphBLAS operation, which is left pending.  If the user application
-then changes the global variable before pending operations complete, the
-pending operations will be eventually computed with this different value.
-
-Worse yet, a user-defined operator might be freed before it is needed to finish
-a pending operation.  This causes undefined behavior.
-
-For best results with GraphBLAS, user-defined functions should not have side
-effects, nor should they access global variables outside the control of
-GraphBLAS.  This allows the non-blocking mode to be used at its fullest level
-of performance.  However, both of these features can safely be used in
-user-defined functions if the following specific rules are followed.
-
-\begin{itemize}
-
-\item User-defined functions may be called in any order when used in a
-    GraphBLAS operation.  This order may change in non-obvious ways, even in
-    the same GraphBLAS operation.  For example, SuiteSparse:\-GraphBLAS relies
-    on multiple algorithms for matrix multiplication, and selects between them
-    automatically.  The methods will call user-defined multiply and add
-    operators in the semiring, in different order.  The user application should
-    not rely on any particular order used in a specific implementation of
-    GraphBLAS.
-
-\item User-defined functions are permitted to access global variables.
-    However, if they do so, the global variables they rely on should not be
-    changed if any GraphBLAS methods or operations are still pending, assuming
-    GraphBLAS is executing in non-blocking mode (see Section~\ref{init}).  To
-    ensure this, the user application must call \verb'GrB_wait' before changing
-    any global variables relied upon by user-defined functions.  Alternatively,
-    computations can be forced to complete on selected matrices and vectors via
-    \verb'GrB_*_nvals', \verb'GrB_*_extractElement',
-    \verb'GrB_*_extractTuples', and \verb'GrB_*_reduce' (to scalar) applied to
-    selected matrices and vectors.  The \verb'GrB_*_nvals' function is
-    particularly well-suited for this purpose since it is otherwise an
-    extremely light-weight computation in SuiteSparse:GraphBLAS.
-
-\item If any GraphBLAS methods or operations are still pending, freeing
-    user-defined types, operators, monoids, semirings, vectors, matrices, or
-    descriptors leads to undefined behavior.  A user application must call
-    \verb'GrB_wait' before freeing any user-defined object, if a pending
-    operation relies on it, or by selective completion via, say,
-    \verb'GrB_*_nvals'.  Alternatively, if the user application is about to
-    terminate GraphBLAS (see \verb'GrB_finalize' below), then all GraphBLAS
-    objects may be freed in any order, without calling \verb'GrB_wait'.
-    Pending computations will simply be abandoned.
-
-\end{itemize}
-
-\verb'GrB_wait' ensures that all computations are completed for all objects.
-For specific objects, \verb'GrB_*_nvals', \verb'GrB_*_extractElement',
-\verb'GrB_*_extractTuples', and \verb'GrB_*_reduce' (to scalar) ensure that the
-pending operations are completed just for the matrix or vector they operate on.
-No other GraphBLAS method or operation guarantees the completion of pending
-computations, even though they may happen to do so in any particular
-implementation.  In the current version, SuiteSparse:GraphBLAS exploits the
-non-blocking mode in the \verb'GrB_*_setElement' methods and the
-\verb'GrB_assign' and \verb'GxB_subassign' operations.  Future versions of
-SuiteSparse:GraphBLAS may extend this to other methods and operations.  Refer
-to the example at the end of Section~\ref{overview}.
-
-If multiple user threads have created matrices or vectors, and those have
-pending operations, then a single call by one thread to \verb'GrB_wait' causes
-all pending operations left by all threads to be completed.  If other user
-threads are working on any of those matrices, this would result in a race
-condition.  Therefore, \verb'GrB_wait' should be called only when no other user
-thread is operating on any other matrix.  Functions that cause a specific
-matrix to be finalized (\verb'GrB_*_nvals', \verb'GrB_*_extractElement',
-\verb'GrB_*_extractTuples', and \verb'GrB_*_reduce' (to scalar)) can be safely
-called by multiple user threads on different matrices.
-
-\newpage
-%===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============
 %===============================================================================
 \label{info}
@@ -1417,8 +1323,8 @@ application should be freed first, before calling \verb'GrB_finalize' since
 \verb'GrB_finalize' will not free those objects.  In non-blocking mode,
 GraphBLAS may leave some computations as pending.  These computations can be
 safely abandoned if the user application frees all GraphBLAS objects it has
-created and then calls \verb'GrB_finalize'.  There is no need to call
-\verb'GrB_wait' in this case.  When the user application is finished, exactly
+created and then calls \verb'GrB_finalize'.
+When the user application is finished, exactly
 one user thread must call \verb'GrB_finalize'.
 
 \newpage
@@ -3022,6 +2928,7 @@ and destroy a GraphBLAS sparse scalar, \verb'GxB_Scalar':
 \verb'GxB_Scalar_setElement'     & set the single entry of a sparse scalar \\
 \verb'GxB_Scalar_extractElement' & get the single entry from a sparse scalar \\
 \verb'GxB_Scalar_free'           & free a sparse scalar \\
+\verb'GxB_Scalar_wait'           & wait for pending work on a vector to finish \\
 \hline
 \end{tabular}
 }
@@ -3132,11 +3039,6 @@ that the implicit value in GraphBLAS need not be zero and \verb'nnz' (short for
 ``number of nonzeros'') in MATLAB is better described as ``number of entries''
 in GraphBLAS.
 
-\paragraph{Forced completion:}
-All computations for the sparse scalar \verb's' are guaranteed to be finished
-when \verb'GxB_Scalar_nvals' method returns.  See the discussion about
-\verb'GxB_Vector_nvals' in Section~\ref{vector_nvals} for more details.
-
 % \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_type:} return the type of a sparse scalar}
@@ -3199,11 +3101,6 @@ discussed in Section~\ref{matrix_extractElement}, which discusses
 sparse scalar \verb's', then \verb'x' is not modified, and the return value of
 \verb'GxB_Scalar_extractElement' is \verb'GrB_NO_VALUE'.
 
-\paragraph{Forced completion:}
-All computations for the sparse scalar \verb's' are
-guaranteed to be finished when the method returns.
-
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_free:} free a sparse scalar}
 %-------------------------------------------------------------------------------
@@ -3231,6 +3128,26 @@ frees the sparse scalar \verb's' and sets \verb's' to \verb'NULL'.  It safely
 does nothing if passed a \verb'NULL' handle, or if \verb's == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
 abandoned.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_wait:} finish all pending work on a scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_wait}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_wait
+(
+    GxB_Scalar *s
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_wait' forces all pending operations on a scalar to be
+completed.
+
+\newpage
 
 \newpage
 %===============================================================================
@@ -3280,6 +3197,7 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector \\
 \verb'GxB_Vector_resize'         & resize a vector \\
 \verb'GrB_Vector_free'           & free a vector \\
+\verb'GrB_Vector_wait'           & wait for all pending work to finish \\
 \hline
 \verb'GxB_Vector_import'         & import a vector
                                     (see Section~\ref{import_export})\\
@@ -3420,23 +3338,6 @@ analogous to \verb'nvals = nnz(v)' in MATLAB, except that the implicit value in
 GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
 MATLAB is better described as ``number of entries'' in GraphBLAS.
 
-\paragraph{Forced completion:}
-All computations for the vector \verb'v' are guaranteed to be finished when
-\verb'GrB_Vector_nvals' method returns.
-%
-That is, it acts like an object-specific \verb'GrB_wait' for just this
-particular vector \verb'v', which is a side-effect useful in its own right.
-For example, suppose the computations required for \verb'v' rely upon a
-user-defined operator that accesses a user-controlled global variable outside
-the scope or control of GraphBLAS.  If the user-application needs to modify or
-free the variable, \verb'GrB_Vector_nvals' can be used to force all pending
-operations for this vector \verb'v' to complete.  The user application can then
-safely modify the global variable.  A call to \verb'GrB_Vector_nvals(&nvals,v)'
-only ensures that the computations require to compute \verb'v' are finished;
-other pending computations for other objects may remain.  To ensure that all
-pending computations are complete for all GraphBLAS objects, use
-\verb'GrB_wait' instead.
-
 % \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_type:}          return the type of a vector}
@@ -3547,11 +3448,6 @@ method are discussed in Section~\ref{matrix_extractElement}, which discusses
 \verb'x' is not modified, and the return value of
 \verb'GrB_Vector_extractElement' is \verb'GrB_NO_VALUE'.
 
-\paragraph{Forced completion:}
-All computations for the vector \verb'v' are
-guaranteed to be finished when the method returns.
-
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractTuples:} get all entries from a vector}
 %-------------------------------------------------------------------------------
@@ -3575,10 +3471,6 @@ its \verb'GrB_Matrix_extractTuples' counterpart, except that the array of
 column indices \verb'J' does not appear in this function.  Refer to
 Section~\ref{matrix_extractTuples} where further details of this function are
 described.
-
-\paragraph{Forced completion:}
-All computations for the vector \verb'v' are
-guaranteed to be finished when the method returns.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3627,6 +3519,24 @@ frees the vector \verb'v' and sets \verb'v' to \verb'NULL'.  It safely does
 nothing if passed a \verb'NULL' handle, or if \verb'v == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the vector are abandoned.
 
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_Vector\_wait:} finish all pending work on a vector}
+%-------------------------------------------------------------------------------
+\label{vector_wait}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_Vector_wait
+(
+    GrB_Vector *v
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GrB_Vector_wait' forces all pending operations on a vector to be
+completed.
+
 \newpage
 %===============================================================================
 \subsection{GraphBLAS matrices: {\sf GrB\_Matrix}} %============================
@@ -3653,6 +3563,7 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix \\
 \verb'GxB_Matrix_resize'        & resize a matrix \\
 \verb'GrB_Matrix_free'          & free a matrix \\
+\verb'GrB_Matrix_wait'          & wait for all pending work to finish \\
 \hline
 \verb'GxB_Matrix_import_CSR'            & import a matrix in CSR form
                                           (see Section~\ref{import_export})\\
@@ -3821,15 +3732,6 @@ analogous to \verb'nvals = nnz(A)' in MATLAB, except that the implicit value in
 GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
 MATLAB is better described as ``number of entries'' in GraphBLAS.
 
-\paragraph{Forced completion:}
-All computations for the matrix \verb'A' are guaranteed to be finished when
-\verb'GrB_Matrix_nvals' returns.  That is, it acts like an object-specific
-\verb'GrB_wait' for just this particular matrix \verb'A'.  Other pending
-computations for other objects may remain.  To ensure that all pending
-computations are complete for all GraphBLAS objects, used \verb'GrB_wait'
-instead.
-
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_type:}         return the type of a matrix}
 %-------------------------------------------------------------------------------
@@ -3852,7 +3754,6 @@ in MATLAB.
 {\bf SPEC:} \verb'GxB_Matrix_type' is an extension to the spec.
 \end{spec}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_build:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -4003,7 +3904,8 @@ in a list of pending updates, and the later on the updates are done all at
 once, using the same algorithm used for \verb'GrB_Matrix_build'.  In other
 words, \verb'setElement' in SuiteSparse:GraphBLAS builds its own internal list
 of tuples \verb'[I,J,X]', and then calls \verb'GrB_Matrix_build' whenever the
-matrix is needed in another computation, or whenever \verb'GrB_wait' is called.
+matrix is needed in another computation, or whenever \verb'GrB_Matrix_wait' is
+called.
 
 As a result, if calls to \verb'setElement' are mixed with calls to most other
 methods and operations (even \verb'extractElement') then the pending updates
@@ -4076,11 +3978,7 @@ types cannot be typecasted, so if \verb'A' has a user-defined type then
 \verb'x' must be a \verb'void *' pointer that points to a memory space the same
 size as a single scalar of the type of \verb'A'.
 
-\paragraph{Forced completion:}
-All computations for the matrix \verb'A' are
-guaranteed to be finished when the method returns.
-%
-In particular, this method causes all pending updates from
+Currently, this method causes all pending updates from
 \verb'GrB_setElement', \verb'GrB_assign', or \verb'GxB_subassign' to be
 assembled, so its use can have performance implications.  Calls to this
 function should not be arbitrarily intermixed with calls to these other two
@@ -4124,10 +4022,6 @@ entries in the arrays \verb'I' \verb'J', and \verb'X' are modified, containing
 all the tuples of \verb'A', and the rest of \verb'I' \verb'J', and \verb'X' are
 left unchanged.  On output, \verb'nvals' contains the number of tuples
 extracted.
-
-\paragraph{Forced completion:}
-All computations for the matrix \verb'A' are
-guaranteed to be finished when the method returns.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -4176,6 +4070,23 @@ frees the matrix \verb'A' and sets \verb'A' to \verb'NULL'.  It safely does
 nothing if passed a \verb'NULL' handle, or if \verb'A == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the matrix are abandoned.
 
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_Matrix\_wait:} finish all pending work on a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_wait}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_Matrix_wait
+(
+    GrB_Matrix *A
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GrB_Matrix_wait' forces all pending operations on a matrix to be
+completed.
 
 
 
@@ -6035,14 +5946,13 @@ matrices at the same time.  The user threads may use OpenMP or POSIX pthreads.
 If multiple user threads make simultaneous calls to GraphBLAS, then output
 matrices and vectors used by different threads must be different, and input
 matrices and vectors can be safely used only if any pending computations on
-them have finished, via \verb'GrB_wait' or the per-matrix methods,
-\verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
-and reduction to a scalar via \verb'GrB_*_reduce'.
+them have finished, via \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', or
+\verb'GxB_Scalar_wait'.
 
 The \verb'GxB_THREAD_SAFETY' option returns the threading model used internally
-to synchronize user threads.  This is determined during installation (see
-Section~\ref{sec:threads}).  Since \verb'GxB_THREAD_NONE' is zero, the
-following can be used:
+to synchronize user threads, solely for the now-deprected \verb'GrB_wait()'.
+This is determined during installation (see Section~\ref{sec:threads}).  Since
+\verb'GxB_THREAD_NONE' is zero, the following can be used:
 
 {\footnotesize
 \begin{verbatim}
@@ -8161,11 +8071,11 @@ and suppose \verb'y' is a vector of length 2 with the values \verb'[5 7]'.
         GrB_Index I [2] = {0, 0} ;
         GrB_Vector_setElement (y, 5, 0) ;
         GrB_Vector_setElement (y, 7, 1) ;
-        GrB_wait ( ) ;
+        GrB_Vector_wait (&y) ;
         GxB_print (x, 3) ;
         GxB_print (y, 3) ;
         GrB_assign (x, NULL, GrB_MIN_INT32, y, I, 2, NULL) ;
-        GrB_wait ( ) ;
+        GrB_Vector_wait (&y) ;
         GxB_print (x, 3) ;
         GrB_finalize ( ) ;
     }
@@ -9078,10 +8988,6 @@ the value of \verb'c' (on input) is typecast into the \verb'xtype' of the
 the \verb'ztype' of the \verb'accum' operator.  Finally, \verb'z' is typecast
 into the final result, \verb'c'.
 
-\paragraph{Forced completion:}
-All computations for the vector \verb'u' are
-guaranteed to be finished when the method returns.
-
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_$<$type$>$:} reduce a matrix to a scalar}
@@ -9106,10 +9012,6 @@ analogous to \verb't = sum (A (:))' in MATLAB.  This function is identical to
 reducing a vector to a scalar, since the positions of the entries in a matrix
 or vector have no effect on the result.  Refer to the reduction to scalar
 described in the previous Section~\ref{reduce_vector_to_scalar}.
-
-\paragraph{Forced completion:}
-All computations for the matrix \verb'A' are
-guaranteed to be finished when the method returns.
 
 \newpage
 %===============================================================================
@@ -9638,12 +9540,12 @@ in a dedicated device, with no file output, for example.
 Some implementations may wish to print nothing at all if the matrix is not yet
 completed, or just an indication that the matrix has pending operations and
 cannot be printed, when non-blocking mode is employed.  In this case, use
-\verb'GrB_Matrix_nvals' or \verb'GrB_wait' to finish all pending computations
-first.  If a matrix or vector has pending operations, SuiteSparse:GraphBLAS
-prints a list of the {\em pending tuples}, which are the entries not yet
-inserted into the primary data structure.  It can also print out entries that
-remain in the data structure but are awaiting deletion; these are called {\em
-zombies} in the output report.
+\verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', or \verb'GxB_Scalar_wait' to
+finish all pending computations first.  If a matrix or vector has pending
+operations, SuiteSparse:GraphBLAS prints a list of the {\em pending tuples},
+which are the entries not yet inserted into the primary data structure.  It can
+also print out entries that remain in the data structure but are awaiting
+deletion; these are called {\em zombies} in the output report.
 
 Most of the rest of the report is self-explanatory.
 
@@ -10899,21 +10801,23 @@ calls to GraphBLAS must be unique; you cannot safely modify one GraphBLAS
 object in parallel, with two or more simultaneous GraphBLAS functions operating
 on the same output object.  In addition, all pending operations of objects that
 appear in parallel calls to GraphBLAS must be complete.  This can be done for
-all objects via \verb'GrB_wait', or it can be done by calling a method or
-operation that forces completion of a particular object (such as
-\verb'GrB_*_nvals').  If multiple parallel calls to GraphBLAS functions operate
-on unique inputs, then those input objects can safely have pending operations.
+all objects via \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', and
+\verb'GxB_Scalar_wait', which force completion of a particular object.  If
+multiple parallel calls to GraphBLAS functions operate on unique inputs, then
+those input objects can safely have pending operations.
 
-To use GraphBLAS from a multithreaded user application, GraphBLAS
-requires access to a critical section for the \verb'GrB_wait' queue of
-matrices with pending operations, and to a thread-local storage space
-so that each user thread can safely retrieve its own error message with
-\verb'GrB_error'.
+To use GraphBLAS from a multithreaded user application, GraphBLAS requires
+access to a critical section for the (now deprecated) \verb'GrB_wait()' queue
+of matrices with pending operations, and to a thread-local storage space so
+that each user thread can safely retrieve its own error message with
+\verb'GrB_error'.  In v4.0, the no-argument \verb'GrB_wait()' function will be
+removed, and thus the user-thread-based critical section will be no longer
+needed.
 
 SuiteSparse:GraphBLAS supports the following user threading models.  By
 default, the \verb'cmake' script detects the presence of OpenMP and POSIX
 pthreads.  If OpenMP is present, it uses OpenMP critical sections for
-\verb'GrB_wait' and OpenMP \verb'threadprivate(...)' for thread-local storage
+\verb'GrB_wait()' and OpenMP \verb'threadprivate(...)' for thread-local storage
 for \verb'GrB_error'.  Otherwise, if POSIX pthreads are available, it uses a
 POSIX \verb'mutex', and POSIX thread-local storage via
 \verb'pthread_key_create'.
@@ -10947,14 +10851,6 @@ one user thread.
 \item no user threading:  compile with \verb'cmake -DUSER_NONE=1'.
     {\bf GraphBLAS will not be thread-safe}.
 
-\end{itemize}
-
-The following user-threading models are not yet supported, but may be in
-a future version.
-
-\begin{itemize}
-\item Microsoft Windows:  \verb'cmake -DUSER_WINDOWS=1'
-\item ANSI C11 threads:   \verb'cmake -DUSER_ANSI=1'
 \end{itemize}
 
 %----------------------------------------

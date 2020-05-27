@@ -21,8 +21,10 @@ function [args, is_GrB] = gb_get_args (varargin)
 % get the args and extract any GraphBLAS matrix structs
 args = varargin ;
 for k = 1:length (args)
-    if (isa (args {k}, 'GrB'))
-        args {k} = args {k}.opaque ;
+    arg = args {k} ;
+    if (isobject (arg))
+        arg = arg.opaque ;
+        args {k} = arg ;
     end
 end
 

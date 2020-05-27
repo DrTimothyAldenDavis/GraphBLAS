@@ -41,7 +41,7 @@ GrB_Info set_ ## name                                                       \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_wait (A, NULL)) ;                                        \
+        return (GB_Matrix_wait (A, NULL)) ;                                 \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
@@ -81,7 +81,7 @@ GrB_Info vset_ ## name                                                      \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_wait (A, NULL)) ;                                        \
+        return (GB_Matrix_wait (A, NULL)) ;                                 \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
@@ -187,7 +187,7 @@ void mexFunction
         mexErrMsgTxt ("X cannot be sparse") ;
     }
 
-    // get debug_wait (if true, to GB_wait after setElements)
+    // get debug_wait (if true, to GB_Matrix_wait after setElements)
     GET_SCALAR (4, bool, debug_wait, false) ;
 
     if (mxIsComplex (pargin [3]))

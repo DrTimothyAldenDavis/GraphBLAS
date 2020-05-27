@@ -183,10 +183,10 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     // delete any lingering zombies and assemble any pending tuples
     // but only in A and M, not C
-    GB_WAIT (M) ;
+    GB_MATRIX_WAIT (M) ;
     if (!scalar_expansion)
     { 
-        GB_WAIT (A) ;
+        GB_MATRIX_WAIT (A) ;
     }
 
     //--------------------------------------------------------------------------
@@ -347,14 +347,14 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         if (GB_PENDING (Z2))
         { 
             // assemble all pending tuples, and delete all zombies too
-            GB_OK (GB_wait (Z2, Context)) ;
+            GB_OK (GB_Matrix_wait (Z2, Context)) ;
         }
         // transplants the content of Z2 into C and frees Z2
         GB_OK (GB_transplant (C, C->type, &Z2, Context)) ;
     }
 
     // The hypersparsity of C is not modified.  This will be done eventually,
-    // when all pending operations are completed via GB_wait.
+    // when all pending operations are completed via GB_Matrix_wait.
 
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result

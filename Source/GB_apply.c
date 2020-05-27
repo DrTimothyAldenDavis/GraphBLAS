@@ -15,6 +15,8 @@
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -81,9 +83,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    // GB_WAIT (C) ;
-    GB_WAIT (M) ;
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // T = op(A) or op(A')
@@ -124,6 +125,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         info = GB_shallow_op (&T, C_is_csc, op, A, Context) ;
     }
 
+    // TODO use GB_OK instead
     if (info != GrB_SUCCESS)
     { 
         GB_MATRIX_FREE (&T) ;

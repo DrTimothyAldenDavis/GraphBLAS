@@ -32,16 +32,6 @@
 // thread-local storage for POSIX THREADS
 pthread_key_t GB_thread_local_key ;
 
-#elif defined ( USER_WINDOWS_THREADS )
-// for user applications that use Windows threads:
-#error "Windows threading not yet supported"
-
-#elif defined ( USER_ANSI_THREADS )
-// for user applications that use ANSI C11 threads:
-// (this should work per the ANSI C11 specification but is not yet supported)
-//_Thread_local char GB_thread_local_report [GB_RLEN+1] = "" ;
-#error "ANSI C11 threading not yet supported"
-
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // OpenMP user threads, or no user threads: this is the default
 char GB_thread_local_report [GB_RLEN+1] = "" ;
@@ -64,14 +54,9 @@ bool GB_thread_local_init
         // GB_Global_free_function.
         return (pthread_key_create (&GB_thread_local_key, free_function) == 0) ;
     }
-//  #elif defined ( USER_WINDOWS_THREADS )
-//  {
-//      #error "Windows threads not yet supported"
-//      return (false) ;        // not yet implemented
-//  }
     #else
     {
-        // _OPENMP, USER_OPENMP_THREADS, USER_ANSI_THREADS, or USER_NO_THREADS
+        // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
         GB_thread_local_report [0] = '\0' ;
         return (true) ;
     }
@@ -99,12 +84,7 @@ char *GB_thread_local_get (void)        // get pointer to thread-local storage
         // and return a GrB_PANIC to its caller.
         return (p) ;
     }
-//  #elif defined ( USER_WINDOWS_THREADS )
-//  {
-//      #error "Windows threads not yet supported"
-//      return (NULL) ;
-//  }
-    #else // USER_OPENMP_THREADS, USER_NO_THREADS, USER_ANSI_THREADS,
+    #else // USER_OPENMP_THREADS, USER_NO_THREADS
     {
         return (GB_thread_local_report) ;
     }

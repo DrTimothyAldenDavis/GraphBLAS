@@ -373,16 +373,10 @@ void mexFunction
 
     #if defined (USER_POSIX_THREADS)
     printf ("User threads: POSIX\n") ;
-    #elif defined (USER_WINDOWS_THREADS)
-    printf ("User threads: Windows\n") ;
-    #elif defined (USER_ANSI_THREADS)
-    printf ("User threads: ANSI\n") ;
     #elif defined (USER_OPENMP_THREADS)
     printf ("User threads: OpenMP\n") ;
-    #elif defined (USER_NO_THREADS)
-    printf ("User threads: none\n") ;
     #else
-    printf ("User threads: not specific (none)\n") ;
+    printf ("User threads: none\n") ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -806,12 +800,12 @@ void mexFunction
     // slice vector
     //--------------------------------------------------------------------------
 
-    // GB_wait constructs a slice, Aslice [1], that is then added to the
+    // GB_Matrix_wait constructs a slice, Aslice [1], that is then added to the
     // pending tuples, B = T.  It then calls GB_add to compute Aslice [1] + T,
     // where Aslice [1] can either be hypersparse or a hyperslice.  Need to
     // trigger the condition that the index i appears after all entries in the
     // implicit hyperlist Ah.  It's hard to test this case directly, via
-    // GB_wait and GB_add.
+    // GB_Matrix_wait and GB_add.
 
     int64_t i, pA = -1, pB = -1 ;
     int64_t Bh [10] ;

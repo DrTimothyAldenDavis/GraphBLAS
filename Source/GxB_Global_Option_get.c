@@ -91,14 +91,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 (*safety) = 
                     #if defined (USER_POSIX_THREADS)
                     GxB_THREAD_POSIX ;
-                    #elif defined (USER_WINDOWS_THREADS)
-                    GxB_THREAD_WINDOWS ;    // not yet supported
-                    #elif defined (USER_ANSI_THREADS)
-                    GxB_THREAD_ANSI ;       // not yet supported
                     #elif defined ( _OPENMP ) || defined (USER_OPENMP_THREADS)
                     GxB_THREAD_OPENMP ;
                     #else
-                    GxB_THREAD_NONE ;       // GraphBLAS is not thread safe!
+                    GxB_THREAD_NONE ;
                     #endif
             }
             break ;

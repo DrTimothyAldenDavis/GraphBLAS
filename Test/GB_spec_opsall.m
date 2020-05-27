@@ -40,7 +40,7 @@ types.complex = { 'single complex', 'double complex'} ;
 %-------------------------------------------------------------------------------
 
 % binary operators for all 13 types
-binops.all = {
+binops.all = {              % TODO rename binops.alltypes
 'first',     % z = x
 'second',    % z = y
 'pair',      % z = 1

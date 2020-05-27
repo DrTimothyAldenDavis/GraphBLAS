@@ -73,7 +73,7 @@ if (isequal (dim, 'all'))
         case 'count'
             % number of entries in A
             % e = GrB.entries (A)
-            if (isa (A, 'GrB'))
+            if (isobject (A))
                 result = gbnvals (A.opaque) ;
             else
                 result = gbnvals (A) ;
@@ -81,7 +81,7 @@ if (isequal (dim, 'all'))
         case 'list'
             % list of values of unique entries
             % X = GrB.entries (A, 'list')
-            if (isa (A, 'GrB'))
+            if (isobject (A))
                 result = unique (gbextractvalues (A.opaque)) ;
             else
                 result = unique (gbextractvalues (A)) ;
@@ -96,7 +96,7 @@ else
     f = GrB.format (A) ;
     native = (isequal (f, 'by row') && isequal (dim, 'row')) || ...
              (isequal (f, 'by col') && isequal (dim, 'col')) ;
-    if (isa (A, 'GrB'))
+    if (isobject (A))
         degree = GrB (gbdegree (A.opaque, native)) ;
     else
         degree = GrB (gbdegree (A, native)) ;

@@ -32,23 +32,6 @@ GrB_Info GrB_finalize ( )
         // delete the critical section for POSIX pthreads
         pthread_mutex_destroy (&GB_sync) ;
     }
-
-//  #elif defined (USER_WINDOWS_THREADS)
-//  {
-        // delete the critical section for Microsoft Windows.
-        // This is not yet supported.  See:
-        // https://docs.microsoft.com/en-us/windows/desktop/sync
-        //  /using-critical-section-objects
-//      DeleteCriticalSection (&GB_sync) ;
-//  }
-
-//  #elif defined (USER_ANSI_THREADS)
-//  {
-        // delete the critical section for ANSI C11 threads
-        // This should work but is not yet supported.
-//      mtx_destroy (&GB_sync) ;
-//  }
-
     #else // USER_OPENMP_THREADS or USER_NO_THREADS
     {
         // no need to finalize anything for OpenMP or for no user threads

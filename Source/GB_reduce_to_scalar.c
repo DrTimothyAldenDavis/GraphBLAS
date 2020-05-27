@@ -19,6 +19,8 @@
 #include "GB_red__include.h"
 #endif
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 (
     void *c,                    // result scalar
@@ -34,6 +36,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (c) ;
@@ -45,11 +48,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
-    GrB_Info info = GB_compatible (ctype, NULL, NULL, accum, ztype, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        return (info) ;
-    }
+    GB_OK (GB_compatible (ctype, NULL, NULL, accum, ztype, Context)) ;
 
     // s = reduce (s,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
@@ -65,8 +64,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_WAIT (A) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // get A

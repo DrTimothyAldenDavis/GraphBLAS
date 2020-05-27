@@ -40,13 +40,13 @@ if (GrB.isfull (A) && isequal (type, GrB.type (A)))
 else
 
     % convert A to full
-    if (isa (A, 'GrB'))
+    if (isobject (A))
         A = A.opaque ;
     end
     if (nargin < 3)
         identity = 0 ;
     end
-    if (isa (identity, 'GrB'))
+    if (isobject (identity))
         identity = identity.opaque ;
     end
     C = GrB (gbfull (A, type, identity, struct ('kind', 'GrB'))) ;

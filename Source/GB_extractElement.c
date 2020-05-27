@@ -16,6 +16,8 @@
 
 #include "GB.h"
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 (
     void *x,                    // scalar to extract, not modified if not found
@@ -31,10 +33,12 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+
     // delete any lingering zombies and assemble any pending tuples
-    // do this as early as possible (see Table 2.4 in spec)
     ASSERT (A != NULL) ;
-    GB_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;
+
     GB_RETURN_IF_NULL (x) ;
     ASSERT (xcode <= GB_UDT_code) ;
 

@@ -44,9 +44,6 @@
     GB_RETURN_IF_NULL (A) ;                                     \
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;                          \
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;                 \
-    /* finish any pending work */                               \
-    GB_WAIT (*A) ;                                              \
-    /* check these after forcing completion */                  \
     GB_RETURN_IF_NULL (type) ;                                  \
     GB_RETURN_IF_NULL (nrows) ;                                 \
     GB_RETURN_IF_NULL (ncols) ;                                 \
@@ -54,6 +51,8 @@
     GB_RETURN_IF_NULL (nonempty) ;                              \
     /* get the descriptor */                                    \
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ; \
+    /* finish any pending work */                               \
+    GB_MATRIX_WAIT (*A) ;                                       \
     /* export basic attributes */                               \
     (*type) = (*A)->type ;                                      \
     (*nrows) = GB_NROWS (*A) ;                                  \

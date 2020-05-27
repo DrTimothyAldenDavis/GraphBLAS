@@ -255,7 +255,11 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (row_assign || col_assign)
             {
                 // all pending tuples must first be assembled; zombies OK
-                GB_WAIT_PENDING (C) ;
+                if (GB_PENDING (C))
+                { 
+                    GB_OK (GB_Matrix_wait (C, Context)) ;
+                }
+                ASSERT (GB_ZOMBIES_OK (C)) ;
                 ASSERT_MATRIX_OK (C, "waited C for quick mask", GB0) ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 { 
@@ -332,10 +336,10 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // delete any lingering zombies and assemble any pending tuples
     // but only in A and M, not C
-    GB_WAIT (M) ;
+    GB_MATRIX_WAIT (M) ;
     if (!scalar_expansion)
     { 
-        GB_WAIT (A) ;
+        GB_MATRIX_WAIT (A) ;
     }
 
     //--------------------------------------------------------------------------
@@ -687,7 +691,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
         if (GB_PENDING (Z))
         { 
-            GB_OK (GB_wait (Z, Context)) ;
+            GB_OK (GB_Matrix_wait (Z, Context)) ;
         }
 
         ASSERT_MATRIX_OK (Z, "Z cleaned up for C-replace-phase", GB0) ;
@@ -810,14 +814,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         if (GB_PENDING (Z2))
         { 
             // assemble all pending tuples, and delete all zombies too
-            GB_OK (GB_wait (Z2, Context)) ;
+            GB_OK (GB_Matrix_wait (Z2, Context)) ;
         }
         // transplants the content of Z into C and frees Z
         GB_OK (GB_transplant (C, C->type, &Z2, Context)) ;
     }
 
     // The hypersparsity of C is not modified.  This will be done eventually,
-    // when all pending operations are completed via GB_wait.
+    // when all pending operations are completed via GB_Matrix_wait.
 
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result

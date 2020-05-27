@@ -22,8 +22,9 @@ if (nargin == 1)
 else
     args = varargin ;
     for k = 1:length (args)
-        if (isa (args {k}, 'GrB'))
-            args {k} = full (double (args {k})) ;
+        argk = args {k} ;
+        if (isobject (argk))
+            args {k} = full (double (argk)) ;
         end
     end
     [V, varargout{1:nargout-1}] = builtin ('eig', G, args {:}) ;

@@ -23,7 +23,8 @@
 // and C->h.  Either way, the caller must not free them.
 
 // op may be NULL.  In this case, the intersection of A and B must be empty.
-// This is used by GB_wait only, for merging the pending tuple matrix T into A.
+// This is used by GB_Matrix_wait only, for merging the pending tuple matrix T
+// into A.
 
 #include "GB_add.h"
 #include "GB_unused.h"
@@ -73,7 +74,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
     if (op == NULL)
     { 
-        // GB_wait does no typecasting.  A and T have the same type when
+        // GB_Matrix_wait does no typecasting.  A and T have the same type when
         // computing A=A+T, and no operator is used since A and T have disjoint
         // nonzero patterns.  No mask is used.
         ASSERT (ctype == A->type) ;

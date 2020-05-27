@@ -15,7 +15,7 @@
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
 // GB_add_phase0.  The mask M may be present, but it is not complemented.
 
-// GB_wait computes A=A+T where T is the matrix of the assembled pending
+// GB_Matrix_wait computes A=A+T where T is the matrix of the assembled pending
 // tuples.  A and T are disjoint, so this function does not need to examine
 // the pattern of A and T at all.  No mask is used in this case.
 

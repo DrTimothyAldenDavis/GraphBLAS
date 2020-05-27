@@ -53,17 +53,17 @@ if (ndims == 1)
                 C = GrB.subassign (C, M, A) ;
             else
                 % C (M) = A where A is a vector
-                if (isa (M, 'GrB'))
+                if (isobject (M))
                     M = M.opaque ;
                 end
                 if (size (A, 2) ~= 1)
                     % make sure A is a column vector of size mnz-by-1
                     A = A (:) ;
                 end
-                if (isa (A, 'GrB'))
+                if (isobject (A))
                     A = A.opaque ;
                 end
-                if (isa (C, 'GrB'))
+                if (isobject (C))
                     C = C.opaque ;
                 end
                 C = GrB (gblogassign (C, M, A)) ;
