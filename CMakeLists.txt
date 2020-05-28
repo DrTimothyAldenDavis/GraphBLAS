@@ -58,7 +58,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 24, 2020 (DRAFT)" )
+set ( GraphBLAS_DATE "May 28, 2020 (6pm DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -172,6 +172,9 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 # Intel10_64ilp includes libiomp.  When this happens, incorrect results are
 # obtained from cblas_saxpy and cblas_daxpy.  The Intel MKL can work with
 # libgomp, but not when libiomp is also included.
+
+# This is fixed in the alternative/Makefile, which only loads libgomp.
+# It is not yet fixed in this CMake script.
 
 #   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
 #       # Look for the parallel 64-bit MKL BLAS by default

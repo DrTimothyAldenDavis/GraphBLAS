@@ -174,17 +174,16 @@ GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<M> = accum (w, u+v)
 }
 
 // misnamed, deprecated version:
-GrB_Info GrB_eWiseAdd_Vector_Monoid         // w<M> = accum (w, u+v)
+GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<M> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M,             // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Monoid monoid,        // defines '+' for t=u+v
+    const GrB_Semiring semiring,    // defines '+' for t=u+v
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector v,             // second input: vector v
     const GrB_Descriptor desc       // descriptor for w and M
 )
-{ 
 { 
     // the correctly-named function:
     return (GrB_Vector_eWiseAdd_Semiring (w, M, accum, semiring, u, v, desc)) ;
