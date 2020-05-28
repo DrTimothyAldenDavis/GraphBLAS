@@ -1,4 +1,4 @@
-% function test10
+function test10
 %TEST10 test GrB_apply
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,6 +7,8 @@
 fprintf ('\ntest10: GrB_apply tests\n') ;
 
 [~, unary_ops, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
+unary_ops = unary_ops.all ;
 
 rng ('default') ;
 GrB.burble (0) ;
@@ -16,15 +18,8 @@ n = 4 ;
 dt = struct ('inp0', 'tran') ;
 dr = struct ('outp', 'replace') ;
 
-% test_types = types.real ;
-% test_unops = unary_ops.real ;
-
-test_types = types.all ;
-test_unops = unary_ops.all ;
-
-
-for k1 = 1:length(test_types)
-    atype = test_types {k1} ;
+for k1 = 1:length(types)
+    atype = types {k1} ;
     fprintf ('\n%s: ', atype) ;
 
     Mask = GB_random_mask (m, n, 0.5, true, false) ;
@@ -84,13 +79,12 @@ for k1 = 1:length(test_types)
         crange = 1 ;
     end
 
-    ops = test_unops ;
-    for k2 = 1:length(ops)
-        op.opname = ops {k2} ;
+    for k2 = 1:length(unary_ops)
+        op.opname = unary_ops {k2} ;
         fprintf (' %s', op.opname) ;
 
-        for k3 = 1:length(test_types)
-            op.optype = test_types {k3} ;
+        for k3 = 1:length(types)
+            op.optype = types {k3} ;
 
             try
                 [opname optype ztype xtype ytype] = GB_spec_operator (op) ;

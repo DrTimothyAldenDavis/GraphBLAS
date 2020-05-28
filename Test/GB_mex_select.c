@@ -109,11 +109,83 @@ void mexFunction
         else
         {
             // get k
-            int64_t k = (int64_t) mxGetScalar (pargin [5]) ;
-            GxB_Scalar_new (&Thunk, GrB_INT64) ;
-            GxB_Scalar_setElement_INT64 (Thunk, k) ;
-            GrB_Index ignore ;
-            GxB_Scalar_nvals (&ignore, Thunk) ;
+            GrB_Type thunk_type = GB_mx_Type (pargin [5]) ;
+            GxB_Scalar_new (&Thunk, thunk_type) ;
+            if (thunk_type == GrB_BOOL)
+            {
+                bool *p = mxGetData (pargin [5]) ;
+                GxB_Scalar_setElement_BOOL (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_INT8)
+            {
+                int8_t *p = mxGetInt8s (pargin [5]) ;
+                GxB_Scalar_setElement_INT8 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_INT16)
+            {
+                int16_t *p = mxGetInt16s (pargin [5]) ;
+                GxB_Scalar_setElement_INT16 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_INT32)
+            {
+                int32_t *p = mxGetInt32s (pargin [5]) ;
+                GxB_Scalar_setElement_INT32 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_INT64)
+            {
+                int64_t *p = mxGetInt64s (pargin [5]) ;
+                GxB_Scalar_setElement_INT64 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_UINT8)
+            {
+                uint8_t *p = mxGetUint8s (pargin [5]) ;
+                GxB_Scalar_setElement_UINT8 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_UINT16)
+            {
+                uint16_t *p = mxGetUint16s (pargin [5]) ;
+                GxB_Scalar_setElement_UINT16 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_UINT32)
+            {
+                uint32_t *p = mxGetUint32s (pargin [5]) ;
+                GxB_Scalar_setElement_UINT32 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_UINT64)
+            {
+                uint64_t *p = mxGetUint64s (pargin [5]) ;
+                GxB_Scalar_setElement_UINT64 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_FP32)
+            {
+                float *p = mxGetSingles (pargin [5]) ;
+                GxB_Scalar_setElement_FP32 (Thunk, *p) ;
+            }
+            else if (thunk_type == GrB_FP64)
+            {
+                double *p = mxGetDoubles (pargin [5]) ;
+                GxB_Scalar_setElement_FP64 (Thunk, *p) ;
+            }
+            else if (thunk_type == GxB_FC32)
+            {
+                GxB_FC32_t *p = mxGetComplexSingles (pargin [5]) ;
+                GxB_Scalar_setElement_FC32 (Thunk, *p) ;
+            }
+            else if (thunk_type == GxB_FC64)
+            {
+                GxB_FC64_t *p = mxGetComplexDoubles (pargin [5]) ;
+                GxB_Scalar_setElement_FC64 (Thunk, *p) ;
+            }
+            else if (thunk_type == Complex)
+            {
+                GxB_FC64_t *p = mxGetComplexDoubles (pargin [5]) ;
+                GxB_Scalar_setElement_UDT (Thunk, p) ;
+            }
+            else
+            {
+                mexErrMsgTxt ("unknown type") ;
+            }
+            GxB_Scalar_wait (&Thunk) ;
         }
     }
 
@@ -137,11 +209,11 @@ void mexFunction
     {
         // this is just to test the Vector version
         METHOD (GxB_Vector_select ((GrB_Vector) C, (GrB_Vector) M, accum, op,
-            (GrB_Vector) A, Thunk, desc)) ;
+            (GrB_Vector) A, Thunk, desc)) ; // C
     }
     else
     {
-        METHOD (GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)) ;
+        METHOD (GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)) ; // C
     }
 
     // return C to MATLAB as a struct and free the GraphBLAS C

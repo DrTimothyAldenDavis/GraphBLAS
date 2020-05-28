@@ -5,7 +5,8 @@ function test18(fulltest)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-bin_ops = [binops.all binops.real] ;
+bin_ops = binops.all ;
+types = types.all ;
 
 if (nargin < 1)
     fulltest = 0 ;
@@ -13,7 +14,7 @@ end
 
 if (fulltest == 2)
     fprintf ('test18 ----------lengthy tests of GrB_eWiseAdd and eWiseMult\n') ;
-    k1test = 1:length(types.real) ;
+    k1test = 1:length(types) ;
     k4test = randi([0,length(bin_ops)])
     k6list = [false true] ;
     k7list = [false true] ;
@@ -48,10 +49,10 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 n_semirings = 0 ;
-for k1 = k1test % 1:length (types.real)
-    clas = types.real {k1}  ;
+for k1 = k1test % 1:length (types)
+    type = types {k1}  ;
 
-    fprintf ('\n%s:\n', clas) ;
+    fprintf ('\n%s:\n', type) ;
 
     k2test = 1:length(bin_ops) ;
 
@@ -61,8 +62,15 @@ for k1 = k1test % 1:length (types.real)
         fprintf ('\n%s', binop) ;
 
         op.opname = binop ;
-        op.optype = clas ;
-        fprintf (' binary op: [ %s %s ] ', binop, clas) ;
+        op.optype = type ;
+
+        try
+            GB_spec_operator (op) ;
+        catch
+            continue
+        end
+
+        fprintf (' binary op: [ %s %s ] ', binop, type) ;
 
         % try some matrices
         for m = mlist
@@ -147,14 +155,21 @@ for k1 = k1test % 1:length (types.real)
                         fprintf ('accum: [ none ]') ;
                     else
                         accum.opname = bin_ops {k4}  ;
-                        ntypes = length (types.real) ;
+                        ntypes = length (types) ;
                         fprintf ('accum: %s ', accum.opname) ;
                     end
 
                     for k5 = randi ([1 ntypes]) % ntypes
 
                         if (k4 > 0)
-                            accum.optype = types.real {k5}  ;
+                            accum.optype = types {k5}  ;
+
+                            try
+                                GB_spec_operator (accum) ;
+                            catch
+                                continue
+                            end
+
                             fprintf ('%s\n', accum.optype) ;
                         else
                             fprintf ('\n') ;

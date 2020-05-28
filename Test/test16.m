@@ -7,7 +7,7 @@ function test16
 % all complex matrix tests
 
 for k = [false true]
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
     if (k)
         fprintf ('\nTesting GxB_FC64 complex type:\n') ;
     else

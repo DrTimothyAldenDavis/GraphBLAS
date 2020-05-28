@@ -285,6 +285,17 @@ void mexFunction
 
     #ifdef GxB_SUITESPARSE_GRAPHBLAS
 
+    char *name, *date, *about, *license ;
+    unsigned int version = 0 , minorversion = 33, subversion = 9999 ;
+    GxB_getLibraryVersion (&name, &date, &about, &license,
+        &version, &minorversion, &subversion) ;
+
+    printf ("Library: (%d.%d.%d) %s\n", version, minorversion, subversion,
+        name) ;
+    printf ("date: %s\n", date) ;
+    printf ("about: %s\n", about) ;
+    printf ("license: %s\n", license) ;
+
     printf ("\nAbout:\n%s\n", GxB_IMPLEMENTATION_ABOUT) ;
     printf ("Date: %s\n", GxB_IMPLEMENTATION_DATE) ;
     printf ("Implementation: %d.%d.%d ("GBu")\n",
@@ -294,8 +305,17 @@ void mexFunction
         GxB_IMPLEMENTATION) ;
     printf ("License:%s\n", GxB_IMPLEMENTATION_LICENSE) ;
 
-    printf ("Spec: %d.%d.%d ("GBu")\n",
-        GxB_SPEC_MAJOR, GxB_SPEC_MINOR, GxB_SPEC_SUB, GxB_SPEC_VERSION) ;
+    GrB_getVersion (&version, &subversion) ;
+    printf ("Spec: %d.%d.%d ("GBu"): %d.%d\n",
+        GxB_SPEC_MAJOR, GxB_SPEC_MINOR, GxB_SPEC_SUB, GxB_SPEC_VERSION,
+        version, subversion) ;
+
+    CHECK (version == GxB_SPEC_MAJOR) ;
+    CHECK (subversion == GxB_SPEC_MINOR) ;
+
+    CHECK (version == GrB_VERSION) ;
+    CHECK (subversion == GrB_SUBVERSION) ;
+
     printf ("Spec Date: %s\n", GxB_SPEC_DATE) ;
     printf ("About the spec:\n%s\n", GxB_SPEC_ABOUT) ;
 

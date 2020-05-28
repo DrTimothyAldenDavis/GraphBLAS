@@ -162,11 +162,26 @@ switch opname
 
     % bitwise operators
     case { 'bitget', 'bget' }
-        z = bitget (x, y, ztype) ;
+        bits = GB_spec_nbits (ztype) ;
+        m = (y > 0 & y <= bits) ;
+        t = bitget (x (m), y (m), ztype) ;
+        z = zeros (size (x), ztype) ;
+        z (m) = t ;
+
     case { 'bitset', 'bset' }
-        z = bitset (x, y, ztype) ;
+        bits = GB_spec_nbits (ztype) ;
+        m = (y > 0 & y <= bits) ;
+        t = bitset (x (m), y (m), 1, ztype) ;
+        z = x ;
+        z (m) = t ;
+
     case { 'bitclr', 'bclr' }
-        z = bitset (x, y, 0, ztype) ;
+        bits = GB_spec_nbits (ztype) ;
+        m = (y > 0 & y <= bits) ;
+        t = bitset (x (m), y (m), 0, ztype) ;
+        z = x ;
+        z (m) = t ;
+
     case { 'bitand', 'band' }
         z = bitand (x, y, ztype) ;
     case { 'bitor', 'bor' }
@@ -189,9 +204,21 @@ switch opname
     case { 'ldexp', 'pow2' }
         z = pow2 (x,y) ;
 
-        % z = fmod (x,y)
-        % z = remainder (x,y)
-        % z = copysign (x,y)
+    case { 'fmod', 'rem' }
+        % see ANSI C11 fmod function
+        % the MATLAB rem differs slightly from the ANSI C11 fmod,
+        % if x/y is O(eps) smaller than an integer.
+        z = rem (x,y) ;
+
+    case { 'remainder' }
+        % see ANSI C11 remainder function
+        m = (y ~= 0 & x ~= y) ;
+        z = nan (size (x), ztype) ;
+        z (m) = x (m) - round (x (m) ./ y (m)) .* y (m) ;
+
+    case { 'copysign' }
+        % see ANSI C11 copysign function
+        z = abs (x) .* (2 * double (y >= 0) - 1) ;
 
     case { 'complex', 'cmplx' }
         z = complex (x,y) ;
@@ -339,6 +366,10 @@ switch opname
     otherwise
         opname
         error ('unknown op') ;
+end
+
+if (~isequal (ztype, GB_spec_type (z)))
+    z = GB_mex_cast (z, ztype) ;
 end
 
 C = z ;

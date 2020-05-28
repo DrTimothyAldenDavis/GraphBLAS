@@ -194,9 +194,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         T_transposed = true ;
         #endif
         T = (*Thandle) ;
+        ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
-
-    ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
 
     if (M != NULL && C->is_csc != M->is_csc)
     {

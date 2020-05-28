@@ -5,6 +5,7 @@ function test23(fulltest)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 if (nargin < 1)
     % do a short test, by default
@@ -68,8 +69,8 @@ for k0 = 1:size (problems,1) ;
         fprintf ('%s', op.opname) ;
 
         % try every operator class
-        for k2 = 1:length (types.real)
-            op.optype = types.real {k2} ;
+        for k2 = 1:length (types)
+            op.optype = types {k2} ;
             z = GB_mex_cast (1, op.optype) ;
             opint = isinteger (z) || islogical (z) ;
 
@@ -84,26 +85,26 @@ for k0 = 1:size (problems,1) ;
             end
 
             if (fulltest)
-                k3list = 1:length(types.real) ;
+                k3list = 1:length(types) ;
             else
                 k3list = unique ([k2 randperm(11,2)]) ;
             end
 
             % try every class for X
-            for k3 = k3list % 1:length (types.real)
-                xclass = types.real {k3} ;
+            for k3 = k3list % 1:length (types)
+                xclass = types {k3} ;
                 X = GB_mex_cast (Y, xclass) ;
                 fprintf ('.') ;
 
                 if (fulltest)
-                    k4list = 1:length(types.real) ;
+                    k4list = 1:length(types) ;
                 else
                     k4list = unique ([k3 randperm(11,2)]) ;
                 end
 
                 % try every class for the result
-                for k4 = k4list % 1:length (types.real)
-                    cclass = types.real {k4} ;
+                for k4 = k4list % 1:length (types)
+                    cclass = types {k4} ;
 
                     % build the matrix in the natural order
                     % fprintf ('\n-------------------------------op: %s ', ...

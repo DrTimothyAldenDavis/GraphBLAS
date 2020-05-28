@@ -5,7 +5,8 @@ function test77 (fulltest)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-bin_ops = [binops.all binops.real] ;
+binops = binops.all ;
+types = types.all ;
 
 if (nargin < 1)
     fulltest = 0 ;
@@ -13,7 +14,7 @@ end
 
 if (fulltest)
     fprintf ('--------------lengthy tests of GxB_kron\n') ;
-    k1test = 1:length(types.real) ;
+    k1test = 1:length(types) ;
 else
     fprintf ('--------------quick tests of GxB_kron\n') ;
     k1test = 11 ; % Was [1 2 4 10 11] ;
@@ -27,46 +28,61 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 n_semirings = 0 ;
-for k1 = k1test % 1:length (types.real)
-    clas = types.real {k1}  ;
+for k1 = k1test
+    clas = types {k1}  ;
 
     fprintf ('\n%s:\n', clas) ;
 
     if (fulltest)
-        k2test = 1:length(bin_ops) ;
+        k2test = 1:length(binops) ;
     else
-        k2test = randperm (length(bin_ops), 1) ; % Was 2
+        k2test = 7 ; % randperm (length(binops), 1) ; % Was 2
     end
 
-    for k2 = k2test % 1:length(bin_ops)
-        binop = bin_ops {k2}  ;
-
-        fprintf (' %s', binop) ;
+    for k2 = k2test % 1:length(binops)
+        binop = binops {k2}  ;
 
         op.opname = binop ;
         op.optype = clas ;
+
+        try
+            GB_spec_operator (op) ;
+        catch
+            continue
+        end
+
+        fprintf (' %s', binop) ;
+
         fprintf (' binary op: [ %s %s ] ', binop, clas) ;
 
-        for k4 = randi([0,length(bin_ops)]) % 0:length(bin_ops)
+        for k4 = [0 randi([0,length(binops)], 1, 3)] % 0:length(binops)
 
             clear accum
+            fprintf ('\n') ;
             if (k4 == 0)
                 accum = ''  ;
                 ntypes = 1 ;
                 fprintf ('accum: [ none ]') ;
             else
-                accum.opname = bin_ops {k4}  ;
-                ntypes = length (types.real) ;
+                accum.opname = binops {k4}  ;
+                ntypes = length (types) ;
                 fprintf ('accum: %s ', accum.opname) ;
             end
 
-            for k5 = randi ([1 ntypes]) % ntypes
+            for k5 = randi ([1 ntypes], 1, 3) % ntypes
 
                 if (k4 > 0)
-                    accum.optype = types.real {k5}  ;
-                    fprintf ('%s\n', accum.optype) ;
-                else
-                    fprintf ('\n') ;
+                    accum.optype = types {k5}  ;
+                end
+
+                try
+                    GB_spec_operator (accum) ;
+                catch
+                    continue
+                end
+
+                if (~isempty (accum))
+                    fprintf ('%s ', accum.optype) ;
                 end
 
                 for Mask_complement = [false true]

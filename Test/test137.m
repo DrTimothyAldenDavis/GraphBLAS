@@ -11,7 +11,7 @@ rng ('default') ;
 n = 100 ;
 for k = [false true]
     fprintf ('builtin_complex: %d\n', k) ;
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
 
     A = sprand (n, n, 0.1) ;
     Z = sprand (n, n, 0.1) + 1i * sprand (n, n, 0.1) ;

@@ -5,7 +5,8 @@ function test20(fulltest)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+mult_ops = binops.all ;
+types = types.all ;
 
 tic
 
@@ -32,14 +33,14 @@ aa = 1 ;
 if (fulltest > 0)
     k1_list = 1:length(mult_ops) ;
     k2_list = 1:length(add_ops) ;
-    k3_list = 1:length(types.real) ;
+    k3_list = 1:length(types) ;
 else
     k1_list = [ 9 ] ;   % times
     k2_list = [ 3 ] ;   % plus
     k3_list = [ 11 ] ;  % double
 end
 
-kk = min (kk, length (types.real)) ;
+kk = min (kk, length (types)) ;
 
 dnn = struct ;
 dtn = struct ( 'inp0', 'tran' ) ;
@@ -56,13 +57,13 @@ for k1 = k1_list % 1:length(mult_ops)
         addop = add_ops {k2} ;
         fprintf ('\nsemiring %s:%s ', addop, mulop) ;
 
-        for k3 = k3_list % 1:length (types.real)
+        for k3 = k3_list % 1:length (types)
             rng ('default') ;
-            clas = types.real {k3} ;
+            type = types {k3} ;
 
             semiring.multiply = mulop ;
             semiring.add = addop ;
-            semiring.class = clas ;
+            semiring.class = type ;
             if (n_semirings_max == 1)
                 semiring
             end
@@ -71,7 +72,7 @@ for k1 = k1_list % 1:length(mult_ops)
             % monoids can only be used when z is boolean for z=mult(x,y).
             try
                 [mult_op add_op id] = GB_spec_semiring (semiring) ;
-                [mult_opname mult_optype zclass] = GB_spec_operator (mult_op);
+                [mult_opname mult_optype ztype] = GB_spec_operator (mult_op);
                 [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                 identity = GB_spec_identity (semiring.add, add_optype) ;
             catch
@@ -84,7 +85,7 @@ for k1 = k1_list % 1:length(mult_ops)
             end
 
             % fprintf ('\n%4d ', n_semirings) ;
-            % fprintf ('%12.2f mxm semiring %s:%s:%s ', toc,addop,mulop,clas) ;
+            % fprintf ('%12.2f mxm semiring %s:%s:%s ', toc,addop,mulop,type) ;
             % fprintf (' id: %g ', double (identity)) ;
             n_semirings = n_semirings + 1 ;
 
@@ -95,20 +96,26 @@ for k1 = k1_list % 1:length(mult_ops)
                     ntypes = 1 ;
                 else
                     accum_op = mult_ops {k4} ;
-                    % ntypes = [1 2 8 ] ; % length (types.real) ;
-                    % ntypes = 1:length (types.real) ;
-                    ntypes = randperm (length (types.real),kk) ;
+                    % ntypes = [1 2 8 ] ; % length (types) ;
+                    % ntypes = 1:length (types) ;
+                    ntypes = randperm (length (types),kk) ;
                 end
 
                 for k5 = ntypes
                     clear accum
                     if (~isempty (accum_op))
-                        accum_class = types.real {k5} ;
+                        accum_type = types {k5} ;
                         accum.opname = accum_op ;
-                        accum.optype = accum_class ;
+                        accum.optype = accum_type ;
                     else
                         accum = '' ;
-                        accum_class = '' ;
+                        accum_type = '' ;
+                    end
+
+                    try
+                        GB_spec_operator (accum) ;
+                    catch
+                        continue
                     end
 
                     for Mask_complement = [false true]
@@ -140,13 +147,13 @@ for k1 = k1_list % 1:length(mult_ops)
                             end
 
                             % pick a random class, and int32
-                            atypes = randperm(length(types.real),kk) ;
-                            %  1:length (types.real)
+                            atypes = randperm(length(types),kk) ;
+                            %  1:length (types)
                             atypes = unique ([atypes 6]) ;
 
-                            % try all matrix types.real, to test casting
+                            % try all matrix types, to test casting
                             for k6 = atypes
-                                aclas = types.real {k6} ;
+                                aclas = types {k6} ;
 
                                 if (isequal (aclas, 'int32') && ...
                                     mod (n_semirings, 100) == 1)
@@ -195,8 +202,8 @@ for k1 = k1_list % 1:length(mult_ops)
                                             GB_spec_compare (C0, C1, identity) ;
 
                                             % w = A*u, no mask
-                                            w = GB_spec_random (m,1,density,100,clas) ;
-                                            u = GB_spec_random (s,1,density,100,clas) ;
+                                            w = GB_spec_random (m,1,density,100,type) ;
+                                            u = GB_spec_random (s,1,density,100,type) ;
 
                                             w0 = GB_spec_mxv (w, [ ], accum, semiring, A, u, dnn);
                                             w1 = GB_mex_mxv  (w, [ ], accum, semiring, A, u, dnn);
@@ -369,7 +376,6 @@ for k1 = k1_list % 1:length(mult_ops)
     end
 end
 
-% fprintf ('%d options tested\n', ntrials) ;
 fprintf ('semirings tested: %d\n', n_semirings) ;
 fprintf ('\ntest20: all tests passed\n') ;
 

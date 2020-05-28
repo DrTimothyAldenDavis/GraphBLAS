@@ -5,7 +5,8 @@ function test141
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-bin_ops = [binops.all binops.real] ;
+binops = binops.all ;
+types = types.all ;
 
 fprintf ('test141 ------------ GrB_eWiseAdd with dense matrices\n') ;
 
@@ -15,9 +16,15 @@ n = 5 ;
 rng ('default') ;
 
 M = sprand (m, n, 0.5) ;
-Amat = sparse (100 * rand (m,n)) ;
-Bmat = sparse (100 * rand (m,n)) ;
-Cmat = sparse (100 * rand (m,n)) ;
+
+Amat2 = 2 * sparse (rand (m,n)) ;
+Bmat2 = 2 * sparse (rand (m,n)) ;
+Cmat2 = 2 * sparse (rand (m,n)) ;
+
+Amat = 50 * sparse (rand (m,n)) ;
+Bmat = 50 * sparse (rand (m,n)) ;
+Cmat = 50 * sparse (rand (m,n)) ;
+
 Emat = sprand (m, n, 0.5) ;
 Smat = sparse (m,n) ;
 desc.mask = 'structural' ;
@@ -28,31 +35,48 @@ C.matrix = Cmat ; C.class = 'see below' ;
 S.matrix = Smat ; S.class = 'see below' ;
 E.matrix = Emat ; E.class = 'see below' ;
 
-for k2 = 1:length(bin_ops)
-    binop = bin_ops {k2}  ;
+for k2 = 1:length(binops)
+    binop = binops {k2}  ;
     if (isequal (binop, 'pow'))
         continue ;
     end
-    fprintf ('%s', binop) ;
+    fprintf ('\n%-10s ', binop) ;
 
-    for k1 = 1:length (types.real)
-        clas = types.real {k1}  ;
-
+    for k1 = 1:length (types)
+        type = types {k1}  ;
         op.opname = binop ;
-        op.optype = clas ;
+        op.optype = type ;
+
+        try
+            GB_spec_operator (op) ;
+        catch
+            continue ;
+        end
+
         fprintf ('.') ;
 
-        A.class = clas ;
-        B.class = clas ;
-        E.class = clas ;
+        switch (binop)
+            % domain is ok, but limit it to avoid integer typecast
+            % failures from O(eps) errors, or overflow to inf
+            case { 'ldexp', 'pow' }
+                A.matrix = Amat2 ;
+                B.matrix = Bmat2 ;
+                C.matrix = Cmat2 ;
+            otherwise
+                % no change
+        end
+
+        A.class = type ;
+        B.class = type ;
+        E.class = type ;
 
         if (k2 > 20)
             % eq, ne, gt, lt, ge, le
             S.class = 'logical' ;
             C.class = 'logical' ;
         else
-            S.class = clas ;
-            C.class = clas ;
+            S.class = type ;
+            C.class = type ;
         end
 
         %---------------------------------------
@@ -91,6 +115,7 @@ for k2 = 1:length(bin_ops)
         % C += A+B
         %---------------------------------------
 
+save gunk C op A B
         C0 = GB_spec_eWiseAdd_Matrix (C, [ ], op, op, A, B, [ ]) ;
         C1 = GB_mex_eWiseAdd_Matrix  (C, [ ], op, op, A, B, [ ]) ;
         GB_spec_compare (C0, C1) ;

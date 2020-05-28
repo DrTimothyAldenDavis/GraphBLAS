@@ -6,9 +6,9 @@ function test151
 
 fprintf ('test151: test bitwise operators\n') ;
 
-[~, ~, ~, types ~, ~,] = GB_spec_opsall ;
-
-ops2 = { 'bitget', 'bitset', 'bitclr', 'bitand', 'bitor', 'bitxor' } ;
+[binops, ~, ~, types, ~, ~,] = GB_spec_opsall ;
+types = types.int ;
+ops2 = binops.int ;
 
 int_nbits = [ 8, 16, 32, 64, 8, 16, 32, 64 ] ;
 
@@ -18,7 +18,7 @@ C10 = sparse (10,10) ;
 
 for k = 1:8
 
-    type = types.int {k} ;
+    type = types {k} ;
     nbits = int_nbits (k) ;
     fprintf ('\n%s', type) ;
 

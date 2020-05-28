@@ -5,11 +5,12 @@ function test03
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 rng ('default') ;
 
-for k = 1:length (types.real)
-    aclass = types.real {k} ;
+for k = 1:length (types)
+    aclass = types {k} ;
     for is_hyper = 0:1
         for is_csc = 0:1
             A = GB_spec_random (10,30,0.2,100,aclass, is_csc, is_hyper) ;
@@ -31,7 +32,7 @@ end
 
 for k = [false true]
     fprintf ('builtin_complex: %d\n', k) ;
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
 
     % complex case:
     A = GB_mex_random (10, 30, 15, 1, 1, 0, 0, 0) ;

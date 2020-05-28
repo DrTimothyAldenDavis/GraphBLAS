@@ -5,7 +5,8 @@ function test142
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-bin_ops = [binops.all binops.real] ;
+binops = binops.all ;
+types = types.all ;
 
 fprintf ('test142 ------------ GrB_assign with dense matrices\n') ;
 
@@ -30,13 +31,13 @@ S.matrix = Smat ; S.class = 'see below' ;
 X.matrix = Xmat ; X.class = 'see below' ;
 Bmask = logical (Bmat) ;
 
-for k1 = 1:length (types.real)
-    clas = types.real {k1}  ;
-    fprintf ('%s', clas) ;
+for k1 = 1:length (types)
+    type = types {k1}  ;
+    fprintf ('%s', type) ;
 
-    A.class = clas ;
-    B.class = clas ;
-    X.class = clas ;
+    A.class = type ;
+    B.class = type ;
+    X.class = type ;
 
     for k3 = 1:2
 
@@ -44,8 +45,8 @@ for k1 = 1:length (types.real)
             C.class = 'logical' ;
             S.class = 'logical' ;
         else
-            C.class = clas ;
-            S.class = clas ;
+            C.class = type ;
+            S.class = type ;
         end
 
         %---------------------------------------
@@ -116,14 +117,21 @@ for k1 = 1:length (types.real)
         % with accum operators
         %---------------------------------------
 
-        for k2 = 1:length(bin_ops)
-            binop = bin_ops {k2}  ;
+        for k2 = 1:length(binops)
+            binop = binops {k2}  ;
             if (isequal (binop, 'pow'))
                 continue ;
             end
 
             op.opname = binop ;
-            op.optype = clas ;
+            op.optype = type ;
+
+            try
+                GB_spec_operator (op) ;
+            catch
+                continue
+            end
+
             fprintf ('.') ;
 
             %---------------------------------------

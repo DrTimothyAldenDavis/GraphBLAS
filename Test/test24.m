@@ -6,7 +6,8 @@ function test24(fulltest)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-accum_ops = [binops.all binops.real] ;
+test_types = types.all ;
+accum_ops = binops.all ;
 
 rng ('default') ;
 
@@ -16,10 +17,10 @@ end
 
 if (fulltest)
     fprintf ('\ntest24: ----- exhaustive test of GrB_reduce_to_scalar and vector\n') ;
-    cset = 1:length (types.real) ;
-    aset = 1:length (types.real) ;
+    cset = 1:length (test_types) ;
+    aset = 1:length (test_types) ;
 else
-    fprintf ('\ntest24: ----- quick test of GrB_reduce_to_scalar and vector\n') ;
+    fprintf ('\ntest24: ----- quick test of GrB_reduce_to_scalar and vector\n');
     cset = 10 ;
     aset = 11 ;
 end
@@ -27,14 +28,14 @@ end
 dt = struct ('inp0', 'tran') ;
 
 % class of the vector x
-for k1 = cset % 1:length (types.real)
-    cclass = types.real {k1}  ;
+for k1 = cset
+    cclass = test_types {k1}  ;
     cin = GB_mex_cast (2, cclass) ;
     % fprintf ('\n===================================  c class: %s\n',cclass) ;
 
     % class of the matrix A
-    for k2 = aset % 1:length (types.real)
-        aclass = types.real {k2}  ;
+    for k2 = aset
+        aclass = test_types {k2}  ;
         % fprintf ('\n==================================A class: %s\n',aclass) ;
         fprintf ('[%s %s]', cclass, aclass) ;
 
@@ -65,7 +66,7 @@ for k1 = cset % 1:length (types.real)
                         ntypes = 1 ;
                     else
                         reduce_op = add_ops {k3}  ;
-                        ntypes = 1;length (types.real) ;
+                        ntypes = 1;length (test_types) ;
                     end
                     % fprintf ('reduce: %s\n', reduce_op) ;
                     % reduce operator class
@@ -73,12 +74,19 @@ for k1 = cset % 1:length (types.real)
                     for k4 = ntypes
                         clear reduce
                         if (~isempty (reduce_op))
-                            reduce_class = types.real {k4}  ;
+                            reduce_class = test_types {k4}  ;
                             reduce.opname = reduce_op ;
                             reduce.optype = reduce_class ;
                         else
                             reduce = '' ;
                             reduce_class = '' ;
+                        end
+
+                        try
+                            [opname optype ztype xtype ytype] = ...
+                                GB_spec_operator (reduce) ;
+                        catch
+                            continue
                         end
 
                         if (~isequal (reduce_class, 'logical') && ...
@@ -98,18 +106,25 @@ for k1 = cset % 1:length (types.real)
                                 ntypes = 1 ;
                             else
                                 accum_op = accum_ops {k5}  ;
-                                ntypes = 1;length (types.real) ;
+                                ntypes = 1;length (test_types) ;
                             end
                             % accum operator class
                             for k6 = ntypes
                                 clear accum
                                 if (~isempty (accum_op))
-                                    accum_class = types.real {k6}  ;
+                                    accum_class = test_types {k6}  ;
                                     accum.opname = accum_op ;
                                     accum.optype = accum_class ;
                                 else
                                     accum = '' ;
                                     accum_class = '' ;
+                                end
+
+                                try
+                                    [opname optype ztype xtype ytype] = ...
+                                        GB_spec_operator (accum) ;
+                                catch
+                                    continue
                                 end
 
                                 % reduce matrix to scalar

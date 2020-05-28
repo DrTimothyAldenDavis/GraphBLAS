@@ -40,7 +40,7 @@ types.complex = { 'single complex', 'double complex'} ;
 %-------------------------------------------------------------------------------
 
 % binary operators for all 13 types
-binops.all = {              % TODO rename binops.alltypes
+binops.alltypes = {
 'first',     % z = x
 'second',    % z = y
 'pair',      % z = 1
@@ -87,6 +87,10 @@ binops.fpreal = {
 
 % binary ops for FC32 and FC64 only
 binops.complex = { } ;
+
+% list of all binary ops
+binops.all = [ binops.alltypes, binops.real, binops.int, ...
+    binops.float, binops.fpreal, binops.complex ] ;
 
 %-------------------------------------------------------------------------------
 % unary ops

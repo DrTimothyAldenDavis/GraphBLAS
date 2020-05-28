@@ -129,7 +129,7 @@
 %   test60   - test min and max operators with NaNs
 %   test61   - performance test of GrB_eWiseMult
 %   test62   - test GrB_apply
-%   test63   - test GraphBLAS operators
+%   test63   - test GraphBLAS binary operators
 %   test64   - test GxB_*_subassign, scalar expansion, with and without duplicates
 %   test64b  - test GrB_*_assign, scalar expansion, with and without duplicates
 %   test65   - test type casting

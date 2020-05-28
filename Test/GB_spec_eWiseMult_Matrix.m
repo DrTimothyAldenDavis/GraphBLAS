@@ -50,12 +50,20 @@ p = A.pattern & B.pattern ;
 % first cast the entries into the class of the operator
 A1 = GB_mex_cast (A.matrix (p), xtype) ;
 B1 = GB_mex_cast (B.matrix (p), ytype) ;
-T.matrix (p) = GB_spec_op (mult, A1, B1) ;
+z = GB_spec_op (mult, A1, B1) ;
+
+% assert (isequal (ztype, GB_spec_type (T.matrix))) ;
+if (~isequal (ztype, GB_spec_type (z)))
+    A1
+    B1
+    mult
+    z
+    assert (false) ;
+end
 
 % the pattern of T is the intersection of both A and B
+T.matrix (p) = z ;
 T.pattern = p ;
-
-assert (isequal (ztype, GB_spec_type (T.matrix))) ;
 T.class = ztype ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result

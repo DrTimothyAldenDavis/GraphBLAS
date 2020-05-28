@@ -10,9 +10,10 @@ rng ('default') ;
 fprintf ('\n-------------- GrB_resize\n') ;
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
-for k1 = 1:length(types.real)
-    clas = types.real {k1} ;
+for k1 = 1:length(types)
+    type = types {k1} ;
     for nrows_old = [1 2 5 10]
         for ncols_old = [1 2 5 10]
 
@@ -20,7 +21,7 @@ for k1 = 1:length(types.real)
             for A_is_hyper = 0:1
             for A_is_csc   = 0:1
 
-            A = GB_spec_random (nrows_old, ncols_old, 0.5, 99, clas, ...
+            A = GB_spec_random (nrows_old, ncols_old, 0.5, 99, type, ...
                 A_is_hyper, A_is_csc) ;
             for nrows_new = [1 2 5 10 ]
                 for ncols_new = [1 2 5 10]

@@ -5,9 +5,10 @@ function test127
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-bin_ops = [binops.all binops.real] ;
+binops = binops.all ;
+types = types.all ;
 
-fprintf ('test127 ------------tests of GrB_eWiseAdd and eWiseMult (all ops)\n') ;
+fprintf ('test127 -----------tests of GrB_eWiseAdd and eWiseMult (all ops)\n') ;
 
 m = 5 ;
 n = 5 ;
@@ -69,18 +70,34 @@ clear T i j x
 ATmat = Amat' ;
 BTmat = Bmat' ;
 
-for k1 = 1:length (types.real)
-    clas = types.real {k1}  ;
+for k1 = 1:length (types)
+    type = types {k1}  ;
+    fprintf ('\n\n%-8s : ', type) ;
 
-    for k2 = 1:length(bin_ops)
-        binop = bin_ops {k2}  ;
+    for k2 = 1:length(binops)
+        binop = binops {k2}  ;
         if (isequal (binop, 'pow'))
             continue ;
         end
 
         op.opname = binop ;
-        op.optype = clas ;
-        fprintf ('.') ;
+        op.optype = type ;
+
+        if (contains (type, 'single'))
+            tol = 1e-5 ;
+        elseif (contains (type, 'double'))
+            tol = 1e-12 ;
+        else
+            tol = 0 ;
+        end
+        
+        try
+            GB_spec_operator (op) ;
+        catch
+            continue ;
+        end
+
+        fprintf (' %s', binop) ;
 
         for A_is_hyper = 0 % 0:1
         for A_is_csc   = 0 % 0:1
@@ -150,13 +167,13 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, A, B, dnn);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, [ ], [ ], op, A, B, dnn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         w0 = GB_spec_eWiseAdd_Vector ...
             (w, [ ], [ ], op, u, v, dnn);
         w1 = GB_mex_eWiseAdd_Vector ...
             (w, [ ], [ ], op, u, v, dnn);
-        GB_spec_compare (w0, w1) ;
+        GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'+B
@@ -166,7 +183,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, AT, B, dtn);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, [ ], [ ], op, AT, B, dtn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A+B'
@@ -176,7 +193,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, A, BT, dnt);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, [ ], [ ], op, A, BT, dnt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'+B'
@@ -186,7 +203,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, AT, BT, dtt);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, [ ], [ ], op, AT, BT, dtt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B
@@ -196,13 +213,13 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, A, B, dnn);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, [ ], [ ], op, A, B, dnn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         w0 = GB_spec_eWiseMult_Vector ...
             (w, [ ], [ ], op, u, v, dnn);
         w1 = GB_mex_eWiseMult_Vector ...
             (w, [ ], [ ], op, u, v, dnn);
-        GB_spec_compare (w0, w1) ;
+        GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B
@@ -212,7 +229,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, AT, B, dtn);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, [ ], [ ], op, AT, B, dtn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B'
@@ -222,7 +239,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, A, BT, dnt);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, [ ], [ ], op, A, BT, dnt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B'
@@ -232,7 +249,7 @@ for k1 = 1:length (types.real)
             (C, [ ], [ ], op, AT, BT, dtt);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, [ ], [ ], op, AT, BT, dtt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %-----------------------------------------------
         % with mask
@@ -262,13 +279,13 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, A, B, dnn);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, Mask, [ ], op, A, B, dnn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         w0 = GB_spec_eWiseAdd_Vector ...
             (w, mask, [ ], op, u, v, dnn);
         w1 = GB_mex_eWiseAdd_Vector ...
             (w, mask, [ ], op, u, v, dnn);
-        GB_spec_compare (w0, w1) ;
+        GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'+B, with mask
@@ -278,7 +295,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, AT, B, dtn);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, Mask, [ ], op, AT, B, dtn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A+B', with mask
@@ -288,7 +305,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, A, BT, dnt);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, Mask, [ ], op, A, BT, dnt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'+B', with mask
@@ -298,7 +315,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, AT, BT, dtt);
         C1 = GB_mex_eWiseAdd_Matrix ...
             (C, Mask, [ ], op, AT, BT, dtt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B, with mask
@@ -308,13 +325,13 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, A, B, dnn);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, Mask, [ ], op, A, B, dnn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         w0 = GB_spec_eWiseMult_Vector ...
             (w, mask, [ ], op, u, v, dnn);
         w1 = GB_mex_eWiseMult_Vector ...
             (w, mask, [ ], op, u, v, dnn);
-        GB_spec_compare (w0, w1) ;
+        GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B, with mask
@@ -324,7 +341,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, AT, B, dtn);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, Mask, [ ], op, AT, B, dtn);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B', with mask
@@ -334,7 +351,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, A, BT, dnt);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, Mask, [ ], op, A, BT, dnt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B', with mask
@@ -344,7 +361,7 @@ for k1 = 1:length (types.real)
             (C, Mask, [ ], op, AT, BT, dtt);
         C1 = GB_mex_eWiseMult_Matrix ...
             (C, Mask, [ ], op, AT, BT, dtt);
-        GB_spec_compare (C0, C1) ;
+        GB_spec_compare (C0, C1, 0, tol) ;
 
 
         end

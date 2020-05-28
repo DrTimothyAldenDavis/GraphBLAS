@@ -3,9 +3,9 @@ function builtin_complex = GB_builtin_complex_set (builtin_complex)
 %
 % builtin_complex = GB_builtin_complex_set (builtin_complex)
 %
-% Sets the GraphBLAS_builtin_complex flag.  If true, the Complex ==
-% GxB_FC64.  If false, the Complex GrB_Type is allocated as a user-defined
-% type.
+% Sets the GraphBLAS_builtin_complex flag.  If true, then the Complex and
+% GxB_FC64 types are identical.  If false, the Complex GrB_Type is allocated as
+% a user-defined type.
 %
 % See also GB_builtin_complex_get.
 

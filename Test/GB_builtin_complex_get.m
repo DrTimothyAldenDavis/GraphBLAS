@@ -9,14 +9,12 @@ function builtin_complex = GB_builtin_complex_get
 %
 % See also GB_builtin_complex_set.
 
-% TODO rename
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 global GraphBLAS_builtin_complex
 if (isempty (GraphBLAS_builtin_complex))
-    builtin_complex = builtin_complex_set (true) ;
+    builtin_complex = GB_builtin_complex_set (true) ;
 end
 builtin_complex = GraphBLAS_builtin_complex ;
 

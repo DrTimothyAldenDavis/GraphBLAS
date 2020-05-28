@@ -13,7 +13,7 @@ fprintf ('\ntest129: GxB_select tests (tril and nonzero)\n') ;
 rng ('default') ;
 
 fprintf ('\n---------- Trigger an intentional error (domain mismatch):\n\n') ;
-builtin_complex_set (0) ;
+GB_builtin_complex_set (0) ;
 try
     % this must fail; the scalar thunk cannot be user-defined for tril
     C = sparse (1i) ;
@@ -27,7 +27,7 @@ catch me
 end
 assert (ok) ;
 fprintf ('---------- Domain mismatch error above is expected\n\n') ;
-builtin_complex_set (1) ;
+GB_builtin_complex_set (1) ;
 
 m = 10 ;
 n = 6 ;

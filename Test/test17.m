@@ -7,17 +7,18 @@ function test17
 fprintf ('\n ------------ testing GrB_extractElement\n') ;
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 rng ('default') ;
 
-% class of the output X
-for k1 = 4 % 1:length (types.real)
-    xclass = types.real {k1}  ;
-    fprintf ('\n%s', xclass) ;
+% type of the output X
+for k1 = 4 % 1:length (types)
+    xtype = types {k1}  ;
+    fprintf ('\n%s', xtype) ;
 
-    % class of the matrix A
-    for k2 = 3 % 1:length (types.real)
-        aclass = types.real {k2}  ;
+    % type of the matrix A
+    for k2 = 3 % 1:length (types)
+        atype = types {k2}  ;
 
         % create a matrix
         for m = [1 10] % [1 10 25 50]
@@ -25,11 +26,11 @@ for k1 = 4 % 1:length (types.real)
                 fprintf ('.') ;
                 clear A
                 A.matrix = 100 * sprandn (m, n, 0.1) ;
-                A.class = aclass ;
+                A.class = atype ;
 
                 clear B
                 B.matrix = 100 * sprandn (m*n, 1, 0.1) ;
-                B.class = aclass ;
+                B.class = atype ;
 
                 for A_is_hyper = 0:1
                 for A_is_csc   = 0:1
@@ -38,8 +39,8 @@ for k1 = 4 % 1:length (types.real)
 
                 for i = 0:m-1
                     for j = 0:n-1
-                        x1 = GB_mex_Matrix_extractElement  (A, uint64(i), uint64(j), xclass) ;
-                        x2 = GB_spec_Matrix_extractElement (A, i, j, xclass) ;
+                        x1 = GB_mex_Matrix_extractElement  (A, uint64(i), uint64(j), xtype) ;
+                        x2 = GB_spec_Matrix_extractElement (A, i, j, xtype) ;
                         assert (isequal (x1,x2))
                     end
                 end
@@ -48,8 +49,8 @@ for k1 = 4 % 1:length (types.real)
                 end
 
                 for i = 0:(m*n)-1
-                    x1 = GB_mex_Vector_extractElement  (B, uint64(i), xclass) ;
-                    x2 = GB_spec_Vector_extractElement (B, uint64(i), xclass) ;
+                    x1 = GB_mex_Vector_extractElement  (B, uint64(i), xtype) ;
+                    x2 = GB_spec_Vector_extractElement (B, uint64(i), xtype) ;
                     assert (isequal (x1,x2))
                 end
 

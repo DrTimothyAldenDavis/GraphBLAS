@@ -8,7 +8,7 @@ fprintf ('\ntest109: terminal monoid with user-defined type\n') ;
 
 for k = [false true]
     fprintf ('builtin_complex: %d\n', k) ;
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
 
     rng ('default') ;
 

@@ -435,6 +435,28 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
+#define GrB_VERSION     GxB_SPEC_MAJOR
+#define GrB_SUBVERSION  GxB_SPEC_MINOR
+
+GB_PUBLIC
+GrB_Info GrB_getVersion         // runtime access to C API version number
+(
+    unsigned int *version,      // returns GrB_VERSION
+    unsigned int *subversion    // returns GrB_SUBVERSION
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_getLibraryVersion
+(
+    const char **name,              // name of the library
+    const char **date,              // date of release
+    const char **about,             // information about the library
+    const char **license,           // library license
+    unsigned int *version,          // version numbers
+    unsigned int *minorversion,
+    unsigned int *subversion
+) ;
+
 //==============================================================================
 //=== GraphBLAS error handling =================================================
 //==============================================================================
@@ -1107,7 +1129,7 @@ GB_PUBLIC GrB_BinaryOp
 // GrB_IDENTITY_BOOL, GrB_AINV_BOOL, and GrB_MINV_BOOL all give the same result
 // (z = x).
 
-// With this convention for boolean "division", there are 13 unique binary
+// With this convention for boolean "division", there are 11 unique binary
 // operators that are purely boolean.  The other *_BOOL operators are redundant
 // but are included in GraphBLAS so that the name space of operators is
 // complete.  Below is a list of all operators and their equivalents.
@@ -1129,10 +1151,10 @@ GB_PUBLIC GrB_BinaryOp
 //      z = ~(x || y)   1 0 0 0     (nor(x,y) function, not predefined)
 //      z = (x == y)    1 0 0 1     EQ, ISEQ, LXNOR
 //      z = ~y          1 0 1 0     (not(y), not predefined)
-//      z = (x >= y)    1 0 1 1     GE, ISGE, POW
+//      z = (x >= y)    1 0 1 1     GE, ISGE, POW, and "x implies y"
 //
 //      z = ~x          1 1 0 0     (not(x), not predefined)
-//      z = (x >= y)    1 1 0 1     LE, ISLE
+//      z = (x >= y)    1 1 0 1     LE, ISLE, and "y implies x"
 //      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
 //      z = 1           1 1 1 1     PAIR
 //
@@ -1515,34 +1537,34 @@ GrB_Info GrB_Monoid_new             // create a monoid
     _Generic                                        \
     (                                               \
         (identity),                                 \
-        const bool     : GrB_Monoid_new_BOOL   ,    \
-              bool     : GrB_Monoid_new_BOOL   ,    \
-        const int8_t   : GrB_Monoid_new_INT8   ,    \
-              int8_t   : GrB_Monoid_new_INT8   ,    \
-        const uint8_t  : GrB_Monoid_new_UINT8  ,    \
-              uint8_t  : GrB_Monoid_new_UINT8  ,    \
-        const int16_t  : GrB_Monoid_new_INT16  ,    \
-              int16_t  : GrB_Monoid_new_INT16  ,    \
-        const uint16_t : GrB_Monoid_new_UINT16 ,    \
-              uint16_t : GrB_Monoid_new_UINT16 ,    \
-        const int32_t  : GrB_Monoid_new_INT32  ,    \
-              int32_t  : GrB_Monoid_new_INT32  ,    \
-        const uint32_t : GrB_Monoid_new_UINT32 ,    \
-              uint32_t : GrB_Monoid_new_UINT32 ,    \
-        const int64_t  : GrB_Monoid_new_INT64  ,    \
-              int64_t  : GrB_Monoid_new_INT64  ,    \
-        const uint64_t : GrB_Monoid_new_UINT64 ,    \
-              uint64_t : GrB_Monoid_new_UINT64 ,    \
-        const float    : GrB_Monoid_new_FP32   ,    \
-              float    : GrB_Monoid_new_FP32   ,    \
-        const double   : GrB_Monoid_new_FP64   ,    \
-              double   : GrB_Monoid_new_FP64   ,    \
-        const GxB_FC32_t : GxB_Monoid_new_FC32 ,    \
-              GxB_FC32_t : GxB_Monoid_new_FC32 ,    \
-        const GxB_FC64_t : GxB_Monoid_new_FC64 ,    \
-              GxB_FC64_t : GxB_Monoid_new_FC64 ,    \
-        const void *   : GrB_Monoid_new_UDT    ,    \
-              void *   : GrB_Monoid_new_UDT         \
+        const bool       : GrB_Monoid_new_BOOL   ,  \
+              bool       : GrB_Monoid_new_BOOL   ,  \
+        const int8_t     : GrB_Monoid_new_INT8   ,  \
+              int8_t     : GrB_Monoid_new_INT8   ,  \
+        const int16_t    : GrB_Monoid_new_INT16  ,  \
+              int16_t    : GrB_Monoid_new_INT16  ,  \
+        const int32_t    : GrB_Monoid_new_INT32  ,  \
+              int32_t    : GrB_Monoid_new_INT32  ,  \
+        const int64_t    : GrB_Monoid_new_INT64  ,  \
+              int64_t    : GrB_Monoid_new_INT64  ,  \
+        const uint8_t    : GrB_Monoid_new_UINT8  ,  \
+              uint8_t    : GrB_Monoid_new_UINT8  ,  \
+        const uint16_t   : GrB_Monoid_new_UINT16 ,  \
+              uint16_t   : GrB_Monoid_new_UINT16 ,  \
+        const uint32_t   : GrB_Monoid_new_UINT32 ,  \
+              uint32_t   : GrB_Monoid_new_UINT32 ,  \
+        const uint64_t   : GrB_Monoid_new_UINT64 ,  \
+              uint64_t   : GrB_Monoid_new_UINT64 ,  \
+        const float      : GrB_Monoid_new_FP32   ,  \
+              float      : GrB_Monoid_new_FP32   ,  \
+        const double     : GrB_Monoid_new_FP64   ,  \
+              double     : GrB_Monoid_new_FP64   ,  \
+        const GxB_FC32_t : GxB_Monoid_new_FC32   ,  \
+              GxB_FC32_t : GxB_Monoid_new_FC32   ,  \
+        const GxB_FC64_t : GxB_Monoid_new_FC64   ,  \
+              GxB_FC64_t : GxB_Monoid_new_FC64   ,  \
+        const void *     : GrB_Monoid_new_UDT    ,  \
+              void *     : GrB_Monoid_new_UDT       \
     )                                               \
     (monoid, op, identity) ;
 #endif
@@ -1698,34 +1720,34 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
     _Generic                                                    \
     (                                                           \
         (identity),                                             \
-        const bool     : GxB_Monoid_terminal_new_BOOL   ,       \
-              bool     : GxB_Monoid_terminal_new_BOOL   ,       \
-        const int8_t   : GxB_Monoid_terminal_new_INT8   ,       \
-              int8_t   : GxB_Monoid_terminal_new_INT8   ,       \
-        const uint8_t  : GxB_Monoid_terminal_new_UINT8  ,       \
-              uint8_t  : GxB_Monoid_terminal_new_UINT8  ,       \
-        const int16_t  : GxB_Monoid_terminal_new_INT16  ,       \
-              int16_t  : GxB_Monoid_terminal_new_INT16  ,       \
-        const uint16_t : GxB_Monoid_terminal_new_UINT16 ,       \
-              uint16_t : GxB_Monoid_terminal_new_UINT16 ,       \
-        const int32_t  : GxB_Monoid_terminal_new_INT32  ,       \
-              int32_t  : GxB_Monoid_terminal_new_INT32  ,       \
-        const uint32_t : GxB_Monoid_terminal_new_UINT32 ,       \
-              uint32_t : GxB_Monoid_terminal_new_UINT32 ,       \
-        const int64_t  : GxB_Monoid_terminal_new_INT64  ,       \
-              int64_t  : GxB_Monoid_terminal_new_INT64  ,       \
-        const uint64_t : GxB_Monoid_terminal_new_UINT64 ,       \
-              uint64_t : GxB_Monoid_terminal_new_UINT64 ,       \
-        const float    : GxB_Monoid_terminal_new_FP32   ,       \
-              float    : GxB_Monoid_terminal_new_FP32   ,       \
-        const double   : GxB_Monoid_terminal_new_FP64   ,       \
-              double   : GxB_Monoid_terminal_new_FP64   ,       \
-        const GxB_FC32_t : GxB_Monoid_terminal_new_FC32 ,       \
-              GxB_FC32_t : GxB_Monoid_terminal_new_FC32 ,       \
-        const GxB_FC64_t : GxB_Monoid_terminal_new_FC64 ,       \
-              GxB_FC64_t : GxB_Monoid_terminal_new_FC64 ,       \
-        const void *   : GxB_Monoid_terminal_new_UDT    ,       \
-              void *   : GxB_Monoid_terminal_new_UDT            \
+        const bool       : GxB_Monoid_terminal_new_BOOL   ,     \
+              bool       : GxB_Monoid_terminal_new_BOOL   ,     \
+        const int8_t     : GxB_Monoid_terminal_new_INT8   ,     \
+              int8_t     : GxB_Monoid_terminal_new_INT8   ,     \
+        const int16_t    : GxB_Monoid_terminal_new_INT16  ,     \
+              int16_t    : GxB_Monoid_terminal_new_INT16  ,     \
+        const int32_t    : GxB_Monoid_terminal_new_INT32  ,     \
+              int32_t    : GxB_Monoid_terminal_new_INT32  ,     \
+        const int64_t    : GxB_Monoid_terminal_new_INT64  ,     \
+              int64_t    : GxB_Monoid_terminal_new_INT64  ,     \
+        const uint8_t    : GxB_Monoid_terminal_new_UINT8  ,     \
+              uint8_t    : GxB_Monoid_terminal_new_UINT8  ,     \
+        const uint16_t   : GxB_Monoid_terminal_new_UINT16 ,     \
+              uint16_t   : GxB_Monoid_terminal_new_UINT16 ,     \
+        const uint32_t   : GxB_Monoid_terminal_new_UINT32 ,     \
+              uint32_t   : GxB_Monoid_terminal_new_UINT32 ,     \
+        const uint64_t   : GxB_Monoid_terminal_new_UINT64 ,     \
+              uint64_t   : GxB_Monoid_terminal_new_UINT64 ,     \
+        const float      : GxB_Monoid_terminal_new_FP32   ,     \
+              float      : GxB_Monoid_terminal_new_FP32   ,     \
+        const double     : GxB_Monoid_terminal_new_FP64   ,     \
+              double     : GxB_Monoid_terminal_new_FP64   ,     \
+        const GxB_FC32_t : GxB_Monoid_terminal_new_FC32   ,     \
+              GxB_FC32_t : GxB_Monoid_terminal_new_FC32   ,     \
+        const GxB_FC64_t : GxB_Monoid_terminal_new_FC64   ,     \
+              GxB_FC64_t : GxB_Monoid_terminal_new_FC64   ,     \
+        const void *     : GxB_Monoid_terminal_new_UDT    ,     \
+              void *     : GxB_Monoid_terminal_new_UDT          \
     )                                                           \
     (monoid, op, identity, terminal) ;
 #endif
@@ -1827,9 +1849,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
 // opaque to the user; their internal structure may change in future releases.
 
 typedef struct GB_Matrix_opaque *GrB_Matrix ;
-
 typedef struct GB_Vector_opaque *GrB_Vector ;
-
 typedef struct GB_Scalar_opaque *GxB_Scalar ;
 
 //==============================================================================
@@ -2003,39 +2023,39 @@ GrB_Info GxB_Scalar_setElement          // s = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Scalar_setElement(s,x)                        \
-    _Generic                                              \
-    (                                                     \
-        (x),                                              \
-        const bool      : GxB_Scalar_setElement_BOOL   ,  \
-              bool      : GxB_Scalar_setElement_BOOL   ,  \
-        const int8_t    : GxB_Scalar_setElement_INT8   ,  \
-              int8_t    : GxB_Scalar_setElement_INT8   ,  \
-        const uint8_t   : GxB_Scalar_setElement_UINT8  ,  \
-              uint8_t   : GxB_Scalar_setElement_UINT8  ,  \
-        const int16_t   : GxB_Scalar_setElement_INT16  ,  \
-              int16_t   : GxB_Scalar_setElement_INT16  ,  \
-        const uint16_t  : GxB_Scalar_setElement_UINT16 ,  \
-              uint16_t  : GxB_Scalar_setElement_UINT16 ,  \
-        const int32_t   : GxB_Scalar_setElement_INT32  ,  \
-              int32_t   : GxB_Scalar_setElement_INT32  ,  \
-        const uint32_t  : GxB_Scalar_setElement_UINT32 ,  \
-              uint32_t  : GxB_Scalar_setElement_UINT32 ,  \
-        const int64_t   : GxB_Scalar_setElement_INT64  ,  \
-              int64_t   : GxB_Scalar_setElement_INT64  ,  \
-        const uint64_t  : GxB_Scalar_setElement_UINT64 ,  \
-              uint64_t  : GxB_Scalar_setElement_UINT64 ,  \
-        const float     : GxB_Scalar_setElement_FP32   ,  \
-              float     : GxB_Scalar_setElement_FP32   ,  \
-        const double    : GxB_Scalar_setElement_FP64   ,  \
-              double    : GxB_Scalar_setElement_FP64   ,  \
-        const GxB_FC32_t : GxB_Scalar_setElement_FC32  ,  \
-              GxB_FC32_t : GxB_Scalar_setElement_FC32  ,  \
-        const GxB_FC64_t : GxB_Scalar_setElement_FC64  ,  \
-              GxB_FC64_t : GxB_Scalar_setElement_FC64  ,  \
-        const void *    : GxB_Scalar_setElement_UDT    ,  \
-              void *    : GxB_Scalar_setElement_UDT       \
-    )                                                     \
+#define GxB_Scalar_setElement(s,x)                          \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        const bool       : GxB_Scalar_setElement_BOOL   ,   \
+              bool       : GxB_Scalar_setElement_BOOL   ,   \
+        const int8_t     : GxB_Scalar_setElement_INT8   ,   \
+              int8_t     : GxB_Scalar_setElement_INT8   ,   \
+        const int16_t    : GxB_Scalar_setElement_INT16  ,   \
+              int16_t    : GxB_Scalar_setElement_INT16  ,   \
+        const int32_t    : GxB_Scalar_setElement_INT32  ,   \
+              int32_t    : GxB_Scalar_setElement_INT32  ,   \
+        const int64_t    : GxB_Scalar_setElement_INT64  ,   \
+              int64_t    : GxB_Scalar_setElement_INT64  ,   \
+        const uint8_t    : GxB_Scalar_setElement_UINT8  ,   \
+              uint8_t    : GxB_Scalar_setElement_UINT8  ,   \
+        const uint16_t   : GxB_Scalar_setElement_UINT16 ,   \
+              uint16_t   : GxB_Scalar_setElement_UINT16 ,   \
+        const uint32_t   : GxB_Scalar_setElement_UINT32 ,   \
+              uint32_t   : GxB_Scalar_setElement_UINT32 ,   \
+        const uint64_t   : GxB_Scalar_setElement_UINT64 ,   \
+              uint64_t   : GxB_Scalar_setElement_UINT64 ,   \
+        const float      : GxB_Scalar_setElement_FP32   ,   \
+              float      : GxB_Scalar_setElement_FP32   ,   \
+        const double     : GxB_Scalar_setElement_FP64   ,   \
+              double     : GxB_Scalar_setElement_FP64   ,   \
+        const GxB_FC32_t : GxB_Scalar_setElement_FC32   ,   \
+              GxB_FC32_t : GxB_Scalar_setElement_FC32   ,   \
+        const GxB_FC64_t : GxB_Scalar_setElement_FC64   ,   \
+              GxB_FC64_t : GxB_Scalar_setElement_FC64   ,   \
+        const void *     : GxB_Scalar_setElement_UDT    ,   \
+              void *     : GxB_Scalar_setElement_UDT        \
+    )                                                       \
     (s, x)
 #endif
 
@@ -2162,25 +2182,25 @@ GrB_Info GxB_Scalar_extractElement  // x = s
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Scalar_extractElement(x,s)                  \
-    _Generic                                            \
-    (                                                   \
-        (x),                                            \
-        bool     *: GxB_Scalar_extractElement_BOOL   ,  \
-        int8_t   *: GxB_Scalar_extractElement_INT8   ,  \
-        uint8_t  *: GxB_Scalar_extractElement_UINT8  ,  \
-        int16_t  *: GxB_Scalar_extractElement_INT16  ,  \
-        uint16_t *: GxB_Scalar_extractElement_UINT16 ,  \
-        int32_t  *: GxB_Scalar_extractElement_INT32  ,  \
-        uint32_t *: GxB_Scalar_extractElement_UINT32 ,  \
-        int64_t  *: GxB_Scalar_extractElement_INT64  ,  \
-        uint64_t *: GxB_Scalar_extractElement_UINT64 ,  \
-        float    *: GxB_Scalar_extractElement_FP32   ,  \
-        double   *: GxB_Scalar_extractElement_FP64   ,  \
-        GxB_FC32_t *: GxB_Scalar_extractElement_FC32 ,  \
-        GxB_FC64_t *: GxB_Scalar_extractElement_FC64 ,  \
-        void     *: GxB_Scalar_extractElement_UDT       \
-    )                                                   \
+#define GxB_Scalar_extractElement(x,s)                      \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        bool       *: GxB_Scalar_extractElement_BOOL   ,    \
+        int8_t     *: GxB_Scalar_extractElement_INT8   ,    \
+        int16_t    *: GxB_Scalar_extractElement_INT16  ,    \
+        int32_t    *: GxB_Scalar_extractElement_INT32  ,    \
+        int64_t    *: GxB_Scalar_extractElement_INT64  ,    \
+        uint8_t    *: GxB_Scalar_extractElement_UINT8  ,    \
+        uint16_t   *: GxB_Scalar_extractElement_UINT16 ,    \
+        uint32_t   *: GxB_Scalar_extractElement_UINT32 ,    \
+        uint64_t   *: GxB_Scalar_extractElement_UINT64 ,    \
+        float      *: GxB_Scalar_extractElement_FP32   ,    \
+        double     *: GxB_Scalar_extractElement_FP64   ,    \
+        GxB_FC32_t *: GxB_Scalar_extractElement_FC32   ,    \
+        GxB_FC64_t *: GxB_Scalar_extractElement_FC64   ,    \
+        void       *: GxB_Scalar_extractElement_UDT         \
+    )                                                       \
     (x, s)
 #endif
 
@@ -2434,34 +2454,34 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
     _Generic                                            \
     (                                                   \
         (X),                                            \
-        const bool      *: GrB_Vector_build_BOOL   ,    \
-              bool      *: GrB_Vector_build_BOOL   ,    \
-        const int8_t    *: GrB_Vector_build_INT8   ,    \
-              int8_t    *: GrB_Vector_build_INT8   ,    \
-        const uint8_t   *: GrB_Vector_build_UINT8  ,    \
-              uint8_t   *: GrB_Vector_build_UINT8  ,    \
-        const int16_t   *: GrB_Vector_build_INT16  ,    \
-              int16_t   *: GrB_Vector_build_INT16  ,    \
-        const uint16_t  *: GrB_Vector_build_UINT16 ,    \
-              uint16_t  *: GrB_Vector_build_UINT16 ,    \
-        const int32_t   *: GrB_Vector_build_INT32  ,    \
-              int32_t   *: GrB_Vector_build_INT32  ,    \
-        const uint32_t  *: GrB_Vector_build_UINT32 ,    \
-              uint32_t  *: GrB_Vector_build_UINT32 ,    \
-        const int64_t   *: GrB_Vector_build_INT64  ,    \
-              int64_t   *: GrB_Vector_build_INT64  ,    \
-        const uint64_t  *: GrB_Vector_build_UINT64 ,    \
-              uint64_t  *: GrB_Vector_build_UINT64 ,    \
-        const float     *: GrB_Vector_build_FP32   ,    \
-              float     *: GrB_Vector_build_FP32   ,    \
-        const double    *: GrB_Vector_build_FP64   ,    \
-              double    *: GrB_Vector_build_FP64   ,    \
-        const GxB_FC32_t *: GxB_Vector_build_FC32  ,    \
-              GxB_FC32_t *: GxB_Vector_build_FC32  ,    \
-        const GxB_FC64_t *: GxB_Vector_build_FC64  ,    \
-              GxB_FC64_t *: GxB_Vector_build_FC64  ,    \
-        const void      *: GrB_Vector_build_UDT    ,    \
-              void      *: GrB_Vector_build_UDT         \
+        const bool       *: GrB_Vector_build_BOOL   ,   \
+              bool       *: GrB_Vector_build_BOOL   ,   \
+        const int8_t     *: GrB_Vector_build_INT8   ,   \
+              int8_t     *: GrB_Vector_build_INT8   ,   \
+        const int16_t    *: GrB_Vector_build_INT16  ,   \
+              int16_t    *: GrB_Vector_build_INT16  ,   \
+        const int32_t    *: GrB_Vector_build_INT32  ,   \
+              int32_t    *: GrB_Vector_build_INT32  ,   \
+        const int64_t    *: GrB_Vector_build_INT64  ,   \
+              int64_t    *: GrB_Vector_build_INT64  ,   \
+        const uint8_t    *: GrB_Vector_build_UINT8  ,   \
+              uint8_t    *: GrB_Vector_build_UINT8  ,   \
+        const uint16_t   *: GrB_Vector_build_UINT16 ,   \
+              uint16_t   *: GrB_Vector_build_UINT16 ,   \
+        const uint32_t   *: GrB_Vector_build_UINT32 ,   \
+              uint32_t   *: GrB_Vector_build_UINT32 ,   \
+        const uint64_t   *: GrB_Vector_build_UINT64 ,   \
+              uint64_t   *: GrB_Vector_build_UINT64 ,   \
+        const float      *: GrB_Vector_build_FP32   ,   \
+              float      *: GrB_Vector_build_FP32   ,   \
+        const double     *: GrB_Vector_build_FP64   ,   \
+              double     *: GrB_Vector_build_FP64   ,   \
+        const GxB_FC32_t *: GxB_Vector_build_FC32   ,   \
+              GxB_FC32_t *: GxB_Vector_build_FC32   ,   \
+        const GxB_FC64_t *: GxB_Vector_build_FC64   ,   \
+              GxB_FC64_t *: GxB_Vector_build_FC64   ,   \
+        const void       *: GrB_Vector_build_UDT    ,   \
+              void       *: GrB_Vector_build_UDT        \
     )                                                   \
     (w, I, ((const void *) (X)), nvals, dup)
 #endif
@@ -2601,39 +2621,39 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_setElement(w,x,i)                      \
-    _Generic                                              \
-    (                                                     \
-        (x),                                              \
-        const bool      : GrB_Vector_setElement_BOOL   ,  \
-              bool      : GrB_Vector_setElement_BOOL   ,  \
-        const int8_t    : GrB_Vector_setElement_INT8   ,  \
-              int8_t    : GrB_Vector_setElement_INT8   ,  \
-        const uint8_t   : GrB_Vector_setElement_UINT8  ,  \
-              uint8_t   : GrB_Vector_setElement_UINT8  ,  \
-        const int16_t   : GrB_Vector_setElement_INT16  ,  \
-              int16_t   : GrB_Vector_setElement_INT16  ,  \
-        const uint16_t  : GrB_Vector_setElement_UINT16 ,  \
-              uint16_t  : GrB_Vector_setElement_UINT16 ,  \
-        const int32_t   : GrB_Vector_setElement_INT32  ,  \
-              int32_t   : GrB_Vector_setElement_INT32  ,  \
-        const uint32_t  : GrB_Vector_setElement_UINT32 ,  \
-              uint32_t  : GrB_Vector_setElement_UINT32 ,  \
-        const int64_t   : GrB_Vector_setElement_INT64  ,  \
-              int64_t   : GrB_Vector_setElement_INT64  ,  \
-        const uint64_t  : GrB_Vector_setElement_UINT64 ,  \
-              uint64_t  : GrB_Vector_setElement_UINT64 ,  \
-        const float     : GrB_Vector_setElement_FP32   ,  \
-              float     : GrB_Vector_setElement_FP32   ,  \
-        const double    : GrB_Vector_setElement_FP64   ,  \
-              double    : GrB_Vector_setElement_FP64   ,  \
-        const GxB_FC32_t : GxB_Vector_setElement_FC32  ,  \
-              GxB_FC32_t : GxB_Vector_setElement_FC32  ,  \
-        const GxB_FC64_t : GxB_Vector_setElement_FC64  ,  \
-              GxB_FC64_t : GxB_Vector_setElement_FC64  ,  \
-        const void *    : GrB_Vector_setElement_UDT    ,  \
-              void *    : GrB_Vector_setElement_UDT       \
-    )                                                     \
+#define GrB_Vector_setElement(w,x,i)                        \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        const bool       : GrB_Vector_setElement_BOOL   ,   \
+              bool       : GrB_Vector_setElement_BOOL   ,   \
+        const int8_t     : GrB_Vector_setElement_INT8   ,   \
+              int8_t     : GrB_Vector_setElement_INT8   ,   \
+        const int16_t    : GrB_Vector_setElement_INT16  ,   \
+              int16_t    : GrB_Vector_setElement_INT16  ,   \
+        const int32_t    : GrB_Vector_setElement_INT32  ,   \
+              int32_t    : GrB_Vector_setElement_INT32  ,   \
+        const int64_t    : GrB_Vector_setElement_INT64  ,   \
+              int64_t    : GrB_Vector_setElement_INT64  ,   \
+        const uint8_t    : GrB_Vector_setElement_UINT8  ,   \
+              uint8_t    : GrB_Vector_setElement_UINT8  ,   \
+        const uint16_t   : GrB_Vector_setElement_UINT16 ,   \
+              uint16_t   : GrB_Vector_setElement_UINT16 ,   \
+        const uint32_t   : GrB_Vector_setElement_UINT32 ,   \
+              uint32_t   : GrB_Vector_setElement_UINT32 ,   \
+        const uint64_t   : GrB_Vector_setElement_UINT64 ,   \
+              uint64_t   : GrB_Vector_setElement_UINT64 ,   \
+        const float      : GrB_Vector_setElement_FP32   ,   \
+              float      : GrB_Vector_setElement_FP32   ,   \
+        const double     : GrB_Vector_setElement_FP64   ,   \
+              double     : GrB_Vector_setElement_FP64   ,   \
+        const GxB_FC32_t : GxB_Vector_setElement_FC32   ,   \
+              GxB_FC32_t : GxB_Vector_setElement_FC32   ,   \
+        const GxB_FC64_t : GxB_Vector_setElement_FC64   ,   \
+              GxB_FC64_t : GxB_Vector_setElement_FC64   ,   \
+        const void *     : GrB_Vector_setElement_UDT    ,   \
+              void *     : GrB_Vector_setElement_UDT        \
+    )                                                       \
     (w, x, i)
 #endif
 
@@ -2775,25 +2795,25 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractElement(x,v,i)                \
-    _Generic                                            \
-    (                                                   \
-        (x),                                            \
-        bool     *: GrB_Vector_extractElement_BOOL   ,  \
-        int8_t   *: GrB_Vector_extractElement_INT8   ,  \
-        uint8_t  *: GrB_Vector_extractElement_UINT8  ,  \
-        int16_t  *: GrB_Vector_extractElement_INT16  ,  \
-        uint16_t *: GrB_Vector_extractElement_UINT16 ,  \
-        int32_t  *: GrB_Vector_extractElement_INT32  ,  \
-        uint32_t *: GrB_Vector_extractElement_UINT32 ,  \
-        int64_t  *: GrB_Vector_extractElement_INT64  ,  \
-        uint64_t *: GrB_Vector_extractElement_UINT64 ,  \
-        float    *: GrB_Vector_extractElement_FP32   ,  \
-        double   *: GrB_Vector_extractElement_FP64   ,  \
-        GxB_FC32_t *: GxB_Vector_extractElement_FC32 ,  \
-        GxB_FC64_t *: GxB_Vector_extractElement_FC64 ,  \
-        void     *: GrB_Vector_extractElement_UDT       \
-    )                                                   \
+#define GrB_Vector_extractElement(x,v,i)                    \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        bool       *: GrB_Vector_extractElement_BOOL   ,    \
+        int8_t     *: GrB_Vector_extractElement_INT8   ,    \
+        int16_t    *: GrB_Vector_extractElement_INT16  ,    \
+        int32_t    *: GrB_Vector_extractElement_INT32  ,    \
+        int64_t    *: GrB_Vector_extractElement_INT64  ,    \
+        uint8_t    *: GrB_Vector_extractElement_UINT8  ,    \
+        uint16_t   *: GrB_Vector_extractElement_UINT16 ,    \
+        uint32_t   *: GrB_Vector_extractElement_UINT32 ,    \
+        uint64_t   *: GrB_Vector_extractElement_UINT64 ,    \
+        float      *: GrB_Vector_extractElement_FP32   ,    \
+        double     *: GrB_Vector_extractElement_FP64   ,    \
+        GxB_FC32_t *: GxB_Vector_extractElement_FC32   ,    \
+        GxB_FC64_t *: GxB_Vector_extractElement_FC64   ,    \
+        void       *: GrB_Vector_extractElement_UDT         \
+    )                                                       \
     (x, v, i)
 #endif
 
@@ -2959,20 +2979,20 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
     _Generic                                            \
     (                                                   \
         (X),                                            \
-        bool     *: GrB_Vector_extractTuples_BOOL   ,   \
-        int8_t   *: GrB_Vector_extractTuples_INT8   ,   \
-        uint8_t  *: GrB_Vector_extractTuples_UINT8  ,   \
-        int16_t  *: GrB_Vector_extractTuples_INT16  ,   \
-        uint16_t *: GrB_Vector_extractTuples_UINT16 ,   \
-        int32_t  *: GrB_Vector_extractTuples_INT32  ,   \
-        uint32_t *: GrB_Vector_extractTuples_UINT32 ,   \
-        int64_t  *: GrB_Vector_extractTuples_INT64  ,   \
-        uint64_t *: GrB_Vector_extractTuples_UINT64 ,   \
-        float    *: GrB_Vector_extractTuples_FP32   ,   \
-        double   *: GrB_Vector_extractTuples_FP64   ,   \
-        GxB_FC32_t *: GxB_Vector_extractTuples_FC32 ,   \
-        GxB_FC64_t *: GxB_Vector_extractTuples_FC64 ,   \
-        void     *: GrB_Vector_extractTuples_UDT        \
+        bool       *: GrB_Vector_extractTuples_BOOL   , \
+        int8_t     *: GrB_Vector_extractTuples_INT8   , \
+        int16_t    *: GrB_Vector_extractTuples_INT16  , \
+        int32_t    *: GrB_Vector_extractTuples_INT32  , \
+        int64_t    *: GrB_Vector_extractTuples_INT64  , \
+        uint8_t    *: GrB_Vector_extractTuples_UINT8  , \
+        uint16_t   *: GrB_Vector_extractTuples_UINT16 , \
+        uint32_t   *: GrB_Vector_extractTuples_UINT32 , \
+        uint64_t   *: GrB_Vector_extractTuples_UINT64 , \
+        float      *: GrB_Vector_extractTuples_FP32   , \
+        double     *: GrB_Vector_extractTuples_FP64   , \
+        GxB_FC32_t *: GxB_Vector_extractTuples_FC32   , \
+        GxB_FC64_t *: GxB_Vector_extractTuples_FC64   , \
+        void       *: GrB_Vector_extractTuples_UDT      \
     )                                                   \
     (I, X, nvals, v)
 #endif
@@ -3244,34 +3264,34 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
     _Generic                                            \
     (                                                   \
         (X),                                            \
-        const bool      *: GrB_Matrix_build_BOOL   ,    \
-              bool      *: GrB_Matrix_build_BOOL   ,    \
-        const int8_t    *: GrB_Matrix_build_INT8   ,    \
-              int8_t    *: GrB_Matrix_build_INT8   ,    \
-        const uint8_t   *: GrB_Matrix_build_UINT8  ,    \
-              uint8_t   *: GrB_Matrix_build_UINT8  ,    \
-        const int16_t   *: GrB_Matrix_build_INT16  ,    \
-              int16_t   *: GrB_Matrix_build_INT16  ,    \
-        const uint16_t  *: GrB_Matrix_build_UINT16 ,    \
-              uint16_t  *: GrB_Matrix_build_UINT16 ,    \
-        const int32_t   *: GrB_Matrix_build_INT32  ,    \
-              int32_t   *: GrB_Matrix_build_INT32  ,    \
-        const uint32_t  *: GrB_Matrix_build_UINT32 ,    \
-              uint32_t  *: GrB_Matrix_build_UINT32 ,    \
-        const int64_t   *: GrB_Matrix_build_INT64  ,    \
-              int64_t   *: GrB_Matrix_build_INT64  ,    \
-        const uint64_t  *: GrB_Matrix_build_UINT64 ,    \
-              uint64_t  *: GrB_Matrix_build_UINT64 ,    \
-        const float     *: GrB_Matrix_build_FP32   ,    \
-              float     *: GrB_Matrix_build_FP32   ,    \
-        const double    *: GrB_Matrix_build_FP64   ,    \
-              double    *: GrB_Matrix_build_FP64   ,    \
-        const GxB_FC32_t *: GxB_Matrix_build_FC32  ,    \
-              GxB_FC32_t *: GxB_Matrix_build_FC32  ,    \
-        const GxB_FC64_t *: GxB_Matrix_build_FC64  ,    \
-              GxB_FC64_t *: GxB_Matrix_build_FC64  ,    \
-        const void      *: GrB_Matrix_build_UDT    ,    \
-              void      *: GrB_Matrix_build_UDT         \
+        const bool       *: GrB_Matrix_build_BOOL   ,   \
+              bool       *: GrB_Matrix_build_BOOL   ,   \
+        const int8_t     *: GrB_Matrix_build_INT8   ,   \
+              int8_t     *: GrB_Matrix_build_INT8   ,   \
+        const int16_t    *: GrB_Matrix_build_INT16  ,   \
+              int16_t    *: GrB_Matrix_build_INT16  ,   \
+        const int32_t    *: GrB_Matrix_build_INT32  ,   \
+              int32_t    *: GrB_Matrix_build_INT32  ,   \
+        const int64_t    *: GrB_Matrix_build_INT64  ,   \
+              int64_t    *: GrB_Matrix_build_INT64  ,   \
+        const uint8_t    *: GrB_Matrix_build_UINT8  ,   \
+              uint8_t    *: GrB_Matrix_build_UINT8  ,   \
+        const uint16_t   *: GrB_Matrix_build_UINT16 ,   \
+              uint16_t   *: GrB_Matrix_build_UINT16 ,   \
+        const uint32_t   *: GrB_Matrix_build_UINT32 ,   \
+              uint32_t   *: GrB_Matrix_build_UINT32 ,   \
+        const uint64_t   *: GrB_Matrix_build_UINT64 ,   \
+              uint64_t   *: GrB_Matrix_build_UINT64 ,   \
+        const float      *: GrB_Matrix_build_FP32   ,   \
+              float      *: GrB_Matrix_build_FP32   ,   \
+        const double     *: GrB_Matrix_build_FP64   ,   \
+              double     *: GrB_Matrix_build_FP64   ,   \
+        const GxB_FC32_t *: GxB_Matrix_build_FC32   ,   \
+              GxB_FC32_t *: GxB_Matrix_build_FC32   ,   \
+        const GxB_FC64_t *: GxB_Matrix_build_FC64   ,   \
+              GxB_FC64_t *: GxB_Matrix_build_FC64   ,   \
+        const void       *: GrB_Matrix_build_UDT    ,   \
+              void       *: GrB_Matrix_build_UDT        \
     )                                                   \
     (C, I, J, ((const void *) (X)), nvals, dup)
 #endif
@@ -3426,39 +3446,39 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_setElement(C,x,i,j)                    \
-    _Generic                                              \
-    (                                                     \
-        (x),                                              \
-        const bool      : GrB_Matrix_setElement_BOOL   ,  \
-              bool      : GrB_Matrix_setElement_BOOL   ,  \
-        const int8_t    : GrB_Matrix_setElement_INT8   ,  \
-              int8_t    : GrB_Matrix_setElement_INT8   ,  \
-        const uint8_t   : GrB_Matrix_setElement_UINT8  ,  \
-              uint8_t   : GrB_Matrix_setElement_UINT8  ,  \
-        const int16_t   : GrB_Matrix_setElement_INT16  ,  \
-              int16_t   : GrB_Matrix_setElement_INT16  ,  \
-        const uint16_t  : GrB_Matrix_setElement_UINT16 ,  \
-              uint16_t  : GrB_Matrix_setElement_UINT16 ,  \
-        const int32_t   : GrB_Matrix_setElement_INT32  ,  \
-              int32_t   : GrB_Matrix_setElement_INT32  ,  \
-        const uint32_t  : GrB_Matrix_setElement_UINT32 ,  \
-              uint32_t  : GrB_Matrix_setElement_UINT32 ,  \
-        const int64_t   : GrB_Matrix_setElement_INT64  ,  \
-              int64_t   : GrB_Matrix_setElement_INT64  ,  \
-        const uint64_t  : GrB_Matrix_setElement_UINT64 ,  \
-              uint64_t  : GrB_Matrix_setElement_UINT64 ,  \
-        const float     : GrB_Matrix_setElement_FP32   ,  \
-              float     : GrB_Matrix_setElement_FP32   ,  \
-        const double    : GrB_Matrix_setElement_FP64   ,  \
-              double    : GrB_Matrix_setElement_FP64   ,  \
-        const GxB_FC32_t : GxB_Matrix_setElement_FC32  ,  \
-              GxB_FC32_t : GxB_Matrix_setElement_FC32  ,  \
-        const GxB_FC64_t : GxB_Matrix_setElement_FC64  ,  \
-              GxB_FC64_t : GxB_Matrix_setElement_FC64  ,  \
-        const void *    : GrB_Matrix_setElement_UDT    ,  \
-              void *    : GrB_Matrix_setElement_UDT       \
-    )                                                     \
+#define GrB_Matrix_setElement(C,x,i,j)                      \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        const bool       : GrB_Matrix_setElement_BOOL   ,   \
+              bool       : GrB_Matrix_setElement_BOOL   ,   \
+        const int8_t     : GrB_Matrix_setElement_INT8   ,   \
+              int8_t     : GrB_Matrix_setElement_INT8   ,   \
+        const int16_t    : GrB_Matrix_setElement_INT16  ,   \
+              int16_t    : GrB_Matrix_setElement_INT16  ,   \
+        const int32_t    : GrB_Matrix_setElement_INT32  ,   \
+              int32_t    : GrB_Matrix_setElement_INT32  ,   \
+        const int64_t    : GrB_Matrix_setElement_INT64  ,   \
+              int64_t    : GrB_Matrix_setElement_INT64  ,   \
+        const uint8_t    : GrB_Matrix_setElement_UINT8  ,   \
+              uint8_t    : GrB_Matrix_setElement_UINT8  ,   \
+        const uint16_t   : GrB_Matrix_setElement_UINT16 ,   \
+              uint16_t   : GrB_Matrix_setElement_UINT16 ,   \
+        const uint32_t   : GrB_Matrix_setElement_UINT32 ,   \
+              uint32_t   : GrB_Matrix_setElement_UINT32 ,   \
+        const uint64_t   : GrB_Matrix_setElement_UINT64 ,   \
+              uint64_t   : GrB_Matrix_setElement_UINT64 ,   \
+        const float      : GrB_Matrix_setElement_FP32   ,   \
+              float      : GrB_Matrix_setElement_FP32   ,   \
+        const double     : GrB_Matrix_setElement_FP64   ,   \
+              double     : GrB_Matrix_setElement_FP64   ,   \
+        const GxB_FC32_t : GxB_Matrix_setElement_FC32   ,   \
+              GxB_FC32_t : GxB_Matrix_setElement_FC32   ,   \
+        const GxB_FC64_t : GxB_Matrix_setElement_FC64   ,   \
+              GxB_FC64_t : GxB_Matrix_setElement_FC64   ,   \
+        const void *     : GrB_Matrix_setElement_UDT    ,   \
+              void *     : GrB_Matrix_setElement_UDT        \
+    )                                                       \
     (C, x, i, j)
 #endif
 
@@ -3615,25 +3635,25 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractElement(x,A,i,j)              \
-    _Generic                                            \
-    (                                                   \
-        (x),                                            \
-        bool     *: GrB_Matrix_extractElement_BOOL   ,  \
-        int8_t   *: GrB_Matrix_extractElement_INT8   ,  \
-        uint8_t  *: GrB_Matrix_extractElement_UINT8  ,  \
-        int16_t  *: GrB_Matrix_extractElement_INT16  ,  \
-        uint16_t *: GrB_Matrix_extractElement_UINT16 ,  \
-        int32_t  *: GrB_Matrix_extractElement_INT32  ,  \
-        uint32_t *: GrB_Matrix_extractElement_UINT32 ,  \
-        int64_t  *: GrB_Matrix_extractElement_INT64  ,  \
-        uint64_t *: GrB_Matrix_extractElement_UINT64 ,  \
-        float    *: GrB_Matrix_extractElement_FP32   ,  \
-        double   *: GrB_Matrix_extractElement_FP64   ,  \
-        GxB_FC32_t *: GxB_Matrix_extractElement_FC32 ,  \
-        GxB_FC64_t *: GxB_Matrix_extractElement_FC64 ,  \
-        void     *: GrB_Matrix_extractElement_UDT       \
-    )                                                   \
+#define GrB_Matrix_extractElement(x,A,i,j)                  \
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+        bool       *: GrB_Matrix_extractElement_BOOL   ,    \
+        int8_t     *: GrB_Matrix_extractElement_INT8   ,    \
+        int16_t    *: GrB_Matrix_extractElement_INT16  ,    \
+        int32_t    *: GrB_Matrix_extractElement_INT32  ,    \
+        int64_t    *: GrB_Matrix_extractElement_INT64  ,    \
+        uint8_t    *: GrB_Matrix_extractElement_UINT8  ,    \
+        uint16_t   *: GrB_Matrix_extractElement_UINT16 ,    \
+        uint32_t   *: GrB_Matrix_extractElement_UINT32 ,    \
+        uint64_t   *: GrB_Matrix_extractElement_UINT64 ,    \
+        float      *: GrB_Matrix_extractElement_FP32   ,    \
+        double     *: GrB_Matrix_extractElement_FP64   ,    \
+        GxB_FC32_t *: GxB_Matrix_extractElement_FC32   ,    \
+        GxB_FC64_t *: GxB_Matrix_extractElement_FC64   ,    \
+        void       *: GrB_Matrix_extractElement_UDT         \
+    )                                                       \
     (x, A, i, j)
 #endif
 
@@ -3814,17 +3834,17 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
     _Generic                                            \
     (                                                   \
         (X),                                            \
-        bool     *: GrB_Matrix_extractTuples_BOOL   ,   \
-        int8_t   *: GrB_Matrix_extractTuples_INT8   ,   \
-        uint8_t  *: GrB_Matrix_extractTuples_UINT8  ,   \
-        int16_t  *: GrB_Matrix_extractTuples_INT16  ,   \
-        uint16_t *: GrB_Matrix_extractTuples_UINT16 ,   \
-        int32_t  *: GrB_Matrix_extractTuples_INT32  ,   \
-        uint32_t *: GrB_Matrix_extractTuples_UINT32 ,   \
-        int64_t  *: GrB_Matrix_extractTuples_INT64  ,   \
-        uint64_t *: GrB_Matrix_extractTuples_UINT64 ,   \
-        float    *: GrB_Matrix_extractTuples_FP32   ,   \
-        double   *: GrB_Matrix_extractTuples_FP64   ,   \
+        bool       *: GrB_Matrix_extractTuples_BOOL   , \
+        int8_t     *: GrB_Matrix_extractTuples_INT8   , \
+        int16_t    *: GrB_Matrix_extractTuples_INT16  , \
+        int32_t    *: GrB_Matrix_extractTuples_INT32  , \
+        int64_t    *: GrB_Matrix_extractTuples_INT64  , \
+        uint8_t    *: GrB_Matrix_extractTuples_UINT8  , \
+        uint16_t   *: GrB_Matrix_extractTuples_UINT16 , \
+        uint32_t   *: GrB_Matrix_extractTuples_UINT32 , \
+        uint64_t   *: GrB_Matrix_extractTuples_UINT64 , \
+        float      *: GrB_Matrix_extractTuples_FP32   , \
+        double     *: GrB_Matrix_extractTuples_FP64   , \
         GxB_FC32_t *: GxB_Matrix_extractTuples_FC32 ,   \
         GxB_FC64_t *: GxB_Matrix_extractTuples_FC64 ,   \
         void     *: GrB_Matrix_extractTuples_UDT        \
@@ -4378,7 +4398,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
     (arg1, __VA_ARGS__)
 #endif
 
-
 //==============================================================================
 //=== GrB_free =================================================================
 //==============================================================================
@@ -4426,11 +4445,6 @@ GB_PUBLIC GrB_Info GrB_Descriptor_wait (GrB_Descriptor *desc    ) ;
 GB_PUBLIC GrB_Info GxB_Scalar_wait     (GxB_Scalar     *s       ) ;
 GB_PUBLIC GrB_Info GrB_Vector_wait     (GrB_Vector     *v       ) ;
 GB_PUBLIC GrB_Info GrB_Matrix_wait     (GrB_Matrix     *A       ) ;
-
-// The polymorphic GrB_wait (object) method will be added in v4.0 of
-// SuiteSparse:GraphBLAS.  It is not compatible with the no-argument
-// GrB_wait ( ), which must be removed before GrB_wait (&object) can be
-// added.
 
 GB_PUBLIC GrB_Info GrB_wait (void) ;        // DEPRECATED
 
@@ -4548,7 +4562,7 @@ GrB_Info GrB_mxv                    // w<Mask> = accum (w, A*u)
 // operator instead. For a monoid, the mult operator is the monoid operator.
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Vector_Semiring       // w<Mask> = accum (w, u.*v)
+GrB_Info GrB_Vector_eWiseMult_Semiring       // w<Mask> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4560,7 +4574,7 @@ GrB_Info GrB_eWiseMult_Vector_Semiring       // w<Mask> = accum (w, u.*v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Vector_Monoid         // w<Mask> = accum (w, u.*v)
+GrB_Info GrB_Vector_eWiseMult_Monoid         // w<Mask> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4572,7 +4586,7 @@ GrB_Info GrB_eWiseMult_Vector_Monoid         // w<Mask> = accum (w, u.*v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<Mask> = accum (w, u.*v)
+GrB_Info GrB_Vector_eWiseMult_BinaryOp       // w<Mask> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4584,7 +4598,7 @@ GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<Mask> = accum (w, u.*v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_Matrix_eWiseMult_Semiring       // C<Mask> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4596,7 +4610,7 @@ GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<Mask> = accum (C, A.*B)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_Matrix_eWiseMult_Monoid         // C<Mask> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4608,7 +4622,7 @@ GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<Mask> = accum (C, A.*B)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<Mask> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4619,9 +4633,39 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
     const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
 ) ;
 
+// misnamed, deprecated functions:  These function names do not appear
+// in the GraphBLAS C API Specification.  They were misnamed in
+// earlier versions of SuiteSparse:GraphBLAS.  The corrected versions
+// appear above.
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Vector_Semiring (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_Semiring,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Vector_Monoid (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_Monoid,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor desc) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Vector_BinaryOp (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_BinaryOp,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor desc) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Matrix_Semiring (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_Semiring,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor desc) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Matrix_Monoid (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_Monoid,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseMult_Matrix_BinaryOp (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_BinaryOp,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor desc) ;
+
 // All 6 of the above type-specific functions are captured in a single
 // type-generic function, GrB_eWiseMult:
 
+// TODO FIX the names below
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseMult(C,Mask,accum,op,A,B,desc)                         \
     _Generic                                                            \
@@ -4666,7 +4710,7 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
 // pattern of A and B, then T(i,j) = A(i,j) "+" B(i,j).  If only A(i,j) is
 // present then T(i,j) = A (i,j) and the "+" operator is not used.  Likewise,
 // if only B(i,j) is in the pattern of B but A(i,j) is not in the pattern of A,
-// then T(i,j) = B(i,j).  This is primary difference between GrB_eWiseAdd and
+// then T(i,j) = B(i,j).  This is the primary difference between GrB_eWiseAdd and
 // GrB_eWiseMult; the same set of binary operators can be used in both methods,
 // and the action they take on entries in the intersection of the pattern of A
 // and B is identical.
@@ -4678,7 +4722,7 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
 // operator instead. For a monoid, the mult operator is the monoid operator.
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<Mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4690,7 +4734,7 @@ GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<Mask> = accum (w, u+v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Vector_Monoid         // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<Mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4702,7 +4746,7 @@ GrB_Info GrB_eWiseAdd_Vector_Monoid         // w<Mask> = accum (w, u+v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_BinaryOp       // w<Mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -4714,7 +4758,7 @@ GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // w<Mask> = accum (w, u+v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Matrix_Semiring       // C<Mask> = accum (C, A+B)
+GrB_Info GrB_Matrix_eWiseAdd_Semiring       // C<Mask> = accum (C, A+B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4726,7 +4770,7 @@ GrB_Info GrB_eWiseAdd_Matrix_Semiring       // C<Mask> = accum (C, A+B)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Matrix_Monoid         // C<Mask> = accum (C, A+B)
+GrB_Info GrB_Matrix_eWiseAdd_Monoid         // C<Mask> = accum (C, A+B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4738,7 +4782,7 @@ GrB_Info GrB_eWiseAdd_Matrix_Monoid         // C<Mask> = accum (C, A+B)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // C<Mask> = accum (C, A+B)
+GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -4749,6 +4793,36 @@ GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // C<Mask> = accum (C, A+B)
     const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
 ) ;
 
+// misnamed, deprecated functions:  These function names do not appear
+// in the GraphBLAS C API Specification.  They were misnamed in
+// earlier versions of SuiteSparse:GraphBLAS.  The corrected versions
+// appear above.
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Vector_Semiring (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_Semiring,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor desc) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Vector_Monoid (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_Monoid,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor desc) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Vector_BinaryOp (GrB_Vector,
+    const GrB_Vector, const GrB_BinaryOp, const GrB_BinaryOp,
+    const GrB_Vector, const GrB_Vector, const GrB_Descriptor) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Matrix_Semiring (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_Semiring,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Matrix_Monoid (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_Monoid,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor) ;
+
+GB_PUBLIC GrB_Info GrB_eWiseAdd_Matrix_BinaryOp (GrB_Matrix,
+    const GrB_Matrix, const GrB_BinaryOp, const GrB_BinaryOp,
+    const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor) ;
+
+// TODO FIX the names below
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseAdd(C,Mask,accum,op,A,B,desc)                          \
     _Generic                                                            \
@@ -5480,18 +5554,18 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
                       bool       : GxB_Vector_subassign_BOOL   ,   \
                 const int8_t     : GxB_Vector_subassign_INT8   ,   \
                       int8_t     : GxB_Vector_subassign_INT8   ,   \
-                const uint8_t    : GxB_Vector_subassign_UINT8  ,   \
-                      uint8_t    : GxB_Vector_subassign_UINT8  ,   \
                 const int16_t    : GxB_Vector_subassign_INT16  ,   \
                       int16_t    : GxB_Vector_subassign_INT16  ,   \
-                const uint16_t   : GxB_Vector_subassign_UINT16 ,   \
-                      uint16_t   : GxB_Vector_subassign_UINT16 ,   \
                 const int32_t    : GxB_Vector_subassign_INT32  ,   \
                       int32_t    : GxB_Vector_subassign_INT32  ,   \
-                const uint32_t   : GxB_Vector_subassign_UINT32 ,   \
-                      uint32_t   : GxB_Vector_subassign_UINT32 ,   \
                 const int64_t    : GxB_Vector_subassign_INT64  ,   \
                       int64_t    : GxB_Vector_subassign_INT64  ,   \
+                const uint8_t    : GxB_Vector_subassign_UINT8  ,   \
+                      uint8_t    : GxB_Vector_subassign_UINT8  ,   \
+                const uint16_t   : GxB_Vector_subassign_UINT16 ,   \
+                      uint16_t   : GxB_Vector_subassign_UINT16 ,   \
+                const uint32_t   : GxB_Vector_subassign_UINT32 ,   \
+                      uint32_t   : GxB_Vector_subassign_UINT32 ,   \
                 const uint64_t   : GxB_Vector_subassign_UINT64 ,   \
                       uint64_t   : GxB_Vector_subassign_UINT64 ,   \
                 const float      : GxB_Vector_subassign_FP32   ,   \
@@ -5514,18 +5588,18 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
                       bool       : GxB_Matrix_subassign_BOOL   ,   \
                 const int8_t     : GxB_Matrix_subassign_INT8   ,   \
                       int8_t     : GxB_Matrix_subassign_INT8   ,   \
-                const uint8_t    : GxB_Matrix_subassign_UINT8  ,   \
-                      uint8_t    : GxB_Matrix_subassign_UINT8  ,   \
                 const int16_t    : GxB_Matrix_subassign_INT16  ,   \
                       int16_t    : GxB_Matrix_subassign_INT16  ,   \
-                const uint16_t   : GxB_Matrix_subassign_UINT16 ,   \
-                      uint16_t   : GxB_Matrix_subassign_UINT16 ,   \
                 const int32_t    : GxB_Matrix_subassign_INT32  ,   \
                       int32_t    : GxB_Matrix_subassign_INT32  ,   \
-                const uint32_t   : GxB_Matrix_subassign_UINT32 ,   \
-                      uint32_t   : GxB_Matrix_subassign_UINT32 ,   \
                 const int64_t    : GxB_Matrix_subassign_INT64  ,   \
                       int64_t    : GxB_Matrix_subassign_INT64  ,   \
+                const uint8_t    : GxB_Matrix_subassign_UINT8  ,   \
+                      uint8_t    : GxB_Matrix_subassign_UINT8  ,   \
+                const uint16_t   : GxB_Matrix_subassign_UINT16 ,   \
+                      uint16_t   : GxB_Matrix_subassign_UINT16 ,   \
+                const uint32_t   : GxB_Matrix_subassign_UINT32 ,   \
+                      uint32_t   : GxB_Matrix_subassign_UINT32 ,   \
                 const uint64_t   : GxB_Matrix_subassign_UINT64 ,   \
                       uint64_t   : GxB_Matrix_subassign_UINT64 ,   \
                 const float      : GxB_Matrix_subassign_FP32   ,   \
@@ -6030,18 +6104,18 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
                       bool       : GrB_Vector_assign_BOOL   ,   \
                 const int8_t     : GrB_Vector_assign_INT8   ,   \
                       int8_t     : GrB_Vector_assign_INT8   ,   \
-                const uint8_t    : GrB_Vector_assign_UINT8  ,   \
-                      uint8_t    : GrB_Vector_assign_UINT8  ,   \
                 const int16_t    : GrB_Vector_assign_INT16  ,   \
                       int16_t    : GrB_Vector_assign_INT16  ,   \
-                const uint16_t   : GrB_Vector_assign_UINT16 ,   \
-                      uint16_t   : GrB_Vector_assign_UINT16 ,   \
                 const int32_t    : GrB_Vector_assign_INT32  ,   \
                       int32_t    : GrB_Vector_assign_INT32  ,   \
-                const uint32_t   : GrB_Vector_assign_UINT32 ,   \
-                      uint32_t   : GrB_Vector_assign_UINT32 ,   \
                 const int64_t    : GrB_Vector_assign_INT64  ,   \
                       int64_t    : GrB_Vector_assign_INT64  ,   \
+                const uint8_t    : GrB_Vector_assign_UINT8  ,   \
+                      uint8_t    : GrB_Vector_assign_UINT8  ,   \
+                const uint16_t   : GrB_Vector_assign_UINT16 ,   \
+                      uint16_t   : GrB_Vector_assign_UINT16 ,   \
+                const uint32_t   : GrB_Vector_assign_UINT32 ,   \
+                      uint32_t   : GrB_Vector_assign_UINT32 ,   \
                 const uint64_t   : GrB_Vector_assign_UINT64 ,   \
                       uint64_t   : GrB_Vector_assign_UINT64 ,   \
                 const float      : GrB_Vector_assign_FP32   ,   \
@@ -6064,18 +6138,18 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
                       bool       : GrB_Matrix_assign_BOOL   ,   \
                 const int8_t     : GrB_Matrix_assign_INT8   ,   \
                       int8_t     : GrB_Matrix_assign_INT8   ,   \
-                const uint8_t    : GrB_Matrix_assign_UINT8  ,   \
-                      uint8_t    : GrB_Matrix_assign_UINT8  ,   \
                 const int16_t    : GrB_Matrix_assign_INT16  ,   \
                       int16_t    : GrB_Matrix_assign_INT16  ,   \
-                const uint16_t   : GrB_Matrix_assign_UINT16 ,   \
-                      uint16_t   : GrB_Matrix_assign_UINT16 ,   \
                 const int32_t    : GrB_Matrix_assign_INT32  ,   \
                       int32_t    : GrB_Matrix_assign_INT32  ,   \
-                const uint32_t   : GrB_Matrix_assign_UINT32 ,   \
-                      uint32_t   : GrB_Matrix_assign_UINT32 ,   \
                 const int64_t    : GrB_Matrix_assign_INT64  ,   \
                       int64_t    : GrB_Matrix_assign_INT64  ,   \
+                const uint8_t    : GrB_Matrix_assign_UINT8  ,   \
+                      uint8_t    : GrB_Matrix_assign_UINT8  ,   \
+                const uint16_t   : GrB_Matrix_assign_UINT16 ,   \
+                      uint16_t   : GrB_Matrix_assign_UINT16 ,   \
+                const uint32_t   : GrB_Matrix_assign_UINT32 ,   \
+                      uint32_t   : GrB_Matrix_assign_UINT32 ,   \
                 const uint64_t   : GrB_Matrix_assign_UINT64 ,   \
                       uint64_t   : GrB_Matrix_assign_UINT64 ,   \
                 const float      : GrB_Matrix_assign_FP32   ,   \
@@ -6140,6 +6214,12 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
+
+// TODO add GrB_Vector_apply_BinaryOp1st_TYPE
+// TODO add GrB_Vector_apply_BinaryOp2nd_TYPE
+// TODO add GrB_Matrix_apply_BinaryOp1st_TYPE
+// TODO add GrB_Matrix_apply_BinaryOp2nd_TYPE
+// TODO add GrB_Matrix_removeElement, GrB_Vector_removeElement
 
 //------------------------------------------------------------------------------
 // GrB_apply: generic matrix/vector apply
@@ -6588,77 +6668,77 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
             _Generic                                        \
             (                                               \
                 (arg1),                                     \
-                bool     * : GrB_Vector_reduce_BOOL   ,     \
-                int8_t   * : GrB_Vector_reduce_INT8   ,     \
-                uint8_t  * : GrB_Vector_reduce_UINT8  ,     \
-                int16_t  * : GrB_Vector_reduce_INT16  ,     \
-                uint16_t * : GrB_Vector_reduce_UINT16 ,     \
-                int32_t  * : GrB_Vector_reduce_INT32  ,     \
-                uint32_t * : GrB_Vector_reduce_UINT32 ,     \
-                int64_t  * : GrB_Vector_reduce_INT64  ,     \
-                uint64_t * : GrB_Vector_reduce_UINT64 ,     \
-                float    * : GrB_Vector_reduce_FP32   ,     \
-                double   * : GrB_Vector_reduce_FP64   ,     \
-                GxB_FC32_t * : GxB_Vector_reduce_FC32 ,     \
-                GxB_FC64_t * : GxB_Vector_reduce_FC64 ,     \
-                default    : GrB_Vector_reduce_UDT          \
+                bool       * : GrB_Vector_reduce_BOOL   ,   \
+                int8_t     * : GrB_Vector_reduce_INT8   ,   \
+                int16_t    * : GrB_Vector_reduce_INT16  ,   \
+                int32_t    * : GrB_Vector_reduce_INT32  ,   \
+                int64_t    * : GrB_Vector_reduce_INT64  ,   \
+                uint8_t    * : GrB_Vector_reduce_UINT8  ,   \
+                uint16_t   * : GrB_Vector_reduce_UINT16 ,   \
+                uint32_t   * : GrB_Vector_reduce_UINT32 ,   \
+                uint64_t   * : GrB_Vector_reduce_UINT64 ,   \
+                float      * : GrB_Vector_reduce_FP32   ,   \
+                double     * : GrB_Vector_reduce_FP64   ,   \
+                GxB_FC32_t * : GxB_Vector_reduce_FC32   ,   \
+                GxB_FC64_t * : GxB_Vector_reduce_FC64   ,   \
+                default      : GrB_Vector_reduce_UDT        \
             ),                                              \
         GrB_Vector :                                        \
             _Generic                                        \
             (                                               \
                 (arg1),                                     \
-                bool     * : GrB_Vector_reduce_BOOL   ,     \
-                int8_t   * : GrB_Vector_reduce_INT8   ,     \
-                uint8_t  * : GrB_Vector_reduce_UINT8  ,     \
-                int16_t  * : GrB_Vector_reduce_INT16  ,     \
-                uint16_t * : GrB_Vector_reduce_UINT16 ,     \
-                int32_t  * : GrB_Vector_reduce_INT32  ,     \
-                uint32_t * : GrB_Vector_reduce_UINT32 ,     \
-                int64_t  * : GrB_Vector_reduce_INT64  ,     \
-                uint64_t * : GrB_Vector_reduce_UINT64 ,     \
-                float    * : GrB_Vector_reduce_FP32   ,     \
-                double   * : GrB_Vector_reduce_FP64   ,     \
-                GxB_FC32_t * : GxB_Vector_reduce_FC32 ,     \
-                GxB_FC64_t * : GxB_Vector_reduce_FC64 ,     \
-                default    : GrB_Vector_reduce_UDT          \
+                bool       * : GrB_Vector_reduce_BOOL   ,   \
+                int8_t     * : GrB_Vector_reduce_INT8   ,   \
+                int16_t    * : GrB_Vector_reduce_INT16  ,   \
+                int32_t    * : GrB_Vector_reduce_INT32  ,   \
+                int64_t    * : GrB_Vector_reduce_INT64  ,   \
+                uint8_t    * : GrB_Vector_reduce_UINT8  ,   \
+                uint16_t   * : GrB_Vector_reduce_UINT16 ,   \
+                uint32_t   * : GrB_Vector_reduce_UINT32 ,   \
+                uint64_t   * : GrB_Vector_reduce_UINT64 ,   \
+                float      * : GrB_Vector_reduce_FP32   ,   \
+                double     * : GrB_Vector_reduce_FP64   ,   \
+                GxB_FC32_t * : GxB_Vector_reduce_FC32   ,   \
+                GxB_FC64_t * : GxB_Vector_reduce_FC64   ,   \
+                default      : GrB_Vector_reduce_UDT        \
             ),                                              \
         const GrB_Matrix :                                  \
             _Generic                                        \
             (                                               \
                 (arg1),                                     \
-                bool     * : GrB_Matrix_reduce_BOOL   ,     \
-                int8_t   * : GrB_Matrix_reduce_INT8   ,     \
-                uint8_t  * : GrB_Matrix_reduce_UINT8  ,     \
-                int16_t  * : GrB_Matrix_reduce_INT16  ,     \
-                uint16_t * : GrB_Matrix_reduce_UINT16 ,     \
-                int32_t  * : GrB_Matrix_reduce_INT32  ,     \
-                uint32_t * : GrB_Matrix_reduce_UINT32 ,     \
-                int64_t  * : GrB_Matrix_reduce_INT64  ,     \
-                uint64_t * : GrB_Matrix_reduce_UINT64 ,     \
-                float    * : GrB_Matrix_reduce_FP32   ,     \
-                double   * : GrB_Matrix_reduce_FP64   ,     \
-                GxB_FC32_t * : GxB_Matrix_reduce_FC32 ,     \
-                GxB_FC64_t * : GxB_Matrix_reduce_FC64 ,     \
-                default    : GrB_Matrix_reduce_UDT          \
+                bool       * : GrB_Matrix_reduce_BOOL   ,   \
+                int8_t     * : GrB_Matrix_reduce_INT8   ,   \
+                int16_t    * : GrB_Matrix_reduce_INT16  ,   \
+                int32_t    * : GrB_Matrix_reduce_INT32  ,   \
+                int64_t    * : GrB_Matrix_reduce_INT64  ,   \
+                uint8_t    * : GrB_Matrix_reduce_UINT8  ,   \
+                uint16_t   * : GrB_Matrix_reduce_UINT16 ,   \
+                uint32_t   * : GrB_Matrix_reduce_UINT32 ,   \
+                uint64_t   * : GrB_Matrix_reduce_UINT64 ,   \
+                float      * : GrB_Matrix_reduce_FP32   ,   \
+                double     * : GrB_Matrix_reduce_FP64   ,   \
+                GxB_FC32_t * : GxB_Matrix_reduce_FC32   ,   \
+                GxB_FC64_t * : GxB_Matrix_reduce_FC64   ,   \
+                default      : GrB_Matrix_reduce_UDT        \
             ),                                              \
         GrB_Matrix :                                        \
             _Generic                                        \
             (                                               \
                 (arg1),                                     \
-                bool     * : GrB_Matrix_reduce_BOOL   ,     \
-                int8_t   * : GrB_Matrix_reduce_INT8   ,     \
-                uint8_t  * : GrB_Matrix_reduce_UINT8  ,     \
-                int16_t  * : GrB_Matrix_reduce_INT16  ,     \
-                uint16_t * : GrB_Matrix_reduce_UINT16 ,     \
-                int32_t  * : GrB_Matrix_reduce_INT32  ,     \
-                uint32_t * : GrB_Matrix_reduce_UINT32 ,     \
-                int64_t  * : GrB_Matrix_reduce_INT64  ,     \
-                uint64_t * : GrB_Matrix_reduce_UINT64 ,     \
-                float    * : GrB_Matrix_reduce_FP32   ,     \
-                double   * : GrB_Matrix_reduce_FP64   ,     \
+                bool       * : GrB_Matrix_reduce_BOOL   ,   \
+                int8_t     * : GrB_Matrix_reduce_INT8   ,   \
+                int16_t    * : GrB_Matrix_reduce_INT16  ,   \
+                int32_t    * : GrB_Matrix_reduce_INT32  ,   \
+                int64_t    * : GrB_Matrix_reduce_INT64  ,   \
+                uint8_t    * : GrB_Matrix_reduce_UINT8  ,   \
+                uint16_t   * : GrB_Matrix_reduce_UINT16 ,   \
+                uint32_t   * : GrB_Matrix_reduce_UINT32 ,   \
+                uint64_t   * : GrB_Matrix_reduce_UINT64 ,   \
+                float      * : GrB_Matrix_reduce_FP32   ,   \
+                double     * : GrB_Matrix_reduce_FP64   ,   \
                 GxB_FC32_t * : GxB_Matrix_reduce_FC32 ,     \
                 GxB_FC64_t * : GxB_Matrix_reduce_FC64 ,     \
-                default    : GrB_Matrix_reduce_UDT          \
+                default      : GrB_Matrix_reduce_UDT        \
             ),                                              \
         const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,   \
               GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,   \
@@ -7588,11 +7668,30 @@ GB_PUBLIC GrB_Semiring
     GrB_LXNOR_LOR_SEMIRING_BOOL ;       // GxB_EQ_LOR_BOOL (note EQ == LXNOR)
 
 //------------------------------------------------------------------------------
-// GxB_resize:  change the size of a matrix or vector
+// GrB_*_resize:  change the size of a matrix or vector
 //------------------------------------------------------------------------------
 
 // If the dimensions decrease, entries that fall outside the resized matrix or
-// vector are deleted
+// vector are deleted.  GrB_Matrix_resize and GrB_Vector_resize now appear in
+// the spec, with the identical behaviour as the earlier GxB_*_resize
+// functions.  The Generic GxB_resize does not appear in the spec.  The old
+// GxB* names are kept for backward compatibility, but new code should use
+// the GrB* names.
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_resize      // change the size of a matrix
+(
+    GrB_Matrix A,               // matrix to modify
+    GrB_Index nrows_new,        // new number of rows in matrix
+    GrB_Index ncols_new         // new number of columns in matrix
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_resize      // change the size of a vector
+(
+    GrB_Vector u,               // vector to modify
+    GrB_Index nrows_new         // new number of rows in vector
+) ;
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_resize      // change the size of a matrix
@@ -7609,7 +7708,7 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 
-// GxB_resize is a generic function for resizing a matrix or vector
+// GxB_resize is a generic function for resizing a matrix or vector:
 
 // GrB_Vector_resize (u,nrows_new)
 // GrB_Matrix_resize (A,nrows_new,ncols_new)
@@ -7619,15 +7718,19 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
     _Generic                                                \
     (                                                       \
         (arg1),                                             \
-              GrB_Vector : GxB_Vector_resize ,              \
-              GrB_Matrix : GxB_Matrix_resize                \
+              GrB_Vector : GrB_Vector_resize ,              \
+              GrB_Matrix : GrB_Matrix_resize                \
     )                                                       \
     (arg1, __VA_ARGS__)
 #endif
 
 //------------------------------------------------------------------------------
-// GxB_kron:  Kronecker product
+// GrB_kronecker:  Kronecker product
 //------------------------------------------------------------------------------
+
+// GxB_kron is now called GrB_Matrix_kronecker_BinaryOp, and can also be used
+// by the generic GrB_kronecker.  The GxB_kron name is kept for backward
+// compatibility.
 
 GB_PUBLIC
 GrB_Info GxB_kron                   // C<Mask> = accum (C, kron(A,B))
@@ -7640,6 +7743,57 @@ GrB_Info GxB_kron                   // C<Mask> = accum (C, kron(A,B))
     const GrB_Matrix B,             // second input: matrix B
     const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
 ) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // defines '*' for T=kron(A,B)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_Monoid monoid,        // defines '*' for T=kron(A,B)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_Semiring semiring,    // defines '*' for T=kron(A,B)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_kronecker(C,Mask,accum,op,A,B,desc)                 \
+    _Generic                                                    \
+    (                                                           \
+        (op),                                                   \
+        const GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
+              GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
+        const GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
+              GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
+        const GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp ,    \
+              GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp      \
+    )                                                           \
+    (C, Mask, accum, op, A, B, desc)
+#endif
 
 //------------------------------------------------------------------------------
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
@@ -8215,7 +8369,8 @@ GrB_Info GxB_Vector_export  // export and free a vector
 // MKL optimization
 //------------------------------------------------------------------------------
 
-// This is a draft.
+// This is a draft.  The functions signatures may change in the future.
+// Do not use these functions.
 
 GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
 (

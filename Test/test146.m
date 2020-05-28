@@ -17,7 +17,7 @@ C2 (M) = pi
 assert (isequal (C2, C1.matrix))
 
 for k = [false true]
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
     z = 1 + 1i ;
     C1 = GB_mex_expand (M, z) 
     C2 = sparse (m, n) ;

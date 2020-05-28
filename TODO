@@ -1,0 +1,6 @@
+to add from v1.3:
+
+GrB_apply with binary op
+GrB_Matrix_removeElement
+GrB_Vector_removeElement
+

@@ -5,6 +5,7 @@ function test100
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 rng ('default') ;
 
@@ -39,7 +40,7 @@ assert (r0 == r1)
 
 for k = [false true]
     fprintf ('builtin_complex: %d\n', k) ;
-    builtin_complex_set (k) ;
+    GB_builtin_complex_set (k) ;
 
     % complex case:
     A = sprand (5, 5, 0.1) + 1i * sprand (5, 5, 0.1) ;
@@ -60,23 +61,23 @@ assert (r0 == r1)
 
 density = 0.5 ;
 scale = 100 ;
-nclass = length (types.real) ;
+ntypes = length (types) ;
 
-for k1 = 1:nclass
-    aclas = types.real {k1} ;
+for k1 = 1:ntypes
+    atype = types {k1} ;
     fprintf ('.') ;
     for am = [1 5]
         for an = [1 5]
-            A = GB_spec_random (am,an,density,100,aclas) ;
+            A = GB_spec_random (am,an,density,100,atype) ;
 
             r0 = isequal (A, A) ;
             r1 = GB_mex_isequal (A, A) ;
             assert (r0 == r1) 
 
-            Amat = GB_mex_cast (full (A.matrix), aclas) ;
+            Amat = GB_mex_cast (full (A.matrix), atype) ;
 
-            for k2 = 1:nclass
-                bclas = types.real {k2} ;
+            for k2 = 1:ntypes
+                bclas = types {k2} ;
                 for bm = [1 5]
                     for bn = [1 5]
 
@@ -85,7 +86,7 @@ for k1 = 1:nclass
                         % r0 = isequal (A, B) ;
                         Bmat = GB_mex_cast (full (B.matrix), bclas) ;
                         r0 = isequal (Amat, Bmat) & ...
-                            isequal (aclas, bclas) & ...
+                            isequal (atype, bclas) & ...
                                 isequal (A.pattern, B.pattern) ;
 
                         r1 = GB_mex_isequal (A, B) ;

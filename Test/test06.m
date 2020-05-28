@@ -15,7 +15,8 @@ function test06 (A,B,fulltests,method_list)
 fprintf ('test06: GrB_mxm on all semirings\n') ;
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+mult_ops = binops.all ;
+types = types.all ;
 
 if (nargin < 3)
     fprintf ('\n-------------- GrB_mxm on all semirings\n') ;
@@ -133,7 +134,7 @@ n_semirings = 0 ;
 if (fulltests)
     k1_list = 1:length (mult_ops) ;
     k2_list = 1:length (add_ops) ;
-    k3_list = 1:length (types.real) ;
+    k3_list = 1:length (types) ;
 else
     % just use plus-times-double semiring
     k1_list = 4 ;
@@ -152,8 +153,8 @@ for k1 = k1_list % 1:length(mult_ops)
     for k2 = k2_list % 1:length(add_ops)
         addop = add_ops {k2} ;
 
-        for k3 = k3_list % 1:length (types.real)
-            semiring_type = types.real {k3} ;
+        for k3 = k3_list % 1:length (types)
+            semiring_type = types {k3} ;
             if (n <= 500)
                fprintf ('.') ;
             end

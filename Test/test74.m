@@ -5,7 +5,8 @@ function test74
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+mult_ops = binops.all ;
+types = types.all ;
 
 fprintf ('test74 -------- GrB_mxm on all semirings (all methods)\n') ;
 
@@ -20,7 +21,7 @@ dnn_hash = struct ( 'axb', 'hash' ) ;
 ntrials = 0 ;
 
 rng ('default') ;
-builtin_complex_set (1) ;
+GB_builtin_complex_set (1) ;
 
 m_list = [ 1  2    9  ] ;
 n_list = [ 1  2   10  ] ;
@@ -54,8 +55,8 @@ for k0 = 1:size(m_list,2)
         for k2 = 1:length(add_ops)
             addop = add_ops {k2} ;
 
-            for k3 = 1:length (types.all)
-                semiring_type = types.all {k3} ;
+            for k3 = 1:length (types)
+                semiring_type = types {k3} ;
 
                 semiring.multiply = mulop ;
                 semiring.add = addop ;
@@ -77,7 +78,7 @@ for k0 = 1:size(m_list,2)
                 fprintf ('.') ;
 
                 n_semirings = n_semirings + 1 ;
-                % fprintf ('[%s.%s.%s]\n', addop, mulop, semiring_type) ;
+                fprintf ('[%s.%s.%s]\n', addop, mulop, semiring_type) ;
 
                 AT.class = semiring_type ;
                 A.class = semiring_type ;

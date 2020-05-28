@@ -5,7 +5,8 @@ function test75
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+types = types.all ;
+mult_ops = binops.all ;
 
 rng ('default') ;
 
@@ -89,8 +90,8 @@ for k1 = 1:length(mult_ops)
     for k2 = 1:length(add_ops)
         addop = add_ops {k2} ;
 
-        for k3 = 1:length (types.real)
-            semiring_type = types.real {k3} ;
+        for k3 = 1:length (types)
+            semiring_type = types {k3} ;
 
             semiring.multiply = mulop ;
             semiring.add = addop ;

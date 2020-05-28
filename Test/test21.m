@@ -10,7 +10,8 @@ if (nargin < 1)
 end
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
-accum_ops = [binops.all binops.real] ;
+accum_ops = binops.all ; 
+types = types.real ;
 
 dn = struct ;
 dt = struct ( 'inp0', 'tran' ) ;
@@ -30,7 +31,7 @@ for k1 = k1test
         ntypes = 1 ;
     else
         accum_op = accum_ops {k1}  ;
-        ntypes = length (types.real) ;
+        ntypes = length (types) ;
     end
     fprintf ('\naccum: [%s]', accum_op) ;
 
@@ -40,17 +41,24 @@ for k1 = k1test
         k2test = 11 ; % Was [1 2 11] ;
     end
 
-    % try all types.real
+    % try all types
     for k2 = k2test % 1:ntypes
         clear accum
         if (~isempty (accum_op))
-            accum_class = types.real {k2}  ;
+            accum_type = types {k2}  ;
             accum.opname = accum_op ;
-            accum.optype = accum_class ;
+            accum.optype = accum_type ;
         else
             accum = '' ;
-            accum_class = '' ;
+            accum_type = '' ;
         end
+
+        try
+            GB_spec_operator (accum) ;
+        catch
+            continue ;
+        end
+        fprintf (' %s', accum_type) ;
 
         rng (k1 * 100 + k2, 'v4') ;
 
@@ -74,11 +82,11 @@ for k1 = k1test
                     dt.outp = 'default' ;
                 end
 
-                kk3 = randperm (length (types.real), 1) ;
+                kk3 = randperm (length (types), 1) ;
 
-                % try all matrix types.real, to test casting
-                for k3 = kk3 % 1:length (types.real)
-                    aclas = types.real {k3}  ;
+                % try all matrix types, to test casting
+                for k3 = kk3 % 1:length (types)
+                    atype = types {k3}  ;
 
                     % try some matrices
                     for m = [1 10] % Was [1 5 10 ]
@@ -127,15 +135,15 @@ for k1 = k1test
                                             % fprintf ('test expansion\n') ;
                                             A.matrix = sparse (rand (1)) * 100 ;
                                             A.pattern = sparse (logical (true));
-                                            A.class = aclas ;
+                                            A.class = atype ;
                                             if (A_is_hyper || ~A_is_csc)
                                                 continue
                                             end
                                         else
-                                            A = GB_spec_random (am,an,0.2,100,aclas, A_is_csc, A_is_hyper) ;
+                                            A = GB_spec_random (am,an,0.2,100,atype, A_is_csc, A_is_hyper) ;
                                         end
 
-                                        C = GB_spec_random (m,n,0.2,100,aclas, C_is_csc, C_is_hyper) ;
+                                        C = GB_spec_random (m,n,0.2,100,atype, C_is_csc, C_is_hyper) ;
                                         Mask = GB_random_mask (am,an,0.2, M_is_csc, M_is_hyper) ;
 
                                         % C(I,J) = accum (C (I,J),A)

@@ -5,7 +5,8 @@ function test75b
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+mult_ops = binops.all ;
+types = types.all ;
 
 % cstart = grb_get_coverage ;
 % fprintf ('coverage start: %d\n', cstart) ;
@@ -88,18 +89,17 @@ n_semirings = 0 ;
 
 for k1 = 1:length(mult_ops)
     mulop = mult_ops {k1} ;
-    fprintf ('\n%s', mulop) ;
+    fprintf ('\n%-10s ', mulop) ;
 
     for k2 = 1:length(add_ops)
         addop = add_ops {k2} ;
 
-        % TODO: add complex types
-        for k3 = 1:length (types.real)
-            clas = types.real {k3} ;
+        for k3 = 1:length (types)
+            type = types {k3} ;
 
             semiring.multiply = mulop ;
             semiring.add = addop ;
-            semiring.class = clas ;
+            semiring.class = type ;
 
             % create the semiring.  some are not valid because the or,and,xor,eq
             % monoids can only be used when z is boolean for z=mult(x,y).
@@ -116,10 +116,10 @@ for k1 = 1:length(mult_ops)
                 continue
             end
 
-            A.class = clas ;
-            B.class = clas ;
-            X.class = clas ;
-            Y.class = clas ;
+            A.class = type ;
+            B.class = type ;
+            X.class = type ;
+            Y.class = type ;
             D.class = add_op.optype ;
 
             n_semirings = n_semirings + 1 ;
@@ -221,12 +221,11 @@ for k1 = 1:length(mult_ops)
     end
 end
 
-n_semirings
+fprintf ('semirings tested: %d\n', n_semirings) ;
 % cc
 % cfin = grb_get_coverage ;
 % fprintf ('coverage end: %d\n', cfin) ;
 % save saveme2 cc ccall
 
 fprintf ('\ntest75b: all tests passed\n') ;
-
 

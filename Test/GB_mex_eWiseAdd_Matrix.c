@@ -119,8 +119,17 @@ void mexFunction
         C->nvec_nonempty = -1 ;
     }
 
+    // GxB_print (A, 3) ;
+    // GxB_print (B, 3) ;
+    // if (M != NULL) GxB_print (M, 3) ;
+    // GxB_print (C, 3) ;
+    // GxB_print (accum, 3) ;
+    // GxB_print (add, 3) ;
+
     // C<M> = accum(C,A+B)
     METHOD (GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, add, A, B, desc)) ;
+
+    // printf ("result: \n") ; GxB_print (C, 3) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

@@ -5,17 +5,18 @@ function test11
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 fprintf ('\n ------------ testing GrB_extractTuples\n') ;
 
-% class of the output X
-for k1 = 1:length (types.real)
-    xclass = types.real {k1}  ;
-    fprintf ('\n%s', xclass) ;
+% type of the output X
+for k1 = 1:length (types)
+    xtype = types {k1}  ;
+    fprintf ('\n%s', xtype) ;
 
-    % class of the matrix A
-    for k2 = 1:length (types.real)
-        aclass = types.real {k2}  ;
+    % type of the matrix A
+    for k2 = 1:length (types)
+        atype = types {k2}  ;
 
         % create a matrix
         for m = [1 10 25]
@@ -23,19 +24,19 @@ for k1 = 1:length (types.real)
                 fprintf ('.') ;
                 clear A
                 A.matrix = sprandn (m, n, 0.1) ;
-                A.class = aclass ;
+                A.class = atype ;
 
                 clear B
                 B.matrix = sprandn (m*n, 1, 0.1) ;
-                B.class = aclass ;
+                B.class = atype ;
 
                 for A_is_hyper = 0:1
                 for A_is_csc   = 0:1
                 A.is_hyper = A_is_hyper ;
                 A.is_csc   = A_is_csc   ;
 
-                [I1, J1, X1] = GB_mex_extractTuples  (A, xclass) ;
-                [I2, J2, X2] = GB_spec_extractTuples (A, xclass) ;
+                [I1, J1, X1] = GB_mex_extractTuples  (A, xtype) ;
+                [I2, J2, X2] = GB_spec_extractTuples (A, xtype) ;
 
                 % If A is CSR, the extraction returns tuples in row major
                 % order, but the MATLAB GB_spec_extractTuples always returns
@@ -50,8 +51,8 @@ for k1 = 1:length (types.real)
                 end
                 end
 
-                [I1, J1, X1] = GB_mex_extractTuples  (B, xclass) ;
-                [I2, J2, X2] = GB_spec_extractTuples (B, xclass) ;
+                [I1, J1, X1] = GB_mex_extractTuples  (B, xtype) ;
+                [I2, J2, X2] = GB_spec_extractTuples (B, xtype) ;
 
                 assert (isequal (I1, I2)) ;
                 assert (isequal (J1, J2)) ;

@@ -43,7 +43,7 @@ for do_real = 0:1
         % 1003: dot
 
     for k = [false true]
-        builtin_complex_set (k) ;
+        GB_builtin_complex_set (k) ;
 
         if (k)
             % GraphBLAS is fast

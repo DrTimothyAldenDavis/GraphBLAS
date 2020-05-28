@@ -117,6 +117,14 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     have been added, and the no-argument \verb'GrB_wait( )' has been
     deprecated.
 
+    Added
+    \verb'GrB_getVersion',
+    \verb'GrB_Matrix_resize',
+    \verb'GrB_Vector_resize',
+    \verb'GrB_kronecker',
+    \verb'GrB_*_wait',
+    ...
+
 % TODO: describe new types, binary/unary ops, monoids, semirings
 
 \item Version 3.2.0 (Feb 20, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
@@ -3195,7 +3203,7 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_setElement'     & add a single entry to a vector \\
 \verb'GrB_Vector_extractElement' & get a single entry from a vector \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector \\
-\verb'GxB_Vector_resize'         & resize a vector \\
+\verb'GrB_Vector_resize'         & resize a vector \\
 \verb'GrB_Vector_free'           & free a vector \\
 \verb'GrB_Vector_wait'           & wait for all pending work to finish \\
 \hline
@@ -3474,21 +3482,21 @@ described.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_resize:}          resize a vector}
+\subsubsection{{\sf GrB\_Vector\_resize:}          resize a vector}
 %-------------------------------------------------------------------------------
 \label{vector_resize}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Vector_resize      // change the size of a vector
+GrB_Info GrB_Vector_resize      // change the size of a vector
 (
     GrB_Vector u,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_Vector_resize' changes the size of a vector.  If the dimension
+\verb'GrB_Vector_resize' changes the size of a vector.  If the dimension
 decreases, entries that fall outside the resized vector are deleted.
 
 % \newpage
@@ -3561,7 +3569,7 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 \verb'GrB_Matrix_setElement'    & add a single entry to a matrix \\
 \verb'GrB_Matrix_extractElement'& get a single entry from a matrix \\
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix \\
-\verb'GxB_Matrix_resize'        & resize a matrix \\
+\verb'GrB_Matrix_resize'        & resize a matrix \\
 \verb'GrB_Matrix_free'          & free a matrix \\
 \verb'GrB_Matrix_wait'          & wait for all pending work to finish \\
 \hline
@@ -4025,14 +4033,14 @@ extracted.
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_resize:}          resize a matrix}
+\subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_resize}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Matrix_resize      // change the size of a matrix
+GrB_Info GrB_Matrix_resize      // change the size of a matrix
 (
     GrB_Matrix A,               // matrix to modify
     const GrB_Index nrows_new,  // new number of rows in matrix
@@ -4040,7 +4048,7 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_Matrix_resize' changes the size of a matrix.
+\verb'GrB_Matrix_resize' changes the size of a matrix.
 If the dimensions decrease, entries that fall outside the resized
 matrix are deleted.
 

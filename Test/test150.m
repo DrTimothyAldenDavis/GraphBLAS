@@ -7,6 +7,7 @@ function test150
 fprintf ('test150: ------- GrB_mxm with typecasting and zombies (dot3)\n') ;
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
 
 semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
@@ -20,12 +21,12 @@ n = 5 ;
 s = 4 ;
 density = 0.1 ;
 
-for k6 = 1:length (types.real)
-    aclas = types.real {k6} ;
-    fprintf ('%s ', aclas) ;
+for k6 = 1:length (types)
+    atype = types {k6} ;
+    fprintf ('%s ', atype) ;
 
-    A = GB_spec_random (m, s, density, 100, aclas) ;
-    B = GB_spec_random (s, n, density, 100, aclas) ;
+    A = GB_spec_random (m, s, density, 100, atype) ;
+    B = GB_spec_random (s, n, density, 100, atype) ;
     M = GB_random_mask(m,n,0.2) ;
 
     clear C

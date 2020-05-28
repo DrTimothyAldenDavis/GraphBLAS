@@ -126,10 +126,14 @@ GrB_Info GB_selector
             // ithunk = (int64_t) Thunk (0)
             GB_cast_array ((GB_void *GB_RESTRICT) &ithunk,
                                    GB_INT64_code, xthunk, tcode, 1, NULL) ;
+            // printf ("ithunk: %ld\n", ithunk) ;
             // athunk = (atype) Thunk (0)
             GB_cast_array (athunk, A->type->code, xthunk, tcode, 1, NULL) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
+            // printf ("athunk: ") ;
+            // GB_code_check (A->type->code, &athunk, 5, NULL, Context) ;
+            // printf ("\n") ;
         }
     }
 

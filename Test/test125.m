@@ -6,7 +6,8 @@ function test125
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-mult_ops = [binops.all binops.real binops.int binops.fpreal] ;
+mult_ops = binops.all ;
+types = types.all ;
 
 if (nargin < 1)
     fulltest = 1 ;
@@ -44,17 +45,22 @@ rng ('default') ;
 
     for k1 = 1:length(mult_ops)
         mulop = mult_ops {k1} ;
+        if (fulltest)
+            fprintf ('\n%-10s ', mulop) ;
+        end
 
         for k2 = 1:length(add_ops)
             addop = add_ops {k2} ;
-            % fprintf ('.') ;
+            if (fulltest)
+                fprintf ('.') ;
+            end
 
-            for k3 = 1:length (types.all)
-                clas = types.all {k3} ;
+            for k3 = 1:length (types)
+                type = types {k3} ;
 
                 semiring.multiply = mulop ;
                 semiring.add = addop ;
-                semiring.class = clas ;
+                semiring.class = type ;
 
                 % semiring
 
@@ -77,9 +83,9 @@ rng ('default') ;
                 end
 
                 n_semirings = n_semirings + 1 ;
-                A.class = clas ;
-                B.class = clas ;
-                C.class = clas ;
+                A.class = type ;
+                B.class = type ;
+                C.class = type ;
 
                 % C = A*B
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn);

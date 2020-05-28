@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Vector_reduce_scalar: reduce a vector to a scalar
+// GrB_Vector_reduce: reduce a vector to a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
