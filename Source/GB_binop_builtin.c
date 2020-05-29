@@ -134,38 +134,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
     if (flipxy)
     {
-        switch (*opcode)
-        {
-            // swap FIRST and SECOND
-            case GB_FIRST_opcode  : (*opcode) = GB_SECOND_opcode ; break ;
-            case GB_SECOND_opcode : (*opcode) = GB_FIRST_opcode ;  break ;
-
-            // swap LT and GT
-            case GB_GT_opcode     : (*opcode) = GB_LT_opcode ;     break ;
-            case GB_LT_opcode     : (*opcode) = GB_GT_opcode ;     break ;
-
-            // swap LE and GE
-            case GB_GE_opcode     : (*opcode) = GB_LE_opcode ;     break ;
-            case GB_LE_opcode     : (*opcode) = GB_GE_opcode ;     break ;
-
-            // swap ISLT and ISGT
-            case GB_ISGT_opcode   : (*opcode) = GB_ISLT_opcode ;   break ;
-            case GB_ISLT_opcode   : (*opcode) = GB_ISGT_opcode ;   break ;
-
-            // swap ISLE and ISGE
-            case GB_ISGE_opcode   : (*opcode) = GB_ISLE_opcode ;   break ;
-            case GB_ISLE_opcode   : (*opcode) = GB_ISGE_opcode ;   break ;
-
-            // swap DIV and RDIV
-            case GB_DIV_opcode    : (*opcode) = GB_RDIV_opcode ;   break ;
-            case GB_RDIV_opcode   : (*opcode) = GB_DIV_opcode ;    break ;
-
-            // swap MINUS and RMINUS
-            case GB_MINUS_opcode  : (*opcode) = GB_RMINUS_opcode ; break ;
-            case GB_RMINUS_opcode : (*opcode) = GB_MINUS_opcode ;  break ;
-
-            default: ;
-        }
+        (*opcode) = GB_binop_flip (*opcode) ;
     }
 
     return (true) ;

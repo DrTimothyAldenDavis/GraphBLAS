@@ -78,11 +78,36 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, anz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
+    //--------------------------------------------------------------------------
+    // determine the number of OpenMP threads and/or GPUs to use
+    //--------------------------------------------------------------------------
+
+    // TODO should ntasks be int64_t?  It can be large; but grid.x is
+    // probably too big below.
+
+    int nthreads = 0, ntasks = 0 ;
+    int ngpus_to_use = GB_ngpus_to_use ((double) anz) ;
+    int blocksize = 0 ;
+
+    if (ngpus_to_use > 0)
+    {
+        // use the GPU
+        blocksize = 512 ;                                   // blockDim.x
+        // TODO is grid.x too large??
+        ntasks = GB_ICEIL (anz, 8*blocksize) ;              // grid.x
+        // ntasks = (anz + 8*blocksize - 1) / (8*blocksize) ;
+        ngpus_to_use = 1 ;              // assume one GPU for now (TODO)
+        nthreads = ngpus_to_use ;       // use one CPU thread per GPU
+    }
+    else
+    {
+        // use the CPU
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+        ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
+        ntasks = GB_IMIN (ntasks, anz) ;
+        ntasks = GB_IMAX (ntasks, 1) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate workspace

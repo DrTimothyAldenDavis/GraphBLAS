@@ -308,7 +308,45 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // control usage of Intel MKL
+        // CUDA (in progress)
+        //----------------------------------------------------------------------
+
+        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
+
+            {
+                va_start (ap, field) ;
+                GrB_Desc_Value *gpu_control = va_arg (ap, GrB_Desc_Value *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (gpu_control) ;
+                (*gpu_control) = GB_Global_gpu_control_get ( ) ;
+            }
+            break ;
+
+        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
+
+            {
+                va_start (ap, field) ;
+                double *gpu_chunk = va_arg (ap, double *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (gpu_chunk) ;
+                (*gpu_chunk) = GB_Global_gpu_chunk_get ( ) ;
+            }
+            break ;
+
+        case GxB_GPU_COUNT :
+
+            {
+                va_start (ap, field) ;
+                int *gpu_count = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (gpu_count) ;
+                (*gpu_count) = GB_Global_gpu_count_get ( ) ;
+            }
+            break ;
+
+
+        //----------------------------------------------------------------------
+        // Intel MKL (in progress)
         //----------------------------------------------------------------------
 
         case GxB_GLOBAL_MKL :           // same as GxB_MKL

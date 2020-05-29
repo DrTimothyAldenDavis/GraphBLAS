@@ -432,6 +432,13 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     bool user_malloc_is_thread_safe     // ADDED in V3.0: thread_safe arg
 ) ;
 
+// GxB_cuda_init (DRAFT: in progress)
+GB_PUBLIC
+GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
+(
+    GrB_Mode mode           // blocking or non-blocking mode
+) ;
+
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
@@ -3927,16 +3934,44 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          vector or matrix, or when C is tiny.  It is impossibly slow if C is
 //          large and the mask is not present, since it takes Omega(m*n) time
 //          if C is m-by-n.
-//
-// GxB_MKL: a boolean that controls the usage of the Intel MKL.  If true,
-//          then MKL may be used; if false, MKL is not called. 
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field.  They are defined with the same integer value for both
 // enums, so the user can use them for both.
 #define GxB_NTHREADS 5
 #define GxB_CHUNK 7
-#define GxB_MKL 21
+
+// GxB_MKL (DRAFT: in progresss) a boolean that controls the usage of the Intel
+//          MKL.  If true, then MKL may be used; if false, MKL is not called. 
+#define GxB_MKL 31
+
+// CUDA support (DRAFT: in progress)
+// SuiteSparse:GraphBLAS can exploit a CUDA-aware GPU.  CUDA must be avaiable
+// when GraphBLAS is compiled (see the installations instructions), and it
+// must also be requested at run time by called GxB_cuda_init instead of
+// GrB_init or GxB_init.
+//
+//      GxB_GPU_CONTROL:  determines where the computation is performed.
+//
+//          GxB_DEFAULT:    decide based on where the matrix is, etc. 
+//          GxB_GPU_ALWAYS: always use the GPU
+//          GxB_GPU_NEVER:  never use the GPU
+//          type: GrB_Desc_Value (an enum)
+//
+//      GxB_GPU_CHUNK: used by the GxB_GPU_AUTO rule, to decide when a
+//          problem is large enough to use the GPU.  A double value.
+//
+//      GxB_GPU_SET: an array of GPUs to use, defined by integers 0 to
+//          # of GPUs available - 1. For example: [2 4 6], if there are
+//          8 GPUs.  (FUTURE)
+//
+// GxB_cuda_init is not used, or if CUDA is not available when GraphBLAS is
+// compiled as a library, then no GPUs are used and these settings are silently
+// ignored.
+
+#define GxB_GPU_CONTROL 21
+#define GxB_GPU_CHUNK   22
+// #define GxB_GPU_SET  23      // FUTURE
 
 // GxB_NTHREADS_MAX is no longer used, as of v3.2.0.
 #ifndef GxB_NTHREADS_MAX
@@ -3957,6 +3992,12 @@ typedef enum
     GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
                     // If <= GxB_DEFAULT, then the default is used.
 
+    // GPU control (DRAFT: in progress)
+    GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
+    GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
+    // GxB_DESCRIPTOR_GPU_SET  = GxB_GPU_SET,       // FUTURE
+
+    // MKL control (DRAFT: in progress)
     GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL
 
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
@@ -3965,11 +4006,10 @@ typedef enum
 }
 GrB_Desc_Field ;
 
-// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK, GxB_MKL, and GxB_AxB_* are
-// extensions.  In the spec, setting both GrB_COMP and GrB_STRUCTURE can be
-// done with two calls to GrB_Descriptor_set.  As an extension to the spec,
-// they can also be set with a single call, using the setting
-// GrB_COMP+GrB_STRUCTURE.
+// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK, and GxB_AxB_* are extensions.
+// In the spec, setting both GrB_COMP and GrB_STRUCTURE can be done with two
+// calls to GrB_Descriptor_set.  As an extension to the spec, they can also be
+// set with a single call, using the setting GrB_COMP+GrB_STRUCTURE.
 
 typedef enum
 {
@@ -3986,6 +4026,10 @@ typedef enum
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
+
+    // for GxB_GPU_CONTROL only:
+    GxB_GPU_ALWAYS  = 4,
+    GxB_GPU_NEVER   = 5,
 
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
@@ -4149,7 +4193,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 //  GxB_get: queries a global option, a GrB_Matrix option or a GrB_Descriptor
 
 // ADDED in V3.0: GxB_CHUNK, GxB_LIBRARY_*, GxB_API_* options:
-// ADDED in V3.3: GxB_MKL
+// ADDED in V3.3: GxB_MKL and GxB_GPU* (DRAFT: in progress)
 
 typedef enum            // for global options or matrix options
 {
@@ -4189,9 +4233,17 @@ typedef enum            // for global options or matrix options
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
     GxB_API_URL = 19,               // URL for the API (char *)
-    GxB_BURBLE = 20,                // development only (bool *)
 
-    GxB_GLOBAL_MKL = GxB_MKL        // control usage of Intel MKL
+    // GPU control (DRAFT: in progress)
+    GxB_GPU_COUNT = 20,             // # of GPUs (query only)
+    GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
+    GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
+    // GxB_GLOBAL_GPU_SET  = GxB_GPU_SET,       // FUTURE
+
+    // MKL control (DRAFT: in progress)
+    GxB_GLOBAL_MKL = GxB_MKL,       // control usage of Intel MKL
+
+    GxB_BURBLE = 99                 // development only (bool *)
 
 } GxB_Option_Field ;
 
@@ -4309,9 +4361,23 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GxB_CHUNK, double chunk) ;
 //      GxB_get (GxB_CHUNK, double *chunk) ;
+
+// To set/get the global GPU options: (DRAFT: in progress)
 //
-//      GxB_set (GxB_MKL, bool chunk) ;
-//      GxB_get (GxB_MKL, bool *chunk) ;
+//      GxB_set (GxB_GPU_CONTROL, GxB_DEFAULT) ;
+//      GxB_set (GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+//      GxB_set (GxB_GPU_CONTROL, GxB_GPU_NEVER) ;
+//      GxB_get (GxB_GPU_CONTROL, GrB_Desc_Value *)
+//
+//      GxB_set (GxB_GPU_CHUNK, double chunk) ;
+//      GxB_get (GxB_GPU_CHUNK, double *chunk) ;
+//
+//      GxB_get (GxB_GPU_COUNT, int *ngpus) ;   // query only
+
+// To set/get the global MKL options: (DRAFT: in progress)
+//
+//      GxB_set (GxB_MKL, bool use_mkl) ;
+//      GxB_get (GxB_MKL, bool *use_mkl) ;
 
 // To get global options that can be queried but not modified:
 //
@@ -4329,6 +4395,16 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_ROW) ;
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
 //      GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
+
+// To set/get the matrix GPU options: (DRAFT: in progress)
+//
+//      GxB_set (GrB_Matrix A, GxB_GPU_CONTROL, GxB_DEFAULT) ;
+//      GxB_set (GrB_Matrix A, GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+//      GxB_set (GrB_Matrix A, GxB_GPU_CONTROL, GxB_GPU_NEVER) ;
+//      GxB_get (GrB_Matrix A, GxB_GPU_CONTROL, GrB_Desc_Value *)
+//
+//      GxB_set (GrB_Matrix A, GxB_GPU_CHUNK, double chunk) ;
+//      GxB_get (GrB_Matrix A, GxB_GPU_CHUNK, double *chunk) ;
 
 // To get a matrix status (modified with GxB_HYPER, double h parameter):
 //
@@ -4366,9 +4442,21 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
+
+// To set/get the descriptor MKL options: (DRAFT: in progress)
 //
-//      GxB_set (GrB_Descriptor d, GxB_MKL, bool chunk) ;
-//      GxB_get (GrB_Descriptor d, GxB_MKL, bool *chunk) ;
+//      GxB_set (GrB_Descriptor d, GxB_MKL, bool use_mkl) ;
+//      GxB_get (GrB_Descriptor d, GxB_MKL, bool *use_mkl) ;
+
+// To set/get the descriptor GPU options: (DRAFT: in progress)
+//
+//      GxB_set (GrB_Descriptor d, GxB_GPU_CONTROL, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+//      GxB_set (GrB_Descriptor d, GxB_GPU_CONTROL, GxB_GPU_NEVER) ;
+//      GxB_get (GrB_Descriptor d, GxB_GPU_CONTROL, GrB_Desc_Value *)
+//
+//      GxB_set (GrB_Descriptor d, GxB_GPU_CHUNK, double chunk) ;
+//      GxB_get (GrB_Descriptor d, GxB_GPU_CHUNK, double *chunk) ;
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \
@@ -8366,11 +8454,32 @@ GrB_Info GxB_Vector_export  // export and free a vector
 // the result.
 
 //------------------------------------------------------------------------------
-// MKL optimization
+// CUDA memory management (DRAFT: in progress)
 //------------------------------------------------------------------------------
 
-// This is a draft.  The functions signatures may change in the future.
-// Do not use these functions.
+// These functions are made available to the user application, since the
+// GxB_import/export functions require the user application and the GraphBLAS
+// library to rely on the same malloc/calloc/realloc/free functions.  If
+// GraphBLAS is using CUDA Unified Memory Management and GxB_cuda_init is used
+// to initialize GraphBLAS, then all of its memory allocations rely on these
+// functions.
+
+// If GraphBLAS is compiled with CUDA enabled, these functions map to
+// cudaMallocManaged and cudaFree.  Otherwise, they map to the ANSI C malloc,
+// calloc, and free functions.
+
+// Note that there is no cudaReallocManaged function, and in this case
+// GraphBLAS makes do without it.  As a result, the user application cannot use
+// realloc either, for memory blocks passed to/from GraphBLAS via
+// import/export.  TODO NVIDIA really needs a cudaReallocManaged function!
+
+void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
+void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
+void  GxB_cuda_free (void *p) ;                 // standard free signature
+
+//------------------------------------------------------------------------------
+// MKL optimization (DRAFT: in progress)
+//------------------------------------------------------------------------------
 
 GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
 (

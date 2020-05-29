@@ -341,7 +341,7 @@ GB_Pending Pending ;        // list of pending tuples
 // condition (A->nzombies > 0), and then delete all of them if they appear, via
 // GB_Matrix_wait.
 
-int64_t nzombies ;      // number of zombies marked for deletion
+uint64_t nzombies ;     // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
 // statistics

@@ -1,18 +1,23 @@
 //------------------------------------------------------------------------------
-// GrB_init: initialize GraphBLAS
+// GxB_cuda_init: initialize GraphBLAS for use with CUDA
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
-// GrB_init (or GxB_init) must called before any other GraphBLAS operation.
-// GrB_finalize must be called as the last GraphBLAS operation.
+// DRAFT: in progress
+
+// GrB_init, GxB_init, or GxB_cuda_init must called before any other GraphBLAS
+// operation.  GrB_finalize must be called as the last GraphBLAS operation.
+
+// If CUDA was not available when GraphBLAS was compiled, then this function
+// acks just like GrB_init.
 
 #include "GB.h"
 
-GrB_Info GrB_init           // start up GraphBLAS
+GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
 (
     GrB_Mode mode           // blocking or non-blocking mode
 )
@@ -22,19 +27,17 @@ GrB_Info GrB_init           // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT ("GrB_init (mode)") ;
+    GB_CONTEXT ("GxB_cuda_init (mode)") ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    // default:  use the ANSI C11 malloc memory manager, which is thread-safe 
-
     return (GB_init
         (mode,                          // blocking or non-blocking mode
-        malloc, calloc, realloc, free,  // ANSI C memory management functions
+        NULL, NULL, NULL, NULL,         // use GxB_cuda_* memory managment
         true,                           // memory functions are thread-safe
-        false,                          // do not use CUDA
+        true,                           // use CUDA
         Context)) ;
 }
 

@@ -58,7 +58,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 28, 2020 (6pm DRAFT)" )
+set ( GraphBLAS_DATE "May 28, 2020 (9pm DRAFT+CUDA)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -140,9 +140,24 @@ configure_file (
 include ( FindOpenMP  )
 include ( FindThreads )
 
-# FUTURE: rely on CUDA
 # enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
+# set ( CMAKE_CUDA on )
+set ( CMAKE_CUDA off )
+
+# LIBS = -L/usr/local/cuda/lib64 -lcudadevrt -lcudart
+# LIB += -ldl -L$(CUDA_LIB_DIR) -lcuda -lcudart -lnvrtc
+
+if ( CMAKE_CUDA )
+    message ( STATUS "CUDA enabled" )
+    set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
+    set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
+    link_directories ( "CUDA" "/usr/local/cuda/lib64" )
+else ( )
+    message ( STATUS "CUDA not enabled" )
+    set ( CMAKE_CUDA_FLAG " " )
+    set ( GB_CUDA )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # report status
@@ -263,6 +278,8 @@ else ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" )
 endif ( )
 
+set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
+
 #-------------------------------------------------------------------------------
 # dynamic graphblas library properties
 #-------------------------------------------------------------------------------
@@ -355,33 +372,33 @@ endif ( )
 if ( USE_OPENMP )
     # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
-    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
 elseif ( USE_POSIX )
     # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
-    target_link_libraries ( graphblas ${M_LIB} )
+    target_link_libraries ( graphblas ${M_LIB} ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${GB_CUDA} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -pthread -DUSER_POSIX_THREADS " )
 else ( )
     # use no threading at all
     message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
-    target_link_libraries ( graphblas ${M_LIB} )
+    target_link_libraries ( graphblas ${M_LIB} ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${GB_CUDA} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DUSER_NO_THREADS " )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
-    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} )
+    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} ${GB_CUDA} )
     endif ( )
 endif ( )
 
@@ -389,9 +406,9 @@ if ( OPENMP_FOUND )
     # use OpenMP for internal parallelism
     message ( STATUS "Using OpenMP for internal parallelism" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES}  ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
     endif ( )
 endif ( )
 
@@ -437,7 +454,7 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
+target_link_libraries ( graphblasdemo ${M_LIB} graphblas  ${GB_CUDA} )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -445,7 +462,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
         VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo_static  graphblas_static )
+    target_link_libraries ( graphblasdemo_static  graphblas_static  ${GB_CUDA} )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -466,18 +483,18 @@ add_executable ( reduce_demo   "Demo/Program/reduce_demo.c" )
 add_executable ( import_demo   "Demo/Program/import_demo.c" )
 
 # Libraries required for Demo programs
-target_link_libraries ( pagerank_demo graphblas graphblasdemo )
-target_link_libraries ( bfs_demo      graphblas graphblasdemo )
-target_link_libraries ( tri_demo      graphblas graphblasdemo )
-target_link_libraries ( pthread_demo  graphblas graphblasdemo )
-target_link_libraries ( openmp_demo   graphblas graphblasdemo )
-target_link_libraries ( mis_demo      graphblas graphblasdemo )
-target_link_libraries ( complex_demo  graphblas graphblasdemo )
-target_link_libraries ( kron_demo     graphblas graphblasdemo )
-target_link_libraries ( simple_demo             graphblasdemo )
-target_link_libraries ( wildtype_demo graphblas )
-target_link_libraries ( reduce_demo   graphblas )
-target_link_libraries ( import_demo   graphblas graphblasdemo )
+target_link_libraries ( pagerank_demo graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( bfs_demo      graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( tri_demo      graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( pthread_demo  graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( openmp_demo   graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( mis_demo      graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( complex_demo  graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( kron_demo     graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( simple_demo   graphblasdemo ${GB_CUDA} )
+target_link_libraries ( wildtype_demo graphblas ${GB_CUDA} )
+target_link_libraries ( reduce_demo   graphblas ${GB_CUDA} )
+target_link_libraries ( import_demo   graphblas graphblasdemo ${GB_CUDA} )
 
 #-------------------------------------------------------------------------------
 # graphblas installation location

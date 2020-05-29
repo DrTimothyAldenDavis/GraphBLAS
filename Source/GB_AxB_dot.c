@@ -101,8 +101,34 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // use dot3 if M is present and not complemented
         GBBURBLE ("dot3 ") ;
         (*mask_applied) = true ;
-        return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring, flipxy,
-            Context)) ;
+
+        #if defined ( GBCUDA )
+
+        // very rough estimate of the work to do
+        double adeg = ((double) GB_NNZ (A)) / ((double) GB_IMAX (1, A->nvec)) ;
+        double bdeg = ((double) GB_NNZ (B)) / ((double) GB_IMAX (1, B->nvec)) ;
+        double work = GB_NNZ (M) * GB_IMIN (adeg, bdeg) ;
+
+        // TODO if A or B are not accessed (first, 2nd, or pair ops)
+        // then the type if A can be user-defined here, for CUDA.
+
+        int ngpus_to_use = GB_ngpus_to_use (work) ;
+        if (ngpus_to_use > 0 && 
+            && (semiring->object_kind == GB_BUILTIN)
+            && (A->type->code != GB_UDT_code)
+            && (B->type->code != GB_UDT_code))
+        {
+            // use "the" GPU (TODO: could use multiple GPUs too)
+            return (GB_AxB_dot3_cuda (Chandle, M, Mask_struct, A, B, semiring,
+                flipxy, Context)) ;
+        }
+        else
+        #endif
+        {
+            // use the CPU
+            return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring,
+                flipxy, Context)) ;
+        }
 
     }
     else

@@ -20,6 +20,8 @@
 
 #include "GB.h"
 
+// TODO add error handling and GrB_Info return value
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cumsum                      // cumulative sum of an array
 (
@@ -57,6 +59,15 @@ void GB_cumsum                      // cumulative sum of an array
 
     if (kresult == NULL)
     {
+
+        #if defined ( GBCUDA )
+        if (GB_cuda_is_on_GPU (count))
+        {
+            // 'count' is already on the GPU: compute the cumulative sum there
+            GB_cuda_cumsum (count, n) ;
+        }
+        else
+        #endif
 
         if (nthreads <= 2)
         {
@@ -131,6 +142,19 @@ void GB_cumsum                      // cumulative sum of an array
     }
     else
     {
+
+#if 0
+        // TODO: pop count on the GPU for GB_cumsum
+        #if defined ( GBCUDA )
+        if (GB_cuda_is_on_GPU (count))
+        {
+            // 'count' is already on the GPU: compute the cumulative sum there
+            (*kresult) = GB_cuda_population_count_int64 (count, n) ;
+            GB_cuda_cumsum (count, n) ;
+        }
+        else
+        #endif
+#endif
 
         if (nthreads <= 2)
         {

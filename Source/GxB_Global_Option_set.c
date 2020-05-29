@@ -31,6 +31,10 @@ GrB_Info GxB_Global_Option_set      // set a global default option
     switch (field)
     {
 
+        //----------------------------------------------------------------------
+        // matrix format
+        //----------------------------------------------------------------------
+
         case GxB_HYPER : 
 
             {
@@ -58,6 +62,10 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        //----------------------------------------------------------------------
+        // OpenMP control
+        //----------------------------------------------------------------------
+
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
             {
@@ -80,6 +88,10 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        //----------------------------------------------------------------------
+        // diagnostics
+        //----------------------------------------------------------------------
+
         case GxB_BURBLE :
 
             {
@@ -89,6 +101,34 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 GB_Global_burble_set ((bool) burble) ;
             }
             break ;
+
+        //----------------------------------------------------------------------
+        // CUDA (in progress)
+        //----------------------------------------------------------------------
+
+        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
+
+            {
+                va_start (ap, field) ;
+                GrB_Desc_Value gpu_control = va_arg (ap, GrB_Desc_Value) ;
+                va_end (ap) ;
+                GB_Global_gpu_control_set (gpu_control) ;
+            }
+            break ;
+
+        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
+
+            {
+                va_start (ap, field) ;
+                double gpu_chunk = va_arg (ap, double) ;
+                va_end (ap) ;
+                GB_Global_gpu_chunk_set (gpu_chunk) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // Intel MKL (in progress)
+        //----------------------------------------------------------------------
 
         case GxB_GLOBAL_MKL :          // same as GxB_MKL
 
@@ -100,15 +140,21 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        //----------------------------------------------------------------------
+        // invalid option
+        //----------------------------------------------------------------------
+
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                     "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_NTHREADS [%d]"
-                    "GxB_CHUNK [%d], GxB_BURBLE [%d], or GxB_MKL [%d]",
+                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_NTHREADS [%d]\n"
+                    "GxB_CHUNK [%d], GxB_BURBLE [%d], GxB_GPU_CONTROL [%d]\n"
+                    "GxB_GPU_CHUNK [%d], or GxB_MKL [%d]\n",
                     (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_NTHREADS, (int) GxB_CHUNK,
-                    (int) GxB_BURBLE, (int) GxB_MKL))) ;
+                    (int) GxB_NTHREADS, (int) GxB_CHUNK, (int) GxB_BURBLE,
+                    (int) GxB_GPU_CONTROL, (int) GxB_GPU_CHUNK, (int)
+                    GxB_MKL))) ;
 
     }
 

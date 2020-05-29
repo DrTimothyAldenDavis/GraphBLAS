@@ -75,6 +75,8 @@ Tcov/fprint.txt
 
 Doc/html
 
+CUDA/test/googletest/*
+
 # Do not ignore this file
 !.gitignore
 

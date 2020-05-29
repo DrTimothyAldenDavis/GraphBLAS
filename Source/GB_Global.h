@@ -118,5 +118,15 @@ void     GB_Global_print_one_based_set (bool onebased) ;
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool     GB_Global_print_one_based_get (void) ;
 
+void     GB_Global_gpu_control_set (GrB_Desc_Value value) ;
+GrB_Desc_Value GB_Global_gpu_control_get (void);
+void     GB_Global_gpu_chunk_set (double gpu_chunk) ;
+double   GB_Global_gpu_chunk_get (void) ;
+bool     GB_Global_gpu_count_set (bool enable_cuda) ;
+int      GB_Global_gpu_count_get (void) ;
+size_t   GB_Global_gpu_memorysize_get (int device) ;
+int      GB_Global_gpu_sm_get (int device) ;
+bool     GB_Global_gpu_device_properties_get (int device) ;
+
 #endif
 

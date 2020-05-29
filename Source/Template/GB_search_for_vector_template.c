@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_search_for_vector: find the vector k that contains p
+// GB_search_for_vector_template: find the vector k that contains p
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,12 +10,15 @@
 // Given an index p, find k so that Ap [k] <= p && p < Ap [k+1].  The search is
 // limited to k in the range Ap [kleft ... anvec].
 
-#include "GB_ek_slice.h"
-
-int64_t GB_search_for_vector        // return the vector k that contains p
+#ifdef GB_KERNEL
+__device__
+static inline int64_t GB_search_for_vector_device
+#else
+static inline int64_t GB_search_for_vector // return vector k that contains p
+#endif
 (
     const int64_t p,                // search for vector k that contains p
-    const int64_t *GB_RESTRICT Ap,     // vector pointers to search
+    const int64_t *GB_RESTRICT Ap,  // vector pointers to search
     int64_t kleft,                  // left-most k to search
     int64_t anvec                   // Ap is of size anvec+1
 )

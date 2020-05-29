@@ -105,6 +105,16 @@ typedef struct
 
     bool print_one_based ;          // if true, print 1-based indices
 
+    //--------------------------------------------------------------------------
+    // CUDA (DRAFT: in progress)
+    //--------------------------------------------------------------------------
+
+    int gpu_count ;                 // # of GPUs in the system
+    GrB_Desc_Value gpu_control ;    // always, never, or default
+    double gpu_chunk ;              // min problem size for using a GPU
+    // properties of each GPU:
+    GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
+
 }
 GB_Global_struct ;
 
@@ -122,7 +132,7 @@ GB_Global_struct GB_Global =
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
 
-    // Intel MKL control
+    // Intel MKL control (DRAFT: in progress)
     .use_mkl = false,           // if true, exploit the Intel MKL
 
     // max number of threads and chunk size
@@ -157,6 +167,11 @@ GB_Global_struct GB_Global =
 
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
+
+    // CUDA environment (DRAFT: in progress)
+    .gpu_count = 0,                     // # of GPUs in the system
+    .gpu_control = GxB_DEFAULT,         // always, never, or default
+    .gpu_chunk = GB_GPU_CHUNK_DEFAULT   // min problem size for using a GPU
 
 } ;
 
@@ -569,4 +584,107 @@ bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;
 }
+
+//------------------------------------------------------------------------------
+// CUDA (DRAFT: in progress)
+//------------------------------------------------------------------------------
+
+void GB_Global_gpu_control_set (GrB_Desc_Value gpu_control)
+{ 
+    // set the GPU control to always, never, or default
+    if (GB_Global.gpu_count > 0)
+    {
+        // one or more GPUs are available: set gpu_control to
+        // always, never, or default.
+        if (gpu_control == GxB_GPU_ALWAYS || gpu_control == GxB_GPU_NEVER)
+        {
+            GB_Global.gpu_control = gpu_control ;
+        }
+        else
+        {
+            GB_Global.gpu_control = GxB_DEFAULT ;
+        }
+    }
+    else
+    {
+        // no GPUs available: never use a GPU
+        GB_Global.gpu_control = GxB_GPU_NEVER ;
+    }
+}
+
+GrB_Desc_Value GB_Global_gpu_control_get (void)
+{ 
+    // get the GPU control parameter
+    return (GB_Global.gpu_control) ;
+}
+
+void GB_Global_gpu_chunk_set (double gpu_chunk)
+{ 
+    // set the GPU chunk factor
+    if (gpu_chunk < 1) gpu_chunk = GB_GPU_CHUNK_DEFAULT ;
+    GB_Global.gpu_chunk = gpu_chunk ;
+}
+
+double GB_Global_gpu_chunk_get (void)
+{ 
+    // get the GPU chunk factor
+    return (GB_Global.gpu_chunk) ;
+}
+
+bool GB_Global_gpu_count_set (bool enable_cuda)
+{
+    // set the # of GPUs in the system;
+    // this function is only called once, by GB_init.
+    #if defined ( GBCUDA )
+    if (enable_cuda)
+    {
+        return (GB_cuda_get_device_count (&GB_Global.gpu_count)) ;
+    }
+    else
+    #endif
+    {
+        // no GPUs available, or available but not requested
+        GB_Global.gpu_count = 0 ;
+        return (true) ;
+    }
+}
+
+int GB_Global_gpu_count_get (void)
+{
+    // get the # of GPUs in the system
+    return (GB_Global.gpu_count) ;
+}
+
+#define GB_GPU_DEVICE_CHECK(error) \
+    if (device < 0 || device >= GB_Global.gpu_count) return (error) ;
+
+size_t GB_Global_gpu_memorysize_get (int device)
+{
+    // get the memory size of a specific GPU
+    GB_GPU_DEVICE_CHECK (0) ;       // memory size zero if invalid GPU
+    return (GB_Global.gpu_properties [device].total_global_memory) ;
+}
+
+int GB_Global_gpu_sm_get (int device)
+{
+    // get the # of SMs in a specific GPU
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    return (GB_Global.gpu_properties [device].number_of_sms)  ;
+}
+
+bool GB_Global_gpu_device_properties_get (int device)
+{
+    // get all properties of a specific GPU;
+    // this function is only called once per GPU, by GB_init.
+    // Note that GraphBLAS returns GrB_PANIC if this function fails.
+    GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
+    #if defined ( GBCUDA )
+    return (GB_cuda_get_device_properties (device,
+        &(GB_Global.gpu_properties [device]))) ;
+    #else
+    // if no GPUs exist, they cannot be queried
+    return (false) ;
+    #endif
+}
+
 

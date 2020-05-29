@@ -7,22 +7,27 @@
 
 //------------------------------------------------------------------------------
 
-// GrB_init (or GxB_init) must called before any other GraphBLAS operation;
-// both rely on this internal function.  If GraphBLAS is used by multiple user
-// threads, only one can call GrB_init or GxB_init.
+// GrB_init, GxB_init, or GxB_cuda_init must called before any other GraphBLAS
+// operation; all three rely on this internal function.  If GraphBLAS is used
+// by multiple user threads, only one can call GrB_init, GxB_init or
+// GxB_cuda_init.
 
 // Result are undefined if multiple user threads simultaneously
-// call GrB_init (or GxB_init).
+// call GrB_init, GxB_init, or GxB_cuda_init.
 
 // GrB_finalize must be called as the last GraphBLAS operation.
 
-// GrB_init or GxB_init define the mode that GraphBLAS will use:  blocking or
-// non-blocking.  With blocking mode, all operations finish before returning to
-// the user application.  With non-blocking mode, operations can be left
-// pending, and are computed only when needed.
+// GrB_init, GxB_init, or GxB_cuda_init define the mode that GraphBLAS will
+// use:  blocking or non-blocking.  With blocking mode, all operations finish
+// before returning to the user application.  With non-blocking mode,
+// operations can be left pending, and are computed only when needed.
 
 // GxB_init is the same as GrB_init except that it also defines the
 // malloc/calloc/realloc/free functions to use.
+
+// GxB_cuda_init is the same as GrB_init, except that it passes in
+// caller_is_GxB_cuda_init as true to this function.  GxB_init and GrB_init
+// both pass this flag in as false.
 
 #include "GB.h"
 #include "GB_thread_local.h"
@@ -42,6 +47,8 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* realloc_function ) (void *, size_t),
     void   (* free_function    ) (void *),
     bool malloc_is_thread_safe,
+
+    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
 
     GB_Context Context      // from GrB_init or GxB_init
 )
@@ -72,6 +79,27 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
+    // GxB_cuda_init passes in NULL pointers; they are now defined below.
+
+    if (caller_is_GxB_cuda_init)
+    {
+        #if defined ( GBCUDA )
+        // CUDA is available at compile time, and requested at run time via
+        // GxB_cuda_init.  Use CUDA unified memory management functions.
+        malloc_function = GxB_cuda_malloc ;
+        calloc_function = GxB_cuda_calloc ;
+        realloc_function = NULL ;
+        free_function = GxB_cuda_free ;
+        #else
+        // CUDA not available at compile time.  Use ANSI C memory managment
+        // functions instead, even though the caller is GxB_cuda_init.
+        // No GPUs will be used.
+        malloc_function = malloc ;
+        calloc_function = calloc ;
+        realloc_function = realloc ;
+        free_function = free ;
+        #endif
+    }
 
     GB_Global_malloc_function_set  (malloc_function ) ;
     GB_Global_calloc_function_set  (calloc_function ) ;
@@ -167,6 +195,44 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GB_Global_burble_set (false) ;
+
+    //--------------------------------------------------------------------------
+    // CUDA initializations
+    //--------------------------------------------------------------------------
+
+    // If CUDA exists (#define GBCUDA) and if the caller is GxB_cuda_init, then
+    // query the system for the # of GPUs available, their memory sizes, SM
+    // counts, and other capabilities.  Unified Memory support is assumed.
+    // Then warmup each GPU.
+
+    #if defined ( GBCUDA )
+    if (caller_is_GxB_cuda_init)
+    {
+        // query the system for the # of GPUs
+        if (!GB_Global_gpu_count_set (true)) GB_PANIC ;
+        int gpu_count = GB_Global_gpu_count_get ( ) ;
+        fprintf (stderr, "gpu_count: %d\n", gpu_count) ;
+        for (int device = 0 ; device < gpu_count ; device++)
+        {
+            // query the GPU and then warm it up
+            if (!GB_Global_gpu_device_properties_get (device)) GB_PANIC ;
+            if (!GB_cuda_warmup (device)) GB_PANIC ;
+            fprintf (stderr, "gpu %d memory %g Gbytes, %d SMs\n", device,
+                ((double) GB_Global_gpu_memorysize_get (device)) / 1e9,
+                GB_Global_gpu_sm_get (device)) ;
+        }
+        // TODO check for jit cache
+    }
+    else
+    #endif
+    {
+        // CUDA not available at compile-time, or available but not requested.
+        GB_Global_gpu_count_set (false) ;
+    }
+
+    // set the default GxB_GPU_CONTROL and GxB_GPU_CHUNK parameters
+    GB_Global_gpu_control_set (GxB_DEFAULT) ;
+    GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
 
     //--------------------------------------------------------------------------
     // return result

@@ -911,6 +911,8 @@ GrB_Info GB_init            // start up GraphBLAS
     void   (* free_function    ) (void *),
     bool malloc_is_thread_safe,
 
+    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+
     GB_Context Context      // from GrB_init or GxB_init
 ) ;
 
@@ -1357,6 +1359,11 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *xcode,            // type code for x input
     GB_Type_code *ycode,            // type code for y input
     GB_Type_code *zcode             // type code for z output
+) ;
+
+GB_Opcode GB_binop_flip     // flipped opcode, or same opcode if not flipped
+(
+    GB_Opcode opcode        // opcode to flip
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -1899,6 +1906,12 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 #define GB_opaque_GrB_LAND  GB_opaque_GxB_LAND_BOOL
 #define GB_opaque_GrB_LXOR  GB_opaque_GxB_LXOR_BOOL
 #define GB_opaque_GrB_LXNOR GB_opaque_GxB_LXNOR_BOOL
+
+//------------------------------------------------------------------------------
+// CUDA (DRAFT: in progress)
+//------------------------------------------------------------------------------
+
+#include "GB_cuda_gateway.h"
 
 #endif
 
