@@ -115,7 +115,6 @@ for k2 = 1:length(binops)
         % C += A+B
         %---------------------------------------
 
-save gunk C op A B
         C0 = GB_spec_eWiseAdd_Matrix (C, [ ], op, op, A, B, [ ]) ;
         C1 = GB_mex_eWiseAdd_Matrix  (C, [ ], op, op, A, B, [ ]) ;
         GB_spec_compare (C0, C1) ;

@@ -63,7 +63,6 @@ for k1 = 1:length(types)
         for k = -m:3:n % Was: [-m:n]
 
             % no mask
-save gunk Cin op A k
             C1 = GB_spec_select (Cin, [], [], op, A, k, []) ;
             C2 = GB_mex_select  (Cin, [], [], op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
@@ -89,7 +88,6 @@ save gunk Cin op A k
             GB_spec_compare (C1, C2) ;
 
             % no mask, with accum, transpose
-save gunk Cin op B k dt
             C1 = GB_spec_select (Cin, [], 'plus', op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, [], 'plus', op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
