@@ -16,9 +16,15 @@ n = 12 ;
 rng ('default') ;
 
 M = sprand (m, n, 0.5) ;
-Amat = sparse (100 * rand (m,n)) ;
-Bmat = sparse (100 * sprand (m,n, 0.5)) ;
-Cmat = sparse (100 * rand (m,n)) ;
+
+Amat2 = sparse (2 * rand (m,n)) ;
+Bmat2 = sparse (2 * sprand (m,n, 0.5)) ;
+Cmat2 = sparse (2 * rand (m,n)) ;
+
+Amat = 50 * Amat2 ;
+Bmat = 50 * Bmat2 ;
+Cmat = 50 * Cmat2 ;
+
 Smat = sparse (m,n) ;
 Xmat = sparse (pi) ;
 desc.mask = 'structural' ;
@@ -33,7 +39,7 @@ Bmask = logical (Bmat) ;
 
 for k1 = 1:length (types)
     type = types {k1}  ;
-    fprintf ('%s', type) ;
+    fprintf ('\n%-14s ', type) ;
 
     A.class = type ;
     B.class = type ;
@@ -119,8 +125,22 @@ for k1 = 1:length (types)
 
         for k2 = 1:length(binops)
             binop = binops {k2}  ;
-            if (isequal (binop, 'pow'))
-                continue ;
+
+            tol = 0 ;
+            switch (binop)
+                case { 'pow', 'atan2', 'hypot', 'remainder' }
+                    A.matrix = Amat2 ;
+                    B.matrix = Bmat2 ;
+                    C.matrix = Cmat2 ;
+                    if (contains (type, 'single'))
+                        tol = 1e-5 ;
+                    elseif (contains (type, 'double'))
+                        tol = 1e-12 ;
+                    end
+                otherwise
+                    A.matrix = Amat ;
+                    B.matrix = Bmat ;
+                    C.matrix = Cmat ;
             end
 
             op.opname = binop ;
@@ -140,7 +160,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], op, A, [ ], [ ], [ ], false) ;
             C1 = GB_mex_assign  (C, [ ], op, A, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1) ;
+            GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C += B where B is sparse
@@ -148,7 +168,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], op, B, [ ], [ ], [ ], false) ;
             C1 = GB_mex_assign  (C, [ ], op, B, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1) ;
+            GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C += x
@@ -156,7 +176,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], op, X, [ ], [ ], [ ], true) ;
             C1 = GB_mex_assign  (C, [ ], op, X, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1) ;
+            GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C<replace> += x
@@ -164,7 +184,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], op, X, [ ], [ ], drep, true) ;
             C1 = GB_mex_subassign  (C, [ ], op, X, [ ], [ ], drep) ;
-            GB_spec_compare (C0, C1) ;
+            GB_spec_compare (C0, C1, 0, tol) ;
 
         end
     end

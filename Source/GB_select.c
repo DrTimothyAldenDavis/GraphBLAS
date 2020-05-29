@@ -70,12 +70,21 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
         opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
 
-    if (typecode >= GB_UDT_code && op_is_ordered_comparator)
-    { 
+    if (op_is_ordered_comparator)
+    {
         // built-in GT, GE, LT, and LE operators cannot be used with
-        // user-defined types
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "operator %s not defined for user-defined types", op->name))) ;
+        // user-defined types or with complex types
+        if (typecode == GB_UDT_code)
+        { 
+            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                "operator %s not defined for user-defined types",
+                op->name))) ;
+        }
+        if (typecode == GB_FC32_code || typecode == GB_FC32_code)
+        { 
+            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                "operator %s not defined for complex types", op->name))) ;
+        }
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible

@@ -203,6 +203,86 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             }
             break ;
 
+        case GB_BOR_opcode     :
+
+            // BOR monoids (bitwise or):
+            // GxB_BOR_UINT8_MONOID,         // identity: 0   terminal: 0xFF
+            // GxB_BOR_UINT16_MONOID,        // identity: 0   terminal: 0xFFFF
+            // GxB_BOR_UINT32_MONOID,        // identity: 0   terminal: 0xFFFFFFFF
+            // GxB_BOR_UINT64_MONOID,        // identity: 0   terminal: 0xFFFFFFFFFFFFFFFF
+
+            switch (add->xtype->code)
+            {
+                case GB_UINT8_code  : METHOD (GrB_Monoid_new_UINT8  (&M, add, (uint8_t ) 0)) ;         break ;
+                case GB_UINT16_code : METHOD (GrB_Monoid_new_UINT16 (&M, add, (uint16_t) 0)) ;         break ;
+                case GB_UINT32_code : METHOD (GrB_Monoid_new_UINT32 (&M, add, (uint32_t) 0)) ;         break ;
+                case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64 (&M, add, (uint64_t) 0)) ;         break ;
+                default: 
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (BOR)") ;
+                    return (false) ;
+            }
+            break ;
+
+        case GB_BAND_opcode     :
+
+            // BAND monoids (bitwise and):
+            // GxB_BAND_UINT8_MONOID,        // identity: 0xFF               terminal: 0
+            // GxB_BAND_UINT16_MONOID,       // identity: 0xFFFF             terminal: 0
+            // GxB_BAND_UINT32_MONOID,       // identity: 0xFFFFFFFF         terminal: 0
+            // GxB_BAND_UINT64_MONOID,       // identity: 0xFFFFFFFFFFFFFFFF terminal: 0
+
+            switch (add->xtype->code)
+            {
+                case GB_UINT8_code  : METHOD (GrB_Monoid_new_UINT8  (&M, add, (uint8_t ) 0xFF)) ;               break ;
+                case GB_UINT16_code : METHOD (GrB_Monoid_new_UINT16 (&M, add, (uint16_t) 0xFFFF)) ;             break ;
+                case GB_UINT32_code : METHOD (GrB_Monoid_new_UINT32 (&M, add, (uint32_t) 0xFFFFFFFF)) ;         break ;
+                case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64 (&M, add, (uint64_t) 0xFFFFFFFFFFFFFFFF)) ; break ;
+                default: 
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (BAND)") ;
+                    return (false) ;
+            }
+            break ;
+
+        case GB_BXOR_opcode     :
+
+            // BXOR monoids (bitwise xor):
+            // GxB_BXOR_UINT8_MONOID,        // identity: 0
+            // GxB_BXOR_UINT16_MONOID,       // identity: 0
+            // GxB_BXOR_UINT32_MONOID,       // identity: 0
+            // GxB_BXOR_UINT64_MONOID,       // identity: 0
+
+            switch (add->xtype->code)
+            {
+                case GB_UINT8_code  : METHOD (GrB_Monoid_new_UINT8  (&M, add, (uint8_t ) 0)) ;         break ;
+                case GB_UINT16_code : METHOD (GrB_Monoid_new_UINT16 (&M, add, (uint16_t) 0)) ;         break ;
+                case GB_UINT32_code : METHOD (GrB_Monoid_new_UINT32 (&M, add, (uint32_t) 0)) ;         break ;
+                case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64 (&M, add, (uint64_t) 0)) ;         break ;
+                default: 
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (BXOR)") ;
+                    return (false) ;
+            }
+            break ;
+
+        case GB_BXNOR_opcode     :
+
+            // BXNOR monoids (bitwise xnor):
+            // GxB_BXNOR_UINT8_MONOID,       // identity: 0xFF
+            // GxB_BXNOR_UINT16_MONOID,      // identity: 0xFFFF
+            // GxB_BXNOR_UINT32_MONOID,      // identity: 0xFFFFFFFF
+            // GxB_BXNOR_UINT64_MONOID ;     // identity: 0xFFFFFFFFFFFFFFFF
+
+            switch (add->xtype->code)
+            {
+                case GB_UINT8_code  : METHOD (GrB_Monoid_new_UINT8  (&M, add, (uint8_t ) 0xFF)) ;               break ;
+                case GB_UINT16_code : METHOD (GrB_Monoid_new_UINT16 (&M, add, (uint16_t) 0xFFFF)) ;             break ;
+                case GB_UINT32_code : METHOD (GrB_Monoid_new_UINT32 (&M, add, (uint32_t) 0xFFFFFFFF)) ;         break ;
+                case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64 (&M, add, (uint64_t) 0xFFFFFFFFFFFFFFFF)) ; break ;
+                default: 
+                    mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid for (BXNOR)") ;
+                    return (false) ;
+            }
+            break ;
+
         default: 
             mexWarnMsgIdAndTxt ("GB:warn", "unsupported add operator") ;
             return (false) ;

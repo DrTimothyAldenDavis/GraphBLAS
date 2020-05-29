@@ -39,7 +39,7 @@ r1 = GB_mex_isequal (A, A') ;
 assert (r0 == r1) 
 
 for k = [false true]
-    fprintf ('builtin_complex: %d\n', k) ;
+    fprintf ('\nbuiltin_complex: %d ', k) ;
     GB_builtin_complex_set (k) ;
 
     % complex case:
@@ -48,50 +48,50 @@ for k = [false true]
     r0 = isequal (A, B) ;
     r1 = GB_mex_isequal (A, B) ;
     assert (r0 == r1) 
-end
 
-r0 = isequal (A, A) ;
-r1 = GB_mex_isequal (A, A) ;
-assert (r0 == r1) 
+    r0 = isequal (A, A) ;
+    r1 = GB_mex_isequal (A, A) ;
+    assert (r0 == r1) 
 
-A = A+A.' ;
-r0 = isequal (A, A.') ;
-r1 = GB_mex_isequal (A, A.') ;
-assert (r0 == r1) 
+    A = A+A.' ;
+    r0 = isequal (A, A.') ;
+    r1 = GB_mex_isequal (A, A.') ;
+    assert (r0 == r1) 
 
-density = 0.5 ;
-scale = 100 ;
-ntypes = length (types) ;
+    density = 0.5 ;
+    scale = 100 ;
+    ntypes = length (types) ;
 
-for k1 = 1:ntypes
-    atype = types {k1} ;
-    fprintf ('.') ;
-    for am = [1 5]
-        for an = [1 5]
-            A = GB_spec_random (am,an,density,100,atype) ;
+    for k1 = 1:ntypes
+        atype = types {k1} ;
+        fprintf ('.') ;
+        for am = [1 5]
+            for an = [1 5]
+                A = GB_spec_random (am,an,density,100,atype) ;
 
-            r0 = isequal (A, A) ;
-            r1 = GB_mex_isequal (A, A) ;
-            assert (r0 == r1) 
+                r0 = isequal (A, A) ;
+                r1 = GB_mex_isequal (A, A) ;
+                assert (r0 == r1) 
 
-            Amat = GB_mex_cast (full (A.matrix), atype) ;
+                Amat = GB_mex_cast (full (A.matrix), atype) ;
 
-            for k2 = 1:ntypes
-                bclas = types {k2} ;
-                for bm = [1 5]
-                    for bn = [1 5]
+                for k2 = 1:ntypes
+                    bclas = types {k2} ;
+                    for bm = [1 5]
+                        for bn = [1 5]
 
-                        B = GB_spec_random (bm,bn,density,100,bclas) ;
+                            B = GB_spec_random (bm,bn,density,100,bclas) ;
 
-                        % r0 = isequal (A, B) ;
-                        Bmat = GB_mex_cast (full (B.matrix), bclas) ;
-                        r0 = isequal (Amat, Bmat) & ...
-                            isequal (atype, bclas) & ...
-                                isequal (A.pattern, B.pattern) ;
+                            % r0 = isequal (A, B) ;
+                            Bmat = GB_mex_cast (full (B.matrix), bclas) ;
+                            r0 = isequal (Amat, Bmat) & ...
+                                isequal (atype, bclas) & ...
+                                    isequal (A.pattern, B.pattern) ;
 
-                        r1 = GB_mex_isequal (A, B) ;
-                        assert (r0 == r1) 
+                            r1 = GB_mex_isequal (A, B) ;
+                            assert (r0 == r1) 
 
+                        end
                     end
                 end
             end

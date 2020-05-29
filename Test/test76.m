@@ -14,6 +14,7 @@ types = types.all ;
 
 for k1 = 1:length(types)
     type = types {k1} ;
+    fprintf ('\n%-14s ', type) ;
     for nrows_old = [1 2 5 10]
         for ncols_old = [1 2 5 10]
 

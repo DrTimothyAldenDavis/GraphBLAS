@@ -31,9 +31,21 @@ if (Atrans)
     A.pattern = A.pattern' ;
 end
 
-T.matrix = GB_spec_zeros (size (A.matrix), A.class) ;
+atype = A.class ;
+T.matrix = GB_spec_zeros (size (A.matrix), atype) ;
 thunk = full (thunk) ;
-xthunk = GB_mex_cast (thunk, A.class) ;
+xthunk = GB_mex_cast (thunk, atype) ;
+
+is_complex = contains (atype, 'complex') ;
+if (is_complex)
+    switch (opname)
+        case { 'gt_zero', 'ge_zero', 'lt_zero', 'le_zero', ...
+               'gt_thunk', 'ge_thunk', 'lt_thunk', 'le_thunk' }
+            error ('op %s not defined for complex types', opname) ;
+        otherwise
+            % op is OK
+    end
+end
 
 switch (opname)
     case 'tril'

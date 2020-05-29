@@ -7,28 +7,26 @@ function test11
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 types = types.all ;
 
-fprintf ('\n ------------ testing GrB_extractTuples\n') ;
+fprintf ('\n------------ testing GrB_extractTuples') ;
 
 % type of the output X
 for k1 = 1:length (types)
     xtype = types {k1}  ;
-    fprintf ('\n%s', xtype) ;
+    fprintf ('\n%-14s ', xtype) ;
 
     % type of the matrix A
     for k2 = 1:length (types)
         atype = types {k2}  ;
 
         % create a matrix
+        fprintf ('.') ;
         for m = [1 10 25]
             for n = [1 10 25]
-                fprintf ('.') ;
                 clear A
-                A.matrix = sprandn (m, n, 0.1) ;
-                A.class = atype ;
+                A = GB_spec_random (m, n, 0.1, 32, atype) ;
 
                 clear B
-                B.matrix = sprandn (m*n, 1, 0.1) ;
-                B.class = atype ;
+                B = GB_spec_random (m*n, 1, 0.1, 32, atype) ;
 
                 for A_is_hyper = 0:1
                 for A_is_csc   = 0:1
@@ -42,11 +40,20 @@ for k1 = 1:length (types)
                 % order, but the MATLAB GB_spec_extractTuples always returns
                 % the tuples in column major order.  Either way is fine since
                 % the order does not matter.
-                assert (isequal (sortrows ([I2 J2 X2]), sortrows ([I1 J1 X1])));
 
-                % assert (isequal (I1, I2)) ;
-                % assert (isequal (J1, J2)) ;
-                % assert (isequal (X1, X2)) ;
+                [~,p1] = sortrows ([I1 J1]) ;
+                I1 = I1 (p1) ; 
+                J1 = J1 (p1) ; 
+                X1 = X1 (p1) ; 
+
+                [~,p2] = sortrows ([I2 J2]) ;
+                I2 = I2 (p2) ; 
+                J2 = J2 (p2) ; 
+                X2 = X2 (p2) ; 
+
+                assert (isequal (I1, I2)) ;
+                assert (isequal (J1, J2)) ;
+                assert (isequal (X1, X2)) ;
 
                 end
                 end

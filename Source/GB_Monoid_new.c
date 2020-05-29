@@ -148,7 +148,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     GrB_Monoid mon = *monoid ;
     mon->magic = GB_MAGIC ;
     mon->op = op ;
-    mon->object_kind = GB_USER_RUNTIME ;
+    mon->builtin = false ;
     size_t zsize = op->ztype->size ;
     mon->op_ztype_size = zsize ;
     mon->identity = NULL ;                  // defined below

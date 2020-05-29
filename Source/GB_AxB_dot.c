@@ -113,8 +113,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // then the type if A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
-        if (ngpus_to_use > 0 && 
-            && (semiring->object_kind == GB_BUILTIN)
+        if (ngpus_to_use > 0 && semiring->builtin &&
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code))
         {

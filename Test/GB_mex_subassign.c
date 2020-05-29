@@ -593,13 +593,6 @@ void mexFunction
                 mexErrMsgTxt ("op failed") ;
             }
 
-//          GxB_print (op, 3) ;
-//          GxB_print (C->type, 3) ;
-//          GxB_print (Complex, 3) ;
-//          GxB_print (Complex_plus, 3) ;
-//          printf ("user complex %d: %d %d\n", user_complex,
-//          (Complex != GxB_FC64), (C->type == Complex) ) ;
-
             // get the reduce monoid
             if (user_complex)
             {

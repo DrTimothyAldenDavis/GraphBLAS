@@ -416,8 +416,8 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
     sizeof (ztype),                                                         \
-    GB_BUILTIN,                                                             \
-    NULL                                                                    \
+    NULL,                                                                   \
+    true                                                                    \
 } ;                                                                         \
 GrB_Monoid GxB_ ## op ## _MONOID = & GB_opaque_GxB_ ## op ## _MONOID ;
 
@@ -431,8 +431,8 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
     sizeof (ztype),                                                         \
-    GB_BUILTIN,                                                             \
-    & GB_opaque_terminal_ ## op                                             \
+    & GB_opaque_terminal_ ## op,                                            \
+    true                                                                    \
 } ;                                                                         \
 GrB_Monoid GxB_ ## op ## _MONOID = & GB_opaque_GxB_ ## op ## _MONOID ;
 
@@ -600,7 +600,7 @@ struct GB_Semiring_opaque GB (GxB_ ## add ## _ ## mult) =                   \
     GB_MAGIC,                                                               \
     & GB_MONOID (add),                                                      \
     & GB (prefix ## mult),                                                  \
-    GB_BUILTIN                                                              \
+    true                                                                    \
 } ;                                                                         \
 GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 
@@ -611,7 +611,7 @@ struct GB_Semiring_opaque GB (GxB_ ## add ## _ ## mult) =                   \
     GB_MAGIC,                                                               \
     & GB_BOOL_MONOID (add),                                                 \
     & GB (GrB_ ## mult),                                                    \
-    GB_BUILTIN                                                              \
+    true                                                                    \
 } ;                                                                         \
 GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 

@@ -1,4 +1,4 @@
-function test14
+% function test14
 %TEST14 test GrB_reduce
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -6,7 +6,7 @@ function test14
 
 fprintf ('\ntest14: reduce to column and scalar\n') ;
 
-[~, ~, add_ops types, ~, ~] = GB_spec_opsall ;
+[~, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 types = types.all ;
 
 rng ('default') ;
@@ -38,7 +38,7 @@ for k1 = 1:length(types)
         crange = 1 ;
     end
 
-    is_float = isequal (atype, 'single') || isequal (atype, 'double') ;
+    is_float = contains (atype, 'single') || contains (atype, 'double') ;
 
     for A_is_hyper = 0:1
     for A_is_csc   = 0:1
@@ -51,8 +51,10 @@ for k1 = 1:length(types)
 
         if (isequal (op, 'any'))
             tol = [ ] ;
-        elseif (is_float)
-            tol = 64 * eps (atype) ;
+        elseif (contains (atype, 'single'))
+            tol = 1e-5 ;
+        elseif (contains (atype, 'double'))
+            tol = 1e-12 ;
         else
             tol = 0 ;
         end
@@ -112,7 +114,7 @@ for k1 = 1:length(types)
 
         A_flip = A ;
         if (~A.is_csc && is_float)
-            A_flip.matrix = A_flip.matrix' ;
+            A_flip.matrix = A_flip.matrix.' ;
             A_flip.pattern = A_flip.pattern' ;
             A_flip.is_csc = true ;
         end
@@ -128,7 +130,7 @@ for k1 = 1:length(types)
         else
             c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
             if (is_float)
-                assert (abs (c1-c2) < 4 * eps (A.class) *  (abs(c1) + 1))
+                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
             else
                 assert (isequal (c1, c2)) ;
             end
@@ -139,7 +141,7 @@ for k1 = 1:length(types)
         if (~isequal (op, 'any'))
             c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_flip) ;
             if (is_float)
-                assert (abs (c1-c2) < 4 * eps (A.class) *  (abs(c1) + 1))
+                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
             else
                 assert (isequal (c1, c2)) ;
             end

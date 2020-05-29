@@ -1,4 +1,4 @@
-function test134
+% function test134
 %TEST134 test GxB_select
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -19,7 +19,7 @@ dt = struct ('inp0', 'tran') ;
 
 for k1 = 1:length(types)
     atype = types {k1} ;
-    fprintf ('%s: ', atype) ;
+    fprintf ('%-14s ', atype) ;
 
     for A_is_hyper = 0:1
     for A_is_csc   = 0:1
@@ -62,6 +62,17 @@ for k1 = 1:length(types)
         op = select_ops {k2} ;
         % fprintf ('%s ', op) ;
 
+        if (contains (atype, 'complex'))
+            switch (op)
+                case { 'gt_zero', 'ge_zero', 'lt_zero', 'le_zero', ...
+                       'gt_thunk', 'ge_thunk', 'lt_thunk', 'le_thunk' }
+                    continue ;
+                    % error ('op %s not defined for complex types', op) ;
+                otherwise
+                    % op is OK
+            end
+        end
+
         switch op
             case {'tril'    }
                 klist = [-4 0 4] ;
@@ -96,6 +107,8 @@ for k1 = 1:length(types)
             case {'le_thunk'}
                 klist = [0 1] ;
         end
+
+
 
         for k = klist
 

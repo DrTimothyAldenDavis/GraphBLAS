@@ -66,13 +66,19 @@ for k0 = 1:size (problems,1) ;
         is_associative = ops {k1,2} ;
         op_is_any = isequal (op.opname, 'any') ;
 
-        fprintf ('%s', op.opname) ;
+        fprintf ('\n%-14s ', op.opname) ;
 
-        % try every operator class
+        % try every operator type
         for k2 = 1:length (types)
             op.optype = types {k2} ;
             z = GB_mex_cast (1, op.optype) ;
             opint = isinteger (z) || islogical (z) ;
+
+            try
+                GB_spec_operator (op) ;
+            catch
+                continue
+            end
 
             % the non-boolean logical operators are not associative
             if (isequal (op.opname, 'or')  || ...
@@ -84,16 +90,24 @@ for k0 = 1:size (problems,1) ;
                 end
             end
 
+            if (contains (op.optype, 'single'))
+                epsilon = 1e-5 ;
+            elseif (contains (op.optype, 'double'))
+                epsilon = 1e-12 ;
+            else
+                epsilon = 0 ;
+            end
+
             if (fulltest)
                 k3list = 1:length(types) ;
             else
                 k3list = unique ([k2 randperm(11,2)]) ;
             end
 
-            % try every class for X
+            % try every type for X
             for k3 = k3list % 1:length (types)
-                xclass = types {k3} ;
-                X = GB_mex_cast (Y, xclass) ;
+                xtype = types {k3} ;
+                X = GB_mex_cast (Y, xtype) ;
                 fprintf ('.') ;
 
                 if (fulltest)
@@ -102,20 +116,20 @@ for k0 = 1:size (problems,1) ;
                     k4list = unique ([k3 randperm(11,2)]) ;
                 end
 
-                % try every class for the result
+                % try every type for the result
                 for k4 = k4list % 1:length (types)
-                    cclass = types {k4} ;
+                    ctype = types {k4} ;
 
                     % build the matrix in the natural order
                     % fprintf ('\n-------------------------------op: %s ', ...
                     % op.opname) ;
                     % fprintf ('optype: %s ', op.optype) ;
-                    % fprintf ('xclass: %s ', xclass) ;
+                    % fprintf ('xtype: %s ', xtype) ;
 
                     for A_is_csc   = 0:1
 
                         A = GB_mex_Matrix_build (I, J, X, nrows, ncols, op, ...
-                            cclass, A_is_csc) ;
+                            ctype, A_is_csc) ;
                         % A is sparse but may have explicit zeros
                         if (~spok (A.matrix*1))
                             fprintf ('test failure: invalid sparse matrix\n') ;
@@ -123,7 +137,7 @@ for k0 = 1:size (problems,1) ;
                         end
                         A.matrix = full (double (A.matrix)) ;
                         if (~op_is_any)
-                            S = GB_spec_build (I, J, X, nrows, ncols, op, 'natural', cclass) ;
+                            S = GB_spec_build (I, J, X, nrows, ncols, op, 'natural', ctype) ;
                             if (~isequalwithequalnans (A.matrix, double (S.matrix))) ;
                                 fprintf ('test failure: does not match spec\n') ;
                                 assert (false) ;
@@ -134,7 +148,7 @@ for k0 = 1:size (problems,1) ;
                         % build in random order, for associative operators.
                         if (is_associative)
                             [S2 p] = GB_spec_build (I, J, X, nrows, ncols, ...
-                                op, 'random', cclass) ;
+                                op, 'random', ctype) ;
                             if (op_is_any)
                                 % 'any' reduction
                             elseif (opint)
@@ -145,7 +159,7 @@ for k0 = 1:size (problems,1) ;
                                 end
                             else
                                 % floating point is approximately associative
-                                tol = norm (double (S2.matrix)) * eps (op.optype) ;
+                                tol = norm (double (S2.matrix)) * epsilon ;
                                 ok = isequal (isnan (A.matrix), isnan (S2.matrix)) ;
                                 A.matrix (isnan (A.matrix)) = 0 ;
                                 S2.matrix (isnan (S2.matrix)) = 0 ;
@@ -161,8 +175,8 @@ for k0 = 1:size (problems,1) ;
                     % build a vector in the natural order (discard J)
                     % fprintf ('\n-------------------------------op: %s ', op) ;
                     % fprintf ('optype: %s ', optype) ;
-                    % fprintf ('xclass: %s\n', xclass) ;
-                    A = GB_mex_Vector_build (I, X, nrows, op, cclass) ;
+                    % fprintf ('xtype: %s\n', xtype) ;
+                    A = GB_mex_Vector_build (I, X, nrows, op, ctype) ;
                     % A is sparse but may have explicit zeros
                     if (~spok (A.matrix*1))
                         fprintf ('test failure: invalid sparse matrix\n') ;
@@ -170,7 +184,7 @@ for k0 = 1:size (problems,1) ;
                     end
                     if (~op_is_any)
                         A.matrix = full (double (A.matrix)) ;
-                        S = GB_spec_build (I, [ ], X, nrows, 1, op, 'natural', cclass) ;
+                        S = GB_spec_build (I, [ ], X, nrows, 1, op, 'natural', ctype) ;
                         if (~isequalwithequalnans (A.matrix, double (S.matrix))) ;
                             fprintf ('test failure: does not match spec\n') ;
                             assert (false) ;

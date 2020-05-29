@@ -129,7 +129,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     if (X != NULL)
     {
         GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-        if (xcode > GB_FP64_code || xcode == A->type->code)
+        if (xcode == GB_UDT_code || xcode == A->type->code)
         { 
             // Copy the values without typecasting.  For user-defined types,
             // the (void *) X array is assumed to point to values of the right

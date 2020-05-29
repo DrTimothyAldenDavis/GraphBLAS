@@ -41,7 +41,9 @@ typedef struct
 {
     char    name [256] ;
     size_t  total_global_memory ;
-    size_t  number_of_sms ;
+    int  number_of_sms ;
+    int  compute_capability_major;
+    int  compute_capability_minor;
 }
 GB_cuda_device ;
 

@@ -21,7 +21,7 @@
     {                                               \
         if (semiring != NULL)                       \
         {                                           \
-            GrB_Semiring_free (&(semiring->add)) ;  \
+            GrB_Monoid_free (&(semiring->add)) ;    \
         }                                           \
         GrB_Semiring_free (&semiring) ;             \
     }                                               \

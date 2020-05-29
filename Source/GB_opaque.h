@@ -292,22 +292,14 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
     GB_Select_Opcode opcode ;   // operator opcode
 } ;
 
-// codes used in GrB_Monoid and GrB_Semiring objects
-typedef enum
-{
-    GB_BUILTIN,             // built-in monoid or semiring
-    GB_USER_RUNTIME         // user monoid or semiring
-}
-GB_object_code ;
-
 struct GB_Monoid_opaque     // content of GrB_Monoid
 {
     int64_t magic ;         // for detecting uninitialized objects
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid
     size_t op_ztype_size ;  // size of the type (also is op->ztype->size)
-    GB_object_code object_kind ;   // built-in or user defined
     void *terminal ;        // value that triggers early-exit (NULL if no value)
+    bool builtin ;          // built-in or user defined
 } ;
 
 struct GB_Semiring_opaque   // content of GrB_Semiring
@@ -315,7 +307,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     int64_t magic ;         // for detecting uninitialized objects
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
-    GB_object_code object_kind ;   // built-in or user defined
+    bool builtin ;          // built-in or user defined
 } ;
 
 struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix

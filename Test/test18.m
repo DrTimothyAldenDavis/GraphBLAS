@@ -29,7 +29,7 @@ elseif (fulltest == 1)
     k8list = 0:1 ;
 else
     fprintf ('test18 ------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
-    k1test = [ 1 2 11 ] ;
+    k1test = [ 1 2 11 12 13] ;
     k4test = 0 ;
     k6list = [false] ;
     k7list = [false] ;
@@ -52,7 +52,7 @@ n_semirings = 0 ;
 for k1 = k1test % 1:length (types)
     type = types {k1}  ;
 
-    fprintf ('\n%s:\n', type) ;
+    fprintf ('\n\n========================================= %s:\n', type) ;
 
     k2test = 1:length(bin_ops) ;
 
@@ -152,7 +152,7 @@ for k1 = k1test % 1:length (types)
                     if (k4 == 0)
                         accum = ''  ;
                         ntypes = 1 ;
-                        fprintf ('accum: [ none ]') ;
+                        % fprintf ('accum: [ none ]') ;
                     else
                         accum.opname = bin_ops {k4}  ;
                         ntypes = length (types) ;

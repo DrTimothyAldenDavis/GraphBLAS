@@ -156,6 +156,8 @@ GrB_Info isequal            // return GrB_SUCCESS if successful
     else if (atype == GrB_UINT64) op = GrB_EQ_UINT64 ;
     else if (atype == GrB_FP32  ) op = GrB_EQ_FP32   ;
     else if (atype == GrB_FP64  ) op = GrB_EQ_FP64   ;
+    else if (atype == GxB_FC32  ) op = GxB_EQ_FC32   ;
+    else if (atype == GxB_FC64  ) op = GxB_EQ_FC64   ;
     else                          op = userop ; // A and B are user-defined
 
     // check the size, pattern, and values of A and B

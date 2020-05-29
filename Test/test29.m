@@ -12,10 +12,14 @@ fprintf ('\ntest29: ----------------- GrB_reduce with zombies\n') ;
 for m = [1 5 10]
     for n = [1 5 10]
 
+        fprintf ('.') ;
         rng ('default') ;
 
         for k3 = 1:length (types)
             atype = types {k3}  ;
+
+            for builtin = 0:1
+            GB_builtin_complex_set (builtin) ;
 
             clear C
             C.matrix = 100 * sparse (rand (m,n)) ;
@@ -27,21 +31,26 @@ for m = [1 5 10]
 
             A = GB_spec_random (m,n,0.1,100,atype, A_is_csc, A_is_hyper) ;
 
-            if (isequal (atype, 'logical'))
-                ops = {'or', 'and', 'xor', 'eq'} ;
-            else
-                ops = {'min', 'max', 'plus', 'times'} ;
-            end
-
-            fprintf ('.') ;
             for kk4 = 1:length(add_ops)
 
-                op = ops {kk4} ;
+                op = add_ops {kk4} ;
                 try
                     GB_spec_operator (op, atype) ;
                     cin = GB_spec_identity (op, atype) ;
                 catch
                     continue
+                end
+                if (isempty (cin))
+                    cin = GB_mex_cast (0, atype) ;
+                end
+
+                if (~builtin)
+                    % no user-defined Complex_any_monoid
+                    if (contains (atype, 'complex'))
+                        if (isequal (op, 'any'))
+                            continue ;
+                        end
+                    end
                 end
 
                 [C3,c1,c3] = GB_mex_subassign (C, [ ], [ ], A, ...
@@ -55,10 +64,17 @@ for m = [1 5 10]
                     assert (isequal (c1,c2))
                 end
 
+                if (~builtin)
+                    % optype is double, which can't be used to
+                    % reduce the user-defined type 'Complex'
+                    if (contains (atype, 'complex'))
+                        continue ;
+                    end
+                end
+
                 op_plus.opname = 'plus' ;
                 op_plus.optype = 'double' ;
                 c4 = GB_mex_reduce_to_scalar (0, '', op_plus, C3) ;
-
                 if (isfloat (c3))
                     assert (isequal (c3,c4) || ...
                         (abs (c3-c4) <= 8 * eps (c4)))  ;
@@ -66,13 +82,15 @@ for m = [1 5 10]
                     assert (isequal (c3,c4))
                 end
 
-
+            end
             end
             end
             end
         end
     end
 end
+
+GB_builtin_complex_set (1) ;
 
 fprintf ('\ntest29: all tests passed\n') ;
 
