@@ -1,8 +1,8 @@
-function w = GB_spec_eWiseAdd_Vector (w, mask, accum, add, u, v, descriptor)
-%GB_SPEC_EWISEADD_VECTOR a MATLAB mimic of GrB_eWiseAdd_Vector
+function w = GB_spec_Vector_eWiseAdd (w, mask, accum, add, u, v, descriptor)
+%GB_SPEC_VECTOR_EWISEADD a MATLAB mimic of GrB_Vector_eWiseAdd
 %
 % Usage:
-% w = GB_spec_eWiseAdd_Vector (w, mask, accum, add, u, v, descriptor)
+% w = GB_spec_Vector_eWiseAdd (w, mask, accum, add, u, v, descriptor)
 %
 % Computes w<mask> = accum(w,t), in GraphBLAS notation, where t =u+v,
 % The pattern of t is the union of u and v.
@@ -15,7 +15,7 @@ function w = GB_spec_eWiseAdd_Vector (w, mask, accum, add, u, v, descriptor)
 %-------------------------------------------------------------------------------
 
 if (nargout > 1 || nargin ~= 7)
-    error ('usage: C = GB_spec_eWiseAdd_Vector (w, mask, accum, add, u, v, descriptor)') ;
+    error ('usage: C = GB_spec_Vector_eWiseAdd (w, mask, accum, add, u, v, descriptor)') ;
 end
 
 % make sure u is a column vector
@@ -36,6 +36,6 @@ if (isfield (descriptor, 'inp1'))
     descriptor = rmfield (descriptor, 'inp1') ;
 end
 
-w = GB_spec_eWiseAdd_Matrix (w, mask, accum, add, u, v, descriptor) ;
+w = GB_spec_Matrix_eWiseAdd (w, mask, accum, add, u, v, descriptor) ;
 
 

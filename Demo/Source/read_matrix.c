@@ -268,7 +268,7 @@ GrB_Info read_matrix        // read a double-precision or boolean matrix
             double tic [2], t ;
             simple_tic (tic) ;
             OK (GrB_Matrix_new (&A, xtype, nrows, nrows)) ;
-            OK (GrB_eWiseAdd_Matrix_BinaryOp (A, NULL, NULL, xop, C, C, dt2)) ;
+            OK (GrB_Matrix_eWiseAdd_BinaryOp (A, NULL, NULL, xop, C, C, dt2)) ;
             OK (GrB_Matrix_free (&C)) ;
 
             if (boolean)

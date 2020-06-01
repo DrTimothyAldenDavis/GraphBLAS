@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbkronecker is an interface to GxB_kron
+// gbkronecker is an interface to GrB_kronecker
 
 // Usage:
 
@@ -160,7 +160,7 @@ void mexFunction
     // compute C<M> += kron (A,B)
     //--------------------------------------------------------------------------
 
-    OK (GxB_kron (C, M, accum, op, A, B, desc)) ;
+    OK (GrB_kronecker (C, M, accum, op, A, B, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

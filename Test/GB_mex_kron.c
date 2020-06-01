@@ -109,8 +109,29 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // C<Mask> = accum(C,kron(A,B))
-    METHOD (GxB_kron (C, Mask, accum, mult, A, B, desc)) ;
+    // test all 3 variants: monoid, semiring, and binary op
+    if (mult == GrB_PLUS_FP64)
+    {
+        // C<Mask> = accum(C,kron(A,B)), monoid variant
+        METHOD (GrB_kronecker (C, Mask, accum, GrB_PLUS_MONOID_FP64,
+            A, B, desc)) ;
+    }
+    else if (mult == GrB_TIMES_FP64)
+    {
+        // C<Mask> = accum(C,kron(A,B)), semiring variant
+        METHOD (GrB_kronecker (C, Mask, accum, GrB_PLUS_TIMES_SEMIRING_FP64,
+            A, B, desc)) ;
+    }
+    else if (mult == GrB_TIMES_FP32)
+    {
+        // C<Mask> = accum(C,kron(A,B)), binary op variant (old name)
+        METHOD (GxB_kron (C, Mask, accum, mult, A, B, desc)) ;
+    }
+    else
+    {
+        // C<Mask> = accum(C,kron(A,B)), binary op variant (new name)
+        METHOD (GrB_kronecker (C, Mask, accum, mult, A, B, desc)) ;
+    }
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

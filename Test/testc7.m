@@ -8,7 +8,7 @@ fprintf ('\ntestc7: all complex assign C(I,J)=A --------------------------\n') ;
 rng ('default')
 
 dclear.outp = 'replace' ;
-dclear.mask = 'scmp' ;
+dclear.mask = 'complement' ;
 tol = 1e-13 ;
 
 seed = 1 ;

@@ -63,6 +63,8 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
+
+
 GrB_Info GB_unop__isinf_bool_fp32
 (
     bool *Cx,       // Cx and Ax may be aliased
@@ -83,6 +85,8 @@ GrB_Info GB_unop__isinf_bool_fp32
     return (GrB_SUCCESS) ;
     #endif
 }
+
+
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

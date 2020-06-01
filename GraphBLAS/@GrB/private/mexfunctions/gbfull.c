@@ -102,7 +102,7 @@ void mexFunction
     }
     else
     {
-        // T = A, and let GrB_eWiseAdd do the typecasting
+        // T = A, and let GrB_Matrix_eWiseAdd_BinaryOp do the typecasting
         S = A ;
     }
 
@@ -113,7 +113,7 @@ void mexFunction
     GrB_Matrix C ;
     OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
     OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-    OK (GrB_eWiseAdd_Matrix_BinaryOp (C, NULL, NULL,
+    OK (GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
         gb_first_binop (type), S, B, NULL)) ;
 
     //--------------------------------------------------------------------------

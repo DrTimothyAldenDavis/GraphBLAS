@@ -17,7 +17,7 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop__identity_fc64_fc64
+// op(A)  function:  (none)
 // op(A') function:  GB_tran__identity_fc64_fc64
 
 // C type:   GxB_FC64_t
@@ -63,7 +63,9 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop__identity_fc64_fc64
+#if 0
+
+GrB_Info (none)
 (
     GxB_FC64_t *Cx,       // Cx and Ax may be aliased
     GxB_FC64_t *Ax,
@@ -83,6 +85,8 @@ GrB_Info GB_unop__identity_fc64_fc64
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

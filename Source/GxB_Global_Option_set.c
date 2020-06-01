@@ -37,7 +37,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_HYPER : 
 
-            {
+            { 
                 va_start (ap, field) ;
                 double hyper_ratio = va_arg (ap, double) ;
                 va_end (ap) ;
@@ -47,7 +47,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_FORMAT : 
 
-            {
+            { 
                 va_start (ap, field) ;
                 int format = va_arg (ap, int) ;
                 va_end (ap) ;
@@ -68,7 +68,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
-            {
+            { 
                 va_start (ap, field) ;
                 int nthreads_max_new = va_arg (ap, int) ;
                 va_end (ap) ;
@@ -80,7 +80,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
-            {
+            { 
                 va_start (ap, field) ;
                 double chunk = va_arg (ap, double) ;
                 va_end (ap) ;
@@ -94,7 +94,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_BURBLE :
 
-            {
+            { 
                 va_start (ap, field) ;
                 int burble = va_arg (ap, int) ;
                 va_end (ap) ;
@@ -108,7 +108,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
 
-            {
+            { 
                 va_start (ap, field) ;
                 GrB_Desc_Value gpu_control = va_arg (ap, GrB_Desc_Value) ;
                 va_end (ap) ;
@@ -118,7 +118,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
 
-            {
+            { 
                 va_start (ap, field) ;
                 double gpu_chunk = va_arg (ap, double) ;
                 va_end (ap) ;
@@ -132,7 +132,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_GLOBAL_MKL :          // same as GxB_MKL
 
-            {
+            { 
                 va_start (ap, field) ;
                 int use_mkl = va_arg (ap, int) ;
                 va_end (ap) ;

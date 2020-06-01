@@ -78,7 +78,7 @@ for k0 = 1:size(m_list,2)
                 fprintf ('.') ;
 
                 n_semirings = n_semirings + 1 ;
-                fprintf ('[%s.%s.%s]\n', addop, mulop, semiring_type) ;
+                % fprintf ('[%s.%s.%s]\n', addop, mulop, semiring_type) ;
 
                 AT.class = semiring_type ;
                 A.class = semiring_type ;

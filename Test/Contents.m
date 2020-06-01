@@ -24,13 +24,13 @@
 %   GB_spec_build                 - a MATLAB version of GrB_Matrix_build and GrB_vector_build
 %   GB_spec_compare               - compare MATLAB mimic result with GraphBLAS result
 %   GB_spec_descriptor            - return components of a descriptor
-%   GB_spec_eWiseAdd_Matrix       - a MATLAB mimic of GrB_eWiseAdd_Matrix
-%   GB_spec_eWiseAdd_Vector       - a MATLAB mimic of GrB_eWiseAdd_Vector
-%   GB_spec_eWiseMult_Matrix      - a MATLAB mimic of GrB_eWiseMult_Matrix
-%   GB_spec_eWiseMult_Vector      - a MATLAB mimic of GrB_eWiseMult_Vector
+%   GB_spec_Matrix_eWiseAdd       - a MATLAB mimic of GrB_Matrix_eWiseAdd
+%   GB_spec_Vector_eWiseAdd       - a MATLAB mimic of GrB_Vector_eWiseAdd
+%   GB_spec_Matrix_eWiseMult      - a MATLAB mimic of GrB_Matrix_eWiseMult
+%   GB_spec_Vector_eWiseMult      - a MATLAB mimic of GrB_Vector_eWiseMult
 %   GB_spec_extractTuples         - a MATLAB mimic of GrB_*_extractTuples
 %   GB_spec_identity              - the additive identity of a monoid
-%   GB_spec_kron                  - a MATLAB mimic of GxB_kron
+%   GB_spec_kron                  - a MATLAB mimic of GrB_kronecker
 %   GB_spec_mask                  - a pure MATLAB implementation of GrB_mask
 %   GB_spec_matrix                - a MATLAB mimic that conforms a matrix to the GraphBLAS spec
 %   GB_spec_mxm                   - a MATLAB mimic of GrB_mxm
@@ -143,7 +143,7 @@
 %   test75   - test GrB_mxm and GrB_vxm on all semirings
 %   test75b  - GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
 %   test76   - test GxB_resize
-%   test77   - test GxB_kron
+%   test77   - test GrB_kronecker
 %   test78   - test subref
 %   test79   - run all matrices with test06
 %   test80   - rerun test06 with different matrices
@@ -217,7 +217,9 @@
 %   test147  - test C<M>A*B with very sparse M
 %   test148  - eWiseAdd with aliases
 %   test149  - test fine hash method for C<!M>=A*B
-%   test150  - test GrB_mxm with typecasting and zombies (dot3)
+%   test150  - test GrB_mxm with typecasting and zombies (dot3 and saxpy)
+%   test151  - test bitwise operators
+%   test152  - test C = A+B for dense A, B, and C
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B

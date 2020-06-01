@@ -84,9 +84,9 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                 int mask = (int) desc->mask ;
                 switch (value)
                 {
-                    case GrB_COMP:      mask |= GrB_COMP ;      break ;
-                    case GrB_STRUCTURE: mask |= GrB_STRUCTURE ; break ;
-                    default:            mask = value ;          break ;
+                    case GrB_COMP      : mask |= GrB_COMP ;      break ;
+                    case GrB_STRUCTURE : mask |= GrB_STRUCTURE ; break ;
+                    default            : mask = value ;          break ;
                 }
                 desc->mask = (GrB_Desc_Value) mask ;
             }

@@ -244,10 +244,7 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         // delete any lingering zombies and assemble any pending tuples
-        if (GB_PENDING (M) || GB_ZOMBIES (M))
-        { 
-            GB_OK (GB_Matrix_wait (M, Context)) ;
-        }
+        GB_MATRIX_WAIT (M) ;
 
         // R has the same CSR/CSC format as C_result.  It is hypersparse if
         // both C and Z are hypersparse.
@@ -286,13 +283,10 @@ GrB_Info GB_mask                // C<M> = Z
             C = C_result ;
 
             // delete any lingering zombies and assemble any pending tuples
-            if (GB_PENDING (C) || GB_ZOMBIES (C))
-            { 
-                GB_OK (GB_Matrix_wait (C, Context)) ;
-            }
+            GB_MATRIX_WAIT (C) ;
         }
 
-        // no more zombies or pending tuples
+        // no more zombies or pending tuples in M or C
         ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
         ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
 

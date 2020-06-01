@@ -83,40 +83,40 @@ for k2 = 1:length(binops)
         % C = A+B
         %---------------------------------------
 
-        C0 = GB_spec_eWiseAdd_Matrix (S, [ ], [ ], op, A, B, [ ]) ;
-        C1 = GB_mex_eWiseAdd_Matrix  (S, [ ], [ ], op, A, B, [ ]) ;
+        C0 = GB_spec_Matrix_eWiseAdd (S, [ ], [ ], op, A, B, [ ]) ;
+        C1 = GB_mex_Matrix_eWiseAdd  (S, [ ], [ ], op, A, B, [ ]) ;
         GB_spec_compare (C0, C1) ;
 
         %---------------------------------------
         % C<M> = A+B, both A and B dense
         %---------------------------------------
 
-        C0 = GB_spec_eWiseAdd_Matrix (S, M, [ ], op, A, B, desc) ;
-        C1 = GB_mex_eWiseAdd_Matrix  (S, M, [ ], op, A, B, desc) ;
+        C0 = GB_spec_Matrix_eWiseAdd (S, M, [ ], op, A, B, desc) ;
+        C1 = GB_mex_Matrix_eWiseAdd  (S, M, [ ], op, A, B, desc) ;
         GB_spec_compare (C0, C1) ;
 
         %---------------------------------------
         % C<M> = A+E, A dense, E sparse
         %---------------------------------------
 
-        C0 = GB_spec_eWiseAdd_Matrix (S, M, [ ], op, A, E, desc) ;
-        C1 = GB_mex_eWiseAdd_Matrix  (S, M, [ ], op, A, E, desc) ;
+        C0 = GB_spec_Matrix_eWiseAdd (S, M, [ ], op, A, E, desc) ;
+        C1 = GB_mex_Matrix_eWiseAdd  (S, M, [ ], op, A, E, desc) ;
         GB_spec_compare (C0, C1) ;
 
         %---------------------------------------
         % C<M> = E+A, A dense, E sparse
         %---------------------------------------
 
-        C0 = GB_spec_eWiseAdd_Matrix (S, M, [ ], op, E, A, desc) ;
-        C1 = GB_mex_eWiseAdd_Matrix  (S, M, [ ], op, E, A, desc) ;
+        C0 = GB_spec_Matrix_eWiseAdd (S, M, [ ], op, E, A, desc) ;
+        C1 = GB_mex_Matrix_eWiseAdd  (S, M, [ ], op, E, A, desc) ;
         GB_spec_compare (C0, C1) ;
 
         %---------------------------------------
         % C += A+B
         %---------------------------------------
 
-        C0 = GB_spec_eWiseAdd_Matrix (C, [ ], op, op, A, B, [ ]) ;
-        C1 = GB_mex_eWiseAdd_Matrix  (C, [ ], op, op, A, B, [ ]) ;
+        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], op, op, A, B, [ ]) ;
+        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], op, op, A, B, [ ]) ;
         GB_spec_compare (C0, C1) ;
 
     end

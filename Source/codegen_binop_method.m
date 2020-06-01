@@ -15,13 +15,11 @@ name = sprintf ('%s_%s', binop, fname) ;
 % function names
 fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
-fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Cdense_accumA'', `GB_Cdense_accumA__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Cdense_accumX'', `GB_Cdense_accumX__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Cdense_accumB'', `GB_Cdense_accumB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Cdense_accumb'', `GB_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
 
-% subset of operators for ewise3_accum
+% subset of operators for GB_dense_ewise3_accum
 switch (binop)
     case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv' }
         % these operators are used in ewise3_accum
@@ -32,6 +30,35 @@ switch (binop)
         fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `(none)'')\n') ;
         fprintf (f, 'define(`if_is_binop_subset'', `#if 0'')\n') ;
         fprintf (f, 'define(`endif_is_binop_subset'', `#endif'')\n') ;
+end
+
+% subset of operators for GB_AxB_rowscale and GB_AxB_colscale
+switch (binop)
+    case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv', ...
+        'first', 'second', 'pair', 'isgt', 'islt', 'isge', 'isle', ...
+        'gt', 'lt', 'ge', 'le', 'lor', 'land', 'lxor' }
+        % these operators are used in GB_AxB_*scale
+        binop_is_semiring_multiplier = true ;
+    case { 'eq', 'iseq', 'ne', 'isne' }
+        % these do not appear in complex semirings
+        binop_is_semiring_multiplier = (~contains (xtype, 'FC')) ;
+    case { 'bor', 'band', 'bxor', 'bxnor' }
+        % these operators are used in GB_AxB_*scale for uint* only
+        binop_is_semiring_multiplier = contains (xtype, 'uint') ;
+    otherwise
+        % these operators are not used in GB_AxB_*scale by any builtin semiring
+        binop_is_semiring_multiplier = false ;
+end
+if (binop_is_semiring_multiplier)
+    fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
+    fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
+    fprintf (f, 'define(`if_binop_is_semiring_multiplier'', `'')\n') ;
+    fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `'')\n') ;
+else
+    fprintf (f, 'define(`GB_AxD'', `(none)'')\n') ;
+    fprintf (f, 'define(`GB_DxB'', `(node)'')\n') ;
+    fprintf (f, 'define(`if_binop_is_semiring_multiplier'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `#endif'')\n') ;
 end
 
 if (isequal (binop, 'second'))
@@ -169,7 +196,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 30 ;
+trim = 32 ;
 
 % construct the *.c file
 cmd = sprintf (...

@@ -8,7 +8,11 @@
 //------------------------------------------------------------------------------
 
 // The #include'ing file defines the GB_BINOP_WORKER macro, and opcode, xcode,
-// ycode, and zcode, to call one of 388 builtin binary operators.
+// ycode, and zcode, to call one of 388 builtin binary operators.  The binary
+// operators are all named GrB_[OPNAME]_[XTYPE], according to the opcode/
+// opname, and the xtype of the operator.  The type of z and y are not in the
+// name.  Except for the GxB_BSHIFT_[XTYPE] operators (where y always has type
+// int8), the types of x and y are the same.
 
 {
     //--------------------------------------------------------------------------
@@ -201,6 +205,9 @@
 
 #ifndef GB_BINOP_SUBSET
 
+        // These operators are not used in C+=A+B by GB_dense_eWise3_accum
+        // when all 3 matrices are dense.
+
         //----------------------------------------------------------------------
         case GB_FIRST_opcode   :    // z = x
         //----------------------------------------------------------------------
@@ -288,8 +295,11 @@
                 case GB_UINT64_code : GB_BINOP_WORKER (_iseq, _uint64)
                 case GB_FP32_code   : GB_BINOP_WORKER (_iseq, _fp32  )
                 case GB_FP64_code   : GB_BINOP_WORKER (_iseq, _fp64  )
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // ISEQ does not appear in a builtin complex semiring
                 case GB_FC32_code   : GB_BINOP_WORKER (_iseq, _fc32  )
                 case GB_FC64_code   : GB_BINOP_WORKER (_iseq, _fc64  )
+                #endif
                 default: ;
             }
             break ;
@@ -311,8 +321,11 @@
                 case GB_UINT64_code : GB_BINOP_WORKER (_isne, _uint64)
                 case GB_FP32_code   : GB_BINOP_WORKER (_isne, _fp32  )
                 case GB_FP64_code   : GB_BINOP_WORKER (_isne, _fp64  )
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // ISNE does not appear in a builtin complex semiring
                 case GB_FC32_code   : GB_BINOP_WORKER (_isne, _fc32  )
                 case GB_FC64_code   : GB_BINOP_WORKER (_isne, _fc64  )
+                #endif
                 default: ;
             }
             break ;
@@ -363,7 +376,7 @@
         case GB_ISGE_opcode    :    // z = (x >= y)
         //----------------------------------------------------------------------
 
-            // ISGE == GE for boolean. no complex case.
+            // POW == ISGE == GE for boolean. no complex case.
             switch (xcode)
             {
                 case GB_INT8_code   : GB_BINOP_WORKER (_isge, _int8  )
@@ -418,8 +431,11 @@
                 case GB_UINT64_code : GB_BINOP_WORKER (_eq, _uint64)
                 case GB_FP32_code   : GB_BINOP_WORKER (_eq, _fp32  )
                 case GB_FP64_code   : GB_BINOP_WORKER (_eq, _fp64  )
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // EQ does not appear in a builtin complex semiring
                 case GB_FC32_code   : GB_BINOP_WORKER (_eq, _fc32  )
                 case GB_FC64_code   : GB_BINOP_WORKER (_eq, _fc64  )
+                #endif
                 default: ;
             }
             break ;
@@ -441,8 +457,11 @@
                 case GB_UINT64_code : GB_BINOP_WORKER (_ne, _uint64)
                 case GB_FP32_code   : GB_BINOP_WORKER (_ne, _fp32  )
                 case GB_FP64_code   : GB_BINOP_WORKER (_ne, _fp64  )
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // NE does not appear in a builtin complex semiring
                 case GB_FC32_code   : GB_BINOP_WORKER (_ne, _fc32  )
                 case GB_FC64_code   : GB_BINOP_WORKER (_ne, _fc64  )
+                #endif
                 default: ;
             }
             break ;
@@ -601,13 +620,19 @@
             }
             break ;
 
+#ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+
+        // pow, atan2, hypot, ... are not used as multiplicative operators in
+        // any semiring, so they are not called by GB_AxB_rowscale or
+        // GB_AxB_colscale.
+
         //----------------------------------------------------------------------
         case GB_POW_opcode    :    // z = x ^ y
         //----------------------------------------------------------------------
 
+            // POW == ISGE == GE for boolean
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_BINOP_WORKER (_pow, _bool  )
                 case GB_INT8_code   : GB_BINOP_WORKER (_pow, _int8  )
                 case GB_INT16_code  : GB_BINOP_WORKER (_pow, _int16 )
                 case GB_INT32_code  : GB_BINOP_WORKER (_pow, _int32 )
@@ -709,78 +734,6 @@
             break ;
 
         //----------------------------------------------------------------------
-        case GB_BOR_opcode :     // z = (x | y), bitwise or
-        //----------------------------------------------------------------------
-
-            switch (xcode)
-            {
-                case GB_INT8_code   : GB_BINOP_WORKER (_bor, _int8 )
-                case GB_INT16_code  : GB_BINOP_WORKER (_bor, _int16)
-                case GB_INT32_code  : GB_BINOP_WORKER (_bor, _int32)
-                case GB_INT64_code  : GB_BINOP_WORKER (_bor, _int64)
-                case GB_UINT8_code  : GB_BINOP_WORKER (_bor, _uint8 )
-                case GB_UINT16_code : GB_BINOP_WORKER (_bor, _uint16)
-                case GB_UINT32_code : GB_BINOP_WORKER (_bor, _uint32)
-                case GB_UINT64_code : GB_BINOP_WORKER (_bor, _uint64)
-                default: ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        case GB_BAND_opcode :    // z = (x & y), bitwise and
-        //----------------------------------------------------------------------
-
-            switch (xcode)
-            {
-                case GB_INT8_code   : GB_BINOP_WORKER (_band, _int8 )
-                case GB_INT16_code  : GB_BINOP_WORKER (_band, _int16)
-                case GB_INT32_code  : GB_BINOP_WORKER (_band, _int32)
-                case GB_INT64_code  : GB_BINOP_WORKER (_band, _int64)
-                case GB_UINT8_code  : GB_BINOP_WORKER (_band, _uint8 )
-                case GB_UINT16_code : GB_BINOP_WORKER (_band, _uint16)
-                case GB_UINT32_code : GB_BINOP_WORKER (_band, _uint32)
-                case GB_UINT64_code : GB_BINOP_WORKER (_band, _uint64)
-                default: ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        case GB_BXOR_opcode :    // z = (x ^ y), bitwise xor
-        //----------------------------------------------------------------------
-
-            switch (xcode)
-            {
-                case GB_INT8_code   : GB_BINOP_WORKER (_bxor, _int8 )
-                case GB_INT16_code  : GB_BINOP_WORKER (_bxor, _int16)
-                case GB_INT32_code  : GB_BINOP_WORKER (_bxor, _int32)
-                case GB_INT64_code  : GB_BINOP_WORKER (_bxor, _int64)
-                case GB_UINT8_code  : GB_BINOP_WORKER (_bxor, _uint8 )
-                case GB_UINT16_code : GB_BINOP_WORKER (_bxor, _uint16)
-                case GB_UINT32_code : GB_BINOP_WORKER (_bxor, _uint32)
-                case GB_UINT64_code : GB_BINOP_WORKER (_bxor, _uint64)
-                default: ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        case GB_BXNOR_opcode :   // z = ~(x ^ y), bitwise xnor
-        //----------------------------------------------------------------------
-
-            switch (xcode)
-            {
-                case GB_INT8_code   : GB_BINOP_WORKER (_bxnor, _int8 )
-                case GB_INT16_code  : GB_BINOP_WORKER (_bxnor, _int16)
-                case GB_INT32_code  : GB_BINOP_WORKER (_bxnor, _int32)
-                case GB_INT64_code  : GB_BINOP_WORKER (_bxnor, _int64)
-                case GB_UINT8_code  : GB_BINOP_WORKER (_bxnor, _uint8 )
-                case GB_UINT16_code : GB_BINOP_WORKER (_bxnor, _uint16)
-                case GB_UINT32_code : GB_BINOP_WORKER (_bxnor, _uint32)
-                case GB_UINT64_code : GB_BINOP_WORKER (_bxnor, _uint64)
-                default: ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
         case GB_BGET_opcode :   // z = bitget (x,y)
         //----------------------------------------------------------------------
 
@@ -838,6 +791,7 @@
         case GB_BSHIFT_opcode :   // z = bitshift (x,y)
         //----------------------------------------------------------------------
 
+            // y is always int8; z and x have int* or uint* type
             switch (xcode)
             {
                 case GB_INT8_code   : GB_BINOP_WORKER (_bshift, _int8 )
@@ -848,6 +802,92 @@
                 case GB_UINT16_code : GB_BINOP_WORKER (_bshift, _uint16)
                 case GB_UINT32_code : GB_BINOP_WORKER (_bshift, _uint32)
                 case GB_UINT64_code : GB_BINOP_WORKER (_bshift, _uint64)
+                default: ;
+            }
+            break ;
+
+#endif
+
+        //----------------------------------------------------------------------
+        case GB_BOR_opcode :     // z = (x | y), bitwise or
+        //----------------------------------------------------------------------
+
+            switch (xcode)
+            {
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // BOR for signed integers is not in any builtin semiring
+                case GB_INT8_code   : GB_BINOP_WORKER (_bor, _int8 )
+                case GB_INT16_code  : GB_BINOP_WORKER (_bor, _int16)
+                case GB_INT32_code  : GB_BINOP_WORKER (_bor, _int32)
+                case GB_INT64_code  : GB_BINOP_WORKER (_bor, _int64)
+                #endif
+                case GB_UINT8_code  : GB_BINOP_WORKER (_bor, _uint8 )
+                case GB_UINT16_code : GB_BINOP_WORKER (_bor, _uint16)
+                case GB_UINT32_code : GB_BINOP_WORKER (_bor, _uint32)
+                case GB_UINT64_code : GB_BINOP_WORKER (_bor, _uint64)
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_BAND_opcode :    // z = (x & y), bitwise and
+        //----------------------------------------------------------------------
+
+            switch (xcode)
+            {
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // BAND for signed integers is not in any builtin semiring
+                case GB_INT8_code   : GB_BINOP_WORKER (_band, _int8 )
+                case GB_INT16_code  : GB_BINOP_WORKER (_band, _int16)
+                case GB_INT32_code  : GB_BINOP_WORKER (_band, _int32)
+                case GB_INT64_code  : GB_BINOP_WORKER (_band, _int64)
+                #endif
+                case GB_UINT8_code  : GB_BINOP_WORKER (_band, _uint8 )
+                case GB_UINT16_code : GB_BINOP_WORKER (_band, _uint16)
+                case GB_UINT32_code : GB_BINOP_WORKER (_band, _uint32)
+                case GB_UINT64_code : GB_BINOP_WORKER (_band, _uint64)
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_BXOR_opcode :    // z = (x ^ y), bitwise xor
+        //----------------------------------------------------------------------
+
+            switch (xcode)
+            {
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // BXOR for signed integers is not in any builtin semiring
+                case GB_INT8_code   : GB_BINOP_WORKER (_bxor, _int8 )
+                case GB_INT16_code  : GB_BINOP_WORKER (_bxor, _int16)
+                case GB_INT32_code  : GB_BINOP_WORKER (_bxor, _int32)
+                case GB_INT64_code  : GB_BINOP_WORKER (_bxor, _int64)
+                #endif
+                case GB_UINT8_code  : GB_BINOP_WORKER (_bxor, _uint8 )
+                case GB_UINT16_code : GB_BINOP_WORKER (_bxor, _uint16)
+                case GB_UINT32_code : GB_BINOP_WORKER (_bxor, _uint32)
+                case GB_UINT64_code : GB_BINOP_WORKER (_bxor, _uint64)
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_BXNOR_opcode :   // z = ~(x ^ y), bitwise xnor
+        //----------------------------------------------------------------------
+
+            switch (xcode)
+            {
+                #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
+                // BXNOR for signed integers is not in any builtin semiring
+                case GB_INT8_code   : GB_BINOP_WORKER (_bxnor, _int8 )
+                case GB_INT16_code  : GB_BINOP_WORKER (_bxnor, _int16)
+                case GB_INT32_code  : GB_BINOP_WORKER (_bxnor, _int32)
+                case GB_INT64_code  : GB_BINOP_WORKER (_bxnor, _int64)
+                #endif
+                case GB_UINT8_code  : GB_BINOP_WORKER (_bxnor, _uint8 )
+                case GB_UINT16_code : GB_BINOP_WORKER (_bxnor, _uint16)
+                case GB_UINT32_code : GB_BINOP_WORKER (_bxnor, _uint32)
+                case GB_UINT64_code : GB_BINOP_WORKER (_bxnor, _uint64)
                 default: ;
             }
             break ;

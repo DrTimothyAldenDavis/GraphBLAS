@@ -383,7 +383,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // copy the values from A into C and cast from atype to ctype
             C->x = Cx ; C->x_shallow = false ;
-            GB_cast_array (Cx, ccode, Ax, acode, anz, Context) ;
+            GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype
@@ -512,7 +512,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // copy the values from A into C and cast from atype to ctype
             C->x = Cx ; C->x_shallow = false ;
-            GB_cast_array (Cx, ccode, Ax, acode, anz, Context) ;
+            GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype

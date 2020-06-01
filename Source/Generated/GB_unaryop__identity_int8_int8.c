@@ -17,7 +17,7 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop__identity_int8_int8
+// op(A)  function:  (none)
 // op(A') function:  GB_tran__identity_int8_int8
 
 // C type:   int8_t
@@ -63,7 +63,9 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop__identity_int8_int8
+#if 0
+
+GrB_Info (none)
 (
     int8_t *Cx,       // Cx and Ax may be aliased
     int8_t *Ax,
@@ -83,6 +85,8 @@ GrB_Info GB_unop__identity_int8_int8
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

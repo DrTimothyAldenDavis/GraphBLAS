@@ -151,11 +151,6 @@ GrB_Info GB_init            // start up GraphBLAS
         bool ok = (pthread_mutex_init (&GB_sync, NULL) == 0) ;
         if (!ok) GB_PANIC ;
     }
-    #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
-    { 
-        // no need to initialize anything for OpenMP
-        ;
-    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -209,6 +204,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (caller_is_GxB_cuda_init)
     {
         // query the system for the # of GPUs
+        GB_Global_gpu_control_set (GxB_GPU_DEFAULT) ;
         if (!GB_Global_gpu_count_set (true)) GB_PANIC ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
         fprintf (stderr, "gpu_count: %d\n", gpu_count) ;
@@ -227,11 +223,10 @@ GrB_Info GB_init            // start up GraphBLAS
     #endif
     {
         // CUDA not available at compile-time, or available but not requested.
-        GB_Global_gpu_count_set (false) ;
+        GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
+        GB_Global_gpu_count_set (0) ;
     }
 
-    // set the default GxB_GPU_CONTROL and GxB_GPU_CHUNK parameters
-    GB_Global_gpu_control_set (GxB_DEFAULT) ;
     GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
 
     //--------------------------------------------------------------------------

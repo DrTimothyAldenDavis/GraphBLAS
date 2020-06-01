@@ -111,9 +111,13 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in place, with no typecasting
         // of the output of the operator with the matrix C.  Always succeeds.
+        // There is no work to do the op is GrB_IDENTITY_*.
         // FUTURE::: also handle C += op(C), with accum
-        GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
-        GB_apply_op (Cx, op, Cx, C->type, GB_NNZ (C), Context) ;
+        if (op->opcode != GB_IDENTITY_opcode)
+        { 
+            GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+            GB_apply_op (Cx, op, Cx, C->type, GB_NNZ (C), Context) ;
+        }
         return (GrB_SUCCESS) ;
     }
     else

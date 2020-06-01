@@ -121,10 +121,10 @@ for k1 = k1_list % 1:length(mult_ops)
                     for Mask_complement = [false true]
 
                         if (Mask_complement)
-                            dnn.mask = 'scmp' ;
-                            dtn.mask = 'scmp' ;
-                            dnt.mask = 'scmp' ;
-                            dtt.mask = 'scmp' ;
+                            dnn.mask = 'complement' ;
+                            dtn.mask = 'complement' ;
+                            dnt.mask = 'complement' ;
+                            dtt.mask = 'complement' ;
                         else
                             dnn.mask = 'default' ;
                             dtn.mask = 'default' ;
@@ -225,7 +225,7 @@ for k1 = k1_list % 1:length(mult_ops)
                                             Mask1 = sprandn (m,n,0.2) ~= 0 ;
                                             Mask2 = Mask1 .* spones (sprandn (m,n,0.5)) ;
                                             S = sparse (m,n) ;
-                                            Mask3 = GB_mex_eWiseAdd_Matrix (S,[ ],[ ],'minus',Mask1,Mask2) ;
+                                            Mask3 = GB_mex_Matrix_eWiseAdd (S,[ ],[ ],'minus',Mask1,Mask2) ;
                                             clear Mask
                                             Mask.matrix = Mask3.matrix ;
                                             Mask.is_csc = M_is_csc ;
@@ -285,7 +285,7 @@ for k1 = k1_list % 1:length(mult_ops)
                                             Mask1 = sprandn (m,n,0.2) ~= 0 ;
                                             Mask2 = Mask1 .* spones (sprandn (m,n,0.5)) ;
                                             S = sparse (m,n) ;
-                                            Mask3 = GB_mex_eWiseAdd_Matrix (S,[ ],[ ],'minus',Mask1,Mask2) ;
+                                            Mask3 = GB_mex_Matrix_eWiseAdd (S,[ ],[ ],'minus',Mask1,Mask2) ;
                                             clear Mask
                                             Mask.matrix = Mask3.matrix ;
                                             Mask.is_csc = M_is_csc ;

@@ -124,13 +124,13 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
 {
     switch (status)
     {
-        case MKL_GRAPH_STATUS_SUCCESS         : return (GrB_SUCCESS) ;
-        case MKL_GRAPH_STATUS_NOT_INITIALIZED : return (GrB_UNINITIALIZED_OBJECT) ;
-        case MKL_GRAPH_STATUS_ALLOC_FAILED    : return (GrB_OUT_OF_MEMORY) ;
-        case MKL_GRAPH_STATUS_INVALID_VALUE   : return (GrB_INVALID_VALUE) ;
-        case MKL_GRAPH_STATUS_INTERNAL_ERROR  : return (GrB_PANIC) ;
-        case MKL_GRAPH_STATUS_NOT_SUPPORTED   : return (GrB_NO_VALUE) ;
-        default                               : return (GrB_PANIC) ;
+        case MKL_GRAPH_STATUS_SUCCESS:          return (GrB_SUCCESS) ;
+        case MKL_GRAPH_STATUS_NOT_INITIALIZED:  return (GrB_UNINITIALIZED_OBJECT) ;
+        case MKL_GRAPH_STATUS_ALLOC_FAILED:     return (GrB_OUT_OF_MEMORY) ;
+        case MKL_GRAPH_STATUS_INVALID_VALUE:    return (GrB_INVALID_VALUE) ;
+        case MKL_GRAPH_STATUS_INTERNAL_ERROR:   return (GrB_PANIC) ;
+        case MKL_GRAPH_STATUS_NOT_SUPPORTED:    return (GrB_NO_VALUE) ;
+        default:                                return (GrB_PANIC) ;
     }
 }
 
@@ -143,24 +143,24 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
     info = GB_info_mkl (mkl_method) ;                                       \
     switch (info)                                                           \
     {                                                                       \
-        case GrB_SUCCESS :                                                  \
+        case GrB_SUCCESS:                                                   \
             break ;                                                         \
-        case GrB_UNINITIALIZED_OBJECT :                                     \
+        case GrB_UNINITIALIZED_OBJECT:                                      \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph uninitialized"))) ; \
-        case GrB_OUT_OF_MEMORY :                                            \
+        case GrB_OUT_OF_MEMORY:                                             \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_OUT_OF_MEMORY) ;                                     \
-        case GrB_INVALID_VALUE :                                            \
+        case GrB_INVALID_VALUE:                                             \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph invalid value"))) ; \
-        case GrB_PANIC :                                                    \
+        case GrB_PANIC:                                                     \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph panic"))) ;         \
-        case GrB_NO_VALUE :                                                 \
+        case GrB_NO_VALUE:                                                  \
             GB_MKL_FREE_ALL ;                                               \
             return (GB_ERROR (info, (GB_LOG, "MKL_graph not supported"))) ; \
-        default :                                                           \
+        default:                                                            \
             GB_MKL_FREE_ALL ;                                               \
             return (GrB_PANIC) ;                                            \
     }                                                                       \
@@ -269,20 +269,20 @@ static inline int GB_type_mkl   // return the MKL type, or -1 if none
 {
     switch (type_code)
     {
-        case GB_BOOL_code   : return (MKL_GRAPH_TYPE_BOOL) ;
-        case GB_INT8_code   : return (-1) ;
-        case GB_INT16_code  : return (-1) ;
-        case GB_INT32_code  : return (MKL_GRAPH_TYPE_INT32) ;
-        case GB_INT64_code  : return (MKL_GRAPH_TYPE_INT64) ;
-        case GB_UINT8_code  : return (-1) ;
-        case GB_UINT16_code : return (-1) ;
-        case GB_UINT32_code : return (-1) ;
-        case GB_UINT64_code : return (-1) ;
-        case GB_FP32_code   : return (MKL_GRAPH_TYPE_FP32) ;
-        case GB_FP64_code   : return (MKL_GRAPH_TYPE_FP64) ;
-        case GB_FC32_code   : return (-1) ;
-        case GB_FC64_code   : return (-1) ;
-        default             : return (-1) ;
+        case GB_BOOL_code:    return (MKL_GRAPH_TYPE_BOOL) ;
+        case GB_INT8_code:    return (-1) ;
+        case GB_INT16_code:   return (-1) ;
+        case GB_INT32_code:   return (MKL_GRAPH_TYPE_INT32) ;
+        case GB_INT64_code:   return (MKL_GRAPH_TYPE_INT64) ;
+        case GB_UINT8_code:   return (-1) ;
+        case GB_UINT16_code:  return (-1) ;
+        case GB_UINT32_code:  return (-1) ;
+        case GB_UINT64_code:  return (-1) ;
+        case GB_FP32_code:    return (MKL_GRAPH_TYPE_FP32) ;
+        case GB_FP64_code:    return (MKL_GRAPH_TYPE_FP64) ;
+        case GB_FC32_code:    return (-1) ;
+        case GB_FC64_code:    return (-1) ;
+        default:              return (-1) ;
     }
 }
 

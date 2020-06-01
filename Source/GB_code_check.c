@@ -11,37 +11,39 @@
 
 #include "GB.h"
 
+#define GB_PRINT_INF(x) GBPR ((x < 0) ? "-Inf" : "Inf")
+
 #define GB_PRINT_FLOAT(s)                                           \
 {                                                                   \
     switch (fpclassify (s))                                         \
     {                                                               \
         case FP_NAN:      GBPR ("NaN") ; break ;                    \
-        case FP_INFINITE: GBPR ((s < 0) ? "-Inf" : "Inf") ; break ; \
+        case FP_INFINITE: GB_PRINT_INF (s) ; break ;                \
         case FP_ZERO:     GBPR ("0") ; break ;                      \
         default:          GBPR ("%.6g", (double) s) ;               \
     }                                                               \
 }
 
-#define GB_PRINT_DOUBLE(d,pr_verbose)                                   \
-{                                                                       \
-    switch (fpclassify (d))                                             \
-    {                                                                   \
-        case FP_NAN:      GBPR ("NaN") ; break ;                        \
-        case FP_INFINITE: GBPR ((d < 0) ? "-Inf" : "Inf") ; break ;     \
-        case FP_ZERO:     GBPR ("0") ; break ;                          \
-        default:                                                        \
-            if (pr_verbose)                                             \
-            {                                                           \
-                /* long format */                                       \
-                GBPR ("%.15g", d) ;                                     \
-            }                                                           \
-            else                                                        \
-            {                                                           \
-                /* short format */                                      \
-                GBPR ("%.6g", d) ;                                      \
-            }                                                           \
-            break ;                                                     \
-    }                                                                   \
+#define GB_PRINT_DOUBLE(d,pr_verbose)                               \
+{                                                                   \
+    switch (fpclassify (d))                                         \
+    {                                                               \
+        case FP_NAN:      GBPR ("NaN") ; break ;                    \
+        case FP_INFINITE: GB_PRINT_INF (d) ; break ;                \
+        case FP_ZERO:     GBPR ("0") ; break ;                      \
+        default:                                                    \
+            if (pr_verbose)                                         \
+            {                                                       \
+                /* long format */                                   \
+                GBPR ("%.15g", d) ;                                 \
+            }                                                       \
+            else                                                    \
+            {                                                       \
+                /* short format */                                  \
+                GBPR ("%.6g", d) ;                                  \
+            }                                                       \
+            break ;                                                 \
+    }                                                               \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

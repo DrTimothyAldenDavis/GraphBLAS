@@ -367,7 +367,7 @@ int main (void)
     wildtype_print_matrix (D, "D") ;
 
     // do something invalid
-    info = GrB_eWiseAdd_Matrix_BinaryOp (C, NULL, NULL, WildAdd, A, D, NULL) ;
+    info = GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL, WildAdd, A, D, NULL) ;
     if (info != GrB_SUCCESS)
     {
         printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n",

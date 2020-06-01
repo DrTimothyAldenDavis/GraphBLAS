@@ -1421,9 +1421,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // nothing if C is already not in the queue.
 
         // FUTURE:: this might cause thrashing if lots of assigns or
-        // setElements are done in parallel.  Instead, leave the matrix in the
-        // queue, and allow matrices to be in the queue even if they have no
-        // unfinished computations.  See also GB_setElement.
+        // setElements are done in parallel.  Solution: delete GrB_wait ( ).
 
         if (!GB_queue_remove (C)) GB_PANIC ;
     }

@@ -329,22 +329,22 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_LOR_opcode :
+        case GB_LOR_opcode : 
 
             // boolean OR monoid:  identity is false, terminal is true
             if (zcode == GB_BOOL_code) GB_IT (bool, false, true)
 
-        case GB_LAND_opcode :
+        case GB_LAND_opcode : 
 
             // boolean AND monoid:  identity is true, terminal is false
             if (zcode == GB_BOOL_code) GB_IT (bool, true, false)
 
-        case GB_LXOR_opcode :
+        case GB_LXOR_opcode : 
 
             // boolean XOR monoid:  identity is false, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, false)
 
-        case GB_EQ_opcode :
+        case GB_EQ_opcode : 
 
             // boolean EQ monoid:  identity is true, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, true)

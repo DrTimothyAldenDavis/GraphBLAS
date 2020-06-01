@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DEPRECATED FUNCTION.  This will be removed in SuiteSparse:GraphBLAS v4.0.
+// DEPRECATED: This will be removed in SuiteSparse:GraphBLAS v4.0.
 
 #include "GB.h"
 

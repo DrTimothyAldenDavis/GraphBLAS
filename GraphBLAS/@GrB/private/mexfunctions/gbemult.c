@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbemult is an interface to GrB_eWiseMult_Matrix_*.
+// gbemult is an interface to GrB_Matrix_eWiseMult_BinaryOp.
 
 // Usage:
 
@@ -140,7 +140,7 @@ void mexFunction
     // compute C<M> += (A.*B)
     //--------------------------------------------------------------------------
 
-    OK (GrB_eWiseMult_Matrix_BinaryOp (C, M, accum, op, A, B, desc)) ;
+    OK (GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, op, A, B, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

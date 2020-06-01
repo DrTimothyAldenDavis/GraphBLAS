@@ -66,7 +66,7 @@ static void get_descriptor
             { 
                 OK (GxB_Desc_set (D, field, GrB_TRAN)) ;
             }
-            else if (MATCH (s, "complement") || MATCH (s, "comp"))
+            else if (MATCH (s, "complement"))
             { 
                 OK (GxB_Desc_set (D, field, GrB_COMP)) ;
             }

@@ -1647,8 +1647,9 @@ void GB_cast_array              // typecast an array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
+    const size_t user_size,     // size of Ax and Cx if user-defined
     const int64_t anz,          // number of entries in Cx and Ax
-    GB_Context Context
+    const int nthreads          // number of threads to use
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1798,6 +1799,19 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
 #define GB_VECTOR_WAIT(v) GB_MATRIX_WAIT (v)
 #define GB_SCALAR_WAIT(s) GB_MATRIX_WAIT (s)
+
+// do all pending updates:  but only if pending tuples; zombies are OK
+#define GB_MATRIX_WAIT_PENDING(A)                                             \
+{                                                                             \
+    if (GB_PENDING (A))                                                       \
+    {                                                                         \
+        /* do all pending work: delete zombies and assemble pending tuples */ \
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;                    \
+        ASSERT (!GB_ZOMBIES (A)) ;                                            \
+        ASSERT (!GB_PENDING (A)) ;                                            \
+    }                                                                         \
+    ASSERT (GB_ZOMBIES_OK (A)) ;                                              \
+}
 
 // true if a matrix has no entries; zombies OK
 #define GB_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))

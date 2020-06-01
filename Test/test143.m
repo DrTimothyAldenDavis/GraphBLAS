@@ -21,7 +21,7 @@ S = sparse (n, n) ;
 M = logical (sprand (n, n, 0.01)) ;
 M (:,1) = 1 ;
 B = sprand (n, n, d) ;
-C2 = GB_mex_mxm (S, M, [ ], semiring, A, B, struct ('mask', 'comp')) ;
+C2 = GB_mex_mxm (S, M, [ ], semiring, A, B, struct ('mask', 'complement')) ;
 C = (A*B) .* double (~M) ;
 assert (nnz (C) > 0) ;
 err = norm (C - C2.matrix, 1) ;
@@ -29,7 +29,7 @@ assert (err < 1e-12) ;
 fprintf ('.') ;
 
 %----------------------------------------
-desc = struct ('axb', 'hash', 'mask', 'comp') ;
+desc = struct ('axb', 'hash', 'mask', 'complement') ;
 %----------------------------------------
 
 % coarse hash tasks, C<!M>=A*B

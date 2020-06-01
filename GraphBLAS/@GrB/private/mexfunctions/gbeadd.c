@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbeadd is an interface to GrB_eWiseAdd_Matrix_*.
+// gbeadd is an interface to GrB_Matrix_eWiseAdd_BinaryOp.
 
 // Usage:
 
@@ -140,7 +140,7 @@ void mexFunction
     // compute C<M> += A+B
     //--------------------------------------------------------------------------
 
-    OK (GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, op, A, B, desc)) ;
+    OK (GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, op, A, B, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

@@ -17,7 +17,7 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop__identity_uint16_uint16
+// op(A)  function:  (none)
 // op(A') function:  GB_tran__identity_uint16_uint16
 
 // C type:   uint16_t
@@ -63,7 +63,9 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop__identity_uint16_uint16
+#if 0
+
+GrB_Info (none)
 (
     uint16_t *Cx,       // Cx and Ax may be aliased
     uint16_t *Ax,
@@ -83,6 +85,8 @@ GrB_Info GB_unop__identity_uint16_uint16
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

@@ -89,7 +89,7 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
 
     // C = A .* B, where the pattern of C is the intersection of A and B
     OK (GrB_Matrix_new (&C, GrB_BOOL, nrows1, ncols1)) ;
-    OK (GrB_eWiseMult_Matrix_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
+    OK (GrB_Matrix_eWiseMult_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
 
     // ensure C has the same number of entries as A and B
     OK (GrB_Matrix_nvals (&nvals, C)) ;

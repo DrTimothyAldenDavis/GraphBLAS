@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_eWiseAdd_Vector: w<mask> = accum(w,u+v)
+// GB_mex_Vector_eWiseAdd: w<mask> = accum(w,u+v)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "w = GB_mex_eWiseAdd_Vector (w, mask, accum, add, u, v, desc)"
+#define USAGE "w = GB_mex_Vector_eWiseAdd (w, mask, accum, add, u, v, desc)"
 
 #define FREE_ALL                    \
 {                                   \
@@ -109,7 +109,7 @@ void mexFunction
     }
 
     // w<mask> = accum(w,u+v)
-    METHOD (GrB_eWiseAdd_Vector_BinaryOp (w, mask, accum, add, u, v, desc)) ;
+    METHOD (GrB_Vector_eWiseAdd_BinaryOp (w, mask, accum, add, u, v, desc)) ;
 
     // return w to MATLAB as a struct and free the GraphBLAS w
     pargout [0] = GB_mx_Vector_to_mxArray (&w, "w output", true) ;

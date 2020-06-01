@@ -352,7 +352,7 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
             desc)) ;
 
         // compute pagerank_rdiff = sum ((r - rnew).^2)
-        OK (GrB_eWiseAdd_Vector_BinaryOp (rdiff, NULL, NULL, PageRank_diff,
+        OK (GrB_Vector_eWiseAdd_BinaryOp (rdiff, NULL, NULL, PageRank_diff,
             r, rnew, NULL)) ;
         pagerank_type rsum ;
         OK (GrB_Vector_reduce_UDT (&rsum, NULL, PageRank_monoid, rdiff, NULL)) ;

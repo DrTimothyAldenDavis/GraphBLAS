@@ -70,19 +70,14 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<M> = accum (C, A.*B)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<M> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // misnamed
 (
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp mult,        // defines '.*' for T=A.*B
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
+    const GrB_BinaryOp mult, const GrB_Matrix A, const GrB_Matrix B,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, mult, A, B, desc)) ;
 }
 
@@ -121,19 +116,14 @@ GrB_Info GrB_Matrix_eWiseMult_Monoid         // C<M> = accum (C, A.*B)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<M> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_Monoid         // misnamed
 (
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_Monoid monoid,        // defines '.*' for T=A.*B
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
+    const GrB_Monoid monoid, const GrB_Matrix A, const GrB_Matrix B,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Matrix_eWiseMult_Monoid (C, M, accum, monoid, A, B, desc)) ;
 }
 
@@ -173,19 +163,18 @@ GrB_Info GrB_Matrix_eWiseMult_Semiring       // C<M> = accum (C, A.*B)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<M> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_Semiring       // misnamed
 (
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_Semiring semiring,    // defines '.*' for T=A.*B
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_BinaryOp accum,
+    const GrB_Semiring semiring,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Matrix_eWiseMult_Semiring (C, M, accum, semiring, A, B, desc)) ;
 }
 

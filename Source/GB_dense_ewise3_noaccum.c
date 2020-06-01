@@ -72,12 +72,12 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_Cdense_ewise3_noaccum(op,xyname) \
-        GB_Cdense_ewise3_noaccum_ ## op ## xyname
+    #define GB_Cdense_ewise3_noaccum(op,xname) \
+        GB_Cdense_ewise3_noaccum_ ## op ## xname
 
-    #define GB_BINOP_WORKER(op,xyname)                                      \
+    #define GB_BINOP_WORKER(op,xname)                                       \
     {                                                                       \
-        info = GB_Cdense_ewise3_noaccum(op,xyname) (C, A, B, nthreads) ;    \
+        info = GB_Cdense_ewise3_noaccum(op,xname) (C, A, B, nthreads) ;     \
     }                                                                       \
     break ;
 

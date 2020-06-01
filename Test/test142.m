@@ -39,18 +39,25 @@ Bmask = logical (Bmat) ;
 
 for k1 = 1:length (types)
     type = types {k1}  ;
-    fprintf ('\n%-14s ', type) ;
+    fprintf ('%s ', type) ;
 
     A.class = type ;
-    B.class = type ;
-    X.class = type ;
 
-    for k3 = 1:2
+    for k3 = 1:3
 
         if (k3 == 1)
+            X.class = type ;
+            B.class = type ;
             C.class = 'logical' ;
             S.class = 'logical' ;
+        elseif (k3 == 2)
+            X.class = type ;
+            B.class = type ;
+            C.class = type ;
+            S.class = type ;
         else
+            X.class = 'int8' ;
+            B.class = 'int8' ;
             C.class = type ;
             S.class = type ;
         end
@@ -151,8 +158,6 @@ for k1 = 1:length (types)
             catch
                 continue
             end
-
-            fprintf ('.') ;
 
             %---------------------------------------
             % C += A where A is dense

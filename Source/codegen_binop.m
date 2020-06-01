@@ -364,7 +364,6 @@ codegen_binop_method ('bshift', 'GB_bitshift_uint64 (xarg, yarg)', 'uint64_t') ;
 
 % pow
 fprintf ('\npow      ') ;
-codegen_binop_method ('pow', '(xarg) || (!(yarg))'       , 'bool'      ) ;
 codegen_binop_method ('pow', 'GB_pow_int8 (xarg, yarg)'  , 'int8_t'    ) ;
 codegen_binop_method ('pow', 'GB_pow_int16 (xarg, yarg)' , 'int16_t'   ) ;
 codegen_binop_method ('pow', 'GB_pow_int32 (xarg, yarg)' , 'int32_t'   ) ;

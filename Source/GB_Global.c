@@ -676,7 +676,6 @@ bool GB_Global_gpu_device_properties_get (int device)
 {
     // get all properties of a specific GPU;
     // this function is only called once per GPU, by GB_init.
-    // Note that GraphBLAS returns GrB_PANIC if this function fails.
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
     #if defined ( GBCUDA )
     return (GB_cuda_get_device_properties (device,

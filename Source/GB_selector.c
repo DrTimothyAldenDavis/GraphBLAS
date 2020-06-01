@@ -124,16 +124,14 @@ GrB_Info GB_selector
         if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_opcode)
         { 
             // ithunk = (int64_t) Thunk (0)
-            GB_cast_array ((GB_void *GB_RESTRICT) &ithunk,
-                                   GB_INT64_code, xthunk, tcode, 1, NULL) ;
-            // printf ("ithunk: %ld\n", ithunk) ;
+            size_t tsize = Thunk->type->size ;
+            GB_cast_array ((GB_void *GB_RESTRICT) &ithunk, GB_INT64_code,
+                xthunk, tcode, tsize, 1, 1) ;
             // athunk = (atype) Thunk (0)
-            GB_cast_array (athunk, A->type->code, xthunk, tcode, 1, NULL) ;
+            GB_cast_array (athunk, A->type->code,
+                xthunk, tcode, tsize, 1, 1) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
-            // printf ("athunk: ") ;
-            // GB_code_check (A->type->code, &athunk, 5, NULL, Context) ;
-            // printf ("\n") ;
         }
     }
 
@@ -214,6 +212,9 @@ GrB_Info GB_selector
             return (GB_OUT_OF_MEMORY) ;
         }
     }
+
+    // printf ("sel opcode: %d\n", opcode) ;
+    // printf ("typecode: %d\n", typecode) ;
 
     //--------------------------------------------------------------------------
     // phase1: launch the switch factory to count the entries

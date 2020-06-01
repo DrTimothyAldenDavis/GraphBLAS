@@ -9,8 +9,7 @@ Version 3.3.0, TODO, 2020
     * added GrB_*_wait: wait for specific object to complete
     * added GrB_*_resize: same as prior GxB_*_resize functions
     * added GrB_kronecker: same as prior GxB_kron
-    * added version methods: GrB_getVersion, GxB_getLibraryVersion,
-        GrB_VERSION, GrB_SUBVERSION
+    * added version methods: GrB_getVersion, GrB_VERSION, GrB_SUBVERSION
     * (17) bug fix: non-polymorphic GrB_eWiseAdd and eWiseMult functions
         were misnamed.
 

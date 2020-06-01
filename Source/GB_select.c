@@ -70,21 +70,13 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
         opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
 
-    if (op_is_ordered_comparator)
-    {
+    if (op_is_ordered_comparator && typecode == GB_UDT_code)
+    { 
         // built-in GT, GE, LT, and LE operators cannot be used with
-        // user-defined types or with complex types
-        if (typecode == GB_UDT_code)
-        { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "operator %s not defined for user-defined types",
-                op->name))) ;
-        }
-        if (typecode == GB_FC32_code || typecode == GB_FC32_code)
-        { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "operator %s not defined for complex types", op->name))) ;
-        }
+        // user-defined types.  There are no built-in ordered comparators
+        // for built-in complex types.
+        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            "operator %s not defined for user-defined types", op->name))) ;
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible
@@ -249,8 +241,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
     { 
+        // bthunk = (bool) Thunk_in
         GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
-            xthunk_in, Thunk_in->type->code, 1, NULL) ;
+            xthunk_in, Thunk_in->type->code, Thunk_in->type->size, 1, 1) ;
     }
 
     int64_t ithunk = 0 ;        // ithunk = (int64_t) Thunk (0)
@@ -277,9 +270,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // if Thunk is not present, or has no entries, then k defaults to zero
         if (nz_thunk > 0)
         { 
-            // ithunk = - (int64_t) (Thunk_in (0)) ;
+            // ithunk = (int64_t) (Thunk_in (0)) ;
             GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
-                xthunk_in, Thunk_in->type->code, 1, NULL) ;
+                xthunk_in, Thunk_in->type->code, Thunk_in->type->size, 1, 1) ;
         }
 
         if (flipij)

@@ -14,10 +14,6 @@
 
 // If this method fails, all content of A is freed (including A->p and A->h).
 
-// GB_ix_alloc is only called by GB_create, so the matrix is not in the queue.
-// The function never accessed the global matrix queue, and thus it
-// cannot return GrB_PANIC.
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

@@ -56,12 +56,12 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_Cdense_ewise3_accum(op,xyname) \
-        GB_Cdense_ewise3_accum_ ## op ## xyname
+    #define GB_Cdense_ewise3_accum(op,xname) \
+        GB_Cdense_ewise3_accum_ ## op ## xname
 
-    #define GB_BINOP_WORKER(op,xyname)                                      \
+    #define GB_BINOP_WORKER(op,xname)                                       \
     {                                                                       \
-        GB_Cdense_ewise3_accum(op,xyname) (C, A, B, nthreads) ;             \
+        GB_Cdense_ewise3_accum(op,xname) (C, A, B, nthreads) ;              \
     }                                                                       \
     break ;
 
@@ -80,7 +80,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     else
     {
         // this function is not called if the op cannot be applied
-        ASSERT (0) ;
+        ASSERT (GB_DEAD_CODE) ;
     }
 
     //--------------------------------------------------------------------------

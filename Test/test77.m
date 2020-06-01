@@ -1,5 +1,5 @@
 function test77 (fulltest)
-%TEST77 test GxB_kron
+%TEST77 test GrB_kronecker
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -13,11 +13,11 @@ if (nargin < 1)
 end
 
 if (fulltest)
-    fprintf ('--------------lengthy tests of GxB_kron\n') ;
+    fprintf ('--------------lengthy tests of GrB_kronecker\n') ;
     k1test = 1:length(types) ;
 else
-    fprintf ('--------------quick tests of GxB_kron\n') ;
-    k1test = 11 ; % Was [1 2 4 10 11] ;
+    fprintf ('--------------quick tests of GrB_kronecker\n') ;
+    k1test = [10 11] ; % Was [1 2 4 10 11] ;
 end
 
 rng ('default') ;
@@ -29,21 +29,21 @@ dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 n_semirings = 0 ;
 for k1 = k1test
-    clas = types {k1}  ;
+    type = types {k1}  ;
 
-    fprintf ('\n%s:\n', clas) ;
+    % fprintf ('\n%s:\n', type) ;
 
     if (fulltest)
         k2test = 1:length(binops) ;
     else
-        k2test = 7 ; % randperm (length(binops), 1) ; % Was 2
+        k2test = [4 7] ; % randperm (length(binops), 1) ; % Was 2
     end
 
     for k2 = k2test % 1:length(binops)
         binop = binops {k2}  ;
 
         op.opname = binop ;
-        op.optype = clas ;
+        op.optype = type ;
 
         try
             GB_spec_operator (op) ;
@@ -51,9 +51,7 @@ for k1 = k1test
             continue
         end
 
-        fprintf (' %s', binop) ;
-
-        fprintf (' binary op: [ %s %s ] ', binop, clas) ;
+        fprintf ('\nbinary op: [ %s %s ] ', binop, type) ;
 
         for k4 = [0 randi([0,length(binops)], 1, 3)] % 0:length(binops)
 
@@ -88,10 +86,10 @@ for k1 = k1test
                 for Mask_complement = [false true]
 
                     if (Mask_complement)
-                        dnn.mask = 'scmp' ;
-                        dtn.mask = 'scmp' ;
-                        dnt.mask = 'scmp' ;
-                        dtt.mask = 'scmp' ;
+                        dnn.mask = 'complement' ;
+                        dtn.mask = 'complement' ;
+                        dnt.mask = 'complement' ;
+                        dtt.mask = 'complement' ;
                     else
                         dnn.mask = 'default' ;
                         dtn.mask = 'default' ;

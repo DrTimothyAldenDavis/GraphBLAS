@@ -1,4 +1,4 @@
-% function test134
+function test134
 %TEST134 test GxB_select
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -52,7 +52,6 @@ for k1 = 1:length(types)
     Cin = GB_spec_random (m, n, 0.3, 100, atype, C_is_csc, C_is_hyper, hc) ;
     B = GB_spec_random (n, m, 0.3, 100, atype, A_is_csc, A_is_hyper, ha) ;
     cin = GB_mex_cast (0, atype) ;
-    % Mask = (sprand (m, n, 0.5) ~= 0) ;
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
     Mask.hyper_ratio = hm ;
 
@@ -60,7 +59,6 @@ for k1 = 1:length(types)
 
     for k2 = 1:length(select_ops)
         op = select_ops {k2} ;
-        % fprintf ('%s ', op) ;
 
         if (contains (atype, 'complex'))
             switch (op)

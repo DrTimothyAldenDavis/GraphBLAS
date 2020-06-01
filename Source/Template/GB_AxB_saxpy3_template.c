@@ -169,7 +169,7 @@
                         GB_ATOMIC_READ
                         f = Hf [i] ;            // grab the entry
                         if (f == 2)             // if true, update C(i,j)
-                        { 
+                        {
                             GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                             continue ;          // C(i,j) has been updated
                         }
@@ -318,7 +318,7 @@
                         f = Hf [i] ;            // grab the entry
                         #if GB_HAS_ATOMIC
                         if (f == 2)             // if true, update C(i,j)
-                        { 
+                        {
                             GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                             continue ;          // C(i,j) has been updated
                         }
@@ -421,7 +421,7 @@
                             hf = Hf [hash] ;        // grab the entry
                             #if GB_HAS_ATOMIC
                             if (hf == i_unlocked)  // if true, update C(i,j)
-                            { 
+                            {
                                 GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                                 break ;         // C(i,j) has been updated
                             }
@@ -542,7 +542,7 @@
 
             }
             else
-            { 
+            {
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C<!M>=A*B
@@ -584,7 +584,7 @@
                             hf = Hf [hash] ;        // grab the entry
                             #if GB_HAS_ATOMIC
                             if (hf == i_unlocked)  // if true, update C(i,j)
-                            { 
+                            {
                                 GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                                 break ;         // C(i,j) has been updated
                             }

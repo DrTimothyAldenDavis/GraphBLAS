@@ -66,8 +66,8 @@ for k1 = k1test
         for Mask_complement = [false true]
 
             if (Mask_complement)
-                dn.mask = 'scmp' ;
-                dt.mask = 'scmp' ;
+                dn.mask = 'complement' ;
+                dt.mask = 'complement' ;
             else
                 dn.mask = 'default' ;
                 dt.mask = 'default' ;

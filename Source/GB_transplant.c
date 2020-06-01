@@ -333,7 +333,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // types differ, must typecast from A to C.
         GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
         GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-        GB_cast_array (Cx, C->type->code, Ax, A->type->code, anz, Context) ;
+        GB_cast_array (Cx, C->type->code,
+            Ax, A->type->code, A->type->size, anz, nthreads) ;
         if (!A->x_shallow)
         { 
             GB_FREE (A->x) ;

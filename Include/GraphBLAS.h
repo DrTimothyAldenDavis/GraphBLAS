@@ -107,7 +107,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 29, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "June 1, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -442,26 +442,18 @@ GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
+// compile-time access to the C API Version number of this library.
 #define GrB_VERSION     GxB_SPEC_MAJOR
 #define GrB_SUBVERSION  GxB_SPEC_MINOR
 
+// If the user program was compiled with one version of the library but linked
+// with a different one later on, the compile-time version check would be
+// stale.  GrB_getVersion thus provides a runtime access of the C API Version.
 GB_PUBLIC
 GrB_Info GrB_getVersion         // runtime access to C API version number
 (
     unsigned int *version,      // returns GrB_VERSION
     unsigned int *subversion    // returns GrB_SUBVERSION
-) ;
-
-GB_PUBLIC
-GrB_Info GxB_getLibraryVersion
-(
-    const char **name,              // name of the library
-    const char **date,              // date of release
-    const char **about,             // information about the library
-    const char **license,           // library license
-    unsigned int *version,          // version numbers
-    unsigned int *minorversion,
-    unsigned int *subversion
 ) ;
 
 //==============================================================================
@@ -4753,7 +4745,6 @@ GB_PUBLIC GrB_Info GrB_eWiseMult_Matrix_BinaryOp (GrB_Matrix,
 // All 6 of the above type-specific functions are captured in a single
 // type-generic function, GrB_eWiseMult:
 
-// TODO FIX the names below
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseMult(C,Mask,accum,op,A,B,desc)                         \
     _Generic                                                            \
@@ -4763,23 +4754,23 @@ GB_PUBLIC GrB_Info GrB_eWiseMult_Matrix_BinaryOp (GrB_Matrix,
             _Generic                                                    \
             (                                                           \
                 (op),                                                   \
-                const GrB_Semiring : GrB_eWiseMult_Matrix_Semiring ,    \
-                      GrB_Semiring : GrB_eWiseMult_Matrix_Semiring ,    \
-                const GrB_Monoid   : GrB_eWiseMult_Matrix_Monoid   ,    \
-                      GrB_Monoid   : GrB_eWiseMult_Matrix_Monoid   ,    \
-                const GrB_BinaryOp : GrB_eWiseMult_Matrix_BinaryOp ,    \
-                      GrB_BinaryOp : GrB_eWiseMult_Matrix_BinaryOp      \
+                const GrB_Semiring : GrB_Matrix_eWiseMult_Semiring ,    \
+                      GrB_Semiring : GrB_Matrix_eWiseMult_Semiring ,    \
+                const GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   ,    \
+                      GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   ,    \
+                const GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp ,    \
+                      GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp      \
             ),                                                          \
         GrB_Vector :                                                    \
             _Generic                                                    \
             (                                                           \
                 (op),                                                   \
-                const GrB_Semiring : GrB_eWiseMult_Vector_Semiring ,    \
-                      GrB_Semiring : GrB_eWiseMult_Vector_Semiring ,    \
-                const GrB_Monoid   : GrB_eWiseMult_Vector_Monoid   ,    \
-                      GrB_Monoid   : GrB_eWiseMult_Vector_Monoid   ,    \
-                const GrB_BinaryOp : GrB_eWiseMult_Vector_BinaryOp ,    \
-                      GrB_BinaryOp : GrB_eWiseMult_Vector_BinaryOp      \
+                const GrB_Semiring : GrB_Vector_eWiseMult_Semiring ,    \
+                      GrB_Semiring : GrB_Vector_eWiseMult_Semiring ,    \
+                const GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   ,    \
+                      GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   ,    \
+                const GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp ,    \
+                      GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp      \
             )                                                           \
     )                                                                   \
     (C, Mask, accum, op, A, B, desc)
@@ -4910,7 +4901,6 @@ GB_PUBLIC GrB_Info GrB_eWiseAdd_Matrix_BinaryOp (GrB_Matrix,
     const GrB_Matrix, const GrB_BinaryOp, const GrB_BinaryOp,
     const GrB_Matrix, const GrB_Matrix, const GrB_Descriptor) ;
 
-// TODO FIX the names below
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseAdd(C,Mask,accum,op,A,B,desc)                          \
     _Generic                                                            \
@@ -4920,23 +4910,23 @@ GB_PUBLIC GrB_Info GrB_eWiseAdd_Matrix_BinaryOp (GrB_Matrix,
             _Generic                                                    \
             (                                                           \
                 (op),                                                   \
-                const GrB_Semiring : GrB_eWiseAdd_Matrix_Semiring ,     \
-                      GrB_Semiring : GrB_eWiseAdd_Matrix_Semiring ,     \
-                const GrB_Monoid   : GrB_eWiseAdd_Matrix_Monoid   ,     \
-                      GrB_Monoid   : GrB_eWiseAdd_Matrix_Monoid   ,     \
-                const GrB_BinaryOp : GrB_eWiseAdd_Matrix_BinaryOp ,     \
-                      GrB_BinaryOp : GrB_eWiseAdd_Matrix_BinaryOp       \
+                const GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring ,     \
+                      GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring ,     \
+                const GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   ,     \
+                      GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   ,     \
+                const GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp ,     \
+                      GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp       \
             ),                                                          \
         GrB_Vector :                                                    \
             _Generic                                                    \
             (                                                           \
                 (op),                                                   \
-                const GrB_Semiring : GrB_eWiseAdd_Vector_Semiring ,     \
-                      GrB_Semiring : GrB_eWiseAdd_Vector_Semiring ,     \
-                const GrB_Monoid   : GrB_eWiseAdd_Vector_Monoid   ,     \
-                      GrB_Monoid   : GrB_eWiseAdd_Vector_Monoid   ,     \
-                const GrB_BinaryOp : GrB_eWiseAdd_Vector_BinaryOp ,     \
-                      GrB_BinaryOp : GrB_eWiseAdd_Vector_BinaryOp       \
+                const GrB_Semiring : GrB_Vector_eWiseAdd_Semiring ,     \
+                      GrB_Semiring : GrB_Vector_eWiseAdd_Semiring ,     \
+                const GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   ,     \
+                      GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   ,     \
+                const GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp ,     \
+                      GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp       \
             )                                                           \
     )                                                                   \
     (C, Mask, accum, op, A, B, desc)
@@ -7081,11 +7071,11 @@ GB_PUBLIC GrB_Monoid
 // from the complete cross product of:
 
 //      5 monoids: MIN, MAX, PLUS, TIMES, ANY
-//      10 non-Boolean real types, T
 //      20 multiply operators:
 //          FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
 //          ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //          LOR, LAND, LXOR
+//      10 non-Boolean real types, T
 //
 //      Note that min_pair, max_pair, times_pair are all identical to any_pair.
 //      These 30 semirings are named below, but are internally remapped to
@@ -7095,8 +7085,8 @@ GB_PUBLIC GrB_Monoid
 // non-Boolean, from the complete cross product of:
 
 //      5 Boolean monoids: LAND, LOR, LXOR, EQ, ANY
-//      10 non-Boolean real types, T
 //      6 multiply operators: EQ, NE, GT, LT, GE, LE
+//      10 non-Boolean real types, T
 
 // 55 semirings with purely Boolean types, bool x bool -> bool, from the
 // complete cross product of:
@@ -7112,9 +7102,9 @@ GB_PUBLIC GrB_Monoid
 // 54 complex semirings: TxT -> T where T is float complex or double complex:
 
 //      3 complex monoids: PLUS, TIMES, ANY
-//      2 complex types
 //      9 complex multiply operators:
 //          FIRST, SECOND, PAIR, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+//      2 complex types
 //
 //      Note that times_pair is identical to any_pair.
 //      These 2 semirings are named below, but are internally remapped to
@@ -7818,7 +7808,8 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
 
 // GxB_kron is now called GrB_Matrix_kronecker_BinaryOp, and can also be used
 // by the generic GrB_kronecker.  The GxB_kron name is kept for backward
-// compatibility.
+// compatibility.  GxB_kron will be kept for backward compatibility, but
+// new user code should switch to GrB_kronecker.
 
 GB_PUBLIC
 GrB_Info GxB_kron                   // C<Mask> = accum (C, kron(A,B))
@@ -8471,7 +8462,7 @@ GrB_Info GxB_Vector_export  // export and free a vector
 // Note that there is no cudaReallocManaged function, and in this case
 // GraphBLAS makes do without it.  As a result, the user application cannot use
 // realloc either, for memory blocks passed to/from GraphBLAS via
-// import/export.  TODO NVIDIA really needs a cudaReallocManaged function!
+// import/export.
 
 void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
 void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature

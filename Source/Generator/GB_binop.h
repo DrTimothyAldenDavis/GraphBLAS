@@ -19,10 +19,10 @@ GrB_Info GB_Cdense_ewise3_noaccum
     const int nthreads
 ) ;
 
-GrB_Info GB_Cdense_accumA
+GrB_Info GB_Cdense_accumB
 (
     GrB_Matrix C,
-    const GrB_Matrix A,
+    const GrB_Matrix B,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -30,12 +30,14 @@ GrB_Info GB_Cdense_accumA
     const int nthreads
 ) ;
 
-GrB_Info GB_Cdense_accumX
+GrB_Info GB_Cdense_accumb
 (
     GrB_Matrix C,
-    const GB_void *p_ywork,
+    const GB_void *p_bwork,
     const int nthreads
 ) ;
+
+if_binop_is_semiring_multiplier
 
 GrB_Info GB_AxD
 (
@@ -56,6 +58,8 @@ GrB_Info GB_DxB
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
+
+endif_binop_is_semiring_multiplier
 
 GrB_Info GB_AaddB
 (

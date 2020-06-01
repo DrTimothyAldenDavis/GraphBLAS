@@ -63,6 +63,8 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
+if_operator_is_enabled
+
 GrB_Info GB_unop
 (
     GB_ctype *Cx,       // Cx and Ax may be aliased
@@ -83,6 +85,8 @@ GrB_Info GB_unop
     return (GrB_SUCCESS) ;
     #endif
 }
+
+endif_operator_is_enabled
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

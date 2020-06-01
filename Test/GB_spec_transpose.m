@@ -28,7 +28,7 @@ function C = GB_spec_transpose (C, Mask, accum, A, descriptor)
 %       descriptor.inp0 = 'tran' (do C=A) or 'default' (do C=A')
 %       descriptor.mask =
 %               'default': use Mask
-%               'complement' or 'scmp': use ~Mask
+%               'complement': use ~Mask
 %               'structural': use spones(Mask)
 %               'structural complement': use ~spones(Mask)
 %

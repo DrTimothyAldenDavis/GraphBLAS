@@ -23,14 +23,14 @@
 // A.*B function (eWiseMult):       GB_AemultB__lor_uint16
 // A*D function (colscale):         GB_AxD__lor_uint16
 // D*A function (rowscale):         GB_DxB__lor_uint16
-// C+=A function (dense accum):     GB_Cdense_accumA__lor_uint16
-// C+=x function (dense accum):     GB_Cdense_accumX__lor_uint16
+// C+=B function (dense accum):     GB_Cdense_accumB__lor_uint16
+// C+=b function (dense accum):     GB_Cdense_accumb__lor_uint16
 // C+=A+B function (dense ewise3):  (none)
 // C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__lor_uint16
 
 // C type:   uint16_t
 // A type:   uint16_t
-// B type:   uint16_t
+// B,b type: uint16_t
 // BinaryOp: cij = ((aij != 0) || (bij != 0))
 
 #define GB_ATYPE \
@@ -148,13 +148,13 @@ GrB_Info GB_Cdense_ewise3_noaccum__lor_uint16
 }
 
 //------------------------------------------------------------------------------
-// C += A, accumulate a sparse matrix into a dense matrix
+// C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumA__lor_uint16
+GrB_Info GB_Cdense_accumB__lor_uint16
 (
     GrB_Matrix C,
-    const GrB_Matrix A,
+    const GrB_Matrix B,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -175,13 +175,13 @@ GrB_Info GB_Cdense_accumA__lor_uint16
 }
 
 //------------------------------------------------------------------------------
-// C += x, accumulate a scalar into a dense matrix
+// C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumX__lor_uint16
+GrB_Info GB_Cdense_accumb__lor_uint16
 (
     GrB_Matrix C,
-    const GB_void *p_ywork,
+    const GB_void *p_bwork,
     const int nthreads
 )
 {
@@ -190,7 +190,8 @@ GrB_Info GB_Cdense_accumX__lor_uint16
     #else
     
     { 
-        uint16_t ywork = (*((uint16_t *) p_ywork)) ;
+        // get the scalar b for C += b, of type uint16_t
+        uint16_t bwork = (*((uint16_t *) p_bwork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
@@ -202,6 +203,8 @@ GrB_Info GB_Cdense_accumX__lor_uint16
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_AxD__lor_uint16
 (
@@ -224,9 +227,13 @@ GrB_Info GB_AxD__lor_uint16
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_DxB__lor_uint16
 (
@@ -244,6 +251,8 @@ GrB_Info GB_DxB__lor_uint16
     return (GrB_SUCCESS) ;
     #endif
 }
+
+
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B

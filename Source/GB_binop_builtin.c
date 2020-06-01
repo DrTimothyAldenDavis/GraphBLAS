@@ -116,7 +116,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         // ISEQ becomes EQ
         // ISGT becomes GT
         // ISLT becomes LT
-        // ISGE becomes GE
+        // ISGE and POW become GE
         // ISLE becomes LE
         (*opcode) = GB_boolean_rename (*opcode) ;
     }

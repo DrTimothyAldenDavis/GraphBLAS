@@ -140,7 +140,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         // C is single complex, typecast to sparse double complex
         A = mxCreateSparse (C->vlen, C->vdim, C->nzmax, mxCOMPLEX) ;
         GB_cast_array (mxGetComplexDoubles (A), GB_FC64_code,
-            C->x, C->type->code, cnz, Context) ;
+            C->x, C->type->code, C->type->size, cnz, 1) ;
 
     }
     else
@@ -149,7 +149,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         // otherwise C is cast into a MATLAB double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         double *Sx = GB_MALLOC (cnz+1, double) ;
-        GB_cast_array (Sx, GB_FP64_code, C->x, C->type->code, cnz, Context) ;
+        GB_cast_array (Sx, GB_FP64_code,
+            C->x, C->type->code, C->type->size, cnz, 1) ;
         mexMakeMemoryPersistent (Sx) ;
         mxSetPr (A, Sx) ;
 

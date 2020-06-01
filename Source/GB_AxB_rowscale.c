@@ -125,7 +125,9 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
             mult, flipxy, &opcode, &xcode, &ycode, &zcode))
         { 
+            #define GB_BINOP_IS_SEMIRING_MULTIPLIER
             #include "GB_binop_factory.c"
+            #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
         }
 
     #endif

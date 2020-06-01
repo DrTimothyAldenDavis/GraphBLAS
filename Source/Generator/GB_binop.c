@@ -23,14 +23,14 @@
 // A.*B function (eWiseMult):       GB_AemultB
 // A*D function (colscale):         GB_AxD
 // D*A function (rowscale):         GB_DxB
-// C+=A function (dense accum):     GB_Cdense_accumA
-// C+=x function (dense accum):     GB_Cdense_accumX
+// C+=B function (dense accum):     GB_Cdense_accumB
+// C+=b function (dense accum):     GB_Cdense_accumb
 // C+=A+B function (dense ewise3):  GB_Cdense_ewise3_accum
 // C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum
 
 // C type:   GB_ctype
 // A type:   GB_atype
-// B type:   GB_btype
+// B,b type: GB_btype
 // BinaryOp: GB_BINARYOP(cij,aij,bij)
 
 #define GB_ATYPE \
@@ -148,13 +148,13 @@ GrB_Info GB_Cdense_ewise3_noaccum
 }
 
 //------------------------------------------------------------------------------
-// C += A, accumulate a sparse matrix into a dense matrix
+// C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumA
+GrB_Info GB_Cdense_accumB
 (
     GrB_Matrix C,
-    const GrB_Matrix A,
+    const GrB_Matrix B,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -175,13 +175,13 @@ GrB_Info GB_Cdense_accumA
 }
 
 //------------------------------------------------------------------------------
-// C += x, accumulate a scalar into a dense matrix
+// C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumX
+GrB_Info GB_Cdense_accumb
 (
     GrB_Matrix C,
-    const GB_void *p_ywork,
+    const GB_void *p_bwork,
     const int nthreads
 )
 {
@@ -190,7 +190,8 @@ GrB_Info GB_Cdense_accumX
     #else
     if_C_dense_update
     { 
-        GB_btype ywork = (*((GB_btype *) p_ywork)) ;
+        // get the scalar b for C += b, of type GB_btype
+        GB_btype bwork = (*((GB_btype *) p_bwork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
@@ -202,6 +203,8 @@ GrB_Info GB_Cdense_accumX
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+if_binop_is_semiring_multiplier
 
 GrB_Info GB_AxD
 (
@@ -224,9 +227,13 @@ GrB_Info GB_AxD
     #endif
 }
 
+endif_binop_is_semiring_multiplier
+
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+if_binop_is_semiring_multiplier
 
 GrB_Info GB_DxB
 (
@@ -244,6 +251,8 @@ GrB_Info GB_DxB
     return (GrB_SUCCESS) ;
     #endif
 }
+
+endif_binop_is_semiring_multiplier
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B

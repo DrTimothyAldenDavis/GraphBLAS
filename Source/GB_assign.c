@@ -255,11 +255,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (row_assign || col_assign)
             {
                 // all pending tuples must first be assembled; zombies OK
-                if (GB_PENDING (C))
-                { 
-                    GB_OK (GB_Matrix_wait (C, Context)) ;
-                }
-                ASSERT (GB_ZOMBIES_OK (C)) ;
+                GB_MATRIX_WAIT_PENDING (C) ;
                 ASSERT_MATRIX_OK (C, "waited C for quick mask", GB0) ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 { 

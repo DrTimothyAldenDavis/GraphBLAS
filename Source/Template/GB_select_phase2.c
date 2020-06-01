@@ -62,7 +62,7 @@
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
                     int64_t i = Ai [pA] ;
-                    if (GB_SELECT (pA))
+                    if (GB_TEST_VALUE_OF_ENTRY (pA))
                     { 
                         ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ;
                         Ci [pC] = i ;

@@ -151,7 +151,9 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             mult, flipxy, &opcode, &xcode, &ycode, &zcode))
         { 
             // C=A*D, colscale with built-in operator
+            #define GB_BINOP_IS_SEMIRING_MULTIPLIER
             #include "GB_binop_factory.c"
+            #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
         }
 
     #endif

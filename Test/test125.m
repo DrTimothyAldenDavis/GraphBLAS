@@ -35,7 +35,7 @@ n = 10 ;
 n_semirings = 0 ;
 A = GB_spec_random (n,n,0.3,100,'none') ;
 clear B
-B1matrix = spdiags (rand (n,1), 0, n, n) ;
+B1matrix = spdiags (3 * rand (n,1), 0, n, n) ;
 B.matrix = B1matrix ;
 B.class = 'none' ;
 B.pattern = logical (spones (B1matrix)) ;

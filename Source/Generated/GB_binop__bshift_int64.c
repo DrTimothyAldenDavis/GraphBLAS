@@ -21,16 +21,16 @@
 
 // A+B function (eWiseAdd):         GB_AaddB__bshift_int64
 // A.*B function (eWiseMult):       GB_AemultB__bshift_int64
-// A*D function (colscale):         GB_AxD__bshift_int64
-// D*A function (rowscale):         GB_DxB__bshift_int64
-// C+=A function (dense accum):     GB_Cdense_accumA__bshift_int64
-// C+=x function (dense accum):     GB_Cdense_accumX__bshift_int64
+// A*D function (colscale):         (none)
+// D*A function (rowscale):         (node)
+// C+=B function (dense accum):     GB_Cdense_accumB__bshift_int64
+// C+=b function (dense accum):     GB_Cdense_accumb__bshift_int64
 // C+=A+B function (dense ewise3):  (none)
 // C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__bshift_int64
 
 // C type:   int64_t
 // A type:   int64_t
-// B type:   int8_t
+// B,b type: int8_t
 // BinaryOp: cij = GB_bitshift_int64 (aij, bij)
 
 #define GB_ATYPE \
@@ -148,13 +148,13 @@ GrB_Info GB_Cdense_ewise3_noaccum__bshift_int64
 }
 
 //------------------------------------------------------------------------------
-// C += A, accumulate a sparse matrix into a dense matrix
+// C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumA__bshift_int64
+GrB_Info GB_Cdense_accumB__bshift_int64
 (
     GrB_Matrix C,
-    const GrB_Matrix A,
+    const GrB_Matrix B,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -175,13 +175,13 @@ GrB_Info GB_Cdense_accumA__bshift_int64
 }
 
 //------------------------------------------------------------------------------
-// C += x, accumulate a scalar into a dense matrix
+// C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumX__bshift_int64
+GrB_Info GB_Cdense_accumb__bshift_int64
 (
     GrB_Matrix C,
-    const GB_void *p_ywork,
+    const GB_void *p_bwork,
     const int nthreads
 )
 {
@@ -190,7 +190,8 @@ GrB_Info GB_Cdense_accumX__bshift_int64
     #else
     
     { 
-        int8_t ywork = (*((int8_t *) p_ywork)) ;
+        // get the scalar b for C += b, of type int8_t
+        int8_t bwork = (*((int8_t *) p_bwork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
@@ -203,7 +204,9 @@ GrB_Info GB_Cdense_accumX__bshift_int64
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxD__bshift_int64
+#if 0
+
+GrB_Info (none)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -224,11 +227,15 @@ GrB_Info GB_AxD__bshift_int64
     #endif
 }
 
+#endif
+
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_DxB__bshift_int64
+#if 0
+
+GrB_Info (node)
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -244,6 +251,8 @@ GrB_Info GB_DxB__bshift_int64
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B

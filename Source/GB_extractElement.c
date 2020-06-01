@@ -139,20 +139,10 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 
     if (found)
     {
-        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+        // typecast the value from A into x
         size_t asize = A->type->size ;
-        // found A (row,col), return its value
-        if (xcode > GB_FP64_code || xcode == A->type->code)
-        { 
-            // copy the values without typecasting
-            memcpy (x, Ax +(pleft*asize), asize) ;
-        }
-        else
-        { 
-            // typecast the value from A into x
-            GB_cast_array ((GB_void *) x, xcode, Ax +(pleft*asize),
-                A->type->code, 1, Context) ;
-        }
+        GB_cast_array ((GB_void *) x, xcode,
+            ((GB_void *) A->x) +(pleft*asize), A->type->code, asize, 1, 1) ;
         return (GrB_SUCCESS) ;
     }
     else

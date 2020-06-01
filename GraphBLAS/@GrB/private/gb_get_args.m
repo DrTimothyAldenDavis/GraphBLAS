@@ -18,6 +18,15 @@ function [args, is_GrB] = gb_get_args (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO: this is slow.  Delete it. Change all mexFunctions so that the last
+% parameter (the descriptor) is optional.  Let each mexFunction access the
+% opaque content itself.  Try writing this helper function, and benchmark it:
+%
+%   function arg = gb_arg (arg)
+%   if (isboject (arg))
+%       arg = arg.opaque ;
+%   end
+
 % get the args and extract any GraphBLAS matrix structs
 args = varargin ;
 for k = 1:length (args)

@@ -107,8 +107,11 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->i_shallow = true ;       // C->i will not be freed when freeing C
 
     //--------------------------------------------------------------------------
-    // apply the operator to the numerical values
+    // make a shallow copy of the values, if possible
     //--------------------------------------------------------------------------
+
+    // If the identity operator is used with no typecasting, C->x becomes a
+    // shallow copy of A->x, and no work is done.
 
     int64_t anz = GB_NNZ (A) ;
     ASSERT (A->nzmax >= GB_IMAX (anz,1)) ;
@@ -125,6 +128,10 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         return (GrB_SUCCESS) ;
     }
 
+    //--------------------------------------------------------------------------
+    // apply the operator to the numerical values
+    //--------------------------------------------------------------------------
+
     // allocate new space for the numerical values of C
     C->nzmax = GB_IMAX (anz,1) ;
     C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
@@ -135,10 +142,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         GB_MATRIX_FREE (&C) ;
         return (GB_OUT_OF_MEMORY) ;
     }
-
-    //--------------------------------------------------------------------------
-    // apply the unary operator
-    //--------------------------------------------------------------------------
 
     // C->x = op ((op->xtype) Ax)
           GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;

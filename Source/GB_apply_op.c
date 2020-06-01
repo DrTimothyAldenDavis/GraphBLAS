@@ -51,30 +51,38 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     // built-in unary operators
     //--------------------------------------------------------------------------
 
-    // only two workers are allowed to do their own typecasting: IDENTITY and
-    // ONE.  For all others, the input type Atype must match the op->xtype of
-    // the operator.  If this check isn't done, abs.single with fc32 input will
-    // map to abs.fc32, based on the type of the input A, which is the wrong
-    // operator.
+    #if 0
+    if (op->opcode == GB_IDENTITY_opcode && Atype == op->xtype)
+    {
+        // If the operator is identity with no typecast, it becomes either
+        // GB_memcpy or a shallow copy, and this function is not called.
+        ASSERT (GB_DEAD_CODE) ;
+        GB_memcpy (Cx, Ax, anz * Atype->size, nthreads) ;
+        return ;
+    }
+    #endif
 
     #ifndef GBCOMPACT
 
-        bool no_typecasting = (Atype == op->xtype)
+        if ((Atype == op->xtype)
             || (op->opcode == GB_IDENTITY_opcode)
-            || (op->opcode == GB_ONE_opcode) ;
-
-        if (no_typecasting)
+            || (op->opcode == GB_ONE_opcode))
         { 
+
+            //------------------------------------------------------------------
+            // all other built-in operators
+            //------------------------------------------------------------------
+
+            // only two workers are allowed to do their own typecasting from
+            // the Atype to the xtype of the operator: IDENTITY and ONE.  For
+            // all others, the input type Atype must match the op->xtype of the
+            // operator.  If this check isn't done, abs.fp32 with fc32 input
+            // will map to abs.fc32, based on the type of the input A, which is
+            // the wrong operator.
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
             //------------------------------------------------------------------
-
-            // FUTURE:: these operators could be renamed:
-            // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
-            // GrB_MINV_BOOL to GxB_ONE_BOOL.
-            // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
-            // and then these workers would not need to be created.
 
             #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
 

@@ -28,7 +28,8 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     int64_t ncalls,                 // estimate # of future calls to GrB_mxv
     const GrB_Descriptor desc       // currently unused
 )
-{ 
+{
+#if GB_HAS_MKL_GRAPH
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -47,8 +48,6 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     //--------------------------------------------------------------------------
     // optimize the matrix for mkl_graph_mxv in MKL
     //--------------------------------------------------------------------------
-
-    #if GB_HAS_MKL_GRAPH
 
     if (use_mkl)
     {
@@ -90,9 +89,9 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
         // TODO if A is modified, A->mkl needs to be freed.
 
     }
-    #endif
 
     GB_BURBLE_END ;
+#endif
     return (GrB_SUCCESS) ;
 }
 

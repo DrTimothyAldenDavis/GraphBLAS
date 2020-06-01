@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_eWiseMult_Vector: w<mask> = accum(w,u.*v)
+// GB_mex_Matrix_eWiseMult: C<Mask> = accum(C,A.*B)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,15 +9,15 @@
 
 #include "GB_mex.h"
 
-#define USAGE "w = GB_mex_eWiseMult_Vector (w, mask, accum, mult, u, v, desc)"
+#define USAGE "C = GB_mex_Matrix_eWiseMult (C, Mask, accum, mult, A, B, desc)"
 
 #define FREE_ALL                    \
 {                                   \
-    GrB_Vector_free (&w) ;          \
-    GrB_Vector_free (&u) ;          \
-    GrB_Vector_free (&v) ;          \
+    GB_MATRIX_FREE (&A) ;           \
+    GB_MATRIX_FREE (&B) ;           \
+    GB_MATRIX_FREE (&C) ;           \
     GrB_Descriptor_free (&desc) ;   \
-    GrB_Vector_free (&mask) ;       \
+    GB_MATRIX_FREE (&Mask) ;        \
     GB_mx_put_global (true, 0) ;    \
 }
 
@@ -31,10 +31,10 @@ void mexFunction
 {
 
     bool malloc_debug = GB_mx_get_global (true) ;
-    GrB_Vector w = NULL ;
-    GrB_Vector u = NULL ;
-    GrB_Vector v = NULL ;
-    GrB_Vector mask = NULL ;
+    GrB_Matrix A = NULL ;
+    GrB_Matrix B = NULL ;
+    GrB_Matrix C = NULL ;
+    GrB_Matrix Mask = NULL ;
     GrB_Descriptor desc = NULL ;
 
     // check inputs
@@ -44,57 +44,58 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    // get w (make a deep copy)
+    // get C (make a deep copy)
     #define GET_DEEP_COPY \
-    w = GB_mx_mxArray_to_Vector (pargin [0], "w input", true, true) ;
-    #define FREE_DEEP_COPY GrB_Vector_free (&w) ;
+    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
+    #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
     GET_DEEP_COPY ;
-    if (w == NULL)
+    if (C == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("w failed") ;
+        mexErrMsgTxt ("C failed") ;
     }
 
-    // get mask (shallow copy)
-    mask = GB_mx_mxArray_to_Vector (pargin [1], "mask", false, false) ;
-    if (mask == NULL && !mxIsEmpty (pargin [1]))
+    // get Mask (shallow copy)
+    Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", false, false) ;
+    if (Mask == NULL && !mxIsEmpty (pargin [1]))
     {
         FREE_ALL ;
-        mexErrMsgTxt ("mask failed") ;
+        mexErrMsgTxt ("Mask failed") ;
     }
 
-    // get u (shallow copy)
-    u = GB_mx_mxArray_to_Vector (pargin [4], "u input", false, true) ;
-    if (u == NULL)
+    // get A (shallow copy)
+    A = GB_mx_mxArray_to_Matrix (pargin [4], "A input", false, true) ;
+    if (A == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("u failed") ;
+        mexErrMsgTxt ("A failed") ;
     }
 
-    // get v (shallow copy)
-    v = GB_mx_mxArray_to_Vector (pargin [5], "v input", false, true) ;
-    if (v == NULL)
+    // get B (shallow copy)
+    B = GB_mx_mxArray_to_Matrix (pargin [5], "B input", false, true) ;
+    if (B == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("v failed") ;
+        mexErrMsgTxt ("B failed") ;
     }
 
     // get mult operator
     bool user_complex = (Complex != GxB_FC64)
-        && (u->type == Complex || v->type == Complex) ;
+        && (A->type == Complex || B->type == Complex) ;
     GrB_BinaryOp mult ;
     if (!GB_mx_mxArray_to_BinaryOp (&mult, pargin [3], "mult",
-        w->type, user_complex) || mult == NULL)
+        C->type, user_complex) || mult == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("mult failed") ;
     }
 
     // get accum, if present
+    user_complex = (Complex != GxB_FC64)
+        && (C->type == Complex || mult->ztype == Complex) ;
     GrB_BinaryOp accum ;
-    user_complex = (Complex != GxB_FC64) && (w->type == Complex) ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [2], "accum",
-        w->type, user_complex))
+        C->type, user_complex))
     {
         FREE_ALL ;
         mexErrMsgTxt ("accum failed") ;
@@ -107,11 +108,11 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // w<mask> = accum(w,u.*v)
-    METHOD (GrB_eWiseMult_Vector_BinaryOp (w, mask, accum, mult, u, v, desc)) ;
+    // C<Mask> = accum(C,A.*B)
+    METHOD (GrB_Matrix_eWiseMult_BinaryOp (C, Mask, accum, mult, A, B, desc)) ;
 
-    // return w to MATLAB as a struct and free the GraphBLAS w
-    pargout [0] = GB_mx_Vector_to_mxArray (&w, "w output", true) ;
+    // return C to MATLAB as a struct and free the GraphBLAS C
+    pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
 
     FREE_ALL ;
 }

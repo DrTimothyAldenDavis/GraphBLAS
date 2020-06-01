@@ -85,7 +85,7 @@ void mexFunction
     }
 
     // C<M> = A+M
-    METHOD (GrB_eWiseAdd_Matrix_BinaryOp (C, M, NULL, op, A, M, desc)) ;
+    METHOD (GrB_Matrix_eWiseAdd_BinaryOp (C, M, NULL, op, A, M, desc)) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

@@ -74,19 +74,14 @@ GrB_Info GrB_Vector_eWiseAdd_BinaryOp       // w<M> = accum (w, u+v)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // w<M> = accum (w, u+v)
+GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // misnamed
 (
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp add,         // defines '+' for t=u+v
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and M
+    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
+    const GrB_BinaryOp add, const GrB_Vector u, const GrB_Vector v,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Vector_eWiseAdd_BinaryOp (w, M, accum, add, u, v, desc)) ;
 }
 
@@ -123,19 +118,14 @@ GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<M> = accum (w, u+v)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseAdd_Vector_Monoid         // w<M> = accum (w, u+v)
+GrB_Info GrB_eWiseAdd_Vector_Monoid         // misnamed
 (
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Monoid monoid,        // defines '+' for t=u+v
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and M
+    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
+    const GrB_Monoid monoid, const GrB_Vector u, const GrB_Vector v,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Vector_eWiseAdd_Monoid (w, M, accum, monoid, u, v, desc)) ;
 }
 
@@ -173,19 +163,14 @@ GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<M> = accum (w, u+v)
     return (info) ;
 }
 
-// misnamed, deprecated version:
-GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<M> = accum (w, u+v)
+GrB_Info GrB_eWiseAdd_Vector_Semiring       // misnamed
 (
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Semiring semiring,    // defines '+' for t=u+v
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and M
+    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
+    const GrB_Semiring semiring, const GrB_Vector u, const GrB_Vector v,
+    const GrB_Descriptor desc
 )
 { 
-    // the correctly-named function:
+    // call the correctly-named function:
     return (GrB_Vector_eWiseAdd_Semiring (w, M, accum, semiring, u, v, desc)) ;
 }
 

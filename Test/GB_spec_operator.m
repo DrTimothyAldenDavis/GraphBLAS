@@ -183,7 +183,7 @@ switch opname
                 opname = 'bclr' ;
         end
 
-    case { 'bitshift' }
+    case { 'bitshift' , 'bshift' }
         % x,z types are the same.  y is int8
         % available for int and uint only
         ytype = 'int8' ;

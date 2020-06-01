@@ -33,8 +33,7 @@ m = 10 ;
 n = 6 ;
 dt = struct ('inp0', 'tran') ;
 
-    aclass = 'double' ;
-    % fprintf ('%s: ', aclass) ;
+    atype = 'double' ;
 
     for A_is_hyper = 0:1
     for A_is_csc   = 0:1
@@ -62,12 +61,12 @@ dt = struct ('inp0', 'tran') ;
         hm = 0 ;
     end
 
-    A = GB_spec_random (m, n, 0.3, 100, aclass, A_is_csc, A_is_hyper, ha) ;
+    A = GB_spec_random (m, n, 0.3, 100, atype, A_is_csc, A_is_hyper, ha) ;
     A.matrix (:,1) = rand (m,1) ;
     A.pattern (:,1) = true (m,1) ;
-    Cin = GB_spec_random (m, n, 0.3, 100, aclass, C_is_csc, C_is_hyper, hc) ;
-    B = GB_spec_random (n, m, 0.3, 100, aclass, A_is_csc, A_is_hyper, ha) ;
-    cin = GB_mex_cast (0, aclass) ;
+    Cin = GB_spec_random (m, n, 0.3, 100, atype, C_is_csc, C_is_hyper, hc) ;
+    B = GB_spec_random (n, m, 0.3, 100, atype, A_is_csc, A_is_hyper, ha) ;
+    cin = GB_mex_cast (0, atype) ;
     % Mask = (sprand (m, n, 0.5) ~= 0) ;
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
     Mask.hyper_ratio = hm ;
@@ -76,7 +75,6 @@ dt = struct ('inp0', 'tran') ;
 
     for k2 = [ 1 5 ]
         op = select_ops {k2} ;
-        % fprintf ('%s ', op) ;
 
         k = sparse (0) ;
 

@@ -20,7 +20,7 @@ for k = [false true]
 
     try
         % this is an error
-        C1 = GB_mex_eWiseMult_Matrix (C, [ ], [ ], 'times', A, Z, [ ]) ;
+        C1 = GB_mex_Matrix_eWiseMult (C, [ ], [ ], 'times', A, Z, [ ]) ;
         assert (false) ;
     catch
         assert (true) ;

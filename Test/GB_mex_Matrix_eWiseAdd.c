@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_eWiseAdd_Matrix: C<M> = accum(C,A+B)
+// GB_mex_Matrix_eWiseAdd: C<M> = accum(C,A+B)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 
 #define USAGE \
-    "C = GB_mex_eWiseAdd_Matrix (C, M, accum, add, A, B, desc, test)"
+    "C = GB_mex_Matrix_eWiseAdd (C, M, accum, add, A, B, desc, test)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -127,7 +127,7 @@ void mexFunction
     // GxB_print (add, 3) ;
 
     // C<M> = accum(C,A+B)
-    METHOD (GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, add, A, B, desc)) ;
+    METHOD (GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)) ;
 
     // printf ("result: \n") ; GxB_print (C, 3) ;
 

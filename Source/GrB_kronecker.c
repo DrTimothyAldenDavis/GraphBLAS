@@ -147,3 +147,26 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
     return (info) ;
 }
 
+//------------------------------------------------------------------------------
+// GxB_kron: Kronecker product (pre-GrB version)
+//------------------------------------------------------------------------------
+
+// GrB_kronecker is now a built-in operation; use that one instead.
+// They compute the same thing.  New user code should switch from GxB_kron
+// to GrB_kronecker.
+
+GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // defines '*' for T=kron(A,B)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+)
+{ 
+    // call the new GrB_kronecker (the binary op version)
+    return (GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)) ;
+}
+

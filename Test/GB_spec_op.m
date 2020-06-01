@@ -212,8 +212,9 @@ switch opname
 
     case { 'remainder' }
         % see ANSI C11 remainder function
-        m = (y ~= 0 & x ~= y) ;
+        m = (y ~= 0 & x ~= y)  ;
         z = nan (size (x), ztype) ;
+        z (x == y) = 0 ;
         z (m) = x (m) - round (x (m) ./ y (m)) .* y (m) ;
 
     case { 'copysign' }

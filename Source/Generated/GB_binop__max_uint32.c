@@ -23,14 +23,14 @@
 // A.*B function (eWiseMult):       GB_AemultB__max_uint32
 // A*D function (colscale):         GB_AxD__max_uint32
 // D*A function (rowscale):         GB_DxB__max_uint32
-// C+=A function (dense accum):     GB_Cdense_accumA__max_uint32
-// C+=x function (dense accum):     GB_Cdense_accumX__max_uint32
+// C+=B function (dense accum):     GB_Cdense_accumB__max_uint32
+// C+=b function (dense accum):     GB_Cdense_accumb__max_uint32
 // C+=A+B function (dense ewise3):  GB_Cdense_ewise3_accum__max_uint32
 // C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__max_uint32
 
 // C type:   uint32_t
 // A type:   uint32_t
-// B type:   uint32_t
+// B,b type: uint32_t
 // BinaryOp: cij = GB_IMAX (aij, bij)
 
 #define GB_ATYPE \
@@ -148,13 +148,13 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_uint32
 }
 
 //------------------------------------------------------------------------------
-// C += A, accumulate a sparse matrix into a dense matrix
+// C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumA__max_uint32
+GrB_Info GB_Cdense_accumB__max_uint32
 (
     GrB_Matrix C,
-    const GrB_Matrix A,
+    const GrB_Matrix B,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -175,13 +175,13 @@ GrB_Info GB_Cdense_accumA__max_uint32
 }
 
 //------------------------------------------------------------------------------
-// C += x, accumulate a scalar into a dense matrix
+// C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumX__max_uint32
+GrB_Info GB_Cdense_accumb__max_uint32
 (
     GrB_Matrix C,
-    const GB_void *p_ywork,
+    const GB_void *p_bwork,
     const int nthreads
 )
 {
@@ -190,7 +190,8 @@ GrB_Info GB_Cdense_accumX__max_uint32
     #else
     
     { 
-        uint32_t ywork = (*((uint32_t *) p_ywork)) ;
+        // get the scalar b for C += b, of type uint32_t
+        uint32_t bwork = (*((uint32_t *) p_bwork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
@@ -202,6 +203,8 @@ GrB_Info GB_Cdense_accumX__max_uint32
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_AxD__max_uint32
 (
@@ -224,9 +227,13 @@ GrB_Info GB_AxD__max_uint32
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_DxB__max_uint32
 (
@@ -244,6 +251,8 @@ GrB_Info GB_DxB__max_uint32
     return (GrB_SUCCESS) ;
     #endif
 }
+
+
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B

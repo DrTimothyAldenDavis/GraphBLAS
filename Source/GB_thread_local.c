@@ -32,7 +32,7 @@
 // thread-local storage for POSIX THREADS
 pthread_key_t GB_thread_local_key ;
 
-#else // USER_OPENMP_THREADS, or USER_NO_THREADS
+#else
 // OpenMP user threads, or no user threads: this is the default
 char GB_thread_local_report [GB_RLEN+1] = "" ;
 #pragma omp threadprivate(GB_thread_local_report)
@@ -56,7 +56,6 @@ bool GB_thread_local_init
     }
     #else
     {
-        // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
         GB_thread_local_report [0] = '\0' ;
         return (true) ;
     }
@@ -80,11 +79,10 @@ char *GB_thread_local_get (void)        // get pointer to thread-local storage
             if (p != NULL) pthread_setspecific (GB_thread_local_key, p) ;
         }
         // do not attempt to recover from a failure to allocate the space;
-        // just return the NULL pointer on failure.  The caller will catch it
-        // and return a GrB_PANIC to its caller.
+        // just return the NULL pointer on failure.  The caller will catch it.
         return (p) ;
     }
-    #else // USER_OPENMP_THREADS, USER_NO_THREADS
+    #else
     {
         return (GB_thread_local_report) ;
     }

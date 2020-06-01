@@ -1,5 +1,5 @@
 function C = GB_spec_kron (C, Mask, accum, mult, A, B, descriptor)
-%GB_SPEC_KRON a MATLAB mimic of GxB_kron
+%GB_SPEC_KRON a MATLAB mimic of GrB_kronecker
 %
 % Usage:
 % C = GB_spec_kron (C, Mask, accum, mult, A, B, descriptor)

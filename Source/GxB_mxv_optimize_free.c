@@ -14,7 +14,8 @@ GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
 (
     GrB_Matrix A                    // input/output matrix
 )
-{ 
+{
+#if GB_HAS_MKL_GRAPH
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -28,11 +29,10 @@ GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
     // free any existing MKL version of the matrix A and its optimization
     //--------------------------------------------------------------------------
 
-    #if GB_HAS_MKL_GRAPH
     GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
-    #endif
 
     A->mkl = NULL ;
+#endif
     return (GrB_SUCCESS) ;
 }
 

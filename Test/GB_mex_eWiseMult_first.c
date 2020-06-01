@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This is a simplified version of GB_mex_eWiseMult_Matrix.  The op is
+// This is a simplified version of GB_mex_Matrix_eWiseMult.  The op is
 // always GrB_FIRST_FP64.
 
 #include "GB_mex.h"
@@ -105,7 +105,7 @@ void mexFunction
     }
 
     // C<Mask> = accum(C,A.*B)
-    METHOD (GrB_eWiseMult_Matrix_BinaryOp (C, Mask, accum, mult, A, B, desc)) ;
+    METHOD (GrB_Matrix_eWiseMult_BinaryOp (C, Mask, accum, mult, A, B, desc)) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

@@ -1,3 +1,5 @@
+if_operator_is_enabled
+
 GrB_Info GB_unop
 (
     GB_ctype *Cx,
@@ -5,6 +7,8 @@ GrB_Info GB_unop
     int64_t anz,
     int nthreads
 ) ;
+
+endif_operator_is_enabled
 
 GrB_Info GB_tran
 (

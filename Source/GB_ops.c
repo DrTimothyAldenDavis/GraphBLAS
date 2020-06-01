@@ -69,7 +69,7 @@ struct GB_Descriptor_opaque GB_opaque_desc_ ## name =           \
 } ;                                                             \
 GrB_Descriptor GrB_DESC_ ## name = & GB_opaque_desc_ ## name ;
 
-//       name     outp         structure       comp      in0       in1
+//       name     outp         structure     complement  in0       in1
 
 // GrB_NULL     , o          , o             + o       , o       , o
 GB_DESC (T1     , o          , o             + o       , o       , GrB_TRAN )

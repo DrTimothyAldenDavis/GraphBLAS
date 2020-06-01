@@ -98,7 +98,7 @@ void mexFunction
         // X = A-B
         GrB_Matrix X ;
         OK (GrB_Matrix_new (&X, xtype, anrows, ancols)) ;
-        OK (GrB_eWiseAdd_Matrix_BinaryOp (X, NULL, NULL, op, A, B, NULL)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp (X, NULL, NULL, op, A, B, NULL)) ;
 
         // s = norm (X, norm_kind)
         s = gb_norm (X, norm_kind) ;

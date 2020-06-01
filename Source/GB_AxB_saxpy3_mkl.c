@@ -255,13 +255,13 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     info = GB_new (Chandle, ctype, cncols, cnrows, GB_Ap_null, false,
         GB_FORCE_NONHYPER, B->hyper_ratio, cnrows, Context) ;
     if (info != GrB_SUCCESS)
-    { 
+    {
         // out of memory
         return (info) ;
     }
 
     if (cnvals == 0)
-    { 
+    {
         // free the MKL input Ci and Cx arrays, if they exist
         GB_FREE (Ci) ;
         GB_FREE (Cx) ;

@@ -7,8 +7,9 @@ function C = spfun (fun, G)
 % FUTURE: this would be much faster as a mexFunction, but calling feval
 % from inside a mexFunction would not be trivial (perhaps not possible).
 
-% TODO: if fun is a string that contains a MATLAB function matching the
-% functionality of a GraphBLAS operator, use GrB.apply instead.
+% TODO: if fun is a string that is a GraphBLAS operator, or that contains a
+% MATLAB function matching the functionality of a GraphBLAS operator, operator,
+% use GrB.apply instead.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

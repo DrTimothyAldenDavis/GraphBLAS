@@ -123,27 +123,14 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     }
 
     //--------------------------------------------------------------------------
-    // extract the values, typecasting as needed
+    // extract the values
     //--------------------------------------------------------------------------
 
     if (X != NULL)
-    {
-        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-        if (xcode == GB_UDT_code || xcode == A->type->code)
-        { 
-            // Copy the values without typecasting.  For user-defined types,
-            // the (void *) X array is assumed to point to values of the right
-            // user-defined type, but this can't be checked.  For built-in
-            // types, xcode has already been determined by the type of X in the
-            // function signature of the caller.
-            GB_memcpy (X, Ax, anz * A->type->size, nthreads) ;
-        }
-        else
-        { 
-            // typecast the values from A into X, for built-in types only
-            GB_cast_array ((GB_void *) X, xcode, Ax, A->type->code, anz,
-                Context) ;
-        }
+    { 
+        // typecast or copy the values from A into X
+        GB_cast_array ((GB_void *) X, xcode,
+            (GB_void *) A->x, A->type->code, A->type->size, anz, nthreads) ;
     }
 
     //--------------------------------------------------------------------------

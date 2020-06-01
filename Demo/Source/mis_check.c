@@ -164,7 +164,7 @@ GrB_Info mis_check              // compute a maximal independent set
 
         // compute a random probability scaled by inverse of degree
         OK (prand_xget (X, Seed)) ;
-        OK (GrB_eWiseMult_Vector_BinaryOp (prob, candidates, NULL, set_random,
+        OK (GrB_Vector_eWiseMult_BinaryOp (prob, candidates, NULL, set_random,
             degrees, X, r_desc)) ;
 
         // compute the max probability of all neighbors
@@ -172,11 +172,11 @@ GrB_Info mis_check              // compute a maximal independent set
             prob, A, r_desc)) ;
 
         // select node if its probability is > than all its active neighbors
-        OK (GrB_eWiseAdd_Vector_BinaryOp (new_members, NULL, NULL, GrB_GT_FP64,
+        OK (GrB_Vector_eWiseAdd_BinaryOp (new_members, NULL, NULL, GrB_GT_FP64,
             prob, neighbor_max, NULL)) ;
 
         // add new members to independent set.
-        OK (GrB_eWiseAdd_Vector_BinaryOp (iset, NULL, NULL, GrB_LOR, iset,
+        OK (GrB_Vector_eWiseAdd_BinaryOp (iset, NULL, NULL, GrB_LOR, iset,
             new_members, NULL)) ;
 
         // remove new members from set of candidates c = c & !new

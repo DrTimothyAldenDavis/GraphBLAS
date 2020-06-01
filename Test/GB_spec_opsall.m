@@ -75,8 +75,8 @@ binops.real = {
 
 % binary operators for integer types only
 binops.int = {
-    'bitor', 'bitand', 'bitxor', 'bitxnor', ...
-    'bitget', 'bitset', 'bitclr', 'bitshift' } ;
+    'bor', 'band', 'bxor', 'bxnor', ...
+    'bget', 'bset', 'bclr', 'bshift' } ;
 
 % binary operators for floating-point only (FP32, FP64, FC32, FC64)
 binops.float = { } ;
@@ -112,7 +112,7 @@ unary_ops.real = {
 
 % unary ops for 8 integer types only (INT* and UINT*)
 unary_ops.int = {
-'bitnot'     % z = ~x           
+'bnot'     % z = ~x           
 } ;
 
 % unary ops for floating-point only (FP32, FP64, FC32, FC64)
@@ -146,7 +146,7 @@ add_ops = { ...
     'min', 'max', ...                           % 11 real types only
     'plus', 'times', 'any', ...                 % all 13 types
     'or', 'and', 'xor', 'eq', ...               % just boolean
-    'bitor', 'bitand', 'bitxor', 'bitxnor' } ;  % just integer
+    'bor', 'band', 'bxor', 'bxnor' } ;          % just integer
 
 nonbool = {
 'int8' 

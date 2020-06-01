@@ -114,8 +114,9 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     match the behavior on MATLAB integer matrices.  The rules for typecasting
     large floating point values to integers has changed.
     The specific object-based \verb'GrB_Matrix_wait' and related functions
-    have been added, and the no-argument \verb'GrB_wait( )' has been
-    deprecated.
+    have been added
+    
+    The no-argument \verb'GrB_wait( )' has been deprecated.
 
     Added \verb'GrB_getVersion', \verb'GrB_Matrix_resize',
     \verb'GrB_Vector_resize', \\
@@ -373,11 +374,9 @@ The user application can create any semiring based on any types, monoids,
 and multiply operators, as long these few rules are followed.
 
 Just considering built-in types and operators, GraphBLAS can perform
-\verb'C=A*B' in 1355 %TODO
-unique semirings.  With typecasting, any of these 1355 % TODO
+\verb'C=A*B' in 2,291 unique semirings.  With typecasting, any of these 2,291
 semirings can be applied to matrices \verb'C', \verb'A', and \verb'B' of any of
-the 11 types, in any combination.  This gives
-$1355 \times 11^3 = 1,803,505$ % TODO
+the 11 types, in any combination.  This gives $2291 \times 13^3 = 5,033,327$
 possible kinds of sparse matrix multiplication supported by GraphBLAS, and this
 is counting just built-in types and operators.  By contrast, MATLAB provides
 just two semirings for its sparse matrix multiplication \verb'C=A*B':
@@ -385,8 +384,8 @@ plus-times-double and plus-times-complex, not counting the typecasting that
 MATLAB does when multiplying a real matrix times a complex matrix.  All of the
 1.4 million forms of matrix multiplication methods in SuiteSparse:GraphBLAS are
 typically just as fast as computing \verb'C=A*B' in MATLAB using its own native
-sparse matrix multiplication methods, and often faster when parallelism can
-be effectively used.
+sparse matrix multiplication methods, and often faster when parallelism can be
+effectively used.
 
 A monoid can also be used in a reduction operation, like \verb's=sum(A)' in
 MATLAB.  MATLAB provides the plus, times, min, and max reductions of a real or
@@ -775,7 +774,7 @@ denote the multiplication of two matrices over a semiring.
 \hline
 \verb'GrB_transpose' & transpose               & ${\bf C \langle M \rangle = C \odot A^{\sf T}}$ \\
 \hline
-\verb'GxB_kron'      & Kronecker product       & ${\bf C \langle M \rangle = C \odot \mbox{kron}(A, B)}$ \\
+\verb'GrB_kronecker' & Kronecker product       & ${\bf C \langle M \rangle = C \odot \mbox{kron}(A, B)}$ \\
 \hline
 \end{tabular}
 }
@@ -2726,7 +2725,7 @@ A {\em semiring} defines all the operators required to define the
 multiplication of two sparse matrices in GraphBLAS, ${\bf C=AB}$.  The ``add''
 operator is a commutative and associative monoid, and the binary ``multiply''
 operator defines a function $z=fmult(x,y)$ where the type of $z$ matches the
-exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1355 % TODO
+exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1,473
 predefined built-in semirings, which are all those that can be constructed
 from built-in types and operators.  The next sections define the following
 methods for the \verb'GrB_Semiring' object:
@@ -2766,11 +2765,20 @@ additive monoid and \verb'multiply' being the binary ``multiply'' operator.  In
 addition to the standard error cases, the function returns
 \verb'GrB_DOMAIN_MISMATCH' if the output (\verb'ztype') domain of
 \verb'multiply' does not match the domain of the \verb'add' monoid.  Using
-built-in types and operators, 1355 % TODO
-semirings can be built.  This count
+built-in types and operators, 2,291 semirings can be built.  This count
 excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL' and
 \verb'GrB_LAND' are different operators but they are redundant since they
 always return the same result).
+
+SuiteSparse:GraphBLAS pre-defines 1,473 of the 2,291 unique semirings that can
+be constructed from built-in types and operators, listed below, as an extension
+to the spec.  The naming convention is \verb'GxB_add_mult_type', where
+\verb'add' is the operator of the additive monoid, \verb'mult' is the multiply
+operator, and \verb'type' is the type of inputs to the multiply operator.  The
+name of the domain for the additive monoid does not appear, since it always
+matches the type of the output of the \verb'mult' operator.  For example
+\verb'GxB_LAND_EQ_FP32' uses the \verb'GxB_LAND_BOOL_MONOID' as its additive
+monoid, and the \verb'GrB_EQ_FP32' as the binary multiplicative operator.
 
 \vspace{-0.05in}
 \begin{itemize}
@@ -2813,19 +2821,29 @@ always return the same result).
     \verb'EQ', \verb'GT', \verb'LT', \verb'GE', \verb'LE')
     \end{itemize}
 
-\end{itemize}
+\item 54 complex semirings, $T \times T \rightarrow T$ where $T$ is
+    \verb'float complex' or \verb'double complex':
 
-\vspace{-0.05in}
-SuiteSparse:GraphBLAS pre-defines all 1355 % TODO
-unique semirings that can be
-constructed from built-in types and operators, as an extension to the spec.
-The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
-operator of the additive monoid, \verb'mult' is the multiply operator, and
-\verb'type' is the type of inputs to the multiply operator.  The name of the
-domain for the additive monoid does not appear, since it always matches the
-type of the output of the \verb'mult' operator.  For example
-\verb'GxB_LAND_EQ_FP32' uses the \verb'GxB_LAND_BOOL_MONOID' as its additive
-monoid, and the \verb'GrB_EQ_FP32' as the binary multiplicative operator.
+    \vspace{-0.05in}
+    \begin{itemize}
+    \item 3 complex monoids (\verb'PLUS', \verb'TIMES', \verb'ANY')
+    \item 9 complex multiply operators:
+        (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'PLUS', \verb'MINUS',
+            \verb'TIMES', \verb'DIV', \verb'RDIV', \verb'RMINUS')
+    \item 2 complex types, $T$
+    \end{itemize}
+
+\item 64 bitwise semirings, $T \times T \rightarrow T$ where $T$ is
+    an unsigned integer.
+
+    \vspace{-0.05in}
+    \begin{itemize}
+    \item 4 bitwise monoids (\verb'BOR', \verb'BAND', \verb'BXOR', \verb'BXNOR')
+    \item 4 bitwise multiply operators (the same list)
+    \item 4 unsigned integer types
+    \end{itemize}
+
+\end{itemize}
 
 \begin{spec}
 {\bf SPEC:} Predefined semirings are an extension to the spec.
@@ -6509,7 +6527,7 @@ are extensions to the specification.
 
 The next sections define each of the GraphBLAS operations, also listed in the
 table below.  SuiteSparse:GraphBLAS extensions (\verb'GxB_subassign',
-\verb'GxB_select' and \verb'GxB_kron') are included in the table.
+\verb'GxB_select') are included in the table.
 
 \vspace{0.2in}
 {\small
@@ -6547,7 +6565,7 @@ table below.  SuiteSparse:GraphBLAS extensions (\verb'GxB_subassign',
 \hline
 \verb'GrB_transpose' & transpose               & ${\bf C \langle M \rangle = C \odot A^{\sf T}}$ \\
 \hline
-\verb'GxB_kron'      & Kronecker product       & ${\bf C \langle M \rangle = C \odot \mbox{kron}(A, B)}$ \\
+\verb'GrB_kronecker' & Kronecker product       & ${\bf C \langle M \rangle = C \odot \mbox{kron}(A, B)}$ \\
 \hline
 \end{tabular}
 }
@@ -6625,10 +6643,10 @@ MATLAB \verb'GB_spec' function          & corresponding GraphBLAS           & Se
 \verb'GB_spec_vxm.m'                    & \verb'GrB_vxm'                    & \ref{vxm} \\
 \verb'GB_spec_mxv.m'                    & \verb'GrB_mxv'                    & \ref{mxv} \\
 \hline
-\verb'GB_spec_eWiseMult_Vector.m'       & \verb'GrB_eWiseMult_Vector'       & \ref{eWiseMult} \\
-\verb'GB_spec_eWiseMult_Matrix.m'       & \verb'GrB_eWiseMult_Matrix'       & \ref{eWiseMult} \\
-\verb'GB_spec_eWiseAdd_Vector.m'        & \verb'GrB_eWiseAdd_Vector'        & \ref{eWiseAdd} \\
-\verb'GB_spec_eWiseAdd_Matrix.m'        & \verb'GrB_eWiseAdd_Matrix'        & \ref{eWiseAdd} \\
+\verb'GB_spec_Vector_eWiseMult.m'       & \verb'GrB_Vector_eWiseMult'       & \ref{eWiseMult} \\
+\verb'GB_spec_Matrix_eWiseMult.m'       & \verb'GrB_Matrix_eWiseMult'       & \ref{eWiseMult} \\
+\verb'GB_spec_Vector_eWiseAdd.m'        & \verb'GrB_Vector_eWiseAdd'        & \ref{eWiseAdd} \\
+\verb'GB_spec_Matrix_eWiseAdd.m'        & \verb'GrB_Matrix_eWiseAdd'        & \ref{eWiseAdd} \\
 \hline
 \verb'GB_spec_Vector_extract.m'         & \verb'GrB_Vector_extract'         & \ref{extract_vector} \\
 \verb'GB_spec_Matrix_extract.m'         & \verb'GrB_Matrix_extract'         & \ref{extract_matrix} \\
@@ -6646,7 +6664,7 @@ MATLAB \verb'GB_spec' function          & corresponding GraphBLAS           & Se
 \hline
 \verb'GB_spec_transpose.m'              & \verb'GrB_transpose'              & \ref{transpose} \\
 \hline
-\verb'GB_spec_kron.m'                   & \verb'GxB_kron'                   & \ref{kron} \\
+\verb'GB_spec_kron.m'                   & \verb'GrB_kronecker'              & \ref{kron} \\
 \hline
 \end{tabular}
 }
@@ -7003,7 +7021,7 @@ GrB_Info GrB_eWiseMult              // w<mask> = accum (w, u.*v)
 \end{verbatim}
 } \end{mdframed}
 
-\verb'GrB_eWiseMult_Vector' computes the element-wise ``multiplication'' of two
+\verb'GrB_Vector_eWiseMult' computes the element-wise ``multiplication'' of two
 vectors \verb'u' and \verb'v', element-wise using any binary operator (not just
 times).  The vectors are not transposed via the descriptor.  The vectors
 \verb'u' and \verb'v' are first typecasted into the first and second inputs of
@@ -7047,7 +7065,7 @@ GrB_Info GrB_eWiseMult              // C<Mask> = accum (C, A.*B)
 \end{verbatim}
 } \end{mdframed}
 
-\verb'GrB_eWiseMult_Matrix' computes the element-wise ``multiplication'' of two
+\verb'GrB_Matrix_eWiseMult' computes the element-wise ``multiplication'' of two
 matrices \verb'A' and \verb'B', element-wise using any binary operator (not
 just times).  The input matrices may be transposed first, according to the
 descriptor \verb'desc'.  They are then typecasted into the first and second
@@ -7170,7 +7188,7 @@ GrB_Info GrB_eWiseAdd               // w<mask> = accum (w, u+v)
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_eWiseAdd_Vector' computes the element-wise ``addition'' of two
+\verb'GrB_Vector_eWiseAdd' computes the element-wise ``addition'' of two
 vectors \verb'u' and \verb'v', element-wise using any binary operator (not just
 plus).  The vectors are not transposed via the descriptor.  Entries in the
 intersection of \verb'u' and \verb'v' are first typecasted into the first and
@@ -7210,7 +7228,7 @@ GrB_Info GrB_eWiseAdd               // C<Mask> = accum (C, A+B)
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_eWiseAdd_Matrix' computes the element-wise ``addition'' of two
+\verb'GrB_Matrix_eWiseAdd' computes the element-wise ``addition'' of two
 matrices \verb'A' and \verb'B', element-wise using any binary operator (not
 just plus).  The input matrices may be transposed first, according to the
 descriptor \verb'desc'.  Entries in the intersection then typecasted into the
@@ -9125,14 +9143,14 @@ deleted from the copy \verb'C'.
 
 \newpage
 %===============================================================================
-\subsection{{\sf GxB\_kron:} Kronecker product} %===============================
+\subsection{{\sf GrB\_kronecker:} Kronecker product} %==========================
 %===============================================================================
 \label{kron}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_kron                   // C<Mask> = accum (C, kron(A,B))
+GrB_Info GrB_kronecker              // C<Mask> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -9144,7 +9162,7 @@ GrB_Info GxB_kron                   // C<Mask> = accum (C, kron(A,B))
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_kron' computes the Kronecker product,
+\verb'GrB_kronecker' computes the Kronecker product,
 ${\bf C \langle M \rangle = C \odot \mbox{kron}(A,B)}$ where
 \[
 \mbox{kron}{\bf (A,B)} =
@@ -9166,10 +9184,6 @@ be transposed first via the descriptor, \verb'desc'.  Entries in \verb'A' and
 \verb'T=kron(A,B)' has the same type as the \verb'ztype' of the binary
 operator, \verb'op'.  The final step is ${\bf C \langle M \rangle  = C \odot
 T}$, as described in Section~\ref{accummask}.
-
-\begin{spec}
-{\bf SPEC:} \verb'GxB_kron' is an extension to the spec.
-\end{spec}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

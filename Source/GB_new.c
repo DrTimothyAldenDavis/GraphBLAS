@@ -149,7 +149,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nzombies = 0 ;
     A->Pending = NULL ;
 
-    // content freed or reset by GB_queue_remove:
     A->queue_next = NULL ;
     A->queue_prev = NULL ;
     A->enqueued = false ;

@@ -623,6 +623,12 @@ void mexFunction
     ERR (GrB_Monoid_new_FP64 (&monoid, GrB_PLUS_FP32, (double) 0)) ;
     CHECK (monoid == NULL) ;
 
+    ERR (GxB_Monoid_new_FC32 (&monoid, GrB_PLUS_FP64, (float) 0)) ;
+    CHECK (monoid == NULL) ;
+
+    ERR (GxB_Monoid_new_FC64 (&monoid, GrB_PLUS_FP32, (double) 0)) ;
+    CHECK (monoid == NULL) ;
+
     // this works
     OK (GrB_Monoid_new_FP64 (&monoid, GrB_PLUS_FP64, (double) 0)) ;
     CHECK (monoid != NULL) ;
@@ -1968,65 +1974,65 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GrB_eWiseMult_Vector_Semiring (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
-    ERR (GrB_eWiseMult_Vector_Semiring (v0, NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , NULL, NULL, s2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
+    ERR (GrB_Vector_eWiseMult_Semiring (v0, NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , NULL, NULL, s2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseMult_Vector_Monoid (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
-    ERR (GrB_eWiseMult_Vector_Monoid (v0, NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , NULL, NULL, m2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
+    ERR (GrB_Vector_eWiseMult_Monoid (v0, NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , NULL, NULL, m2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v0, NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , NULL, NULL, o2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v0, NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , NULL, NULL, o2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseMult_Matrix_Semiring (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
-    ERR (GrB_eWiseMult_Matrix_Semiring (A0, NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , NULL, NULL, s2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
+    ERR (GrB_Matrix_eWiseMult_Semiring (A0, NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , NULL, NULL, s2 , A , A0, d0)) ;
 
-    ERR (GrB_eWiseMult_Matrix_Monoid (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
-    ERR (GrB_eWiseMult_Matrix_Monoid (A0, NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , NULL, NULL, m2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
+    ERR (GrB_Matrix_eWiseMult_Monoid (A0, NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , NULL, NULL, m2 , A , A0, d0)) ;
 
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , NULL, NULL, o2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , NULL, NULL, o2 , A , A0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v0, NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , NULL, NULL, s2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v0, NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , NULL, NULL, s2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v0, NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , NULL, NULL, m2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v0, NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , NULL, NULL, m2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v0, NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , NULL, NULL, o2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v0, NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , NULL, NULL, o2 , v , v0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A0, NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , NULL, NULL, s2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A0, NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , NULL, NULL, s2 , A , A0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A0, NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , NULL, NULL, m2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A0, NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , NULL, NULL, m2 , A , A0, d0)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , A , A0, d0)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -2036,122 +2042,122 @@ void mexFunction
     A0 = Agunk ;
     op0 = op2gunk ;
 
-    ERR (GrB_eWiseMult_Vector_Semiring (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
-    ERR (GrB_eWiseMult_Vector_Semiring (v0, NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , NULL, NULL, s2 , v , v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , v0  , NULL, s2 , v , v , d0)) ;
-    ERR (GrB_eWiseMult_Vector_Semiring (v , NULL, op0 , s2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
+    ERR (GrB_Vector_eWiseMult_Semiring (v0, NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , NULL, NULL, s2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , v0  , NULL, s2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseMult_Semiring (v , NULL, op0 , s2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseMult_Vector_Monoid (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
-    ERR (GrB_eWiseMult_Vector_Monoid (v0, NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , NULL, NULL, m2 , v , v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , v0  , NULL, m2 , v , v , d0)) ;
-    ERR (GrB_eWiseMult_Vector_Monoid (v , NULL, op0 , m2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
+    ERR (GrB_Vector_eWiseMult_Monoid (v0, NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , NULL, NULL, m2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , v0  , NULL, m2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseMult_Monoid (v , NULL, op0 , m2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v0, NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , NULL, NULL, o2 , v , v0, d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , v0  , NULL, o2 , v , v , d0)) ;
-    ERR (GrB_eWiseMult_Vector_BinaryOp (v , NULL, op0 , o2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v0, NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , NULL, NULL, o2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , v0  , NULL, o2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseMult_BinaryOp (v , NULL, op0 , o2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseMult_Matrix_Semiring (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
-    ERR (GrB_eWiseMult_Matrix_Semiring (A0, NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , NULL, NULL, s2 , A , A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , A0  , NULL, s2 , A , A , d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Semiring (A , NULL, op0 , s2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
+    ERR (GrB_Matrix_eWiseMult_Semiring (A0, NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , NULL, NULL, s2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , A0  , NULL, s2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Semiring (A , NULL, op0 , s2 , A , A , NULL)) ;
 
-    ERR (GrB_eWiseMult_Matrix_Monoid (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
-    ERR (GrB_eWiseMult_Matrix_Monoid (A0, NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , NULL, NULL, m2 , A , A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , A0  , NULL, m2 , A , A , d0)) ;
-    ERR (GrB_eWiseMult_Matrix_Monoid (A , NULL, op0 , m2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
+    ERR (GrB_Matrix_eWiseMult_Monoid (A0, NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , NULL, NULL, m2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , A0  , NULL, m2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseMult_Monoid (A , NULL, op0 , m2 , A , A , NULL)) ;
 
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , NULL, NULL, o2 , A , A0, d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , A0  , NULL, o2 , A , A , d0)) ;
-    ERR (GrB_eWiseMult_Matrix_BinaryOp (A , NULL, op0 , o2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , NULL, NULL, o2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , A0  , NULL, o2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseMult_BinaryOp (A , NULL, op0 , o2 , A , A , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v0, NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , NULL, NULL, s2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , NULL, NULL, s2 , v , v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , v0  , NULL, s2 , v , v , d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Semiring  (v , NULL, op0 , s2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v0, NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , NULL, NULL, s2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , NULL, NULL, s2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , v0  , NULL, s2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Semiring  (v , NULL, op0 , s2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v0, NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , NULL, NULL, m2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , NULL, NULL, m2 , v , v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , v0  , NULL, m2 , v , v , d0)) ;
-    ERR (GrB_eWiseAdd_Vector_Monoid  (v , NULL, op0 , m2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v0, NULL, NULL, m0 , v0, v0, d0)) ;  // vector monoid
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v0, NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , NULL, NULL, m2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , NULL, NULL, m2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , v0  , NULL, m2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseAdd_Monoid  (v , NULL, op0 , m2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v0, NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , NULL, NULL, o2 , v0, v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , NULL, NULL, o2 , v , v0, d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , v0  , NULL, o2 , v , v , d0)) ;
-    ERR (GrB_eWiseAdd_Vector_BinaryOp  (v , NULL, op0 , o2 , v , v , NULL)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v0, NULL, NULL, op0, v0, v0, d0)) ;  // vector op
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v0, NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , NULL, NULL, o2 , v0, v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , NULL, NULL, o2 , v , v0, d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , v0  , NULL, o2 , v , v , d0)) ;
+    ERR (GrB_Vector_eWiseAdd_BinaryOp  (v , NULL, op0 , o2 , v , v , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A0, NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , NULL, NULL, s2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , NULL, NULL, s2 , A , A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , A0  , NULL, s2 , A , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Semiring  (A , NULL, op0 , s2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A0, NULL, NULL, s0 , A0, A0, d0)) ;  // matrix semiring
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A0, NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , NULL, NULL, s2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , NULL, NULL, s2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , A0  , NULL, s2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Semiring  (A , NULL, op0 , s2 , A , A , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A0, NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , NULL, NULL, m2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , NULL, NULL, m2 , A , A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , A0  , NULL, m2 , A , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_Monoid  (A , NULL, op0 , m2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A0, NULL, NULL, m0 , A0, A0, d0)) ;  // matrix monoid
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A0, NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , NULL, NULL, m2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , NULL, NULL, m2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , A0  , NULL, m2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_Monoid  (A , NULL, op0 , m2 , A , A , NULL)) ;
 
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , A , A0, d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , A0  , NULL, o2 , A , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, op0 , o2 , A , A , NULL)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , A , A0, d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , A0  , NULL, o2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, op0 , o2 , A , A , NULL)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , Z , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, o2 , A , Z , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, Complex_plus, A , Z , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , Z , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, o2 , A , Z , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (Z , NULL, NULL, Complex_complex, A , A , d0)) ;
 
     OK (GrB_BinaryOp_new (&op3, f3, Complex, Complex, GrB_FP64)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (Z , NULL, NULL, op3, Z , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (Z , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (Z , NULL, NULL, op3, Z , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (Z , NULL, op3 , o2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, op3 , o2 , A , A , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (A , NULL, Complex_complex, o2 , A , A , d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (C , NULL, NULL, o2 , A , B , d0)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (C , NULL, NULL, o2 , A , B , dtn)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (C , NULL, NULL, o2 , A , B , dnt)) ;
-    ERR (GrB_eWiseAdd_Matrix_BinaryOp  (C , NULL, NULL, o2 , A , B , dtt)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (C , NULL, NULL, o2 , A , B , d0)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (C , NULL, NULL, o2 , A , B , dtn)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (C , NULL, NULL, o2 , A , B , dnt)) ;
+    ERR (GrB_Matrix_eWiseAdd_BinaryOp  (C , NULL, NULL, o2 , A , B , dtt)) ;
 
     // The following are now allocated; keep them for the rest the tests:
     // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty,
     // desc, dgunk, A, B, C, E, F, Z, v, u, dnt, dtn, dtt
 
     //--------------------------------------------------------------------------
-    // GxB_kron
+    // GrB_kronecker
     //--------------------------------------------------------------------------
 
-    printf ("GxB_kron ----------------------------------------------------\n") ;
+    printf ("GrB_kronecker -----------------------------------------------\n") ;
 
     m2 = GxB_MIN_FP64_MONOID ;
     s2 = GxB_PLUS_ISEQ_FP32 ;
@@ -2164,10 +2170,10 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
 
-    info = (GxB_kron (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GxB_kron (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GxB_kron (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GxB_kron (A , NULL, NULL, o2 , A , A0, d0)) ;
+    info = (GrB_kronecker (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_kronecker (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_kronecker (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_kronecker (A , NULL, NULL, o2 , A , A0, d0)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -2177,28 +2183,28 @@ void mexFunction
     A0 = Agunk ;
     op0 = op2gunk ;
 
-    ERR (GxB_kron (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
-    ERR (GxB_kron (A0, NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GxB_kron (A , NULL, NULL, o2 , A0, A0, d0)) ;
-    ERR (GxB_kron (A , NULL, NULL, o2 , A , A0, d0)) ;
-    ERR (GxB_kron (A , A0  , NULL, o2 , A , A , d0)) ;
-    ERR (GxB_kron (A , NULL, op0 , o2 , A , A , NULL)) ;
+    ERR (GrB_kronecker (A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
+    ERR (GrB_kronecker (A0, NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_kronecker (A , NULL, NULL, o2 , A0, A0, d0)) ;
+    ERR (GrB_kronecker (A , NULL, NULL, o2 , A , A0, d0)) ;
+    ERR (GrB_kronecker (A , A0  , NULL, o2 , A , A , d0)) ;
+    ERR (GrB_kronecker (A , NULL, op0 , o2 , A , A , NULL)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GxB_kron  (A , NULL, NULL, o2 , Z , A , d0)) ;
-    ERR (GxB_kron  (A , NULL, NULL, o2 , A , Z , d0)) ;
-    ERR (GxB_kron  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
-    ERR (GxB_kron  (A , NULL, NULL, Complex_plus, A , Z , d0)) ;
-    ERR (GxB_kron  (A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GxB_kron  (Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+    ERR (GrB_kronecker  (A , NULL, NULL, o2 , Z , A , d0)) ;
+    ERR (GrB_kronecker  (A , NULL, NULL, o2 , A , Z , d0)) ;
+    ERR (GrB_kronecker  (A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+    ERR (GrB_kronecker  (A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+    ERR (GrB_kronecker  (A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+    ERR (GrB_kronecker  (Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
-    ERR (GxB_kron  (C , NULL, NULL, o2 , A , B , d0)) ;
-    ERR (GxB_kron  (C , NULL, NULL, o2 , A , B , dtn)) ;
-    ERR (GxB_kron  (C , NULL, NULL, o2 , A , B , dnt)) ;
-    ERR (GxB_kron  (C , NULL, NULL, o2 , A , B , dtt)) ;
+    ERR (GrB_kronecker  (C , NULL, NULL, o2 , A , B , d0)) ;
+    ERR (GrB_kronecker  (C , NULL, NULL, o2 , A , B , dtn)) ;
+    ERR (GrB_kronecker  (C , NULL, NULL, o2 , A , B , dnt)) ;
+    ERR (GrB_kronecker  (C , NULL, NULL, o2 , A , B , dtt)) ;
 
     //--------------------------------------------------------------------------
     // extract
@@ -3586,6 +3592,7 @@ void mexFunction
     #undef GrB_UnaryOp_new
     OK (GrB_UnaryOp_new (&op1b, f1, GrB_FP64, GrB_UINT32)) ;
     CHECK (op1b != NULL) ;
+    OK (GrB_UnaryOp_wait (&op1b)) ;
 
     Context->where = "GB_UnaryOp_check" ;
     OK (GB_UnaryOp_check (op1b, "op1b ok (via function)", GB3, ff, Context)) ;
@@ -4677,6 +4684,86 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseMult_Semiring (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
+        OK (GrB_Vector_eWiseMult_Semiring (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseMult_Monoid (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
+        OK (GrB_Vector_eWiseMult_Monoid (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseMult_BinaryOp (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
+        OK (GrB_Vector_eWiseMult_BinaryOp (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseMult_Semiring (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseMult_Semiring (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseMult_Monoid (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseMult_Monoid (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseMult_BinaryOp (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseMult_BinaryOp (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        //----------------------------------------------------------------------
+        // GrB_eWiseAdd
+        //----------------------------------------------------------------------
+
+        OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseAdd_Semiring (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
+        OK (GrB_Vector_eWiseAdd_Semiring (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseAdd_Monoid (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
+        OK (GrB_Vector_eWiseAdd_Monoid (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Vector_dup (&v, u)) ;
+        OK (GrB_Vector_eWiseAdd_BinaryOp  (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
+        OK (GrB_Vector_eWiseAdd_BinaryOp  (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
+        GrB_Vector_free (&v) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseAdd_Semiring (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseAdd_Semiring (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseAdd_Monoid (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseAdd_Monoid (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        OK (GrB_Matrix_dup (&B, A)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
+        GrB_Matrix_free (&B) ;
+
+        //----------------------------------------------------------------------
+        // GrB_eWiseMult (misnamed)
+        //----------------------------------------------------------------------
+
+        OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseMult_Vector_Semiring (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
         OK (GrB_eWiseMult_Vector_Semiring (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
@@ -4713,7 +4800,7 @@ void mexFunction
         GrB_Matrix_free (&B) ;
 
         //----------------------------------------------------------------------
-        // GrB_eWiseAdd
+        // GrB_eWiseAdd (misnamed)
         //----------------------------------------------------------------------
 
         OK (GrB_Vector_dup (&v, u)) ;
