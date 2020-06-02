@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Extract a single entry, x = v(i), typecasting from the type
-// of v to the type of x, as needed.
+// Extract a single entry, x = v(i), typecasting from the type of v to the type
+// of x, as needed.
 
 // Returns GrB_SUCCESS if v(i) is present, and sets x to its value.
 // Returns GrB_NO_VALUE if v(i) is not present, and x is unmodified.

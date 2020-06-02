@@ -13,8 +13,12 @@
 // Returns GrB_SUCCESS if A(row,col) is present, and sets x to its value.
 // Returns GrB_NO_VALUE if A(row,col) is not present, and x is unmodified.
 
-// This template constructs GrB_Matrix_extractElement_[TYPE] for each of the 13
-// built-in types, and the _UDT method for all user-defined types.
+// This template constructs GrB_Matrix_extractElement_[TYPE] for each of the
+// 13 built-in types, and the _UDT method for all user-defined types.
+
+// TODO tolerate zombies
+
+#define GB_WHERE_STRING GB_STR (GB_EXTRACT_ELEMENT) " (x, A, row, col)"
 
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 (
@@ -29,15 +33,22 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
-    GB_WHERE (GB_STR (GB_EXTRACT_ELEMENT) " (x, A, row, col)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_CONTEXT_RETURN_IF_NULL (A) ;
+    GB_CONTEXT_RETURN_IF_FAULTY (A) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (A) ;
+    if (GB_PENDING_OR_ZOMBIES (A))
+    { 
+        GrB_Info info ;
+        GB_WHERE (GB_WHERE_STRING) ;
+        GB_BURBLE_START ("GrB_Matrix_extractElement") ;
+        GB_OK (GB_Matrix_wait (A, Context)) ;
+        ASSERT (!GB_ZOMBIES (A)) ;
+        ASSERT (!GB_PENDING (A)) ;
+        GB_BURBLE_END ;
+    }
 
-    GB_RETURN_IF_NULL (x) ;
+    GB_CONTEXT_RETURN_IF_NULL (x) ;
 
     // look for index i in vector j
     int64_t i, j, nrows, ncols ;
@@ -59,11 +70,13 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     // check row and column indices
     if (row >= nrows)
     { 
+        GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
             GBu " out of range; must be < " GBd, row, nrows))) ;
     }
     if (col >= ncols)
     { 
+        GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Column index "
             GBu " out of range; must be < " GBd, col, ncols))) ;
     }
@@ -72,6 +85,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     GB_Type_code acode = A->type->code ;
     if (!GB_code_compatible (GB_XCODE, acode))
     { 
+        GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
             "entry A(i,j) of type [%s] cannot be typecast\n"
             "to output scalar x of type [%s]",
@@ -154,6 +168,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     }
 }
 
+#undef GB_WHERE_STRING
 #undef GB_EXTRACT_ELEMENT
 #undef GB_XTYPE
 #undef GB_XCODE

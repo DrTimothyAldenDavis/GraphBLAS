@@ -164,7 +164,7 @@ logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
 logstat ('test143',t) ; % mxm, special cases
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
-logstat ('test27',t) ;  % quick test of GxB_select (band)
+logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 
 %----------------------------------------
 % longer tests (200 seconds to 600 seconds)

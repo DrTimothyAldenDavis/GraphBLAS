@@ -14,9 +14,10 @@
 // value.  Returns GrB_NO_VALUE if the GxB_Scalar is not present, and x is
 // unmodified.
 
-// This template constructs GrB_*_extractElement_[TYPE], for both the
-// GrB_Matrix and GrB_Vector methods, for each of the 13 built-in types, and
-// the _UDT method for all user-defined types.
+// This template constructs GxB_Scalar_extractElement_[TYPE] for each of the
+// 13 built-in types, and the _UDT method for all user-defined types.
+
+#define GB_WHERE_STRING GB_STR (GB_EXTRACT_ELEMENT) " (x, s)"
 
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
 (
@@ -29,20 +30,28 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
-    GB_WHERE (GB_STR (GB_EXTRACT_ELEMENT) " (x, s)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (S) ;
+    GB_CONTEXT_RETURN_IF_NULL (S) ;
+    GB_CONTEXT_RETURN_IF_FAULTY (S) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (S) ;
+    if (GB_PENDING_OR_ZOMBIES (S))
+    { 
+        GrB_Info info ;
+        GB_WHERE (GB_WHERE_STRING) ;
+        GB_BURBLE_START ("GxB_Scalar_extractElement") ;
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) S, Context)) ;
+        ASSERT (!GB_ZOMBIES (S)) ;
+        ASSERT (!GB_PENDING (S)) ;
+        GB_BURBLE_END ;
+    }
 
-    GB_RETURN_IF_NULL (x) ;
+    GB_CONTEXT_RETURN_IF_NULL (x) ;
 
     // GB_XCODE and S must be compatible
     GB_Type_code scode = S->type->code ;
     if (!GB_code_compatible (GB_XCODE, scode))
     { 
+        GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
             "entry s of type [%s] cannot be typecast\n"
             "to output scalar x of type [%s]",
@@ -61,7 +70,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
 
     const int64_t *GB_RESTRICT Sp = S->p ;
     if (Sp [1] == 0)
-    {
+    { 
         // the scalar has no entry
         return (GrB_NO_VALUE) ;
     }
@@ -84,6 +93,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     return (GrB_SUCCESS) ;
 }
 
+#undef GB_WHERE_STRING
 #undef GB_EXTRACT_ELEMENT
 #undef GB_XTYPE
 #undef GB_XCODE

@@ -89,7 +89,7 @@
 %   test24   - test GrB_reduce
 %   test25   - test GxB_select
 %   test26   - performance test for GxB_select
-%   test27   - test GxB_select with user-defined select op (band)
+%   test27   - test GxB_select with user-defined select op (LoHi_band)
 %   test28   - test mxm with aliased inputs, C<C> = accum(C,C*C)
 %   test29   - GrB_reduce with zombies
 %   test30   - test GxB_subassign

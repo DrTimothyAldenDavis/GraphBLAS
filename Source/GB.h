@@ -1719,6 +1719,35 @@ void GB_cast_array              // typecast an array
     GB_RETURN_IF_NULL (arg) ;                                           \
     GB_RETURN_IF_FAULTY (arg) ;
 
+// same as GB_RETURN_IF_NULL(arg), but set Context first
+#define GB_CONTEXT_RETURN_IF_NULL(arg)                                  \
+    if ((arg) == NULL)                                                  \
+    {                                                                   \
+        /* the required arg is NULL */                                  \
+        GB_WHERE (GB_WHERE_STRING) ;                                    \
+        return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,                    \
+            "Required argument is null: [%s]", GB_STR(arg)))) ;         \
+    }
+
+// same as GB_RETURN_IF_FAULTY(arg), but set Context first
+#define GB_CONTEXT_RETURN_IF_FAULTY(arg)                                \
+    if ((arg) != NULL && (arg)->magic != GB_MAGIC)                      \
+    {                                                                   \
+        GB_WHERE (GB_WHERE_STRING) ;                                    \
+        if ((arg)->magic == GB_MAGIC2)                                  \
+        {                                                               \
+            /* optional arg is not NULL, but invalid */                 \
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
+                "Argument is invalid: [%s]", GB_STR(arg)))) ;           \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* optional arg is not NULL, but not initialized */         \
+            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
+                "Argument is uninitialized: [%s]", GB_STR(arg)))) ;     \
+        }                                                               \
+    }
+
 // check the descriptor and extract its contents; also copies
 // nthreads_max, chunk, and use_mkl from the descriptor to the Context
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \

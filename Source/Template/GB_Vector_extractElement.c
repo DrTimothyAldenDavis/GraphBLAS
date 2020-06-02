@@ -16,6 +16,10 @@
 // This template constructs GrB_Vector_extractElement_[TYPE], for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
 
+// TODO tolerate zombies
+
+#define GB_WHERE_STRING GB_STR (GB_EXTRACT_ELEMENT) " (x, v, i)"
+
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
 (
     GB_XTYPE *x,                // scalar to extract, not modified if not found
@@ -28,15 +32,22 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
-    GB_WHERE (GB_STR (GB_EXTRACT_ELEMENT) " (x, v, i)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    GB_CONTEXT_RETURN_IF_NULL (V) ;
+    GB_CONTEXT_RETURN_IF_FAULTY (V) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_VECTOR_WAIT (V) ;
+    if (GB_PENDING_OR_ZOMBIES (V))
+    { 
+        GrB_Info info ;
+        GB_WHERE (GB_WHERE_STRING) ;
+        GB_BURBLE_START ("GrB_Vector_extractElement") ;
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
+        ASSERT (!GB_ZOMBIES (V)) ;
+        ASSERT (!GB_PENDING (V)) ;
+        GB_BURBLE_END ;
+    }
 
-    GB_RETURN_IF_NULL (x) ;
+    GB_CONTEXT_RETURN_IF_NULL (x) ;
 
     // look for index i in the GrB_Vector
     int64_t i = row ;
@@ -44,14 +55,16 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
     // check index
     if (row >= V->vlen)
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Index " GBu " out of range; must be < " GBd, row, V->vlen))) ;
+        GB_WHERE (GB_WHERE_STRING) ;
+        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
+            GBu " out of range; must be < " GBd, row, V->vlen))) ;
     }
 
     // GB_XCODE and V must be compatible
     GB_Type_code vcode = V->type->code ;
     if (!GB_code_compatible (GB_XCODE, vcode))
     { 
+        GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
             "entry v(i) of type [%s] cannot be typecast\n"
             "to output scalar x of type [%s]",
@@ -114,6 +127,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
     }
 }
 
+#undef GB_WHERE_STRING
 #undef GB_EXTRACT_ELEMENT
 #undef GB_XTYPE
 #undef GB_XCODE
