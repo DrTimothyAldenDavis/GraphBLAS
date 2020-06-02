@@ -1066,11 +1066,39 @@ bool GB_Type_compatible         // check if two types can be typecast
     const GrB_Type btype
 ) ;
 
-bool GB_code_compatible         // check if two types can be typecast
+//------------------------------------------------------------------------------
+// GB_code_compatible: return true if domains are compatible
+//------------------------------------------------------------------------------
+
+// Two domains are compatible for typecasting between them if both are built-in
+// types (of any kind) or if both are the same user-defined type.  This
+// function does not have the type itself, but just the code.  If the types are
+// available, GB_Type_compatible should be called instead.
+
+static inline bool GB_code_compatible       // true if two types can be typecast
 (
-    const GB_Type_code acode,
-    const GB_Type_code bcode
-) ;
+    const GB_Type_code acode,   // type code of a
+    const GB_Type_code bcode    // type code of b
+)
+{
+
+    bool a_user = (acode == GB_UDT_code) ;
+    bool b_user = (bcode == GB_UDT_code) ;
+
+    if (a_user || b_user)
+    { 
+        // both a and b must be user-defined.  They should be the same
+        // user-defined type, but the caller does not have the actual type,
+        // just the code.
+        return (a_user && b_user) ;
+    }
+    else
+    { 
+        // any built-in domain is compatible with any other built-in domain
+        return (true) ;
+    }
+}
+
 
 //------------------------------------------------------------------------------
 // GB_task_struct: parallel task descriptor
@@ -1461,16 +1489,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
     const GB_Type_code xcode,   // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
-    GB_Context Context
-) ;
-
-GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
-(
-    void *x,                    // scalar to extract, not modified if not found
-    const GB_Type_code xcode,   // type of the scalar x
-    const GrB_Matrix A,         // matrix to extract a scalar from
-    const GrB_Index row,        // row index
-    const GrB_Index col,        // column index
     GB_Context Context
 ) ;
 

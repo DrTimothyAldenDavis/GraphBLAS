@@ -23,7 +23,7 @@
 // C_replace effectively false (its value is ignored), and A transpose
 // effectively false (since transposing a scalar has no effect).
 
-// Compare this function with GB_extractElement.
+// Compare this function with GrB_*_extractElement_*
 
 #include "GB_Pending.h"
 

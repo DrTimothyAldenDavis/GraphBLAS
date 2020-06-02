@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_extractElement: x = A(row,col)
+// GB_Matrix_extractElement: x = A(row,col)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,24 +8,20 @@
 //------------------------------------------------------------------------------
 
 // Extract the value of single scalar, x = A(row,col), typecasting from the
-// type of A to the type of x, as needed.  Not user-callable; does the work for
-// all GrB_*_extractElement* functions.
+// type of A to the type of x, as needed.
 
 // Returns GrB_SUCCESS if A(row,col) is present, and sets x to its value.
 // Returns GrB_NO_VALUE if A(row,col) is not present, and x is unmodified.
 
-#include "GB.h"
+// This template constructs GrB_Matrix_extractElement_[TYPE] for each of the 13
+// built-in types, and the _UDT method for all user-defined types.
 
-#define GB_FREE_ALL ;
-
-GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
+GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 (
-    void *x,                    // scalar to extract, not modified if not found
-    const GB_Type_code xcode,   // type of the scalar x
+    GB_XTYPE *x,                // scalar to extract, not modified if not found
     const GrB_Matrix A,         // matrix to extract a scalar from
-    const GrB_Index row,        // row index
-    const GrB_Index col,        // column index
-    GB_Context Context
+    GrB_Index row,              // row index
+    GrB_Index col               // column index
 )
 {
 
@@ -35,65 +31,68 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 
     GrB_Info info ;
 
+    GB_WHERE (GB_STR (GB_EXTRACT_ELEMENT) " (x, A, row, col)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
     // delete any lingering zombies and assemble any pending tuples
-    ASSERT (A != NULL) ;
     GB_MATRIX_WAIT (A) ;
 
     GB_RETURN_IF_NULL (x) ;
-    ASSERT (xcode <= GB_UDT_code) ;
+
+    // look for index i in vector j
+    int64_t i, j, nrows, ncols ;
+    if (A->is_csc)
+    { 
+        i = row ;
+        j = col ;
+        nrows = A->vlen ;
+        ncols = A->vdim ;
+    }
+    else
+    { 
+        i = col ;
+        j = row ;
+        nrows = A->vdim ;
+        ncols = A->vlen ;
+    }
 
     // check row and column indices
-    if (row >= GB_NROWS (A))
+    if (row >= nrows)
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Row index " GBu " out of range; must be < " GBd,
-            row, GB_NROWS (A)))) ;
+        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
+            GBu " out of range; must be < " GBd, row, nrows))) ;
     }
-    if (col >= GB_NCOLS (A))
+    if (col >= ncols)
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Column index " GBu " out of range; must be < " GBd,
-            col, GB_NCOLS (A)))) ;
+        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Column index "
+            GBu " out of range; must be < " GBd, col, ncols))) ;
     }
 
-    // xcode and A must be compatible
-    if (!GB_code_compatible (xcode, A->type->code))
+    // GB_XCODE and A must be compatible
+    GB_Type_code acode = A->type->code ;
+    if (!GB_code_compatible (GB_XCODE, acode))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
             "entry A(i,j) of type [%s] cannot be typecast\n"
             "to output scalar x of type [%s]",
-            A->type->name, GB_code_string (xcode)))) ;
+            A->type->name, GB_code_string (GB_XCODE)))) ;
     }
 
-    if (GB_NNZ (A) == 0)
+    if (A->nzmax == 0)
     { 
         // quick return
         return (GrB_NO_VALUE) ;
     }
 
     //--------------------------------------------------------------------------
-    // handle the CSR/CSC format
-    //--------------------------------------------------------------------------
-
-    int64_t i, j ;
-    if (A->is_csc)
-    { 
-        // look for index i in vector j
-        i = row ;
-        j = col ;
-    }
-    else
-    { 
-        // look for index j in vector i
-        i = col ;
-        j = row ;
-    }
-
-    //--------------------------------------------------------------------------
     // binary search in A->h for vector j
     //--------------------------------------------------------------------------
 
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     bool found ;
+
+    // extract from vector j of a GrB_Matrix
     int64_t k ;
     if (A->is_hyper)
     {
@@ -114,23 +113,14 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
     { 
         k = j ;
     }
+    int64_t pleft = Ap [k] ;
+    int64_t pright = Ap [k+1] - 1 ;
 
     //--------------------------------------------------------------------------
     // binary search in kth vector for index i
     //--------------------------------------------------------------------------
 
-    const int64_t *Ap = A->p ;
-    int64_t pleft = Ap [k] ;
-    int64_t pright = Ap [k+1] - 1 ;
-
-    if (pleft > pright)
-    { 
-        // no entries in vector j
-        return (GrB_NO_VALUE) ;
-    }
-
     // Time taken for this step is at most O(log(nnz(A(:,j))).
-    const int64_t *Ai = A->i ;
     GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
 
     //--------------------------------------------------------------------------
@@ -139,20 +129,32 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 
     if (found)
     {
-        // typecast the value from A into x
-        size_t asize = A->type->size ;
-        GB_cast_array ((GB_void *) x, xcode,
-            ((GB_void *) A->x) +(pleft*asize), A->type->code, asize, 1, 1) ;
+        #if (GB_XCODE < GB_UDT_code)
+        if (GB_XCODE == acode)
+        { 
+            // copy the value from A into x, no typecasting, for built-in
+            // types only.
+            GB_XTYPE *GB_RESTRICT Ax = (GB_XTYPE *) A->x ;
+            (*x) = Ax [pleft] ;
+        }
+        else
+        #endif
+        { 
+            // typecast the value from A into x
+            size_t asize = A->type->size ;
+            GB_cast_array ((GB_void *) x, GB_XCODE,
+                ((GB_void *) A->x) +(pleft*asize), acode, asize, 1, 1) ;
+        }
         return (GrB_SUCCESS) ;
     }
     else
     { 
-        // Entry not found.  This is not an error, but an indication to the
-        // user that the entry is not present in the matrix.  The matrix does
-        // not keep track of its identity value; that depends on the semiring.
-        // So the user would need to interpret this status of 'no value' and
-        // take whatever action is appropriate.
+        // Entry not found.
         return (GrB_NO_VALUE) ;
     }
 }
+
+#undef GB_EXTRACT_ELEMENT
+#undef GB_XTYPE
+#undef GB_XCODE
 

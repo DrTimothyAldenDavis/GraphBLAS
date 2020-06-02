@@ -184,7 +184,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 // the comments, but this is short-hand for the phrase "an entry A(i,j) whose
 // value is explicity held in the matrix and which appears in the pattern; its
 // value can be anything".  Entries not in the pattern are simply "not there";
-// see for example GB_extractElement.  The actual numerical value of these
+// see for example GrB_*_extractElement.  The actual numerical value of these
 // implicit entries is dependent upon the identity value of the semiring's
 // monoid operation used on the matrix.  The actual semiring is not held in the
 // matrix itself, and there are no restrictions on using a matrix in multiple

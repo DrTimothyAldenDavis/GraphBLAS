@@ -4,3 +4,10 @@ GrB_apply with binary op
 GrB_Matrix_removeElement
 GrB_Vector_removeElement
 
+extension to spec:
+add GxB_checkElement (no suffix).  No return value:
+
+    GrB_Info GxB_Matrix_existsElement (A, row, col)
+    GrB_Info GxB_Vector_existsElement (v, i)
+    GrB_Info GxB_Scalar_existsElement (s)
+
