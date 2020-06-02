@@ -16,6 +16,7 @@
 #include "GB.h"
 
 #define GB_FREE_ALL ;
+#define GB_WHERE_STRING "GxB_Scalar_extractElement (&x, s)"
 
 #define GB_EXTRACT_ELEMENT GxB_Scalar_extractElement_BOOL
 #define GB_XTYPE bool
@@ -82,6 +83,7 @@
 #define GB_XCODE GB_FC64_code
 #include "GB_Scalar_extractElement.c"
 
+#define GB_UDT_EXTRACT
 #define GB_EXTRACT_ELEMENT GxB_Scalar_extractElement_UDT
 #define GB_XTYPE void
 #define GB_XCODE GB_UDT_code

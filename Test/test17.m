@@ -1,4 +1,4 @@
-function test17
+% function test17
 %TEST17 test GrB_*_extractElement
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -12,24 +12,26 @@ types = types.all ;
 rng ('default') ;
 
 % type of the output X
-for k1 = 4 % 1:length (types)
+for k1 = 1:length (types)
     xtype = types {k1}  ;
-    fprintf ('\n%s', xtype) ;
+    fprintf ('\n%-14s ', xtype) ;
 
     % type of the matrix A
-    for k2 = 3 % 1:length (types)
+    for k2 = 1:length (types)
         atype = types {k2}  ;
+        fprintf ('.') ;
 
         % create a matrix
         for m = [1 10] % [1 10 25 50]
             for n = [1 10] % [1 10 25 50]
-                fprintf ('.') ;
                 clear A
                 A.matrix = 100 * sprandn (m, n, 0.1) ;
+                A.matrix (1,1) = pi ;
                 A.class = atype ;
 
                 clear B
                 B.matrix = 100 * sprandn (m*n, 1, 0.1) ;
+                B.matrix (1,1) = sparse (0) ;
                 B.class = atype ;
 
                 for A_is_hyper = 0:1

@@ -60,6 +60,7 @@
     GrB_Descriptor_free (&dgunk) ;    CHECK (dgunk        == NULL) ;      \
     GxB_SelectOp_free (&selectop) ;   CHECK (selectop     == NULL) ;      \
     GxB_SelectOp_free (&selectopgunk) ; CHECK (selectopgunk == NULL) ;    \
+    GxB_Scalar_free (&a_scalar) ;                                         \
     GB_mx_put_global (true, 0) ;                                          \
 }
 
@@ -178,6 +179,7 @@ void mexFunction
     GB_void *pp = NULL ;
 
     GxB_SelectOp selectop = NULL, selectopgunk = NULL, sel0 ;
+    GxB_Scalar a_scalar = NULL ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -801,6 +803,47 @@ void mexFunction
 
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
+
+    //--------------------------------------------------------------------------
+    // basic Scalar methods
+    //--------------------------------------------------------------------------
+
+    printf ("GrB_Vector---------------------------------------------------\n") ;
+
+    OK (GxB_Scalar_new (&a_scalar, GrB_INT32)) ;
+    CHECK (a_scalar != NULL) ;
+
+    int32_t i_scalar = 33 ;
+    OK (GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
+    OK (GxB_Scalar_extractElement_INT32 (&i_scalar, a_scalar)) ;
+    CHECK (i_scalar == 42) ;
+    i_scalar = 33 ;
+
+    // force a zombie
+    a_scalar->i [0] = GB_FLIP (0) ;
+    a_scalar->nzombies = 1 ;
+    GB_queue_insert (a_scalar) ;
+
+    info = GxB_Scalar_extractElement_INT32 (&i_scalar, a_scalar) ;
+    CHECK (i_scalar == 33) ;
+    CHECK (info == GrB_NO_VALUE) ;
+
+    OK (GxB_Scalar_free (&a_scalar)) ;
+
+    OK (GrB_Type_new (&T, sizeof (int))) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    OK (GxB_Scalar_new (&a_scalar, T)) ;
+    GxB_print (a_scalar, 3) ;
+    GxB_print (T, 3) ;
+    ERR (GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
+    ERR (GxB_Scalar_extractElement_INT32 (&i_scalar, a_scalar)) ;
+    CHECK (i_scalar == 33) ;
+
+    printf ("error expected: %s\n", GrB_error ( )) ;
+
+    OK (GrB_Type_free (&T)) ;
+    OK (GxB_Scalar_free (&a_scalar)) ;
 
     //--------------------------------------------------------------------------
     // basic Vector methods

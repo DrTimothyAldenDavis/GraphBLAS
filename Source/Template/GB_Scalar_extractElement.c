@@ -17,8 +17,6 @@
 // This template constructs GxB_Scalar_extractElement_[TYPE] for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
 
-#define GB_WHERE_STRING GB_STR (GB_EXTRACT_ELEMENT) " (x, s)"
-
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
 (
     GB_XTYPE *x,                // scalar to extract, not modified if not found
@@ -58,7 +56,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
             S->type->name, GB_code_string (GB_XCODE)))) ;
     }
 
-    if (S->nzmax == 0)
+    if (S->nzmax == 0 || S->p [1] == 0)
     { 
         // quick return
         return (GrB_NO_VALUE) ;
@@ -68,19 +66,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     // extract the scalar
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Sp = S->p ;
-    if (Sp [1] == 0)
-    { 
-        // the scalar has no entry
-        return (GrB_NO_VALUE) ;
-    }
-
-    #if (GB_XCODE < GB_UDT_code)
+    #if !defined ( GB_UDT_EXTRACT )
     if (GB_XCODE == scode)
     { 
         // copy the value from S into x, no typecasting, for built-in
         // types only.
-        GB_XTYPE *GB_RESTRICT Sx = (GB_XTYPE *) S->x ;
+        GB_XTYPE *GB_RESTRICT Sx = ((GB_XTYPE *) (S->x)) ;
         (*x) = Sx [0] ;
     }
     else
@@ -93,7 +84,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     return (GrB_SUCCESS) ;
 }
 
-#undef GB_WHERE_STRING
+#undef GB_UDT_EXTRACT
 #undef GB_EXTRACT_ELEMENT
 #undef GB_XTYPE
 #undef GB_XCODE

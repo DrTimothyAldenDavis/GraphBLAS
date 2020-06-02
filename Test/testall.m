@@ -68,7 +68,6 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
-logstat ('test151',t) ; % test bitwise operators
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 
 logstat ('test07b',t) ; % quick test GB_mex_assign
@@ -120,6 +119,7 @@ logstat ('test147',t) ; % C<M>=A*B with very sparse M
 logstat ('test146',t) ; % expand scalar
 logstat ('test149',t) ; % test fine hash tasks for C<!M>=A*B
 logstat ('test133',t) ; % test mask operations (GB_masker)
+logstat ('test151',t) ; % test bitwise operators
 
 %----------------------------------------
 % tests taking 1 to 10 seconds:

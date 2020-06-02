@@ -992,6 +992,14 @@ void mexFunction
     CHECK (info == GrB_NO_VALUE) ;
     CHECK (x_64 == 1.25) ;
 
+    info = GrB_Matrix_extractElement_FP64 (&x_64, (GrB_Matrix) scalar, 0, 0) ;
+    CHECK (info == GrB_NO_VALUE) ;
+    CHECK (x_64 == 1.25) ;
+
+    info = GrB_Vector_extractElement_FP64 (&x_64, (GrB_Vector) scalar, 0) ;
+    CHECK (info == GrB_NO_VALUE) ;
+    CHECK (x_64 == 1.25) ;
+
     u_64 = 0 ;
     OK (GxB_Scalar_extractElement_UINT64 (&u_64, scalar2)) ; CHECK (u_64 == 1) ;
     OK (GxB_Scalar_nvals (&nvals, scalar2)) ;

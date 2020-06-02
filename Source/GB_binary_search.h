@@ -23,6 +23,23 @@
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
     {                                                                       \
+        int64_t pmiddle = (pleft + pright) >> 1 ;                           \
+        bool less = (X [pmiddle] < i) ;                                     \
+        pleft  = less ? (pmiddle+1) : pleft ;                               \
+        pright = less ? pright : pmiddle ;                                  \
+    }                                                                       \
+    /* binary search is narrowed down to a single item */                   \
+    /* or it has found the list is empty */                                 \
+    ASSERT (pleft == pright || pleft == pright + 1) ;                       \
+}
+
+#if 0
+// slower version
+#define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
+{                                                                           \
+    /* binary search of X [pleft ... pright] for integer i */               \
+    while (pleft < pright)                                                  \
+    {                                                                       \
         int64_t pmiddle = (pleft + pright) / 2 ;                            \
         if (X [pmiddle] < i)                                                \
         {                                                                   \
@@ -39,6 +56,7 @@
     /* or it has found the list is empty */                                 \
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_BINARY_SEARCH: binary search and check if found
@@ -93,6 +111,22 @@
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
     {                                                                       \
+        int64_t pmiddle = (pleft + pright) >> 1 ;                           \
+        bool less = (GB_UNFLIP (X [pmiddle]) < i) ;                         \
+        pleft  = less ? (pmiddle+1) : pleft ;                               \
+        pright = less ? pright : pmiddle ;                                  \
+    }                                                                       \
+    /* binary search is narrowed down to a single item */                   \
+    /* or it has found the list is empty */                                 \
+    ASSERT (pleft == pright || pleft == pright + 1) ;                       \
+}
+
+#if 0
+#define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
+{                                                                           \
+    /* binary search of X [pleft ... pright] for integer i */               \
+    while (pleft < pright)                                                  \
+    {                                                                       \
         int64_t pmiddle = (pleft + pright) / 2 ;                            \
         if (i > GB_UNFLIP (X [pmiddle]))                                    \
         {                                                                   \
@@ -109,6 +143,7 @@
     /* or it has found the list is empty */                                 \
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_BINARY_SEARCH_ZOMBIE: binary search with zombies; check if found

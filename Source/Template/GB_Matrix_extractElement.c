@@ -18,8 +18,6 @@
 
 // TODO tolerate zombies
 
-#define GB_WHERE_STRING GB_STR (GB_EXTRACT_ELEMENT) " (x, A, row, col)"
-
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 (
     GB_XTYPE *x,                // scalar to extract, not modified if not found
@@ -143,12 +141,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     if (found)
     {
-        #if (GB_XCODE < GB_UDT_code)
+        #if !defined ( GB_UDT_EXTRACT )
         if (GB_XCODE == acode)
         { 
             // copy the value from A into x, no typecasting, for built-in
             // types only.
-            GB_XTYPE *GB_RESTRICT Ax = (GB_XTYPE *) A->x ;
+            GB_XTYPE *GB_RESTRICT Ax = ((GB_XTYPE *) (A->x)) ;
             (*x) = Ax [pleft] ;
         }
         else
@@ -168,7 +166,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     }
 }
 
-#undef GB_WHERE_STRING
+#undef GB_UDT_EXTRACT
 #undef GB_EXTRACT_ELEMENT
 #undef GB_XTYPE
 #undef GB_XCODE
