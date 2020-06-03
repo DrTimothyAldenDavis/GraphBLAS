@@ -129,7 +129,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         info = GB_shallow_op (&T, C_is_csc, op, A, Context) ;
     }
 
-    // TODO use GB_OK instead
     if (info != GrB_SUCCESS)
     { 
         GB_MATRIX_FREE (&T) ;

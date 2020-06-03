@@ -81,7 +81,6 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     // phase0: determine the vectors in C(:,j)
     //--------------------------------------------------------------------------
 
-    // TODO use GB_OK instead
     GrB_Info info = GB_emult_phase0 (
         // computed by phase0:
         &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B,

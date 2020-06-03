@@ -91,7 +91,6 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     // phase0: determine the vectors in C(:,j)
     //--------------------------------------------------------------------------
 
-    // TODO: use GB_OK instead
     info = GB_add_phase0 (
         // computed by by phase0:
         &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
