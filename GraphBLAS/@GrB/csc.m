@@ -8,5 +8,11 @@ function C = csc (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB.apply ('minv', full (sin (G))) ;
+G = G.opaque ;
+
+if (~gb_isfloat (gbtype (G)))
+    G = gbnew (G, 'double') ;
+end
+
+C = GrB (gbapply ('minv', gbfull (gbapply ('sin', G)))) ;
 

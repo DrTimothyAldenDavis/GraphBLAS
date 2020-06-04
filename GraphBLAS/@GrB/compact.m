@@ -35,6 +35,8 @@ function [C, I, J] = compact (A, id)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 if (nargin > 1)
     id = gb_get_scalar (id) ;
     if (~(id == 0 && builtin ('issparse', A)))

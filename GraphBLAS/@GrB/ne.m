@@ -23,7 +23,7 @@ ctype = GrB.optype (A, B) ;
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  C is sparse.
-        C = gb_union_op ('~=', A, B) ;
+        C = GrB (gb_union_op ('~=', gb (A), gb (B))) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) ~= 0)
@@ -62,7 +62,7 @@ else
         end
     else
         % both A and B are matrices.  C is sparse.
-        C = gb_union_op ('~=', A, B) ;
+        C = GrB (gb_union_op ('~=', gb (A), gb (B))) ;
     end
 end
 

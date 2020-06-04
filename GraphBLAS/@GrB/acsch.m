@@ -8,9 +8,11 @@ function C = acsch (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+G = G.opaque ;
+
 if (~isfloat (G))
     G = GrB (G, 'double') ;
 end
 
-C = asinh (GrB.apply ('minv', full (G))) ;
+C = GrB (gbapply ('asinh', gbapply ('minv', gbfull (G)))) ;
 

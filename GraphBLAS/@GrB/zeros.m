@@ -1,4 +1,4 @@
-function C = zeros (varargin)
+function C = zeros (arg1, arg2, arg3, arg4)
 %ZEROS an all-zero matrix, the same type as G.
 % C = zeros (m, n, 'like', G) or C = zeros ([m n], 'like', G) returns
 % an m-by-n matrix with no entries, of the same type as G.
@@ -8,23 +8,23 @@ function C = zeros (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-G = varargin {end} ;
 if (nargin == 4)
-    if (~isequal (varargin {3}, 'like'))
+
+    if (~isequal (arg3, 'like'))
         gb_error ('usage: zeros (m, n, ''like'', G)') ;
     end
-    m = varargin {1} ;
-    n = varargin {2} ;
+    C = GrB (arg1, arg2, gbtype (arg4.opaque)) ;
+
 elseif (nargin == 3)
-    if (~isequal (varargin {2}, 'like'))
+
+    if (~isequal (arg2, 'like'))
         gb_error ('usage: zeros ([m n], ''like'', G)') ;
     end
-    mn = varargin {1} ;
-    m = mn (1) ;
-    n = mn (2) ;
-else
-    gb_error ('usage: zeros (m, n, ''like'', G)') ;
-end
+    C = GrB (arg1 (1), arg1 (2), gbtype (arg3.opaque)) ;
 
-C = GrB (m, n, GrB.type (G)) ;
+else
+
+    gb_error ('usage: zeros (m, n, ''like'', G)') ;
+
+end
 

@@ -32,7 +32,15 @@ function C = bitcmp (A, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-atype = GrB.type (A) ;
+if (nargin < 2)
+    assumedtype = 'uint64' ;
+end
+
+if (isobject (A))
+    A = A.opaque ;
+end
+
+atype = gbtype (A) ;
 
 if (contains (atype, 'complex'))
     error ('inputs must be real') ;
@@ -40,10 +48,6 @@ end
 
 if (isequal (atype, 'logical'))
     error ('inputs must not be logical') ;
-end
-
-if (nargin < 2)
-    assumedtype = 'uint64' ;
 end
 
 if (~contains (assumedtype, 'int'))
@@ -54,13 +58,8 @@ end
 ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = GrB (A, assumedtype) ;
+    A = gbnew (A, assumedtype) ;
 end
 
-C = GrB.apply ('bitcmp', full (A)) ;
-
-% recast C back to the original type of A
-if (~isequal (ctype, GrB.type (C)))
-    C = GrB (C, ctype) ;
-end
+C = GrB (gbapply ('bitcmp', gbfull (A)), ctype) ;
 

@@ -1,21 +1,21 @@
-function Cout = mxm (varargin)
+function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.MXM sparse matrix-matrix multiplication.
 %
 % GrB.mxm computes C<M> = accum (C, A*B) using a given semiring.
 %
 % Usage:
 %
-%   Cout = GrB.mxm (semiring, A, B)
-%   Cout = GrB.mxm (semiring, A, B, desc)
+%   C = GrB.mxm (semiring, A, B)
+%   C = GrB.mxm (semiring, A, B, desc)
 %
-%   Cout = GrB.mxm (Cin, accum, semiring, A, B)
-%   Cout = GrB.mxm (Cin, accum, semiring, A, B, desc)
+%   C = GrB.mxm (Cin, accum, semiring, A, B)
+%   C = GrB.mxm (Cin, accum, semiring, A, B, desc)
 %
-%   Cout = GrB.mxm (Cin, M, semiring, A, B)
-%   Cout = GrB.mxm (Cin, M, semiring, A, B, desc)
+%   C = GrB.mxm (Cin, M, semiring, A, B)
+%   C = GrB.mxm (Cin, M, semiring, A, B, desc)
 %
-%   Cout = GrB.mxm (Cin, M, accum, semiring, A, B)
-%   Cout = GrB.mxm (Cin, M, accum, semiring, A, B, desc)
+%   C = GrB.mxm (Cin, M, accum, semiring, A, B)
+%   C = GrB.mxm (Cin, M, accum, semiring, A, B, desc)
 %
 % Not all inputs are required.
 %
@@ -49,7 +49,7 @@ function Cout = mxm (varargin)
 % 'help GrB.descriptorinfo' for more details.
 %
 % All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  Cout is returned as a GraphBLAS matrix, by default;
+% any combination.  C is returned as a GraphBLAS matrix, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
 % Examples:
@@ -69,10 +69,46 @@ function Cout = mxm (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[args, is_gb] = gb_get_args (varargin {:}) ;
-if (is_gb)
-    Cout = GrB (gbmxm (args {:})) ;
-else
-    Cout = gbmxm (args {:}) ;
+if (isobject (arg1))
+    arg1 = arg1.opaque ;
+end
+
+if (isobject (arg2))
+    arg2 = arg2.opaque ;
+end
+
+if (isobject (arg3))
+    arg3 = arg3.opaque ;
+end
+
+if (nargin > 3 && isobject (arg4))
+    arg4 = arg4.opaque ;
+end
+
+if (nargin > 4 && isobject (arg5))
+    arg5 = arg5.opaque ;
+end
+
+if (nargin > 5 && isobject (arg6))
+    arg6 = arg6.opaque ;
+end
+
+switch (nargin)
+    case 3
+        [C, k] = gbmxm (arg1, arg2, arg3) ;
+    case 4
+        [C, k] = gbmxm (arg1, arg2, arg3, arg4) ;
+    case 5
+        [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5) ;
+    case 6
+        [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6) ;
+    case 7
+        [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
+    otherwise
+        error ('usage: C = GrB.mxm (Cin, M, accum, semiring, A, B, desc)');
+end
+
+if (k == 0)
+    C = GrB (C) ;
 end
 

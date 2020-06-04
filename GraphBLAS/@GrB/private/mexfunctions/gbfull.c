@@ -8,7 +8,14 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse or dense matrix.  The output is a standard MATLAB dense matrix.
+// sparse or dense matrix.  The output is a standard MATLAB dense matrix,
+// by default.
+
+// Usage:
+//  C = gbfull (A)
+//  C = gbfull (A, type)
+//  C = gbfull (A, type, id)
+//  C = gbfull (A, type, id, desc)
 
 #include "gb_matlab.h"
 
@@ -25,7 +32,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 2 && nargin <= 4 && nargout <= 1,
+    gb_usage (nargin >= 1 && nargin <= 4 && nargout <= 2,
         "usage: C = gbfull (A, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
@@ -41,7 +48,15 @@ void mexFunction
     // get the type of C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix type = gb_mxstring_to_type (pargin [1]) ;
+    GrB_Matrix type ;
+    if (nargin > 1)
+    {
+        type = gb_mxstring_to_type (pargin [1]) ;
+    }
+    else
+    {
+        OK (GxB_Matrix_type (&type, A)) ;
+    }
 
     //--------------------------------------------------------------------------
     // get the identity scalar
@@ -71,6 +86,7 @@ void mexFunction
     { 
         desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base);
     }
+    OK (GrB_Descriptor_free (&desc)) ;
 
     // A determines the format of C, unless defined by the descriptor
     fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
@@ -124,13 +140,13 @@ void mexFunction
     OK (GrB_Matrix_free (&B)) ;
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&T)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
     // export C to a MATLAB dense matrix
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

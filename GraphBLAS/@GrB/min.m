@@ -62,7 +62,7 @@ elseif (nargin == 2)
     if (isscalar (A))
         if (isscalar (B))
             % both A and B are scalars.  Result is also a scalar.
-            C = gb_union_op (op, A, B) ;
+            C = GrB (gb_union_op (op, gb (A), gb (B))) ;
         else
             % A is a scalar, B is a matrix
             if (gb_get_scalar (A) < 0)
@@ -93,7 +93,7 @@ elseif (nargin == 2)
             C = GrB.eadd (A, op, B) ;
         else
             % both A and B are matrices.  Result is sparse.
-            C = gb_union_op (op, A, B) ;
+            C = GrB (gb_union_op (op, gb (A), gb (B))) ;
         end
     end
 

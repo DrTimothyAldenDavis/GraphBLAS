@@ -8,11 +8,13 @@ function C = isnan (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isfloat (G) && GrB.entries (G) > 0)
-    C = GrB.apply ('isnan', G) ;
+G = G.opaque ;
+
+if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
+    C = GrB (gbapply ('isnan', G)) ;
 else
     % C is all false
-    [m, n] = size (G) ;
+    [m, n] = gbsize (G) ;
     C = GrB (m, n, 'logical') ;
 end
 

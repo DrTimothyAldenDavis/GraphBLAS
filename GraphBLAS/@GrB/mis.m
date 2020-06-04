@@ -28,6 +28,8 @@ function iset = mis (A, check)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% NOTE: this is a high-level algorithm that uses GrB objects.
+
 [m, n] = size (A) ;
 if (m ~= n)
     gb_error ('A must be square') ;
@@ -91,7 +93,7 @@ last_ncand = ncand ;
 while (ncand > 0)
 
     % compute a random probability scaled by inverse of degree
-    % NOTE: this is slower than it should be; rand may not be parallel,
+    % FUTURE: this is slower than it should be; rand may not be parallel,
     % See GraphBLAS/Demo/Source/mis.c and the prand_* functions for a better
     % approach using user-defined types and operators.
     prob = 0.0001 + rand (n,1) ./ (1 + 2 * degrees) ;

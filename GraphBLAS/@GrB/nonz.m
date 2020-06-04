@@ -57,6 +57,8 @@ function result = nonz (A, varargin)
 % a GraphBLAS sparse matrix.
 matlab_sparse = builtin ('issparse', A) ;
 
+% TODO
+
 if (nargin > 1 && ~ischar (varargin {end}))
     id = gb_get_scalar (varargin {end}) ;
     if (id == 0 && matlab_sparse)

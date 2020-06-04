@@ -6,9 +6,11 @@ function C = conj (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    C = G ;
+Q = G.opaque ;
+
+if (contains (gbtype (Q), 'complex')) ;
+    C = GrB (gbapply ('conj', Q)) ;
 else
-    C = GrB.apply ('conj', G) ;
+    C = G ;
 end
 

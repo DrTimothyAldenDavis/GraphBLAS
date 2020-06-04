@@ -12,6 +12,13 @@ function U = triu (G, k)
 
 if (nargin < 2)
     k = 0 ;
+elseif (isobject (k))
+    k = gb_get_scalar (k) ;
 end
-U = GrB.select ('triu', G, k) ;
+
+if (isobject (G))
+    G = G.opaque ;
+end
+
+U = GrB (gbselect ('triu', G, k)) ;
 

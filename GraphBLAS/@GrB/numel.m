@@ -9,10 +9,5 @@ function s = numel (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[m, n] = size (G) ;
-s = m*n ;
-
-if (m > flintmax || n > flintmax || s > flintmax)
-    s = vpa (vpa (m, 64) * vpa (n, 64), 128) ;
-end
+s = gb_numel (G.opaque) ;
 

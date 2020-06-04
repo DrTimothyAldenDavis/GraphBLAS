@@ -118,7 +118,8 @@ gbtest80  % test complex division and power
 gbtest81  % test complex operators
 gbtest82  %  test complex A*B, A'*B, A*B', A'*B', A+B
 
-gbtest99  % test GrB.bfs and plot (graph (G))
+% TODO remove (0):
+gbtest99 (0) % test GrB.bfs and plot (graph (G))
 
 fprintf ('\ngbtest: all tests passed\n') ;
 

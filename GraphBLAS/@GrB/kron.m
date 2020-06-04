@@ -9,5 +9,13 @@ function C = kron (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB.kronecker (A, '*', B) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (B))
+    B = B.opaque ;
+end
+
+C = GrB (gbkronecker (A, '*', B)) ;
 

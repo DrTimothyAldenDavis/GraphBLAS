@@ -11,17 +11,10 @@ function [arg1, arg2] = bandwidth (G, uplo)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (GrB.entries (G) == 0)
-    % matrix is empty
-    hi = 0 ;
-    lo = 0 ;
-else
-    desc.base = 'zero-based' ;
-    [i, j] = GrB.extracttuples (G, desc) ;
-    b = j - i ;
-    hi = max (0,  double (max (b))) ;
-    lo = max (0, -double (min (b))) ;
-end
+% compute the bandwidth
+[lo, hi] = gb_bandwidth (G.opaque) ;
+
+% return the result
 if (nargin == 1)
    arg1 = lo ;
    arg2 = hi ;

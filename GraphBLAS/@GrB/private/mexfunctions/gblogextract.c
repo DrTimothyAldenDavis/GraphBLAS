@@ -14,7 +14,7 @@
 
 // Usage:
 
-//      C = gblogextract (A, M)
+// C = gblogextract (A, M)
 
 //  This function is the C equivalent of the following m-function:
 
@@ -74,6 +74,8 @@
 // use of GrB.extracttuples and GrB.build.  Instead, it accesses the internal
 // structure of the GrB_Matrix objects, and creates shallow copies.  The
 // m-file above is useful for understanding that this C mexFunction does.
+
+// C is always returned as a GrB matrix.
 
 #include "gb_matlab.h"
 #include "GB_transpose.h"

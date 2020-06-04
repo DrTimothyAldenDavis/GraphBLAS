@@ -24,6 +24,12 @@ function L = laplacian (A, type, check)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
+%   if (isobject (A))
+%       A = A.opaque ;
+%   end
+
 if (nargin < 2)
     type = 'double' ;
 end
@@ -33,12 +39,14 @@ else
     check = isequal (check, 'check') ;
 end
 
-if (~GrB.issigned (type))
+if (~gb_issigned (type))
     % type must be signed
     gb_error ('invalid type') ;
 end
 
-A = GrB.apply (['1.' type], A) ;
+% A = spones (A)
+A = gbapply (['1.' type], gb (A)) ; % TODO
+A = GrB (A) ;   % TODO
 
 if (check)
     if (~issymmetric (A))

@@ -37,46 +37,8 @@ function C = bitand (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-atype = GrB.type (A) ;
-btype = GrB.type (B) ;
-
-if (contains (atype, 'complex') || contains (btype, 'complex'))
-    error ('inputs must be real') ;
-end
-
-if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    error ('inputs must not be logical') ;
-end
-
 if (nargin < 3)
     assumedtype = 'uint64' ;
 end
-
-if (~contains (assumedtype, 'int'))
-    error ('assumedtype must be an integer type') ;
-end
-
-% C will have the same type as A on input
-ctype = atype ;
-
-if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = GrB (A, assumedtype) ;
-    atype = assumedtype ;
-end
-
-if (isequal (btype, 'double') || isequal (btype, 'single'))
-    B = GrB (B, assumedtype) ;
-    btype = assumedtype ;
-end
-
-if (~isequal (atype, btype))
-    error ('integer inputs must have the same type') ;
-end
-
-C = gb_emult (A, 'bitand', B) ;
-
-% recast C back to the original type of A
-if (~isequal (ctype, GrB.type (C)))
-    C = GrB (C, ctype) ;
-end
+C = gb_bitwise ('bitand', A, B, assumedtype) ;
 

@@ -11,6 +11,5 @@ function X = nonzeros (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-desc = struct ('kind', 'GrB') ;
-X = gbextractvalues (gbselect ('nonzero', G.opaque, desc)) ;
+X = gbextractvalues (gbselect ('nonzero', G.opaque)) ;
 

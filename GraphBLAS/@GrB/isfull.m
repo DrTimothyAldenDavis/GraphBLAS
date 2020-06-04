@@ -10,9 +10,19 @@ function s = isfull (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isobject (A) || issparse (A))
-    s = (numel (A) == GrB.entries (A)) ;
+if (issparse (A))
+
+    % MATLAB sparse matrix
+    s = (numel (A) == nnz (A)) ;
+
+elseif (isobject (A))
+
+    % GraphBLAS matrix
+    s = gb_isfull (A.opaque) ;
+
 else
+
     s = true ;
+
 end
 

@@ -26,6 +26,6 @@ else
     end
 
     % use the ldexp operator to compute C = A.*(2.^B)
-    C = gb_union_op ('ldexp', A, B) ;
+    C = GrB (gb_union_op ('ldexp', gb (A), gb (B))) ;
 end
 

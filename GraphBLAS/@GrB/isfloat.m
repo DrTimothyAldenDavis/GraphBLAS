@@ -9,6 +9,5 @@ function s = isfloat (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-t = gbtype (G.opaque) ;
-s = contains (t, 'double') || contains (t, 'single') ;
+s = gb_isfloat (gbtype (G.opaque)) ;
 

@@ -47,10 +47,10 @@ function C = build (varargin)
 %   S = double (GrB.build (I, J, X)) ;
 %   S = double (GrB.build (uint64(I), uint64(J), X)) ;
 %
-% I and J need not be in any particular order, but GrB.build is fastest if
-% I and J are provided in column-major order if building a MATLAB sparse
-% matrix.  If desc.format is 'by row', then GrB.build is fastest if I and J
-% are in row-major order.
+% The row and column indices I and J need not be in any particular order,
+% but GrB.build is fastest if I and J are provided in column-major order
+% if building a MATLAB sparse matrix.  If desc.format is 'by row', then
+% GrB.build is fastest if I and J are in row-major order.
 %
 % If desc.base is 'zero-based', then I and J are treated as zero-based,
 % where (0,0) is the first entry in the top left of S, and (m-1,n-1)
@@ -67,10 +67,8 @@ function C = build (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[args, is_gb] = gb_get_args (varargin {:}) ;
-if (is_gb)
-    C = GrB (gbbuild (args {:})) ;
-else
-    C = gbbuild (args {:}) ;
+[C, k] = gbbuild (varargin {:}) ;
+if (k == 0)
+    C = GrB (C) ;
 end
 

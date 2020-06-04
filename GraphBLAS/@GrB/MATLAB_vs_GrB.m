@@ -22,9 +22,6 @@
 %     It uses a 'type' to represent these different data types.  See help
 %     GrB.type for more details.
 %
-%     'single complex' and 'double complex' matrices were added to
-%     GraphBLAS v3.3, as the built-in types GxB_FC32 and GxB_FC64.
-%
 % ------------------------------------------------
 % Explicit zeros:
 % ------------------------------------------------
@@ -107,7 +104,7 @@
 %         A.*x            % singleton expansion
 %         A * diag(x)     % standard matrix-vector multiply, which works
 %
-%     GraphBLAS does not support singleton expansion:
+%     GraphBLAS does not yet support singleton expansion:
 %
 %         A = GrB (A)
 %         A * diag (x)    % works
@@ -132,7 +129,7 @@
 %       G = 100 * rand (4)
 %       G = GrB (G, 'int8')
 %
-%     If instead, an double matrix is used as-is directly in an integer 
+%     If instead, a double matrix is used as-is directly in an integer 
 %     semiring, the C typecasting rules are used:
 %
 %       % suppose A and B are double:
@@ -260,10 +257,9 @@
 % Bitwise operators:
 % ------------------------------------------------
 %
-%     These were not available in GraphBLAS v3.2, but appear as new
-%     additions to GraphBLAS v3.3.  They work just the same in GraphBLAS
-%     as they do in MATLAB, except that GraphBLAS can use the bitwise
-%     operations in semirings; for example, if A and B are uint8, then:
+%     GraphBLAS includes all the bitwise operators that MATLAB has.  In
+%     addition, GraphBLAS can use the bitwise operations in semirings; for
+%     example, if A and B are uint8, then:
 %
 %         C = GrB.mxm (A, 'bitor.bitand', B) ;
 %

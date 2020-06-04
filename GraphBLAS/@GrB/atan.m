@@ -8,9 +8,11 @@ function C = atan (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isfloat (G))
-    G = GrB (G, 'double') ;
+G = G.opaque ;
+
+if (~gb_isfloat (gbtype (G)))
+    G = gbnew (G, 'double') ;
 end
 
-C = GrB.apply ('atan', G) ;
+C = GrB (gbapply ('atan', G)) ;
 

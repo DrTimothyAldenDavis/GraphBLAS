@@ -1,4 +1,4 @@
-function c = chunk (varargin)
+function c = chunk (c)
 %GRB.CHUNK get/set the chunk size to use in GraphBLAS.
 %
 % Usage:
@@ -21,5 +21,9 @@ function c = chunk (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-c = gbchunk (varargin {:}) ;
+if (nargin == 0)
+    c = gbchunk ;
+else
+    c = gbchunk (c) ;
+end
 

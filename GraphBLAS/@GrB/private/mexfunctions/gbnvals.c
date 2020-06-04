@@ -10,6 +10,10 @@
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
 // sparse matrix.
 
+// Usage
+
+// nvals = gbnvals (X)
+
 #include "gb_matlab.h"
 
 void mexFunction

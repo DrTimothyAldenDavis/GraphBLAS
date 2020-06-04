@@ -11,17 +11,18 @@
 
 // Usage:
 
-// Cout = GrB.apply (op, A, desc)
-// Cout = GrB.apply (Cin, accum, op, A, desc)
-// Cout = GrB.apply (Cin, M, op, A, desc)
-// Cout = GrB.apply (Cin, M, accum, op, A, desc)
+// C = gbapply (op, A)
+// C = gbapply (op, A, desc)
+// C = gbapply (Cin, accum, op, A, desc)
+// C = gbapply (Cin, M, op, A, desc)
+// C = gbapply (Cin, M, accum, op, A, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: Cout = GrB.apply (Cin, M, accum, op, A, desc)"
+#define USAGE "usage: C = GrB.apply (Cin, M, accum, op, A, desc)"
 
 void mexFunction
 (
@@ -36,8 +37,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 3 || nargin == 5 || nargin == 6) && nargout <= 1,
-        USAGE) ;
+    gb_usage (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -154,6 +154,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

@@ -6,9 +6,11 @@ function C = ctranspose (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    C = GrB.trans (G) ;
+G = G.opaque ;
+
+if (contains (gbtype (G), 'complex'))
+    C = GrB (gbtrans (gbapply ('conj', G))) ;
 else
-    C = GrB.trans (conj (G)) ;
+    C = GrB (gbtrans (G)) ;
 end
 

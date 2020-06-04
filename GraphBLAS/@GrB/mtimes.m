@@ -11,9 +11,17 @@ function C = mtimes (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isscalar (A) || isscalar (B))
-    C = A .* B ;
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (B))
+    B = B.opaque ;
+end
+
+if (gb_isscalar (A) || gb_isscalar (B))
+    C = GrB (gb_emult (A, '*', B)) ;
 else
-    C = GrB.mxm (A, '+.*', B) ;
+    C = GrB (gbmxm (A, '+.*', B)) ;
 end
 

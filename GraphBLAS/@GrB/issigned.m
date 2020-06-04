@@ -14,9 +14,11 @@ function s = issigned (arg)
 
 if (ischar (arg))
     type = arg ;
+elseif (isobject (arg))
+    type = gbtype (arg.opaque) ;
 else
-    type = GrB.type (arg) ;
+    type = gbtype (arg) ;
 end
 
-s = ~ (isequal (type, 'logical') || contains (type, 'uint')) ;
+s = gb_issigned (type) ;
 

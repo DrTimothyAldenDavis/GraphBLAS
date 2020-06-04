@@ -14,9 +14,11 @@ function C = single (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    C = gbfull (G.opaque, 'single') ;
+G = G.opaque ;
+
+if (contains (gbtype (G), 'complex'))
+    C = gbfull (G, 'single complex') ;
 else
-    C = gbfull (G.opaque, 'single complex') ;
+    C = gbfull (G, 'single') ;
 end
 

@@ -8,10 +8,11 @@ function s = istriu (G)
 %
 % See also GrB/istriu, GrB/isbanded.
 
-% FUTURE: this will be much faster when written as a mexFunction.
+% FUTURE: this will be much faster when written as a mexFunction
+% that doesn't rely on gbselect.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-s = (GrB.entries (tril (G, -1)) == 0) ;
+s = (gbnvals (gbselect ('tril', G.opaque, -1)) == 0) ;
 

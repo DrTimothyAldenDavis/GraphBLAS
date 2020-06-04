@@ -19,6 +19,7 @@
 
 // C<M>=x (C is dense): GB_Cdense_05d
 // C<A>=A (C is dense): GB_Cdense_06d
+// C<M>=A (C is empty, A dense): GB_Cdense_25
 
 // C type:   GB_ctype
 

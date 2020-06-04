@@ -112,6 +112,12 @@ if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
 endif ( )
 
+set ( GB_AVX2 true )
+
+if ( GB_AVX2 )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -mavx2 -DGB_AVX2 " )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # Configure Include/GraphBLAS.h and documentation with version number
 #-------------------------------------------------------------------------------

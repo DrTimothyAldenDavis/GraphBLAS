@@ -67,25 +67,21 @@ for k = 1:nargin-1
     end
 end
 
+if (isobject (A))
+    A = A.opaque ;
+end
+
 if (isequal (dim, 'all'))
 
     switch kind
         case 'count'
             % number of entries in A
             % e = GrB.entries (A)
-            if (isobject (A))
-                result = gbnvals (A.opaque) ;
-            else
-                result = gbnvals (A) ;
-            end
+            result = gbnvals (A) ;
         case 'list'
             % list of values of unique entries
             % X = GrB.entries (A, 'list')
-            if (isobject (A))
-                result = unique (gbextractvalues (A.opaque)) ;
-            else
-                result = unique (gbextractvalues (A)) ;
-            end
+            result = unique (gbextractvalues (A)) ;
         otherwise
             gb_error ('''all'' and ''degree'' cannot be combined') ;
     end
@@ -93,31 +89,25 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    f = GrB.format (A) ;
+    f = gbformat (A) ;
     native = (isequal (f, 'by row') && isequal (dim, 'row')) || ...
              (isequal (f, 'by col') && isequal (dim, 'col')) ;
-    if (isobject (A))
-        degree = GrB (gbdegree (A.opaque, native)) ;
-    else
-        degree = GrB (gbdegree (A, native)) ;
-    end
-
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = nnz (degree) ;
+            result = gb_nnz (gbdegree (A, native)) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
-            result = find (degree) ;
+            result = find (GrB (gbdegree (A, native))) ;    % TODO
         case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')
             % d = GrB.entries (A, 'col', 'degree')
-            result = degree ;
+            result = GrB (gbdegree (A, native)) ;
     end
 end
 

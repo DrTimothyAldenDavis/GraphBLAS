@@ -14,17 +14,28 @@ function C = hypot (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (A))
-    A = abs (A) ;
-elseif (~isfloat (A))
-    A = GrB (A, 'double') ;
+if (isobject (A))
+    A = A.opaque ;
 end
 
-if (~isreal (B))
-    B = abs (B) ;
-elseif (~isfloat (A))
-    B = GrB (B, 'double') ;
+if (isobject (B))
+    B = B.opaque ;
 end
 
-C = gb_eadd (A, 'hypot', B) ;
+atype = gbtype (A) ;
+btype = gbtype (B) ;
+
+if (contains (atype, 'complex'))
+    A = gbapply ('abs', A) ;
+elseif (~gb_isfloat (atype))
+    A = gbnew (A, 'double') ;
+end
+
+if (contains (btype, 'complex'))
+    B = gbapply ('abs', B) ;
+elseif (~gb_isfloat (btype))
+    B = gbnew (B, 'double') ;
+end
+
+C = GrB (gbapply ('abs', gb_eadd (A, 'hypot', B))) ;
 

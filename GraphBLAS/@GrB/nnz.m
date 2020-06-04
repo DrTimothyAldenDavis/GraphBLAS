@@ -9,5 +9,5 @@ function e = nnz (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-e = GrB.entries (G) - GrB.entries (GrB.select (G, '==0')) ;
+e = gb_nnz (G.opaque) ;
 

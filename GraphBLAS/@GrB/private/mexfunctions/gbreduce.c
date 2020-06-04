@@ -11,14 +11,15 @@
 
 // Usage:
 
-//  cout = GrB.reduce (op, A, desc)
-//  cout = GrB.reduce (cin, accum, op, A, desc)
+//  cout = gbreduce (op, A)
+//  cout = gbreduce (op, A, desc)
+//  cout = gbreduce (cin, accum, op, A, desc)
 
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: Cout = GrB.reduce (cin, accum, op, A, desc)"
+#define USAGE "usage: C = GrB.reduce (cin, accum, op, A, desc)"
 
 void mexFunction
 (
@@ -33,7 +34,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 3 || nargin == 5) && nargout <= 1, USAGE) ;
+    gb_usage (nargin >= 2 && nargin <= 5 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -245,6 +246,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

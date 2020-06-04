@@ -10,6 +10,6 @@ function s = isbanded (G, lo, hi)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[Glo, Ghi] = bandwidth (G) ;
+[Glo, Ghi] = gb_bandwidth (G.opaque) ;
 s = (Glo <= lo) & (Ghi <= hi) ;
 

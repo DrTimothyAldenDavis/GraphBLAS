@@ -11,17 +11,18 @@
 
 // Usage:
 
-// Cout = gbselect (op, A, desc)
-// Cout = gbselect (op, A, b, desc)
+// C = gbselect (op, A)
+// C = gbselect (op, A, desc)
+// C = gbselect (op, A, b, desc)
 
-// Cout = gbselect (Cin, accum, op, A, desc)
-// Cout = gbselect (Cin, accum, op, A, b, desc)
+// C = gbselect (Cin, accum, op, A, desc)
+// C = gbselect (Cin, accum, op, A, b, desc)
 
-// Cout = gbselect (Cin, M, op, A, desc)
-// Cout = gbselect (Cin, M, op, A, b, desc)
+// C = gbselect (Cin, M, op, A, desc)
+// C = gbselect (Cin, M, op, A, b, desc)
 
-// Cout = gbselect (Cin, M, accum, op, A, desc)
-// Cout = gbselect (Cin, M, accum, op, A, b, desc)
+// C = gbselect (Cin, M, accum, op, A, desc)
+// C = gbselect (Cin, M, accum, op, A, b, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, and the descriptor).  The type if Cin, if
@@ -37,7 +38,7 @@
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: Cout = GrB.select (Cin, M, accum, op, A, b, desc)"
+#define USAGE "usage: C = GrB.select (Cin, M, accum, op, A, b, desc)"
 
 bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *b)
@@ -110,7 +111,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1, USAGE) ;
+    gb_usage (nargin >= 2 && nargin <= 7 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -366,6 +367,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

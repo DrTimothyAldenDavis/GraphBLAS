@@ -1,4 +1,4 @@
-function [I,J,X] = extracttuples (varargin)
+function [I,J,X] = extracttuples (A, desc)
 %GRB.EXTRACTTUPLES extract a list of entries from a matrix.
 %
 % Usage:
@@ -12,7 +12,7 @@ function [I,J,X] = extracttuples (varargin)
 % For a GraphBLAS matrix G, GrB.extracttuples (G) returns any explicit
 % zero entries in G, while find (G) excludes them.
 %
-% The descriptor is optional.  desc.base is a string, eithe 'default',
+% The descriptor is optional.  desc.base is a string, either 'default',
 % 'zero-based', 'one-based int', or 'one-based'.  This parameter
 % determines the type of output for I and J.  The default is one-based,
 % so that I and J are returned as double vectors, with one-based indices.
@@ -38,12 +38,19 @@ function [I,J,X] = extracttuples (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[args, ~] = gb_get_args (varargin {:}) ;
-if (nargout == 3)
-    [I, J, X] = gbextracttuples (args {:}) ;
-elseif (nargout == 2)
-    [I, J] = gbextracttuples (args {:}) ;
-else
-    I = gbextracttuples (args {:}) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+if (nargin < 2)
+    desc.base = 'default' ;
+end
+
+switch (nargout)
+    case 1
+        I = gbextracttuples (A, desc) ;
+    case 2
+        [I, J] = gbextracttuples (A, desc) ;
+    case 3
+        [I, J, X] = gbextracttuples (A, desc) ;
 end
 

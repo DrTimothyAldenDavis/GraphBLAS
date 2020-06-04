@@ -9,22 +9,5 @@ function C = log (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    if (GrB.issigned (G) && any (G < 0, 'all'))
-        if (isequal (GrB.type (G), 'single'))
-            G = GrB (G, 'single complex') ;
-        else
-            G = GrB (G, 'double complex') ;
-        end
-    elseif (~isfloat (G))
-        G = GrB (G, 'double') ;
-    end
-end
-
-C = GrB.apply ('log', full (G)) ;
-
-% so that reallog gets the right result
-if (~isreal (C) && nnz (imag (C) == 0))
-    C = real (C) ;
-end
+C = GrB (gb_to_real_if_imag_zero (gb_trig ('log', gbfull (G.opaque)))) ;
 

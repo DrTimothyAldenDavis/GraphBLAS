@@ -9,7 +9,7 @@
 
 // Usage:
 
-// X = GrB.extractvalues (A)
+// X = gbextractvalues (A)
 
 #include "gb_matlab.h"
 

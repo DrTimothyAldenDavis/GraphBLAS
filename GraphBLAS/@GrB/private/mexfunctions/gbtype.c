@@ -10,6 +10,10 @@
 // The input may be any MATLAB variable.  If it is a GraphBLAS G.opaque struct,
 // then its internal type is returned.
 
+// Usage
+
+// type = gbtype (X)
+
 #include "gb_matlab.h"
 
 void mexFunction

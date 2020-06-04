@@ -50,7 +50,8 @@ GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
 //          case mxCELL_CLASS     :
 //          case mxSTRUCT_CLASS   :
 //          case mxFUNCTION_CLASS :
-            default               : ERROR ("invalid type") ;
+            default               : printf ("%d\n", mxGetClassID (X)) ;
+            ERROR ("invalid type") ;
         }
     }
 

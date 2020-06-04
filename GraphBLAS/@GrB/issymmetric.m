@@ -11,6 +11,8 @@ function s = issymmetric (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 [m, n] = size (G) ;
 if (m ~= n)
     s = false ;

@@ -1,4 +1,4 @@
-function nthreads = threads (varargin)
+function nthreads = threads (nthreads)
 %GRB.THREADS get/set the max number of threads to use in GraphBLAS.
 %
 % Usage:
@@ -34,5 +34,9 @@ function nthreads = threads (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-nthreads = gbthreads (varargin {:}) ;
+if (nargin == 0)
+    nthreads = gbthreads ;
+else
+    nthreads = gbthreads (nthreads) ;
+end
 

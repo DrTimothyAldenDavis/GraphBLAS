@@ -64,6 +64,8 @@
 // GrB_Matrix objects.  The m-file above is useful for understanding that this
 // C mexFunction does.
 
+// C is always returned as a GrB matrix.
+
 #include "gb_matlab.h"
 
 void mexFunction

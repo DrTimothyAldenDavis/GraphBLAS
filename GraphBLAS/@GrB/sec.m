@@ -8,5 +8,13 @@ function C = sec (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB.apply ('minv', cos (G)) ;
+G = G.opaque ;
+type = gbtype (G) ;
+
+if (~gb_isfloat (type))
+    type = 'double' ;
+end
+
+C = GrB (gbapply ('minv', gbapply ('cos', gbfull (G, type)))) ;
+
 

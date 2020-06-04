@@ -9,6 +9,8 @@ function C = expand (scalar, S)
 %
 % See also GrB.assign.
 
+% TODO allow for a type to be passed in
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
@@ -16,7 +18,13 @@ function C = expand (scalar, S)
 % operators used in a unary apply, when they are added to
 % SuiteSparse:GraphBLAS from the v1.3 C API.
 
-[m, n] = size (S) ;
-desc.mask = 'structure' ;
-C = GrB.assign (GrB (m, n, GrB.type (scalar)), S, scalar, desc) ;
+if (isobject (scalar))
+    scalar = scalar.opaque ;
+end
+
+if (isobject (S))
+    S = S.opaque ;
+end
+
+C = GrB (gb_expand (scalar, S)) ;
 

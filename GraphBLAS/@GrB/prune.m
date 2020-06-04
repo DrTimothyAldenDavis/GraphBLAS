@@ -8,9 +8,16 @@ function C = prune (G, id)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+if (isobject (G))
+    G = G.opaque ;
+end
+
 if (nargin == 1)
-    C = GrB.select (G, 'nonzero') ;
+    C = GrB (gbselect (G, 'nonzero')) ;
 else
-    C = GrB.select (G, '~=', id) ;
+    if (isobject (id))
+        id = id.opaque ;
+    end
+    C = GrB (gbselect (G, '~=', id)) ;
 end
 

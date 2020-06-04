@@ -29,8 +29,8 @@ if (nargin == 1)
 end
 
 if (isobject (G)) ;
-    G = G.opaque ;
+    s = gbnorm (G.opaque, kind) ;
+else
+    s = gbnorm (G, kind) ;
 end
-
-s = gbnorm (G, kind) ;
 

@@ -251,9 +251,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     const GrB_BinaryOp mult         // multiply operator
 ) ;
 
-GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
+GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
 (
-    const mxArray *D_matlab,    // MATLAB struct
+    const mxArray *desc_matlab, // MATLAB struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
     GxB_Format_Value *fmt,      // by row or by col
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
@@ -376,7 +376,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction
     mxArray *pargout [ ],       // output arguments for mexFunction
-    int nargin,                 // # inpu arguments for mexFunction
+    int nargin,                 // # input arguments for mexFunction
     const mxArray *pargin [ ],  // input arguments for mexFunction
     bool do_subassign,          // true: do subassign, false: do assign
     const char *usage           // usage string to print if error
@@ -451,7 +451,6 @@ void gb_get_mxargs
     int nargin,                 // # input arguments for mexFunction
     const mxArray *pargin [ ],  // input arguments for mexFunction
     const char *usage,          // usage to print, if too many args appear
-
     // output:
     const mxArray *Matrix [4],  // matrix arguments
     int *nmatrices,             // # of matrix arguments

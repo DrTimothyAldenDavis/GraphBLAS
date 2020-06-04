@@ -8,13 +8,16 @@ function C = gamma (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (G))
+G = G.opaque ;
+type = gbtype (G) ;
+
+if (contains (type, 'complex'))
     error ('input must be real') ;
 end
 
-if (~isfloat (G))
-    G = GrB (G, 'double') ;
+if (~gb_isfloat (type))
+    type = 'double' ;
 end
 
-C = GrB.apply ('gamma', full (G)) ;
+C = GrB (gbapply ('gamma', gbfull (G, type))) ;
 

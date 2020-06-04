@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// Usage
+
+// f = gbformat ;
+// f = gbformat (f) ;
+
 #include "gb_matlab.h"
 
 void mexFunction

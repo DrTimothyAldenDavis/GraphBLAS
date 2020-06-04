@@ -5,8 +5,7 @@ function ctype = optype (a, b)
 % atype and btype, respectively.  The input a can be either the
 % matrix A or the string atype = GrB.type (A), and likewise for b.
 %
-% The rules are listed below; the first
-% one that applies is used:
+% The rules are listed below; the first one that applies is used:
 %
 % (1) same:
 %
@@ -50,14 +49,18 @@ function ctype = optype (a, b)
 
 if (ischar (a)) 
     atype = a ;
+elseif (isobject (a))
+    atype = gbtype (a.opaque) ;
 else
-    atype = GrB.type (a) ;
+    atype = gbtype (a) ;
 end
 
 if (ischar (b)) 
     btype = b ;
+elseif (isobject (b))
+    btype = gbtype (b.opaque) ;
 else
-    btype = GrB.type (b) ;
+    btype = gbtype (b) ;
 end
 
 ctype = gboptype (atype, btype) ;

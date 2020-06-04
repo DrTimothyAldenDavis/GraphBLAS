@@ -46,9 +46,9 @@ function f = format (arg)
 % The format of the output C of a GraphBLAS method is defined using the
 % following rules.  The first rule that holds is used:
 %
-%   (1) GraphBLAS operations of the form Cout = GrB.method (Cin, ...)
+%   (1) GraphBLAS operations of the form C = GrB.method (Cin, ...)
 %       that take a Cin input matrix, use the format of Cin as the format
-%       for Cout, if Cin is provided on input.
+%       for C, if Cin is provided on input.
 %   (2) If the format is determined by the descriptor to the method, then
 %       that determines the format of C.
 %   (3) If C is a column vector then C is stored by column.
@@ -89,10 +89,11 @@ if (nargin == 0)
     f = gbformat ;
 else
     if (isobject (arg))
-        % f = GrB.format (G) ; get the format of the matrix G
+        % f = GrB.format (G) ; get the format of the GraphBLAS matrix
         f = gbformat (arg.opaque) ;
     else
-        % f = GrB.format (f) ; set the global format for all matrices
+        % f = GrB.format (f) ; get the format of the MATLAB matrix,
+        % or (if arg is a string) set the global format for all matrices.
         % created from now on.
         f = gbformat (arg) ;
     end

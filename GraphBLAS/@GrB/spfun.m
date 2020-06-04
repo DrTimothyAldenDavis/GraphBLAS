@@ -14,6 +14,8 @@ function C = spfun (fun, G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 [m, n] = size (G) ;
 desc.base = 'zero-based' ;
 [i, j, x] = GrB.extracttuples (G, desc) ;

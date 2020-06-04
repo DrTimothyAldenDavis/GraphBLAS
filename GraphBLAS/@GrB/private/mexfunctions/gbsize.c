@@ -11,6 +11,10 @@
 // sparse matrix.  Note that the output is int64, to accomodate huge
 // hypersparse matrices.
 
+// Usage:
+
+// [m n] = gbsize (X)
+
 #include "gb_matlab.h"
 
 void mexFunction

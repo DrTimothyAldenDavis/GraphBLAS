@@ -30,7 +30,7 @@ ctype = GrB.optype (A, B) ;
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars
-        C = gb_union_op ('<', A, B) ;
+        C = GrB (gb_union_op ('<', gb (A), gb (B))) ;
     else
         % A is a scalar, B is a matrix
         [m, n] = size (B) ;
@@ -76,7 +76,7 @@ else
         end
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = gb_union_op ('<', A, B) ;
+        C = GrB (gb_union_op ('<', gb (A), gb (B))) ;
     end
 end
 

@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// Usage:
+
+// gbdisp (C, cnz, level)
+
 #include "gb_matlab.h"
 
 void mexFunction
@@ -22,7 +26,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 3 && nargout == 0, "usage: gbdisp (C,cnz,level)") ;
+    gb_usage (nargin == 3 && nargout == 0, "usage: gbdisp (C, cnz, level)") ;
 
     //--------------------------------------------------------------------------
     // get cnz and level

@@ -9,6 +9,7 @@
 
 // Usage:
 
+// A = gbbuild (I, J, X)
 // A = gbbuild (I, J, X, desc)
 // A = gbbuild (I, J, X, m, desc)
 // A = gbbuild (I, J, X, m, n, desc)
@@ -16,11 +17,16 @@
 // A = gbbuild (I, J, X, m, n, dup, type, desc) ;
 
 // m and n default to the largest index in I and J, respectively.
-// dup defaults to 'plus.xtype' where xtype is the type of X.
-// If dup is given by without a type,  type of dup defaults to the type of X.
-// type is the type of A, which defaults to the type of X.
 
-// desc.kind is the only part used from the descriptor.
+// dup is a string that defaults to 'plus.xtype' where xtype is the type of X.
+// If dup is given by without a type,  type of dup defaults to the type of X.
+
+// type is a string that defines is the type of A, which defaults to the type
+// of X.
+
+// The descriptor is optional; if present, it must be the last input parameter.
+// desc.kind is the only part used from the descriptor, and it defaults to
+// desc.kind = 'GrB'.
 
 #include "gb_matlab.h"
 
@@ -37,8 +43,8 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 4 && nargin <= 8 && nargout <= 1,
-        "usage: A = GrB.build (I, J, X, m, n, dup, type)") ;
+    gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 2,
+        "usage: A = GrB.build (I, J, X, m, n, dup, type, desc)") ;
 
     //--------------------------------------------------------------------------
     // get the descriptor
@@ -47,13 +53,13 @@ void mexFunction
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    GrB_Descriptor desc = NULL ;
+    desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+
+    // if present, remove the descriptor from consideration
+    if (desc != NULL) nargin-- ;
 
     OK (GrB_Descriptor_free (&desc)) ;
-
-    // remove the descriptor from consideration
-    nargin-- ;
 
     //--------------------------------------------------------------------------
     // get I and J
@@ -394,6 +400,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&A, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

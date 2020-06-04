@@ -37,6 +37,8 @@ function Y = dnn (W, bias, Y0)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% NOTE: this is a high-level algorithm that uses GrB objects.
+
 Y = Y0 ;
 for k = 1:length(W)
 

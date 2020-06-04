@@ -28,28 +28,42 @@ function C = full (A, type, identity)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (nargin < 2)
-    type = GrB.type (A) ;
+A_is_GrB = isobject (A) ;
+if (A_is_GrB)
+    % A is a GraphBLAS matrix
+    Q = A.opaque ;
+else
+    % A is a MATLAB matrix
+    Q = A ;
 end
 
-if (GrB.isfull (A) && isequal (type, GrB.type (A)))
+if (nargin < 2)
+    type = gbtype (Q) ;
+    right_type = true ;
+else
+    right_type = isequal (type, gbtype (Q)) ;
+end
+
+if (gb_isfull (Q) && right_type)
 
     % nothing to do, A is already full and has the right type
-    C = A ;
+    if (A_is_GrB)
+        % A is already a GrB matrix, return it as-is
+        C = A ;
+    else
+        % convert A into a GrB matrix
+        C = GrB (A) ;
+    end
 
 else
 
-    % convert A to full
-    if (isobject (A))
-        A = A.opaque ;
-    end
+    % convert A to a full GraphBLAS matrix
     if (nargin < 3)
         identity = 0 ;
-    end
-    if (isobject (identity))
+    elseif (isobject (identity))
         identity = identity.opaque ;
     end
-    C = GrB (gbfull (A, type, identity, struct ('kind', 'GrB'))) ;
+    C = GrB (gbfull (Q, type, identity)) ;
 
 end
 

@@ -11,8 +11,8 @@
 // computed from one or two input matrices A and B.  The following rules are
 // used, in order:
 
-// (1) GraphBLAS operations of the form Cout = GrB.method (Cin, ...) use the
-//      format of Cin for the new matrix Cout.
+// (1) GraphBLAS operations of the form C = GrB.method (Cin, ...) use the
+//      format of Cin for the new matrix C.
 
 // (1) If the format is determined by the descriptor to the method, then that
 //      determines the format of C.

@@ -35,5 +35,5 @@ if (~ ((m == 0) || (n == 0)))
     gb_error ('at least one dimension must be zero') ;
 end
 
-C = GrB (m, n) ;
+C = GrB (gbnew (m, n)) ;
 

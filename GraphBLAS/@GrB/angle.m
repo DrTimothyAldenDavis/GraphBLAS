@@ -8,9 +8,14 @@ function C = angle (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    C = zeros (size (G), 'like', G) ;
+G = G.opaque ;
+type = gbtype (G) ;
+
+if (contains (type, 'complex'))
+    C = GrB (gbapply ('carg', G)) ;
 else
-    C = GrB.apply ('carg', G) ;
+    % C is all zero
+    [m, n] = gbsize (G) ;
+    C = GrB (gbnew (m, n, type)) ;
 end
 

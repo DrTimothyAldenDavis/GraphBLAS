@@ -9,7 +9,10 @@
 
 // Usage:
 
+// [I J X] = GrB.extracttuples (A)
 // [I J X] = GrB.extracttuples (A, desc)
+
+// The desciptor is optional.  If present, it must be a struct.
 
 // desc.base = 'zero-based':    I and J are returned as 0-based int64 indices
 // desc.base = 'one-based int': I and J are returned as 1-based int64 indices
@@ -40,12 +43,12 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     base_enum_t base = BASE_DEFAULT ;
-    kind_enum_t kind = KIND_GRB ;
-    GxB_Format_Value fmt = GxB_NO_FORMAT ;
+    kind_enum_t kind = KIND_FULL ;              // ignored
+    GxB_Format_Value fmt = GxB_NO_FORMAT ;      // ignored
     GrB_Descriptor desc = NULL ;
-    if (nargin == 2)
+    if (nargin > 1)
     { 
-        desc = gb_mxarray_to_descriptor (pargin [1], &kind, &fmt, &base) ;
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base);
     }
     OK (GrB_Descriptor_free (&desc)) ;
 

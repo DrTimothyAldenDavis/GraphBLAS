@@ -41,30 +41,31 @@ if (~isequal (S.type, '()'))
     error ('GrB:unsupported', 'index type %s not supported', S.type) ;
 end
 
+if (isobject (C))
+    C = C.opaque ;
+end
+
 ndims = length (S.subs) ;
 if (ndims == 1)
-    if (isequal (GrB.type (S.subs {1}), 'logical'))
+    if (isequal (GrB.type (S.subs {1}), 'logical'))     % TODO
         % C (M) = A for logical assignment
         M = S.subs {1} ;
+        if (isobject (M))
+            M = M.opaque ;
+        end
         % the 'all' syntax requires MATLAB R2019a
         % if (any (M, 'all'))
             if (isscalar (A))
                 % C (M) = scalar
-                C = GrB.subassign (C, M, A) ;
+                C = GrB (gbsubassign (C, M, gb (A))) ;
             else
                 % C (M) = A where A is a vector
-                if (isobject (M))
-                    M = M.opaque ;
-                end
-                if (size (A, 2) ~= 1)
+                if (size (A, 2) ~= 1) % TODO: this uses A as an object
                     % make sure A is a column vector of size mnz-by-1
                     A = A (:) ;
                 end
                 if (isobject (A))
                     A = A.opaque ;
-                end
-                if (isobject (C))
-                    C = C.opaque ;
                 end
                 C = GrB (gblogassign (C, M, A)) ;
             end
@@ -74,13 +75,19 @@ if (ndims == 1)
     else
         % C (I) = A where C is a vector
         I = gb_get_index (S.subs (1)) ;
-        C = GrB.subassign (C, I, A) ;
+        if (isobject (A))
+            A = A.opaque ;
+        end
+        C = GrB (gbsubassign (C, I, gb (A))) ;
     end
 elseif (ndims == 2)
     % C(I,J) = A where A is length(I)-by-length(J), or a scalar
     I = gb_get_index (S.subs (1)) ;
     J = gb_get_index (S.subs (2)) ;
-    C = GrB.subassign (C, I, J, A) ;
+    if (isobject (A))
+        A = A.opaque ;
+    end
+    C = GrB (gbsubassign (C, I, J, A)) ;
 else
     error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
 end

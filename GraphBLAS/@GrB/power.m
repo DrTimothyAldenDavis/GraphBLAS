@@ -13,6 +13,8 @@ function C = power (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 % ensure A and B are both GrB matrices
 if (~isobject (A))
     A = GrB (A) ;

@@ -21,7 +21,7 @@ if (level > 0)
     end
 end
 
-gbdisp (G.opaque, nnz (G), level) ;
+gbdisp (G.opaque, nnz (G), level) ; % TODO
 
 if (level > 0)
     fprintf ('\n') ;

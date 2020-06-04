@@ -8,9 +8,11 @@ function C = isfinite (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[m, n] = size (G) ;
-if (isfloat (G) && m > 0 && n > 0)
-    C = GrB.apply ('isfinite', full (G)) ;
+G = G.opaque ;
+
+[m, n] = gbsize (G) ;
+if (gb_isfloat (gbtype (G)) && m > 0 && n > 0)
+    C = GrB (gbapply ('isfinite', gbfull (G))) ; 
 else
     % C is all true
     C = GrB (true (m, n)) ;

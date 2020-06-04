@@ -8,8 +8,10 @@ function C = fix (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isfloat (G) && GrB.entries (G) > 0)
-    C = GrB.apply ('trunc', G) ;
+Q = G.opaque ;
+
+if (gb_isfloat (gbtype (Q)) && gbnvals (Q) > 0)
+    C = GrB (gbapply ('trunc', Q)) ;
 else
     C = G ;
 end

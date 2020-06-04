@@ -12,6 +12,13 @@ function L = tril (G, k)
 
 if (nargin < 2)
     k = 0 ;
+elseif (isobject (k))
+    k = gb_get_scalar (k) ;
 end
-L = GrB.select ('tril', G, k) ;
+
+if (isobject (G))
+    G = G.opaque ;
+end
+
+L = GrB (gbselect ('tril', G, k)) ;
 

@@ -15,15 +15,15 @@
 
 // Usage:
 
-//      Cout = gbextract (Cin, M, accum, A, I, J, desc)
+//      C = gbextract (Cin, M, accum, A, I, J, desc)
 
-// A and desc are required.  See GrB.m for more details.
+// A is required.  See GrB.m for more details.
 // If accum or M is used, then Cin must appear.
 
 #include "gb_matlab.h"
 #include "GB_ij.h"
 
-#define USAGE "usage: Cout = GrB.extract (Cin, M, accum, A, I, J, desc)"
+#define USAGE "usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)"
 
 void mexFunction
 (
@@ -38,7 +38,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 2 && nargin <= 7 && nargout <= 1, USAGE) ;
+    gb_usage (nargin >= 1 && nargin <= 7 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -186,6 +186,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
 

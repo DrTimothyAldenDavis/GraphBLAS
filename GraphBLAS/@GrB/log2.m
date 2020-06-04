@@ -14,37 +14,24 @@ function [F, E] = log2 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+G = G.opaque ;
+
 if (nargout == 1)
 
     % C = log2 (G)
-    if (isreal (G))
-        if (GrB.issigned (G) && any (G < 0, 'all'))
-            if (isequal (GrB.type (G), 'single'))
-                G = GrB (G, 'single complex') ;
-            else
-                G = GrB (G, 'double complex') ;
-            end
-        elseif (~isfloat (G))
-            G = GrB (G, 'double') ;
-        end
-    end
-    F = GrB.apply ('log2', full (G)) ;
-
-    % same behavior as log
-    if (~isreal (F) && nnz (imag (F) == 0))
-        F = real (F) ;
-    end
+    F = GrB (gb_to_real_if_imag_zero (gb_trig ('log2', gbfull (G)))) ;
 
 else
 
     % [F,E] = log2 (G)
-    if (~isfloat (G))
-        G = GrB (G, 'double') ;
-    elseif (~isreal (G))
-       G = real (G) ;
+    type = gbtype (G) ;
+    if (~gb_isfloat (type))
+        G = gbnew (G, 'double') ;
+    elseif (contains (type, 'complex'))
+        G = gbapply ('creal', G) ;
     end
-    F = GrB.apply ('frexpx', G) ;
-    E = GrB.apply ('frexpe', G) ;
+    F = GrB (gbapply ('frexpx', G)) ;
+    E = GrB (gbapply ('frexpe', G)) ;
 
 end
 

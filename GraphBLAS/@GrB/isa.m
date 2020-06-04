@@ -23,23 +23,41 @@ function s = isa (G, classname)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isequal (classname, 'GrB') || isequal (classname, 'numeric'))
+
     % all GraphBLAS matrices are numeric, and have class name 'GrB'
     s = true ;
-elseif (isequal (classname, 'float'))
-    % GraphBLAS double, single, and complex matrices are 'float'
-    s = isfloat (G) ;
-elseif (isequal (classname, 'integer'))
-    % GraphBLAS int* and uint* matrices are 'integer'
-    s = isinteger (G) ;
-elseif (isequal (classname, 'single complex') || ...
-        isequal (classname, 'double complex') || ...
-        isequal (classname, 'complex'))
-    s = ~isreal (G) ;
-elseif (isequal (GrB.type (G), classname))
-    % specific cases, such as isa (G, 'double')
-    s = true ;
+
 else
-    % catch-all for cases not handled above
-    s = builtin ('isa', G, classname) ;
+
+    type = gbtype (G.opaque) ;
+
+    switch (classname)
+
+        case { 'float' }
+
+            % GraphBLAS double, single, and complex matrices are 'float'
+            s = contains (type, 'double') || contains (type, 'single') ;
+
+        case { 'integer' }
+
+            % GraphBLAS int* and uint* matrices are 'integer'
+            s = contains (type, 'int') ;
+
+        case { 'single complex', 'double complex', 'complex' }
+
+            s = contains (type, 'complex') ;
+
+        case { type }
+
+            % specific cases, such as isa (G, 'double')
+            s = true ;
+
+        otherwise
+
+            % catch-all for cases not handled above
+            s = builtin ('isa', G, classname) ;
+
+    end
+
 end
 

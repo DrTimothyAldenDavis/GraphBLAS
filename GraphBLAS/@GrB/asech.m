@@ -10,9 +10,11 @@ function C = asech (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isfloat (G))
-    G = GrB (G, 'double') ;
+G = G.opaque ;
+type = gbtype (G) :
+if (~gb_isfloat (type))
+    type = 'double' ;
 end
 
-C = acosh (GrB.apply ('minv', full (G))) ;
+C = GrB (gb_trig ('acosh', gbapply ('minv', gbfull (G, type)))) ;
 

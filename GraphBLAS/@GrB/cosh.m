@@ -8,9 +8,12 @@ function C = cosh (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isfloat (G))
-    G = GrB (G, 'double') ;
+G = G.opaque ;
+type = gbtype (G) ;
+
+if (~gb_isfloat (type))
+    type = 'double' ;
 end
 
-C = GrB.apply ('cosh', full (G)) ;
+C = GrB (gbapply ('cosh', gbfull (G, type))) ;
 

@@ -13,5 +13,13 @@ function C = minus (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = gb_eadd (A, '+', -B) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (B))
+    B = B.opaque ;
+end
+
+C = GrB (gb_eadd (A, '+', gbapply ('-', B))) ;
 

@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// Usage
+
+// b = gbburble ;
+// b = gbburble (b) ;
+
 #include "gb_matlab.h"
 
 void mexFunction

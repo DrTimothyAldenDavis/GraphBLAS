@@ -99,6 +99,8 @@ function C = random (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO: make this gb_random, and return a GrB struct
+
 % defaults
 dist = 'uniform' ;
 type = 'double' ;

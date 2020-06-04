@@ -1,16 +1,16 @@
-function Cout = vreduce (varargin)
+function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 %GRB.REDUCE reduce a matrix to a vector.
 %
 % Usage:
 %
-%   Cout = GrB.vreduce (monoid, A)
-%   Cout = GrB.vreduce (monoid, A, desc)
-%   Cout = GrB.vreduce (Cin, M, monoid, A)
-%   Cout = GrB.vreduce (Cin, M, monoid, A, desc)
-%   Cout = GrB.vreduce (Cin, accum, monoid, A)
-%   Cout = GrB.vreduce (Cin, accum, monoid, A, desc)
-%   Cout = GrB.vreduce (Cin, M, accum, monoid, A)
-%   Cout = GrB.vreduce (Cin, M, accum, monoid, A, desc)
+%   C = GrB.vreduce (monoid, A)
+%   C = GrB.vreduce (monoid, A, desc)
+%   C = GrB.vreduce (Cin, M, monoid, A)
+%   C = GrB.vreduce (Cin, M, monoid, A, desc)
+%   C = GrB.vreduce (Cin, accum, monoid, A)
+%   C = GrB.vreduce (Cin, accum, monoid, A, desc)
+%   C = GrB.vreduce (Cin, M, accum, monoid, A)
+%   C = GrB.vreduce (Cin, M, accum, monoid, A, desc)
 %
 % The monoid and A arguments are required.  All others are optional.  The
 % valid monoids are: '+', '*', 'max', and 'min' for all but the 'logical'
@@ -18,14 +18,14 @@ function Cout = vreduce (varargin)
 % GrB.monoidinfo' for more details.
 %
 % By default, each row of A is reduced to a scalar.  If Cin is not
-% present, Cout (i) = reduce (A (i,:)).  In this case, Cin and Cout are
+% present, C (i) = reduce (A (i,:)).  In this case, Cin and C are
 % column vectors of size m-by-1, where A is m-by-n.  If desc.in0 is
-% 'transpose', then A.' is reduced to a column vector; Cout (j) = reduce
-% (A (:,j)).  In this case, Cin and Cout are column vectors of size
+% 'transpose', then A.' is reduced to a column vector; C (j) = reduce
+% (A (:,j)).  In this case, Cin and C are column vectors of size
 % n-by-1, if A is m-by-n.
 %
 % All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  Cout is returned as a GraphBLAS matrix, by default;
+% any combination.  C is returned as a GraphBLAS matrix, by default;
 % see 'help GrB/descriptorinfo' for more options.
 %
 % See also GrB.reduce, GrB/sum, GrB/prod, GrB/max, GrB/min.
@@ -33,10 +33,42 @@ function Cout = vreduce (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[args, is_gb] = gb_get_args (varargin {:}) ;
-if (is_gb)
-    Cout = GrB (gbvreduce (args {:})) ;
-else
-    Cout = gbvreduce (args {:}) ;
+if (isobject (arg1))
+    arg1 = arg1.opaque ;
+end
+
+if (isobject (arg2))
+    arg2 = arg2.opaque ;
+end
+
+if (nargin > 2 && isobject (arg3))
+    arg3 = arg3.opaque ;
+end
+
+if (nargin > 3 && isobject (arg4))
+    arg4 = arg4.opaque ;
+end
+
+if (nargin > 4 && isobject (arg5))
+    arg5 = arg5.opaque ;
+end
+
+switch (nargin)
+    case 2
+        [C, k] = gbvreduce (arg1, arg2) ;
+    case 3
+        [C, k] = gbvreduce (arg1, arg2, arg3) ;
+    case 4
+        [C, k] = gbvreduce (arg1, arg2, arg3, arg4) ;
+    case 5
+        [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5) ;
+    case 6
+        [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
+    otherwise
+        error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
+end
+
+if (k == 0)
+    C = GrB (C) ;
 end
 

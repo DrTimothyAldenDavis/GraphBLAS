@@ -50,8 +50,16 @@ function C = bigset (A, B, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-atype = GrB.type (A) ;
-btype = GrB.type (B) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (B))
+    B = B.opaque ;
+end
+
+atype = gbtype (A) ;
+btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
@@ -87,44 +95,50 @@ ctype = atype ;
 
 % determine the type of A
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = GrB (A, assumedtype) ;
+    A = gbnew (A, assumedtype) ;
     atype = assumedtype ;
 end
 
 % ensure B has the same type as A
 if (~isequal (btype, atype))
-    B = GrB (B, atype) ;
+    B = gbnew (B, atype) ;
 end
 
-if (isscalar (V))
+% get the matrix or scalar V
+if (isobject (V))
+    V = V.opaque ;
+end
+[m, n] = gbsize (V) ;
+V_is_scalar = (m == 1) && (n == 1) ;
+
+if (V_is_scalar)
 
     % V is a scalar:  all bits in A indexed by B are either cleared or set.
     % If A or B are scalar, but not both, then C is the size of the
     % matrix.  This case is handled by gb_union_op.
     if (gb_get_scalar (V) == 0)
         % any bit reference by B(i,j) is set to 0 in A
-        C = gb_union_op (['bitclr.' atype], A, B) ;
+        C = GrB (gb_union_op (['bitclr.' atype], A, B), ctype) ;
     else
         % any bit reference by B(i,j) is set to 1 in A
-        C = gb_union_op (['bitset.' atype], A, B) ;
+        C = GrB (gb_union_op (['bitset.' atype], A, B), ctype) ;
     end
 
 else
 
     % V is a matrix: A and B can be scalars or matrices, but if they
     % are matrices, they must have the same size as V.
-    [m, n] = size (V) ;
 
     % if B(i,j) is nonzero and V(i,j)=1, then
-    % C(i,j) = bitset (A (i,j), B (i,j).  If B(i,j) is nonzero and
+    % C(i,j) = bitset (A (i,j), B (i,j)).  If B(i,j) is nonzero and
     % V(i,j) = 0 (either implicit or explicit), then
-    % C(i,j) = bitclr (A (i,j), B (i,j).
+    % C(i,j) = bitclr (A (i,j), B (i,j)).
 
-    if (isscalar (A))
+    if (gb_isscalar (A))
         % The rest of this method will fail if both A and B are scalars,
-        % so expand A to a matrix the same size as V.  B can remain a
+        % so expand A to a full matrix the same size as V.  B can remain a
         % scalar.
-        A = GrB.subassign (GrB (m, n, atype), A) ;
+        A = gbsubassign (gbnew (m, n, atype), A) ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
@@ -139,15 +153,10 @@ else
     % pattern of bit positions B0 to set to 0 in A.  B0 is an m-by-n
     % matrix, if B is either an m-by-n matrix or a scalar.
     d.mask = 'complement' ;
-    B0 = GrB.assign (GrB (m, n, atype), V, B, d) ;
+    B0 = gbassign (gbnew (m, n, atype), V, B, d) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    C = GrB.eadd (['bitclr.', atype], C, B0) ;
+    C = GrB (gbeadd (['bitclr.', atype], C, B0), ctype) ;
 
-end
-
-% recast C back to the original type of A
-if (~isequal (ctype, GrB.type (C)))
-    C = GrB (C, ctype) ;
 end
 

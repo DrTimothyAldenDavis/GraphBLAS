@@ -9,9 +9,12 @@ function C = acoth (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isfloat (G))
-    G = GrB (G, 'double') ;
+G = G.opaque ;
+type = gbtype (G) :
+
+if (~gb_isfloat (type))
+    type = 'double' ;
 end
 
-C = atanh (GrB.apply ('minv', full (G))) ;
+C = GrB (gb_trig ('atanh', gbapply ('minv', gbfull (G, type)))) ;
 

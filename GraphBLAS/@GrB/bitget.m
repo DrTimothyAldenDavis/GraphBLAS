@@ -44,8 +44,20 @@ function C = bitget (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-atype = GrB.type (A) ;
-btype = GrB.type (B) ;
+if (nargin < 3)
+    assumedtype = 'uint64' ;
+end
+
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (B))
+    B = B.opaque ;
+end
+
+atype = gbtype (A) ;
+btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
@@ -53,10 +65,6 @@ end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
     error ('inputs must not be logical') ;
-end
-
-if (nargin < 3)
-    assumedtype = 'uint64' ;
 end
 
 if (~contains (assumedtype, 'int'))
@@ -68,20 +76,15 @@ ctype = atype ;
 
 % determine the type of A
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = GrB (A, assumedtype) ;
+    A = gbnew (A, assumedtype) ;
     atype = assumedtype ;
 end
 
 % ensure B has the right type
 if (~isequal (btype, atype))
-    B = GrB (B, atype) ;
+    B = gbnew (B, atype) ;
 end
 
 % extract the bits from each entry of A
-C = gb_emult (A, ['bitget.' atype], B) ;
-
-% recast C back to the original type of A
-if (~isequal (ctype, GrB.type (C)))
-    C = GrB (C, ctype) ;
-end
+C = GrB (gb_emult (A, ['bitget.' atype], B), ctype) ;
 

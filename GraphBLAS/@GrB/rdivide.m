@@ -1,5 +1,5 @@
 function C = rdivide (A, B)
-%TIMES C = A./B, sparse matrix element-wise division.
+%RDIVIDE C = A./B, sparse matrix element-wise division.
 % C = A./B when B is a matrix results in a dense matrix C, with all
 % entries present.  If A is a matrix and B is a scalar, then C has the
 % pattern of A, except if B is zero and A is double, single, or complex.
@@ -13,38 +13,50 @@ function C = rdivide (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-ctype = GrB.optype (A, B) ;
+if (isobject (A))
+    A = A.opaque ;
+end
 
-if (isscalar (A))
-    if (isscalar (B))
+if (isobject (B))
+    B = B.opaque ;
+end
+
+[am, an] = gbsize (A) ;
+[bm, bn] = gbsize (B) ;
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
+
+atype = gbtype (A) ;
+btype = gbtype (B) ;
+ctype = gboptype (atype, btype) ;
+
+if (a_is_scalar)
+    if (b_is_scalar)
         % both A and B are scalars
     else
-        % A is a scalar, B is a matrix.  A is expanded to full
-        [m, n] = size (B) ;
-        % A (1:m,1:n) = A and cast to the type of B
-        A = GrB.subassign (GrB (m, n, ctype), A) ;
-        B = gb_full (B, ctype) ;
+        % A is a scalar, B is a matrix.  A is expanded to full, with type of C
+        A = gbsubassign (gbnew (bm, bn, ctype), A) ;
+        B = gbfull (B, ctype) ;
     end
 else
-    if (isscalar (B))
+    if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) == 0 && isfloat (A))
+        if (gb_get_scalar (B) == 0 && gb_isfloat (atype))
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
-            [m, n] = size (A) ;
-            % B (1:m,1:n) = B and cast to the type of A
-            B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
+            % expand B t a full matrix and cast to the type of A
+            B = gbsubassign (gbnew (am, an, atype), B) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).
-            B = GrB.expand (B, A) ;
+            B = gb_expand (B, A) ;
         end
     else
         % both A and B are matrices.  The result is a dense matrix.
-        A = gb_full (A, ctype) ;
-        B = gb_full (B, ctype) ;
+        A = gbfull (A, ctype) ;
+        B = gbfull (B, ctype) ;
     end
 end
 
-C = GrB.emult (A, '/', B) ;
+C = GrB (gbemult (A, '/', B)) ;
 

@@ -1,4 +1,4 @@
-function b = burble (varargin)
+function b = burble (b)
 %GRB.BURBLE get/set the burble
 %
 % Usage:
@@ -17,5 +17,9 @@ function b = burble (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-b = gbburble (varargin {:}) ;
+if (nargin == 0)
+    b = gbburble ;
+else
+    b = gbburble (b) ;
+end
 

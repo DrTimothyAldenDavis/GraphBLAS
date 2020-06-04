@@ -8,17 +8,5 @@ function C = log1p (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isreal (G))
-    if (GrB.issigned (G) && any (G < -1, 'all'))
-        if (isequal (GrB.type (G), 'single'))
-            G = GrB (G, 'single complex') ;
-        else
-            G = GrB (G, 'double complex') ;
-        end
-    elseif (~isfloat (G))
-        G = GrB (G, 'double') ;
-    end
-end
-
-C = GrB.apply ('log1p', G) ;
+C = GrB (gb_trig ('log1p', G.opaque)) ;
 

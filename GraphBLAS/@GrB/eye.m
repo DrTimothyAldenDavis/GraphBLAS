@@ -64,5 +64,5 @@ else
     X = ones (mn, 1, type) ;
 end
 
-C = GrB.build (I, I, X, m, n, '1st', type, desc) ;
+C = GrB (gbbuild (I, I, X, m, n, '1st', type, desc)) ;
 
