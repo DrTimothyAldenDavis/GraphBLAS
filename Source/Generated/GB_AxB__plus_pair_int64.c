@@ -891,7 +891,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
             continue ;                                  \
         }
 
-#if 0
+#if 1
         if (ainz >= 4 && bjnz >= 4)
         {
             // if (ainz < bjnz)
