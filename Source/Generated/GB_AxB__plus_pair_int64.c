@@ -849,22 +849,24 @@ GrB_Info GB_Adot3B__plus_pair_int64
         // k = _mm_popcnt_u32 (mask) ;
         //      counts the number of bits set in a 32-bit integer (mask)
 
-        // load the next 4 entries of Ai [pA ...] and broadcast them
-        #define GB_BROADCAST(X)                     \
-            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0]) ; \
-            (X ## 1).m = _mm256_set1_epi64x (X ## i [p ## X +1]) ; \
-            (X ## 2).m = _mm256_set1_epi64x (X ## i [p ## X +2]) ; \
-            (X ## 3).m = _mm256_set1_epi64x (X ## i [p ## X +3])
+        // load the next 4 entries of Ai [pA...] or Bi [pB...] and broadcast
+        #define GB_BROADCAST(X)                                     \
+        {                                                           \
+            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0]) ;  \
+            (X ## 1).m = _mm256_set1_epi64x (X ## i [p ## X +1]) ;  \
+            (X ## 2).m = _mm256_set1_epi64x (X ## i [p ## X +2]) ;  \
+            (X ## 3).m = _mm256_set1_epi64x (X ## i [p ## X +3]) ;  \
+        }
 
-        // load the next entries of Ai [pA ...] and broadcast it
+        // load the next entry of Ai [pA...] or Bi [pB...] and broadcast it
         #define GB_BROADCAST1(X)                        \
-            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0])
+            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0]) ;
 
-        // load the next 4 entries of Bi [pB ...]
+        // load the next 4 entries of Ai [pA...] or Bi [pB ...]
         #define GB_LOAD(X) \
             (X ## 0).m = _mm256_loadu_si256 ((__m256i const *)(X ## i + p ## X))
 
-        // munch the next 4 entries of Ai [pA ...] and load the next 4
+        // munch the next 4 entries of Ai [pA ...] or Bi [...] and load next 4
         #define GB_MUNCH_BROADCAST(X)                   \
         {                                               \
             p ## X += 4 ;                               \
@@ -873,7 +875,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
             continue ;                                  \
         }
 
-        // munch the next entries of Ai [pA ...]
+        // munch the next entry of Ai [pA ...] or Bi [pB...]
         #define GB_MUNCH_BROADCAST1(X)                  \
         {                                               \
             p ## X += 1 ;                               \
@@ -882,7 +884,7 @@ GrB_Info GB_Adot3B__plus_pair_int64
             continue ;                                  \
         }
 
-        // munch the next 4 entries of Bi [pB ...] and load the next 4
+        // munch the next 4 entries of Ai [pA ...] or Bi [...] and load next 4
         #define GB_MUNCH_LOAD(X)                        \
         {                                               \
             p ## X += 4 ;                               \
@@ -894,20 +896,17 @@ GrB_Info GB_Adot3B__plus_pair_int64
 #if 1
         if (ainz >= 4 && bjnz >= 4)
         {
-            // if (ainz < bjnz)
+            if (ainz < bjnz)
             {
                 GB_vector B0, A0, A1, A2, A3 ;
                 GB_BROADCAST (A) ;
                 GB_LOAD (B) ;
                 while (1)
                 {
-                    ASSERT (pA_end - pA >= 4) ;
-                    ASSERT (pB_end - pB >= 4) ;
-
-                    // skip if last entry of a comes before first entry of b
+                    // skip if last entry of A comes before first entry of B
                     if (A3.i [3] < B0.i [0]) GB_MUNCH_BROADCAST (A) ;
 
-                    // skip if last entry of b comes before first entry of a
+                    // skip if last entry of B comes before first entry of A
                     if (B0.i [3] < A0.i [0]) GB_MUNCH_LOAD (B)  ;
 
                     // count the intersections
@@ -938,7 +937,6 @@ GrB_Info GB_Adot3B__plus_pair_int64
                     }
                 }
             }
-            #if 0
             else
             {
 
@@ -947,13 +945,10 @@ GrB_Info GB_Adot3B__plus_pair_int64
                 GB_BROADCAST (B) ;
                 while (1)
                 {
-                    ASSERT (pA_end - pA >= 4) ;
-                    ASSERT (pB_end - pB >= 4) ;
-
-                    // skip if last entry of a comes before first entry of b
+                    // skip if last entry of A comes before first entry of B
                     if (A0.i [3] < B0.i [0]) GB_MUNCH_LOAD (A) ;
 
-                    // skip if last entry of b comes before first entry of a
+                    // skip if last entry of B comes before first entry of A
                     if (B3.i [3] < A0.i [0]) GB_MUNCH_BROADCAST (B)  ;
 
                     // count the intersections
@@ -984,7 +979,6 @@ GrB_Info GB_Adot3B__plus_pair_int64
                     }
                 }
             }
-            #endif
         }
 #endif
 
