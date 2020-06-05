@@ -30,7 +30,7 @@ if (a_is_scalar)
         else
             % expand A to a full matrix of type ctype
             ctype = gboptype (gbtype (A), gbtype (B)) ;
-            A = gbsubassign (gbnew (bm, bn, ctype), A) ;
+            A = gb_scalar_to_full (bm, bn, ctype, A) ;
             C = gbeadd (A, op, B) ;
         end
     end
@@ -43,7 +43,7 @@ else
         else
             % expand B to a full matrix
             ctype = gboptype (gbtype (A), gbtype (B)) ;
-            B = gbsubassign (gbnew (am, an, ctype), B) ;
+            B = gb_scalar_to_full (am, an, ctype, B) ;
             C = gbeadd (A, op, B) ;
         end
     else

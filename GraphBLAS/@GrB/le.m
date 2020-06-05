@@ -17,57 +17,58 @@ function C = le (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (~isreal (A))
-    A = real (A) ;
+if (isobject (A))
+    A = A.opaque ;
 end
 
-if (~isreal (B))
-    B = real (B) ;
+if (isobject (B))
+    B = B.opaque ;
 end
 
-ctype = GrB.optype (A, B) ;
+[am, an] = gbsize (A) ;
+[bm, bn] = gbsize (B) ;
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
 
-if (isscalar (A))
-    if (isscalar (B))
+ctype = gboptype (gbtype (A), gbtype (B)) ;
+
+if (a_is_scalar)
+    if (b_is_scalar)
         % both A and B are scalars.  C is full.
-        C = GrB.emult (gb_full (A, ctype), '<=', gb_full (B, ctype)) ;
+        C = GrB (gbemult (gbfull (A, ctype), '<=', gbfull (B, ctype))) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) <= 0)
             % since a <= 0, entries not present in B result in a true
             % value, so the result is dense.  Expand A to a dense matrix.
-            [m, n] = size (B) ;
-            % A (1:m,1:n) = A and cast to ctype
-            A = GrB.subassign (GrB (m, n, ctype), A) ;
-            B = gb_full (B, ctype) ;
-            C = GrB.emult (A, '<=', B) ;
+            A = gb_scalar_to_full (bm, bn, ctype, A) ;
+            B = gbfull (B, ctype) ;
+            C = GrB (gbemult (A, '<=', B)) ;
         else
             % since a > 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B >= a, then convert to true.
-            C = GrB.apply ('1.logical', GrB.select (B, '>=', A)) ;
+            C = GrB (gbapply ('1.logical', gbselect (B, '>=', A))) ;
         end
     end
 else
-    if (isscalar (B))
+    if (b_is_scalar)
         % A is a matrix, B is a scalar
         if (gb_get_scalar (B) >= 0)
             % since b >= 0, entries not present in A result in a true
             % value, so the result is dense.  Expand B to a dense matrix.
-            [m, n] = size (A) ;
-            % B (1:m,1:n) = B and cast to the type of A
-            B = GrB.subassign (GrB (m, n, ctype), B) ;
-            A = gb_full (A, ctype) ;
-            C = GrB.emult (A, '<=', B) ;
+            B = gb_scalar_to_full (am, an, ctype, B) ;
+            A = gbfull (A, ctype) ;
+            C = GrB (gbemult (A, '<=', B)) ;
         else
             % since b < 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all
             % entries in A <= b, then convert to true.
-            C = GrB.apply ('1.logical', GrB.select (A, '<=', B)) ;
+            C = GrB (gbapply ('1.logical', gbselect (A, '<=', B))) ;
         end
     else
         % both A and B are matrices.  C is full.
-        C = GrB.emult (gb_full (A, ctype), '<=', gb_full (B, ctype)) ;
+        C = GrB (gbemult (gbfull (A, ctype), '<=', gbfull (B, ctype))) ;
     end
 end
 

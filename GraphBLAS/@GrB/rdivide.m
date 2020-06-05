@@ -35,7 +35,7 @@ if (a_is_scalar)
         % both A and B are scalars
     else
         % A is a scalar, B is a matrix.  A is expanded to full, with type of C
-        A = gbsubassign (gbnew (bm, bn, ctype), A) ;
+        A = gb_scalar_to_full (bm, bn, ctype, A) ;
         B = gbfull (B, ctype) ;
     end
 else
@@ -45,7 +45,7 @@ else
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
             % expand B t a full matrix and cast to the type of A
-            B = gbsubassign (gbnew (am, an, atype), B) ;
+            B = gb_scalar_to_full (am, an, atype, B) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).

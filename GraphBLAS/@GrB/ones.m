@@ -14,14 +14,18 @@ if (nargin == 4)
     if (~isequal (arg3, 'like'))
         gb_error ('usage: ones (m, n, ''like'', G)') ;
     end
-    Z = gbnew (arg1, arg2, gbtype (arg4.opaque)) ;
+    m = arg1 ;
+    n = arg2 ;
+    type = gbtype (arg4.opaque) ;
 
 elseif (nargin == 3)
 
     if (~isequal (arg2, 'like'))
         gb_error ('usage: ones ([m n], ''like'', G)') ;
     end
-    Z = gbnew (arg1 (1), arg1 (2), gbtype (arg3.opaque)) ;
+    m = arg1 (1) ;
+    n = arg2 (2) ;
+    type = gbtype (arg3.opaque) ;
 
 else
 
@@ -29,5 +33,5 @@ else
 
 end
 
-C = GrB (gbsubassign (Z, 1)) ;
+C = GrB (gb_scalar_to_full (m, n, type, 1)) ;
 

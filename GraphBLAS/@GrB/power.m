@@ -13,23 +13,33 @@ function C = power (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
+if (isobject (A))
+    A = A.opaque ;
+end
+if (isobject (B))
+    B = B.opaque ;
+end
 
-% ensure A and B are both GrB matrices
-if (~isobject (A))
-    A = GrB (A) ;
-end
-if (~isobject (B))
-    B = GrB (B) ;
-end
+atype = gbtype (A) ;
+btype = gbtype (B) ;
+a_is_real = ~contains (atype, 'complex') ;
+b_is_real = ~contains (btype, 'complex') ;
+
+[am, an] = gbsize (A) ;
+[bm, bn] = gbsize (B) ;
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
 
 % determine if C = A.^B is real or complex
-if (isreal (A) && isreal (B))
-    % A and B are both real.  Check the contents of B.
-    if (islogical (B) || isinteger (B) || isequal (B, round (B)))
-        % All entries in B are integers, so C is real
+if (a_is_real && b_is_real)
+    % A and B are both real.  Determine if C might be complex.
+    if (contains (btype, 'int') || isequal (btype, 'logical'))
+        % B is logical or integer, so C is real
         c_is_real = true ;
-    elseif (GrB.reduce ('min', A) >= 0)
+    elseif (gbisequal (B, gbapply ('round', B)))
+        % B is floating point, but all values are equal to integers
+        c_is_real = true ;
+    elseif (gb_get_scalar (gbreduce ('min', A)) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -42,61 +52,76 @@ else
     c_is_real = false ;
 end
 
-atype = GrB.type (A) ;
-btype = GrB.type (B) ;
-
 if (c_is_real)
-    % C has the same type as A
-    ctype = GrB.optype (atype, btype) ;
+    % C is real
+    ctype = gboptype (atype, btype) ;
 else
     % C is complex
-    if (contains (GrB.type (A), 'single') && ...
-        contains (GrB.type (B), 'single'))
+    if (contains (atype, 'single') && contains (btype, 'single'))
         ctype = 'single complex' ;
     else
         ctype = 'double complex' ;
     end
 end
 
-if (isscalar (A))
-    if (isscalar (B))
+if (a_is_scalar)
+
+    %----------------------------------------------------------------------
+    % A is a scalar: C is a full matrix
+    %----------------------------------------------------------------------
+
+    if (b_is_scalar)
         % both A and B are scalars
-        A = gb_full (A, ctype) ;
-        B = gb_full (B, ctype) ;
+        A = gbfull (A, ctype) ;
     else
         % A is a scalar, B is a matrix; expand A to the size of B
-        [m, n] = size (B) ;
-        % A (1:m,1:n) = A, converting to ctype
-        A = GrB.subassign (GrB (m, n, ctype), A) ;
-        B = gb_full (B, ctype) ;
+        A = gb_scalar_to_full (bm, bn, ctype, A) ;
     end
+    B = gbfull (B, ctype) ;
+
 else
-    if (isscalar (B))
+
+    %----------------------------------------------------------------------
+    % A is a matrix
+    %----------------------------------------------------------------------
+
+    if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) <= 0)
-            % so the result is full
-            A = gb_full (A, ctype) ;
-            [m, n] = size (A) ;
-            % B (1:m,1:n) = B, converting to ctype
-            B = GrB.subassign (GrB (m, n, ctype), B) ;
+        b = gb_get_scalar (B) ;
+        if (b == 0)
+            % special case:  C = A.^0 = ones (am, an, ctype)
+            C = GrB (gb_scalar_to_full (am, an, ctype, 1)) ;
+            return ;
+        elseif (b == 1)
+            % special case: C = A.^1 = A
+            C = GrB (A) ;
+            return
+        elseif (b == 2)
+            % special case: C = A.^2
+            C = GrB (gbemult (A, '*', A)) ;
+            return ;
+        elseif (b <= 0)
+            % 0.^b where b < 0 is Inf, so C is full
+            A = gbfull (A, ctype) ;
+            B = gb_scalar_to_full (am, an, ctype, B) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero.  The result is
             % sparse.  B is expanded to a matrix with the same pattern as
             % A, with the type of C.
-            B = GrB.expand (GrB (B, ctype), A) ;
+            B = gb_expand (B, A, ctype) ;
         end
     else
         % both A and B are matrices.
-        A = gb_full (A, ctype) ;
-        B = gb_full (B, ctype) ;
+        A = gbfull (A, ctype) ;
+        B = gbfull (B, ctype) ;
     end
+
 end
 
 % C = A.^B, where A and B now have the same pattern
-C = GrB.emult ('pow', A, B) ;
-
-% convert C back to real, if complex but with all-zero imaginary part
-if (~c_is_real && nnz (imag (C)) == 0)
-    C = real (C) ;
+if (c_is_real)
+    C = GrB (gbemult ('pow', A, B)) ;
+else
+    C = GrB (gb_to_real_if_imag_zero (gbemult ('pow', A, B))) ;
 end
 

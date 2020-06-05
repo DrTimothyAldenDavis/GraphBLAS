@@ -73,6 +73,9 @@
             // PLUS_PAIR for 64-bit integers, float, and double (not complex):
             // To check if C(i,j) exists, test (cij != 0) when done.  The
             // boolean flag cij_exists is not defined.
+            #if defined ( __AVX2__ )
+            #define GB_USE_AVX2
+            #endif
             #undef  GB_CIJ_CHECK
             #define GB_CIJ_CHECK false
             #undef  GB_CIJ_EXISTS
@@ -387,6 +390,172 @@
         // A(:,i) and B(:,j) have about the same sparsity
         //----------------------------------------------------------------------
 
+        // This uses the following AVX2 instructions, for the PLUS_PAIR_T
+        // semirings (for T = int64, float, and double only):
+
+        // v =_mm256_set1_epi64x (int64_t x) ;
+        //      loads x into all 4 entries of the vector v:
+        //      for (k = 0 to 3) v [k] = x
+
+        // v = _mm256_loadu_si256 ((__m256i const *) x) ;
+        //      loads 4 entries from x [0...3] into the vector v:
+        //      for (k = 0 to 3) v [k] = x [k]
+
+        // c = _mm256_cmpeq_epi64 (a, b) ;
+        //      compares the vectors a and b, for k = 0:3
+        //      for (k = 0 to 3) c [k] = (a [k] == b [k]) ? -1 : 0
+
+        // c = _mm256_or_si256 (a,b) ;
+        //      logical or:
+        //      for (k = 0 to 3) c [k] = a [k] | b [k]
+
+        // mask = _mm256_movemask_pd (c) ;
+        //      sets each bit of the mask from most sig. bit of each entry in c
+        //      for (k = 0 to 3) mask bit [k] = (most sig. bit of c [k])
+
+        // k = _mm_popcnt_u32 (mask) ;
+        //      counts the number of bits set in a 32-bit integer (mask)
+
+        // load the next 4 entries of Ai [pA ...] and broadcast them
+        #define GB_BROADCAST(X)                     \
+            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0]) ; \
+            (X ## 1).m = _mm256_set1_epi64x (X ## i [p ## X +1]) ; \
+            (X ## 2).m = _mm256_set1_epi64x (X ## i [p ## X +2]) ; \
+            (X ## 3).m = _mm256_set1_epi64x (X ## i [p ## X +3])
+
+        // load the next entries of Ai [pA ...] and broadcast it
+        #define GB_BROADCAST1(X)                        \
+            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0])
+
+        // load the next 4 entries of Bi [pB ...]
+        #define GB_LOAD(X) \
+            (X ## 0).m = _mm256_loadu_si256 ((__m256i const *)(X ## i + p ## X))
+
+        // munch the next 4 entries of Ai [pA ...] and load the next 4
+        #define GB_MUNCH_BROADCAST(X)                   \
+        {                                               \
+            p ## X += 4 ;                               \
+            if (p ## X ## _end - p ## X < 4) break ;    \
+            GB_BROADCAST (X) ;                          \
+            continue ;                                  \
+        }
+
+        // munch the next entries of Ai [pA ...]
+        #define GB_MUNCH_BROADCAST1(X)                  \
+        {                                               \
+            p ## X += 1 ;                               \
+            if (p ## X ## _end - p ## X < 1) break ;    \
+            GB_BROADCAST1 (X) ;                         \
+            continue ;                                  \
+        }
+
+        // munch the next 4 entries of Bi [pB ...] and load the next 4
+        #define GB_MUNCH_LOAD(X)                        \
+        {                                               \
+            p ## X += 4 ;                               \
+            if (p ## X ## _end - p ## X < 4) break ;    \
+            GB_LOAD (X) ;                               \
+            continue ;                                  \
+        }
+
+        #if defined ( GB_USE_AVX2 )
+
+        if (ainz >= 4 && bjnz >= 4)
+        {
+            // if (ainz < bjnz)
+            {
+                GB_vector B0, A0, A1, A2, A3 ;
+                GB_BROADCAST (A) ;
+                GB_LOAD (B) ;
+                while (1)
+                {
+                    ASSERT (pA_end - pA >= 4) ;
+                    ASSERT (pB_end - pB >= 4) ;
+
+                    // skip if last entry of a comes before first entry of b
+                    if (A3.i [3] < B0.i [0]) GB_MUNCH_BROADCAST (A) ;
+
+                    // skip if last entry of b comes before first entry of a
+                    if (B0.i [3] < A0.i [0]) GB_MUNCH_LOAD (B)  ;
+
+                    // count the intersections
+
+                    // compare (4 instructions)
+                    GB_vector C0, C1, C2, C3 ;
+                    C0.m = _mm256_cmpeq_epi64 (A0.m, B0.m) ;
+                    C1.m = _mm256_cmpeq_epi64 (A1.m, B0.m) ;
+                    C2.m = _mm256_cmpeq_epi64 (A2.m, B0.m) ;
+                    C3.m = _mm256_cmpeq_epi64 (A3.m, B0.m) ;
+
+                    // or (3 instructions)
+                    C0.m = _mm256_or_si256 (C0.m, C1.m) ;
+                    C2.m = _mm256_or_si256 (C2.m, C3.m) ;
+                    C0.m = _mm256_or_si256 (C0.m, C2.m) ;
+
+                    // count (2 instructions)
+                    uint32_t mask = _mm256_movemask_pd (C0.d) ;
+                    cij += _mm_popcnt_u32 (mask) ;
+
+                    if (A3.i [3] < B0.i [3])
+                    {
+                        GB_MUNCH_BROADCAST (A) ;
+                    }
+                    else
+                    {
+                        GB_MUNCH_LOAD (B) ;
+                    }
+                }
+            }
+            #if 0
+            else
+            {
+
+                GB_vector A0, B0, B1, B2, B3 ;
+                GB_LOAD (A) ;
+                GB_BROADCAST (B) ;
+                while (1)
+                {
+                    ASSERT (pA_end - pA >= 4) ;
+                    ASSERT (pB_end - pB >= 4) ;
+
+                    // skip if last entry of a comes before first entry of b
+                    if (A0.i [3] < B0.i [0]) GB_MUNCH_LOAD (A) ;
+
+                    // skip if last entry of b comes before first entry of a
+                    if (B3.i [3] < A0.i [0]) GB_MUNCH_BROADCAST (B)  ;
+
+                    // count the intersections
+
+                    // compare (4 instructions)
+                    GB_vector C0, C1, C2, C3 ;
+                    C0.m = _mm256_cmpeq_epi64 (A0.m, B0.m) ;
+                    C1.m = _mm256_cmpeq_epi64 (A0.m, B1.m) ;
+                    C2.m = _mm256_cmpeq_epi64 (A0.m, B2.m) ;
+                    C3.m = _mm256_cmpeq_epi64 (A0.m, B3.m) ;
+
+                    // or (3 instructions)
+                    C0.m = _mm256_or_si256 (C0.m, C1.m) ;
+                    C2.m = _mm256_or_si256 (C2.m, C3.m) ;
+                    C0.m = _mm256_or_si256 (C0.m, C2.m) ;
+
+                    // count (2 instructions)
+                    uint32_t mask = _mm256_movemask_pd (C0.d) ;
+                    cij += _mm_popcnt_u32 (mask) ;
+
+                    if (A0.i [3] < B3.i [3])
+                    {
+                        GB_MUNCH_LOAD (A) ;
+                    }
+                    else
+                    {
+                        GB_MUNCH_BROADCAST (B) ;
+                    }
+                }
+            }
+            #endif
+        }
+        #endif
+
 #if 0
         // load the next 3 entries of Ai [pA ...]
         #define GB_LOAD_A                   \
@@ -587,4 +756,12 @@
 #undef GB_MUNCH_AB
 #undef GB_CIJ_EXISTS
 #undef GB_CIJ_CHECK
+#undef GB_USE_AVX2
+
+#undef GB_BROADCAST
+#undef GB_BROADCAST1
+#undef GB_LOAD
+#undef GB_MUNCH_BROADCAST
+#undef GB_MUNCH_BROADCAST1
+#undef GB_MUNCH_LOAD
 

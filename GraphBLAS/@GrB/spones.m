@@ -20,23 +20,9 @@ function C = spones (G, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-G = G.opaque ;
-
 if (nargin == 1)
-    switch (gbtype (G))
-        case { 'single complex' }
-            op = '1.single' ;
-        case { 'double complex' }
-            op = '1.double' ;
-        otherwise
-            op = '1' ;
-    end
+    C = GrB (gb_spones (G.opaque)) ;
 else
-    if (~ischar (type))
-        gb_error ('type must be a string') ;
-    end
-    op = ['1.' type] ;
+    C = GrB (gb_spones (G.opaque, type)) ;
 end
-
-C = GrB (gbapply (op, G)) ;
 

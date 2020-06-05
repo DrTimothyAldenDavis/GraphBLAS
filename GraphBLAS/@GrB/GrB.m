@@ -118,7 +118,7 @@ classdef GrB
 %
 %   C = and (A, B)          C = A & B
 %   C = ctranspose (G)      C = G'
-%   i = end (A, k, n)       A(1:end,1:end)
+%   i = end (G, k, ndims)   A(1:end,1:end)
 %   C = eq (A, B)           C = A == B
 %   C = ge (A, B)           C = A >= B
 %   C = gt (A, B)           C = A > B
@@ -128,17 +128,17 @@ classdef GrB
 %   C = lt (A, B)           C = A < B
 %   C = minus (A, B)        C = A - B
 %   C = mldivide (A, B)     C = A \ B
-%   C = mtimes (A, B)       C = A * B
 %   C = mpower (A, B)       C = A ^ B
 %   C = mrdivide (A, B)     C = A / B
+%   C = mtimes (A, B)       C = A * B
 %   C = ne (A, B)           C = A ~= B
 %   C = not (G)             C = ~G
 %   C = or (A, B)           C = A | B
 %   C = plus (A, B)         C = A + B
 %   C = power (A, B)        C = A .^ B
 %   C = rdivide (A, B)      C = A ./ B
-%   C = subsref (A, I, J)   C = A (I,J) or C = A (M)
 %   C = subsasgn (A, I, J)  C (I,J) = A
+%   C = subsref (A, I, J)   C = A (I,J) or C = A (M)
 %   C = times (A, B)        C = A .* B
 %   C = transpose (G)       C = G.'
 %   C = uminus (G)          C = -G
@@ -155,7 +155,7 @@ classdef GrB
 %   C = acsc (G)            inverse cosecant
 %   C = acsch (G)           inverse hyperbolic cosecant
 %   C = all (G, ...)        reduce via '&', to vector or scalar
-%   p = amd (G)             approximate minimum degree ordering
+%   p = amd (G, ...)        approximate minimum degree ordering
 %   C = angle (G)           phase angle of a complex matrix
 %   C = any (G, ...)        reduce via '|', to vector or scalar
 %   C = asec (G)            inverse secant
@@ -167,14 +167,14 @@ classdef GrB
 %   C = atanh (G)           inverse hyperbolic tangent
 %   C = atan2 (A, B)        inverse tangent (four-quadrant)
 %
-%   [lo,hi] = bandwidth (G)     lower and upper bandwidth of G
-%   C = bitand (A, B, ...)      bitwise and
-%   C = bitcmp (A, ...)         bitwise negation
-%   C = bitget (A, B, ...)      get bits
-%   C = bitor (A, B, ...)       bitwise or
-%   C = bitset (A, B, ...)      set bits
-%   C = bitshift (A, B, ...)    shift bits
-%   C = bitxor (A, B, ...)      bitwise xor
+%   [lo, hi] = bandwidth (G, ...)   lower and upper bandwidth of G
+%   C = bitand (A, B, ...)          bitwise and
+%   C = bitcmp (A, ...)             bitwise negation
+%   C = bitget (A, B, ...)          get bits
+%   C = bitset (A, B, ...)          set bits
+%   C = bitshift (A, B, ...)        shift bits
+%   C = bitor (A, B, ...)           bitwise or
+%   C = bitxor (A, B, ...)          bitwise xor
 %
 %   C = cast (G,...)        cast GrB matrix to MATLAB matrix
 %   C = ceil (G)            round towards infinity
@@ -188,7 +188,7 @@ classdef GrB
 %   C = csc (G)             cosecant
 %   C = csch (G)            hyperbolic cosecant
 %
-%   C = diag (G,k)          diagonal matrices and diagonals
+%   C = diag (G, k)         diagonal matrices and diagonals
 %   DiGraph = digraph (G,...)   directed Graph
 %   disp (G, level)         display a GrB matrix G
 %   display (G)             display a GrB matrix G; same as disp(G,2)
@@ -205,7 +205,7 @@ classdef GrB
 %   C = expm1 (G)           exp (x) - 1
 %
 %   C = false (...,'like',G)   all-false logical matrix
-%   [I,J,X] = find (G,...)  extract all entries from a GrB matrix
+%   [I,J,X] = find (G, ...) extract all entries from a GrB matrix
 %   C = fix (G)             round towards zero
 %   C = flip (G, dim)       flip the order of entries
 %   C = floor (G)           round towards -infinity
@@ -229,8 +229,8 @@ classdef GrB
 %   s = isdiag (G)          true if G is diagonal
 %   s = isempty (G)         true if any dimension of G is zero
 %   s = isequal (A, B)      test if equal
-%   s = isfloat (G)         true if GrB matrix is double, single, complex
 %   C = isfinite (G)        test if finite
+%   s = isfloat (G)         true if GrB matrix is double, single, complex
 %   s = ishermitian (G)     true if G is Hermitian
 %   C = isinf (G)           test if infinite
 %   s = isinteger (G)       true if GrB matrix is int8, int16, ..., uint64
@@ -256,7 +256,7 @@ classdef GrB
 %   [F, E] = log2 (G)       base-2 logarithm
 %   C = logical (G)         cast GrB matrix to MATLAB sparse logical
 %
-%   [C,I] = max (G, ...)    reduce via max, to vector or scalar
+%   C = max (G, ...)        reduce via max, to vector or scalar
 %   C = min (G, ...)        reduce via min, to vector or scalar
 %
 %   e = nnz (G)             number of entries in a GrB matrix G
@@ -281,10 +281,10 @@ classdef GrB
 %   C = sin (G)             sine
 %   C = single (G)          cast GrB matrix to MATLAB full single
 %   C = sinh (G)            hyperbolic sine
-%   [m n] = size (G)        size of a GrB matrix G
+%   [m, n] = size (G, dim)  size of a GrB matrix G
 %   C = sparse (G)          makes a copy of a GrB matrix
 %   C = spfun (fun, G)      evaluate a function on the entries of G
-%   C = spones (G)          return pattern of GrB matrix
+%   C = spones (G, type)    return pattern of GrB matrix
 %   C = sprand (G)          random GraphBLAS matrix
 %   C = sprandn (G)         random GraphBLAS matrix, normal distribution
 %   C = sprandsym (G, ...)  random symmetric GraphBLAS matrix
@@ -296,8 +296,8 @@ classdef GrB
 %
 %   C = tan (G)             tangent
 %   C = tanh (G)            hyperbolic tangent
-%   L = tril (G,k)          lower triangular part of GrB matrix G
-%   U = triu (G,k)          upper triangular part of GrB matrix G
+%   L = tril (G, k)         lower triangular part of GrB matrix G
+%   U = triu (G, k)         upper triangular part of GrB matrix G
 %   C = true (...,'like',G) all-true logical matrix
 %
 %   C = uint8 (G)           cast GrB matrix to MATLAB full uint8
@@ -305,7 +305,7 @@ classdef GrB
 %   C = uint32 (G)          cast GrB matrix to MATLAB full uint32
 %   C = uint64 (G)          cast GrB matrix to MATLAB full uint64
 %
-%   C = xor (G)             exclusive or
+%   C = xor (A, B)          exclusive or
 %
 %   C = zeros (...,'like',G)   all-zero matrix, same type as G
 %
@@ -578,10 +578,10 @@ methods
             if (isstruct (arg1))
                 % C = GrB (A), where the input A is a GraphBLAS struct as
                 % returned by another GrB* function, but this usage is not
-                % meant for the end-user.  It is only used internally in @GrB.
-                % See for example @GrB/mxm, which uses C = GrB (gbmxm (args)),
-                % and the typecasting methods, C = double (C), etc.  The output
-                % of GrB is a GraphBLAS object.
+                % meant for the end-user.  It is only used internally in
+                % @GrB.  See for example @GrB/mxm, which uses C = GrB
+                % (gbmxm (args)), and the typecasting methods, C = double
+                % (C), etc.  The output of GrB is a GraphBLAS object.
                 C.opaque = arg1 ;
             elseif (isobject (arg1))
                 % arg1 is already a GrB matrix; nothing to do
@@ -702,24 +702,26 @@ methods
     % MATLAB operator overloading
     %---------------------------------------------------------------------
 
+    C = and (A, B) ;                % C = (A & B)
     C = ctranspose (A) ;            % C = A'
-    C = eq (A, B) ;                 % C = (A == B)  % TODO
+    i = end (G, k, ndims) ;         % for A (1:end,1:end)
+    C = eq (A, B) ;                 % C = (A == B)
     C = ge (A, B) ;                 % C = (A >= B)
     C = gt (A, B) ;                 % C = (A > B)
     C = horzcat (varargin) ;        % C = [A , B]   % TODO
     C = ldivide (A, B) ;            % C = A .\ B
-    C = le (A, B) ;                 % C = (A <= B)  % TODO
-    C = lt (A, B) ;                 % C = (A < B)   % TODO
+    C = le (A, B) ;                 % C = (A <= B)
+    C = lt (A, B) ;                 % C = (A < B)
     C = minus (A, B) ;              % C = A - B
     C = mldivide (A, B) ;           % C = A \ B
     C = mpower (A, B) ;             % C = A^B       % TODO
     C = mrdivide (A, B) ;           % C = A / B
     C = mtimes (A, B) ;             % C = A * B
-    C = ne (A, B) ;                 % C = (A ~= B)  % TODO
+    C = ne (A, B) ;                 % C = (A ~= B)
     C = not (G) ;                   % C = ~A
-    C = or (A, B) ;                 % C = (A | B)   % TODO
+    C = or (A, B) ;                 % C = (A | B)
     C = plus (A, B) ;               % C = A + B
-    C = power (A, B) ;              % C = A .^ B    % TODO
+    C = power (A, B) ;              % C = A .^ B
     C = rdivide (A, B) ;            % C = A ./ B
     C = subsasgn (C, S, A) ;        % C (I,J) = A   % TODO
     C = subsref (A, S) ;            % C = A (I,J)   % TODO
@@ -744,15 +746,14 @@ methods
     %   DiGraph is a MATLAB directed digraph.
 
     C = abs (G) ;
-    C = acsc (G) ;
-    C = acsch (G) ;
     C = acos (G) ;
     C = acosh (G) ;
     C = acot (G) ;
     C = acoth (G) ;
+    C = acsc (G) ;
+    C = acsch (G) ;
     C = all (G, option) ;                   % TODO
     p = amd (G, varargin) ;
-    C = and (A, B) ;
     C = angle (G) ;
     C = any (G, option) ;
     C = asec (G) ;
@@ -764,7 +765,7 @@ methods
     C = atanh (G) ;
     C = atan2 (A, B) ;
 
-    [arg1, arg2] = bandwidth (G, uplo) ;
+    [lo, hi] = bandwidth (G, uplo) ;
     C = bitand (A, B, assumedtype) ;
     C = bitcmp (A, assumedtype) ;
     C = bitget (A, B, assumedtype) ;
@@ -773,6 +774,7 @@ methods
     C = bitor (A, B, assumedtype) ;
     C = bitxor (A, B, assumedtype) ;
 
+%   C = cast (G,...)        built-in works as-is
     C = ceil (G) ;
     [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;    % TODO
@@ -786,13 +788,12 @@ methods
 
     C = diag (G, k) ;   % TODO
     DiGraph = digraph (G, option) ; % TODO
-    display (G) ;   % TODO
     disp (G, level) ;   % TODO
+    display (G) ;   % TODO
     [p, varargout] = dmperm (G) ;
     C = double (G) ;
 
     [V, varargout] = eig (G, varargin) ;    % TODO
-    i = end (G, k, ndims) ; % TODO
     C = eps (G) ;   % TODO
     C = erf (G) ;
     C = erfc (G) ;
@@ -802,7 +803,7 @@ methods
     C = expm1 (G) ;
 
     C = false (arg1, arg2, arg3, arg4) ;
-    [I, J, X] = find (G, k, search) ;   % TODO
+    [I,J,X] = find (G, k, search) ;   % TODO
     C = fix (G) ;
     C = flip (G, dim) ; % TODO
     C = floor (G) ;
@@ -816,12 +817,13 @@ methods
     C = hypot (A, B) ;
 
     C = imag (G) ;
+    C = int8 (G) ;
     C = int16 (G) ;
     C = int32 (G) ;
     C = int64 (G) ;
-    C = int8 (G) ;
     s = isa (G, classname) ;
     s = isbanded (G, lo, hi) ;
+%   s = iscolumn (G)        built-in works as-is
     s = isdiag (G) ;
     s = isempty (G) ;
     s = isequal (A, B) ;
@@ -835,6 +837,7 @@ methods
     C = isnan (G) ;
     s = isnumeric (G) ;
     s = isreal (G) ;
+%   s = isrow (G)           built-in works as-is
     s = isscalar (G) ;
     s = issparse (G) ;
     s = issymmetric (G, option) ;   % TODO
@@ -856,7 +859,7 @@ methods
 
     e = nnz (G) ;
     X = nonzeros (G) ;
-    s = norm (G,kind) ;
+    s = norm (G, kind) ;
     s = numel (G) ;
     e = nzmax (G) ;
 
@@ -872,11 +875,11 @@ methods
 
     C = sec (G) ;
     C = sech (G) ;
-    C = sign (G) ;  % TODO
+    C = sign (G) ;
     C = sin (G) ;
     C = single (G) ;
     C = sinh (G) ;
-    [arg1, n] = size (G, dim) ;
+    [m, n] = size (G, dim) ;
     C = sparse (G) ;
     C = spfun (fun, G) ;    % TODO
     C = spones (G, type) ;
@@ -895,10 +898,10 @@ methods
     U = triu (G, k) ;
     C = true (arg1, arg2, arg3, arg4) ;
 
+    C = uint8 (G) ;
     C = uint16 (G) ;
     C = uint32 (G) ;
     C = uint64 (G) ;
-    C = uint8 (G) ;
 
     C = xor (A, B) ;
 

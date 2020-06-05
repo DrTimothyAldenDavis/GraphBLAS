@@ -1,4 +1,4 @@
-function gbtest36
+% function gbtest36
 %GBTEST36 test abs, sign
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

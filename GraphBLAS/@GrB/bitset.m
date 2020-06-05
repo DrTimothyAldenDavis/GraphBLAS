@@ -138,7 +138,7 @@ else
         % The rest of this method will fail if both A and B are scalars,
         % so expand A to a full matrix the same size as V.  B can remain a
         % scalar.
-        A = gbsubassign (gbnew (m, n, atype), A) ;
+        A = gb_scalar_to_full (m, n, atype, A) ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be

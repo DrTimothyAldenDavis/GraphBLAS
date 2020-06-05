@@ -10,29 +10,43 @@ function C = sign (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% remove explicit zeros
-G = GrB.prune (G) ;
-type = GrB.type (G) ;
+% FUTURE: this would be faster if GraphBLAS had a built-in unary
+% GxB_SIGN_[TYPE] operator.
 
-if (contains (type, 'uint') || isequal (type, 'logical'))
+G = G.opaque ;
+type = gbtype (G) ;
 
-    % logical or unsigned integer
-    C = spones (G, type) ;
+% prune explicit zeros
+G = gbselect (G, 'nonzero') ;
 
-elseif (contains (type, 'int'))
+switch (type)
 
-    % signed integer
-    C = spones (GrB.select (G, '>0')) - spones (GrB.select (G, '<0')) ;
+    case { 'double', 'single' }
 
-elseif (contains (type, 'complex'))
+        % single or double real
+        C = GrB (gbemult ('copysign', gb_spones (G, type), G)) ;
 
-    % single or double complex
-    C = GrB.emult (G, '/', abs (G)) ;
+    case { 'int8', 'int16', 'int32', 'int64' }
 
-else
+        % signed integer
+        Pos = gb_spones (gbselect (G, '>0'), type) ;
+        Neg = gb_spones (gbselect (G, '<0'), type) ;
+        C = GrB (gbeadd (Pos, '+', gbapply ('-', Neg))) ;
 
-    % single or double real
-    C = GrB.emult ('copysign', spones (G, type), G) ;
+    case { 'single complex', 'double complex' }
+
+        % single or double complex
+        C = GrB (gbemult (G, '/', gbapply ('abs', G))) ;
+
+    case { 'uint8', 'uint16', 'uint32', 'uint64' }
+
+        % unsigned integer
+        C = GrB (gb_spones (G, type)) ;
+
+    case { 'logical' }
+
+        % logical
+        C = GrB (G) ;
 
 end
 

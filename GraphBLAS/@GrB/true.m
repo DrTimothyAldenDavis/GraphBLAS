@@ -16,5 +16,5 @@ else
     n = arg2 ;
 end
 
-C = GrB (gbsubassign (gbnew (m, n, 'logical'), true)) ;
+C = GrB (gb_scalar_to_full (m, n, 'logical', true)) ;
 
