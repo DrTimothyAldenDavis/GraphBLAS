@@ -52,12 +52,12 @@ function result = nonz (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO: make all of GrB.entries a private/gb_entries function.
+
 % issparse (G) is overloaded for a GraphBLAS matrix, and always returns
 % true.  Here, we need to know if A is truly a MATLAB sparse matrix, not
 % a GraphBLAS sparse matrix.
 matlab_sparse = builtin ('issparse', A) ;
-
-% TODO
 
 if (nargin > 1 && ~ischar (varargin {end}))
     id = gb_get_scalar (varargin {end}) ;

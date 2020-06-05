@@ -31,7 +31,7 @@ if (nargin == 1)
         desc.in0 = 'transpose' ;
         C = GrB.vreduce ('&.logical', G, desc) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB.entries (G, 'col', 'degree') ;
+        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
         C = GrB.subassign (C, C & (coldegree < m), 0)' ;
     end
 
@@ -51,14 +51,14 @@ else
         desc.in0 = 'transpose' ;
         C = GrB.vreduce ('&.logical', G, desc) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB.entries (G, 'col', 'degree') ;
+        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
         C = GrB.subassign (C, C & (coldegree < m), 0)' ;
     elseif (isequal (option, 2))
         % C = all (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = GrB.vreduce ('&.logical', G) ;
         % if C(i) is true, but the row is sparse, then assign C(i) = 0.
-        rowdegree = GrB.entries (G, 'row', 'degree') ;
+        rowdegree = GrB (gbdegree (G.opaque, 'row')) ;
         C = GrB.subassign (C, C & (rowdegree < n), 0) ;
     else
         gb_error ('unknown option') ;

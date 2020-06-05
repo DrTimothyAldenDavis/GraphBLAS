@@ -392,6 +392,11 @@ void GB_Global_realloc_function_set
     GB_Global.realloc_function = realloc_function ;
 }
 
+bool GB_Global_have_realloc_function (void)
+{ 
+    return (GB_Global.realloc_function != NULL) ;
+}
+
 void * GB_Global_realloc_function (void *p, size_t size)
 { 
     bool ok = true ;

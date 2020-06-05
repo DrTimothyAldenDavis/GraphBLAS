@@ -35,6 +35,8 @@ function C = subsref (A, S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 if (length (S) > 1)
     error ('GrB:unsupported', 'nested indexing not supported') ;
 end

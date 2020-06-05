@@ -10,6 +10,8 @@ function C = flip (G, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 if (nargin < 2)
     if (isrow (G))
         dim = 2 ;

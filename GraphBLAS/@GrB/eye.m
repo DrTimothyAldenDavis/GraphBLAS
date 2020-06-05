@@ -15,6 +15,8 @@ function C = eye (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO make the body of the function private, and share with GrB.speye
+
 % get the type
 type = 'double' ;
 nargs = nargin ;

@@ -45,7 +45,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 )
 {
 
-    size_t size ;
+    size_t size, oldsize ;
 
     // make sure at least one item is allocated
     nitems_old = GB_IMAX (1, nitems_old) ;
@@ -54,7 +54,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     // make sure at least one byte is allocated
     size_of_item = GB_IMAX (1, size_of_item) ;
 
-    (*ok) = GB_size_t_multiply (&size, nitems_new, size_of_item) ;
+    (*ok) = GB_size_t_multiply (&size,    nitems_new, size_of_item)
+         && GB_size_t_multiply (&oldsize, nitems_old, size_of_item) ;
+
     if (!(*ok) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
         // overflow
@@ -100,9 +102,43 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         }
         else
         { 
+
+            //------------------------------------------------------------------
             // reallocate the space
-            pnew = (void *) GB_Global_realloc_function (p, size) ;
+            //------------------------------------------------------------------
+
+            if (GB_Global_have_realloc_function ( ))
+            {
+
+                //--------------------------------------------------------------
+                // use realloc
+                //--------------------------------------------------------------
+
+                pnew = (void *) GB_Global_realloc_function (p, size) ;
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // no realloc function: mimic with malloc and memcpy
+                //--------------------------------------------------------------
+
+                // malloc the new space
+                pnew = (void *) GB_Global_malloc_function (size) ;
+
+                // copy over the data from the old space to the new space
+                if (pnew != NULL)
+                {
+                    // TODO use a parallel memcpy
+                    memcpy (pnew, p, GB_IMIN (oldsize, size)) ;
+                }
+
+                // free the old space
+                GB_Global_free_function (p) ;
+            }
         }
+
 
         //----------------------------------------------------------------------
         // check if successful

@@ -204,7 +204,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (caller_is_GxB_cuda_init)
     {
         // query the system for the # of GPUs
-        GB_Global_gpu_control_set (GxB_GPU_DEFAULT) ;
+        GB_Global_gpu_control_set (GxB_DEFAULT) ;
         if (!GB_Global_gpu_count_set (true)) GB_PANIC ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
         fprintf (stderr, "gpu_count: %d\n", gpu_count) ;

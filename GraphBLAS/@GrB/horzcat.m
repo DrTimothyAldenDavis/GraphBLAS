@@ -5,14 +5,12 @@ function C = horzcat (varargin)
 % Multiple matrices may be concatenated, as [A, B, C, ...].
 %
 % If the matrices have different types, the type is determined
-% from the first matrix A.  This differs from MATLAB: S = [true pi]
-% is double, not logical.  S = [true pi int32(1) int8(1)] uses
-% the leftmost integer type, so S is int32.
+% according to the results in GrB.optype.
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
 %
-% See also GrB/vertcat.
+% See also GrB/vertcat, GrB.optype.
 
 % FUTURE: this will be much faster when it is a mexFunction.
 
@@ -24,20 +22,27 @@ nmatrices = length (varargin) ;
 nvals = zeros (1, nmatrices) ;
 ncols = zeros (1, nmatrices) ;
 A = varargin {1} ;
-[m, n] = size (A) ;
-nvals (1) = GrB.entries (A) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+[m, n] = gbsize (A) ;
+nvals (1) = gbnvals (A) ;
 ncols (1) = n ;
-type = GrB.type (A) ;
+type = gbtype (A) ;
 clear A
 for k = 2:nmatrices
-    B = varargin {k} ;
-    [m2, n] = size (B) ;
+    A = varargin {k} ;
+    if (isobject (A))
+        A = A.opaque ;
+    end
+    [m2, n] = gbsize (A) ;
     if (m ~= m2)
         gb_error ('Dimensions of input matrices are not consistent') ;
     end
-    nvals (k) = GrB.entries (B) ;
+    nvals (k) = gbnvals (A) ;
     ncols (k) = n ;
-    clear B ;
+    type = gboptype (type, gbtype (A)) ;
+    clear A ;
 end
 ncols = [0 cumsum(ncols)] ;
 nvals = [0 cumsum(nvals)] ;
@@ -52,15 +57,19 @@ X = zeros (cnvals, 1, type) ;
 % fill the I,J,X arrays
 desc.base = 'zero-based' ;
 for k = 1:nmatrices
-    [i, j, x] = GrB.extracttuples (varargin {k}, desc) ;
+    A = varargin {k} ;
+    if (isobject (A))
+        A = A.opaque ;
+    end
+    [i, j, x] = gbextracttuples (A, desc) ;
     noffset = int64 (ncols (k)) ;
-    koffset = nvals (k) ;
-    kvals = GrB.entries (varargin {k}) ;
-    I ((koffset+1):(koffset+kvals)) = i ;
-    J ((koffset+1):(koffset+kvals)) = j + noffset ;
-    X ((koffset+1):(koffset+kvals)) = x ;
+    k1 = nvals (k) + 1 ;
+    k2 = nvals (k+1) ;
+    I (k1:k2) = i ;
+    J (k1:k2) = j + noffset ;
+    X (k1:k2) = x ;
 end
 
 % build the output matrix
-C = GrB.build (I, J, X, m, n, desc) ;
+C = GrB (gbbuild (I, J, X, m, n, desc)) ;
 

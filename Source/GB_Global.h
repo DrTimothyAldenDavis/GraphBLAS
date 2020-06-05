@@ -72,6 +72,7 @@ void     GB_Global_realloc_function_set
              void * (* realloc_function) (void *, size_t)
          ) ;
 void  *  GB_Global_realloc_function (void *p, size_t size) ;
+bool     GB_Global_have_realloc_function (void) ;
 
 void     GB_Global_free_function_set (void (* free_function) (void *)) ;
 void     GB_Global_free_function (void *p) ;

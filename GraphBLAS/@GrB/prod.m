@@ -47,7 +47,7 @@ if (nargin == 1)
     else
         % C = prod (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        coldegree = GrB.entries (G, 'col', 'degree') ;
+        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
         C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
     end
 elseif (isequal (option, 'all'))
@@ -60,12 +60,12 @@ elseif (isequal (option, 'all'))
 elseif (isequal (option, 1))
     % C = prod (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
-    coldegree = GrB.entries (G, 'col', 'degree') ;
+    coldegree = GrB (gbdegree (G.opaque, 'col')) ;
     C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
 elseif (isequal (option, 2))
     % C = prod (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.
-    rowdegree = GrB.entries (G, 'row', 'degree') ;
+    rowdegree = GrB (gbdegree (G.opaque, 'row')) ;
     C = GrB.vreduce (op, G) .* (rowdegree == n) ;
 else
     gb_error ('unknown option') ;

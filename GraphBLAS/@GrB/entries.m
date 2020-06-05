@@ -33,6 +33,9 @@ function result = entries (A, varargin)
 %   then d(j) is an implicit zero, not present in the pattern of d, so
 %   that I = find (d) is the same I = GrB.entries (A, 'col', 'list').
 %
+% The result is a MATLAB scalar or vector, except for the 'degree'
+% usage, in which case the result is a GrB vector.
+%
 % Example:
 %
 %   A = magic (5) ;
@@ -52,6 +55,10 @@ function result = entries (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+if (isobject (A))
+    A = A.opaque ;
+end
+
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'
@@ -65,10 +72,6 @@ for k = 1:nargin-1
         otherwise
             gb_error ('unknown option') ;
     end
-end
-
-if (isobject (A))
-    A = A.opaque ;
 end
 
 if (isequal (dim, 'all'))
@@ -89,25 +92,24 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    f = gbformat (A) ;
-    native = (isequal (f, 'by row') && isequal (dim, 'row')) || ...
-             (isequal (f, 'by col') && isequal (dim, 'col')) ;
+    deg = gbdegree (A, dim) ;
+
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gb_nnz (gbdegree (A, native)) ;
+            result = gbnvals (gbselect (deg, 'nonzero')) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
-            result = find (GrB (gbdegree (A, native))) ;    % TODO
+            result = gbextracttuples (gbselect (deg, 'nonzero')) ;
         case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')
             % d = GrB.entries (A, 'col', 'degree')
-            result = GrB (gbdegree (A, native)) ;
+            result = GrB (deg) ;
     end
 end
 

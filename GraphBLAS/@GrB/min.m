@@ -22,6 +22,8 @@ function C = min (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO
+
 G = varargin {1} ;
 type = GrB.type (G) ;
 if (contains (type, 'complex'))
@@ -49,7 +51,7 @@ if (nargin == 1)
         % giving a 1-by-n row vector.
         C = GrB.vreduce (op, G, desc) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB.entries (G, 'col', 'degree') ;
+        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
         C = GrB.subassign (C, (C > 0) & (coldegree < m), 0)' ;
     end
 
@@ -112,14 +114,14 @@ elseif (nargin == 3)
         % giving a 1-by-n row vector.
         C = GrB.vreduce (op, G, desc) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB.entries (G, 'col', 'degree') ;
+        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
         C = GrB.subassign (C, (C > 0) & (coldegree < m), 0)' ;
     elseif (isequal (option, 2))
         % C = min (G, [ ], 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = GrB.vreduce (op, G) ;
         % if C(i) > 0, but the row is sparse, then assign C(i) = 0.
-        rowdegree = GrB.entries (G, 'row', 'degree') ;
+        rowdegree = GrB (gbdegree (G.opaque, 'row')) ;
         C = GrB.subassign (C, (C > 0) & (rowdegree < n), 0) ;
     else
         gb_error ('unknown option') ;

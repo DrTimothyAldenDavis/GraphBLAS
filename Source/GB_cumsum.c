@@ -60,6 +60,8 @@ void GB_cumsum                      // cumulative sum of an array
     if (kresult == NULL)
     {
 
+#if 0
+        // FIXME
         #if defined ( GBCUDA )
         if (GB_cuda_is_on_GPU (count))
         {
@@ -68,6 +70,7 @@ void GB_cumsum                      // cumulative sum of an array
         }
         else
         #endif
+#endif
 
         if (nthreads <= 2)
         {

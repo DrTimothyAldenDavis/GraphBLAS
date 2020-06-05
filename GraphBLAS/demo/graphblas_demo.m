@@ -483,6 +483,7 @@ C2 = G * 40
 C3 = double (G) * 40 ;
 S = double (C1 < 255) ;
 assert (isequal (double (C1).*S, double (C2).*S))
+% FIXME
 assert (isequal (nonzeros (C2), double (mod (nonzeros (C3), 256))))
 
 %% An example graph algorithm: breadth-first search
