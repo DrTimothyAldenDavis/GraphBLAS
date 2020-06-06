@@ -7,6 +7,8 @@ function [V, varargout] = eig (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% NOTE: this is a high-level algorithm that uses GrB objects.
+
 % convert G to a MATLAB matrix
 if (isreal (G) && issymmetric (G))
     % G can be sparse if G is real and symmetric

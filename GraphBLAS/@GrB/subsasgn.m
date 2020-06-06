@@ -30,7 +30,7 @@ function C = subsasgn (C, S, A)
 % not possible, because MATLAB creates I and J as explicit lists first.
 % See GrB.subassign instead.  See also the example with 'help GrB.extract'.
 %
-% See also GrB/subsref, GrB.assign, GrB.subassign.
+% See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
 % FUTURE: add linear indexing, and allow the matrix to grow in size.
 

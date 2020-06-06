@@ -28,7 +28,8 @@ function C = subsref (A, S)
 %   C = H (J, J)                % this is very fast
 %   E = H (1:1e13, 1:1e13)      % but this is not possible 
 %
-% See also GrB/subsasgn, GrB.subassign, GrB.assign, GrB.extract.
+% See also GrB/subsasgn, GrB/subsindex, GrB.subassign, GrB.assign,
+% GrB.extract.
 
 % FUTURE: add linear indexing.
 
@@ -61,7 +62,8 @@ if (ndims == 1)
     else
         % C = A (I) for a vector A
         if (~isvector (A))
-            error ('GrB:unsupported', 'Linear indexing not supported') ;
+            error ('GrB:unsupported', ...
+                'Linear indexing not yet supported for GrB matrices') ;
         end
         [I, whole_vector] = gb_get_index (S.subs (1)) ;
         if (size (A, 1) > 1)

@@ -8,60 +8,16 @@ function C = all (G, option)
 % C = all (G, 1) is a row vector with C(j) = all (G (:,j))
 % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
 %
-% See also GrB/any, GrB/nnz, GrB.entries.
+% See also GrB/any, GrB/nnz, GrB/prod, GrB.entries.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[m, n] = size (G) ;
+G = G.opaque ;
 
 if (nargin == 1)
-
-    % C = all (G)
-    if (isvector (G))
-        % C = all (G) for a vector G results in a scalar C
-        if (~GrB.isfull (G))
-            C = GrB (false, 'logical') ;
-        else
-            C = GrB.reduce ('&.logical', G) ;
-        end
-    else
-        % C = all (G) reduces each column to a scalar,
-        % giving a 1-by-n row vector.
-        desc.in0 = 'transpose' ;
-        C = GrB.vreduce ('&.logical', G, desc) ;
-        % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
-        C = GrB.subassign (C, C & (coldegree < m), 0)' ;
-    end
-
+    C = GrB (gb_prod ('&.logical', 'logical', G)) ;
 else
-
-    % C = all (G, option)
-    if (isequal (option, 'all'))
-        % C = all (G, 'all'), reducing all entries to a scalar
-        if (~GrB.isfull (G))
-            C = GrB (false, 'logical') ;
-        else
-            C = GrB.reduce ('&.logical', G) ;
-        end
-    elseif (isequal (option, 1))
-        % C = all (G, 1) reduces each column to a scalar,
-        % giving a 1-by-n row vector.
-        desc.in0 = 'transpose' ;
-        C = GrB.vreduce ('&.logical', G, desc) ;
-        % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
-        C = GrB.subassign (C, C & (coldegree < m), 0)' ;
-    elseif (isequal (option, 2))
-        % C = all (G, 2) reduces each row to a scalar,
-        % giving an m-by-1 column vector.
-        C = GrB.vreduce ('&.logical', G) ;
-        % if C(i) is true, but the row is sparse, then assign C(i) = 0.
-        rowdegree = GrB (gbdegree (G.opaque, 'row')) ;
-        C = GrB.subassign (C, C & (rowdegree < n), 0) ;
-    else
-        gb_error ('unknown option') ;
-    end
+    C = GrB (gb_prod ('&.logical', 'logical', G, option)) ;
 end
 

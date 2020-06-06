@@ -59,7 +59,7 @@ if (isequal (op, 'bitshift'))
         B = gbeadd (['1st.int8'], B, gb_expand (0, A, 'int8')) ;
     end
 
-    C = GrB (gbemult (['bitshift.' atype], A, B), ctype) ;
+    C = gbemult (['bitshift.' atype], A, B) ;
 
 else
 
@@ -74,11 +74,15 @@ else
     switch (op)
 
         case { 'bitxor', 'bitor' }
-            C = GrB (gb_eadd (A, op, B), ctype) ;
+            C = gb_eadd (A, op, B) ;
 
         case { 'bitand' }
-            C = GrB (gb_emult (A, op, B), ctype) ;
+            C = gb_emult (A, op, B) ;
 
     end
+end
+
+if (~isequal (gbtype (C), ctype))
+    C = gbnew (C, ctype) ;
 end
 

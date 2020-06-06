@@ -20,54 +20,22 @@ function C = prod (G, option)
 % GraphBLAS prod (G,...) uses only a type of 'native', and a nanflag of
 % 'includenan'.  See 'help prod' for more details.
 %
-% See also GrB/max, GrB/min, GrB/sum.
+% See also GrB/all, GrB/max, GrB/min, GrB/sum.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
-
-[m, n] = size (G) ;
-desc = struct ('in0', 'transpose') ;
-if (isequal (GrB.type (G), 'logical'))
+G = G.opaque ;
+type = gbtype (G) ;
+if (isequal (type, 'logical'))
     op = '&.logical' ;
 else
     op = '*' ;
 end
 
 if (nargin == 1)
-    % C = prod (G); check if G is a row vector
-    if (isvector (G))
-        % C = prod (G) for a vector G results in a scalar C
-        if (~GrB.isfull (G))
-            C = GrB (0, GrB.type (G)) ;
-        else
-            C = GrB.reduce (op, G) ;
-        end
-    else
-        % C = prod (G) reduces each column to a scalar,
-        % giving a 1-by-n row vector.
-        coldegree = GrB (gbdegree (G.opaque, 'col')) ;
-        C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
-    end
-elseif (isequal (option, 'all'))
-    % C = prod (G, 'all'), reducing all entries to a scalar
-    if (~GrB.isfull (G))
-        C = GrB (0, GrB.type (G)) ;
-    else
-        C = GrB.reduce (op, G) ;
-    end
-elseif (isequal (option, 1))
-    % C = prod (G,1) reduces each column to a scalar,
-    % giving a 1-by-n row vector.
-    coldegree = GrB (gbdegree (G.opaque, 'col')) ;
-    C = (GrB.vreduce (op, G, desc) .* (coldegree == m)).' ;
-elseif (isequal (option, 2))
-    % C = prod (G,2) reduces each row to a scalar,
-    % giving an m-by-1 column vector.
-    rowdegree = GrB (gbdegree (G.opaque, 'row')) ;
-    C = GrB.vreduce (op, G) .* (rowdegree == n) ;
+    C = GrB (gb_prod (op, type, G)) ;
 else
-    gb_error ('unknown option') ;
+    C = GrB (gb_prod (op, type, G, option)) ;
 end
 

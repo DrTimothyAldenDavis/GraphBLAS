@@ -8,7 +8,7 @@ function C = any (G, option)
 % C = any (G, 1) is a row vector with C(j) = any (G (:,j))
 % C = any (G, 2) is a column vector with C(i) = any (G (i,:))
 %
-% See also GrB/all, GrB/nnz, GrB.entries, GrB.nonz.
+% See also GrB/all, GrB/sum, GrB/nnz, GrB.entries, GrB.nonz.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -16,44 +16,8 @@ function C = any (G, option)
 G = G.opaque ;
 
 if (nargin == 1)
-
-    % C = any (G)
-    if (gb_isvector (G))
-        % C = any (G) for a vector G results in a scalar C
-        C = GrB (gbreduce ('|.logical', G)) ;
-    else
-        % C = any (G) reduces each column to a scalar,
-        % giving a 1-by-n row vector.
-        desc.in0 = 'transpose' ;
-        C = GrB (gbtrans (gbvreduce ('|.logical', G, desc))) ;
-    end
-
+    C = GrB (gb_sum ('|.logical', G)) ;
 else
-
-    switch (option)
-
-        case { 'all' }
-
-            % C = any (G, 'all'), reducing all entries to a scalar
-            C = GrB (gbreduce ('|.logical', G)) ;
-
-        case { 1 }
-
-            % C = any (G, 1) reduces each column to a scalar,
-            % giving a 1-by-n row vector.
-            desc.in0 = 'transpose' ;
-            C = GrB (gbtrans (gbvreduce ('|.logical', G, desc))) ;
-
-        case { 2 }
-
-            % C = any (G, 2) reduces each row to a scalar,
-            % giving an m-by-1 column vector.
-            C = GrB (gbvreduce ('|.logical', G)) ;
-
-        otherwise
-
-            gb_error ('unknown option') ;
-
-    end
+    C = GrB (gb_sum ('|.logical', G, option)) ;
 end
 

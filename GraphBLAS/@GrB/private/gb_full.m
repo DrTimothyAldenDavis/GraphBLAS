@@ -7,11 +7,8 @@ function C = gb_full (A, ctype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-% TODO delete this function
-
 if (nargin < 2)
     ctype = GrB.type (A) ;
 end
-
-C = full (A, ctype, GrB (0, ctype)) ;
+C = full (A, ctype, GrB (0, ctype)) ;       % TODO delete this function
 

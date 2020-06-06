@@ -137,8 +137,9 @@ classdef GrB
 %   C = plus (A, B)         C = A + B
 %   C = power (A, B)        C = A .^ B
 %   C = rdivide (A, B)      C = A ./ B
-%   C = subsasgn (A, I, J)  C (I,J) = A
-%   C = subsref (A, I, J)   C = A (I,J) or C = A (M)
+%   I = subsindex (G)       X = A (G)
+%   C = subsasgn (C, S, A)  C (I,J) = A or C (M) = A
+%   C = subsref (A, S)      C = A (I,J) or C = A (M)
 %   C = times (A, B)        C = A .* B
 %   C = transpose (G)       C = G.'
 %   C = uminus (G)          C = -G
@@ -579,9 +580,8 @@ methods
                 % C = GrB (A), where the input A is a GraphBLAS struct as
                 % returned by another GrB* function, but this usage is not
                 % meant for the end-user.  It is only used internally in
-                % @GrB.  See for example @GrB/mxm, which uses C = GrB
-                % (gbmxm (args)), and the typecasting methods, C = double
-                % (C), etc.  The output of GrB is a GraphBLAS object.
+                % @GrB, to convert a GraphBLAS struct computed by a
+                % GraphBLAS mexFunction into a GrB matrix object.
                 C.opaque = arg1 ;
             elseif (isobject (arg1))
                 % arg1 is already a GrB matrix; nothing to do
@@ -625,6 +625,15 @@ methods
     %---------------------------------------------------------------------
     % FUTURE:: many these could also be overloaded:
     %---------------------------------------------------------------------
+
+    % methods in the MATLAB/ops folder:
+    %
+    %   colon idivide ismembertol uniquetol
+    %   m-files: union unique intersect setdiff setxor setunion ismember
+
+    % methods in the MATLAB/datatypes folder:
+    %
+    %   typecast swapbytes
 
     % methods the 'double' class that are not yet implemented here:
     %
@@ -702,34 +711,35 @@ methods
     % MATLAB operator overloading
     %---------------------------------------------------------------------
 
-    C = and (A, B) ;                % C = (A & B)
-    C = ctranspose (A) ;            % C = A'
-    i = end (G, k, ndims) ;         % for A (1:end,1:end)
-    C = eq (A, B) ;                 % C = (A == B)
-    C = ge (A, B) ;                 % C = (A >= B)
-    C = gt (A, B) ;                 % C = (A > B)
-    C = horzcat (varargin) ;        % C = [A , B]   % TODO
-    C = ldivide (A, B) ;            % C = A .\ B
-    C = le (A, B) ;                 % C = (A <= B)
-    C = lt (A, B) ;                 % C = (A < B)
-    C = minus (A, B) ;              % C = A - B
-    C = mldivide (A, B) ;           % C = A \ B
-    C = mpower (A, B) ;             % C = A^B       % TODO
-    C = mrdivide (A, B) ;           % C = A / B
-    C = mtimes (A, B) ;             % C = A * B
-    C = ne (A, B) ;                 % C = (A ~= B)
-    C = not (G) ;                   % C = ~A
-    C = or (A, B) ;                 % C = (A | B)
-    C = plus (A, B) ;               % C = A + B
-    C = power (A, B) ;              % C = A .^ B
-    C = rdivide (A, B) ;            % C = A ./ B
-    C = subsasgn (C, S, A) ;        % C (I,J) = A   % TODO
-    C = subsref (A, S) ;            % C = A (I,J)   % TODO
-    C = times (A, B) ;              % C = A .* B
-    C = transpose (G) ;             % C = A.'
-    C = uminus (G) ;                % C = -A
-    C = uplus (G) ;                 % C = +A
-    C = vertcat (varargin) ;        % C = [A ; B]   % TODO
+    C = and (A, B) ;            % C = (A & B)
+    C = ctranspose (A) ;        % C = A'
+    i = end (G, k, ndims) ;     % for A (1:end,1:end)
+    C = eq (A, B) ;             % C = (A == B)
+    C = ge (A, B) ;             % C = (A >= B)
+    C = gt (A, B) ;             % C = (A > B)
+    C = horzcat (varargin) ;    % C = [A , B]
+    C = ldivide (A, B) ;        % C = A .\ B
+    C = le (A, B) ;             % C = (A <= B)
+    C = lt (A, B) ;             % C = (A < B)
+    C = minus (A, B) ;          % C = A - B
+    C = mldivide (A, B) ;       % C = A \ B
+    C = mpower (A, B) ;         % C = A^B       % TODO
+    C = mrdivide (A, B) ;       % C = A / B
+    C = mtimes (A, B) ;         % C = A * B
+    C = ne (A, B) ;             % C = (A ~= B)
+    C = not (G) ;               % C = ~A
+    C = or (A, B) ;             % C = (A | B)
+    C = plus (A, B) ;           % C = A + B
+    C = power (A, B) ;          % C = A .^ B
+    C = rdivide (A, B) ;        % C = A ./ B
+    I = subsindex (G) ;         % X = A (G)
+    C = subsasgn (C, S, A) ;    % C (I,J) = A   % TODO
+    C = subsref (A, S) ;        % C = A (I,J)   % TODO
+    C = times (A, B) ;          % C = A .* B
+    C = transpose (G) ;         % C = A.'
+    C = uminus (G) ;            % C = -A
+    C = uplus (G) ;             % C = +A
+    C = vertcat (varargin) ;    % C = [A ; B]
 
     %---------------------------------------------------------------------
     % Methods that overload built-in MATLAB functions:
@@ -752,7 +762,7 @@ methods
     C = acoth (G) ;
     C = acsc (G) ;
     C = acsch (G) ;
-    C = all (G, option) ;                   % TODO
+    C = all (G, option) ;
     p = amd (G, varargin) ;
     C = angle (G) ;
     C = any (G, option) ;
@@ -793,7 +803,7 @@ methods
     [p, varargout] = dmperm (G) ;
     C = double (G) ;
 
-    [V, varargout] = eig (G, varargin) ;    % TODO
+    [V, varargout] = eig (G, varargin) ;        % uses GrB matrices
     C = eps (G) ;   % TODO
     C = erf (G) ;
     C = erfc (G) ;
@@ -866,7 +876,7 @@ methods
     C = ones (arg1, arg2, arg3, arg4) ;
 
     C = pow2 (A, B) ;   % TODO
-    C = prod (G, option) ;  % TODO
+    C = prod (G, option) ;
 
     C = real (G) ;
     C = repmat (G, m, n) ;
@@ -922,7 +932,7 @@ methods (Static)
 
     C = apply (Cin, M, accum, op, A, desc) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
-    [v, parent] = bfs (A, s, varargin) ;    % 
+    [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices
     binopinfo (op, type) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
     b = burble (b) ;
@@ -930,7 +940,7 @@ methods (Static)
     clear ;
     [C, I, J] = compact (A, id) ;   % TODO
     descriptorinfo (d) ;
-    Y = dnn (W, bias, Y0) ;
+    Y = dnn (W, bias, Y0) ;                     % uses GrB matrices
     C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;
     C = emult (Cin, M, accum, op, A, B, desc) ;
@@ -948,16 +958,16 @@ methods (Static)
     s = isfull (A) ;
     s = issigned (arg) ;
     C = kronecker (Cin, M, accum, op, A, B, desc) ;
-    C = ktruss (A, k, check) ;
+    C = ktruss (A, k, check) ;                  % uses GrB matrices
     L = laplacian (A, type, check) ;    % TODO
-    iset = mis (A, check) ;
+    iset = mis (A, check) ;                     % uses GrB matrices
     monoidinfo (monoid, type) ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
     result = nonz (A, varargin) ;   % TODO
     s = normdiff (A, B, kind) ;
     C = offdiag (A) ;
     ctype = optype (a, b) ;
-    [r, stats] = pagerank (A, opts) ;
+    [r, stats] = pagerank (A, opts) ;           % uses GrB matrices
     C = prune (A, identity) ;
     C = random (varargin) ; % TODO
     C = reduce (cin, accum, monoid, A, desc) ;
@@ -968,7 +978,7 @@ methods (Static)
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;
     C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check) ;
+    s = tricount (A, check) ;                   % uses GrB matrices
     s = type (A) ;
     unopinfo (op, type) ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
