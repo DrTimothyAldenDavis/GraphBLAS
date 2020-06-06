@@ -11,8 +11,10 @@ function C = tanh (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'sin.double' ;
+else
+    op = 'sin' ;
 end
 
-C = GrB (gbapply ('tanh', G)) ;
+C = GrB (gbapply (op, G)) ;
 

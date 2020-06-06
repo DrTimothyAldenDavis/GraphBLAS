@@ -15,9 +15,11 @@ if (contains (type, 'complex'))
     error ('input must be real') ;
 end
 
-if (~gb_isfloat (type))
-    G = gbnew (G, 'double') ;
+if (~gb_isfloat (gbtype (G)))
+    op = 'erf.double' ;
+else
+    op = 'erf' ;
 end
 
-C = GrB (gbapply ('erf', G)) ;
+C = GrB (gbapply (op, G)) ;
 

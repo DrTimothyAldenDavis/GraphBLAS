@@ -10,8 +10,10 @@ function C = tan (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'tan.double' ;
+else
+    op = 'tan' ;
 end
 
-C = GrB (gbapply ('tan', G)) ;
+C = GrB (gbapply (op, G)) ;
 

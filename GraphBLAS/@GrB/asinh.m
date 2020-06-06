@@ -11,8 +11,10 @@ function C = asinh (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'asinh.double' ;
+else
+    op = 'asinh' ;
 end
 
-C = GrB (gbapply ('asinh', G)) ;
+C = GrB (gbapply (op, G)) ;
 

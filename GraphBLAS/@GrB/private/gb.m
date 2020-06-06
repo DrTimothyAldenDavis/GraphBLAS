@@ -1,5 +1,5 @@
 function G = gb (G)
-%GB TODO remove when done
+%GB TODO this remove when done
 if (isobject (G))
     G = G.opaque ;
 end

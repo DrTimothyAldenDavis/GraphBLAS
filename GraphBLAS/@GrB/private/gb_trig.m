@@ -52,12 +52,13 @@ end
 if (noutside > 0)
     % G is real but C is complex
     if (isequal (type, 'single'))
-        G = gbnew (G, 'single complex') ;
+        op = [op '.single complex'] ;
     else
-        G = gbnew (G, 'double complex') ;
+        op = [op '.double complex'] ;
     end
 elseif (~gb_isfloat (type))
-    G = gbnew (G, 'double') ;
+    % G is integer or logical; use the op.double operator
+    op = [op '.double'] ;
 end
 
 C = gbapply (op, G) ;

@@ -11,8 +11,10 @@ function C = atan (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'atan.double' ;
+else
+    op = 'atan' ;
 end
 
-C = GrB (gbapply ('atan', G)) ;
+C = GrB (gbapply (op, G)) ;
 

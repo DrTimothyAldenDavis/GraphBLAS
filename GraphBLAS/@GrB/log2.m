@@ -24,14 +24,25 @@ if (nargout == 1)
 else
 
     % [F,E] = log2 (G)
-    type = gbtype (G) ;
-    if (~gb_isfloat (type))
-        G = gbnew (G, 'double') ;
-    elseif (contains (type, 'complex'))
-        G = gbapply ('creal', G) ;
+
+    switch (gbtype (G))
+
+        case { 'logical', 'int8', 'int16', 'int32', 'int64', ...
+            'uint8', 'uint16', 'uint32', 'uint64', 'double complex' }
+
+            optype = 'double' ;
+
+        case { 'single', 'double' }
+
+            optype = type ;
+
+        case { 'single complex' }
+
+            optype = 'single' ;
     end
-    F = GrB (gbapply ('frexpx', G)) ;
-    E = GrB (gbapply ('frexpe', G)) ;
+
+    F = GrB (gbapply (['frexpx.' optype], G)) ;
+    E = GrB (gbapply (['frexpe.' optype], G)) ;
 
 end
 

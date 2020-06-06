@@ -11,8 +11,10 @@ function C = coth (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'tanh.double' ;
+else
+    op = 'tanh' ;
 end
 
-C = GrB (gbapply ('minv', gbfull (gbapply ('tanh', G)))) ;
+C = GrB (gbapply ('minv', gbfull (gbapply (op, G)))) ;
 

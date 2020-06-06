@@ -11,8 +11,10 @@ function C = csc (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'sin.double' ;
+else
+    op = 'sin' ;
 end
 
-C = GrB (gbapply ('minv', gbfull (gbapply ('sin', G)))) ;
+C = GrB (gbapply ('minv', gbfull (gbapply (op, G)))) ;
 

@@ -10,8 +10,10 @@ function C = sin (G)
 G = G.opaque ;
 
 if (~gb_isfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+    op = 'sin.double' ;
+else
+    op = 'sin' ;
 end
 
-C = GrB (gbapply ('sin', G)) ;
+C = GrB (gbapply (op, G)) ;
 

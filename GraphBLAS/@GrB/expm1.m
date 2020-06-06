@@ -10,9 +10,11 @@ function C = expm1 (G)
 G = G.opaque ;
 type = gbtype (G) ;
 
-if (~gb_isfloat (type))
-    G = gbnew (G, 'double') ;
+if (~gb_isfloat (gbtype (G)))
+    op = 'expm1.double' ;
+else
+    op = 'expm1' ;
 end
 
-C = GrB (gbapply ('expm1', G)) ;
+C = GrB (gbapply (op, G)) ;
 

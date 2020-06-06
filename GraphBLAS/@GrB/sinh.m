@@ -10,9 +10,11 @@ function C = sinh (G)
 
 G = G.opaque ;
 
-if (~gbisfloat (gbtype (G)))
-    G = gbnew (G, 'double') ;
+if (~gb_isfloat (gbtype (G)))
+    op = 'sinh.double' ;
+else
+    op = 'sinh' ;
 end
 
-C = GrB (gbapply ('sinh', G)) ;
+C = GrB (gbapply (op, G)) ;
 
