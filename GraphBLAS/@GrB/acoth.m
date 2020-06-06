@@ -10,8 +10,7 @@ function C = acoth (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-type = gbtype (G) :
-
+type = gbtype (G) ;
 if (~gb_isfloat (type))
     type = 'double' ;
 end

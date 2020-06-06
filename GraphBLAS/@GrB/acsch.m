@@ -9,8 +9,8 @@ function C = acsch (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-
-if (~isfloat (G))
+type = gbtype (G) ;
+if (~gb_isfloat (type))
     G = GrB (G, 'double') ;
 end
 
