@@ -332,7 +332,6 @@ try
     ok = false
 catch expected_error
     expected_error
-    disp (expected_error.stack (end-1))
 end
 assert (ok) ;
 

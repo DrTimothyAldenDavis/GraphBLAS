@@ -24,25 +24,27 @@ if (nargout == 1)
 else
 
     % [F,E] = log2 (G)
+    type = gbtype (G) ;
 
-    switch (gbtype (G))
+    switch (type)
 
         case { 'logical', 'int8', 'int16', 'int32', 'int64', ...
             'uint8', 'uint16', 'uint32', 'uint64', 'double complex' }
 
-            optype = 'double' ;
-
-        case { 'single', 'double' }
-
-            optype = type ;
+            type = 'double' ;
 
         case { 'single complex' }
 
-            optype = 'single' ;
+            type = 'single' ;
+
+        case { 'single', 'double' }
+
+            % type remains the same
+
     end
 
-    F = GrB (gbapply (['frexpx.' optype], G)) ;
-    E = GrB (gbapply (['frexpe.' optype], G)) ;
+    F = GrB (gbapply (['frexpx.' type], G)) ;
+    E = GrB (gbapply (['frexpe.' type], G)) ;
 
 end
 

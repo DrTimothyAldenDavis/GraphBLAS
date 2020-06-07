@@ -13,6 +13,7 @@ name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
-gbdisp (G.opaque, nnz (G), 2) ;     % TODO
+G = G.opaque ;
+gbdisp (G, gb_nnz (G), 2) ;
 fprintf ('\n') ;
 

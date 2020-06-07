@@ -8,24 +8,31 @@ function C = pow2 (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+if (isobject (A))
+    A = A.opaque ;
+end
+
 if (nargin == 1)
+
     % use GrB/power
-    C = 2.^G ;
+    C = GrB (gb_power (2, A)) ;
+
 else
 
-    % convert A and B to real
-    if (~isreal (A))
-        A = real (A) ;
-    elseif (~isfloat (A))
-        A = GrB (A, 'double') ;
+    if (isobject (B))
+        B = B.opaque ;
     end
-    if (~isreal (B))
-        B = real (B) ;
-    elseif (~isfloat (B))
-        B = GrB (B, 'double') ;
+
+    type = gboptype (gbtype (A), gbtype (B)) ;
+
+    if (contains (type, 'single'))
+        type = 'single' ;
+    else
+        type = 'double' ;
     end
 
     % use the ldexp operator to compute C = A.*(2.^B)
-    C = GrB (gb_union_op ('ldexp', gb (A), gb (B))) ;
+    C = GrB (gb_union_op (['ldexp.' type], A, B)) ;
+
 end
 

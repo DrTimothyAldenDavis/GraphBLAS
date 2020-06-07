@@ -1,15 +1,28 @@
-function s = isbanded (G, lo, hi)
-%ISBANDED True if G is a banded GraphBLAS matrix.
-% isbanded (G, lo, hi) is true if the bandwidth of the GraphBLAS matrix G
-% is between lo and hi.
+function s = isbanded (A, lo, hi)
+%ISBANDED True if A is a banded matrix.
+% isbanded (A, lo, hi) is true if the bandwidth of A is between lo and hi,
+% where A is a MATLAB or GraphBLAS matrix.  To use this function on a
+% MATLAB matrix, use isbanded (A, GrB (lo), GrB (hi)) ;
 %
 % See also GrB/istril, GrB/istriu, GrB/bandwidth.
 
-% FUTURE: this will be much faster when 'bandwidth' is a mexFunction.
+% FUTURE: this will be much faster when 'gb_bandwidth' is a mexFunction.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[Glo, Ghi] = gb_bandwidth (G.opaque) ;
-s = (Glo <= lo) & (Ghi <= hi) ;
+if (isobject (A))
+    A = A.opaque ;
+end
+
+if (isobject (lo))
+    lo = gb_get_scalar (lo) ;
+end
+
+if (isobject (hi))
+    hi = gb_get_scalar (hi) ;
+end
+
+[alo, ahi] = gb_bandwidth (A) ;
+s = (alo <= lo) & (ahi <= hi) ;
 

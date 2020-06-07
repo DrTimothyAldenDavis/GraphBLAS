@@ -8,6 +8,9 @@ function C = eps (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% FUTURE: GraphBLAS should have a built-in unary operator to
+% compute eps.
+
 % convert to a MATLAB full matrix and use the MATLAB eps:
 
 switch (GrB.type (G))

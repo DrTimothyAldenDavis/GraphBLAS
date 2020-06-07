@@ -13,6 +13,7 @@ function C = sign (G)
 % FUTURE: this would be faster if GraphBLAS had a built-in unary
 % GxB_SIGN_[TYPE] operator.
 
+% G must be a GraphBLAS matrx
 G = G.opaque ;
 type = gbtype (G) ;
 

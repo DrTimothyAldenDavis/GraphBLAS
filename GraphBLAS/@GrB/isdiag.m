@@ -9,6 +9,10 @@ function s = isdiag (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[Glo, Ghi] = gb_bandwidth (G.opaque) ;
-s = (Glo == 0) & (Ghi == 0) ;
+% using gb_bandwidth:
+% [lo, hi] = gb_bandwidth (G.opaque) ;
+% s = (lo == 0) & (hi == 0) ;
+
+G = G.opaque ;
+s = (gbnvals (gbselect ('diag', G, 0)) == gbnvals (G)) ;
 

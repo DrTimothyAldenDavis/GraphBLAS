@@ -11,56 +11,49 @@ function C = mpower (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
+if (isobject (A))
+    A = A.opaque ;
+end
 
-if (isscalar (A) && isscalar (B))
-    C = power (A, B) ;
+if (isobject (B))
+    B = B.opaque ;
+end
+
+[am, an] = gbsize (A) ;
+[bm, bn] = gbsize (B) ;
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
+
+if (a_is_scalar && b_is_scalar)
+    C = GrB (gb_power (A, B)) ;
     return ;
 end
 
-[m, n] = size (A) ;
-
-if (m ~= n)
+if (am ~= an)
     gb_error ('For C=A^B, A must be square') ;
 end
 
-if (~isscalar (B))
+if (~b_is_scalar)
     gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
 end
 
 b = gb_get_scalar (B) ;
-if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
-    if (b == 0)
-        type = GrB.type (A) ;
-        if (isequal (type, 'single complex'))
-            C = GrB.eye (n, 'single') ;
-        elseif (isequal (type, 'double complex'))
-            C = GrB.eye (n, 'double') ;
-        else
-            % C is identity, of the same type as A
-            C = GrB.eye (n, type) ;
-        end
-    else
-        % C = A^b where b > 0 is an integer
-        C = gb_compute_mpower (A, b) ;
-    end
-else
+
+if (~(isreal (b) && isfinite (b) && round (b) == b && b >= 0))
     gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
 end
 
-end
-
-function C = gb_compute_mpower (A, b)
-% C = A^b where b > 0 is an integer
-if (b == 1)
-    C = A ;
-else
-    T = gb_compute_mpower (A, floor (b/2)) ;
-    C = T*T ;
-    clear T ;
-    if (mod (b, 2) == 1)
-        C = C*A ;
+if (b == 0)
+    % C = A^0 = I
+    atype = gbtype (A) ;
+    if (isequal (atype, 'single complex'))
+        atype = 'single' ;
+    elseif (isequal (atype, 'double complex'))
+        atype = 'double' ;
     end
-end
+    C = GrB (gb_speye (an, atype)) ;
+else
+    % C = A^b where b > 0 is an integer
+    C = GrB (gb_mpower (A, b)) ;
 end
 

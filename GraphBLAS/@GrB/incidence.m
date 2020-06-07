@@ -25,9 +25,10 @@ function C = incidence (A, varargin)
 %   C = GrB.incidence (A, ..., 'upper') is the same as 'undirected',
 %       except that only entries in triu (A,1) are used.
 %
-%   C = GrB.incidence (A, ..., type) construct C with the type 'double',
+%   C = GrB.incidence (A, ..., type) constructs C with the type 'double',
 %       'single', 'int8', 'int16', 'int32', or 'int64'.  The default is
-%       'double'.
+%       'double'.  The type cannot be 'logical' or 'uint*' since C
+%       must contain -1's.
 %
 % Examples:
 %
@@ -39,9 +40,11 @@ function C = incidence (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
+if (isobject (A))
+    A = A.opaque ;
+end
 
-[m, n] = size (A) ;
+[m, n] = gbsize (A) ;
 if (m ~= n)
     gb_error ('A must be square') ;
 end
@@ -57,30 +60,43 @@ for k = 1:nargin-1
             kind = arg ;
         case { 'double', 'single', 'int8', 'int16', 'int32', 'int64' }
             type = arg ;
+        case { 'uint8', 'uint16', 'uint32', 'uint64', 'logical' }
+            gb_error ('type must be signed') ;
         otherwise
             gb_error ('unknown option') ;
     end
 end
 
-if (isequal (kind, 'directed') || isequal (kind, 'unsymmetric'))
-    % create the incidence matrix of a directed graph, using all of A;
-    % except that diagonal entries are ignored.
-    A = GrB.offdiag (A) ;
-elseif (isequal (kind, 'upper'))
-    % create the incidence matrix of an undirected graph, using only entries
-    % in the strictly upper triangular part of A.
-    A = triu (A, 1) ;
-else
-    % create the incidence matrix of an undirected graph, using only entries
-    % in the strictly lower triangular part of A.
-    A = tril (A, -1) ;
+switch (kind)
+
+    case { 'directed', 'unsymmetric' }
+
+        % create the incidence matrix of a directed graph, using all of A;
+        % except that diagonal entries are ignored.
+        A = gbselect ('offdiag', A, 0) ;
+
+    case { 'upper' }
+
+        % create the incidence matrix of an undirected graph, using only
+        % entries in the strictly upper triangular part of A.
+        A = gbselect ('triu', A, 1) ;
+
+    otherwise   % 'undirected', 'symmetric', or 'lower'
+
+        % create the incidence matrix of an undirected graph, using only
+        % entries in the strictly lower triangular part of A.
+        A = gbselect ('tril', A, -1) ;
+
 end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
-[i, j] = GrB.extracttuples (A, desc) ;
-e = length (i) ;
-k = (int64 (0) : int64 (e-1))' ;
-x = ones (e, 1, type) ;
-C = GrB.build ([i ; j], [k ; k], [-x ; x], n, e, desc) ;
+[I, J] = gbextracttuples (A, desc) ;
+e = length (I) ;
+I = [I ; J] ;
+J = (int64 (0) : int64 (e-1))' ;
+J = [J ; J] ;
+X = ones (e, 1, type) ;
+X = [-X ; X] ;
+C = GrB (gbbuild (I, J, X, n, e, desc)) ;
 

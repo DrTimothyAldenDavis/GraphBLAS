@@ -55,6 +55,11 @@ function result = entries (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO make this private/gb_entries, so it can be used by GrB.nonz
+
+% TODO check if A is a MATLAB sparse matrix (so the prune of
+% explicit zeros can be skipped)
+
 if (isobject (A))
     A = A.opaque ;
 end

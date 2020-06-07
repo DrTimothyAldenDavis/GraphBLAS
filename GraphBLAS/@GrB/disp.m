@@ -1,9 +1,24 @@
-function disp (G, level)
-%DISP display the contents of a GraphBLAS matrix.
-% disp (G, level) displays the GraphBLAS sparse matrix G.  Level controls
-% how much is printed; 0: none, 1: terse, 2: a few entries, 3: all,
-% 4: a few entries with high precision, 5: all with high precision.  The
-% default is 2 if level is not present.
+function disp (A, level)
+%DISP display the contents of a MATLAB or GraphBLAS matrix.
+% disp (A, level) displays the matrix A.  The 2nd argument controls how
+% much is printed; 0: none, 1: terse, 2: a few entries, 3: all, 4: a few
+% entries with high precision, 5: all with high precision.  The default is
+% 2 if level is not present.  To use this function on a MATLAB sparse
+% matrix, use disp (A, GrB (level)).
+%
+% Example:
+%
+%   A = sprand (50, 50, 0.1) ;
+%   % just print a few entries
+%   disp (A, GrB (2))
+%   G = GrB (A)
+%   % print all entries
+%   A
+%   disp (G, 3)
+%   % print all entries in full precision
+%   format long
+%   A
+%   disp (G, 5)
 %
 % See also GrB/display.
 
@@ -12,6 +27,8 @@ function disp (G, level)
 
 if (nargin < 2)
     level = 2 ;
+elseif (isobject (level))
+    level = gb_get_scalar (level) ;
 end
 
 if (level > 0)
@@ -21,7 +38,12 @@ if (level > 0)
     end
 end
 
-gbdisp (G.opaque, nnz (G), level) ; % TODO
+if (isobject (A))
+    A = A.opaque ;
+    gbdisp (A, gb_nnz (A), level) ;
+else
+    gbdisp (A, nnz (A), level) ;
+end
 
 if (level > 0)
     fprintf ('\n') ;

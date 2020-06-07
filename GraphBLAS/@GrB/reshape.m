@@ -9,35 +9,52 @@ function C = reshape (G, arg1, arg2)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[mold, nold] = size (G) ;
+% FUTURE: this would be faster as a built-in GxB_reshape function.
+
+if (isobject (G))
+    G = G.opaque ;
+end
+
+[mold, nold] = gbsize (G) ;
 mold = int64 (mold) ;
 nold = int64 (nold) ;
+
 if (nargin == 2)
+
     if (length (arg1) ~= 2)
         gb_error ('reshape (G,s): s must have exactly two elements') ;
     end
     mnew = int64 (arg1 (1)) ;
     nnew = int64 (arg1 (2)) ;
+
 elseif (nargin == 3)
+
     if (~isscalar (arg1) || ~isscalar (arg2))
         gb_error ('reshape (G,m,n): m and n must be scalars') ;
     end
     mnew = int64 (arg1) ;
     nnew = int64 (arg2) ;
+
 end
+
 if (mold * nold ~= mnew * nnew)
     gb_error ('number of elements must not change') ;
 end
+
 if (isempty (G))
-    C = GrB (mnew, nnew, GrB.type (G)) ;
+
+    C = GrB (mnew, nnew, gbtype (G)) ;
+
 else
+
     desc.base = 'zero-based' ;
-    [iold, jold, x] = GrB.extracttuples (G, desc) ;
+    [iold, jold, x] = gbextracttuples (G, desc) ;
     % convert i and j from 2D (mold-by-nold) to 1D indices
     k = gb_convert_index_2d_to_1d (iold, jold, mold) ;
     % convert k from 1D indices to 2D (mnew-by-nnew)
     [inew, jnew] = gb_convert_index_1d_to_2d (k, mnew) ;
     % rebuild the new matrix
-    C = GrB.build (inew, jnew, x, mnew, nnew, desc) ;
+    C = GrB (gbbuild (inew, jnew, x, mnew, nnew, desc)) ;
+
 end
 

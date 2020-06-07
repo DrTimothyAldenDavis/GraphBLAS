@@ -26,6 +26,8 @@ function Graph = graph (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% NOTE: this is a high-level algorithm that uses GrB objects.
+
 type = GrB.type (G) ;
 [m, n] = size (G) ;
 if (m ~= n)

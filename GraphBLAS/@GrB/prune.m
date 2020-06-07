@@ -8,6 +8,9 @@ function C = prune (G, id)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO check if A is a MATLAB sparse matrix (so the prune of
+% explicit zeros can be skipped, if nargin == 1 or id == 0)
+
 if (isobject (G))
     G = G.opaque ;
 end

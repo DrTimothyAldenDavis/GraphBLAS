@@ -177,7 +177,7 @@ classdef GrB
 %   C = bitor (A, B, ...)           bitwise or
 %   C = bitxor (A, B, ...)          bitwise xor
 %
-%   C = cast (G,...)        cast GrB matrix to MATLAB matrix
+%   C = cast (G, ...)       cast GrB matrix to MATLAB matrix
 %   C = ceil (G)            round towards infinity
 %   p = colamd (G)          column approximate minimum degree ordering
 %   C = complex (G)         cast GrB matrix to MATLAB sparse complex
@@ -189,9 +189,9 @@ classdef GrB
 %   C = csc (G)             cosecant
 %   C = csch (G)            hyperbolic cosecant
 %
-%   C = diag (G, k)         diagonal matrices and diagonals
+%   C = diag (A, k)         diagonal matrices and diagonals
 %   DiGraph = digraph (G,...)   directed Graph
-%   disp (G, level)         display a GrB matrix G
+%   disp (A, level)         display a MATLAB or GrB matrix A
 %   display (G)             display a GrB matrix G; same as disp(G,2)
 %   [...] = dmperm (G)      Dulmage-Mendelsohn permutation
 %   C = double (G)          cast GrB matrix to MATLAB sparse double
@@ -351,8 +351,8 @@ classdef GrB
 %   s = GrB.isbyrow (A)          true if format f A is 'by row'
 %   s = GrB.isbycol (A)          true if format f A is 'by col'
 %   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
-%   C = GrB.eye                  identity matrix of any type
-%   C = GrB.speye                identity matrix (of type 'double')
+%   C = GrB.eye                  identity matrix of any type (same as speye)
+%   C = GrB.speye                identity matrix of any type
 %   C = GrB.random (varargin)    random GraphBLAS matrix
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %                               build a GrB matrix from list of entries
@@ -723,7 +723,7 @@ methods
     C = lt (A, B) ;             % C = (A < B)
     C = minus (A, B) ;          % C = A - B
     C = mldivide (A, B) ;       % C = A \ B
-    C = mpower (A, B) ;         % C = A^B       % TODO
+    C = mpower (A, B) ;         % C = A^B
     C = mrdivide (A, B) ;       % C = A / B
     C = mtimes (A, B) ;         % C = A * B
     C = ne (A, B) ;             % C = (A ~= B)
@@ -784,10 +784,10 @@ methods
     C = bitor (A, B, assumedtype) ;
     C = bitxor (A, B, assumedtype) ;
 
-%   C = cast (G,...)        built-in works as-is
+%   C = cast (G, ...)       built-in works as-is
     C = ceil (G) ;
     [p, varargout] = colamd (G, varargin) ;
-    C = complex (A, B) ;    % TODO
+    C = complex (A, B) ;
     C = conj (G) ;
     C = cos (G) ;
     C = cosh (G) ;
@@ -796,15 +796,15 @@ methods
     C = csc (G) ;
     C = csch (G) ;
 
-    C = diag (G, k) ;   % TODO
-    DiGraph = digraph (G, option) ; % TODO
-    disp (G, level) ;   % TODO
-    display (G) ;   % TODO
+    C = diag (A, k) ;
+    DiGraph = digraph (G, option) ;
+    disp (A, level) ;
+    display (G) ;
     [p, varargout] = dmperm (G) ;
     C = double (G) ;
 
     [V, varargout] = eig (G, varargin) ;        % uses GrB matrices
-    C = eps (G) ;   % TODO
+    C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;
     [parent, varargout] = etree (G, varargin) ;
@@ -815,14 +815,14 @@ methods
     C = false (arg1, arg2, arg3, arg4) ;
     [I,J,X] = find (G, k, search) ;   % TODO
     C = fix (G) ;
-    C = flip (G, dim) ; % TODO
+    C = flip (G, dim) ;
     C = floor (G) ;
     c = fprintf (varargin) ;    % TODO
     C = full (A, type, identity) ;
 
     C = gamma (G) ;
     C = gammaln (G) ;
-    Graph = graph (G, varargin) ;   % TODO
+    Graph = graph (G, varargin) ;
 
     C = hypot (A, B) ;
 
@@ -875,12 +875,12 @@ methods
 
     C = ones (arg1, arg2, arg3, arg4) ;
 
-    C = pow2 (A, B) ;   % TODO
+    C = pow2 (A, B) ;
     C = prod (G, option) ;
 
     C = real (G) ;
     C = repmat (G, m, n) ;
-    C = reshape (G, arg1, arg2) ;   % TODO
+    C = reshape (G, arg1, arg2) ;
     C = round (G) ;
 
     C = sec (G) ;
@@ -951,7 +951,7 @@ methods (Static)
     C = eye (m, n, type) ;
     finalize ;
     f = format (arg) ;
-    C = incidence (A, varargin) ;   % TODO
+    C = incidence (A, varargin) ;
     init ;
     s = isbyrow (A) ;
     s = isbycol (A) ;
@@ -974,7 +974,7 @@ methods (Static)
     C = select (Cin, M, accum, selectop, A, b, desc) ;
     selectopinfo (op) ;
     semiringinfo (s, type) ;
-    C = speye (m, n, type) ;  % TODO
+    C = speye (m, n, type) ;
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;
     C = trans (Cin, M, accum, A, desc) ;

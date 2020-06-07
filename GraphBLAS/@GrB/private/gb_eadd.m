@@ -18,6 +18,8 @@ function C = gb_eadd (A, op, B)
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
 
+type = gboptype (gbtype (A), gbtype (B)) ;
+
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
@@ -28,9 +30,8 @@ if (a_is_scalar)
             % C = 0+B is returned as a MATLAB matrix if B is a MATLAB matrix
             C = B ;
         else
-            % expand A to a full matrix of type ctype
-            ctype = gboptype (gbtype (A), gbtype (B)) ;
-            A = gb_scalar_to_full (bm, bn, ctype, A) ;
+            % expand A to a full matrix
+            A = gb_scalar_to_full (bm, bn, type, A) ;
             C = gbeadd (A, op, B) ;
         end
     end
@@ -42,8 +43,7 @@ else
             C = A ;
         else
             % expand B to a full matrix
-            ctype = gboptype (gbtype (A), gbtype (B)) ;
-            B = gb_scalar_to_full (am, an, ctype, B) ;
+            B = gb_scalar_to_full (am, an, type, B) ;
             C = gbeadd (A, op, B) ;
         end
     else
