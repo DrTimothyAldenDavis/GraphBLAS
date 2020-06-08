@@ -15,9 +15,11 @@ fprintf (f, 'define(`GB_Cdense_25'', `GB_Cdense_25__%s'')\n', fname) ;
 
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', xtype) ;
 
+
 % mask macro
 if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))
-    fprintf (f, 'define(`GB_ax_mask'', `GB_mcast ((GB_void *) $1, $2, $3)'')\n') ;
+    asize = sprintf ('sizeof (%s)', xtype) ;
+    fprintf (f, 'define(`GB_ax_mask'', `GB_mcast ((GB_void *) $1, $2, %s)'')\n', asize) ;
 else
     fprintf (f, 'define(`GB_ax_mask'', `($1 [$2] != 0)'')\n') ;
 end

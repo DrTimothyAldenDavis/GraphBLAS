@@ -39,7 +39,7 @@
 
 // test the mask condition with Ax [pA]
 #define GB_AX_MASK(Ax,pA,asize) \
-    GB_mcast ((GB_void *) Ax, pA, asize)
+    GB_mcast ((GB_void *) Ax, pA, sizeof (GxB_FC32_t))
 
 // hard-coded loops can be vectorized
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
