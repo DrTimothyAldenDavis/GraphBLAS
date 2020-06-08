@@ -10,7 +10,7 @@ end
 
 [m, n] = gbsize (A) ;
 if (m*n ~= 2)
-    error ('input parameter %s must have length 2', inputname (1)) ;
+    gb_error ('input parameter %s must have length 2', inputname (1)) ;
 end
 
 A = gbfull (A) ;

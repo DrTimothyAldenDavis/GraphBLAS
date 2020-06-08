@@ -27,7 +27,7 @@ function C = min (varargin)
 G = varargin {1} ;
 type = GrB.type (G) ;
 if (contains (type, 'complex'))
-    error ('complex matrices not supported') ;
+    error ('GrB:unsupported', 'complex matrices not supported') ;
 elseif (isequal (type, 'logical'))
     op = '&.logical' ;
 else

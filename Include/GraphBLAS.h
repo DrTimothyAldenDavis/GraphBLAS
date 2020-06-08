@@ -614,7 +614,7 @@ GB_PUBLIC GrB_UnaryOp
     GxB_IDENTITY_FC32,   GxB_AINV_FC32,     GxB_MINV_FC32,      // no LNOT
     GxB_IDENTITY_FC64,   GxB_AINV_FC64,     GxB_MINV_FC64,      // for complex
 
-    // z = 1             z = abs(x)         z = bnot(x)
+    // z = 1             z = abs(x)         z = bnot(x)         z = signum
     // one               absolute value     bitwise negation
     GxB_ONE_BOOL,        GrB_ABS_BOOL,
     GxB_ONE_INT8,        GrB_ABS_INT8,      GrB_BNOT_INT8,
@@ -628,8 +628,8 @@ GB_PUBLIC GrB_UnaryOp
     GxB_ONE_FP32,        GrB_ABS_FP32,
     GxB_ONE_FP64,        GrB_ABS_FP64,
     // complex unary operators:
-    GxB_ONE_FC32,        // for complex types, z = abs(x) returns z as real;
-    GxB_ONE_FC64,        // so they are listed below.
+    GxB_ONE_FC32,        // for complex types, z = abs(x)
+    GxB_ONE_FC64,        // is real; listed below.
 
     // Boolean negation, z = !x, where both z and x are boolean.  There is no
     // suffix since z and x are only boolean.  This operator is identical to
@@ -695,11 +695,11 @@ GB_PUBLIC GrB_UnaryOp
     GxB_SINH_FC32,      GxB_COSH_FC32,      GxB_TANH_FC32,
     GxB_SINH_FC64,      GxB_COSH_FC64,      GxB_TANH_FC64,
 
-    // z = acosh (x)    z = asinh (x)       z = atanh (x)
-    GxB_ACOSH_FP32,     GxB_ASINH_FP32,     GxB_ATANH_FP32,
-    GxB_ACOSH_FP64,     GxB_ASINH_FP64,     GxB_ATANH_FP64,
-    GxB_ACOSH_FC32,     GxB_ASINH_FC32,     GxB_ATANH_FC32,
-    GxB_ACOSH_FC64,     GxB_ASINH_FC64,     GxB_ATANH_FC64,
+    // z = acosh (x)    z = asinh (x)       z = atanh (x)       z = signum (x)
+    GxB_ACOSH_FP32,     GxB_ASINH_FP32,     GxB_ATANH_FP32,     GxB_SIGNUM_FP32,
+    GxB_ACOSH_FP64,     GxB_ASINH_FP64,     GxB_ATANH_FP64,     GxB_SIGNUM_FP64,
+    GxB_ACOSH_FC32,     GxB_ASINH_FC32,     GxB_ATANH_FC32,     GxB_SIGNUM_FC32,
+    GxB_ACOSH_FC64,     GxB_ASINH_FC64,     GxB_ATANH_FC64,     GxB_SIGNUM_FC64,
 
     // z = ceil (x)     z = floor (x)       z = round (x)       z = trunc (x)
     GxB_CEIL_FP32,      GxB_FLOOR_FP32,     GxB_ROUND_FP32,     GxB_TRUNC_FP32,

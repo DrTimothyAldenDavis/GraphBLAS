@@ -72,7 +72,7 @@ switch (nargin)
     case 7
         [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        error ('usage: C = GrB.eadd (Cin, M, accum, op, A, B, desc)') ;
+        gb_error ('usage: C = GrB.eadd (Cin, M, accum, op, A, B, desc)') ;
 end
 
 if (k == 0)

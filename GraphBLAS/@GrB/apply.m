@@ -60,7 +60,7 @@ switch (nargin)
     case 6
         [C, k] = gbapply (arg1, arg2, arg3, arg4, arg5, arg6) ;
     otherwise
-        error ('usage: C = GrB.apply (Cin, M, accum, op, A, desc)') ;
+        gb_error ('usage: C = GrB.apply (Cin, M, accum, op, A, desc)') ;
 end
 
 if (k == 0)

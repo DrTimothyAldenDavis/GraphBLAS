@@ -66,6 +66,7 @@ GB_OP1 (GxB_, ONE, "one") ;
     GB_OP1 (GxB_, ACOSH    , "acosh"    ) ;
     GB_OP1 (GxB_, ATANH    , "atanh"    ) ;
 
+    GB_OP1 (GxB_, SIGNUM   , "signum"   ) ;
     GB_OP1 (GxB_, CEIL     , "ceil"     ) ;
     GB_OP1 (GxB_, FLOOR    , "floor"    ) ;
     GB_OP1 (GxB_, ROUND    , "round"    ) ;

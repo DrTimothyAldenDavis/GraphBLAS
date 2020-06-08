@@ -16,20 +16,19 @@ function C = GB_spec_op (op, A, B)
 %
 % Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', 'not', 'bnot',
 % 'sqrt', 'log', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh',
-% 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'ceil', 'floor', 'round', ('trunc'
-% or 'fix'), 'exp2', 'expm1', 'log10', 'log2', ('lgamma' or 'gammaln'),
-% ('tgamma' or 'gamma'), 'erf', 'erfc', 'frexpx', 'frexpe', 'conj', ('creal' or
-% 'real'), ('cimag' or 'imag'), ('carg' or 'angle'), 'isinf', 'isnan',
-% 'isfinite'.
+% 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'signum', 'ceil', 'floor',
+% 'round', ('trunc' or 'fix'), 'exp2', 'expm1', 'log10', 'log2', ('lgamma' or
+% 'gammaln'), ('tgamma' or 'gamma'), 'erf', 'erfc', 'frexpx', 'frexpe', 'conj',
+% ('creal' or 'real'), ('cimag' or 'imag'), ('carg' or 'angle'), 'isinf',
+% 'isnan', 'isfinite'.
 %
-% op.optype: 'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32',
-%   'uint32', 'int64', 'uint64', 'single', 'double', 'single complex'
-%   or 'double complex'.
+% op.optype: 'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32',
+% 'int64', 'uint64', 'single', 'double', 'single complex' or 'double complex'.
 %
-% The class of z is the same as the class of the output of the operator,
-% which is op.optype except for: (1) 'eq', 'ne', 'gt', 'lt', 'ge', 'le',
-% in which case z is logical, (2) 'complex', where x and y are real and
-% z is complex, (3) ... TODO
+% The class of z is the same as the class of the output of the operator, which
+% is op.optype except for: (1) 'eq', 'ne', 'gt', 'lt', 'ge', 'le', in which
+% case z is logical, (2) 'complex', where x and y are real and z is complex,
+% (3) ... TODO
 %
 % Intrinsic MATLAB operators are used as much as possible, so as to test
 % GraphBLAS operators.  Some must be done in GraphBLAS because the
@@ -297,6 +296,9 @@ switch opname
 
     case 'atanh'
         z = atanh (x) ;
+
+    case { 'sign', 'signum' }
+        z = sign (x) ;
 
     case 'ceil'
         z = ceil (x) ;

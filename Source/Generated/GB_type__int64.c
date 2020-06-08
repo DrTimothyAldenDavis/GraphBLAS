@@ -19,6 +19,7 @@
 
 // C<M>=x (C is dense): GB_Cdense_05d__int64
 // C<A>=A (C is dense): GB_Cdense_06d__int64
+// C<M>=A (C is empty, A dense): GB_Cdense_25__int64
 
 // C type:   int64_t
 

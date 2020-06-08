@@ -22,8 +22,8 @@
 //      (result is same type as input):
 //      sqrt, log, exp,
 //      sin, cos, tan, acos, asin, atan,
-//      sinh, cosh, tanh, acosh, asinh, atanh.
-//      ceil, floor, round, trunc, exp2, expm1, log10, log1p, log2
+//      sinh, cosh, tanh, acosh, asinh, atanh,
+//      signum, ceil, floor, round, trunc, exp2, expm1, log10, log1p, log2
 
 // for complex only:
 //      creal, cimag, carg  (result is real)
@@ -298,6 +298,15 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GrB_FP64  ) return (GxB_ATANH_FP64) ;
         if (type == GxB_FC32  ) return (GxB_ATANH_FC32) ;
         if (type == GxB_FC64  ) return (GxB_ATANH_FC64) ;
+
+    }
+    else if (MATCH (op_name, "sign") ||  MATCH (op_name, "signum"))
+    { 
+
+        if (type == GrB_FP32  ) return (GxB_SIGNUM_FP32) ;
+        if (type == GrB_FP64  ) return (GxB_SIGNUM_FP64) ;
+        if (type == GxB_FC32  ) return (GxB_SIGNUM_FC32) ;
+        if (type == GxB_FC64  ) return (GxB_SIGNUM_FC64) ;
 
     }
     else if (MATCH (op_name, "ceil"))

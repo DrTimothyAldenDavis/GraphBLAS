@@ -138,6 +138,7 @@
 // #define GxB_NO_ACOSH     1
 // #define GxB_NO_ATANH     1
 
+// #define GxB_NO_SIGNUM    1
 // #define GxB_NO_CEIL      1
 // #define GxB_NO_FLOOR     1
 // #define GxB_NO_ROUND     1

@@ -6565,6 +6565,94 @@ GrB_Info GB_tran__atanh_fc64_fc64
 
 
 
+GrB_Info GB_unop__signum_fp32_fp32
+(
+    float *Cx,
+    float *Ax,
+    int64_t anz,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_tran__signum_fp32_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+
+
+
+GrB_Info GB_unop__signum_fp64_fp64
+(
+    double *Cx,
+    double *Ax,
+    int64_t anz,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_tran__signum_fp64_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+
+
+
+GrB_Info GB_unop__signum_fc32_fc32
+(
+    GxB_FC32_t *Cx,
+    GxB_FC32_t *Ax,
+    int64_t anz,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_tran__signum_fc32_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+
+
+
+GrB_Info GB_unop__signum_fc64_fc64
+(
+    GxB_FC64_t *Cx,
+    GxB_FC64_t *Ax,
+    int64_t anz,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_tran__signum_fc64_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+
+
+
 GrB_Info GB_unop__ceil_fp32_fp32
 (
     float *Cx,

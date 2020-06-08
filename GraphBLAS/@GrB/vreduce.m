@@ -65,7 +65,7 @@ switch (nargin)
     case 6
         [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
     otherwise
-        error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
+        gb_error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
 end
 
 if (k == 0)

@@ -127,6 +127,7 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
         else if (MATCH (opname, "acosh"   )) { opcode = GB_ACOSH_opcode ; }
         else if (MATCH (opname, "atanh"   )) { opcode = GB_ATANH_opcode ; }
 
+        else if (MATCH (opname, "signum"  )) { opcode = GB_SIGNUM_opcode ; }
         else if (MATCH (opname, "ceil"    )) { opcode = GB_CEIL_opcode ; }
         else if (MATCH (opname, "floor"   )) { opcode = GB_FLOOR_opcode ; }
         else if (MATCH (opname, "round"   )) { opcode = GB_ROUND_opcode ; }
@@ -540,6 +541,20 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
                 }
                 break ;
 
+
+            case GB_SIGNUM_opcode :    // z = signum (x)
+
+                switch (xcode)
+                {
+                    case GB_FP32_code    : op = GxB_SIGNUM_FP32   ; break ;
+                    case GB_FP64_code    : op = GxB_SIGNUM_FP64   ; break ;
+                    case GB_FC32_code    : op = GxB_SIGNUM_FC32   ; break ;
+                    case GB_FC64_code    : op = GxB_SIGNUM_FC64   ; break ;
+                    default              : 
+                        mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
+                        return (false) ;
+                }
+                break ;
 
             case GB_CEIL_opcode :    // z = ceil (x)
 

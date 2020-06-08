@@ -53,7 +53,7 @@ switch (nargin)
     case 5
         [C, k] = gbtrans (arg1, arg2, arg3, arg4, arg5) ;
     otherwise
-        error ('usage: C = GrB.trans (Cin, M, accum, A, desc)') ;
+        gb_error ('usage: C = GrB.trans (Cin, M, accum, A, desc)') ;
 end
 
 if (k == 0)

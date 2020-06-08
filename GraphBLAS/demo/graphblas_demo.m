@@ -818,9 +818,8 @@ C2 - C
 % illustrated below in the next example.
 %
 % Other methods that will be faster in the future include bandwidth,
-% istriu, istril, eps, ceil, floor, round, fix, isfinite, isinf, isnan,
-% spfun, and A.^B.  These methods are currently implemented in
-% m-files, not in efficient parallel C functions.
+% istriu, istril, and spfun.  These methods are currently implemented
+% in m-files, not in efficient parallel C functions.
 
 %%
 % Here is an example that illustrates the performance of C = [A B]

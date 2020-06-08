@@ -489,15 +489,6 @@ end
 assert (ok) ;
 
 try
-    L = GrB.laplacian (S + speye (n), 'double', 'check') ;
-    ok = false ;
-catch expected_error
-    expected_error
-    disp (expected_error.stack (end-1))
-end
-assert (ok) ;
-
-try
     DiGraph = digraph (GrB (ones (4,3))) ;
     ok = false ;
 catch expected_error

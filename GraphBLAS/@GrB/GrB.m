@@ -734,7 +734,7 @@ methods
     C = rdivide (A, B) ;        % C = A ./ B
     I = subsindex (G) ;         % X = A (G)
     C = subsasgn (C, S, A) ;    % C (I,J) = A   % TODO
-    C = subsref (A, S) ;        % C = A (I,J)   % TODO
+    C = subsref (A, S) ;        % C = A (I,J)
     C = times (A, B) ;          % C = A .* B
     C = transpose (G) ;         % C = A.'
     C = uminus (G) ;            % C = -A

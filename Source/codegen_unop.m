@@ -220,6 +220,15 @@ codegen_unop_template ('atanh', ...
     'catanhf (xarg)',           ... % GxB_FC32_t
     'catanh (xarg)') ;          ... % GxB_FC64_t
 
+codegen_unop_template ('signum', ...
+    [ ],                        ... % bool
+    [ ],                        ... % int
+    [ ],                        ... % uint
+    'GB_signumf (xarg)',        ... % float
+    'GB_signum (xarg)',         ... % double
+    'GB_csignumf (xarg)',       ... % GxB_FC32_t
+    'GB_csignum (xarg)') ;      ... % GxB_FC64_t
+
 codegen_unop_template ('ceil', ...
     [ ],                        ... % bool
     [ ],                        ... % int

@@ -127,7 +127,7 @@ switch (nargin)
     case 7
         [C, k] = gbselect (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        error ('usage: C = GrB.select (Cin, M, accum, op, A, b, desc)') ;
+        gb_error ('usage: C = GrB.select (Cin, M, accum, op, A, b, desc)') ;
 end
 
 if (k == 0)

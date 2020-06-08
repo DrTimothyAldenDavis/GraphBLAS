@@ -467,6 +467,17 @@
                 }
                 break ;
 
+            case GB_SIGNUM_opcode :  // z = signum (x)
+
+                switch (code1)
+                {
+                    case GB_FP32_code   : GB_WORKER (_signum, _fp32, float     , _fp32, float     )
+                    case GB_FP64_code   : GB_WORKER (_signum, _fp64, double    , _fp64, double    )
+                    case GB_FC32_code   : GB_WORKER (_signum, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
+                    case GB_FC64_code   : GB_WORKER (_signum, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    default: ;
+                }
+                break ;
 
             case GB_CEIL_opcode :    // z = ceil (x)
 

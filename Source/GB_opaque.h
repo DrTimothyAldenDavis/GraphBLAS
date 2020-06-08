@@ -92,6 +92,7 @@ typedef enum
     GB_ACOSH_opcode,    // z = acosh (x)
     GB_ATANH_opcode,    // z = atanh (x)
 
+    GB_SIGNUM_opcode,   // z = signum (x)
     GB_CEIL_opcode,     // z = ceil (x)
     GB_FLOOR_opcode,    // z = floor (x)
     GB_ROUND_opcode,    // z = round (x)

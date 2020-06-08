@@ -93,7 +93,7 @@ switch (nargin)
     case 7
         [C, k] = gbsubassign (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        error ('usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)') ;
+        gb_error ('usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)') ;
 end
 
 if (k == 0)

@@ -60,9 +60,15 @@ extern uint16_t GB_pow_uint16 (uint16_t x, uint16_t y) ;
 extern uint32_t GB_pow_uint32 (uint32_t x, uint32_t y) ;
 extern uint64_t GB_pow_uint64 (uint64_t x, uint64_t y) ;
 
-// z = frexp (x) for float and double
+// z = frexp* (x) for float and double
 extern float  GB_frexpxf (float  x) ;
 extern double GB_frexpx  (double x) ;
 extern float  GB_frexpef (float  x) ;
 extern double GB_frexpe  (double x) ;
+
+// z = signum (x) for floating-point types
+extern float      GB_signumf  (float      x) ;
+extern double     GB_signum   (double     x) ;
+extern GxB_FC32_t GB_csignumf (GxB_FC32_t x) ;
+extern GxB_FC64_t GB_csignum  (GxB_FC64_t x) ;
 

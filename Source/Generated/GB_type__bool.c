@@ -19,6 +19,7 @@
 
 // C<M>=x (C is dense): GB_Cdense_05d__bool
 // C<A>=A (C is dense): GB_Cdense_06d__bool
+// C<M>=A (C is empty, A dense): GB_Cdense_25__bool
 
 // C type:   bool
 

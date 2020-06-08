@@ -117,7 +117,7 @@ switch (nargin)
     case 7
         [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        error ('usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)') ;
+        gb_error ('usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)');
 end
 
 if (k == 0)

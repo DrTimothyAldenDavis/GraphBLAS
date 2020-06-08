@@ -36,7 +36,10 @@ function C = subsref (A, S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
+if (isobject (A))
+    A = A.opaque ;
+end
+[m, n] = gbsize (A) ;
 
 if (length (S) > 1)
     error ('GrB:unsupported', 'nested indexing not supported') ;
@@ -49,38 +52,42 @@ end
 ndims = length (S.subs) ;
 
 if (ndims == 1)
-    if (isequal (GrB.type (S.subs {1}), 'logical'))
-        % C = A (M) for a logical indexing
-        M = S.subs {1} ;
-        if (isobject (M))
-            M = M.opaque ;
-        end
-        if (isobject (A))
-            A = A.opaque ;
-        end
-        C = GrB (gblogextract (A, M)) ;
+
+    % C = A(M) if M is logical, or C=A(I) otherwise
+    S = S.subs {1} ;
+    if (isobject (S))
+        S = S.opaque ;
+    end
+    if (isequal (gbtype (S), 'logical'))
+        % C = A (M) for logical indexing
+        C = GrB (gblogextract (A, S)) ;
     else
         % C = A (I) for a vector A
-        if (~isvector (A))
+        if (~(m == 1 || n == 1))
             error ('GrB:unsupported', ...
                 'Linear indexing not yet supported for GrB matrices') ;
         end
-        [I, whole_vector] = gb_get_index (S.subs (1)) ;
-        if (size (A, 1) > 1)
-            C = GrB.extract (A, I, { }) ;
+        [I, whole] = gb_index (S) ;
+        if (m > 1)
+            C = gbextract (A, I, { }) ;
         else
-            C = GrB.extract (A, { }, I) ;
+            C = gbextract (A, { }, I) ;
         end
-        if (whole_vector && size (C,1) == 1)
-            C = C.' ;
+        [cm, ~] = gbsize (C) ; 
+        if (whole && cm == 1)
+            C = gbtrans (C) ;
         end
+        C = GrB (C) ;
     end
+
 elseif (ndims == 2)
+
     % C = A (I,J)
-    I = gb_get_index (S.subs (1)) ;
-    J = gb_get_index (S.subs (2)) ;
-    C = GrB.extract (A, I, J) ;
+    C = GrB (gbextract (A, gb_index (S.subs {1}), gb_index (S.subs {2}))) ;
+
 else
+
     error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
+
 end
 

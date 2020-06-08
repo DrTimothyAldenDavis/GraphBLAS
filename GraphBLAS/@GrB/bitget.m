@@ -60,15 +60,15 @@ atype = gbtype (A) ;
 btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
-    error ('inputs must be real') ;
+    gb_error ('inputs must be real') ;
 end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    error ('inputs must not be logical') ;
+    gb_error ('inputs must not be logical') ;
 end
 
 if (~contains (assumedtype, 'int'))
-    error ('assumedtype must be an integer type') ;
+    gb_error ('assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input

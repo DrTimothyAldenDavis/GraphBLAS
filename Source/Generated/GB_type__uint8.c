@@ -19,6 +19,7 @@
 
 // C<M>=x (C is dense): GB_Cdense_05d__uint8
 // C<A>=A (C is dense): GB_Cdense_06d__uint8
+// C<M>=A (C is empty, A dense): GB_Cdense_25__uint8
 
 // C type:   uint8_t
 

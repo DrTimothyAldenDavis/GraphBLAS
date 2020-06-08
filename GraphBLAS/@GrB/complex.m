@@ -46,7 +46,7 @@ else
 
     if (contains (gbtype (A), 'complex') || ...
         contains (gbtype (B), 'complex'))
-        error ('inputs must be real') ;
+        gb_error ('inputs must be real') ;
     end
 
     [am, an] = gbsize (A) ;
