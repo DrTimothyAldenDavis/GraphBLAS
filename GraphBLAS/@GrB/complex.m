@@ -44,7 +44,8 @@ else
         B = B.opaque ;
     end
 
-    if (contains (gbtype (A), 'complex') || contains (gbtype (B), 'complex'))
+    if (contains (gbtype (A), 'complex') || ...
+        contains (gbtype (B), 'complex'))
         error ('inputs must be real') ;
     end
 
@@ -61,7 +62,7 @@ else
             desc.kind = 'full' ;
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
-            if (gb_get_scalar (A) == 0)
+            if (gb_scalar (A) == 0)
                 % C = 1i*B, so A = zero, expanded to the pattern of B;
                 % C is sparse
                 A = gb_expand (0, B, 'double') ;
@@ -78,7 +79,7 @@ else
     else
         if (b_is_scalar)
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
-            if (gb_get_scalar (B) == 0)
+            if (gb_scalar (B) == 0)
                 % C = complex (A); C is sparse
                 C = gbsparse (A, 'double.complex') ;
             else

@@ -146,8 +146,8 @@
 % Mixing different integers:
 % ------------------------------------------------
 %
-%     MATLAB refuses to do this.  GraphBLAS can do this, using the rules
-%     listed by:
+%     MATLAB refuses to compute int16(1) + int8(1).  GraphBLAS can do
+%     this, using the rules listed by:
 %
 %         help GrB.optype
 %
@@ -201,7 +201,7 @@
 %     and thus MATLAB does not support integer matrix computations such as
 %     C=A*B.
 %
-%     GraphBLAS supports integer semirings, and to do so in requires
+%     GraphBLAS supports integer semirings, and to do so requires
 %     integer operations that act in a modulo fashion.  As a result if
 %     a=GrB(255,'uint8') and b=GrB(1,'uint8'), then a+b is zero.
 %
@@ -227,7 +227,7 @@
 %
 %     It does not affect the following:
 %
-%         +   uplus (nothing to do)
+%         +   uplus
 %         *   mtimes (GraphBLAS can do this, MATLAB can't)
 %         <   lt
 %         <=  le
@@ -235,7 +235,7 @@
 %         >=  ge
 %         ==  eq
 %         ~=  ne
-%             bitor, bitand, ...
+%             bitwise operators (bitor, bitand, ...)
 %         ~   logical negation
 %         |   or
 %         &   and
@@ -249,9 +249,8 @@
 % The rules for concatenation differ.
 % ------------------------------------------------
 %
-%     In MATLAB, C = [A1 A2 A3 ...] results in a matrix C whose type
-%     depends on all the types in the list.  In GraphBLAS, C has the same
-%     type as A1.
+%     For C = [A1 A2] and [A1 ; A2], the type of C differs.
+%     GraphBLAS uses the rules given by 'help GrB.optype'
 %
 % ------------------------------------------------
 % Bitwise operators:

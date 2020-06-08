@@ -8,20 +8,15 @@ function s = isbanded (A, lo, hi)
 
 % FUTURE: this will be much faster when 'gb_bandwidth' is a mexFunction.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved.  http://suitesparse.com   See GraphBLAS/Doc/License.txt.
 
 if (isobject (A))
     A = A.opaque ;
 end
 
-if (isobject (lo))
-    lo = gb_get_scalar (lo) ;
-end
-
-if (isobject (hi))
-    hi = gb_get_scalar (hi) ;
-end
+lo = gb_get_scalar (lo) ;
+hi = gb_get_scalar (hi) ;
 
 [alo, ahi] = gb_bandwidth (A) ;
 s = (alo <= lo) & (ahi <= hi) ;

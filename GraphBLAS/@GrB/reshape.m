@@ -1,4 +1,4 @@
-function C = reshape (G, arg1, arg2)
+function C = reshape (G, varargin)
 %RESHAPE Reshape a GraphBLAS matrix.
 % C = reshape (G, m, n) or C = reshape (G, [m n]) returns the m-by-n
 % matrix whose elements are taken columnwise from G.  The matrix G must
@@ -19,23 +19,9 @@ end
 mold = int64 (mold) ;
 nold = int64 (nold) ;
 
-if (nargin == 2)
-
-    if (length (arg1) ~= 2)
-        gb_error ('reshape (G,s): s must have exactly two elements') ;
-    end
-    mnew = int64 (arg1 (1)) ;
-    nnew = int64 (arg1 (2)) ;
-
-elseif (nargin == 3)
-
-    if (~isscalar (arg1) || ~isscalar (arg2))
-        gb_error ('reshape (G,m,n): m and n must be scalars') ;
-    end
-    mnew = int64 (arg1) ;
-    nnew = int64 (arg2) ;
-
-end
+[mnew, nnew] = gb_parse_dimensions (varargin {:}) ;
+mnew = int64 (mnew) ;
+nnew = int64 (nnew) ;
 
 if (mold * nold ~= mnew * nnew)
     gb_error ('number of elements must not change') ;

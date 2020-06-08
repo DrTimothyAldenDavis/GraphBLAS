@@ -27,7 +27,7 @@ if (a_is_scalar)
         C = GrB (gbemult (A, '&.logical', B)) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_get_scalar (A) == 0)
+        if (gb_scalar (A) == 0)
             % A is false, so C is empty, the same size as B
             C = GrB (gbnew (bm, bn, 'logical')) ;
         else
@@ -38,7 +38,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) == 0)
+        if (gb_scalar (B) == 0)
             % B is false, so C is empty, the same size as A
             C = GrB (gbnew (am, an, 'logical')) ;
         else

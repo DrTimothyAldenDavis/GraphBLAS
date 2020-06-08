@@ -10,14 +10,14 @@ function U = triu (G, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (nargin < 2)
-    k = 0 ;
-elseif (isobject (k))
-    k = gb_get_scalar (k) ;
-end
-
 if (isobject (G))
     G = G.opaque ;
+end
+
+if (nargin < 2)
+    k = 0 ;
+else
+    k = gb_get_scalar (k) ;
 end
 
 U = GrB (gbselect ('triu', G, k)) ;

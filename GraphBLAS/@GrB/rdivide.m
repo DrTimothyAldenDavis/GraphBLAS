@@ -34,14 +34,14 @@ if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
     else
-        % A is a scalar, B is a matrix.  A is expanded to full, with type of C
+        % A is a scalar, B is a matrix.  Expand A to full with type of C
         A = gb_scalar_to_full (bm, bn, ctype, A) ;
         B = gbfull (B, ctype) ;
     end
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) == 0 && gb_isfloat (atype))
+        if (gb_scalar (B) == 0 && gb_isfloat (atype))
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
             % expand B t a full matrix and cast to the type of A

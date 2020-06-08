@@ -116,7 +116,7 @@ if (V_is_scalar)
     % V is a scalar:  all bits in A indexed by B are either cleared or set.
     % If A or B are scalar, but not both, then C is the size of the
     % matrix.  This case is handled by gb_union_op.
-    if (gb_get_scalar (V) == 0)
+    if (gb_scalar (V) == 0)
         % any bit reference by B(i,j) is set to 0 in A
         C = GrB (gb_union_op (['bitclr.' atype], A, B), ctype) ;
     else

@@ -812,7 +812,7 @@ methods
     C = exp2 (G) ;
     C = expm1 (G) ;
 
-    C = false (arg1, arg2, arg3, arg4) ;
+    C = false (varargin) ;
     [I,J,X] = find (G, k, search) ;   % TODO
     C = fix (G) ;
     C = flip (G, dim) ;
@@ -839,7 +839,7 @@ methods
     s = isequal (A, B) ;
     C = isfinite (G) ;
     s = isfloat (G) ;
-    s = ishermitian (G, option) ;   % TODO
+    s = ishermitian (G, option) ;
     C = isinf (G) ;
     s = isinteger (G) ;
     s = islogical (G) ;
@@ -850,7 +850,7 @@ methods
 %   s = isrow (G)           built-in works as-is
     s = isscalar (G) ;
     s = issparse (G) ;
-    s = issymmetric (G, option) ;   % TODO
+    s = issymmetric (G, option) ;
     s = istril (G) ;
     s = istriu (G) ;
     s = isvector (G) ;
@@ -873,7 +873,7 @@ methods
     s = numel (G) ;
     e = nzmax (G) ;
 
-    C = ones (arg1, arg2, arg3, arg4) ;
+    C = ones (varargin) ;
 
     C = pow2 (A, B) ;
     C = prod (G, option) ;
@@ -906,7 +906,7 @@ methods
     C = tanh (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
-    C = true (arg1, arg2, arg3, arg4) ;
+    C = true (varargin) ;
 
     C = uint8 (G) ;
     C = uint16 (G) ;
@@ -915,7 +915,7 @@ methods
 
     C = xor (A, B) ;
 
-    C = zeros (arg1, arg2, arg3, arg4) ;
+    C = zeros (varargin) ;
 
 end
 
@@ -959,7 +959,7 @@ methods (Static)
     s = issigned (arg) ;
     C = kronecker (Cin, M, accum, op, A, B, desc) ;
     C = ktruss (A, k, check) ;                  % uses GrB matrices
-    L = laplacian (A, type, check) ;    % TODO
+    L = laplacian (A, type, check) ;
     iset = mis (A, check) ;                     % uses GrB matrices
     monoidinfo (monoid, type) ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;

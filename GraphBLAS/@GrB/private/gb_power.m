@@ -24,7 +24,7 @@ if (a_is_real && b_is_real)
     elseif (gbisequal (B, gbapply ('round', B)))
         % B is floating point, but all values are equal to integers
         c_is_real = true ;
-    elseif (gb_get_scalar (gbreduce ('min', A)) >= 0)
+    elseif (gb_scalar (gbreduce ('min', A)) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -72,7 +72,7 @@ else
 
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        b = gb_get_scalar (B) ;
+        b = gb_scalar (B) ;
         if (b == 0)
             % special case:  C = A.^0 = ones (am, an, ctype)
             C = gb_scalar_to_full (am, an, ctype, 1) ;

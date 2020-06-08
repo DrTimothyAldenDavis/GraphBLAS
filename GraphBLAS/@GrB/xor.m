@@ -23,7 +23,7 @@ if (gb_isscalar (A))
         C = GrB (gbemult (A, 'xor.logical', B)) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_get_scalar (A) == 0)
+        if (gb_scalar (A) == 0)
             % A is false, so C is B typecasted to logical
             C = GrB (gbnew (B, 'logical')) ;
         else
@@ -34,7 +34,7 @@ if (gb_isscalar (A))
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) == 0)
+        if (gb_scalar (B) == 0)
             % B is false, so C is A typecasted to logical
             C = GrB (gbnew (A, 'logical')) ;
         else

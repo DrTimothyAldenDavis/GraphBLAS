@@ -1,37 +1,21 @@
-function C = ones (arg1, arg2, arg3, arg4)
-%ONES a matrix with all ones, the same type as G.
-% C = ones (m, n, 'like', G) or C = ones ([m n], 'like', G) constructs an
-% m-by-n GraphBLAS matrix C with all entries equal to one.  C has the
-% same type as G.
+function C = ones (varargin)
+%ONES a matrix with all ones.
+%
+%   C = ones (n) ;      n-by-n GrB double matrix of all ones.
+%   C = ones (m,n) ;    m-by-n GrB double matrix of all ones.
+%   C = ones ([m,n]) ;  m-by-n GrB double matrix of all ones.
+%   C = ones (..., type) ;      matrix of all ones of given type
+%   C = ones (..., 'like', G) ; matrix of all ones, same type as G
+%
+% Since function overloads the MATLAB built-in ones(...), at least one
+% input must be a GraphBLAS matrix to use this version; for example,
+% C = ones (GrB (n), 'int8').
 %
 % See also GrB/zeros, GrB/false, GrB/true.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (nargin == 4)
-
-    if (~isequal (arg3, 'like'))
-        gb_error ('usage: ones (m, n, ''like'', G)') ;
-    end
-    m = arg1 ;
-    n = arg2 ;
-    type = gbtype (arg4.opaque) ;
-
-elseif (nargin == 3)
-
-    if (~isequal (arg2, 'like'))
-        gb_error ('usage: ones ([m n], ''like'', G)') ;
-    end
-    m = arg1 (1) ;
-    n = arg2 (2) ;
-    type = gbtype (arg3.opaque) ;
-
-else
-
-    gb_error ('usage: ones (m, n, ''like'', G)') ;
-
-end
-
+[m, n, type] = gb_parse_args ('ones', varargin {:}) ;
 C = GrB (gb_scalar_to_full (m, n, type, 1)) ;
 

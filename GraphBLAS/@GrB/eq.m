@@ -38,7 +38,7 @@ if (a_is_scalar)
         C = GrB (gbemult (gbfull (A, ctype), '==', gbfull (B, ctype))) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_get_scalar (A) == 0)
+        if (gb_scalar (A) == 0)
             % since a == 0, entries not present in B result in a true
             % value, so the result is dense.  Expand A to a dense matrix.
             A = gb_scalar_to_full (bm, bn, ctype, A) ;
@@ -53,7 +53,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_get_scalar (B) == 0)
+        if (gb_scalar (B) == 0)
             % since b == 0, entries not present in A result in a true
             % value, so the result is dense.  Expand B to a dense matrix.
             B = gb_scalar_to_full (am, an, ctype, B) ;

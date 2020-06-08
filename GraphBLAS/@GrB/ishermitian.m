@@ -6,32 +6,12 @@ function s = ishermitian (G, option)
 %
 % See also GrB/issymmetric.
 
-% FUTURE: this can be much faster.  See CHOLMOD/MATLAB/spsym.
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
-
-[m, n] = size (G) ;
-if (m ~= n)
-    s = false ;
-else
-    if (nargin < 2)
-        option = 'nonskew' ;
-    end
-    if (islogical (G))
-        G = GrB (G, 'double') ;
-    end
-    if (isequal (option, 'skew'))
-        s = (norm (G + G', 1) == 0) ;
-    else
-        s = (GrB.normdiff (G, G', 1) == 0) ;
-    end
-    if (s)
-        % also check the pattern; G might have explicit zeros
-        S = spones (G, 'logical') ;
-        s = isequal (S, S') ;
-    end
+if (nargin < 2)
+    option = 'nonskew' ;
 end
+
+s = gb_issymmetric (G.opaque, option, true) ;
 

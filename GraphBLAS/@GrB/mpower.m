@@ -37,7 +37,7 @@ if (~b_is_scalar)
     gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
 end
 
-b = gb_get_scalar (B) ;
+b = gb_scalar (B) ;
 
 if (~(isreal (b) && isfinite (b) && round (b) == b && b >= 0))
     gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
@@ -51,7 +51,7 @@ if (b == 0)
     elseif (isequal (atype, 'double complex'))
         atype = 'double' ;
     end
-    C = GrB (gb_speye (an, atype)) ;
+    C = GrB (gb_speye ('mpower', an, atype)) ;
 else
     % C = A^b where b > 0 is an integer
     C = GrB (gb_mpower (A, b)) ;

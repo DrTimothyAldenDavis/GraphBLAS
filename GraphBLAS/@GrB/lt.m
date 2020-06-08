@@ -40,7 +40,7 @@ if (a_is_scalar)
         C = GrB (gb_union_op ('<', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_get_scalar (A) < 0)
+        if (gb_scalar (A) < 0)
             if (~gb_issigned (btype))
                 % a < 0, and B has an unsigned type.  C is all true.
                 C = GrB (gb_scalar_to_full (bm, bn, 'logical', true)) ;
@@ -60,7 +60,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        b = gb_get_scalar (B) ;
+        b = gb_scalar (B) ;
         if (b < 0 && ~gb_issigned (atype))
             % b is negative, and A has an unsigned type.  C is all false.
             C = GrB (gbnew (m, n, 'logical')) ;

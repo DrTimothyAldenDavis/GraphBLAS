@@ -27,7 +27,7 @@ function disp (A, level)
 
 if (nargin < 2)
     level = 2 ;
-elseif (isobject (level))
+else
     level = gb_get_scalar (level) ;
 end
 

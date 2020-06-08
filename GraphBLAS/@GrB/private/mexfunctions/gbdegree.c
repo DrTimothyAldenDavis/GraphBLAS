@@ -21,6 +21,7 @@
 
 #include "gb_matlab.h"
 
+    end
 #define USAGE "usage: degree = gbdegree (X, dim)"
 
 void mexFunction

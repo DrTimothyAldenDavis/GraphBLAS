@@ -29,12 +29,6 @@ if (nargin == 1)
         dim = 1 ;
     end
 else
-    if (isobject (dim))
-        dim = dim.opaque ;
-    end
-    if (~gb_isscalar (dim))
-        gb_error ('dim must be a scalar') ;
-    end
     dim = gb_get_scalar (dim) ;
 end
 

@@ -10,8 +10,8 @@ function C = gb_eadd (A, op, B)
 %
 % See also GrB/plus, GrB/minus, GrB/bitxor, GrB/bitor, GrB/hypot.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved.  http://suitesparse.com   See GraphBLAS/Doc/License.txt.
 
 [am, an] = gbsize (A) ;
 [bm, bn] = gbsize (B) ;
@@ -26,8 +26,8 @@ if (a_is_scalar)
         C = gbeadd (A, op, B) ;
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
-        if (gb_get_scalar (A) == 0)
-            % C = 0+B is returned as a MATLAB matrix if B is a MATLAB matrix
+        if (gb_scalar (A) == 0)
+            % C = 0+B is a MATLAB matrix if B is a MATLAB matrix
             C = B ;
         else
             % expand A to a full matrix
@@ -38,8 +38,8 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full, unless B == 0.
-        if (gb_get_scalar (B) == 0)
-            % C = A+0 is returned as a MATLAB matrix if A is a MATLAB matrix
+        if (gb_scalar (B) == 0)
+            % C = A+0 is a MATLAB matrix if A is a MATLAB matrix
             C = A ;
         else
             % expand B to a full matrix

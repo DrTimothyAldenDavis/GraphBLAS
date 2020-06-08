@@ -44,14 +44,7 @@ GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
             case mxUINT64_CLASS   : type = GrB_UINT64   ; break ;
             case mxSINGLE_CLASS   : type = GrB_FP32     ; break ;
             case mxDOUBLE_CLASS   : type = GrB_FP64     ; break ;
-//          case mxVOID_CLASS     :
-//          case mxCHAR_CLASS     :
-//          case mxUNKNOWN_CLASS  :
-//          case mxCELL_CLASS     :
-//          case mxSTRUCT_CLASS   :
-//          case mxFUNCTION_CLASS :
-            default               : printf ("%d\n", mxGetClassID (X)) ;
-            ERROR ("invalid type") ;
+            default               : ERROR ("invalid type") ;
         }
     }
 
