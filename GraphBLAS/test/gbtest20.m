@@ -19,7 +19,7 @@ for trial = 1:10
             d2 = isdiag (G) ;
             assert (isequal (d1, d2)) ;
 
-            assert (gbtest_eq (signum(A), signum(G))) ;
+            assert (gbtest_eq (sign  (A), sign  (G))) ;
             assert (gbtest_eq (ceil  (A), ceil  (G))) ;
             assert (gbtest_eq (floor (A), floor (G))) ;
             assert (gbtest_eq (round (A), round (G))) ;

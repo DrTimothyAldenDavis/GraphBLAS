@@ -80,5 +80,5 @@ for k1 = 1:length(types)
     end
 end
 
-fprintf ('gbtest33: all tests passed\n') ;
+fprintf ('\ngbtest33: all tests passed\n') ;
 
