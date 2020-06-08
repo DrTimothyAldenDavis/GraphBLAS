@@ -32,7 +32,8 @@ if (nargin == 1)
     % with a single input, A must be a GraphBLAS matrix (otherwise,
     % this overloaded method for GrB objects would not be called).
     % Convert A to a double complex matrix C.
-    C = gbsparse (A.opaque, 'double complex') ;
+    A = A.opaque ;
+    C = gbsparse (A, 'double complex') ;
 
 else
 

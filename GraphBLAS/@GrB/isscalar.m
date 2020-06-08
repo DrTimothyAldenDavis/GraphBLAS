@@ -8,4 +8,5 @@ function s = isscalar (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-s = gb_isscalar (G.opaque) ;
+G = G.opaque ;
+s = gb_isscalar (G) ;

@@ -50,7 +50,8 @@ function ctype = optype (a, b)
 if (ischar (a)) 
     atype = a ;
 elseif (isobject (a))
-    atype = gbtype (a.opaque) ;
+    a = a.opaque ;
+    atype = gbtype (a) ;
 else
     atype = gbtype (a) ;
 end
@@ -58,7 +59,8 @@ end
 if (ischar (b)) 
     btype = b ;
 elseif (isobject (b))
-    btype = gbtype (b.opaque) ;
+    b = b.opaque ;
+    btype = gbtype (b) ;
 else
     btype = gbtype (b) ;
 end

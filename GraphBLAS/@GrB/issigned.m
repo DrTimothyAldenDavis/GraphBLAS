@@ -15,7 +15,8 @@ function s = issigned (arg)
 if (ischar (arg))
     type = arg ;
 elseif (isobject (arg))
-    type = gbtype (arg.opaque) ;
+    arg = arg.opaque ;
+    type = gbtype (arg) ;
 else
     type = gbtype (arg) ;
 end

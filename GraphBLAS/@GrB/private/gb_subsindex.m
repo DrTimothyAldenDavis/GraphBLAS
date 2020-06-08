@@ -5,6 +5,8 @@ function I = gb_subsindex (G, offset)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+% TODO can this handle logical indexing too?
+
 type = gbtype (G) ;
 [m, n] = gbsize (G) ;
 

@@ -14,5 +14,6 @@ function C = int64 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = gbfull (G.opaque, 'int64') ;
+G = G.opaque ;
+C = gbfull (G, 'int64') ;
 

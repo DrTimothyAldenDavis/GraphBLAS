@@ -4,7 +4,7 @@ Version 3.3.0, TODO, 2020
         binary operators, monoids, and semirings
     * added bitwise operators: and their monoids and semirings
     * added predefined GrB* monoids and semirings: from the v1.3 spec.
-    * MATLAB interface: added complex matrices and operators
+    * MATLAB interface: added complex matrices and operators, better performance
     * changed typecasting rules: for casting floating point types to integers
     * added GrB_*_wait: wait for specific object to complete
     * added GrB_*_resize: same as prior GxB_*_resize functions

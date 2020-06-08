@@ -8,5 +8,6 @@ function s = islogical (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-s = isequal (gbtype (G.opaque), 'logical') ;
+G = G.opaque ;
+s = isequal (gbtype (G), 'logical') ;
 

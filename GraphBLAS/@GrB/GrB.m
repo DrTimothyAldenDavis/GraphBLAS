@@ -206,7 +206,7 @@ classdef GrB
 %   C = expm1 (G)           exp (x) - 1
 %
 %   C = false (...,'like',G)   all-false logical matrix
-%   [I,J,X] = find (G, ...) extract all entries from a GrB matrix
+%   [I,J,X] = find (G, ...) extract entries from a matrix
 %   C = fix (G)             round towards zero
 %   C = flip (G, dim)       flip the order of entries
 %   C = floor (G)           round towards -infinity
@@ -286,9 +286,9 @@ classdef GrB
 %   C = sparse (G)          makes a copy of a GrB matrix
 %   C = spfun (fun, G)      evaluate a function on the entries of G
 %   C = spones (G, type)    return pattern of GrB matrix
-%   C = sprand (G)          random GraphBLAS matrix
-%   C = sprandn (G)         random GraphBLAS matrix, normal distribution
-%   C = sprandsym (G, ...)  random symmetric GraphBLAS matrix
+%   C = sprand (...)        random GraphBLAS matrix
+%   C = sprandn (...)       random GraphBLAS matrix, normal distribution
+%   C = sprandsym (...)     random symmetric GraphBLAS matrix
 %   c = sprintf (...)       print to a string
 %   C = sqrt (G)            element-wise square root
 %   C = sum (G, option)     reduce via sum, to vector or scalar
@@ -635,14 +635,25 @@ methods
     %
     %   typecast swapbytes
 
+    % methods in the MATLAB/datafun folder:
+    %
+    %   cummax cummin cumprod cumsum diff histcounts islocalmax 
+    %   ismissing issorted maxk mink movmad movmax movmean movmedian
+    %   movmin movprod movstd movsum movvar rmmissing rmoutliers
+    %   sort sortrows standardizeMissing topkrows
+    %
+    %   m-files: bounds corrcoef cov del2 fillmissing filloutliers
+    %   gradient isoutlier issortedrows mean median mode normalize
+    %   rescale smoothdata std var
+    %       
+
     % methods the 'double' class that are not yet implemented here:
     %
     %   Possible 'double' functions to overload in the future (note that
     %   mod and rem are not the same as the ANSI fmod or remainder, but
     %   the MATLAB rem is almost the same as the ANSI fmod):
     %
-    %       cummax cummin cumprod cumsum diff issorted issortedrows maxk
-    %       mink mod rem sort sortrowsc unwrap sind asind cosd acosd tand
+    %       mod rem unwrap sind asind cosd acosd tand
     %       atand secd asecd cscd acscd cotd acotd atan2d
     %
     %   not needed: 
@@ -733,8 +744,8 @@ methods
     C = power (A, B) ;          % C = A .^ B
     C = rdivide (A, B) ;        % C = A ./ B
     I = subsindex (G) ;         % X = A (G)
-    C = subsasgn (C, S, A) ;    % C (I,J) = A   % TODO
-    C = subsref (A, S) ;        % C = A (I,J)
+    C = subsasgn (C, S, A) ;    % C (I,J) = A or C (M) = A
+    C = subsref (A, S) ;        % C = A (I,J) or C = A (M)
     C = times (A, B) ;          % C = A .* B
     C = transpose (G) ;         % C = A.'
     C = uminus (G) ;            % C = -A
@@ -813,11 +824,11 @@ methods
     C = expm1 (G) ;
 
     C = false (varargin) ;
-    [I,J,X] = find (G, k, search) ;   % TODO
+    [I,J,X] = find (G, k, search) ;
     C = fix (G) ;
     C = flip (G, dim) ;
     C = floor (G) ;
-    c = fprintf (varargin) ;    % TODO
+    c = fprintf (varargin) ;
     C = full (A, type, identity) ;
 
     C = gamma (G) ;
@@ -893,9 +904,9 @@ methods
     C = sparse (G) ;
     C = spfun (fun, G) ;    % TODO
     C = spones (G, type) ;
-    C = sprand (G) ;    % TODO
-    C = sprandn (G) ;   % TODO
-    C = sprandsym (G, varargin) ;   % TODO
+    C = sprand (arg1, arg2, arg3) ;
+    C = sprandn (arg1, arg2, arg3) ;
+    C = sprandsym (arg1, arg2) ;
     c = sprintf (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
@@ -963,13 +974,13 @@ methods (Static)
     iset = mis (A, check) ;                     % uses GrB matrices
     monoidinfo (monoid, type) ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
-    result = nonz (A, varargin) ;   % TODO
+    result = nonz (A, varargin) ;
     s = normdiff (A, B, kind) ;
     C = offdiag (A) ;
     ctype = optype (a, b) ;
     [r, stats] = pagerank (A, opts) ;           % uses GrB matrices
     C = prune (A, identity) ;
-    C = random (varargin) ; % TODO
+    C = random (varargin) ;
     C = reduce (cin, accum, monoid, A, desc) ;
     C = select (Cin, M, accum, selectop, A, b, desc) ;
     selectopinfo (op) ;

@@ -10,5 +10,6 @@ function C = not (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB (gbapply ('~', gbfull (G.opaque, 'logical'))) ;
+G = G.opaque ;
+C = GrB (gbapply ('~', gbfull (G, 'logical'))) ;
 

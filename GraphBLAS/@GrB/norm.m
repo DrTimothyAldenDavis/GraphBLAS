@@ -1,6 +1,5 @@
-function s = norm (G,kind)
+function s = norm (G, kind)
 %NORM norm of a GraphBLAS sparse matrix.
-%
 % If G is a matrix:
 %
 %   norm (G,1) is the maximum sum of the columns of abs (G).
@@ -24,13 +23,17 @@ function s = norm (G,kind)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (nargin == 1)
+if (isobject (G)) ;
+    G = G.opaque ;
+end
+
+if (nargin == 2)
+    if (~ischar (kind))
+        kind = gb_get_scalar (kind) ;
+    end
+else
     kind = 2 ;
 end
 
-if (isobject (G)) ;
-    s = gbnorm (G.opaque, kind) ;
-else
-    s = gbnorm (G, kind) ;
-end
+s = gbnorm (G, kind) ;
 

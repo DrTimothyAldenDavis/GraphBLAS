@@ -13,5 +13,6 @@ function C = logical (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = gbsparse (G.opaque, 'logical') ;
+G = G.opaque ;
+C = gbsparse (G, 'logical') ;
 

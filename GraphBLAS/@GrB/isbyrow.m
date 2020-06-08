@@ -10,7 +10,8 @@ function s = isbyrow (X)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (X))
-    s = isequal (gbformat (X.opaque), 'by row')  ;
+    X = X.opaque ;
+    s = isequal (gbformat (X), 'by row')  ;
 else
-    s = true ;
+    s = false ;
 end

@@ -13,7 +13,8 @@ function [arg1, arg2] = bandwidth (G, uplo)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 % compute the bandwidth
-[lo, hi] = gb_bandwidth (G.opaque) ;
+G = G.opaque ;
+[lo, hi] = gb_bandwidth (G) ;
 
 % return the result
 if (nargin == 1)

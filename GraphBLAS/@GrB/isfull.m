@@ -18,7 +18,8 @@ if (issparse (A))
 elseif (isobject (A))
 
     % GraphBLAS matrix
-    s = gb_isfull (A.opaque) ;
+    A = A.opaque ;
+    s = gb_isfull (A) ;
 
 else
 

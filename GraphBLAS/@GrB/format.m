@@ -90,12 +90,10 @@ if (nargin == 0)
 else
     if (isobject (arg))
         % f = GrB.format (G) ; get the format of the GraphBLAS matrix
-        f = gbformat (arg.opaque) ;
-    else
-        % f = GrB.format (f) ; get the format of the MATLAB matrix,
-        % or (if arg is a string) set the global format for all matrices.
-        % created from now on.
-        f = gbformat (arg) ;
+        arg = arg.opaque ;
     end
+    % f = GrB.format (A) ; get the format of the matrix A (MATLAB or GraphBLAS)
+    % f = GrB.format (f) ; set the global format for all matrices.
+    f = gbformat (arg) ;
 end
 

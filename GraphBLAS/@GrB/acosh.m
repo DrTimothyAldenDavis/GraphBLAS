@@ -9,5 +9,6 @@ function C = acosh (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-C = GrB (gb_trig ('acosh', gbfull (G.opaque))) ;
+G = G.opaque ;
+C = GrB (gb_trig ('acosh', gbfull (G))) ;
 

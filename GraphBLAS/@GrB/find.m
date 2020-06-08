@@ -33,56 +33,61 @@ function [I, J, X] = find (G, k, search)
 % of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
 % the entire matrix.
 
-% TODO
-
-if (nargin > 1 && ~GrB.isbycol (G))
-    % find (G, k) assumes the matrix is stored by column, so reformat G
-    % if it is stored by row.
-    G = GrB (G, 'by col') ;
+if (isobject (G))
+    G = G.opaque ;
 end
 
-if (nnz (G) < GrB.entries (G))
-    G = GrB.prune (G) ;
+if (nargin > 1)
+    k = ceil (double (gb_get_scalar (k))) ;
+    if (k < 1)
+        gb_error ('k must be positive') ;
+    end
+    if (~isequal (gbformat (G), 'by col'))
+        % find (G, k) assumes the matrix is stored by column, so reformat G
+        % if it is stored by row.
+        G = gbnew (G, 'by col') ;
+    end
 end
+
+% prune explicit zeros
+G = gbselect (G, 'nonzero') ;
+
+[m, n] = gbsize (G) ;
 
 if (nargout == 3)
-    [I, J, X] = GrB.extracttuples (G) ;
-    if (isrow (G))
+    [I, J, X] = gbextracttuples (G) ;
+    if (m == 1)
         I = I' ;
         J = J' ;
         X = X' ;
     end
 elseif (nargout == 2)
-    [I, J] = GrB.extracttuples (G) ;
-    if (isrow (G))
+    [I, J] = gbextracttuples (G) ;
+    if (m == 1)
         I = I' ;
         J = J' ;
     end
 else
-    if (isrow (G))
-        [~, I] = GrB.extracttuples (G) ;
+    if (m == 1)
+        [~, I] = gbextracttuples (G) ;
         I = I' ;
     else
         % FUTURE: this does not return the same thing
-        I = GrB.extracttuples (G) ;
+        % (need to implement linear indexing)
+        I = gbextracttuples (G) ;
     end
 end
 
 if (nargin > 1)
     % find (G, k, ...): get the first or last k entries
-    if (nargin == 2)
+    if (nargin < 3)
         search = 'first' ;
     end
-    if (~isscalar (k))
-        gb_error ('k must be a scalar') ;
-    end
-    k = ceil (double (k)) ;
-    if (k < 1)
-        gb_error ('k must be positive') ;
-    end
     n = length (I) ;
-    k = min (k, n) ;
-    if (isequal (search, 'first'))
+    if (k >= n)
+        % output already has all k first or last entries;
+        % nothing more to do
+    elseif (isequal (search, 'first'))
         % find (G, k, 'first'): get the first k entries
         I = I (1:k) ;
         if (nargout > 1)

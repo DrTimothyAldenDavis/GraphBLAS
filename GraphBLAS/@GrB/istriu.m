@@ -14,5 +14,6 @@ function s = istriu (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-s = (gbnvals (gbselect ('tril', G.opaque, -1)) == 0) ;
+G = G.opaque ;
+s = (gbnvals (gbselect ('tril', G, -1)) == 0) ;
 

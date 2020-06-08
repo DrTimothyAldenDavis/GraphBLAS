@@ -8,5 +8,6 @@ function I = subsindex (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-I = gb_subsindex (G.opaque, 1) ;
+G = G.opaque ;
+I = gb_subsindex (G, 1) ;
 

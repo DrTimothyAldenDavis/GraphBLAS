@@ -9,9 +9,11 @@ function s = ishermitian (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+G = G.opaque ;
+
 if (nargin < 2)
     option = 'nonskew' ;
 end
 
-s = gb_issymmetric (G.opaque, option, true) ;
+s = gb_issymmetric (G, option, true) ;
 

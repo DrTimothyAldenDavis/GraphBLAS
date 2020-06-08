@@ -1,18 +1,37 @@
-function C = sprand (G)
-%SPRAND  sparse uniformly distributed GraphBLAS random matrix.
-% C = sprand (G) has the same pattern as A, but uniformly
-%   distributed random entries.  If the same random seed is used,
-%   and if G and A have the same pattern, sprand (G) and the MATLAB
-%   sprand (A) produce the same result.
+function C = sprand (arg1, arg2, arg3)
+%SPRAND sparse uniformly distributed random GraphBLAS matrix.
+% C = sprand (A) is a GraphBLAS matrix with the same pattern as A,
+%   but with uniformly distributed random entries.  This usage is
+%   identical to C = GrB.random (A).
+%
+% C = sprand (m,n,d) is a random m-by-n GraphBLAS matrix with about
+%   m*n*d uniformly distributed values.  If d == inf, C is a full
+%   matrix. To use this function instead of the built-in sprand, use
+%   C = sprand (m,n,GrB(d)), for example, or C = GrB.random (m,n,d).
+%
+% For additional options, see GrB.random.
+% The C = sprand (m,n,d,rc) syntax is not supported.
 %
 % The entries in C will greater than zero and less than one.
+% C is returned as a double GraphBLAS matrix.
 %
 % See also GrB/sprandn, GrB/sprandsym, GrB.random.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
-
-C = GrB.random (G) ;
+if (nargin == 1)
+    % C = sprand (G)
+    G = arg1.opaque ;
+    C = GrB (gb_random (G)) ;
+elseif (nargin == 3)
+    % C = sprand (m, n, d)
+    m = gb_get_scalar (arg1) ;
+    n = gb_get_scalar (arg2) ;
+    d = gb_get_scalar (arg3) ;
+    C = GrB (gb_random (m, n, d)) ;
+else
+    % the 'rc' input option is not supported
+    gb_error ('usage: sprand(A) or sprand(m,n,d)') ;
+end
 

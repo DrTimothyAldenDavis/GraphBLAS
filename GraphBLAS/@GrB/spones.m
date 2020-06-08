@@ -20,9 +20,10 @@ function C = spones (G, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
+G = G.opaque ;
 if (nargin == 1)
-    C = GrB (gb_spones (G.opaque)) ;
+    C = GrB (gb_spones (G)) ;
 else
-    C = GrB (gb_spones (G.opaque, type)) ;
+    C = GrB (gb_spones (G, type)) ;
 end
 

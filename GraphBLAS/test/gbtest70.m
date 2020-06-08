@@ -81,16 +81,6 @@ for k = 1:length(types)
     assert (issymmetric (G)) ;
     assert (isequal (GrB.type (G), 'double')) ;
 
-    G = sprandsym (GrB (S), 'uniform') ;
-    assert (isequal (spones (G), spones (S))) ;
-    assert (issymmetric (G)) ;
-    assert (isequal (GrB.type (G), 'double')) ;
-
-    G = sprandsym (GrB (S), 'normal') ;
-    assert (isequal (spones (G), spones (S))) ;
-    assert (issymmetric (G)) ;
-    assert (isequal (GrB.type (G), 'double')) ;
-
     S = sprandn (30, 40, 0.6) ;
     G = sprandn (GrB (S)) ;
     assert (isequal (spones (G), spones (S))) ;

@@ -10,7 +10,8 @@ function s = isbycol (X)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (X))
-    s = isequal (gbformat (X.opaque), 'by col')  ;
+    X = X.opaque ;
+    s = isequal (gbformat (X), 'by col')  ;
 else
     s = true ;
 end

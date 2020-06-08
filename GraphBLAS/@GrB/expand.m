@@ -19,7 +19,11 @@ function C = expand (scalar, S)
 % SuiteSparse:GraphBLAS from the v1.3 C API.
 
 if (isobject (scalar))
+    % do not use gb_get_scalar, to keep it sparse
     scalar = scalar.opaque ;
+    if (~gb_isscalar (scalar))
+        gb_error ('input parameter (%s) must be a scalar', inputname (1)) ;
+    end
 end
 
 if (isobject (S))

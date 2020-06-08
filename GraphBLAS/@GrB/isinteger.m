@@ -9,5 +9,6 @@ function s = isinteger (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-s = contains (gbtype (G.opaque), 'int') ;
+G = G.opaque ;
+s = contains (gbtype (G), 'int') ;
 

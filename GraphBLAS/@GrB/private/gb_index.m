@@ -42,11 +42,12 @@ if (isobject (I))
     % C (I) where I is a GraphBLAS matrix or vector containing integer
     % indices (as an opaque object).  Do not yet subtract 1 from the
     % indices; this will be done internally in gbextract.
-    I = { (gb_subsindex (I.opaque, 0)) } ;
+    I = I.opaque ;
+    I = { (gb_subsindex (I, 0)) } ;
 
 elseif (isstruct (I))
 
-    % C (I) where I is a GraphBLAS struct, G.opaque.  Do not yet subtract
+    % C (I) where I is a GraphBLAS struct.  Do not yet subtract
     % 1 from the indices; this will be done internally in gbextract.
     I = { (gb_subsindex (I, 0)) } ;
 
@@ -66,7 +67,8 @@ elseif (iscell (I))
             K = I {k} ;
             if (isobject (K))
                 % C ({ ..., K, ... }) where K is a GraphBLAS object
-                I {k} = gb_subsindex (K.opaque, 0) ;
+                K = K.opaque ;
+                I {k} = gb_subsindex (K, 0) ;
             elseif (isstruct (K))
                 % C ({ ..., K, ... }) where I is a GraphBLAS struct
                 I {k} = gb_subsindex (K, 0) ;

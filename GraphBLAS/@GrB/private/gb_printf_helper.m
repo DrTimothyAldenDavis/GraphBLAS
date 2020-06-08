@@ -4,14 +4,13 @@ function result = gb_printf_helper (printf_function, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
-
 % convert all GraphBLAS matrices to full MATLAB matrices
-for k = 2:nargin-1
+len = length (varargin) ;
+for k = 2:len
     arg = varargin {k} ;
     if (isobject (arg))
-        % TODO FIXME for complex case
-        varargin {k} = full (cast (full (arg), GrB.type (arg))) ;
+        arg = arg.opaque ;
+        varargin {k} = gbfull (arg) ;
     end
 end
 

@@ -1,13 +1,10 @@
 function C = random (varargin)
-%GRB.RANDOM uniformly distributed random GraphBLAS matrix.
+%GRB.RANDOM random GraphBLAS matrix.
 % C = GrB.random (A) has the same pattern as A, but with uniformly
-%   distributed random entries.  If the same random seed is used,
-%   GrB.random (A) and the MATLAB sprand (A) produce the same result.
+%   distributed random entries.
 %
 % C = GrB.random (m, n, d) is a random m-by-n GraphBLAS matrix, with
-%   about d*m*n uniformly distributed entries.  With the same inputs
-%   and same random seed, GrB.random and the MATLAB built-in sprand
-%   produce the same pattern, but the values differ.  The entries are
+%   about d*m*n uniformly distributed entries.  The entries are
 %   constructed by computing d*m*n entries at random positions, and
 %   then any duplicates are discarded, so if d is large or m*n is
 %   small, then C will have fewer than d*m*n entries.  The value of
@@ -26,7 +23,7 @@ function C = random (varargin)
 %
 %   C = GrB.random (..., 'range', [lo hi], ...) changes the range of
 %           the random numbers.  If 'range' is not present, the default
-%           is double ([0 1]).  The class of [lo hi] determines the type
+%           is double ([0 1]).  The type of [lo hi] determines the type
 %           of the random matrix C.  If [lo hi] is logical, all entries
 %           in the pattern are true.  If [lo hi] is 'double' or 'single',
 %           then if the random number generator (rand or randn) produces
@@ -35,7 +32,7 @@ function C = random (varargin)
 %           which is then typecasted to the requested. integer type. This
 %           scaling applies to both the 'uniform' and 'normal'
 %           distribution.  To construct a random complex matrix, pass in
-%           [lo hi] as a single complex or double complex parameter.
+%           [lo hi] as single complex or double complex.
 %
 %           With the normal distribution, [lo hi] specifies the mean (lo)
 %           and the standard deviation (hi) of the final distribution.
@@ -90,7 +87,7 @@ function C = random (varargin)
 %   histogram (x, 'BinMethod', 'integers') ;
 %
 %   % large symmetric matrix with normal distribution
-%   C1 = GrB.random (1e6, 1e-5, 'symmetric', 'normal')
+%   C = GrB.random (1e6, 1e-5, 'symmetric', 'normal')
 %   [i,j,x] = find (C) ;
 %   histogram (x)
 %
@@ -99,120 +96,5 @@ function C = random (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO: make this gb_random, and return a GrB struct
-
-% defaults
-dist = 'uniform' ;
-type = 'double' ;
-range = [ ] ;
-sym_option = 'unsymmetric' ;
-firstchar = nargin + 1 ;
-
-% parse input options
-for k = 1:nargin
-    arg = varargin {k} ;
-    if (ischar (arg))
-        arg = lower (arg) ;
-        firstchar = min (firstchar, k) ;
-        switch arg
-            case { 'uniform', 'normal' }
-                dist = arg ;
-            case 'range'
-                range = varargin {k+1} ;
-                type = GrB.type (range) ;
-            case { 'unsymmetric', 'symmetric', 'hermitian' }
-                sym_option = arg ;
-            otherwise
-                gb_error ('unknown option') ;
-        end
-    end
-end
-
-symmetric = isequal (sym_option, 'symmetric') ;
-hermitian = isequal (sym_option, 'hermitian') ;
-desc.base = 'zero-based' ;
-
-% construct the pattern
-if (firstchar == 2)
-    % C = GrB.random (A, ...) ;
-    A = varargin {1} ;
-    [m, n] = size (A) ;
-    if ((symmetric || hermitian) && (m ~= n))
-        gb_error ('input matrix must be square') ;
-    end
-    [I, J] = GrB.extracttuples (A, desc) ;
-    e = length (I) ;
-elseif (firstchar == (4 - (symmetric || hermitian)))
-    % C = GrB.random (m, n, d, ...)
-    % C = GrB.random (n, d, ... 'symmetric')
-    % C = GrB.random (n, d, ... 'hermitian')
-    m = varargin {1} ;
-    if (symmetric || hermitian)
-        n = m ;
-        d = varargin {2} ;
-    else
-        n = varargin {2} ;
-        d = varargin {3} ;
-    end
-    if (isinf (d))
-        e = m * n ;
-        I = repmat ((int64 (0) : int64 (m-1)), 1, n) ;
-        J = repmat ((int64 (0) : int64 (n-1)), m, 1) ;
-    else
-        e = round (m * n * d) ;
-        I = int64 (floor (rand (e, 1) * m)) ;
-        J = int64 (floor (rand (e, 1) * n)) ;
-    end
-else
-    gb_error ('invalid usage') ;
-end
-
-% construct the values
-if (isequal (type, 'logical'))
-    % X is logical: just pass a single logical 'true' to GrB.build
-    X = true ;
-else
-    if (isequal (dist, 'uniform'))
-        X = rand (e, 1) ;
-    else
-        X = randn (e, 1) ;
-    end
-    if (~isempty (range))
-        lo = min (double (range)) ;
-        hi = max (double (range)) ;
-        if (contains (type, 'int'))
-            % X is signed or unsigned integer
-            X = cast (floor ((hi - lo + 1) * X + lo), type) ;
-        elseif (~contains (type, 'complex'))
-            % X is single or double real
-            X = cast ((hi - lo) * X + lo, type) ;
-        else
-            % X is complex: compute random imaginary values
-            if (isequal (dist, 'uniform'))
-                Y = rand (e, 1) ;
-            else
-                Y = randn (e, 1) ;
-            end
-            X = (hi - lo) * X + lo ;
-            Y = (hi - lo) * Y + lo ;
-            if (isequal (type, 'single complex'))
-                % X is single complex
-                X = single (X) ;
-                Y = single (Y) ;
-            end
-            X = complex (X, Y) ;
-        end
-    end
-end
-
-% build the matrix
-C = GrB.build (I, J, X, m, n, '2nd', desc) ;
-
-% make it symmetric or hermitian, if requested
-if (symmetric)
-    C = tril (C) + tril (C, -1).' ;
-elseif (hermitian)
-    L = tril (C, -1) ;
-    C = L + L' + real (GrB.select ('diag', C, 0)) ;
-end
+C = GrB (gb_random (varargin {:})) ;
 

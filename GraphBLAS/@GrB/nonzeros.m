@@ -11,7 +11,6 @@ function X = nonzeros (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% G must be a GraphBLAS matrix
-
-X = gbextractvalues (gbselect ('nonzero', G.opaque)) ;
+G = G.opaque ;
+X = gbextractvalues (gbselect ('nonzero', G)) ;
 
