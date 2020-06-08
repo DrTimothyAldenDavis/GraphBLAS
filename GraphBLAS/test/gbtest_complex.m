@@ -46,7 +46,7 @@ complex_unaryops = {
     'asinh'
     'acosh'
     'atanh'
-    'signum'
+    'sign'
     'ceil'
     'floor'
     'round'
