@@ -45,50 +45,50 @@ if (isobject (C))
     C = C.opaque ;
 end
 
+if (isobject (A))
+    A = A.opaque ;
+end
+
 ndims = length (S.subs) ;
+
 if (ndims == 1)
-    if (isequal (GrB.type (S.subs {1}), 'logical'))     % TODO
+
+    % C (M) = A if M is logical, or C (I) = A otherwise
+    S = S.subs {1} ;
+    if (isobject (S))
+        S = S.opaque ;
+    end
+    if (isequal (gbtype (S), 'logical'))
         % C (M) = A for logical assignment
-        M = S.subs {1} ;
-        if (isobject (M))
-            M = M.opaque ;
+        [am, an] = gbsize (A) ;
+        if (am == 1 && an == 1)
+            % C (M) = scalar
+            C = GrB (gbsubassign (C, S, A)) ;
+        else
+            % C (M) = A where A is a vector
+            C = GrB (gblogassign (C, S, A)) ;
         end
-        % the 'all' syntax requires MATLAB R2019a
-        % if (any (M, 'all'))
-            if (isscalar (A))
-                % C (M) = scalar
-                C = GrB (gbsubassign (C, M, gb (A))) ;
-            else
-                % C (M) = A where A is a vector
-                if (size (A, 2) ~= 1) % TODO: this uses A as an object
-                    % make sure A is a column vector of size mnz-by-1
-                    A = A (:) ;
-                end
-                if (isobject (A))
-                    A = A.opaque ;
-                end
-                C = GrB (gblogassign (C, M, A)) ;
-            end
-        % else
-        %     % M is empty, so C does not change
-        % end
     else
-        % C (I) = A where C is a vector
-        I = gb_get_index (S.subs (1)) ;
-        if (isobject (A))
-            A = A.opaque ;
+        % C (I) = A
+        [cm, cn] = gbsize (C) ;
+        if (cm == 1 || cn == 1)
+            % C (I) = A for a vector or scalar C
+            C = GrB (gbsubassign (C, gb_index (S), A)) ;
+        else
+            % C (I) = A for a matrix C
+            error ('GrB:unsupported', ...
+                'Linear indexing not yet supported for GrB matrices') ;
         end
-        C = GrB (gbsubassign (C, I, gb (A))) ;
     end
+
 elseif (ndims == 2)
+
     % C(I,J) = A where A is length(I)-by-length(J), or a scalar
-    I = gb_get_index (S.subs (1)) ;
-    J = gb_get_index (S.subs (2)) ;
-    if (isobject (A))
-        A = A.opaque ;
-    end
-    C = GrB (gbsubassign (C, I, J, A)) ;
+    C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
+
 else
+
     error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
+
 end
 

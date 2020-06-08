@@ -62,22 +62,25 @@ if (ndims == 1)
         % C = A (M) for logical indexing
         C = GrB (gblogextract (A, S)) ;
     else
-        % C = A (I) for a vector A
-        if (~(m == 1 || n == 1))
+        % C = A (I)
+        if (m == 1 || n == 1)
+            % C = A (I) for a vector A
+            [I, whole] = gb_index (S) ;
+            if (m > 1)
+                C = gbextract (A, I, { }) ;
+            else
+                C = gbextract (A, { }, I) ;
+            end
+            [cm, ~] = gbsize (C) ; 
+            if (whole && cm == 1)
+                C = gbtrans (C) ;
+            end
+            C = GrB (C) ;
+        else
+            % C = A (I) for a matrix A
             error ('GrB:unsupported', ...
                 'Linear indexing not yet supported for GrB matrices') ;
         end
-        [I, whole] = gb_index (S) ;
-        if (m > 1)
-            C = gbextract (A, I, { }) ;
-        else
-            C = gbextract (A, { }, I) ;
-        end
-        [cm, ~] = gbsize (C) ; 
-        if (whole && cm == 1)
-            C = gbtrans (C) ;
-        end
-        C = GrB (C) ;
     end
 
 elseif (ndims == 2)

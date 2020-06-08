@@ -40,7 +40,7 @@ GrB_Matrix gb_by_col            // return the matrix by column
 
     // make sure A is finalized
     GrB_Index anz ;
-    OK (GrB_Matrix_nvals (&anz, A)) ;
+    OK (GrB_Matrix_nvals (&anz, A)) ;   // TODO use GrB_Matrix_wait
 
     // return results
     (*A_copy_handle) = A_copy ;
