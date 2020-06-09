@@ -1,20 +1,17 @@
 function iset = mis (A, check)
 %GRB.MIS variant of Luby's maximal independent set algorithm.
 %
-% Usage:
-%
 %   iset = GrB.mis (A) ;
 %
 % Given an n-by-n symmetric adjacency matrix A of an undirected graph,
-% compute a maximal set of independent nodes and return it in a boolean
-% n-vector, 'iset' where iset(i) of true implies node i is a member of
+% GrB.mis (A) finds a maximal set of independent nodes and returns it as a
+% logical vector, iset, where iset(i) of true implies node i is a member of
 % the set.
 %
-% The matrix A must not have any diagonal entries (self edges), and it
-% must be symmetric.  These conditions are not checked by default, and
-% results are undefined if they do not hold.  In particular, diagonal
-% entries will cause the method to stall.  To check these conditions,
-% use:
+% The matrix A must not have any diagonal entries (self edges), and it must
+% be symmetric.  These conditions are not checked by default, and results
+% are undefined if they do not hold.  In particular, diagonal entries will
+% cause the method to stall.  To check these conditions, use:
 %
 %   iset = GrB.mis (A, 'check') ;
 %
@@ -32,7 +29,7 @@ function iset = mis (A, check)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    gb_error ('A must be square') ;
+    error ('A must be square') ;
 end
 
 % convert A to logical
@@ -44,16 +41,16 @@ else
     if (isequal (check, 'check'))
         check = true ;
     else
-        gb_error ('unknown option') ;
+        error ('unknown option') ;
     end
 end
 
 if (check)
     if (nnz (diag (A)) > 0)
-        gb_error ('A must not have any diagonal entries') ;
+        error ('A must not have any diagonal entries') ;
     end
     if (~issymmetric (A))
-        gb_error ('A must be symmetric') ;
+        error ('A must be symmetric') ;
     end
 end
 
@@ -84,7 +81,7 @@ candidates = GrB.assign (candidates, degrees, true) ;
 
 % add all singletons to iset
 % iset (degree == 0) = 1
-iset = GrB.assign (iset, degrees, true, sr_desc) ; 
+iset = GrB.assign (iset, degrees, true, sr_desc) ;
 
 % Iterate while there are candidates to check.
 ncand = GrB.entries (candidates) ;
@@ -129,7 +126,7 @@ while (ncand > 0)
 
     % this will not occur, unless the input is corrupted somehow
     if (last_ncand == ncand)
-        gb_error ('method stalled; rerun with ''check'' option') ;
+        error ('method stalled; rerun with ''check'' option') ;
     end
     last_ncand = ncand ;
 end

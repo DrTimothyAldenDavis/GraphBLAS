@@ -1,5 +1,5 @@
 function C = reshape (G, varargin)
-%RESHAPE Reshape a GraphBLAS matrix.
+%RESHAPE reshape a matrix.
 % C = reshape (G, m, n) or C = reshape (G, [m n]) returns the m-by-n
 % matrix whose elements are taken columnwise from G.  The matrix G must
 % have numel (G) == m*n.  That is numel (G) == numel (C) must be true.
@@ -15,7 +15,7 @@ if (isobject (G))
     G = G.opaque ;
 end
 
-[mold, nold] = gbsize (G) ;
+[mold, nold, type] = gbsize (G) ;
 mold = int64 (mold) ;
 nold = int64 (nold) ;
 
@@ -24,12 +24,12 @@ mnew = int64 (mnew) ;
 nnew = int64 (nnew) ;
 
 if (mold * nold ~= mnew * nnew)
-    gb_error ('number of elements must not change') ;
+    error ('number of elements must not change') ;
 end
 
 if (isempty (G))
 
-    C = GrB (mnew, nnew, gbtype (G)) ;
+    C = GrB (mnew, nnew, type) ;
 
 else
 

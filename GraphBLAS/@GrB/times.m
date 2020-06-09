@@ -5,9 +5,6 @@ function C = times (A, B)
 % If one is a scalar, the pattern of C is the same as the pattern of the
 % one matrix.
 %
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
-%
 % See also GrB/mtimes, GrB.emult, GrB.mxm.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

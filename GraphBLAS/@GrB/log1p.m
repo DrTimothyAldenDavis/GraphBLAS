@@ -1,7 +1,7 @@
 function C = log1p (G)
-%LOG1P natural logarithm of the entries of a GraphBLAS matrix
-% C = log1p (G) computes the log(1+x) for each entry of a GraphBLAS
-% matrix G.  If any entry in G is < -1, the result is complex.
+%LOG1P natural logarithm.
+% C = log1p (G) is log(1+x) for each entry x of G.
+% If any entry in G is < -1, the result is complex.
 %
 % See also GrB/log, GrB/log2, GrB/log10, GrB/exp.
 

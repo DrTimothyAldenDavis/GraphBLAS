@@ -45,10 +45,10 @@ function C = gb_union_op (op, A, B, desc)
 
 type = gboptype (gbtype (A), gbtype (B)) ;
 
-% A0 = expand A by padding it with zeros from the pattern of B 
+% A0 = expand A by padding it with zeros from the pattern of B
 A0 = gbeadd (['1st.' type], A, gb_expand (0, B, type)) ;
 
-% B0 = expand B by padding it with zeros from the pattern of A 
+% B0 = expand B by padding it with zeros from the pattern of A
 B0 = gbeadd (['1st.' type], B, gb_expand (0, A, type)) ;
 
 % A0 and B0 now have the same pattern, so gbemult can be used:

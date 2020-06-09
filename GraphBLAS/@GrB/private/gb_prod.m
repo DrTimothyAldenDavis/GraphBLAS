@@ -51,7 +51,7 @@ switch (option)
 
     otherwise
 
-        gb_error ('unknown option') ;
+        error ('unknown option') ;
 end
 
 

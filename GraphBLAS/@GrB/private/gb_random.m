@@ -30,15 +30,15 @@ for k = 1:nargin
                 if (isobject (range))
                     range = range.opaque ;
                 end
-                if (prod (gbsize (range)) > 2)
-                    gb_error ('range must contain at most 2 entries') ;
+                [rm, rn, type] = gbsize (range) ;
+                if (rm*rn > 2)
+                    error ('range must contain at most 2 entries') ;
                 end
-                type = gbtype (range) ;
                 range = double (gbfull (range)) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
-                gb_error ('unknown option') ;
+                error ('unknown option') ;
         end
     end
 end
@@ -60,7 +60,7 @@ if (firstchar == 2)
     end
     [m, n] = gbsize (A) ;
     if ((symmetric || hermitian) && (m ~= n))
-        gb_error ('input matrix must be square') ;
+        error ('input matrix must be square') ;
     end
     [I, J] = gbextracttuples (A, desc) ;
     e = length (I) ;
@@ -92,7 +92,7 @@ elseif (firstchar == (4 - (symmetric || hermitian)))
 
 else
 
-    gb_error ('invalid usage') ;
+    error ('invalid usage') ;
 
 end
 

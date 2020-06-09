@@ -1,8 +1,8 @@
 function C = gammaln (G)
 %GAMMALN logarithm of gamma function.
-% C = gammaln (G) computes the natural logarithm of each entry of a
-% GraphBLAS matrix G.  Since gammaln (0) = inf, the result is a full
-% matrix.  G must be real.
+% C = gammaln (G) is the natural logarithm of the gamma function of each
+% entry of G.  Since gammaln (0) = inf, the result is a full matrix.
+% G must be real.
 %
 % See also GrB/gammaln.
 
@@ -13,7 +13,7 @@ G = G.opaque ;
 type = gbtype (G) ;
 
 if (contains (type, 'complex'))
-    gb_error ('input must be real') ;
+    error ('input must be real') ;
 end
 
 if (~gb_isfloat (type))

@@ -1,14 +1,9 @@
 function C = horzcat (varargin)
-%HORZCAT Horizontal concatenation.
+%HORZCAT horizontal concatenation.
 % [A B] or [A,B] is the horizontal concatenation of A and B.
-% A and B may be GraphBLAS or MATLAB matrices, in any combination.
 % Multiple matrices may be concatenated, as [A, B, C, ...].
-%
 % If the matrices have different types, the type is determined
 % according to the results in GrB.optype.
-%
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also GrB/vertcat, GrB.optype.
 
@@ -25,23 +20,22 @@ A = varargin {1} ;
 if (isobject (A))
     A = A.opaque ;
 end
-[m, n] = gbsize (A) ;
+[m, n, type] = gbsize (A) ;
 nvals (1) = gbnvals (A) ;
 ncols (1) = n ;
-type = gbtype (A) ;
 clear A
 for k = 2:nmatrices
     A = varargin {k} ;
     if (isobject (A))
         A = A.opaque ;
     end
-    [m2, n] = gbsize (A) ;
+    [m2, n2, type2] = gbsize (A) ;
     if (m ~= m2)
-        gb_error ('Dimensions of input matrices are not consistent') ;
+        error ('Dimensions of arrays not consistent') ;
     end
     nvals (k) = gbnvals (A) ;
-    ncols (k) = n ;
-    type = gboptype (type, gbtype (A)) ;
+    ncols (k) = n2 ;
+    type = gboptype (type, type2) ;
     clear A ;
 end
 ncols = [0 cumsum(ncols)] ;

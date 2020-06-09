@@ -1,5 +1,5 @@
 function C = spones (G, type)
-%SPONES return pattern of GraphBLAS matrix.
+%SPONES return pattern of a sparse matrix.
 % C = spones (G) returns a matrix C with the same pattern as G, but with
 % all entries set to 1.  The behavior of spones (G) for a GrB matrix
 % differs from spones (A) for a MATLAB matrix A.  An explicit entry

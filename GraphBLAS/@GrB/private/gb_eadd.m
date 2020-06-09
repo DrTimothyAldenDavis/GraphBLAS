@@ -13,12 +13,11 @@ function C = gb_eadd (A, op, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved.  http://suitesparse.com   See GraphBLAS/Doc/License.txt.
 
-[am, an] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-
-type = gboptype (gbtype (A), gbtype (B)) ;
+type = gboptype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)

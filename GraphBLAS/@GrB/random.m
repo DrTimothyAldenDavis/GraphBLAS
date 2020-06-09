@@ -1,5 +1,5 @@
 function C = random (varargin)
-%GRB.RANDOM random GraphBLAS matrix.
+%GRB.RANDOM random sparse matrix.
 % C = GrB.random (A) has the same pattern as A, but with uniformly
 %   distributed random entries.
 %
@@ -66,7 +66,7 @@ function C = random (varargin)
 %
 %   C = GrB.random (2, 4, inf)      % 2-by-4 with all 8 entries
 %   C = GrB.random (2, 4, 0.5, 'normal')    % like sprandn (2,4,0.5)
-%   
+%
 %   % random 10-by-10 int16 matrix with entries from -3 to 6,
 %   % including explicit zeros, with a uniform distribution
 %   C = GrB.random (10, 10, 0.5, 'range', int16 ([-3 6]))

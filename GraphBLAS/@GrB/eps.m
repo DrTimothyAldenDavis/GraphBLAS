@@ -1,5 +1,5 @@
 function C = eps (G)
-%EPS Spacing of numbers in a GraphBLAS matrix.
+%EPS spacing of numbers in a GraphBLAS matrix.
 % C = eps (G) returns the spacing of numbers in a floating-point GraphBLAS
 % matrix.
 %
@@ -25,7 +25,7 @@ switch (GrB.type (G))
         C = max (eps (real (G)), eps (imag (G))) ;
 
     otherwise
-        gb_error ('input must be floating-point') ;
+        error ('input must be floating-point') ;
 
 end
 

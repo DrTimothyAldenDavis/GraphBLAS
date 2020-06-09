@@ -1,5 +1,5 @@
 function p = amd (G, varargin)
-%AMD approximate minimum degree ordering of a GraphBLAS matrix.
+%AMD approximate minimum degree ordering.
 % See 'help amd' for details.
 %
 % See also GrB/colamd, GrB/symrcm.

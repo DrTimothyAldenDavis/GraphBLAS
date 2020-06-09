@@ -1,6 +1,6 @@
 function C = cos (G)
 %COS cosine.
-% C = cos (G) computes the cosine of each entry of a GraphBLAS matrix G.
+% C = cos (G) is the cosine of each entry of G.
 % Since cos (0) = 1, the result is a full matrix.
 %
 % See also GrB/acos, GrB/cosh, GrB/acosh.

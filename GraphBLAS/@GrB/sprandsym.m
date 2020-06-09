@@ -1,18 +1,18 @@
 function C = sprandsym (arg1, arg2)
-%SPRANDSYM random symmetric GraphBLAS matrix
-% C = sprandsym (A) is a symmetric random GraphBLAS matrix.  Its
-%   lower triangle and diagonal have the same pattern as tril (A).
-%   The values of C have a normal distribution.  A must be square.
-%   This usage is the same as C = GrB.random (A, 'symmetric', 'normal').
+%SPRANDSYM random symmetric matrix.
+% C = sprandsym (A) is a symmetric random matrix.  Its lower triangle and
+%   diagonal have the same pattern as tril (A).  The values of C have a
+%   normal distribution.  A must be square.  This usage is the same as
+%   C = GrB.random (A, 'symmetric', 'normal').
 %
-% C = sprandsym (n,d) is an n-by-n symmetric random matrix with
-%   about n*n*d entries, with a normal distribution.  If d == inf,
-%   C is a full matrix.  To use this function instead of the built-in
-%   MATLAB sprandsym, use C = sprandsym (n,GrB(d)), or
-%   C = GrB.random (n, d, 'symmetric', 'normal') ;
+% C = sprandsym (n,d) is an n-by-n symmetric random matrix with about n*n*d
+%   entries, with a normal distribution.  If d == inf, C is full.  To use
+%   this function instead of the built-in MATLAB sprandsym, use
+%   C = sprandsym (n,GrB(d)), or C = GrB.random (n,d,'symmetric','normal').
 %
 % For additional options, see GrB.random.
 % The C = sprandsym (n,d,rc) syntax is not supported.
+% C is returned as a double GraphBLAS matrix.
 %
 % Example:
 %
@@ -37,6 +37,6 @@ elseif (nargin == 2)
     C = GrB (gb_random (n, d, 'symmetric', 'normal')) ;
 else
     % the 'rc' input option is not supported
-    gb_error ('usage: sprandsym(A) or sprandsym(n,d)') ;
+    error ('usage: sprandsym(A) or sprandsym(n,d)') ;
 end
 

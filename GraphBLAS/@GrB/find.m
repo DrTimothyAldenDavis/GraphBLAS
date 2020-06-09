@@ -1,18 +1,18 @@
 function [I, J, X] = find (G, k, search)
-%FIND extract entries from a GraphBLAS matrix.
-% [I, J, X] = find (G) extracts the nonzeros from a GraphBLAS matrix G.
+%FIND extract entries from a matrix.
+% [I, J, X] = find (G) extracts the nonzeros from a matrix G.
 % X has the same type as G ('double', 'single', 'int8', ...).
 %
 % Linear 1D indexing (I = find (S) for the MATLAB matrix S) is not yet
 % supported.
 %
-% G may contain explicit zero entries, and by default these are excluded
-% from the result.  Use GrB.extracttuples (G) to return these explicit
-% zero entries.
+% A GraphBLAS matrix G may contain explicit zero entries, and by default
+% these are excluded from the result.  Use GrB.extracttuples (G) to return
+% these explicit zero entries.
 %
-% For a column vector, I = find (G) returns I as a list of the row
-% indices of nonzeros in G.  For a row vector, I = find (G) returns I as a
-% list of the column indices of nonzeros in G.
+% For a column vector, I = find (G) returns I as a list of the row indices
+% of nonzeros in G.  For a row vector, I = find (G) returns I as a list of
+% the column indices of nonzeros in G.
 %
 % [...] = find (G, k, 'first') returns the first k nonozeros of G.
 % [...] = find (G, k, 'last')  returns the last k nonozeros of G.
@@ -40,7 +40,7 @@ end
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
     if (k < 1)
-        gb_error ('k must be positive') ;
+        error ('k must be positive') ;
     end
     if (~isequal (gbformat (G), 'by col'))
         % find (G, k) assumes the matrix is stored by column, so reformat G
@@ -106,7 +106,7 @@ if (nargin > 1)
             X = X (n-k+1:n) ;
         end
     else
-        gb_error ('invalid search option; must be ''first'' or ''last''') ;
+        error ('invalid search option; must be ''first'' or ''last''') ;
     end
 end
 

@@ -1,13 +1,6 @@
 function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.EXTRACT extract sparse submatrix.
 %
-% GrB.extract is an interface to GrB_Matrix_extract and
-% GrB_Matrix_extract_[TYPE], computing the GraphBLAS expression:
-%
-%   C<#M,replace> = accum (C, A(I,J)) or accum(C, A(J,I)')
-%
-% Usage:
-%
 %   C = GrB.extract (Cin, M, accum, A, I, J, desc)
 %
 % A is a required parameters.  All others are optional, but if M or accum
@@ -58,10 +51,6 @@ function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %       If accum is present then Cin is a required input.
 %
 % M: an optional mask matrix, the same size as C.
-%
-% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix, by default;
-% see 'help GrB/descriptorinfo' for more options.
 %
 % Example:
 %
@@ -117,7 +106,7 @@ switch (nargin)
     case 7
         [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        gb_error ('usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)');
+        error ('usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)');
 end
 
 if (k == 0)

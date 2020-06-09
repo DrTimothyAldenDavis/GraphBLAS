@@ -1,5 +1,5 @@
 function C = complex (A, B)
-%COMPLEX cast a GraphBLAS matrix to MATLAB sparse double complex matrix.
+%COMPLEX cast to a MATLAB sparse double complex matrix.
 % C = complex (G) typecasts the GraphBLAS matrix G to into a MATLAB sparse
 % complex matrix.
 %
@@ -45,15 +45,14 @@ else
         B = B.opaque ;
     end
 
-    if (contains (gbtype (A), 'complex') || ...
-        contains (gbtype (B), 'complex'))
-        gb_error ('inputs must be real') ;
-    end
-
-    [am, an] = gbsize (A) ;
-    [bm, bn] = gbsize (B) ;
+    [am, an, atype] = gbsize (A) ;
+    [bm, bn, btype] = gbsize (B) ;
     a_is_scalar = (am == 1) && (an == 1) ;
     b_is_scalar = (bm == 1) && (bn == 1) ;
+
+    if (contains (atype, 'complex') || contains (btype, 'complex'))
+        error ('inputs must be real') ;
+    end
 
     if (a_is_scalar)
         if (b_is_scalar)

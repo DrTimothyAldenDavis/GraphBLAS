@@ -1,8 +1,8 @@
 function C = acosh (G)
 %ACOSH inverse hyperbolic cosine.
-% C = acosh (G) computes the inverse hyperbolic cosine of each entry of a
-% GraphBLAS matrix G.  Since acosh (0) is nonzero, the result is a full
-% matrix.  C is complex if any (G < 1).
+% C = acosh (G) is the inverse hyperbolic cosine of each entry G.
+% Since acosh (0) is nonzero, the result is a full matrix.
+% C is complex if any (G < 1).
 %
 % See also GrB/cos, GrB/acos, GrB/cosh.
 

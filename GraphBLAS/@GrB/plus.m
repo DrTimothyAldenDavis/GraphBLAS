@@ -5,9 +5,6 @@ function C = plus (A, B)
 % nonzero scalar, the scalar is expanded into a dense matrix the size of
 % the other matrix, and the result is a dense matrix.
 %
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
-%
 % See also GrB.eadd, GrB/minus, GrB/uminus.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

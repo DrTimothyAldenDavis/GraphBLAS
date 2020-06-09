@@ -5,15 +5,12 @@ function C = gb_power (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-atype = gbtype (A) ;
-btype = gbtype (B) ;
-a_is_real = ~contains (atype, 'complex') ;
-b_is_real = ~contains (btype, 'complex') ;
-
-[am, an] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
+a_is_real = ~contains (atype, 'complex') ;
+b_is_real = ~contains (btype, 'complex') ;
 
 % determine if C = A.^B is real or complex
 if (a_is_real && b_is_real)

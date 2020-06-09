@@ -4,7 +4,7 @@ function C = bitget (A, B, assumedtype)
 % A is an integer array.  If B(i,j) is an integer in the range 1 (the
 % least significant bit) to the number of bits in the data type of A, then
 % C(i,j) is that bit of A(i,j).  If B(i,j) is outside this range, C(i,j)
-% is zero; note that this behavior differs from the built-in MATLAB
+% is zero; note that this behavior is an extension to the built-in MATLAB
 % bitget, which results in an error for this case.  This modified rule
 % allows the inputs A and B to be sparse.  If B(i,j) is implicitly zero
 % (not in the pattern of B), or if A(i,j) is implicitly zero, then C(i,j)
@@ -20,11 +20,6 @@ function C = bitget (A, B, assumedtype)
 % an integer type, then it is not modified.  Otherwise, A is converted to
 % assumedtype, which can be 'int8', 'int16', 'int32', 'int64', 'uint8',
 % 'uint16', 'uint32' or 'uint64'.  The default is 'uint64'.
-%
-% The input matrices must be real, and may be either GraphBLAS and/or
-% MATLAB matrices, in any combination.  C is returned as a GraphBLAS
-% matrix.  The type of C is the same as A, after any conversion of A to
-% assumedtype, if needed.
 %
 % Example:
 %
@@ -60,15 +55,15 @@ atype = gbtype (A) ;
 btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
-    gb_error ('inputs must be real') ;
+    error ('inputs must be real') ;
 end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    gb_error ('inputs must not be logical') ;
+    error ('inputs must not be logical') ;
 end
 
 if (~contains (assumedtype, 'int'))
-    gb_error ('assumedtype must be an integer type') ;
+    error ('assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input

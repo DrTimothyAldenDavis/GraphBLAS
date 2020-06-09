@@ -1,6 +1,6 @@
 function C = pow2 (A, B)
 %POW2 base-2 power and scale floating-point number.
-% C = pow2 (G) computes C = 2.^G for a GraphBLAS matrix G.
+% C = pow2 (G) is C(i,j) = 2.^G(i,j) for each entry in G.
 % C = pow2 (F,E) with computes C = F .* (2 .^ fix (E)).
 %
 % See also GrB/log2, GrB/power.

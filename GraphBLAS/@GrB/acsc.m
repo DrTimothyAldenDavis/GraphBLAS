@@ -1,7 +1,7 @@
 function C = acsc (G)
 %ACSC inverse cosecant.
-% C = acsc (G) computes the inverse cosecant of each entry of a GraphBLAS
-% matrix G.  Since acsc (0) is nonzero, C is a full matrix.
+% C = acsc (G) is the inverse cosecant of each entry of G.
+% Since acsc (0) is nonzero, C is a full matrix.
 %
 % See also GrB/csc, GrB/csch, GrB/acsch.
 

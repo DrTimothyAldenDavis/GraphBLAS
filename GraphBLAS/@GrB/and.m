@@ -1,5 +1,5 @@
 function C = and (A, B)
-%& logical AND of GraphBLAS matrices.
+%& logical AND.
 % C = (A & B) is the element-by-element logical AND of A and B.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %

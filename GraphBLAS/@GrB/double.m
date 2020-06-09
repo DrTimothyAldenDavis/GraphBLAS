@@ -1,10 +1,10 @@
 function C = double (G)
 %DOUBLE cast a GraphBLAS sparse matrix to a MATLAB sparse double matrix.
 % C = double (G) typecasts the GraphBLAS matrix G into a MATLAB sparse
-% double matrix C, either real or complex.
+% double matrix C, either real or complex.  Explicit zeros are dropped.
 %
 % To typecast the matrix G to a GraphBLAS sparse double (real) matrix
-% instead, use C = GrB (G, 'double').
+% instead, use C = GrB (G, 'double').  Explicit zeros are kept in C.
 %
 % See also GrB/cast, GrB, GrB/complex, GrB/single, GrB/logical, GrB/int8,
 % GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16, GrB/uint32,

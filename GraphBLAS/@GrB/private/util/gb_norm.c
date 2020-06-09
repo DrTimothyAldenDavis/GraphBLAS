@@ -37,7 +37,7 @@ double gb_norm              // compute norm (A,kind)
     bool is_complex = false ;
 
     if (atype == GrB_FP32)
-    {
+    { 
         // if A is FP32, use the FP32 type and operators
         xtype = GrB_FP32 ;
         absop = GxB_ABS_FP32 ;
@@ -47,7 +47,7 @@ double gb_norm              // compute norm (A,kind)
         minop = GrB_MIN_MONOID_FP32 ;
     }
     else if (atype == GxB_FC32)
-    {
+    { 
         // if A is FC32, use the FP32/FC32 type and operators
         is_complex = true ;
         xtype = GrB_FP32 ;
@@ -58,7 +58,7 @@ double gb_norm              // compute norm (A,kind)
         minop = GrB_MIN_MONOID_FP32 ;
     }
     else if (atype == GxB_FC64)
-    {
+    { 
         // if A is FC64, use the FP64/FC64 type and operators
         is_complex = true ;
         xtype = GrB_FP64 ;
@@ -69,7 +69,7 @@ double gb_norm              // compute norm (A,kind)
         minop = GrB_MIN_MONOID_FP64 ;
     }
     else
-    {
+    { 
         // otherwise, use FP64 type and operators; this will typecast the 
         // input matrix to FP64 if A is not of that type.
         xtype = GrB_FP64 ;
@@ -98,11 +98,11 @@ double gb_norm              // compute norm (A,kind)
         switch (norm_kind)
         {
 
-            case 0:     // Frobenius norm
-            case 2:     // 2-norm
+            case 0 :    // Frobenius norm
+            case 2 :    // 2-norm
 
                 if (is_complex)
-                {
+                { 
                     // X = abs (A)
                     OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                     // X = X .* X
@@ -111,7 +111,7 @@ double gb_norm              // compute norm (A,kind)
                         X, X, NULL)) ;
                 }
                 else
-                {
+                { 
                     // X = A .* A
                     // TODO use GxB_POW_* with GrB_Matrix_apply
                     OK (GrB_Matrix_eWiseMult_BinaryOp (X, NULL, NULL, timesop,
@@ -122,7 +122,7 @@ double gb_norm              // compute norm (A,kind)
                 s = sqrt (s) ;
                 break ;
 
-            case 1:     // 1-norm
+            case 1 :    // 1-norm
 
                 // X = abs (A)
                 OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
@@ -130,7 +130,7 @@ double gb_norm              // compute norm (A,kind)
                 OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;
                 break ;
 
-            case INT64_MAX:     // inf-norm
+            case INT64_MAX :    // inf-norm
 
                 // X = abs (A)
                 OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
@@ -138,10 +138,10 @@ double gb_norm              // compute norm (A,kind)
                 OK (GrB_Matrix_reduce_FP64 (&s, NULL, maxop, X, NULL)) ;
                 break ;
 
-            case INT64_MIN:     // (-inf)-norm
+            case INT64_MIN :    // (-inf)-norm
 
                 if (GB_is_dense (A))
-                {
+                { 
                     // X = abs (A)
                     OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                     // s = min (X)
@@ -166,12 +166,12 @@ double gb_norm              // compute norm (A,kind)
         switch (norm_kind)
         {
 
-            case 2:     // 2-norm
+            case 2 :    // 2-norm
 
                 ERROR ("2-norm not available for GrB matrices") ;
                 break ;
 
-            case 1:     // 1-norm:  max sum of columns of abs (A)
+            case 1 :    // 1-norm:  max sum of columns of abs (A)
 
                 // X = abs (A)
                 OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
@@ -184,7 +184,7 @@ double gb_norm              // compute norm (A,kind)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
                 break ;
 
-            case INT64_MAX:     // inf-norm:  max sum of rows of abs (A)
+            case INT64_MAX :    // inf-norm:  max sum of rows of abs (A)
 
                 // X = abs (A)
                 OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
@@ -196,12 +196,12 @@ double gb_norm              // compute norm (A,kind)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
                 break ;
 
-            case INT64_MIN:
+            case INT64_MIN :
 
                 ERROR ("(-inf)-norm not available for GrB matrices") ;
                 break ;
 
-            default:
+            default :
 
                 ERROR ("unknown norm") ;
                 break ;

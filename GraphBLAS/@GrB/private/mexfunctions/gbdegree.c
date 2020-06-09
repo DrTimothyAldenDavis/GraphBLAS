@@ -79,7 +79,7 @@ void mexFunction
     GrB_Vector d = NULL ;
 
     if (native)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get the degree of each vector of X
@@ -114,7 +114,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             if (nvals < ncols / 16 && ncols > 256)
-            {
+            { 
                 // X is hypersparse, or might as well be, so let y be the
                 // pattern of nonempty columns of X.
                 if (!GB_matlab_helper9 (X, &degree, &list, &nvec))
@@ -125,7 +125,7 @@ void mexFunction
                     &list, &degree, NULL)) ;
             }
             else
-            {
+            { 
                 // y = dense vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
                 OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
@@ -145,7 +145,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             if (nvals < nrows / 16 && nrows > 256)
-            {
+            { 
                 // X is hypersparse, or might as well be, so let y be the
                 // pattern of nonempty rows of X.
                 if (!GB_matlab_helper9 (X, &degree, &list, &nvec))
@@ -156,7 +156,7 @@ void mexFunction
                     &list, &degree, NULL)) ;
             }
             else
-            {
+            { 
                 // y = dense vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
                 OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,

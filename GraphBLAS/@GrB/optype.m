@@ -47,7 +47,7 @@ function type = optype (a, b)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (ischar (a)) 
+if (ischar (a))
     atype = a ;
 elseif (isobject (a))
     a = a.opaque ;
@@ -56,7 +56,7 @@ else
     atype = gbtype (a) ;
 end
 
-if (ischar (b)) 
+if (ischar (b))
     btype = b ;
 elseif (isobject (b))
     b = b.opaque ;

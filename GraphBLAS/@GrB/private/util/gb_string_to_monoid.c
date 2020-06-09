@@ -18,12 +18,9 @@ GrB_Monoid gb_string_to_monoid          // return monoid from a string
     char *opstring,                     // string defining the operator
     const GrB_Type type                 // default type if not in the string
 )
-{
+{ 
 
-    //--------------------------------------------------------------------------
     // get the binary operator and convert to a monoid
-    //--------------------------------------------------------------------------
-
     return (gb_binop_to_monoid (gb_string_to_binop (opstring, type, type))) ;
 }
 

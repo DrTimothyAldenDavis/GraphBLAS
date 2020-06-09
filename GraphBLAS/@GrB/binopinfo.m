@@ -1,7 +1,6 @@
 function binopinfo (op, optype)
 %GRB.BINOPINFO list the details of a GraphBLAS binary operator.
 %
-% Usage:
 %   GrB.binopinfo
 %   GrB.binopinfo (op)
 %   GrB.binopinfo (op, optype)
@@ -12,13 +11,13 @@ function binopinfo (op, optype)
 % 'uint16', 'uint32', 'uint64', 'single', 'double', 'single complex',
 % 'double complex' (the latter can be written as simply 'complex').
 %
-% For GrB.binopinfo(op), however, the op must be a string of the form
-% 'op.optype', where 'op' is listed below.  The second usage allows the
-% optype to be omitted from the first argument, as just 'op'.  This is
-% valid for all GraphBLAS operations, since the optype can be determined
-% from the operands (see Typecasting, below).  However, GrB.binopinfo does
-% not have any operands thus the optype must be provided, either in the
-% op as GrB.binopinfo ('+.double'), or in the second argument as
+% For GrB.binopinfo (op), the op must be a string of the form 'op.optype',
+% where 'op' is listed below.  The second usage allows the optype to be
+% omitted from the first argument, as just 'op'.  This is valid for all
+% GraphBLAS operations, since the optype can be determined from the
+% operands (see Typecasting, below).  However, GrB.binopinfo does not have
+% any operands and thus the optype must be provided, either in the op as
+% GrB.binopinfo ('+.double'), or in the second argument as
 % GrB.binopinfo ('+', 'double').
 %
 % The 6 comparator operators come in two flavors.  For the is* operators,
@@ -75,13 +74,13 @@ function binopinfo (op, optype)
 % z = cmplx(x,y) can be computed for x and y as single and double; z is
 % single complex or double complex, respectively.
 %
-% The following  bitwise operators are available for any signed or
+% The following bitwise operators are available for any signed or
 % unsigned integer types:  bitor, bitand, bitxor, bitxnor, bitget, bitset,
 % bitclr, and bitshift.
 %
-% Typecasting:  If the optype is omitted from the string (as in GrB.eadd
-% (A, '+', B) or simply C = A+B), then the optype is inferred from the
-% type of A and B.  See 'help GrB.optype' for details.
+% Typecasting:  If the optype is omitted from the string (for example,
+% GrB.eadd (A, '+', B) or simply C = A+B), then the optype is inferred
+% from the type of A and B.  See 'help GrB.optype' for details.
 %
 % Example:
 %

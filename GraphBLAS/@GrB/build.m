@@ -1,7 +1,6 @@
 function C = build (varargin)
-%GRB.BUILD construct a GraphBLAS sparse matrix from a list of entries.
+%GRB.BUILD construct a sparse matrix from a list of entries.
 %
-% Usage:
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %
 % GrB.build constructs an m-by-n GraphBLAS sparse matrix C from a list of
@@ -32,10 +31,10 @@ function C = build (varargin)
 % and the subsequent entries are ignored.  If dup is '2nd', then
 % C(i,j)=X(k3), and the preceding entries are ignored.
 %
-% type is a string that defines the type of C (see 'help GrB' for a list of
-% types).  The type need not be the same type as the dup operator (unless
-% one has a complex type, in which case both must have a complex type).  If
-% the type is not specified, it defaults to the type of X.
+% type is a string that defines the type of C (see 'help GrB' for a list
+% of types).  The type need not be the same type as the dup operator
+% (unless one has a complex type, in which case both must have a complex
+% type).  If the type is not specified, it defaults to the type of X.
 %
 % The integer arrays I and J may be double, int64, or uint64:
 % If I, J, and X are double, the following examples construct the same

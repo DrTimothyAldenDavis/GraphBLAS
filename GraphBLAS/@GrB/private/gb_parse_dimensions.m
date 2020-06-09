@@ -22,7 +22,7 @@ switch (nargin)
             % C = ones ([m n])
             [m, n] = gb_get_pair (arg1) ;
         else
-            gb_error ('invalid dimensions') ;
+            error ('invalid dimensions') ;
         end
 
     case { 2 }

@@ -1,5 +1,5 @@
 function C = eq (A, B)
-%A == B Equal.
+%A == B equal.
 % C = (A == B) is an element-by-element comparison of A and B.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
@@ -25,12 +25,11 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-[am, an] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-
-ctype = gboptype (gbtype (A), gbtype (B)) ;
+ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)

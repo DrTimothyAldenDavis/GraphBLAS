@@ -4,13 +4,12 @@ function C = zeros (varargin)
 %   C = zeros (n) ;      n-by-n GrB double matrix with no entries.
 %   C = zeros (m,n) ;    m-by-n GrB double matrix with no entries.
 %   C = zeros ([m,n]) ;  m-by-n GrB double matrix with no entries.
-%   C = zeros (..., type) ;      empty matrix of given type
-%   C = zeros (..., 'like', G) ; empty matrix, same type as G
+%   C = zeros (..., type) ;      empty matrix of given type.
+%   C = zeros (..., 'like', G) ; empty matrix, same type as G.
 %
 % Since function overloads the MATLAB built-in zeros(...), at least one
 % input must be a GraphBLAS matrix to use this version (for example,
-% C = zeros (GrB (n))).  Alternatively, C = GrB (n,n) can be used
-% instead.
+% C = zeros (GrB (n))).  Alternatively, C = GrB (n,n) can be used.
 %
 % See also GrB/ones, GrB/false, GrB/true.
 

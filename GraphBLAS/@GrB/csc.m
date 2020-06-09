@@ -1,6 +1,6 @@
 function C = csc (G)
 %CSC cosecant.
-% C = csc (G) computes the cosecant of each entry of a GraphBLAS matrix G.
+% C = csc (G) is the cosecant of each entry of G.
 % Since csc (0) is nonzero, C is a full matrix.
 %
 % See also GrB/acsc, GrB/csch, GrB/acsch.

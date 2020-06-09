@@ -1,6 +1,6 @@
 function C = tan (G)
 %TAN tangent.
-% C = tan (G) computes the tangent of each entry of a GraphBLAS matrix G.
+% C = tan (G) is the tangent of each entry of G.
 %
 % See also GrB/tanh, GrB/atan, GrB/atanh, GrB/atan2.
 

@@ -53,7 +53,7 @@ if (~isfield (opts, 'type'))
 end
 
 if (~(isequal (opts.type, 'single') || isequal (opts.type, 'double')))
-    gb_error ('opts.type must be ''single'' or ''double''') ;
+    error ('opts.type must be ''single'' or ''double''') ;
 end
 
 % get options
@@ -67,7 +67,7 @@ weighted = opts.weighted ;
 
 [m, n] = size (A) ;
 if (m ~= n)
-    gb_error ('A must be square') ;
+    error ('A must be square') ;
 end
 
 % select the semiring and determine if A is native

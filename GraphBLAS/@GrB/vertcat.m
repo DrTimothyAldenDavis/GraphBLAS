@@ -1,14 +1,9 @@
 function C = vertcat (varargin)
-%VERTCAT Vertical concatenation.
+%VERTCAT vertical concatenation.
 % [A ; B] is the vertical concatenation of A and B.
-% A and B may be GraphBLAS or MATLAB matrices, in any combination.
 % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
-%
 % If the matrices have different types, the type is determined
 % according to the rules in GrB.optype.
-%
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also GrB/horzcat, GrB.optype.
 
@@ -26,23 +21,22 @@ A = varargin {1} ;
 if (isobject (A))
     A = A.opaque ;
 end
-[m, n] = gbsize (A) ;
+[m, n, type] = gbsize (A) ;
 nvals (1) = gbnvals (A) ;
 nrows (1) = m ;
-type = gbtype (A) ;
 clear A
 for k = 2:nmatrices
     A = varargin {k} ;
     if (isobject (A))
         A = A.opaque ;
     end
-    [m, n2] = gbsize (A) ;
+    [m2, n2, type2] = gbsize (A) ;
     if (n ~= n2)
-        gb_error ('Dimensions of arrays being concatenated are not consistent');
+        error ('Dimensions of arrays not consistent') ;
     end
     nvals (k) = gbnvals (A) ;
-    nrows (k) = m ;
-    type = gboptype (type, gbtype (A)) ;
+    nrows (k) = m2 ;
+    type = gboptype (type, type2) ;
     clear A ;
 end
 nrows = [0 cumsum(nrows)] ;

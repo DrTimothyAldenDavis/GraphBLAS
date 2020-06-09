@@ -1,8 +1,6 @@
 function s = isbanded (A, lo, hi)
-%ISBANDED True if A is a banded matrix.
-% isbanded (A, lo, hi) is true if the bandwidth of A is between lo and hi,
-% where A is a MATLAB or GraphBLAS matrix.  To use this function on a
-% MATLAB matrix, use isbanded (A, GrB (lo), GrB (hi)) ;
+%ISBANDED true if A is a banded matrix.
+% isbanded (A, lo, hi) is true if the bandwidth of A is between lo and hi.
 %
 % See also GrB/istril, GrB/istriu, GrB/bandwidth.
 

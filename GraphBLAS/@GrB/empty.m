@@ -21,7 +21,7 @@ else
     m = max (m, 0) ;
     n = max (n, 0) ;
     if (~ ((m == 0) || (n == 0)))
-        gb_error ('at least one dimension must be zero') ;
+        error ('at least one dimension must be zero') ;
     end
 end
 

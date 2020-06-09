@@ -71,17 +71,17 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // and converted to CSC format if not already in that format.
 
         if (type == GxB_FC32 || type == GxB_FC64)
-        {
+        { 
             // typecast to double complex, by col
             type = GxB_FC64 ;
         }
         else if (type == GrB_BOOL)
-        {
+        { 
             // typecast to logical, by col
             type = GrB_BOOL ;
         }
         else
-        {
+        { 
             // typecast to double, by col
             type = GrB_FP64 ;
         }
@@ -123,7 +123,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
             S = mxCreateSparseLogicalMatrix (nrows, ncols, 1) ;
         }
         else if (type == GxB_FC64)
-        {
+        { 
             S = mxCreateSparse (nrows, ncols, 1, mxCOMPLEX) ;
         }
         else
@@ -159,7 +159,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
             S = mxCreateSparseLogicalMatrix (0, 0, 1) ;
         }
         else if (type == GxB_FC64)
-        {
+        { 
             S = mxCreateSparse (0, 0, 1, mxCOMPLEX) ;
         }
         else // type == GrB_FP64
@@ -190,7 +190,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
             mxSetData (S, Tx) ;     // OK:bool
         }
         else if (type == GxB_FC64)
-        {
+        { 
             p = mxGetComplexDoubles (S) ;
             gb_mxfree (&p) ;
             mxSetComplexDoubles (S, Tx) ;

@@ -24,7 +24,7 @@ function gbmake (what)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if verLessThan ('matlab', '9.4')
-    gb_error ('MATLAB 9.4 (R2018a) or later is required') ;
+    error ('MATLAB 9.4 (R2018a) or later is required') ;
 end
 
 % finish GraphBLAS
@@ -194,20 +194,26 @@ try
 catch
 end
 
-%{
-% TODO uncomment this when done:
 fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n') ;
-cd ../..
-fprintf ('\n  addpath (''%s'') ;\n', pwd) ;
-cd ..
+here1 = cd ('../..') ;
+addpath (pwd) ;
+cmd1 = fprintf ('\n  addpath (''%s'') ;\n', pwd) ;
+here2 = cd ('..') ;
 if ispc
-    fprintf ('  addpath (''%s/build/Release'') ;\n', pwd) ;
+    lib_path = sprintf ('%s/build/Release', pwd) ;
 else
-    fprintf ('  addpath (''%s/build'') ;\n', pwd) ;
+    lib_path = sprintf ('%s/build', pwd) ;
 end
+fprintf ('  addpath (''%s'') ;\n', lib_path) ;
+addpath (lib_path) ;
+cd (here1) ;
+
+fprintf ('\nFor a quick demo of GraphBLAS, type the following commands:\n\n') ;
+fprintf ('  cd ../../demo\n') ;
+fprintf ('  gbdemo\n') ;
 
 fprintf ('\nTo test GraphBLAS, type the following commands:\n\n') ;
-fprintf ('  cd GraphBLAS/test\n') ;
+fprintf ('  cd ../../test\n') ;
 fprintf ('  gbtest\n') ;
-%}
+

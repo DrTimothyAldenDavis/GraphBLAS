@@ -1,7 +1,7 @@
 function C = acsch (G)
 %ACSCH inverse hyperbolic cosecant.
-% C = acsch (G) computes the inverse hyberbolic cosecant of each entry of a
-% GraphBLAS matrix G.  Since acsch (0) is nonzero, C is a full matrix.
+% C = acsch (G) is the inverse hyberbolic cosecant of each entry G.
+% Since acsch (0) is nonzero, C is a full matrix.
 %
 % See also GrB/csc, GrB/acsc, GrB/csch.
 

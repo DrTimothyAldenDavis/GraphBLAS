@@ -16,7 +16,7 @@ for k = 1:nargin-1
         case { 'count', 'list', 'degree' }
             kind = arg ;
         otherwise
-            gb_error ('unknown option') ;
+            error ('unknown option') ;
     end
 end
 
@@ -32,7 +32,7 @@ if (isequal (dim, 'all'))
             % X = GrB.entries (A, 'list')
             result = unique (gbextractvalues (A)) ;
         otherwise
-            gb_error ('''all'' and ''degree'' cannot be combined') ;
+            error ('''all'' and ''degree'' cannot be combined') ;
     end
 
 else

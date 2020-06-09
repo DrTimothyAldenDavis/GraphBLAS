@@ -99,7 +99,7 @@
 %     to match the required size of the other input.  For example, given
 %
 %         A = rand (4)
-%         x = [10 100 1000 10000] 
+%         x = [10 100 1000 10000]
 %
 %     these computations both scale the columns of x.  The results are the
 %     same:
@@ -132,7 +132,7 @@
 %       G = 100 * rand (4)
 %       G = GrB (G, 'int8')
 %
-%     If instead, a double matrix is used as-is directly in an integer 
+%     If instead, a double matrix is used as-is directly in an integer
 %     semiring, the C typecasting rules are used:
 %
 %       % suppose A and B are double:

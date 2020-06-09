@@ -32,6 +32,9 @@ function result = nonz (A, varargin)
 % 'zero' can be specified; d = GrB.nonz (A, ..., id).  For example, to
 % count all entries in A not equal to one, use GrB.nonz (A, 1).
 %
+% The result is a MATLAB scalar or vector, except for the 'degree'
+% usage, in which case the result is a GrB vector d.
+%
 % Example:
 %
 %   A = magic (5) ;

@@ -1,12 +1,11 @@
 function [I,J,X] = extracttuples (A, desc)
 %GRB.EXTRACTTUPLES extract a list of entries from a matrix.
 %
-% Usage:
 %   [I,J,X] = GrB.extracttuples (A, desc)
 %
-% GrB.extracttuples extracts all entries from either a MATLAB matrix or a
-% GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix, [I,J,X] =
-% GrB.extracttuples (A) is identical to [I,J,X] = find (A).
+% GrB.extracttuples extracts all entries from either a MATLAB or
+% GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix,
+% [I,J,X] = GrB.extracttuples (A) is identical to [I,J,X] = find (A).
 %
 % For a GraphBLAS matrix G, GrB.extracttuples (G) returns any explicit
 % zero entries in G, while find (G) excludes them.
@@ -27,10 +26,7 @@ function [I,J,X] = extracttuples (A, desc)
 % conventional 1-based indexing in MATLAB, but it is the fastest method.
 %
 % The overloaded [I,J,X] = find (A) method for a GraphBLAS matrix A uses
-% desc.base of 'default'.
-%
-% This function corresponds to the GrB_*_extractTuples_* functions in
-% GraphBLAS.
+% desc.base of 'default', and always removes explicit zeros.
 %
 % See also GrB/find, GrB/build.
 

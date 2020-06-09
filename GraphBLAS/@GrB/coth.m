@@ -1,7 +1,7 @@
 function C = coth (G)
 %COTH hyperbolic cotangent.
-% C = coth (G) computes the hyperbolic cotangent of each entry of a
-% GraphBLAS matrix G.  Since coth (0) is nonzero, C is a full matrix.
+% C = coth (G) is the hyperbolic cotangent of each entry of G.
+% Since coth (0) is nonzero, C is a full matrix.
 %
 % See also GrB/cot, GrB/acot, GrB/acoth.
 

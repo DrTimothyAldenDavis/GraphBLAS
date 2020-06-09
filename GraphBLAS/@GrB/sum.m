@@ -1,9 +1,8 @@
 function C = sum (G, option)
-%SUM Sum of elements.
-% C = sum (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n
-% row vector C where C(j) is the sum of all entries in G(:,j).  If G is a
-% row or column vector, then sum (G) is a scalar sum of all the entries
-% in the vector.
+%SUM sum of elements.
+% C = sum (G), where G is an m-by-n matrix, computes a 1-by-n row vector C
+% where C(j) is the sum of all entries in G(:,j).  If G is a row or column
+% vector, then sum (G) is a scalar sum of all the entries in the vector.
 %
 % C = sum (G,'all') sums all elements of G to a single scalar.
 %

@@ -13,7 +13,7 @@ function s = isa (G, type)
 % matrix G has type 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
 % 'uint32', or 'uint64'.
 %
-% isa (G, 'complex') is the same as ~isreal (G), and it stru if the GrB
+% isa (G, 'complex') is the same as ~isreal (G), and is true if the GrB
 % matrix G has type 'single complex' or 'double complex'.
 %
 % isa (G, type) is true if the type string matches the type of G.

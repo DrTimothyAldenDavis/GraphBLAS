@@ -8,8 +8,8 @@ function C = int8 (G)
 % C = GrB (G, 'int8').
 %
 % See also GrB, GrB/double, GrB/complex, GrB/single, GrB/logical,
-% GrB/int8, GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16,
-% GrB/uint32, GrB/uint64.
+% GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16, GrB/uint32,
+% GrB/uint64.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

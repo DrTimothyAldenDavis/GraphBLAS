@@ -1,8 +1,6 @@
 function unopinfo (op, type)
 %GRB.UNOPINFO list the details of a GraphBLAS unary operator.
 %
-% Usage
-%
 %   GrB.unopinfo
 %   GrB.unopinfo (op)
 %   GrB.unopinfo (op, type)
@@ -32,7 +30,7 @@ function unopinfo (op, type)
 % For 4 floating-point types (real & complex)x(single & double):
 %   sqrt        z = sqrt (x)    square root
 %   log         z = log (x)     base-e logarithm
-%   exp         z = exp (x)     base-2 exponential, e^x 
+%   exp         z = exp (x)     base-2 exponential, e^x
 %   sin         z = sin (x)     sine
 %   cos         z = cos (x)     cosine
 %   tan         z = tan (x)     tangent
@@ -42,9 +40,9 @@ function unopinfo (op, type)
 %   sinh        z = sinh (x)    hyperbolic sine
 %   cosh        z = cosh (x)    hyperbolic cosine
 %   tanh        z = tanh (x)    hyperbolic tangent
-%   asinh       z = asinh (x)   inverse hyperbolic sine 
-%   acosh       z = acosh (x)   inverse hyperbolic cosine 
-%   atanh       z = atanh (x)   inverse hyperbolic tangent 
+%   asinh       z = asinh (x)   inverse hyperbolic sine
+%   acosh       z = acosh (x)   inverse hyperbolic cosine
+%   atanh       z = atanh (x)   inverse hyperbolic tangent
 %   signum      z = signum (x)  signum function, also 'sign'
 %   ceil        z = ceil (x)    ceiling
 %   floor       z = floor (x)   floor
@@ -76,7 +74,7 @@ function unopinfo (op, type)
 %   frexpe      z = frexpe (x)  exponent from ANSI C11 frexp function
 %                               The MATLAB [f,e]=log2(x) returns
 %                               f = frexpx (x) and e = frexpe (x).
-% 
+%
 % For integer types only (result is same type as input):
 %   bitcmp      z = ~(x)        bitwise complement, also 'bitnot'
 %

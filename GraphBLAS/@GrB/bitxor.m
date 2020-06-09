@@ -1,6 +1,6 @@
 function C = bitxor (A, B, assumedtype)
 %BITXOR bitwise XOR.
-% C = bitxor (A,B) computes the bitwise XOR of A and B.  If A and B are
+% C = bitxor (A,B) is the bitwise XOR of A and B.  If A and B are
 % matrices, the pattern of C is the set union of A and B.  If one of A or
 % B is a nonzero scalar, the scalar is expanded into a dense matrix the
 % size of the other matrix, and the result is a dense matrix.
@@ -11,10 +11,6 @@ function C = bitxor (A, B, assumedtype)
 % B are converted to assumedtype, which can be 'int8', 'int16', 'int32',
 % 'int64', 'uint8', 'uint16', 'uint32' or 'uint64'.  The default is
 % 'uint64'.
-%
-% The input matrices must be real, and may be either GraphBLAS and/or
-% MATLAB matrices, in any combination.  C is returned as a GraphBLAS
-% matrix.
 %
 % Example:
 %

@@ -7,14 +7,14 @@ function s = gb_issymmetric (G, option, herm)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[m, n] = gbsize (G) ;
+[m, n, type] = gbsize (G) ;
+
 if (m ~= n)
 
     s = false ;
 
 else
 
-    type = gbtype (G) ;
     if (isequal (type, 'logical'))
         G = gbnew (G, 'double') ;
     end
@@ -41,7 +41,7 @@ else
             s = (gbnormdiff (G, T, 1) == 0) ;
 
         otherwise
-            gb_error ('invalid option') ;
+            error ('invalid option') ;
 
     end
 

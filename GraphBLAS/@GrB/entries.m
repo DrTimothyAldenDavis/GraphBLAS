@@ -34,7 +34,7 @@ function result = entries (A, varargin)
 %   that I = find (d) is the same I = GrB.entries (A, 'col', 'list').
 %
 % The result is a MATLAB scalar or vector, except for the 'degree'
-% usage, in which case the result is a GrB vector.
+% usage, in which case the result is a GrB vector d.
 %
 % Example:
 %

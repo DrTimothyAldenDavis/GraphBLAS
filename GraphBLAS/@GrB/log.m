@@ -1,7 +1,7 @@
 function C = log (G)
-%LOG natural logarithm of the entries of a GraphBLAS matrix.
-% C = log (G) computes the natural logarithm of each entry of a GraphBLAS
-% matrix G.  Since log (0) is nonzero, the result is a full matrix.
+%LOG natural logarithm.
+% C = log (G) is the natural logarithm of each entry of G.
+% Since log (0) is nonzero, the result is a full matrix.
 % If any entry in G is negative, the result is complex.
 %
 % See also GrB/log1p, GrB/log2, GrB/log10, GrB/exp.

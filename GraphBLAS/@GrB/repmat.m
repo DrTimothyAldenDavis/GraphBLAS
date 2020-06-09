@@ -1,8 +1,8 @@
 function C = repmat (G, m, n)
-%REPMAT Replicate and tile a GraphBLAS matrix.
-% C = repmat (G, m, n)  % constructs an m-by-n tiling of the GrB matrix A
+%REPMAT replicate and tile a matrix.
+% C = repmat (G, m, n)  % constructs an m-by-n tiling of the matrix G
 % C = repmat (G, [m n]) % same as C = repmat (A, m, n)
-% C = repmat (G, n)     % constructs an n-by-n tiling of the GrB matrix G
+% C = repmat (G, n)     % constructs an n-by-n tiling of the matrix G
 %
 % See also GrB/kron, GrB.kronecker.
 

@@ -1,5 +1,5 @@
 function s = isdiag (G)
-%ISDIAG True if the GraphBLAS matrix G is a diagonal matrix.
+%ISDIAG true if G is a diagonal matrix.
 % isdiag (G) is true if G is a diagonal matrix, and false otherwise.
 %
 % See also GrB/isbanded.

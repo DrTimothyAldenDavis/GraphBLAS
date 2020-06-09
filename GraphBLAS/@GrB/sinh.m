@@ -1,7 +1,6 @@
 function C = sinh (G)
 %SINH hyperbolic sine.
-% C = sinh (G) computes the hyperbolic sine of each entry of a GraphBLAS
-% matrix G.
+% C = sinh (G) is the hyperbolic sine of each entry of G.
 %
 % See also GrB/sin, GrB/asin, GrB/asinh.
 

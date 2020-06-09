@@ -1,6 +1,5 @@
 function C = any (G, option)
-%ANY True if any element of a GraphBLAS matrix is nonzero or true.
-%
+%ANY true if any element of a matrix is nonzero or true.
 % C = any (G) is true if any entry in G is nonzero or true.  If G is a
 % matrix, C is a row vector with C(j) = any (G (:,j)).
 %

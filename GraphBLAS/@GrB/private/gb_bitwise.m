@@ -16,15 +16,15 @@ atype = gbtype (A) ;
 btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
-    gb_error ('inputs must be real') ;
+    error ('inputs must be real') ;
 end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    gb_error ('inputs must not be logical') ;
+    error ('inputs must not be logical') ;
 end
 
 if (~contains (assumedtype, 'int'))
-    gb_error ('assumedtype must be an integer type') ;
+    error ('assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input
@@ -55,7 +55,7 @@ if (isequal (op, 'bitshift'))
         % expand the scalar A to the pattern of B
         A = gb_expand (A, B) ;
     else
-        % expand B by padding it with zeros from the pattern of A 
+        % expand B by padding it with zeros from the pattern of A
         B = gbeadd (['1st.int8'], B, gb_expand (0, A, 'int8')) ;
     end
 
@@ -68,7 +68,7 @@ else
         btype = assumedtype ;
     end
     if (~isequal (atype, btype))
-        gb_error ('integer inputs must have the same type') ;
+        error ('integer inputs must have the same type') ;
     end
 
     switch (op)

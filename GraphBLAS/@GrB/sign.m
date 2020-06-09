@@ -1,9 +1,8 @@
 function C = sign (G)
-%SIGN Signum function.
-% C = sign (G) computes the signum function for each entry in the
-% GraphBLAS matrix G.  For each element of G, sign(G) returns 1 if the
-% element is greater than zero, 0 if it equals zero, and -1 if it is less
-% than zero.  For the complex case, C = G ./ abs (G).
+%SIGN signum function.
+% C = sign (G) is the signum function for each entry of G.  For real
+% values, sign(x) is 1 if x > 0, zero if x is zero, and -1 if x < 0.
+% For the complex case, sign(x) = x ./ abs (x).
 %
 % See also GrB/abs.
 

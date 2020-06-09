@@ -11,30 +11,30 @@
 
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
 (
-    const char *classname
+    const char *typename
 )
 { 
 
-    if (MATCH (classname, "logical" )) return (GrB_BOOL) ;
-    if (MATCH (classname, "int8"    )) return (GrB_INT8) ;
-    if (MATCH (classname, "int16"   )) return (GrB_INT16) ;
-    if (MATCH (classname, "int32"   )) return (GrB_INT32) ;
-    if (MATCH (classname, "int64"   )) return (GrB_INT64) ;
-    if (MATCH (classname, "uint8"   )) return (GrB_UINT8) ;
-    if (MATCH (classname, "uint16"  )) return (GrB_UINT16) ;
-    if (MATCH (classname, "uint32"  )) return (GrB_UINT32) ;
-    if (MATCH (classname, "uint64"  )) return (GrB_UINT64) ;
-    if (MATCH (classname, "single"  )) return (GrB_FP32) ;
-    if (MATCH (classname, "double"  )) return (GrB_FP64) ;
+    if (MATCH (typename, "logical" )) return (GrB_BOOL) ;
+    if (MATCH (typename, "int8"    )) return (GrB_INT8) ;
+    if (MATCH (typename, "int16"   )) return (GrB_INT16) ;
+    if (MATCH (typename, "int32"   )) return (GrB_INT32) ;
+    if (MATCH (typename, "int64"   )) return (GrB_INT64) ;
+    if (MATCH (typename, "uint8"   )) return (GrB_UINT8) ;
+    if (MATCH (typename, "uint16"  )) return (GrB_UINT16) ;
+    if (MATCH (typename, "uint32"  )) return (GrB_UINT32) ;
+    if (MATCH (typename, "uint64"  )) return (GrB_UINT64) ;
+    if (MATCH (typename, "single"  )) return (GrB_FP32) ;
+    if (MATCH (typename, "double"  )) return (GrB_FP64) ;
 
-    if (MATCH (classname, "single complex"))
-    {
+    if (MATCH (typename, "single complex"))
+    { 
         return (GxB_FC32) ;
     }
 
-    if (MATCH (classname, "double complex") ||
-        MATCH (classname, "complex"))
-    {
+    if (MATCH (typename, "double complex") ||
+        MATCH (typename, "complex"))
+    { 
         return (GxB_FC64) ;
     }
 

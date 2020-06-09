@@ -5,7 +5,7 @@ function s = isfull (A)
 % or full matrix.  GrB.isfull (A) is always true if A is a MATLAB full
 % matrix.
 %
-% See also GrB/issparse.
+% See also GrB/issparse, GrB/full.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

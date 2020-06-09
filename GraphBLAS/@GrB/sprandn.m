@@ -1,17 +1,15 @@
 function C = sprandn (arg1, arg2, arg3)
-%SPRANDN sparse normally distributed random GraphBLAS matrix.
-% C = sprandn (A) is a GraphBLAS matrix with the same pattern as A,
-%   but with normally distributed random entries. 
+%SPRANDN sparse normally distributed random matrix.
+% C = sprandn (A) is a matrix with the same pattern as A,
+%   but with normally distributed random entries.
 %
-% C = sprandn (m,n,d) is a random m-by-n GraphBLAS matrix with about
-%   m*n*d normally distributed values.  If d == inf, C is a full
-%   matrix. To use this function instead of the built-in sprandn, use
-%   C = sprandn (m,n,GrB(d)), for example, or
-%   C = GrB.random (m,n,d,'normal').
+% C = sprandn (m,n,d) is a random m-by-n matrix with about m*n*d normally
+%   distributed values.  If d == inf, C is a full matrix. To use this
+%   function instead of the built-in sprandn, use C = sprandn (m,n,GrB(d)),
+%   for example, or C = GrB.random (m,n,d,'normal').
 %
 % For additional options, see GrB.random.
-% The C = sprandn (m,n,d,rc) syntax is not supported.
-%
+% The rc parameter for C = sprandn (m,n,d,rc) is not supported.
 % C is returned as a double GraphBLAS matrix.
 %
 % See also GrB/sprandn, GrB/sprandsym, GrB.random.
@@ -31,6 +29,6 @@ elseif (nargin == 3)
     C = GrB (gb_random (m, n, d, 'normal')) ;
 else
     % the 'rc' input option is not supported
-    gb_error ('usage: sprandn(A) or sprandn(m,n,d)') ;
+    error ('usage: sprandn(A) or sprandn(m,n,d)') ;
 end
 

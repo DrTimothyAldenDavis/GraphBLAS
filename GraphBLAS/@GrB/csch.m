@@ -1,7 +1,7 @@
 function C = csch (G)
 %CSCH hyperbolic cosecant.
-% C = csch (G) computes the hyperbolic cosecant of each entry of a
-% GraphBLAS matrix G.  Since csch(0) is nonzero, C is a full matrix.
+% C = csch (G) is the hyperbolic cosecant of each entry of G.
+% Since csch(0) is nonzero, C is a full matrix.
 %
 % See also GrB/csc, GrB/acsc, GrB/acsch.
 

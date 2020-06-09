@@ -1,8 +1,6 @@
 function finalize
 %GRB.FINALIZE finalize SuiteSparse:GraphBLAS.
 %
-% Usage:
-%
 %   GrB.finalize
 %
 % GrB.finalize finishes GraphBLAS, and clears its global settings.

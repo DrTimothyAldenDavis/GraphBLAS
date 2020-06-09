@@ -128,7 +128,7 @@ void mexFunction
     GrB_Matrix A, A_copy = NULL ;
 
     if (mnz == 0)
-    {
+    { 
         // M is empty, so A must have no entries.  The dimensions and format of
         // A are not relevant, since the content of A will not be accessed.
         CHECK_ERROR (anz != 0, ERR) ;
@@ -140,7 +140,7 @@ void mexFunction
         // or transpose to ancols-by-1 and held by column.
         CHECK_ERROR (ancols != mnz, ERR) ;
         if (fmt == GxB_BY_COL)
-        {
+        { 
             // A is 1-by-ancols and held by column: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
             OK (GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
@@ -149,7 +149,7 @@ void mexFunction
             A = A_copy ;
         }
         else
-        {
+        { 
             A = A_input ;
         }
     }
@@ -159,7 +159,7 @@ void mexFunction
         // or transpose to 1-by-anrows and held by row.
         CHECK_ERROR (anrows != mnz, ERR) ;
         if (fmt == GxB_BY_ROW)
-        {
+        { 
             // A is anrows-by-1 and held by row: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
             OK (GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_ROW)) ;
@@ -168,7 +168,7 @@ void mexFunction
             A = A_copy ;
         }
         else
-        {
+        { 
             A = A_input ;
         }
     }

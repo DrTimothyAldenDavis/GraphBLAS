@@ -1,7 +1,6 @@
 function C = tanh (G)
 %TANH hyperbolic tangent.
-% C = tanh (G) computes the hyperbolic tangent of each entry of a GraphBLAS
-% matrix G.
+% C = tanh (G) is the hyperbolic tangent of each entry of G.
 %
 % See also GrB/tan, GrB/atan, GrB/atanh, GrB/atan2.
 

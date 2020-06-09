@@ -5,9 +5,9 @@ function C = bigset (A, B, arg3, arg4)
 % range 1 (the least significant bit) to the number of bits in the data
 % type of A, then C(i,j) is equal to the value of A(i,j) after setting the
 % bit to 1.  If B(i,j) is outside this range, C(i,j) is set to A(i,j),
-% unmodified; note that this behavior differs from the built-in MATLAB
-% bigset, which results in an error for this case.  This modified rule
-% allows the inputs A and B to be sparse.
+% unmodified; note that this behavior is an extension of the built-in
+% MATLAB bigset, which results in an error for this case.  This modified
+% rule allows the inputs A and B to be sparse.
 %
 % If A and B are matrices, the pattern of C is the set union of A
 % and B.  If one of A or B is a nonzero scalar, the scalar is expanded
@@ -26,11 +26,6 @@ function C = bigset (A, B, arg3, arg4)
 % is implicitly expanded to V * spones (B).
 %
 % All four arguments may be used, as C = bitset (A,B,V,assumedtype).
-%
-% The input matrices must be real, and may be either GraphBLAS and/or
-% MATLAB matrices, in any combination.  C is returned as a GraphBLAS
-% matrix.  The type of C is the same as A, after any conversion of A to
-% assumedtype, if needed.
 %
 % Example:
 %
@@ -62,11 +57,11 @@ atype = gbtype (A) ;
 btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
-    gb_error ('inputs must be real') ;
+    error ('inputs must be real') ;
 end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    gb_error ('inputs must not be logical') ;
+    error ('inputs must not be logical') ;
 end
 
 % get the optional input arguments
@@ -87,7 +82,7 @@ else
 end
 
 if (~contains (assumedtype, 'int'))
-    gb_error ('assumedtype must be an integer type') ;
+    error ('assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input

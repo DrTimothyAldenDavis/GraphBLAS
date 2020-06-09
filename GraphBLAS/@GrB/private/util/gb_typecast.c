@@ -46,13 +46,13 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         OK (GxB_Matrix_type (&stype, S)) ;
 
         if (gb_is_integer (type) && gb_is_float (stype))
-        {
+        { 
             // A = (type) round (S), using MATLAB rules for typecasting.
             OK (GrB_Matrix_apply (A, NULL, NULL, gb_round_binop (stype), S,
                 NULL)) ;
         }
         else
-        {
+        { 
             // A = (type) S, no rounding.  Use GraphBLAS typecasting if needed.
             GrB_Descriptor d ;
             OK (GrB_Descriptor_new (&d)) ;

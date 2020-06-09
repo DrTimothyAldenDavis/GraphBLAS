@@ -1,5 +1,5 @@
 function L = tril (G, k)
-%TRIL lower triangular part of a GraphBLAS matrix.
+%TRIL lower triangular part of a matrix.
 % L = tril (G) returns the lower triangular part of G.
 %
 % L = tril (G,k) returns the entries on and below the kth diagonal of G,

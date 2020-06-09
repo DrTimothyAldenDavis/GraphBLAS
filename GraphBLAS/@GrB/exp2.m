@@ -1,6 +1,6 @@
 function C = exp2 (G)
-%EXP2 base 2 exponential of the entries of a GraphBLAS matrix
-% C = exp2 (G) computes 2^x of each entry x of a GraphBLAS matrix G.
+%EXP2 base 2 exponential.
+% C = exp2 (G) is 2^x for each entry x of the matrix G.
 % Since 2^0 is nonzero, C is a full matrix.
 %
 % See also GrB/pow2, GrB/exp, GrB/expm1, GrB/exp2, GrB/log, GrB/log10,

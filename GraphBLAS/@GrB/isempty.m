@@ -1,5 +1,5 @@
 function s = isempty (G)
-%ISEMPTY true for empty GraphBLAS matrix.
+%ISEMPTY true for an empty matrix.
 % isempty (G) is true if any dimension of G is zero.
 %
 % See also GrB/size.

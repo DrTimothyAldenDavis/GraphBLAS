@@ -1,7 +1,7 @@
 function C = floor (G)
 %FLOOR round entries to nearest integers towards -infinity.
-% C = floor (G) rounds the entries in the GraphBLAS matrix G to the
-% nearest integers towards -infinity.
+% C = floor (G) rounds the entries in the matrix G to the nearest integers
+% towards -infinity.
 %
 % See also GrB/ceil, GrB/round, GrB/fix.
 

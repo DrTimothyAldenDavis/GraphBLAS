@@ -19,10 +19,9 @@ function [I, whole] = gb_index (I)
 % struct).  In this case, it is wrapped in a cell, I = {subsindex(I)},
 % but kept as 1-based indices (they are later translated to 0-based).
 %
-% If the input is already a cell array, then it is already in one of
-% the above forms.  Any member of the cell array that is a GraphBLAS
-% matrix or struct is converted into an index list, with 
-% subsindex(I{k}).
+% If the input is already a cell array, then it is already in one of the
+% above forms.  Any member of the cell array that is a GraphBLAS matrix or
+% struct is converted into an index list, with subsindex(I{k}).
 %
 % MATLAB passes the string I = ':' to the subsref and subsasgn methods.
 % This is converted into I = { }.
@@ -57,7 +56,7 @@ elseif (iscell (I))
     % C ({ }), C ({ I }), C ({start,fini}), or C ({start,inc,fini}).
     len = length (I) ;
     if (len > 3)
-        gb_error ('invalid indexing: usage is A ({start,inc,fini})') ;
+        error ('invalid indexing: usage is A ({start,inc,fini})') ;
     elseif (len == 0)
         % C ({ })
         whole = true ;

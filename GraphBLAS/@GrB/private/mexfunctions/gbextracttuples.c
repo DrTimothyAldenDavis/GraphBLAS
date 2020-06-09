@@ -214,12 +214,12 @@ void mexFunction
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
         if (MAX (nrows, ncols) > FLINTMAX)
-        {
+        { 
             // the matrix is too large for I and J to be returned as double
             base = BASE_1_INT64 ;
         }
         else
-        {
+        { 
             // this is the typical case
             base = BASE_1_DOUBLE ;
         }

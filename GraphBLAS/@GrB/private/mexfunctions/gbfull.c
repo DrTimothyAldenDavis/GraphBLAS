@@ -50,11 +50,11 @@ void mexFunction
 
     GrB_Matrix type ;
     if (nargin > 1)
-    {
+    { 
         type = gb_mxstring_to_type (pargin [1]) ;
     }
     else
-    {
+    { 
         OK (GxB_Matrix_type (&type, A)) ;
     }
 
@@ -109,7 +109,7 @@ void mexFunction
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
     if (gb_is_integer (type) && gb_is_float (atype))
-    {
+    { 
         // T = (type) round (A)
         OK (GrB_Matrix_new (&T, type, nrows, ncols)) ;
         OK (GxB_Matrix_Option_set (T, GxB_FORMAT, fmt)) ;
@@ -117,7 +117,7 @@ void mexFunction
         S = T ;
     }
     else
-    {
+    { 
         // T = A, and let GrB_Matrix_eWiseAdd_BinaryOp do the typecasting
         S = A ;
     }

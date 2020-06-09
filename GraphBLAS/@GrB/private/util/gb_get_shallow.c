@@ -172,7 +172,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             Xx = mxGetDoubles (X) ;
         }
         else if (type == GxB_FC64)
-        {
+        { 
             // MATLAB sparse or dense double complex matrix
             Xx = mxGetComplexDoubles (X) ;
         }
@@ -232,7 +232,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             Xx = mxGetSingles (X) ;
         }
         else if (type == GxB_FC32)
-        {
+        { 
             // dense single complex matrix
             Xx = mxGetComplexSingles (X) ;
         }

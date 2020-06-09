@@ -4,9 +4,9 @@ function Y = dnn (W, bias, Y0)
 % and bias vectors.  The input features are in a matrix Y0 of size
 % nfeatures-by- nneurons.  The DNN weights W is a cell array with W{k}
 % being the kth layer of the DNN, so that the number of layers is nlayers =
-% length (W).  W{k} is a matrix of size nneurons-by-nneurons.  The bais
+% length (W).  W{k} is a matrix of size nneurons-by-nneurons.  The bias
 % variable is a cell array of length nlayers.  Each bias{k} is a diagonal
-% matrix of size nneurons-by- nneurons, which gives the bias values of each
+% matrix of size nneurons-by-nneurons, which gives the bias values of each
 % neuron in the kth layer.
 %
 % Usage:
@@ -14,8 +14,8 @@ function Y = dnn (W, bias, Y0)
 %   Y = GrB.dnn (W, bias, Y0) ;
 %
 % The matrices can be stored by row or by column, but GrB.format ('by row')
-% is significantly faster.  For the 2019 GraphChallenge, all matrices can be
-% 'single', and the same results are obtained.
+% is significantly faster.  For the 2019 GraphChallenge, all matrices can
+% be 'single', and the same results are obtained.
 %
 % In the MATLAB reference implementation, the bias{k} is a row vector of
 % size 1-by-nneurons.  The MATLAB reference inputs can be converted to

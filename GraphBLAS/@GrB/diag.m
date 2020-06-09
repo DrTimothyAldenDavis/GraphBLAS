@@ -1,21 +1,18 @@
 function C = diag (A, k)
-%DIAG Diagonal matrices and diagonals of a GraphBLAS matrix.
-% C = diag (v,k) when v is a GraphBLAS vector with n components is a
-% square sparse GarphBLAS matrix of dimension n+abs(k), with the elements
-% of v on the kth diagonal. The main diagonal is k = 0; k > 0 is above
-% the diagonal, and k < 0 is below the main diagonal.  C = diag (v) is
-% the same as C = diag (v,0).
+%DIAG diagonal matrices and diagonals of a matrix.
+% C = diag (v,k) when v is a vector with n components is a square sparse
+% matrix of dimension n+abs(k), with the elements of v on the kth
+% diagonal. The main diagonal is k = 0; k > 0 is above the diagonal, and
+% k < 0 is below the main diagonal.  C = diag (v) is the same as
+% C = diag (v,0).
 %
-% c = diag (A,k) when A is a GraphBLAS matrix returns a GraphBLAS column
-% vector c formed the entries on the kth diagonal of A.  The main
-% diagonal is c = diag(A).
+% c = diag (A,k) when A is a matrix returns a column vector c formed the
+% entries on the kth diagonal of A.  The main diagonal is c = diag (A).
 %
-% The GraphBLAS diag function always constructs a GraphBLAS sparse
-% matrix, unlike the the MATLAB diag, which always constructs a MATLAB
-% full matrix.
-%
-% A may be a MATLAB or GraphBLAS matrix.  To use this function for a
-% MATLAB sparse matrix A, use C = diag (A, GrB (k)) ;
+% The GraphBLAS diag function always constructs a GraphBLAS sparse matrix,
+% unlike the built-in MATLAB diag, which always constructs a MATLAB full
+% matrix.  To use this overloaded function for a MATLAB sparse matrix A,
+% use C = diag (A, GrB (k)) ;
 %
 % Examples:
 %

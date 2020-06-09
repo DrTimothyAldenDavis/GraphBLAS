@@ -1,5 +1,5 @@
 function s = ishermitian (G, option)
-%ISHERMITIAN Determine if a GraphBLAS matrix is Hermitian or real symmetric
+%ISHERMITIAN Determine if a matrix is Hermitian or real symmetric.
 % ishermitian (G) is true if G equals G' and false otherwise.
 % ishermitian (G, 'skew') is true if G equals -G' and false otherwise.
 % ishermitian (G, 'nonskew') is the same as ishermitian (G).

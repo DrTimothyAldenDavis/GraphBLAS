@@ -5,9 +5,6 @@ function C = rdivide (A, B)
 % pattern of A, except if B is zero and A is double, single, or complex.
 % In that case, since 0/0 is NaN, C is a dense matrix.
 %
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
-%
 % See also GrB/ldivide, GrB.emult, GrB.eadd.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
@@ -21,13 +18,10 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-[am, an] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-
-atype = gbtype (A) ;
-btype = gbtype (B) ;
 ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar)

@@ -1,5 +1,6 @@
 function C = conj (G)
-%CONJ complex conjugate of a GraphBLAS matrix.
+%CONJ complex conjugate.
+% C = conj (G) is the complex conjugate of each entry of G.
 %
 % See also GrB/real, GrB/imag.
 

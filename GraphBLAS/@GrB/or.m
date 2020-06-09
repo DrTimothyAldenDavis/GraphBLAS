@@ -2,7 +2,6 @@ function C = or (A, B)
 %| logical OR.
 % C = (A | B) is the element-by-element logical OR of A and B.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
-% GraphBLAS and MATLAB matrices may be combined.
 %
 % See also GrB/and, GrB/xor, GrB/not.
 
@@ -17,12 +16,11 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-[am, an] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-
-ctype = gboptype (gbtype (A), gbtype (B)) ;
+ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)

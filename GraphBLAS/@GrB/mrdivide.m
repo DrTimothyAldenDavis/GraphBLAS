@@ -4,9 +4,6 @@ function C = mrdivide (A, B)
 % Otherwise, C is computed by first converting A and B to MATLAB sparse
 % matrices, and then C=A/B is computed using the MATLAB backslash.
 %
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
-%
 % See also GrB/mldivide.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

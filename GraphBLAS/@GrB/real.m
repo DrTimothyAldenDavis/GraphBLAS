@@ -1,6 +1,6 @@
 function C = real (G)
 %REAL complex real part.
-% C = real (G) returns the real part of the GraphBLAS matrix G.
+% C = real (G) returns the real part of G.
 %
 % See also GrB/conj, GrB/imag.
 

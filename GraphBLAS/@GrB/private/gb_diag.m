@@ -5,7 +5,7 @@ function C = gb_diag (A, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[am, an] = gbsize (A) ;
+[am, an, atype] = gbsize (A) ;
 a_is_vector = (am == 1) || (an == 1) ;
 desc.base = 'zero-based' ;
 
@@ -67,7 +67,7 @@ else
 
     if (length (I) == 0)
         % A does not have a kth diagonal, or diag (A,k) has no entries
-        C = gbnew (m, 1, gbtype (A)) ;
+        C = gbnew (m, 1, atype) ;
     else
         C = gbbuild (I, int64 (0), X, m, 1, desc) ;
     end

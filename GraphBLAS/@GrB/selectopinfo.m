@@ -1,7 +1,6 @@
 function selectopinfo (op)
 %GRB.SELECTOPINFO list the details of a GraphBLAS select operator.
 %
-% Usage
 %   GrB.selectopinfo
 %   GrB.selectopinfo (op)
 %

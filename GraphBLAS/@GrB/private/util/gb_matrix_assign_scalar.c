@@ -180,11 +180,11 @@ void gb_matrix_assign_scalar
         GxB_FC32_t x = GxB_CMPLXF (0,0) ;
         OK2 (GxB_Matrix_extractElement_FC32 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_FC32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GxB_Matrix_assign_FC32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -193,11 +193,11 @@ void gb_matrix_assign_scalar
         GxB_FC64_t x = GxB_CMPLX (0,0) ;
         OK2 (GxB_Matrix_extractElement_FC64 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_FC64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GxB_Matrix_assign_FC64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }

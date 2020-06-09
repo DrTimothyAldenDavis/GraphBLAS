@@ -1,5 +1,5 @@
 function s = isscalar (G)
-%ISSCALAR determine if the GraphBLAS matrix is a scalar.
+%ISSCALAR determine if a matrix is a scalar.
 % isscalar (G) is true for an m-by-n GraphBLAS matrix if m and n are 1.
 %
 % See also GrB/issparse, GrB/ismatrix, GrB/isvector, GrB/issparse,

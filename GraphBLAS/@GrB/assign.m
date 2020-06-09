@@ -1,20 +1,12 @@
 function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.ASSIGN: assign a submatrix into a matrix.
 %
-% GrB.assign is an interface to GrB_Matrix_assign and
-% GrB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
-%
-%   C<#M,replace>(I,J) = accum (C(I,J), A) or accum(C(I,J), A')
-%
-% where A can be a matrix or a scalar.
-%
-% Usage:
-%
 %   C = GrB.assign (Cin, M, accum, A, I, J, desc)
 %
 %   Cin and A are required parameters.  All others are optional.
 %   The arguments are parsed according to their type.  Arguments
-%   with different types can appear in any order.
+%   with different types can appear in any order:
+%
 %       Cin, M, A:  2 or 3 GraphBLAS or MATLAB sparse/full matrices.
 %                   The first three matrix inputs are Cin, M, and A.
 %                   If 2 matrix inputs are present, they are Cin and A.
@@ -141,7 +133,7 @@ switch (nargin)
     case 7
         [C, k] = gbassign (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        gb_error ('usage: C = GrB.assign (Cin, M, accum, A, I, J, desc)') ;
+        error ('usage: C = GrB.assign (Cin, M, accum, A, I, J, desc)') ;
 end
 
 if (k == 0)

@@ -1,8 +1,6 @@
 function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.KRONECKER sparse Kronecker product.
 %
-% Usage:
-%
 %   C = GrB.kronecker (op, A, B, desc)
 %   C = GrB.kronecker (Cin, accum, op, A, B, desc)
 %   C = GrB.kronecker (Cin, M, op, A, B, desc)
@@ -12,10 +10,6 @@ function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % given binary operator op, in place of the conventional '*' operator for
 % the MATLAB built-in kron.  See also C = kron (A,B), which uses the
 % default semiring operators if A and/or B are GrB matrices.
-%
-% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix, by default;
-% see 'help GrB/descriptorinfo' for more options.
 %
 % T is then accumulated into C via C<#M,replace> = accum (C,T).
 %
@@ -60,7 +54,7 @@ switch (nargin)
     case 7
         [C, k] = gbkronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        gb_error ('usage: C = GrB.kronecker (Cin, M, accum, op, A, B, desc)') ;
+        error ('usage: C = GrB.kronecker (Cin, M, accum, op, A, B, desc)') ;
 end
 
 if (k == 0)

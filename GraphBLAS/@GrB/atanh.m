@@ -1,7 +1,7 @@
 function C = atanh (G)
 %ATANH inverse hyperbolic tangent.
-% C = atanh (G) computes the inverse hyberbolic tangent of each entry of a
-% GraphBLAS matrix G.  C is complex if G is complex, or if any (abs(G)>1).
+% C = atanh (G) is the inverse hyberbolic tangent of each entry G.
+% C is complex if G is complex, or if any (abs (G) > 1).
 %
 % See also GrB/tan, GrB/atan, GrB/tanh, GrB/atan2.
 

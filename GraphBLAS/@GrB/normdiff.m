@@ -1,6 +1,5 @@
 function s = normdiff (A,B,kind)
 %NORMDIFF norm (A-B,kind)
-%
 % If A-B is a matrix:
 %
 %   norm (A-B,1) is the maximum sum of the columns of abs (A-B).

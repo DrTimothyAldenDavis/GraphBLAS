@@ -46,11 +46,11 @@ void gb_get_mxargs
     (*fmt) = GxB_NO_FORMAT ;
     (*base) = BASE_DEFAULT ;
     if (nargin > 0)
-    {
+    { 
         (*desc) = gb_mxarray_to_descriptor (pargin [nargin-1], kind, fmt, base);
     }
     if ((*desc) != NULL)
-    {
+    { 
         // descriptor is present, remove it from further consideration
         nargin-- ;
     }

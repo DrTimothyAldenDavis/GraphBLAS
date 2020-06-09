@@ -1,6 +1,6 @@
 function C = sin (G)
 %SIN sine.
-% C = sin (G) computes the sine of each entry of a GraphBLAS matrix G.
+% C = sin (G) is the sine of each entry of G.
 %
 % See also GrB/asin, GrB/sinh, GrB/asinh.
 

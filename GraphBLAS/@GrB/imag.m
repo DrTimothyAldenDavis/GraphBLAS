@@ -1,6 +1,6 @@
 function C = imag (G)
 %IMAG complex imaginary part.
-% C = imag (G) returns the imaginary part of the GraphBLAS matrix G.
+% C = imag (G) returns the imaginary part of G.
 %
 % See also GrB/conj, GrB/real.
 
@@ -8,14 +8,13 @@ function C = imag (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-type = gbtype (G) ;
+[m, n, type] = gbsize (G) ;
 
 if (contains (type, 'complex'))
     % C = imag (G) where G is complex
     C = GrB (gbapply ('cimag', G)) ;
 else
     % G is real, so C = zeros (m,n)
-    [m, n] = gbsize (G) ;
     C = GrB (gbnew (m, n, type)) ;
 end
 

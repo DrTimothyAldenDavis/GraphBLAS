@@ -1,5 +1,5 @@
 function assert (G)
-%ASSERT generate an error when a condition is violated
+%ASSERT generate an error when a condition is violated.
 %
 % See also error.
 

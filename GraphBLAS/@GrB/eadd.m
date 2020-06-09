@@ -1,8 +1,6 @@
 function C = eadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.EADD sparse matrix addition.
 %
-% Usage:
-%
 %   C = GrB.eadd (op, A, B)
 %   C = GrB.eadd (op, A, B, desc)
 %   C = GrB.eadd (Cin, accum, op, A, B, desc)
@@ -26,10 +24,6 @@ function C = eadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % Cin, M, accum, and the descriptor desc are the same as all other
 % GrB.methods; see GrB.mxm and GrB.descriptorinfo for more details.  For
 % the binary operator, see GrB.binopinfo.
-%
-% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix, by default;
-% see 'help GrB/descriptorinfo' for more options.
 %
 % See also GrB.emult.
 
@@ -72,7 +66,7 @@ switch (nargin)
     case 7
         [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        gb_error ('usage: C = GrB.eadd (Cin, M, accum, op, A, B, desc)') ;
+        error ('usage: C = GrB.eadd (Cin, M, accum, op, A, B, desc)') ;
 end
 
 if (k == 0)

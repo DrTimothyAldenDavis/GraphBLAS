@@ -47,7 +47,7 @@ classdef GrB
 % --------------------
 % Matrix types:
 % --------------------
-% 
+%
 %   Most of the valid type strings correspond to MATLAB class of the same
 %   name (see 'help class'):
 %
@@ -197,6 +197,7 @@ classdef GrB
 %   C = double (G)          cast GrB matrix to MATLAB sparse double
 %
 %   [V, ...] = eig (G,...)  eigenvalues and eigenvectors
+%   G = GrB.empty (m, n)    empty matrix for the GrB class
 %   C = eps (G)             floating-point spacing
 %   C = erf (G)             error function
 %   C = erfc (G)            complementary error function
@@ -282,7 +283,7 @@ classdef GrB
 %   C = sin (G)             sine
 %   C = single (G)          cast GrB matrix to MATLAB full single
 %   C = sinh (G)            hyperbolic sine
-%   [m, n] = size (G, dim)  size of a GrB matrix G
+%   [m,n,t] = size (G,dim)  size and type of a GrB matrix
 %   C = sparse (G)          makes a copy of a GrB matrix
 %   C = spfun (fun, G)      evaluate a function on the entries of G
 %   C = spones (G, type)    return pattern of GrB matrix
@@ -326,52 +327,55 @@ classdef GrB
 % GraphBLAS basic functions:
 %---------------------------
 %
-%   GrB.init                     initialize GraphBLAS
-%   GrB.finalize                 finish GraphBLAS
+%   context:
 %   GrB.clear                    clear GraphBLAS workspace and settings
-%   GrB.descriptorinfo (d)       list properties of a descriptor
-%   GrB.unopinfo (op, type)      list properties of a unary operator
-%   GrB.binopinfo (op, type)     list properties of a binary operator
-%   GrB.monoidinfo (op, type)    list properties of a monoid
-%   GrB.semiringinfo (s, type)   list properties of a semiring
-%   GrB.selectopinfo (op)        list properties of a select operator
+%   GrB.finalize                 finish GraphBLAS
+%   GrB.init                     initialize GraphBLAS
 %   t = GrB.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = GrB.chunk (c)            set/get chunk size to use in GraphBLAS
 %   b = GrB.burble (b)           set/get burble (diagnostic output)
-%   result = GrB.entries (G,...) count or query entries in a matrix
-%   result = GrB.nonz (G,...)    count or query nonzeros in a matrix
-%   C = GrB.prune (A, id)        prune entries equal to id
-%   C = GrB.offdiag (A)          prune diagonal entries
-%   s = GrB.isfull (A)           true if all entries present
+%
+%   info:
+%   GrB.binopinfo (op, type)     list properties of a binary operator
+%   GrB.descriptorinfo (d)       list properties of a descriptor
+%   GrB.monoidinfo (op, type)    list properties of a monoid
+%   GrB.selectopinfo (op)        list properties of a select operator
+%   GrB.semiringinfo (s, type)   list properties of a semiring
+%   GrB.unopinfo (op, type)      list properties of a unary operator
+%
+%   operations:
+%   C = GrB.build (I,J,X,m,n,dup,type,desc) build a GrB matrix from
+%                                list of entries (like C=sparse(I,J,X...))
 %   [C,I,J] = GrB.compact (A,id) remove empty rows and columns
-%   G = GrB.empty (m, n)         return an empty GraphBLAS matrix
-%   s = GrB.type (A)             get the type of a MATLAB or GrB matrix A
-%   s = GrB.issigned (type)      true if type is signed
-%   f = GrB.format (f)           set/get matrix format to use in GraphBLAS
+%   c = GrB.entries (A,...)      count or query entries in a matrix
+%   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
+%   [I,J,X] = GrB.extracttuples (A,desc) extract all entries (like 'find')
+%   C = GrB.eye (m,n,type)       identity matrix of any type (like 'speye')
+%   f = GrB.format (f)           set/get matrix format by row or col
 %   s = GrB.isbyrow (A)          true if format f A is 'by row'
 %   s = GrB.isbycol (A)          true if format f A is 'by col'
-%   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
-%   C = GrB.eye                  identity matrix of any type (same as speye)
-%   C = GrB.speye                identity matrix of any type
-%   C = GrB.random (varargin)    random GraphBLAS matrix
-%   C = GrB.build (I, J, X, m, n, dup, type, desc)
-%                               build a GrB matrix from list of entries
-%   [I,J,X] = GrB.extracttuples (A, desc)
-%                               extract all entries from a matrix
-%   s = GrB.normdiff (A, B, kind)   norm (A-B,kind)
+%   s = GrB.isfull (A)           true if all entries present
+%   s = GrB.issigned (type)      true if type is signed
+%   c = GrB.nonz (A,...)         count or query nonzeros in a matrix
+%   s = GrB.normdiff (A,B,kind)  norm (A-B,kind)
+%   C = GrB.offdiag (A)          prune diagonal entries
+%   C = GrB.prune (A, id)        prune entries equal to id
+%   C = GrB.random (...)         random GraphBLAS matrix (like 'sprand')
+%   C = GrB.speye (m,n,type)     identity matrix of any type (like 'speye')
+%   t = GrB.type (A)             get the type of a MATLAB or GrB matrix A
 %
 %-------------------------------------
 % Static Methods for graph algorithms:
 %-------------------------------------
 %
-%   r = GrB.pagerank (A, opts) ;            PageRank of a matrix
-%   C = GrB.ktruss (A, k, check) ;          k-truss
-%   s = GrB.tricount (A, check) ;           triangle count
-%   L = GrB.laplacian (A, type, check) ;    Laplacian graph
-%   C = GrB.incidence (A, ...) ;            incidence matrix
 %   [v, parent] = GrB.bfs (A, s, ...) ;     breadth-first search
-%   iset = GrB.mis (A, check) ;             maximal independent set
 %   Y = GrB.dnn (W, bias, Y0) ;             deep neural network
+%   C = GrB.incidence (A, ...) ;            incidence matrix
+%   C = GrB.ktruss (A, k, check) ;          k-truss
+%   L = GrB.laplacian (A, type, check) ;    Laplacian graph
+%   iset = GrB.mis (A, check) ;             maximal independent set
+%   r = GrB.pagerank (A, opts) ;            PageRank of a matrix
+%   s = GrB.tricount (A, check) ;           triangle count
 %
 %-----------------------------------
 % Foundational GraphBLAS operations:
@@ -629,7 +633,9 @@ methods
     % methods in the MATLAB/ops folder:
     %
     %   colon idivide ismembertol uniquetol
-    %   m-files: union unique intersect setdiff setxor setunion ismember
+    %   m-files: intersect ismember setdiff setxorunion unique
+    %       (if 'sort' is overloaded, and 1D indexing added,
+    %       then all these will work for GrB matrices)
 
     % methods in the MATLAB/datatypes folder:
     %
@@ -637,7 +643,7 @@ methods
 
     % methods in the MATLAB/datafun folder:
     %
-    %   cummax cummin cumprod cumsum diff histcounts islocalmax 
+    %   cummax cummin cumprod cumsum diff histcounts islocalmax
     %   ismissing issorted maxk mink movmad movmax movmean movmedian
     %   movmin movprod movstd movsum movvar rmmissing rmoutliers
     %   sort sortrows standardizeMissing topkrows
@@ -645,7 +651,6 @@ methods
     %   m-files: bounds corrcoef cov del2 fillmissing filloutliers
     %   gradient isoutlier issortedrows mean median mode normalize
     %   rescale smoothdata std var
-    %       
 
     % methods the 'double' class that are not yet implemented here:
     %
@@ -656,7 +661,7 @@ methods
     %       mod rem unwrap sind asind cosd acosd tand
     %       atand secd asecd cscd acscd cotd acotd atan2d
     %
-    %   not needed: 
+    %   not needed:
     %
     %       special functions: airy bernoulli besselh besseli besselj
     %       besselk bessely betainc betaincinv chebyshevT chebyshevU
@@ -698,7 +703,7 @@ methods
     %
     %       not needed: linspace logspace ind2sub sub2ind meshgrid pi
     %       freqspace flintmax intmax intmin squeeze realmin realmax i j
-    %       magic rosser 
+    %       magic rosser
 
     % methods for classes graph and digraph not yet implemented:
     %
@@ -833,7 +838,7 @@ methods
 
     C = gamma (G) ;
     C = gammaln (G) ;
-    Graph = graph (G, varargin) ;
+    Graph = graph (G, varargin) ;               % uses GrB matrices
 
     C = hypot (A, B) ;
 
@@ -875,8 +880,8 @@ methods
     [F, E] = log2 (G) ;
     C = logical (G) ;
 
-    C = max (varargin) ;    % TODO
-    C = min (varargin) ;    % TODO
+    C = max (A, B, option) ;
+    C = min (A, B, option) ;
 
     e = nnz (G) ;
     X = nonzeros (G) ;
@@ -900,7 +905,7 @@ methods
     C = sin (G) ;
     C = single (G) ;
     C = sinh (G) ;
-    [m, n] = size (G, dim) ;
+    [m, n, t] = size (G, dim) ;
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;
@@ -943,7 +948,11 @@ methods (Static)
 
     % Some of the methods listed below are high-level graph algorithms that
     % rely on GrB objects internally (bfs, dnn, ktruss, mis, pagerank, and
-    % tricount).
+    % tricount), for simplicity and readability.  All of the other methods
+    % extract the opaque content of the GrB objects just once, operate on
+    % them, and then cast their results back into a MATLAB GrB object just
+    % once.  This makes for less-readable MATLAB code, but it avoids the
+    % performance cost of accessing/modifying a MATLAB object.
 
     MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
@@ -961,7 +970,7 @@ methods (Static)
     C = empty (arg1, arg2) ;
     C = emult (Cin, M, accum, op, A, B, desc) ;
     x = entries (A, arg2, arg3) ;
-    C = expand (scalar, A) ;
+    C = expand (scalar, A, type) ;
     C = extract (Cin, M, accum, A, I, J, desc) ;
     [I, J, X] = extracttuples (A, desc) ;
     C = eye (m, n, type) ;
@@ -998,6 +1007,8 @@ methods (Static)
     s = type (A) ;
     unopinfo (op, type) ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
+
+    mslow ;
 
 end
 end

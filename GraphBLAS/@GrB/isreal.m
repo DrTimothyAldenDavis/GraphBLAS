@@ -1,5 +1,5 @@
 function s = isreal (G)
-%ISREAL true for real GraphBLAS matrices.
+%ISREAL true for real matrices.
 % isreal (G) is true for a GraphBLAS matrix G, unless it has a type of
 % 'single complex' or 'double complex'.
 %

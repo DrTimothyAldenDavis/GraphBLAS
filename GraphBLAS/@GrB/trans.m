@@ -1,8 +1,6 @@
 function C = trans (arg1, arg2, arg3, arg4, arg5)
 %GRB.TRANS transpose a sparse matrix.
 %
-% Usage:
-%
 %   C = GrB.trans (A)
 %   C = GrB.trans (A, desc)
 %   C = GrB.trans (Cin, accum, A, desc)
@@ -53,7 +51,7 @@ switch (nargin)
     case 5
         [C, k] = gbtrans (arg1, arg2, arg3, arg4, arg5) ;
     otherwise
-        gb_error ('usage: C = GrB.trans (Cin, M, accum, A, desc)') ;
+        error ('usage: C = GrB.trans (Cin, M, accum, A, desc)') ;
 end
 
 if (k == 0)

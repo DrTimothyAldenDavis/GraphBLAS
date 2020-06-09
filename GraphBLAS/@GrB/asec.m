@@ -1,7 +1,7 @@
 function C = asec (G)
 %ASEC inverse secant.
-% C = asec (G) computes the inverse secant of each entry of a GraphBLAS
-% matrix G.  Since asec (0) is nonzero, the result is a full matrix.
+% C = asec (G) is the inverse secant of each entry of G.
+% Since asec (0) is nonzero, the result is a full matrix.
 % C is complex if any (abs(G) < 1).
 %
 % See also GrB/sec, GrB/sech, GrB/asech.

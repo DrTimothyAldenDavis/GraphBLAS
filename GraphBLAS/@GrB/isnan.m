@@ -1,7 +1,6 @@
 function C = isnan (G)
-%ISNAN True for NaN elements.
-% C = isnan (G) for a GraphBLAS matrix G returns a GraphBLAS logical
-% matrix with C(i,j)=true if G(i,j) is NaN.
+%ISNAN true for NaN elements.
+% C = isnan (G) is a logical C matrix with C(i,j)=true if G(i,j) is NaN.
 %
 % See also GrB/isinf, GrB/isfinite.
 
@@ -9,12 +8,12 @@ function C = isnan (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
+[m, n, type] = gbsize (G) ;
 
-if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
+if (gb_isfloat (type) && gbnvals (G) > 0)
     C = GrB (gbapply ('isnan', G)) ;
 else
     % C is all false
-    [m, n] = gbsize (G) ;
     C = GrB (m, n, 'logical') ;
 end
 

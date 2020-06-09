@@ -1,8 +1,6 @@
 function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 %GRB.APPLY apply a unary operator to a matrix.
 %
-% Usage:
-%
 %   C = GrB.apply (op, A, desc)
 %   C = GrB.apply (Cin, accum, op, A, desc)
 %   C = GrB.apply (Cin, M, op, A, desc)
@@ -60,7 +58,7 @@ switch (nargin)
     case 6
         [C, k] = gbapply (arg1, arg2, arg3, arg4, arg5, arg6) ;
     otherwise
-        gb_error ('usage: C = GrB.apply (Cin, M, accum, op, A, desc)') ;
+        error ('usage: C = GrB.apply (Cin, M, accum, op, A, desc)') ;
 end
 
 if (k == 0)

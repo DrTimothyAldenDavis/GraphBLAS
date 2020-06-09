@@ -1,6 +1,6 @@
 function C = exp (G)
-%EXP exponential of the entries of a GraphBLAS matrix
-% C = exp (G) computes e^x of each entry x of a GraphBLAS matrix G.
+%EXP exponential.
+% C = exp (G) is e^x for each entry x of the matrix G.
 % Since e^0 is nonzero, C is a full matrix.
 %
 % See also GrB/exp, GrB/expm1, GrB/exp2, GrB/log, GrB/log10, GrB/log2.

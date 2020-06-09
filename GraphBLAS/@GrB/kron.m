@@ -1,8 +1,6 @@
 function C = kron (A, B)
 %KRON sparse Kronecker product.
 % C = kron (A,B) is the sparse Kronecker tensor product of A and B.
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also GrB.kronecker.
 

@@ -1,5 +1,5 @@
 function s = numel (G)
-%NUMEL the maximum number of entries a GraphBLAS matrix can hold.
+%NUMEL the maximum number of entries in a matrix.
 % numel (G) is m*n for the m-by-n GraphBLAS matrix G.  If m, n, or m*n
 % exceed flintmax (2^53), the result is returned as a vpa symbolic value,
 % to avoid integer overflow.

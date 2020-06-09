@@ -1,6 +1,6 @@
 function s = tricount (A, arg2, arg3)
 %GRB.TRICOUNT count triangles in a matrix.
-% s = GrB.tricount (A) counts the number of triangles in the matrix A.
+% s = GrB.tricount (A) is the number of triangles in the matrix A.
 % spones (A) must be symmetric; results are undefined if spones (A) is
 % unsymmetric.  Diagonal entries are ignored.
 %
@@ -20,7 +20,7 @@ function s = tricount (A, arg2, arg3)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    gb_error ('A must be square') ;
+    error ('A must be square') ;
 end
 
 d = [ ] ;
@@ -47,7 +47,7 @@ elseif (nargin == 3)
 end
 
 if (check && ~issymmetric (spones (A)))
-    gb_error ('pattern of A must be symmetric') ;
+    error ('pattern of A must be symmetric') ;
 end
 
 if (isequal (class (d), 'GrB'))

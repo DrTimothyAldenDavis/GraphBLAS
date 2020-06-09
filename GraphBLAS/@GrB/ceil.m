@@ -1,5 +1,5 @@
 function C = ceil (G)
-%CEIL round entries of a GraphBLAS matrix to nearest integers towards inf.
+%CEIL round entries of a matrix to nearest integers towards infinity.
 %
 % See also GrB/floor, GrB/round, GrB/fix.
 

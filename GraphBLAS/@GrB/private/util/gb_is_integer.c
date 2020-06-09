@@ -10,7 +10,7 @@
 #include "gb_matlab.h"
 
 bool gb_is_integer (const GrB_Type type)
-{
+{ 
     return ((type == GrB_INT8  ) ||
             (type == GrB_INT16 ) ||
             (type == GrB_INT32 ) ||

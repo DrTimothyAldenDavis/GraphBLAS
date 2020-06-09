@@ -1,7 +1,6 @@
 function C = atan (G)
 %ATAN inverse tangent.
-% C = atan (G) computes the inverse tangent of each entry of a GraphBLAS
-% matrix G.
+% C = atan (G) is the inverse tangent of each entry of G.
 %
 % See also GrB/tan, GrB/tanh, GrB/atanh, GrB/atan2.
 

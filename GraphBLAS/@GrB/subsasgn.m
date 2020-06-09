@@ -1,5 +1,5 @@
 function C = subsasgn (C, S, A)
-%SUBSASGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix
+%SUBSASGN C(I,J) = A or C(I) = A; assign submatrix.
 % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix
 % C.  A must be either a matrix of size length(I)-by-length(J), or a
 % scalar.  Note that C(I,J) = 0 differs from C(I,J) = sparse (0).  The
@@ -16,29 +16,31 @@ function C = subsasgn (C, S, A)
 % indexing, where C and M have the same size, and x(:) is either a vector
 % of length nnz (M), or a scalar.
 %
-% Note that C (M) = A (M), where the same logical matrix M is used on
-% both the sides of the assignment, is identical to C = GrB.subassign (C,
-% M, A).  If C and A (or M) are GraphBLAS matrices, C (M) = A (M) uses
-% GraphBLAS via operator overloading.  The statement C (M) = A (M) takes
-% about twice the time as C = GrB.subassign (C, M, A), so the latter is
-% preferred for best performance.  However, both methods in GraphBLAS are
-% many thousands of times faster than C (M) = A (M) using purely MATLAB
-% sparse matrices C, M, and A, when the matrices are large.  So either
-% method works fine, relatively speaking.
+% C (M) = A (M), where the logical matrix M is used on both the sides of
+% the assignment, is the same as C = GrB.subassign (C, M, A).  If C and A
+% (or M) are GraphBLAS matrices, C (M) = A (M) uses GraphBLAS via operator
+% overloading.  The statement C (M) = A (M) takes about twice the time as
+% C = GrB.subassign (C, M, A), so the latter is preferred for best
+% performance.  However, both methods in GraphBLAS are many thousands of
+% times faster than C (M) = A (M) using purely MATLAB sparse matrices C, M,
+% and A, when the matrices are large.
 %
 % If I or J are very large colon notation expressions, then C(I,J)=A is
 % not possible, because MATLAB creates I and J as explicit lists first.
 % See GrB.subassign instead.  See also the example with 'help GrB.extract'.
 %
+% Unlike the MATLAB C(I,J)=A, the GraphBLAS assignment does not change
+% the size of C.
+%
 % See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
-% FUTURE: add linear indexing, and allow the matrix to grow in size.
+% FUTURE: add linear indexing, and allow the matrix to grow/shrink in size.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (~isequal (S.type, '()'))
-    error ('GrB:unsupported', 'index type %s not supported', S.type) ;
+    error ('index type %s not supported', S.type) ;
 end
 
 if (isobject (C))
@@ -76,8 +78,7 @@ if (ndims == 1)
             C = GrB (gbsubassign (C, gb_index (S), A)) ;
         else
             % C (I) = A for a matrix C
-            error ('GrB:unsupported', ...
-                'Linear indexing not yet supported for GrB matrices') ;
+            error ('Linear indexing not yet supported') ;
         end
     end
 
@@ -88,7 +89,7 @@ elseif (ndims == 2)
 
 else
 
-    error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
+    error ('%dD indexing not yet supported', ndims) ;
 
 end
 

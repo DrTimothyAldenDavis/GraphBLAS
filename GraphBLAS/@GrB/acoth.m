@@ -1,8 +1,8 @@
 function C = acoth (G)
 %ACOTH inverse hyperbolic cotangent.
-% C = acoth (G) computes the inverse hyberbolic cotangent of each entry of
-% a GraphBLAS matrix G.  C is complex if G is complex, or if any
-% abs(G)<1.  Since acoth (0) is nonozero, C is a full matrix.
+% C = acoth (G) is the inverse hyberbolic cotangent of each entry of G.
+% Since acoth (0) is nonozero, C is a full matrix.
+% C is complex if G is complex, or if any (abs (G) < 1).
 %
 % See also GrB/cot, GrB/acot, GrB/coth.
 

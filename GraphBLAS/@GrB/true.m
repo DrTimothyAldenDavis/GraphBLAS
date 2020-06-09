@@ -4,8 +4,8 @@ function C = true (varargin)
 %   C = true (n) ;      n-by-n GrB logical matrix of all true entries.
 %   C = true (m,n) ;    m-by-n GrB logical matrix of all true entries.
 %   C = true ([m,n]) ;  m-by-n GrB logical matrix of all true entries.
-%   C = true (..., type) ;      matrix of all true entries of given type
-%   C = true (..., 'like', G) ; matrix of all true entries, same type as G
+%   C = true (..., type) ;      matrix of all true entries of given type.
+%   C = true (..., 'like', G) ; matrix of all true entries, same type as G.
 %
 % Since function overloads the MATLAB built-in true(...), at least one
 % input must be a GraphBLAS matrix to use this version (for example,

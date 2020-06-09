@@ -4,13 +4,14 @@ function [C, I, J] = compact (A, id)
 % It has no effect on a MATLAB full matrix, except to convert it to a
 % GraphBLAS matrix, since all entries are present in a MATLAB full matrix.
 %
-% To remove rows and columns with no entries or only explicit zero entries,
-% use C = GrB.compact (A,0).  For a MATLAB sparse matrix, GrB.compact (A,0)
-% and GrB.compact (A) are identical.
+% Explicit zeros in A are treated as entries, and are not removed by
+% default.  To remove rows and columns with no entries or only explicit
+% zero entries, use C = GrB.compact (A,0).  For a MATLAB sparse matrix,
+% GrB.compact (A,0) and GrB.compact (A) are identical.
 %
-% To remove rows and colums with no entries, or with only entries equal to
-% a particular scalar value, use C = GrB.compact (A, id), where id is the
-% scalar value.
+% To remove rows and colums that either have no entries, or that only have
+% entries equal to a particular scalar value, use C = GrB.compact (A, id),
+% where id is the scalar value.
 %
 % With two additional output arguments, [C,I,J] = GrB.compact (A, ...),
 % the indices of non-empty rows and columns of A are returned, so that

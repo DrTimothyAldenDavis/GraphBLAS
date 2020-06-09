@@ -1,6 +1,6 @@
 function C = gamma (G)
 %GAMMA gamma function.
-% C = gamma (G) computes the gamma of each entry of a GraphBLAS matrix G.
+% C = gamma (G) is the gamma function of each entry of G.
 % Since gamma (0) = inf, the result is a full matrix.  G must be real.
 %
 % See also GrB/gammaln.
@@ -12,7 +12,7 @@ G = G.opaque ;
 type = gbtype (G) ;
 
 if (contains (type, 'complex'))
-    gb_error ('input must be real') ;
+    error ('input must be real') ;
 end
 
 if (~gb_isfloat (type))

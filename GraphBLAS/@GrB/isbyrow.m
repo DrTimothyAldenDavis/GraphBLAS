@@ -1,7 +1,7 @@
-function s = isbyrow (X)
-%GRB.ISBYROW True if X is stored by row, false if by column.
-% s = GrB.isbyrow (X) is true if X is stored by row, false if by column.
-% X may be a GraphBLAS matrix or MATLAB matrix (sparse or full).  MATLAB
+function s = isbyrow (A)
+%GRB.ISBYROW true if A is stored by row, false if by column.
+% s = GrB.isbyrow (A) is true if A is stored by row, false if by column.
+% A may be a GraphBLAS matrix or MATLAB matrix (sparse or full).  MATLAB
 % matrices are always stored by column.
 %
 % See also GrB.isbycol, GrB.format.
@@ -9,9 +9,9 @@ function s = isbyrow (X)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-if (isobject (X))
-    X = X.opaque ;
-    s = isequal (gbformat (X), 'by row')  ;
+if (isobject (A))
+    A = A.opaque ;
+    s = isequal (gbformat (A), 'by row')  ;
 else
     s = false ;
 end

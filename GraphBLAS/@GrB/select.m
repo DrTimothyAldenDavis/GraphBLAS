@@ -1,8 +1,6 @@
 function C = select (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.SELECT: select entries from a GraphBLAS sparse matrix.
 %
-% Usage:
-%
 %   C = GrB.select (selectop, A)
 %   C = GrB.select (selectop, A, b)
 %   C = GrB.select (selectop, A, b, desc)
@@ -51,8 +49,8 @@ function C = select (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %   '<'             C = A (A <  b)
 %   '<='            C = A (A <= b)
 %
-% Note that C = GrB.select ('diag',A,b) does not returns a vector,
-% but a diagonal matrix.
+% Note that C = GrB.select ('diag',A,b) does not return a vector,
+% but a diagonal matrix, instead.
 %
 % Many of the operations have equivalent synonyms, as listed above.
 %
@@ -76,13 +74,7 @@ function C = select (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % A is the input matrix.  It is transposed on input if desc.in0 =
 % 'transpose'.
 %
-% The descriptor desc is optional.  If not present, all default settings
-% are used.  Fields not present are treated as their default values.  See
-% 'help GrB.descriptorinfo' for more details.
-%
-% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix, by default;
-% see 'help GrB/descriptorinfo' for more options.
+% desc is optional. See 'help GrB.descriptorinfo' for more details.
 %
 % See also GrB/tril, GrB/triu, GrB/diag.
 
@@ -127,7 +119,7 @@ switch (nargin)
     case 7
         [C, k] = gbselect (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-        gb_error ('usage: C = GrB.select (Cin, M, accum, op, A, b, desc)') ;
+        error ('usage: C = GrB.select (Cin, M, accum, op, A, b, desc)') ;
 end
 
 if (k == 0)

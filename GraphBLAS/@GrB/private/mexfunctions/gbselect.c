@@ -40,6 +40,10 @@
 
 #define USAGE "usage: C = GrB.select (Cin, M, accum, op, A, b, desc)"
 
+//------------------------------------------------------------------------------
+// nan operators
+//------------------------------------------------------------------------------
+
 bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *b)
 { 
@@ -96,7 +100,9 @@ bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
     return (!isnan (creal (aij)) && !isnan (cimag (aij))) ;
 }
 
-
+//------------------------------------------------------------------------------
+// gbselect mexFunction
+//------------------------------------------------------------------------------
 
 void mexFunction
 (
@@ -271,13 +277,13 @@ void mexFunction
             b_is_nan = isnan (b_value) ;
         }
         else if (b_type == GxB_FC32)
-        {
+        { 
             GxB_FC32_t b_value = GxB_CMPLXF (0, 0) ;
             OK (GxB_Matrix_extractElement_FC32 (&b_value, b, 0, 0)) ;
             b_is_nan = GB_cisnanf (b_value) ;
         }
         else if (b_type == GxB_FC64)
-        {
+        { 
             GxB_FC64_t b_value = GxB_CMPLX (0, 0) ;
             OK (GxB_Matrix_extractElement_FC64 (&b_value, b, 0, 0)) ;
             b_is_nan = GB_cisnan (b_value) ;

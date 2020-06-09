@@ -1,16 +1,15 @@
 function C = incidence (A, varargin)
-%GRB.INCIDENCE Graph incidence matrix.
+%GRB.INCIDENCE graph incidence matrix.
 % C = GrB.incidence (A) is the graph incidence matrix of the square
 % matrix A.  C is GraphBLAS matrix of size n-by-e, if A is n-by-n with e
-% entries (not including diagonal entries).  The jth column of has 2
+% entries (not including diagonal entries).  The jth column of C has 2
 % entries: C(s,j) = -1 and C(t,j) = 1, where A(s,t) is an entry A.
-% Diagonal entries in A are ignored.   Optional string arguments can
-% appear after A:
+% Diagonal entries in A are ignored.
 %
 %   C = GrB.incidence (A, ..., 'directed') constructs a matrix C of size
 %       n-by-e where e = GrB.entries (GrB.offdiag (A)).  Any entry in the
 %       upper or lower trianglar part of A results in a unique column of
-%       C.  The diagonal is ignored.  This is the default. 
+%       C.  The diagonal is ignored.  This is the default.
 %
 %   C = GrB.incidence (A, ..., 'unsymmetric') is the same as 'directed'.
 %
@@ -46,7 +45,7 @@ end
 
 [m, n] = gbsize (A) ;
 if (m ~= n)
-    gb_error ('A must be square') ;
+    error ('A must be square') ;
 end
 
 % get the string options
@@ -61,9 +60,9 @@ for k = 1:nargin-1
         case { 'double', 'single', 'int8', 'int16', 'int32', 'int64' }
             type = arg ;
         case { 'uint8', 'uint16', 'uint32', 'uint64', 'logical' }
-            gb_error ('type must be signed') ;
+            error ('type must be signed') ;
         otherwise
-            gb_error ('unknown option') ;
+            error ('unknown option') ;
     end
 end
 

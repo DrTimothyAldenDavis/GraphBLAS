@@ -12,7 +12,7 @@ switch (op)
 
     case { 'asin', 'acos', 'atanh' }
 
-        % C is complex if any (abs (G) > 1) 
+        % C is complex if any (abs (G) > 1)
         switch (type)
             case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
                 noutside = gbnvals (gbselect (gbapply ('abs', G), '>', 1)) ;
@@ -24,7 +24,7 @@ switch (op)
 
     case { 'log', 'log10', 'sqrt', 'log2' }
 
-        % C is complex if any (G < 0) 
+        % C is complex if any (G < 0)
         switch (type)
             case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
                 noutside = gbnvals (gbselect (G, '<', 0)) ;
@@ -34,7 +34,7 @@ switch (op)
 
     case { 'log1p' }
 
-        % C is complex if any (G < -1) 
+        % C is complex if any (G < -1)
         switch (type)
             case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
                 noutside = gbnvals (gbselect (G, '<', -1)) ;
@@ -44,7 +44,7 @@ switch (op)
 
     case { 'acosh' }
 
-        % C is complex if any (G < 1) 
+        % C is complex if any (G < 1)
         noutside = gbnvals (gbselect (G, '<', 1)) ;
 
 end

@@ -38,15 +38,15 @@ void mexFunction
     #define LEN 256
     char s [LEN+1] ;
     if (cnz == 0)
-    {
+    { 
         snprintf (s, LEN, "no nonzeros") ;
     }
     else if (cnz == 1)
-    {
+    { 
         snprintf (s, LEN, "1 nonzero") ;
     }
     else
-    {
+    { 
         snprintf (s, LEN, GBd " nonzeros", cnz) ;
     }
 

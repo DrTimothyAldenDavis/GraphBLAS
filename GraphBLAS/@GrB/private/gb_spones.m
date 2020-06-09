@@ -16,7 +16,7 @@ if (nargin == 1)
     end
 else
     if (~ischar (type))
-        gb_error ('type must be a string') ;
+        error ('type must be a string') ;
     end
     op = ['1.' type] ;
 end

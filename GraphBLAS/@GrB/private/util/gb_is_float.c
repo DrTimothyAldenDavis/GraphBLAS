@@ -10,7 +10,7 @@
 #include "gb_matlab.h"
 
 bool gb_is_float (const GrB_Type type)
-{
+{ 
     return ((type == GrB_FP32 ) ||
             (type == GrB_FP64 ) ||
             (type == GxB_FC32 ) ||

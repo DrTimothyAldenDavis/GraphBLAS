@@ -29,7 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: type = GrB.type (X)") ;
+    gb_usage (nargin == 1 && nargout <= 1, "usage: type = gbtype (X)") ;
 
     //--------------------------------------------------------------------------
     // get the type of the matrix
@@ -45,61 +45,15 @@ void mexFunction
         if (mx_type != NULL)
         { 
             // X is a GraphBLAS G.opaque struct; get its type
-            GrB_Type type = gb_mxstring_to_type (mx_type) ;
-            c = gb_type_to_mxstring (type) ;
-            CHECK_ERROR (c == NULL, "unknown type") ;
+            c = mxDuplicateArray (mx_type) ;
         }
     }
 
     if (c == NULL)
-    {
-        // if c is still NULL, then it is not a GraphBLAS opaque struct
-        switch (class)
-        {
-            // a MATLAB sparse or dense matrix, valid for G = GrB (X), or
-            // for inputs to any GrB.method.
-            case mxLOGICAL_CLASS  : c = mxCreateString ("logical") ;  break ;
-            case mxINT8_CLASS     : c = mxCreateString ("int8") ;     break ;
-            case mxINT16_CLASS    : c = mxCreateString ("int16") ;    break ;
-            case mxINT32_CLASS    : c = mxCreateString ("int32") ;    break ;
-            case mxINT64_CLASS    : c = mxCreateString ("int64") ;    break ;
-            case mxUINT8_CLASS    : c = mxCreateString ("uint8") ;    break ;
-            case mxUINT16_CLASS   : c = mxCreateString ("uint16") ;   break ;
-            case mxUINT32_CLASS   : c = mxCreateString ("uint32") ;   break ;
-            case mxUINT64_CLASS   : c = mxCreateString ("uint64") ;   break ;
-
-            case mxSINGLE_CLASS   :
-                if (is_complex)
-                {
-                    c = mxCreateString ("single complex") ;
-                }
-                else
-                {
-                    c = mxCreateString ("single") ;
-                }
-                break ;
-
-            case mxDOUBLE_CLASS   :
-                if (is_complex)
-                {
-                    c = mxCreateString ("double complex") ;
-                }
-                else
-                {
-                    c = mxCreateString ("double") ;
-                }
-                break ;
-
-            // a MATLAB struct, cell, char, void, function, or unknown
-            case mxSTRUCT_CLASS   : c = mxCreateString ("struct") ;   break ;
-            case mxCELL_CLASS     : c = mxCreateString ("cell") ;     break ;
-            case mxCHAR_CLASS     : c = mxCreateString ("char") ;     break ;
-            case mxVOID_CLASS     : c = mxCreateString ("void") ;     break ;
-            case mxFUNCTION_CLASS : c = mxCreateString ("function_handle") ;
-                                   break ;
-            case mxUNKNOWN_CLASS  :
-            default               : c = mxCreateString ("unknown") ;  break ;
-        }
+    { 
+        // if c is still NULL, then it is not a GraphBLAS opaque struct.
+        // get the type of a MATLAB matrix
+        c = gb_mxclass_to_mxstring (class, is_complex) ;
     }
 
     //--------------------------------------------------------------------------

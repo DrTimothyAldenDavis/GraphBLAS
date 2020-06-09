@@ -1,5 +1,5 @@
 function C = spfun (fun, G)
-%SPFUN Apply function to the entries of a GraphBLAS matrix.
+%SPFUN apply function to the entries of a matrix.
 % C = spfun (fun, G) evaluates the function fun on the entries of G.
 %
 % If fun is a string, it can be any GraphBLAS unary operator (type

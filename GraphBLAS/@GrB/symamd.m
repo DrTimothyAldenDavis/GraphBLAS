@@ -1,5 +1,5 @@
 function [p, varargout] = symamd (G, varargin)
-%SYMAMD approximate minimum degree ordering of a GraphBLAS matrix.
+%SYMAMD approximate minimum degree ordering.
 % See 'help symamd' for details.
 %
 % See also GrB/amd, GrB/colamd, GrB/symrcm.

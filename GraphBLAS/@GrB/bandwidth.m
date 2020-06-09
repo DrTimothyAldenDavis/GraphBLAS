@@ -1,16 +1,16 @@
 function [arg1, arg2] = bandwidth (G, uplo)
-%BANDWIDTH Determine the bandwidth of a GraphBLAS matrix.
+%BANDWIDTH matrix bandwidth.
 % [lo, hi] = bandwidth (G) returns the upper and lower bandwidth of G.
 % lo = bandwidth (G, 'lower') returns just the lower bandwidth.
 % hi = bandwidth (G, 'upper') returns just the upper bandwidth.
 %
 % See also GrB/isbanded, GrB/isdiag, GrB/istril, GrB/istriu.
 
-% FUTURE: this will be much faster when implemented in a mexFunction.
-% It is currently much slower than the MATLAB bandwidth function.
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+
+% FUTURE: this will be much faster when implemented in a mexFunction.
+% It is currently much slower than the MATLAB bandwidth function.
 
 % compute the bandwidth
 G = G.opaque ;
@@ -22,13 +22,13 @@ if (nargin == 1)
    arg2 = hi ;
 else
     if (nargout > 1)
-        gb_error ('too many output arguments') ;
+        error ('too many output arguments') ;
     elseif isequal (uplo, 'lower')
         arg1 = lo ;
     elseif isequal (uplo, 'upper')
         arg1 = hi ;
     else
-        gb_error ('unrecognized option') ;
+        error ('unrecognized option') ;
     end
 end
 

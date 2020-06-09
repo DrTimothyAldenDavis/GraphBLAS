@@ -1,6 +1,6 @@
 function C = cot (G)
 %COT cotangent.
-% C = cot (G) computes the cotangent of each entry of a GraphBLAS matrix G.
+% C = cot (G) is the cotangent of each entry of G.
 % Since cot (0) is nonzero, C is a full matrix.
 %
 % See also GrB/coth, GrB/acot, GrB/acoth.

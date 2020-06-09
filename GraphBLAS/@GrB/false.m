@@ -4,8 +4,8 @@ function C = false (varargin)
 %   C = false (n) ;      n-by-n GrB logical matrix with no entries.
 %   C = false (m,n) ;    m-by-n GrB logical matrix with no entries.
 %   C = false ([m,n]) ;  m-by-n GrB logical matrix with no entries.
-%   C = false (..., type) ;      empty logical matrix of given type
-%   C = false (..., 'like', G) ; empty logical matrix, same type as G
+%   C = false (..., type) ;      empty logical matrix of given type.
+%   C = false (..., 'like', G) ; empty logical matrix, same type as G.
 %
 % Since function overloads the MATLAB built-in false(...), at least one
 % input must be a GraphBLAS matrix to use this version (for example,

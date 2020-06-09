@@ -1,6 +1,6 @@
 function C = offdiag (A)
-%GRB.OFFDIAG removes diaogonal entries from the matrix G.
-% C = GrB.offdiag (A) removes diagonal entries from G.
+%GRB.OFFDIAG remove diaogonal entries.
+% C = GrB.offdiag (A) removes diagonal entries from A.
 %
 % See also GrB/tril, GrB/triu, GrB/diag, GrB.select.
 

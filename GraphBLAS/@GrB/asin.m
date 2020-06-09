@@ -1,7 +1,7 @@
 function C = asin (G)
 %ASIN inverse sine.
-% C = asin (G) computes the inverse sine of each entry of a GraphBLAS
-% matrix G.  C is complex if any entry in any (abs(G) > 1)
+% C = asin (G) is the inverse sine of each entry of G.
+% C is complex if any entry in any (abs(G) > 1).
 %
 % See also GrB/sin, GrB/sinh, GrB/asinh.
 

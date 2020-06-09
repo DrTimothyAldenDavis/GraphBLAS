@@ -1,20 +1,15 @@
 function C = bitcmp (A, assumedtype)
 %BITCMP bitwise complement.
-% C = bitcmp (A) computes the bitwise complement of A.  C is a full
-% matrix.  To complement all the bits in the entries of a sparse matrix,
-% but not the implicit entries not in the pattern of C, use
+% C = bitcmp (A) is the bitwise complement of A.  C is a full matrix.  To
+% complement all the bits in the entries of a sparse matrix, but not the
+% implicit entries not in the pattern of C, use
 % C = GrB.apply ('bitcmp', A) instead.
 %
 % With a second parameter, C = bitcmp (A,assumedtype) provides a data type
-% to convert A to if it a floating-point type.  If A already has an
-% integer type, then it are not modified.  Otherwise, A is converted to
+% to convert A to if it is a floating-point type.  If A already has an
+% integer type, then it is not modified.  Otherwise, A is converted to
 % assumedtype, which can be 'int8', 'int16', 'int32', 'int64', 'uint8',
 % 'uint16', 'uint32' or 'uint64'.  The default is 'uint64'.
-%
-% The input matrix must be real, and can only be a GraphBLAS matrix.  This
-% is an overloaded method, and the MATLAB built-in bitcmp is used if A is
-% a MATLAB matrix.  C is returned as a GraphBLAS matrix, as the same type
-% as A after conversion to assumedtype, if needed.
 %
 % Example:
 %
@@ -43,15 +38,15 @@ end
 atype = gbtype (A) ;
 
 if (contains (atype, 'complex'))
-    gb_error ('inputs must be real') ;
+    error ('inputs must be real') ;
 end
 
 if (isequal (atype, 'logical'))
-    gb_error ('inputs must not be logical') ;
+    error ('inputs must not be logical') ;
 end
 
 if (~contains (assumedtype, 'int'))
-    gb_error ('assumedtype must be an integer type') ;
+    error ('assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input

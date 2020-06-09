@@ -1,7 +1,6 @@
 function C = asinh (G)
 %ASINH inverse hyperbolic sine.
-% C = asinh (G) computes the inverse hyberbolic sine of each entry of a
-% GraphBLAS matrix G.
+% C = asinh (G) is the inverse hyberbolic sine of each entry G.
 %
 % See also GrB/sin, GrB/asin, GrB/sinh.
 

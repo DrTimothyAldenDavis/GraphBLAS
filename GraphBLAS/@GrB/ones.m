@@ -4,8 +4,8 @@ function C = ones (varargin)
 %   C = ones (n) ;      n-by-n GrB double matrix of all ones.
 %   C = ones (m,n) ;    m-by-n GrB double matrix of all ones.
 %   C = ones ([m,n]) ;  m-by-n GrB double matrix of all ones.
-%   C = ones (..., type) ;      matrix of all ones of given type
-%   C = ones (..., 'like', G) ; matrix of all ones, same type as G
+%   C = ones (..., type) ;      matrix of all ones of given type.
+%   C = ones (..., 'like', G) ; matrix of all ones, same type as G.
 %
 % Since function overloads the MATLAB built-in ones(...), at least one
 % input must be a GraphBLAS matrix to use this version; for example,

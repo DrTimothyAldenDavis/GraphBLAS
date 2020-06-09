@@ -11,13 +11,13 @@ function i = end (G, k, ndims)
 
 if (ndims == 1)
     if (~isvector (G))
-        error ('GrB:unsupported', 'Linear indexing not supported') ;
+        error ('Linear indexing not yet supported') ;
     end
     i = length (G) ;
 elseif (ndims == 2)
     s = size (G) ;
     i = s (k) ;
 else
-    error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
+    error ('%dD indexing not yet supported', ndims) ;
 end
 

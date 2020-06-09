@@ -29,7 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: nvals = GrB.nvals (X)") ;
+    gb_usage (nargin == 1 && nargout <= 1, "usage: nvals = gbnvals (X)") ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix

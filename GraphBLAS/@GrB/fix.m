@@ -1,7 +1,7 @@
 function C = fix (G)
-%FIX Round towards entries in a GraphBLAS matrix to zero.
-% C = fix (G) rounds the entries in the GraphBLAS matrix G to the
-% nearest integers towards zero.
+%FIX Round towards zero.
+% C = fix (G) rounds the entries in the matrix G to the nearest integers
+% towards zero.
 %
 % See also GrB/ceil, GrB/floor, GrB/round.
 

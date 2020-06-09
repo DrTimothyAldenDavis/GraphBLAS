@@ -1,7 +1,6 @@
 function C = angle (G)
-%ANGLE phase angle of the entries of a GraphBLAS matrix
-% C = angle (G) computes the phase angle of each entry of a GraphBLAS
-% matrix G.
+%ANGLE phase angle.
+% C = angle (G) is the phase angle of each entry of G.
 %
 % See also GrB/abs.
 
@@ -9,13 +8,12 @@ function C = angle (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-type = gbtype (G) ;
+[m, n, type] = gbsize (G) ;
 
 if (contains (type, 'complex'))
     C = GrB (gbapply ('carg', G)) ;
 else
     % C is all zero
-    [m, n] = gbsize (G) ;
     C = GrB (gbnew (m, n, type)) ;
 end
 

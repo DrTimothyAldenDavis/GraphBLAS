@@ -1,6 +1,6 @@
 function C = bitand (A, B, assumedtype)
 %BITAND bitwise AND.
-% C = bitand (A,B) computes the bitwise AND of A and B.  If A and B are
+% C = bitand (A,B) is the bitwise AND of A and B.  If A and B are
 % matrices, the pattern of C is the set intersection of A and B.  If one
 % of A or B is a nonzero scalar, the scalar is expanded into a sparse
 % matrix with the same pattern as the other matrix, and the result is a

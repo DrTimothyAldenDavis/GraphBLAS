@@ -1,5 +1,5 @@
 function C = subsref (A, S)
-%SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix.
+%SUBSREF C = A(I,J) or C = A(I); extract submatrix.
 % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
 % With a single index, C = A(I) extracts a subvector C of a vector A.
 % Linear indexing of a matrix is not yet supported.
@@ -26,7 +26,7 @@ function C = subsref (A, S)
 %   H (I,I) = M
 %   J = {1, 1e13} ;             % represents 1:1e13 colon notation
 %   C = H (J, J)                % this is very fast
-%   E = H (1:1e13, 1:1e13)      % but this is not possible 
+%   E = H (1:1e13, 1:1e13)      % but this is not possible
 %
 % See also GrB/subsasgn, GrB/subsindex, GrB.subassign, GrB.assign,
 % GrB.extract.
@@ -42,11 +42,11 @@ end
 [m, n] = gbsize (A) ;
 
 if (length (S) > 1)
-    error ('GrB:unsupported', 'nested indexing not supported') ;
+    error ('nested indexing not supported') ;
 end
 
 if (~isequal (S.type, '()'))
-    error ('GrB:unsupported', 'index type %s not supported', S.type) ;
+    error ('index type %s not supported', S.type) ;
 end
 
 ndims = length (S.subs) ;
@@ -71,15 +71,14 @@ if (ndims == 1)
             else
                 C = gbextract (A, { }, I) ;
             end
-            [cm, ~] = gbsize (C) ; 
+            [cm, ~] = gbsize (C) ;
             if (whole && cm == 1)
                 C = gbtrans (C) ;
             end
             C = GrB (C) ;
         else
             % C = A (I) for a matrix A
-            error ('GrB:unsupported', ...
-                'Linear indexing not yet supported for GrB matrices') ;
+            error ('Linear indexing not yet supported') ;
         end
     end
 
@@ -90,7 +89,7 @@ elseif (ndims == 2)
 
 else
 
-    error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
+    error ('%dD indexing not yet supported', ndims) ;
 
 end
 

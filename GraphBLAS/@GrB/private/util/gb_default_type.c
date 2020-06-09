@@ -23,28 +23,28 @@ GrB_Type gb_default_type        // return the default type to use
 {
 
     if (atype == NULL || btype == NULL)
-    {
+    { 
 
         // undefined type
         return (NULL) ;
 
     }
     else if (atype == GrB_BOOL)
-    {
+    { 
 
         // A is bool: optype determined by B
         return (btype) ;
 
     }
     else if (btype == GrB_BOOL)
-    {
+    { 
 
         // B is bool: optype determined by A
         return (atype) ;
 
     }
     else if (atype == GrB_INT8)
-    {
+    { 
 
         // A is int8: optype must be signed, and at least 8 bits
         if (btype == GrB_UINT8  ) return (GrB_INT8) ;
@@ -55,7 +55,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_INT16)
-    {
+    { 
 
         // A is int16: optype must be signed, and at least 16 bits
         if (btype == GrB_INT8   ||
@@ -67,7 +67,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_INT32)
-    {
+    { 
 
         // A is int32: optype must be signed, and at least 32 bits
         if (btype == GrB_INT8   ||
@@ -80,7 +80,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_INT64)
-    {
+    { 
 
         // A is int64: optype must be signed, and at least 64
         // bits (if integer).  float and float complex are OK
@@ -95,14 +95,14 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_UINT8)
-    {
+    { 
 
         // A is uint8: optype determined by B (which is not bool; see above)
         return (btype) ;
 
     }
     else if (atype == GrB_UINT16)
-    {
+    { 
 
         // A is uint16: optype can be unsigned if B is also unsigned.
         // optype must be at least 16 bits.
@@ -112,7 +112,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_UINT32)
-    {
+    { 
 
         // A is uint32: optype can be unsigned if B is also unsigned.
         // optype must be at least 32 bits.
@@ -124,7 +124,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_UINT64)
-    {
+    { 
 
         // A is uint64: optype can be unsigned if B is also unsigned.
         // optype must be at least 64 bits.  float and float complex OK.
@@ -138,7 +138,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_FP32)
-    {
+    { 
 
         // A is float: optype must be real or complex
         if (btype == GrB_INT8   ||
@@ -153,7 +153,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GrB_FP64)
-    {
+    { 
 
         // A is double: optype must be double or double complex
         if (btype == GxB_FC32   ||
@@ -162,7 +162,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GxB_FC32)
-    {
+    { 
 
         // A is float complex: optype must be float complex
         // or double complex
@@ -172,7 +172,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else if (atype == GxB_FC64)
-    {
+    { 
 
         // A is double complex: optype must be double complex
         return (GxB_FC64) ;

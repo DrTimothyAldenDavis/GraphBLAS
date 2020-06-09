@@ -1,7 +1,5 @@
 function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
-%GRB.REDUCE reduce a matrix to a vector.
-%
-% Usage:
+%GRB.VREDUCE reduce a matrix to a vector.
 %
 %   C = GrB.vreduce (monoid, A)
 %   C = GrB.vreduce (monoid, A, desc)
@@ -12,21 +10,20 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 %   C = GrB.vreduce (Cin, M, accum, monoid, A)
 %   C = GrB.vreduce (Cin, M, accum, monoid, A, desc)
 %
-% The monoid and A arguments are required.  All others are optional.  The
-% valid monoids are: '+', '*', 'max', and 'min' for all but the 'logical'
-% type, and '|', '&', 'xor', and 'ne' for the 'logical' type.  See 'help
-% GrB.monoidinfo' for more details.
+% The monoid and A arguments are required.  All others are optional.
 %
-% By default, each row of A is reduced to a scalar.  If Cin is not
-% present, C (i) = reduce (A (i,:)).  In this case, Cin and C are
-% column vectors of size m-by-1, where A is m-by-n.  If desc.in0 is
-% 'transpose', then A.' is reduced to a column vector; C (j) = reduce
-% (A (:,j)).  In this case, Cin and C are column vectors of size
-% n-by-1, if A is m-by-n.
+%   Monoids for real non-logical types: '+', '*', 'max', 'min', 'any'
+%   For logical: '|', '&', 'xor', 'eq', 'any'
+%   For complex types: '+', '*', 'any'
+%   For integer types: 'bitor', 'bitand', 'bitxor', 'bitxnor'
 %
-% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix, by default;
-% see 'help GrB/descriptorinfo' for more options.
+% See 'help GrB.monoidinfo' for more details on the available monoids.
+%
+% By default, each row of A is reduced to a scalar.  If Cin is not present,
+% C (i) = reduce (A (i,:)).  In this case, Cin and C are column vectors of
+% size m-by-1, where A is m-by-n.  If desc.in0 is 'transpose', then A.' is
+% reduced to a column vector; C (j) = reduce (A (:,j)).  In this case, Cin
+% and C are column vectors of size n-by-1, if A is m-by-n.
 %
 % See also GrB.reduce, GrB/sum, GrB/prod, GrB/max, GrB/min.
 
@@ -65,7 +62,7 @@ switch (nargin)
     case 6
         [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
     otherwise
-        gb_error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
+        error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
 end
 
 if (k == 0)

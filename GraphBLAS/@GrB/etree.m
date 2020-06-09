@@ -1,5 +1,5 @@
 function [parent, varargout] = etree (G, varargin)
-%ETREE Elimination tree of a GraphBLAS matrix.
+%ETREE elimination tree of a GraphBLAS matrix.
 % See 'help etree' for details.
 %
 % See also GrB/amd.

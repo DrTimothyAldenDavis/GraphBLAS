@@ -1,5 +1,6 @@
 function C = ctranspose (G)
 %CTRANSPOSE C = G', transpose a GraphBLAS matrix.
+% C = G' is the complex conjugate transpose of G.
 %
 % See also GrB.trans, GrB/transpose, GrB/conj.
 

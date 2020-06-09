@@ -1,7 +1,7 @@
 function C = erf (G)
 %ERF error function.
-% C = erf (G) computes the error function of each entry of a GraphBLAS
-% matrix G.  G must be real.
+% C = erf (G) computes the error function of each entry of G.
+% G must be real.
 %
 % See also GrB/erfc, erfcx, erfinv, erfcinv.
 
@@ -12,7 +12,7 @@ G = G.opaque ;
 type = gbtype (G) ;
 
 if (contains (type, 'complex'))
-    gb_error ('input must be real') ;
+    error ('input must be real') ;
 end
 
 if (~gb_isfloat (gbtype (G)))

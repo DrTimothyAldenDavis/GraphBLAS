@@ -1,5 +1,5 @@
 function U = triu (G, k)
-%TRIU upper triangular part of a GraphBLAS matrix.
+%TRIU upper triangular part of a matrix.
 % U = triu (G) returns the upper triangular part of G.
 %
 % U = triu (G,k) returns the entries on and above the kth diagonal of X,

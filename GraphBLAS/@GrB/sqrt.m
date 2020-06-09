@@ -1,7 +1,6 @@
 function C = sqrt (G)
-%SQRT Square root.
-% C = sqrt (G) is the square root of the elements of the GraphBLAS matrix
-% G.
+%SQRT square root.
+% C = sqrt (G) is the square root of the entries of G.
 %
 % See also GrB.apply, GrB/hypot.
 

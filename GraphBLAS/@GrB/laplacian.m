@@ -1,5 +1,5 @@
 function L = laplacian (A, type, check)
-%GRB.LAPLACIAN Graph Laplacian matrix
+%GRB.LAPLACIAN Laplacian matrix
 % L = laplacian (A) is the graph Laplacian of the matrix A.  spones(A)
 % must be symmetric.  The diagonal of A is ignored. The diagonal of L is
 % the degree of the nodes.  That is, L(j,j) = sum (spones (A (:,j))),
@@ -35,7 +35,7 @@ end
 
 [m, n] = gbsize (A) ;
 if (m ~= n)
-    gb_error ('A must be square and symmetric') ;
+    error ('A must be square and symmetric') ;
 end
 
 % get the type
@@ -43,7 +43,7 @@ if (nargin < 2)
     type = 'double' ;
 elseif (~gb_issigned (type))
     % type must be signed
-    gb_error ('type cannot be logical or unsigned integer') ;
+    error ('type cannot be logical or unsigned integer') ;
 end
 
 % S = spones (A)
@@ -53,7 +53,7 @@ S = gbapply (['1.' type], A) ;
 if (nargin > 2 && isequal (check, 'check'))
     % make sure spones (S) is symmetric
     if (~gb_issymmetric (S, 'nonskew', false))
-        gb_error ('spones(A) must be symmetric') ;
+        error ('spones(A) must be symmetric') ;
     end
 end
 

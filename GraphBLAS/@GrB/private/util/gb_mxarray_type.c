@@ -29,7 +29,7 @@ GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
 
     }
     else
-    {
+    { 
 
         switch (mxGetClassID (X))
         {

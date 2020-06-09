@@ -1,12 +1,9 @@
 function C = power (A, B)
-%.^ Array power.
+%.^ array power.
 % C = A.^B computes element-wise powers.  One or both of A and B may be
 % scalars.  Otherwise, A and B must have the same size.  C is sparse (with
-% the same patternas A) if B is a positive scalar (greater than zero), or
+% the same pattern as A) if B is a positive scalar (greater than zero), or
 % full otherwise.
-%
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
-% any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also GrB/mpower.
 
