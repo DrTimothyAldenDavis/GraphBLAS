@@ -39,14 +39,16 @@
 //      bitcmp
 
 // The following equivalent synonyms are available:
-//  ainv    -   negate
-//  lnot    ~   not
-//  one     1
-//  creal   real
-//  cimag   imag
-//  carg    angle
-//  lgamma  gammaln
-//  tgamma  gamma
+//  identity    +       uplus
+//  ainv        -       uminus  negate
+//  lnot        ~       not
+//  one         1
+//  creal       real
+//  cimag       imag
+//  carg        angle
+//  lgamma      gammaln
+//  tgamma      gamma
+//  exp2        pow2
 
 GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 (
@@ -57,7 +59,8 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 
     CHECK_ERROR (type == NULL, "unsupported type") ;
 
-    if (MATCH (op_name, "identity"))
+    if (MATCH (op_name, "identity") || MATCH (op_name, "+") ||
+        MATCH (op_name, "uplus"))
     { 
 
         if (type == GrB_BOOL  ) return (GrB_IDENTITY_BOOL  ) ;
@@ -75,8 +78,8 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GxB_FC64  ) return (GxB_IDENTITY_FC64  ) ;
 
     }
-    else if (MATCH (op_name, "ainv") || MATCH (op_name, "-") ||
-             MATCH (op_name, "negate"))
+    else if (MATCH (op_name, "ainv"  ) || MATCH (op_name, "-") ||
+             MATCH (op_name, "negate") || MATCH (op_name, "uminus"))
     { 
 
         if (type == GrB_BOOL  ) return (GrB_AINV_BOOL  ) ;
@@ -336,7 +339,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GxB_FC64  ) return (GxB_ROUND_FC64) ;
 
     }
-    else if (MATCH (op_name, "trunc"))
+    else if (MATCH (op_name, "trunc") || MATCH (op_name, "fix"))
     { 
 
         if (type == GrB_FP32  ) return (GxB_TRUNC_FP32) ;
@@ -345,7 +348,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GxB_FC64  ) return (GxB_TRUNC_FC64) ;
 
     }
-    else if (MATCH (op_name, "exp2"))
+    else if (MATCH (op_name, "exp2") || MATCH (op_name, "pow2"))
     { 
 
         if (type == GrB_FP32  ) return (GxB_EXP2_FP32) ;
@@ -487,7 +490,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GrB_FP64  ) return (GxB_FREXPE_FP64) ;
 
     }
-    else if (MATCH (op_name, "bitcmp"))
+    else if (MATCH (op_name, "bitcmp") || MATCH (op_name, "bitnot"))
     { 
 
         if (type == GrB_INT8  ) return (GrB_BNOT_INT8  ) ;

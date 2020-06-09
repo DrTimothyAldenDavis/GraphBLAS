@@ -72,8 +72,8 @@ else
         [~, I] = gbextracttuples (G) ;
         I = I' ;
     else
-        % FUTURE: this does not return the same thing
-        % (need to implement linear indexing)
+        % FUTURE: this does not return the same thing as I = find (G)
+        % in MATLAB. (need to 1D linear indexing)
         I = gbextracttuples (G) ;
     end
 end

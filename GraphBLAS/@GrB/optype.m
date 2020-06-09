@@ -1,6 +1,6 @@
-function ctype = optype (a, b)
+function type = optype (a, b)
 %GRB.OPTYPE determine the default type of a binary operator.
-% ctype = GrB.optype (a, b) returns a string that defines the
+% type = GrB.optype (a, b) returns a string that defines the
 % default type of operator to use for two inputs A and B, of type
 % atype and btype, respectively.  The input a can be either the
 % matrix A or the string atype = GrB.type (A), and likewise for b.
@@ -42,7 +42,7 @@ function ctype = optype (a, b)
 %   GrB.optype ('uint32', 'int8')
 %   GrB.optype (uint32 (magic (4)), rand (4))
 %
-% See also GrB.binopinfo, GrB.semiringinfo.
+% See also GrB.binopinfo, GrB.semiringinfo, GrB.type.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -65,5 +65,5 @@ else
     btype = gbtype (b) ;
 end
 
-ctype = gboptype (atype, btype) ;
+type = gboptype (atype, btype) ;
 

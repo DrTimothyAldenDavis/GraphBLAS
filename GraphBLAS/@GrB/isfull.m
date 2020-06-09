@@ -23,6 +23,7 @@ elseif (isobject (A))
 
 else
 
+    % MATLAB full matrix, string, struct, etc
     s = true ;
 
 end

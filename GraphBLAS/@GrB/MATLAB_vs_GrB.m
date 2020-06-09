@@ -1,6 +1,4 @@
-% -------------------------------------------------------------------------
-% Operations MATLAB matrices vs GraphBLAS matrices
-% -------------------------------------------------------------------------
+%% Operations MATLAB matrices vs GraphBLAS matrices
 %
 % Most of the overloaded operations on GrB matrices work just the same as
 % the MATLAB operations of the same name.  There are some important
@@ -8,11 +6,11 @@
 % GraphBLAS may be modified to reduce these differences.
 %
 % ------------------------------------------------
-% Matrix classes and types:
+%% Matrix classes and types:
 % ------------------------------------------------
 %
 %     MATLAB supports 3 kinds of sparse matrices: logical, double, and
-%     double complex.  For single precision floationg-point (real or
+%     double complex.  For single precision floating-point (real or
 %     complex), and integer matrices, MATLAB only supports dense matrices,
 %     not sparse.
 %
@@ -23,25 +21,25 @@
 %     GrB.type for more details.
 %
 % ------------------------------------------------
-% Explicit zeros:
+%% Explicit zeros:
 % ------------------------------------------------
 %
 %     MATLAB always drops explicit zeros from its sparse matrices.
 %     GraphBLAS never drops them, except on request (A = GrB.prune (A)).
-%     This difference will always exist between MATLAB abd GraphBLAS.
+%     This difference will always exist between MATLAB and GraphBLAS.
 %
 %     GraphBLAS cannot drop zeros automatically, since the explicit zero
 %     might be meaningful.  The value zero is the additive identity for
 %     the single monoid supported by MATLAB (the '+' of the '+.*'
 %     conventional semiring).  MATLAB has only two semirings ('+.*.double'
-%     and '+.*.double complex'). GraphBLAS supports both of those, but
-%     many more (1000s), many of which have a different identity value.
+%     and '+.*.double complex').  GraphBLAS supports both of those, but
+%     many 1000s more, many of which have a different identity value.
 %     In a shortest-path problem, for example, an edge of weight zero is
 %     very different than no edge at all (the identity is inf, for the
 %     'min' monoid often used in path problems).
 %
 % ------------------------------------------------
-% MATLAB linear indexing:
+%% MATLAB linear indexing:
 % ------------------------------------------------
 %
 %     In MATLAB, as in A = rand (3) ; X = A (1:6) extracts the first two
@@ -49,7 +47,7 @@
 %     GraphBLAS, but may be added in the future.
 %
 % ------------------------------------------------
-% Increasing/decreasing the size of a matrix:
+%% Increasing/decreasing the size of a matrix:
 % ------------------------------------------------
 %
 %     This can be done with a MATLAB matrix, and the result is a sparse
@@ -71,7 +69,7 @@
 %     This feature is not yet supported but may be added in the future.
 %
 % ------------------------------------------------
-% The outputs of min and max, and operations on complex matrices:
+%% The outputs of min and max, and operations on complex matrices:
 % ------------------------------------------------
 %
 %     MATLAB can compute the min and max on complex values (they return
@@ -86,10 +84,15 @@
 %     GraphBLAS uses the 'omitnan' behavior, which is the default in
 %     MATLAB.
 %
+%     Likewise, logical comparisons (< <= > >=) are not well-defined
+%     mathematically for complex types.  MATLAB defines them, but
+%     GraphBLAS does not.  GraphBLAS can only compare for equality (==)
+%     and inequality (~=) with complex types.
+%
 %     These features may be added to GraphBLAS in the future.
 %
 % ------------------------------------------------
-% Singleton expansion:
+%% Singleton expansion:
 % ------------------------------------------------
 %
 %     MATLAB can expand a 'singleton' dimension (of size 1) of one input
@@ -111,7 +114,7 @@
 %         A.*x            % fails
 %
 % ------------------------------------------------
-% Typecasting from floating-point types to integer:
+%% Typecasting from floating-point types to integer:
 % ------------------------------------------------
 %
 %     In MATLAB, the default is to round to the nearest integer.  If the
@@ -143,7 +146,7 @@
 %       C = GrB.mxm (GrB (A, 'int8'), '+.*.int8', GrB (B, 'int8'))
 %
 % ------------------------------------------------
-% Mixing different integers:
+%% Mixing different integers:
 % ------------------------------------------------
 %
 %     MATLAB refuses to compute int16(1) + int8(1).  GraphBLAS can do
@@ -152,7 +155,7 @@
 %         help GrB.optype
 %
 % ------------------------------------------------
-% Combining 32-bit or lower integers and floating-point:
+%% Combining 32-bit or lower integers and floating-point:
 % ------------------------------------------------
 %
 %     Both MATLAB and GraphBLAS do the work in floating-point.  In MATLAB,
@@ -174,7 +177,7 @@
 %       C = GrB (C, 'int8')
 %
 % ------------------------------------------------
-% 64-bit integers (int64 and uint64) and double:
+%% 64-bit integers (int64 and uint64) and double:
 % ------------------------------------------------
 %
 %     In MATLAB, both inputs are converted to 80-bit long double
@@ -190,7 +193,7 @@
 %     new operators that internally do their work in long double.
 %
 % ------------------------------------------------
-% MATLAB integer operations saturate:
+%% MATLAB integer operations saturate:
 % ------------------------------------------------
 %
 %     If a = uint8 (255), and b = uint8 (1), then a+b for MATLAB matrices
@@ -246,14 +249,14 @@
 %             end
 %
 % ------------------------------------------------
-% The rules for concatenation differ.
+%% The rules for concatenation differ.
 % ------------------------------------------------
 %
 %     For C = [A1 A2] and [A1 ; A2], the type of C differs.
 %     GraphBLAS uses the rules given by 'help GrB.optype'
 %
 % ------------------------------------------------
-% Bitwise operators:
+%% Bitwise operators:
 % ------------------------------------------------
 %
 %     GraphBLAS includes all the bitwise operators that MATLAB has.  In
@@ -266,7 +269,7 @@
 %
 %         GrB.semiringinfo ('bitor.bitand.uint8')
 %
-% For more details, see the GraphBLAS user guide in GraphBLAS/Doc.
+%% For more details, see the GraphBLAS user guide in GraphBLAS/Doc.
 %
 % See also GrB, sparse.
 

@@ -2,7 +2,6 @@ function C = emult (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.EMULT sparse element-wise 'multiplication'.
 %
 % Usage:
-%
 %   C = GrB.emult (op, A, B, desc)
 %   C = GrB.emult (Cin, accum, op, A, B, desc)
 %   C = GrB.emult (Cin, M, op, A, B, desc)

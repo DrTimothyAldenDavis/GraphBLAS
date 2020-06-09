@@ -1,8 +1,7 @@
 function C = build (varargin)
 %GRB.BUILD construct a GraphBLAS sparse matrix from a list of entries.
 %
-% Usage
-%
+% Usage:
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %
 % GrB.build constructs an m-by-n GraphBLAS sparse matrix C from a list of

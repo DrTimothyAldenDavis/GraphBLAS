@@ -51,19 +51,19 @@ classdef GrB
 %   Most of the valid type strings correspond to MATLAB class of the same
 %   name (see 'help class'):
 %
-%       'double'    64-bit floating-point (real, not complex)
-%       'single'    32-bit floating-point (real, not complex)
-%       'single complex'  32-bit single complex
-%       'double complex'  64-bit double complex (also just 'complex')
-%       'logical'   8-bit boolean
-%       'int8'      8-bit signed integer
-%       'int16'     16-bit signed integer
-%       'int32'     32-bit signed integer
-%       'int64'     64-bit signed integer
-%       'uint8'     8-bit unsigned integer
-%       'uint16'    16-bit unsigned integer
-%       'uint32'    32-bit unsigned integer
-%       'uint64'    64-bit unsigned integer
+%       'logical'           8-bit boolean
+%       'int8'              8-bit signed integer
+%       'int16'             16-bit signed integer
+%       'int32'             32-bit signed integer
+%       'int64'             64-bit signed integer
+%       'uint8'             8-bit unsigned integer
+%       'uint16'            16-bit unsigned integer
+%       'uint32'            32-bit unsigned integer
+%       'uint64'            64-bit unsigned integer
+%       'double'            64-bit floating-point (real, not complex)
+%       'single'            32-bit floating-point (real, not complex)
+%       'single complex'    single complex
+%       'double complex'    double complex (also just 'complex')
 %
 %   In MATLAB matrices, complex is an attribute, not a class.  In GrB
 %   matrices, 'double complex' and 'single complex' are treated as their
@@ -205,7 +205,7 @@ classdef GrB
 %   C = exp2 (G)            base-2 exponent
 %   C = expm1 (G)           exp (x) - 1
 %
-%   C = false (...,'like',G)   all-false logical matrix
+%   C = false (...)         all-false logical matrix
 %   [I,J,X] = find (G, ...) extract entries from a matrix
 %   C = fix (G)             round towards zero
 %   C = flip (G, dim)       flip the order of entries
@@ -266,7 +266,7 @@ classdef GrB
 %   e = numel (G)           m*n for an m-by-n GrB matrix G
 %   e = nzmax (G)           number of entries in a GrB matrix G
 %
-%   C = ones (...,'like',G) matrix with all ones, same type as G
+%   C = ones (...)          matrix with all ones, same type as G
 %
 %   C = pow2 (F, E)         base-2 power
 %   C = prod (G, option)    reduce via product, to vector or scalar
@@ -299,7 +299,7 @@ classdef GrB
 %   C = tanh (G)            hyperbolic tangent
 %   L = tril (G, k)         lower triangular part of GrB matrix G
 %   U = triu (G, k)         upper triangular part of GrB matrix G
-%   C = true (...,'like',G) all-true logical matrix
+%   C = true (...)          all-true logical matrix
 %
 %   C = uint8 (G)           cast GrB matrix to MATLAB full uint8
 %   C = uint16 (G)          cast GrB matrix to MATLAB full uint16
@@ -308,7 +308,7 @@ classdef GrB
 %
 %   C = xor (A, B)          exclusive or
 %
-%   C = zeros (...,'like',G)   all-zero matrix, same type as G
+%   C = zeros (...)         all-zero matrix, same type as G
 %
 %-------------------------------------------------------------------------
 % Static Methods:
@@ -385,18 +385,18 @@ classdef GrB
 %   the MATLAB interface, many of the parameters become optional, and
 %   they can appear in different order.
 %
-%   GrB.mxm         sparse matrix-matrix multiplication over a semiring
-%   GrB.kronecker   Kronecker product
-%   GrB.eadd        element-wise addition
-%   GrB.emult       element-wise multiplication
-%   GrB.select      select a subset of entries from a matrix
-%   GrB.vreduce     reduce a matrix to a vector
 %   GrB.apply       apply a unary operator
 %   GrB.assign      sparse matrix assignment, such as C(I,J)=A
-%   GrB.subassign   sparse matrix assignment, such as C(I,J)=A
+%   GrB.eadd        element-wise addition
+%   GrB.emult       element-wise multiplication
 %   GrB.extract     extract submatrix, like C=A(I,J) in MATLAB
-%   GrB.trans       transpose a matrix
+%   GrB.kronecker   Kronecker product
+%   GrB.mxm         sparse matrix-matrix multiplication over a semiring
 %   GrB.reduce      reduce a matrix to a scalar
+%   GrB.select      select a subset of entries from a matrix
+%   GrB.subassign   sparse matrix assignment, such as C(I,J)=A
+%   GrB.trans       transpose a matrix
+%   GrB.vreduce     reduce a matrix to a vector
 %
 %   In GraphBLAS notation (with C, Cin arguments for the one matrix
 %   C), these take the following form:
@@ -426,18 +426,18 @@ classdef GrB
 %
 %   The full list of parameters is shown below:
 %
-%       C = GrB.mxm       (Cin, M, accum, op, A, B,    desc)
-%       C = GrB.kronecker (Cin, M, accum, op, A, B,    desc)
-%       C = GrB.eadd      (Cin, M, accum, op, A, B,    desc)
-%       C = GrB.emult     (Cin, M, accum, op, A, B,    desc)
-%       C = GrB.select    (Cin, M, accum, op, A, b,    desc)
-%       C = GrB.vreduce   (Cin, M, accum, op, A,       desc)
-%       C = GrB.apply     (Cin, M, accum, op, A,       desc)
-%       C = GrB.assign    (Cin, M, accum,     A, I, J, desc)
-%       C = GrB.subassign (Cin, M, accum,     A, I, J, desc)
-%       C = GrB.extract   (Cin, M, accum,     A, I, J, desc)
-%       C = GrB.trans     (Cin, M, accum,     A,       desc)
-%       C = GrB.reduce    (Cin,    accum, op, A,       desc)
+%       C = GrB.apply     (Cin, M, accum, op, A,          desc)
+%       C = GrB.assign    (Cin, M, accum,     A,    I, J, desc)
+%       C = GrB.eadd      (Cin, M, accum, op, A, B,       desc)
+%       C = GrB.emult     (Cin, M, accum, op, A, B,       desc)
+%       C = GrB.extract   (Cin, M, accum,     A,    I, J, desc)
+%       C = GrB.kronecker (Cin, M, accum, op, A, B,       desc)
+%       C = GrB.mxm       (Cin, M, accum, op, A, B,       desc)
+%       C = GrB.reduce    (Cin,    accum, op, A,          desc)
+%       C = GrB.select    (Cin, M, accum, op, A, b,       desc)
+%       C = GrB.subassign (Cin, M, accum,     A,    I, J, desc)
+%       C = GrB.trans     (Cin, M, accum,     A,          desc)
+%       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
 %   single optional struct (the descriptor).  The order of parameters
@@ -502,16 +502,8 @@ classdef GrB
 %   strings '+' and '+.*' must appear in that order, but the matrices and
 %   strings may be interleaved arbitrarily.
 %
-%       C = GrB.mxm (C, M, '+', '+.*', A, B)        C<M> += A*B
-%       C = GrB.mxm (C, M, '+', A, '+.*', B)        C<M> += A*B
-%       C = GrB.mxm ('+', '+,*', C, M, A, B)        C<M> += A*B
-%
-%       C = GrB.mxm ('+.*', A, B)                   C = A*B
-%       C = GrB.mxm (A, '+.*', B)                   C = A*B
-%       C = GrB.mxm (C, M, A, '+.*', B)             C<M> = A*B
-%
-%       C = GrB.emult (C, M, '+', A, '*', B)        C<M> += A.*B
-%       C = GrB.emult (A, '*', B)                   C = A.*B
+%       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
+%       C = GrB.apply ('~', A)                      C = ~A
 %
 %       C = GrB.assign (C, M, '+', A, I, J)         C(I,J)<M> += A
 %       C = GrB.assign (C, I, J, M, '+', A)         C(I,J)<M> += A
@@ -523,6 +515,9 @@ classdef GrB
 %       C = GrB.assign (C, M, '+', A)               C<M> += A
 %       C = GrB.assign (C, '+', A, I)               C (I,:) += A
 %
+%       C = GrB.emult (C, M, '+', A, '*', B)        C<M> += A.*B
+%       C = GrB.emult (A, '*', B)                   C = A.*B
+%
 %       C = GrB.extract (C, M, '+', A, I, J)        C<M> += A(I,J)
 %       C = GrB.extract (A, I, J)                   C = A(I,J)
 %       C = GrB.extract (I, J, A)                   C = A(I,J)
@@ -531,8 +526,13 @@ classdef GrB
 %       C = GrB.extract (C, M, '+', A)              C<M> += A
 %       C = GrB.extract (C, '+', A, I)              C += A(I,:)
 %
-%       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
-%       C = GrB.apply ('~', A)                      C = ~A
+%       C = GrB.mxm (C, M, '+', '+.*', A, B)        C<M> += A*B
+%       C = GrB.mxm (C, M, '+', A, '+.*', B)        C<M> += A*B
+%       C = GrB.mxm ('+', '+,*', C, M, A, B)        C<M> += A*B
+%
+%       C = GrB.mxm ('+.*', A, B)                   C = A*B
+%       C = GrB.mxm (A, '+.*', B)                   C = A*B
+%       C = GrB.mxm (C, M, A, '+.*', B)             C<M> = A*B
 %
 %       c = GrB.reduce (c, '+', 'max', A)           c += max (A)
 %       c = GrB.reduce ('max', A)                   c = max (A)
@@ -724,7 +724,7 @@ methods
 
     C = and (A, B) ;            % C = (A & B)
     C = ctranspose (A) ;        % C = A'
-    i = end (G, k, ndims) ;     % for A (1:end,1:end)
+    i = end (A, k, ndims) ;     % for A (1:end,1:end)
     C = eq (A, B) ;             % C = (A == B)
     C = ge (A, B) ;             % C = (A >= B)
     C = gt (A, B) ;             % C = (A > B)
@@ -743,7 +743,7 @@ methods
     C = plus (A, B) ;           % C = A + B
     C = power (A, B) ;          % C = A .^ B
     C = rdivide (A, B) ;        % C = A ./ B
-    I = subsindex (G) ;         % X = A (G)
+    I = subsindex (A) ;         % for C = X (A), using A as index I
     C = subsasgn (C, S, A) ;    % C (I,J) = A or C (M) = A
     C = subsref (A, S) ;        % C = A (I,J) or C = A (M)
     C = times (A, B) ;          % C = A .* B
@@ -842,7 +842,7 @@ methods
     C = int16 (G) ;
     C = int32 (G) ;
     C = int64 (G) ;
-    s = isa (G, classname) ;
+    s = isa (G, type) ;
     s = isbanded (G, lo, hi) ;
 %   s = iscolumn (G)        built-in works as-is
     s = isdiag (G) ;
@@ -902,7 +902,7 @@ methods
     C = sinh (G) ;
     [m, n] = size (G, dim) ;
     C = sparse (G) ;
-    C = spfun (fun, G) ;    % TODO
+    C = spfun (fun, G) ;
     C = spones (G, type) ;
     C = sprand (arg1, arg2, arg3) ;
     C = sprandn (arg1, arg2, arg3) ;
@@ -941,6 +941,11 @@ methods (Static)
     % MATLAB sparse, or MATLAB full).  The output matrix C is a GraphBLAS
     % matrix.
 
+    % Some of the methods listed below are high-level graph algorithms that
+    % rely on GrB objects internally (bfs, dnn, ktruss, mis, pagerank, and
+    % tricount).
+
+    MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices
@@ -949,7 +954,7 @@ methods (Static)
     b = burble (b) ;
     c = chunk (c) ;
     clear ;
-    [C, I, J] = compact (A, id) ;   % TODO
+    [C, I, J] = compact (A, id) ;
     descriptorinfo (d) ;
     Y = dnn (W, bias, Y0) ;                     % uses GrB matrices
     C = eadd (Cin, M, accum, op, A, B, desc) ;
@@ -993,7 +998,6 @@ methods (Static)
     s = type (A) ;
     unopinfo (op, type) ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
-    MATLAB_vs_GrB ;
 
 end
 end

@@ -35,7 +35,7 @@ else
 end
 
 [m, n] = size (G) ;
-desc = struct ('in0', 'transpose') ;
+desc.in0 = 'transpose' ;
 
 if (nargin == 1)
 

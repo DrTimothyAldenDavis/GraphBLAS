@@ -1,8 +1,7 @@
 function binopinfo (op, optype)
 %GRB.BINOPINFO list the details of a GraphBLAS binary operator.
 %
-% Usage
-%
+% Usage:
 %   GrB.binopinfo
 %   GrB.binopinfo (op)
 %   GrB.binopinfo (op, optype)
@@ -56,12 +55,17 @@ function binopinfo (op, optype)
 %   xor lxor         xor(x,y)       |   .^  pow          x .^ y
 %   pair             1              |   any              pick x or y
 %
+% Comparators (*lt, *gt, *le, *ge) and min/max are not available for
+% complex types.
+%
+% All of the above operators are defined for logical operands, but many
+% are redundant. 'min.logical' is the same as 'and.logical', for example.
+% Most of the logical operators have aliases: ('lor', 'or', '|') are the
+% same, as are ('lxnor', 'xnor', 'eq', '==') for logical types.
+%
 % The three logical operators, lor, land, and lxor, can be used with any
 % real types.  z = lor.double (x,y) tests the condition (x~=0) || (y~=0),
 % and returns the double value 1.0 if true, or 0.0 if false.
-%
-% Comparators (*lt, *gt, *le, *ge) and min/max are not available for
-% complex types.
 %
 % The following operators are avaiable for single and double (real); their
 % definitions are identical to the ANSI C11 versions of these functions:
@@ -71,19 +75,20 @@ function binopinfo (op, optype)
 % z = cmplx(x,y) can be computed for x and y as single and double; z is
 % single complex or double complex, respectively.
 %
-% Four bitwise operators are available for any signed or unsigned integer
-% types:  bitor, bitand, bitxor, bitxnor.
+% The following  bitwise operators are available for any signed or
+% unsigned integer types:  bitor, bitand, bitxor, bitxnor, bitget, bitset,
+% bitclr, and bitshift.
 %
-% Typecasting:  Most binary operators are available for all 13 types.  If
-% the optype is omitted from the string (as in GrB.eadd (A, '+', B) or
-% simply C = A+B), then the optype is inferred from the type of A and B,.
-% See 'help GrB.optype' for details.
+% Typecasting:  If the optype is omitted from the string (as in GrB.eadd
+% (A, '+', B) or simply C = A+B), then the optype is inferred from the
+% type of A and B.  See 'help GrB.optype' for details.
 %
 % Example:
 %
 %   % valid binary operators
 %   GrB.binopinfo ('+.double') ;
 %   GrB.binopinfo ('1st.int32') ;
+%   GrB.binopinfo ('cmplx.single') ;
 %
 %   % invalid binary operator (an error; this is a unary op):
 %   GrB.binopinfo ('abs.double') ;

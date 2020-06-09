@@ -17,7 +17,7 @@
 //  atan2, hypot, fmod, remainder, copysign, cmplx, pow
 
 //  bitwise operators:
-//      bitand, bitor, bitxor, bitxnor
+//      bitand, bitor, bitxor, bitxnor, bitget, bitset, bitclr, bitshift
 
 // The following synonyms are allowed for specifying these operators:
 //

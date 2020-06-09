@@ -16,21 +16,37 @@ function monoidinfo (monoid, type)
 % GrB.monoidinfo ('+.double'), or in the second argument,
 % GrB.monoidinfo ('+', 'double').
 %
-% The valid monoids for real non-logical types are: '+', '*', 'max', 'min',
-% and 'any'.  For the 'logical' type: '|', '&', 'xor', 'eq', and 'any'.
-% For complex types: '+', '*', and 'any'.
+% A monoid is any binary operator z=f(x,y) that is commutative and
+% associative, with an identity value o so that f(x,o)=f(o,x)=o.  The
+% types of z, x, and y must all be identical.  For example, the
+% plus.double operator is f(x,y)=x+y, with zero as the identity value
+% (x+0 = 0+x = x).  The plus.times operator has an identity value of 1
+% (x*1 = 1*x = x).  The identity of min.double is -inf.
+%
+% The valid monoids for real non-logical types are:
+%       '+', '*', 'max', 'min', 'any' 
+% For the 'logical' type:
+%       '|', '&', 'xor', 'eq', 'any'
+% For complex types:
+%       '+', '*', 'any'
+% For integer types (signed and unsigned): 
+%       'bitor', 'bitand', 'bitxor', 'bitxnor'
+%
+% Some monoids have synonyms; see 'help GrB.binopinfo' for details.
 %
 % Example:
 %
 %   % valid monoids
 %   GrB.monoidinfo ('+.double') ;
 %   GrB.monoidinfo ('*.int32') ;
+%   GrB.monoidinfo ('min.double') ;
 %
 %   % invalid monoids
 %   GrB.monoidinfo ('1st.int32') ;
 %   GrB.monoidinfo ('abs.double') ;
+%   GrB.monoidinfo ('min.complex') ;
 %
-% See also GrB.binopinfo, GrB.descriptorinfo, % GrB.selectopinfo,
+% See also GrB.binopinfo, GrB.descriptorinfo, GrB.selectopinfo,
 % GrB.semiringinfo, GrB.unopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

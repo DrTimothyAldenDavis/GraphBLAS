@@ -50,12 +50,13 @@ else
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
-            result = gbextracttuples (gbselect (result, 'nonzero')) ;
+            desc.base = 'one-based int' ;
+            result = gbextracttuples (gbselect (result, 'nonzero'), desc) ;
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')
             % d = GrB.entries (A, 'col', 'degree')
-            % result is returned as a GraphBLAS struct
+            % result is returned as a GraphBLAS struct, already computed above
     end
 end
 

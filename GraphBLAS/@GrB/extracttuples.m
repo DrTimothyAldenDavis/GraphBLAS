@@ -2,7 +2,6 @@ function [I,J,X] = extracttuples (A, desc)
 %GRB.EXTRACTTUPLES extract a list of entries from a matrix.
 %
 % Usage:
-%
 %   [I,J,X] = GrB.extracttuples (A, desc)
 %
 % GrB.extracttuples extracts all entries from either a MATLAB matrix or a

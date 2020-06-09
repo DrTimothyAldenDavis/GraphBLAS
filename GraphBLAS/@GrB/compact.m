@@ -26,26 +26,36 @@ function [C, I, J] = compact (A, id)
 %   H (I,J) = A
 %   [C, I, J] = GrB.compact (H)
 %   assert (isequal (C, A)) ;       % C and A are the same
+%   assert (isequal (C, H(I,J)) ;   % C and H(I,J) are the same
 %   H (I, J(1)) = 0
 %   [C, I, J] = GrB.compact (H, 0)
-%   norm (C - A (:,2:end), 1)
+%   assert (norm (C - A (:,2:end), 1) == 0)
 %
 % See also GrB.entries, GrB.nonz, GrB.prune.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% TODO
+if (isobject (A))
+    A = A.opaque ;
+end
 
 if (nargin > 1)
+    % prune identity values from A
     id = gb_get_scalar (id) ;
-    if (~(id == 0 && builtin ('issparse', A)))
-        A = GrB.prune (A, id) ;
+    if (id ~= 0)
+        % prune a nonzero identity value from A
+        A = gbselect (A, '~=', id) ;
+    elseif (~builtin ('issparse', A))
+        % prune zeros from A, but skip this if A is a MATLAB sparse matrix
+        A = gbselect (A, 'nonzero') ;
     end
 end
 
-S = GrB.apply ('1.double', A) ;
-I = find (GrB.vreduce ('+', S)) ;
-J = find (GrB.vreduce ('+', S, struct ('in0', 'transpose'))) ;
-C = GrB.extract (A, { I }, { J }) ;
+% get the list of non-empty rows and columns
+I = gb_entries (A, 'row', 'list') ;
+J = gb_entries (A, 'col', 'list') ;
+
+% C = A (I,J)
+C = GrB (gbextract (A, { I }, { J })) ;
 
