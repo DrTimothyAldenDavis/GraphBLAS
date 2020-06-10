@@ -48,20 +48,26 @@ function type = optype (a, b)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (ischar (a))
+% assert(false) ;
     atype = a ;
 elseif (isobject (a))
+% assert(false) ;
     a = a.opaque ;
     atype = gbtype (a) ;
 else
+% assert(false) ;
     atype = gbtype (a) ;
 end
 
 if (ischar (b))
+% assert(false) ;
     btype = b ;
 elseif (isobject (b))
+% assert(false) ;
     b = b.opaque ;
     btype = gbtype (b) ;
 else
+% assert(false) ;
     btype = gbtype (b) ;
 end
 

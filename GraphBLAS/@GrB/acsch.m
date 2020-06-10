@@ -11,8 +11,8 @@ function C = acsch (G)
 G = G.opaque ;
 type = gbtype (G) ;
 if (~gb_isfloat (type))
-    G = GrB (G, 'double') ;
+    type = 'double' ;
 end
 
-C = GrB (gbapply ('asinh', gbapply ('minv', gbfull (G)))) ;
+C = GrB (gbapply ('asinh', gbapply ('minv', gbfull (G, type)))) ;
 

@@ -32,11 +32,13 @@ if (nargin == 1)
     C = GrB (gb_random (G, 'symmetric', 'normal')) ;
 elseif (nargin == 2)
     % C = sprandsym (n, d)
+% assert(false) ;
     n = gb_get_scalar (arg1) ;
     d = gb_get_scalar (arg2) ;
     C = GrB (gb_random (n, d, 'symmetric', 'normal')) ;
 else
     % the 'rc' input option is not supported
+% assert(false) ;
     error ('usage: sprandsym(A) or sprandsym(n,d)') ;
 end
 

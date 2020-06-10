@@ -27,6 +27,7 @@ end
 
 type = gbtype (A) ;
 if (contains (type, 'complex'))
+% assert(false) ;
     error ('complex matrices not yet supported') ;
 elseif (isequal (type, 'logical'))
     op = '|.logical' ;
@@ -51,12 +52,14 @@ elseif (nargin == 3)
 
     % C = max (A, [ ], option)
     if (~isempty (B))
+% assert(false) ;
         error ('dimension argument not allowed with 2 input matrices') ;
     end
     C = GrB (gb_max3 (op, A, option)) ;
 
 else
 
+% assert(false) ;
     error ('invalid usage') ;
 
 end

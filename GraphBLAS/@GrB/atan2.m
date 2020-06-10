@@ -19,7 +19,7 @@ atype = gbtype (A) ;
 btype = gbtype (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
-    error ('both inputs must be real') ;
+    error ('inputs must be real') ;
 end
 
 if (~gb_isfloat (atype))

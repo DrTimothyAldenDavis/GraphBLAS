@@ -16,6 +16,7 @@ a_is_object = isobject (A) ;
 if (a_is_object)
     G = A.opaque ;
 else
+% assert(false) ;
     G = A ;
 end
 

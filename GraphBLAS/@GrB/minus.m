@@ -18,5 +18,7 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-C = GrB (gb_eadd (A, '+', gbapply ('-', B))) ;
+type = gboptype (gbtype (A), gbtype (B)) ;
+
+C = GrB (gb_eadd (A, '+', gbapply (['-.' type], B))) ;
 

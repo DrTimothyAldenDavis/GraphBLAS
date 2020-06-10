@@ -23,7 +23,7 @@ function C = bitor (A, B, assumedtype)
 %   fprintf ('\nC: ') ; fprintf ('%3x ', C) ; fprintf ('\n') ;
 %   % in MATLAB:
 %   C2 = bitor (uint8 (A), uint8 (B))
-%   assert (all (C2 == C, 'all'))
+%   isequal (C2, C)
 %
 % See also GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift, GrB/bitget,
 % GrB/bitset, GrB/bitclr.

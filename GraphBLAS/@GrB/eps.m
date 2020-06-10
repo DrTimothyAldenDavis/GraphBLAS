@@ -21,8 +21,11 @@ switch (GrB.type (G))
     case { 'double' }
         C = GrB (eps (double (full (G)))) ;
 
-    case { 'single complex', 'double complex' }
-        C = max (eps (real (G)), eps (imag (G))) ;
+    case { 'single complex' }
+        C = max (eps (single (real (G))), eps (single (imag (G)))) ;
+
+    case { 'double complex' }
+        C = max (eps (double (real (G))), eps (double (imag (G)))) ;
 
     otherwise
         error ('input must be floating-point') ;

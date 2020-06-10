@@ -71,22 +71,27 @@ if (isobject (arg1))
 end
 
 if (nargin > 1 && isobject (arg2))
+% assert(false) ;
     arg2 = arg2.opaque ;
 end
 
 if (nargin > 2 && isobject (arg3))
+% assert(false) ;
     arg3 = arg3.opaque ;
 end
 
 if (nargin > 3 && isobject (arg4))
+% assert(false) ;
     arg4 = arg4.opaque ;
 end
 
 if (nargin > 4 && isobject (arg5))
+% assert(false) ;
     arg5 = arg5.opaque ;
 end
 
 if (nargin > 5 && isobject (arg6))
+% assert(false) ;
     arg6 = arg6.opaque ;
 end
 
@@ -102,15 +107,17 @@ switch (nargin)
     case 5
         [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5) ;
     case 6
+% assert(false) ;
         [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
+% assert(false) ;
         [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
+% assert(false) ;
         error ('usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)');
 end
 
 if (k == 0)
     C = GrB (C) ;
 end
-
 

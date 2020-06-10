@@ -37,6 +37,7 @@ if (isobject (A))
     A = A.opaque ;
 end
 if (nargin < 2)
+% assert(false) ;
     desc.base = 'default' ;
 end
 
@@ -44,6 +45,7 @@ switch (nargout)
     case 1
         I = gbextracttuples (A, desc) ;
     case 2
+% assert(false) ;
         [I, J] = gbextracttuples (A, desc) ;
     case 3
         [I, J, X] = gbextracttuples (A, desc) ;

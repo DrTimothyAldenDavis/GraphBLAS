@@ -20,7 +20,7 @@ assert (ok) ;
 
 try
     x = min (G, [ ], 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -29,7 +29,7 @@ assert (ok) ;
 
 try
     x = max (G, [ ], 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -38,25 +38,23 @@ assert (ok) ;
 
 try
     x = min (G, [ ], 1, G) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
-    disp (expected_error.stack (end-1))
 end
 assert (ok) ;
 
 try
     x = max (G, [ ], 1, G) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
-    disp (expected_error.stack (end-1))
 end
 assert (ok) ;
 
 try
     x = sum (G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -65,7 +63,7 @@ assert (ok) ;
 
 try
     x = all (G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -74,7 +72,7 @@ assert (ok) ;
 
 try
     x = any (G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -83,7 +81,7 @@ assert (ok) ;
 
 try
     [x, y] = bandwidth (G, 'lower') ; %#ok<*ASGLU>
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -92,7 +90,7 @@ assert (ok) ;
 
 try
     x = bandwidth (G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -101,7 +99,7 @@ assert (ok) ;
 
 try
     x = GrB.eye (1, 2, 3) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -110,7 +108,7 @@ assert (ok) ;
 
 try
     x = GrB.eye ([1, 2, 3]) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -119,7 +117,7 @@ assert (ok) ;
 
 try
     G.stuff = 3 ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -128,7 +126,7 @@ assert (ok) ;
 
 try
     G (2,1,1) = 3 ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -138,7 +136,7 @@ assert (ok) ;
 H = GrB (rand (4,3)) ;
 try
     C = H^H ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -147,7 +145,7 @@ assert (ok) ;
 
 try
     C = G^H ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -156,7 +154,7 @@ assert (ok) ;
 
 try
     C = G^(-1) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -165,7 +163,7 @@ assert (ok) ;
 
 try
     C = G(1,2).stuff(3,4) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -174,7 +172,7 @@ assert (ok) ;
 
 try
     C = G.stuff ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -183,7 +181,7 @@ assert (ok) ;
 
 try
     C = G (3:4) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -192,7 +190,7 @@ assert (ok) ;
 
 try
     C = G (1,2,2) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -201,7 +199,7 @@ assert (ok) ;
 
 try
     C = spones (G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -210,7 +208,7 @@ assert (ok) ;
 
 try
     C = spones (G, G) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -220,7 +218,7 @@ assert (ok) ;
 G = GrB (magic (2), 'int16') ;
 try
     C = eps (G)
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -229,7 +227,7 @@ assert (ok) ;
 
 try
     C = GrB.entries (G, 'gunk')
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -238,7 +236,7 @@ assert (ok) ;
 
 try
     C = GrB.entries (G, 'all', 'degree')
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -247,7 +245,7 @@ assert (ok) ;
 
 try
     C = norm (G, 0) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -256,7 +254,7 @@ assert (ok) ;
 
 try
     C = norm (G, 42) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -265,7 +263,7 @@ assert (ok) ;
 
 try
     C = norm (G, -inf) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -274,7 +272,7 @@ assert (ok) ;
 
 try
     C = norm (G, 2) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -284,7 +282,7 @@ assert (ok) ;
 v = GrB (rand (4,1)) ;
 try
     C = norm (G, 42) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -293,7 +291,7 @@ assert (ok) ;
 
 try
     C = reshape (v, 42, 42) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -302,7 +300,7 @@ assert (ok) ;
 
 try
     C = reshape (v, [2 2 2]) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -311,7 +309,7 @@ assert (ok) ;
 
 try
     C = zeros (3, 3, 'crud', G) ; %#ok<*PREALL>
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -320,7 +318,7 @@ assert (ok) ;
 
 try
     C = zeros ([3, 3], 'crud', G) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -329,7 +327,7 @@ assert (ok) ;
 
 try
     C = zeros (3, 3, 'like', G, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
 end
@@ -337,7 +335,7 @@ assert (ok) ;
 
 try
     C = reshape (v, [2 2], 2) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -346,7 +344,7 @@ assert (ok) ;
 
 try
     C = norm (v, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -355,7 +353,7 @@ assert (ok) ;
 
 try
     C = norm (v, 3) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -364,7 +362,7 @@ assert (ok) ;
 
 try
     C = norm (G) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -373,7 +371,7 @@ assert (ok) ;
 
 try
     v = GrB.bfs (v, 1) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -382,7 +380,7 @@ assert (ok) ;
 
 try
     v = GrB.bfs (G, 1, 'gunk') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -392,7 +390,7 @@ assert (ok) ;
 try
     % G must be symmetric
     v = GrB.bfs (G, 1, 'symmetric', 'check') ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -401,7 +399,7 @@ assert (ok) ;
 
 try
     v = [G v] ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -410,7 +408,7 @@ assert (ok) ;
 
 try
     v = [G ; v] ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -419,7 +417,7 @@ assert (ok) ;
 
 try
     C = GrB.empty (4, 4) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -428,7 +426,7 @@ assert (ok) ;
 
 try
     C = GrB.empty ([0, 4, 4]) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -437,7 +435,7 @@ assert (ok) ;
 
 try
     c = GrB.tricount (v) ;
-    ok = false
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -645,6 +643,7 @@ assert (ok)
 
 try
     iset = GrB.mis (ones (3,4)) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -653,6 +652,7 @@ assert (ok) ;
 
 try
     iset = GrB.mis (ones (3), 'gunk') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -661,6 +661,7 @@ assert (ok) ;
 
 try
     iset = GrB.mis (ones (3), 'check') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -670,6 +671,7 @@ assert (ok) ;
 A = sprand (10, 10, 0.5) ;
 try
     iset = GrB.mis (GrB.offdiag (A), 'check') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -678,6 +680,7 @@ assert (ok) ;
 
 try
     iset = GrB.mis (ones (3)) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -686,6 +689,7 @@ assert (ok) ;
 
 try
     G = GrB (A, 'gunk') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -694,6 +698,7 @@ assert (ok) ;
 
 try
     G = GrB (A, 'gunk', 'crud') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -702,6 +707,7 @@ assert (ok) ;
 
 try
     G = GrB (4, 3, 'gunk') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -710,6 +716,7 @@ assert (ok) ;
 
 try
     G = GrB (4, 3, 'gunk', 'crud') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -718,6 +725,7 @@ assert (ok) ;
 
 try
     G = GrB (A, A) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -726,6 +734,7 @@ assert (ok) ;
 
 try
     G = GrB (A, A, A) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -734,6 +743,7 @@ assert (ok) ;
 
 try
     G = GrB (A, A, A, A) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -742,6 +752,7 @@ assert (ok) ;
 
 try
     G = GrB.assign (A, {1}, {1}, {1}, pi) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -750,6 +761,7 @@ assert (ok) ;
 
 try
     G = GrB.assign (A, '+', '+', {1}, {1}, pi) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -758,6 +770,7 @@ assert (ok) ;
 
 try
     G = GrB.assign (A, A, A, A) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -766,6 +779,7 @@ assert (ok) ;
 
 try
     G = GrB.assign (A, {1}, {1}) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -774,6 +788,7 @@ assert (ok) ;
 
 try
     GrB.semiringinfo ('') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -782,6 +797,7 @@ assert (ok) ;
 
 try
     G = GrB.mxm ('', 1, 1) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -790,6 +806,7 @@ assert (ok) ;
 
 try
     c = GrB.reduce (ones (2), '+', '+', 1) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -798,6 +815,7 @@ assert (ok) ;
 
 try
     GrB.monoidinfo ('/', 'double') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -806,6 +824,7 @@ assert (ok) ;
 
 try
     GrB.monoidinfo ('') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -814,6 +833,7 @@ assert (ok) ;
 
 try
     GrB.apply ('',1) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -822,6 +842,7 @@ assert (ok) ;
 
 try
     GrB.extract (pi, {1}, {1}, {1}) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -830,6 +851,7 @@ assert (ok) ;
 
 try
     GrB.extract (pi, pi, '+', '+', pi) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -838,6 +860,7 @@ assert (ok) ;
 
 try
     GrB.extract (pi, pi, pi, pi) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -846,6 +869,7 @@ assert (ok) ;
 
 try
     GrB.extract ('+') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -854,6 +878,7 @@ assert (ok) ;
 
 try
     GrB.build (int8(1), int8(1), pi)
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -862,6 +887,7 @@ assert (ok) ;
 
 try
     GrB.extract ('+', pi) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -870,14 +896,7 @@ assert (ok) ;
 
 try
     GrB.select (pi, pi) ;
-catch expected_error
-    expected_error
-    disp (expected_error.stack (end-1))
-end
-assert (ok) ;
-
-try
-    GrB.extract (1i, {1}, {1}) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -886,6 +905,7 @@ assert (ok) ;
 
 try
     GrB.extract (pi, {1}, {1}, struct ('kind', 'gunk')) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -894,6 +914,7 @@ assert (ok) ;
 
 try
     GrB.extract (pi, {1}, {1}, struct ('format', 'gunk')) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -902,6 +923,7 @@ assert (ok) ;
 
 try
     [i,j,x] = find (G, [3 4]) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -910,6 +932,7 @@ assert (ok) ;
 
 try
     [i,j,x] = find (G, 3, 'crud') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -918,6 +941,7 @@ assert (ok) ;
 
 try
     [i,j,x] = find (G, -1, 'first') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -926,6 +950,7 @@ assert (ok) ;
 
 try
     C = flip (G, -1) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -934,6 +959,7 @@ assert (ok) ;
 
 try
     C = flip (G, [2 2]) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -942,6 +968,7 @@ assert (ok) ;
 
 try
     G = GrB.random (10, 10, 0.5, 'crud') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -950,6 +977,7 @@ assert (ok) ;
 
 try
     G = GrB.random (rand (4,5), 'symmetric') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -958,6 +986,7 @@ assert (ok) ;
 
 try
     G = GrB.random (10, 10, 10, 0.5) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -966,6 +995,7 @@ assert (ok) ;
 
 try
     G = GrB.mxm ('to', 'many', 'strings') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -974,6 +1004,7 @@ assert (ok) ;
 
 try
     G = GrB.mxm (G, G, G, G, G) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -982,6 +1013,7 @@ assert (ok) ;
 
 try
     G = GrB.build (1:3, 1:4, 1:4) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -990,6 +1022,7 @@ assert (ok) ;
 
 try
     GrB.select ('tril', A) ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -998,6 +1031,7 @@ assert (ok) ;
 
 try
     GrB.select (A, A, A, A, 'zero') ;
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -1005,7 +1039,8 @@ end
 assert (ok) ;
 
 try
-    GrB.extracttuples (A, struct ('base', 'crud')) ;
+    I = GrB.extracttuples (A, struct ('base', 'crud'))
+    ok = false ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))

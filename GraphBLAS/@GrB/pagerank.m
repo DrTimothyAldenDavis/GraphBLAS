@@ -53,6 +53,7 @@ if (~isfield (opts, 'type'))
 end
 
 if (~(isequal (opts.type, 'single') || isequal (opts.type, 'double')))
+% assert(false) ;
     error ('opts.type must be ''single'' or ''double''') ;
 end
 

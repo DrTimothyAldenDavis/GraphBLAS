@@ -41,6 +41,7 @@ else
             s = (gbnormdiff (G, T, 1) == 0) ;
 
         otherwise
+
             error ('invalid option') ;
 
     end

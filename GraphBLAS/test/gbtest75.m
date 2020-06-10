@@ -5,6 +5,7 @@ function gbtest75
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 fprintf ('\ngbtest75: bitshift\n') ;
+
 for b = -8:8
     fprintf ('.') ;
     for a = intmin ('int8') : intmax ('int8')

@@ -11,11 +11,9 @@ function C = gammaln (G)
 
 G = G.opaque ;
 type = gbtype (G) ;
-
 if (contains (type, 'complex'))
     error ('input must be real') ;
 end
-
 if (~gb_isfloat (type))
     type = 'double' ;
 end

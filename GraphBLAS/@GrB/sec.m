@@ -10,11 +10,9 @@ function C = sec (G)
 
 G = G.opaque ;
 type = gbtype (G) ;
-
 if (~gb_isfloat (type))
     type = 'double' ;
 end
 
 C = GrB (gbapply ('minv', gbapply ('cos', gbfull (G, type)))) ;
-
 

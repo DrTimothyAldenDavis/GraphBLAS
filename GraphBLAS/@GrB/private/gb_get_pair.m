@@ -8,11 +8,6 @@ if (isobject (A))
     A = A.opaque ;
 end
 
-[m, n] = gbsize (A) ;
-if (m*n ~= 2)
-    error ('input parameter %s must have length 2', inputname (1)) ;
-end
-
 A = gbfull (A) ;
 x = A (1) ;
 y = A (2) ;

@@ -26,11 +26,11 @@ function [C, I, J] = compact (A, id)
 %   A = magic (4) ;
 %   H (I,J) = A
 %   [C, I, J] = GrB.compact (H)
-%   assert (isequal (C, A)) ;       % C and A are the same
-%   assert (isequal (C, H(I,J)) ;   % C and H(I,J) are the same
+%   isequal (C, A)                  % C and A are the same
+%   isequal (C, H(I,J))             % C and H(I,J) are the same
 %   H (I, J(1)) = 0
 %   [C, I, J] = GrB.compact (H, 0)
-%   assert (norm (C - A (:,2:end), 1) == 0)
+%   norm (C - A (:,2:end), 1) == 0
 %
 % See also GrB.entries, GrB.nonz, GrB.prune.
 

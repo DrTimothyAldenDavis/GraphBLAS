@@ -25,7 +25,11 @@ for k = 1:length (types)
     assert (gbtest_eq (double (C), double (H)))
 
     H = sign (G) ;
-    C = sign (B) ;
+    if (isequal (type, 'logical'))
+        C = double (B) ;
+    else
+        C = sign (B) ;
+    end
     assert (gbtest_err (C, H) == 0)
 
 end

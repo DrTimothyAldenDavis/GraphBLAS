@@ -37,7 +37,7 @@ function C = bigset (A, B, arg3, arg4)
 %   fprintf ('\nC: ') ; fprintf ('%3x ', C) ; fprintf ('\n') ;
 %   % in MATLAB:
 %   C2 = bitset (uint8 (A), B)
-%   assert (all (C2 == C, 'all'))
+%   isequal (C2, C)
 %
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
 % GrB/bitset, GrB/bitclr.
@@ -53,8 +53,8 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-atype = gbtype (A) ;
-btype = gbtype (B) ;
+[am, an, atype] = gbsize (A) ;
+[bm, bn, btype] = gbsize (B) ;
 
 if (contains (atype, 'complex') || contains (btype, 'complex'))
     error ('inputs must be real') ;
@@ -63,6 +63,9 @@ end
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
     error ('inputs must not be logical') ;
 end
+
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
 
 % get the optional input arguments
 if (nargin == 4)
@@ -109,14 +112,34 @@ V_is_scalar = (m == 1) && (n == 1) ;
 if (V_is_scalar)
 
     % V is a scalar:  all bits in A indexed by B are either cleared or set.
-    % If A or B are scalar, but not both, then C is the size of the
-    % matrix.  This case is handled by gb_union_op.
     if (gb_scalar (V) == 0)
         % any bit reference by B(i,j) is set to 0 in A
-        C = GrB (gb_union_op (['bitclr.' atype], A, B), ctype) ;
+        op = ['bitclr.' atype] ;
     else
         % any bit reference by B(i,j) is set to 1 in A
-        C = GrB (gb_union_op (['bitset.' atype], A, B), ctype) ;
+        op = ['bitset.' atype] ;
+    end
+
+    if (a_is_scalar)
+        % A is a scalar
+        if (b_is_scalar)
+            % both A and B are scalars
+            C = GrB (gb_union_op (op, A, B), ctype) ;
+        else
+            % A is a scalar, B is a matrix
+            A = gb_expand (A, B) ;
+            C = GrB (gbemult (op, A, B), ctype) ;
+        end
+    else
+        % A is a matrix
+        if (b_is_scalar)
+            % A is a matrix, B is scalar
+            B = gb_expand (B, A) ;
+            C = GrB (gbemult (op, A, B), ctype) ;
+        else
+            % both A and B are matrices
+            C = GrB (gb_union_op (op, A, B), ctype) ;
+        end
     end
 
 else
@@ -124,29 +147,32 @@ else
     % V is a matrix: A and B can be scalars or matrices, but if they
     % are matrices, they must have the same size as V.
 
-    % if B(i,j) is nonzero and V(i,j)=1, then
-    % C(i,j) = bitset (A (i,j), B (i,j)).  If B(i,j) is nonzero and
-    % V(i,j) = 0 (either implicit or explicit), then
+    % if B(i,j) is nonzero and V(i,j)=1, then:
+    % C(i,j) = bitset (A (i,j), B (i,j)).
+
+    % if B(i,j) is nonzero and V(i,j) = 0 (either implicit or explicit), then:
     % C(i,j) = bitclr (A (i,j), B (i,j)).
 
-    if (gb_isscalar (A))
-        % The rest of this method will fail if both A and B are scalars,
-        % so expand A to a full matrix the same size as V.  B can remain a
-        % scalar.
+    if (a_is_scalar)
+        % expand A to a full matrix the same size as V.
+% assert(false) ;
         A = gb_scalar_to_full (m, n, atype, A) ;
     end
 
+    if (b_is_scalar)
+        % expand B to a full matrix the same size as V.
+% assert(false) ;
+        B = gb_scalar_to_full (m, n, btype, B) ;
+    end
+
     % Set all bits referenced by B(i,j) to 1, even those that need to be
-    % set to 0, without considering V(i,j).  A is guaranteed to be a
-    % matrix of the correct size.  B can be a scalar, or a matrix of the
-    % same size as A.
+    % set to 0, without considering V(i,j).
     C = gb_union_op (['bitset.', atype], A, B) ;
 
     % The pattern of C is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
-    % pattern of bit positions B0 to set to 0 in A.  B0 is an m-by-n
-    % matrix, if B is either an m-by-n matrix or a scalar.
+    % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
     B0 = gbassign (gbnew (m, n, atype), V, B, d) ;
 

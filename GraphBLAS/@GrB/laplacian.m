@@ -35,6 +35,7 @@ end
 
 [m, n] = gbsize (A) ;
 if (m ~= n)
+% assert(false) ;
     error ('A must be square and symmetric') ;
 end
 

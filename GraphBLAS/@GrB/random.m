@@ -60,7 +60,7 @@ function C = random (varargin)
 %   A = sprand (4, 5, 0.5)          % 4-by-5 with at most 10 entries
 %   rng ('default')
 %   C = GrB.random (4, 5, 0.5)      % same pattern as A
-%   assert (isequal (spones (A), spones (C)))
+%   isequal (spones (A), spones (C))
 %
 %   C = GrB.random (C)              % same pattern but newly random values
 %

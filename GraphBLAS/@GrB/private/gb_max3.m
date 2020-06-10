@@ -16,7 +16,7 @@ else
         % giving an m-by-1 column vector.
         C = gb_maxbyrow (op, A) ;
     else
-        error ('unknown option') ;
+        error ('invalid option') ;
     end
 end
 

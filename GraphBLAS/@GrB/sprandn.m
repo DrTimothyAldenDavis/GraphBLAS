@@ -22,12 +22,14 @@ if (nargin == 1)
     G = arg1.opaque ;
     C = GrB (gb_random (G, 'normal')) ;
 elseif (nargin == 3)
+% assert(false) ;
     % C = sprandn (m, n, d)
     m = gb_get_scalar (arg1) ;
     n = gb_get_scalar (arg2) ;
     d = gb_get_scalar (arg3) ;
     C = GrB (gb_random (m, n, d, 'normal')) ;
 else
+% assert(false) ;
     % the 'rc' input option is not supported
     error ('usage: sprandn(A) or sprandn(m,n,d)') ;
 end

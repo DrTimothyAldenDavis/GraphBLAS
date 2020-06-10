@@ -29,6 +29,7 @@ end
 
 if (isempty (G))
 
+% assert(false) ;
     C = GrB (mnew, nnew, type) ;
 
 else

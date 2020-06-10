@@ -8,7 +8,6 @@ function C = tan (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-
 if (~gb_isfloat (gbtype (G)))
     op = 'tan.double' ;
 else

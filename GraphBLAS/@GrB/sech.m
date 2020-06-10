@@ -10,7 +10,6 @@ function C = sech (G)
 
 G = G.opaque ;
 type = gbtype (G) ;
-
 if (~gb_isfloat (type))
     type = 'double' ;
 end

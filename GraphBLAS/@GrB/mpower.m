@@ -22,6 +22,7 @@ a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
 
 if (a_is_scalar && b_is_scalar)
+% assert(false) ;
     C = GrB (gb_power (A, B)) ;
     return ;
 end
@@ -43,8 +44,10 @@ end
 if (b == 0)
     % C = A^0 = I
     if (isequal (atype, 'single complex'))
+% assert(false) ;
         atype = 'single' ;
     elseif (isequal (atype, 'double complex'))
+% assert(false) ;
         atype = 'double' ;
     end
     C = GrB (gb_speye ('mpower', an, atype)) ;

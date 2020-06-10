@@ -1,4 +1,4 @@
-function I = gb_subsindex (G, offset)
+function I = gb_subsindex (G)
 %GB_SUBSINDEX subscript index from GraphBLAS matrix
 % Implements I = subsindex (G) for X(G) when X is a MATLAB matrix.
 % Explicit zeros must be kept.  I must contain entries in range 0 to
@@ -29,17 +29,11 @@ else
 
 end
 
-
-% for zero-based indexing, offset is zero.
-if (offset ~= 0)
-    % otherwise, subtract the offset.
-    I = I - offset ;
-end
-
 % reshape I as needed
 if (m == 1)
     I = I' ;
 elseif (n > 1)
+% assert(false) ;
     I = reshape (I, m, n) ;
 end
 

@@ -177,7 +177,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
     GrB_Matrix S                // may be shallow
 ) ;
 
-void gb_abort ( void ) ;        // assertion failure
+void gb_abort ( void ) ;    // failure
 
 int gb_flush ( void ) ;     // flush mexPrintf output to MATLAB Command Window
 

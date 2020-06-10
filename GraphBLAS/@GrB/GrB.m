@@ -786,7 +786,7 @@ methods
     C = asech (G) ;
     C = asin (G) ;
     C = asinh (G) ;
-    assert (G) ;
+    assert (G) ;            % test assertion 
     C = atan (G) ;
     C = atanh (G) ;
     C = atan2 (A, B) ;

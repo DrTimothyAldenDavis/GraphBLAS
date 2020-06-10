@@ -8,7 +8,6 @@ function C = tanh (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-
 if (~gb_isfloat (gbtype (G)))
     op = 'tanh.double' ;
 else

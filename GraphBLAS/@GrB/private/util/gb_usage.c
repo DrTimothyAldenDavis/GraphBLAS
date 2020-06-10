@@ -39,7 +39,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // print 1-based indices
         GB_Global_print_one_based_set (true) ;
 
-        // for debug assertions only
+        // for debug only
         GB_Global_abort_function_set (gb_abort) ;
     }
 

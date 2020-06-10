@@ -19,7 +19,7 @@ function C = bitcmp (A, assumedtype)
 %   fprintf ('\nC: ') ; fprintf ('%3x ', C) ; fprintf ('\n') ;
 %   % in MATLAB:
 %   C2 = bitcmp (uint8 (A))
-%   assert (all (C2 == C, 'all'))
+%   isequal (C2, C)
 %
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitshift, GrB/bitget,
 % GrB/bitset, GrB/bitclr.

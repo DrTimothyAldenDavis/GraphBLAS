@@ -31,7 +31,7 @@ function C = ktruss (A, k, check)
 %   ntriangles = sum (C3, 'all') / 6
 %   C4a = GrB.ktruss (A, 4) ;
 %   C4b = GrB.ktruss (C3, 4) ;          % this is faster
-%   assert (isequal (C4a, C4b)) ;
+%   isequal (C4a, C4b)
 %
 % See also GrB.tricount.
 

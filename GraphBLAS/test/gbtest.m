@@ -111,12 +111,15 @@ gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
 gbtest74  % test bitwise operators
 gbtest75  % test bitshift
-
+gbtest76  % test trig functions
+gbtest77  % test error handling
+gbtest78  % test integer operations
 gbtest79  % test power
 gbtest80  % test complex division and power
 gbtest81  % test complex operators
 gbtest82  % test complex A*B, A'*B, A*B', A'*B', A+B
 
+gbtest90  % test indexing
 gbtest99  % test GrB.bfs and plot (graph (G))
 
 fprintf ('\ngbtest: all tests passed\n') ;

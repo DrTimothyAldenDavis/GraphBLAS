@@ -17,7 +17,7 @@ function C = bitshift (A, B, assumedtype)
 %   G = GrB (magic (4), 'uint8') ;
 %   C1 = bitshift (A, -2) ;
 %   C2 = bitshift (G, -2)
-%   assert (isequal (C1, C2))
+%   isequal (C2, C)
 %
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitget,
 % GrB/bitset, GrB/bitclr.

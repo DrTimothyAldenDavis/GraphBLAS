@@ -1,4 +1,0 @@
-(1) .^ (NaN) = (NaN,0) (1,0) err: 1 DIFFERS
-(1) .^ (NaN) = (NaN,0) (1,0) err: 1 DIFFERS
-(NaN) .^ (0) = (NaN,0) (1,0) err: 1 DIFFERS
-(NaN) .^ (0) = (NaN,0) (1,0) err: 1 DIFFERS

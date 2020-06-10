@@ -35,6 +35,7 @@ elseif (isequal (type, 'integer'))
     s = isinteger (G) ;
 elseif (isequal (type, 'complex'))
     % GraphBLAS single complex and double complex
+% assert(false) ;
     s = ~isreal (G) ;
 elseif (isequal (GrB.type (G), type))
     % specific cases, such as isa (G, 'double'), isa (G, 'int8'), etc

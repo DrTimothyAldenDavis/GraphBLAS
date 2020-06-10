@@ -57,7 +57,7 @@ else
         b = gb_scalar (B) ;
         if (b < 0 && ~gb_issigned (atype))
             % b is negative, and A has an unsigned type.  C is all false.
-            C = GrB (gbnew (m, n, 'logical')) ;
+            C = GrB (gbnew (am, an, 'logical')) ;
         elseif (b > 0)
             % since b > 0, entries not present in A result in a true
             % value, so the result is dense.  Expand B to a dense matrix.

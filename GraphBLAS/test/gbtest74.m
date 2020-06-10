@@ -1,4 +1,4 @@
-% function gbtest74
+function gbtest74
 %GBTEST74 test bitwise operators
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
@@ -195,9 +195,13 @@ for k = 1:8
         C2 = bitor (A2, B2) ;
         assert (isequal (C1, full (C2))) ;
 
-        C1 = bitshift (A, B) ;
-        C2 = bitshift (A2, B2) ;
-        assert (isequal (C1, full (C2))) ;
+        if (verLessThan ('matlab', '9.7') && isequal (type, 'int64'))
+            % skip this test (older MATLAB versions have a bug in bitshift)
+        else
+            C1 = bitshift (A, B) ;
+            C2 = bitshift (A2, B2) ;
+            assert (isequal (C1, full (C2))) ;
+        end
 
         C1 = bitcmp (A) ;
         C2 = bitcmp (A2) ;

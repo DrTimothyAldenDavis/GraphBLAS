@@ -31,7 +31,7 @@ function C = bitget (A, B, assumedtype)
 %   fprintf ('\nC: ') ; fprintf ('%3x ', C) ; fprintf ('\n') ;
 %   % in MATLAB:
 %   C2 = bitget (uint16 (A), uint16 (B))
-%   assert (isequal (C, C2))
+%   isequal (C2, C)
 %
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
 % GrB/bitset, GrB/bitclr.
