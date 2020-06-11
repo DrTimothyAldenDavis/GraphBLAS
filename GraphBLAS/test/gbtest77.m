@@ -12,6 +12,7 @@ G = GrB (A) ;
 Z = GrB (rand (3) + 1i*rand(3)) ;
 M = G > 10 ;
 I = GrB (int64 (magic (4))) ;
+R = rand (3,4) ;
 
 try
     C = gammaln (Z)
@@ -320,6 +321,114 @@ assert (ok) ;
 
 try
     A (GrB (1, 'complex'))
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    sprand (G, 0)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    sprandn (G, 0)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    max (Z)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    min (Z)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    max (G, G, 2)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    min (G, G, 2)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    L = GrB.laplacian (R)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    K = GrB.incidence (G, 'uint8')
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    GrB.expand (rand (3), rand (4)) ;
     ok = false ;
 catch expected_error
     expected_error

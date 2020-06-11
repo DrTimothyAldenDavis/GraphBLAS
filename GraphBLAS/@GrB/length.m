@@ -14,7 +14,6 @@ G = G.opaque ;
 [m, n] = gbsize (G) ;
 
 if (m == 0 || n == 0)
-% assert(false) ;
     n = 0 ;
 else
     n = max (m, n) ;

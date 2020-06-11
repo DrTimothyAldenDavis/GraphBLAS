@@ -121,6 +121,7 @@ gbtest82  % test complex A*B, A'*B, A*B', A'*B', A+B
 
 gbtest90  % test indexing
 gbtest99  % test GrB.bfs and plot (graph (G))
+gbtest_final  % test GrB.optype
 
 fprintf ('\ngbtest: all tests passed\n') ;
 

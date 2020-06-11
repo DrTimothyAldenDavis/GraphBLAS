@@ -24,10 +24,10 @@ function C = expand (scalar, S, type)
 if (isobject (scalar))
     % do not use gb_get_scalar, to keep it sparse
     scalar = scalar.opaque ;
-    if (~gb_isscalar (scalar))
-% assert(false) ;
-        error ('input parameter (%s) must be a scalar', inputname (1)) ;
-    end
+end
+
+if (~gb_isscalar (scalar))
+    error ('first input must be a scalar') ;
 end
 
 if (isobject (S))

@@ -1,5 +1,8 @@
 function C = gb_mpower (A, b)
-% C = A^b where b > 0 is an integer
+%GB_MPOWER C = A^b where b > 0 is an integer
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
+% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (b == 1)
     C = A ;

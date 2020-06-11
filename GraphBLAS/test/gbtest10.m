@@ -61,5 +61,10 @@ A (M) = B (M) ;
 G (M) = H (M) ;
 assert (isequal (A, G)) ;
 
+A = sprand (4, 4, 0.5)
+C1 = pi * spones (A)
+C2 = GrB.expand (pi, A)
+assert (isequal (C1, C2)) ;
+
 fprintf ('gbtest10: all tests passed\n') ;
 

@@ -27,11 +27,45 @@ end
 
 C1 = GrB.empty (0) ;
 C2 = GrB.empty (-1) ;
-C3 = GrB (0, 0) ;
-C0 = sparse (0, 0) ;
+C3 = GrB (0,0) ;
+C0 = sparse (0,0) ;
+
 assert (isequal (C0, C1)) ;
 assert (isequal (C0, C2)) ;
 assert (isequal (C0, C3)) ;
+
+assert (length (C0) == 0) ;
+assert (length (C1) == 0) ;
+assert (length (C2) == 0) ;
+assert (length (C3) == 0) ;
+
+C1 = GrB.empty (0,5) ;
+C2 = GrB.empty (0,5) ;
+C3 = GrB (0,5) ;
+C0 = sparse (0,5) ;
+
+assert (isequal (C0, C1)) ;
+assert (isequal (C0, C2)) ;
+assert (isequal (C0, C3)) ;
+
+assert (length (C0) == 0) ;
+assert (length (C1) == 0) ;
+assert (length (C2) == 0) ;
+assert (length (C3) == 0) ;
+
+C1 = GrB.empty (5,0) ;
+C2 = GrB.empty (5,0) ;
+C3 = GrB (5,0) ;
+C0 = sparse (5,0) ;
+
+assert (isequal (C0, C1)) ;
+assert (isequal (C0, C2)) ;
+assert (isequal (C0, C3)) ;
+
+assert (length (C0) == 0) ;
+assert (length (C1) == 0) ;
+assert (length (C2) == 0) ;
+assert (length (C3) == 0) ;
 
 fprintf ('gbtest56: all tests passed\n') ;
 

@@ -89,7 +89,6 @@ result = gb_entries (A, varargin {1:nargs-1}) ;
 
 % if gb_entries returned a GraphBLAS struct, return it as a GrB matrix
 if (isstruct (result))
-% assert(false) ;
     result = GrB (result) ;
 end
 

@@ -40,18 +40,21 @@ assert (isequal (GrB.type (H), 'uint32')) ;
 C = tril (H, GrB (1,1)) ;
 assert (istril (C)) ;
 
-I = GrB ([1 2], 'int8') ;
-C1 = A (I,I) ;
-C2 = A ([1 2], [1 2]) ;
-C3 = A (int8 ([1 2]), int8 ([1 2])) ;
-% TODO: int8 fails here:
-% C4 = G (I,I) ;
-% see the util/*.c function:
-I = GrB ([1 2], 'int64') ;
-C4 = G (I,I) ;
-assert (isequal (C1, C2))
-assert (isequal (C1, C3))
-assert (isequal (C1, C4))
+types = gbtest_types ;
+for k = 1:length (types)
+    type = types {k} ;
+    if (contains (type, 'complex') || isequal (type, 'logical'))
+        continue ;
+    end
+    I = GrB ([1 2], type) ;
+    C1 = A (I,I) ;
+    C2 = A ([1 2], [1 2]) ;
+    C3 = A (int8 ([1 2]), int8 ([1 2])) ;
+    C4 = G (I,I) ;
+    assert (isequal (C1, C2))
+    assert (isequal (C1, C3))
+    assert (isequal (C1, C4))
+end
 
 I1 = [1 2 ; 3 4] ;
 I2 = GrB (I1) ;

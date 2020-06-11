@@ -10,20 +10,33 @@ rng ('default') ;
 for k1 = 1:length (types)
 
     atype = types {k1} ;
-    fprintf ('\n================================================ %s\n', atype) ;
     A = 100 * sprand (3, 3, 0.5) ;
-    H = GrB (A, atype) %#ok<*NOPRT>
-    G = full (H) %#ok<*NASGU>
+    H = full (A, 'double', GrB (0)) ;
+    assert (norm (H-A,1) == 0)
+    B = A ;
+    B (A == 0) = 1 ;
+    H = full (A, 'double', GrB (1)) ;
+    assert (norm (H-B,1) == 0)
+
+    F = rand (3) ;
+    H = full (F, 'double', GrB (0)) ;
+    assert (norm (H-F,1) == 0)
+    assert (isa (H, 'GrB'))
+
+    H = GrB (A, atype) ;
+    G = full (H) ;
+    assert (GrB.entries (G) == prod (size (G))) ;
 
     for k2 = 1:length (types)
 
         gtype = types {k2} ;
-        fprintf ('\n------------ %s:\n', gtype) ;
-        G = full (H, gtype)
-        K = full (G, atype)
+        G = full (H, gtype) ;
+        K = full (G, atype) ;
         for id = [0 1 inf]
-            C = full (H, gtype, id)
+            C = full (H, gtype, id) ;
         end
+
+        assert (GrB.entries (G) == prod (size (G))) ;
     end
 end
 

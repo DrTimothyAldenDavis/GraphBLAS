@@ -1,9 +1,8 @@
 function s = isa (G, type)
 %ISA Determine if a GraphBLAS matrix is of specific type.
-%
 % For any GraphBLAS matrix G, isa (G, 'GrB') and isa (G, 'numeric') are
-% always true (even if G is logical, since many semirings are defined for
-% that type).
+% always true, even if G is logical, since many semirings are defined for
+% that type.
 %
 % isa (G, 'float') is the same as isfloat (G), and is true if the GrB
 % matrix G has type 'double', 'single', 'single complex', or 'double
@@ -13,10 +12,9 @@ function s = isa (G, type)
 % matrix G has type 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
 % 'uint32', or 'uint64'.
 %
-% isa (G, 'complex') is the same as ~isreal (G), and is true if the GrB
-% matrix G has type 'single complex' or 'double complex'.
-%
 % isa (G, type) is true if the type string matches the type of G.
+%
+% Otherwise, all other cases are handled with builtin ('isa',G,type).
 %
 % See also class, GrB.type, GrB/isnumeric, GrB/islogical, GrB/isfloat,
 % GrB/isinteger, isobject, GrB/issparse, GrB/isreal.
@@ -33,10 +31,6 @@ elseif (isequal (type, 'float'))
 elseif (isequal (type, 'integer'))
     % GraphBLAS int* and uint* matrices are 'integer'
     s = isinteger (G) ;
-elseif (isequal (type, 'complex'))
-    % GraphBLAS single complex and double complex
-% assert(false) ;
-    s = ~isreal (G) ;
 elseif (isequal (GrB.type (G), type))
     % specific cases, such as isa (G, 'double'), isa (G, 'int8'), etc
     s = true ;

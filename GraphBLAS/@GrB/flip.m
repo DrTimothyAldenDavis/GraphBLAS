@@ -16,7 +16,6 @@ a_is_object = isobject (A) ;
 if (a_is_object)
     G = A.opaque ;
 else
-% assert(false) ;
     G = A ;
 end
 
@@ -39,14 +38,10 @@ end
 
 if (dim == 1 && m ~= 1)
     % C = A (m:-1:1, :)
-    I = { m, -1, 1 } ;
-    J = { } ;
-    C = GrB (gbextract (G, I, J)) ;
+    C = GrB (gbextract (G, {m,-1,1}, { })) ;
 elseif (dim == 2 && n ~= 1)
     % C = A (:, n:-1:1)
-    I = { } ;
-    J = { n, -1, 1 } ;
-    C = GrB (gbextract (G, I, J)) ;
+    C = GrB (gbextract (G, { }, {n,-1,1})) ;
 elseif (a_is_object)
     % nothing to do
     C = A ;

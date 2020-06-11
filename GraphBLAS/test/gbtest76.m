@@ -138,10 +138,6 @@ function gbtest76b (A, B, G, H, tol)
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
 
-
-
-
-
     C1 = acosh (A) ;
     C2 = acosh (G) ;
     err = norm (C1-C2, 1) ;
@@ -226,6 +222,27 @@ function gbtest76b (A, B, G, H, tol)
     C2 = cos (G) ;
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
+
+    if (contains (GrB.type (G), 'double'))
+        % MATLAB cannot compute spfun for single;
+        % MATLAB and GraphBLAS can't do this for int*
+        C1 = spfun ('cos', A) ;
+        C2 = spfun ('cos', G) ;
+        err = norm (C1-C2, 1) ;
+        assert (err < tol) ;
+
+        C1 = spfun (@cos, A) ;
+        C2 = spfun (@cos, G) ;
+        err = norm (C1-C2, 1) ;
+        assert (err < tol) ;
+
+        % GraphBLAS doesn't have cosd, so it falls
+        % through to use feval('cosd',x).
+        C1 = spfun ('cosd', A) ;
+        C2 = spfun ('cosd', G) ;
+        err = norm (C1-C2, 1) ;
+        assert (err < tol) ;
+    end
 
     C1 = coth (A) ;
     C2 = coth (G) ;

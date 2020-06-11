@@ -34,7 +34,6 @@ if (A_is_GrB)
     Q = A.opaque ;
 else
     % A is a MATLAB matrix
-% assert(false) ;
     Q = A ;
 end
 
@@ -53,7 +52,6 @@ if (gb_isfull (Q) && right_type)
         C = A ;
     else
         % convert A into a GrB matrix
-% assert(false) ;
         C = GrB (A) ;
     end
 

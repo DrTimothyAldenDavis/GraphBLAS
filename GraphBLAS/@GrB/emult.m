@@ -30,7 +30,7 @@ if (isobject (arg1))
 end
 
 if (isobject (arg2))
-% assert(false) ;
+assert(false) ;
     arg2 = arg2.opaque ;
 end
 
@@ -39,23 +39,23 @@ if (nargin > 2 && isobject (arg3))
 end
 
 if (nargin > 3 && isobject (arg4))
-% assert(false) ;
+assert(false) ;
     arg4 = arg4.opaque ;
 end
 
 if (nargin > 4 && isobject (arg5))
-% assert(false) ;
+assert(false) ;
     arg5 = arg5.opaque ;
 end
 
 if (nargin > 5 && isobject (arg6))
-% assert(false) ;
+assert(false) ;
     arg6 = arg6.opaque ;
 end
 
 switch (nargin)
     case 2
-% assert(false) ;
+assert(false) ;
         [C, k] = gbemult (arg1, arg2) ;
     case 3
         [C, k] = gbemult (arg1, arg2, arg3) ;
@@ -66,10 +66,10 @@ switch (nargin)
     case 6
         [C, k] = gbemult (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-% assert(false) ;
+assert(false) ;
         [C, k] = gbemult (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-% assert(false) ;
+assert(false) ;
         error ('usage: C = GrB.emult (Cin, M, accum, op, A, B, desc)') ;
 end
 

@@ -31,7 +31,7 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (arg1))
-% assert(false) ;
+assert(false) ;
     arg1 = arg1.opaque ;
 end
 
@@ -40,17 +40,17 @@ if (isobject (arg2))
 end
 
 if (nargin > 2 && isobject (arg3))
-% assert(false) ;
+assert(false) ;
     arg3 = arg3.opaque ;
 end
 
 if (nargin > 3 && isobject (arg4))
-% assert(false) ;
+assert(false) ;
     arg4 = arg4.opaque ;
 end
 
 if (nargin > 4 && isobject (arg5))
-% assert(false) ;
+assert(false) ;
     arg5 = arg5.opaque ;
 end
 
@@ -64,10 +64,10 @@ switch (nargin)
     case 5
         [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-% assert(false) ;
+assert(false) ;
         [C, k] = gbvreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
     otherwise
-% assert(false) ;
+assert(false) ;
         error ('usage: C = GrB.vreduce (Cin, M, accum, monoid, A, desc)') ;
 end
 

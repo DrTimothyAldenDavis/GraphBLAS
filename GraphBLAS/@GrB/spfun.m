@@ -47,13 +47,10 @@ end
 
 if (ischar (fun))
     try
-% assert(false) ;
         C = GrB (gbapply (fun, G)) ;
-% assert(false) ;
         return ;
     catch me
         % gbapply failed; fall through to feval below
-% assert(false) ;
     end
 end
 

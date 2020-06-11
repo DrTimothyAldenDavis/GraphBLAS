@@ -27,7 +27,6 @@ end
 
 type = gbtype (A) ;
 if (contains (type, 'complex'))
-% assert(false) ;
     error ('complex matrices not yet supported') ;
 elseif (isequal (type, 'logical'))
     op = '&.logical' ;
@@ -36,31 +35,19 @@ else
 end
 
 if (nargin == 1)
-
     % C = min (A)
     C = GrB (gb_min1 (op, A)) ;
-
 elseif (nargin == 2)
-
     % C = min (A,B)
     if (isobject (B))
         B = B.opaque ;
     end
     C = GrB (gb_min2 (op, A, B)) ;
-
-elseif (nargin == 3)
-
+else
     % C = min (A, [ ], option)
     if (~isempty (B))
-% assert(false) ;
         error ('dimension argument not allowed with 2 input matrices') ;
     end
     C = GrB (gb_min3 (op, A, option)) ;
-
-else
-
-% assert(false) ;
-    error ('invalid usage') ;
-
 end
 

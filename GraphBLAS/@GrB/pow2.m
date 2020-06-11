@@ -13,26 +13,19 @@ if (isobject (A))
 end
 
 if (nargin == 1)
-
     % use GrB/power
     C = GrB (gb_power (2, A)) ;
-
 else
-
     if (isobject (B))
         B = B.opaque ;
     end
-
     type = gboptype (gbtype (A), gbtype (B)) ;
-
     if (contains (type, 'single'))
         type = 'single' ;
     else
         type = 'double' ;
     end
-
     % use the ldexp operator to compute C = A.*(2.^B)
     C = GrB (gb_union_op (['ldexp.' type], A, B)) ;
-
 end
 

@@ -91,6 +91,42 @@ for k = 1:length(types)
     assert (isequal (spones (G), spones (S))) ;
     assert (isequal (GrB.type (G), 'double')) ;
 
+    G = sprand (10, 12, GrB (0.5)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (isa (G, 'GrB')) ;
+    assert (isequal (size (G), [10 12])) ;
+
+    G = sprandn (10, 12, GrB (0.5)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (isa (G, 'GrB')) ;
+    assert (isequal (size (G), [10 12])) ;
+    gnz = nnz (G) ;
+    % nnz (G) is hard to predict because of duplicates
+    assert (abs (10*12*0.5 - gnz) < 30) ;
+
+    G = sprandn (10, 12, GrB (inf)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (isa (G, 'GrB')) ;
+    assert (isequal (size (G), [10 12])) ;
+    assert (nnz (G) == 120) ;
+
+    G = sprandsym (10, GrB (0.5)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (isa (G, 'GrB')) ;
+    assert (isequal (size (G), [10 10])) ;
+    gnz = nnz (G) ;
+    assert (abs (10*10*0.5 - gnz) < 30) ;
+
+    G = sprandsym (10, GrB (inf)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (isa (G, 'GrB')) ;
+    assert (isequal (size (G), [10 10])) ;
+    assert (nnz (G) == 100)
+    assert (GrB.isfull (G)) ;
+    assert (GrB.isfull (double (G))) ;
+    assert (GrB.isfull (full (G))) ;
+    assert (GrB.isfull (full (double (G)))) ;
+
 end
 
 

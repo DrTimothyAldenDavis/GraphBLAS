@@ -11,9 +11,9 @@
 
 // I is a cell array.  I contains 0, 1, 2, or 3 items:
 //
-//      0:   { }    This is the MATLAB ':', like C(:,J), refering to all m rows,
+//      0:  { }     This is the MATLAB ':', like C(:,J), refering to all m rows,
 //                  if C is m-by-n.
-//      1:   { list }  A 1D list of row indices, like C(I,J) in MATLAB.
+//      1:  { list }  A 1D list of row indices, like C(I,J) in MATLAB.
 //      2:  { start,fini }  start and fini are scalars (either double, int64,
 //                  or uint64).  This defines I = start:fini in MATLAB colon
 //                  notation.

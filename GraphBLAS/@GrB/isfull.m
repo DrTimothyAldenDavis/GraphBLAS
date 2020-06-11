@@ -11,21 +11,14 @@ function s = isfull (A)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (A))
-
     % GraphBLAS matrix
     A = A.opaque ;
     s = gb_isfull (A) ;
-
 elseif (issparse (A))
-
     % MATLAB sparse matrix
     s = (numel (A) == nnz (A)) ;
-
 else
-% assert(false) ;
-
     % MATLAB full matrix, string, struct, etc
     s = true ;
-
 end
 

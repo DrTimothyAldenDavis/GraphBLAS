@@ -1,8 +1,7 @@
 function [I, whole] = gb_index (I)
 %GB_INDEX helper function for subsref and subsasgn
-%
 % [I, whole] = gb_index (I) converts I into a cell array of MATLAB
-% matrices or vectors containing integer indices:
+% matrices or vectors containing integer indices, to access A(I).
 %
 %   I = { }: this denotes A(:), accessing all rows or all columns.
 %       In this case, the parameter whole is returned as true.
@@ -16,20 +15,18 @@ function [I, whole] = gb_index (I)
 %       the explicit list start:inc:fini.
 %
 % The input I can be a GraphBLAS matrix (as an object or its opaque
-% struct).  In this case, it is wrapped in a cell, I = {subsindex(I)},
+% struct).  In this case, it is wrapped in a cell, I = {gb_index1(I)},
 % but kept as 1-based indices (they are later translated to 0-based).
 %
 % If the input is already a cell array, then it is already in one of the
 % above forms.  Any member of the cell array that is a GraphBLAS matrix or
-% struct is converted into an index list, with subsindex(I{k}).
+% struct is converted into an index list, with gb_index1(I{k}).
 %
 % MATLAB passes the string I = ':' to the subsref and subsasgn methods.
 % This is converted into I = { }.
 %
 % If I is a MATLAB matrix or vector (not a cell array), then it is
 % wrapped in a cell array, { I }, to denote A(I).
-%
-% See also GrB/subsindex, GrB/subsref, GrB/subsasgn.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -38,16 +35,14 @@ whole = false ;
 
 if (isobject (I))
 
-    % C (I) where I is a GraphBLAS matrix or vector containing integer
-    % indices (as an opaque object).
+    % C (I) where I is a GraphBLAS matrix/vector of integer indices
     I = I.opaque ;
-    I = { (gb_subsindex (I)) } ;
+    I = { (gb_index1 (I)) } ;
 
 elseif (isstruct (I))
 
-    % C (I) where I is a GraphBLAS struct.  Do not yet subtract
-    % 1 from the indices; this will be done internally in gbextract.
-    I = { (gb_subsindex (I)) } ;
+    % C (I) where I is the opaque struct of a GrB matrix/vector
+    I = { (gb_index1 (I)) } ;
 
 elseif (iscell (I))
 
@@ -69,7 +64,7 @@ elseif (iscell (I))
             end
             if (isstruct (K))
                 % C ({ ..., K, ... }) where I is a GraphBLAS struct
-                I {k} = gb_subsindex (K) ;
+                I {k} = gb_index1 (K) ;
             end
         end
     end
@@ -82,8 +77,7 @@ elseif (ischar (I) && isequal (I, ':'))
 
 else
 
-    % C (I) where I is a MATLAB matrix or vector containing integer
-    % indices
+    % C (I) where I is a MATLAB matrix/vector of integer indices
     I = { I } ;
 
 end

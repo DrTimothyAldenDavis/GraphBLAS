@@ -25,5 +25,32 @@ nt2 = GrB.tricount (A) ;
 assert (ntriangles == nt2) ;
 assert (ntriangles == 235) ;
 
-fprintf ('gbtest50: all tests passed\n') ;
+d = GrB.entries (A, 'col', 'degree') ;
+nt2 = GrB.tricount (A, d) ;
+assert (ntriangles == nt2) ;
+assert (ntriangles == 235) ;
+
+nt2 = GrB.tricount (A, 'check', d) ;
+assert (ntriangles == nt2) ;
+assert (ntriangles == 235) ;
+
+nt2 = GrB.tricount (A, d, 'check') ;
+assert (ntriangles == nt2) ;
+assert (ntriangles == 235) ;
+
+rng ('default') ;
+for k = 1:200
+    if (mod (k, 10) == 1)
+        fprintf ('.') ;
+    end
+    n = 10000 ;
+    G = GrB.eye (10000) ;
+    k = randperm (n, 10) ;
+    G (:,k) = 1 ;
+    G (k,:) = 1 ;
+    nt = GrB.tricount (G) ;
+    assert (nt == 449670) ;
+end
+
+fprintf ('\ngbtest50: all tests passed\n') ;
 

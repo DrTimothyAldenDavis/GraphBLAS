@@ -19,9 +19,9 @@ desc1_int.base = 'one-based int' ;
 
 for k = 1:length(list)
     xtype = list {k} ;
-    fprintf ('testing: %s\n', xtype) ;
-    C = gbtest_cast (A, xtype) 
-    G = GrB (C) 
+    fprintf ('%s ', xtype) ;
+    C = gbtest_cast (A, xtype) ;
+    G = GrB (C) ;
 
     [I1, J1, X1] = find (G) ;
     nz = find (C (:) ~= 0) ;
@@ -34,8 +34,8 @@ for k = 1:length(list)
     assert (isequal (I (nz), I1)) ;
     assert (isequal (J (nz), J1)) ;
 
-    [I0, J0, X0] = GrB.extracttuples (G, desc0) 
-    C_colon = C (:)
+    [I0, J0, X0] = GrB.extracttuples (G, desc0)  ;
+    C_colon = C (:) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;
@@ -52,6 +52,15 @@ for k = 1:length(list)
 
     [I1, J1, X0] = GrB.extracttuples (G, desc_default) ;
     assert (isequal (C (:), X0)) ;
+    assert (isequal (double (I_0+1), I1)) ;
+    assert (isequal (double (J_0+1), J1)) ;
+
+    [I1, J1, X0] = GrB.extracttuples (G) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (double (I_0+1), I1)) ;
+    assert (isequal (double (J_0+1), J1)) ;
+
+    [I1, J1] = GrB.extracttuples (G) ;
     assert (isequal (double (I_0+1), I1)) ;
     assert (isequal (double (J_0+1), J1)) ;
 
@@ -87,5 +96,5 @@ assert (isequal (x1, x2)) ;
 assert (isequal (i1, i2)) ;
 assert (isequal (j1, j2)) ;
 
-fprintf ('gbtest13: all tests passed\n') ;
+fprintf ('\ngbtest13: all tests passed\n') ;
 

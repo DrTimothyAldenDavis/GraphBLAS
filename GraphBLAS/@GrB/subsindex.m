@@ -27,21 +27,18 @@ else
 end
 
 if (isequal (type, 'double') || isequal (type, 'single'))
-
+    % double or single: convert to int64
     I = gbextractvalues (G) ;
     if (~isequal (I, round (I)))
         error ('array indices must be integers') ;
     end
     I = int64 (I) ;
-
 elseif (contains (type, 'int'))
-
+    % any integer: just extract the values
     I = gbextractvalues (G) ;
-
 else
-
+    % logical or complex
     error ('array indices must be integers') ;
-
 end
 
 % I must contain entries in range 0 to prod (size (A)) - 1,
@@ -53,7 +50,7 @@ if (m == 1)
     % I should be a row vector instead
     I = I' ;
 elseif (n > 1 && G_is_full)
-    % I is should be an m-by-n matrix, so reshap it.  But I cannot be
+    % I is should be an m-by-n matrix, so reshape it.  But I cannot be
     % reshaped to m-by-n if G is sparse, so leave it as a column vector.
     I = reshape (I, m, n) ;
 end

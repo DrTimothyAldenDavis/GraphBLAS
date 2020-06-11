@@ -258,8 +258,8 @@ classdef GrB
 %   [F, E] = log2 (G)       base-2 logarithm
 %   C = logical (G)         cast GrB matrix to MATLAB sparse logical
 %
-%   C = max (G, ...)        reduce via max, to vector or scalar
-%   C = min (G, ...)        reduce via min, to vector or scalar
+%   C = max (A,B,option)    reduce via max, to vector or scalar
+%   C = min (A,B,option)    reduce via min, to vector or scalar
 %
 %   e = nnz (G)             number of entries in a GrB matrix G
 %   X = nonzeros (G)        extract all entries from a GrB matrix
@@ -1003,12 +1003,10 @@ methods (Static)
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;
     C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check) ;                   % uses GrB matrices
+    s = tricount (A, check, d) ;                % uses GrB matrices
     s = type (A) ;
     unopinfo (op, type) ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
-
-    mslow ;
 
 end
 end

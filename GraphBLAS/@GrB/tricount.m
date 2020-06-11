@@ -32,18 +32,14 @@ if (nargin == 2)
         check = isequal (arg2, 'check') ;
     else
         % s = tricount (A, d)
-% assert(false) ;
         d = arg2 ;
     end
 elseif (nargin == 3)
-% assert(false) ;
     if (ischar (arg2))
-% assert(false) ;
         % s = tricount (A, 'check', d)
         check = isequal (arg2, 'check') ;
         d = arg3 ;
     else
-% assert(false) ;
         % s = tricount (A, d, 'check')
         d = arg2 ;
         check = isequal (arg3, 'check') ;
@@ -55,7 +51,6 @@ if (check && ~issymmetric (spones (A)))
 end
 
 if (isequal (class (d), 'GrB'))
-% assert(false) ;
     d = double (d) ;
 end
 
@@ -75,10 +70,10 @@ if (n > 1000 && GrB.entries (A) >= 10*n)
     dmean = full (mean (sample)) ;
     dmed  = full (median (sample)) ;
     if (dmean > 4 * dmed)
-% assert(false) ;
         % sort if the average degree is very high compared to the median
         [~, p] = sort (d, 'descend') ;
-        A = A (p,p) ;
+        % A = A (p,p) ;
+        A = GrB.extract (A, { p }, { p }) ;
         clear p
     end
 end

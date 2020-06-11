@@ -15,11 +15,9 @@ function s = issigned (arg)
 if (ischar (arg))
     type = arg ;
 elseif (isobject (arg))
-% assert(false) ;
     arg = arg.opaque ;
     type = gbtype (arg) ;
 else
-% assert(false) ;
     type = gbtype (arg) ;
 end
 

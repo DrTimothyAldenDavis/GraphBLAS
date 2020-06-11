@@ -60,7 +60,6 @@ for k = 1:nargin-1
         case { 'double', 'single', 'int8', 'int16', 'int32', 'int64' }
             type = arg ;
         case { 'uint8', 'uint16', 'uint32', 'uint64', 'logical' }
-% assert(false) ;
             error ('type must be signed') ;
         otherwise
             error ('unknown option') ;

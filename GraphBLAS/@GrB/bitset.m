@@ -155,13 +155,10 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-% assert(false) ;
         A = gb_scalar_to_full (m, n, atype, A) ;
     end
-
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-% assert(false) ;
         B = gb_scalar_to_full (m, n, btype, B) ;
     end
 

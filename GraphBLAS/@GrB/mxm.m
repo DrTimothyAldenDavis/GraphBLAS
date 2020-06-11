@@ -80,7 +80,7 @@ if (nargin > 4 && isobject (arg5))
 end
 
 if (nargin > 5 && isobject (arg6))
-% assert(false) ;
+assert(false) ;
     arg6 = arg6.opaque ;
 end
 
@@ -94,10 +94,10 @@ switch (nargin)
     case 6
         [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-% assert(false) ;
+assert(false) ;
         [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     otherwise
-% assert(false) ;
+assert(false) ;
         error ('usage: C = GrB.mxm (Cin, M, accum, semiring, A, B, desc)') ;
 end
 
