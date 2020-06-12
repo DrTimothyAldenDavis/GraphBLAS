@@ -1,0 +1,114 @@
+mxm_demo
+
+Prob = 
+
+  struct with fields:
+
+         A: [9000x9000 double]
+      name: 'ND/nd3k'
+     title: 'ND problem set, matrix nd3k'
+        id: 936
+      date: '2003'
+    author: 'author unknown'
+        ed: 'T. Davis'
+      kind: '2D/3D problem'
+
+hypersparse.cs.tamu.edu
+MATLAB version: 9.4 release: (R2018a)
+
+-------------------------------------------------
+Testing single-threaded performance of C=A*B:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+trial 1: MATLAB:     3.7543 GrB:     3.0953 speedup:       1.21 err: 1.63154e-07
+trial 2: MATLAB:     3.7682 GrB:     3.0883 speedup:       1.22 err: 1.63154e-07
+trial 3: MATLAB:     3.7694 GrB:     3.0822 speedup:       1.22 err: 1.63154e-07
+trial 4: MATLAB:     3.7685 GrB:     3.0824 speedup:       1.22 err: 1.63154e-07
+average: MATLAB:     3.7651 GrB:     3.0871 speedup:       1.22
+
+=== MATLAB: double (real) vs GraphBLAS: double
+trial 1: MATLAB:     3.7679 GrB:     3.3832 speedup:       1.11 err: 0
+trial 2: MATLAB:     3.7633 GrB:     3.3790 speedup:       1.11 err: 0
+trial 3: MATLAB:     3.7708 GrB:     3.3867 speedup:       1.11 err: 0
+trial 4: MATLAB:     3.7637 GrB:     3.3842 speedup:       1.11 err: 0
+average: MATLAB:     3.7664 GrB:     3.3833 speedup:       1.11
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+trial 1: MATLAB:     7.9067 GrB:     4.6544 speedup:       1.70 err: 1.6988e-07
+trial 2: MATLAB:     7.9161 GrB:     4.6528 speedup:       1.70 err: 1.6988e-07
+trial 3: MATLAB:     7.9133 GrB:     4.6565 speedup:       1.70 err: 1.6988e-07
+trial 4: MATLAB:     7.9125 GrB:     4.6534 speedup:       1.70 err: 1.6988e-07
+average: MATLAB:     7.9121 GrB:     4.6543 speedup:       1.70
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+trial 1: MATLAB:     7.9160 GrB:     4.9292 speedup:       1.61 err: 0
+trial 2: MATLAB:     7.9142 GrB:     4.9355 speedup:       1.60 err: 0
+trial 3: MATLAB:     7.9143 GrB:     4.9356 speedup:       1.60 err: 0
+trial 4: MATLAB:     7.9155 GrB:     4.9359 speedup:       1.60 err: 0
+average: MATLAB:     7.9150 GrB:     4.9341 speedup:       1.60
+
+-------------------------------------------------
+Testing performance of C=A*B using 20 threads:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+trial 1: MATLAB:     3.7773 GrB:     0.2908 speedup:      12.99 err: 1.65987e-07
+trial 2: MATLAB:     3.7665 GrB:     0.2037 speedup:      18.49 err: 1.65987e-07
+trial 3: MATLAB:     3.7636 GrB:     0.2049 speedup:      18.37 err: 1.65987e-07
+trial 4: MATLAB:     3.7859 GrB:     0.1993 speedup:      18.99 err: 1.65987e-07
+average: MATLAB:     3.7733 GrB:     0.2247 speedup:      16.79
+
+=== MATLAB: double (real) vs GraphBLAS: double
+trial 1: MATLAB:     3.8150 GrB:     0.3525 speedup:      10.82 err: 0
+trial 2: MATLAB:     3.8067 GrB:     0.2971 speedup:      12.81 err: 0
+trial 3: MATLAB:     3.8112 GrB:     0.2885 speedup:      13.21 err: 0
+trial 4: MATLAB:     3.8098 GrB:     0.2222 speedup:      17.15 err: 0
+average: MATLAB:     3.8107 GrB:     0.2901 speedup:      13.14
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+trial 1: MATLAB:     7.9066 GrB:     0.3136 speedup:      25.22 err: 1.7582e-07
+trial 2: MATLAB:     7.9181 GrB:     0.2884 speedup:      27.45 err: 1.7582e-07
+trial 3: MATLAB:     7.9143 GrB:     0.2832 speedup:      27.94 err: 1.7582e-07
+trial 4: MATLAB:     7.9135 GrB:     0.2832 speedup:      27.94 err: 1.7582e-07
+average: MATLAB:     7.9131 GrB:     0.2921 speedup:      27.09
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+trial 1: MATLAB:     7.9165 GrB:     0.3076 speedup:      25.74 err: 0
+trial 2: MATLAB:     7.9159 GrB:     0.3171 speedup:      24.97 err: 0
+trial 3: MATLAB:     7.9158 GrB:     0.3080 speedup:      25.70 err: 0
+trial 4: MATLAB:     7.9163 GrB:     0.3108 speedup:      25.47 err: 0
+average: MATLAB:     7.9161 GrB:     0.3108 speedup:      25.47
+
+-------------------------------------------------
+Testing performance of C=A*B using 40 threads:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+trial 1: MATLAB:     3.8171 GrB:     0.1983 speedup:      19.25 err: 1.65697e-07
+trial 2: MATLAB:     3.8068 GrB:     0.1880 speedup:      20.25 err: 1.65697e-07
+trial 3: MATLAB:     3.8088 GrB:     0.1856 speedup:      20.53 err: 1.65697e-07
+trial 4: MATLAB:     3.8101 GrB:     0.1865 speedup:      20.43 err: 1.65697e-07
+average: MATLAB:     3.8107 GrB:     0.1896 speedup:      20.10
+
+=== MATLAB: double (real) vs GraphBLAS: double
+trial 1: MATLAB:     3.8054 GrB:     0.2068 speedup:      18.40 err: 0
+trial 2: MATLAB:     3.8072 GrB:     0.2117 speedup:      17.98 err: 0
+trial 3: MATLAB:     3.8086 GrB:     0.2160 speedup:      17.63 err: 0
+trial 4: MATLAB:     3.8126 GrB:     0.2119 speedup:      17.99 err: 0
+average: MATLAB:     3.8085 GrB:     0.2116 speedup:      18.00
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+trial 1: MATLAB:     7.9163 GrB:     0.2796 speedup:      28.32 err: 1.72383e-07
+trial 2: MATLAB:     7.9205 GrB:     0.2750 speedup:      28.80 err: 1.72383e-07
+trial 3: MATLAB:     7.9200 GrB:     0.2725 speedup:      29.07 err: 1.72383e-07
+trial 4: MATLAB:     7.9182 GrB:     0.2767 speedup:      28.62 err: 1.72383e-07
+average: MATLAB:     7.9188 GrB:     0.2759 speedup:      28.70
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+trial 1: MATLAB:     7.9187 GrB:     0.2982 speedup:      26.55 err: 0
+trial 2: MATLAB:     7.9185 GrB:     0.3047 speedup:      25.99 err: 0
+trial 3: MATLAB:     7.9190 GrB:     0.3210 speedup:      24.67 err: 0
+trial 4: MATLAB:     7.9162 GrB:     0.3038 speedup:      26.06 err: 0
+average: MATLAB:     7.9181 GrB:     0.3069 speedup:      25.80
+

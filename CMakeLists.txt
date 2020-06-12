@@ -101,8 +101,8 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
-  set ( GB_BURBLE true )
-# set ( GB_BURBLE false )
+# set ( GB_BURBLE true )
+  set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
@@ -240,6 +240,14 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
+    # operations may be carried out in higher precision
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fexcess-precision=fast " )
+    # faster single complex multiplication and division
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fcx-limited-range " )
+    # math functions do not need to report errno
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno ")
+    # integer operations wrap
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv ")
     # check all warnings (uncomment for development only)
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
