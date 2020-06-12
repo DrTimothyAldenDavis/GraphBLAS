@@ -203,7 +203,6 @@ classdef GrB
 %   C = erfc (G)            complementary error function
 %   p = etree (G)           elimination tree
 %   C = exp (G)             natural exponent
-%   C = exp2 (G)            base-2 exponent
 %   C = expm1 (G)           exp (x) - 1
 %
 %   C = false (...)         all-false logical matrix
@@ -825,7 +824,6 @@ methods
     C = erfc (G) ;
     [parent, varargout] = etree (G, varargin) ;
     C = exp (G) ;
-    C = exp2 (G) ;
     C = expm1 (G) ;
 
     C = false (varargin) ;

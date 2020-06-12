@@ -46,7 +46,7 @@ binops = {
     'remainder'
     'copysign'
     'cmplx'
-    'ldexp'
+    'pow2'
     'xnor'
     'pow'
     'bitor'

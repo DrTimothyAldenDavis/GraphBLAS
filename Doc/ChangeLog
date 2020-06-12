@@ -1,4 +1,4 @@
-Version 3.3.0, TODO, 2020
+Version 3.3.0, TODO NOW, 2020
 
     * added complex types: GxB_FC32 and GxB_FC64, many unary operators,
         binary operators, monoids, and semirings

@@ -14,7 +14,7 @@
 //  iseq, isne, isgt, islt, isge, isle,
 //  ==, ~=, >, <, >=, <=,
 //  ||, &&, xor
-//  atan2, hypot, fmod, remainder, copysign, cmplx, pow
+//  atan2, hypot, fmod, remainder, copysign, cmplx, pow, pow2
 
 //  bitwise operators:
 //      bitand, bitor, bitxor, bitxnor, bitget, bitset, bitclr, bitshift
@@ -38,6 +38,7 @@
 //      ||    |     or  lor
 //      &&    &     and land
 //      xor   lxor
+//      pow2  ldexp
 
 GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 (
@@ -553,18 +554,18 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         if (type == GrB_FP64  ) return (GxB_COPYSIGN_FP64  ) ;
 
     }
-    else if (MATCH (op_name, "ldexp"))
-    { 
-
-        if (type == GrB_FP32  ) return (GxB_LDEXP_FP32  ) ;
-        if (type == GrB_FP64  ) return (GxB_LDEXP_FP64  ) ;
-
-    }
     else if (MATCH (op_name, "cmplx"))
     { 
 
         if (type == GrB_FP32  ) return (GxB_CMPLX_FP32  ) ;
         if (type == GrB_FP64  ) return (GxB_CMPLX_FP64  ) ;
+
+    }
+    else if (MATCH (op_name, "ldexp") || MATCH (op_name, "pow2"))
+    { 
+
+        if (type == GrB_FP32  ) return (GxB_LDEXP_FP32  ) ;
+        if (type == GrB_FP64  ) return (GxB_LDEXP_FP64  ) ;
 
     }
     else if (MATCH (op_name, "pow"))

@@ -30,7 +30,12 @@ function unopinfo (op, type)
 % For 4 floating-point types (real & complex)x(single & double):
 %   sqrt        z = sqrt (x)    square root
 %   log         z = log (x)     base-e logarithm
-%   exp         z = exp (x)     base-2 exponential, e^x
+%   log2        z = log2 (x)    base-2 logarithm
+%   log10       z = log10 (x)   base-10 logarithm
+%   log1p       z = log1p (x)   log (x-1), base-e
+%   exp         z = exp (x)     base-e exponential, e^x
+%   pow2        z = pow2 (x)    base-2 exponential, 2^x
+%   expm1       z = exp1m (x)   e^x-1
 %   sin         z = sin (x)     sine
 %   cos         z = cos (x)     cosine
 %   tan         z = tan (x)     tangent
@@ -48,11 +53,6 @@ function unopinfo (op, type)
 %   floor       z = floor (x)   floor
 %   round       z = round (x)   round to nearest
 %   trunc       z = trunc (x)   truncate, also 'fix'
-%   exp2        z = exp2 (x)    base-2 exponential, 2^x, also 'pow2'
-%   expm1       z = exp1m (x)   e^x-1
-%   log10       z = log10 (x)   base-10 logarithm
-%   log1p       z = log1p (x)   log (x-1), base-e
-%   log2        z = log2 (x)    base-2 logarithm
 %
 % For 'single complex' and 'double complex' only:
 %   creal       z = real (x)    real part of x (z is real), also 'real'
@@ -84,6 +84,8 @@ function unopinfo (op, type)
 %   GrB.unopinfo ('+.double') ;     % also a valid binary operator
 %   GrB.unopinfo ('abs.double') ;
 %   GrB.unopinfo ('not.int32') ;
+%   GrB.unopinfo ('pow2.double') ;  % also a valid binary operator
+%   GrB.binopinfo ('pow2.double') ;
 %
 %   % invalid unary operator (generates an error; this is a binary op):
 %   GrB.unopinfo ('*.double') ;

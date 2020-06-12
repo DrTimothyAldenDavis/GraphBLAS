@@ -1,9 +1,12 @@
 function C = pow2 (A, B)
 %POW2 base-2 power and scale floating-point number.
-% C = pow2 (G) is C(i,j) = 2.^G(i,j) for each entry in G.
-% C = pow2 (F,E) with computes C = F .* (2 .^ fix (E)).
+% C = pow2 (A) is C(i,j) = 2.^A(i,j) for each entry in A.
+% Since 2^0 is nonzero, C is a full matrix.
 %
-% See also GrB/log2, GrB/power.
+% C = pow2 (F,E) is C = F .* (2 .^ fix (E)).  C is sparse, with
+% the same pattern as F+E.  Any imaginary parts of F and E are ignored.
+%
+% See also GrB/log2, GrB/power, GrB/exp.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -11,21 +14,25 @@ function C = pow2 (A, B)
 if (isobject (A))
     A = A.opaque ;
 end
+atype = gbtype (A) ;
 
 if (nargin == 1)
-    % use GrB/power
-    C = GrB (gb_power (2, A)) ;
+    % C = 2.^A
+    if (~gb_isfloat (atype))
+        atype = 'double' ;
+    end
+    C = GrB (gbapply ('pow2', gbfull (A, atype))) ;
 else
+    % C = A.*(2.^B)
     if (isobject (B))
         B = B.opaque ;
     end
-    type = gboptype (gbtype (A), gbtype (B)) ;
+    type = gboptype (atype, gbtype (B)) ;
     if (contains (type, 'single'))
         type = 'single' ;
     else
         type = 'double' ;
     end
-    % use the ldexp operator to compute C = A.*(2.^B)
-    C = GrB (gb_union_op (['ldexp.' type], A, B)) ;
+    C = GrB (gb_union_op (['pow2.' type], A, B)) ;
 end
 

@@ -130,7 +130,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 // copy over the data from the old space to the new space
                 if (pnew != NULL)
                 {
-                    // TODO use a parallel memcpy
+                    // TODO for GPU: use a parallel memcpy
                     memcpy (pnew, p, GB_IMIN (oldsize, size)) ;
                 }
 

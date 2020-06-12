@@ -68,8 +68,8 @@ function binopinfo (op, optype)
 %
 % The following operators are avaiable for single and double (real); their
 % definitions are identical to the ANSI C11 versions of these functions:
-% atan2, hypot, fmod, remainder, copysign, ldxep.  All produce the same
-% type as the input, on output.
+% atan2, hypot, fmod, remainder, copysign, ldxep (also called 'pow2').
+% All produce the same type as the input, on output.
 %
 % z = cmplx(x,y) can be computed for x and y as single and double; z is
 % single complex or double complex, respectively.
@@ -85,9 +85,11 @@ function binopinfo (op, optype)
 % Example:
 %
 %   % valid binary operators
-%   GrB.binopinfo ('+.double') ;
+%   GrB.binopinfo ('+.double') ;    % also a valid unary operator
 %   GrB.binopinfo ('1st.int32') ;
 %   GrB.binopinfo ('cmplx.single') ;
+%   GrB.binopinfo ('pow2.double') ; % also a valid unary operator
+%   GrB.unopinfo  ('pow2.double') ;
 %
 %   % invalid binary operator (an error; this is a unary op):
 %   GrB.binopinfo ('abs.double') ;

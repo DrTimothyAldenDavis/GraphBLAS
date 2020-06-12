@@ -1,5 +1,6 @@
-TODO: statement coverage, for *.m and *.c
+TODO NOW: statement coverage, for *.c
+TODO NOW Help report
+TODO NOW Lint report
+TODO NOW ... other reports
+TODO NOW: use binaryops with bind1, bind2 instead of gb_expand
 
-Help report
-Lint report
-... other reports

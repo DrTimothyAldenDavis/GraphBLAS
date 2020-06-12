@@ -28,7 +28,7 @@ function C = GB_spec_op (op, A, B)
 % The class of z is the same as the class of the output of the operator, which
 % is op.optype except for: (1) 'eq', 'ne', 'gt', 'lt', 'ge', 'le', in which
 % case z is logical, (2) 'complex', where x and y are real and z is complex,
-% (3) ... TODO
+% (3) bitshift (where x has the optype and y is int8).
 %
 % Intrinsic MATLAB operators are used as much as possible, so as to test
 % GraphBLAS operators.  Some must be done in GraphBLAS because the

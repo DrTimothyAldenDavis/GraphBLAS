@@ -20,7 +20,7 @@
 
 #include "GB.h"
 
-// TODO add error handling and GrB_Info return value
+// TODO for GPU: add error handling and GrB_Info return value
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cumsum                      // cumulative sum of an array
@@ -147,7 +147,7 @@ void GB_cumsum                      // cumulative sum of an array
     {
 
 #if 0
-        // TODO: pop count on the GPU for GB_cumsum
+        // TODO for GPU: pop count on the GPU for GB_cumsum
         #if defined ( GBCUDA )
         if (GB_cuda_is_on_GPU (count))
         {

@@ -62,7 +62,7 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
         // create the MKL version of the matrix A, and analyze it
         //----------------------------------------------------------------------
 
-        // TODO: doesn't the analysis depend on A'*x or A*x?
+        // TODO for MKL: doesn't the analysis depend on A'*x or A*x?
 
         int A_mkl_type = GB_type_mkl (A->type->code) ;
         if (!GB_IS_HYPER (A) && A_mkl_type >= 0)
@@ -86,7 +86,7 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
             A->mkl = (void *) A_mkl ;
         }
 
-        // TODO if A is modified, A->mkl needs to be freed.
+        // TODO for MKL: if A is modified, A->mkl needs to be freed.
 
     }
 

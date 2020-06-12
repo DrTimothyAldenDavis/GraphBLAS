@@ -157,7 +157,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // C=A*B or C<M>=A*B via MKL
     //--------------------------------------------------------------------------
 
-// TODO figure out how to call mkl_mxv for both dense and sparse v
+// TODO for MKL: figure out how to call mkl_mxv for both dense and sparse v
 
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
     GBBURBLE ("(MKL start) ") ;

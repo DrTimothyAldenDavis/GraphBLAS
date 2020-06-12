@@ -106,14 +106,14 @@ double gb_norm              // compute norm (A,kind)
                     // X = abs (A)
                     OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                     // X = X .* X
-                    // TODO use GxB_POW_* with GrB_Matrix_apply
+                    // TODO NOW: use GxB_POW_* with GrB_Matrix_apply
                     OK (GrB_Matrix_eWiseMult_BinaryOp (X, NULL, NULL, timesop,
                         X, X, NULL)) ;
                 }
                 else
                 { 
                     // X = A .* A
-                    // TODO use GxB_POW_* with GrB_Matrix_apply
+                    // TODO NOW: use GxB_POW_* with GrB_Matrix_apply
                     OK (GrB_Matrix_eWiseMult_BinaryOp (X, NULL, NULL, timesop,
                         A, A, NULL)) ;
                 }

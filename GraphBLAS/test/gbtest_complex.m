@@ -27,8 +27,8 @@ complex_binaryops = {
 
 complex_unaryops = {
     % z and x are complex:
-    'identity'     % z = x
-    'ainv'         % z = -x
+    'uplus'        % z = x
+    'uminus'       % z = -x
     'minv'         % z = 1/x
     'one'          % z = 1
     'sqrt'
@@ -50,8 +50,8 @@ complex_unaryops = {
     'ceil'
     'floor'
     'round'
-    'trunc'
-    'exp2'
+    'fix'
+    'pow2'
     'expm1'
     'log10'
     'log1p'

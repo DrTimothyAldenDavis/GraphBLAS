@@ -109,15 +109,15 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         double bdeg = ((double) GB_NNZ (B)) / ((double) GB_IMAX (1, B->nvec)) ;
         double work = GB_NNZ (M) * GB_IMIN (adeg, bdeg) ;
 
-        // TODO if A or B are not accessed (first, 2nd, or pair ops)
-        // then the type if A can be user-defined here, for CUDA.
+        // TODO for GPU: if A or B are not accessed (first, 2nd, or pair
+        // ops) then the type of A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
         if (ngpus_to_use > 0 && semiring->builtin &&
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code))
         {
-            // use "the" GPU (TODO: could use multiple GPUs too)
+            // use "the" GPU (TODO for GPU: could use multiple GPUs too)
             return (GB_AxB_dot3_cuda (Chandle, M, Mask_struct, A, B, semiring,
                 flipxy, Context)) ;
         }

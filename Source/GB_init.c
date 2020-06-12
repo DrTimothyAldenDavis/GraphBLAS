@@ -217,7 +217,7 @@ GrB_Info GB_init            // start up GraphBLAS
                 ((double) GB_Global_gpu_memorysize_get (device)) / 1e9,
                 GB_Global_gpu_sm_get (device)) ;
         }
-        // TODO check for jit cache
+        // TODO for GPU: check for jit cache
     }
     else
     #endif

@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/reduce_demo: reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// TODO add this to CMakelists.txt, or merge with reduce_demo.c
+// TODO for GPU: add this to CMakelists.txt, or merge with reduce_demo.c
 
 #include "GraphBLAS.h"
 

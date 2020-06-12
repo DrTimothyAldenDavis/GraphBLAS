@@ -16,7 +16,7 @@
 // This template constructs GrB_Matrix_extractElement_[TYPE] for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
 
-// TODO tolerate zombies
+// FUTURE: tolerate zombies
 
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 (

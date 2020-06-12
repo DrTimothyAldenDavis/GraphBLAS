@@ -5,7 +5,7 @@ function C = power (A, B)
 % the same pattern as A) if B is a positive scalar (greater than zero), or
 % full otherwise.
 %
-% See also GrB/mpower.
+% See also GrB/mpower, GrB/pow2, GrB/exp.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

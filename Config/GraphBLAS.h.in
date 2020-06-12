@@ -6293,11 +6293,11 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
-// TODO add GrB_Vector_apply_BinaryOp1st_TYPE
-// TODO add GrB_Vector_apply_BinaryOp2nd_TYPE
-// TODO add GrB_Matrix_apply_BinaryOp1st_TYPE
-// TODO add GrB_Matrix_apply_BinaryOp2nd_TYPE
-// TODO add GrB_Matrix_removeElement, GrB_Vector_removeElement
+// TODO NOW: add GrB_Vector_apply_BinaryOp1st_TYPE
+// TODO NOW: add GrB_Vector_apply_BinaryOp2nd_TYPE
+// TODO NOW: add GrB_Matrix_apply_BinaryOp1st_TYPE
+// TODO NOW: add GrB_Matrix_apply_BinaryOp2nd_TYPE
+// TODO NOW: add GrB_Matrix_removeElement, GrB_Vector_removeElement
 
 //------------------------------------------------------------------------------
 // GrB_apply: generic matrix/vector apply

@@ -279,11 +279,6 @@ function gbtest76b (A, B, G, H, tol)
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
 
-    C1 = 2.^A ;
-    C2 = exp2 (G) ;
-    err = norm (C1-C2, 1) ;
-    assert (err < tol) ;
-
     C1 = expm1 (A) ;
     C2 = expm1 (G) ;
     err = norm (C1-C2, 1) ;

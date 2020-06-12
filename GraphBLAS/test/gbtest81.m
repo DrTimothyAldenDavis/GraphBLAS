@@ -68,18 +68,10 @@ for m = [1 5 10 ]
                 C1 = GrB.apply (op, A) ;
                 % try MATLAB
                 switch (op)
-                    case { 'identity' }
-                        C2 = A ;
-                    case { 'ainv' }
-                        C2 = -A ;
                     case { 'minv' }
                         C2 = 1./A ;
                     case { 'one' }
                         C2 = complex (ones (m, n), 0) ;
-                    case { 'trunc' }
-                        C2 = fix (A) ;
-                    case { 'exp2' }
-                        C2 = 2.^A ;
                     otherwise
                         C2 = feval (op, A) ;
                 end

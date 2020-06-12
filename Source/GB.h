@@ -32,9 +32,8 @@
 // set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
 // -DGB_BURBLE=1.  This setting can also be added at the top of any individual
 // Source/* files, before #including any other files.
-// TODO burble on
 #ifndef GB_BURBLE
-#define GB_BURBLE 1
+#define GB_BURBLE 0
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:

@@ -17,34 +17,21 @@ function [F, E] = log2 (G)
 G = G.opaque ;
 
 if (nargout == 1)
-
     % C = log2 (G)
     F = GrB (gb_to_real_if_imag_zero (gb_trig ('log2', gbfull (G)))) ;
-
 else
-
     % [F,E] = log2 (G)
     type = gbtype (G) ;
-
     switch (type)
-
         case { 'logical', 'int8', 'int16', 'int32', 'int64', ...
             'uint8', 'uint16', 'uint32', 'uint64', 'double complex' }
-
             type = 'double' ;
-
         case { 'single complex' }
-
             type = 'single' ;
-
         case { 'single', 'double' }
-
             % type remains the same
-
     end
-
     F = GrB (gbapply (['frexpx.' type], G)) ;
     E = GrB (gbapply (['frexpe.' type], G)) ;
-
 end
 
