@@ -58,22 +58,22 @@ for do_real = 0:1
 
         C2 = GB_mex_AxB (A, B) ;
         tg = grbresults ;
-        err = norm (C1-C2,1)
-        fprintf ('GraphBLAS %g speedup %g\n', tg, tm/tg) ;
+        err = norm (C1-C2,1) ;
+        fprintf ('GraphBLAS %g speedup %g err: %g\n', tg, tm/tg, err) ;
 
         % these are expected to be slower still; they do not use the default method
         % (Gustavson) which is selected by the auto-strategy.
 
         C2 = GB_mex_AxB (A, B, 0, 0, 1002) ;
         tg = grbresults ;
-        err = norm (C1-C2,1)
-        fprintf ('GraphBLAS %g speedup %g (heap)\n', tg, tm/tg) ;
+        err = norm (C1-C2,1) ;
+        fprintf ('GraphBLAS %g speedup %g (heap) err: %g\n', tg, tm/tg, err) ;
 
 
         C2 = GB_mex_AxB (A, B, 0, 0, 1003) ;
         tg = grbresults ;
-        err = norm (C1-C2,1)
-        fprintf ('GraphBLAS %g speedup %g (dot)\n', tg, tm/tg) ;
+        err = norm (C1-C2,1) ;
+        fprintf ('GraphBLAS %g speedup %g (dot) err: %g\n', tg, tm/tg, err) ;
 
     end
 
