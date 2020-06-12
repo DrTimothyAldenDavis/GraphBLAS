@@ -28,7 +28,10 @@ a = double (A) ;
 % 1 string: monoid
 
 C2 = sum (A, 'all') ;
-c2 = sum (a, 'all') ;
+% works in R2019b; fails in R2018a:
+% c2 = sum (a, 'all') ;
+% works in R2018a:
+c2 = sum (a (:)) ;
 assert (isequal (c2, C2)) ;
 
 C1 = GrB.reduce (monoid, A) ; assert (isequal (C1, C2)) ;
@@ -45,7 +48,7 @@ C1 = GrB.reduce (a, monoid) ; assert (isequal (C1, C2)) ;
 % 1 string: monoid
 
 C2 = sum (A, 'all') ;
-c2 = sum (a, 'all') ;
+c2 = sum (a (:)) ;
 assert (isequal (c2, C2)) ;
 
 C1 = GrB.reduce (monoid, A, desc) ; assert (isequal (C1, C2)) ;
@@ -62,7 +65,7 @@ C1 = GrB.reduce (a, monoid, desc) ; assert (isequal (C1, C2)) ;
 % 2 strings: accum, monoid
 
 C2 = C * sum (A, 'all') ;
-c2 = c * sum (a, 'all') ;
+c2 = c * sum (a (:)) ;
 assert (isequal (c2, C2)) ;
 
 C1 = GrB.reduce (C, accum, monoid, A) ; assert (isequal (C1, C2)) ;
@@ -87,7 +90,7 @@ C1 = GrB.reduce (accum, monoid, c, a) ; assert (isequal (C1, C2)) ;
 % 2 strings: accum, monoid
 
 C2 = C * sum (A, 'all') ;
-c2 = c * sum (a, 'all') ;
+c2 = c * sum (a (:)) ;
 assert (isequal (c2, C2)) ;
 
 C1 = GrB.reduce (C, accum, monoid, A, desc) ; assert (isequal (C1, C2)) ;

@@ -94,7 +94,6 @@ switch (nargin)
         [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
         [C, k] = gbmxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
-    otherwise
 end
 
 if (k == 0)

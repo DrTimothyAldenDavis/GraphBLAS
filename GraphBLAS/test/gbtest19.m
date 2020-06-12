@@ -15,6 +15,11 @@ for k = 0:10
     err = norm (C1 - C2, 1) ;
     assert (err < 1e-10) ;
     maxerr = max (maxerr, err) ;
+    C1 = A.^k ;
+    C2 = G.^k ;
+    err = norm (C1 - C2, 1) ;
+    assert (err < 1e-10) ;
+    maxerr = max (maxerr, err) ;
 end
 
 a = pi ;

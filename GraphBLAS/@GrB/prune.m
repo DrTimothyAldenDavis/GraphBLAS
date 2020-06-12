@@ -14,20 +14,20 @@ else
     id = gb_get_scalar (id) ;
 end
 
-if (isobject (G))
-    % extract the contents of a GraphBLAS matrix
-    G = G.opaque ;
-elseif (builtin ('issparse', G) && id == 0)
+if (builtin ('issparse', G) && id == 0)
     % a MATLAB sparse matrix 'never' contains explicit zeros,
     % so no need to prune.  C should be returned as a GraphBLAS
     % matrix, however.
     C = GrB (G) ;
-    return ;
-end
-
-if (id == 0)
-    C = GrB (gbselect (G, 'nonzero')) ;
 else
-    C = GrB (gbselect (G, '~=', id)) ;
+    if (isobject (G))
+        % extract the contents of a GraphBLAS matrix
+        G = G.opaque ;
+    end
+    if (id == 0)
+        C = GrB (gbselect (G, 'nonzero')) ;
+    else
+        C = GrB (gbselect (G, '~=', id)) ;
+    end
 end
 

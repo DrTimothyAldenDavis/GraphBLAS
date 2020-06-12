@@ -56,7 +56,7 @@ if (isequal (op, 'bitshift'))
         A = gb_expand (A, B) ;
     else
         % expand B by padding it with zeros from the pattern of A
-        B = gbeadd (['1st.int8'], B, gb_expand (0, A, 'int8')) ;
+        B = gbeadd ('1st.int8', B, gb_expand (0, A, 'int8')) ;
     end
 
     C = gbemult (['bitshift.' atype], A, B) ;

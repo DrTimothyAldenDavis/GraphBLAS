@@ -58,6 +58,18 @@ for k = 1:8
         C2 = bitset (A2, B2, V) ;
         assert (isequal (C1, C2)) ;
 
+        for a = 0:3
+            for b = 1:4
+                C1 = bitset (a, b, 1) ;
+                C2 = bitset (a, b, GrB (1)) ;
+                assert (isequal (C1, C2)) ;
+            end
+        end
+
+        C1 = bitset (a, B, 1) ;
+        C2 = bitset (a, B, GrB (1)) ;
+        assert (isequal (C1, C2)) ;
+
         C1 = bitand (A, B) ;
         C2 = bitand (A2, B2) ;
         assert (isequal (C1, C2)) ;
