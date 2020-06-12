@@ -1,5 +1,5 @@
 function gbtest4
-%GBTEST4 list all 2423 possible semirings
+%GBTEST4 list all semirings
 % This count excludes operator synonyms ('1st' and 'first', for example),
 % but it does include identical semirings with operators of different
 % names.  For example, the spec has many boolean operators with different

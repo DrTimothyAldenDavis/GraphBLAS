@@ -6,7 +6,7 @@
 %  gbtest1   - test GrB
 %  gbtest2   - list all binary operators
 %  gbtest3   - test dnn
-%  gbtest4   - list all 1865 possible semirings
+%  gbtest4   - list all semirings
 %  gbtest5   - test GrB.descriptorinfo
 %  gbtest6   - test GrB.mxm
 %  gbtest7   - test GrB.build
@@ -79,15 +79,32 @@
 %  gbtest80  - test complex division and power
 %  gbtest81  - test complex operators
 %  gbtest82  - test complex A*B, A'*B, A*B', A'*B', A+B
-%  gbtest97  - test A*x performance
-%  gbtest98  - test A'*x performance
+%  gbtest83  - test GrB.apply
+%  gbtest84  - test GrB.assign
+%  gbtest85  - test GrB.subassign
+%  gbtest86  - test GrB.mxm
+%  gbtest87  - test GrB.eadd
+%  gbtest88  - test GrB.emult
+%  gbtest89  - test GrB.extract
+%  gbtest90  - test GrB.reduce
+%  gbtest91  - test GrB.trans
+%  gbtest92  - test GrB.kronecker
+%  gbtest93  - test GrB.select
+%  gbtest94  - test GrB.vreduce
+%  gbtest95  - test indexing
+%  gbtest96  - test GrB.optype
 %  gbtest99  - test GrB.bfs and plot (graph (G))
 %
-% Utilities:
+% Utilities and other tests:
 %
-%  gbtest_binops - list of all binary operators
-%  gbtest_types  - return a cell array of strings, listing all types
-%  gbtest_eq     - tests if A and B are equal, after dropping zeros.
+%  gbtest_binops  - list of all binary operators
+%  gbtest_types   - return a cell array of strings, listing all types
+%  gbtest_eq      - tests if A and B are equal, after dropping zeros.
+%  gbtest_perf1   - test A*x performance
+%  gbtest_perf2   - test A'*x performance
+%  gbtest_cast    - cast a MATLAB matrix to another type.
+%  gbtest_complex - return list of complex operators
+%  gbtest_err     - compare two matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

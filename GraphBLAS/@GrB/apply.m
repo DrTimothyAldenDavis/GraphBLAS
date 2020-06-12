@@ -35,7 +35,6 @@ if (isobject (arg2))
 end
 
 if (nargin > 2 && isobject (arg3))
-assert(false) ;
     arg3 = arg3.opaque ;
 end
 
@@ -44,7 +43,6 @@ if (nargin > 3 && isobject (arg4))
 end
 
 if (nargin > 4 && isobject (arg5))
-assert(false) ;
     arg5 = arg5.opaque ;
 end
 
@@ -58,11 +56,7 @@ switch (nargin)
     case 5
         [C, k] = gbapply (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-assert(false) ;
         [C, k] = gbapply (arg1, arg2, arg3, arg4, arg5, arg6) ;
-    otherwise
-assert(false) ;
-        error ('usage: C = GrB.apply (Cin, M, accum, op, A, desc)') ;
 end
 
 if (k == 0)

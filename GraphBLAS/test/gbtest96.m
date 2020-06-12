@@ -1,5 +1,5 @@
-function gbtest_final
-%GBTEST_FINAL test GrB.optype
+function gbtest96
+%GBTEST96 test GrB.optype
 
 fprintf ('gbtest: terse table of types of binary operators when\n') ;
 fprintf ('input types are mixed (the type of c for c=a+b, for example)\n') ;

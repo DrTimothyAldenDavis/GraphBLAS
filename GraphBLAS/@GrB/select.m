@@ -90,22 +90,18 @@ if (isobject (arg2))
 end
 
 if (nargin > 2 && isobject (arg3))
-assert(false) ;
     arg3 = arg3.opaque ;
 end
 
 if (nargin > 3 && isobject (arg4))
-assert(false) ;
     arg4 = arg4.opaque ;
 end
 
 if (nargin > 4 && isobject (arg5))
-assert(false) ;
     arg5 = arg5.opaque ;
 end
 
 if (nargin > 5 && isobject (arg6))
-assert(false) ;
     arg6 = arg6.opaque ;
 end
 
@@ -121,11 +117,7 @@ switch (nargin)
     case 6
         [C, k] = gbselect (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-assert(false) ;
         [C, k] = gbselect (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
-    otherwise
-assert(false) ;
-        error ('usage: C = GrB.select (Cin, M, accum, op, A, b, desc)') ;
 end
 
 if (k == 0)

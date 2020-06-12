@@ -112,6 +112,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     GrB_Index ni = cnrows, nj = cncols ;
     bool I_allocated = false, J_allocated = false ;
 
+    if (cnrows > 1 && cncols > 1 && ncells == 1)
+    {
+        ERROR ("linear indexing not yet supported") ;
+    }
+
     if (cnrows == 1 && ncells == 1)
     { 
         // only J is present

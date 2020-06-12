@@ -1,77 +1,108 @@
 function gbtest90
-%GBTEST90 test indexing
+%GBTEST90 test GrB.reduce
+%
+% c = GrB.reduce (monoid, A)
+% c = GrB.reduce (monoid, A, desc)
+% c = GrB.reduce (c, accum, monoid, A)
+% c = GrB.reduce (c, accum, monoid, A, desc)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-G = GrB.empty (GrB ([0 2])) ;
-assert (isequal (size (G), [0 2])) ;
+rng ('default')
 
-A = magic (4) ;
-I = GrB ([1 2]) ;
-G = GrB (A) ;
-X = G (:,1) ;
-Y = G (:,1) ;
-C1 = X (I) ;
-C2 = Y ([1 2]) ;
-assert (isequal (C1, C2)) ;
+C      = GrB (pi) ;
+accum  = '*' ;
+monoid = '+' ;
+A      = GrB.random (9, 9, 0.5) ;
+desc   = struct ;
 
-C1 = X ({ I }) ;
-assert (isequal (C1, C2)) ;
+c = double (C) ;
+a = double (A) ;
 
-C1 = G ({ }, { })  ;
-assert (isequal (C1, G)) ;
+%----------------------------------------------------------------------
+% c = GrB.reduce (monoid, A)
+%----------------------------------------------------------------------
 
-H = GrB (2^59, 2^60) ;
-[m, n] = size (H) ;
-s = GrB.isfull (H) ;
-assert (~s) ;
-assert (isequal ([m n], [2^59 2^60])) ;
-assert (isa ([m n], 'int64')) ;
+% 1 matrix: A
+% 1 string: monoid
 
-H = GrB.random (3, 4, inf, 'range', GrB ([2 4], 'int8')) ;
-assert (GrB.isfull (H)) ;
-assert (isequal (GrB.type (H), 'int8')) ;
+C2 = sum (A, 'all') ;
+c2 = sum (a, 'all') ;
+assert (isequal (c2, C2)) ;
 
-H = GrB.random (H, 'range', GrB ([3 4], 'uint32')) ;
-assert (GrB.isfull (H)) ;
-assert (isequal (GrB.type (H), 'uint32')) ;
+C1 = GrB.reduce (monoid, A) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (A, monoid) ; assert (isequal (C1, C2)) ;
 
-C = tril (H, GrB (1,1)) ;
-assert (istril (C)) ;
+C1 = GrB.reduce (monoid, a) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (a, monoid) ; assert (isequal (C1, C2)) ;
 
-types = gbtest_types ;
-for k = 1:length (types)
-    type = types {k} ;
-    if (contains (type, 'complex') || isequal (type, 'logical'))
-        continue ;
-    end
-    I = GrB ([1 2], type) ;
-    C1 = A (I,I) ;
-    C2 = A ([1 2], [1 2]) ;
-    C3 = A (int8 ([1 2]), int8 ([1 2])) ;
-    C4 = G (I,I) ;
-    assert (isequal (C1, C2))
-    assert (isequal (C1, C3))
-    assert (isequal (C1, C4))
-end
+%----------------------------------------------------------------------
+% c = GrB.reduce (monoid, A, desc)
+%----------------------------------------------------------------------
 
-I1 = [1 2 ; 3 4] ;
-I2 = GrB (I1) ;
-C1 = A (I1,I1) ;
-C2 = A (I2,I2) ;
-H = GrB (2^60, 2^60) ;
-H (1:2,1:2) = I1 ;
-C3 = A (H,H) ;
-assert (isequal (C1, C2))
-assert (isequal (C1, C3))
+% 1 matrix: A
+% 1 string: monoid
 
-A = [-1 2] ;
-B = [2 0.5] ;
-C1 = A.^B ;
-C2 = GrB (A).^B ;
-assert (isequal (C1, C2))
-assert (isreal (C2)) 
+C2 = sum (A, 'all') ;
+c2 = sum (a, 'all') ;
+assert (isequal (c2, C2)) ;
+
+C1 = GrB.reduce (monoid, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (A, monoid, desc) ; assert (isequal (C1, C2)) ;
+
+C1 = GrB.reduce (monoid, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (a, monoid, desc) ; assert (isequal (C1, C2)) ;
+
+%----------------------------------------------------------------------
+% c = GrB.reduce (c, accum, monoid, A)
+%----------------------------------------------------------------------
+
+% 2 matrices: c, A
+% 2 strings: accum, monoid
+
+C2 = C * sum (A, 'all') ;
+c2 = c * sum (a, 'all') ;
+assert (isequal (c2, C2)) ;
+
+C1 = GrB.reduce (C, accum, monoid, A) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (C, accum, A, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (C, A, accum, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, C, monoid, A) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, C, A, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, monoid, C, A) ; assert (isequal (C1, C2)) ;
+
+C1 = GrB.reduce (c, accum, monoid, a) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (c, accum, a, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (c, a, accum, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, c, monoid, a) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, c, a, monoid) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, monoid, c, a) ; assert (isequal (C1, C2)) ;
+
+%----------------------------------------------------------------------
+% c = GrB.reduce (c, accum, monoid, A, desc)
+%----------------------------------------------------------------------
+
+% 2 matrices: c, A
+% 2 strings: accum, monoid
+
+C2 = C * sum (A, 'all') ;
+c2 = c * sum (a, 'all') ;
+assert (isequal (c2, C2)) ;
+
+C1 = GrB.reduce (C, accum, monoid, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (C, accum, A, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (C, A, accum, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, C, monoid, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, C, A, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, monoid, C, A, desc) ; assert (isequal (C1, C2)) ;
+
+C1 = GrB.reduce (c, accum, monoid, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (c, accum, a, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (c, a, accum, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, c, monoid, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, c, a, monoid, desc) ; assert (isequal (C1, C2)) ;
+C1 = GrB.reduce (accum, monoid, c, a, desc) ; assert (isequal (C1, C2)) ;
 
 fprintf ('gbtest90: all tests passed\n') ;
 

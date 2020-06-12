@@ -118,10 +118,22 @@ gbtest79  % test power
 gbtest80  % test complex division and power
 gbtest81  % test complex operators
 gbtest82  % test complex A*B, A'*B, A*B', A'*B', A+B
+gbtest83  % test GrB.apply
+gbtest84  % test GrB.assign
+gbtest85  % test GrB.subassign
+gbtest86  % test GrB.mxm
+gbtest87  % test GrB.eadd
+gbtest88  % test GrB.emult
+gbtest89  % test GrB.extract
+gbtest90  % test GrB.reduce
+gbtest91  % test GrB.trans
+gbtest92  % test GrB.kronecker
+gbtest93  % test GrB.select
+gbtest94  % test GrB.vreduce
+gbtest95  % test indexing
+gbtest96  % test GrB.optype
 
-gbtest90  % test indexing
 gbtest99  % test GrB.bfs and plot (graph (G))
-gbtest_final  % test GrB.optype
 
 fprintf ('\ngbtest: all tests passed\n') ;
 

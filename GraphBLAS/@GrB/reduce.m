@@ -1,8 +1,6 @@
 function C = reduce (arg1, arg2, arg3, arg4, arg5)
 %GRB.REDUCE reduce a matrix to a scalar.
 %
-% Usage:
-%
 %   c = GrB.reduce (monoid, A)
 %   c = GrB.reduce (monoid, A, desc)
 %   c = GrB.reduce (cin, accum, monoid, A)
@@ -32,7 +30,6 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (arg1))
-assert(false) ;
     arg1 = arg1.opaque ;
 end
 
@@ -41,12 +38,10 @@ if (isobject (arg2))
 end
 
 if (nargin > 2 && isobject (arg3))
-assert(false) ;
     arg3 = arg3.opaque ;
 end
 
 if (nargin > 3 && isobject (arg4))
-assert(false) ;
     arg4 = arg4.opaque ;
 end
 
@@ -58,11 +53,7 @@ switch (nargin)
     case 4
         [C, k] = gbreduce (arg1, arg2, arg3, arg4) ;
     case 5
-assert(false) ;
         [C, k] = gbreduce (arg1, arg2, arg3, arg4, arg5) ;
-    otherwise
-assert(false) ;
-        error ('usage: c = GrB.reduce (cin, accum, monoid, A, desc)') ;
 end
 
 if (k == 0)
