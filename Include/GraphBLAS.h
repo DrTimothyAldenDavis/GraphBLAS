@@ -1140,10 +1140,10 @@ GB_PUBLIC GrB_BinaryOp
     GxB_CMPLX_FP64 ;
 
 //------------------------------------------------------------------------------
-// About boolean operators
+// About boolean and bitwise binary operators
 //------------------------------------------------------------------------------
 
-// Some of the boolean operators compute the same thing but have unique names.
+// Some of the boolean operators compute the same thing with different names.
 // For example, x*y and x&&y give the same results for boolean x and y.
 // Operations such as x < y when x and y are boolean are treated as if true=1
 // and false=0.  Below is the truth table for all binary operators with boolean
@@ -1179,9 +1179,9 @@ GB_PUBLIC GrB_BinaryOp
 // (z = x).
 
 // With this convention for boolean "division", there are 11 unique binary
-// operators that are purely boolean.  The other *_BOOL operators are redundant
-// but are included in GraphBLAS so that the name space of operators is
-// complete.  Below is a list of all operators and their equivalents.
+// operators that are purely boolean.  Other named *_BOOL operators are
+// redundant but are included in GraphBLAS so that the name space of operators
+// is complete.  Below is a list of all operators and their equivalents.
 
 //                   x: 0 0 1 1
 //                   y: 0 1 0 1
@@ -1189,16 +1189,16 @@ GB_PUBLIC GrB_BinaryOp
 //
 //      z = 0           0 0 0 0     (zero function, not predefined)
 //      z = (x && y)    0 0 0 1     AND, MIN, TIMES
-//      z = (x >  y)    0 0 1 0     GT, ISGT
+//      z = (x > y)     0 0 1 0     GT, ISGT, and set diff (x\y)
 //      z = x           0 0 1 1     FIRST, DIV
 //
-//      z = (x <  y)    0 1 0 0     LT, ISLT
+//      z = (x < y)     0 1 0 0     LT, ISLT, and set diff (y\x)
 //      z = y           0 1 0 1     SECOND, RDIV
 //      z = (x != y)    0 1 1 0     XOR, MINUS, RMINUS, NE, ISNE
 //      z = (x || y)    0 1 1 1     OR, MAX, PLUS
 //
 //      z = ~(x || y)   1 0 0 0     (nor(x,y) function, not predefined)
-//      z = (x == y)    1 0 0 1     EQ, ISEQ, LXNOR
+//      z = (x == y)    1 0 0 1     LXNOR, EQ, ISEQ
 //      z = ~y          1 0 1 0     (not(y), not predefined)
 //      z = (x >= y)    1 0 1 1     GE, ISGE, POW, and "x implies y"
 //
@@ -1209,12 +1209,16 @@ GB_PUBLIC GrB_BinaryOp
 //
 //      z = any(x,y)    . . . .     ANY (pick x or y arbitrarily)
 
-// Four more that have no_BOOL suffix are also redundant with the operators
+// Four more that have no _BOOL suffix are also redundant with the operators
 // of the form GxB_*_BOOL (GrB_LOR, GrB_LAND, GrB_LXOR, and GrB_LXNOR).
 
-// Note that the boolean binary operator space is not complete.  Four other
+// Note that the boolean binary operator space is not complete.  Five other
 // boolean functions could be pre-defined as well:  z = 0, nor(x,y),
 // nand(x,y), not(x), and not(y).
+
+// Four of the possible 16 bitwise operators are pre-defined: BOR, BAND,
+// BXOR, and BXNOR.  This assumes that the computations for each bit are
+// entirely independent (so BSHIFT would not fit in the table above).
 
 //------------------------------------------------------------------------------
 // methods for binary operators
