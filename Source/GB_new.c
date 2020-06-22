@@ -149,9 +149,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nzombies = 0 ;
     A->Pending = NULL ;
 
-    A->queue_next = NULL ;
-    A->queue_prev = NULL ;
-    A->enqueued = false ;
+    A->queue_next = NULL ;      // TODO in 4.0: delete
+    A->queue_prev = NULL ;      // TODO in 4.0: delete
+    A->enqueued = false ;       // TODO in 4.0: delete
 
     // method used in GrB_mxm, vxm, and mxv
     A->AxB_method_used = GxB_DEFAULT ;

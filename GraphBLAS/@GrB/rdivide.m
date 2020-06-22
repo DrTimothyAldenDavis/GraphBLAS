@@ -27,10 +27,10 @@ ctype = gboptype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
+        C = GrB (gbemult (A, '/', B)) ;
     else
-        % A is a scalar, B is a matrix.  Expand A to full with type of C
-        A = gb_scalar_to_full (bm, bn, ctype, A) ;
-        B = gbfull (B, ctype) ;
+        % A is a scalar, B is a matrix.  Expand B to full with type of C
+        C = GrB (gbapply2 (A, '/', gbfull (B, ctype))) ;
     end
 else
     if (b_is_scalar)
@@ -40,17 +40,15 @@ else
             % floating-point.  The result is a dense matrix.
             % expand B t a full matrix and cast to the type of A
             B = gb_scalar_to_full (am, an, atype, B) ;
+            C = GrB (gbemult (A, '/', B)) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).
-            B = gb_expand (B, A) ;
+            C = GrB (gbapply2 (A, '/', B)) ;
         end
     else
         % both A and B are matrices.  The result is a dense matrix.
-        A = gbfull (A, ctype) ;
-        B = gbfull (B, ctype) ;
+        C = GrB (gbemult (gbfull (A, ctype), '/', gbfull (B, ctype))) ;
     end
 end
-
-C = GrB (gbemult (A, '/', B)) ;
 

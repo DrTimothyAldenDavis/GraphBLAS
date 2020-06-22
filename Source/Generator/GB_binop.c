@@ -27,11 +27,15 @@
 // C+=b function (dense accum):     GB_Cdense_accumb
 // C+=A+B function (dense ewise3):  GB_Cdense_ewise3_accum
 // C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum
+// C=scalar+B                       GB_bind1st
+// C=scalar+B'                      GB_bind1st_tran
+// C=A+scalar                       GB_bind2nd
+// C=A'+scalar                      GB_bind2nd_tran
 
 // C type:   GB_ctype
 // A type:   GB_atype
 // B,b type: GB_btype
-// BinaryOp: GB_BINARYOP(cij,aij,bij)
+// BinaryOp: GB_binaryop(cij,aij,bij)
 
 #define GB_ATYPE \
     GB_atype
@@ -78,7 +82,7 @@
 
 // binary operator
 #define GB_BINOP(z, x, y)   \
-    GB_BINARYOP(z, x, y) ;
+    GB_binaryop(z, x, y) ;
 
 // op is second
 #define GB_OP_IS_SECOND \
@@ -308,6 +312,156 @@ GrB_Info GB_AemultB
     return (GrB_SUCCESS) ;
     #endif
 }
+
+//------------------------------------------------------------------------------
+// Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
+//------------------------------------------------------------------------------
+
+if_binop_bind1st_is_enabled
+
+GrB_Info GB_bind1st
+(
+    GB_void *Cx_output,         // Cx and Bx may be aliased
+    const GB_void *x_input,
+    const GB_void *Bx_input,
+    int64_t anz,
+    int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    GB_ctype *Cx = (GB_ctype *) Cx_output ;
+    GB_atype   x = (*((GB_atype *) x_input)) ;
+    GB_btype *Bx = (GB_btype *) Bx_input ;
+    int64_t p ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (p = 0 ; p < anz ; p++)
+    {
+        GB_getb(bij, Bx, p) ;
+        GB_binaryop(Cx [p], x, bij) ;
+    }
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+endif_binop_bind1st_is_enabled
+
+//------------------------------------------------------------------------------
+// Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
+//------------------------------------------------------------------------------
+
+if_binop_bind2nd_is_enabled
+
+GrB_Info GB_bind2nd
+(
+    GB_void *Cx_output,         // Cx and Ax may be aliased
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    int64_t anz,
+    int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    int64_t p ;
+    GB_ctype *Cx = (GB_ctype *) Cx_output ;
+    GB_atype *Ax = (GB_atype *) Ax_input ;
+    GB_btype   y = (*((GB_btype *) y_input)) ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (p = 0 ; p < anz ; p++)
+    {
+        GB_geta(aij, Ax, p) ;
+        GB_binaryop(Cx [p], aij, y) ;
+    }
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+endif_binop_bind2nd_is_enabled
+
+//------------------------------------------------------------------------------
+// C = op (x, A'): transpose and apply a binary operator
+//------------------------------------------------------------------------------
+
+if_binop_bind1st_is_enabled
+
+// cij = op (x, aij), no typcasting (in spite of the macro name)
+#undef  GB_CAST_OP
+#define GB_CAST_OP(pC,pA)               \
+{                                       \
+    GB_getb(aij, Ax, pA) ;              \
+    GB_binaryop(Cx [pC], x, aij) ;      \
+}
+
+GrB_Info GB_bind1st_tran
+(
+    GrB_Matrix C,
+    const GB_void *x_input,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+)
+{ 
+    // GB_unop_transpose.c uses GB_ATYPE, but A is
+    // the 2nd input to binary operator z=f(x,y).
+    #undef  GB_ATYPE
+    #define GB_ATYPE \
+    GB_btype
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    GB_atype x = (*((const GB_atype *) x_input)) ;
+    #define GB_PHASE_2_OF_2
+    #include "GB_unop_transpose.c"
+    return (GrB_SUCCESS) ;
+    #endif
+    #undef  GB_ATYPE
+    #define GB_ATYPE \
+    GB_atype
+}
+
+endif_binop_bind1st_is_enabled
+
+//------------------------------------------------------------------------------
+// C = op (A', y): transpose and apply a binary operator
+//------------------------------------------------------------------------------
+
+if_binop_bind2nd_is_enabled
+
+// cij = op (aij, y), no typcasting (in spite of the macro name)
+#undef  GB_CAST_OP
+#define GB_CAST_OP(pC,pA)               \
+{                                       \
+    GB_geta(aij, Ax, pA) ;              \
+    GB_binaryop(Cx [pC], aij, y) ;      \
+}
+
+GrB_Info GB_bind2nd_tran
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GB_void *y_input,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    GB_btype y = (*((const GB_btype *) y_input)) ;
+    #define GB_PHASE_2_OF_2
+    #include "GB_unop_transpose.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+endif_binop_bind2nd_is_enabled
 
 #endif
 

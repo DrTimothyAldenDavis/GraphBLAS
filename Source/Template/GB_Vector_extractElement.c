@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Vector_extractElement: x = V(row)
+// GB_Vector_extractElement: x = V(i)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,22 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Extract the value of single scalar, x = V(row), typecasting from the
+// Extract the value of single scalar, x = V(i), typecasting from the
 // type of V to the type of x, as needed.
 
-// Returns GrB_SUCCESS if V(row) is present, and sets x to its value.
-// Returns GrB_NO_VALUE if V(row) is not present, and x is unmodified.
+// Returns GrB_SUCCESS if V(i) is present, and sets x to its value.
+// Returns GrB_NO_VALUE if V(i) is not present, and x is unmodified.
 
 // This template constructs GrB_Vector_extractElement_[TYPE], for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
 
 // FUTURE: tolerate zombies
 
-GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
+GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
 (
     GB_XTYPE *x,                // scalar to extract, not modified if not found
     const GrB_Vector V,         // vector to extract a scalar from
-    GrB_Index row               // row index
+    GrB_Index i                 // index
 )
 {
 
@@ -47,15 +47,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(row)
 
     GB_CONTEXT_RETURN_IF_NULL (x) ;
 
-    // look for index i in the GrB_Vector
-    int64_t i = row ;
-
     // check index
-    if (row >= V->vlen)
+    if (i >= V->vlen)
     { 
         GB_WHERE (GB_WHERE_STRING) ;
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
-            GBu " out of range; must be < " GBd, row, V->vlen))) ;
+            GBu " out of range; must be < " GBd, i, V->vlen))) ;
     }
 
     // GB_XCODE and V must be compatible

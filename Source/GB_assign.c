@@ -147,7 +147,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         if (!GB_code_compatible (C->type->code, scalar_code))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "input scalar of type [%s]\n"
+                "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 GB_code_string (scalar_code), C->type->name))) ;
         }
@@ -157,7 +157,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         if (!GB_Type_compatible (C->type, A->type))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "input of type [%s]\n"
+                "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 A->type->name, C->type->name))) ;
         }
@@ -184,7 +184,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NCOLS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask vector m length is " GBd "; must match the number of "
+                    "Mask vector m length is " GBd "; must match the number of "
                     "columns of C (" GBd ")", GB_NROWS (M), GB_NCOLS (C)))) ;
             }
         }
@@ -198,7 +198,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NROWS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask vector m length is " GBd "; must match the number of "
+                    "Mask vector m length is " GBd "; must match the number of "
                     "rows of C (" GBd ")", GB_NROWS (M), GB_NROWS (C)))) ;
             }
         }
@@ -210,7 +210,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (GB_NROWS (M) != GB_NROWS (C) || GB_NCOLS (M) != GB_NCOLS (C))
             { 
                 return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                    "mask M is " GBd "-by-" GBd "; "
+                    "Mask M is " GBd "-by-" GBd "; "
                     "must match result C (" GBd "-by-" GBd ")",
                     GB_NROWS (M), GB_NCOLS (M), GB_NROWS (C), GB_NCOLS (C)))) ;
             }
@@ -282,11 +282,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
         }
 
-        if (C->nzombies > 0)
-        { 
-            // make sure C is in the queue
-            if (!GB_queue_insert (C)) GB_PANIC ;
-        }
+        if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
         // finalize C if blocking mode is enabled, and return result
         ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
         return (GB_block (C, Context)) ;
@@ -450,7 +446,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
         GBBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
+            NULL, NULL, NULL, false, Context)) ;
         A = AT ;
     }
 
@@ -553,7 +550,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
             GBBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+                NULL, NULL, NULL, false, Context)) ;
             M = MT ;
         }
     }
@@ -704,7 +702,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
             GBBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+                NULL, NULL, NULL, false, Context)) ;
             M = MT ;
         }
 
@@ -796,7 +795,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
         }
 
-        // Z is valid, but it has zombies and it not in the queue.
         ASSERT_MATRIX_OK (Z, "Z for C-replace-phase done", GB_FLIP (GB0)) ;
     }
 
@@ -823,15 +821,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
-    if (C->nzombies > 0)
-    { 
-        // make sure C is in the queue.  GB_subassigner can place it in the
-        // queue, but it might not need to if the matrix has no zombies or
-        // pending tuples.  Zombies can be added by the C_replace_phase.
-        if (!GB_queue_insert (C)) GB_PANIC ;
-    }
-
-    // finalize C if blocking mode is enabled, and return result
+    if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; }// TODO in 4.0: delete
 
     ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
     GB_FREE_ALL ;

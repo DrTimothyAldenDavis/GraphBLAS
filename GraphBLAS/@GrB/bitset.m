@@ -1,4 +1,4 @@
-function C = bigset (A, B, arg3, arg4)
+function C = bitset (A, B, arg3, arg4)
 %BITSET set bit.
 % C = bitset (A,B) sets a bit in A to 1, where the bit position is
 % determined by B.  A is an integer array.  If B(i,j) is an integer in the
@@ -41,6 +41,9 @@ function C = bigset (A, B, arg3, arg4)
 %
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
 % GrB/bitset, GrB/bitclr.
+
+% FUTURE: bitset(A,B,V) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -124,21 +127,19 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            C = GrB (gb_union_op (op, A, B), ctype) ;
+            C = gb_union_op (op, A, B) ;
         else
             % A is a scalar, B is a matrix
-            A = gb_expand (A, B) ;
-            C = GrB (gbemult (op, A, B), ctype) ;
+            C = gbapply2 (op, A, B) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            B = gb_expand (B, A) ;
-            C = GrB (gbemult (op, A, B), ctype) ;
+            C = gbapply2 (op, A, B) ;
         else
             % both A and B are matrices
-            C = GrB (gb_union_op (op, A, B), ctype) ;
+            C = gb_union_op (op, A, B) ;
         end
     end
 
@@ -150,7 +151,7 @@ else
     % if B(i,j) is nonzero and V(i,j)=1, then:
     % C(i,j) = bitset (A (i,j), B (i,j)).
 
-    % if B(i,j) is nonzero and V(i,j) = 0 (either implicit or explicit), then:
+    % if B(i,j) is nonzero and V(i,j)=0 (implicit or explicit), then:
     % C(i,j) = bitclr (A (i,j), B (i,j)).
 
     if (a_is_scalar)
@@ -159,7 +160,7 @@ else
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B = gb_scalar_to_full (m, n, btype, B) ;
+        B = gb_scalar_to_full (m, n, atype, B) ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
@@ -174,7 +175,15 @@ else
     B0 = gbassign (gbnew (m, n, atype), V, B, d) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    C = GrB (gbeadd (['bitclr.', atype], C, B0), ctype) ;
+    C = gbeadd (['bitclr.', atype], C, B0) ;
 
 end
+
+% return result
+if (isequal (gbtype (C), ctype))
+    C = GrB (C) ;
+else
+    C = GrB (gbnew (C, ctype)) ;
+end
+
 

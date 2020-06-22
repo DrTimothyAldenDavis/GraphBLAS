@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// This function now appears in the C API Specification as GrB_Matrix_resize.
+// The new name is preferred.
+
 #include "GB.h"
 
 GrB_Info GxB_Matrix_resize      // change the size of a matrix

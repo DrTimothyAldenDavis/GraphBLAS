@@ -88,6 +88,7 @@
 
 #include "GB_build.h"
 #include "GB_sort.h"
+#include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif

@@ -349,13 +349,9 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 
 GrB_Desc_Value AxB_method_used ;    // last method used for C=A*B (this is C)
 
-//------------------------------------------------------------------------------
-// queue of matrices (removed when GrB_wait(void) is gone)
-//------------------------------------------------------------------------------
-
-void *queue_next ;      // next matrix in the matrix queue
-void *queue_prev ;      // prev matrix in the matrix queue
-bool enqueued ;         // true if the matrix is in the queue
+void *queue_next ;      // TODO in 4.0: delete
+void *queue_prev ;      // TODO in 4.0: delete
+bool enqueued ;         // TODO in 4.0: delete
 
 //------------------------------------------------------------------------------
 // shallow matrices: like MATLAB but not in CSparse

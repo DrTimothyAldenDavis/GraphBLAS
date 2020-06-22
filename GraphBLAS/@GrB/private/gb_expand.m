@@ -9,9 +9,10 @@ function C = gb_expand (scalar, S, type)
 if (nargin < 3)
     % the type defaults to the type of the scalar, not S.
     type = gbtype (scalar) ;
+else
+    % typecast the scalar to the desired type
+    scalar = gbnew (scalar, type) ;
 end
 
-[m, n] = gbsize (S) ;
-desc.mask = 'structure' ;
-C = gbassign (gbnew (m, n, type), S, scalar, desc) ;
+C = gbapply2 (['1st.' type], scalar, S) ;
 

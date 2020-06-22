@@ -24,6 +24,9 @@ function C = complex (A, B)
 % GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16, GrB/uint32,
 % GrB/uint64.
 
+% FUTURE: complex(A,B) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
@@ -60,22 +63,21 @@ else
             A = gbfull (A, 'double') ;
             B = gbfull (B, 'double') ;
             desc.kind = 'full' ;
+            C = gbemult ('cmplx.double', A, B, desc) ;
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
             if (gb_scalar (A) == 0)
-                % C = 1i*B, so A = zero, expanded to the pattern of B;
-                % C is sparse
-                A = gb_expand (0, B, 'double') ;
+                % C = 1i*B, so A = zero, C is sparse.
                 desc.kind = 'sparse' ;
+                C = gbapply2 ('cmplx.double', 0, B, desc) ;
             else
                 % expand A and B to full double matrices; C is full
                 A = gb_scalar_to_full (bm, bn, 'double', A) ;
                 B = gbfull (B, 'double') ;
                 desc.kind = 'full' ;
+                C = gbemult ('cmplx.double', A, B, desc) ;
             end
         end
-        % A and B now have the same pattern, so emult can be used
-        C = gbemult ('cmplx.double', A, B, desc) ;
     else
         if (b_is_scalar)
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
@@ -92,7 +94,7 @@ else
         else
             % both A and B are matrices.  C is sparse.
             desc.kind = 'sparse' ;
-            C = gb_union_op ('cmplx.double', A, B, desc) ;
+            C = gbeadd (A, '+', gbapply2 (1i, '*', B), desc) ;
         end
     end
 

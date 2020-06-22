@@ -1100,12 +1100,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Asaxpy3B(add,mult,xyname) \
-            GB_Asaxpy3B_ ## add ## mult ## xyname
+        #define GB_Asaxpy3B(add,mult,xname) \
+            GB_Asaxpy3B_ ## add ## mult ## xname
 
-        #define GB_AxB_WORKER(add,mult,xyname)                              \
+        #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_Asaxpy3B (add,mult,xyname) (C, M, Mask_comp,          \
+            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
                 Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
                 TaskList, ntasks, nfine, nthreads, Context) ;               \
             done = (info != GrB_NO_VALUE) ;                                 \

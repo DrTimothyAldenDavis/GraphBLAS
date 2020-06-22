@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 3.3.0, June 8, 2020 (v3.3.0-draft6)
+VERSION 3.3.0, June 21, 2020 (v3.3.0-draft8)
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -95,7 +95,7 @@ alternative:    an alternative to CMake; edit the alternative/Makefile and do
 
 ## SPEC:
 
-This version fully conforms to the version 1.2.0 (May 18, 2018)
+This version fully conforms to the version 1.3.0 (Sept 25, 2019)
 of the GraphBLAS C API Specification.  It includes several additional functions
 and features as extensions to the spec.  These extensions are tagged with the
 keyword SPEC: in the code and in the User Guide, and in the Include/GraphBLAS.h

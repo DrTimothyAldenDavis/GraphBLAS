@@ -56,6 +56,9 @@ void mexFunction
     // print the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
+    // print 1-based indices
+    GB_Global_print_one_based_set (true) ;
+
     GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
     OK (GrB_Matrix_free (&C)) ;

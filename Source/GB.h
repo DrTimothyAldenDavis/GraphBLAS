@@ -859,8 +859,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
-    int pr,                 // print level; if negative, ignore queue,
-                            // and use GB_FLIP(pr) for diagnostic printing.
+    int pr,                 // print level; if negative, ignore nzombie
+                            // conditions and use GB_FLIP(pr) for diagnostics
     FILE *f,                // file for output
     const char *kind,       // "matrix" or "vector"
     GB_Context Context
@@ -1372,27 +1372,6 @@ void GB_eslice
     const int ntasks        // # of tasks
 ) ;
 
-bool GB_binop_builtin               // true if binary operator is builtin
-(
-    // inputs:
-    const GrB_Type A_type,
-    const bool A_is_pattern,        // true if only the pattern of A is used
-    const GrB_Type B_type,
-    const bool B_is_pattern,        // true if only the pattern of B is used
-    const GrB_BinaryOp op,          // binary operator; may be NULL
-    const bool flipxy,              // true if z=op(y,x), flipping x and y
-    // outputs, unused by caller if this function returns false
-    GB_Opcode *opcode,              // opcode for the binary operator
-    GB_Type_code *xcode,            // type code for x input
-    GB_Type_code *ycode,            // type code for y input
-    GB_Type_code *zcode             // type code for z output
-) ;
-
-GB_Opcode GB_binop_flip     // flipped opcode, or same opcode if not flipped
-(
-    GB_Opcode opcode        // opcode to flip
-) ;
-
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cumsum                      // cumulative sum of an array
 (
@@ -1448,12 +1427,6 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
 // O(anz*log(anz)) time, or a bucket-sort method that takes O(anz+n) time.
 // The qsort method is choosen if the following condition is true:
 #define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
-
-GB_PUBLIC   // accessed by the MATLAB interface only
-GB_Opcode GB_boolean_rename     // renamed opcode
-(
-    const GB_Opcode opcode      // opcode to rename
-) ;
 
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Index_multiply      // true if ok, false if overflow

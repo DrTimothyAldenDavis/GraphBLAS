@@ -1,23 +1,25 @@
 function codegen_unop
 %CODEGEN_UNOP create functions for all unary operators
 %
-% This function creates all files of the form GB_unaryop__*.[ch],
-% and the include file GB_unaryop__include.h.
+% This function creates all files of the form GB_unop__*.[ch],
+% and the include file GB_unop__include.h.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 fprintf ('\nunary operators:\n') ;
 
-f = fopen ('Generated/GB_unaryop__include.h', 'w') ;
+f = fopen ('Generated/GB_unop__include.h', 'w') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_unaryop__include.h: definitions for GB_unaryop__*.c\n') ;
+fprintf (f, '// GB_unop__include.h: definitions for GB_unop__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '\n') ;
 fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.\n') ;
 fprintf (f, '// http://suitesparse.com   See GraphBLAS/Doc/License.txargt for license.\n') ;
 fprintf (f, '\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_unaryop.h') ;
+fprintf (f, '// This file has been automatically generated from Generator/GB_unop.h') ;
+fprintf (f, '\n\n') ;
+fprintf (f, '#include "GB_iterator.h"\n') ;
 fprintf (f, '\n\n') ;
 fclose (f) ;
 

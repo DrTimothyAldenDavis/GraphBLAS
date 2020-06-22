@@ -407,7 +407,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->i_shallow = false ;
 
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
-    if (!GB_queue_insert (C)) GB_PANIC ;
+
+    if (!GB_queue_insert (C)) GB_PANIC ;    // TODO in 4.0: delete
 
     //--------------------------------------------------------------------------
     // free A and return result

@@ -16,10 +16,9 @@
 // GrB_setElement, GrB_*assign, or GB_mxm.  Zombies must now be deleted, and
 // pending tuples must now be assembled together and added into the matrix.
 
-// When the function returns, the matrix has been removed from the queue
-// and all pending tuples and zombies have been deleted.  This is true even
-// the function fails due to lack of memory (in that case, the matrix is
-// cleared as well).
+// When the function returns, and all pending tuples and zombies have been
+// deleted.  This is true even the function fails due to lack of memory (in
+// that case, the matrix is cleared as well).
 
 // If A is hypersparse, the time taken is at most O(nnz(A) + t log t), where t
 // is the number of pending tuples in A, and nnz(A) includes both zombies and
@@ -58,11 +57,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-
-    // The matrix A might have pending operations but not be in the queue.
-    // GB_Matrix_check expects the matrix to be in the queue.  As a result,
-    // GB_Matrix_check can report an inconsistency, and thus this assert must
-    // be made with a negative pr.
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
 
     //--------------------------------------------------------------------------
@@ -122,10 +116,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
     if (!GB_PENDING (A))
     { 
-        // nothing more to do; remove the matrix from the queue
-        ASSERT (!GB_PENDING (A)) ;
-        if (!GB_queue_remove (A)) GB_PANIC ;
-        ASSERT (!(A->enqueued)) ;
+        if (!GB_queue_remove (A)) GB_PANIC ;    // TODO in 4.0: delete
 
         // trim any significant extra space from the matrix, but allow for some
         // future insertions.  do not increase the size of the matrix;
@@ -192,17 +183,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // free the list of pending tuples
     GB_Pending_free (&(A->Pending)) ;
 
-    //--------------------------------------------------------------------------
-    // remove the matrix from the queue
-    //--------------------------------------------------------------------------
-
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
-    if (!GB_queue_remove (A)) GB_PANIC ;
+    if (!GB_queue_remove (A)) GB_PANIC ;    // TODO in 4.0: delete
 
-    // No pending operations on A, and A is not in the queue, so
-    // GB_Matrix_check can now see the conditions it expects.
-    ASSERT (!(A->enqueued)) ;
+    // No pending operations on A
     ASSERT_MATRIX_OK (A, "A after moving pending tuples to T", GB0) ;
 
     //--------------------------------------------------------------------------

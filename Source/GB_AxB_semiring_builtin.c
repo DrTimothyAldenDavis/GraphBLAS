@@ -11,6 +11,7 @@
 // opcodes and type codes of the semiring.
 
 #include "GB_mxm.h"
+#include "GB_binop.h"
 
 #ifndef GBCOMPACT
 
@@ -103,3 +104,4 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
 }
 
 #endif
+

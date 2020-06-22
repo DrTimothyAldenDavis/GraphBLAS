@@ -51,9 +51,6 @@ GrB_Info GB_selector
     // check inputs
     //--------------------------------------------------------------------------
 
-    // If the opcode is NONZOMBIE, then GB_Matrix_wait has removed A from the
-    // queue.  A will have zombies and pending tuples, but it is not in the
-    // queue.
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
@@ -212,9 +209,6 @@ GrB_Info GB_selector
             return (GB_OUT_OF_MEMORY) ;
         }
     }
-
-    // printf ("sel opcode: %d\n", opcode) ;
-    // printf ("typecode: %d\n", typecode) ;
 
     //--------------------------------------------------------------------------
     // phase1: launch the switch factory to count the entries

@@ -8,21 +8,22 @@
 //------------------------------------------------------------------------------
 
 // gbemult is an interface to GrB_Matrix_eWiseMult_BinaryOp.
+// Note that gbeadd and gbemult are nearly identical mexFunctions.
 
 // Usage:
 
-// C = gbemult (op, A, B)
-// C = gbemult (op, A, B, desc)
-// C = gbemult (Cin, accum, op, A, B, desc)
-// C = gbemult (Cin, M, op, A, B, desc)
-// C = gbemult (Cin, M, accum, op, A, B, desc)
+// C = gbemult (binop, A, B)
+// C = gbemult (binop, A, B, desc)
+// C = gbemult (Cin, accum, binop, A, B, desc)
+// C = gbemult (Cin, M, binop, A, B, desc)
+// C = gbemult (Cin, M, accum, binop, A, B, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: C = GrB.emult (Cin, M, accum, op, A, B, desc)"
+#define USAGE "usage: C = GrB.emult (Cin, M, accum, binop, A, B, desc)"
 
 void mexFunction
 (

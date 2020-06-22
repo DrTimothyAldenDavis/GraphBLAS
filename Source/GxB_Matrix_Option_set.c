@@ -74,7 +74,8 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     // A = A', done in place, and change to the new format.
                     // transpose: no typecast, no op, in place of A
                     GBBURBLE ("(transpose) ") ;
-                    info = GB_transpose (NULL, NULL, new_csc, A, NULL, Context);
+                    info = GB_transpose (NULL, NULL, new_csc, A,
+                        NULL, NULL, NULL, false, Context);
                     ASSERT (GB_IMPLIES (info == GrB_SUCCESS,
                         A->is_csc == new_csc)) ;
                 }

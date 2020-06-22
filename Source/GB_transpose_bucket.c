@@ -64,7 +64,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
-    const GrB_UnaryOp op,       // operator to apply, NULL if no operator
+        // no operator is applied if both op1 and op2 are NULL
+        const GrB_UnaryOp op1,          // unary operator to apply
+        const GrB_BinaryOp op2,         // binary operator to apply
+        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     GB_Context Context
 )
 {
@@ -80,12 +84,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT_MATRIX_OK_OR_JUMBLED (A, "A input for transpose_bucket", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
-    if (op != NULL)
-    { 
-        ASSERT_UNARYOP_OK (op, "op for transpose", GB0) ;
-        ASSERT (ctype == op->ztype) ;
-        ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
-    }
+    // if op1 and op2 are NULL, then no operator is applied
 
     //--------------------------------------------------------------------------
     // get A
@@ -201,7 +200,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
         // compute the row counts of A for each slice
         #define GB_PHASE_1_OF_2
-        #include "GB_unaryop_transpose.c"
+        #include "GB_unop_transpose.c"
 
         // cumulative sum of the rowcounts across the slices
         int64_t i ;
@@ -245,7 +244,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     // transpose both the pattern and the values
-    if (op == NULL)
+    if (op1 == NULL && op2 == NULL)
     { 
         // do not apply an operator; optional typecast to ctype
         GB_transpose_ix (C, A, Rowcounts, Iter, A_slice, naslice) ;
@@ -253,7 +252,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, op, A, Rowcounts, Iter, A_slice, naslice) ;
+        GB_transpose_op (C, 
+            op1, op2, scalar, binop_bind1st,
+            A, Rowcounts, Iter, A_slice, naslice) ;
     }
 
     //--------------------------------------------------------------------------

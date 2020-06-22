@@ -10,6 +10,7 @@
 // C += b where C is a dense matrix and b is a scalar
 
 #include "GB_dense.h"
+#include "GB_binop.h"
 #include "GB_unused.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
@@ -129,10 +130,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
         // C(i,j) = C(i,j) + scalar
         #define GB_BINOP(cout_ij, cin_aij, bwork) \
-            GB_BINARYOP (cout_ij, cin_aij, bwork)
-
-        // binary operator
-        #define GB_BINARYOP(z,x,y) fadd (z,x,y)
+            fadd (cout_ij, cin_aij, bwork)
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)

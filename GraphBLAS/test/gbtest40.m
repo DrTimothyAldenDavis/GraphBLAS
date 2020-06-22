@@ -127,8 +127,6 @@ for trial = 1:3
                         s1 = min (A, [ ], 1) ;
                         s2 = min (G, [ ], 1) ;
                         assert (gbtest_eq (s1, s2)) ;
-                        s1 = min (A, [ ], 2) ;
-                        s2 = min (G, [ ], 2) ;
                         assert (gbtest_eq (s1, s2)) ;
                         if (old)
                             s1 = min (min (A)) ;

@@ -17,10 +17,6 @@ function C = expand (scalar, S, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% FUTURE: as much as possible, replace scalar expansion with binary
-% operators used in a unary apply, when they are added to
-% SuiteSparse:GraphBLAS from the v1.3 C API.
-
 if (isobject (scalar))
     % do not use gb_get_scalar, to keep it sparse
     scalar = scalar.opaque ;

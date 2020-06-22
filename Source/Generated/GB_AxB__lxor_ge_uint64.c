@@ -15,7 +15,6 @@
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_bracket.h"
-#include "GB_iterator.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
 #include "GB_AxB_saxpy3.h"

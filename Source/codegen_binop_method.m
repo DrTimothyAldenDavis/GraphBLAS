@@ -61,6 +61,34 @@ else
     fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `#endif'')\n') ;
 end
 
+% subset of operators for GB_apply
+switch (binop)
+    case { 'first', 'any', 'pair' }
+        % no bind2nd for these operators
+        fprintf (f, 'define(`GB_bind2nd'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`GB_bind2nd_tran'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `#endif'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_bind2nd'', `GB_bind2nd__%s'')\n', name) ;
+        fprintf (f, 'define(`GB_bind2nd_tran'', `GB_bind2nd_tran__%s'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `'')\n') ;
+end
+switch (binop)
+    case { 'second', 'any', 'pair' }
+        % no bind1st for these operators
+        fprintf (f, 'define(`GB_bind1st'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`GB_bind1st_tran'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `#endif'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_bind1st'', `GB_bind1st__%s'')\n', name) ;
+        fprintf (f, 'define(`GB_bind1st_tran'', `GB_bind1st_tran__%s'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `'')\n') ;
+end
+
 if (isequal (binop, 'second'))
     fprintf (f, 'define(`GB_op_is_second'', `1'')\n') ;
 else
@@ -182,7 +210,7 @@ end
 % create the binary operator
 op = strrep (op, 'xarg', '`$2''') ;
 op = strrep (op, 'yarg', '`$3''') ;
-fprintf (f, 'define(`GB_BINARYOP'', `$1 = %s'')\n', op) ;
+fprintf (f, 'define(`GB_binaryop'', `$1 = %s'')\n', op) ;
 
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (binop)) ;
@@ -196,7 +224,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 32 ;
+trim = 40 ;
 
 % construct the *.c file
 cmd = sprintf (...

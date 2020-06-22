@@ -19,9 +19,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
-    int pr,                 // print level; if negative, ignore queue and
-                            // nzombie conditions and use GB_FLIP(pr) for
-                            // diagnostic printing.
+    int pr,                 // print level; if negative, ignore nzombie
+                            // conditions and use GB_FLIP(pr) for diagnostics
     FILE *f,                // file for output
     const char *kind,       // "matrix" or "vector"
     GB_Context Context
@@ -32,11 +31,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
-    bool ignore_queue_and_nzombies = false ;
+    bool ignore_zombies = false ;
     if (pr < 0)
     { 
         pr = GB_FLIP (pr) ;
-        ignore_queue_and_nzombies = true ;
+        ignore_zombies = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
     bool pr_silent   = (pr == GxB_SILENT) ;
@@ -427,7 +426,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             A->nzombies) ;
     }
 
-    if (!ignore_queue_and_nzombies && (A->nzombies < 0 || A->nzombies > anz))
+    if (!ignore_zombies && (A->nzombies < 0 || A->nzombies > anz))
     { 
         GBPR0 ("  invalid number of zombies: " GBd " "
             "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
@@ -559,7 +558,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the zombie count
     //--------------------------------------------------------------------------
 
-    if (!ignore_queue_and_nzombies && nzombies != A->nzombies)
+    if (!ignore_zombies && nzombies != A->nzombies)
     { 
         GBPR0 ("  invalid zombie count: " GBd " exist but"
             " A->nzombies = " GBd "\n", nzombies, A->nzombies) ;
@@ -681,26 +680,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    //--------------------------------------------------------------------------
-    // check the queue
-    //--------------------------------------------------------------------------
-
-    if (!ignore_queue_and_nzombies)
+    // TODO in 4.0: delete this entire if(){...} [
+    if (!ignore_zombies)
     {
         GrB_Matrix head, prev, next ;
         bool enqd ;
 
         if (!GB_queue_status (A, &head, &prev, &next, &enqd)) GB_PANIC ;
-
-        #if GB_DEVELOPER
-        if (pr_short || pr_complete)
-        {
-            GBPR ("  queue head  %p\n", head) ;
-            GBPR ("  queue prev  %p\n", prev) ;
-            GBPR ("  queue next  %p\n", next) ;
-            GBPR ("  is in queue %d\n", enqd) ;
-        }
-        #endif
 
         #define GB_IS_NOT_IN_QUEUE(A) (prev == NULL && head != A)
         #define GB_IS_IN_QUEUE(A) (! GB_IS_NOT_IN_QUEUE(A))
@@ -721,7 +707,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "%s must be in queue but is not there: [%s]", kind, GB_NAME))) ;
             }
-
             // prev is NULL if and only if A is at the head of the queue
             if ((prev == NULL) != (head == A))
             { 
@@ -741,6 +726,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             }
         }
     }
+    // end TODO in 4: delete ]
 
     if (pr_complete)
     { 

@@ -23,20 +23,8 @@ GrB_Info GrB_finalize ( )
 
     GB_WHERE ("GrB_finalize") ;
 
-    //--------------------------------------------------------------------------
-    // destroy the queue
-    //--------------------------------------------------------------------------
-
     #if defined (USER_POSIX_THREADS)
-    {
-        // delete the critical section for POSIX pthreads
-        pthread_mutex_destroy (&GB_sync) ;
-    }
-    #else // USER_OPENMP_THREADS or USER_NO_THREADS
-    {
-        // no need to finalize anything for OpenMP or for no user threads
-        ;
-    }
+    { pthread_mutex_destroy (&GB_sync) ; }  // TODO in 4.0: delete
     #endif
 
     //--------------------------------------------------------------------------

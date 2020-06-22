@@ -20,6 +20,8 @@ fprintf (f, '// http://suitesparse.com   See GraphBLAS/Doc/License.txt for licen
 fprintf (f, '\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
 fprintf (f, '\n\n') ;
+fprintf (f, '#include "GB_iterator.h"\n') ;
+fprintf (f, '\n\n') ;
 fclose (f) ;
 
 % codegen_axb_template (multop, bmult, imult, fmult, dmult, fcmult, dcmult)

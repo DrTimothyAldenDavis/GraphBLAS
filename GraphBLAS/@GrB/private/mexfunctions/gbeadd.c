@@ -8,21 +8,22 @@
 //------------------------------------------------------------------------------
 
 // gbeadd is an interface to GrB_Matrix_eWiseAdd_BinaryOp.
+// Note that gbeadd and gbemult are nearly identical mexFunctions.
 
 // Usage:
 
-// C = gbeadd (op, A, B)
-// C = gbeadd (op, A, B, desc)
-// C = gbeadd (Cin, accum, op, A, B, desc)
-// C = gbeadd (Cin, M, op, A, B, desc)
-// C = gbeadd (Cin, M, accum, op, A, B, desc)
+// C = gbeadd (binop, A, B)
+// C = gbeadd (binop, A, B, desc)
+// C = gbeadd (Cin, accum, binop, A, B, desc)
+// C = gbeadd (Cin, M, binop, A, B, desc)
+// C = gbeadd (Cin, M, accum, binop, A, B, desc)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of
-// the right size (which depends on A, B, and the descriptor).
+// If Cin is not present then it is implicitly a matrix with no entries, of the
+// right size (which depends on A, B, and the descriptor).
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: C = GrB.eadd (Cin, M, accum, op, A, B, desc)"
+#define USAGE "usage: C = GrB.eadd (Cin, M, accum, binop, A, B, desc)"
 
 void mexFunction
 (

@@ -59,8 +59,7 @@ GrB_Info GB_ix_free             // free A->i and A->x of a matrix
     // free the list of pending tuples
     GB_Pending_free (&(A->Pending)) ;
 
-    // remove from the queue, if present; panic if critical section fails
-    if (!GB_queue_remove (A)) return (GrB_PANIC) ;
+    if (!GB_queue_remove (A)) return (GrB_PANIC) ;  // TODO in 4.0: delete
 
     return (GrB_SUCCESS) ;
 }

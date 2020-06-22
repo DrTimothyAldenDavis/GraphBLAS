@@ -22,7 +22,7 @@
 typedef struct
 {
 
-    void *queue_head ;          // delete this for v4.0
+    void *queue_head ;          // TODO in 4.0: delete
 
     //--------------------------------------------------------------------------
     // blocking/non-blocking mode, set by GrB_init
@@ -123,8 +123,7 @@ GB_PUBLIC GB_Global_struct GB_Global ;
 GB_Global_struct GB_Global =
 {
 
-    // queued matrices with work to do
-    .queue_head = NULL,         // pointer to first queued matrix
+    .queue_head = NULL,         // TODO in 4.0: delete
 
     // GraphBLAS mode
     .mode = GrB_NONBLOCKING,    // default is nonblocking
@@ -179,21 +178,11 @@ GB_Global_struct GB_Global =
 // GB_Global access functions
 //==============================================================================
 
-//------------------------------------------------------------------------------
-// queue_head
-//------------------------------------------------------------------------------
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_Global_queue_head_set (void *p)
-{ 
-    GB_Global.queue_head = p ;
-}
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_Global_queue_head_get (void)
-{ 
-    return (GB_Global.queue_head) ;
-}
+// TODO in 4.0: delete:
+GB_PUBLIC
+void GB_Global_queue_head_set (void *p) { GB_Global.queue_head = p ; }
+GB_PUBLIC
+void *GB_Global_queue_head_get (void) { return (GB_Global.queue_head) ; }
 
 //------------------------------------------------------------------------------
 // mode

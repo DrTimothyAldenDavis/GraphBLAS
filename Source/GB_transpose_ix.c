@@ -15,7 +15,7 @@
 
 #include "GB_transpose.h"
 #ifndef GBCOMPACT
-#include "GB_unaryop__include.h"
+#include "GB_unop__include.h"
 #endif
 
 void GB_transpose_ix            // transpose the pattern and values of a matrix
@@ -44,14 +44,15 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_tran(zname,aname) GB_tran__identity ## zname ## aname
+        #define GB_unop_tran(zname,aname)                           \
+            GB_unop_tran__identity ## zname ## aname
 
-        #define GB_WORKER(ignore1,zname,ztype,aname,atype)                  \
-        {                                                                   \
-            info = GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice,   \
-                naslice) ;                                                  \
-            if (info == GrB_SUCCESS) return ;                               \
-        }                                                                   \
+        #define GB_WORKER(ignore1,zname,ztype,aname,atype)          \
+        {                                                           \
+            info = GB_unop_tran (zname,aname)                       \
+                (C, A, Rowcounts, Iter, A_slice, naslice) ;         \
+            if (info == GrB_SUCCESS) return ;                       \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------
@@ -81,6 +82,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     #define GB_CTYPE GB_void
 
     #define GB_PHASE_2_OF_2
-    #include "GB_unaryop_transpose.c"
+    #include "GB_unop_transpose.c"
 }
 

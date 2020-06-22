@@ -30,7 +30,7 @@ double gb_norm              // compute norm (A,kind)
     OK (GxB_Matrix_type (&atype, A)) ;
 
     GrB_UnaryOp absop ;
-    GrB_BinaryOp timesop ;
+    GrB_BinaryOp powerop ;
     GrB_Monoid sumop, maxop, minop ;
     GrB_Vector t = NULL ;
     GrB_Matrix X = NULL ;
@@ -42,9 +42,9 @@ double gb_norm              // compute norm (A,kind)
         xtype = GrB_FP32 ;
         absop = GxB_ABS_FP32 ;
         sumop = GrB_PLUS_MONOID_FP32 ;
-        timesop = GrB_TIMES_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
+        powerop = GxB_POW_FP32 ;
     }
     else if (atype == GxB_FC32)
     { 
@@ -53,9 +53,9 @@ double gb_norm              // compute norm (A,kind)
         xtype = GrB_FP32 ;
         absop = GxB_ABS_FC32 ;
         sumop = GrB_PLUS_MONOID_FP32 ;
-        timesop = GrB_TIMES_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
+        powerop = GxB_POW_FP32 ;
     }
     else if (atype == GxB_FC64)
     { 
@@ -64,9 +64,9 @@ double gb_norm              // compute norm (A,kind)
         xtype = GrB_FP64 ;
         absop = GxB_ABS_FC64 ;
         sumop = GrB_PLUS_MONOID_FP64 ;
-        timesop = GrB_TIMES_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;
+        powerop = GxB_POW_FP64 ;
     }
     else
     { 
@@ -75,9 +75,9 @@ double gb_norm              // compute norm (A,kind)
         xtype = GrB_FP64 ;
         absop = GxB_ABS_FP64 ;
         sumop = GrB_PLUS_MONOID_FP64 ;
-        timesop = GrB_TIMES_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;
+        powerop = GxB_POW_FP64 ;
     }
 
     OK (GrB_Matrix_new (&X, xtype, nrows, ncols)) ;
@@ -105,17 +105,31 @@ double gb_norm              // compute norm (A,kind)
                 { 
                     // X = abs (A)
                     OK (GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
-                    // X = X .* X
-                    // TODO NOW: use GxB_POW_* with GrB_Matrix_apply
-                    OK (GrB_Matrix_eWiseMult_BinaryOp (X, NULL, NULL, timesop,
-                        X, X, NULL)) ;
+                    // X = X.^2
+                    if (atype == GxB_FC32)
+                    {
+                        OK (GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL, NULL,
+                            powerop, X, (float) 2.0, NULL)) ;
+                    }
+                    else
+                    {
+                        OK (GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
+                            powerop, X, (double) 2.0, NULL)) ;
+                    }
                 }
                 else
                 { 
-                    // X = A .* A
-                    // TODO NOW: use GxB_POW_* with GrB_Matrix_apply
-                    OK (GrB_Matrix_eWiseMult_BinaryOp (X, NULL, NULL, timesop,
-                        A, A, NULL)) ;
+                    // X = A.^2
+                    if (atype == GxB_FC32)
+                    {
+                        OK (GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL, NULL,
+                            powerop, A, (float) 2.0, NULL)) ;
+                    }
+                    else
+                    {
+                        OK (GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
+                            powerop, A, (double) 2.0, NULL)) ;
+                    }
                 }
                 // s = sum (X)
                 OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;

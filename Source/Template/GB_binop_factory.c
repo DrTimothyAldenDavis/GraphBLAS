@@ -208,6 +208,8 @@
         // These operators are not used in C+=A+B by GB_dense_eWise3_accum
         // when all 3 matrices are dense.
 
+#ifndef GB_NO_FIRST
+
         //----------------------------------------------------------------------
         case GB_FIRST_opcode   :    // z = x
         //----------------------------------------------------------------------
@@ -230,6 +232,9 @@
                 default: ;
             }
             break ;
+#endif
+
+#ifndef GB_NO_SECOND
 
         //----------------------------------------------------------------------
         case GB_SECOND_opcode  :    // z = y
@@ -254,6 +259,9 @@
                 default: ;
             }
             break ;
+#endif
+
+#ifndef GB_NO_PAIR
 
         //----------------------------------------------------------------------
         case GB_PAIR_opcode   :    // z = 1
@@ -277,6 +285,7 @@
                 default: ;
             }
             break ;
+#endif
 
         //----------------------------------------------------------------------
         case GB_ISEQ_opcode    :    // z = (x == y)
@@ -898,4 +907,7 @@
     }
 }
 
+#undef GB_NO_FIRST
+#undef GB_NO_SECOND
+#undef GB_NO_PAIR
 

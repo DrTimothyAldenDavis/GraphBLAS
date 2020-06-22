@@ -10,6 +10,7 @@
 // FUTURE: extend to handle typecasting and generic operators.
 
 #include "GB_dense.h"
+#include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 
@@ -87,8 +88,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 
     GB_Opcode opcode ;
     GB_Type_code xcode, ycode, zcode ;
-    if (GB_binop_builtin (A->type, false, B->type, false, op, false,
-        &opcode, &xcode, &ycode, &zcode))
+    if (GB_binop_builtin (A->type, false, B->type, false,
+        op, false, &opcode, &xcode, &ycode, &zcode))
     { 
         #include "GB_binop_factory.c"
     }

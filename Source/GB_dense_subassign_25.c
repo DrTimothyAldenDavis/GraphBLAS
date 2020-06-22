@@ -112,11 +112,11 @@ GrB_Info GB_dense_subassign_25
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cdense_25(xyname) GB_Cdense_25_ ## xyname
+        #define GB_Cdense_25(cname) GB_Cdense_25_ ## cname
 
-        #define GB_WORKER(xyname)                                             \
+        #define GB_WORKER(cname)                                              \
         {                                                                     \
-            info = GB_Cdense_25(xyname) (C, M, A,                             \
+            info = GB_Cdense_25(cname) (C, M, A,                              \
                 kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;  \
             done = (info != GrB_NO_VALUE) ;                                   \
         }                                                                     \

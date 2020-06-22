@@ -12,8 +12,7 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_iterator.h"
-#include "GB_unaryop__include.h"
+#include "GB_unop__include.h"
 #endif
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -69,14 +68,15 @@ void GB_cast_array              // typecast an array
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_unop(zname,xname) GB_unop__identity ## zname ## xname
+        #define GB_unop_apply(zname,xname)                          \
+            GB_unop_apply__identity ## zname ## xname
 
-        #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
-        {                                                                   \
-            GrB_Info info = GB_unop (zname,xname) ((ztype *) Cx,            \
-                (xtype *) Ax, anz, nthreads) ;                              \
-            if (info == GrB_SUCCESS) return ;                               \
-        }                                                                   \
+        #define GB_WORKER(ignore1,zname,ztype,xname,xtype)          \
+        {                                                           \
+            GrB_Info info = GB_unop_apply (zname,xname)             \
+                ((ztype *) Cx, (xtype *) Ax, anz, nthreads) ;       \
+            if (info == GrB_SUCCESS) return ;                       \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------

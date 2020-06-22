@@ -226,11 +226,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Adot2B(add,mult,xyname) GB_Adot2B_ ## add ## mult ## xyname
+        #define GB_Adot2B(add,mult,xname) GB_Adot2B_ ## add ## mult ## xname
 
-        #define GB_AxB_WORKER(add,mult,xyname)                              \
+        #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_Adot2B (add,mult,xyname) (C, M, Mask_struct,          \
+            info = GB_Adot2B (add,mult,xname) (C, M, Mask_struct,           \
                 Aslice, A_is_pattern, B, B_is_pattern, B_slice,             \
                 C_counts, nthreads, naslice, nbslice) ;                     \
             done = (info != GrB_NO_VALUE) ;                                 \

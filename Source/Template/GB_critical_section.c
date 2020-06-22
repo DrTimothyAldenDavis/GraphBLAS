@@ -1,12 +1,4 @@
-//------------------------------------------------------------------------------
-// Source/Template/GB_critical_section: will be removed in v4.0
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-//------------------------------------------------------------------------------
-
+// Source/Template/GB_critical_section: TODO in 4.0: delete
 // DEPRECATED: This critical section is only used to protect the global queue
 // of matrices with pending operations, for GrB_wait ( ).  It will be removed
 // in v4.0.

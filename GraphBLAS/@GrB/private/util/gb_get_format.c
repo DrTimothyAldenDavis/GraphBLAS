@@ -21,11 +21,11 @@
 
 // (3) If C is a row vector (cnrows == 1) then C is stored by row.
 
-// (4) If A is present, and not a row or column vector, then its format is used
-//      for C.
+// (4) If A is present, and not a row or column vector or scalar, then its
+//      format is used for C.
 
-// (5) If B is present, and not a row or column vector, then its format is used
-//      for C.
+// (5) If B is present, and not a row or column vector or scalar, then its
+//      format is used for C.
 
 // (6) Otherwise, the global default format is used for C.
 

@@ -46,20 +46,19 @@ else
     end
 end
 
+% B is always full
+B = gbfull (B, ctype) ;
+
+% determine the operator
+op = ['pow.' ctype] ;
+
 if (a_is_scalar)
 
     %----------------------------------------------------------------------
     % A is a scalar: C is a full matrix
     %----------------------------------------------------------------------
 
-    if (b_is_scalar)
-        % both A and B are scalars
-        A = gbfull (A, ctype) ;
-    else
-        % A is a scalar, B is a matrix; expand A to the size of B
-        A = gb_scalar_to_full (bm, bn, ctype, A) ;
-    end
-    B = gbfull (B, ctype) ;
+    C = gbapply2 (op, gbfull (A, ctype), B) ;
 
 else
 
@@ -78,32 +77,22 @@ else
             % special case: C = A.^1 = A
             C = A ;
             return
-        elseif (b == 2)
-            % special case: C = A.^2
-            C = gbemult (A, '*', A) ;
-            return ;
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
-            A = gbfull (A, ctype) ;
-            B = gb_scalar_to_full (am, an, ctype, B) ;
+            C = gbapply2 (op, gbfull (A, ctype), B) ;
         else
-            % The scalar b is > 0, and thus 0.^b is zero.  The result is
-            % sparse.  B is expanded to a matrix with the same pattern as
-            % A, with the type of C.
-            B = gb_expand (B, A, ctype) ;
+            % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
+            C = gbapply2 (op, A, B) ;
         end
     else
-        % both A and B are matrices.
-        A = gbfull (A, ctype) ;
-        B = gbfull (B, ctype) ;
+        % both A and B are matrices.  0.^0 is NaN, so C is full.
+        C = gbemult (op, gbfull (A, ctype), B) ;
     end
 
 end
 
-% C = A.^B, where A and B now have the same pattern
-if (c_is_real)
-    C = gbemult ('pow', A, B) ;
-else
-    C = gb_to_real_if_imag_zero (gbemult ('pow', A, B)) ;
+% convert C to real if imaginary part is zero
+if (~c_is_real)
+    C = gb_to_real_if_imag_zero (C) ;
 end
 

@@ -1,17 +1,34 @@
+Version 4.0.0, FUTURE, 2020
+
+    * GrB_wait(), with no inputs: removed
+    * GrB_wait(&object): polymorphic function added
+    * GrB_*_nvals: no longer guarantees completion; use GrB_wait(&object)
+        or non-polymorphic GrB_*_wait (&object) instead
+    * otherwise identical to V3.3.0.
+
 Version 3.3.0, TODO NOW, 2020
 
+    * GrB_wait( ): with no input arguments, has been deprecated.  It will
+        be removed in V4.0.
     * added complex types: GxB_FC32 and GxB_FC64, many unary operators,
         binary operators, monoids, and semirings
+    * added GrB_*_apply_BinaryOp1st and 2nd: also GxB version with GxB_Scalar
     * added bitwise operators: and their monoids and semirings
     * added predefined GrB* monoids and semirings: from the v1.3 spec.
-    * MATLAB interface: added complex matrices and operators, better performance
+    * MATLAB interface: added complex matrices and operators, bitwise
+        operators; improved performance
     * changed typecasting rules: for casting floating point types to integers
     * added GrB_*_wait: wait for specific object to complete
     * added GrB_*_resize: same as prior GxB_*_resize functions
     * added GrB_kronecker: same as prior GxB_kron
     * added version methods: GrB_getVersion, GrB_VERSION, GrB_SUBVERSION
+    * added GrB_*_removeElement
     * (17) bug fix: non-polymorphic GrB_eWiseAdd and eWiseMult functions
         were misnamed.
+    * DRAFT interfaces: A few functions have been added to use CUDA and the
+        Intel MKL library.  These are visible in GraphBLAS.h but are
+        undocumented; do *not* use them yet.  They will likely change without
+        warning, and without change the SuiteSparse:GraphBLAS version number.
 
 Version 3.2.2, Apr 2, 2020
 

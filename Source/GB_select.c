@@ -76,7 +76,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // user-defined types.  There are no built-in ordered comparators
         // for built-in complex types.
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "operator %s not defined for user-defined types", op->name))) ;
+            "Operator %s not defined for user-defined types", op->name))) ;
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible
@@ -84,7 +84,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     if (op->xtype != NULL && !GB_Type_compatible (A->type, op->xtype))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "incompatible type for C=%s(A,Thunk):\n"
+            "Incompatible type for C=%s(A,Thunk):\n"
             "input A type [%s]\n"
             "cannot be typecast to operator input of type [%s]",
             op->name, A->type->name, op->xtype->name))) ;
@@ -138,7 +138,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         { 
             // Thunk not a built-in type, for a built-in select operator
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "incompatible type for C=%s(A,Thunk):\n"
+                "Incompatible type for C=%s(A,Thunk):\n"
                 "input Thunk type [%s]\n"
                 "not compatible with GrB_INT64 input to built-in operator %s",
                 op->name, Thunk_in->type->name, op->name))) ;
@@ -480,7 +480,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     { 
         // T = select (A, Thunk)
         GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk,
-            (op_is_thunk_comparator || op_is_user_defined) ?  Thunk_in : NULL,
+            (op_is_thunk_comparator || op_is_user_defined) ? Thunk_in : NULL,
             Context)) ;
     }
 

@@ -13,9 +13,6 @@
 // which must be at least as large as GrB_nvals (&nvals, A).  The values in the
 // matrix are typecasted to the type of X, as needed.
 
-// If all arrays I, J, X are NULL, this function does nothing except to force
-// all pending tuples to be assembled.  This is an intended side effect.
-
 // This function is not user-callable.  It does the work for the user-callable
 // GrB_*_extractTuples functions.
 

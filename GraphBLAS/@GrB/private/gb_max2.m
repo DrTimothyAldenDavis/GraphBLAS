@@ -13,45 +13,33 @@ ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)
-
         % both A and B are scalars.  Result is also a scalar.
         C = gb_union_op (op, A, B) ;
-
     else
-
         % A is a scalar, B is a matrix
         if (gb_scalar (A) > 0)
             % since A > 0, the result is full
             A = gb_scalar_to_full (bm, bn, ctype, A) ;
+            C = gbeadd (A, op, B) ;
         else
-            % since A <= 0, the result is sparse.  Expand the scalar A
-            % to the pattern of B.
-            A = gb_expand (A, B, ctype) ;
+            % since A <= 0, the result is sparse.
+            C = gbapply2 (A, op, B) ;
         end
-        C = gbeadd (A, op, B) ;
-
     end
-
 else
-
     if (b_is_scalar)
-
         % A is a matrix, B is a scalar
         if (gb_scalar (B) > 0)
             % since B > 0, the result is full
             B = gb_scalar_to_full (am, an, ctype, B) ;
+            C = gbeadd (A, op, B) ;
         else
-            % since B <= 0, the result is sparse.  Expand the scalar B
-            % to the pattern of A.
-            B = gb_expand (B, A, ctype) ;
+            % since B <= 0, the result is sparse.
+            C = gbapply2 (A, op, B) ;
         end
-        C = gbeadd (A, op, B) ;
-
     else
-
         % both A and B are matrices.  Result is sparse.
         C = gb_union_op (op, A, B) ;
-
     end
 end
 

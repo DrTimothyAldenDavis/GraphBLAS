@@ -443,16 +443,16 @@
 #define GrB_Matrix_kronecker_Semiring_(...)         GrB_kronecker (__VA_ARGS__)
 
 // GxB_fprint:
-#define GxB_Type_fprint_(...)                       GxB_fprint (__VA_ARGS__)
-#define GxB_UnaryOp_fprint_(...)                    GxB_fprint (__VA_ARGS__)
-#define GxB_BinaryOp_fprint_(...)                   GxB_fprint (__VA_ARGS__)
-#define GxB_SelectOp_fprint_(...)                   GxB_fprint (__VA_ARGS__)
-#define GxB_Monoid_fprint_(...)                     GxB_fprint (__VA_ARGS__)
-#define GxB_Semiring_fprint_(...)                   GxB_fprint (__VA_ARGS__)
-#define GxB_Descriptor_fprint_(...)                 GxB_fprint (__VA_ARGS__)
-#define GxB_Matrix_fprint_(...)                     GxB_fprint (__VA_ARGS__)
-#define GxB_Vector_fprint_(...)                     GxB_fprint (__VA_ARGS__)
-#define GxB_Scalar_fprint_(...)                     GxB_fprint (__VA_ARGS__)
+#define GxB_Type_fprint_(o,p,f)                     GxB_fprint (o,p,f)
+#define GxB_UnaryOp_fprint_(o,p,f)                  GxB_fprint (o,p,f)
+#define GxB_BinaryOp_fprint_(o,p,f)                 GxB_fprint (o,p,f)
+#define GxB_SelectOp_fprint_(o,p,f)                 GxB_fprint (o,p,f)
+#define GxB_Monoid_fprint_(o,p,f)                   GxB_fprint (o,p,f)
+#define GxB_Semiring_fprint_(o,p,f)                 GxB_fprint (o,p,f)
+#define GxB_Descriptor_fprint_(o,p,f)               GxB_fprint (o,p,f)
+#define GxB_Matrix_fprint_(o,p,f)                   GxB_fprint (o,p,f)
+#define GxB_Vector_fprint_(o,p,f)                   GxB_fprint (o,p,f)
+#define GxB_Scalar_fprint_(o,p,f)                   GxB_fprint (o,p,f)
 
 #else
 
@@ -885,16 +885,16 @@
 #define GrB_Matrix_kronecker_Semiring_(...)         GrB_Matrix_kronecker_Semiring (__VA_ARGS__)
 
 // GxB_fprint:
-#define GxB_Type_fprint_(...)                       GxB_Type_fprint (__VA_ARGS__)
-#define GxB_UnaryOp_fprint_(...)                    GxB_UnaryOp_fprint (__VA_ARGS__)
-#define GxB_BinaryOp_fprint_(...)                   GxB_BinaryOp_fprint (__VA_ARGS__)
-#define GxB_SelectOp_fprint_(...)                   GxB_SelectOp_fprint (__VA_ARGS__)
-#define GxB_Monoid_fprint_(...)                     GxB_Monoid_fprint (__VA_ARGS__)
-#define GxB_Semiring_fprint_(...)                   GxB_Semiring_fprint (__VA_ARGS__)
-#define GxB_Descriptor_fprint_(...)                 GxB_Descriptor_fprint (__VA_ARGS__)
-#define GxB_Matrix_fprint_(...)                     GxB_Matrix_fprint (__VA_ARGS__)
-#define GxB_Vector_fprint_(...)                     GxB_Vector_fprint (__VA_ARGS__)
-#define GxB_Scalar_fprint_(...)                     GxB_Scalar_fprint (__VA_ARGS__)
+#define GxB_Type_fprint_(o,p,f)                     GxB_Type_fprint (o, GB_STR(o), p, f)
+#define GxB_UnaryOp_fprint_(o,p,f)                  GxB_UnaryOp_fprint (o, GB_STR(o), p, f)
+#define GxB_BinaryOp_fprint_(o,p,f)                 GxB_BinaryOp_fprint (o, GB_STR(o), p, f)
+#define GxB_SelectOp_fprint_(o,p,f)                 GxB_SelectOp_fprint (o, GB_STR(o), p, f)
+#define GxB_Monoid_fprint_(o,p,f)                   GxB_Monoid_fprint (o, GB_STR(o), p, f)
+#define GxB_Semiring_fprint_(o,p,f)                 GxB_Semiring_fprint (o, GB_STR(o), p, f)
+#define GxB_Descriptor_fprint_(o,p,f)               GxB_Descriptor_fprint (o, GB_STR(o), p, f)
+#define GxB_Matrix_fprint_(o,p,f)                   GxB_Matrix_fprint (o, GB_STR(o), p, f)
+#define GxB_Vector_fprint_(o,p,f)                   GxB_Vector_fprint (o, GB_STR(o), p, f)
+#define GxB_Scalar_fprint_(o,p,f)                   GxB_Scalar_fprint (o, GB_STR(o), p, f)
 
 #endif
 #endif

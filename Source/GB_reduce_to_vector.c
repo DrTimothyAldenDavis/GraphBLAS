@@ -13,6 +13,7 @@
 // to a vector.
 
 #include "GB_reduce.h"
+#include "GB_binop.h"
 #include "GB_build.h"
 #include "GB_ek_slice.h"
 #include "GB_accum_mask.h"
@@ -99,7 +100,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     if (!GB_Type_compatible (A->type, reduce->ztype))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "incompatible type for reduction operator z=%s(x,y):\n"
+            "Incompatible type for reduction operator z=%s(x,y):\n"
             "input matrix A of type [%s]\n"
             "cannot be typecast to reduction operator of type [%s]",
             reduce->name, A->type->name, reduce->ztype->name))) ;

@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbapply (op, A)
-// C = gbapply (op, A, desc)
-// C = gbapply (Cin, accum, op, A, desc)
-// C = gbapply (Cin, M, op, A, desc)
-// C = gbapply (Cin, M, accum, op, A, desc)
+// C = gbapply (unop, A)
+// C = gbapply (unop, A, desc)
+// C = gbapply (Cin, accum, unop, A, desc)
+// C = gbapply (Cin, M, unop, A, desc)
+// C = gbapply (Cin, M, accum, unop, A, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -93,14 +93,14 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        op     = gb_mxstring_to_unop  (String [0], atype) ;
+        op    = gb_mxstring_to_unop  (String [0], atype) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum  = gb_mxstring_to_binop (String [0], ctype, ctype) ;
-        op     = gb_mxstring_to_unop  (String [1], atype) ;
+        accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
+        op    = gb_mxstring_to_unop  (String [1], atype) ;
     }
 
     //--------------------------------------------------------------------------

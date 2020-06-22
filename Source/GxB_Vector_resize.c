@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// This function now appears in the C API Specification as GrB_Vector_resize.
+// The new name is preferred.
+
 #include "GB.h"
 
 GrB_Info GxB_Vector_resize      // change the size of a vector

@@ -1,12 +1,4 @@
-//------------------------------------------------------------------------------
-// GB_queue_status:  check the status of the queue for a particular matrix
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-//------------------------------------------------------------------------------
-
+// GB_queue_status:  TODO in 4.0: delete
 // DEPRECATED:  all GB_queue_* will be removed when GrB_wait() is gone.
 
 #include "GB.h"

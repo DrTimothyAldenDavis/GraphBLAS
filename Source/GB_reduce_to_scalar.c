@@ -14,6 +14,7 @@
 // result is the same if A is in CSR or CSC format.
 
 #include "GB_reduce.h"
+#include "GB_binop.h"
 #include "GB_atomics.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
@@ -54,7 +55,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     if (!GB_Type_compatible (A->type, ztype))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "incompatible type for reduction operator z=%s(x,y):\n"
+            "Incompatible type for reduction operator z=%s(x,y):\n"
             "input of type [%s]\n"
             "cannot be typecast to reduction operator of type [%s]",
             reduce->op->name, A->type->name, reduce->op->ztype->name))) ;
@@ -73,10 +74,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     int64_t asize = A->type->size ;
     int64_t zsize = ztype->size ;
     int64_t anz = GB_NNZ (A) ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     // determine the number of OpenMP threads and/or GPUs to use

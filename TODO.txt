@@ -1,13 +1,9 @@
-to add from v1.3:
+TODO NOW: complex atomic plus monoid, as 2 atomic operations
 
-GrB_apply with binary op
-GrB_Matrix_removeElement
-GrB_Vector_removeElement
+TODO NOW: statement coverage, *.m, and *.c mexFunctions
+TODO NOW Help report
+TODO NOW Lint report
+TODO NOW ... other reports
+TODO NOW: rerun demo output in GraphBLAS/GraphBLAS/demo/html.
 
-extension to spec:
-add GxB_checkElement (no suffix).  No return value:
-
-    GrB_Info GxB_Matrix_existsElement (A, row, col)
-    GrB_Info GxB_Vector_existsElement (v, i)
-    GrB_Info GxB_Scalar_existsElement (s)
-
+ 

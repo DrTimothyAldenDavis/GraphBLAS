@@ -1,6 +1,7 @@
 function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 %GRB.APPLY apply a unary operator to a matrix.
 %
+%   C = GrB.apply (op, A)
 %   C = GrB.apply (op, A, desc)
 %   C = GrB.apply (Cin, accum, op, A, desc)
 %   C = GrB.apply (Cin, M, op, A, desc)
@@ -8,9 +9,7 @@ function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 %
 % GrB.apply applies a unary operator to the entries in the input matrix A,
 % which may be a GraphBLAS or MATLAB matrix (sparse or full).  See 'help
-% GrB.unopinfo' for a list of available unary operators.  C is returned
-% as a GraphBLAS matrix, by default; see 'help GrB/descriptorinfo' for
-% more options.
+% GrB.unopinfo' for a list of available unary operators.
 %
 % The op and A arguments are required.
 %
@@ -21,7 +20,7 @@ function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 % is 'transpose' then A is transposed before applying the operator, as
 % C<M> = accum (C, f(A')) where f(...) is the unary operator.
 %
-% See also GrB/spfun.
+% See also GrB/apply2, GrB/spfun.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.

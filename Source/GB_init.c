@@ -141,27 +141,19 @@ GrB_Info GB_init            // start up GraphBLAS
 
     if (!GB_thread_local_init (free_function)) GB_PANIC ;
 
-    //--------------------------------------------------------------------------
-    // create the mutex for the critical section
-    //--------------------------------------------------------------------------
-
     #if defined (USER_POSIX_THREADS)
     {
-        // initialize the critical section for POSIX pthreads
+        // TODO in 4.0: delete
         bool ok = (pthread_mutex_init (&GB_sync, NULL) == 0) ;
         if (!ok) GB_PANIC ;
     }
     #endif
 
     //--------------------------------------------------------------------------
-    // initialize the global queue
+    // initialize the blocking/nonblocking mode
     //--------------------------------------------------------------------------
 
-    // clear the queue of matrices for nonblocking mode and set the mode.  The
-    // queue must be protected and can be initialized only once by any thread.
-
-    // clear the queue
-    GB_Global_queue_head_set (NULL) ;
+    GB_Global_queue_head_set (NULL) ;   // TODO in 4.0: delete
 
     // set the mode: blocking or nonblocking
     GB_Global_mode_set (mode) ;

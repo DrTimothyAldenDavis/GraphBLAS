@@ -1,12 +1,4 @@
-//------------------------------------------------------------------------------
-// GB_queue_remove_head: remove the matrix at the head of the matrix queue
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-//------------------------------------------------------------------------------
-
+// GB_queue_remove_head: TODO in 4.0: delete this
 // DEPRECATED:  all GB_queue_* will be removed when GrB_wait() is gone.
 
 #include "GB.h"

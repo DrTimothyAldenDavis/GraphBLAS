@@ -24,9 +24,13 @@ function C = gb_union_op (op, A, B, desc)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% FUTURE: this would be faster if a variant to GrB_eWiseAdd would
-% be added, which takes 2 scalar values (one for A and one for B),
-% and applies the binary operator on the union of A and B.
+% FUTURE: this is slower than it could be.
+% affects: lt, gt, min(A,B), max(A,B), minus, ne, pow2, atan2, bitset, complex,
+% hypot, and bitshift.
+%
+% This would be faster if a variant to GrB_eWiseAdd would be added, which takes
+% 2 scalar values (one for A and one for B), and applies the binary operator on
+% the union of A and B.
 %
 % The following operations could use this feature:
 %

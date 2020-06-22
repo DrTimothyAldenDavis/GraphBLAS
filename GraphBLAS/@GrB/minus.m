@@ -7,6 +7,9 @@ function C = minus (A, B)
 %
 % See also GrB.eadd, GrB/plus, GrB/uminus.
 
+% FUTURE: minus(A,B) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 

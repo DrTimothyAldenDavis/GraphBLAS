@@ -5,6 +5,9 @@ function C = ne (A, B)
 %
 % See also GrB/lt, GrB/le, GrB/gt, GrB/ge, GrB/eq.
 
+% FUTURE: ne(A,B) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
+
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.
 % A scalar, B matrix:  C is full if A~=0, otherwise C is a subset of B.

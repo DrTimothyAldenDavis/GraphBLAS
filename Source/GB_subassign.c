@@ -120,7 +120,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         if (!GB_code_compatible (C->type->code, scalar_code))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "input scalar of type [%s]\n"
+                "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 GB_code_string (scalar_code), C->type->name))) ;
         }
@@ -130,7 +130,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         if (!GB_Type_compatible (C->type, A->type))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "input of type [%s]\n"
+                "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 A->type->name, C->type->name))) ;
         }
@@ -228,7 +228,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
         GBBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
+            NULL, NULL, NULL, false, Context)) ;
         A = AT ;
     }
 
@@ -256,7 +257,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: no typecast, no op, not in place
             GBBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+                NULL, NULL, NULL, false, Context)) ;
             M = MT ;
         }
     }

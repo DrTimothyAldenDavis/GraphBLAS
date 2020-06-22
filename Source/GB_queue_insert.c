@@ -1,20 +1,9 @@
-//------------------------------------------------------------------------------
-// GB_queue_insert:  insert a matrix at the head of the matrix queue
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-//------------------------------------------------------------------------------
-
+// GB_queue_insert:  TODO in 4.0: delete 
 // DEPRECATED:  all GB_queue_* will be removed when GrB_wait() is gone.
 
 #include "GB.h"
 
-bool GB_queue_insert            // insert matrix at the head of queue
-(
-    GrB_Matrix A                // matrix to insert
-)
+bool GB_queue_insert (GrB_Matrix A)
 {
     bool ok = true ;
     if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))

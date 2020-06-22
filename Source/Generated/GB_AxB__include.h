@@ -7,6 +7,9 @@
 
 // This file has been automatically generated from Generator/GB_AxB.h
 
+#include "GB_iterator.h"
+
+
 GrB_Info GB_Adot2B__min_first_int8
 (
     GrB_Matrix C,

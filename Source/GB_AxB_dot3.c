@@ -304,11 +304,11 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Adot3B(add,mult,xyname) GB_Adot3B_ ## add ## mult ## xyname
+        #define GB_Adot3B(add,mult,xname) GB_Adot3B_ ## add ## mult ## xname
 
-        #define GB_AxB_WORKER(add,mult,xyname)                              \
+        #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_Adot3B (add,mult,xyname) (C, M, Mask_struct,          \
+            info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct,           \
                 A, A_is_pattern, B, B_is_pattern,                           \
                 TaskList, ntasks, nthreads) ;                               \
             done = (info != GrB_NO_VALUE) ;                                 \
@@ -446,11 +446,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    if (C->nzombies > 0)
-    {
-        // C has been created with zombies, so place it in the queue
-        if (!GB_queue_insert (C)) GB_PANIC ;
-    }
+    if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;

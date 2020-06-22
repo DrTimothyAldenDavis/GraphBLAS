@@ -15,6 +15,8 @@
 // by GB_Matrix_wait.
 
 #include "GB.h"
+#include "GB_binop.h"
+#include "GB_unused.h"
 
 #ifndef GBCOMPACT
 
@@ -68,9 +70,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         return (false) ;
     }
 
-    // This function requires A and B to have the same built-in type, and they
-    // must match the types x,y for the binary operator.  If this condition
-    // doesn't hold, punt to the generic function.
+    // check if A matches the input to the operator
     if (!A_is_pattern)
     {
         if ((A_type != (flipxy ? op_ytype : op_xtype)) ||
@@ -82,6 +82,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         }
     }
 
+    // check if B matches the input to the operator
     if (!B_is_pattern)
     {
         if ((B_type != (flipxy ? op_xtype : op_ytype)) ||
@@ -122,7 +123,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     }
 
     //--------------------------------------------------------------------------
-    // handle the flipxy
+    // handle the flipxy (for a semiring only)
     //--------------------------------------------------------------------------
 
     // If flipxy is true, the matrices A and B have been flipped (A passed as B
@@ -134,6 +135,9 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
     if (flipxy)
     {
+        // All built-in semirings use either commutative multiplicative
+        // operators (PLUS, TIMES, ANY, ...), or operators that have flipped
+        // versions (DIV vs RDIV, ...).
         (*opcode) = GB_binop_flip (*opcode) ;
     }
 
@@ -141,3 +145,4 @@ bool GB_binop_builtin               // true if binary operator is builtin
 }
 
 #endif
+

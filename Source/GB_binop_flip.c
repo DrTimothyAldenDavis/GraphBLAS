@@ -8,8 +8,9 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "GB_binop.h"
 
-GB_Opcode GB_binop_flip     // flipped opcode, or same opcode if not flipped
+GB_Opcode GB_binop_flip     // flipped opcode
 (
     GB_Opcode opcode        // opcode to flip
 )
@@ -45,8 +46,15 @@ GB_Opcode GB_binop_flip     // flipped opcode, or same opcode if not flipped
         case GB_MINUS_opcode  : return (GB_RMINUS_opcode) ;
         case GB_RMINUS_opcode : return (GB_MINUS_opcode) ;
 
-        // the operator is commutative; no need to flip it
-        default: return (opcode) ;
+        // these operators do not have flipped versions:
+        // POW, BGET, BSET, BCLR, BSHIFT, ATAN2, FMOD, REMAINDER, COPYSIGN,
+        // LDEXP, CMPLX, and user-defined operators.
+
+        // these operators are commutative; they are their own flipped ops:
+        // PLUS, TIMES, PAIR, ANY, ISEQ, ISNE, EQ, NE, MIN, MAX, LOR, LAND,
+        // LXOR, LXNOR, HYPOT, BOR, BAND, BXOR, BXNOR.
+        default :
+            return (opcode) ;
     }
 }
 

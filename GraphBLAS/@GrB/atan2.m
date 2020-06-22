@@ -4,6 +4,9 @@ function C = atan2 (A, B)
 %
 % See also GrB/tan, GrB/tanh, GrB/atan, GrB/atanh.
 
+% FUTURE: atan2(A,B) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
@@ -39,17 +42,15 @@ ctype = gboptype (atype, btype) ;
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbemult ('atan2', gbfull (A, ctype), gbfull (B, ctype))) ;
+        C = GrB (gbemult ('atan2', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        A = gb_expand (A, B, ctype) ;
-        C = GrB (gbemult ('atan2', A, B)) ;
+        C = GrB (gbapply2 ('atan2', A, B)) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        B = gb_expand (B, A, ctype) ;
-        C = GrB (gbemult ('atan2', A, B)) ;
+        C = GrB (gbapply2 ('atan2', A, B)) ;
     else
         % both A and B are matrices.  C is the set union of A and B.
         C = GrB (gb_union_op ('atan2', A, B)) ;

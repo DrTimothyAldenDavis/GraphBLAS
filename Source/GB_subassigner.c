@@ -1409,28 +1409,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     GB_FREE_WORK ;
 
-    //--------------------------------------------------------------------------
-    // insert C in the queue if it has work to do and isn't already queued
-    //--------------------------------------------------------------------------
-
-    if (C->nzombies == 0 && C->Pending == NULL)
-    { 
-        // C may be in the queue from a prior assignment, but this assignemt
-        // can bring zombies back to life, and the zombie count can go to zero.
-        // In that case, C must be removed from the queue.  The removal does
-        // nothing if C is already not in the queue.
-
-        // FUTURE:: this might cause thrashing if lots of assigns or
-        // setElements are done in parallel.  Solution: delete GrB_wait ( ).
-
-        if (!GB_queue_remove (C)) GB_PANIC ;
-    }
-    else
-    { 
-        // If C has any zombies or pending tuples, it must be in the queue.
-        // The queue insert does nothing if C is already in the queue.
-        if (!GB_queue_insert (C)) GB_PANIC ;
-    }
+    // TODO in 4.0: delete this:
+    if (C->nzombies == 0 && C->Pending == NULL) { if (!GB_queue_remove (C)) GB_PANIC ; } else { if (!GB_queue_insert (C)) GB_PANIC ; }
 
     //--------------------------------------------------------------------------
     // finalize C and return result

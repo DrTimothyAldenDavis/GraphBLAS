@@ -5,20 +5,21 @@ function C = gb_minbyrow (op, A)
 % C = min (A, [ ], 2) reduces each row to a scalar; C is m-by-1
 C = gbvreduce (op, A) ;
 
-% if C(i) > 0, but the A(i,:) is sparse, then assign C(i) = 0.
+% if C(i) > 0, but if A(i,:) is sparse, then assign C(i) = 0.
 ctype = gbtype (C) ;
 
-% if (gb_issigned (ctype))
-    % d (i) = true if A (i,:) has fewer than n entries
-    [~, n] = gbsize (A) ;
+    % d (i) = number of entries in A(i,:); d (i) not present if A(i,:) empty
+    [m, n] = gbsize (A) ;
     d = gbdegree (A, 'row') ;
-    d = gbemult (d, '<', gb_expand (n, d)) ;
-    % c = (C > 0)
-    c = gbemult (C, '>', gb_expand (0, C)) ;
-    % mask = c & d
-    mask = gbemult (c, '&', d) ;
-    % delete entries in C where mask is true
-    [m, n] = gbsize (mask) ;
-    C = gbsubassign (C, mask, gbnew (m, n, ctype)) ;
-% end
+    % d (i) is an explicit zero if A(i,:) has 1 to n-1 entries
+    d = gbselect (d, '<', n) ;
+    zero = gbnew (0, ctype) ;
+    if (gbnvals (d) == m)
+        % all rows A(i,:) have between 1 and n-1 entries
+        C = gbapply2 (op, C, zero) ;
+    else
+        d = gbapply2 (['1st.' ctype], zero, d) ;
+        % if d(i) is between 1 and n-1 and C(i) > 0 then C (i) = 0
+        C = gbeadd (op, C, d) ;
+    end
 

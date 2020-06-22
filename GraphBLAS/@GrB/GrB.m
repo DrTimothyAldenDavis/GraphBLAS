@@ -13,7 +13,7 @@ classdef GrB
 %   G = GrB.subassign (C, M, A) ;
 %
 % constructs a GraphBLAS matrix G, which is the result of C<M>=A in
-% GraphBLAS notation (like C(M)=A(M) in MATLAB).  The matrices used any
+% GraphBLAS notation (like C(M)=A(M) in MATLAB).  The matrices used in any
 % GrB.method may be MATLAB matrices (sparse or dense) or GraphBLAS sparse
 % matrices, in any combination.
 %
@@ -389,6 +389,7 @@ classdef GrB
 %   they can appear in different order.
 %
 %   GrB.apply       apply a unary operator
+%   GrB.apply2      apply a binary operator
 %   GrB.assign      sparse matrix assignment, such as C(I,J)=A
 %   GrB.eadd        element-wise addition
 %   GrB.emult       element-wise multiplication
@@ -430,6 +431,7 @@ classdef GrB
 %   The full list of parameters is shown below:
 %
 %       C = GrB.apply     (Cin, M, accum, op, A,          desc)
+%       C = GrB.apply2    (Cin, M, accum, op, A, B,       desc)
 %       C = GrB.assign    (Cin, M, accum,     A,    I, J, desc)
 %       C = GrB.eadd      (Cin, M, accum, op, A, B,       desc)
 %       C = GrB.emult     (Cin, M, accum, op, A, B,       desc)
@@ -452,11 +454,12 @@ classdef GrB
 %
 %   (1) Cin, M, A, B are matrices.  If the method takes up to 4 matrices
 %       (mxm, kronecker, select (with operator requiring a b
-%       parameter), eadd, emult), then they appear in this order:
+%       parameter), eadd, emult, apply2), then they appear in this order:
 %       with 2 matrix inputs: A, B
 %       with 3 matrix inputs: Cin, A, B
 %       with 4 matrix inputs: Cin, M, A, B
-%       For the GrB.select, b is a scalar.
+%       For GrB.select, b is a scalar.  For GrB.apply2, either A or B
+%       is be a scalar.
 %
 %       If the method takes up to 3 matrices (vreduce, apply, assign,
 %       subassign, extract, trans, or select without b):
@@ -543,7 +546,7 @@ classdef GrB
 %       c = GrB.reduce (c, 'max', A)                c = max (A)
 %
 % See also sparse.
-
+%
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
@@ -954,6 +957,7 @@ methods (Static)
 
     MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
+    C = apply2 (Cin, M, accum, op, A, B, desc) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices
     binopinfo (op, type) ;

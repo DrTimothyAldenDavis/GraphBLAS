@@ -121,7 +121,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         // AT = A' and typecast to op->xtype
         // transpose: typecast, no op, not in place
         GBBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, op->xtype, is_csc, A, NULL, Context)) ;
+        GB_OK (GB_transpose (&AT, op->xtype, is_csc, A,
+            NULL, NULL, NULL, false, Context)) ;
         ASSERT_MATRIX_OK (A , "A after AT kron", GB0) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
     }
@@ -131,7 +132,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         // BT = B' and typecast to op->ytype
         // transpose: typecast, no op, not in place
         GBBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT, op->ytype, is_csc, B, NULL, Context)) ;
+        GB_OK (GB_transpose (&BT, op->ytype, is_csc, B,
+            NULL, NULL, NULL, false, Context)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
     }
 

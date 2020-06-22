@@ -1,6 +1,5 @@
 
 if_is_binop_subset
-
 void GB_Cdense_ewise3_accum
 (
     GrB_Matrix C,
@@ -8,7 +7,6 @@ void GB_Cdense_ewise3_accum
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
 endif_is_binop_subset
 
 GrB_Info GB_Cdense_ewise3_noaccum
@@ -91,4 +89,52 @@ GrB_Info GB_AemultB
     const int ntasks,
     const int nthreads
 ) ;
+
+if_binop_bind1st_is_enabled
+GrB_Info GB_bind1st
+(
+    GB_void *Cx_output,
+    const GB_void *x_input,
+    const GB_void *Bx_input,
+    int64_t anz,
+    int nthreads
+) ;
+endif_binop_bind1st_is_enabled
+
+if_binop_bind2nd_is_enabled
+GrB_Info GB_bind2nd
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    int64_t anz,
+    int nthreads
+) ;
+endif_binop_bind2nd_is_enabled
+
+if_binop_bind1st_is_enabled
+GrB_Info GB_bind1st_tran
+(
+    GrB_Matrix C,
+    const GB_void *x_input,
+    const GrB_Matrix A,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+endif_binop_bind1st_is_enabled
+
+if_binop_bind2nd_is_enabled
+GrB_Info GB_bind2nd_tran
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GB_void *y_input,
+    int64_t *GB_RESTRICT *Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *GB_RESTRICT A_slice,
+    int naslice
+) ;
+endif_binop_bind2nd_is_enabled
 

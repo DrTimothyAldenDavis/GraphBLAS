@@ -17,6 +17,7 @@
 // Method 04.
 
 #include "GB_dense.h"
+#include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif
@@ -173,10 +174,6 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
             GB_void bij [GB_VLA(ysize)] ;                                   \
             cast_B_to_Y (bij, Bx +((pB)*bsize), bsize)
 
-        // C(i,j) = C(i,j) + B(i,j)
-        #define GB_BINOP(cout_ij, cin_ij, bij)                              \
-            GB_BINARYOP (cout_ij, cin_ij, bij)
-
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
@@ -186,7 +183,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         // no vectorization
         #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-        #define GB_BINARYOP(z,x,y) fadd (z,x,y)
+        #define GB_BINOP(z,x,y) fadd (z,x,y)
         #include "GB_dense_subassign_23_template.c"
     }
 

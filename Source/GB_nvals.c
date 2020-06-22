@@ -23,26 +23,18 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // delete any lingering zombies and assemble any pending tuples
-    // TODO: in v4.0: if zombies but no pending tuples, do not wait,
-    // and delete the assertions.
     GrB_Info info ;
-    GB_MATRIX_WAIT (A) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
 
-    // There are no longer any zombies or pending tuples.  However, except for
-    // the side effect (no longer required in the v1.3 spec) of forcing
-    // completion in GrB_Matrix_nvals and GrB_Vector_nvals, zombies can be
-    // tolerated.
+    // delete any lingering zombies and assemble any pending tuples
+    // TODO in 4.0: delete this line of code:
+    GB_MATRIX_WAIT (A) ; ASSERT (!GB_ZOMBIES (A)) ; ASSERT (!GB_PENDING (A)) ;
 
     GB_RETURN_IF_NULL (nvals) ;
 
-    // this has already been done above, but this code must remain in v4.0:
+    // leave zombies alone, but assemble any pending tuples
     if (GB_PENDING (A))
     {
-        // this will no longer be dead code once the wait is removed above.
-        ASSERT (GB_DEAD_CODE) ;
+        ASSERT (GB_DEAD_CODE) ; // TODO in 4.0: delete this line
         GB_MATRIX_WAIT (A) ;
     }
 

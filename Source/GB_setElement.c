@@ -70,7 +70,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     if (!GB_code_compatible (scalar_code, ccode))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "input scalar of type [%s]\n"
+            "Input scalar of type [%s]\n"
             "cannot be typecast to entry of type [%s]",
             GB_code_string (scalar_code), ctype->name))) ;
     }
@@ -152,15 +152,9 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         {
             // bring the zombie back to life
-            ASSERT (C->enqueued) ;
             C->i [pleft] = i ;
             C->nzombies-- ;
-            if (C->nzombies == 0 && C->Pending == NULL)
-            { 
-                // remove from queue if no zombies or pending tuples
-                // FUTURE:: delete this
-                if (!GB_queue_remove (C)) GB_PANIC ;
-            }
+            if (C->nzombies == 0 && C->Pending == NULL) { if (!GB_queue_remove (C)) GB_PANIC ; } // TODO in 4.0: delete
         }
 
         // the check is fine but just costly even when debugging
@@ -264,12 +258,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        // insert C in the queue if it isn't already queued
         ASSERT (GB_PENDING (C)) ;
-        if (!(C->enqueued))
-        { 
-            if (!GB_queue_insert (C)) GB_PANIC ;
-        }
+        if (!(C->enqueued)) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
 
         // if this was the first tuple, then the pending operator and
         // pending type have been defined

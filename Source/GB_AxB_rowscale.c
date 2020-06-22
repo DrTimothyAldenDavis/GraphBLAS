@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif
@@ -106,11 +107,11 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_DxB(mult,xyname) GB_DxB_ ## mult ## xyname
+        #define GB_DxB(mult,xname) GB_DxB_ ## mult ## xname
 
-        #define GB_BINOP_WORKER(mult,xyname)                                  \
+        #define GB_BINOP_WORKER(mult,xname)                                   \
         {                                                                     \
-            info = GB_DxB(mult,xyname) (C, D, D_is_pattern, B, B_is_pattern,  \
+            info = GB_DxB(mult,xname) (C, D, D_is_pattern, B, B_is_pattern,   \
                 nthreads) ;                                                   \
             done = (info != GrB_NO_VALUE) ;                                   \
         }                                                                     \
@@ -194,10 +195,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             GB_void bij [GB_VLA(bij_size)] ;                                \
             if (!B_is_pattern) cast_B (bij, Bx +((pB)*bsize), bsize) ;
 
-        // C(i,j) = D(i,i) * B(i,j)
-        #define GB_BINOP(cij, dii, bij)                                     \
-            GB_BINARYOP (cij, dii, bij) ;                                   \
-
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
@@ -210,15 +207,15 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         if (flipxy)
         { 
-            #define GB_BINARYOP(z,x,y) fmult (z,y,x)
+            #define GB_BINOP(z,x,y) fmult (z,y,x)
             #include "GB_AxB_rowscale_meta.c"
-            #undef GB_BINARYOP
+            #undef GB_BINOP
         }
         else
         { 
-            #define GB_BINARYOP(z,x,y) fmult (z,x,y)
+            #define GB_BINOP(z,x,y) fmult (z,x,y)
             #include "GB_AxB_rowscale_meta.c"
-            #undef GB_BINARYOP
+            #undef GB_BINOP
         }
     }
 

@@ -1,11 +1,4 @@
-//------------------------------------------------------------------------------
-// GB_wait.h: DEPRECATED
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-//------------------------------------------------------------------------------
+// GB_wait.h: DEPRECATED: TODO in 4.0: delete this
 
 #ifndef GB_DEPRECATED_H
 #define GB_DEPRECATED_H

@@ -18,6 +18,9 @@ function C = max (A, B, option)
 %
 % See also GrB/min.
 
+% FUTURE: max(A,B) for two matrices A and B is slower than it could be.
+% See comments in gb_union_op.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 

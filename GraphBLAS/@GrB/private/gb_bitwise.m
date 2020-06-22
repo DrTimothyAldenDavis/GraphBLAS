@@ -40,26 +40,23 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = gbemult ('min', B, gb_expand (64, B, btype)) ;
+        B = gbapply2 (['min.' btype], B, 64) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
-            B = gbemult ('max', B, gb_expand (-64, B, btype)) ;
+            B = gbapply2 (['max.' btype], B, -64) ;
         end
         B = gbnew (B, 'int8') ;
     end
 
-    if (gb_isscalar (B))
-        % expand the scalar B to the pattern of A
-        B = gb_expand (B, A) ;
-    elseif (gb_isscalar (A))
-        % expand the scalar A to the pattern of B
-        A = gb_expand (A, B) ;
+    if (gb_isscalar (A) || gb_isscalar (B))
+        % either A or B are scalars
+        C = gbapply2 (['bitshift.' atype], A, B) ;
     else
+        % both A and B are matrices.
         % expand B by padding it with zeros from the pattern of A
         B = gbeadd ('1st.int8', B, gb_expand (0, A, 'int8')) ;
+        C = gbemult (['bitshift.' atype], A, B) ;
     end
-
-    C = gbemult (['bitshift.' atype], A, B) ;
 
 else
 
@@ -72,13 +69,10 @@ else
     end
 
     switch (op)
-
         case { 'bitxor', 'bitor' }
             C = gb_eadd (A, op, B) ;
-
         case { 'bitand' }
             C = gb_emult (A, op, B) ;
-
     end
 end
 

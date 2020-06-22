@@ -78,7 +78,6 @@ codegen_axb_method ('plus', multop, add, addfunc, imult, 'uint64_t', 'uint64_t',
 codegen_axb_method ('plus', multop, add, addfunc, fmult, 'float'   , 'float'   , '0', [ ], 1, 1) ;
 codegen_axb_method ('plus', multop, add, addfunc, dmult, 'double'  , 'double'  , '0', [ ], 1, 1) ;
 % complex types not done with OpenMP atomic update:
-% (TODO NOW: could do complex atomic plus monoid, as 2 atomic operations)
 add = 'w = GB_FC32_add (w, t)' ;
 addfunc = 'GB_FC32_add (w, t)' ;
 id = 'GxB_CMPLXF(0,0)' ;

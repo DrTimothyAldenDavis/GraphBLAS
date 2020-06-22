@@ -25,6 +25,7 @@
 // See discussion on Source/GB.h on boolean and integer division
 
 #include "GB.h"
+#include "GB_binop.h"
 
 GB_Opcode GB_boolean_rename     // renamed opcode
 (

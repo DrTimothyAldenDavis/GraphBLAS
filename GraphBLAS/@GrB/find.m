@@ -69,12 +69,17 @@ elseif (nargout == 2)
     end
 else
     if (m == 1)
+        % extract indices from a row vector
         [~, I] = gbextracttuples (G) ;
         I = I' ;
+    elseif (n == 1)
+        % extract indices from a column vector
+        I = gbextracttuples (G) ;
     else
         % FUTURE: this does not return the same thing as I = find (G)
-        % in MATLAB. (need to 1D linear indexing)
-        I = gbextracttuples (G) ;
+        % in MATLAB. (need to add 1D linear indexing)
+        error ('Linear indexing not yet supported') ;
+        % I = gbextracttuples (G) ;
     end
 end
 
