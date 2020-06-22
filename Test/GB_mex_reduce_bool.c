@@ -16,7 +16,7 @@
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&A) ;               \
-    GrB_Monoid_free (&reduce) ;         \
+    GrB_Monoid_free_(&reduce) ;         \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -81,11 +81,11 @@ void mexFunction
     // create the reduce monoid
     if (has_terminal)
     {
-        info = GxB_Monoid_terminal_new_BOOL (&reduce, reduceop, identity, terminal) ;
+        info = GxB_Monoid_terminal_new_BOOL_(&reduce, reduceop, identity, terminal) ;
     }
     else
     {
-        info = GrB_Monoid_new_BOOL (&reduce, reduceop, identity) ;
+        info = GrB_Monoid_new_BOOL_(&reduce, reduceop, identity) ;
     }
 
     if (info != GrB_SUCCESS)
@@ -96,7 +96,7 @@ void mexFunction
 
     // reduce to a scalar
     bool result = false ;
-    info = GrB_Matrix_reduce_BOOL (&result, NULL, reduce, A, NULL) ;
+    info = GrB_Matrix_reduce_BOOL_(&result, NULL, reduce, A, NULL) ;
 
     if (info != GrB_SUCCESS)
     {

@@ -180,7 +180,7 @@ for k1 = 1:length(types)
 
             % with C == mask, and outp = replace
             C1 = GB_spec_apply (Cin, Cmask, [], op, A, dr) ;
-            C2 = GB_mex_apply2 (Cin,        [], op, A, dr) ;
+            C2 = GB_mex_apply_maskalias (Cin,        [], op, A, dr) ;
             test10_compare (op, C1, C2, tol) ;
 
             % no mask, transpose
@@ -213,7 +213,7 @@ for k1 = 1:length(types)
 
             % with C == mask and accum, and outp = replace
             C1 = GB_spec_apply (Cin, Cmask, 'plus', op, A, dr) ;
-            C2 = GB_mex_apply2 (Cin,        'plus', op, A, dr) ;
+            C2 = GB_mex_apply_maskalias (Cin,        'plus', op, A, dr) ;
             test10_compare (op, C1, C2, tol) ;
 
             % no mask, with accum, transpose

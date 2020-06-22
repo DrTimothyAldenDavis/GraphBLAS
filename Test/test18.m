@@ -71,6 +71,13 @@ for k1 = k1test % 1:length (types)
         end
 
         fprintf (' binary op: [ %s %s ] ', binop, type) ;
+        if (contains (type, 'single'))
+            tol = 1e-5 ;
+        elseif (contains (type, 'double'))
+            tol = 1e-12 ;
+        else
+            tol = 0 ;
+        end
 
         % try some matrices
         for m = mlist
@@ -272,13 +279,13 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, [ ], accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 w0 = GB_spec_Vector_eWiseAdd ...
                                     (w, [ ], accum, op, u, v, dnn);
                                 w1 = GB_mex_Vector_eWiseAdd ...
                                     (w, [ ], accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
+                                GB_spec_compare (w0, w1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'+B
@@ -288,7 +295,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, [ ], accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A+B'
@@ -298,7 +305,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, A, BT, dnt);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, [ ], accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'+B'
@@ -308,7 +315,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, [ ], accum, op, AT, BT, dtt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A.*B
@@ -318,13 +325,13 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, [ ], accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 w0 = GB_spec_Vector_eWiseMult ...
                                     (w, [ ], accum, op, u, v, dnn);
                                 w1 = GB_mex_Vector_eWiseMult ...
                                     (w, [ ], accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
+                                GB_spec_compare (w0, w1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'.*B
@@ -334,7 +341,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, [ ], accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A.*B'
@@ -344,7 +351,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, A, BT, dnt);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, [ ], accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'.*B'
@@ -354,7 +361,7 @@ for k1 = k1test % 1:length (types)
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, [ ], accum, op, AT, BT, dtt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %-----------------------------------------------
                                 % with mask
@@ -384,13 +391,13 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, Mask, accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 w0 = GB_spec_Vector_eWiseAdd ...
                                     (w, mask, accum, op, u, v, dnn);
                                 w1 = GB_mex_Vector_eWiseAdd ...
                                     (w, mask, accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
+                                GB_spec_compare (w0, w1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'+B, with mask
@@ -400,7 +407,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, AT, B, dtn);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, Mask, accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A+B', with mask
@@ -410,7 +417,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, A, BT, dnt);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, Mask, accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'+B', with mask
@@ -420,7 +427,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 C1 = GB_mex_Matrix_eWiseAdd ...
                                     (C, Mask, accum, op, AT, BT, dtt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A.*B, with mask
@@ -430,13 +437,13 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, Mask, accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 w0 = GB_spec_Vector_eWiseMult ...
                                     (w, mask, accum, op, u, v, dnn);
                                 w1 = GB_mex_Vector_eWiseMult ...
                                     (w, mask, accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
+                                GB_spec_compare (w0, w1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'.*B, with mask
@@ -446,7 +453,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, AT, B, dtn);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, Mask, accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A.*B', with mask
@@ -456,7 +463,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, A, BT, dnt);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, Mask, accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 %---------------------------------------
                                 % A'.*B', with mask
@@ -466,7 +473,7 @@ for k1 = k1test % 1:length (types)
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 C1 = GB_mex_Matrix_eWiseMult ...
                                     (C, Mask, accum, op, AT, BT, dtt);
-                                GB_spec_compare (C0, C1) ;
+                                GB_spec_compare (C0, C1, 0, tol) ;
 
                                 end
                                 end

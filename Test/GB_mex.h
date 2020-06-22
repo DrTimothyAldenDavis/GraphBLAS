@@ -23,6 +23,7 @@
 #include "GB_transpose.h"
 #include "GB_sort.h"
 #include "GB_apply.h"
+#include "GB_mex_generic.h"
 
 #include "graphblas_demos.h"
 

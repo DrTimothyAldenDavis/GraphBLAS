@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_assign_alias: C(I,J) = accum(C(I,J),C)
+// GB_mex_apply_maskalias: C<C> = accum(C,op(A)) or op(A')
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,15 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// Apply a unary operator to a matrix, with C aliased to the Mask
+
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_assign_alias (C, accum, I, J, desc)"
+#define USAGE "C = GB_mex_apply_maskalias (C, accum, op, A, desc)"
 
-#define FREE_ALL                            \
-{                                           \
-    GB_MATRIX_FREE (&C) ;                   \
-    GrB_Descriptor_free_(&desc) ;           \
-    GB_mx_put_global (true, 0) ;            \
+#define FREE_ALL                        \
+{                                       \
+    GB_MATRIX_FREE (&C) ;               \
+    GB_MATRIX_FREE (&A) ;               \
+    GrB_Descriptor_free_(&desc) ;       \
+    GB_mx_put_global (true, 0) ;        \
 }
 
 void mexFunction
@@ -29,21 +32,19 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix C = NULL ;
+    GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
-    GrB_Index *J = NULL, nj = 0, J_range [3] ;
-    bool ignore ;
 
     // check inputs
     GB_WHERE (USAGE) ;
-    if (nargout > 1 || nargin < 2 || nargin > 5)
+    if (nargout > 1 || nargin < 4 || nargin > 5)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
     // get C (make a deep copy)
     #define GET_DEEP_COPY \
-        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
+    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
     #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
     GET_DEEP_COPY ;
     if (C == NULL)
@@ -52,8 +53,17 @@ void mexFunction
         mexErrMsgTxt ("C failed") ;
     }
 
+    // get A (shallow copy)
+    A = GB_mx_mxArray_to_Matrix (pargin [3], "A input", false, true) ;
+    if (A == NULL)
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("A failed") ;
+    }
+
     // get accum, if present
-    bool user_complex = (Complex != GxB_FC64) && (C->type == Complex) ;
+    bool user_complex = (Complex != GxB_FC64)
+        && (C->type == Complex || A->type == Complex) ;
     GrB_BinaryOp accum ;
     if (!GB_mx_mxArray_to_BinaryOp (&accum, pargin [1], "accum",
         C->type, user_complex))
@@ -62,18 +72,13 @@ void mexFunction
         mexErrMsgTxt ("accum failed") ;
     }
 
-    // get I
-    if (!GB_mx_mxArray_to_indices (&I, PARGIN (2), &ni, I_range, &ignore))
+    // get op
+    GrB_UnaryOp op ;
+    if (!GB_mx_mxArray_to_UnaryOp (&op, pargin [2], "op",
+        A->type, user_complex) || op == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("I failed") ;
-    }
-
-    // get J
-    if (!GB_mx_mxArray_to_indices (&J, PARGIN (3), &nj, J_range, &ignore))
-    {
-        FREE_ALL ;
-        mexErrMsgTxt ("J failed") ;
+        mexErrMsgTxt ("UnaryOp failed") ;
     }
 
     // get desc
@@ -83,12 +88,17 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    GrB_Index nrows, ncols ;
-    GrB_Matrix_nvals (&nrows, C) ;
-    GrB_Matrix_nvals (&ncols, C) ;
-
-    // C(I,J) = accum (C(I,J),C)
-    METHOD (GrB_Matrix_assign_(C, NULL, accum, C, I, ni, J, nj, desc)) ;
+    // C<C> = accum(C,op(A))
+    if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT))
+    {
+        // this is just to test the Vector version
+        METHOD (GrB_Vector_apply_((GrB_Vector) C, (GrB_Vector) C, accum, op,
+            (GrB_Vector) A, desc)) ;
+    }
+    else
+    {
+        METHOD (GrB_Matrix_apply_(C, C, accum, op, A, desc)) ;
+    }
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

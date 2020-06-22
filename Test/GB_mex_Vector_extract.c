@@ -13,10 +13,10 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GrB_Vector_free (&w) ;              \
-    GrB_Vector_free (&mask) ;           \
-    GrB_Vector_free (&u) ;              \
-    GrB_Descriptor_free (&desc) ;       \
+    GrB_Vector_free_(&w) ;              \
+    GrB_Vector_free_(&mask) ;           \
+    GrB_Vector_free_(&u) ;              \
+    GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -47,7 +47,7 @@ void mexFunction
     // get w (make a deep copy)
     #define GET_DEEP_COPY \
     w = GB_mx_mxArray_to_Vector (pargin [0], "w input", true, true) ;
-    #define FREE_DEEP_COPY GrB_Vector_free (&w) ;
+    #define FREE_DEEP_COPY GrB_Vector_free_(&w) ;
     GET_DEEP_COPY ;
     if (w == NULL)
     {
@@ -97,7 +97,7 @@ void mexFunction
     }
 
     // w<mask> = accum (w,u(I))
-    METHOD (GrB_Vector_extract (w, mask, accum, u, I, ni, desc)) ;
+    METHOD (GrB_Vector_extract_(w, mask, accum, u, I, ni, desc)) ;
 
     // return w to MATLAB as a struct and free the GraphBLAS w
     pargout [0] = GB_mx_Vector_to_mxArray (&w, "w output", true) ;

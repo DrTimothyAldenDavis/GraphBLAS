@@ -69,6 +69,7 @@ logstat ;             % start the log.txt
 %----------------------------------------
 
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
+logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
 
 logstat ('test07b',t) ; % quick test GB_mex_assign
 logstat ('test01',t) ;  % error handling
@@ -95,8 +96,6 @@ logstat ('test132',t) ; % setElement
 logstat ('test92',t) ;  % GB_subref (symbolic case)
 logstat ('test97',t) ;  % GB_mex_assign, scalar expansion and zombies
 logstat ('test04',t) ;  % simple mask and transpose test
-logstat ('test05',t) ;  % quick setElement test, with typecasting
-logstat ('test05',s);   % quick setElement test, with typecasting
 logstat ('test15',t) ;  % simple test of GB_mex_AxB
 logstat ('test78',t) ;  % quick test of hypersparse subref
 logstat ('test82',t) ;  % GrB_extract with index range (hypersparse)
@@ -152,6 +151,7 @@ logstat ('test104',t) ; % export/import
 % tests taking 10 to 200 seconds
 %----------------------------------------
 
+logstat ('test154',t) ; % apply with binop and scalar binding
 logstat ('test125',t) ; % test GrB_mxm: row and column scaling
 logstat ('test74',t) ;  % test GrB_mxm on all semirings
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
@@ -202,6 +202,7 @@ if (longtests)
 % test script              % time % description
 % ------------------------ % ---- % ------------------------------
 
+logstat ('test05',t) ;     %      % quick setElement test, with typecasting
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test100',t) ;    %    5 % GB_mex_isequal
 logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings

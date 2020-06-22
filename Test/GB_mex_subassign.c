@@ -48,8 +48,8 @@
     GB_MATRIX_FREE (&C) ;               \
     if (C_is_M) M = NULL ;              \
     GB_MATRIX_FREE (&M) ;               \
-    GrB_Descriptor_free (&desc) ;       \
-    if (!user_complex) GrB_Monoid_free (&reduce) ;                \
+    GrB_Descriptor_free_(&desc) ;       \
+    if (!user_complex) GrB_Monoid_free_(&reduce) ;                \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -266,7 +266,7 @@ GrB_Info assign (GB_Context Context)
     {
         // test GxB_Vector_subassign
         if (ph) printf ("vector assign\n") ;
-        OK (GxB_Vector_subassign ((GrB_Vector) C, (GrB_Vector) M, accum,
+        OK (GxB_Vector_subassign_((GrB_Vector) C, (GrB_Vector) M, accum,
             (GrB_Vector) A, I, ni, desc)) ;
     }
     else if (GB_VECTOR_OK (A) && nj == 1 &&
@@ -274,7 +274,7 @@ GrB_Info assign (GB_Context Context)
     {
         // test GxB_Col_subassign
         if (ph) printf ("col assign\n") ;
-        OK (GxB_Col_subassign (C, (GrB_Vector) M, accum, (GrB_Vector) A,
+        OK (GxB_Col_subassign_(C, (GrB_Vector) M, accum, (GrB_Vector) A,
             I, ni, J [0], desc)) ;
     }
     else if (A->vlen == 1 && ni == 1 &&
@@ -285,13 +285,16 @@ GrB_Info assign (GB_Context Context)
         if (ph) printf ("row assign\n") ;
         if (M != NULL)
         {
-            OK (GB_transpose_bucket (&mask, GrB_BOOL, true, M, NULL,
+            OK (GB_transpose_bucket (&mask, GrB_BOOL, true, M,
+                NULL, NULL, NULL, false,
                 Context)) ;
             ASSERT (GB_VECTOR_OK (mask)) ;
         }
-        OK (GB_transpose_bucket (&u, A->type, true, A, NULL, Context)) ;
+        OK (GB_transpose_bucket (&u, A->type, true, A,
+            NULL, NULL, NULL, false,
+            Context)) ;
         ASSERT (GB_VECTOR_OK (u)) ;
-        OK (GxB_Row_subassign (C, (GrB_Vector) mask, accum, (GrB_Vector) u,
+        OK (GxB_Row_subassign_(C, (GrB_Vector) mask, accum, (GrB_Vector) u,
             I [0], J, nj, desc)) ;
         GB_MATRIX_FREE (&mask) ;
         GB_MATRIX_FREE (&u) ;
@@ -300,7 +303,7 @@ GrB_Info assign (GB_Context Context)
     {
         // standard submatrix assignment
         if (ph) printf ("submatrix assign\n") ;
-        OK (GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
+        OK (GxB_Matrix_subassign_(C, M, accum, A, I, ni, J, nj, desc)) ;
     }
 
     ASSERT_MATRIX_OK (C, "C after assign", pr) ;
@@ -421,7 +424,7 @@ GrB_Info many_subassign
 
         GB_MATRIX_FREE (&A) ;
         GB_MATRIX_FREE (&M) ;
-        GrB_Descriptor_free (&desc) ;
+        GrB_Descriptor_free_(&desc) ;
 
         if (info != GrB_SUCCESS)
         {
@@ -429,7 +432,7 @@ GrB_Info many_subassign
         }
     }
 
-    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
     return (info) ;
 }
 
@@ -666,7 +669,7 @@ void mexFunction
                     {
                         // user-defined Complex type
                         GxB_FC64_t c = GxB_CMPLX (0,0) ;
-                        GrB_Matrix_reduce_UDT ((void *) &c, NULL, reduce,
+                        GrB_Matrix_reduce_UDT_((void *) &c, NULL, reduce,
                             C, NULL) ;
                         memcpy (p, &c, sizeof (GxB_FC64_t)) ;
                     }
@@ -677,7 +680,7 @@ void mexFunction
                     mexErrMsgTxt ("unknown type: subassign reduce") ;
             }
 
-            GrB_Matrix_reduce_FP64 (&d, NULL, GxB_PLUS_FP64_MONOID, C, NULL) ;
+            GrB_Matrix_reduce_FP64_(&d, NULL, GxB_PLUS_FP64_MONOID, C, NULL) ;
             if (nargout > 2) pargout [2] = mxCreateDoubleScalar (d) ;
 
         }
@@ -688,7 +691,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    GrB_Matrix_wait (&C) ;
+    GrB_Matrix_wait_(&C) ;
 
     if (C == A) A = NULL ;      // do not free A if it is aliased to C
     if (C == M) M = NULL ;      // do not free M if it is aliased to C

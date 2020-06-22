@@ -16,7 +16,7 @@
     GB_MATRIX_FREE (&A) ;           \
     GB_MATRIX_FREE (&B) ;           \
     GB_MATRIX_FREE (&C) ;           \
-    GrB_Descriptor_free (&desc) ;   \
+    GrB_Descriptor_free_(&desc) ;   \
     GB_MATRIX_FREE (&Mask) ;        \
     GB_mx_put_global (true, 0) ;    \
 }
@@ -109,7 +109,7 @@ void mexFunction
     }
 
     // C<Mask> = accum(C,A.*B)
-    METHOD (GrB_Matrix_eWiseMult_BinaryOp (C, Mask, accum, mult, A, B, desc)) ;
+    METHOD (GrB_Matrix_eWiseMult_BinaryOp_(C, Mask, accum, mult, A, B, desc)) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

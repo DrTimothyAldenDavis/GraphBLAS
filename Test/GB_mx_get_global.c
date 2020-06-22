@@ -70,8 +70,8 @@ bool GB_mx_get_global       // true if doing malloc_debug
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
-    GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL) ;
-    GxB_Global_Option_set (GxB_BURBLE, burble) ;        // restore the burble
+    GxB_Global_Option_set_(GxB_FORMAT, GxB_BY_COL) ;
+    GxB_Global_Option_set_(GxB_BURBLE, burble) ;        // restore the burble
     GB_printf_function = mexPrintf ;
 
     //--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
         if (nthreads == NULL) mexErrMsgTxt ("nthreads_matlab null!") ;
     }
 
-    GxB_Global_Option_set (GxB_NTHREADS, nthreads [0]) ;
+    GxB_Global_Option_set_(GxB_NTHREADS, nthreads [0]) ;
 
     //--------------------------------------------------------------------------
     // get chunk
@@ -122,7 +122,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
         if (chunk == NULL) mexErrMsgTxt ("chunk_matlab null!") ;
     }
 
-    GxB_Global_Option_set (GxB_CHUNK, chunk [0]) ;
+    GxB_Global_Option_set_(GxB_CHUNK, chunk [0]) ;
 
     //--------------------------------------------------------------------------
     // get GraphBLAS_complex flag and allocate the complex type and operators

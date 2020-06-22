@@ -18,11 +18,11 @@
     {                                               \
         if (semiring != NULL)                       \
         {                                           \
-            GrB_Monoid_free (&(semiring->add)) ;    \
+            GrB_Monoid_free_(&(semiring->add)) ;    \
         }                                           \
-        GrB_Semiring_free (&semiring) ;             \
+        GrB_Semiring_free_(&semiring) ;             \
     }                                               \
-    GrB_Descriptor_free (&desc) ;                   \
+    GrB_Descriptor_free_(&desc) ;                   \
     GB_mx_put_global (true, AxB_method_used) ;      \
 }
 

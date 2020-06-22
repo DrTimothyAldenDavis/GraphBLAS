@@ -13,19 +13,19 @@
 
 #define FREE_ALL                                    \
 {                                                   \
-    GrB_Vector_free (&w) ;                          \
-    GrB_Vector_free (&u) ;                          \
+    GrB_Vector_free_(&w) ;                          \
+    GrB_Vector_free_(&u) ;                          \
     GB_MATRIX_FREE (&A) ;                           \
-    GrB_Vector_free (&mask) ;                       \
+    GrB_Vector_free_(&mask) ;                       \
     if (semiring != Complex_plus_times)             \
     {                                               \
         if (semiring != NULL)                       \
         {                                           \
-            GrB_Monoid_free (&(semiring->add)) ;    \
+            GrB_Monoid_free_(&(semiring->add)) ;    \
         }                                           \
-        GrB_Semiring_free (&semiring) ;             \
+        GrB_Semiring_free_(&semiring) ;             \
     }                                               \
-    GrB_Descriptor_free (&desc) ;                   \
+    GrB_Descriptor_free_(&desc) ;                   \
     GB_mx_put_global (true, AxB_method_used) ;      \
 }
 
@@ -57,7 +57,7 @@ void mexFunction
     // get w' (make a deep copy)
     #define GET_DEEP_COPY \
     w = GB_mx_mxArray_to_Vector (pargin [0], "w input", true, true) ;
-    #define FREE_DEEP_COPY GrB_Vector_free (&w) ;
+    #define FREE_DEEP_COPY GrB_Vector_free_(&w) ;
     GET_DEEP_COPY ;
     if (w == NULL)
     {

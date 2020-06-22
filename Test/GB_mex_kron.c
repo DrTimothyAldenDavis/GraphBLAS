@@ -16,7 +16,7 @@
     GB_MATRIX_FREE (&A) ;           \
     GB_MATRIX_FREE (&B) ;           \
     GB_MATRIX_FREE (&C) ;           \
-    GrB_Descriptor_free (&desc) ;   \
+    GrB_Descriptor_free_(&desc) ;   \
     GB_MATRIX_FREE (&Mask) ;        \
     GB_mx_put_global (true, 0) ;    \
 }
@@ -113,13 +113,13 @@ void mexFunction
     if (mult == GrB_PLUS_FP64)
     {
         // C<Mask> = accum(C,kron(A,B)), monoid variant
-        METHOD (GrB_kronecker (C, Mask, accum, GrB_PLUS_MONOID_FP64,
+        METHOD (GrB_Matrix_kronecker_Monoid_ (C, Mask, accum, GrB_PLUS_MONOID_FP64,
             A, B, desc)) ;
     }
     else if (mult == GrB_TIMES_FP64)
     {
         // C<Mask> = accum(C,kron(A,B)), semiring variant
-        METHOD (GrB_kronecker (C, Mask, accum, GrB_PLUS_TIMES_SEMIRING_FP64,
+        METHOD (GrB_Matrix_kronecker_Semiring_ (C, Mask, accum, GrB_PLUS_TIMES_SEMIRING_FP64,
             A, B, desc)) ;
     }
     else if (mult == GrB_TIMES_FP32)
@@ -130,7 +130,7 @@ void mexFunction
     else
     {
         // C<Mask> = accum(C,kron(A,B)), binary op variant (new name)
-        METHOD (GrB_kronecker (C, Mask, accum, mult, A, B, desc)) ;
+        METHOD (GrB_Matrix_kronecker_BinaryOp_ (C, Mask, accum, mult, A, B, desc)) ;
     }
 
     // return C to MATLAB as a struct and free the GraphBLAS C

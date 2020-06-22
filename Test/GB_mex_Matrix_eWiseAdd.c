@@ -17,7 +17,7 @@
     GB_MATRIX_FREE (&A) ;               \
     GB_MATRIX_FREE (&B) ;               \
     GB_MATRIX_FREE (&C) ;               \
-    GrB_Descriptor_free (&desc) ;       \
+    GrB_Descriptor_free_(&desc) ;       \
     GB_MATRIX_FREE (&M) ;               \
     GB_mx_put_global (true, 0) ;        \
 }
@@ -127,7 +127,7 @@ void mexFunction
     // GxB_print (add, 3) ;
 
     // C<M> = accum(C,A+B)
-    METHOD (GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)) ;
+    METHOD (GrB_Matrix_eWiseAdd_BinaryOp_(C, M, accum, add, A, B, desc)) ;
 
     // printf ("result: \n") ; GxB_print (C, 3) ;
 

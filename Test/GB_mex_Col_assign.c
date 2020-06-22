@@ -26,7 +26,7 @@
     GB_MATRIX_FREE (&A) ;               \
     GB_MATRIX_FREE (&Mask) ;            \
     GB_MATRIX_FREE (&C) ;               \
-    GrB_Descriptor_free (&desc) ;       \
+    GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -213,17 +213,17 @@ GrB_Info assign ( )
         (Mask == NULL || Mask->vdim == 1) && !at)
     {
         // test GrB_Vector_assign
-        OK (GrB_Vector_assign ((GrB_Vector) C, (GrB_Vector) Mask, accum,
+        OK (GrB_Vector_assign_((GrB_Vector) C, (GrB_Vector) Mask, accum,
             (GrB_Vector) A, I, ni, desc)) ;
     }
     else
     {
         // standard submatrix assignment
-        OK (GrB_Matrix_assign (C, Mask, accum, A, I, ni, J, nj, desc)) ;
+        OK (GrB_Matrix_assign_(C, Mask, accum, A, I, ni, J, nj, desc)) ;
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
     return (info) ;
 }
 
@@ -340,7 +340,7 @@ GrB_Info many_assign
 
         GB_MATRIX_FREE (&A) ;
         GB_MATRIX_FREE (&Mask) ;
-        GrB_Descriptor_free (&desc) ;
+        GrB_Descriptor_free_(&desc) ;
 
         if (info != GrB_SUCCESS)
         {
@@ -349,7 +349,7 @@ GrB_Info many_assign
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
     return (info) ;
 }
 

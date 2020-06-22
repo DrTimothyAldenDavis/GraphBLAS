@@ -54,7 +54,8 @@ binops.alltypes = {
 'isne',      % z = (x != y)
 'eq',        % z = (x == y)
 'ne',        % z = (x != y)
-'pow'}' ;    % z = x.^y
+'pow',       % z = x.^y
+'any'}' ;    % z = any(x,y)
 
 % binary operators for 11 types (all but complex)
 binops.real = {

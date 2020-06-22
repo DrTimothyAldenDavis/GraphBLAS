@@ -18,7 +18,7 @@
     GB_MATRIX_FREE (&A) ;               \
     if (reduce_monoid_allocated)        \
     {                                   \
-        GrB_Monoid_free (&reduce) ;     \
+        GrB_Monoid_free_(&reduce) ;     \
     }                                   \
     GB_mx_put_global (true, 0) ;        \
 }

@@ -16,7 +16,7 @@
 #define FREE_ALL                            \
 {                                           \
     GB_MATRIX_FREE (&A) ;                   \
-    GrB_Monoid_free (&Times_terminal) ;     \
+    GrB_Monoid_free_(&Times_terminal) ;     \
     GB_mx_put_global (true, 0) ;            \
 }
 
@@ -91,7 +91,7 @@ void mexFunction
     // reduce to a scalar
     if (Complex == GxB_FC64)
     {
-        info = GxB_Matrix_reduce_FC64 (c, NULL, Times_terminal, A, NULL) ;
+        info = GxB_Matrix_reduce_FC64_(c, NULL, Times_terminal, A, NULL) ;
     }
     else
     {

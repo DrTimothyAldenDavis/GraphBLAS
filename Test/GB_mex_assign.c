@@ -29,7 +29,7 @@
     GB_MATRIX_FREE (&A) ;               \
     GB_MATRIX_FREE (&Mask) ;            \
     GB_MATRIX_FREE (&C) ;               \
-    GrB_Descriptor_free (&desc) ;       \
+    GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -130,7 +130,7 @@ GrB_Info assign ( )
         // test GrB_Col_assign
         ASSERT (GB_VECTOR_OK (A)) ;
         ASSERT (Mask == NULL || GB_VECTOR_OK (Mask)) ;
-        OK (GrB_Col_assign (C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
+        OK (GrB_Col_assign_(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
             I, ni, J [0], desc)) ;
     }
     else if (kind == 2)
@@ -141,7 +141,7 @@ GrB_Info assign ( )
         ASSERT_VECTOR_OK_OR_NULL ((GrB_Vector) Mask, "row mask", GB0) ;
         ASSERT_VECTOR_OK ((GrB_Vector) A, "row u", GB0) ;
 
-        OK (GrB_Row_assign (C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
+        OK (GrB_Row_assign_(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
             I [0], J, nj, desc)) ;
     }
     else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
@@ -269,17 +269,17 @@ GrB_Info assign ( )
         (Mask == NULL || GB_VECTOR_OK (Mask)) && !at)
     {
         // test GrB_Vector_assign
-        OK (GrB_Vector_assign ((GrB_Vector) C, (GrB_Vector) Mask, accum,
+        OK (GrB_Vector_assign_((GrB_Vector) C, (GrB_Vector) Mask, accum,
             (GrB_Vector) A, I, ni, desc)) ;
     }
     else
     {
         // standard submatrix assignment
-        OK (GrB_Matrix_assign (C, Mask, accum, A, I, ni, J, nj, desc)) ;
+        OK (GrB_Matrix_assign_(C, Mask, accum, A, I, ni, J, nj, desc)) ;
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
     return (info) ;
 }
 
@@ -409,7 +409,7 @@ GrB_Info many_assign
 
         GB_MATRIX_FREE (&A) ;
         GB_MATRIX_FREE (&Mask) ;
-        GrB_Descriptor_free (&desc) ;
+        GrB_Descriptor_free_(&desc) ;
 
         if (info != GrB_SUCCESS)
         {
@@ -418,7 +418,7 @@ GrB_Info many_assign
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
-    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
     return (info) ;
 }
 

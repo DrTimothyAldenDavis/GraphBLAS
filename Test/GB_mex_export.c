@@ -312,7 +312,9 @@ void mexFunction
         if (!is_csc)                                                        \
         {                                                                   \
             /* convert C to CSR */                                          \
-            GB_transpose (NULL, NULL, false, C, NULL, NULL) ;               \
+            GB_transpose (NULL, NULL, false, C,                             \
+                NULL, NULL, NULL, false,                                    \
+                NULL) ;                                                     \
         }                                                                   \
         if (is_hyper)                                                       \
         {                                                                   \

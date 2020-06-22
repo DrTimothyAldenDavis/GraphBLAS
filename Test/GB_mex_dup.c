@@ -15,9 +15,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GrB_Matrix_free (&A) ;              \
-    GrB_Matrix_free (&C) ;              \
-    GrB_Descriptor_free (&desc) ;       \
+    GrB_Matrix_free_(&A) ;              \
+    GrB_Matrix_free_(&C) ;              \
+    GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -89,8 +89,8 @@ void mexFunction
             }
             #define FREE_DEEP_COPY                              \
             {                                                   \
-                GrB_Matrix_free (&C) ;                          \
-                GrB_Descriptor_free (&desc) ;                   \
+                GrB_Matrix_free_(&C) ;                          \
+                GrB_Descriptor_free_(&desc) ;                   \
             }
 
             GET_DEEP_COPY ;
@@ -122,8 +122,8 @@ void mexFunction
         }
         #define FREE_DEEP_COPY                              \
         {                                                   \
-            GrB_Matrix_free (&C) ;                          \
-            GrB_Descriptor_free (&desc) ;                   \
+            GrB_Matrix_free_(&C) ;                          \
+            GrB_Descriptor_free_(&desc) ;                   \
         }
 
         GET_DEEP_COPY ;
