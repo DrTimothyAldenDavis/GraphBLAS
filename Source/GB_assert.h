@@ -85,8 +85,7 @@
 }
 #endif
 
-#define GB_HERE GBDUMP ("%2d: Here: " __FILE__ " line: %d\n",       \
-    GB_OPENMP_THREAD_ID, __LINE__) ;
+#define GB_HERE GBDUMP ("%2d: Here: " __FILE__ " line: %d\n", __LINE__) ;
 
 // ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
 // prior versions of SuiteSparse:GraphBLAS but no longer used in the current

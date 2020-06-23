@@ -105,10 +105,10 @@ void GB_cumsum                      // cumulative sum of an array
                 return ;
             }
 
-            #pragma omp parallel num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
             {
-                // each thread sums up its own part
-                int tid = GB_OPENMP_THREAD_ID ;
+                // each task sums up its own part
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, n, tid, nthreads) ;
                 int64_t s = 0 ;
@@ -117,11 +117,15 @@ void GB_cumsum                      // cumulative sum of an array
                     s += count [i] ;
                 }
                 ws [tid] = s ;
+            }
 
-                #pragma omp barrier
-
-                // each thread computes the cumsum of its own part
-                s = 0 ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                // each tasks computes the cumsum of its own part
+                int64_t istart, iend ;
+                GB_PARTITION (istart, iend, n, tid, nthreads) ;
+                int64_t s = 0 ;
                 for (int i = 0 ; i < tid ; i++)
                 { 
                     s += ws [i] ;
@@ -195,10 +199,10 @@ void GB_cumsum                      // cumulative sum of an array
             }
             int64_t *wk = ws + nthreads ;
 
-            #pragma omp parallel num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
             {
-                // each thread sums up its own part
-                int tid = GB_OPENMP_THREAD_ID ;
+                // each task sums up its own part
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, n, tid, nthreads) ;
                 int64_t k = 0 ;
@@ -211,11 +215,15 @@ void GB_cumsum                      // cumulative sum of an array
                 }
                 ws [tid] = s ;
                 wk [tid] = k ;
+            }
 
-                #pragma omp barrier
-
-                // each thread computes the cumsum of its own part
-                s = 0 ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                // each task computes the cumsum of its own part
+                int64_t istart, iend ;
+                GB_PARTITION (istart, iend, n, tid, nthreads) ;
+                int64_t s = 0 ;
                 for (int i = 0 ; i < tid ; i++)
                 { 
                     s += ws [i] ;

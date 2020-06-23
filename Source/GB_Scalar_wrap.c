@@ -28,7 +28,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     //--------------------------------------------------------------------------
 
     ASSERT (s != NULL) ;
-    ASSERT ((*s) != NULL) ;
 
     //--------------------------------------------------------------------------
     // create the GxB_Scalar

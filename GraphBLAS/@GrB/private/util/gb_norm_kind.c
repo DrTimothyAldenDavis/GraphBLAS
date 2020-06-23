@@ -31,7 +31,7 @@ int64_t gb_norm_kind (const mxArray *arg)
             ERROR ("unknown norm") ;
         }
     }
-    else if (mxIsScalar (arg))
+    else
     {
         double x = mxGetScalar (arg) ;
         if (x == INFINITY)
@@ -50,11 +50,6 @@ int64_t gb_norm_kind (const mxArray *arg)
         { 
             ERROR ("unknown norm") ;
         }
-    }
-    else
-    { 
-        // arg must be a scalar
-        ERROR ("unknown norm") ;
     }
 }
 
