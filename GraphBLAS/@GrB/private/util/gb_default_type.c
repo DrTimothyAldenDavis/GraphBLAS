@@ -23,7 +23,7 @@ GrB_Type gb_default_type        // return the default type to use
 {
 
     if (atype == NULL || btype == NULL)
-    { 
+    {
 
         // undefined type
         return (NULL) ;

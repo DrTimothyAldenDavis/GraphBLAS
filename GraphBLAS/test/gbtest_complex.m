@@ -1,4 +1,4 @@
-function [complex_binaryops complex_unaryops ] = gbtest_complex
+function [complex_binaryops, complex_unaryops ] = gbtest_complex
 %GBTEST_COMPLEX return list of complex operators
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights

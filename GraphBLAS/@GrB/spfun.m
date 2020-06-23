@@ -49,7 +49,7 @@ if (ischar (fun))
     try
         C = GrB (gbapply (fun, G)) ;
         return ;
-    catch me
+    catch me %#ok<NASGU>
         % gbapply failed; fall through to feval below
     end
 end

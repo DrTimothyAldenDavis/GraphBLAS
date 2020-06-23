@@ -61,7 +61,7 @@ A (M) = B (M) ;
 G (M) = H (M) ;
 assert (isequal (A, G)) ;
 
-A = sprand (4, 4, 0.5)
+A = sprand (4, 4, 0.5) %#ok<*NOPRT>
 C1 = pi * spones (A)
 C2 = GrB.expand (pi, A)
 assert (isequal (C1, C2)) ;

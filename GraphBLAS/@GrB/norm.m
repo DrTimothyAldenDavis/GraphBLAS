@@ -25,7 +25,7 @@ function s = norm (G, kind)
 
 % FUTURE: add the p-norm for vectors.
 
-if (isobject (G)) ;
+if (isobject (G))
     G = G.opaque ;
 end
 

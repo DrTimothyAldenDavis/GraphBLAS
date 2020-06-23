@@ -198,8 +198,7 @@ fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n') ;
 here1 = cd ('../..') ;
 addpath (pwd) ;
-cmd1 = fprintf ('\n  addpath (''%s'') ;\n', pwd) ;
-here2 = cd ('..') ;
+cd ('..') ;
 if ispc
     lib_path = sprintf ('%s/build/Release', pwd) ;
 else

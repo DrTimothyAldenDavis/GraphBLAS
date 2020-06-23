@@ -47,7 +47,7 @@ types = {
 % bitset (a,b,V) where a and b are scalars
 V = magic (4) .* mod (magic (4), 2) ;
 G = GrB (V) ;
-for k = 1:length (types) ;
+for k = 1:length (types)
     type = types {k} ;
     fprintf ('%s ', type) ;
     for a = 0:8

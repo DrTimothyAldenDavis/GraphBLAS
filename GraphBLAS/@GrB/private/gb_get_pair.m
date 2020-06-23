@@ -8,7 +8,9 @@ if (isobject (A))
     A = A.opaque ;
 end
 
-A = gbfull (A) ;
+type = gbtype (A) ;
+desc.kind = 'full' ;
+A = gbfull (A, type, 0, desc) ;
 x = A (1) ;
 y = A (2) ;
 

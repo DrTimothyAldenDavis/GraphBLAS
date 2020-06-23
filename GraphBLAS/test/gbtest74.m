@@ -7,13 +7,13 @@ function gbtest74
 fprintf ('gbtest74: test bitwise operators\n') ;
 
 int_types = {
-'int8',
-'int16',
-'int32',
-'int64',
-'uint8',
-'uint16',
-'uint32',
+'int8'
+'int16'
+'int32'
+'int64'
+'uint8'
+'uint16'
+'uint32'
 'uint64' } ;
 
 int_nbits = [ 8, 16, 32, 64, 8, 16, 32, 64 ] ;

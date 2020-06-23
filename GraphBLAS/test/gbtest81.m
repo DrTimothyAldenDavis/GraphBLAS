@@ -1,5 +1,5 @@
 function gbtest81
-%TEST81 test complex operators
+%GBTEST81 test complex operators
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -17,7 +17,7 @@ rng ('default')
 
 A = sparse (rand (2) + 1i * rand (2))  ;
 
-C = GrB (A)
+C = GrB (A)    %#ok<NOPRT,NASGU>
 
 B = sparse (rand (2) + 1i * rand (2))  ;
 
@@ -36,7 +36,7 @@ C1 = complex (GrB (E), GrB (F)) ;
 C2 = complex (E,F) ;
 assert (isequal (C1,C2)) ;
 
-[complex_binary complex_unary] = gbtest_complex ;
+[complex_binary, complex_unary] = gbtest_complex ;
 
 A (2,1) = B (2,1) ;
 
@@ -60,7 +60,7 @@ for m = [1 5 10 ]
                     A = complex (x,y) ;
                 case 5
                     A = complex (rand (m,n), rand (m,n)) ;
-                end
+            end
 
             % test unary ops with complex x
             for k = 1:length (complex_unary)
@@ -102,7 +102,7 @@ for m = [1 5 10 ]
                         B = complex (rand (m,n), rand (m,n)) ;
                     case 6
                         B = A ;
-                    end
+                end
 
                 % test all but the last one, 'cmplex', which requires
                 % x,y real
@@ -159,4 +159,5 @@ for m = [1 5 10 ]
 end
 
 fprintf ('\ngbtest81: all tests passed\n') ;
+
 

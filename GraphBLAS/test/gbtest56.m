@@ -34,7 +34,7 @@ assert (isequal (C0, C1)) ;
 assert (isequal (C0, C2)) ;
 assert (isequal (C0, C3)) ;
 
-assert (length (C0) == 0) ;
+assert (length (C0) == 0) ; %#ok<*ISMT>
 assert (length (C1) == 0) ;
 assert (length (C2) == 0) ;
 assert (length (C3) == 0) ;

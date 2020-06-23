@@ -30,7 +30,6 @@ double gb_norm              // compute norm (A,kind)
     OK (GxB_Matrix_type (&atype, A)) ;
 
     GrB_UnaryOp absop ;
-    GrB_BinaryOp powerop ;
     GrB_Monoid sumop, maxop, minop ;
     GrB_Vector t = NULL ;
     GrB_Matrix X = NULL ;
@@ -44,7 +43,6 @@ double gb_norm              // compute norm (A,kind)
         sumop = GrB_PLUS_MONOID_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
-        powerop = GxB_POW_FP32 ;
     }
     else if (atype == GxB_FC32)
     { 
@@ -55,7 +53,6 @@ double gb_norm              // compute norm (A,kind)
         sumop = GrB_PLUS_MONOID_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
-        powerop = GxB_POW_FP32 ;
     }
     else if (atype == GxB_FC64)
     { 
@@ -66,7 +63,6 @@ double gb_norm              // compute norm (A,kind)
         sumop = GrB_PLUS_MONOID_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;
-        powerop = GxB_POW_FP64 ;
     }
     else
     { 
@@ -77,7 +73,6 @@ double gb_norm              // compute norm (A,kind)
         sumop = GrB_PLUS_MONOID_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;
-        powerop = GxB_POW_FP64 ;
     }
 
     OK (GrB_Matrix_new (&X, xtype, nrows, ncols)) ;
@@ -109,27 +104,19 @@ double gb_norm              // compute norm (A,kind)
                     if (atype == GxB_FC32)
                     {
                         OK (GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL, NULL,
-                            powerop, X, (float) 2.0, NULL)) ;
+                            GxB_POW_FP32, X, (float) 2.0, NULL)) ;
                     }
                     else
                     {
                         OK (GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
-                            powerop, X, (double) 2.0, NULL)) ;
+                            GxB_POW_FP64, X, (double) 2.0, NULL)) ;
                     }
                 }
                 else
                 { 
                     // X = A.^2
-                    if (atype == GxB_FC32)
-                    {
-                        OK (GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL, NULL,
-                            powerop, A, (float) 2.0, NULL)) ;
-                    }
-                    else
-                    {
-                        OK (GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
-                            powerop, A, (double) 2.0, NULL)) ;
-                    }
+                    OK (GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
+                        GxB_POW_FP64, A, (double) 2.0, NULL)) ;
                 }
                 // s = sum (X)
                 OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;

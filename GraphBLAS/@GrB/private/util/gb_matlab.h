@@ -137,11 +137,6 @@ GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
     const mxArray *X
 ) ;
 
-int gb_mxarray_typecode        // return the GB_Type_code of a MATLAB matrix
-(
-    const mxArray *X
-) ;
-
 GrB_Type gb_mxstring_to_type    // return the GrB_Type from a MATLAB string
 (
     const mxArray *S        // MATLAB mxArray containing a string
@@ -196,11 +191,6 @@ void gb_find_dot            // find 1st and 2nd dot ('.') in a string
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
 (
     const char *classname
-) ;
-
-int gb_string_to_typecode       // return the GB_Type_code from a string
-(
-    const char *typename
 ) ;
 
 GrB_UnaryOp gb_mxstring_to_unop         // return unary operator from a string

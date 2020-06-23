@@ -15,10 +15,10 @@ I = GrB (int64 (magic (4))) ;
 R = rand (3,4) ;
 
 try
-    C = gammaln (Z)
+    C = gammaln (Z) %#ok<*NASGU>
     ok = false ;
 catch expected_error
-    expected_error
+    expected_error %#ok<*NOPRT>
     disp (expected_error.stack (end-1))
 end
 assert (ok) ;
@@ -476,4 +476,17 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    norm (G, 3)
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
 fprintf ('gbtest77: all tests passed\n') ;
+

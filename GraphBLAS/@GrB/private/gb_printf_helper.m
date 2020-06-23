@@ -10,7 +10,8 @@ for k = 2:len
     arg = varargin {k} ;
     if (isobject (arg))
         arg = arg.opaque ;
-        varargin {k} = gbfull (arg) ;
+        desc.kind = 'full' ;
+        varargin {k} = gbfull (arg, gbtype (arg), 0, desc) ;
     end
 end
 

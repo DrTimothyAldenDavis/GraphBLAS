@@ -14,5 +14,6 @@ function C = int64 (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-C = gbfull (G, 'int64') ;
+desc.kind = 'full' ;
+C = gbfull (G, 'int64', int64 (0), desc) ;
 

@@ -65,7 +65,7 @@ else
 
     end
 
-    if (length (I) == 0)
+    if (isempty (I))
         % A does not have a kth diagonal, or diag (A,k) has no entries
         C = gbnew (m, 1, atype) ;
     else

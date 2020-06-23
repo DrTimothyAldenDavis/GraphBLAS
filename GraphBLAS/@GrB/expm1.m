@@ -8,7 +8,6 @@ function C = expm1 (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-type = gbtype (G) ;
 
 if (~gb_isfloat (gbtype (G)))
     op = 'expm1.double' ;

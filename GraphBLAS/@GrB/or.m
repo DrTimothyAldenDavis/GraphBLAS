@@ -16,11 +16,10 @@ if (isobject (B))
     B = B.opaque ;
 end
 
-[am, an, atype] = gbsize (A) ;
-[bm, bn, btype] = gbsize (B) ;
+[am, an, ~] = gbsize (A) ;
+[bm, bn, ~] = gbsize (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)

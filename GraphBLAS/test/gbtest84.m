@@ -34,7 +34,6 @@ Aij   = GrB.random (4, 3, 0.5) ;
 
 V     = GrB.random (9, 1, 0.7) ;
 W     = GrB.random (9, 1, 0.7, 'range', logical ([false true])) ;
-U     = GrB.random (9, 1, 0.7) ;
 
 Ui    = GrB.random (4, 1, 0.7) ;
 
@@ -48,7 +47,6 @@ aij = double (Aij) ;
 
 v = double (V) ;
 w = logical (W) ;
-u = double (U) ;
 
 ui  = double (Ui) ;
 
@@ -162,7 +160,7 @@ V1 = GrB.assign (I, v, ui, desc) ; assert (isequal (V1, V2)) ;
 
 % V<W>(I) = Ui
 
-S = V (i) ;
+% S = V (i) ;
 % with accum
 % S = S + Ui ;
 % with no accum:
@@ -175,7 +173,7 @@ V2 (W) = Z (W) ;
 % with no mask:
 % V2 = Z ;
 
-s = v (i) ;
+% s = v (i) ;
 s = ui ;
 z = v ;
 z (i) = s ;
@@ -331,7 +329,7 @@ V1 = GrB.assign (I, accum, v, w, ui, desc) ; assert (isequal (V1, V2)) ;
 
 % C<M>(I,J) = accum (C(I,J), Aij)
 
-S = C (i,j) ;
+% S = C (i,j) ;
 % with accum:
 % S = S + Aij ;
 % with no accum:
@@ -344,7 +342,7 @@ Z (i,j) = S ;
 % with no mask:
 C2 = Z ;
 
-s = c (i,j) ;
+% s = c (i,j) ;
 s = aij ;
 z = c ;
 z (i,j) = s ;
@@ -374,7 +372,7 @@ C1 = GrB.assign (I, c, aij, J, desc) ; assert (isequal (C1, C2)) ;
 
 % C<M>(I,J) = accum (C(I,J), Aij)
 
-S = C (i,j) ;
+% S = C (i,j) ;
 % with accum:
 % S = S + Aij ;
 % with no accum:
@@ -387,7 +385,7 @@ C2 (M) = Z (M) ;
 % with no mask:
 % C2 = Z ;
 
-s = c (i,j) ;
+% s = c (i,j) ;
 s = aij ;
 z = c ;
 z (i,j) = s ;

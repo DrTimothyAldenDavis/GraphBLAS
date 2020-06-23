@@ -22,6 +22,8 @@ for k1 = 1:length(types)
         A_notnan = zeros (4, 4) ;
         A_notnan (~isnan (A)) = A (~isnan (A)) ;
 
+        A = gbtest_cast (A, atype) ;
+
         for k2 = 1:length(types)
             xtype = types {k2} ;
             xnan = gbtest_cast (nan, xtype) ;

@@ -58,7 +58,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 22, 2020 (v3.3.0-draft9)" )
+set ( GraphBLAS_DATE "June 23, 2020 (v3.3.0-draft10)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -101,8 +101,8 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
-# set ( GB_BURBLE true )
-  set ( GB_BURBLE false )
+set ( GB_BURBLE true )
+#  set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )

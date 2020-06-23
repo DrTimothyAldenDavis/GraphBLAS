@@ -37,7 +37,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     mxArray *F ;
     void *X = (*X_handle) ;
     if (X == NULL)
-    { 
+    {
         // A GrB_Matrix C has a null C->x array, if C has no entries.  Since
         // C has already been expanded to a full matrix, C->x can be NULL
         // only if nrows or ncols is zero.

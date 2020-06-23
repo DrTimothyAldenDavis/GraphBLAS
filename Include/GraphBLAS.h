@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 22, 2020 (v3.3.0-draft9)"
+#define GxB_IMPLEMENTATION_DATE "June 23, 2020 (v3.3.0-draft10)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -448,8 +448,8 @@ GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
 // compile-time access to the C API Version number of this library.
-#define GrB_VERSION     GxB_SPEC_MAJOR
-#define GrB_SUBVERSION  GxB_SPEC_MINOR
+#define GRB_VERSION     GxB_SPEC_MAJOR
+#define GRB_SUBVERSION  GxB_SPEC_MINOR
 
 // If the user program was compiled with one version of the library but linked
 // with a different one later on, the compile-time version check would be
@@ -457,8 +457,8 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 GB_PUBLIC
 GrB_Info GrB_getVersion         // runtime access to C API version number
 (
-    unsigned int *version,      // returns GrB_VERSION
-    unsigned int *subversion    // returns GrB_SUBVERSION
+    unsigned int *version,      // returns GRB_VERSION
+    unsigned int *subversion    // returns GRB_SUBVERSION
 ) ;
 
 //==============================================================================

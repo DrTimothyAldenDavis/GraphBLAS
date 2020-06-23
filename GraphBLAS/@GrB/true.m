@@ -16,6 +16,6 @@ function C = true (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-[m, n, type] = gb_parse_args ('true', varargin {:}) ;
+[m, n, ~] = gb_parse_args ('true', varargin {:}) ;
 C = GrB (gb_scalar_to_full (m, n, 'logical', true)) ;
 

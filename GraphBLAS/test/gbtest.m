@@ -1,5 +1,5 @@
 function gbtest
-%GBTESTALL test GraphBLAS MATLAB interface
+%GBTEST test GraphBLAS MATLAB interface
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
@@ -132,8 +132,11 @@ gbtest93  % test GrB.select
 gbtest94  % test GrB.vreduce
 gbtest95  % test indexing
 gbtest96  % test GrB.optype
+gbtest97  % test GrB.apply2
+gbtest98  % test row/col degree for hypersparse matrices
 
 gbtest99  % test GrB.bfs and plot (graph (G))
 
 fprintf ('\ngbtest: all tests passed\n') ;
+
 

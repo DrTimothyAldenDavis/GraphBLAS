@@ -34,7 +34,7 @@ for k = 1:nargin
                 if (rm*rn > 2)
                     error ('range must contain at most 2 entries') ;
                 end
-                range = double (gbfull (range)) ;
+                range = gbfull (range, type, 0, struct ('kind', 'full')) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -116,8 +116,8 @@ else
 
     % scale the values and typecast if requested
     if (~isempty (range))
-        lo = min (range) ;
-        hi = max (range) ;
+        lo = double (min (range)) ;
+        hi = double (max (range)) ;
         if (contains (type, 'int'))
             % X is signed or unsigned integer
             X = cast (floor ((hi - lo + 1) * X + lo), type) ;

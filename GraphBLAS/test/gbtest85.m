@@ -24,8 +24,6 @@ rng ('default')
 
 C     = GrB.random (9, 9, 0.5) ;
 M     = GrB.random (9, 9, 0.5, 'range', logical ([false true])) ;
-Mi    = GrB.random (4, 9, 0.5, 'range', logical ([false true])) ;
-Mj    = GrB.random (9, 3, 0.5, 'range', logical ([false true])) ;
 Mij   = GrB.random (4, 3, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
 A     = GrB.random (9, 9, 0.5) ;
@@ -34,12 +32,8 @@ J     = { [3 2 7 ] } ;
 desc  = struct ;
 
 Aij   = GrB.random (4, 3, 0.5) ;
-
 V     = GrB.random (9, 1, 0.7) ;
-W     = GrB.random (9, 1, 0.7, 'range', logical ([false true])) ;
 Wi    = GrB.random (4, 1, 0.7, 'range', logical ([false true])) ;
-U     = GrB.random (9, 1, 0.7) ;
-
 Ui    = GrB.random (4, 1, 0.7) ;
 
 c = double (C) ;
@@ -50,13 +44,9 @@ j = J {1} ;
 
 aij = double (Aij) ;
 
-mi  = double (Mi) ;
 mij = logical (Mij) ;
-mj  = double (Mj) ;
 
 v = double (V) ;
-w = logical (W) ;
-u = double (U) ;
 
 wi  = logical (Wi) ;
 ui  = double (Ui) ;
@@ -328,7 +318,7 @@ V1 = GrB.subassign (I, accum, v, wi, ui, desc) ; assert (isequal (V1, V2)) ;
 
 % C(I,J)<M> = accum (C(I,J), Aij)
 
-S = C (i,j) ;
+% S = C (i,j) ;
 % with accum:
 % T = S + Aij ;
 % with no accum:
@@ -340,7 +330,6 @@ S = T ;
 C2 = C ;
 C2 (i,j) = S ;
 
-s = c (i,j) ;
 t = aij ;
 s = t ;
 c2 = c ;

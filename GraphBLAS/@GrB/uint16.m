@@ -14,5 +14,6 @@ function C = uint16 (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-C = gbfull (G, 'uint16') ;
+desc.kind = 'full' ;
+C = gbfull (G, 'uint16', uint16 (0), desc) ;
 

@@ -39,14 +39,6 @@ for m = nlist
 end
 fprintf ('All complex A+B tests passed, maxerr %g\n', maxerr) ;
 
-semiring.multiply = 'times' ;
-semiring.add = 'plus' ;
-semiring.class = 'complex' ;
-dtn.inp0 = 'tran' ;
-
-anum = [0 1001 1002 1003] ;
-algos = {'auto', 'gustavson', 'dot', 'hash'} ;
-
 maxerr = 0 ;
 for m = nlist
     for n = nlist
@@ -73,7 +65,7 @@ for m = nlist
                     end
 
                     M = sparse (m, n) ;
-                    M (1,1) = 1 ;
+                    M (1,1) = 1 ; %#ok
 
                     C = GrB.mxm (A, '+.*', B, desc) ;
                     Cin = GrB (m, n, 'double complex') ;

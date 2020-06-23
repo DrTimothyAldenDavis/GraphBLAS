@@ -56,17 +56,13 @@ void mexFunction
         { 
             native = (fmt == GxB_BY_ROW) ;
         }
-        else if (MATCH (dim_string, "col"))
+        else // if (MATCH (dim_string, "col"))
         { 
             native = (fmt == GxB_BY_COL) ;
         }
-        else
-        { 
-            ERROR ("invalid option") ;
-        }
     }
     else
-    {
+    { 
         native = (mxGetScalar (pargin [1]) != 0) ;
     }
 

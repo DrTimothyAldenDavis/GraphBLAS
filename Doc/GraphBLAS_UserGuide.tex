@@ -1169,19 +1169,19 @@ You can query the mode of a GraphBLAS session with the following
 \begin{verbatim}
 GrB_Info GrB_getVersion         // runtime access to C API version number
 (
-    unsigned int *version,      // returns GrB_VERSION
-    unsigned int *subversion    // returns GrB_SUBVERSION
+    unsigned int *version,      // returns GRB_VERSION
+    unsigned int *subversion    // returns GRB_SUBVERSION
 ) ;
 \end{verbatim}
 }\end{mdframed}
 
-GraphBLAS defines two compile-time constants, \verb'GrB_VERSION' and
-\verb'GrB_SUBVERSION', which defines the version of the C API Specification
+GraphBLAS defines two compile-time constants, \verb'GRB_VERSION' and
+\verb'GRB_SUBVERSION', which defines the version of the C API Specification
 that is implemented by the library.
 
 If the user program was compiled with one version of the library but linked
 with a different one later on, the compile-time version check with
-\verb'GrB_VERSION' would be stale.  \verb'GrB_getVersion' thus provides a
+\verb'GRB_VERSION' would be stale.  \verb'GrB_getVersion' thus provides a
 runtime access of the version of the C API Specification supported by the
 library.
 

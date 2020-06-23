@@ -305,8 +305,8 @@ void mexFunction
         version, subversion) ;
     CHECK (version == GxB_SPEC_MAJOR) ;
     CHECK (subversion == GxB_SPEC_MINOR) ;
-    CHECK (version == GrB_VERSION) ;
-    CHECK (subversion == GrB_SUBVERSION) ;
+    CHECK (version == GRB_VERSION) ;
+    CHECK (subversion == GRB_SUBVERSION) ;
     printf ("Spec Date: %s\n", GxB_SPEC_DATE) ;
 
     OK (GxB_Global_Option_get_(GxB_API_ABOUT, &about)) ;

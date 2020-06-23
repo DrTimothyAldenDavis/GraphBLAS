@@ -22,6 +22,24 @@ for k = 1:length (types)
         assert (gbtest_eq (real (G), real (C))) ;
         assert (gbtest_eq (imag (G), imag (C))) ;
     end
+
+    C0 = GrB.random (3, 3, inf, 'range', GrB ([0 1], type)) ;
+    M = true (3) ;
+    A = GrB (1:9, type) ;
+    C1 = C0 ;
+    C1 (M) = A ;
+    C2 = double (C0) ;
+    C2 (M) = double (A) ;
+    assert (isequal (double (C1), C2)) ;
+
+    A = GrB (A, 'by row') ;
+    C1 = C0 ;
+    C1 (M) = A ;
+    assert (isequal (double (C1), C2)) ;
+    A = GrB (A', 'by row') ;
+    C1 = C0 ;
+    C1 (M) = A ;
+    assert (isequal (double (C1), C2)) ;
 end
 
 for trial = 1:40

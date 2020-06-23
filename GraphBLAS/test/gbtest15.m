@@ -1,5 +1,5 @@
 function gbtest15
-%GBTEST15 list all unary operators.
+%GBTEST15 list all unary operators
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -34,4 +34,5 @@ fprintf ('number of unary ops: %d\n', nops) ;
 assert (nops == 204) ;
 
 fprintf ('gbtest15: all tests passed\n') ;
+
 

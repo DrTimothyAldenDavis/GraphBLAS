@@ -15,7 +15,7 @@ if (isobject (G))
     G = G.opaque ;
 end
 
-[mold, nold, type] = gbsize (G) ;
+[mold, nold, ~] = gbsize (G) ;
 mold = int64 (mold) ;
 nold = int64 (nold) ;
 

@@ -5,7 +5,7 @@ function gbtest65
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 rng ('default') ;
-load west0479 ;
+load west0479 ; %#ok<LOAD>
 
 A = GrB.offdiag (spones (west0479)) ;
 A = A+A' ;
@@ -33,7 +33,7 @@ for trial = 1:100
 
     % assert that iset is maximal
     q = find (~iset) ;
-    d = GrB.entries (A (p, q), 'col', 'degree') ;
+    d = GrB.entries (A (p, q), 'col', 'degree') ; %#ok<FNDSB>
     assert (all (d > 0)) ;
 end
 

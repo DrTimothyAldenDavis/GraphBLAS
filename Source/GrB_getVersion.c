@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// For compile-time access, use GrB_VERSION and GrB_SUBVERSION.
+// For compile-time access, use GRB_VERSION and GRB_SUBVERSION.
 
 #include "GB.h"
 
 GrB_Info GrB_getVersion         // runtime access to C API version number
 (
-    unsigned int *version,      // returns GrB_VERSION
-    unsigned int *subversion    // returns GrB_SUBVERSION
+    unsigned int *version,      // returns GRB_VERSION
+    unsigned int *subversion    // returns GRB_SUBVERSION
 )
 { 
 
@@ -22,8 +22,8 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
     // get the version number
     //--------------------------------------------------------------------------
 
-    if (version    != NULL) (*version   ) = GrB_VERSION ;
-    if (subversion != NULL) (*subversion) = GrB_SUBVERSION ;
+    if (version    != NULL) (*version   ) = GRB_VERSION ;
+    if (subversion != NULL) (*subversion) = GRB_SUBVERSION ;
 
     return (GrB_SUCCESS) ;
 }

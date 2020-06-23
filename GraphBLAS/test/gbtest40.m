@@ -6,6 +6,20 @@ function gbtest40
 
 rng ('default')
 
+x = GrB.random (10, 1, inf, 'range', complex ([0 1])) ;
+s1 = norm (x, 2) ;
+s2 = norm (double (x), 2) ;
+assert (abs (s1-s2) < 1e-12) ;
+
+x = GrB.random (10, 1, inf, 'range', int16 ([1 16])) ;
+s1 = norm (x, 2) ;
+s2 = norm (double (x), 2) ;
+assert (abs (s1-s2) < 1e-6) ;
+
+s1 = norm (x, -inf) ;
+s2 = norm (double (x), -inf) ;
+assert (abs (s1-s2) < 1e-6) ;
+
 old = verLessThan ('matlab', '9.6') ;
 
 for trial = 1:3

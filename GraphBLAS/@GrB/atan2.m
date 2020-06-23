@@ -27,17 +27,13 @@ end
 
 if (~gb_isfloat (atype))
     A = gbnew (A, 'double') ;
-    atype = 'double' ;
 end
 
 if (~gb_isfloat (btype))
     B = gbnew (B, 'double') ;
-    btype = 'double' ;
 end
 
 % atan2(A,B) gives the set union of the pattern of A and B
-
-ctype = gboptype (atype, btype) ;
 
 if (gb_isscalar (A))
     if (gb_isscalar (B))

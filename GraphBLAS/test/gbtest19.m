@@ -27,7 +27,7 @@ b = 3.7 ;
 c1 = a^b ;
 x = GrB (a) ;
 c2 = x^b ;
-err (abs (c1-c2)) ;
+err = abs (c1-c2) ;
 assert (err < 1e-10) ;
 maxerr = max (maxerr, err) ;
 

@@ -65,7 +65,6 @@ if (n > 1000 && GrB.entries (A) >= 10*n)
         end
     end
     % sample the degree
-    p = randperm (n, 1000) ;
     sample = d (randperm (n, 1000)) ;
     dmean = full (mean (sample)) ;
     dmed  = full (median (sample)) ;

@@ -35,7 +35,6 @@ for k = 1:length(list)
     assert (isequal (J (nz), J1)) ;
 
     [I0, J0, X0] = GrB.extracttuples (G, desc0)  ;
-    C_colon = C (:) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;

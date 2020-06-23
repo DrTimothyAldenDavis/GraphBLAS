@@ -1,6 +1,6 @@
 % SuiteSparse/GraphBLAS/GraphBLAS/test: testing GraphBLAS MATLAB interface
 %
-%  gbtest    - test GraphBLAS MATLAB interface (runs all tests below)
+%  gbtest    - test GraphBLAS MATLAB interface
 %
 %  gbtest0   - test GrB.clear
 %  gbtest1   - test GrB
@@ -62,7 +62,7 @@
 %  gbtest57  - test fprintf and sprintf
 %  gbtest58  - test uplus
 %  gbtest59  - test end
-%  gbtest60  - test issigned
+%  gbtest60  - test GrB.issigned
 %  gbtest61  - test GrB.laplacian
 %  gbtest62  - test ldivide, rdivide, mldivide, mrdivide
 %  gbtest63  - test GrB.incidence
@@ -76,6 +76,12 @@
 %  gbtest71  - test GrB.selectopinfo
 %  gbtest72  - test any-pair semiring
 %  gbtest73  - test GrB.normdiff
+%  gbtest74  - test bitwise operators
+%  gbtest75  - test bitshift
+%  gbtest76  - test trig and other functions
+%  gbtest77  - test error handling
+%  gbtest78  - test integer operators
+%  gbtest79  - test real power
 %  gbtest80  - test complex division and power
 %  gbtest81  - test complex operators
 %  gbtest82  - test complex A*B, A'*B, A*B', A'*B', A+B
@@ -93,6 +99,8 @@
 %  gbtest94  - test GrB.vreduce
 %  gbtest95  - test indexing
 %  gbtest96  - test GrB.optype
+%  gbtest97  - test GrB.apply2
+%  gbtest98  - test row/col degree for hypersparse matrices
 %  gbtest99  - test GrB.bfs and plot (graph (G))
 %
 % Utilities and other tests:
@@ -108,4 +116,3 @@
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
-

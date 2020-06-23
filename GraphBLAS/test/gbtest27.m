@@ -14,7 +14,7 @@ for k1 = 1:length (types)
     H = full (A, 'double', GrB (0)) ;
     assert (norm (H-A,1) == 0)
     B = A ;
-    B (A == 0) = 1 ;
+    B (A == 0) = 1 ; %#ok<*SPRIX>
     H = full (A, 'double', GrB (1)) ;
     assert (norm (H-B,1) == 0)
 
@@ -33,10 +33,10 @@ for k1 = 1:length (types)
         G = full (H, gtype) ;
         K = full (G, atype) ;
         for id = [0 1 inf]
-            C = full (H, gtype, id) ;
+            C = full (H, gtype, id) ; %#ok<*NASGU>
         end
 
-        assert (GrB.entries (G) == prod (size (G))) ;
+        assert (GrB.entries (G) == prod (size (G))) ; %#ok<*PSIZE>
     end
 end
 

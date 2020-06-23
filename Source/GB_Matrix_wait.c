@@ -251,7 +251,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         ASSERT (GB_IMPLIES (kA > 0 && kA < A->nvec, Ah [kA-1] < tjfirst)) ;
         ASSERT (GB_IMPLIES (found, Ah [kA] == tjfirst)) ;
         anz0 = A->p [kA] ;
-        jlast = Ah [kA-1] ;
+        jlast = (kA > 0) ? Ah [kA-1] : (-1) ;
     }
     else
     { 

@@ -15,10 +15,10 @@ function C = single (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 G = G.opaque ;
-
+desc.kind = 'full' ;
 if (contains (gbtype (G), 'complex'))
-    C = gbfull (G, 'single complex') ;
+    C = gbfull (G, 'single complex', complex (single (0)), desc) ;
 else
-    C = gbfull (G, 'single') ;
+    C = gbfull (G, 'single', single (0), desc) ;
 end
 

@@ -1,5 +1,5 @@
-function gbtest97
-%GBTEST97 test A*x performance
+function gbtest_perf1
+%GBTEST_PERF1 test A*x performance
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
@@ -66,3 +66,4 @@ for test = 1:4
     end
 
 end
+
