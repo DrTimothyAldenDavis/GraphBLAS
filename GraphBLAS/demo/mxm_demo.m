@@ -9,6 +9,7 @@ function mxm_demo
 ncores = feature ('numcores') ;
 rng ('default') ;
 Prob = ssget (936)
+Prob2 = ssget (2662)
 % GrB.burble (true) ;
 
 try
@@ -65,7 +66,6 @@ for nth = [1 ncores 2*ncores]
         GB = GrB.random (Prob.A, 'range', range) ;
         fprintf ('vs GraphBLAS: %s\n', GrB.type (GA)) ;
         [m, n] = size (Prob.A) ;
-        Gx = GrB.random (n, 1, 0.5, 'range', range) ;
 
         % create MATLAB versions of GA and GB.  The overloaded "double"
         % function converts GA and GB to double or double complex,
@@ -74,7 +74,6 @@ for nth = [1 ncores 2*ncores]
         % 'double complex'.
         A = double (GA) ;
         B = double (GB) ;
-        x = double (Gx) ;
 
         tm_total = 0 ;
         tg_total = 0 ;
@@ -98,6 +97,12 @@ for nth = [1 ncores 2*ncores]
         tg = tg_total / ntrials ;
         fprintf ('average: MATLAB: %10.4f GrB: %10.4f', tm, tg) ;
         fprintf (' speedup: %10.2f\n', tm / tg) ;
+
+        GA = GrB.random (Prob2.A, 'range', range) ;
+        [m, n] = size (Prob2.A) ;
+        Gx = GrB.random (n, 1, 0.5, 'range', range) ;
+        A = double (GA) ;
+        x = double (Gx) ;
 
         fprintf ('C=A*x: sparse matrix times sparse vector:\n') ;
         tm_total = 0 ;
