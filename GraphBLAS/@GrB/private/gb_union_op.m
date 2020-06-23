@@ -1,4 +1,4 @@
-function C = gb_union_op (op, A, B, desc)
+function C = gb_union_op (op, A, B)
 %GB_SPARSE_BINOP apply a binary operator to two sparse matrices.
 % The pattern of C is the set union of A and B.  A and B must first be
 % expanded to include explicit zeros in the set union of A and B.  For
@@ -56,9 +56,5 @@ A0 = gbeadd (['1st.' type], A, gb_expand (0, B, type)) ;
 B0 = gbeadd (['1st.' type], B, gb_expand (0, A, type)) ;
 
 % A0 and B0 now have the same pattern, so gbemult can be used:
-if (nargin > 3)
-    C = gbemult (A0, op, B0, desc) ;
-else
-    C = gbemult (A0, op, B0) ;
-end
+C = gbemult (A0, op, B0) ;
 
