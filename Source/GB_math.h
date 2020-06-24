@@ -685,13 +685,15 @@ inline double GB_signum (double x)
 inline GxB_FC32_t GB_csignumf (GxB_FC32_t x)
 {
     if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;
-    return (GB_FC32_div (x, cabsf (x))) ;
+    float y = cabsf (x) ;
+    return (GxB_CMPLXF (crealf (x) / y, cimagf (x) / y)) ;
 }
 
 inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 {
     if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;
-    return (GB_FC64_div (x, cabs (x))) ;
+    double y = cabs (x) ;
+    return (GxB_CMPLX (creal (x) / y, cimag (x) / y)) ;
 }
 
 //------------------------------------------------------------------------------
