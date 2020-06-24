@@ -1,6 +1,2 @@
-TODO NOW: complex atomic plus monoid, as 2 atomic operations
-
 TODO NOW: rerun demo output in GraphBLAS/GraphBLAS/demo/html
 TODO NOW: test on Windows
-TODO NOW: run mxm_demo on slash and hypersparse (after complex atomic +)
- 

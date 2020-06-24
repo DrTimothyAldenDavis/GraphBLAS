@@ -127,7 +127,10 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 4.0.0 (Future, 2020).
+\item Version 4.0.0 (Future, 2020), will follow the V2.0 of the C API.
+    The following changes are tentative, and depend on the final release of the
+    V2.0 C API.
+
     \verb'GrB_wait()', with no inputs: will be removed.
     \verb'GrB_wait(&object)': polymorphic function will be added.
     \verb'GrB_*_nvals' and related functions:
@@ -135,9 +138,14 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
         (per the v1.3 C API);
         use \verb'GrB_wait(&object)'
         or non-polymorphic \verb'GrB_*_wait(&object)' instead.
+    \verb'GrB_error' will change; it will take two parameters,
+    \verb'GrB_error(&s,C)' where \verb's' is the error string generated
+    when \verb'C' was last operated on.
     V4.0 will otherwise be identical to V3.3.0.
 
-\item Version 3.3.0 (June/July (TODO NOW), 2020).
+\item Version 3.3.0 (June/July (TODO NOW), 2020).  Compliant with V1.3 of the C API
+    (except that the polymorphic \verb'GrB_wait(&object)' doesn't appear yet).
+
     Added complex types (\verb'GxB_FC32' and \verb'GxB_FC64'), many unary
     operators, binary operators, monoids, and semirings.  Added bitwise
     operators, and their monoids and semirings.  Added the predefined monoids
@@ -1379,6 +1387,14 @@ value to indicate that \verb'A(i,j)' is not present in the matrix.
 In SuiteSparse:GraphBLAS, some failures cannot be safely recorded for
 \verb'GrB_error' to print.  These include \verb'GrB_PANIC' and errors in
 \verb'GrB_init' and \verb'GxB_init'.
+
+% TODO in 4.0: revise this statement when the change to the API is finalized:
+{\bf NOTE:} in the upcoming revision of the GraphBLAS C API Specification,
+\verb'GrB_error' may change.  It may have the signature
+\verb'GrB_error(&s,C)' where \verb's' is the error string that describes the
+error when \verb'C' is the output object of a GraphBLAS method.  This change to
+the C API is tentative.  If this change is made, it will be reflected in
+SuiteSparse:GraphBLAS v4.0.
 
 \newpage
 %===============================================================================
@@ -11242,6 +11258,9 @@ subsections.  Next:
 \subsection{Thread-safety in multithreaded user applications}
 \label{sec:threads}
 %----------------------------------------
+
+% TODO in 4.0: this entire section will likely be deleted, with the
+% pending change to GrB_wait and GrB_error.
 
 SuiteSparse:GraphBLAS is parallel, based on OpenMP.  It is thread-safe if
 multiple simultaneous calls are made to GraphBLAS functions, from user threads
