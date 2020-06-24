@@ -1,0 +1,210 @@
+mxm_demo
+Prob = 
+  struct with fields:
+
+         A: [9000x9000 double]
+      name: 'ND/nd3k'
+     title: 'ND problem set, matrix nd3k'
+        id: 936
+      date: '2003'
+    author: 'author unknown'
+        ed: 'T. Davis'
+      kind: '2D/3D problem'
+Prob2 = 
+  struct with fields:
+
+      name: 'Freescale/Freescale2'
+     title: 'circuit simulation matrix from Freescale'
+         A: [2999349x2999349 double]
+     Zeros: [2999349x2999349 double]
+        id: 2662
+      date: '2015'
+    author: 'K. Gullapalli'
+        ed: 'T. Davis'
+      kind: 'circuit simulation matrix'
+     notes: [4x59 char]
+slash
+MATLAB version: 9.8 release: (R2020a)
+
+-------------------------------------------------
+Testing single-threaded performance of C=A*B:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     2.9076 GrB:     2.4390 speedup:       1.19 err: 1.63154e-07
+trial 2: MATLAB:     2.9307 GrB:     2.4430 speedup:       1.20 err: 1.63154e-07
+trial 3: MATLAB:     2.9133 GrB:     2.5188 speedup:       1.16 err: 1.63154e-07
+trial 4: MATLAB:     2.9455 GrB:     2.4881 speedup:       1.18 err: 1.63154e-07
+average: MATLAB:     2.9243 GrB:     2.4722 speedup:       1.18
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.1766 GrB:     0.0622 speedup:       2.84 err: 3.60006e-08
+trial 2: MATLAB:     0.1816 GrB:     0.0542 speedup:       3.35 err: 3.60006e-08
+trial 3: MATLAB:     0.1690 GrB:     0.0541 speedup:       3.12 err: 3.60006e-08
+trial 4: MATLAB:     0.1734 GrB:     0.0545 speedup:       3.18 err: 3.60006e-08
+average: MATLAB:     0.1752 GrB:     0.0563 speedup:       3.11
+
+=== MATLAB: double (real) vs GraphBLAS: double
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     3.0287 GrB:     2.6868 speedup:       1.13 err: 0
+trial 2: MATLAB:     3.1281 GrB:     2.7668 speedup:       1.13 err: 0
+trial 3: MATLAB:     3.1315 GrB:     2.7270 speedup:       1.15 err: 0
+trial 4: MATLAB:     3.0760 GrB:     2.7478 speedup:       1.12 err: 0
+average: MATLAB:     3.0911 GrB:     2.7321 speedup:       1.13
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.1777 GrB:     0.0698 speedup:       2.55 err: 0
+trial 2: MATLAB:     0.1701 GrB:     0.0560 speedup:       3.04 err: 0
+trial 3: MATLAB:     0.1720 GrB:     0.0558 speedup:       3.08 err: 0
+trial 4: MATLAB:     0.1684 GrB:     0.0558 speedup:       3.02 err: 0
+average: MATLAB:     0.1720 GrB:     0.0594 speedup:       2.90
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.8491 GrB:     3.7045 speedup:       1.58 err: 1.67606e-07
+trial 2: MATLAB:     5.9138 GrB:     3.7123 speedup:       1.59 err: 1.67606e-07
+trial 3: MATLAB:     6.3985 GrB:     3.6716 speedup:       1.74 err: 1.67606e-07
+trial 4: MATLAB:     5.8864 GrB:     3.7629 speedup:       1.56 err: 1.67606e-07
+average: MATLAB:     6.0119 GrB:     3.7128 speedup:       1.62
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2368 GrB:     0.0932 speedup:       2.54 err: 4.57824e-08
+trial 2: MATLAB:     0.2124 GrB:     0.0766 speedup:       2.77 err: 4.57824e-08
+trial 3: MATLAB:     0.2163 GrB:     0.0756 speedup:       2.86 err: 4.57824e-08
+trial 4: MATLAB:     0.2153 GrB:     0.0779 speedup:       2.76 err: 4.57824e-08
+average: MATLAB:     0.2202 GrB:     0.0808 speedup:       2.72
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.8709 GrB:     3.6744 speedup:       1.60 err: 0
+trial 2: MATLAB:     5.8787 GrB:     3.5761 speedup:       1.64 err: 0
+trial 3: MATLAB:     5.9062 GrB:     3.5994 speedup:       1.64 err: 0
+trial 4: MATLAB:     5.9412 GrB:     3.5776 speedup:       1.66 err: 0
+average: MATLAB:     5.8992 GrB:     3.6069 speedup:       1.64
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2205 GrB:     0.1213 speedup:       1.82 err: 0
+trial 2: MATLAB:     0.2115 GrB:     0.0951 speedup:       2.22 err: 0
+trial 3: MATLAB:     0.2112 GrB:     0.1006 speedup:       2.10 err: 0
+trial 4: MATLAB:     0.2114 GrB:     0.1021 speedup:       2.07 err: 0
+average: MATLAB:     0.2136 GrB:     0.1048 speedup:       2.04
+
+-------------------------------------------------
+Testing performance of C=A*B using 4 threads:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     3.0011 GrB:     0.7489 speedup:       4.01 err: 1.6553e-07
+trial 2: MATLAB:     3.0597 GrB:     0.8313 speedup:       3.68 err: 1.6553e-07
+trial 3: MATLAB:     3.1511 GrB:     0.9179 speedup:       3.43 err: 1.6553e-07
+trial 4: MATLAB:     3.1258 GrB:     0.9086 speedup:       3.44 err: 1.6553e-07
+average: MATLAB:     3.0844 GrB:     0.8517 speedup:       3.62
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2221 GrB:     0.0301 speedup:       7.38 err: 3.58413e-08
+trial 2: MATLAB:     0.1930 GrB:     0.0211 speedup:       9.13 err: 3.58367e-08
+trial 3: MATLAB:     0.1917 GrB:     0.0207 speedup:       9.24 err: 3.58374e-08
+trial 4: MATLAB:     0.1830 GrB:     0.0203 speedup:       9.00 err: 3.58547e-08
+average: MATLAB:     0.1974 GrB:     0.0231 speedup:       8.56
+
+=== MATLAB: double (real) vs GraphBLAS: double
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     3.0357 GrB:     0.9721 speedup:       3.12 err: 0
+trial 2: MATLAB:     3.1447 GrB:     0.9925 speedup:       3.17 err: 0
+trial 3: MATLAB:     3.1777 GrB:     1.0091 speedup:       3.15 err: 0
+trial 4: MATLAB:     3.1459 GrB:     1.0116 speedup:       3.11 err: 0
+average: MATLAB:     3.1260 GrB:     0.9963 speedup:       3.14
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2155 GrB:     0.0366 speedup:       5.89 err: 9.81972e-19
+trial 2: MATLAB:     0.1933 GrB:     0.0250 speedup:       7.74 err: 7.28052e-19
+trial 3: MATLAB:     0.1896 GrB:     0.0251 speedup:       7.56 err: 7.83973e-19
+trial 4: MATLAB:     0.1871 GrB:     0.0248 speedup:       7.55 err: 7.52861e-19
+average: MATLAB:     0.1964 GrB:     0.0279 speedup:       7.05
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.8904 GrB:     1.2134 speedup:       4.85 err: 1.68576e-07
+trial 2: MATLAB:     5.9792 GrB:     1.2528 speedup:       4.77 err: 1.68576e-07
+trial 3: MATLAB:     6.0663 GrB:     1.3359 speedup:       4.54 err: 1.68576e-07
+trial 4: MATLAB:     6.0230 GrB:     1.2848 speedup:       4.69 err: 1.68576e-07
+average: MATLAB:     5.9897 GrB:     1.2717 speedup:       4.71
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2623 GrB:     0.0415 speedup:       6.32 err: 4.55858e-08
+trial 2: MATLAB:     0.2371 GrB:     0.0277 speedup:       8.55 err: 4.56127e-08
+trial 3: MATLAB:     0.2278 GrB:     0.0280 speedup:       8.13 err: 4.55903e-08
+trial 4: MATLAB:     0.2303 GrB:     0.0280 speedup:       8.24 err: 4.56092e-08
+average: MATLAB:     0.2394 GrB:     0.0313 speedup:       7.65
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.8223 GrB:     1.3915 speedup:       4.18 err: 0
+trial 2: MATLAB:     5.8774 GrB:     1.4354 speedup:       4.09 err: 0
+trial 3: MATLAB:     5.8995 GrB:     1.4293 speedup:       4.13 err: 0
+trial 4: MATLAB:     5.8919 GrB:     1.4236 speedup:       4.14 err: 0
+average: MATLAB:     5.8728 GrB:     1.4200 speedup:       4.14
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2526 GrB:     0.0583 speedup:       4.33 err: 8.99268e-19
+trial 2: MATLAB:     0.2332 GrB:     0.0411 speedup:       5.67 err: 9.08326e-19
+trial 3: MATLAB:     0.2289 GrB:     0.0388 speedup:       5.90 err: 9.15595e-19
+trial 4: MATLAB:     0.2232 GrB:     0.0404 speedup:       5.53 err: 9.63959e-19
+average: MATLAB:     0.2345 GrB:     0.0446 speedup:       5.25
+
+-------------------------------------------------
+Testing performance of C=A*B using 8 threads:
+-------------------------------------------------
+
+=== MATLAB: double (real) vs GraphBLAS: single
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     3.0336 GrB:     0.8733 speedup:       3.47 err: 1.61777e-07
+trial 2: MATLAB:     3.1506 GrB:     0.8749 speedup:       3.60 err: 1.61777e-07
+trial 3: MATLAB:     3.0776 GrB:     0.9117 speedup:       3.38 err: 1.61777e-07
+trial 4: MATLAB:     3.1188 GrB:     0.8783 speedup:       3.55 err: 1.61777e-07
+average: MATLAB:     3.0951 GrB:     0.8845 speedup:       3.50
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2193 GrB:     0.0281 speedup:       7.81 err: 3.59432e-08
+trial 2: MATLAB:     0.1926 GrB:     0.0189 speedup:      10.20 err: 3.59713e-08
+trial 3: MATLAB:     0.1964 GrB:     0.0187 speedup:      10.52 err: 3.59795e-08
+trial 4: MATLAB:     0.1796 GrB:     0.0187 speedup:       9.61 err: 3.59828e-08
+average: MATLAB:     0.1970 GrB:     0.0211 speedup:       9.35
+
+=== MATLAB: double (real) vs GraphBLAS: double
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     2.9840 GrB:     0.9793 speedup:       3.05 err: 0
+trial 2: MATLAB:     3.1449 GrB:     0.9928 speedup:       3.17 err: 0
+trial 3: MATLAB:     3.1363 GrB:     1.0107 speedup:       3.10 err: 0
+trial 4: MATLAB:     3.1438 GrB:     0.9969 speedup:       3.15 err: 0
+average: MATLAB:     3.1023 GrB:     0.9949 speedup:       3.12
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2220 GrB:     0.0367 speedup:       6.05 err: 1.32962e-18
+trial 2: MATLAB:     0.1920 GrB:     0.0243 speedup:       7.91 err: 1.38437e-18
+trial 3: MATLAB:     0.1857 GrB:     0.0242 speedup:       7.68 err: 1.27174e-18
+trial 4: MATLAB:     0.1825 GrB:     0.0240 speedup:       7.59 err: 1.39937e-18
+average: MATLAB:     0.1956 GrB:     0.0273 speedup:       7.16
+
+=== MATLAB: double complex vs GraphBLAS: single complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.8077 GrB:     1.2399 speedup:       4.68 err: 1.66845e-07
+trial 2: MATLAB:     5.9035 GrB:     1.3373 speedup:       4.41 err: 1.66845e-07
+trial 3: MATLAB:     5.8272 GrB:     1.2749 speedup:       4.57 err: 1.66845e-07
+trial 4: MATLAB:     5.8086 GrB:     1.2685 speedup:       4.58 err: 1.66845e-07
+average: MATLAB:     5.8368 GrB:     1.2802 speedup:       4.56
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2452 GrB:     0.0388 speedup:       6.32 err: 4.57499e-08
+trial 2: MATLAB:     0.2167 GrB:     0.0255 speedup:       8.50 err: 4.57179e-08
+trial 3: MATLAB:     0.2117 GrB:     0.0254 speedup:       8.33 err: 4.57274e-08
+trial 4: MATLAB:     0.2224 GrB:     0.0257 speedup:       8.66 err: 4.57437e-08
+average: MATLAB:     0.2240 GrB:     0.0288 speedup:       7.77
+
+=== MATLAB: double complex vs GraphBLAS: double complex
+C=A*B: sparse matrix times sparse matrix:
+trial 1: MATLAB:     5.7660 GrB:     1.8261 speedup:       3.16 err: 0
+trial 2: MATLAB:     8.2238 GrB:     2.1735 speedup:       3.78 err: 0
+trial 3: MATLAB:     7.0633 GrB:     1.8775 speedup:       3.76 err: 0
+trial 4: MATLAB:     6.6823 GrB:     1.6245 speedup:       4.11 err: 0
+average: MATLAB:     6.9339 GrB:     1.8754 speedup:       3.70
+C=A*x: sparse matrix times sparse vector:
+trial 1: MATLAB:     0.2680 GrB:     0.0568 speedup:       4.72 err: 1.61352e-18
+trial 2: MATLAB:     0.2402 GrB:     0.0345 speedup:       6.96 err: 1.71761e-18
+trial 3: MATLAB:     0.2221 GrB:     0.0376 speedup:       5.91 err: 1.69027e-18
+trial 4: MATLAB:     0.2513 GrB:     0.0353 speedup:       7.12 err: 1.45863e-18
+average: MATLAB:     0.2454 GrB:     0.0411 speedup:       5.98
+
+
+diary off
