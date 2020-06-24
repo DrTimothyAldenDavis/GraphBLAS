@@ -77,6 +77,8 @@ Doc/html
 
 CUDA/test/googletest/*
 
+desktop.ini
+
 # Do not ignore this file
 !.gitignore
 
