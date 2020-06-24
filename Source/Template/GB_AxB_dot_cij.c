@@ -175,8 +175,11 @@
 
             #if GB_IS_PAIR_MULTIPLIER
 
-                #if (GB_IS_ANY_MONOID || GB_IS_EQ_MONOID)
-                // ANY monoid: take the first entry found
+                #if GB_IS_ANY_MONOID
+                // ANY monoid: take the first entry found; this sets cij = 1
+                GB_MULT (cij, ignore, ignore) ;
+                #elif GB_IS_EQ_MONOID
+                // EQ_PAIR semiring: all entries are equal to 1
                 cij = 1 ;
                 #elif (GB_CTYPE_BITS > 0)
                 // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
@@ -223,8 +226,11 @@
 
             #if GB_IS_PAIR_MULTIPLIER
 
-                #if (GB_IS_ANY_MONOID || GB_IS_EQ_MONOID)
-                // ANY monoid: take the first entry found
+                #if GB_IS_ANY_MONOID
+                // ANY monoid: take the first entry found; this sets cij = 1
+                GB_MULT (cij, ignore, ignore) ;
+                #elif GB_IS_EQ_MONOID
+                // EQ_PAIR semiring: all entries are equal to 1
                 cij = 1 ;
                 #elif (GB_CTYPE_BITS > 0)
                 // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
@@ -272,8 +278,11 @@
 
             #if GB_IS_PAIR_MULTIPLIER
 
-                #if (GB_IS_ANY_MONOID || GB_IS_EQ_MONOID)
-                // ANY monoid: take the first entry found
+                #if GB_IS_ANY_MONOID
+                // ANY monoid: take the first entry found; this sets cij = 1
+                GB_MULT (cij, ignore, ignore) ;
+                #elif GB_IS_EQ_MONOID
+                // EQ_PAIR semiring: all entries are equal to 1
                 cij = 1 ;
                 #elif (GB_CTYPE_BITS > 0)
                 // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),

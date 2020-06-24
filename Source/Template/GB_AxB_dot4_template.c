@@ -133,7 +133,8 @@
 
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
-                        cij = 1 ;
+                        // cij = 1, or CMPLX(1,0) for complex ANY
+                        GB_MULT (cij, ignore, ignore) ;
                         #elif GB_IS_EQ_MONOID
                         // A(:,i)'*B(:j) is one, so this result must be
                         // accumulated into cij, as cij += 1, where the
@@ -244,7 +245,8 @@
 
                             #if GB_IS_ANY_MONOID
                             // ANY monoid: take the first entry found
-                            cij = 1 ;
+                            // cij = 1, or CMPLX(1,0) for complex ANY
+                            GB_MULT (cij, ignore, ignore) ;
                             #elif GB_IS_EQ_MONOID
                             // A(:,i)'*B(:j) is one, so this result must be
                             // accumulated into cij, as cij += 1, where the

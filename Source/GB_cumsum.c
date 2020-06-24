@@ -105,8 +105,9 @@ void GB_cumsum                      // cumulative sum of an array
                 return ;
             }
 
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
                 // each task sums up its own part
                 int64_t istart, iend ;
@@ -120,7 +121,7 @@ void GB_cumsum                      // cumulative sum of an array
             }
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
                 // each tasks computes the cumsum of its own part
                 int64_t istart, iend ;
@@ -199,8 +200,9 @@ void GB_cumsum                      // cumulative sum of an array
             }
             int64_t *wk = ws + nthreads ;
 
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
                 // each task sums up its own part
                 int64_t istart, iend ;
@@ -218,7 +220,7 @@ void GB_cumsum                      // cumulative sum of an array
             }
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
                 // each task computes the cumsum of its own part
                 int64_t istart, iend ;

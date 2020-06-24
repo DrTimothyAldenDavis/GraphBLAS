@@ -128,7 +128,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         bool op_is_first  = opcode == GB_FIRST_opcode ;
         bool op_is_second = opcode == GB_SECOND_opcode ;
         bool op_is_pair   = opcode == GB_PAIR_opcode ;
-        bool builtin ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;

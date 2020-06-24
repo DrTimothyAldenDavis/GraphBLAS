@@ -139,7 +139,6 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
         bool op_is_first  = opcode == GB_FIRST_opcode ;
         bool op_is_second = opcode == GB_SECOND_opcode ;
         bool op_is_pair   = opcode == GB_PAIR_opcode ;
-        bool builtin ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;

@@ -279,7 +279,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_FP32_code   : GB_IN (float   , 0 )
                 case GB_FP64_code   : GB_IN (double  , 0 )
                 case GB_FC32_code   : GB_IN (GxB_FC32_t, GxB_CMPLXF(0,0) )
-                case GB_FC64_code   : GB_IN (GxB_FC32_t, GxB_CMPLX(0,0) )
+                case GB_FC64_code   : GB_IN (GxB_FC64_t, GxB_CMPLX(0,0) )
                 default: ;
             }
             break ;
@@ -300,7 +300,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_FP32_code   : GB_IN (float   , 1 )
                 case GB_FP64_code   : GB_IN (double  , 1 )
                 case GB_FC32_code   : GB_IN (GxB_FC32_t, GxB_CMPLXF(1,0) )
-                case GB_FC64_code   : GB_IN (GxB_FC32_t, GxB_CMPLX(1,0) )
+                case GB_FC64_code   : GB_IN (GxB_FC64_t, GxB_CMPLX(1,0) )
                 default: ;
             }
             break ;

@@ -72,11 +72,11 @@
 
 // cij = Ax [pA]
 #define GB_COPY_A_TO_C(cij,Ax,pA) \
-    cij = Ax [pA]
+    cij = GxB_CMPLX (Ax [pA], 0)
 
 // cij = Bx [pB]
 #define GB_COPY_B_TO_C(cij,Bx,pB) \
-    cij = Bx [pB]
+    cij = GxB_CMPLX (Bx [pB], 0)
 
 #define GB_CX(p) Cx [p]
 
