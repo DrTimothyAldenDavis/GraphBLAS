@@ -450,7 +450,13 @@ inline void GB (SECOND_f) (GB_Z_X_Y_ARGS)
 
 inline void GB (PAIR_f) (GB_Z_X_Y_ARGS)
 {
-    (*z) = 1 ;
+    #if defined ( GB_FLOAT_COMPLEX )
+        (*z) = GxB_CMPLXF (1, 0) ;
+    #elif defined ( GB_DOUBLE_COMPLEX )
+        (*z) = GxB_CMPLX (1, 0) ;
+    #else
+        (*z) = 1 ;
+    #endif
 }
 
 inline void GB (ANY_f) (GB_Z_X_Y_ARGS)      // same as SECOND
