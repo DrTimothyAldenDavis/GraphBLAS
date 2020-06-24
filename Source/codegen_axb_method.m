@@ -178,8 +178,26 @@ if (ztype_is_real)
     % all built-in real monoids are atomic
     fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
 else
-    % complex monoids are not atomic
-    fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
+    % complex monoids are not atomic, except for 'plus'
+    if (isequal (addop, 'plus'))
+        fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+    else
+        fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
+    end
+end
+
+% plus_fc32 monoid:
+if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC32_t'))
+    fprintf (f, 'define(`GB_is_plus_fc32_monoid'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_plus_fc32_monoid'', `0'')\n') ;
+end
+
+% plus_fc64 monoid:
+if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC64_t'))
+    fprintf (f, 'define(`GB_is_plus_fc64_monoid'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_plus_fc64_monoid'', `0'')\n') ;
 end
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
@@ -287,14 +305,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +33 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +33 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -34,8 +34,8 @@
 // Multiply: z = GB_FC64_minus (bkj, aik)
 // Add:      cij = GB_FC64_add (cij, z)
 //           'any' monoid?  0
-//           atomic?        0
-//           OpenMP atomic? 0
+//           atomic?        1
+//           OpenMP atomic? 1
 // MultAdd:  GxB_FC64_t x_op_y = GB_FC64_minus (bkj, aik) ; cij = GB_FC64_add (cij, x_op_y)
 // Identity: GxB_CMPLX(0,0)
 // Terminal: ;
@@ -145,15 +145,15 @@
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
-    0
+    1
 
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
 #if GB_MICROSOFT
     #define GB_HAS_OMP_ATOMIC \
-        0
+        1
 #else
     #define GB_HAS_OMP_ATOMIC \
-        0
+        1
 #endif
 
 // 1 for the ANY_PAIR semirings
@@ -163,6 +163,14 @@
 // 1 if PAIR is the multiply operator 
 #define GB_IS_PAIR_MULTIPLIER \
     0
+
+// 1 if monoid is PLUS_FC32
+#define GB_IS_PLUS_FC32_MONOID \
+    0
+
+// 1 if monoid is PLUS_FC64
+#define GB_IS_PLUS_FC64_MONOID \
+    1
 
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \

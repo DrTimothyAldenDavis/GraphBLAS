@@ -163,6 +163,14 @@
 #define GB_IS_PAIR_MULTIPLIER \
     GB_is_pair_multiplier
 
+// 1 if monoid is PLUS_FC32
+#define GB_IS_PLUS_FC32_MONOID \
+    GB_is_plus_fc32_monoid
+
+// 1 if monoid is PLUS_FC64
+#define GB_IS_PLUS_FC64_MONOID \
+    GB_is_plus_fc64_monoid
+
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_atomic_compare_exchange (target, expected, desired)

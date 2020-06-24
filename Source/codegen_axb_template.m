@@ -77,15 +77,15 @@ codegen_axb_method ('plus', multop, add, addfunc, imult, 'int64_t' , 'int64_t' ,
 codegen_axb_method ('plus', multop, add, addfunc, imult, 'uint64_t', 'uint64_t', '0', [ ], 1, 1) ;
 codegen_axb_method ('plus', multop, add, addfunc, fmult, 'float'   , 'float'   , '0', [ ], 1, 1) ;
 codegen_axb_method ('plus', multop, add, addfunc, dmult, 'double'  , 'double'  , '0', [ ], 1, 1) ;
-% complex types not done with OpenMP atomic update:
+% complex types done with two OpenMP atomic updates:
 add = 'w = GB_FC32_add (w, t)' ;
 addfunc = 'GB_FC32_add (w, t)' ;
 id = 'GxB_CMPLXF(0,0)' ;
-codegen_axb_method ('plus', multop, add, addfunc, fcmult, 'GxB_FC32_t', 'GxB_FC32_t', id, [ ], 0, 0) ;
+codegen_axb_method ('plus', multop, add, addfunc, fcmult, 'GxB_FC32_t', 'GxB_FC32_t', id, [ ], 1, 1) ;
 add = 'w = GB_FC64_add (w, t)' ;
 addfunc = 'GB_FC64_add (w, t)' ;
 id = 'GxB_CMPLX(0,0)' ;
-codegen_axb_method ('plus', multop, add, addfunc, dcmult, 'GxB_FC64_t', 'GxB_FC64_t', id, [ ], 0, 0) ;
+codegen_axb_method ('plus', multop, add, addfunc, dcmult, 'GxB_FC64_t', 'GxB_FC64_t', id, [ ], 1, 1) ;
 
 % TIMES monoid: integers are terminal, float and double are not.
 % All real types can be done with OpenMP atomic update
