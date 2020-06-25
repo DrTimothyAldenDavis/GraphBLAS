@@ -192,14 +192,20 @@ function gbtest76b (A, B, G, H, tol)
     assert (err < tol) ;
 
     C1 = asin (A) ;
-    C2 = asin (G) ;
-    err = norm (sin (C1) - sin (C2), 1) ;
-    assert (err < tol) ;
+    if (isreal (C1) || ~ispc)
+        % Windows casinf and casin are broken
+        C2 = asin (G) ;
+        err = norm (sin (C1) - sin (C2), 1) ;
+        assert (err < tol) ;
+    end
 
     C1 = asin (2*A) ;
-    C2 = asin (2*G) ;
-    err = norm (sin (C1) - sin (C2), 1) ;
-    assert (err < tol) ;
+    if (isreal (C1) || ~ispc)
+        % Windows casinf and casin are broken
+        C2 = asin (2*G) ;
+        err = norm (sin (C1) - sin (C2), 1) ;
+        assert (err < tol) ;
+    end
 
     C1 = atanh (A) ;
     C2 = atanh (G) ;
