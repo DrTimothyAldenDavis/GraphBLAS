@@ -160,7 +160,7 @@ void mexFunction
     // compute C<M> += kron (A,B)
     //--------------------------------------------------------------------------
 
-    OK (GrB_kronecker (C, M, accum, op, A, B, desc)) ;
+    OK (GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
