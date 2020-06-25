@@ -150,7 +150,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
            !GB_Type_compatible (A->type, Thunk_in->type))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "incompatible type for C=%s(A,Thunk):\n"
+                "Incompatible type for C=%s(A,Thunk):\n"
                 "input A type [%s] and Thunk type [%s] not compatible",
                 op->name, A->type->name, Thunk_in->type->name))) ;
         }
