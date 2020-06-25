@@ -195,10 +195,10 @@ catch
 end
 
 fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
-fprintf ('Add the following commands to your startup.m file:\n') ;
+fprintf ('Add the following commands to your startup.m file:\n\n') ;
 here1 = cd ('../..') ;
 addpath (pwd) ;
-fprintf ('  addpath (''%s'') ;\n', here1) ;
+fprintf ('  addpath (''%s'') ;\n', pwd) ;
 cd ('..') ;
 if ispc
     lib_path = sprintf ('%s/build/Release', pwd) ;
