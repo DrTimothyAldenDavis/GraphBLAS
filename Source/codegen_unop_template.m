@@ -119,7 +119,7 @@ for code1 = 1:ntypes
                 fcast = 'GB_ctype zarg = (GB_ctype) crealf (xarg)' ;
             elseif (isequal (ctype, 'GxB_FC64_t'))
                 % to GxB_FC64_t from GxB_FC32_t 
-                fcast = 'GB_ctype zarg = (GB_ctype) GxB_CMPLX ((double) crealf (xarg), (double) cimagf (xarg))' ;
+                fcast = 'GB_ctype zarg = GxB_CMPLX ((double) crealf (xarg), (double) cimagf (xarg))' ;
             end
 
         elseif (isequal (atype, 'GxB_FC64_t'))
@@ -136,7 +136,7 @@ for code1 = 1:ntypes
                 fcast = 'GB_ctype zarg = (GB_ctype) creal (xarg)' ;
             elseif (isequal (ctype, 'GxB_FC32_t'))
                 % to GxB_FC32_t from GxB_FC64_t 
-                fcast = 'GB_ctype zarg = (GB_ctype) GxB_CMPLXF ((float) creal (xarg), (float) cimag (xarg))' ;
+                fcast = 'GB_ctype zarg = GxB_CMPLXF ((float) creal (xarg), (float) cimag (xarg))' ;
             end
 
         elseif (isequal (atype, 'float') || isequal (atype, 'double'))
