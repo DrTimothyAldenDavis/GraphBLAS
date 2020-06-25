@@ -5,6 +5,3 @@ GPU: AMD Radeon R7 250
 MATLAB R2019b
 Microsoft Visual Studio 2019
 
-v322: output from GraphBLAS v3.2.2 (Apr 13, 2020)
-v330: output from GraphBLAS v3.3.0 (June 25, 2020)
-
