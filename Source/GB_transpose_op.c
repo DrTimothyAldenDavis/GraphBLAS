@@ -156,7 +156,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             ignore_scalar = op_is_first  || op_is_pair ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
-        void *scalarx = scalar->x ;
+        GB_void *scalarx = (GB_void *) scalar->x ;
         if (scode_cast != scode && !ignore_scalar)
         { 
             // typecast the scalar to the operator input, in swork

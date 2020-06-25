@@ -102,7 +102,8 @@ int main (int argc, char **argv)
     OK (GrB_Matrix_new (&C, GrB_FP64, anrows * bnrows, ancols * bncols)) ;
 
     simple_tic (tic) ;
-    OK (GrB_kronecker (C, NULL, NULL, GrB_TIMES_FP64, A, B, NULL)) ;
+    OK (GrB_Matrix_kronecker_BinaryOp (C, NULL, NULL,
+        GrB_TIMES_FP64, A, B, NULL)) ;
     t = simple_toc (tic) ;
 
     OK (GrB_Matrix_free (&A)) ;

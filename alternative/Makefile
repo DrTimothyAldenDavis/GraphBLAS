@@ -43,7 +43,7 @@ VER3 = 0
 # GraphBLAS inside.  CMake cannot be used to compile a *.c code with a C++
 # compiler (it complains), and thus this option is only available in this
 # alternative/Makefile.
-# CC = c++
+  CC = c++
 
 # Using the Intel MKL (don't try this if CC=c++, it will likely break):
 # from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html

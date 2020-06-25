@@ -17,8 +17,8 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 (
     GxB_Scalar s,           // GxB_Scalar to create
     GrB_Type type,          // type of GxB_Scalar to create
-    GrB_Index *Sp,          // becomes S->p, an array of size 2
-    GrB_Index *Si,          // becomes S->i, an array of size 1
+    int64_t *Sp,            // becomes S->p, an array of size 2
+    int64_t *Si,            // becomes S->i, an array of size 1
     void *Sx                // becomes S->x, an array of size 1 * type->size
 )
 { 
@@ -50,7 +50,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->hfirst = 0 ;
     s->Pending = NULL ;
     s->nzombies = 0 ;
-    s->AxB_method_used = 0 ;
+    s->AxB_method_used = GxB_DEFAULT ;
     s->queue_next = NULL ;  // TODO in 4.0: delete
     s->queue_prev = NULL ;  // TODO in 4.0: delete
     s->enqueued = false ;   // TODO in 4.0: delete

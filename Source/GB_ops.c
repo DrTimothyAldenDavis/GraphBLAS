@@ -407,6 +407,18 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
 // predefined built-in monoids
 //------------------------------------------------------------------------------
 
+#if ( _MSC_VER && !__INTEL_COMPILER )
+#define GB_FC32_ONE  {1.0f, 0.0f}
+#define GB_FC64_ONE  {1.0 , 0.0 }
+#define GB_FC32_ZERO {0.0f, 0.0f}
+#define GB_FC64_ZERO {0.0 , 0.0 }
+#else
+#define GB_FC32_ONE  GxB_CMPLXF (1,0)
+#define GB_FC64_ONE  GxB_CMPLX  (1,0)
+#define GB_FC32_ZERO GxB_CMPLXF (0,0)
+#define GB_FC64_ZERO GxB_CMPLX  (0,0)
+#endif
+
 // helper macro to define built-in monoids (no terminal value)
 #define GB_MONOID_DEF(prefix,op,ztype,identity)                             \
 ztype GB_opaque_identity_ ## op = identity ;                                \
@@ -498,8 +510,8 @@ GB_MONOID_DEF  ( GrB_, PLUS_UINT32  , uint32_t  , 0           )
 GB_MONOID_DEF  ( GrB_, PLUS_UINT64  , uint64_t  , 0           )
 GB_MONOID_DEF  ( GrB_, PLUS_FP32    , float     , 0           )
 GB_MONOID_DEF  ( GrB_, PLUS_FP64    , double    , 0           )
-GB_MONOID_DEF  ( GxB_, PLUS_FC32    , GxB_FC32_t, GxB_CMPLXF(0,0))
-GB_MONOID_DEF  ( GxB_, PLUS_FC64    , GxB_FC64_t, GxB_CMPLX (0,0))
+GB_MONOID_DEF  ( GxB_, PLUS_FC32    , GxB_FC32_t, GB_FC32_ZERO)
+GB_MONOID_DEF  ( GxB_, PLUS_FC64    , GxB_FC64_t, GB_FC64_ZERO)
 
 GB_MONOID_GRB  ( PLUS, INT8     )
 GB_MONOID_GRB  ( PLUS, INT16    )
@@ -523,8 +535,8 @@ GB_MONOID_DEFT ( GrB_, TIMES_UINT32 , uint32_t  , 1           , 0)
 GB_MONOID_DEFT ( GrB_, TIMES_UINT64 , uint64_t  , 1           , 0)
 GB_MONOID_DEF  ( GrB_, TIMES_FP32   , float     , 1           )
 GB_MONOID_DEF  ( GrB_, TIMES_FP64   , double    , 1           )
-GB_MONOID_DEF  ( GxB_, TIMES_FC32   , GxB_FC32_t, GxB_CMPLXF(1,0))
-GB_MONOID_DEF  ( GxB_, TIMES_FC64   , GxB_FC64_t, GxB_CMPLX (1,0))
+GB_MONOID_DEF  ( GxB_, TIMES_FC32   , GxB_FC32_t, GB_FC32_ONE)
+GB_MONOID_DEF  ( GxB_, TIMES_FC64   , GxB_FC64_t, GB_FC64_ONE)
 
 GB_MONOID_GRB  ( TIMES, INT8     )
 GB_MONOID_GRB  ( TIMES, INT16    )
@@ -548,8 +560,8 @@ GB_MONOID_DEFT ( GxB_, ANY_UINT32   , uint32_t  , 0           , 0)
 GB_MONOID_DEFT ( GxB_, ANY_UINT64   , uint64_t  , 0           , 0)
 GB_MONOID_DEFT ( GxB_, ANY_FP32     , float     , 0           , 0)
 GB_MONOID_DEFT ( GxB_, ANY_FP64     , double    , 0           , 0)
-GB_MONOID_DEFT ( GxB_, ANY_FC32, GxB_FC32_t, GxB_CMPLXF(0,0), GxB_CMPLXF(0,0))
-GB_MONOID_DEFT ( GxB_, ANY_FC64, GxB_FC64_t, GxB_CMPLX (0,0), GxB_CMPLX (0,0))
+GB_MONOID_DEFT ( GxB_, ANY_FC32     , GxB_FC32_t, GB_FC32_ZERO, GB_FC32_ZERO)
+GB_MONOID_DEFT ( GxB_, ANY_FC64     , GxB_FC64_t, GB_FC64_ZERO, GB_FC64_ZERO)
 
 // Boolean monoids:
 GB_MONOID_DEFT ( GxB_, ANY_BOOL     , bool      , false       , false)

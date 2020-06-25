@@ -110,7 +110,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
             { 
                 va_start (ap, field) ;
-                GrB_Desc_Value gpu_control = va_arg (ap, GrB_Desc_Value) ;
+                GrB_Desc_Value gpu_control = (GrB_Desc_Value) va_arg (ap, int) ;
                 va_end (ap) ;
                 GB_Global_gpu_control_set (gpu_control) ;
             }

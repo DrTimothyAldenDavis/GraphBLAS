@@ -310,6 +310,7 @@ GB_PUBLIC int GB_cover_max ;
 // GraphBLAS include files
 //------------------------------------------------------------------------------
 
+#include "GB_cplusplus.h"
 #include "GB_Global.h"
 #include "GB_printf.h"
 #include "GB_assert.h"

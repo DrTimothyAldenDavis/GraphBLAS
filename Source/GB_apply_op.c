@@ -167,7 +167,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
             ignore_scalar = op_is_first  || op_is_pair ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
-        void *scalarx = scalar->x ;
+        GB_void *scalarx = (GB_void *) scalar->x ;
         if (scode_cast != scode && !ignore_scalar)
         { 
             // typecast the scalar to the operator input, in swork
