@@ -164,9 +164,12 @@ function gbtest76b (A, B, G, H, tol)
     assert (err < tol) ;
 
     C1 = acsc (A) ;
-    C2 = acsc (G) ;
-    err = norm (csc (C1) - csc (C2),1) ;
-    assert (err < tol) ;
+    if (isreal (C1) || ~ispc)
+        % Windows casinf and casin are broken
+        C2 = acsc (G) ;
+        err = norm (csc (C1) - csc (C2),1) ;
+        assert (err < tol) ;
+    end
 
     C1 = angle (A) ;
     C2 = angle (G) ;
