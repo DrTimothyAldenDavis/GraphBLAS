@@ -81,7 +81,7 @@ GrB_Info GB_unop_apply__asin_fc32_fc32
     {
         GxB_FC32_t aij = Ax [p] ;
         GxB_FC32_t z = aij ;
-        printf ("casinf (%g,%g) ", crealf (z), cimag (f)) ;
+        printf ("casinf (%g,%g) ", crealf (z), cimag (z)) ;
         Cx [p] = casinf (z) ;
         printf ("= (%g,%g) ", crealf (Cx [p]), cimag (Cx [p])) ;
     }
