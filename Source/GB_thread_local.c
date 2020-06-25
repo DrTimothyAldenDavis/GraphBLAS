@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// TODO in 4.0: delete this
+
 // This implementation is complete for user threading with POSIX threads,
 // OpenMP, and no user threads.  Windows and ANSI C11 threads are not yet
 // supported.
