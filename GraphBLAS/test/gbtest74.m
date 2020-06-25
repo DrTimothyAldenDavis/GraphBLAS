@@ -124,10 +124,12 @@ for k = 1:8
         C2 = bitxor (A2, B2, type) ;
         assert (isequal (C1, C2)) ;
 
-        save gunk A A2 type
-        C1 = bitcmp (A, type) ;
-        C2 = bitcmp (A2, type) ;
-        assert (isequal (C1, C2)) ;
+        if (~ispc)
+            % MATLAB R2019b on Windows has a bug here:
+            C1 = bitcmp (A, type) ;
+            C2 = bitcmp (A2, type) ;
+            assert (isequal (C1, C2)) ;
+        end
 
         C1 = bitshift (A, B, type) ;
         C2 = bitshift (A2, B2, type) ;
