@@ -124,6 +124,7 @@ for k = 1:8
         C2 = bitxor (A2, B2, type) ;
         assert (isequal (C1, C2)) ;
 
+        save gunk A A2 type
         C1 = bitcmp (A, type) ;
         C2 = bitcmp (A2, type) ;
         assert (isequal (C1, C2)) ;
