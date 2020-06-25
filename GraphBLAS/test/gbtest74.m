@@ -125,7 +125,44 @@ for k = 1:8
         assert (isequal (C1, C2)) ;
 
         if (~ispc)
-            % MATLAB R2019b on Windows has a bug here:
+            % MATLAB R2019b on Windows has a bug here, so this
+            % test is skipped.  Here is the pure MATLAB test:
+            %
+            %   ver
+            %   A = 1287128410976072704
+            %   fprintf ('A:         %30o\n', A) ;
+            %   C = bitcmp (A, 'uint64')
+            %   fprintf ('bitcmp(A): %30o\n', C) ;
+            %
+            % printing input and output in octal, with spaces
+            % added for readability:
+            %
+            % A:                 0 107 346 307 414 442 532 000
+            %
+            % Linux bitcmp(A):   1 670 431 470 363 335 244 000
+            % Win. bitcmp(A):    1 670 431 470 363 335 250 000
+            %
+            % GraphBLAS obtains the Linux result on all
+            % platforms, including Windows.
+            %
+            % Expanding the last 5 octal digits into binary,
+            % with a space where I think the double mantissa
+            % runs about of bits when converted to uint64.
+            %
+            % A:                 32000 = 011.01 0.000.000.000
+            %
+            % Linux bitcmp(A):   44000 = 100.10 0.000.000.000
+            % Win. bitcmp(A):    50000 = 101.00 0.000.000.000
+            %
+            % Note that A starts out as double, so it only
+            % has about 53 bits of mantissa.  I would expect
+            % the result to have 10 or 11 trailing zeros, as a
+            % result.  On Linux (and also GraphBLAS on Windows),
+            % bitcmp(A) has 10 trailing zero bits, and the
+            % remaining bits are properly complemented.
+            %
+            % On MATLAB in Windows, the result is not comprehensible.
+
             C1 = bitcmp (A, type) ;
             C2 = bitcmp (A2, type) ;
             assert (isequal (C1, C2)) ;

@@ -11234,7 +11234,7 @@ subsections.  Next:
     or \verb'*.exp' files in the \verb'build/Release' folder.  This can happen
     if your Windows System path is not set properly, or if Windows is not
     recognizing the \verb'GraphBLAS/build/Release' folder (see
-    Section~\ref{sec:windows})  Or, you might p have permission to change your
+    Section~\ref{sec:windows})  Or, you might have permission to change your
     Windows System path.  In this case, do the following in the MATLAB Command
     \vspace{-0.1in}
     Window:
@@ -11251,6 +11251,14 @@ subsections.  Next:
     so that they are done each time MATLAB starts.  You will also need to do
     this after \verb'clear all' or \verb'clear mex', since those MATLAB
     commands remove all loaded libraries from MATLAB.
+
+    You might also get an error ``the specified procedure cannot be found.''
+    This can occur if you have upgraded your GraphBLAS library from a prior
+    version, and some of the compiled files \verb'@GrB/private/*.mex*'
+    are stale.  Try the command \verb'gbmake all' in the MATLAB Command
+    Window, which forces all of the MATLAB interface to be recompiled.
+    Or, try deleting all \verb'@GrB/private/*.mex*' files and running
+    \verb'gbmake' again.
 
 \end{enumerate}
 
