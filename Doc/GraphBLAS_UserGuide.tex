@@ -11260,6 +11260,13 @@ subsections.  Next:
     Or, try deleting all \verb'@GrB/private/*.mex*' files and running
     \verb'gbmake' again.
 
+\item On Windows, the \verb'casin' and \verb'casinf' functions do not
+    return the correct imaginary part.  As a result, \verb'GxB_ASIN_FC32'
+    and \verb'GxB_ASIN_FC64' do not work properly on Windows.  This
+    affects the \verb'GrB/asin' and \verb'GrB/acsc' functions in the
+    MATLAB interface.  See the MATLAB tests bypassed in \verb'gbtest76.m'
+    for details, in the \verb'GraphBLAS/GraphBLAS/test' folder.
+
 \end{enumerate}
 
 %----------------------------------------

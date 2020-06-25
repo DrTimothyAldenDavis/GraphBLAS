@@ -125,6 +125,30 @@ for nth = [1 ncores 2*ncores]
         fprintf ('average: MATLAB: %10.4f GrB: %10.4f', tm, tg) ;
         fprintf (' speedup: %10.2f\n', tm / tg) ;
 
+        Gx = GrB.random (n, 1, inf, 'range', range) ;
+        x = full (double (Gx)) ;
+
+        fprintf ('C=A*x: sparse matrix times dense vector:\n') ;
+        tm_total = 0 ;
+        tg_total = 0 ;
+        for trial = 1:ntrials
+            tic
+            C1 = A*x ;
+            tm = toc ;
+            tic
+            C2 = GA*Gx ;
+            tg = toc ;
+            err = norm (C1-C2,1) / norm (C1, 1) ;
+            fprintf ('trial %d: MATLAB: %10.4f GrB: %10.4f', trial, tm, tg);
+            fprintf (' speedup: %10.2f err: %g\n', tm / tg, err) ;
+            tm_total = tm_total + tm ;
+            tg_total = tg_total + tg ;
+        end
+        tm = tm_total / ntrials ;
+        tg = tg_total / ntrials ;
+        fprintf ('average: MATLAB: %10.4f GrB: %10.4f', tm, tg) ;
+        fprintf (' speedup: %10.2f\n', tm / tg) ;
+
     end
 end
 

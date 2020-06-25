@@ -13,7 +13,6 @@
 #ifndef GBCOMPACT
 #include "GB_control.h"
 #include "GB_unop__include.h"
-#include "GB_printf.h"
 
 // C=unop(A) is defined by the following types and operators:
 
@@ -82,9 +81,7 @@ GrB_Info GB_unop_apply__asin_fc32_fc32
     {
         GxB_FC32_t aij = Ax [p] ;
         GxB_FC32_t z = aij ;
-        GB_printf_function ("casinf (%g,%g) ", crealf (z), cimagf (z)) ;
         Cx [p] = casinf (z) ;
-        GB_printf_function ("= (%g,%g)\n", crealf (Cx [p]), cimagf (Cx [p])) ;
     }
     return (GrB_SUCCESS) ;
     #endif
