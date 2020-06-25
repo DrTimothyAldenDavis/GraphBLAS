@@ -11,6 +11,8 @@ fprintf ('gbtest80: test complex division and power') ;
 
 maxerr = 0 ;
 maxerr_single = 0 ;
+stol = 1e-5 ;
+dtol = 1e-14 ;
 
 for xr = list
     fprintf ('\n%g ', xr) ;
@@ -41,7 +43,7 @@ for xr = list
                 if (~errnan)
                     maxerr = max (maxerr, err) ;
                 end
-                if (err > 1e-14)
+                if (err > dtol)
                     fprintf ('(%g,%g) / (%g,%g) = (%g,%g) (%g,%g)', ...
                         xr, xi, yr, yi, real (Z), imag (Z), ...
                         real (Z2), imag (Z2)) ;
@@ -61,7 +63,7 @@ for xr = list
                 if (~errnan)
                     maxerr_single = max (maxerr_single, err) ;
                 end
-                if (err > 1e-6)
+                if (err > stol)
                     fprintf ('(%g,%g) / (%g,%g) = (%g,%g) (%g,%g)', ...
                         xr, xi, yr, yi, real (Z), imag (Z), ...
                         real (Z2), imag (Z2)) ;
@@ -81,7 +83,7 @@ for xr = list
                 if (~errnan)
                     maxerr = max (maxerr, err) ;
                 end
-                if (err > 1e-14)
+                if (err > dtol)
                     fprintf ('(%g,%g) .^ (%g,%g) = (%g,%g) (%g,%g)', ...
                         xr, xi, yr, yi, real (Z), imag (Z), ...
                         real (Z2), imag (Z2)) ;
@@ -101,7 +103,7 @@ for xr = list
                 if (~errnan)
                     maxerr_single = max (maxerr_single, err) ;
                 end
-                if (err > 1e-6)
+                if (err > stol)
                     fprintf ('(%g,%g) .^ (%g,%g) = (%g,%g) (%g,%g)', ...
                         xr, xi, yr, yi, real (Z), imag (Z), ...
                         real (Z2), imag (Z2)) ;
@@ -117,8 +119,8 @@ for xr = list
 end
 
 fprintf ('\nmaxerr: %g %g\n', maxerr, maxerr_single) ;
-assert (maxerr < 1e-14)
-assert (maxerr_single < 1e-5)
+assert (maxerr < dtol)
+assert (maxerr_single < stol)
 
 fprintf ('\ngbtest80: all tests passed\n') ;
 
