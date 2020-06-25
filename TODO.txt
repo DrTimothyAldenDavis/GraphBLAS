@@ -1,2 +1,1 @@
 TODO NOW: rerun demo output in GraphBLAS/GraphBLAS/demo/html
-TODO NOW: test on Windows

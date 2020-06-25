@@ -89,8 +89,7 @@ fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
 % '+.*.complex' semirings.  A semiring is defined in terms of a string,
 % 'add.mult.type', where 'add' is a monoid that takes the place of the
 % additive operator, 'mult' is the multiplicative operator, and 'type' is
-% the data type for the two inputs to the mult operator (the type
-% defaults to the type of A for C=A*B).
+% the data type for the two inputs to the mult operator.
 %
 % In the standard semiring, C=A*B is defined as:
 %
@@ -123,7 +122,9 @@ fprintf ('\nerr = norm (C-C2,1) = %g\n', norm (C-C2,1)) ;
 
 %% The max.plus tropical semiring
 % Here are details of the "max.plus" tropical semiring.  The identity
-% value is -inf since max(x,-inf) = max (-inf,x) = -inf for any x.
+% value is -inf since max(x,-inf) = max (-inf,x) = x for any x.
+% The identity for the conventional "plus.times" semiring is zero,
+% since x+0 = 0+x = x for any x.
 
 GrB.semiringinfo ('max.+.double') ;
 
@@ -421,7 +422,7 @@ whos C G H K
 A = rand (3) 
 C = GrB.assign (A, A > 0.5, 3) ;     % in GraphBLAS
 C1 = GrB (A) ; C1 (A > .5) = 3       % also in GraphBLAS
-C2 = A      ; C2 (A > .5) = 3       % in MATLAB
+C2 = A       ; C2 (A > .5) = 3       % in MATLAB
 err = norm (C - C1, 1)
 err = norm (C - C2, 1)
 
@@ -505,12 +506,11 @@ fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
     matlab_time / gb_time) ;
 
 %% Example graph algorithm: Luby's method in GraphBLAS
-% The GrB.mis.m function is variant of Luby's randomized algorithm [Luby
+% The GrB.mis function is variant of Luby's randomized algorithm [Luby
 % 1985].  It is a parallel method for finding an maximal independent set
-% of nodes, where no two nodes are adjacent.  See the
-% GraphBLAS/@GrB/GrB.mis.m function for details.  The graph must be
-% symmetric with a zero-free diagonal, so A is symmetrized first and any
-% diagonal entries are removed.
+% of nodes, where no two nodes are adjacent.  See the GraphBLAS/@GrB/mis.m
+% function for details.  The graph must be symmetric with a zero-free
+% diagonal, so A is symmetrized first and any diagonal entries are removed.
 
 A = GrB (A) ;
 A = GrB.offdiag (A|A') ;
@@ -603,7 +603,9 @@ err = norm (Y1-Y2,1)
 % Thus, to compute C = A (start:inc:fini) for very huge matrices,
 % you need to use use a cell array to represent the colon notation,
 % as { start, inc, fini }, instead of start:inc:fini. See
-% 'help GrB.extract' and 'help.gbsubassign' for, for C(I,J)=A.  The
+% 'help GrB.extract', 'help GrB.assign' for the functional form.
+% For the overloaded syntax C(I,J)=A and C=A(I,J), see
+% 'help GrB/subsasgn' and 'help GrB/subsfref'.  The cell array
 % syntax isn't conventional, but it is far faster than the MATLAB
 % colon notation for objects, and takes far less memory when I is huge.
 
@@ -757,10 +759,7 @@ C2 - C
 % as C(I,J)=A.  However, in its MATLAB interface, this would require a
 % MATLAB mexFunction to modify its inputs.  That breaks the MATLAB API
 % standard, so it cannot be safely done.  As a result, using GraphBLAS
-% via its MATLAB interface can be slower than when using its C API.  This
-% restriction would not be a limitation if GraphBLAS were to be
-% incorporated into MATLAB itself, but there is likely no way to do this
-% in a mexFunction interface to GraphBLAS.
+% via its MATLAB interface can be slower than when using its C API.
 
 %%
 % (2) Integer element-wise operations:
@@ -836,7 +835,7 @@ end
 % implicitly expands B to a matrix, computing C(i,j)=A(i,j)+B(j).  This
 % implicit expansion is not yet suported in GraphBLAS with C=A+B.
 % However, it can be done with C = GrB.mxm ('+.+', A, diag(GrB(B))).
-% That's an nice example of the power of semirings, but it's not
+% That's a nice example of the power of semirings, but it's not
 % immediately obvious, and not as clear a syntax as C=A+B.  The
 % GraphBLAS/@GrB/dnn.m function uses this 'plus.plus' semiring to
 % apply the bias to each neuron.
