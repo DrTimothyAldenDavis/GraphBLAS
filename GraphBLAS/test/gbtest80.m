@@ -118,7 +118,7 @@ end
 
 fprintf ('\nmaxerr: %g %g\n', maxerr, maxerr_single) ;
 assert (maxerr < 1e-14)
-assert (maxerr_single < 1e-6)
+assert (maxerr_single < 1e-5)
 
 fprintf ('\ngbtest80: all tests passed\n') ;
 
