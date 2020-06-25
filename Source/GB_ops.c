@@ -409,7 +409,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
 
 // helper macro to define built-in monoids (no terminal value)
 #define GB_MONOID_DEF(prefix,op,ztype,identity)                             \
-ztype GB_opaque_identity_ ## op = (ztype) identity ;                        \
+ztype GB_opaque_identity_ ## op = identity ;                                \
 struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
 {                                                                           \
     GB_MAGIC,                                                               \
@@ -421,12 +421,10 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
 } ;                                                                         \
 GrB_Monoid GxB_ ## op ## _MONOID = & GB_opaque_GxB_ ## op ## _MONOID ;
 
-// GB_MONOID_DEF  ( GxB_, PLUS_FC32    , GxB_FC32_t, GxB_CMPLXF(0,0))
-
 // helper macro to define built-in monoids (with terminal value)
 #define GB_MONOID_DEFT(prefix,op,ztype,identity,terminal)                   \
-ztype GB_opaque_identity_ ## op = (ztype) identity ;                        \
-ztype GB_opaque_terminal_ ## op = (ztype) terminal ;                        \
+ztype GB_opaque_identity_ ## op = identity ;                                \
+ztype GB_opaque_terminal_ ## op = terminal ;                                \
 struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
 {                                                                           \
     GB_MAGIC,                                                               \
