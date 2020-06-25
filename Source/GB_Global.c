@@ -275,11 +275,13 @@ double GB_Global_hyper_ratio_get (void)
 // use_mkl
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_use_mkl_set (bool use_mkl)
 { 
     GB_Global.use_mkl = use_mkl ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Global_use_mkl_get (void)
 { 
     return (GB_Global.use_mkl) ;
