@@ -90,7 +90,7 @@ for k1 = 1:length(types)
         for k3 = 1:length(types)
             op.optype = types {k3} ;
 
-            if (ispc && contains (op.opname, 'asin') && contains (op.type, 'complex'))
+            if (ispc && contains (op.opname, 'asin') && contains (op.optype, 'complex'))
                 % casin and casinf are broken on Windows
                 fprintf (' (skipped)') ;
                 continue ;
