@@ -3303,6 +3303,7 @@ void mexFunction
     OK (GxB_Scalar_setElement_FP64 (Thunk, thresh)) ;
 
     o2  = Complex_plus ;
+    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
     ERR (GxB_Matrix_select_(A, Z   , NULL, selectop, A, Thunk, NULL)) ;
     ERR (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
