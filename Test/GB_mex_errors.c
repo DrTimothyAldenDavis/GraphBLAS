@@ -3141,7 +3141,16 @@ void mexFunction
     ERR (GrB_Row_assign_(A, v0, o2  , z, 0, J, 0, d0)) ;
     ERR (GrB_Row_assign_(A, v0, NULL, z, 0, J, 0, d0)) ;
 
-    ERR (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;               // vector scalar
+    // vector scalar
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;
+    }
+    else
+    {
+        ERR (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;
+    }
+
     ERR (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
     ERR (GrB_Vector_assign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
     ERR (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
