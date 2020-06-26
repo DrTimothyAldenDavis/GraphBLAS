@@ -3125,10 +3125,12 @@ void mexFunction
     
     ERR (GrB_Matrix_assign_FP64_(A, Z , NULL, x, I, 0, J, 0, d0)) ;
 
+    expected = GrB_DOMAIN_MISMATCH ;
     ERR (GrB_Matrix_assign_UDT_(A, A0, op0 ,(void *) &c , I, 0, J, 0, d0)) ;
-    ERR (GrB_Matrix_assign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     ERR (GrB_Matrix_assign_UDT_(A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GrB_Matrix_assign_UDT_(A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
+
+    ERR (GrB_Matrix_assign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
