@@ -339,8 +339,8 @@ void mexFunction
     printf ("name: %s\n", name) ;
 
     OK (GxB_Global_Option_get_(GxB_LIBRARY_DATE, &date)) ;
-    CHECK (strcmp (date, GxB_IMPLEMENTATION_DATE) == 0) ;
     printf ("date: %s\n", date) ;
+    CHECK (strcmp (date, GxB_IMPLEMENTATION_DATE) == 0) ;
 
     OK (GxB_Global_Option_get_(GxB_LIBRARY_ABOUT, &about)) ;
     CHECK (strcmp (about, GxB_IMPLEMENTATION_ABOUT) == 0) ;
