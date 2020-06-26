@@ -44,7 +44,7 @@ VER3 = 0
 # compiler (it complains), and thus this option is only available in this
 # alternative/Makefile.  The GCC C++ 5.4 compiler fails; version 7.5 is
 # sufficient.
-# CC = c++
+CC = c++
 
 # Using the Intel MKL (don't try this if CC=c++, it will likely break):
 # from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html

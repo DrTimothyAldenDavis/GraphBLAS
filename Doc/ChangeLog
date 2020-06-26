@@ -1,11 +1,11 @@
 Version 4.0.0, FUTURE, 2020 (this list is tentative):
 
-    * GrB_wait(), with no inputs: removed
-    * GrB_wait(&object): polymorphic function added
-    * GrB_*_nvals: no longer guarantees completion; use GrB_wait(&object)
+    * GrB_wait(), with no inputs: will be removed
+    * GrB_wait(&object): polymorphic function will be added
+    * GrB_*_nvals: will no longer guarantee completion; use GrB_wait(&object)
         or non-polymorphic GrB_*_wait (&object) instead
-    * GrB_error: now has two inputs: a string (char **) and an object
-    * V4.0.0 is otherwise identical to V3.3.0.
+    * GrB_error: will have two inputs: a string (char **) and an object
+    * V4.0.0 will otherwise be identical to V3.3.0.
 
 Version 3.3.0, June 26, 2020
 
