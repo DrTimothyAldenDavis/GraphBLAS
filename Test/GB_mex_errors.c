@@ -3664,7 +3664,7 @@ void mexFunction
     ERR (GrB_transpose (A    , NULL , NULL   , Agunk, NULL )) ;
     ERR (GrB_transpose (A    , NULL , NULL   , A    , dgunk)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
     o2 = Complex_plus ;
     ERR (GrB_transpose (A   , Z   , NULL, A, NULL)) ;
