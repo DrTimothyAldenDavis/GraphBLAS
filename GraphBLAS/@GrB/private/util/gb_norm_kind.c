@@ -51,5 +51,6 @@ int64_t gb_norm_kind (const mxArray *arg)
             ERROR ("unknown norm") ;
         }
     }
+    return (0) ;
 }
 

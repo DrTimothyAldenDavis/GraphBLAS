@@ -91,6 +91,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
     else
     { 
         ERROR ("integer array must be double, int64, or uint64") ;
+        return (NULL) ;
     }
 }
 

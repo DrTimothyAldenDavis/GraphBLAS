@@ -54,8 +54,8 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     for (int k = 0 ; k < len ; k++)
     { 
         // convert I_cell {k} content to an integer list
-        Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k), base,
-            &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
+        Item [k] = (GrB_Index *) gb_mxarray_to_list (mxGetCell (I_cell, k),
+            base, &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
     }
 
     //--------------------------------------------------------------------------
