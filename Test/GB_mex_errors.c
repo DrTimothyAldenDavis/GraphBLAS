@@ -1500,7 +1500,7 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, GrB_LE_FP64)) ;
-    if (Complex == GxB_FC64_t)
+    if (Complex == GxB_FC64)
     {
         OK (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
         GrB_Matrix_free_(&A) ;
