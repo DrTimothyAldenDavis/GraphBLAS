@@ -1046,6 +1046,8 @@ void mexFunction
 
     ERR (GrB_Vector_build_FP64_(v, I, X, 5, op2gunk)) ;
 
+    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", GB3, f)) ;
+
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Vector_build_FP64_(v, I, X, 5, GrB_LE_FP64)) ;
