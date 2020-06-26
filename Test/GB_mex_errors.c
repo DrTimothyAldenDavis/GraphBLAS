@@ -3556,15 +3556,25 @@ void mexFunction
     v0 = NULL ;
     A0 = NULL ;
     op0 = NULL ;
-
     expected = GrB_DOMAIN_MISMATCH ;
-
     o2  = Complex_plus ;
-    ERR (GrB_Matrix_reduce_FP64 (&x, op0 , GxB_PLUS_FP64_MONOID , Z , d0)) ;
-    ERR (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , Z , d0)) ;
-    ERR (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , A , d0)) ;
-    ERR (GrB_Matrix_reduce_FP64 (&x, o2  , Complex_plus_monoid  , Z , d0)) ;
-    ERR (GrB_Matrix_reduce_UDT  (&c, o2  , Complex_plus_monoid  , A , d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK  (GrB_Matrix_reduce_FP64 (&x, op0 , GxB_PLUS_FP64_MONOID , Z , d0)) ;
+        OK  (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , Z , d0)) ;
+        OK  (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , A , d0)) ;
+        OK  (GrB_Matrix_reduce_FP64 (&x, o2  , Complex_plus_monoid  , Z , d0)) ;
+        OK  (GrB_Matrix_reduce_UDT  (&c, o2  , Complex_plus_monoid  , A , d0)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_reduce_FP64 (&x, op0 , GxB_PLUS_FP64_MONOID , Z , d0)) ;
+        ERR (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , Z , d0)) ;
+        ERR (GrB_Matrix_reduce_FP64 (&x, op0 , Complex_plus_monoid  , A , d0)) ;
+        ERR (GrB_Matrix_reduce_FP64 (&x, o2  , Complex_plus_monoid  , Z , d0)) ;
+        ERR (GrB_Matrix_reduce_UDT  (&c, o2  , Complex_plus_monoid  , A , d0)) ;
+    }
 
     //--------------------------------------------------------------------------
     // reduce to vector
