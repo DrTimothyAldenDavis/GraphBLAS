@@ -1049,8 +1049,21 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Vector_build_FP64_(v, I, X, 5, GrB_LE_FP64)) ;
-    ERR (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
     ERR (GrB_Vector_build_UDT_(v, I, (void *) X, 5, GrB_PLUS_FP64)) ;
+
+    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", GB3, f)) ;
+    OK (GxB_Type_fprint (Complex, "Complex user type", GB3, f)) ;
+    OK (GxB_Type_fprint (GxB_FC64, "Complex built-in type", GB3, f)) ;
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
+        GrB_Vector_free_(&v) ;
+        OK  (GrB_Vector_new (&v, GrB_FP64, 10)) ;
+    }
+    else
+    {
+        ERR (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
+    }
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
 
@@ -1487,7 +1500,16 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, GrB_LE_FP64)) ;
-    ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+        GrB_Matrix_free_(&A) ;
+        OK (GrB_Matrix_new (&A, GrB_FP64, 10, 5)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+    }
     ERR (GrB_Matrix_build_UDT_(A, I, J, (void *) X, 5, GrB_PLUS_FP64)) ;
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
@@ -1970,13 +1992,24 @@ void mexFunction
     ERR (GrB_mxm (C   , NULL, NULL, s2  , B   , A   , NULL)) ;
     ERR (GrB_mxm (C   , A   , NULL, s2  , A   , B   , NULL)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
-
-    ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
-    ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
-    ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
-    ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
-    ERR (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+        OK  (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+        OK  (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
+        OK  (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+        ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+        ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
+        ERR (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
+    }
 
     printf ("here we are, last error was %s\n", GrB_error ( )) ;
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
@@ -2169,21 +2202,47 @@ void mexFunction
     ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , A0  , NULL, o2 , A , A , d0)) ;
     ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op0 , o2 , A , A , NULL)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
-
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+        OK  (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    }
 
     OK (GrB_BinaryOp_new (&op3, f3, Complex, Complex, GrB_FP64)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
+        OK  (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
+        OK  (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    }
 
     expected = GrB_DIMENSION_MISMATCH ;
 
@@ -2233,7 +2292,14 @@ void mexFunction
     ERR (GrB_Matrix_kronecker_BinaryOp_(A , A0  , NULL, o2 , A , A , d0)) ;
     ERR (GrB_Matrix_kronecker_BinaryOp_(A , NULL, op0 , o2 , A , A , NULL)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GrB_Matrix_kronecker_BinaryOp_  (A , NULL, NULL, o2 , Z , A , d0)) ;
     ERR (GrB_Matrix_kronecker_BinaryOp_  (A , NULL, NULL, o2 , A , Z , d0)) ;
@@ -2305,7 +2371,14 @@ void mexFunction
     A0 = NULL ;
     d0 = NULL ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GrB_Vector_extract_(v, z, NULL, u, I, 0, d0)) ;              // vector extract
     ERR (GrB_Vector_extract_(v, NULL, Complex_plus, u, I, 0, d0)) ;
@@ -2622,11 +2695,16 @@ void mexFunction
     v0 = NULL ;
     A0 = NULL ;
     d0 = NULL ;
-    op0 = NULL ;
-
-    expected = GrB_DOMAIN_MISMATCH ;
-
     op0 = Complex_plus ;
+
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GxB_Vector_subassign_(v, z , NULL, v, I, 0, d0)) ;            // vector assign
     ERR (GxB_Vector_subassign_(v, v0, op0 , v, I, 0, d0)) ;
@@ -2657,16 +2735,49 @@ void mexFunction
     ERR (GxB_Row_subassign_(A, v0, NULL, z, 0, J, 0, d0)) ;
 
     ERR (GxB_Vector_subassign_FP64_(v, z , NULL, x, I, 0, d0)) ;            // vector scalar
-    ERR (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+    }
+    else
+    {
+        ERR (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+    }
+
+    expected = GrB_DOMAIN_MISMATCH ;
+
     ERR (GxB_Vector_subassign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
-    ERR (GxB_Vector_subassign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK (GxB_Vector_subassign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
+    }
+    else
+    {
+        ERR (GxB_Vector_subassign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
+    }
+
     ERR (GxB_Vector_subassign_UDT_(v, v0, o2  ,(void *) &c, I, 0, d0)) ;
     ERR (GxB_Vector_subassign_UDT_(v, v0, NULL,(void *) &c, I, 0, d0)) ;
 
-    ERR (GxB_Matrix_subassign_FP64_(A, Z , NULL, x, I, 0, J, 0, d0)) ;      // matrix scalar
-    ERR (GxB_Matrix_subassign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+    // matrix scalar
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+        OK (GxB_Matrix_subassign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        OK (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+        ERR (GxB_Matrix_subassign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        ERR (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
+    }
+    ERR (GxB_Matrix_subassign_FP64_(A, Z , NULL, x, I, 0, J, 0, d0)) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, op0 ,(void *) &c , I, 0, J, 0, d0)) ;
-    ERR (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
 
@@ -2991,11 +3102,16 @@ void mexFunction
     v0 = NULL ;
     A0 = NULL ;
     d0 = NULL ;
-    op0 = NULL ;
-
-    expected = GrB_DOMAIN_MISMATCH ;
-
     op0 = Complex_plus ;
+
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GrB_Vector_assign_(v, z , NULL, v, I, 0, d0)) ;               // vector assign
     ERR (GrB_Vector_assign_(v, v0, op0 , v, I, 0, d0)) ;
@@ -3025,10 +3141,22 @@ void mexFunction
     ERR (GrB_Row_assign_(A, v0, o2  , z, 0, J, 0, d0)) ;
     ERR (GrB_Row_assign_(A, v0, NULL, z, 0, J, 0, d0)) ;
 
-    ERR (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;               // vector scalar
-    ERR (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+    // vector scalar
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;
+        OK (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+        OK (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
+    }
+    else
+    {
+        ERR (GrB_Vector_assign_FP64_(v, z , NULL, x, I, 0, d0)) ;
+        ERR (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+        ERR (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
+    }
+
+    expected = GrB_DOMAIN_MISMATCH ;
     ERR (GrB_Vector_assign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
-    ERR (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
     ERR (GrB_Vector_assign_UDT_(v, v0, o2  ,(void *) &c, I, 0, d0)) ;
     ERR (GrB_Vector_assign_UDT_(v, v0, NULL,(void *) &c, I, 0, d0)) ;
 
