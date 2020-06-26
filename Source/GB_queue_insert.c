@@ -3,11 +3,12 @@
 
 #include "GB.h"
 
+GB_PUBLIC
 bool GB_queue_insert (GrB_Matrix A)
 {
     bool ok = true ;
     if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))
-    { 
+    {
         #define GB_CRITICAL_SECTION                                         \
         {                                                                   \
             if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))  \

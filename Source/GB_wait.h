@@ -7,7 +7,8 @@ bool GB_queue_remove            // remove matrix from queue
 (
     GrB_Matrix A                // matrix to remove
 ) ;
-
+ 
+GB_PUBLIC
 bool GB_queue_insert            // insert matrix at the head of queue
 (
     GrB_Matrix A                // matrix to insert
