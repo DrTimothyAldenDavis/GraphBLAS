@@ -266,12 +266,7 @@ void mexFunction
 
     if (A->type == Complex)
     {
-        // FIXME
-        #if GxB_STDC_VERSION >= 201112L
         METHOD (axb_complex (Context)) ;
-        #else
-        mexErrMsgTxt ("complex type not available") ;
-        #endif
     }
     else
     {
