@@ -2766,17 +2766,18 @@ void mexFunction
     {
         expected = GrB_DIMENSION_MISMATCH ;
         OK (GxB_Matrix_subassign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        OK (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     }
     else
     {
         expected = GrB_DOMAIN_MISMATCH ;
         ERR (GxB_Matrix_subassign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        ERR (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     }
     ERR (GxB_Matrix_subassign_FP64_(A, Z , NULL, x, I, 0, J, 0, d0)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, op0 ,(void *) &c , I, 0, J, 0, d0)) ;
-    ERR (GxB_Matrix_subassign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GxB_Matrix_subassign_UDT_(A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
 
