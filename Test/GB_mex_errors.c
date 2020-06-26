@@ -3209,7 +3209,7 @@ void mexFunction
     ERR (GrB_Matrix_apply_(A , A   , op0 , op1gunk, A , NULL)) ;
     ERR (GrB_Matrix_apply_(A , A   , NULL, op1gunk, A , NULL)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
     o2  = Complex_plus ;
     ERR (GrB_Matrix_apply_(A, Z   , NULL, GrB_AINV_FP64, A, NULL)) ;
