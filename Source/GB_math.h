@@ -395,7 +395,7 @@ inline GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)
     double zr, zi ;
     GB_divcomplex ((double) crealf (x), (double) cimagf (x),
                    (double) crealf (y), (double) cimagf (y), &zr, &zi) ;
-    return (GxB_CMPLXF (zr, zi)) ;
+    return (GxB_CMPLXF ((float) zr, (float) zi)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -588,13 +588,13 @@ inline double GB_frexpe (double x)
 inline float GB_signumf (float x)
 {
     if (isnan (x)) return (x) ;
-    return ((x < 0) ? (-1) : ((x > 0) ? 1 : 0)) ;
+    return ((float) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
 }
 
 inline double GB_signum (double x)
 {
     if (isnan (x)) return (x) ;
-    return ((x < 0) ? (-1) : ((x > 0) ? 1 : 0)) ;
+    return ((double) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
 }
 
 inline GxB_FC32_t GB_csignumf (GxB_FC32_t x)

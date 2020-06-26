@@ -97,8 +97,8 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64_(&M, add, (uint64_t) 0)) ;           break ;
                 case GB_FP32_code   : METHOD (GrB_Monoid_new_FP32_  (&M, add, (float   ) 0)) ;           break ;
                 case GB_FP64_code   : METHOD (GrB_Monoid_new_FP64_  (&M, add, (double  ) 0)) ;           break ;
-                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, (GxB_FC32_t) 0)) ;         break ;
-                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, (GxB_FC64_t) 0)) ;         break ;
+                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, GxB_CMPLXF(0,0))) ;        break ;
+                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, GxB_CMPLX (0,0))) ;        break ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (PLUS)") ;
                     return (false) ;
@@ -122,8 +122,8 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64_(&M, add, (uint64_t) 1)) ;           break ;
                 case GB_FP32_code   : METHOD (GrB_Monoid_new_FP32_  (&M, add, (float   ) 1)) ;           break ;
                 case GB_FP64_code   : METHOD (GrB_Monoid_new_FP64_  (&M, add, (double  ) 1)) ;           break ;
-                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, (GxB_FC32_t) 1)) ;         break ;
-                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, (GxB_FC64_t) 1)) ;         break ;
+                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, GxB_CMPLXF(1,0))) ;        break ;
+                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, GxB_CMPLX (1,0))) ;        break ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (TIMES)") ;
                     return (false) ;
@@ -146,8 +146,8 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_UINT64_code : METHOD (GrB_Monoid_new_UINT64_(&M, add, (uint64_t) 0)) ;           break ;
                 case GB_FP32_code   : METHOD (GrB_Monoid_new_FP32_  (&M, add, (float   ) 0)) ;           break ;
                 case GB_FP64_code   : METHOD (GrB_Monoid_new_FP64_  (&M, add, (double  ) 0)) ;           break ;
-                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, (GxB_FC32_t) 0)) ;         break ;
-                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, (GxB_FC64_t) 0)) ;         break ;
+                case GB_FC32_code   : METHOD (GxB_Monoid_new_FC32_  (&M, add, GxB_CMPLXF(0,0))) ;        break ;
+                case GB_FC64_code   : METHOD (GxB_Monoid_new_FC64_  (&M, add, GxB_CMPLX (0,0))) ;        break ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "unknown type for (ANY)") ;
                     return (false) ;

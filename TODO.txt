@@ -1,3 +1,8 @@
+TODO: port GraphBLAS/Test to Windows
+TODO: fix MacOS warnings below
+
+
+
 >> cd @GrB/private/
 >> gbmake
 ............................/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_list.c:95:1: warning: control may reach end of non-void function [-Wreturn-type]

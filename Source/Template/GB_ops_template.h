@@ -53,7 +53,7 @@ inline void GB (AINV_f) (GB_TYPE *z, const GB_TYPE *x)
     #elif defined ( GB_BOOLEAN )
         (*z) = (*x) ;
     #else
-        // integer (signed or unsigned)
+        // integer (signed or unsigned).  unsigned int remains unsigned.
         (*z) = -(*x) ;
     #endif
 }
@@ -873,7 +873,7 @@ inline void GB (ISEQ_f) (GB_Z_X_Y_ARGS)
     #elif defined ( GB_DOUBLE_COMPLEX )
     (*z) = GB_FC64_iseq (*x, *y) ;
     #else
-    (*z) = ((*x) == (*y)) ;
+    (*z) = (GB_TYPE) ((*x) == (*y)) ;
     #endif
 }
 
@@ -884,7 +884,7 @@ inline void GB (ISNE_f) (GB_Z_X_Y_ARGS)
     #elif defined ( GB_DOUBLE_COMPLEX )
     (*z) = GB_FC64_isne (*x, *y) ;
     #else
-    (*z) = ((*x) != (*y)) ;
+    (*z) = (GB_TYPE) ((*x) != (*y)) ;
     #endif
 }
 
@@ -894,10 +894,10 @@ GB_PUBLIC struct GB_BinaryOp_opaque
 
 #if defined ( GB_REAL )
 
-    inline void GB (ISGT_f) (GB_Z_X_Y_ARGS) { (*z) = ((*x) >  (*y)) ; }
-    inline void GB (ISLT_f) (GB_Z_X_Y_ARGS) { (*z) = ((*x) <  (*y)) ; }
-    inline void GB (ISGE_f) (GB_Z_X_Y_ARGS) { (*z) = ((*x) >= (*y)) ; }
-    inline void GB (ISLE_f) (GB_Z_X_Y_ARGS) { (*z) = ((*x) <= (*y)) ; }
+    inline void GB (ISGT_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) ((*x) >  (*y)) ; }
+    inline void GB (ISLT_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) ((*x) <  (*y)) ; }
+    inline void GB (ISGE_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) ((*x) >= (*y)) ; }
+    inline void GB (ISLE_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) ((*x) <= (*y)) ; }
 
     GB_PUBLIC struct GB_BinaryOp_opaque
         GB (opaque_GxB_ISGT),
@@ -919,9 +919,9 @@ inline void GB (LXOR_f) (GB_Z_X_Y_ARGS) { (*z) = ((*x) != (*y)) ; }
 #else
 // The inputs are of type T but are then implicitly converted to boolean
 // The output z is of type T, either 1 or 0 in that type.
-inline void GB (LOR_f)  (GB_Z_X_Y_ARGS) { (*z) = (((*x) != 0) || ((*y) != 0)) ;}
-inline void GB (LAND_f) (GB_Z_X_Y_ARGS) { (*z) = (((*x) != 0) && ((*y) != 0)) ;}
-inline void GB (LXOR_f) (GB_Z_X_Y_ARGS) { (*z) = (((*x) != 0) != ((*y) != 0)) ;}
+inline void GB (LOR_f)  (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) (((*x) != 0) || ((*y) != 0)) ; }
+inline void GB (LAND_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) (((*x) != 0) && ((*y) != 0)) ; }
+inline void GB (LXOR_f) (GB_Z_X_Y_ARGS) { (*z) = (GB_TYPE) (((*x) != 0) != ((*y) != 0)) ; }
 #endif
 
 GB_PUBLIC struct GB_BinaryOp_opaque

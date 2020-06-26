@@ -11482,13 +11482,17 @@ folder and type:
 \subsection{Running the tests}
 %----------------------------------------
 
+To run a short test, type \verb'make run' at the top-level \verb'GraphBLAS'
+folder.  This will run all the demos in \verb'GraphBLAS/Demos'.  MATLAB is not
+required.
+
 To perform the extensive tests in the \verb'Test' folder, and the statement
 coverage tests in \verb'Tcov', MATLAB R2017A is required.  See the
 \verb'README.txt' files in those two folders for instructions on how to run the
-tests.  The tests in the \verb'Test' folder have been ported to MATLAB on Linux
-and MacOS.  The \verb'Test' and \verb'Tcov' tests do not work on Windows.
-The MATLAB interface test (\verb'gbtest') does work on all platforms, however.
-See the \verb'GraphBLAS/GraphBLAS' folder for more details.
+tests.  The tests in the \verb'Test' folder have been ported to MATLAB on
+Linux, MacOS, and Windows.  The \verb'Tcov' tests do not work on Windows.  The
+MATLAB interface test (\verb'gbtest') works on all platforms; see the
+\verb'GraphBLAS/GraphBLAS' folder for more details.
 
 %----------------------------------------
 \subsection{Cleaning up}

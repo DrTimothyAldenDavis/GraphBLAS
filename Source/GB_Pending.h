@@ -196,7 +196,7 @@ static inline bool GB_shall_block
 {
 
     if (!GB_PENDING_OR_ZOMBIES (A)) return (false) ;
-    double npending = GB_Pending_n (A) ;
+    double npending = (double) GB_Pending_n (A) ;
     double anzmax = ((double) A->vlen) * ((double) A->vdim) ;
     bool many_pending = (npending >= anzmax) ;
     bool blocking = (GB_Global_mode_get ( ) == GrB_BLOCKING) ;
