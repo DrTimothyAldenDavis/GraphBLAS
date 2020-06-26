@@ -197,7 +197,7 @@ void mexFunction
     GrB_Index *Si = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
     GrB_Index *Sj = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
 
-    GB_matlab_helper5 (Si, Sj, Mi, Mj, Ai, anz) ;
+    GB_matlab_helper5 (Si, Sj, Mi, Mj, (GrB_Index *) Ai, anz) ;
 
     GrB_Matrix S ;
     OK (GrB_Matrix_new (&S, atype, nrows, ncols)) ;

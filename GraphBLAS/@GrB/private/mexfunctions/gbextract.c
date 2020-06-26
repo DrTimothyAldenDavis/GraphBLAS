@@ -156,8 +156,8 @@ void mexFunction
         int I_kind, J_kind ;
         int64_t I_colon [3], J_colon [3] ;
         GrB_Index cnrows, cncols ;
-        GB_ijlength (I, ni, anrows, &cnrows, &I_kind, I_colon) ;
-        GB_ijlength (J, nj, ancols, &cncols, &J_kind, J_colon) ;
+        GB_ijlength (I, ni, anrows, (int64_t *) &cnrows, &I_kind, I_colon) ;
+        GB_ijlength (J, nj, ancols, (int64_t *) &cncols, &J_kind, J_colon) ;
         ctype = atype ;
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;

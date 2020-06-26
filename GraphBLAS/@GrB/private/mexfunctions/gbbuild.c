@@ -70,10 +70,10 @@ void mexFunction
     int64_t Imax = -1, Jmax = -1 ;
 
     GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0], base,
-        &I_allocated, &ni, &Imax) ;
+        &I_allocated, (int64_t *) &ni, &Imax) ;
 
     GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1], base,
-        &J_allocated, &nj, &Jmax) ;
+        &J_allocated, (int64_t *) &nj, &Jmax) ;
 
     //--------------------------------------------------------------------------
     // get X
@@ -107,7 +107,8 @@ void mexFunction
     if (ni == 1 && ni < nvals)
     { 
         GrB_Index *I2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_matlab_helper8 (I2, I, nvals, sizeof (GrB_Index)) ;
+        GB_matlab_helper8 ((GB_void *) I2, (GB_void *) I, nvals,
+            sizeof (GrB_Index)) ;
         if (I_allocated) gb_mxfree (&I) ;
         I_allocated = true ;
         I = I2 ;
@@ -116,7 +117,8 @@ void mexFunction
     if (nj == 1 && nj < nvals)
     { 
         GrB_Index *J2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_matlab_helper8 (J2, J, nvals, sizeof (GrB_Index)) ;
+        GB_matlab_helper8 ((GB_void *) J2, (GB_void *) J, nvals,
+            sizeof (GrB_Index)) ;
         if (J_allocated) gb_mxfree (&J) ;
         J_allocated = true ;
         J = J2 ;
@@ -219,7 +221,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (bool)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (bool)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (bool)) ;
             X = (bool *) X2 ;
         }
         OK (GrB_Matrix_build_BOOL (A, I, J, X, nvals, dup)) ;
@@ -232,7 +235,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (int8_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (int8_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (int8_t)) ;
             X = (int8_t *) X2 ;
         }
         OK (GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
@@ -245,7 +249,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (int16_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (int16_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (int16_t)) ;
             X = (int16_t *) X2 ;
         }
         OK (GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
@@ -258,7 +263,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (int32_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (int32_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (int32_t)) ;
             X = (int32_t *) X2 ;
         }
         OK (GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
@@ -271,7 +277,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (int64_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (int64_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (int64_t)) ;
             X = (int64_t *) X2 ;
         }
         OK (GrB_Matrix_build_INT64 (A, I, J, X, nvals, dup)) ;
@@ -284,7 +291,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (uint8_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (uint8_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (uint8_t)) ;
             X = (uint8_t *) X2 ;
         }
         OK (GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
@@ -297,7 +305,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (uint16_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (uint16_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (uint16_t)) ;
             X = (uint16_t *) X2 ;
         }
         OK (GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
@@ -310,7 +319,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (uint32_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (uint32_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (uint32_t)) ;
             X = (uint32_t *) X2 ;
         }
         OK (GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
@@ -323,7 +333,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (uint64_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (uint64_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (uint64_t)) ;
             X = (uint64_t *) X2 ;
         }
         OK (GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
@@ -336,7 +347,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (float)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (float)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (float)) ;
             X = (float *) X2 ;
         }
         OK (GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
@@ -349,7 +361,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (double)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (double)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (double)) ;
             X = (double *) X2 ;
         }
         OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
@@ -363,7 +376,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC32_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (GxB_FC32_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (GxB_FC32_t)) ;
             X = (GxB_FC32_t *) X2 ;
         }
         OK (GxB_Matrix_build_FC32 (A, I, J, X, nvals, dup)) ;
@@ -377,7 +391,8 @@ void mexFunction
         if (expandx)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC64_t)) ;
-            GB_matlab_helper8 (X2, X, nvals, sizeof (GxB_FC64_t)) ;
+            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+                sizeof (GxB_FC64_t)) ;
             X = (GxB_FC64_t *) X2 ;
         }
         OK (GxB_Matrix_build_FC64 (A, I, J, X, nvals, dup)) ;
