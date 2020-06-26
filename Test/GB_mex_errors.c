@@ -3153,7 +3153,9 @@ void mexFunction
         ERR (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
     }
 
+    expected = GrB_DOMAIN_MISMATCH ;
     ERR (GrB_Vector_assign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
+
     ERR (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
     ERR (GrB_Vector_assign_UDT_(v, v0, o2  ,(void *) &c, I, 0, d0)) ;
     ERR (GrB_Vector_assign_UDT_(v, v0, NULL,(void *) &c, I, 0, d0)) ;
