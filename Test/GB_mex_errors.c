@@ -2735,7 +2735,16 @@ void mexFunction
     ERR (GxB_Row_subassign_(A, v0, NULL, z, 0, J, 0, d0)) ;
 
     ERR (GxB_Vector_subassign_FP64_(v, z , NULL, x, I, 0, d0)) ;            // vector scalar
-    ERR (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+    }
+    else
+    {
+        ERR (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
+    }
+
     ERR (GxB_Vector_subassign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
     ERR (GxB_Vector_subassign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
     ERR (GxB_Vector_subassign_UDT_(v, v0, o2  ,(void *) &c, I, 0, d0)) ;
