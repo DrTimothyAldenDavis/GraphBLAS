@@ -3622,7 +3622,7 @@ void mexFunction
     op0 = NULL ;
     d0 = NULL ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
     o2 = Complex_plus ;
     ERR (GrB_Matrix_reduce_BinaryOp_(v, z   , NULL, GrB_PLUS_FP64, A, d0)) ;
