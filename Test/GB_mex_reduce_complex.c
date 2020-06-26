@@ -81,12 +81,12 @@ void mexFunction
     if (hack >= 0)
     {
         GxB_FC64_t *Ax = A->x ;
-        Ax [hack] = 0 ;
+        Ax [hack] = GxB_CMPLX (0,0) ;
     }
 
     // allocate the MATLAB output scalar
     pargout [0] = GB_mx_create_full (1, 1, GxB_FC64) ;
-    GxB_FC64_t *c = mxGetComplexDoubles (pargout [0]) ;
+    GxB_FC64_t *c = (GxB_FC64_t *) mxGetComplexDoubles (pargout [0]) ;
 
     // reduce to a scalar
     if (Complex == GxB_FC64)
