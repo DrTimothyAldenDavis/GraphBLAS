@@ -87,13 +87,14 @@ for k1 = 1:length(types)
         end
         fprintf (' %s', op.opname) ;
 
-        if (ispc && isequal (op.opname, 'asin'))
-            fprintf (' (skipped)') ;
-            continue ;
-        end
-
         for k3 = 1:length(types)
             op.optype = types {k3} ;
+
+            if (ispc && contains (op.opname, 'asin') && contains (op.type, 'complex'))
+                % casin and casinf are broken on Windows
+                fprintf (' (skipped)') ;
+                continue ;
+            end
 
             try
                 [opname optype ztype xtype ytype] = GB_spec_operator (op) ;
