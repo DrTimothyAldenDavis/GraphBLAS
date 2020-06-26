@@ -123,14 +123,15 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \end{spec}
 
 \newpage
-\subsection{Release Notes:}
+\subsection{Future plans:}
 
 \begin{itemize}
 
-\item Version 4.0.0 (Future, 2020), will follow the V2.0 of the C API.
+\item Version 4.0.0 (likely in July, 2020), will follow the V2.0 of the C API.
     The following changes are tentative, and depend on the final release of the
     V2.0 C API.
 
+    % TODO in 4.0: revise this as needed:
     \verb'GrB_wait()', with no inputs: will be removed.
     \verb'GrB_wait(&object)': polymorphic function will be added.
     \verb'GrB_*_nvals' and related functions:
@@ -143,8 +144,14 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     when \verb'C' was last operated on.
     V4.0 will otherwise be identical to V3.3.0.
 
-\item Version 3.3.0 (June/July (TODO NOW), 2020).  Compliant with V1.3 of the C API
-    (except that the polymorphic \verb'GrB_wait(&object)' doesn't appear yet).
+\end{itemize}
+
+\subsection{Release Notes:}
+\begin{itemize}
+
+\item Version 3.3.0 (June 25, 2020).  Compliant with V1.3 of the C API
+    (except that the polymorphic \verb'GrB_wait(&object)' doesn't appear yet;
+    it will appear in V4.0).
 
     Added complex types (\verb'GxB_FC32' and \verb'GxB_FC64'), many unary
     operators, binary operators, monoids, and semirings.  Added bitwise
@@ -400,7 +407,7 @@ since $x+0=0+x=x$.   GraphBLAS includes many built-in operators suitable for
 use as a monoid: min (with an identity value of positive infinity), max (whose
 identity is negative infinity), add (identity is zero), multiply (with an
 identity of one), four logical operators: AND, OR, exclusive-OR, and
-Boolean equality, four bitwise operators (AND, OR, XOR, and XNOR),
+Boolean equality (XNOR), four bitwise operators (AND, OR, XOR, and XNOR),
 and the ANY operator.
 User-created monoids can be defined with any associative and
 commutative operator that has an identity value.
@@ -714,9 +721,9 @@ than 10 using logical indexing in MATLAB:
          4   -14   -15     1 \end{verbatim} } \end{mdframed}
 
 In MATLAB, logical indexing with a sparse matrix \verb'A' and sparse logical
-matrix \verb'Mask' is very efficient since MATLAB supports sparse logical
-matrices.  The Mask operator in GraphBLAS works identically as sparse logical
-indexing in MATLAB, and is equally as fast (or faster) in SuiteSparse:GraphBLAS.
+matrix \verb'Mask' is a built-in method.  The Mask operator in GraphBLAS works
+identically as sparse logical indexing in MATLAB, but is typically far faster
+in SuiteSparse:GraphBLAS than the same operation using MATLAB sparse matrices.
 
 %===============================================================================
 \subsection{Typecasting} %======================================================
@@ -737,19 +744,18 @@ when one type cannot be typecast to another, the GraphBLAS function returns an
 error code, \verb'GrB_DOMAIN_MISMATCH' (refer to Section~\ref{error} for a
 complete list of error codes).  Typecasting can only be done between built-in
 types, and it follows the rules of the ANSI C language (not MATLAB) wherever
-the rules of ANSI C are well-defined.  In particular, a large integer outside
-the range of a smaller one is wrapped, modulo style.  This differs from MATLAB.
+the rules of ANSI C are well-defined.
 
-However, unlike MATLAB, the C language specification states that the results of
-typecasting a \verb'float' or \verb'double' to an integer type is not always
-defined.  In SuiteSparse:GraphBLAS, whenever C leaves the result undefined the
-rules used in MATLAB are followed.  In particular \verb'+Inf' converts to the
-largest integer value, \verb'-Inf' converts to the smallest (zero for unsigned
-integers), and \verb'NaN' converts to zero.  Positive values outside the range
-of the integer are converted to the largest positive integer, and negative
-values less than the most negative integer are converted to that most negative
-integer.  Other than these special cases, SuiteSparse:GraphBLAS trusts the C
-compiler for the rest of its typecasting.
+However, unlike MATLAB, the ANSI C11 language specification states that the
+results of typecasting a \verb'float' or \verb'double' to an integer type is
+not always defined.  In SuiteSparse:GraphBLAS, whenever C leaves the result
+undefined the rules used in MATLAB are followed.  In particular \verb'+Inf'
+converts to the largest integer value, \verb'-Inf' converts to the smallest
+(zero for unsigned integers), and \verb'NaN' converts to zero.  Positive values
+outside the range of the integer are converted to the largest positive integer,
+and negative values less than the most negative integer are converted to that
+most negative integer.  Other than these special cases, SuiteSparse:GraphBLAS
+trusts the C compiler for the rest of its typecasting.
 
 Typecasting to \verb'bool' is fully defined in the C language specification,
 even for \verb'NaN'.  The result is \verb'false' if the value compares equal to
@@ -942,7 +948,8 @@ See Abhinav Mehndiratta's Julia interface at  \\
 \label{java}
 
 Fabian Murariu is working on a Java interface.
-See \href{https://github.com/fabianmurariu/graphblas-java-native}.
+See \newline
+\href{https://github.com/fabianmurariu/graphblas-java-native}{https://github.com/fabianmurariu/graphblas-java-native}.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1067,8 +1074,8 @@ dealing with errors:
 GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GrB_init'      & start up GraphBLAS                           & \ref{init} \\
-\verb'GxB_init'      & start up GraphBLAS with different \verb'malloc' & \ref{xinit} \\
 \verb'GrB_getVersion'& C API supported by the library               & \ref{getVersion} \\
+\verb'GxB_init'      & start up GraphBLAS with different \verb'malloc' & \ref{xinit} \\
 \verb'GrB_Info'      & status code returned by GraphBLAS functions  & \ref{info} \\
 \verb'GrB_error'     & get more details on the last error           & \ref{error} \\
 \verb'GrB_finalize'  & finish GraphBLAS                             & \ref{finalize} \\
@@ -1137,7 +1144,6 @@ they will not guarantee completion.  Use \verb'GrB_*_wait(&object)' instead.}
 SuiteSparse:GraphBLAS is multithreaded internally, via OpenMP, and it is also
 safe to use in a multithreaded user application.  See Section~\ref{sec:install}
 for details.
-
 User threads must not operate on the same matrices at the same time, with one
 exception.  Multiple user threads can use the same matrices or vectors as
 read-only inputs to GraphBLAS operations or methods, but only if they have no
@@ -1183,21 +1189,24 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 \end{verbatim}
 }\end{mdframed}
 
-GraphBLAS defines two compile-time constants, \verb'GRB_VERSION' and
-\verb'GRB_SUBVERSION', which defines the version of the C API Specification
-that is implemented by the library.
-
-If the user program was compiled with one version of the library but linked
-with a different one later on, the compile-time version check with
-\verb'GRB_VERSION' would be stale.  \verb'GrB_getVersion' thus provides a
-runtime access of the version of the C API Specification supported by the
-library.
+GraphBLAS defines two compile-time constants that
+define the version of the C API Specification
+that is implemented by the library:
+\verb'GRB_VERSION' and \verb'GRB_SUBVERSION'.
+If the user program was compiled with one
+version of the library but linked with a different one later on, the
+compile-time version check with \verb'GRB_VERSION' would be stale.
+\verb'GrB_getVersion' thus provides a runtime access of the version of the C
+API Specification supported by the library.
 
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
 of the C API Specification,
 % TODO in 4.0: Remove when GrB_wait(no inputs) is removed;
 except for the polymorphic \verb'GrB_wait(&object)' with one input.
+That method will appear in SuiteSparse:GraphBLAS V4.0.0.  In the meantime, use
+the non-polymorphic methods \verb'GrB_Matrix_wait(&C)',
+\verb'GrB_Vector_wait(&v)', and so on.
 
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %======
@@ -1262,9 +1271,9 @@ management function inside a parallel region.  Results are undefined if all
 three of the following conditions hold: (1) the user application calls
 GraphBLAS in parallel from multiple user-level threads, (2) the memory
 functions are not thread-safe, and (3) GraphBLAS is not compiled with OpenMP.
-Safety is guaranteed if at least one of those conditions is true.
+Safety is guaranteed if at least one of those conditions is false.
 
-As another example, the scalable Intel TBB memory manager can be used:
+To use the scalable Intel TBB memory manager:
 
     {\footnotesize
     \begin{verbatim}
@@ -1377,7 +1386,7 @@ intentionally generate errors to illustrate the use of \verb'GrB_error'.
 
 Successful GraphBLAS methods do not modify the last error message recorded.  If
 a GraphBLAS method fails and then subsequent GraphBLAS method succeeds, the
-error message is not modified from the last failure.  Only a subsequent failure
+error message is not modified from the last failure.  A subsequent failure
 will cause \verb'GrB_error' to return a different error message.
 
 Note that \verb'GrB_NO_VALUE' is an not error, but an informational status.
@@ -1389,8 +1398,7 @@ In SuiteSparse:GraphBLAS, some failures cannot be safely recorded for
 \verb'GrB_init' and \verb'GxB_init'.
 
 % TODO in 4.0: revise this statement when the change to the API is finalized:
-{\bf NOTE:} in the upcoming revision of the GraphBLAS C API Specification,
-\verb'GrB_error' may change.  It may have the signature
+{\bf NOTE:} \verb'GrB_error' may change in the future.  It may have the signature
 \verb'GrB_error(&s,C)' where \verb's' is the error string that describes the
 error when \verb'C' is the output object of a GraphBLAS method.  This change to
 the C API is tentative.  If this change is made, it will be reflected in
@@ -1633,11 +1641,11 @@ complex scalar, and then apply it to the matrix before or after the transpose,
 via \verb'GrB_apply'.  An extensive set of complex operators are provided in
 the \verb'usercomplex.c' example in the \verb'Demo' folder, along with an
 include file, \verb'usercomplex.h', that is suitable for inclusion in any user
-application.  Thus, while GraphBLAS does not include any complex types or
-operators, SuiteSparse:GraphBLAS provides them in two simple ``user'' files in
-the \verb'Demo' folder.
-Refer to Section~\ref{user} for more details on these two example user-defined
-types.
+application.  GraphBLAS does not include any complex types or operators,
+SuiteSparse:GraphBLAS provides them in two simple ``user'' files in the
+\verb'Demo' folder, as user-defined types.  They also now appear as built-in
+types, \verb'GxB_FC32' and \verb'GxB_FC64'.  Refer to Section~\ref{user} for
+more details on these example user-defined types.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_wait:} wait for a type}
@@ -1656,7 +1664,7 @@ GrB_Info GrB_Type_wait          // wait for a user-defined type
 After creating a user-defined type, a GraphBLAS library may choose to exploit
 non-blocking mode to delay its creation.  \verb'GrB_Type_wait(&type)' ensures
 the \verb'type' is completed.  SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Type_wait(&type)', except to ensure that it is valid.
+\verb'GrB_Type_wait(&type)', except to ensure that \verb'type' is valid.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -1724,7 +1732,7 @@ type is freed the matrix can no longer be used.  The only safe thing that can
 be done with such a matrix is to free it.
 
 The function signature of \verb'GrB_Type_free' uses the generic name
-\verb'GrB_free', which can free any GraphBLAS object See Section~\ref{free}
+\verb'GrB_free', which can free any GraphBLAS object. See Section~\ref{free}
 details.  GraphBLAS includes many such generic functions.  When describing a
 specific variation, a function is described with its specific name in this User
 Guide (such as \verb'GrB_Type_free').  When discussing features applicable to
@@ -1850,6 +1858,13 @@ GraphBLAS name          & types (domains)   & $z=f(x)$      & description \\
 from the ANSI C11 \verb'frexp' function.  The exponent is returned as a
 floating-point value, not an integer.
 
+The functions \verb'casin' and \verb'casinf' provided by Microsoft
+Visual Studio for computing $\sin^{-1}(x)$ when $x$ is complex do not
+compute the correct result.  Thus,
+\verb'GxB_ASIN_FC32' and \verb'GxB_ASIN_FC64' do not work properly if the MS
+Visual Studio compiler is used.  These functions work properly if the gcc, icc,
+or clang compilers are used on Linux or MacOS.
+
 \vspace{0.2in}
 \begin{tabular}{|llll|}
 \hline
@@ -1949,15 +1964,17 @@ aliased to each other.
 \begin{verbatim}
 GrB_Info GrB_UnaryOp_wait       // wait for a user-defined unary operator
 (
-    GrB_UnaryOp *op             // unary operator to wait for
+    GrB_UnaryOp *unaryop        // unary operator to wait for
 ) ;
 \end{verbatim}
 }\end{mdframed}
 
 After creating a user-defined unary operator, a GraphBLAS library may choose to
-exploit non-blocking mode to delay its creation.  \verb'GrB_UnaryOp_wait(&op)'
-ensures the \verb'op' is completed.  SuiteSparse:GraphBLAS currently does
-nothing for \verb'GrB_UnaryOp_wait(&op)', except to ensure that it is valid.
+exploit non-blocking mode to delay its creation.
+\verb'GrB_UnaryOp_wait(&unaryop)' ensures the \verb'op' is completed.
+SuiteSparse:GraphBLAS currently does nothing for
+\verb'GrB_UnaryOp_wait(&unaryop)', except to ensure that the \verb'unaryop' is
+valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_UnaryOp\_ztype:} return the type of $z$}
@@ -2082,9 +2099,14 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 }
 \vspace{0.2in}
 
-Operators that require the domain to be ordered
-(\verb'MIN', \verb'MAX', and relative comparisons less-than, greater-than,
-and so on) are not defined for complex types.
+The \verb'GxB_POW_*' operators for real types do not return a complex result,
+and thus $z = f(x,y) = x^y$ is undefined if $x$ is negative and $y$ is not an
+integer.  To compute a complex result, use \verb'GxB_POW_FC32' or
+\verb'GxB_POW_FC64'.
+
+Operators that require the domain to be ordered (\verb'MIN', \verb'MAX', and
+relative comparisons less-than, greater-than, and so on) are not defined for
+complex types.  These are listed in the following table:
 
 \vspace{0.2in}
 {\footnotesize
@@ -2340,16 +2362,17 @@ should be computed.  Future versions may use additional pointer aliasing.
 \begin{verbatim}
 GrB_Info GrB_BinaryOp_wait      // wait for a user-defined binary operator
 (
-    GrB_BinaryOp *op            // binary operator to wait for
+    GrB_BinaryOp *binaryop      // binary operator to wait for
 ) ;
 \end{verbatim}
 }\end{mdframed}
 
 After creating a user-defined binary operator, a GraphBLAS library may choose
 to exploit non-blocking mode to delay its creation.
-\verb'GrB_BinaryOp_wait(&op)' ensures the \verb'op' is completed.
-SuiteSparse:GraphBLAS currently does nothing for \verb'GrB_BinaryOp_wait(&op)',
-except to ensure that it is valid.
+\verb'GrB_BinaryOp_wait(&binaryop)' ensures the \verb'binaryop' is completed.
+SuiteSparse:GraphBLAS currently does nothing for
+\verb'GrB_BinaryOp_wait(&binaryop)', except to ensure that the \verb'binaryop'
+is valid.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -2489,16 +2512,16 @@ in a fast benign race condition.
 The result of the \verb'ANY' monoid is non-deterministic, unless it is
 coupled with the \verb'PAIR' multiplicative operator.  In this case,
 the \verb'ANY_PAIR' semiring will return a deterministic result,
-since $f(1,1)$ is always 1, for the \verb'ANY' operator.
+since $f(1,1)$ is always 1, for the \verb'ANY' operator $f(x,y)$.
 
 When paired with a different operator, the results are non-deterministic.  This
 gives a powerful method when computing results for which any value selected by
 the \verb'ANY' operator is valid.  One such example is the breadth-first-search
 tree.  Suppose node $j$ is at level $v$, and there are multiple nodes $i$ at
-level $v-1$ for which edge $(i,j)$ exists in the graph.  Any of these nodes $i$
-can serve as a valid parent in the BFS tree.  Using the \verb'ANY' operator,
-GraphBLAS can quickly compute a valid BFS tree; if it used again on the
-same inputs, it might return a different, yet still valid, BFS tree, due to
+level $v-1$ for which the edge $(i,j)$ exists in the graph.  Any of these nodes
+$i$ can serve as a valid parent in the BFS tree.  Using the \verb'ANY'
+operator, GraphBLAS can quickly compute a valid BFS tree; if it used again on
+the same inputs, it might return a different, yet still valid, BFS tree, due to
 the non-deterministic nature of intra-thread synchronization.
 
 \newpage
@@ -2636,16 +2659,17 @@ will be passed as \verb'NULL'.
 \begin{verbatim}
 GrB_Info GxB_SelectOp_wait      // wait for a user-defined select operator
 (
-    GxB_SelectOp *op            // select operator to wait for
+    GxB_SelectOp *selectop      // select operator to wait for
 ) ;
 \end{verbatim}
 }\end{mdframed}
 
 After creating a user-defined select operator, a GraphBLAS library may choose
 to exploit non-blocking mode to delay its creation.
-\verb'GxB_SelectOp_wait(&op)' ensures the \verb'op' is completed.
-SuiteSparse:GraphBLAS currently does nothing for \verb'GxB_SelectOp_wait(&op)',
-except to ensure that it is valid.
+\verb'GxB_SelectOp_wait(&selectop)' ensures the \verb'selectop' is completed.
+SuiteSparse:GraphBLAS currently does nothing for
+\verb'GxB_SelectOp_wait(&selectop)', except to ensure that the \verb'selectop'
+is valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_xtype:} return the type of $x$}
@@ -2668,7 +2692,7 @@ GrB_Info GxB_SelectOp_xtype     // return the type of x
 which is the type of $x$ in the function $z=f(i,j,m,n,x,\mbox{thunk})$.  If the
 select operator is type-generic, \verb'xtype' is returned as \verb'GrB_NULL'.
 This is not an error condition, but simply indicates that the
-\verb'GxB_SelectOp' is type-generic.
+\verb'selectop' is type-generic.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_ttype:} return the type of the {\em thunk}}
@@ -2691,7 +2715,7 @@ GrB_Info GxB_SelectOp_ttype     // return the type of thunk
 which is the type of {\em thunk} in the function $z=f(i,j,m,n,x,\mbox{thunk})$.
 If the select operator does not use this parameter, \verb'ttype' is returned as
 \verb'GrB_NULL'.  This is not an error condition, but simply indicates that the
-\verb'GxB_SelectOp' does not use this parameter.
+\verb'selectop' does not use this parameter.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_free:} free a user-defined select operator}
@@ -2730,7 +2754,7 @@ A {\em monoid} is defined on a single domain (that is, a single type), $T$.  It
 consists of an associative binary operator $z=f(x,y)$ whose three operands $x$,
 $y$, and $z$ are all in this same domain $T$ (that is $T \times T \rightarrow
 T$).  The associative operator must also have an identity element, or ``zero''
-in this domain, such that $f(x,0)=f(0,x)=0$.  Recall that an associative
+in this domain, such that $f(x,0)=f(0,x)=x$.  Recall that an associative
 operator $f(x,y)$ is one for which the condition $f(a, f(b,c)) = f(f (a,b),c)$
 always holds.  That is, operator can be applied in any order and the results
 remain the same.
@@ -2889,7 +2913,8 @@ GrB_Info GrB_Monoid_wait        // wait for a user-defined monoid
 After creating a user-defined monoid, a GraphBLAS library may choose to exploit
 non-blocking mode to delay its creation.  \verb'GrB_Monoid_wait(&monoid)'
 ensures the \verb'monoid' is completed.  SuiteSparse:GraphBLAS currently does
-nothing for \verb'GrB_Monoid_wait(&monoid)', except to ensure that it is valid.
+nothing for \verb'GrB_Monoid_wait(&monoid)', except to ensure that the
+\verb'monoid' is valid.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3081,10 +3106,9 @@ A {\em semiring} defines all the operators required to define the
 multiplication of two sparse matrices in GraphBLAS, ${\bf C=AB}$.  The ``add''
 operator is a commutative and associative monoid, and the binary ``multiply''
 operator defines a function $z=fmult(x,y)$ where the type of $z$ matches the
-exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1,473
-predefined built-in semirings, which are all those that can be constructed
-from built-in types and operators.  The next sections define the following
-methods for the \verb'GrB_Semiring' object:
+exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1,473 predefined
+built-in semirings.  The next sections define the following methods for the
+\verb'GrB_Semiring' object:
 
 \vspace{0.2in}
 {\footnotesize
@@ -3190,7 +3214,8 @@ preferred, for portability to other GraphBLAS implementations.
     \end{itemize}
 
 \item 54 complex semirings, $Z \times Z \rightarrow Z$ where $Z$ is
-    \verb'float complex' or \verb'double complex':
+    \verb'GxB_FC32' (single precision complex) or
+    \verb'GxB_FC64' (double precision complex):
 
     \vspace{-0.05in}
     \begin{itemize}
@@ -3235,7 +3260,8 @@ After creating a user-defined semiring, a GraphBLAS library may choose to
 exploit non-blocking mode to delay its creation.
 \verb'GrB_Semiring_wait(&semiring)' ensures the \verb'semiring' is completed.
 SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Semiring_wait(&semiring)', except to ensure that it is valid.
+\verb'GrB_Semiring_wait(&semiring)', except to ensure that the \verb'semiring'
+is valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_add:} return the additive monoid of a semiring}
@@ -3442,8 +3468,7 @@ GrB_Info GxB_Scalar_clear   // clear a GxB_Scalar of its entry
 \verb'GxB_Scalar_clear' clears the entry from a sparse scalar.  The pattern of
 \verb's' is empty, just as if it were created fresh with \verb'GxB_Scalar_new'.
 Analogous with \verb's = sparse (0)' in MATLAB.  The type of \verb's' does not
-change.  In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
-discarded.
+change.  Any pending updates to the sparse scalar are discarded.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3554,8 +3579,7 @@ GrB_Info GrB_free           // free a GxB_Scalar
 \noindent
 frees the sparse scalar \verb's' and sets \verb's' to \verb'NULL'.  It safely
 does nothing if passed a \verb'NULL' handle, or if \verb's == NULL' on input.
-In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
-abandoned.
+Any pending updates to the sparse scalar are abandoned.
 
 \newpage
 %===============================================================================
@@ -3720,9 +3744,8 @@ GrB_Info GrB_Vector_clear   // clear a vector of all entries;
 \verb'v(i)' are now equal to the implicit value, depending on what semiring
 ring is used to perform computations on the vector.  The pattern of \verb'v' is
 empty, just as if it were created fresh with \verb'GrB_Vector_new'.  Analogous
-with \verb'v (:) = 0' in MATLAB.  The type and dimension of \verb'v' do not
-change.  In SuiteSparse:GraphBLAS, any pending updates to the vector are
-discarded.
+with \verb'v (:) = sparse(0)' in MATLAB.  The type and dimension of \verb'v' do
+not change.  Any pending updates to the vector are discarded.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_size:}          return the size of a vector}
@@ -3957,8 +3980,8 @@ GrB_Info GrB_free           // free a vector
 
 \noindent
 frees the vector \verb'v' and sets \verb'v' to \verb'NULL'.  It safely does
-nothing if passed a \verb'NULL' handle, or if \verb'v == NULL' on input.
-In SuiteSparse:GraphBLAS, any pending updates to the vector are abandoned.
+nothing if passed a \verb'NULL' handle, or if \verb'v == NULL' on input.  Any
+pending updates to the vector are abandoned.
 
 \newpage
 %===============================================================================
@@ -4115,8 +4138,7 @@ GrB_Info GrB_Matrix_clear   // clear a matrix of all entries;
 ring is used to perform computations on the matrix.  The pattern of \verb'A' is
 empty, just as if it were created fresh with \verb'GrB_Matrix_new'.  Analogous
 with \verb'A (:,:) = 0' in MATLAB.  The type and dimensions of \verb'A' do not
-change.  In SuiteSparse:Graph\-BLAS, any pending updates to the matrix are
-discarded.
+change.  Any pending updates to the matrix are discarded.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -4362,7 +4384,7 @@ updates are assembled frequently.
 A few methods and operations can be intermixed with \verb'setElement', in
 particular, some forms of the \verb'GrB_assign' and \verb'GxB_subassign'
 operations are compatible with the pending updates from \verb'setElement'.
-Sections~\ref{compare_assign} gives more details on which \verb'GxB_subassign'
+Section~\ref{compare_assign} gives more details on which \verb'GxB_subassign'
 and \verb'GrB_assign' operations can be interleaved with calls to
 \verb'setElement' without forcing updates to be assembled.  Other methods that
 do not access the existing entries may also be done without forcing the updates
@@ -4532,8 +4554,8 @@ GrB_Info GrB_free           // free a matrix
 
 \noindent
 frees the matrix \verb'A' and sets \verb'A' to \verb'NULL'.  It safely does
-nothing if passed a \verb'NULL' handle, or if \verb'A == NULL' on input.
-In SuiteSparse:GraphBLAS, any pending updates to the matrix are abandoned.
+nothing if passed a \verb'NULL' handle, or if \verb'A == NULL' on input.  Any
+pending updates to the matrix are abandoned.
 
 \newpage
 %===============================================================================
@@ -5586,12 +5608,12 @@ need not be an array:
     \verb'desc [GrB_INP1]' is set to \verb'GrB_TRAN', then the second input,
     typically called \verb'B', is transposed.
 
-    Vectors are never transposed via the descriptor.  If a method's first
-    parameter is a matrix and the second a vector, then \verb'desc [GrB_INP0]'
-    modifies the matrix parameter and \verb'desc [GrB_INP1]' is ignored.  If a
-    method's first parameter is a vector and the second a matrix, then
-    \verb'desc [GrB_INP1]' modifies the matrix parameter and
-    \verb'desc [GrB_INP0]' is ignored.
+    Vectors and scalars are never transposed via the descriptor.  If a method's
+    first parameter is a matrix and the second a vector or scalar, then
+    \verb'desc [GrB_INP0]' modifies the matrix parameter and
+    \verb'desc [GrB_INP1]' is ignored.  If a method's first parameter is a
+    vector or scalar and the second a matrix, then \verb'desc [GrB_INP1]'
+    modifies the matrix parameter and \verb'desc [GrB_INP0]' is ignored.
 
     To clarify this in each function, the inputs are labeled as
     \verb'first input:' and \verb'second input:' in the function signatures.
@@ -5623,20 +5645,9 @@ need not be an array:
     {\em saxpy} operations, and using workspace of size $n$ per thread,
     corresponding to the number of columns of \verb'C'.
 
-    \item \verb'GxB_AxB_HEAP':
-        no longer appears in v3.2.0, but will likely
-        be reintroduced in a future version.  This is silently replaced
-        with \verb'GxB_AxB_HASH'.
-
-%   a heap-based method, computing
-%   \verb'C(:,j)=A*B(:,j)' via a heap of size equal to the maximum number of
-%   entries in any column of \verb'B'.  The method is very good for hypersparse
-%   matrices, particularly when $|{\bf B}|$ is less than the number of rows of
-%   \verb'C'.  The method used is similar to Algorithm II in
-%   \cite{BulucGilbert08} (see also \cite{BulucGilbert12}).  It computes
-%   \verb'C' in the same order as Gustavson's method, using a heap instead of a
-%   large gather/scatter workspace.  The heap has size $b$, equal to the
-%   maximum number of entries in any one vector of \verb'B'.
+    \item \verb'GxB_AxB_HEAP': no longer appears in SuiteSparse:GraphBLAS, but
+    may be reintroduced in a future version.  This is silently replaced with
+    \verb'GxB_AxB_HASH'.
 
     \item \verb'GxB_AxB_HASH':  a hash-based method, based on
         \cite{10.1145/3229710.3229720}.  Very efficient for hypersparse
@@ -5682,9 +5693,9 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
 \end{verbatim} } \end{mdframed}
 
 \verb'GrB_Descriptor_new' creates a new descriptor, with all fields set to
-their defaults (output is not replaced, mask is not complemented, neither
-input matrix is transposed, and the method used in \verb'C=A*B' is
-selected automatically).
+their defaults (output is not replaced, the mask is not complemented, the mask
+is valued not structural, neither input matrix is transposed, and the method
+used in \verb'C=A*B' is selected automatically).
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_wait:} wait for a descriptor}
@@ -5704,7 +5715,7 @@ After creating a user-defined descriptor, a GraphBLAS library may choose to
 exploit non-blocking mode to delay its creation.
 \verb'GrB_Descriptor_wait(&d)' ensures the descriptor \verb'd' is completed.
 SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Descriptor_wait(&d)', except to ensure that it is valid.
+\verb'GrB_Descriptor_wait(&d)', except to ensure that \verb'd' is valid.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -5816,13 +5827,10 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_Desc_set' is identical to \verb'GrB_Descriptor_set', except that the
-type of the third parameter can vary with the field.  All descriptor fields are
-currently of type \verb'GrB_Desc_Value', so currently this function is
-identical in all ways to \verb'GrB_Descriptor_set', except for the name of the
-function.  Future versions of this function will allow for arbitrary types of
-the third parameter, depending on the field.  For a simpler-to-use alternative,
-see \verb'GxB_set' described in Section~\ref{options}.
+\verb'GxB_Desc_set' is like \verb'GrB_Descriptor_set', except that the
+type of the third parameter can vary with the field.   This function can
+modify descriptor settings that do not have the type \verb'GrB_Desc_Value'.
+See also \verb'GxB_set' described in Section~\ref{options}.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Desc_set' is an extension to the spec.
@@ -5846,16 +5854,12 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
 \verb'GxB_Desc_get' returns the value of a single field in a descriptor.  The
 type of the third parameter is a pointer to a variable type, whose type depends
-on the field.  Currently, all descriptor values are of type
-\verb'GrB_Desc_Value', so this third parameter is a pointer to a scalar value of
-type \verb'GrB_Desc_Value'.  For a simpler-to-use alternative, see
-\verb'GxB_get' described in Section~\ref{options}.
+on the field.  See also \verb'GxB_get' described in Section~\ref{options}.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Desc_get' is an extension to the spec.
 \end{spec}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_free:} free a descriptor}
 %-------------------------------------------------------------------------------
@@ -5987,9 +5991,9 @@ valid but the last statement will lead to undefined behavior.
 
 Some objects are predefined, such as the built-in types.  If a user application
 attempts to free a built-in object, SuiteSparse:GraphBLAS will safely do
-nothing.  In all cases, the \verb'GrB_free' function in SuiteSparse:GraphBLAS
-always returns \verb'GrB_SUCCESS'.
-
+nothing.  The \verb'GrB_free' function in SuiteSparse:GraphBLAS returns
+\verb'GrB_SUCCESS' or \verb'GrB_PANIC' in the unlikely event of a failure.
+% TODO in v4.0: GrB_PANIC will not be returned.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5999,10 +6003,10 @@ always returns \verb'GrB_SUCCESS'.
 
 After a GraphBLAS operation computes a result ${\bf T}$, (for example, ${\bf
 T=AB}$ for \verb'GrB_mxm'), the results are assigned to an output matrix ${\bf
-C}$ via the mask/accumulator phase, written as ${\bf C \langle M \rangle = C
+C}$ via the mask/ accumulator phase, written as ${\bf C \langle M \rangle = C
 \odot T}$.  This phase is affected by the \verb'GrB_REPLACE' option in the
-descriptor, the presence of an optional binary accumulator operator, the
-presence of the optional mask matrix ${\bf M}$, and the status of the mask
+descriptor, the presence of an optional binary accumulator operator ($\odot$),
+the presence of the optional mask matrix ${\bf M}$, and the status of the mask
 descriptor.  The interplay of these options is summarized in
 Table~\ref{tab:maskaccum}.
 
@@ -6036,10 +6040,10 @@ if no mask is present (and the mask-complement descriptor option is not used),
 then only the first half of the table is used.  In this case, the \verb'GrB_REPLACE'
 option has no effect.  The entire matrix ${\bf C}$ is modified.
 
-Consider the case when $c_{ij}$ is present but $t_{ij}$ is not, and there is no
+Consider the cases when $c_{ij}$ is present but $t_{ij}$ is not, and there is no
 mask or the effective value of the mask is true for this ${ij}$ position.  With
 no accumulator operator, $c_{ij}$ is deleted.  If the accumulator operator is
-present, $c_{ij}$ is not deleted, and keeps its original value.
+present and the replace option is not used, $c_{ij}$ remains unchanged.
 
 \begin{table}
 {\small
@@ -6121,6 +6125,8 @@ on the amount of time or memory taken.
     calling this function:  by row, by column, and whether or not to use a {\em
     hypersparse} format \cite{BulucGilbert08,BulucGilbert12}.  These are global
     options that modify all matrices created after calling this method.
+    The global settings also control the number of threads used, and the
+    heuristic for selecting the number of threads for small problems.
 
 \item \verb'GxB_set (GrB_Matrix A, field, value)' provides hints to
     SuiteSparse: GraphBLAS on how to store a particular matrix.  This method
@@ -6139,7 +6145,7 @@ or the global options.
 
 \begin{itemize}
 
-\item \verb'GxB_get (field, &value)' retrieves the current value of
+\item \verb'GxB_get (field, &value)' retrieves the value of
     a global option.
 
 \item \verb'GxB_get (GrB_Matrix A, field, &value)' retrieves the current
@@ -6216,7 +6222,7 @@ For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
 \verb'GxB_set (GxB_NTHREADS, 4)' is used, then the global setting is four
 threads, not eight.  If a descriptor is used but its \verb'GxB_NTHREADS' is not
 set, or set to \verb'GxB_DEFAULT', then any operation that uses this descriptor
-
+will use 4 threads.
 
 %-------------------------------------------------------------------------------
 \subsection{Storing a matrix by row or by column}
@@ -6364,7 +6370,7 @@ in non-hypersparse CSC format.
 
 A new matrix created via \verb'GrB_Matrix_new' starts with $k=0$ and is created
 in hypersparse form by default unless $n \le 1$ or if $h<0$, where $h$ is the
-global \verb'hyper_ratio' value.  The matrix is created in in either
+global \verb'hyper_ratio' value.  The matrix is created in either
 \verb'GxB_BY_ROW' or \verb'GxB_BY_COL' format, as determined by the last call
 to \verb'GxB_set(GxB_FORMAT,...)' or \verb'GrB_init'.
 
@@ -6477,7 +6483,7 @@ future.  Any prior options no longer needed in future versions of
 SuiteSparse:GraphBLAS will be silently ignored, so the use these options is
 safe for future updates.
 
-The hypersparse status of a matrix can be queried with the following usage:
+The hypersparse status of a matrix can be queried with the following:
 
 {\footnotesize
 \begin{verbatim}
@@ -6618,14 +6624,14 @@ ratio to 0.2, and the format of \verb'GxB_BY_COL', for a particular matrix
 but since they are simply hints, future versions of SuiteSparse:GraphBLAS may
 delay the change in format if it can obtain better performance.
 
-For performance, the matrix option should be set as soon as it is created with
-\verb'GrB_Matrix_new', so the internal transformation takes less time.
-
 {\footnotesize
 \begin{verbatim}
     GxB_set (A, GxB_HYPER, 0.2) ;
     GxB_set (A, GxB_FORMAT, GxB_BY_COL) ;
 \end{verbatim} }
+
+For performance, the matrix option should be set as soon as it is created with
+\verb'GrB_Matrix_new', so the internal transformation takes less time.
 
 \newpage
 %===============================================================================
@@ -6716,19 +6722,22 @@ GrB_Info GxB_get                    // gets the current option of a matrix
 \end{verbatim} } \end{mdframed}
 
 This usage of \verb'GxB_get' retrieves the value of a matrix option.
-The \verb'field' parameter can be \verb'GxB_HYPER' or \verb'GxB_FORMAT'.
+The \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_IS_HYPER',
+or \verb'GxB_FORMAT'.
 For example:
 
+\vspace{-0.1in}
 {\footnotesize
 \begin{verbatim}
     double h ;
+    bool is_hyper ;
+    GxB_get (A, GxB_IS_HYPER, &is_hyper) ;
     GxB_get (A, GxB_HYPER, &h) ;
     printf ("matrix A has hyper_ratio = %g\n", h) ;
-
+    printf ("matrix A is currently %shypersparse\n", is_hyper ? "not " : " ") ; 
     GxB_Format_Value s ;
     GxB_get (A, GxB_FORMAT, &s) ;
-    if (s == GxB_BY_COL) printf ("matrix A is stored by column\n") :
-    else printf ("matrix A is stored by row\n") ; \end{verbatim} }
+    printf ("matrix A is stored by %s\n", (s == GxB_BY_COL) ? "col" : "row") ; \end{verbatim} }
 
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_get:} retrieve a {\sf GrB\_Descriptor} value}
@@ -7068,7 +7077,7 @@ effect as array \verb'I' with \verb'ni=0'.
 are extensions to the specification.
 \end{spec}
 
-\newpage
+% \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{GraphBLAS Operations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7151,7 +7160,7 @@ according to the descriptor, \verb'desc' (which may be \verb'NULL') and then
 typecasted to match the multiply operator of the \verb'semiring'.  Next,
 \verb'T=A*B' is computed on the \verb'semiring', precisely defined in the
 \verb'GB_spec_mxm.m' script in \verb'GraphBLAS/Test'.  The actual algorithm
-exploits sparsity and does not take $O(n^3)$ time, but what computes is the
+exploits sparsity and does not take $O(n^3)$ time, but it computes the
 following:
 
 {\footnotesize
@@ -8949,7 +8958,8 @@ without considering the advantages of non-blocking mode discussed in
 Section~\ref{compare_assign}.  It can be up to 500x faster than MATLAB
 R2019b, or even higher depending on the kind of matrix assignment.
 MATLAB logical indexing (the mask of GraphBLAS) is much faster with
-GraphBLAS than in MATLAB R2019b.
+GraphBLAS than in MATLAB R2019b; differences of up to 100,000x have been
+observed.
 
 All of the 28 variants (each with their own source code) are either
 asymptotically optimal, or to within a log factor of being asymptotically
@@ -8966,14 +8976,14 @@ with $h$, not $h \log h$.
 %===============================================================================
 \label{apply}
 
-The \verb'GrB_apply' function is the generic name for 62 specific functions.
+\verb'GrB_apply' is the generic name for 62 specific functions.
 \verb'GrB_Vector_apply' and \verb'GrB_Matrix_apply' apply a unary operator to
 the entries of a matrix.  \verb'GrB_*_apply_BinaryOp1st*' applies a binary
 operator where a single scalar is provided as the $x$ input to the binary
 operator.  \verb'GrB_*_apply_BinaryOp2nd*' applies a binary operator where a
 single scalar is provided as the $y$ input to the binary operator.  The generic
 name appears in the function prototypes, but the specific function name is used
-when describing each variation.  When discussing features that apply to both
+when describing each variation.  When discussing features that apply to all
 versions, the simple name \verb'GrB_apply' is used.
 
 % \newpage
@@ -9039,6 +9049,10 @@ The built-in \verb'GrB_IDENTITY_'$T$ operators (one for each built-in type $T$)
 are very useful when combined with this function, enabling it to compute ${\bf
 C \langle M \rangle  = C \odot A}$.  This makes \verb'GrB_apply' a direct
 interface to the accumulator/mask function for both matrices and vectors.
+The \verb'GrB_IDENTITY_'$T$ operators also provide the fastest stand-alone
+typecasting methods in SuiteSparse:GraphBLAS, with all $13 \times 13=169$
+methods appearing as individual functions, to typecast between any of the 13
+built-in types.
 
 To compute ${\bf C \langle M \rangle = A}$ or ${\bf C \langle M \rangle = C
 \odot A}$ for user-defined types, the user application would need to define an
@@ -9695,14 +9709,13 @@ can be helpful tools to track down this bug.  If \verb'GxB_*print' attempted to
 complete any computations prior to printing or checking the contents of the
 matrix or vector, then further errors could occur, including a segfault.
 
-By contrast, all GraphBLAS methods and operations that return values into
-user-provided arrays or variables force the completion of pending operations
-(\verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
-and \verb'GrB_reduce' (to scalar)).  The \verb'GxB_*print' methods provide
-a useful alternative for debugging, and for a quick understanding of what
-GraphBLAS is computing while developing a user application.
+By contrast, GraphBLAS methods and operations that return values into
+user-provided arrays or variables might finish pending operations before the
+return these values, and this would change their state.  Since they do not
+change the state of any object, the \verb'GxB_*print' methods provide a useful
+alternative for debugging, and for a quick understanding of what GraphBLAS is
+computing while developing a user application.
 
-\newpage
 Each of the methods has a parameter of type \verb'GxB_Print_Level' that
 specifies the amount to print:
 
@@ -9750,7 +9763,7 @@ SuiteSparse:GraphBLAS.  Do not attempt to rely on the exact content or format
 by trying to parse the resulting output via another program.  The intent of
 these functions is to produce a report of an object for visual inspection.  If
 the user application needs to extract content from a GraphBLAS matrix or
-vector, use \verb'GrB_*_extractTuples' instead.
+vector, use \verb'GrB_*_extractTuples' or the import/export methods instead.
 
 \newpage
 %===============================================================================
@@ -10973,10 +10986,12 @@ endless possibilities of user-defined types and their use in GraphBLAS.
 
 Two example demo programs are included that illustrate how a multi-threaded
 user application can use GraphBLAS:  \verb'openmp_demo' uses OpenMP for its
-user threads and \verb'pthread_demo' uses POSIX pthreads.  {\bf To be
-thread-safe, SuiteSparse:GraphBLAS must be compiled with a threading library,
-either OpenMP or POSIX}.  Either option used inside GraphBLAS can typically be
-combined with any user threading model.  See Section~\ref{sec:install}.
+user threads and \verb'pthread_demo' uses POSIX pthreads.
+% TODO in 4.0: delete this note in bold:
+{\bf To be thread-safe, SuiteSparse:GraphBLAS must be compiled with a threading
+library, either OpenMP or POSIX}.  Either option used inside GraphBLAS can
+typically be combined with any user threading model.  See
+Section~\ref{sec:install}.
 
 The \verb'openmp_demo' can be compiled without OpenMP, in which case it
 becomes single-threaded.  GraphBLAS can be compiled with OpenMP, POSIX
@@ -11016,6 +11031,7 @@ It will print its own error, not an error from another thread.  When all the
 threads finish, the master thread prints out each matrix generated by each
 thread, and these results are identical for all 7 cases listed above as OK.
 
+% TODO in 4.0: remove this; GraphBLAS will always be thread-safe:
 The GraphBLAS C API requires GraphBLAS to be thread-safe.  If
 SuiteSparse:GraphBLAS is not compiled with a threading library it will not be
 thread-safe (the two {\em fail} cases above).  For these cases, a thread will
@@ -11265,7 +11281,7 @@ subsections.  Next:
     \verb'GxB_ASIN_FC32' and \verb'GxB_ASIN_FC64' do not work properly on
     Windows.  This affects the \verb'GrB/asin' and \verb'GrB/acsc' functions in
     the MATLAB interface.  See the MATLAB tests bypassed in \verb'gbtest76.m'
-    for details, in the \verb'GraphBLAS/GraphBLAS/test' folder.
+    for details, in the \newline \verb'GraphBLAS/GraphBLAS/test' folder.
     %% FUTURE: fix asin and acsc on Windows for the complex case.
 
 \end{enumerate}
@@ -11402,7 +11418,7 @@ the example below, to set the compiler flags you need.
     endif ( )
     \end{verbatim} }
 
-To compile SuiteSparse:GraphBLAS without running the demos, use
+To compile SuiteSparse:GraphBLAS without running the demos, use \newline
 \verb'make library' in the top-level directory, or \verb'make' in the
 \verb'build' directory.
 
@@ -11419,7 +11435,10 @@ kernels it uses, and how much time is spent.  If you see the word
 kernels in \verb'Source/Generated', but used a generic kernel that relies on
 function pointers.  This is done for user-defined types and operators, and when
 typecasting is performed, and it is typically slower than the kernels in
-\verb'Source/Generated'.
+\verb'Source/Generated'.  If you see a lot of \verb'wait' statements, it may
+mean that a lot of time is spent finishing a matrix or vector.  This may be
+the result of an inefficient use of the \verb'setElement' and \verb'assign'
+methods.
 
 %----------------------------------------
 \subsection{Using a plain makefile}
@@ -11427,7 +11446,9 @@ typecasting is performed, and it is typically slower than the kernels in
 
 The \verb'GraphBLAS/alternative' directory contains a simple \verb'Makefile'
 that can be used to compile SuiteSparse:GraphBLAS.  This is a useful option
-if you do not have the required version of \verb'cmake'.
+if you do not have the required version of \verb'cmake'.  This \verb'Makefile'
+can even compile the entire library with a C++ compiler, which cannot be
+done with \verb'CMake'.
 
 %----------------------------------------
 \subsection{Running the Demos}
@@ -11464,8 +11485,10 @@ folder and type:
 To perform the extensive tests in the \verb'Test' folder, and the statement
 coverage tests in \verb'Tcov', MATLAB R2017A is required.  See the
 \verb'README.txt' files in those two folders for instructions on how to run the
-tests.  The tests in the \verb'Test' folder have been ported to MATLAB on
-Linux, MacOS, and Windows.  The \verb'Tcov' tests do not work on Windows.
+tests.  The tests in the \verb'Test' folder have been ported to MATLAB on Linux
+and MacOS.  The \verb'Test' and \verb'Tcov' tests do not work on Windows.
+The MATLAB interface test (\verb'gbtest') does work on all platforms, however.
+See the \verb'GraphBLAS/GraphBLAS' folder for more details.
 
 %----------------------------------------
 \subsection{Cleaning up}
@@ -11518,8 +11541,8 @@ I would like to thank Lucas Jarman, MathWorks (\url{http://mathworks.com}),
 for his help in porting GraphBLAS to Microsoft Windows.
 
 SuiteSparse:GraphBLAS was developed with support from
-NVIDIA, MIT Lincoln Lab, Intel, Redis Labs, IBM,
-and the National Science Foundation (1514406).
+NVIDIA, Intel, MIT Lincoln Lab, Redis Labs, IBM,
+and the National Science Foundation (1514406, 1835499).
 
 %-------------------------------------------------------------------------------
 \section{Additional Resources}

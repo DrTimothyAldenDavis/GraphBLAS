@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 23, 2020 (v3.3.0-draft11)"
+#define GxB_IMPLEMENTATION_DATE "June 25, 2020"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4079,11 +4079,13 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 //      GxB_Global_Option_set (GxB_HYPER, GxB_HYPER_DEFAULT) ;
 //      GxB_Global_Option_set (GxB_FORMAT, GxB_FORMAT_DEFAULT) ;
 //
-// That is, by default, all new matrices are held by column in CSC format.  If
-// a matrix has fewer than n/16 columns, it can be converted to hypersparse
-// format.  If it has more than n/8 columns, it can be converted to
-// non-hypersparse format.  GxB_Global_Option_set has no effect on matrices
-// already created.
+// The compile-time constants GxB_HYPER_DEFAULT and GxB_FORMAT_DEFAULT are
+// equal to 0.625 and GxB_BY_ROW, by default.  That is, by default, all new
+// matrices are held by row in CSR format.  If a matrix has fewer than n/16
+// columns, it can be converted to hypersparse format.  If it has more than n/8
+// columns, it can be converted to non-hypersparse format.  Modifying these
+// global settings via GxB_Global_Option_set has no effect on matrices already
+// created.
 
 GB_PUBLIC
 GrB_Info GxB_Global_Option_set      // set a global default option
