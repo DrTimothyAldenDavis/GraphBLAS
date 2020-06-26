@@ -7,7 +7,7 @@ Version 4.0.0, FUTURE, 2020 (this list is tentative):
     * GrB_error: now has two inputs: a string (char **) and an object
     * V4.0.0 is otherwise identical to V3.3.0.
 
-Version 3.3.0, June 25, 2020
+Version 3.3.0, June 26, 2020
 
     * GrB_wait( ): with no input arguments, has been deprecated.  It will
         be removed in V4.0.
