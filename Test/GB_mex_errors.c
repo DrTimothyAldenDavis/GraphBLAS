@@ -3102,11 +3102,16 @@ void mexFunction
     v0 = NULL ;
     A0 = NULL ;
     d0 = NULL ;
-    op0 = NULL ;
-
-    expected = GrB_DOMAIN_MISMATCH ;
-
     op0 = Complex_plus ;
+
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GrB_Vector_assign_(v, z , NULL, v, I, 0, d0)) ;               // vector assign
     ERR (GrB_Vector_assign_(v, v0, op0 , v, I, 0, d0)) ;
