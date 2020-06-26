@@ -2745,6 +2745,8 @@ void mexFunction
         ERR (GxB_Vector_subassign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
     }
 
+    expected = GrB_DOMAIN_MISMATCH ;
+
     ERR (GxB_Vector_subassign_UDT_(v, v0, op0 ,(void *) &c, I, 0, d0)) ;
     ERR (GxB_Vector_subassign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
     ERR (GxB_Vector_subassign_UDT_(v, v0, o2  ,(void *) &c, I, 0, d0)) ;
