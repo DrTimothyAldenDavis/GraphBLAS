@@ -3107,6 +3107,7 @@ void mexFunction
         OK (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
         OK (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
         OK (GrB_Matrix_assign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        OK (GrB_Matrix_assign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     }
     else
     {
@@ -3114,6 +3115,7 @@ void mexFunction
         ERR (GrB_Vector_assign_FP64_(v, v0, op0 , x, I, 0, d0)) ;
         ERR (GrB_Vector_assign_FP64_(z, v0, o2  , x, I, 0, d0)) ;
         ERR (GrB_Matrix_assign_FP64_(A, A0, op0 , x, I, 0, J, 0, d0)) ;
+        ERR (GrB_Matrix_assign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
     }
 
     expected = GrB_DOMAIN_MISMATCH ;
@@ -3129,8 +3131,6 @@ void mexFunction
     ERR (GrB_Matrix_assign_UDT_(A, A0, op0 ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GrB_Matrix_assign_UDT_(A, A0, o2  ,(void *) &c , I, 0, J, 0, d0)) ;
     ERR (GrB_Matrix_assign_UDT_(A, A0, NULL,(void *) &c , I, 0, J, 0, d0)) ;
-
-    ERR (GrB_Matrix_assign_FP64_(Z, A0, o2  , x, I, 0, J, 0, d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
