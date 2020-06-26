@@ -1994,7 +1994,14 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+    }
+    else
+    {
+        ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+    }
     ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
     ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
     ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
