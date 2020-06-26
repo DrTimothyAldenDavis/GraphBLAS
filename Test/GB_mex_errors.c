@@ -1058,6 +1058,7 @@ void mexFunction
     {
         OK (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
         GrB_Vector_free_(&v) ;
+        OK  (GrB_Vector_new (&v, GrB_FP64, 10)) ;
     }
     else
     {
