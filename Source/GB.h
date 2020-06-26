@@ -140,7 +140,7 @@
 
 #if ( _MSC_VER && !__INTEL_COMPILER )
 // disable MS Visual Studio warnings
-GB_PRAGMA (warning (disable : 4146 ))
+#pragma warning(disable:4146)
 #endif
 
 //------------------------------------------------------------------------------
