@@ -1046,13 +1046,23 @@ void mexFunction
 
     ERR (GrB_Vector_build_FP64_(v, I, X, 5, op2gunk)) ;
 
-    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", GB3, f)) ;
-
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Vector_build_FP64_(v, I, X, 5, GrB_LE_FP64)) ;
-    ERR (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
     ERR (GrB_Vector_build_UDT_(v, I, (void *) X, 5, GrB_PLUS_FP64)) ;
+
+    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", GB3, f)) ;
+    OK (GxB_Type_fprint (Complex, "Complex user type", GB3, f)) ;
+    OK (GxB_Type_fprint (GxB_FC64, "Complex built-in type", GB3, f)) ;
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
+        GrB_Vector_free_(&v) ;
+    }
+    else
+    {
+        ERR (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
+    }
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
 
