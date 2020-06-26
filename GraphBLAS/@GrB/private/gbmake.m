@@ -18,13 +18,13 @@ function gbmake (what)
 % GraphBLAS, just as GrB.clear does.  It then calls GrB.init to initialize
 % GraphBLAS.
 %
-% See also: mex, version, GrB.clear
+% See also mex, version, GrB.clear.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if verLessThan ('matlab', '9.4')
-    gb_error ('MATLAB 9.4 (R2018a) or later is required') ;
+    error ('MATLAB 9.4 (R2018a) or later is required') ;
 end
 
 % finish GraphBLAS
@@ -147,7 +147,8 @@ for k = 1:length (cfiles)
     % compile the cfile if it is newer than its object file, or any hfile
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
-        fprintf ('%s\n', cfile) ;
+        % fprintf ('%s\n', cfile) ;
+        fprintf ('.') ;
         mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
         eval (mexcmd) ;
         any_c_compiled = true ;
@@ -179,10 +180,13 @@ for k = 1:length (mexfunctions)
         % compile the mexFunction
         mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s -lgraphblas', ...
             ldflags, flags, inc, mexfunction, objlist) ;
-        fprintf ('%s\n', mexcmd) ;
+        % fprintf ('%s\n', mexcmd) ;
+        fprintf (':') ;
         eval (mexcmd) ;
     end
 end
+
+fprintf ('\n') ;
 
 % start GraphBLAS
 try
@@ -191,17 +195,25 @@ catch
 end
 
 fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
-fprintf ('Add the following commands to your startup.m file:\n') ;
-cd ../..
-fprintf ('\n  addpath (''%s'') ;\n', pwd) ;
-cd ..
+fprintf ('Add the following commands to your startup.m file:\n\n') ;
+here1 = cd ('../..') ;
+addpath (pwd) ;
+fprintf ('  addpath (''%s'') ;\n', pwd) ;
+cd ('..') ;
 if ispc
-    fprintf ('  addpath (''%s/build/Release'') ;\n', pwd) ;
+    lib_path = sprintf ('%s/build/Release', pwd) ;
 else
-    fprintf ('  addpath (''%s/build'') ;\n', pwd) ;
+    lib_path = sprintf ('%s/build', pwd) ;
 end
+fprintf ('  addpath (''%s'') ;\n', lib_path) ;
+addpath (lib_path) ;
+cd (here1) ;
+
+fprintf ('\nFor a quick demo of GraphBLAS, type the following commands:\n\n') ;
+fprintf ('  cd ../../demo\n') ;
+fprintf ('  gbdemo\n') ;
 
 fprintf ('\nTo test GraphBLAS, type the following commands:\n\n') ;
-fprintf ('  cd GraphBLAS/test\n') ;
+fprintf ('  cd ../../test\n') ;
 fprintf ('  gbtest\n') ;
 
