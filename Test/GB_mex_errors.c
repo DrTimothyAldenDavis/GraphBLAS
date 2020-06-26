@@ -625,10 +625,10 @@ void mexFunction
     ERR (GrB_Monoid_new_FP64 (&monoid, GrB_PLUS_FP32, (double) 0)) ;
     CHECK (monoid == NULL) ;
 
-    ERR (GxB_Monoid_new_FC32 (&monoid, GrB_PLUS_FP64, (float) 0)) ;
+    ERR (GxB_Monoid_new_FC32 (&monoid, GrB_PLUS_FP64, GxB_CMPLXF(0,0))) ;
     CHECK (monoid == NULL) ;
 
-    ERR (GxB_Monoid_new_FC64 (&monoid, GrB_PLUS_FP32, (double) 0)) ;
+    ERR (GxB_Monoid_new_FC64 (&monoid, GrB_PLUS_FP32, GxB_CMPLX (0,0))) ;
     CHECK (monoid == NULL) ;
 
     // this works
@@ -822,7 +822,7 @@ void mexFunction
     // force a zombie
     a_scalar->i [0] = GB_FLIP (0) ;
     a_scalar->nzombies = 1 ;
-    GB_queue_insert (a_scalar) ;
+    GB_queue_insert ((GrB_Matrix) a_scalar) ;
 
     info = GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar) ;
     CHECK (i_scalar == 33) ;
@@ -3485,12 +3485,12 @@ void mexFunction
     ERR (GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , o2 , A0, d0)) ;
     ERR (GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , o2 , A , d0)) ;
 
-    ERR (GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , m0 , A0, d0)) ;    // reduce via op
-    ERR (GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , m2 , A0, d0)) ;
-    ERR (GrB_Matrix_reduce_BinaryOp_(v , v0  , op0 , m2 , A0, d0)) ;
-    ERR (GrB_Matrix_reduce_BinaryOp_(v , v   , op0 , m2 , A0, d0)) ;
-    ERR (GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , m2 , A0, d0)) ;
-    ERR (GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , m2 , A , d0)) ;
+    ERR (GrB_Matrix_reduce_Monoid_(v0, v0  , op0 , m0 , A0, d0)) ;    // reduce via monoid
+    ERR (GrB_Matrix_reduce_Monoid_(v0, v0  , op0 , m2 , A0, d0)) ;
+    ERR (GrB_Matrix_reduce_Monoid_(v , v0  , op0 , m2 , A0, d0)) ;
+    ERR (GrB_Matrix_reduce_Monoid_(v , v   , op0 , m2 , A0, d0)) ;
+    ERR (GrB_Matrix_reduce_Monoid_(v , v   , o2  , m2 , A0, d0)) ;
+    ERR (GrB_Matrix_reduce_Monoid_(v , v   , o2  , m2 , A , d0)) ;
 
     m0 = NULL ;
     v0 = NULL ;
@@ -4536,11 +4536,11 @@ void mexFunction
     // malloc wrappers
     //--------------------------------------------------------------------------
 
-    pp = &x ;
+    pp = (GB_void *) &x ;
     pp = GB_malloc_memory (UINT64_MAX, 1) ;
     CHECK (pp == NULL) ;
 
-    pp = &x ;
+    pp = (GB_void *) &x ;
     pp = GB_calloc_memory (UINT64_MAX, 1) ;
     CHECK (pp == NULL) ;
 
@@ -5071,10 +5071,10 @@ void mexFunction
         &Ap, &Aj, &Ax, desc)) ;
     OK (GxB_Type_fprint (atype, "type of A", GxB_COMPLETE, stdout)) ;
     printf ("nvals %llu\n", nvals) ;
-    for (int64_t i = 0 ; i < nrows ; i++)
+    for (int64_t i = 0 ; i < ((int64_t) nrows) ; i++)
     {
         printf ("exported row %lld\n", j) ;
-        for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
+        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++)
         {
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
@@ -5316,7 +5316,7 @@ void mexFunction
     OK (GxB_Vector_export (&u, &utype, &n, &nvals, &Ai, &Ax, desc)) ;
     OK (GxB_Type_fprint (utype, "type of u", GxB_COMPLETE, stdout)) ;
     printf ("nvals %llu\n", nvals) ;
-    for (int64_t p = 0 ; p < nvals ; p++)
+    for (int64_t p = 0 ; p < ((int64_t) nvals) ; p++)
     {
         printf ("   col %lld value %g\n", Ai [p], Ax [p]) ;
     }
@@ -5375,7 +5375,7 @@ void mexFunction
     GrB_Matrix_free_(&Empty1) ;       CHECK (Empty1       == NULL) ;
     GrB_Vector_free_(&v) ;            CHECK (v            == NULL) ;
     GrB_Vector_free_(&u) ;            CHECK (u            == NULL) ;
-    GrB_Vector_free_(&A) ;            CHECK (A            == NULL) ;
+    GrB_Matrix_free_(&A) ;            CHECK (A            == NULL) ;
     GrB_Vector_free_(&u) ;            CHECK (u            == NULL) ;
     GrB_Vector_free_(&z) ;            CHECK (z            == NULL) ;
     GrB_Vector_free_(&h) ;            CHECK (h            == NULL) ;
