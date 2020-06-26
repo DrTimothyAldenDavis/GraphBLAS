@@ -222,20 +222,20 @@ void mexFunction
         // test GrB_Vector_setElement
         switch (xtype->code)
         {
-            case GB_BOOL_code   : METHOD (vset_BOOL   (A, Y, I, ni)) ; break ;
-            case GB_INT8_code   : METHOD (vset_INT8   (A, Y, I, ni)) ; break ;
-            case GB_UINT8_code  : METHOD (vset_UINT8  (A, Y, I, ni)) ; break ;
-            case GB_INT16_code  : METHOD (vset_INT16  (A, Y, I, ni)) ; break ;
-            case GB_UINT16_code : METHOD (vset_UINT16 (A, Y, I, ni)) ; break ;
-            case GB_INT32_code  : METHOD (vset_INT32  (A, Y, I, ni)) ; break ;
-            case GB_UINT32_code : METHOD (vset_UINT32 (A, Y, I, ni)) ; break ;
-            case GB_INT64_code  : METHOD (vset_INT64  (A, Y, I, ni)) ; break ;
-            case GB_UINT64_code : METHOD (vset_UINT64 (A, Y, I, ni)) ; break ;
-            case GB_FP32_code   : METHOD (vset_FP32   (A, Y, I, ni)) ; break ;
-            case GB_FP64_code   : METHOD (vset_FP64   (A, Y, I, ni)) ; break ;
-            case GB_FC32_code   : METHOD (vset_FC32   (A, Y, I, ni)) ; break ;
-            case GB_FC64_code   : METHOD (vset_FC64   (A, Y, I, ni)) ; break ;
-            case GB_UDT_code    : METHOD (vset_UDT    (A, Y, I, ni)) ; break ;
+            case GB_BOOL_code   : METHOD (vset_BOOL   (A, (bool       *) Y, I, ni)) ; break ;
+            case GB_INT8_code   : METHOD (vset_INT8   (A, (int8_t     *) Y, I, ni)) ; break ;
+            case GB_INT16_code  : METHOD (vset_INT16  (A, (int16_t    *) Y, I, ni)) ; break ;
+            case GB_INT32_code  : METHOD (vset_INT32  (A, (int32_t    *) Y, I, ni)) ; break ;
+            case GB_INT64_code  : METHOD (vset_INT64  (A, (int64_t    *) Y, I, ni)) ; break ;
+            case GB_UINT8_code  : METHOD (vset_UINT8  (A, (uint8_t    *) Y, I, ni)) ; break ;
+            case GB_UINT16_code : METHOD (vset_UINT16 (A, (uint16_t   *) Y, I, ni)) ; break ;
+            case GB_UINT32_code : METHOD (vset_UINT32 (A, (uint32_t   *) Y, I, ni)) ; break ;
+            case GB_UINT64_code : METHOD (vset_UINT64 (A, (uint64_t   *) Y, I, ni)) ; break ;
+            case GB_FP32_code   : METHOD (vset_FP32   (A, (float      *) Y, I, ni)) ; break ;
+            case GB_FP64_code   : METHOD (vset_FP64   (A, (double     *) Y, I, ni)) ; break ;
+            case GB_FC32_code   : METHOD (vset_FC32   (A, (GxB_FC32_t *) Y, I, ni)) ; break ;
+            case GB_FC64_code   : METHOD (vset_FC64   (A, (GxB_FC64_t *) Y, I, ni)) ; break ;
+            case GB_UDT_code    : METHOD (vset_UDT    (A, (void       *) Y, I, ni)) ; break ;
             default:
                 FREE_ALL ;
                 mexErrMsgTxt ("unsupported type") ;
@@ -246,20 +246,20 @@ void mexFunction
         // test GrB_Matrix_setElement
         switch (xtype->code)
         {
-            case GB_BOOL_code   : METHOD (set_BOOL   (A, Y, I, J, ni)) ; break ;
-            case GB_INT8_code   : METHOD (set_INT8   (A, Y, I, J, ni)) ; break ;
-            case GB_UINT8_code  : METHOD (set_UINT8  (A, Y, I, J, ni)) ; break ;
-            case GB_INT16_code  : METHOD (set_INT16  (A, Y, I, J, ni)) ; break ;
-            case GB_UINT16_code : METHOD (set_UINT16 (A, Y, I, J, ni)) ; break ;
-            case GB_INT32_code  : METHOD (set_INT32  (A, Y, I, J, ni)) ; break ;
-            case GB_UINT32_code : METHOD (set_UINT32 (A, Y, I, J, ni)) ; break ;
-            case GB_INT64_code  : METHOD (set_INT64  (A, Y, I, J, ni)) ; break ;
-            case GB_UINT64_code : METHOD (set_UINT64 (A, Y, I, J, ni)) ; break ;
-            case GB_FP32_code   : METHOD (set_FP32   (A, Y, I, J, ni)) ; break ;
-            case GB_FP64_code   : METHOD (set_FP64   (A, Y, I, J, ni)) ; break ;
-            case GB_FC32_code   : METHOD (set_FC32   (A, Y, I, J, ni)) ; break ;
-            case GB_FC64_code   : METHOD (set_FC64   (A, Y, I, J, ni)) ; break ;
-            case GB_UDT_code    : METHOD (set_UDT    (A, Y, I, J, ni)) ; break ;
+            case GB_BOOL_code   : METHOD (set_BOOL   (A, (bool       *) Y, I, J, ni)) ; break ;
+            case GB_INT8_code   : METHOD (set_INT8   (A, (int8_t     *) Y, I, J, ni)) ; break ;
+            case GB_INT16_code  : METHOD (set_INT16  (A, (int16_t    *) Y, I, J, ni)) ; break ;
+            case GB_INT32_code  : METHOD (set_INT32  (A, (int32_t    *) Y, I, J, ni)) ; break ;
+            case GB_INT64_code  : METHOD (set_INT64  (A, (int64_t    *) Y, I, J, ni)) ; break ;
+            case GB_UINT8_code  : METHOD (set_UINT8  (A, (uint8_t    *) Y, I, J, ni)) ; break ;
+            case GB_UINT16_code : METHOD (set_UINT16 (A, (uint16_t   *) Y, I, J, ni)) ; break ;
+            case GB_UINT32_code : METHOD (set_UINT32 (A, (uint32_t   *) Y, I, J, ni)) ; break ;
+            case GB_UINT64_code : METHOD (set_UINT64 (A, (uint64_t   *) Y, I, J, ni)) ; break ;
+            case GB_FP32_code   : METHOD (set_FP32   (A, (float      *) Y, I, J, ni)) ; break ;
+            case GB_FP64_code   : METHOD (set_FP64   (A, (double     *) Y, I, J, ni)) ; break ;
+            case GB_FC32_code   : METHOD (set_FC32   (A, (GxB_FC32_t *) Y, I, J, ni)) ; break ;
+            case GB_FC64_code   : METHOD (set_FC64   (A, (GxB_FC64_t *) Y, I, J, ni)) ; break ;
+            case GB_UDT_code    : METHOD (set_UDT    (A, (void       *) Y, I, J, ni)) ; break ;
             default:
                 FREE_ALL ;
                 mexErrMsgTxt ("unsupported type") ;
@@ -267,7 +267,7 @@ void mexFunction
     }
 
     // only do debug checks after adding lots of tuples
-    if (ni > 1000) ASSERT_MATRIX_OK (A, "A added pending tuples", GB0) ;
+    if (ni > 1000) { ASSERT_MATRIX_OK (A, "A added pending tuples", GB0) ; }
 
     // return A to MATLAB as a struct and free the GraphBLAS A
     pargout [0] = GB_mx_Matrix_to_mxArray (&A, "A output", true) ;
