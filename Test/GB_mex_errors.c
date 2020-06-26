@@ -2204,19 +2204,43 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, o2 , A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, A , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, NULL, Complex_plus, Z , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , Z   , NULL, Complex_plus, Z , Z , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, Complex_complex, A , A , d0)) ;
+    }
 
     OK (GrB_BinaryOp_new (&op3, f3, Complex, Complex, GrB_FP64)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
-    ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
+        OK (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, NULL, op3, Z , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(Z , NULL, op3 , o2 , A , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, op3 , o2 , A , A , d0)) ;
+        ERR (GrB_Matrix_eWiseAdd_BinaryOp_(A , NULL, Complex_complex, o2 , A , A , d0)) ;
+    }
 
     expected = GrB_DIMENSION_MISMATCH ;
 
