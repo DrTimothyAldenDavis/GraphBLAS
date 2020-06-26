@@ -12,22 +12,26 @@ fprintf ('\ntest129: GxB_select tests (tril and nonzero)\n') ;
 
 rng ('default') ;
 
-fprintf ('\n---------- Trigger an intentional error (domain mismatch):\n\n') ;
-GB_builtin_complex_set (0) ;
-try
-    % this must fail; the scalar thunk cannot be user-defined for tril
-    C = sparse (1i) ;
-    C = GB_mex_select (C, [ ], [ ], 'tril', C, C, [ ]) ;
-    % ack! The call to GB_mex_select was supposed to have failed.
-    ok = false ;
-catch me
-    % GB_mex_select correctly returned an error
-    fprintf ('Intentional error: %s\n', me.message) ;
-    ok = true ;
+if (~ispc)
+    % This test is not done on Windows, since the Complex type is 
+    % always the same as the built-in GxB_FC64, and not user-defined.
+    fprintf ('\n---------- Trigger an intentional error (domain mismatch):\n\n') ;
+    GB_builtin_complex_set (0) ;    % use the user-defined Complex type
+    try
+        % this must fail; the scalar thunk cannot be user-defined for tril
+        C = sparse (1i) ;
+        C = GB_mex_select (C, [ ], [ ], 'tril', C, C, [ ]) ;
+        % ack! The call to GB_mex_select was supposed to have failed.
+        ok = false ;
+    catch me
+        % GB_mex_select correctly returned an error
+        fprintf ('Intentional error: %s\n', me.message) ;
+        ok = true ;
+    end
+    assert (ok) ;
+    fprintf ('---------- Domain mismatch error above is expected\n\n') ;
+    GB_builtin_complex_set (1) ;    % use the built-in GxB_FC64 Complex type
 end
-assert (ok) ;
-fprintf ('---------- Domain mismatch error above is expected\n\n') ;
-GB_builtin_complex_set (1) ;
 
 m = 10 ;
 n = 6 ;
