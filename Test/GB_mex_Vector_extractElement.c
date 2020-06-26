@@ -77,7 +77,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                bool *X = Y ;
+                bool *X = (bool *) Y ;
                 METHOD (GrB_Vector_extractElement_BOOL_(&X [k], v, I [k])) ;
             }
             break ;
@@ -86,7 +86,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                int8_t *X = Y ;
+                int8_t *X = (int8_t *) Y ;
                 METHOD (GrB_Vector_extractElement_INT8_(&X [k], v, I [k])) ;
             }
             break ;
@@ -95,7 +95,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                uint8_t *X = Y ;
+                uint8_t *X = (uint8_t *) Y ;
                 METHOD (GrB_Vector_extractElement_UINT8_(&X [k], v, I [k])) ;
             }
             break ;
@@ -104,7 +104,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                int16_t *X = Y ;
+                int16_t *X = (int16_t *) Y ;
                 METHOD (GrB_Vector_extractElement_INT16_(&X [k], v, I [k])) ;
             }
             break ;
@@ -113,7 +113,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                uint16_t *X = Y ;
+                uint16_t *X = (uint16_t *) Y ;
                 METHOD (GrB_Vector_extractElement_UINT16_(&X [k], v, I [k])) ;
             }
             break ;
@@ -122,7 +122,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                int32_t *X = Y ;
+                int32_t *X = (int32_t *) Y ;
                 METHOD (GrB_Vector_extractElement_INT32_(&X [k], v, I [k])) ;
             }
             break ;
@@ -131,7 +131,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                uint32_t *X = Y ;
+                uint32_t *X = (uint32_t *) Y ;
                 METHOD (GrB_Vector_extractElement_UINT32_(&X [k], v, I [k])) ;
             }
             break ;
@@ -140,7 +140,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                int64_t *X = Y ;
+                int64_t *X = (int64_t *) Y ;
                 METHOD (GrB_Vector_extractElement_INT64_(&X [k], v, I [k])) ;
             }
             break ;
@@ -149,7 +149,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                uint64_t *X = Y ;
+                uint64_t *X = (uint64_t *) Y ;
                 METHOD (GrB_Vector_extractElement_UINT64_(&X [k], v, I [k])) ;
             }
             break ;
@@ -158,7 +158,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                float *X = Y ;
+                float *X = (float *) Y ;
                 METHOD (GrB_Vector_extractElement_FP32_(&X [k], v, I [k])) ;
             }
             break ;
@@ -167,7 +167,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                double *X = Y ;
+                double *X = (double *) Y ;
                 METHOD (GrB_Vector_extractElement_FP64_(&X [k], v, I [k])) ;
             }
             break;
@@ -176,7 +176,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                GxB_FC32_t *X = Y ;
+                GxB_FC32_t *X = (void *) Y ;
                 METHOD (GxB_Vector_extractElement_FC32_(&X [k], v, I [k])) ;
             }
             break;
@@ -185,7 +185,7 @@ void mexFunction
 
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                GxB_FC64_t *X = Y ;
+                GxB_FC64_t *X = (void *) Y ;
                 METHOD (GxB_Vector_extractElement_FC64_(&X [k], v, I [k])) ;
             }
             break;
@@ -195,7 +195,7 @@ void mexFunction
             // user-defined Complex
             for (int64_t k = 0 ; k < ni ; k++)
             {
-                GxB_FC64_t *X = Y ;
+                GxB_FC64_t *X = (void *) Y ;
                 METHOD (GrB_Vector_extractElement_UDT (&X [k], v, I [k])) ;
             }
             break;
