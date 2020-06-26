@@ -78,6 +78,7 @@ mxArray *GB_mx_create_full      // return new MATLAB full matrix
     else
     {
         mexErrMsgTxt ("unsupported type") ;
+        return (NULL) ;
     }
 }
 
