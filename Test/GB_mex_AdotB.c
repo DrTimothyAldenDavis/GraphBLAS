@@ -206,12 +206,8 @@ void mexFunction
 
     if (A->type == Complex)
     {
-        #if GxB_STDC_VERSION >= 201112L
         // C = A'*B, complex case
         METHOD (adotb_complex (Context)) ;
-        #else
-        mexErrMsgTxt ("complex type not available") ;
-        #endif
     }
     else
     {
