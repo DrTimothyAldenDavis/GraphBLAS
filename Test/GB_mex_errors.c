@@ -66,12 +66,12 @@
 
 #include "GB_mex_errors.h"
 
-void f1 (double *z, uint32_t *x) ;
-void f2 (int32_t *z, uint8_t *x, int16_t *y) ;
+void f1 (double *z, const uint32_t *x) ;
+void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
 bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
     GrB_Index ncols, const double *x, const double *k) ;
 
-void f1 (double *z, uint32_t *x)
+void f1 (double *z, const uint32_t *x)
 { 
     (*z) = (*x) + 1 ;
 }
@@ -84,7 +84,7 @@ void f2 (int32_t *z, uint8_t *x, int16_t *y)
 void f3 (GxB_FC64_t *z, GxB_FC64_t *x, double *y) ;
 void f3 (GxB_FC64_t *z, GxB_FC64_t *x, double *y)
 {
-    (*z) = (*x) + GxB_CMPLX (0,(*y))  ;
+    (*z) = GB_FC64_add ((*x), GxB_CMPLX (0,(*y))) ;
 }
 
 bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,

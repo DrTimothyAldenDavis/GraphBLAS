@@ -127,6 +127,11 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #endif
 #endif
 
+#if ( _MSC_VER && !__INTEL_COMPILER )
+// disable MS Visual Studio warnings
+GB_PRAGMA (warning (disable : 4146 ))
+#endif
+
 // convert a GrB_object into the name of its opaque struct
 #define GB_opaque(x) GB_opaque_ ## x
 
