@@ -1500,7 +1500,16 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, GrB_LE_FP64)) ;
-    ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+    if (Complex == GxB_FC64_t)
+    {
+        OK (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+        GrB_Matrix_free_(&A) ;
+        OK (GrB_Matrix_new (&A, GrB_FP64, 10, 5)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
+    }
     ERR (GrB_Matrix_build_UDT_(A, I, J, (void *) X, 5, GrB_PLUS_FP64)) ;
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
