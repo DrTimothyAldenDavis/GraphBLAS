@@ -138,6 +138,11 @@
 
 #endif
 
+#if ( _MSC_VER && !__INTEL_COMPILER )
+// disable MS Visual Studio warnings
+GB_PRAGMA (warning (disable : 4146 ))
+#endif
+
 //------------------------------------------------------------------------------
 // include GraphBLAS.h (depends on user threading model)
 //------------------------------------------------------------------------------

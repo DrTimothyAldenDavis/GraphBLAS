@@ -76,13 +76,13 @@ void f1 (double *z, const uint32_t *x)
     (*z) = (*x) + 1 ;
 }
 
-void f2 (int32_t *z, uint8_t *x, int16_t *y)
+void f2 (int32_t *z, const uint8_t *x, const int16_t *y)
 {
     (*z) = (*x) + (*y) + 1 ;
 }
 
-void f3 (GxB_FC64_t *z, GxB_FC64_t *x, double *y) ;
-void f3 (GxB_FC64_t *z, GxB_FC64_t *x, double *y)
+void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y) ;
+void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
 {
     (*z) = GB_FC64_add ((*x), GxB_CMPLX (0,(*y))) ;
 }
