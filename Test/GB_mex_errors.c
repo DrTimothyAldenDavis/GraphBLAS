@@ -3213,16 +3213,28 @@ void mexFunction
 
     o2  = Complex_plus ;
     ERR (GrB_Matrix_apply_(A, Z   , NULL, GrB_AINV_FP64, A, NULL)) ;
-    ERR (GrB_Matrix_apply_(A, NULL, o2  , GrB_AINV_FP64, A, NULL)) ;
+
+    if (Complex == GxB_FC64)
+    {
+        OK (GrB_Matrix_apply_(A, NULL, o2  , GrB_AINV_FP64, A, NULL)) ;
+        OK (GrB_Matrix_apply_(Z, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
+        OK (GrB_Matrix_apply_BinaryOp1st_INT32_(Z, NULL, NULL, o2, 1, Z, NULL)) ;
+        OK (GrB_Matrix_apply_BinaryOp2nd_INT32_(Z, NULL, NULL, o2, Z, 1, NULL)) ;
+    }
+    else
+    {
+        ERR (GrB_Matrix_apply_(A, NULL, o2  , GrB_AINV_FP64, A, NULL)) ;
+        ERR (GrB_Matrix_apply_(Z, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
+        ERR (GrB_Matrix_apply_BinaryOp1st_INT32_(Z, NULL, NULL, o2, 1, Z, NULL)) ;
+        ERR (GrB_Matrix_apply_BinaryOp2nd_INT32_(Z, NULL, NULL, o2, Z, 1, NULL)) ;
+    }
+
     ERR (GrB_Matrix_apply_(A, NULL, o2  , GrB_AINV_FP64, Z, NULL)) ;
     ERR (GrB_Matrix_apply_(A, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
     ERR (GrB_Matrix_apply_(Z, NULL, NULL, GrB_AINV_FP64, A, NULL)) ;
-    ERR (GrB_Matrix_apply_(Z, NULL, NULL, GrB_AINV_FP64, Z, NULL)) ;
 
     ERR (GrB_Matrix_apply_BinaryOp1st_INT32_(Z, NULL, NULL, o2, 1, A, NULL)) ;
     ERR (GrB_Matrix_apply_BinaryOp2nd_INT32_(Z, NULL, NULL, o2, A, 1, NULL)) ;
-    ERR (GrB_Matrix_apply_BinaryOp1st_INT32_(Z, NULL, NULL, o2, 1, Z, NULL)) ;
-    ERR (GrB_Matrix_apply_BinaryOp2nd_INT32_(Z, NULL, NULL, o2, Z, 1, NULL)) ;
 
     v0 = NULL ;
     A0 = NULL ;
