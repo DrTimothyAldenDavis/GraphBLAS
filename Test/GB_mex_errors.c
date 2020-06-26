@@ -834,8 +834,8 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
     OK (GxB_Scalar_new (&a_scalar, T)) ;
-    GxB_print (a_scalar, 3) ;
-    GxB_print (T, 3) ;
+    GxB_Scalar_fprint_(a_scalar, 3, NULL) ;
+    GxB_Type_fprint_(T, 3, NULL) ;
     ERR (GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
     ERR (GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
     CHECK (i_scalar == 33) ;

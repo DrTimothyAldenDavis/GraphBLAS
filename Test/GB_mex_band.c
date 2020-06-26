@@ -124,7 +124,7 @@ void mexFunction
     GrB_Matrix_ncols (&ncols, A) ;
     if (bandwidth.lo == 0 && bandwidth.hi == 0 && nrows == 10 && ncols == 10)
     {
-        GxB_print (op, 3) ;
+        GxB_SelectOp_fprint_ (op, 3, NULL) ;
     }
 
     // create result matrix C
