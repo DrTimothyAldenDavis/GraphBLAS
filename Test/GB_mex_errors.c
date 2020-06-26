@@ -1994,12 +1994,12 @@ void mexFunction
 
     if (Complex == GxB_FC64)
     {
-        OK (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
-        OK (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
         expected = GrB_DIMENSION_MISMATCH ;
+        OK  (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+        OK  (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
         ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
-        OK (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
-        OK (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
+        OK  (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
     }
     else
     {
