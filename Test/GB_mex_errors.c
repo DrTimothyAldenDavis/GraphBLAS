@@ -3304,13 +3304,21 @@ void mexFunction
 
     o2  = Complex_plus ;
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
+    if (Complex == GxB_FC64)
+    {
+        OK  (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
+        OK  (GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
+    }
+    else
+    {
+        ERR (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
+        ERR (GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
+    }
 
     ERR (GxB_Matrix_select_(A, Z   , NULL, selectop, A, Thunk, NULL)) ;
-    ERR (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
     ERR (GxB_Matrix_select_(A, NULL, o2  , selectop, Z, Thunk, NULL)) ;
     ERR (GxB_Matrix_select_(A, NULL, NULL, selectop, Z, Thunk, NULL)) ;
     ERR (GxB_Matrix_select_(Z, NULL, NULL, selectop, A, Thunk, NULL)) ;
-    ERR (GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
 
     v0 = NULL ;
     A0 = NULL ;
