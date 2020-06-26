@@ -2292,7 +2292,14 @@ void mexFunction
     ERR (GrB_Matrix_kronecker_BinaryOp_(A , A0  , NULL, o2 , A , A , d0)) ;
     ERR (GrB_Matrix_kronecker_BinaryOp_(A , NULL, op0 , o2 , A , A , NULL)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    if (Complex == GxB_FC64)
+    {
+        expected = GrB_DIMENSION_MISMATCH ;
+    }
+    else
+    {
+        expected = GrB_DOMAIN_MISMATCH ;
+    }
 
     ERR (GrB_Matrix_kronecker_BinaryOp_  (A , NULL, NULL, o2 , Z , A , d0)) ;
     ERR (GrB_Matrix_kronecker_BinaryOp_  (A , NULL, NULL, o2 , A , Z , d0)) ;
