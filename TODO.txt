@@ -1,0 +1,64 @@
+>> cd @GrB/private/
+>> gbmake
+............................/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_list.c:95:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+1 warning generated.
+
+../Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxcell_to_index.c:57:18: warning: assigning to 'GrB_Index *' (aka 'unsigned long long *') from 'int64_t *' (aka 'long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+        Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k), base,
+                 ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+
+............/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_norm_kind.c:54:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+1 warning generated.
+
+.............:::::/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbuild.c:73:23: warning: passing 'GrB_Index *' (aka 'unsigned long long *') to parameter of type 'int64_t *' (aka 'long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+        &I_allocated, &ni, &Imax) ;
+                      ^~~
+util/gb_matlab.h:321:14: note: passing argument to parameter 'len' here
+    int64_t *len,               // length of list
+             ^
+/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbuild.c:76:23: warning: passing 'GrB_Index *' (aka 'unsigned long long *') to parameter of type 'int64_t *' (aka 'long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+        &J_allocated, &nj, &Jmax) ;
+                      ^~~
+util/gb_matlab.h:321:14: note: passing argument to parameter 'len' here
+    int64_t *len,               // length of list
+             ^
+/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbuild.c:235:36: warning: passing 'int8_t *' (aka 'signed char *') to parameter of type 'GB_void *' (aka 'unsigned char *') converts between pointers to integer types with different sign [-Wpointer-sign]
+            GB_matlab_helper8 (X2, X, nvals, sizeof (int8_t)) ;
+                                   ^
+../../../Source/GB_matlab_helper.h:97:14: note: passing argument to parameter 'A' here
+    GB_void *A,         // input scalar of size s
+             ^
+3 warnings generated.
+
+::::::::/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbextract.c:159:37: warning: passing 'GrB_Index *' (aka 'unsigned long long *') to parameter of type 'int64_t *' (aka 'long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+        GB_ijlength (I, ni, anrows, &cnrows, &I_kind, I_colon) ;
+                                    ^~~~~~~
+../../../Source/GB_ij.h:27:14: note: passing argument to parameter 'nI' here
+    int64_t *nI,            // actual length of I
+             ^
+/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbextract.c:160:37: warning: passing 'GrB_Index *' (aka 'unsigned long long *') to parameter of type 'int64_t *' (aka 'long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+        GB_ijlength (J, nj, ancols, &cncols, &J_kind, J_colon) ;
+                                    ^~~~~~~
+../../../Source/GB_ij.h:27:14: note: passing argument to parameter 'nI' here
+    int64_t *nI,            // actual length of I
+             ^
+2 warnings generated.
+
+:::::::/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gblogassign.c:200:40: warning: passing 'int64_t *' (aka 'long long *') to parameter of type 'GrB_Index *' (aka 'unsigned long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+    GB_matlab_helper5 (Si, Sj, Mi, Mj, Ai, anz) ;
+                                       ^~
+../../../Source/GB_matlab_helper.h:75:28: note: passing argument to parameter 'Ai' here
+    GrB_Index *GB_RESTRICT Ai,         // array of size anz
+                           ^
+1 warning generated.
+
+:/Users/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gblogextract.c:216:10: warning: assigning to 'int64_t *' (aka 'long long *') from 'uint64_t *' (aka 'unsigned long long *') converts between pointers to integer types with different sign [-Wpointer-sign]
+    V->i = Tx ;         // transplant the values of T as the row indices of V
+         ^ ~~
+1 warning generated.
+
