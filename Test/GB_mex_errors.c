@@ -1997,15 +1997,19 @@ void mexFunction
     if (Complex == GxB_FC64)
     {
         OK (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+        OK (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
+        OK (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
+        OK (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
+        OK (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
     }
     else
     {
         ERR (GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL)) ;
+        ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
+        ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
+        ERR (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
     }
-    ERR (GrB_mxm (Z, NULL, NULL, s2, A, B, NULL)) ;
-    ERR (GrB_mxm (C, NULL, NULL, s2, Z, B, NULL)) ;
-    ERR (GrB_mxm (C, NULL, NULL, s2, B, Z, NULL)) ;
-    ERR (GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
 
     printf ("here we are, last error was %s\n", GrB_error ( )) ;
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
