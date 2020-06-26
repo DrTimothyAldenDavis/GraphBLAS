@@ -1858,10 +1858,11 @@ GraphBLAS name          & types (domains)   & $z=f(x)$      & description \\
 from the ANSI C11 \verb'frexp' function.  The exponent is returned as a
 floating-point value, not an integer.
 
-The functions \verb'casin' and \verb'casinf' provided by Microsoft
-Visual Studio for computing $\sin^{-1}(x)$ when $x$ is complex do not
-compute the correct result.  Thus,
-\verb'GxB_ASIN_FC32' and \verb'GxB_ASIN_FC64' do not work properly if the MS
+The functions \verb'casin', \verb'casinf', \verb'casinh', and \verb'casinhf'
+provided by Microsoft Visual Studio for computing $\sin^{-1}(x)$ and
+$\sinh^{-1}(x)$ when $x$ is complex do not compute the correct result.  Thus,
+the unary operators \verb'GxB_ASIN_FC32', \verb'GxB_ASIN_FC64'
+\verb'GxB_ASINH_FC32', and \verb'GxB_ASINH_FC64' do not work properly if the MS
 Visual Studio compiler is used.  These functions work properly if the gcc, icc,
 or clang compilers are used on Linux or MacOS.
 
