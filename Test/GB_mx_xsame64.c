@@ -41,7 +41,7 @@ bool GB_mx_xsame64  // true if arrays X and Y are the same (ignoring zombies)
             else if (c != FP_NAN)
             {
                 // both are normal or subnormal, and nonzero
-                double err = fabsf (X [i] - Y [i]) / fabsf (X [i]) ;
+                double err = fabs (X [i] - Y [i]) / fabs (X [i]) ;
                 if (err > eps) return (false) ;
             }
         }
