@@ -3628,13 +3628,15 @@ void mexFunction
     ERR (GrB_Matrix_reduce_BinaryOp_(v, z   , NULL, GrB_PLUS_FP64, A, d0)) ;
     ERR (GrB_Matrix_reduce_BinaryOp_(z, NULL, NULL, GrB_PLUS_FP64, A, d0)) ;
     ERR (GrB_Matrix_reduce_BinaryOp_(v, NULL, o2  , GrB_PLUS_FP64, A, d0)) ;
-    ERR (GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_EQ_FP64  , A, d0)) ;
     ERR (GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_PLUS_FP64, Z, d0)) ;
 
     ERR (GrB_Matrix_reduce_Monoid_(v, z   , NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR (GrB_Matrix_reduce_Monoid_(z, NULL, NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR (GrB_Matrix_reduce_Monoid_(v, NULL, o2  , GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR (GrB_Matrix_reduce_Monoid_(v, NULL, NULL, GxB_PLUS_FP64_MONOID, Z, d0)) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_EQ_FP64  , A, d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
