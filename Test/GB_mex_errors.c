@@ -2373,45 +2373,30 @@ void mexFunction
 
     if (Complex == GxB_FC64)
     {
-        OK (GrB_Vector_extract_(v, z, NULL, u, I, 0, d0)) ;              // vector extract
-        OK (GrB_Vector_extract_(v, NULL, Complex_plus, u, I, 0, d0)) ;
-        OK (GrB_Vector_extract_(v, NULL, Complex_plus, z, I, 0, d0)) ;
-        OK (GrB_Vector_extract_(z, NULL, o2 , u, I, 0, d0)) ;
-        OK (GrB_Vector_extract_(v, NULL, o2 , z, I, 0, d0)) ;
-
-        OK (GrB_Col_extract_(v, z, NULL, A, I, 0, 0, d0)) ;           // column extract
-        OK (GrB_Col_extract_(v, NULL, Complex_plus, A, I, 0, 0, d0)) ;
-        OK (GrB_Col_extract_(v, NULL, Complex_plus, Z, I, 0, 0, d0)) ;
-        OK (GrB_Col_extract_(z, NULL, o2 , A, I, 0, 0, d0)) ;
-        OK (GrB_Col_extract_(v, NULL, o2 , Z, I, 0, 0, d0)) ;
-
-        OK (GrB_Matrix_extract_(A, Z, NULL, A, I, 0, J, 0, d0)) ;        // matrix extract
-        OK (GrB_Matrix_extract_(A, NULL, Complex_plus, A, I, 0, J, 0, d0)) ;
-        OK (GrB_Matrix_extract_(A, NULL, Complex_plus, Z, I, 0, J, 0, d0)) ;
-        OK (GrB_Matrix_extract_(Z, NULL, o2 , A, I, 0, J, 0, d0)) ;
-        OK (GrB_Matrix_extract_(A, NULL, o2 , Z, I, 0, J, 0, d0)) ;
+        expected = GrB_DIMENSION_MISMATCH ;
     }
     else
     {
         expected = GrB_DOMAIN_MISMATCH ;
-        ERR (GrB_Vector_extract_(v, z, NULL, u, I, 0, d0)) ;              // vector extract
-        ERR (GrB_Vector_extract_(v, NULL, Complex_plus, u, I, 0, d0)) ;
-        ERR (GrB_Vector_extract_(v, NULL, Complex_plus, z, I, 0, d0)) ;
-        ERR (GrB_Vector_extract_(z, NULL, o2 , u, I, 0, d0)) ;
-        ERR (GrB_Vector_extract_(v, NULL, o2 , z, I, 0, d0)) ;
-
-        ERR (GrB_Col_extract_(v, z, NULL, A, I, 0, 0, d0)) ;           // column extract
-        ERR (GrB_Col_extract_(v, NULL, Complex_plus, A, I, 0, 0, d0)) ;
-        ERR (GrB_Col_extract_(v, NULL, Complex_plus, Z, I, 0, 0, d0)) ;
-        ERR (GrB_Col_extract_(z, NULL, o2 , A, I, 0, 0, d0)) ;
-        ERR (GrB_Col_extract_(v, NULL, o2 , Z, I, 0, 0, d0)) ;
-
-        ERR (GrB_Matrix_extract_(A, Z, NULL, A, I, 0, J, 0, d0)) ;        // matrix extract
-        ERR (GrB_Matrix_extract_(A, NULL, Complex_plus, A, I, 0, J, 0, d0)) ;
-        ERR (GrB_Matrix_extract_(A, NULL, Complex_plus, Z, I, 0, J, 0, d0)) ;
-        ERR (GrB_Matrix_extract_(Z, NULL, o2 , A, I, 0, J, 0, d0)) ;
-        ERR (GrB_Matrix_extract_(A, NULL, o2 , Z, I, 0, J, 0, d0)) ;
     }
+
+    ERR (GrB_Vector_extract_(v, z, NULL, u, I, 0, d0)) ;              // vector extract
+    ERR (GrB_Vector_extract_(v, NULL, Complex_plus, u, I, 0, d0)) ;
+    ERR (GrB_Vector_extract_(v, NULL, Complex_plus, z, I, 0, d0)) ;
+    ERR (GrB_Vector_extract_(z, NULL, o2 , u, I, 0, d0)) ;
+    ERR (GrB_Vector_extract_(v, NULL, o2 , z, I, 0, d0)) ;
+
+    ERR (GrB_Col_extract_(v, z, NULL, A, I, 0, 0, d0)) ;           // column extract
+    ERR (GrB_Col_extract_(v, NULL, Complex_plus, A, I, 0, 0, d0)) ;
+    ERR (GrB_Col_extract_(v, NULL, Complex_plus, Z, I, 0, 0, d0)) ;
+    ERR (GrB_Col_extract_(z, NULL, o2 , A, I, 0, 0, d0)) ;
+    ERR (GrB_Col_extract_(v, NULL, o2 , Z, I, 0, 0, d0)) ;
+
+    ERR (GrB_Matrix_extract_(A, Z, NULL, A, I, 0, J, 0, d0)) ;        // matrix extract
+    ERR (GrB_Matrix_extract_(A, NULL, Complex_plus, A, I, 0, J, 0, d0)) ;
+    ERR (GrB_Matrix_extract_(A, NULL, Complex_plus, Z, I, 0, J, 0, d0)) ;
+    ERR (GrB_Matrix_extract_(Z, NULL, o2 , A, I, 0, J, 0, d0)) ;
+    ERR (GrB_Matrix_extract_(A, NULL, o2 , Z, I, 0, J, 0, d0)) ;
 
     expected = GrB_DIMENSION_MISMATCH ;
 
