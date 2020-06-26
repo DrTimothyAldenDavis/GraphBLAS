@@ -87,6 +87,11 @@ for k1 = 1:length(types)
         end
         fprintf (' %s', op.opname) ;
 
+        if (ispc && isequal (op.opname, 'asin'))
+            fprintf (' (skipped)') ;
+            continue ;
+        end
+
         for k3 = 1:length(types)
             op.optype = types {k3} ;
 
