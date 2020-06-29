@@ -7,6 +7,12 @@ Version 4.0.0, FUTURE, 2020 (this list is tentative):
     * GrB_error: will have two inputs: a string (char **) and an object
     * V4.0.0 will otherwise be identical to V3.3.0.
 
+Version 3.3.1, June 29, 2020
+
+    * (19) bug fix: incorrect typecasting when GrB_assign or GxB_subassign
+        is simple: C=A where A is sparse or dense, in GB_dense_subassign_24.
+    * revised gbmake: to allow GraphBLAS to be compiled in Octave
+
 Version 3.3.0, June 26, 2020
 
     * GrB_wait( ): with no input arguments, has been deprecated.  It will

@@ -869,14 +869,14 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // submatrix assignment C(I,J)<M> = accum (C(I,J),A): meta-algorithm
     //==========================================================================
 
-    // There are up to 64 combinations of options, but not required to be
+    // There are up to 128 combinations of options, but not all must be
     // implemented, because they are either identical to another method
     // (C_replace is effectively false if M=NULL and Mask_comp=false), or they
     // are not used (the last option, whether or not S is constructed, is
     // determined here; it is not a user input).  The first 5 options are
     // determined by the input.  The table below has been pruned to remove
     // combinations that are not used, or equivalent to other entries in the
-    // table.  Only 22 unique combinations of the 64 combinations are needed,
+    // table.  Only 22 unique combinations of the 128 combinations are needed,
     // with additional special cases when C(:,:) is dense.
 
     //      M           present or NULL
