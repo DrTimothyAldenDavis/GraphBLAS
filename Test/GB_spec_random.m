@@ -5,7 +5,7 @@ function A = GB_spec_random (m, n, d, scale, type, is_csc,is_hyper,hyper_ratio)
 %
 % m,n,d: parameters to sprandn (m,n,d)
 % m,n: defaults to 4
-% d: defaults to 0.5
+% d: defaults to 0.5.  If d = inf, A is fully populated.
 % scale: a double scalar, defaults to 1.0
 % type: a string; defaults to 'double'
 % is_csc: true for CSC, false for CSR; defaults to true
@@ -46,10 +46,18 @@ if (nargin >= 8)
     A.hyper_ratio = hyper_ratio ;
 end
 
-A.matrix = scale * sprandn (m, n, d) ;
+if (isinf (d))
+    A.matrix = scale * sparse (rand (m, n)) ;
+else
+    A.matrix = scale * sprandn (m, n, d) ;
+end
 
 if (contains (type, 'complex'))
-    A.matrix = A.matrix + 1i * scale * sprandn (m, n, d) ;
+    if (isinf (d))
+        A.matrix = A.matrix + 1i * scale * sparse (rand (m, n)) ;
+    else
+        A.matrix = A.matrix + 1i * scale * sprandn (m, n, d) ;
+    end
 end
 
 A.class = type ;

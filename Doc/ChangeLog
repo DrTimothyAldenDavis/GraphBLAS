@@ -7,6 +7,13 @@ Version 4.0.0, FUTURE, 2020 (this list is tentative):
     * GrB_error: will have two inputs: a string (char **) and an object
     * V4.0.0 will otherwise be identical to V3.3.0.
 
+Version 3.3.1, June 30, 2020
+
+    * (19) bug fix: incorrect typecasting when GrB_assign or GxB_subassign
+        is simple: C=A where A is sparse or dense, in GB_dense_subassign_24.
+        Bug introduced in v3.2.0.
+    * revised gbmake: to allow GraphBLAS to be compiled in Octave
+
 Version 3.3.0, June 26, 2020
 
     * GrB_wait( ): with no input arguments, has been deprecated.  It will
@@ -65,7 +72,7 @@ Version 3.2.0, Feb 20, 2020
         instead.
     * faster saxpy-based matrix multiply (about 5x to 10x for mxv and vxm):
         removed Sauna workspace.  Heap method removed.  Hash method added.
-    * better performance for dense matrix and vectors
+    * better performance for dense matrix and vectors: NOTE: see bug (19) above
     * faster typecast of the mask matrix M: GB_mcast replaces cast_M
     * added GB_BURBLE: for development diagnostics
     * changed default chunk size: from 4K to 64K

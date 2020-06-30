@@ -142,12 +142,16 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     \verb'GrB_error' will change; it will take two parameters,
     \verb'GrB_error(&s,C)' where \verb's' is the error string generated
     when \verb'C' was last operated on.
-    V4.0 will otherwise be identical to V3.3.0.
+    V4.0 will otherwise be identical to V3.3.1.
 
 \end{itemize}
 
 \subsection{Release Notes:}
 \begin{itemize}
+
+\item Version 3.3.1 (June 30, 2020).  Bug fix to \verb'GrB_assign' and
+    \verb'GxB_subassign' when the assignment is simple (\verb'C=A') but
+    with typecasting.
 
 \item Version 3.3.0 (June 26, 2020).  Compliant with V1.3 of the C API
     (except that the polymorphic \verb'GrB_wait(&object)' doesn't appear yet;
