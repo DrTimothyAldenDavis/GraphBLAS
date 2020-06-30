@@ -70,6 +70,7 @@ logstat ;             % start the log.txt
 
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
+logstat ('test156',t) ; % test GrB_assign C=A with typecasting
 
 logstat ('test07b',t) ; % quick test GB_mex_assign
 logstat ('test01',t) ;  % error handling

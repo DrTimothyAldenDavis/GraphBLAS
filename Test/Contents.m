@@ -223,6 +223,7 @@
 %   test153  - list all possible semirings
 %   test154  - test GrB_apply with scalar binding
 %   test155  - test GrB_*_setElement and GrB_*_removeElement
+%   test156  - test assign C=A with typecasting
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B

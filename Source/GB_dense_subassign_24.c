@@ -110,6 +110,11 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
     // copy the values from A to C, typecasting as needed
     //-------------------------------------------------------------------------
 
+    if (C->type != A->type)
+    { 
+        GBBURBLE ("(typecast) ") ;
+    }
+
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     GB_cast_array (C->x, C->type->code, A->x, A->type->code, A->type->size,
                        anz, nthreads) ;
