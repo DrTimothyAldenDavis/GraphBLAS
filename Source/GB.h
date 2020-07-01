@@ -722,8 +722,8 @@ static inline int GB_nthreads   // return # of threads to use
 //
 //  if (i >= nrows)
 //  {
-//      return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
-//          "Row index %d out of bounds; must be < %d", i, nrows)) ;
+//      GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
+//          "Row index %d out of bounds; must be < %d", i, nrows) ;
 //  }
 //
 // The user can then do:
