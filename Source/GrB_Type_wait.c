@@ -23,7 +23,7 @@ GrB_Info GrB_Type_wait      // no work, just check if the GrB_Type is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Type_wait (&type)") ;
+    GB_WHERE1 ("GrB_Type_wait (&type)") ;
     GB_RETURN_IF_NULL (type) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*type) ;
 

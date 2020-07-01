@@ -118,7 +118,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_MATRIX_FREE (&R) ;
+        GB_Matrix_free (&R) ;
         return (info) ;
     }
 

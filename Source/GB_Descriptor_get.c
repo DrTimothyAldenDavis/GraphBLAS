@@ -145,7 +145,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
           AxB_desc  == GxB_AxB_DOT || AxB_desc  == GxB_AxB_HEAP ||
           AxB_desc  == GxB_AxB_HASH || AxB_desc  == GxB_AxB_SAXPY))
     { 
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG, "Descriptor invalid"))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     if (C_replace != NULL)

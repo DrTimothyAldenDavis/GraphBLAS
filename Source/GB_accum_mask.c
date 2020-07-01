@@ -112,9 +112,9 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_MATRIX_FREE (Thandle) ;      \
-    GB_MATRIX_FREE (&MT) ;          \
-    GB_MATRIX_FREE (&Z) ;           \
+    GB_Matrix_free (Thandle) ;      \
+    GB_Matrix_free (&MT) ;          \
+    GB_Matrix_free (&Z) ;           \
 }
 
 //------------------------------------------------------------------------------
@@ -342,7 +342,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
             GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, C, T,
                 accum, Context)) ;
-            GB_MATRIX_FREE (Thandle) ;
+            GB_Matrix_free (Thandle) ;
         }
 
         ASSERT (*Thandle == NULL) ;

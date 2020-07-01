@@ -31,7 +31,7 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
+    GB_WHERE (w, "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
@@ -46,9 +46,9 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
     GrB_Index ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
+        GB_ERROR (GrB_INVALID_INDEX,
             "Column index j=" GBu " out of bounds; must be < " GBu ,
-            j, ancols))) ;
+            j, ancols) ;
     }
 
     //--------------------------------------------------------------------------

@@ -47,8 +47,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // make sure the matrix is finished
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals ;
-    OK (GrB_Matrix_nvals (&nvals, A)) ;
+    OK1 (A, GrB_Matrix_wait (&A)) ;
 
     //--------------------------------------------------------------------------
     // construct the output struct

@@ -18,7 +18,7 @@ GrB_Info GrB_Vector_free    // free a vector
 )
 { 
 
-    GB_VECTOR_FREE (v) ;
+    GB_Matrix_free ((GrB_Matrix *) v) ;
     return (GrB_SUCCESS) ;
 }
 

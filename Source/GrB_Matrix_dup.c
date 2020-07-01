@@ -22,7 +22,7 @@ GrB_Info GrB_Matrix_dup     // make an exact copy of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_dup (&C, A)") ;
+    GB_WHERE1 ("GrB_Matrix_dup (&C, A)") ;
     GB_BURBLE_START ("GrB_Matrix_dup") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

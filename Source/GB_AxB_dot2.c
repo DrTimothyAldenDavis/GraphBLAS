@@ -209,7 +209,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_MATRIX_FREE (Chandle) ;
+        GB_Matrix_free (Chandle) ;
         GB_FREE_WORK ;
         return (info) ;
     }

@@ -274,7 +274,7 @@
 %   stat             - report status of statement coverage and malloc debugging
 %   GB_define        - create C source code for GraphBLAS.h
 
-%   grbresults       - return time taken by last GraphBLAS function, and AxB method
+%   grbresults       - return time taken by last GraphBLAS function
 %   isequal_roundoff - compare two matrices, allowing for roundoff errors
 
 %   test_other       - installs all packages needed for extensive tests

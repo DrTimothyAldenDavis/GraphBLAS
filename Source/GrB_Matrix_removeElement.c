@@ -76,8 +76,6 @@ static inline bool GB_removeElement
         // C(i,j) becomes a zombie
         C->i [pleft] = GB_FLIP (i) ;
         C->nzombies++ ;
-        // TODO in 4.0: delete:
-        if (!(C->enqueued)) { if (!GB_queue_insert (C)) GB_PANIC ; }
     }
 
     return (found) ;
@@ -99,8 +97,7 @@ GrB_Info GrB_Matrix_removeElement
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT_RETURN_IF_NULL (C) ;
-    GB_CONTEXT_RETURN_IF_FAULTY (C) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     // look for index i in vector j
     int64_t i, j, nrows, ncols ;
@@ -124,15 +121,15 @@ GrB_Info GrB_Matrix_removeElement
     // check row and column indices
     if (row >= nrows)
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
-            GBu " out of range; must be < " GBd, row, nrows))) ;
+        GB_WHERE (C, GB_WHERE_STRING) ;
+        GB_ERROR (GrB_INVALID_INDEX, "Row index "
+            GBu " out of range; must be < " GBd, row, nrows) ;
     }
     if (col >= ncols)
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Column index "
-            GBu " out of range; must be < " GBd, col, ncols))) ;
+        GB_WHERE (C, GB_WHERE_STRING) ;
+        GB_ERROR (GrB_INVALID_INDEX, "Column index "
+            GBu " out of range; must be < " GBd, col, ncols) ;
     }
 
     bool C_is_pending = GB_PENDING (C) ;
@@ -153,7 +150,7 @@ GrB_Info GrB_Matrix_removeElement
     if (C_is_pending)
     { 
         GrB_Info info ;
-        GB_WHERE (GB_WHERE_STRING) ;
+        GB_WHERE (C, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_removeElement") ;
         GB_OK (GB_Matrix_wait (C, Context)) ;
         ASSERT (!GB_ZOMBIES (C)) ;

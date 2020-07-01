@@ -127,7 +127,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     {
         // out of memory
         GB_MKL_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
     GB_MKL_OK (mkl_graph_vector_create (&z_mkl)) ;
     GB_MKL_OK (mkl_graph_vector_set_dense (z_mkl, n, Zx, MKL_GRAPH_TYPE_FP32)) ;

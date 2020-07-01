@@ -51,8 +51,8 @@
 
 #define FREE_ALL                \
 {                               \
-    GB_MATRIX_FREE (&C) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&C) ;       \
+    GB_mx_put_global (true) ;           \
 }
 
 #else
@@ -68,7 +68,7 @@
 #define FREE_ALL                    \
 {                                   \
     GrB_Matrix_free_(&C) ;          \
-    GB_mx_put_global (true, 0) ;    \
+    GB_mx_put_global (true) ;       \
 }
 
 #endif
@@ -222,7 +222,7 @@ void mexFunction
     GrB_Vector C = NULL ;
     #endif
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < MIN_NARGIN || nargin > MAX_NARGIN)

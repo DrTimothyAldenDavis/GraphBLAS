@@ -124,13 +124,13 @@ void mexFunction
             { 
                 // y = dense vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
-                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     ncols, NULL)) ;
             }
 
             // d = X*y using the PLUS_PAIR semiring
             OK (GrB_Vector_new (&d, GrB_INT64, nrows)) ;
-            OK (GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y, NULL)) ;
+            OK1 (d, GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y, NULL)) ;
 
         }
         else
@@ -155,13 +155,13 @@ void mexFunction
             { 
                 // y = dense vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
-                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     nrows, NULL)) ;
             }
 
             // d = y*X using the PLUS_PAIR semiring
             OK (GrB_Vector_new (&d, GrB_INT64, ncols)) ;
-            OK (GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X, NULL)) ;
+            OK1 (d, GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X, NULL)) ;
         }
 
         OK (GrB_Vector_free (&y)) ;

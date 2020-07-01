@@ -30,7 +30,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_UnaryOp_new (unaryop, function, ztype, xtype)") ;
+    GB_WHERE1 ("GrB_UnaryOp_new (unaryop, function, ztype, xtype)") ;
     GB_RETURN_IF_NULL (unaryop) ;
     (*unaryop) = NULL ;
     GB_RETURN_IF_NULL (function) ;
@@ -46,7 +46,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     if (*unaryop == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the unary operator

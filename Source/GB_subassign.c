@@ -25,9 +25,9 @@
 
 #define GB_FREE_ALL                                 \
 {                                                   \
-    GB_MATRIX_FREE (&Z2) ;                          \
-    GB_MATRIX_FREE (&AT) ;                          \
-    GB_MATRIX_FREE (&MT) ;                          \
+    GB_Matrix_free (&Z2) ;                          \
+    GB_Matrix_free (&AT) ;                          \
+    GB_Matrix_free (&MT) ;                          \
 }
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
@@ -119,20 +119,20 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     {
         if (!GB_code_compatible (C->type->code, scalar_code))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                GB_code_string (scalar_code), C->type->name))) ;
+                GB_code_string (scalar_code), C->type->name) ;
         }
     }
     else
     {
         if (!GB_Type_compatible (C->type, A->type))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                A->type->name, C->type->name))) ;
+                A->type->name, C->type->name) ;
         }
     }
 
@@ -142,20 +142,20 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // M is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "M of type [%s] cannot be typecast to boolean",
-                M->type->name))) ;
+                M->type->name) ;
         }
         // M is a matrix the same size as C(Rows,Cols)
         int64_t mnrows = M_transpose ? GB_NCOLS (M) : GB_NROWS (M) ;
         int64_t mncols = M_transpose ? GB_NROWS (M) : GB_NCOLS (M) ;
         if (mnrows != nRows || mncols != nCols)
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "M is " GBd "-by-" GBd "%s, "
                 "must match size of result C(I,J): " GBd "-by-" GBd "",
                 mnrows, mncols, M_transpose ? " (transposed)" : "",
-                nRows, nCols))) ;
+                nRows, nCols) ;
         }
     }
 
@@ -166,12 +166,12 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         int64_t ancols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
         if (nRows != anrows || nCols != ancols)
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "Dimensions not compatible:\n"
                 "C(Rows,Cols) is " GBd "-by-" GBd "\n"
                 "input is " GBd "-by-" GBd "%s",
                 nRows, nCols, anrows, ancols,
-                A_transpose ? " (transposed)" : ""))) ;
+                A_transpose ? " (transposed)" : "") ;
         }
     }
 
@@ -336,8 +336,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         Context)) ;
 
     // Z2 is still needed
-    GB_MATRIX_FREE (&AT) ;
-    GB_MATRIX_FREE (&MT) ;
+    GB_Matrix_free (&AT) ;
+    GB_Matrix_free (&MT) ;
 
     //--------------------------------------------------------------------------
     // transplant Z2 back into C

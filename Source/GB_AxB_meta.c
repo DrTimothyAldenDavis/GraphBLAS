@@ -18,19 +18,16 @@
 // matrix C passed in from the user (C_in_place).
 
 // The method is chosen automatically:  a gather/scatter saxpy method
-// (Gustavson), a heap-based saxpy method, or a dot product method.  The
-// AxB_method can modify this automatic choice, if set to a non-default value.
-// AxB_method_used is DOT, SAXPY, or DEFAULT (the latter denotes the row/col
-// scaling methods).
+// (Gustavson), a heap-based saxpy method, or a dot product method.
 
 // FUTURE:: an outer-product method for C=A*B'
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_MATRIX_FREE (Chandle) ;  \
-    GB_MATRIX_FREE (&AT) ;      \
-    GB_MATRIX_FREE (&BT) ;      \
-    GB_MATRIX_FREE (&MT) ;      \
+    GB_Matrix_free (Chandle) ;  \
+    GB_Matrix_free (&AT) ;      \
+    GB_Matrix_free (&BT) ;      \
+    GB_Matrix_free (&MT) ;      \
 }
 
 #include "GB_mxm.h"
@@ -57,7 +54,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
-    GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
 )
 {
@@ -75,7 +71,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     ASSERT (!GB_PENDING (B_in)) ; ASSERT (!GB_ZOMBIES (B_in)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*B", GB0) ;
     ASSERT (mask_applied != NULL) ;
-    ASSERT (AxB_method_used != NULL) ;
     ASSERT (Chandle != NULL) ;
 
     (*Chandle) = NULL ;
@@ -92,7 +87,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     (*mask_applied) = false ;
     (*done_in_place) = false ;
-    (*AxB_method_used) = GxB_DEFAULT ;
 
     if (AxB_method == GxB_AxB_HEAP)
     { 
@@ -456,7 +450,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
-            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
@@ -466,7 +459,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
                 AT, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
-            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
     }
@@ -503,7 +495,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
-            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
@@ -513,7 +504,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
                 A, BT, semiring, flipxy, mask_applied, AxB_method, Context)) ;
-            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
     }
@@ -545,7 +535,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
-            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
@@ -553,7 +542,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GBBURBLE ("C%s=A*B, saxpy ", M_str) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
                 A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
-            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
     }
 
@@ -587,8 +575,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_FREE (&AT) ;
-    GB_MATRIX_FREE (&BT) ;
+    GB_Matrix_free (&AT) ;
+    GB_Matrix_free (&BT) ;
     ASSERT_MATRIX_OK_OR_NULL (MT, "MT if computed", GB0) ;
     if (MT_handle != NULL)
     { 
@@ -598,7 +586,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     else
     { 
         // otherwise, free it
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
     }
 
     return (GrB_SUCCESS) ;

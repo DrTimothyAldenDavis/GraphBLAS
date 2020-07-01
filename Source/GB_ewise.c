@@ -20,10 +20,10 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_MATRIX_FREE (&T) ;   \
-    GB_MATRIX_FREE (&AT) ;  \
-    GB_MATRIX_FREE (&BT) ;  \
-    GB_MATRIX_FREE (&MT) ;  \
+    GB_Matrix_free (&T) ;   \
+    GB_Matrix_free (&AT) ;  \
+    GB_Matrix_free (&BT) ;  \
+    GB_Matrix_free (&MT) ;  \
 }
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
@@ -78,18 +78,18 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // C = A is done for entries in A but not C
         if (!GB_Type_compatible (C->type, A->type))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "First input of type [%s]\n"
                 "cannot be typecast to final output of type [%s]",
-                A->type->name, C->type->name))) ;
+                A->type->name, C->type->name) ;
         }
         // C = B is done for entries in B but not C
         if (!GB_Type_compatible (C->type, B->type))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Second input of type [%s]\n"
                 "cannot be typecast to final output of type [%s]",
-                B->type->name, C->type->name))) ;
+                B->type->name, C->type->name) ;
         }
     }
 
@@ -103,14 +103,14 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (anrows != bnrows || ancols != bncols ||
         cnrows != anrows || cncols != bncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
             "first input is " GBd "-by-" GBd "%s\n"
             "second input is " GBd "-by-" GBd "%s",
             cnrows, cncols,
             anrows, ancols, A_transpose ? " (transposed)" : "",
-            bnrows, bncols, B_transpose ? " (transposed)" : ""))) ;
+            bnrows, bncols, B_transpose ? " (transposed)" : "") ;
     }
 
     // quick return if an empty mask M is complemented
@@ -336,8 +336,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // free the transposed matrices
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_FREE (&AT) ;
-    GB_MATRIX_FREE (&BT) ;
+    GB_Matrix_free (&AT) ;
+    GB_Matrix_free (&BT) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask
@@ -354,7 +354,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // needed.  If no typecasting is done then this takes no time at all
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
         return (GB_transplant_conform (C, C->type, &T, Context)) ;
     }
     else
@@ -363,7 +363,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Context) ;
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
         return (info) ;
     }
 }

@@ -76,7 +76,7 @@
         GB_FREE (Tnz) ;
         GB_FREE (Count) ;
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -193,7 +193,7 @@
         GB_FREE (Mark0) ;
         GB_FREE (Count) ;
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     T->p [0] = 0 ;

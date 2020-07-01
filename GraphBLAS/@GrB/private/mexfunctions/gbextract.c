@@ -162,14 +162,14 @@ void mexFunction
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
-        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
     // compute C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)) ;
+    OK1 (C, GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

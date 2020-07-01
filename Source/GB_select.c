@@ -11,7 +11,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_MATRIX_FREE (&T) ;                   \
+    GB_Matrix_free (&T) ;                   \
 }
 
 #include "GB_select.h"
@@ -75,19 +75,19 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // built-in GT, GE, LT, and LE operators cannot be used with
         // user-defined types.  There are no built-in ordered comparators
         // for built-in complex types.
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "Operator %s not defined for user-defined types", op->name))) ;
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Operator %s not defined for user-defined types", op->name) ;
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible
     // A must also be compatible with op->xtype, unless op->xtype is NULL
     if (op->xtype != NULL && !GB_Type_compatible (A->type, op->xtype))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Incompatible type for C=%s(A,Thunk):\n"
             "input A type [%s]\n"
             "cannot be typecast to operator input of type [%s]",
-            op->name, A->type->name, op->xtype->name))) ;
+            op->name, A->type->name, op->xtype->name) ;
     }
 
     // check the dimensions
@@ -95,12 +95,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     int64_t tncols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
     if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
             "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
-            tnrows, tncols, A_transpose ? " (transposed)" : ""))) ;
+            tnrows, tncols, A_transpose ? " (transposed)" : "") ;
     }
 
     // check if op is (NE, EQ, GT, GE, LT, LE)_THUNK
@@ -128,8 +128,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (GB_NROWS (Thunk_in) != 1 || GB_NCOLS (Thunk_in) != 1)
         { 
             // Thunk present, but empty, or wrong dimensions
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "Thunk must be a GxB_Scalar"))) ;
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
+                "Thunk must be a %s", "GxB_Scalar") ;
         }
 
         // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be
@@ -137,11 +137,11 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (op_is_positional && !GB_Type_compatible (GrB_INT64, Thunk_in->type))
         { 
             // Thunk not a built-in type, for a built-in select operator
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Incompatible type for C=%s(A,Thunk):\n"
                 "input Thunk type [%s]\n"
                 "not compatible with GrB_INT64 input to built-in operator %s",
-                op->name, Thunk_in->type->name, op->name))) ;
+                op->name, Thunk_in->type->name, op->name) ;
         }
 
         // if op is (NE, EQ, GT, GE, LT, LE)_THUNK, then Thunk must be
@@ -149,10 +149,10 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (op_is_thunk_comparator &&
            !GB_Type_compatible (A->type, Thunk_in->type))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Incompatible type for C=%s(A,Thunk):\n"
                 "input A type [%s] and Thunk type [%s] not compatible",
-                op->name, A->type->name, Thunk_in->type->name))) ;
+                op->name, A->type->name, Thunk_in->type->name) ;
         }
 
         // get the pointer to the value of Thunk_in
@@ -165,15 +165,15 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (op->ttype == NULL && Thunk_in != NULL)
         { 
             // select operator does not take a Thunk, but one is present
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "User-defined operator %s(A,Thunk) does not take a Thunk\n"
-                "input, but Thunk parameter is non-NULL", op->name))) ;
+                "input, but Thunk parameter is non-NULL", op->name) ;
         }
         else if (op->ttype != NULL && Thunk_in == NULL)
         { 
             // select operator takes a Thunk, but Thunk parameter is missing
-            return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,
-                "Required argument is null: [Thunk]"))) ;
+            GB_ERROR (GrB_NULL_POINTER,
+                "Required argument is null: [%s]", "Thunk") ;
         }
         else if (op->ttype != NULL && Thunk_in != NULL)
         {
@@ -181,17 +181,17 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             // The types must match exactly.
             if (op->ttype != Thunk_in->type)
             { 
-                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "User-defined operator %s(A,Thunk) has a Thunk input\n"
                     "type of [%s], which must exactly match the type of the\n"
                     "Thunk parameter; parameter to GxB_select has type [%s]",
-                    op->name, op->ttype->name, Thunk_in->type->name))) ;
+                    op->name, op->ttype->name, Thunk_in->type->name) ;
             }
             if (nz_thunk != 1)
             { 
-                return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+                GB_ERROR (GrB_INVALID_VALUE,
                     "User-defined operator %s(A,Thunk) has a Thunk input,\n"
-                    "which must not be empty", op->name))) ;
+                    "which must not be empty", op->name) ;
             }
         }
     }

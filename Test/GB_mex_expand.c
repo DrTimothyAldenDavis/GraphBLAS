@@ -14,9 +14,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&M) ;               \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&M) ;               \
+    GrB_Matrix_free_(&C) ;               \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -32,7 +32,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix C = NULL, M = NULL ;
 
-    GB_WHERE (USAGE) ;
     if (nargin != 2 || nargout > 1)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -74,7 +73,6 @@ void mexFunction
             GrB_ALL, nrows, GrB_ALL, ncols, GrB_DESC_RS) ;
         if (info != GrB_SUCCESS)
         {
-            printf ("Error:%s\n", GrB_error ( )) ;
             mexErrMsgTxt ("GxB_Matrix_subassign_[complex] failed") ;
         }
     }

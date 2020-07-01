@@ -205,32 +205,6 @@ int main (void)
     fprintf (stderr, "mode: %s\n", (mode == GrB_BLOCKING) ?
         "blocking" : "non-blocking") ;
 
-    GxB_Thread_Model thread_safety ;
-    GxB_Global_Option_get (GxB_THREAD_SAFETY, &thread_safety) ;
-    fprintf (stderr, "user thread safety via: ") ;
-    switch (thread_safety)
-    {
-        case GxB_THREAD_OPENMP :  fprintf (stderr, "OpenMP\n") ;         break ;
-        case GxB_THREAD_POSIX :   fprintf (stderr, "POSIX threads\n") ;  break ;
-        case GxB_THREAD_WINDOWS : fprintf (stderr, "Windowsthreads\n") ; break ;
-        case GxB_THREAD_ANSI :    fprintf (stderr, "ANSI threads\n") ;   break ;
-        case GxB_THREAD_NONE : 
-        default :                 fprintf (stderr, "none\n") ;
-    }
-
-    GxB_Thread_Model threading ;
-    GxB_Global_Option_get (GxB_THREADING, &threading) ;
-    fprintf (stderr, "GraphBLAS parallelism via: ") ;
-    switch (threading)
-    {
-        case GxB_THREAD_OPENMP :  fprintf (stderr, "OpenMP\n") ; break ;
-        case GxB_THREAD_POSIX :   
-        case GxB_THREAD_WINDOWS : 
-        case GxB_THREAD_ANSI :    
-        case GxB_THREAD_NONE : 
-        default :                 fprintf (stderr, "none\n") ;
-    }
-
     int nthreads_max ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads_max) ;
     fprintf (stderr, "max # of threads used internally: %d\n", nthreads_max) ;
@@ -370,8 +344,9 @@ int main (void)
     info = GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL, WildAdd, A, D, NULL) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n",
-            GrB_error ( )) ;
+        char *s ;
+        GrB_error (&s, C) ;
+        printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n", s);
     }
 
     // free everyting

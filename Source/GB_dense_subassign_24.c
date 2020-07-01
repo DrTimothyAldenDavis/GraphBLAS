@@ -100,7 +100,7 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
         // clear prior content of C, but keep the CSR/CSC format and its type
         GBBURBLE ("(deep copy) ") ;
         bool C_is_csc = C->is_csc ;
-        GB_PHIX_FREE (C) ;
+        GB_phix_free (C) ;
         // copy the pattern, not the values
         GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C

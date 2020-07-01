@@ -54,11 +54,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // s = reduce (s,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "Incompatible type for reduction operator z=%s(x,y):\n"
-            "input of type [%s]\n"
-            "cannot be typecast to reduction operator of type [%s]",
-            reduce->op->name, A->type->name, reduce->op->ztype->name))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     //--------------------------------------------------------------------------
@@ -111,7 +107,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     if (W == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

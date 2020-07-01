@@ -109,10 +109,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // check operator types; all must be identical
     if (op->xtype != op->ztype || op->ytype != op->ztype)
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "All domains of monoid operator must be identical;\n"
-            "operator is: [%s] = %s ([%s],[%s])",
-            op->ztype->name, op->name, op->xtype->name, op->ytype->name))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     // The idcode must match the monoid->op->ztype->code for built-in types,
@@ -126,10 +123,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_Type_code zcode = op->ztype->code ;
     if (idcode != zcode)
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "Identity type [%s]\n"
-            "must be identical to monoid operator z=%s(x,y) of type [%s]",
-            GB_code_string (idcode), op->name, op->ztype->name))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     //--------------------------------------------------------------------------
@@ -141,7 +135,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     if (*monoid == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the monoid
@@ -169,7 +163,7 @@ GrB_Info GB_Monoid_new          // create a monoid
             GB_FREE (mon->identity) ;                                       \
             GB_FREE (mon->terminal) ;                                       \
             GB_FREE (*monoid) ;                                             \
-            return (GB_OUT_OF_MEMORY) ;                                     \
+            return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
     }
 
@@ -181,7 +175,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         {                                                                   \
             /* out of memory */                                             \
             GB_FREE (*monoid) ;                                             \
-            return (GB_OUT_OF_MEMORY) ;                                     \
+            return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
     }
 

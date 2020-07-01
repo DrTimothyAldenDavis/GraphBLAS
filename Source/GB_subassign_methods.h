@@ -1540,7 +1540,7 @@ GrB_Info GB_subassign_20
     if (Npending == NULL)                                                   \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
-        return (GB_OUT_OF_MEMORY) ;                                         \
+        return (GrB_OUT_OF_MEMORY) ;                                        \
     }
 
 //------------------------------------------------------------------------------
@@ -1898,12 +1898,12 @@ GrB_Info GB_subassign_emult_slice
     if (!GB_Pending_ensure (&(C->Pending), atype, accum, is_matrix, nnew))  \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
-        return (GB_OUT_OF_MEMORY) ;                                         \
+        return (GrB_OUT_OF_MEMORY) ;                                        \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    int64_t *GB_RESTRICT Pending_i = Pending->i ;                              \
-    int64_t *GB_RESTRICT Pending_j = Pending->j ;                              \
-    GB_void *GB_RESTRICT Pending_x = Pending->x ;                              \
+    int64_t *GB_RESTRICT Pending_i = Pending->i ;                           \
+    int64_t *GB_RESTRICT Pending_j = Pending->j ;                           \
+    GB_void *GB_RESTRICT Pending_x = Pending->x ;                           \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
 

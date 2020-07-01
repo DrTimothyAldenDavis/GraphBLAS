@@ -110,7 +110,7 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
     OK (GrB_Vector_extractTuples_UINT64 (I, X, &nvals, dout)) ;
 
     // I and X exclude empty columns of A.  This condition is always true.
-    CHECK (nvals <= n, GrB_PANIC) ;
+    CHECK (nvals <= n, GrB_INVALID_VALUE) ;
 
     // D = diag (ZSCALE./dout) ;
     OK (GrB_Matrix_new (&D, GrB_UINT64, n, n)) ;

@@ -18,13 +18,13 @@
     {                                                   \
         /* if the analysis fails, return GrB_SUCCESS */ \
         /* anyway, since the analysis is optional */    \
-        GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;          \
+        GB_MKL_GRAPH_MATRIX_DESTROY (C->mkl) ;          \
         return (GrB_SUCCESS) ;                          \
     }
 
-GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
+GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
 (
-    GrB_Matrix A,                   // input/output matrix
+    GrB_Matrix C,                   // input/output matrix
     int64_t ncalls,                 // estimate # of future calls to GrB_mxv
     const GrB_Descriptor desc       // currently unused
 )
@@ -35,15 +35,15 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_mxv_optimize (A, ncols, desc)") ;
+    GB_WHERE (C, "GxB_mxv_optimize (C, ncols, desc)") ;
     GB_BURBLE_START ("GxB_mxv_optimize") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     // get the use_mkl flag from the descriptor
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (C) ;
 
     //--------------------------------------------------------------------------
     // optimize the matrix for mkl_graph_mxv in MKL
@@ -53,40 +53,40 @@ GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
     {
 
         //----------------------------------------------------------------------
-        // free any existing MKL version of the matrix A and its optimization
+        // free any existing MKL version of the matrix C and its optimization
         //----------------------------------------------------------------------
 
-        GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
+        GB_MKL_GRAPH_MATRIX_DESTROY (C->mkl) ;
 
         //----------------------------------------------------------------------
-        // create the MKL version of the matrix A, and analyze it
+        // create the MKL version of the matrix C, and analyze it
         //----------------------------------------------------------------------
 
-        // TODO for MKL: doesn't the analysis depend on A'*x or A*x?
+        // TODO for MKL: doesn't the analysis depend on C'*x or C*x?
 
-        int A_mkl_type = GB_type_mkl (A->type->code) ;
-        if (!GB_IS_HYPER (A) && A_mkl_type >= 0)
+        int A_mkl_type = GB_type_mkl (C->type->code) ;
+        if (!GB_IS_HYPER (C) && A_mkl_type >= 0)
         {
 
             // create the MKL version of the matrix
             mkl_graph_matrix_t A_mkl = NULL ;
             GB_MKL_OK (mkl_graph_matrix_create (&A_mkl)) ;
-            A->mkl = A_mkl ;
+            C->mkl = A_mkl ;
 
             // import the data as shallow arrays into the MKL matrix
-            GB_MKL_OK (mkl_graph_matrix_set_csr (A_mkl, A->vdim, A->vlen,
-                A->p, MKL_GRAPH_TYPE_INT64,
-                A->i, MKL_GRAPH_TYPE_INT64,
-                A->x, A_mkl_type)) ;
+            GB_MKL_OK (mkl_graph_matrix_set_csr (A_mkl, C->vdim, C->vlen,
+                C->p, MKL_GRAPH_TYPE_INT64,
+                C->i, MKL_GRAPH_TYPE_INT64,
+                C->x, A_mkl_type)) ;
 
             // analyze the matrix for future calls to GrB_mxv
             GB_MKL_OK (mkl_graph_optimize_mxv (A_mkl, ncalls)) ;
 
             // save the analysis inside the GrB_Matrix
-            A->mkl = (void *) A_mkl ;
+            C->mkl = (void *) A_mkl ;
         }
 
-        // TODO for MKL: if A is modified, A->mkl needs to be freed.
+        // TODO for MKL: if C is modified, C->mkl needs to be freed.
 
     }
 

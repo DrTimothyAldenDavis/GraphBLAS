@@ -11,8 +11,7 @@
 
 void GB_mx_put_global
 (
-    bool cover,
-    GrB_Desc_Value AxB_method_used
+    bool cover
 )
 {
 
@@ -26,7 +25,7 @@ void GB_mx_put_global
     // return the time to MATLAB, if it was computed
     //--------------------------------------------------------------------------
 
-    GB_mx_put_time (AxB_method_used) ;
+    GB_mx_put_time ( ) ;
 
     //--------------------------------------------------------------------------
     // log the statement coverage

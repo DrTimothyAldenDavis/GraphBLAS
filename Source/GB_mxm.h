@@ -80,7 +80,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
-    GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
 ) ;
 

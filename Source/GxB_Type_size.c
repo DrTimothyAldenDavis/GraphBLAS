@@ -20,7 +20,7 @@ GrB_Info GxB_Type_size          // determine the size of the type
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Type_size (&size, type)") ;
+    GB_WHERE1 ("GxB_Type_size (&size, type)") ;
     GB_RETURN_IF_NULL (size) ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 

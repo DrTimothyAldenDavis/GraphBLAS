@@ -70,6 +70,6 @@ void mexFunction
     GB_qsort_3 (Iout, Jout, Kout, n) ;
 
     GB_MEX_TOC ;
-    GB_mx_put_time (0) ;
+    GB_mx_put_time ( ) ;
 }
 

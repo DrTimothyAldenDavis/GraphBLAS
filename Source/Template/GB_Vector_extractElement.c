@@ -30,14 +30,14 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT_RETURN_IF_NULL (V) ;
-    GB_CONTEXT_RETURN_IF_FAULTY (V) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    GB_RETURN_IF_NULL (x) ;
 
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (V))
     { 
         GrB_Info info ;
-        GB_WHERE (GB_WHERE_STRING) ;
+        GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_extractElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
         ASSERT (!GB_ZOMBIES (V)) ;
@@ -45,25 +45,17 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         GB_BURBLE_END ;
     }
 
-    GB_CONTEXT_RETURN_IF_NULL (x) ;
-
     // check index
     if (i >= V->vlen)
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
-            GBu " out of range; must be < " GBd, i, V->vlen))) ;
+        return (GrB_INVALID_INDEX) ;
     }
 
     // GB_XCODE and V must be compatible
     GB_Type_code vcode = V->type->code ;
     if (!GB_code_compatible (GB_XCODE, vcode))
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "entry v(i) of type [%s] cannot be typecast\n"
-            "to output scalar x of type [%s]",
-            V->type->name, GB_code_string (GB_XCODE)))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     if (V->nzmax == 0)

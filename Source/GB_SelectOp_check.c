@@ -15,8 +15,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     const GxB_SelectOp op,  // GraphBLAS operator to print and check
     const char *name,       // name of the operator
     int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
+    FILE *f                 // file for output
 )
 {
 
@@ -53,37 +52,32 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     if (op->function == NULL && op->opcode >= GB_USER_SELECT_opcode)
     { 
         GBPR0 ("    function pointer is NULL\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "SelectOp has a NULL function pointer: %s [%s]",
-            GB_NAME, op->name))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     if (op->opcode < GB_TRIL_opcode || op->opcode > GB_USER_SELECT_opcode)
     { 
         GBPR0 ("    invalid opcode\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "SelectOp has an invalid opcode: %s [%s]", GB_NAME, op->name))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     if (op->xtype != NULL)
     { 
-        GrB_Info info = GB_Type_check (op->xtype, "xtype", pr, f, Context) ;
+        GrB_Info info = GB_Type_check (op->xtype, "xtype", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
             GBPR0 ("    SelectOp has an invalid xtype\n") ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "SelectOp has an invalid xtype: %s [%s]", GB_NAME, op->name))) ;
+            return (GrB_INVALID_OBJECT) ;
         }
     }
 
     if (op->ttype != NULL)
     { 
-        GrB_Info info = GB_Type_check (op->ttype, "ttype", pr, f, Context) ;
+        GrB_Info info = GB_Type_check (op->ttype, "ttype", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
             GBPR0 ("    SelectOp has an invalid ttype\n") ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "SelectOp has an invalid ttype: %s [%s]", GB_NAME, op->name))) ;
+            return (GrB_INVALID_OBJECT) ;
         }
     }
 

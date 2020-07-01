@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols, nvals,"
+    GB_WHERE1 ("GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols, nvals,"
         " nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_HyperCSR") ;
     GB_IMPORT_CHECK ;
@@ -46,8 +46,8 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     }
     if (nvec > nrows)
     { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "nvec [" GBu "] must be <= nrows [" GBu "]\n", nvec, nrows))) ;
+        // too many vectors
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

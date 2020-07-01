@@ -305,7 +305,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump) ;
     info = method ;                                                     \
     if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))                 \
     {                                                                   \
-        printf ("GraphBLAS error:\n%s\n", GrB_error ( )) ;              \
+        printf ("GraphBLAS error: %d\n", info) ;                        \
         CHECK (false, info) ;                                           \
     }                                                                   \
 }

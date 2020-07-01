@@ -24,7 +24,6 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
     const bool user_complex             // true if X is complex
 )
 {
-    GB_WHERE ("GB_mx_string_to_UnaryOp") ;
 
     (*op_handle) = NULL ;
     GrB_UnaryOp op = NULL ;

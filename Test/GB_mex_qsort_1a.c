@@ -43,6 +43,6 @@ void mexFunction
     GB_qsort_1a (J, n) ;
 
     GB_MEX_TOC ;
-    GB_mx_put_time (0) ;
+    GB_mx_put_time ( ) ;
 }
 

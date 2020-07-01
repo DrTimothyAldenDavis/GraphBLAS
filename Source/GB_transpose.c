@@ -67,7 +67,7 @@
     if (!in_place_A)                                                        \
     {                                                                       \
         /* free all of C and all its contents &C */                         \
-        GB_MATRIX_FREE (Chandle) ;                                          \
+        GB_Matrix_free (Chandle) ;                                          \
     }                                                                       \
 }
 
@@ -235,7 +235,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_C ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -385,7 +385,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -517,7 +517,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -740,7 +740,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 // out of memory
                 GB_FREE_C ;
                 GB_FREE_WORK ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             // Construct the "row" indices of C, which are "column" indices of
@@ -817,7 +817,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_FREE (Swork) ;
                 GB_FREE_A_AND_C ;
                 GB_FREE_WORK ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             //------------------------------------------------------------------
@@ -959,12 +959,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (in_place_A)
             { 
                 // free all content of A, but not the header, if in place of A
-                GB_PHIX_FREE (A) ;   // transpose in-place
+                GB_phix_free (A) ;   // transpose in-place
             }
             else if (in_place_C)
             { 
                 // free all of C, including the header, if done in place of C
-                GB_MATRIX_FREE (Chandle) ;
+                GB_Matrix_free (Chandle) ;
             }
 
             if (info != GrB_SUCCESS)

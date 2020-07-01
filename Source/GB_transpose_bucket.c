@@ -53,7 +53,7 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_MATRIX_FREE (&C) ;                                               \
+    GB_Matrix_free (&C) ;                                               \
     GB_FREE_WORK ;                                                      \
 }
 
@@ -140,7 +140,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     for (int taskid = 0 ; taskid < naslice ; taskid++)
@@ -150,7 +150,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         { 
             // out of memory
             GB_FREE_ALL ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
         Rowcounts [taskid] = rowcount ;
     }
@@ -165,7 +165,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     GBI1_init (&Iter, A) ;

@@ -29,7 +29,7 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_subassign"
+    GB_WHERE (C, "GxB_Matrix_subassign"
         " (C, M, accum, A, Rows, nRows, Cols, nCols, desc)") ;
     GB_BURBLE_START ("GxB_subassign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;

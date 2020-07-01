@@ -24,7 +24,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
-    GB_WHERE ("GxB_Matrix_Option_set (A, field, value)") ;
+    GB_WHERE (A, "GxB_Matrix_Option_set (A, field, value)") ;
     GB_BURBLE_START ("GxB_set") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
@@ -60,10 +60,10 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_end (ap) ;
                 if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
                 { 
-                    return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                            "unsupported format [%d], must be one of:\n"
-                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
-                            (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
+                    GB_ERROR (GrB_INVALID_VALUE,
+                        "unsupported format [%d], must be one of:\n"
+                        "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
+                        (int) GxB_BY_ROW, (int) GxB_BY_COL) ;
                 }
                 // the value is normally GxB_BY_ROW (0) or GxB_BY_COL (1), but
                 // any nonzero value results in GxB_BY_COL.
@@ -84,10 +84,10 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
         default : 
 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                    "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d]",
-                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT))) ;
+            GB_ERROR (GrB_INVALID_VALUE,
+                "invalid option field [%d], must be one of:\n"
+                "GxB_HYPER [%d], GxB_FORMAT [%d]",
+                (int) field, (int) GxB_HYPER, (int) GxB_FORMAT) ;
 
     }
 

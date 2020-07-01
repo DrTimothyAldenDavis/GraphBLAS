@@ -105,11 +105,7 @@ based on {\em GraphBLAS Mathematics} by Jeremy Kepner \cite{Kepner2017}.  The
 GraphBLAS C API Specification is available at \url{http://graphblas.org}.  This
 version of SuiteSparse:GraphBLAS conforms to Version
 \input{GraphBLAS_API_version.tex}
-of {\em The GraphBLAS C API specification}, with one exception:
-% TODO in 4.0: Remove when GrB_wait() is removed:
-the single-input polymorphic function \verb'GrB_wait(&object)' does not appear
-in this version, since it conflicts with the no-input \verb'GrB_wait()'.  Use
-the non-polymorphic versions instead (\verb'GrB_Matrix_wait(&C)' for example).
+of {\em The GraphBLAS C API specification}.
 
 In this User Guide, aspects of the GraphBLAS specification that would be true
 for any GraphBLAS implementation are simply called ``GraphBLAS.'' Details
@@ -123,30 +119,36 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \end{spec}
 
 \newpage
-\subsection{Future plans:}
+%-------------------------------------------------------------------------------
+\subsection{Future plans}
+%-------------------------------------------------------------------------------
 
 \begin{itemize}
 
 \item Version 4.0.0 (likely in July, 2020), will follow the V2.0 of the C API.
-    The following changes are tentative, and depend on the final release of the
-    V2.0 C API.
+    {\bf The following is tentative, but all of these changes have been
+    implemented in the current draft of v4.0.0 (July 1, 2020).}
 
-    % TODO in 4.0: revise this as needed:
-    \verb'GrB_wait()', with no inputs: will be removed.
-    \verb'GrB_wait(&object)': polymorphic function will be added.
+    \verb'GrB_wait()', with no inputs is removed.
+    \verb'GrB_wait(&object)': polymorphic function is added.
     \verb'GrB_*_nvals' and related functions:
-        will no longer guarantee completion
+        no longer guarantee completion
         (per the v1.3 C API);
         use \verb'GrB_wait(&object)'
         or non-polymorphic \verb'GrB_*_wait(&object)' instead.
-    \verb'GrB_error' will change; it will take two parameters,
+
+    \verb'GrB_error' has changed; it now takes two parameters,
     \verb'GrB_error(&s,C)' where \verb's' is the error string generated
     when \verb'C' was last operated on.
-    V4.0 will otherwise be identical to V3.3.1.
+
+    V4.0.0 is otherwise identical to V3.3.1.
 
 \end{itemize}
 
-\subsection{Release Notes:}
+%-------------------------------------------------------------------------------
+\subsection{Release Notes}
+%-------------------------------------------------------------------------------
+
 \begin{itemize}
 
 \item Version 3.3.1 (June 30, 2020).  Bug fix to \verb'GrB_assign' and
@@ -1135,15 +1137,13 @@ read them (such as \verb'GrB_Matrix_build') or write to them (such as
 \verb'GrB_Matrix_extractTuples') always finish reading them, or creating them,
 when the method or operation returns to the user application.
 
-% TODO in 4.0: Revise for v4.0:
-In addition, all methods and operations that extract values from a GraphBLAS
+All methods and operations that extract values from a GraphBLAS
 object and return them into non-opaque user arrays always ensure that the
-computations for that object are completed when the method returns, namely:
+user-visible arrays are fully populated when they return:
 \verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
 and \verb'GrB_*_reduce' (to scalar).
-{\bf NOTE: this behavior will change in SuiteSparse:GraphBLAS v4.0.  These
-functions will only guarantee that the user-visible arrays are fully populated;
-they will not guarantee completion.  Use \verb'GrB_*_wait(&object)' instead.}
+These functions do {\em not} guarantee that the opaque objects they depend on
+are finalized.  To do that, use \verb'GrB_wait(&object)' instead.
 
 SuiteSparse:GraphBLAS is multithreaded internally, via OpenMP, and it is also
 safe to use in a multithreaded user application.  See Section~\ref{sec:install}
@@ -1205,12 +1205,7 @@ API Specification supported by the library.
 
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
-of the C API Specification,
-% TODO in 4.0: Remove when GrB_wait(no inputs) is removed;
-except for the polymorphic \verb'GrB_wait(&object)' with one input.
-That method will appear in SuiteSparse:GraphBLAS V4.0.0.  In the meantime, use
-the non-polymorphic methods \verb'GrB_Matrix_wait(&C)',
-\verb'GrB_Vector_wait(&v)', and so on.
+of the C API Specification.
 
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %======
@@ -1359,24 +1354,34 @@ refer to {\em The GraphBLAS C API Specification} \cite{spec}.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-const char *GrB_error ( ) ;     // return a string describing the last error
+GrB_Info GrB_error      // return a string describing the last error
+( 
+    const char **error, // error string
+    <type> object       // a GrB_matrix, GrB_Vector, etc.
+) ;
 \end{verbatim}
 }\end{mdframed}
 
 Each GraphBLAS method and operation returns a \verb'GrB_Info' error code.  The
-\verb'GrB_error' function returns additional information on the error in a
-thread-safe null-terminated string.  The string returned by \verb'GrB_error' is
-allocated in thread local storage and must not be freed or modified.  Each user
-thread has its own error status.  The simplest way to use it is just to print
-it out, such as:
+\verb'GrB_error' function returns additional information on the error for a
+particular object in a null-terminated string.  The string returned by
+\verb'GrB_error' is never a \verb'NULL' string, but it may have length zero
+(with the first entry being the \verb"'\0'" string-termination value).  The
+string must not be freed or modified.
 
     {\footnotesize
     \begin{verbatim}
-    info = GrB_some_method_here (...) ;
+    info = GrB_some_method_here (C, ...) ;
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     {
-        printf ("info: %d error: %s\n", info, GrB_error ( )) ;
+        char *err ;
+        GrB_error (&err, C) ;
+        printf ("info: %d error: %s\n", info, err) ;
     } \end{verbatim}}
+
+If \verb'C' has no error status, or if the error is not recorded in
+the string, an empty non-null string is returned.  In particular,
+out-of-memory conditions result in an empty string fro \verb'GrB_error'.
 
 SuiteSparse:GraphBLAS reports many helpful details via \verb'GrB_error'.  For
 example, if a row or column index is out of bounds, the report will state what
@@ -1385,30 +1390,57 @@ dimensions will be provided.  \verb'GrB_BinaryOp_new', \verb'GrB_UnaryOp_new',
 and \verb'GxB_SelectOp_new' record the name the function passed to them, and
 \verb'GrB_Type_new' records the name of its type parameter, and these are
 printed if the user-defined types and operators are used incorrectly.  Refer to
-the output of the example programs in the \verb'Demo' folder, which
-intentionally generate errors to illustrate the use of \verb'GrB_error'.
+the output of the example programs in the \verb'Demo' and \verb'Test' folder,
+which intentionally generate errors to illustrate the use of \verb'GrB_error'.
 
-Successful GraphBLAS methods do not modify the last error message recorded.  If
-a GraphBLAS method fails and then subsequent GraphBLAS method succeeds, the
-error message is not modified from the last failure.  A subsequent failure
-will cause \verb'GrB_error' to return a different error message.
+The only functions in GraphBLAS that return an error string are functions that
+have a single input/output argument \verb'C', as a \verb'GrB_Matrix',
+\verb'GrB_Vector', \verb'GxB_Scalar', or \verb'GrB_Descriptor'. Methods that
+create these objects (such as \verb'GrB_Matrix_new') return a \verb'NULL'
+object on failure, so these methods cannot also return an error string in
+\verb'C'.
+
+Any subsequent GraphBLAS method that modifies the object \verb'C' clears the
+error string.
 
 Note that \verb'GrB_NO_VALUE' is an not error, but an informational status.
 \verb'GrB_*_extractElment(&x,A,i,j)', which does \verb'x=A(i,j)', returns this
-value to indicate that \verb'A(i,j)' is not present in the matrix.
+value to indicate that \verb'A(i,j)' is not present in the matrix.  That
+method does not have an input/output object so it cannot return an error
+string.
 
-In SuiteSparse:GraphBLAS, some failures cannot be safely recorded for
-\verb'GrB_error' to print.  These include \verb'GrB_PANIC' and errors in
-\verb'GrB_init' and \verb'GxB_init'.
+The \verb'GrB_error' function is a polymorphic function for the
+following variants:
 
-% TODO in 4.0: revise this statement when the change to the API is finalized:
-{\bf NOTE:} \verb'GrB_error' may change in the future.  It may have the signature
-\verb'GrB_error(&s,C)' where \verb's' is the error string that describes the
-error when \verb'C' is the output object of a GraphBLAS method.  This change to
-the C API is tentative.  If this change is made, it will be reflected in
-SuiteSparse:GraphBLAS v4.0.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_Type_error       (const char **error, const GrB_Type type) ;
+GrB_Info GrB_UnaryOp_error    (const char **error, const GrB_UnaryOp op) ;
+GrB_Info GrB_BinaryOp_error   (const char **error, const GrB_BinaryOp op) ;
+GrB_Info GxB_SelectOp_error   (const char **error, const GxB_SelectOp op) ;
+GrB_Info GrB_Monoid_error     (const char **error, const GrB_Monoid monoid) ;
+GrB_Info GrB_Semiring_error   (const char **error, const GrB_Semiring semiring) ;
+GrB_Info GxB_Scalar_error     (const char **error, const GxB_Scalar s) ;
+GrB_Info GrB_Vector_error     (const char **error, const GrB_Vector v) ;
+GrB_Info GrB_Matrix_error     (const char **error, const GrB_Vector A) ;
+GrB_Info GrB_Descriptor_error (const char **error, const GrB_Descriptor d) ;
+\end{verbatim}
+}\end{mdframed}
 
-\newpage
+Currently, only \verb'GrB_Matrix_error', \verb'GrB_Vector_error',
+\verb'GxB_Scalar_error', and \verb'GrB_Descriptor_error' are able to return
+non-empty error strings.  The latter can return an error string only from
+\verb'GrB_Descriptor_set' and \verb'GxB_set(d,...)'.
+
+The only GraphBLAS methods (Section~\ref{objects}) that return an error string
+are \verb'*setElement', \verb'*removeElement',
+\verb'GxB_Matrix_Option_set(A,...)', \newline
+\verb'GxB_Vector_Option_set(v,...)', \verb'GrB_Descriptor_set', and
+\verb'GxB_Desc_set(d,...)'.  All GraphBLAS operations discussed in
+Section~\ref{operations} can return an error string in their input/output
+object, except for \verb'GrB_reduce' when reducing to a scalar.
+
 %===============================================================================
 \subsection{{\sf GrB\_finalize:} finish GraphBLAS} %============================
 %===============================================================================
@@ -1658,7 +1690,7 @@ more details on these example user-defined types.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Type_wait          // wait for a user-defined type
+GrB_Info GrB_wait               // wait for a user-defined type
 (
     GrB_Type *type              // type to wait for
 ) ;
@@ -1967,7 +1999,7 @@ aliased to each other.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_UnaryOp_wait       // wait for a user-defined unary operator
+GrB_Info GrB_wait               // wait for a user-defined unary operator
 (
     GrB_UnaryOp *unaryop        // unary operator to wait for
 ) ;
@@ -2365,7 +2397,7 @@ should be computed.  Future versions may use additional pointer aliasing.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_BinaryOp_wait      // wait for a user-defined binary operator
+GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
     GrB_BinaryOp *binaryop      // binary operator to wait for
 ) ;
@@ -2662,7 +2694,7 @@ will be passed as \verb'NULL'.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_SelectOp_wait      // wait for a user-defined select operator
+GrB_Info GrB_wait               // wait for a user-defined select operator
 (
     GxB_SelectOp *selectop      // select operator to wait for
 ) ;
@@ -2908,7 +2940,7 @@ instead.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Monoid_wait        // wait for a user-defined monoid
+GrB_Info GrB_wait               // wait for a user-defined monoid
 (
     GrB_Monoid *monoid          // monoid to wait for
 ) ;
@@ -3254,7 +3286,7 @@ preferred, for portability to other GraphBLAS implementations.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Semiring_wait      // wait for a user-defined semiring
+GrB_Info GrB_wait               // wait for a user-defined semiring
 (
     GrB_Semiring *semiring      // semiring to wait for
 ) ;
@@ -3401,7 +3433,7 @@ type.  The pattern of the new scalar is empty.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Scalar_wait        // wait for a scalar
+GrB_Info GrB_wait               // wait for a scalar
 (
     GxB_Scalar *s               // scalar to wait for
 ) ;
@@ -3535,6 +3567,7 @@ GrB_Info GxB_Scalar_setElement          // s = x
 \verb'GxB_Scalar_setElement' sets the single entry in a sparse scalar, like
 \verb's = sparse(x)' in MATLAB notation.  For further details of this function,
 see \verb'GxB_Matrix_setElement' in Section~\ref{matrix_setElement}.
+If an error occurs, \verb'GrB_error(&err,s)' returns details about the error.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3676,7 +3709,7 @@ type.  The pattern of the new vector is empty.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Vector_wait        // wait for a vector
+GrB_Info GrB_wait               // wait for a vector
 (
     GrB_Vector *w               // vector to wait for
 ) ;
@@ -3873,6 +3906,7 @@ The operation is exactly like setting a single entry in an \verb'n'-by-1
 matrix, \verb'A(i,0) = x', where the column index for a vector is implicitly
 \verb'j=0'.  For further details of this function, see
 \verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}.
+If an error occurs, \verb'GrB_error(&err,w)' returns details about the error.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractElement:} get a single entry from a vector}
@@ -3910,13 +3944,14 @@ method are discussed in Section~\ref{matrix_extractElement}, which discusses
 \begin{verbatim}
 GrB_Info GrB_Vector_removeElement
 (
-    GrB_Vector v,                   // vector to remove an entry from
+    GrB_Vector w,                   // vector to remove an entry from
     GrB_Index i                     // index
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_Vector_removeElement' removes a single entry \verb'v(i)' from a vector.
-If no entry is present at \verb'v(i)', then the vector is not modified.
+\verb'GrB_Vector_removeElement' removes a single entry \verb'w(i)' from a vector.
+If no entry is present at \verb'w(i)', then the vector is not modified.
+If an error occurs, \verb'GrB_error(&err,w)' returns details about the error.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractTuples:} get all entries from a vector}
@@ -4065,12 +4100,10 @@ sparse matrices of any type.
 \subsubsection{{\sf GrB\_Matrix\_wait:} wait for a matrix}
 %-------------------------------------------------------------------------------
 
-% GB_PUBLIC GrB_Info GrB_Descriptor_wait (GrB_Descriptor *desc    ) ;
-
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Matrix_wait        // wait for a matrix
+GrB_Info GrB_wait               // wait for a matrix
 (
     GrB_Matrix *C               // matrix to wait for
 ) ;
@@ -4402,6 +4435,7 @@ extend this list.
 
 See Section~\ref{random} for an example of how to use
 \verb'GrB_Matrix_setElement'.
+If an error occurs, \verb'GrB_error(&err,C)' returns details about the error.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -4476,6 +4510,7 @@ GrB_Info GrB_Matrix_removeElement
 
 \verb'GrB_Matrix_removeElement' removes a single entry \verb'A(i,j)' from a matrix.
 If no entry is present at \verb'A(i,j)', then the matrix is not modified.
+If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -4862,7 +4897,7 @@ is given by the expression \verb'Ap [i+1] - Ap [i]'.
 \item \verb'GrB_Index Aj [nvals] ;'  The \verb'Aj' array defines the
 column indices of entries in each row.
 
-\item \verb'ctype Aj [nvals] ;'  The \verb'Ax' array defines the values of
+\item \verb'ctype Ax [nvals] ;'  The \verb'Ax' array defines the values of
 entries in each row.  It is passed in as a \verb'(void *)' pointer, but it must
 point to an array of size \verb'nvals' values, each of size
 \verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that corresponds
@@ -5709,7 +5744,7 @@ used in \verb'C=A*B' is selected automatically).
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Descriptor_wait        // wait for a descriptor
+GrB_Info GrB_wait                   // wait for a descriptor
 (
     GrB_Descriptor *descriptor      // descriptor to wait for
 ) ;
@@ -5815,6 +5850,8 @@ field      & &  \\
 \end{tabular}
 }
 
+If an error occurs, \verb'GrB_error(&err,desc)' returns details about the error.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Desc\_set:}  set a parameter in a descriptor}
@@ -5836,6 +5873,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 type of the third parameter can vary with the field.   This function can
 modify descriptor settings that do not have the type \verb'GrB_Desc_Value'.
 See also \verb'GxB_set' described in Section~\ref{options}.
+If an error occurs, \verb'GrB_error(&err,desc)' returns details about the error.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Desc_set' is an extension to the spec.
@@ -5996,9 +6034,8 @@ valid but the last statement will lead to undefined behavior.
 
 Some objects are predefined, such as the built-in types.  If a user application
 attempts to free a built-in object, SuiteSparse:GraphBLAS will safely do
-nothing.  The \verb'GrB_free' function in SuiteSparse:GraphBLAS returns
-\verb'GrB_SUCCESS' or \verb'GrB_PANIC' in the unlikely event of a failure.
-% TODO in 4.0: GrB_PANIC will not be returned.
+nothing.  The \verb'GrB_free' function in SuiteSparse:GraphBLAS always
+returns \verb'GrB_SUCCESS'.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -6396,8 +6433,6 @@ typedef enum
     GxB_HYPER = 0,      // defines switch to hypersparse format (double value)
     GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
-    GxB_THREAD_SAFETY = 3,  // thread library for thread safety
-    GxB_THREADING = 4,      // currently none (in progress)
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
     GxB_IS_HYPER = 6     // query a matrix to see if it hypersparse or not
@@ -6500,77 +6535,15 @@ The hypersparse status of a matrix can be queried with the following:
 \subsection{Other global options}
 %-------------------------------------------------------------------------------
 
-\verb'GxB_MODE', \verb'GxB_THREAD_SAFETY', and \verb'GxB_THREADING' can only be
+\verb'GxB_MODE' can only be
 queried by \verb'GxB_get'; they cannot be modified by \verb'GxB_set'.  The mode
-is the value passed to \verb'GrB_init' (blocking or non-blocking).  The
-\verb'GxB_THREAD*' options are returned as an \verb'enum' type with one of the
-following options:
-
-{\footnotesize
-\begin{verbatim}
-    typedef enum
-    {
-        GxB_THREAD_NONE = 0,    // no threading
-        GxB_THREAD_OPENMP = 1,  // OpenMP
-        GxB_THREAD_POSIX = 2,   // POSIX pthreads
-        GxB_THREAD_WINDOWS = 3, // Windows threads
-        GxB_THREAD_ANSI = 4     // ANSI C11 threads
-    }
-    GxB_Thread_Model ; \end{verbatim} }
-
-SuiteSparse:GraphBLAS multi-threaded, using only OpenMP for its internal
-parallelism.  It is also thread-safe if it is compiled with OpenMP or POSIX
-pthreads, and if the user application threads do not operate on the same
-matrices at the same time.  The user threads may use OpenMP or POSIX pthreads.
-If multiple user threads make simultaneous calls to GraphBLAS, then output
-matrices and vectors used by different threads must be different, and input
-matrices and vectors can be safely used only if any pending computations on
-them have finished, via \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', or
-\verb'GxB_Scalar_wait'.
-
-The \verb'GxB_THREAD_SAFETY' option returns the threading model used internally
-to synchronize user threads, solely for the now-deprecated \verb'GrB_wait()'.
-This is determined during installation (see Section~\ref{sec:threads}).  Since
-\verb'GxB_THREAD_NONE' is zero, the following can be used:
-
-{\footnotesize
-\begin{verbatim}
-    GxB_Thread_Model thread_safety ;
-    GxB_get (GxB_THREAD_SAFETY, &thread_safety) ;
-    if (thread_safety)
-    {
-        printf ("GraphBLAS is thread-safe\n") ;
-    }
-    else
-    {
-        // neither OpenMP, POSIX pthreads, nor any other threading model
-        // was available at compile-time
-        printf ("GraphBLAS is not thread-safe!\n") ;
-    }
-\end{verbatim} }
-
-The \verb'GxB_THREADING' option returns the internal parallelism used inside
-SuiteSparse:GraphBLAS, depending on how the library was compiled:
-
-{\footnotesize
-\begin{verbatim}
-    GxB_Thread_Model threading ;
-    GxB_get (GxB_THREADING, &threading) ;
-    if (threading == GxB_THREAD_NONE)
-    {
-        printf ("GraphBLAS is single-threaded, internally.\n") ;
-    }
-    else
-    {
-        printf ("GraphBLAS is multi-threaded, internally, using OpenMP.\n") ;
-    }
-\end{verbatim} }
+is the value passed to \verb'GrB_init' (blocking or non-blocking).
 
 All threads in the same user application share the same global options,
-including hypersparsity and CSR/CSC format determined by \verb'GxB_set', the
-blocking mode determined by \verb'GrB_init', and the threading options.
-Specific format and hypersparsity parameters of each matrix are specific to
-that matrix and can be independently changed.
+including hypersparsity and CSR/CSC format determined by \verb'GxB_set', and
+the blocking mode determined by \verb'GrB_init'.  Specific format and
+hypersparsity parameters of each matrix are specific to that matrix and can be
+independently changed.
 
 \newpage
 %===============================================================================
@@ -6638,6 +6611,8 @@ delay the change in format if it can obtain better performance.
 For performance, the matrix option should be set as soon as it is created with
 \verb'GrB_Matrix_new', so the internal transformation takes less time.
 
+If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
+
 \newpage
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_set:} set a {\sf GrB\_Descriptor} value}
@@ -6661,6 +6636,8 @@ consistent with the other usages of this generic function.  Unlike
 \verb'GxB_CHUNK'.  Refer to Sections~\ref{descriptor_set}~and~\ref{desc_set}
 for details.
 
+If an error occurs, \verb'GrB_error(&err,desc)' returns details about the error.
+
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
 %===============================================================================
@@ -6678,7 +6655,7 @@ GrB_Info GxB_get                    // gets the current global default option
 
 This usage of \verb'GxB_get' retrieves the value of a global option.  The
 \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_FORMAT'.
-\verb'GxB_MODE', \verb'GxB_THREAD_SAFETY', \verb'GxB_THREADING',
+\verb'GxB_MODE',
 \verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
 For example:
 
@@ -6706,10 +6683,7 @@ For example:
     GxB_get (GxB_CHUNK, &chunk) ;
     printf ("chunk size: %g\n", chunk) ;
 
-    // see Demo/Program/pthread_demo.c and openmp_demo.c for examples:
-    GxB_Threading_Model thread_safety, threading ;
-    GxB_get (GxB_THREAD_SAFETY, &thread_safey) ;
-    GxB_get (GxB_THREADING, &threading) ; \end{verbatim} }
+    \end{verbatim} }
 
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_get:} retrieve a matrix option}
@@ -6800,9 +6774,7 @@ To get global options that can be queried but not modified:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_get (GxB_MODE,          GrB_Mode *mode) ;
-    GxB_get (GxB_THREAD_SAFETY, GxB_Thread_Model *thread_safety) ;
-    GxB_get (GxB_THREADING,     GxB_Thread_Model *threading) ; \end{verbatim} }
+    GxB_get (GxB_MODE,          GrB_Mode *mode) ; \end{verbatim} }
 
 \noindent
 To set/get a matrix option:
@@ -7082,7 +7054,7 @@ effect as array \verb'I' with \verb'ni=0'.
 are extensions to the specification.
 \end{spec}
 
-% \newpage
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{GraphBLAS Operations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7137,6 +7109,11 @@ table below.  SuiteSparse:GraphBLAS extensions (\verb'GxB_subassign',
 \end{tabular}
 }
 \vspace{0.2in}
+
+If an error occurs, \verb'GrB_error(&err,C)' or \verb'GrB_error(&err,w)'
+returns details about the error, for operations that return a modified matrix
+\verb'C' or vector \verb'w'.  The only operation that cannot return an error
+string is reduction to a scalar with \verb'GrB_reduce'.
 
 \newpage
 %===============================================================================
@@ -9485,6 +9462,9 @@ the value of \verb'c' (on input) is typecast into the \verb'xtype' of the
 the \verb'ztype' of the \verb'accum' operator.  Finally, \verb'z' is typecast
 into the final result, \verb'c'.
 
+Since this operation does not have a GraphBLAS input/output object, it
+cannot return an error string for \verb'GrB_error'.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_$<$type$>$:} reduce a matrix to a scalar}
@@ -9509,6 +9489,9 @@ analogous to \verb't = sum (A (:))' in MATLAB.  This function is identical to
 reducing a vector to a scalar, since the positions of the entries in a matrix
 or vector have no effect on the result.  Refer to the reduction to scalar
 described in the previous Section~\ref{reduce_vector_to_scalar}.
+
+Since this operation does not have a GraphBLAS input/output object, it
+cannot return an error string for \verb'GrB_error'.
 
 \newpage
 %===============================================================================
@@ -9705,7 +9688,10 @@ provided:
 }
 \vspace{0.2in}
 
-These methods do not modify the status of any object.  If a matrix or vector
+These methods do not modify the status of any object, and thus they
+cannot return an error string for use by \verb'GrB_error'.
+
+If a matrix or vector
 has not been completed, the pending computations are guaranteed to {\em not} be
 performed. The reason is simple.  It is possible for a bug in the user
 application (such as accessing memory outside the bounds of an array) to mangle
@@ -10992,58 +10978,24 @@ endless possibilities of user-defined types and their use in GraphBLAS.
 Two example demo programs are included that illustrate how a multi-threaded
 user application can use GraphBLAS:  \verb'openmp_demo' uses OpenMP for its
 user threads and \verb'pthread_demo' uses POSIX pthreads.
-% TODO in 4.0: delete this note in bold:
-{\bf To be thread-safe, SuiteSparse:GraphBLAS must be compiled with a threading
-library, either OpenMP or POSIX}.  Either option used inside GraphBLAS can
-typically be combined with any user threading model.  See
-Section~\ref{sec:install}.
 
 The \verb'openmp_demo' can be compiled without OpenMP, in which case it
-becomes single-threaded.  GraphBLAS can be compiled with OpenMP, POSIX
-pthreads, or no threading support (and is not thread-safe in this latter
-case).  This gives 9 different combinations:
+becomes single-threaded.  GraphBLAS can be compiled with or without OpenMP.
+This gives 6 different combinations, all of which are thread-safe.
 
-\vspace{0.1in}
-{\footnotesize
-\begin{tabular}{llll}
-\hline
-User    & GraphBLAS & \verb'Demo/Output' file & comments \\
-applic. &           & & \\
-\hline
-none    & none      & \verb'user_none_grb_none.out'      & OK \\
-none    & OpenMP    & \verb'user_none_grb_openmp.out'    & OK \\
-none    & pthread   & \verb'user_none_grb_pthread.out'   & OK \\
-\hline
-OpenMP  & none      & \verb'user_openmp_grb_none.out'    & fail \\
-OpenMP  & OpenMP    & \verb'user_openmp_grb_openmp.out'  & OK, random \\
-OpenMP  & pthread   & \verb'user_openmp_grb_pthread.out' & OK, random \\
-\hline
-pthread & none      & \verb'user_pthread_grb_none.out'   & fail \\
-pthread & OpenMP    & \verb'user_pthread_grb_openmp.out' & OK, random \\
-pthread & pthread   & \verb'user_pthread_grb_pthread.out'& OK, random \\
-\hline
-\end{tabular}}
-\vspace{0.1in}
+Regardless of the threading model in the user application, GraphBLAS is always
+thread-safe.  The results from the \verb'openmp_demo' and \verb'pthread_demo'
+programs may appear out of order.  This is by design, simply to show that the
+user application is running in parallel.  The output of each thread should be
+the same.  In particular, each thread generates an intentional error, and later
+on prints it with \verb'GrB_error'.  It will print its own error, not an error
+from another thread.  When all the threads finish, the master thread prints out
+each matrix generated by each thread, and these results are identical for all 6
+combinations.
 
-\noindent
-When the user application is multithreaded, GraphBLAS must be compiled with a
-threading library to be thread-safe.  The results listed above as {\em OK,
-random} mean that the output of the program will appear out of order.  This is
-by design, simply to show that the user application is running in parallel.
-The output of each thread should be the same.  In particular, each thread
-generates an intentional error, and later on prints it with \verb'GrB_error'.
-It will print its own error, not an error from another thread.  When all the
-threads finish, the master thread prints out each matrix generated by each
-thread, and these results are identical for all 7 cases listed above as OK.
-
-% TODO in 4.0: remove this; GraphBLAS will always be thread-safe:
-The GraphBLAS C API requires GraphBLAS to be thread-safe.  If
-SuiteSparse:GraphBLAS is not compiled with a threading library it will not be
-thread-safe (the two {\em fail} cases above).  For these cases, a thread will
-not retrieve its own error, but the last error of any thread.  In addition,
-since there is no critical section that SuiteSparse:GraphBLAS can use, the
-output will include errors about an invalid state of the global matrix queue.
-These errors are to be expected if SuiteSparse:GraphBLAS is not thread-safe.
+GraphBLAS can also be combined with user appplications that rely on MPI,
+the Intel TBB threading library, Microsoft Windows threads, or any other
+threading library.  In all cases, GraphBLAS will be thread safe.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -11294,77 +11246,6 @@ subsections.  Next:
 \end{enumerate}
 
 %----------------------------------------
-\subsection{Thread-safety in multithreaded user applications}
-\label{sec:threads}
-%----------------------------------------
-
-% TODO in 4.0: this entire section will likely be deleted, with the
-% pending change to GrB_wait and GrB_error.
-
-SuiteSparse:GraphBLAS is parallel, based on OpenMP.  It is thread-safe if
-multiple simultaneous calls are made to GraphBLAS functions, from user threads
-that rely on either OpenMP or POSIX pthreads.  The output variables of those
-calls to GraphBLAS must be unique; you cannot safely modify one GraphBLAS
-object in parallel, with two or more simultaneous GraphBLAS functions operating
-on the same output object.  In addition, all pending operations of objects that
-appear in parallel calls to GraphBLAS must be complete.  This can be done for
-all objects via \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', and
-\verb'GxB_Scalar_wait', which force completion of a particular object.  If
-multiple parallel calls to GraphBLAS functions operate on unique inputs, then
-those input objects can safely have pending operations.
-
-% TODO in 4.0: delete this for V4.0 when GrB_wait is removed:
-{\bf NOTE: the following will no longer be required in a future version,
-when \verb'GrB_wait()' is removed.}
-
-To use GraphBLAS from a multithreaded user application, GraphBLAS requires
-access to a critical section for the (now deprecated) \verb'GrB_wait()' queue
-of matrices with pending operations, and to a thread-local storage space so
-that each user thread can safely retrieve its own error message with
-\verb'GrB_error'.  In v4.0, the no-argument \verb'GrB_wait()' function will be
-removed, and thus the user-thread-based critical section will be no longer
-needed.
-
-SuiteSparse:GraphBLAS supports the following user threading models.  By
-default, the \verb'cmake' script detects the presence of OpenMP and POSIX
-pthreads.  If OpenMP is present, it uses OpenMP critical sections for
-\verb'GrB_wait()' and OpenMP \verb'threadprivate(...)' for thread-local storage
-for \verb'GrB_error'.  Otherwise, if POSIX pthreads are available, it uses a
-POSIX \verb'mutex', and POSIX thread-local storage via
-\verb'pthread_key_create'.
-
-These methods used inside GraphBLAS can typically inter-operate with any user
-threading model.  That is, a user application that relies on POSIX threads,
-OpenMP, ANSI C11 threads, or Microsoft Windows threads will find GraphBLAS
-thread-safe, even though GraphBLAS uses OpenMP or POSIX internally to
-synchronize the user threads.  However, for the most reliable results, the
-preferred approach is to use the same threading model in GraphBLAS as is used
-in the user application.
-
-You can modify the automatic selection of a user thread synchronization model
-by adding the following settings for \verb'cmake'.  This setting does not
-determine how SuiteSparse:GraphBLAS creates and exploits multiple threads {\em
-inside} any given GraphBLAS operation. Rather, it determines which threading
-library it will use to synchronize multiple calls to GraphBLAS from more than
-one user thread.
-
-\begin{itemize}
-\item OpenMP: this is the default if your compiler supports OpenMP.
-    It can also be specified with \verb'cmake -DUSER_OPENMP=1' in the
-    \verb'cmake' command line.  Internal parallelism in
-    SuiteSparse:GraphBLAS version is based on OpenMP.  This is
-    typically safe to use with any user threading models.
-
-\item POSIX: this is used if OpenMP is not available.
-    If OpenMP is available but you still want GraphBLAS to use POSIX
-    synchronization, compile with \verb'cmake -DUSER_POSIX=1'
-
-\item no user threading:  compile with \verb'cmake -DUSER_NONE=1'.
-    {\bf GraphBLAS will not be thread-safe}.
-
-\end{itemize}
-
-%----------------------------------------
 \subsection{Default matrix format}
 %----------------------------------------
 
@@ -11392,13 +11273,12 @@ query the global option (see also Sections~\ref{gxbset} and \ref{gxbget}):
 
 The above options can also be combined.  For example, to use the \verb'gcc'
 compiler, to change the default format \verb'GxB_FORMAT_DEFAULT' to
-\verb'GxB_BY_COL', and to use a POSIX mutex inside GraphBLAS to synchronize
-user threads, use the following \verb'cmake' command while in the
+\verb'GxB_BY_COL', use the following \verb'cmake' command while in the
 \verb'GraphBLAS/build' directory:
 
     {\small
     \begin{verbatim}
-    CC=gcc cmake -DBYCOL=1 -DUSER_POSIX=1 .. \end{verbatim}}
+    CC=gcc cmake -DBYCOL=1 .. \end{verbatim}}
 
 \noindent
 Then do \verb'make' in the \verb'build' directory.  If this still fails, see

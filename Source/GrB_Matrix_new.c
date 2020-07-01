@@ -27,25 +27,15 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_new (&A, type, nrows, ncols)") ;
+    GB_WHERE1 ("GrB_Matrix_new (&A, type, nrows, ncols)") ;
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (nrows > GxB_INDEX_MAX)
+    if (nrows > GxB_INDEX_MAX || ncols > GxB_INDEX_MAX)
     { 
         // problem too large
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: nrows " GBu " exceeds " GBu,
-            nrows, GxB_INDEX_MAX))) ;
-    }
-
-    if (ncols > GxB_INDEX_MAX)
-    { 
-        // problem too large
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: ncols " GBu " exceeds " GBu,
-            ncols, GxB_INDEX_MAX))) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

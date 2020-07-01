@@ -23,7 +23,7 @@ GrB_Vector GB_mx_mxArray_to_Vector     // returns GraphBLAS version of V
     if (V != NULL && !GB_VECTOR_OK (V))
     {
         mexWarnMsgIdAndTxt ("GB:warn", "must be a column vector") ;
-        GB_MATRIX_FREE (&V) ;
+        GrB_Matrix_free_(&V) ;
         return (NULL) ;
     }
     return ((GrB_Vector) V) ;

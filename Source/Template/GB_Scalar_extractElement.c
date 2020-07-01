@@ -28,14 +28,14 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT_RETURN_IF_NULL (S) ;
-    GB_CONTEXT_RETURN_IF_FAULTY (S) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (S) ;
+    GB_RETURN_IF_NULL (x) ;
 
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (S))
     { 
         GrB_Info info ;
-        GB_WHERE (GB_WHERE_STRING) ;
+        GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GxB_Scalar_extractElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) S, Context)) ;
         ASSERT (!GB_ZOMBIES (S)) ;
@@ -43,17 +43,11 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         GB_BURBLE_END ;
     }
 
-    GB_CONTEXT_RETURN_IF_NULL (x) ;
-
     // GB_XCODE and S must be compatible
     GB_Type_code scode = S->type->code ;
     if (!GB_code_compatible (GB_XCODE, scode))
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "entry s of type [%s] cannot be typecast\n"
-            "to output scalar x of type [%s]",
-            S->type->name, GB_code_string (GB_XCODE)))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     if (S->nzmax == 0 || S->p [1] == 0)

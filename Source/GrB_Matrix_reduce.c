@@ -30,8 +30,7 @@ GrB_Info prefix ## Matrix_reduce_ ## T    /* c = accum (c, reduce (A))  */     \
     const GrB_Descriptor desc       /* descriptor (currently unused)        */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (GB_STR(prefix) "Matrix_reduce_" GB_STR(T)                        \
-        " (&c, accum, reduce, A, desc)") ;                                     \
+    GB_WHERE1 ("Matrix_reduce_" GB_STR(T) " (&c, accum, reduce, A, desc)") ;   \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
     GrB_Info info = GB_reduce_to_scalar (c, prefix ## T, accum, reduce, A,     \
@@ -70,7 +69,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     // monoid, and no typecasting can be done between user-defined types.
     // Thus, the type of c must be the same as the reduce monoid.
 
-    GB_WHERE ("GrB_Matrix_reduce_UDT (&c, accum, reduce, A, desc)") ;
+    GB_WHERE1 ("GrB_Matrix_reduce_UDT (&c, accum, reduce, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
@@ -95,7 +94,7 @@ GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
     const GrB_Descriptor desc       /* descriptor for w, M, and A          */ \
 )                                                                             \
 {                                                                             \
-    GB_WHERE ("GrB_Matrix_reduce_" GB_STR(kind)                               \
+    GB_WHERE (w, "GrB_Matrix_reduce_" GB_STR(kind)                            \
         " (w, M, accum, reduce, A, desc)") ;                                  \
     GB_BURBLE_START ("GrB_reduce") ;                                          \
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;                                    \

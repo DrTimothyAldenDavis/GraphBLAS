@@ -127,7 +127,7 @@ void prand_dup_f (prand_t *z, /* unused: */ const prand_t *x, const prand_t *y)
     if (info != GrB_SUCCESS)                                \
     {                                                       \
         PRAND_FREE_ALL ;                                    \
-        printf ("GraphBLAS error:\n%s\n", GrB_error ( )) ;  \
+        printf ("GraphBLAS error: %d\n", info) ;            \
         return (info) ;                                     \
     }                                                       \
 }

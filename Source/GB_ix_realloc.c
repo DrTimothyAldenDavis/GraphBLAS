@@ -41,7 +41,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     if (nzmax > GxB_INDEX_MAX)
     { 
         // problem too large
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     if (numeric)
     { 
         size_t asize = A->type->size ;
-        A->x = GB_REALLOC (A->x, nzmax1*asize, (A->nzmax)*asize, GB_void, &ok2) ;
+        A->x = GB_REALLOC (A->x, nzmax1*asize, (A->nzmax)*asize, GB_void, &ok2);
     }
     else
     { 
@@ -74,7 +74,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // it just won't have the requested size (and ok is false in this case).
     if (!ok)
     { 
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;

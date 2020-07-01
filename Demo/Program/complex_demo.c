@@ -90,7 +90,7 @@ int main (int argc, char **argv)
     info = Complex_init (predefined) ;
     if (info != GrB_SUCCESS)
     {
-        fprintf (stderr, "Complex init failed: %s\n", GrB_error ( )) ;
+        fprintf (stderr, "Complex init failed\n") ;
         abort ( ) ;
     }
 

@@ -18,7 +18,7 @@ GrB_Info GxB_Scalar_free    // free a GxB_Scalar
 )
 { 
 
-    GB_SCALAR_FREE (s) ;
+    GB_Matrix_free ((GrB_Matrix *) s) ;
     return (GrB_SUCCESS) ;
 }
 

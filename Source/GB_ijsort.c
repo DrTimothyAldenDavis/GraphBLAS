@@ -80,7 +80,7 @@ GrB_Info GB_ijsort
     { 
         // out of memory
         GB_FREE_WORK ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -114,7 +114,7 @@ GrB_Info GB_ijsort
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -140,7 +140,7 @@ GrB_Info GB_ijsort
     { 
         // out of memory
         GB_FREE_WORK ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -178,7 +178,7 @@ GrB_Info GB_ijsort
         GB_FREE_WORK ;
         GB_FREE (I2) ;
         GB_FREE (I2k) ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

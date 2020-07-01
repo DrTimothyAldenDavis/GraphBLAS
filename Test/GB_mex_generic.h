@@ -232,17 +232,17 @@
 #define GxB_Descriptor_get_(...)                    GxB_get (__VA_ARGS__)
 #define GxB_Desc_get_(...)                          GxB_get (__VA_ARGS__)
 
-// GrB_wait (not yet available as _Generic):
-#define GrB_Type_wait_(...)                         GrB_Type_wait (__VA_ARGS__)
-#define GrB_UnaryOp_wait_(...)                      GrB_UnaryOp_wait (__VA_ARGS__)
-#define GrB_BinaryOp_wait_(...)                     GrB_BinaryOp_wait (__VA_ARGS__)
-#define GxB_SelectOp_wait_(...)                     GxB_SelectOp_wait (__VA_ARGS__)
-#define GrB_Monoid_wait_(...)                       GrB_Monoid_wait (__VA_ARGS__)
-#define GrB_Semiring_wait_(...)                     GrB_Semiring_wait (__VA_ARGS__)
-#define GrB_Descriptor_wait_(...)                   GrB_Descriptor_wait (__VA_ARGS__)
-#define GxB_Scalar_wait_(...)                       GxB_Scalar_wait (__VA_ARGS__)
-#define GrB_Vector_wait_(...)                       GrB_Vector_wait (__VA_ARGS__)
-#define GrB_Matrix_wait_(...)                       GrB_Matrix_wait (__VA_ARGS__)
+// GrB_wait:
+#define GrB_Type_wait_(...)                         GrB_wait (__VA_ARGS__)
+#define GrB_UnaryOp_wait_(...)                      GrB_wait (__VA_ARGS__)
+#define GrB_BinaryOp_wait_(...)                     GrB_wait (__VA_ARGS__)
+#define GxB_SelectOp_wait_(...)                     GrB_wait (__VA_ARGS__)
+#define GrB_Monoid_wait_(...)                       GrB_wait (__VA_ARGS__)
+#define GrB_Semiring_wait_(...)                     GrB_wait (__VA_ARGS__)
+#define GrB_Descriptor_wait_(...)                   GrB_wait (__VA_ARGS__)
+#define GxB_Scalar_wait_(...)                       GrB_wait (__VA_ARGS__)
+#define GrB_Vector_wait_(...)                       GrB_wait (__VA_ARGS__)
+#define GrB_Matrix_wait_(...)                       GrB_wait (__VA_ARGS__)
 
 // GrB_eWiseMult:
 #define GrB_Vector_eWiseMult_Semiring_(...)         GrB_eWiseMult (__VA_ARGS__)

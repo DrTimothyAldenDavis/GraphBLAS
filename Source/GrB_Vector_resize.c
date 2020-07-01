@@ -11,7 +11,7 @@
 
 GrB_Info GrB_Vector_resize      // change the size of a vector
 (
-    GrB_Vector u,               // vector to modify
+    GrB_Vector w,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
 )
 { 
@@ -20,13 +20,13 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_resize (u, nrows_new)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+    GB_WHERE (w, "GrB_Vector_resize (w, nrows_new)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
 
     //--------------------------------------------------------------------------
     // resize the vector
     //--------------------------------------------------------------------------
 
-    return (GB_resize ((GrB_Matrix) u, nrows_new, 1, Context)) ;
+    return (GB_resize ((GrB_Matrix) w, nrows_new, 1, Context)) ;
 }
 

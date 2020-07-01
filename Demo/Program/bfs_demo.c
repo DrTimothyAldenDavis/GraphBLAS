@@ -214,7 +214,7 @@ int main (int argc, char **argv)
         // constant "0".
         GrB_Monoid Lor ;
         info = GrB_Monoid_new_INT32 (&Lor, GrB_LOR, false) ;        
-        printf ("\n------------------- this fails:\n%s\n", GrB_error ( )) ;
+        printf ("\n------------------- this fails: info %d\n", info) ;
         GrB_Monoid_free (&Lor) ;
 
         // this selects the correct GrB_Monoid_new_BOOL function

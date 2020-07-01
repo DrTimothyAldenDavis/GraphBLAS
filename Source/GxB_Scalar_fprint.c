@@ -22,12 +22,12 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Scalar_fprint (s, name, pr, f)") ;
+    GB_WHERE1 ("GxB_Scalar_fprint (s, name, pr, f)") ;
 
     //--------------------------------------------------------------------------
     // print and check the object
     //--------------------------------------------------------------------------
 
-    return (GB_Scalar_check (s, name, pr, f, Context)) ;
+    return (GB_Scalar_check (s, name, pr, f)) ;
 }
 

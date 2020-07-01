@@ -11,10 +11,7 @@
 
 double grbtime = 0, tic [2] = {0,0} ;
 
-void GB_mx_put_time
-(
-    GrB_Desc_Value AxB_method_used
-)
+void GB_mx_put_time (void)
 {
 
     // create a MATLAB array with the right size
@@ -24,7 +21,7 @@ void GB_mx_put_time
     double *t = (double *) mxGetData (grbresults_matlab) ;
 
     t [0] = grbtime ;
-    t [1] = AxB_method_used ;
+    t [1] = 0 ;
 
     grbtime = 0 ;
 

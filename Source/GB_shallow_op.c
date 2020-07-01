@@ -162,8 +162,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     if (C->x == NULL)
     { 
         // out of memory
-        GB_MATRIX_FREE (&C) ;
-        return (GB_OUT_OF_MEMORY) ;
+        GB_Matrix_free (&C) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
           GB_void *Cx = (GB_void *) C->x ;

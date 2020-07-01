@@ -16,8 +16,8 @@
 #include "GB_accum_mask.h"
 
 #define GB_FREE_ALL         \
-    GB_MATRIX_FREE (&AT) ;  \
-    GB_MATRIX_FREE (&BT) ;
+    GB_Matrix_free (&AT) ;  \
+    GB_Matrix_free (&BT) ;
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 (
@@ -84,14 +84,14 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     ok = ok && GB_Index_multiply (&cnz, GB_NNZ (A), GB_NNZ (B)) ;
     if (!ok || GB_NROWS (C) != cnrows || GB_NCOLS (C) != cncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG, "%s:\n"
+        GB_ERROR (GrB_DIMENSION_MISMATCH, "%s:\n"
             "output is " GBd "-by-" GBd "; must be " GBu "-by-" GBu "\n"
             "first input is " GBd "-by-" GBd "%s with " GBd " entries\n"
             "second input is " GBd "-by-" GBd "%s with " GBd " entries",
             ok ? "Dimensions not compatible:" : "Problem too large:",
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols,
             anrows, ancols, A_transpose ? " (transposed)" : "", GB_NNZ (A),
-            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_NNZ (B)))) ;
+            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_NNZ (B)) ;
     }
 
     // quick return if an empty mask is complemented

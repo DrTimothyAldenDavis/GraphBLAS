@@ -69,6 +69,6 @@ void mexFunction
     }
 
     // log the test coverage
-    GB_mx_put_global (true, 0) ;
+    GB_mx_put_global (true) ;   
 }
 

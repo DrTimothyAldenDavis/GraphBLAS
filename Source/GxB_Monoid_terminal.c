@@ -22,7 +22,7 @@ GrB_Info GxB_Monoid_terminal        // return the monoid terminal
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Monoid_terminal (&has_terminal, &terminal, monoid)") ;
+    GB_WHERE1 ("GxB_Monoid_terminal (&has_terminal, &terminal, monoid)") ;
     GB_RETURN_IF_NULL (has_terminal) ;
     GB_RETURN_IF_NULL (terminal) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;

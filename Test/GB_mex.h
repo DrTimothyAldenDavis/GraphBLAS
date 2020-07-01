@@ -13,8 +13,6 @@
 #ifndef GB_MEXH
 #define GB_MEXH
 
-#define GB_PANIC mexErrMsgTxt ("panic") ;
-
 // #include "GB.h"
 #include "GB_mxm.h"
 #include "GB_Pending.h"
@@ -50,10 +48,7 @@
 
 // timer functions, and result statistics
 extern double grbtime, tic [2] ;
-void GB_mx_put_time
-(
-    GrB_Desc_Value AxB_method_used
-) ;
+void GB_mx_put_time (void) ;
 void GB_mx_clear_time (void) ;          // clear the time and start the tic
 #define GB_MEX_TIC { GB_mx_clear_time ( ) ; }
 #define GB_MEX_TOC { grbtime = simple_toc (tic) ; }
@@ -214,8 +209,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
 
 void GB_mx_put_global
 (   
-    bool cover,
-    GrB_Desc_Value AxB_method_used
+    bool cover
 ) ;
 
 bool GB_mx_same     // true if arrays X and Y are the same
@@ -333,7 +327,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \
         {                                                                   \
             FREE_ALL ;                                                      \
-            mexErrMsgTxt (GrB_error ( )) ;                                  \
+            mexErrMsgTxt ("method failed") ;                                \
         }                                                                   \
     }                                                                       \
     else                                                                    \
@@ -378,7 +372,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
                         "method [%s]\n",                                    \
                         tries, nleak, nmalloc_end, nmalloc_start,           \
                         GB_STR (GRAPHBLAS_OPERATION)) ;                     \
-                    mexWarnMsgIdAndTxt ("GB:leak", GrB_error ( )) ;         \
+                    mexWarnMsgIdAndTxt ("GB:leak", "memory leak") ;         \
                     FREE_ALL ;                                              \
                     mexErrMsgTxt ("Leak!") ;                                \
                 }                                                           \
@@ -386,11 +380,10 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
             else                                                            \
             {                                                               \
                 /* another error has occurred */                            \
-                printf ("an error: %s line %d\n%s\n", __FILE__, __LINE__,   \
-                    GrB_error ()) ;                                         \
+                printf ("error: %s %d: %d\n", __FILE__, __LINE__, info) ;   \
                 FREE_ALL ;                                                  \
                 if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;            \
-                mexErrMsgTxt (GrB_error ( )) ;                              \
+                mexErrMsgTxt ("unexpected error") ;                         \
             }                                                               \
         }                                                                   \
     }

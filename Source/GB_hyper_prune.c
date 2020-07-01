@@ -57,7 +57,7 @@ GrB_Info GB_hyper_prune
     if (W == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -87,7 +87,7 @@ GrB_Info GB_hyper_prune
         GB_FREE (W) ;
         GB_FREE (Ap) ;
         GB_FREE (Ah) ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

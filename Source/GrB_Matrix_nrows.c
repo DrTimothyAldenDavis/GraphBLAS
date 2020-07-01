@@ -20,7 +20,7 @@ GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_nrows (&nrows, A)") ;
+    GB_WHERE1 ("GrB_Matrix_nrows (&nrows, A)") ;
     GB_RETURN_IF_NULL (nrows) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 

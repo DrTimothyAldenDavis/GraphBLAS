@@ -13,9 +13,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;              \
     Complex_finalize ( ) ;              \
-    GB_mx_put_global (false, 0) ;       \
+    GB_mx_put_global (false) ;          \
 }
 
 void mexFunction
@@ -31,7 +31,6 @@ void mexFunction
     GrB_Matrix A = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 1 || nargin > 2)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -49,10 +48,10 @@ void mexFunction
     int GET_SCALAR (1, int, pr, 1) ;
 
     // dump the matrix
-    GrB_Info info = GB_Matrix_check (A, "", pr, stdout, NULL) ;
+    GrB_Info info = GB_Matrix_check (A, "", pr, NULL) ;
     if (info != GrB_SUCCESS)
     {
-        mexErrMsgTxt (GrB_error ( )) ;
+        mexErrMsgTxt ("matrix fail") ;
     }
 
     // return A to MATLAB as a struct and free the GraphBLAS A

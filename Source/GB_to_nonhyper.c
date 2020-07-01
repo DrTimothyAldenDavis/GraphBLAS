@@ -65,8 +65,8 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         { 
             // out of memory
             A->is_hyper = false ;    // A is non-hypersparse, but invalid
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         #ifdef GB_DEBUG

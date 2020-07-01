@@ -22,8 +22,6 @@
 typedef struct
 {
 
-    void *queue_head ;          // TODO in 4.0: delete
-
     //--------------------------------------------------------------------------
     // blocking/non-blocking mode, set by GrB_init
     //--------------------------------------------------------------------------
@@ -123,8 +121,6 @@ GB_PUBLIC GB_Global_struct GB_Global ;
 GB_Global_struct GB_Global =
 {
 
-    .queue_head = NULL,         // TODO in 4.0: delete
-
     // GraphBLAS mode
     .mode = GrB_NONBLOCKING,    // default is nonblocking
 
@@ -177,12 +173,6 @@ GB_Global_struct GB_Global =
 //==============================================================================
 // GB_Global access functions
 //==============================================================================
-
-// TODO in 4.0: delete:
-GB_PUBLIC
-void GB_Global_queue_head_set (void *p) { GB_Global.queue_head = p ; }
-GB_PUBLIC
-void *GB_Global_queue_head_get (void) { return (GB_Global.queue_head) ; }
 
 //------------------------------------------------------------------------------
 // mode

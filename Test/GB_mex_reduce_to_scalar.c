@@ -15,12 +15,12 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     if (reduce_monoid_allocated)        \
     {                                   \
         GrB_Monoid_free_(&reduce) ;     \
     }                                   \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -39,7 +39,6 @@ void mexFunction
     bool reduce_monoid_allocated = false ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin != 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

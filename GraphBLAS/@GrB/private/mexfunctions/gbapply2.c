@@ -193,7 +193,7 @@ void mexFunction
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
-        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -203,12 +203,12 @@ void mexFunction
     if (binop_bind1st)
     {
         // printf ("bind 1st:\n") ;
-        OK (GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, scalar, B, desc)) ;
+        OK1 (C, GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, scalar, B, desc)) ;
     }
     else
     {
         // printf ("bind 2nd:\n") ;
-        OK (GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, scalar, desc)) ;
+        OK1 (C, GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, scalar, desc)) ;
     }
 
     //--------------------------------------------------------------------------

@@ -85,7 +85,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
         if (!preexisting_header)
         { 
             // also free the header *Ahandle itself
-            GB_MATRIX_FREE (Ahandle) ;
+            GB_Matrix_free (Ahandle) ;
             ASSERT (*Ahandle == NULL) ;
         }
         return (info) ;

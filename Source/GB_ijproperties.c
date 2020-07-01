@@ -16,8 +16,8 @@
 {                                                                           \
     if ((i) < 0 || (i) >= (limit))                                          \
     {                                                                       \
-        return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,                 \
-        "index " GBd " out of bounds, must be < " GBd , (i), (limit)))) ;   \
+        GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,                                  \
+        "index " GBd " out of bounds, must be < " GBd , (i), (limit)) ;     \
     }                                                                       \
 }
 
@@ -203,7 +203,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         if (Work == NULL)
         { 
             // out of memory
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
         int64_t *Work_imin = Work ;
         int64_t *Work_imax = Work + ntasks ;

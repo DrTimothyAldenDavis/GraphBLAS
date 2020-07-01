@@ -40,7 +40,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     // C may be aliased with M and/or A
-
     GB_RETURN_IF_FAULTY (accum) ;
     ASSERT_MATRIX_OK (C, "C input for GB_apply", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_apply", GB0) ;
@@ -61,11 +60,11 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // A must also be compatible with op1->xtype
         if (!GB_Type_compatible (A->type, op1->xtype))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Incompatible type for z=%s(x):\n"
                 "input A of type [%s]\n"
                 "cannot be typecast to x input of type [%s]",
-                op1->name, A->type->name, op1->xtype->name))) ;
+                op1->name, A->type->name, op1->xtype->name) ;
         }
     }
     else if (op2 != NULL)
@@ -86,21 +85,21 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             if (!(op_is_first || op_is_pair ||
                   GB_Type_compatible (A->type, op2->ytype)))
             { 
-                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Incompatible type for z=%s(x,y):\n"
                     "input A of type [%s]\n"
                     "cannot be typecast to y input of type [%s]",
-                    op2->name, A->type->name, op2->ytype->name))) ;
+                    op2->name, A->type->name, op2->ytype->name) ;
             }
             // scalar must be compatible with op2->xtype
             if (!(op_is_second || op_is_pair ||
                   GB_Type_compatible (scalar->type, op2->xtype)))
             { 
-                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Incompatible type for z=%s(x,y):\n"
                     "input scalar of type [%s]\n"
                     "cannot be typecast to x input of type [%s]",
-                    op2->name, scalar->type->name, op2->xtype->name))) ;
+                    op2->name, scalar->type->name, op2->xtype->name) ;
             }
         }
         else
@@ -110,28 +109,28 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             if (!(op_is_first || op_is_pair ||
                   GB_Type_compatible (A->type, op2->xtype)))
             { 
-                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Incompatible type for z=%s(x,y):\n"
                     "input scalar of type [%s]\n"
                     "cannot be typecast to x input of type [%s]",
-                    op2->name, A->type->name, op2->xtype->name))) ;
+                    op2->name, A->type->name, op2->xtype->name) ;
             }
             // scalar must be compatible with op2->ytype
             if (!(op_is_second || op_is_pair
                   || GB_Type_compatible (scalar->type, op2->ytype)))
             { 
-                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Incompatible type for z=%s(x,y):\n"
                     "input A of type [%s]\n"
                     "cannot be typecast to y input of type [%s]",
-                    op2->name, scalar->type->name, op2->ytype->name))) ;
+                    op2->name, scalar->type->name, op2->ytype->name) ;
             }
         }
     }
     else
     {
-        return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,
-            "Required argument is null: [op]"))) ;
+        GB_ERROR (GrB_NULL_POINTER,
+            "Required argument is null: [%s]", "op") ;
     }
 
     // check domains and dimensions for C<M> = accum (C,T)
@@ -146,12 +145,12 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     int64_t tncols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
     if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
             "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
-            tnrows, tncols, A_transpose ? " (transposed)" : ""))) ;
+            tnrows, tncols, A_transpose ? " (transposed)" : "") ;
     }
 
     // quick return if an empty mask is complemented
@@ -165,8 +164,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (op2 != NULL && GB_NNZ (scalar) != 1)
     {
         // the scalar entry must be present
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "Scalar is missing; it must contain a single entry"))) ;
+        GB_ERROR (GrB_INVALID_VALUE,
+            "Scalar is missing; it must contain %d entry", 1) ;
     }
 
     //--------------------------------------------------------------------------
@@ -306,7 +305,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (info != GrB_SUCCESS)
     { 
-        GB_MATRIX_FREE (&T) ;
+        GB_Matrix_free (&T) ;
         return (info) ;
     }
 

@@ -32,7 +32,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     // C may be aliased with M and/or A
 
-    GB_WHERE ("GrB_transpose (C, M, accum, A, desc)") ;
+    GB_WHERE (C, "GrB_transpose (C, M, accum, A, desc)") ;
     GB_BURBLE_START ("GrB_transpose") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
@@ -56,12 +56,12 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     int64_t tncols = (!A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
     if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
             "input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
-            tnrows, tncols, (!A_transpose) ? " (transposed)" : ""))) ;
+            tnrows, tncols, (!A_transpose) ? " (transposed)" : "") ;
     }
 
     // quick return if an empty mask is complemented

@@ -37,7 +37,7 @@ static void get_descriptor
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
                 "d.nthreads must be a scalar") ;
             int nthreads_max = (int) mxGetScalar (value) ;
-            OK (GxB_Desc_set (desc, GxB_NTHREADS, nthreads_max)) ;
+            OK1 (desc, GxB_Desc_set (desc, GxB_NTHREADS, nthreads_max)) ;
 
         }
         else if (MATCH (fieldname, "chunk"))
@@ -47,7 +47,7 @@ static void get_descriptor
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
                 "d.chunk must be a scalar") ;
             double chunk = mxGetScalar (value) ;
-            OK (GxB_Desc_set (desc, GxB_CHUNK, chunk)) ;
+            OK1 (desc, GxB_Desc_set (desc, GxB_CHUNK, chunk)) ;
 
         }
         else
@@ -60,47 +60,47 @@ static void get_descriptor
             // convert the string to a Descriptor value, and set the value
             if (MATCH (s, "default"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
             }
             else if (MATCH (s, "transpose"))
             { 
-                OK (GxB_Desc_set (desc, field, GrB_TRAN)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_TRAN)) ;
             }
             else if (MATCH (s, "complement"))
             { 
-                OK (GxB_Desc_set (desc, field, GrB_COMP)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP)) ;
             }
             else if (MATCH (s, "structure") || MATCH (s, "structural"))
             { 
-                OK (GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "structural complement"))
             { 
-                OK (GxB_Desc_set (desc, field, GrB_COMP + GrB_STRUCTURE)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP + GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "replace"))
             { 
-                OK (GxB_Desc_set (desc, field, GrB_REPLACE)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_REPLACE)) ;
             }
             else if (MATCH (s, "gustavson"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
             }
             else if (MATCH (s, "dot"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
             }
             else if (MATCH (s, "saxpy"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
             }
             else if (MATCH (s, "heap"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_HEAP)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HEAP)) ;
             }
             else if (MATCH (s, "hash"))
             { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
             }
             else
             { 

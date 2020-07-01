@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \
     const GrB_Descriptor desc       /* descriptor for C(Rows,Cols) and M */    \
 )                                                                              \
 {                                                                              \
-    GB_WHERE ("GxB_Matrix_subassign_" GB_STR(T)                                \
+    GB_WHERE (C, "GxB_Matrix_subassign_" GB_STR(T)                             \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_BURBLE_START ("GxB_Matrix_subassign " GB_STR(T)) ;                      \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                          \

@@ -559,6 +559,6 @@ break ;
 #define GB_FREE_ALL                                                         \
 {                                                                           \
     GB_FREE_WORK ;                                                          \
-    GB_MATRIX_FREE (Chandle) ;                                              \
+    GB_Matrix_free (Chandle) ;                                              \
 }
 

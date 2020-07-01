@@ -30,7 +30,8 @@ GrB_Info GxB_Vector_export  // export and free a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Vector_export (&v, &type, &n, &nvals, &vi, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_export (&v, &type, &n, &nvals, &vi, &vx,"
+        " desc)") ;
     GB_BURBLE_START ("GxB_Vector_export") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
@@ -76,7 +77,7 @@ GrB_Info GxB_Vector_export  // export and free a vector
 
     // free the vector header; do not free the exported content of the vector,
     // which has already been removed above.
-    GB_VECTOR_FREE (v) ;
+    GB_Matrix_free ((GrB_Matrix *) v) ;
     ASSERT (*v == NULL) ;
     GB_BURBLE_END ;
     return (GrB_SUCCESS) ;

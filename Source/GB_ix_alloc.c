@@ -36,7 +36,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     if (nzmax > GxB_INDEX_MAX)
     { 
         // problem too large
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 
     // Free the existing A->x and A->i content, if any.
     // Leave A->p and A->h unchanged.
-    GB_IX_FREE (A) ;
+    GB_ix_free (A) ;
 
     // allocate the new A->x and A->i content
     A->nzmax = GB_IMAX (nzmax, 1) ;
@@ -58,8 +58,8 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     if (A->i == NULL || (numeric && A->x == NULL))
     { 
         // out of memory
-        GB_PHIX_FREE (A) ;
-        return (GB_OUT_OF_MEMORY) ;
+        GB_phix_free (A) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;

@@ -50,15 +50,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
     if (row >= GB_NROWS (C))
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
+        GB_ERROR (GrB_INVALID_INDEX,
             "Row index " GBu " out of range; must be < " GBd,
-            row, GB_NROWS (C)))) ;
+            row, GB_NROWS (C)) ;
     }
     if (col >= GB_NCOLS (C))
     { 
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
+        GB_ERROR (GrB_INVALID_INDEX,
             "Column index " GBu " out of range; must be < " GBd,
-            col, GB_NCOLS (C)))) ;
+            col, GB_NCOLS (C)) ;
     }
 
     ASSERT (scalar_code <= GB_UDT_code) ;
@@ -69,10 +69,10 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     // scalar_code and C must be compatible
     if (!GB_code_compatible (scalar_code, ccode))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Input scalar of type [%s]\n"
             "cannot be typecast to entry of type [%s]",
-            GB_code_string (scalar_code), ctype->name))) ;
+            GB_code_string (scalar_code), ctype->name) ;
     }
 
     // pending tuples and zombies are expected
@@ -154,7 +154,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // bring the zombie back to life
             C->i [pleft] = i ;
             C->nzombies-- ;
-            if (C->nzombies == 0 && C->Pending == NULL) { if (!GB_queue_remove (C)) GB_PANIC ; } // TODO in 4.0: delete
         }
 
         // the check is fine but just costly even when debugging
@@ -254,12 +253,11 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             stype, NULL, i, j, C->vdim > 1))
         { 
             // out of memory
-            GB_PHIX_FREE (C) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (C) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         ASSERT (GB_PENDING (C)) ;
-        if (!(C->enqueued)) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
 
         // if this was the first tuple, then the pending operator and
         // pending type have been defined

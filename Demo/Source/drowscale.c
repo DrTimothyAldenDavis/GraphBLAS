@@ -107,7 +107,7 @@ GrB_Info drowscale          // GrB_SUCCESS or error condition
     OK (GrB_Vector_extractTuples_FP64 (I, X, &nvals, dout)) ;
 
     // I and X exclude empty columns of A.  This condition is always true.
-    CHECK (nvals <= n, GrB_PANIC) ;
+    CHECK (nvals <= n, GrB_INVALID_VALUE) ;
 
     // D = diag (1./dout) ;
     OK (GrB_Matrix_new (&D, GrB_FP64, n, n)) ;

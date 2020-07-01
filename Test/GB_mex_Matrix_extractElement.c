@@ -18,9 +18,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     GB_FREE (Xtemp) ;                   \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -41,7 +41,6 @@ void mexFunction
     bool is_list ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 3 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

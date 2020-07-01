@@ -21,7 +21,7 @@ GrB_Info prefix ## Matrix_setElement_ ## T    /* C (row,col) = x */         \
     GrB_Index col                       /* column index                   */\
 )                                                                           \
 {                                                                           \
-    GB_WHERE (GB_STR(prefix) "Matrix_setElement_" GB_STR(T)                 \
+    GB_WHERE (C, GB_STR(prefix) "Matrix_setElement_" GB_STR(T)              \
         " (C, row, col, x)") ;                                              \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                       \
     return (GB_setElement (C, ampersand x, row, col, GB_ ## T ## _code,     \

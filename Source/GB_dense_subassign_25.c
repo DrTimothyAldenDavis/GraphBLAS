@@ -84,7 +84,7 @@ GrB_Info GB_dense_subassign_25
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, ntasks))
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ GrB_Info GB_dense_subassign_25
     // initialize them.
 
     bool C_is_csc = C->is_csc ;
-    GB_PHIX_FREE (C) ;
+    GB_phix_free (C) ;
     GB_OK (GB_dup2 (&C, M, false, C->type, Context)) ;
     C->is_csc = C_is_csc ;
 

@@ -18,14 +18,14 @@
     bool A_is_M = (A == M) ;            \
     bool A_is_C = (A == C) ;            \
     bool C_is_M = (C == M) ;            \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     if (A_is_C) C = NULL ;              \
     if (A_is_M) M = NULL ;              \
-    GB_MATRIX_FREE (&C) ;               \
+    GrB_Matrix_free_(&C) ;               \
     if (C_is_M) M = NULL ;              \
-    GB_MATRIX_FREE (&M) ;               \
+    GrB_Matrix_free_(&M) ;               \
     GrB_Descriptor_free_(&desc) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -44,7 +44,6 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 4 || nargin > 6)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -94,7 +93,7 @@ void mexFunction
     {                               \
         if (A == C) A = NULL ;      \
         if (M == C) M = NULL ;      \
-        GB_MATRIX_FREE (&C) ;       \
+        GrB_Matrix_free_(&C) ;       \
     }
 
     GET_DEEP_COPY ;

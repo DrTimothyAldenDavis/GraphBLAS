@@ -31,14 +31,14 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_MATRIX_FREE (&Z2) ;      \
-    GB_MATRIX_FREE (&AT) ;      \
-    GB_MATRIX_FREE (&MT) ;      \
+    GB_Matrix_free (&Z2) ;      \
+    GB_Matrix_free (&AT) ;      \
+    GB_Matrix_free (&MT) ;      \
     GB_FREE (I2) ;              \
     GB_FREE (I2k) ;             \
     GB_FREE (J2) ;              \
     GB_FREE (J2k) ;             \
-    GB_MATRIX_FREE (&SubMask) ; \
+    GB_Matrix_free (&SubMask) ; \
 }
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
@@ -146,20 +146,20 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     {
         if (!GB_code_compatible (C->type->code, scalar_code))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                GB_code_string (scalar_code), C->type->name))) ;
+                GB_code_string (scalar_code), C->type->name) ;
         }
     }
     else
     {
         if (!GB_Type_compatible (C->type, A->type))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                A->type->name, C->type->name))) ;
+                A->type->name, C->type->name) ;
         }
     }
 
@@ -169,9 +169,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // M is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "M of type [%s] cannot be typecast to boolean",
-                M->type->name))) ;
+                M->type->name) ;
         }
         // check the mask: size depends on the method
         if (row_assign)
@@ -183,9 +183,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (GB_VECTOR_OK (M)) ;
             if (GB_NROWS (M) != GB_NCOLS (C))
             { 
-                return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DIMENSION_MISMATCH,
                     "Mask vector m length is " GBd "; must match the number of "
-                    "columns of C (" GBd ")", GB_NROWS (M), GB_NCOLS (C)))) ;
+                    "columns of C (" GBd ")", GB_NROWS (M), GB_NCOLS (C)) ;
             }
         }
         else if (col_assign)
@@ -197,9 +197,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (GB_VECTOR_OK (M)) ;
             if (GB_NROWS (M) != GB_NROWS (C))
             { 
-                return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DIMENSION_MISMATCH,
                     "Mask vector m length is " GBd "; must match the number of "
-                    "rows of C (" GBd ")", GB_NROWS (M), GB_NROWS (C)))) ;
+                    "rows of C (" GBd ")", GB_NROWS (M), GB_NROWS (C)) ;
             }
         }
         else
@@ -209,10 +209,10 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // assignment, where A is either a matrix or a scalar
             if (GB_NROWS (M) != GB_NROWS (C) || GB_NCOLS (M) != GB_NCOLS (C))
             { 
-                return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+                GB_ERROR (GrB_DIMENSION_MISMATCH,
                     "Mask M is " GBd "-by-" GBd "; "
                     "must match result C (" GBd "-by-" GBd ")",
-                    GB_NROWS (M), GB_NCOLS (M), GB_NROWS (C), GB_NCOLS (C)))) ;
+                    GB_NROWS (M), GB_NCOLS (M), GB_NROWS (C), GB_NCOLS (C)) ;
             }
         }
     }
@@ -224,12 +224,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         int64_t ancols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
         if (nRows != anrows || nCols != ancols)
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "Dimensions not compatible:\n"
                 "C(Rows,Cols) is " GBd "-by-" GBd "\n"
                 "input is " GBd "-by-" GBd "%s",
                 nRows, nCols, anrows, ancols,
-                A_transpose ? " (transposed)" : ""))) ;
+                A_transpose ? " (transposed)" : "") ;
         }
     }
 
@@ -282,7 +282,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
         }
 
-        if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
         // finalize C if blocking mode is enabled, and return result
         ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
         return (GB_block (C, Context)) ;
@@ -645,9 +644,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // freed because the C_replace_phase requires the original mask, not the
     // submask or its transpose.  Z2 is still needed since Z == Z2, and it will
     // be modified by the C_replace_phase and then transplanted back into C.
-    GB_MATRIX_FREE (&AT) ;
-    GB_MATRIX_FREE (&MT) ;
-    GB_MATRIX_FREE (&SubMask) ;
+    GB_Matrix_free (&AT) ;
+    GB_Matrix_free (&MT) ;
+    GB_Matrix_free (&SubMask) ;
 
     //--------------------------------------------------------------------------
     // examine Z outside the Z(I,J) submatrix
@@ -820,8 +819,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
-
-    if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; }// TODO in 4.0: delete
 
     ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
     GB_FREE_ALL ;

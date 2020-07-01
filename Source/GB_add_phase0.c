@@ -249,7 +249,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         // copy Mh into Ch.  Ch is Mh so C_to_M is not needed.
@@ -309,7 +309,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         {
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         kA_start [0] = (Anvec == 0) ? -1 : 0 ;
@@ -387,7 +387,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -538,7 +538,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         int64_t j ;
@@ -575,7 +575,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         int64_t j ;
@@ -612,7 +612,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
     }

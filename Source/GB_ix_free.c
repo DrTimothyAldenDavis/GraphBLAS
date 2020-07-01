@@ -13,7 +13,7 @@
 #include "GB_Pending.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_ix_free             // free A->i and A->x of a matrix
+void GB_ix_free                 // free A->i and A->x of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 )
@@ -25,7 +25,8 @@ GrB_Info GB_ix_free             // free A->i and A->x of a matrix
 
     if (A == NULL)
     { 
-        return (GrB_SUCCESS) ;
+        // nothing to do
+        return ;
     }
 
     //--------------------------------------------------------------------------
@@ -58,9 +59,5 @@ GrB_Info GB_ix_free             // free A->i and A->x of a matrix
 
     // free the list of pending tuples
     GB_Pending_free (&(A->Pending)) ;
-
-    if (!GB_queue_remove (A)) return (GrB_PANIC) ;  // TODO in 4.0: delete
-
-    return (GrB_SUCCESS) ;
 }
 

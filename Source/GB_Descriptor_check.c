@@ -20,8 +20,7 @@ static GrB_Info GB_dc
     const GrB_Desc_Value v,
     const GrB_Desc_Value nondefault,    // for kind == 0
     int pr,                             // print level
-    FILE *f,
-    GB_Context Context
+    FILE *f 
 )
 {
 
@@ -101,8 +100,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     const GrB_Descriptor D,     // GraphBLAS descriptor to print and check
     const char *name,           // name of the descriptor, optional
     int pr,                     // print level
-    FILE *f,                    // file for output
-    GB_Context Context
+    FILE *f                     // file for output
 )
 {
 
@@ -128,19 +126,18 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     GBPR0 ("\n") ;
 
     GrB_Info info [5] ;
-    info [0] = GB_dc (0, "out     ", D->out,  GrB_REPLACE, pr, f, Context) ;
-    info [1] = GB_dc (1, "mask    ", D->mask, GxB_DEFAULT, pr, f, Context) ;
-    info [2] = GB_dc (0, "in0     ", D->in0,  GrB_TRAN,    pr, f, Context) ;
-    info [3] = GB_dc (0, "in1     ", D->in1,  GrB_TRAN,    pr, f, Context) ;
-    info [4] = GB_dc (2, "axb     ", D->axb,  GxB_DEFAULT, pr, f, Context) ;
+    info [0] = GB_dc (0, "out     ", D->out,  GrB_REPLACE, pr, f) ;
+    info [1] = GB_dc (1, "mask    ", D->mask, GxB_DEFAULT, pr, f) ;
+    info [2] = GB_dc (0, "in0     ", D->in0,  GrB_TRAN,    pr, f) ;
+    info [3] = GB_dc (0, "in1     ", D->in1,  GrB_TRAN,    pr, f) ;
+    info [4] = GB_dc (2, "axb     ", D->axb,  GxB_DEFAULT, pr, f) ;
 
     for (int i = 0 ; i < 5 ; i++)
     {
         if (info [i] != GrB_SUCCESS)
         { 
             GBPR0 ("    Descriptor field set to an invalid value\n") ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "Descriptor field set to an invalid value: [%s]", GB_NAME))) ;
+            return (GrB_INVALID_OBJECT) ;
         }
     }
 

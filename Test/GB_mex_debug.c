@@ -22,7 +22,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (false) ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 4 || nargin != 0)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -77,6 +76,6 @@ void mexFunction
         printf ("-------------------------------------------------------\n\n") ;
     }
 
-    GB_mx_put_global (false, 0) ;
+    GB_mx_put_global (false) ;
 }
 

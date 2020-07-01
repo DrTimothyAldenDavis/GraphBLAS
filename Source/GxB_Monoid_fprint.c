@@ -22,12 +22,12 @@ GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Monoid_fprint (monoid, name, pr, f)") ;
+    GB_WHERE1 ("GxB_Monoid_fprint (monoid, name, pr, f)") ;
 
     //--------------------------------------------------------------------------
     // print and check the object
     //--------------------------------------------------------------------------
 
-    return (GB_Monoid_check (monoid, name, pr, f, Context)) ;
+    return (GB_Monoid_check (monoid, name, pr, f)) ;
 }
 

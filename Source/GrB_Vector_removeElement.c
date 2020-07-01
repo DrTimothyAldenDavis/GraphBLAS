@@ -55,8 +55,6 @@ static inline bool GB_removeElement
         // V(i) becomes a zombie
         V->i [pleft] = GB_FLIP (i) ;
         V->nzombies++ ;
-        // TODO in 4.0: delete:
-        if (!(V->enqueued)) { if (!GB_queue_insert ((GrB_Matrix) V)) GB_PANIC ;}
     }
 
     return (found) ;
@@ -77,16 +75,14 @@ GrB_Info GrB_Vector_removeElement
     // check inputs
     //--------------------------------------------------------------------------
 
-    // GB_WHERE ("Vec here") ;
-    GB_CONTEXT_RETURN_IF_NULL (V) ;
-    GB_CONTEXT_RETURN_IF_FAULTY (V) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (V) ;
 
     // check index
     if (i >= V->vlen)
     { 
-        GB_WHERE (GB_WHERE_STRING) ;
-        return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG, "Row index "
-            GBu " out of range; must be < " GBd, i, V->vlen))) ;
+        GB_WHERE (V, GB_WHERE_STRING) ;
+        GB_ERROR (GrB_INVALID_INDEX, "Row index "
+            GBu " out of range; must be < " GBd, i, V->vlen) ;
     }
 
     bool V_is_pending = GB_PENDING (V) ; 
@@ -107,7 +103,7 @@ GrB_Info GrB_Vector_removeElement
     if (V_is_pending)
     { 
         GrB_Info info ;
-        GB_WHERE (GB_WHERE_STRING) ;
+        GB_WHERE (V, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_removeElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
         ASSERT (!GB_ZOMBIES (V)) ;

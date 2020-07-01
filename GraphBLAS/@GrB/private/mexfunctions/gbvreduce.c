@@ -135,14 +135,14 @@ void mexFunction
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, 1)) ;
         fmt = gb_get_format (cnrows, 1, A, NULL, fmt) ;
-        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
     // compute C<M> += reduce(A)
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_reduce_Monoid (C, M, accum, monoid, A, desc)) ;
+    OK1 (C, GrB_Matrix_reduce_Monoid (C, M, accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

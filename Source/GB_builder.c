@@ -222,7 +222,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     { 
         // out of memory
         GB_FREE_WORK ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -295,7 +295,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -395,10 +395,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     int64_t nrows = is_csc ? vlen : vdim ;
                     int64_t ncols = is_csc ? vdim : vlen ;
                     GB_FREE_WORK ;
-                    return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
+                    GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
                         "index (" GBd "," GBd ") out of bounds,"
                         " must be < (" GBd ", " GBd ")",
-                        row, col, nrows, ncols))) ;
+                        row, col, nrows, ncols) ;
                 }
             }
 
@@ -420,7 +420,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 { 
                     // out of memory
                     GB_FREE_WORK ;
-                    return (GB_OUT_OF_MEMORY) ;
+                    return (GrB_OUT_OF_MEMORY) ;
                 }
                 GB_memcpy (J_work, J_input, nvals * sizeof (int64_t), nthreads);
             }
@@ -491,9 +491,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     // invalid index
                     int64_t i = I_input [kbad [tid]] ;
                     GB_FREE_WORK ;
-                    return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
+                    GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
                         "index (" GBd ") out of bounds, must be < (" GBd ")",
-                        i, vlen))) ;
+                        i, vlen) ;
                 }
             }
 
@@ -545,7 +545,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // out of memory
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         // The k part of each tuple (i,k) or (j,i,k) records the original
@@ -583,7 +583,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 { 
                     // out of memory
                     GB_FREE_WORK ;
-                    return (GB_OUT_OF_MEMORY) ;
+                    return (GrB_OUT_OF_MEMORY) ;
                 }
             }
 
@@ -605,7 +605,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 { 
                     // out of memory
                     GB_FREE_WORK ;
-                    return (GB_OUT_OF_MEMORY) ;
+                    return (GrB_OUT_OF_MEMORY) ;
                 }
             }
 
@@ -944,9 +944,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (Thandle) ;
+            GB_Matrix_free (Thandle) ;
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -1114,9 +1114,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (Thandle) ;
+            GB_Matrix_free (Thandle) ;
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;

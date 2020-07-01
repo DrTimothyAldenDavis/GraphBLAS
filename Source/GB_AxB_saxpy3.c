@@ -124,7 +124,7 @@
 #define GB_FREE_ALL                                                         \
 {                                                                           \
     GB_FREE_WORK ;                                                          \
-    GB_MATRIX_FREE (Chandle) ;                                              \
+    GB_Matrix_free (Chandle) ;                                              \
 }
 
 //------------------------------------------------------------------------------
@@ -542,7 +542,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         { 
             // out of memory
             GB_FREE_ALL ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -657,7 +657,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -1016,7 +1016,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // split the space into separate hash tables
@@ -1139,7 +1139,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //==========================================================================

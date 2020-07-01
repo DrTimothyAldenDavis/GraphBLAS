@@ -20,7 +20,7 @@ GrB_Info GxB_BinaryOp_ytype         // return the type of y
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_BinaryOp_ytype (&ytype, binaryop)") ;
+    GB_WHERE1 ("GxB_BinaryOp_ytype (&ytype, binaryop)") ;
     GB_RETURN_IF_NULL (ytype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (binaryop) ;
     ASSERT_BINARYOP_OK (binaryop, "binaryop for ytype", GB0) ;

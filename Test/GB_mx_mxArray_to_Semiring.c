@@ -29,8 +29,6 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
 )
 {
 
-    GB_WHERE ("GB_mx_mxArray_to_Semiring") ;
-
     (*handle) = NULL ;
     const mxArray *multiply_mx = NULL, *type_mx = NULL, *add_mx = NULL ;
 

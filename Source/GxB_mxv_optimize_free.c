@@ -10,9 +10,9 @@
 #include "GB_mxm.h"
 #include "GB_mkl.h"
 
-GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
+GrB_Info GxB_mxv_optimize_free      // analyze C for subsequent use in mxv
 (
-    GrB_Matrix A                    // input/output matrix
+    GrB_Matrix C                    // input/output matrix
 )
 {
 #if GB_HAS_MKL_GRAPH
@@ -21,17 +21,17 @@ GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_mxv_optimize_free (A, desc)") ;
+    GB_WHERE (C, "GxB_mxv_optimize_free (C, desc)") ;
     GB_BURBLE_START ("GxB_mxv_optimize_free") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     //--------------------------------------------------------------------------
-    // free any existing MKL version of the matrix A and its optimization
+    // free any existing MKL version of the matrix C and its optimization
     //--------------------------------------------------------------------------
 
-    GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (C->mkl) ;
 
-    A->mkl = NULL ;
+    C->mkl = NULL ;
 #endif
     return (GrB_SUCCESS) ;
 }

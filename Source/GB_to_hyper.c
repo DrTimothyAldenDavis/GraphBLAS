@@ -69,8 +69,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         if (Count == NULL)
         { 
             // out of memory
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         int tid ;
@@ -106,8 +106,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
             GB_FREE (Count) ;
             GB_FREE (Ap_new) ;
             GB_FREE (Ah_new) ;
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------

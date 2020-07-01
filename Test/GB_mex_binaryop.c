@@ -21,7 +21,7 @@ void mexFunction
 {
 
     // check inputs
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
     if (nargin != 1)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -32,10 +32,10 @@ void mexFunction
         GrB_FP64, false) ;
 
     GrB_Info info = GB_BinaryOp_check (binaryop, "binaryop", GxB_COMPLETE,
-        stdout, Context) ;
+        stdout) ;
     if (info != GrB_SUCCESS)
     {
-        mexErrMsgTxt (GrB_error ( )) ;
+        mexErrMsgTxt ("binaryop failed") ;
     }
 }
 

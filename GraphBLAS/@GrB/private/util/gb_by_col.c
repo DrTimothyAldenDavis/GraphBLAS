@@ -29,8 +29,8 @@ GrB_Matrix gb_by_col            // return the matrix by column
     { 
         // make a deep copy of A_input and change it to be stored by column
         OK (GrB_Matrix_dup (&A_copy, A_input)) ;
-        OK (GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
-        OK (GrB_Matrix_wait (&A_copy)) ;
+        OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
+        OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
         A = A_copy ;
     }
     else

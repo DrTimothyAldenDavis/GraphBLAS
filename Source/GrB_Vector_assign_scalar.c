@@ -25,7 +25,7 @@ GrB_Info prefix ## Vector_assign_ ## T    /* w<M>(Rows) = accum (w(Rows),x) */ \
     const GrB_Descriptor desc       /* descriptor for w and mask            */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (GB_STR(prefix) "Vector_assign_" GB_STR(T)                        \
+    GB_WHERE (w, GB_STR(prefix) "Vector_assign_" GB_STR(T)                     \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
     GB_BURBLE_START ("GrB_assign") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                          \

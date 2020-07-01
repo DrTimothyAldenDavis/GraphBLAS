@@ -15,8 +15,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     const GrB_UnaryOp op,   // GraphBLAS operator to print and check
     const char *name,       // name of the operator
     int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
+    FILE *f                 // file for output
 )
 {
 
@@ -53,9 +52,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     if (op->function == NULL)
     { 
         GBPR0 ("    function pointer is NULL\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "UnaryOp has a NULL function pointer: %s [%s]",
-            GB_NAME, op->name))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     if (op->opcode != GB_USER_opcode)
@@ -63,28 +60,24 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
         if (op->opcode < GB_ONE_opcode || op->opcode >= GB_FIRST_opcode)
         { 
             GBPR0 ("    invalid opcode\n") ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "UnaryOp has an invalid opcode: %s [%s]",
-                GB_NAME, op->name))) ;
+            return (GrB_INVALID_OBJECT) ;
         }
     }
 
     GrB_Info info ;
 
-    info = GB_Type_check (op->ztype, "ztype", pr, f, Context) ;
+    info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
         GBPR0 ("    UnaryOP has an invalid ztype\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "UnaryOp has an invalid ztype: %s [%s]", GB_NAME, op->name))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
-    info = GB_Type_check (op->xtype, "xtype", pr, f, Context) ;
+    info = GB_Type_check (op->xtype, "xtype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
         GBPR0 ("    UnaryOP has an invalid xtype\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "UnaryOp has an invalid xtype: %s [%s]", GB_NAME, op->name))) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     return (GrB_SUCCESS) ;

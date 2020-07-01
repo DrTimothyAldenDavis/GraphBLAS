@@ -18,12 +18,12 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_MATRIX_FREE (&Mask) ;            \
-    GB_MATRIX_FREE (&S) ;               \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&C) ;               \
+    GrB_Matrix_free_(&Mask) ;            \
+    GrB_Matrix_free_(&S) ;               \
+    GrB_Matrix_free_(&A) ;               \
     GrB_Descriptor_free_(&desc) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 GrB_Matrix C = NULL, S = NULL ;
@@ -240,7 +240,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 7 || nargin > 8)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -249,7 +248,7 @@ void mexFunction
     // get C (make a deep copy)
     #define GET_DEEP_COPY \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
-    #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
+    #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
     GET_DEEP_COPY ;
     if (C == NULL)
     {

@@ -20,7 +20,7 @@ GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Scalar_type (&type, s)") ;
+    GB_WHERE1 ("GxB_Scalar_type (&type, s)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
 
     //--------------------------------------------------------------------------

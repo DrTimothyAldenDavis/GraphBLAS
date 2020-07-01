@@ -51,9 +51,9 @@
 
 #define GB_FREE_WORK            \
 {                               \
-    GB_MATRIX_FREE (&S) ;       \
-    GB_MATRIX_FREE (&A2) ;      \
-    GB_MATRIX_FREE (&M2) ;      \
+    GB_Matrix_free (&S) ;       \
+    GB_Matrix_free (&A2) ;      \
+    GB_Matrix_free (&M2) ;      \
     GB_FREE (I2) ;              \
     GB_FREE (I2k) ;             \
     GB_FREE (J2) ;              \
@@ -71,7 +71,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \
 {                                                       \
-    GB_PHIX_FREE (C) ;                                  \
+    GB_phix_free (C) ;                                  \
     GB_FREE_WORK ;                                      \
 }
 
@@ -1408,9 +1408,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-
-    // TODO in 4.0: delete this:
-    if (C->nzombies == 0 && C->Pending == NULL) { if (!GB_queue_remove (C)) GB_PANIC ; } else { if (!GB_queue_insert (C)) GB_PANIC ; }
 
     //--------------------------------------------------------------------------
     // finalize C and return result

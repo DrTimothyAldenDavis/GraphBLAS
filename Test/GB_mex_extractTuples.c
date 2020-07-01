@@ -13,8 +13,8 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&A) ;               \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -32,7 +32,6 @@ void mexFunction
     GrB_Index nvals = 0 ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 3 || nargin < 1 || nargin > 2)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

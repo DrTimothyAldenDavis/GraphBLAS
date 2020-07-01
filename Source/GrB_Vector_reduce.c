@@ -28,7 +28,8 @@ GrB_Info prefix ## Vector_reduce_ ## T  /* c = accum (c, reduce (u))*/         \
     const GrB_Descriptor desc       /* descriptor (currently unused)        */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE ("GrB_Vector_reduce_" GB_STR(T) " (&c, accum, reduce, u, desc)") ;\
+    GB_WHERE1 ("GrB_Vector_reduce_" GB_STR(T)                             \
+        " (&c, accum, reduce, u, desc)") ;                                     \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                          \
     ASSERT (GB_VECTOR_OK (u)) ;                                                \
@@ -62,7 +63,7 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
 )
 { 
     // See comments on GrB_Matrix_reduce_UDT
-    GB_WHERE ("GrB_Vector_reduce_UDT (&c, accum, reduce, u, desc)") ;
+    GB_WHERE1 ("GrB_Vector_reduce_UDT (&c, accum, reduce, u, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;

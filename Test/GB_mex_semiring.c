@@ -13,7 +13,7 @@
 
 #define FREE_ALL            \
 {                           \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -31,7 +31,6 @@ void mexFunction
     // printf ("user complex: %d\n", Complex != GxB_FC64) ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargin < 1 || nargin > 2 || nargout > 0)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -44,10 +43,10 @@ void mexFunction
 
     int GET_SCALAR (1, int, pr, GxB_COMPLETE) ;
 
-    GrB_Info info = GB_Semiring_check (semiring, "semiring", pr, NULL, NULL) ;
+    GrB_Info info = GB_Semiring_check (semiring, "semiring", pr, NULL) ;
     if (info != GrB_SUCCESS)
     {
-        mexErrMsgTxt (GrB_error ( )) ;
+        mexErrMsgTxt ("semiring fail") ;
     }
     FREE_ALL ;
 }

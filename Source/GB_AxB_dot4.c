@@ -158,7 +158,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     { 
         // out of memory
         GB_FREE_WORK ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

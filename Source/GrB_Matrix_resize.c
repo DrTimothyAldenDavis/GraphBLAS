@@ -11,7 +11,7 @@
 
 GrB_Info GrB_Matrix_resize      // change the size of a matrix
 (
-    GrB_Matrix A,               // matrix to modify
+    GrB_Matrix C,               // matrix to modify
     GrB_Index nrows_new,        // new number of rows in matrix
     GrB_Index ncols_new         // new number of columns in matrix
 )
@@ -21,13 +21,13 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_resize (A, nrows_new, ncols_new)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_WHERE (C, "GrB_Matrix_resize (C, nrows_new, ncols_new)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     //--------------------------------------------------------------------------
     // resize the matrix
     //--------------------------------------------------------------------------
 
-    return (GB_resize (A, nrows_new, ncols_new, Context)) ;
+    return (GB_resize (C, nrows_new, ncols_new, Context)) ;
 }
 

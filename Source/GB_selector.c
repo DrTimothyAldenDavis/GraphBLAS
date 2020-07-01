@@ -13,7 +13,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_MATRIX_FREE (&C) ;                   \
+    GB_Matrix_free (&C) ;                   \
     GB_FREE_WORK ;                          \
 }
 
@@ -156,7 +156,7 @@ GrB_Info GB_selector
     if (Cp == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
     Cp [anvec] = 0 ;
 
@@ -173,7 +173,7 @@ GrB_Info GB_selector
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -187,7 +187,7 @@ GrB_Info GB_selector
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -206,7 +206,7 @@ GrB_Info GB_selector
         { 
             // out of memory
             GB_FREE_ALL ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -296,7 +296,7 @@ GrB_Info GB_selector
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -389,7 +389,7 @@ GrB_Info GB_selector
             { 
                 // out of memory
                 GB_FREE_ALL ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             // copy non-empty vectors from Ah to Ch

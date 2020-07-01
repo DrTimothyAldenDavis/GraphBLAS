@@ -13,8 +13,8 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&C) ;               \
+    GB_mx_put_global (true) ;           \
 }
 
 #define OK(method)                                          \
@@ -22,7 +22,7 @@
     info = method ;                                         \
     if (info != GrB_SUCCESS)                                \
     {                                                       \
-        mexErrMsgTxt (GrB_error ( )) ;                      \
+        mexErrMsgTxt ("fail") ;                             \
     }                                                       \
 }
 
@@ -51,7 +51,6 @@ void mexFunction
     C = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin != 5)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

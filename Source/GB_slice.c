@@ -84,9 +84,9 @@ GrB_Info GB_slice       // slice B into nslices slices or hyperslices
             // out of memory
             for (int i = 0 ; i < s ; i++)
             { 
-                GB_MATRIX_FREE (&(Bslice [i])) ;
+                GB_Matrix_free (&(Bslice [i])) ;
             }
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         // Bslice [s] is a slice or hyperslice

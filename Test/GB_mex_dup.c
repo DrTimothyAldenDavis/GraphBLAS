@@ -18,7 +18,7 @@
     GrB_Matrix_free_(&A) ;              \
     GrB_Matrix_free_(&C) ;              \
     GrB_Descriptor_free_(&desc) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -35,7 +35,6 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 1 || nargin > 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

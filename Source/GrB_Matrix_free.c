@@ -18,7 +18,7 @@ GrB_Info GrB_Matrix_free        // free a matrix
 )
 { 
 
-    GB_MATRIX_FREE (A) ;
+    GB_Matrix_free (A) ;
     return (GrB_SUCCESS) ;
 }
 

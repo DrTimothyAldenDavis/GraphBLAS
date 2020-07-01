@@ -26,7 +26,7 @@
 
 #define GB_MKL_FREE_ALL                         \
     GB_MKL_FREE_WORK                            \
-    GB_MATRIX_FREE (C) ;                        \
+    GB_Matrix_free (C) ;                        \
     GB_FREE (Cp) ;                              \
     GB_FREE (Ci) ;                              \
     GB_FREE (Cx) ;
@@ -196,13 +196,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
         Tx_type != GB_type_mkl (ctype->code))
     {
         GB_MKL_FREE_ALL ;
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "MKL returned result with wrong type."
-            "Expected [%d,%d,%d], got [%d,%d,%d]\n",
-            MKL_GRAPH_TYPE_INT64,
-            MKL_GRAPH_TYPE_INT64,
-            GB_type_mkl (ctype->code),
-            Tp_type, Ti_type, Tx_type))) ;
+        return (GrB_PANIC) ;
     }
 
     cnvals = Tp [cnrows] ;
@@ -217,7 +211,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     {
         // out of memory
         GB_MKL_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     GB_memcpy (Cp, Tp, (cnrows+1) * sizeof (int64_t), nthreads_max) ;

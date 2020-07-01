@@ -37,11 +37,11 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_PHIX_FREE (A) ;                  \
-    GB_MATRIX_FREE (&T) ;               \
-    GB_MATRIX_FREE (&S) ;               \
-    GB_MATRIX_FREE (&(Aslice [0])) ;    \
-    GB_MATRIX_FREE (&(Aslice [1])) ;    \
+    GB_phix_free (A) ;                  \
+    GB_Matrix_free (&T) ;               \
+    GB_Matrix_free (&S) ;               \
+    GB_Matrix_free (&(Aslice [0])) ;    \
+    GB_Matrix_free (&(Aslice [1])) ;    \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -116,8 +116,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
     if (!GB_PENDING (A))
     { 
-        if (!GB_queue_remove (A)) GB_PANIC ;    // TODO in 4.0: delete
-
         // trim any significant extra space from the matrix, but allow for some
         // future insertions.  do not increase the size of the matrix;
         // zombies have been deleted but no pending tuples added.  This is
@@ -185,7 +183,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
-    if (!GB_queue_remove (A)) GB_PANIC ;    // TODO in 4.0: delete
 
     // No pending operations on A
     ASSERT_MATRIX_OK (A, "A after moving pending tuples to T", GB0) ;
@@ -314,7 +311,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             ASSERT_MATRIX_OK (Aslice [1], "A1 slice for GB_Matrix_wait", GB0) ;
 
             // free A0, which is not used
-            GB_MATRIX_FREE (&(Aslice [0])) ;
+            GB_Matrix_free (&(Aslice [0])) ;
 
             // S = A1 + T, but with no operator
             GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, Aslice [1], T,
@@ -323,8 +320,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
             // free A1 and T
-            GB_MATRIX_FREE (&T) ;
-            GB_MATRIX_FREE (&(Aslice [1])) ;
+            GB_Matrix_free (&T) ;
+            GB_Matrix_free (&(Aslice [1])) ;
 
             // replace T with S
             T = S ;
@@ -378,7 +375,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 
-        GB_MATRIX_FREE (&T) ;
+        GB_Matrix_free (&T) ;
 
         // conform A to its desired hypersparsity
         return (GB_to_hyper_conform (A, Context)) ;
@@ -400,7 +397,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // prune of zombies can be skipped.
 
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, A, T, NULL, Context)) ;
-        GB_MATRIX_FREE (&T) ;
+        GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;
     }

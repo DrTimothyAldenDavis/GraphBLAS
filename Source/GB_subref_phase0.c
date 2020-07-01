@@ -329,7 +329,7 @@ GrB_Info GB_subref_phase0
     if (Count == NULL)
     {
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -478,7 +478,7 @@ GrB_Info GB_subref_phase0
         if (Ch == NULL)
         { 
             GB_FREE_WORK ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -493,7 +493,7 @@ GrB_Info GB_subref_phase0
             GB_FREE (Ch) ;
             GB_FREE (Ap_start) ;
             GB_FREE (Ap_end) ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

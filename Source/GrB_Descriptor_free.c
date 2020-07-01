@@ -23,7 +23,8 @@ GrB_Info GrB_Descriptor_free            // free a descriptor
         GrB_Descriptor desc = *descriptor ;
         if (desc != NULL && desc->magic == GB_MAGIC && !(desc->predefined))
         { 
-            desc->magic = GB_FREED ;     // to help detect dangling pointers
+            GB_FREE (desc->logger) ;    // free the error logger string
+            desc->magic = GB_FREED ;    // to help detect dangling pointers
             GB_FREE (*descriptor) ;
         }
         (*descriptor) = NULL ;

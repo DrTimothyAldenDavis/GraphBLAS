@@ -216,7 +216,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_MATRIX_FREE (&C) ;
+        GB_Matrix_free (&C) ;
         return (info) ;
     }
 

@@ -28,7 +28,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (do_cover) ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 2 || nargin < 1 || nargin > 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -70,7 +69,7 @@ void mexFunction
 //  for (int k = 0 ; k < nrows*ncols ; k++)
 //  {
 //      printf ("X [%d] = ", k) ;
-//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL, Context) ;
+//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL) ;
 //      printf ("\n") ;
 //  }
 
@@ -81,7 +80,7 @@ void mexFunction
 //  for (int k = 0 ; k < nrows*ncols ; k++)
 //  {
 //      printf ("X [%d] = ", k) ;
-//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL, Context) ;
+//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL) ;
 //      printf ("\n") ;
 //  }
 
@@ -89,10 +88,10 @@ void mexFunction
 //  for (int k = 0 ; k < nrows*ncols ; k++)
 //  {
 //      printf ("C [%d] = ", k) ;
-//      GB_code_check (ctype->code, C + k*(ctype->size), 3, NULL, Context) ;
+//      GB_code_check (ctype->code, C + k*(ctype->size), 3, NULL) ;
 //      printf ("\n") ;
 //  }
 
-    GB_mx_put_global (do_cover, 0) ;
+    GB_mx_put_global (do_cover) ;
 }
 

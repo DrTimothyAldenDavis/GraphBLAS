@@ -27,7 +27,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_assign"
+    GB_WHERE (C, "GrB_Matrix_assign"
         " (C, M, accum, A, Rows, nRows, Cols, nCols, desc)") ;
     GB_BURBLE_START ("GrB_assign") ;
 

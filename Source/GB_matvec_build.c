@@ -36,14 +36,14 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     GB_RETURN_IF_NULL (I) ;
     if (I == GrB_ALL)
     { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "List of row indices cannot be GrB_ALL"))) ;
+        GB_ERROR (GrB_INVALID_VALUE, "List of row indices cannot be %s",
+            "GrB_ALL") ;
     }
 
     if (nvals == GxB_RANGE || nvals == GxB_STRIDE || nvals == GxB_BACKWARDS)
     { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "nvals cannot be GxB_RANGE, GxB_STRIDE, or GxB_BACKWARDS"))) ;
+        GB_ERROR (GrB_INVALID_VALUE, "nvals cannot be %s",
+            "GxB_RANGE, GxB_STRIDE, or GxB_BACKWARDS") ;
     }
 
     if (is_matrix)
@@ -51,8 +51,8 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
         GB_RETURN_IF_NULL (J) ;
         if (J == GrB_ALL)
         { 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                "List of column indices cannot be 'GrB_ALL'"))) ;
+            GB_ERROR (GrB_INVALID_VALUE, "List of column indices cannot be %s",
+                "GrB_ALL") ;
         }
     }
     else
@@ -70,9 +70,9 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     if (nvals > GxB_INDEX_MAX)
     { 
         // problem too large
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+        GB_ERROR (GrB_INVALID_VALUE,
             "Problem too large: nvals " GBu " exceeds " GBu,
-            nvals, GxB_INDEX_MAX))) ;
+            nvals, GxB_INDEX_MAX) ;
     }
 
     // check types of dup
@@ -80,19 +80,19 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     { 
         // all 3 types of z = dup (x,y) must be the same.  dup must also be
         // associative but there is no way to check this in general.
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG, "All domains of dup "
-        "operator for assembling duplicates must be identical.\n"
-        "operator is: [%s] = %s ([%s],[%s])",
-        dup->ztype->name, dup->name, dup->xtype->name, dup->ytype->name))) ;
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "All domains of dup "
+            "operator for assembling duplicates must be identical.\n"
+            "operator is: [%s] = %s ([%s],[%s])",
+            dup->ztype->name, dup->name, dup->xtype->name, dup->ytype->name) ;
     }
 
     if (!GB_Type_compatible (C->type, dup->ztype))
     { 
         // the type of C and dup must be compatible
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-        "Operator dup [%s] has type [%s]\n"
-        "cannot be typecast to entries in output of type [%s]",
-        dup->name, dup->ztype->name, C->type->name))) ;
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Operator dup [%s] has type [%s]\n"
+            "cannot be typecast to entries in output of type [%s]",
+            dup->name, dup->ztype->name, C->type->name) ;
     }
 
     // C and X must be compatible
@@ -104,11 +104,11 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
         // Thus, if C, dup, or X have any user-defined type, this
         // condition requires all three types to be identical: the same
         // user-defined type.  No casting will be done in this case.
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-        "Numerical values of tuples of type [%s]\n"
-        "cannot be typecast as input to the dup operator\n"
-        "z=%s(x,y), whose input types are [%s]",
-        GB_code_string (scode), dup->name, dup->ztype->name))) ;
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Numerical values of tuples of type [%s]\n"
+            "cannot be typecast as input to the dup operator\n"
+            "z=%s(x,y), whose input types are [%s]",
+            GB_code_string (scode), dup->name, dup->ztype->name) ;
     }
 
     if (!GB_EMPTY (C))
@@ -118,8 +118,8 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
         // However, any existing content is safely freed immediately below, so
         // this test is not required, except to conform to the spec.  Zombies
         // are excluded from this test.
-        return (GB_ERROR (GrB_OUTPUT_NOT_EMPTY, (GB_LOG,
-            "Output already has existing entries"))) ;
+        GB_ERROR (GrB_OUTPUT_NOT_EMPTY,
+            "Output already has %s", "existing entries") ;
     }
 
     //--------------------------------------------------------------------------

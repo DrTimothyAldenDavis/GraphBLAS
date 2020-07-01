@@ -37,8 +37,7 @@
     GrB_Info info = method ;                                        \
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))            \
     {                                                               \
-        printf ("Failure (id: %d, info: %d): %s\n",                 \
-            id, info, GrB_error ( )) ;                              \
+        printf ("Failure (id: %d, info: %d):\n", id, info) ;        \
         /* return to caller (do not use inside critical section) */ \
         return (0) ;                                                \
     }                                                               \
@@ -65,7 +64,9 @@ int worker (GrB_Matrix *Ahandle, int id)
     {
         // critical section
         printf ("\n----------------- worker %d intentional error:\n", id) ;
-        printf ("%s\n", GrB_error ( )) ;
+        char *s ;
+        GrB_error (&s, A) ;
+        printf ("%s\n", s) ;
     }
 
     for (int hammer_hard = 0 ; hammer_hard < NTRIALS ; hammer_hard++)
@@ -80,8 +81,7 @@ int worker (GrB_Matrix *Ahandle, int id)
         }
 
         // force completion
-        GrB_Index nvals ;
-        OK (GrB_Matrix_nvals (&nvals, A)) ;
+        OK (GrB_Matrix_wait (&A)) ;
     }
 
     // Printing is done in a critical section, just so it is not overly
@@ -108,7 +108,9 @@ int worker (GrB_Matrix *Ahandle, int id)
     {
         // critical section
         printf ("\n----------------- worker %d error should be same:\n", id) ;
-        printf ("%s\n", GrB_error ( )) ;
+        char *s ;
+        GrB_error (&s, A) ;
+        printf ("%s\n", s) ;
     }
     return (0) ;
 }
@@ -132,33 +134,6 @@ int main (int argc, char **argv)
     fprintf (stderr, "openmp demo, nthreads %d\n", nthreads) ;
 
     // Determine which user-threading model is being used.
-    GxB_Thread_Model thread_safety ;
-    GxB_Global_Option_get (GxB_THREAD_SAFETY, &thread_safety) ;
-    printf ("GraphBLAS is using ") ;
-    switch (thread_safety)
-    {
-        case GxB_THREAD_POSIX :
-            printf ("a POSIX pthread mutex\n") ;
-            break ;
-        case GxB_THREAD_WINDOWS :
-            printf ("a Windows CriticalSection\n") ;
-            break ;
-        case GxB_THREAD_ANSI :
-            printf ("an ANSI C11 mtx_lock\n") ;
-            break ;
-        case GxB_THREAD_OPENMP :
-            printf ("an OpenMP critical section\n") ;
-            break ;
-        default : // GxB_THREAD_NONE
-            #ifdef _OPENMP
-            printf ("(nothing! This will fail!)\n") ;
-            #else
-            printf ("nothing (OK since user program is single-threaded)\n") ;
-            #endif
-            break ;
-    }
-    printf ("to synchronize user threads.\n") ;
-
     #ifdef _OPENMP
     printf ("User threads in this program are OpenMP threads.\n") ;
     #else
@@ -185,8 +160,8 @@ int main (int argc, char **argv)
 
     // print an error message
     printf ("\n\n---- Master thread prints an error message:\n") ;
-    GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
-    printf ("Error: %s\n", GrB_error ( )) ;
+    GrB_Info info = GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
+    printf ("Error: %d\n", info) ;
 
     // finish GraphBLAS
     GrB_finalize ( ) ;

@@ -28,7 +28,7 @@ GrB_Info prefix ## Vector_extractTuples_ ## T     /* [I,~,X] = find (A) */    \
     const GrB_Vector v      /* vector to extract tuples from             */   \
 )                                                                             \
 {                                                                             \
-    GB_WHERE (GB_STR(prefix) "Vector_extractTuples_" GB_STR(T)                \
+    GB_WHERE1 (GB_STR(prefix) "Vector_extractTuples_" GB_STR(T)          \
         " (I, X, nvals, v)") ;                                                \
     GB_BURBLE_START ("GrB_Vector_extractTuples") ;                            \
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                         \

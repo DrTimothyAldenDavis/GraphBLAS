@@ -32,6 +32,8 @@ GrB_Type type ;         // the type of each numerical entry
 size_t type_size ;      // type->size, copied here since the type could be
                         // user-defined, and freed before the matrix or vector
 
+char *logger ;          // for error logging
+
 //------------------------------------------------------------------------------
 // compressed sparse vector data structure
 //------------------------------------------------------------------------------
@@ -342,16 +344,6 @@ GB_Pending Pending ;        // list of pending tuples
 // GB_Matrix_wait.
 
 uint64_t nzombies ;     // number of zombies marked for deletion
-
-//------------------------------------------------------------------------------
-// statistics
-//------------------------------------------------------------------------------
-
-GrB_Desc_Value AxB_method_used ;    // last method used for C=A*B (this is C)
-
-void *queue_next ;      // TODO in 4.0: delete
-void *queue_prev ;      // TODO in 4.0: delete
-bool enqueued ;         // TODO in 4.0: delete
 
 //------------------------------------------------------------------------------
 // shallow matrices: like MATLAB but not in CSparse

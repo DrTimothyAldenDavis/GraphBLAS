@@ -29,8 +29,6 @@ bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 )
 {
 
-    GB_WHERE ("GB_mx_mxArray_to_BinaryOp") ;
-
     (*op_handle) = NULL ;
 
     const mxArray *opname_mx = NULL, *optype_mx = NULL ;

@@ -16,10 +16,10 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     GrB_BinaryOp_free_(&Max) ;          \
     GrB_Monoid_free_(&Max_Terminal) ;   \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void maxdouble (double *z, const double *x, const double *y) ;
@@ -46,7 +46,6 @@ void mexFunction
     GrB_Info info ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 1 || nargin > 2)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -78,7 +77,6 @@ void mexFunction
     info = GrB_BinaryOp_new (&Max, maxdouble, GrB_FP64, GrB_FP64, GrB_FP64);
     if (info != GrB_SUCCESS)
     {
-        printf ("error: %d %s\n", info, GrB_error ( )) ;
         mexErrMsgTxt ("Max failed") ;
     }
 
@@ -89,7 +87,6 @@ void mexFunction
         terminal) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("error: %d %s\n", info, GrB_error ( )) ;
         mexErrMsgTxt ("Max_Terminal failed") ;
     }
 
@@ -98,7 +95,7 @@ void mexFunction
     info = GrB_Matrix_reduce_FP64_(&c, NULL, Max_Terminal, A, NULL) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("error: %d %s\n", info, GrB_error ( )) ;
+        printf ("error: %d %s\n", info) ;
         mexErrMsgTxt ("reduce failed") ;
     }
 

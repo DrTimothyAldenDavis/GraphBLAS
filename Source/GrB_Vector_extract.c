@@ -25,7 +25,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_extract (w, M, accum, u, I, ni, desc)") ;
+    GB_WHERE (w, "GrB_Vector_extract (w, M, accum, u, I, ni, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;

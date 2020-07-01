@@ -60,6 +60,7 @@ GrB_Type
 struct GB_Descriptor_opaque GB_opaque_desc_ ## name =           \
 {                                                               \
     GB_MAGIC,               /* initialized */                   \
+    "",                                                         \
     (GrB_Desc_Value) (out),                                     \
     (GrB_Desc_Value) (mask),                                    \
     (GrB_Desc_Value) (in0),                                     \

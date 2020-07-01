@@ -151,7 +151,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         OK (GrB_Matrix_free (&A)) ;
         OK (GrB_Matrix_new (&A, ctype, ni, nj)) ;
         OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
-        OK (GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
         scalar_assignment = false ;
     }
 
@@ -168,11 +168,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     {
         if (do_subassign)
         { 
-            OK (GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
+            OK1 (C, GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
         }
         else
         { 
-            OK (GrB_Matrix_assign (C, M, accum, A, I, ni, J, nj, desc)) ;
+            OK1 (C, GrB_Matrix_assign (C, M, accum, A, I, ni, J, nj, desc)) ;
         }
     }
 

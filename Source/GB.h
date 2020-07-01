@@ -12,7 +12,6 @@
 
 // Future plans: (see also 'grep -r FUTURE')
 // FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
-// FUTURE: implement v1.3 of the API
 // FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 // FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
 // FUTURE: allow matrices and vectors to be left jumbled (sort left pending)
@@ -47,10 +46,6 @@
 // #define GB_DEVELOPER 1
 
 // set these via cmake, or uncomment to select the user-thread model:
-
-// #define USER_POSIX_THREADS
-// #define USER_OPENMP_THREADS
-// #define USER_NO_THREADS
 
 //------------------------------------------------------------------------------
 // manage compiler warnings
@@ -323,8 +318,8 @@ GB_PUBLIC int GB_cover_max ;
 #include "GB_casting.h"
 #include "GB_math.h"
 #include "GB_bitwise.h"
-#include "GB_wait.h"
 #include "GB_binary_search.h"
+#include "GB_check.h"
 
 //------------------------------------------------------------------------------
 // default options
@@ -621,7 +616,7 @@ typedef struct
     double chunk ;              // chunk size for small problems
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
-    char details [GB_DLEN] ;    // error report
+    char **logger ;             // error report
     bool use_mkl ;              // control usage of Intel MKL
 }
 GB_Context_struct ;
@@ -640,10 +635,6 @@ typedef GB_Context_struct *GB_Context ;
 // GrB_*free does not encounter error conditions so it doesn't need to be
 // logged by the GB_WHERE macro.
 
-#ifndef GB_PANIC
-#define GB_PANIC return (GrB_PANIC)
-#endif
-
 #define GB_CONTEXT(where_string)                                    \
     /* construct the Context */                                     \
     GB_Context_struct Context_struct ;                              \
@@ -653,13 +644,27 @@ typedef GB_Context_struct *GB_Context ;
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
-    Context->use_mkl = GB_Global_use_mkl_get ( )
+    Context->use_mkl = GB_Global_use_mkl_get ( ) ;                  \
+    /* get the pointer to where any error will be logged */         \
+    Context->logger = NULL ;                                        \
 
-#define GB_WHERE(where_string)                                      \
+#define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
-        /* GrB_init (or GxB_init) has not been called! */           \
-        GB_PANIC ;                                                  \
+        return (GrB_PANIC) ; /* GrB_init not called */              \
+    }                                                               \
+    GB_CONTEXT (where_string)                                       \
+    if (C != NULL)                                                  \
+    {                                                               \
+        /* free any prior error logged in the object */             \
+        GB_FREE (C->logger) ;                                       \
+        Context->logger = &(C->logger) ;                            \
+    }
+
+#define GB_WHERE1(where_string)                                     \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \
     GB_CONTEXT (where_string)
 
@@ -713,193 +718,42 @@ static inline int GB_nthreads   // return # of threads to use
 // error logging
 //------------------------------------------------------------------------------
 
-// The GB_ERROR and GB_LOG macros work together.  If an error occurs, the
-// GB_ERROR macro records the details in the Context.details, and returns the
-// GrB_info to its 'caller'.  This value can then be returned, or set to an
-// info variable of type GrB_Info.  For example:
+// The GB_ERROR macro logs an error in the logger error string.
 //
 //  if (i >= nrows)
 //  {
-//      return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-//          "Row index %d out of bounds; must be < %d", i, nrows))) ;
+//      return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
+//          "Row index %d out of bounds; must be < %d", i, nrows)) ;
 //  }
 //
 // The user can then do:
 //
-//  printf ("%s", GrB_error ( )) ;
-//
-// To print details of the error, which includes: which user-callable function
-// encountered the error, the error status (GrB_INDEX_OUT_OF_BOUNDS), the
-// details ("Row index 102 out of bounds, must be < 100").
+//  const char *error ;
+//  GrB_error (&error, A) ;
+//  printf ("%s", error) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 const char *GB_status_code (GrB_Info info) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_error           // log an error in thread-local-storage
-(
-    GrB_Info info,          // error return code from a GraphBLAS function
-    GB_Context Context      // pointer to a Context struct, on the stack
-) ;
-
-// GB_LOG becomes the snprintf_args for GB_ERROR.  Unused if Context is NULL.
-#define GB_LOG Context->details, GB_DLEN
-
-// if Context is NULL, do not log the error string in Context->details
-#define GB_ERROR(info,snprintf_args)                                \
-(                                                                   \
-    ((Context == NULL) ? 0 : snprintf snprintf_args),               \
-    GB_error (info, Context)                                        \
-)
-
-// return (GB_OUT_OF_MEMORY) ; reports an out-of-memory error
-#define GB_OUT_OF_MEMORY GB_ERROR (GrB_OUT_OF_MEMORY, (GB_LOG, "out of memory"))
-
-//------------------------------------------------------------------------------
-// GraphBLAS check functions: check and optionally print an object
-//------------------------------------------------------------------------------
-
-// pr values for *_check functions
-#define GB0 GxB_SILENT
-#define GB1 GxB_SUMMARY
-#define GB2 GxB_SHORT
-#define GB3 GxB_COMPLETE
-#define GB4 GxB_SHORT_VERBOSE
-#define GB5 GxB_COMPLETE_VERBOSE
-
-// a NULL name is treated as the empty string
-#define GB_NAME ((name != NULL) ? name : "")
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_entry_check     // print a single value
-(
-    const GrB_Type type,    // type of value to print
-    const void *x,          // value to print
-    int pr,                 // print level
-    FILE *f,                // file to print to
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_code_check          // print and check an entry using a type code
-(
-    const GB_Type_code code,    // type code of value to print
-    const void *x,              // entry to print
-    int pr,                     // print level
-    FILE *f,                    // file to print to
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Type_check      // check a GraphBLAS Type
-(
-    const GrB_Type type,    // GraphBLAS type to print and check
-    const char *name,       // name of the type from the caller; optional
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
-(
-    const GrB_BinaryOp op,  // GraphBLAS operator to print and check
-    const char *name,       // name of the operator
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
-(
-    const GrB_UnaryOp op,   // GraphBLAS operator to print and check
-    const char *name,       // name of the operator
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
-(
-    const GxB_SelectOp op,  // GraphBLAS operator to print and check
-    const char *name,       // name of the operator
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
-(
-    const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
-    const char *name,           // name of the monoid, optional
-    int pr,                     // print level
-    FILE *f,                    // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
-(
-    const GrB_Semiring semiring,    // GraphBLAS semiring to print and check
-    const char *name,               // name of the semiring, optional
-    int pr,                         // print level
-    FILE *f,                        // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
-(
-    const GrB_Descriptor D,     // GraphBLAS descriptor to print and check
-    const char *name,           // name of the descriptor, optional
-    int pr,                     // print level
-    FILE *f,                    // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
-(
-    const GrB_Matrix A,     // GraphBLAS matrix to print and check
-    const char *name,       // name of the matrix, optional
-    int pr,                 // print level; if negative, ignore nzombie
-                            // conditions and use GB_FLIP(pr) for diagnostics
-    FILE *f,                // file for output
-    const char *kind,       // "matrix" or "vector"
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Matrix_check    // check a GraphBLAS matrix
-(
-    const GrB_Matrix A,     // GraphBLAS matrix to print and check
-    const char *name,       // name of the matrix
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Vector_check    // check a GraphBLAS vector
-(
-    const GrB_Vector v,     // GraphBLAS vector to print and check
-    const char *name,       // name of the vector
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
-
-GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
-(
-    const GxB_Scalar v,     // GraphBLAS GxB_Scalar to print and check
-    const char *name,       // name of the GxB_Scalar
-    int pr,                 // print level
-    FILE *f,                // file for output
-    GB_Context Context
-) ;
+// log an error in the error logger string and return the error
+#define GB_ERROR(info,format,...)                                           \
+{                                                                           \
+    if (Context != NULL)                                                    \
+    {                                                                       \
+        char **logger = Context->logger ;                                   \
+        if (logger != NULL)                                                 \
+        {                                                                   \
+            (*logger) = GB_MALLOC (GB_RLEN+1, char) ;                       \
+            if ((*logger) != NULL)                                          \
+            {                                                               \
+                snprintf ((*logger), GB_RLEN,                               \
+                    "GraphBLAS error: %s\nfunction: %s\n" format,           \
+                    GB_status_code (info), Context->where, __VA_ARGS__) ;   \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    return (info) ;                                                         \
+}
 
 //------------------------------------------------------------------------------
 // internal GraphBLAS functions
@@ -1039,12 +893,8 @@ GrB_Info GB_ix_resize           // resize a matrix
     GB_Context Context
 ) ;
 
-// free A->i and A->x and return if critical section fails
-#define GB_IX_FREE(A)                                                       \
-    if (GB_ix_free (A) == GrB_PANIC) GB_PANIC
-
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_ix_free             // free A->i and A->x of a matrix
+void GB_ix_free                 // free A->i and A->x of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 ) ;
@@ -1055,11 +905,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
-// free all content, and return if critical section fails
-#define GB_PHIX_FREE(A)                                                     \
-    if (GB_phix_free (A) == GrB_PANIC) GB_PANIC
-
-GrB_Info GB_phix_free           // free all content of a matrix
+void GB_phix_free               // free all content of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 ) ;
@@ -1158,7 +1004,7 @@ GB_task_struct ;
         {                                                                   \
             /* out of memory */                                             \
             GB_FREE_ALL ;                                                   \
-            return (GB_OUT_OF_MEMORY) ;                                     \
+            return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
         for (int t = nold ; t < nnew ; t++)                                 \
         {                                                                   \
@@ -1322,24 +1168,10 @@ void GB_free_memory
 #define GB_REALLOC(p,nnew,nold,type,ok) \
     p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *) p, ok)
 
-//------------------------------------------------------------------------------
-// macros to create/free matrices, vectors, and scalars
-//------------------------------------------------------------------------------
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Matrix_free         // free a matrix
+void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *matrix_handle   // handle of matrix to free
 ) ;
-
-#define GB_MATRIX_FREE(A)                                                     \
-{                                                                             \
-    if (GB_Matrix_free (A) == GrB_PANIC) GB_PANIC ;                           \
-}
-
-#define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
-
-#define GB_SCALAR_FREE(s) GB_MATRIX_FREE ((GrB_Matrix *) s)
 
 //------------------------------------------------------------------------------
 
@@ -1668,8 +1500,7 @@ void GB_cast_array              // typecast an array
     if ((arg) == NULL)                                                  \
     {                                                                   \
         /* the required arg is NULL */                                  \
-        return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,                    \
-            "Required argument is null: [%s]", GB_STR(arg)))) ;         \
+        return (GrB_NULL_POINTER) ;                                     \
     }
 
 // arg may be NULL, but if non-NULL then it must be initialized
@@ -1679,14 +1510,12 @@ void GB_cast_array              // typecast an array
         if ((arg)->magic == GB_MAGIC2)                                  \
         {                                                               \
             /* optional arg is not NULL, but invalid */                 \
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
-                "Argument is invalid: [%s]", GB_STR(arg)))) ;           \
+            return (GrB_INVALID_OBJECT) ;                               \
         }                                                               \
         else                                                            \
         {                                                               \
             /* optional arg is not NULL, but not initialized */         \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "Argument is uninitialized: [%s]", GB_STR(arg)))) ;     \
+            return (GrB_UNINITIALIZED_OBJECT) ;                         \
         }                                                               \
     }
 
@@ -1694,35 +1523,6 @@ void GB_cast_array              // typecast an array
 #define GB_RETURN_IF_NULL_OR_FAULTY(arg)                                \
     GB_RETURN_IF_NULL (arg) ;                                           \
     GB_RETURN_IF_FAULTY (arg) ;
-
-// same as GB_RETURN_IF_NULL(arg), but set Context first
-#define GB_CONTEXT_RETURN_IF_NULL(arg)                                  \
-    if ((arg) == NULL)                                                  \
-    {                                                                   \
-        /* the required arg is NULL */                                  \
-        GB_WHERE (GB_WHERE_STRING) ;                                    \
-        return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,                    \
-            "Required argument is null: [%s]", GB_STR(arg)))) ;         \
-    }
-
-// same as GB_RETURN_IF_FAULTY(arg), but set Context first
-#define GB_CONTEXT_RETURN_IF_FAULTY(arg)                                \
-    if ((arg) != NULL && (arg)->magic != GB_MAGIC)                      \
-    {                                                                   \
-        GB_WHERE (GB_WHERE_STRING) ;                                    \
-        if ((arg)->magic == GB_MAGIC2)                                  \
-        {                                                               \
-            /* optional arg is not NULL, but invalid */                 \
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
-                "Argument is invalid: [%s]", GB_STR(arg)))) ;           \
-        }                                                               \
-        else                                                            \
-        {                                                               \
-            /* optional arg is not NULL, but not initialized */         \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "Argument is uninitialized: [%s]", GB_STR(arg)))) ;     \
-        }                                                               \
-    }
 
 // check the descriptor and extract its contents; also copies
 // nthreads_max, chunk, and use_mkl from the descriptor to the Context
@@ -1741,11 +1541,11 @@ void GB_cast_array              // typecast an array
 
 // C<M>=Z ignores Z if an empty mask is complemented, so return from
 // the method without computing anything.  But do apply the mask.
-#define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp)             \
-    if (Mask_comp && M == NULL)                                         \
-    {                                                                   \
-        /* C<!NULL>=NULL since result does not depend on computing Z */ \
-        return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;      \
+#define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp)                 \
+    if (Mask_comp && M == NULL)                                             \
+    {                                                                       \
+        /* C<!NULL>=NULL since result does not depend on computing Z */     \
+        return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;          \
     }
 
 // GB_MASK_VERY_SPARSE is true if C<M>=A+B or C<M>=accum(C,T) is being

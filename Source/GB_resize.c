@@ -9,7 +9,7 @@
 
 #include "GB_select.h"
 
-#define GB_FREE_ALL GB_PHIX_FREE (A) ;
+#define GB_FREE_ALL GB_phix_free (A) ;
 
 GrB_Info GB_resize              // change the size of a matrix
 (
@@ -138,7 +138,7 @@ GrB_Info GB_resize              // change the size of a matrix
             { 
                 // out of memory
                 GB_FREE_ALL ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
             Ap = A->p ;
             A->plen = vdim_new ;

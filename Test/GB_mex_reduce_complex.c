@@ -15,9 +15,9 @@
 
 #define FREE_ALL                            \
 {                                           \
-    GB_MATRIX_FREE (&A) ;                   \
+    GrB_Matrix_free_(&A) ;                   \
     GrB_Monoid_free_(&Times_terminal) ;     \
-    GB_mx_put_global (true, 0) ;            \
+    GB_mx_put_global (true) ;               \
 }
 
 void mexFunction
@@ -35,7 +35,6 @@ void mexFunction
     GrB_Monoid Times_terminal = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 1 || nargin > 2)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -71,7 +70,6 @@ void mexFunction
             Complex_times, &one, &zero) ;
         if (info != GrB_SUCCESS)
         {
-            printf ("Error:\n%s\n", GrB_error ( )) ;
             FREE_ALL ;
             mexErrMsgTxt ("Times_terminal failed") ;
         }
@@ -99,7 +97,6 @@ void mexFunction
     }
     if (info != GrB_SUCCESS)
     {
-        printf ("Error:\n%s\n", GrB_error ( )) ;
         FREE_ALL ;
         mexErrMsgTxt ("reduce failed") ;
     }

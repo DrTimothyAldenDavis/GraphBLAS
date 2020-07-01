@@ -103,8 +103,8 @@ void mexFunction
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
-    OK (GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK (GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
+    OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
 
     GrB_Index mnz ;
@@ -143,9 +143,9 @@ void mexFunction
         { 
             // A is 1-by-ancols and held by column: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
-            OK (GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
-            OK (GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
-            OK (GrB_Matrix_wait (&A_copy)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
+            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
+            OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
         }
         else
@@ -162,9 +162,9 @@ void mexFunction
         { 
             // A is anrows-by-1 and held by row: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
-            OK (GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_ROW)) ;
-            OK (GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
-            OK (GrB_Matrix_wait (&A_copy)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_ROW)) ;
+            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
+            OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
         }
         else
@@ -201,59 +201,59 @@ void mexFunction
 
     GrB_Matrix S ;
     OK (GrB_Matrix_new (&S, atype, nrows, ncols)) ;
-    OK (GxB_Matrix_Option_set (S, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (S, GxB_Matrix_Option_set (S, GxB_FORMAT, GxB_BY_COL)) ;
 
     if (atype == GrB_BOOL)
     { 
-        OK (GrB_Matrix_build_BOOL (S, Si, Sj, Ax, anz, GrB_LOR)) ;
+        OK1 (S, GrB_Matrix_build_BOOL (S, Si, Sj, Ax, anz, GrB_LOR)) ;
     }
     else if (atype == GrB_INT8)
     { 
-        OK (GrB_Matrix_build_INT8 (S, Si, Sj, Ax, anz, GrB_PLUS_INT8)) ;
+        OK1 (S, GrB_Matrix_build_INT8 (S, Si, Sj, Ax, anz, GrB_PLUS_INT8)) ;
     }
     else if (atype == GrB_INT16)
     { 
-        OK (GrB_Matrix_build_INT16 (S, Si, Sj, Ax, anz, GrB_PLUS_INT16)) ;
+        OK1 (S, GrB_Matrix_build_INT16 (S, Si, Sj, Ax, anz, GrB_PLUS_INT16)) ;
     }
     else if (atype == GrB_INT32)
     { 
-        OK (GrB_Matrix_build_INT32 (S, Si, Sj, Ax, anz, GrB_PLUS_INT32)) ;
+        OK1 (S, GrB_Matrix_build_INT32 (S, Si, Sj, Ax, anz, GrB_PLUS_INT32)) ;
     }
     else if (atype == GrB_INT64)
     { 
-        OK (GrB_Matrix_build_INT64 (S, Si, Sj, Ax, anz, GrB_PLUS_INT64)) ;
+        OK1 (S, GrB_Matrix_build_INT64 (S, Si, Sj, Ax, anz, GrB_PLUS_INT64)) ;
     }
     else if (atype == GrB_UINT8)
     { 
-        OK (GrB_Matrix_build_UINT8 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT8)) ;
+        OK1 (S, GrB_Matrix_build_UINT8 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT8)) ;
     }
     else if (atype == GrB_UINT16)
     { 
-        OK (GrB_Matrix_build_UINT16 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT16)) ;
+        OK1 (S, GrB_Matrix_build_UINT16 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT16)) ;
     }
     else if (atype == GrB_UINT32)
     { 
-        OK (GrB_Matrix_build_UINT32 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT32)) ;
+        OK1 (S, GrB_Matrix_build_UINT32 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT32)) ;
     }
     else if (atype == GrB_UINT64)
     { 
-        OK (GrB_Matrix_build_UINT64 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT64)) ;
+        OK1 (S, GrB_Matrix_build_UINT64 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT64)) ;
     }
     else if (atype == GrB_FP32)
     { 
-        OK (GrB_Matrix_build_FP32 (S, Si, Sj, Ax, anz, GrB_PLUS_FP32)) ;
+        OK1 (S, GrB_Matrix_build_FP32 (S, Si, Sj, Ax, anz, GrB_PLUS_FP32)) ;
     }
     else if (atype == GrB_FP64)
     { 
-        OK (GrB_Matrix_build_FP64 (S, Si, Sj, Ax, anz, GrB_PLUS_FP64)) ;
+        OK1 (S, GrB_Matrix_build_FP64 (S, Si, Sj, Ax, anz, GrB_PLUS_FP64)) ;
     }
     else if (atype == GxB_FC32)
     { 
-        OK (GxB_Matrix_build_FC32 (S, Si, Sj, Ax, anz, GxB_PLUS_FC32)) ;
+        OK1 (S, GxB_Matrix_build_FC32 (S, Si, Sj, Ax, anz, GxB_PLUS_FC32)) ;
     }
     else if (atype == GxB_FC64)
     { 
-        OK (GxB_Matrix_build_FC64 (S, Si, Sj, Ax, anz, GxB_PLUS_FC64)) ;
+        OK1 (S, GxB_Matrix_build_FC64 (S, Si, Sj, Ax, anz, GxB_PLUS_FC64)) ;
     }
     else
     {
@@ -266,7 +266,7 @@ void mexFunction
     // C<M> = S
     //--------------------------------------------------------------------------
 
-    OK (GxB_Matrix_subassign (C, M, NULL,
+    OK1 (S, GxB_Matrix_subassign (C, M, NULL,
         S, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
     //--------------------------------------------------------------------------

@@ -16,15 +16,14 @@
 
 #define FREE_ALL                                \
 {                                               \
-    GB_MATRIX_FREE (&A) ;                       \
-    GB_MATRIX_FREE (&Aconj) ;                   \
-    GB_MATRIX_FREE (&B) ;                       \
-    GB_MATRIX_FREE (&Bconj) ;                   \
-    GB_MATRIX_FREE (&C) ;                       \
-    GB_MATRIX_FREE (&Mask) ;                    \
+    GrB_Matrix_free_(&A) ;                       \
+    GrB_Matrix_free_(&Aconj) ;                   \
+    GrB_Matrix_free_(&B) ;                       \
+    GrB_Matrix_free_(&Bconj) ;                   \
+    GrB_Matrix_free_(&C) ;                       \
+    GrB_Matrix_free_(&Mask) ;                    \
     GrB_Monoid_free_(&add) ;                    \
     GrB_Semiring_free_(&semiring) ;             \
-    GB_mx_put_global (true, AxB_method_used) ;  \
 }
 
 //------------------------------------------------------------------------------
@@ -44,7 +43,6 @@ int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
 
 GrB_Desc_Value AxB_method = GxB_DEFAULT ;
-GrB_Desc_Value AxB_method_used = GxB_DEFAULT ;
 
 GrB_Info axb (GB_Context Context) ;
 GrB_Info axb_complex (GB_Context Context) ;
@@ -82,7 +80,7 @@ GrB_Info axb (GB_Context Context)
         false,      // flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, &AxB_method_used, Context) ;
+        AxB_method, Context) ;
 
     GrB_Monoid_free_(&add) ;
     GrB_Semiring_free_(&semiring) ;
@@ -173,7 +171,7 @@ GrB_Info axb_complex (GB_Context Context)
         false,      // flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, &AxB_method_used, Context) ;
+        AxB_method, Context) ;
 
     GrB_Matrix_free_(&Bconj) ;
     GrB_Matrix_free_(&Aconj) ;
@@ -205,7 +203,7 @@ void mexFunction
     add = NULL ;
     semiring = NULL ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < 2 || nargin > 5)

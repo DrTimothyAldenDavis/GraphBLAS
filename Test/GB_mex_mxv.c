@@ -15,7 +15,7 @@
 {                                                   \
     GrB_Vector_free_(&w) ;                          \
     GrB_Vector_free_(&u) ;                          \
-    GB_MATRIX_FREE (&A) ;                           \
+    GrB_Matrix_free_(&A) ;                           \
     GrB_Vector_free_(&mask) ;                       \
     if (semiring != Complex_plus_times)             \
     {                                               \
@@ -26,7 +26,6 @@
         GrB_Semiring_free_(&semiring) ;             \
     }                                               \
     GrB_Descriptor_free_(&desc) ;                   \
-    GB_mx_put_global (true, AxB_method_used) ;      \
 }
 
 void mexFunction
@@ -45,10 +44,8 @@ void mexFunction
     GrB_Vector mask = NULL ;
     GrB_Semiring semiring = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Desc_Value AxB_method_used = GxB_DEFAULT ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 6 || nargin > 7)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -117,8 +114,6 @@ void mexFunction
 
     // w<mask> = accum(w,A*u)
     METHOD (GrB_mxv (w, mask, accum, semiring, A, u, desc)) ;
-
-    if (w != NULL) AxB_method_used = w->AxB_method_used ;
 
     // return w to MATLAB as a struct and free the GraphBLAS w
     pargout [0] = GB_mx_Vector_to_mxArray (&w, "w output", true) ;

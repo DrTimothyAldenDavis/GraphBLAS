@@ -117,8 +117,8 @@ void mexFunction
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
-    OK (GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK (GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
+    OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
 
     GrB_Index mnz ;
@@ -133,9 +133,9 @@ void mexFunction
     OK (GxB_Matrix_type (&type, A)) ;
     GrB_Matrix G ;
     OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
-    OK (GxB_Matrix_Option_set (G, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (G, GxB_Matrix_Option_set (G, GxB_FORMAT, GxB_BY_COL)) ;
 
-    OK (GxB_Matrix_subassign (G, M, NULL,
+    OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
     OK (GrB_Matrix_free (&A_copy)) ;
@@ -146,6 +146,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index gnvals ;
+    OK1 (G, GrB_Matrix_wait (&G)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
     void *Gx = G->x ;
 
@@ -186,8 +187,8 @@ void mexFunction
 
     GrB_Matrix T ;
     OK (GrB_Matrix_new (&T, GrB_UINT64, nrows, ncols)) ;
-    OK (GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
-    OK (GxB_Matrix_subassign (T, G, NULL,
+    OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
     //--------------------------------------------------------------------------
@@ -195,6 +196,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index tnvals ;
+    OK1 (T, GrB_Matrix_wait (&T)) ;
     OK (GrB_Matrix_nvals (&tnvals, T)) ;
     uint64_t *Tx = T->x ;
 

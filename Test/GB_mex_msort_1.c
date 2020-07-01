@@ -62,6 +62,6 @@ void mexFunction
         mxFree (Work_0) ;
     }
 
-    GB_mx_put_global (true, 0) ;
+    GB_mx_put_global (true) ;   
 }
 

@@ -44,7 +44,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     // free all content
-    GB_PHIX_FREE (A) ;
+    GB_phix_free (A) ;
 
     // no more zombies or pending tuples
     ASSERT (!GB_PENDING (A)) ;
@@ -85,8 +85,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
     }
@@ -105,8 +105,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         if (A->p == NULL)
         { 
             // out of memory
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

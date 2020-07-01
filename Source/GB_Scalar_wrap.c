@@ -50,10 +50,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->hfirst = 0 ;
     s->Pending = NULL ;
     s->nzombies = 0 ;
-    s->AxB_method_used = GxB_DEFAULT ;
-    s->queue_next = NULL ;  // TODO in 4.0: delete
-    s->queue_prev = NULL ;  // TODO in 4.0: delete
-    s->enqueued = false ;   // TODO in 4.0: delete
     s->p_shallow = true ;
     s->h_shallow = false ;
     s->i_shallow = true ;

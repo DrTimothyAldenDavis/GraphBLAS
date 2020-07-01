@@ -17,8 +17,8 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_MATRIX_FREE (&MT) ;  \
-    GB_MATRIX_FREE (&T) ;   \
+    GB_Matrix_free (&MT) ;  \
+    GB_Matrix_free (&T) ;   \
 }
 
 GrB_Info GB_mxm                     // C<M> = A*B
@@ -84,14 +84,14 @@ GrB_Info GB_mxm                     // C<M> = A*B
     int64_t bncols = (B_transpose) ? GB_NROWS (B) : GB_NCOLS (B) ;
     if (ancols != bnrows || GB_NROWS (C) != anrows || GB_NCOLS (C) != bncols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
             "first input is " GBd "-by-" GBd "%s\n"
             "second input is " GBd "-by-" GBd "%s",
             GB_NROWS (C), GB_NCOLS (C),
             anrows, ancols, A_transpose ? " (transposed)" : "",
-            bnrows, bncols, B_transpose ? " (transposed)" : ""))) ;
+            bnrows, bncols, B_transpose ? " (transposed)" : "") ;
     }
 
     // quick return if an empty mask is complemented
@@ -116,13 +116,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
     bool done_in_place = false ;
     GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
         Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
-        &mask_applied, &done_in_place, AxB_method, &(C->AxB_method_used),
-        Context)) ;
+        &mask_applied, &done_in_place, AxB_method, Context)) ;
 
     if (done_in_place)
     { 
         // C<...>+=A*B has been computed in place; no more work to do
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
         return (info) ;
     }
@@ -147,7 +146,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // needed.  If no typecasting is done then this takes no time at all
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
         if (GB_ZOMBIES (T) && T->type != C->type)
         { 
             // T = A*B can be constructed with zombies, using the dot3 method.
@@ -178,7 +177,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Context) ;
-        GB_MATRIX_FREE (&MT) ;
+        GB_Matrix_free (&MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)
         {

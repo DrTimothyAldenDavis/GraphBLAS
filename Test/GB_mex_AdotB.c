@@ -17,14 +17,14 @@
 
 #define FREE_ALL                            \
 {                                           \
-    GB_MATRIX_FREE (&A) ;                   \
-    GB_MATRIX_FREE (&Aconj) ;               \
-    GB_MATRIX_FREE (&B) ;                   \
-    GB_MATRIX_FREE (&C) ;                   \
-    GB_MATRIX_FREE (&Mask) ;                \
+    GrB_Matrix_free_(&A) ;                   \
+    GrB_Matrix_free_(&Aconj) ;               \
+    GrB_Matrix_free_(&B) ;                   \
+    GrB_Matrix_free_(&C) ;                   \
+    GrB_Matrix_free_(&Mask) ;                \
     GrB_Monoid_free_(&add) ;                \
     GrB_Semiring_free_(&semiring) ;         \
-    GB_mx_put_global (true, GxB_AxB_DOT) ;  \
+    GB_mx_put_global (true) ;               \
 }
 
 GrB_Matrix A = NULL, B = NULL, C = NULL, Aconj = NULL, Mask = NULL ;
@@ -136,7 +136,7 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < 2 || nargin > 4)

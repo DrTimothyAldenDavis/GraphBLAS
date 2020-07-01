@@ -82,7 +82,7 @@ GrB_Info GB_assign_zombie5
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, Z, ntasks))
     {
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

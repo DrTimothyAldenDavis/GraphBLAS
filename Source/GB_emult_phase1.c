@@ -62,7 +62,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     if (Cp == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

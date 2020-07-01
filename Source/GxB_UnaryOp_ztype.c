@@ -20,7 +20,7 @@ GrB_Info GxB_UnaryOp_ztype          // return the type of z
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_UnaryOp_ztype (&ztype, unaryop)") ;
+    GB_WHERE1 ("GxB_UnaryOp_ztype (&ztype, unaryop)") ;
     GB_RETURN_IF_NULL (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (unaryop) ;
     ASSERT_UNARYOP_OK (unaryop, "unaryop for ztype", GB0) ;

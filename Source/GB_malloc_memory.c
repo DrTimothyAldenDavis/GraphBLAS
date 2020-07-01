@@ -9,10 +9,10 @@
 
 // A wrapper for malloc_function.  Space is not initialized.
 
-// Parameters are the same as the POSIX calloc, except that asking to allocate
-// a block of zero size causes a block of size 1 to be allocated instead.  This
-// allows the return pointer p to be checked for the out-of-memory condition,
-// even when allocating an object of size zero.
+// Parameters are the same as the ANSI C11 calloc, except that asking to
+// allocate a block of zero size causes a block of size 1 to be allocated
+// instead.  This allows the return pointer p to be checked for the
+// out-of-memory condition, even when allocating an object of size zero.
 
 #include "GB.h"
 

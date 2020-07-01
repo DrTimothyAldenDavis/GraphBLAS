@@ -231,7 +231,7 @@ GrB_Info ipagerank          // GrB_SUCCESS or error condition
     OK (GrB_Vector_extractTuples_UINT64 (I, X, &nvals, r)) ;
 
     // this will always be true since r is dense, but double-check anyway:
-    CHECK (nvals == n, GrB_PANIC) ;
+    CHECK (nvals == n, GrB_INVALID_VALUE) ;
 
     // r no longer needed
     GrB_Vector_free (&r) ;

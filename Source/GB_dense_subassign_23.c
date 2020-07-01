@@ -98,7 +98,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
             ntasks))
         { 
             // out of memory
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

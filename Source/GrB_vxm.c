@@ -31,7 +31,7 @@ GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_vxm (w, M, accum, semiring, u, A, desc)") ;
+    GB_WHERE (w, "GrB_vxm (w, M, accum, semiring, u, A, desc)") ;
     GB_BURBLE_START ("GrB_vxm") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;

@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols, nvals,"
+    GB_WHERE1 ("GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols, nvals,"
         " nonempty, nvec, &Ah, &Ap, &Ai, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
     GB_IMPORT_CHECK ;
@@ -46,8 +46,8 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     }
     if (nvec > ncols)
     { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "nvec [" GBu "] must be <= ncols [" GBu "]\n", nvec, ncols))) ;
+        // too many vectors
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

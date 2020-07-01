@@ -30,7 +30,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_import_CSR (&A, type, nrows, ncols, nvals,"
+    GB_WHERE1 ("GxB_Matrix_import_CSR (&A, type, nrows, ncols, nvals,"
         " nonempty, &Ap, &Aj, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_CSR") ;
     GB_IMPORT_CHECK ;

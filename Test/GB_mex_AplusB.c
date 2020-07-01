@@ -16,10 +16,10 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
-    GB_MATRIX_FREE (&B) ;               \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&A) ;               \
+    GrB_Matrix_free_(&B) ;               \
+    GrB_Matrix_free_(&C) ;               \
+    GB_mx_put_global (true) ;           \
 }
 
 
@@ -40,7 +40,7 @@ void mexFunction
     GrB_Matrix C = NULL ;
     GrB_BinaryOp op = NULL ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin != 3)

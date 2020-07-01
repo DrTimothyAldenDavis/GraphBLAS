@@ -22,12 +22,6 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    // C and M may be aliased
-
-    //--------------------------------------------------------------------------
     // check the mask M
     //--------------------------------------------------------------------------
 
@@ -37,9 +31,9 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
         // M  is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
-            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "M of type [%s] cannot be typecast to boolean",
-                M->type->name))) ;
+                M->type->name) ;
         }
 
         // check the mask dimensions
@@ -47,10 +41,10 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
         GrB_Index cncols = (C == NULL) ? ncols : GB_NCOLS (C) ;
         if (GB_NROWS (M) != cnrows || GB_NCOLS (M) != cncols)
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "M is " GBd "-by-" GBd "; "
                 "does not match output dimensions (" GBu "-by-" GBu ")",
-                GB_NROWS (M), GB_NCOLS (M), cnrows, cncols))) ;
+                GB_NROWS (M), GB_NCOLS (M), cnrows, cncols) ;
         }
     }
 

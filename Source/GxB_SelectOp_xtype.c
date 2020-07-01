@@ -20,7 +20,7 @@ GrB_Info GxB_SelectOp_xtype         // return the type of x or NULL if generic
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_SelectOp_xtype (&xtype, selectop)") ;
+    GB_WHERE1 ("GxB_SelectOp_xtype (&xtype, selectop)") ;
     GB_RETURN_IF_NULL (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (selectop) ;
     ASSERT_SELECTOP_OK (selectop, "selectop for xtype", GB0) ;

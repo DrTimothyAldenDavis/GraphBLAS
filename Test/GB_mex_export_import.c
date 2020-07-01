@@ -23,14 +23,14 @@
     GB_FREE (Ch) ;                      \
     GB_FREE (Ci) ;                      \
     GB_FREE (Cx) ;                      \
-    GB_MATRIX_FREE (&C) ;               \
+    GrB_Matrix_free_(&C) ;              \
 }
 
 #define FREE_ALL                        \
 {                                       \
     FREE_WORK ;                         \
-    GB_MATRIX_FREE (&A) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&A) ;              \
+    GB_mx_put_global (true) ;           \
 }
 
 #define OK(method)                              \
@@ -185,7 +185,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin != 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

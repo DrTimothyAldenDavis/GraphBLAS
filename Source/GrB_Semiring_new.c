@@ -41,7 +41,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Semiring_new (&semiring, add, multiply)") ;
+    GB_WHERE1 ("GrB_Semiring_new (&semiring, add, multiply)") ;
     GB_RETURN_IF_NULL (semiring) ;
     (*semiring) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
@@ -53,8 +53,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     if (multiply->ztype != add->op->ztype)
     { 
         (*semiring) = NULL ;
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "Semiring multiply output domain must match monoid domain"))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     //--------------------------------------------------------------------------
@@ -66,7 +65,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     if (*semiring == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the semiring

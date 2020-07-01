@@ -153,14 +153,14 @@ void mexFunction
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
-        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
     // compute C<M> += kron (A,B)
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)) ;
+    OK1 (C, GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

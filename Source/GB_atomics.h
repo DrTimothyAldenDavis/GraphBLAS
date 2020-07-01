@@ -269,8 +269,7 @@
 // parameters (weak is true, and the memorder parameters are both
 // __ATOMIC_RELAXED).
 //
-// See https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html for
-// more details.
+// See https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
 
 // Microsoft Visual Studio provides similar but not identical functionality in
 // the _InterlockedCompareExchange functions, but they are named differently

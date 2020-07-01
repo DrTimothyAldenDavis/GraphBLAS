@@ -31,7 +31,7 @@ GrB_Info GB_BinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_BinaryOp_new (binaryop, function, ztype, xtype, ytype)") ;
+    GB_WHERE1 ("GrB_BinaryOp_new (op, function, ztype, xtype, ytype)") ;
     GB_RETURN_IF_NULL (binaryop) ;
     (*binaryop) = NULL ;
     GB_RETURN_IF_NULL (function) ;
@@ -48,7 +48,7 @@ GrB_Info GB_BinaryOp_new
     if (*binaryop == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the binary operator

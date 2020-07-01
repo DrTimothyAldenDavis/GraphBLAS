@@ -35,7 +35,7 @@ GrB_Info prefix ## Matrix_assign_ ## T    /* C<M>(Rows,Cols) += x           */ \
     const GrB_Descriptor desc       /* descriptor for C and M               */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (GB_STR(prefix) "Matrix_assign_" GB_STR(T)                        \
+    GB_WHERE (C, GB_STR(prefix) "Matrix_assign_" GB_STR(T)                     \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_BURBLE_START ("GrB_assign") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                          \

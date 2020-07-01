@@ -98,7 +98,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     // drop zeros from T
     //--------------------------------------------------------------------------
 
-    OK (GxB_Matrix_select (T, NULL, NULL, GxB_NONZERO, T, NULL, NULL)) ;
+    OK1 (T, GxB_Matrix_select (T, NULL, NULL, GxB_NONZERO, T, NULL, NULL)) ;
 
     //--------------------------------------------------------------------------
     // create the new MATLAB sparse matrix

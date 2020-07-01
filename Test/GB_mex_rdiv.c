@@ -17,12 +17,12 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
-    GB_MATRIX_FREE (&B) ;               \
-    GB_MATRIX_FREE (&C) ;               \
+    GrB_Matrix_free_(&A) ;               \
+    GrB_Matrix_free_(&B) ;               \
+    GrB_Matrix_free_(&C) ;               \
     GrB_BinaryOp_free_(&My_rdiv) ;      \
     GrB_Semiring_free_(&My_plus_rdiv) ; \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
-GrB_Desc_Value AxB_method = GxB_DEFAULT, AxB_method_used ;
+GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 
 GrB_Info axb (GB_Context Context, bool cprint) ;
 
@@ -83,11 +83,10 @@ GrB_Info axb (GB_Context Context, bool cprint)
         false,      // no flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, &AxB_method_used, Context) ;
+        AxB_method, Context) ;
 
     if (C != NULL)
     {
-        C->AxB_method_used = AxB_method_used ;
         if (cprint) GxB_Matrix_fprint_(C, GxB_COMPLETE, NULL) ;
     }
 
@@ -118,7 +117,7 @@ void mexFunction
     My_rdiv = NULL ;
     My_plus_rdiv = NULL ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < 2 || nargin > 4)

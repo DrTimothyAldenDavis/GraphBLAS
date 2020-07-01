@@ -112,10 +112,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 30, 2020"
-#define GxB_IMPLEMENTATION_MAJOR 3
-#define GxB_IMPLEMENTATION_MINOR 3
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_DATE "July TODO, 2020"
+#define GxB_IMPLEMENTATION_MAJOR 4
+#define GxB_IMPLEMENTATION_MINOR 0
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Sept 25, 2019"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 3
@@ -271,22 +271,6 @@
 #endif
 
 //------------------------------------------------------------------------------
-// user threading model
-//------------------------------------------------------------------------------
-
-#if defined (USER_POSIX_THREADS)
-// POSIX pthreads
-#include <pthread.h>
-
-#elif defined (_OPENMP) || defined (USER_OPENMP_THREADS)
-// OpenMP threads: this is the default, if OpenMP is available
-#include <omp.h>
-
-#else // USER_NO_THREADS
-// no user threads
-#endif
-
-//------------------------------------------------------------------------------
 // the GraphBLAS integer
 //------------------------------------------------------------------------------
 
@@ -374,8 +358,7 @@ typedef enum
     GrB_INSUFFICIENT_SPACE = 11,    // output array not large enough
     GrB_INDEX_OUT_OF_BOUNDS = 12,   // a row or column index is out of bounds;
                                     // used for indices in a list of indices.
-    GrB_PANIC = 13                  // SuiteSparse:GraphBLAS only panics if
-                                    // a critical section fails
+    GrB_PANIC = 13                  // unknown error, or GrB_init not called.
 
 }
 GrB_Info ;
@@ -460,18 +443,6 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
     unsigned int *version,      // returns GRB_VERSION
     unsigned int *subversion    // returns GRB_SUBVERSION
 ) ;
-
-//==============================================================================
-//=== GraphBLAS error handling =================================================
-//==============================================================================
-
-// Each GraphBLAS method and operation returns a GrB_Info error code.
-// GrB_error returns additional information on the error in a thread-safe
-// null-terminated string.  The string returned by GrB_error is statically
-// allocated in thread local storage and must not be free'd.
-
-GB_PUBLIC
-const char *GrB_error (void) ;     // return a string describing the last error
 
 //==============================================================================
 //=== GraphBLAS types, operators, monoids, and semirings =======================
@@ -3967,11 +3938,6 @@ typedef enum            // for global options or matrix options
     // GxB_Global_Option_get only:
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
 
-    GxB_THREAD_SAFETY = 3,  // thread library that allows GraphBLAS to
-                        // be thread-safe for user threads.
-
-    GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
-
     // GxB_Global_Option_get/set only:
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
                         // If <= GxB_DEFAULT, then GraphBLAS selects the number
@@ -4018,17 +3984,6 @@ typedef enum
     GxB_NO_FORMAT = -1  // format not defined
 }
 GxB_Format_Value ;
-
-// GxB_THREAD_SAFETY and GxB_THREADING can be one of the following:
-typedef enum
-{
-    GxB_THREAD_NONE = 0,    // no threading
-    GxB_THREAD_OPENMP = 1,  // OpenMP
-    GxB_THREAD_POSIX = 2,   // POSIX pthreads
-    GxB_THREAD_WINDOWS = 3, // Windows threads
-    GxB_THREAD_ANSI = 4     // ANSI C11 threads
-}
-GxB_Thread_Model ;
 
 // The default format is by column, just like MATLAB.  These constants are
 // defined as GB_PUBLIC const, so that if SuiteSparse:GraphBLAS is recompiled
@@ -4150,8 +4105,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 // To get global options that can be queried but not modified:
 //
 //      GxB_get (GxB_MODE,          GrB_Mode *mode) ;
-//      GxB_get (GxB_THREAD_SAFETY, GxB_Thread_Model *thread_safety) ;
-//      GxB_get (GxB_THREADING,     GxB_Thread_Model *threading) ;
 
 // To set/get a matrix option:
 //
@@ -4263,9 +4216,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 // GrB_*_new and GrB_*_free method.  There is no generic GrB_new, but the
 // generic GrB_free method can free any GraphBLAS object.  It is safe to free
 // an object twice, and it is also safe to (attempt to) free a built-in object.
-// In that case, GrB_free silently does nothing and returns GrB_SUCCESS.  By
-// the GraphBLAS spec, GrB_*_free functions can return GrB_SUCCESS or
-// GrB_PANIC; in this implementation they never panic.
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_free(object)                         \
@@ -4303,15 +4253,8 @@ GB_PUBLIC GrB_Info GxB_Scalar_wait     (GxB_Scalar     *s       ) ;
 GB_PUBLIC GrB_Info GrB_Vector_wait     (GrB_Vector     *v       ) ;
 GB_PUBLIC GrB_Info GrB_Matrix_wait     (GrB_Matrix     *A       ) ;
 
-// TODO in 4.0: GrB_wait (with no inputs) is deprecated, and also not
-// compatible with the polymorphic GrB_wait (&object).  In V4.0,
-// GrB_wait ( ) will be removed, and the polymorphic GrB_wait (&object)
-// will be added.
-
-GB_PUBLIC GrB_Info GrB_wait (void) ;        // DEPRECATED: TODO in 4.0: delete
-
-// TODO in 4.0: add GrB_wait (&object) polymorphic function:
-/*
+// GrB_wait (&object) polymorphic function:
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_wait(object)                         \
     _Generic                                     \
     (                                            \
@@ -4329,7 +4272,66 @@ GB_PUBLIC GrB_Info GrB_wait (void) ;        // DEPRECATED: TODO in 4.0: delete
     )                                            \
     (object)
 #endif
-*/
+
+//==============================================================================
+//=== GraphBLAS error handling =================================================
+//==============================================================================
+
+// Each GraphBLAS method and operation returns a GrB_Info error code.
+// GrB_error returns additional information on the error in a thread-safe
+// null-terminated string.  The string returned by GrB_error is owned by
+// the GraphBLAS library and must not be free'd.
+
+GB_PUBLIC
+GrB_Info GrB_Type_error (const char **error, const GrB_Type type) ;
+GB_PUBLIC
+GrB_Info GrB_UnaryOp_error (const char **error, const GrB_UnaryOp op) ;
+GB_PUBLIC
+GrB_Info GrB_BinaryOp_error (const char **error, const GrB_BinaryOp op) ;
+GB_PUBLIC
+GrB_Info GxB_SelectOp_error (const char **error, const GxB_SelectOp op) ;
+GB_PUBLIC
+GrB_Info GrB_Monoid_error (const char **error, const GrB_Monoid monoid) ;
+GB_PUBLIC
+GrB_Info GrB_Semiring_error (const char **error, const GrB_Semiring semiring) ;
+GB_PUBLIC
+GrB_Info GxB_Scalar_error (const char **error, const GxB_Scalar s) ;
+GB_PUBLIC
+GrB_Info GrB_Vector_error (const char **error, const GrB_Vector v) ;
+GB_PUBLIC
+GrB_Info GrB_Matrix_error (const char **error, const GrB_Vector A) ;
+GB_PUBLIC
+GrB_Info GrB_Descriptor_error (const char **error, const GrB_Descriptor d) ;
+
+// GrB_error (error,object) polymorphic function:
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_error(error,object)                         \
+    _Generic                                            \
+    (                                                   \
+        (object),                                       \
+        const GrB_Type       : GrB_Type_error       ,   \
+              GrB_Type       : GrB_Type_error       ,   \
+        const GrB_UnaryOp    : GrB_UnaryOp_error    ,   \
+              GrB_UnaryOp    : GrB_UnaryOp_error    ,   \
+        const GrB_BinaryOp   : GrB_BinaryOp_error   ,   \
+              GrB_BinaryOp   : GrB_BinaryOp_error   ,   \
+        const GxB_SelectOp   : GxB_SelectOp_error   ,   \
+              GxB_SelectOp   : GxB_SelectOp_error   ,   \
+        const GrB_Monoid     : GrB_Monoid_error     ,   \
+              GrB_Monoid     : GrB_Monoid_error     ,   \
+        const GrB_Semiring   : GrB_Semiring_error   ,   \
+              GrB_Semiring   : GrB_Semiring_error   ,   \
+        const GxB_Scalar     : GxB_Scalar_error     ,   \
+              GxB_Scalar     : GxB_Scalar_error     ,   \
+        const GrB_Vector     : GrB_Vector_error     ,   \
+              GrB_Vector     : GrB_Vector_error     ,   \
+        const GrB_Matrix     : GrB_Matrix_error     ,   \
+              GrB_Matrix     : GrB_Matrix_error     ,   \
+        const GrB_Descriptor : GrB_Descriptor_error ,   \
+              GrB_Descriptor : GrB_Descriptor_error     \
+    )                                                   \
+    (error, object)
+#endif
 
 //==============================================================================
 //=== GraphBLAS operations =====================================================
@@ -8154,7 +8156,7 @@ GB_PUBLIC GrB_Semiring
 GB_PUBLIC
 GrB_Info GrB_Matrix_resize      // change the size of a matrix
 (
-    GrB_Matrix A,               // matrix to modify
+    GrB_Matrix C,               // matrix to modify
     GrB_Index nrows_new,        // new number of rows in matrix
     GrB_Index ncols_new         // new number of columns in matrix
 ) ;
@@ -8162,14 +8164,14 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
 GB_PUBLIC
 GrB_Info GrB_Vector_resize      // change the size of a vector
 (
-    GrB_Vector u,               // vector to modify
+    GrB_Vector w,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_resize      // change the size of a matrix
 (
-    GrB_Matrix A,               // matrix to modify
+    GrB_Matrix C,               // matrix to modify
     GrB_Index nrows_new,        // new number of rows in matrix
     GrB_Index ncols_new         // new number of columns in matrix
 ) ;
@@ -8177,7 +8179,7 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix
 GB_PUBLIC
 GrB_Info GxB_Vector_resize      // change the size of a vector
 (
-    GrB_Vector u,               // vector to modify
+    GrB_Vector w,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 
@@ -8867,16 +8869,16 @@ void  GxB_cuda_free (void *p) ;                 // standard free signature
 // MKL optimization (DRAFT: in progress, do not use)
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_mxv_optimize           // analyze A for subsequent use in mxv
+GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
 (
-    GrB_Matrix A,                   // input/output matrix
+    GrB_Matrix C,                   // input/output matrix
     int64_t ncalls,                 // estimate # of future calls to GrB_mxv
     const GrB_Descriptor desc       // currently unused
 ) ;
 
 GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
 (
-    GrB_Matrix A                    // input/output matrix
+    GrB_Matrix C                    // input/output matrix
 ) ;
 
 #endif

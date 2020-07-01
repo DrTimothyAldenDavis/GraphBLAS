@@ -15,13 +15,13 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_SCALAR_FREE (&Thunk) ;           \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_MATRIX_FREE (&A) ;               \
+    GxB_Scalar_free_(&Thunk) ;          \
+    GrB_Matrix_free_(&C) ;              \
+    GrB_Matrix_free_(&A) ;              \
     GxB_Scalar_free_(&Thunk_type) ;     \
     GxB_SelectOp_free_(&op) ;           \
     GrB_Descriptor_free_(&desc) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 #define OK(method)                                      \
@@ -30,7 +30,6 @@
     if (info != GrB_SUCCESS)                            \
     {                                                   \
         FREE_ALL ;                                      \
-        printf ("%s\n", GrB_error ()) ;                 \
         mexErrMsgTxt ("GraphBLAS failed") ;             \
     }                                                   \
 }
@@ -76,7 +75,6 @@ void mexFunction
     #define FREE_DEEP_COPY ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 3 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -100,8 +98,7 @@ void mexFunction
 
     OK (GxB_Scalar_new (&Thunk, Thunk_type)) ;
     OK (GxB_Scalar_setElement_UDT (Thunk, (void *) &bandwidth)) ;
-    GrB_Index ignore ;
-    OK (GxB_Scalar_nvals (&ignore, Thunk)) ;
+    OK (GxB_Scalar_wait_(&Thunk)) ;
 
     // get atranspose
     bool atranspose = false ;

@@ -14,7 +14,7 @@
 #include "GB_mkl.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Matrix_free         // free a matrix
+void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *matrix          // handle of matrix to free
 )
@@ -26,18 +26,18 @@ GrB_Info GB_Matrix_free         // free a matrix
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
         { 
             // free all content of A
-            GB_PHIX_FREE (A) ;
+            GB_phix_free (A) ;
             // free the MKL optimization, if it exists
             #if GB_HAS_MKL
             GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
             #endif
+            // free the error logger string
+            GB_FREE (A->logger) ;
             // free the header of A itself
             A->magic = GB_FREED ;      // to help detect dangling pointers
             GB_FREE (*matrix) ;
         }
         (*matrix) = NULL ;
     }
-
-    return (GrB_SUCCESS) ;
 }
 

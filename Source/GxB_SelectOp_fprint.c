@@ -22,12 +22,12 @@ GrB_Info GxB_SelectOp_fprint        // print and check a GrB_SelectOp
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_SelectOp_fprint (selectop, name, pr, f)") ;
+    GB_WHERE1 ("GxB_SelectOp_fprint (selectop, name, pr, f)") ;
 
     //--------------------------------------------------------------------------
     // print and check the object
     //--------------------------------------------------------------------------
 
-    return (GB_SelectOp_check (selectop, name, pr, f, Context)) ;
+    return (GB_SelectOp_check (selectop, name, pr, f)) ;
 }
 

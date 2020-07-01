@@ -58,10 +58,10 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 30, 2020" )
-set ( GraphBLAS_VERSION_MAJOR 3 )
-set ( GraphBLAS_VERSION_MINOR 3 )
-set ( GraphBLAS_VERSION_SUB   1 )
+set ( GraphBLAS_DATE "July TODO, 2020" )
+set ( GraphBLAS_VERSION_MAJOR 4 )
+set ( GraphBLAS_VERSION_MINOR 0 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
@@ -179,8 +179,6 @@ endif ( )
 
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
 message ( STATUS "CMAKE thread library:      " ${CMAKE_THREAD_LIBS_INIT} )
-message ( STATUS "CMAKE have pthreads:       " ${CMAKE_USE_PTHREADS_INIT}  )
-message ( STATUS "CMAKE have Win32 pthreads: " ${CMAKE_USE_WIN32_THREADS_INIT} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 #-------------------------------------------------------------------------------
@@ -348,25 +346,10 @@ endif ( )
 # select the threading library
 #-------------------------------------------------------------------------------
 
-if ( USER_OPENMP )
-    # user insists on OpenMP synchronization inside GraphBLAS
-    message ( STATUS "cmake -DUSER_OPENMP=1: insisting on using OpenMP" )
+if ( OPENMP_FOUND )
+#   set this to 'false' if you do not want OpenMP
+#   set ( USE_OPENMP false )
     set ( USE_OPENMP true )
-elseif ( USER_POSIX )
-    # user insists on POSIX synchronization inside GraphBLAS
-    message ( STATUS "cmake -DUSER_POSIX=1: insisting on using POSIX" )
-    set ( USE_POSIX true )
-elseif ( USER_NONE )
-    message ( STATUS "cmake -DUSER_NONE=1: insisting on using no threading" )
-    set ( USE_NONE true )
-else ( )
-    # default: automatic selection
-    message ( STATUS "Automatic selection of synchronization method for user threads" )
-    if ( OPENMP_FOUND )
-        set ( USE_OPENMP true )
-    elseif ( CMAKE_USE_PTHREADS_INIT )
-        set ( USE_POSIX true )
-    endif ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -379,59 +362,35 @@ else ( )
     set ( M_LIB "m" )
 endif ( )
 
+target_link_libraries ( graphblas ${M_LIB} )
+if ( BUILD_GRB_STATIC_LIBRARY )
+    target_link_libraries ( graphblas_static ${M_LIB} )
+endif ( )
+
 #-------------------------------------------------------------------------------
-# add the threading library
+# add the OpenMP, CUDA, BLAS, ... libraries
 #-------------------------------------------------------------------------------
 
 if ( USE_OPENMP )
-    # use OpenMP for user thread synchronization
-    message ( STATUS "Using OpenMP to synchronize user threads" )
-    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
+    target_link_libraries ( graphblas ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
+        target_link_libraries ( graphblas_static ${OpenMP_C_LIBRARIES} )
     endif ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
-elseif ( USE_POSIX )
-    # use POSIX for user thread synchronization
-    message ( STATUS "Using POSIX pthreads to synchronize user threads" )
-    target_link_libraries ( graphblas ${M_LIB} ${GB_CUDA} )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
+endif ( )
+
+if ( CMAKE_CUDA )
+    target_link_libraries ( graphblas ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${GB_CUDA} )
+        target_link_libraries ( graphblas_static ${GB_CUDA} )
     endif ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -pthread -DUSER_POSIX_THREADS " )
-else ( )
-    # use no threading at all
-    message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
-    target_link_libraries ( graphblas ${M_LIB} ${GB_CUDA} )
-    if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${GB_CUDA} )
-    endif ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DUSER_NO_THREADS " )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
-    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} ${GB_CUDA} )
+    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} ${GB_CUDA} )
+        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
     endif ( )
-endif ( )
-
-if ( OPENMP_FOUND )
-    # use OpenMP for internal parallelism
-    message ( STATUS "Using OpenMP for internal parallelism" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES}  ${GB_CUDA} )
-    if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} ${GB_CUDA} )
-    endif ( )
-endif ( )
-
-if ( CMAKE_USE_PTHREADS_INIT )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DHAVE_PTHREADS " )
-endif ( )
-
-if ( CMAKE_USE_WIN32_THREADS_INIT )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DHAVE_WINDOWS_THREADS " )
 endif ( )
 
 if ( BLAS_FOUND )

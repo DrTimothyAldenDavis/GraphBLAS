@@ -24,7 +24,6 @@ void mexFunction
 )
 {
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
-    GB_WHERE (USAGE) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
 
@@ -35,13 +34,8 @@ void mexFunction
     GxB_Global_Option_get_(GxB_NTHREADS, &nthreads_max) ;
     pargout [0] = mxCreateDoubleScalar (nthreads_max) ;
 
-    GxB_Thread_Model threading ;
-    GxB_Global_Option_get_(GxB_THREADING, &threading) ;
-    pargout [1] = mxCreateDoubleScalar (threading) ;
-
-    GxB_Thread_Model thread_safety ;
-    GxB_Global_Option_get_(GxB_THREAD_SAFETY, &thread_safety) ;
-    pargout [2] = mxCreateDoubleScalar (thread_safety) ;
+    pargout [1] = mxCreateDoubleScalar (1) ;
+    pargout [2] = mxCreateDoubleScalar (1) ;
 
     GxB_Format_Value format ;
     GxB_Global_Option_get_(GxB_FORMAT, &format) ;

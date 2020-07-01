@@ -13,9 +13,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
-    GB_MATRIX_FREE (&B) ;               \
-    GB_mx_put_global (true, 0) ;        \
+    GrB_Matrix_free_(&A) ;               \
+    GrB_Matrix_free_(&B) ;               \
+    GB_mx_put_global (true) ;           \
 }
 
 
@@ -31,8 +31,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
     GrB_Matrix B = NULL ;
-
-    GB_WHERE (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin != 2)

@@ -47,10 +47,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // xcode and A must be compatible
     if (!GB_code_compatible (xcode, A->type->code))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-            "entries in A of type [%s] cannot be typecast\n"
-            "to output array X of type [%s]",
-            A->type->name, GB_code_string (xcode)))) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
@@ -69,9 +66,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     if (nvals < anz && (I_out != NULL || J_out != NULL || X != NULL))
     { 
         // output arrays are not big enough
-        return (GB_ERROR (GrB_INSUFFICIENT_SPACE, (GB_LOG,
-            "output arrays I,J,X are not big enough: nvals " GBd " < "
-            "number of entries " GBd, nvals, anz))) ;
+        return (GrB_INSUFFICIENT_SPACE) ;
     }
 
     //--------------------------------------------------------------------------
@@ -115,7 +110,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         if (!GB_extract_vector_list ((int64_t *) J, A, nthreads))
         { 
             // out of memory
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

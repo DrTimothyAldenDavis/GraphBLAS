@@ -38,7 +38,7 @@
 
 #define FREE_ALL            \
 {                           \
-    GB_MATRIX_FREE (&A) ;   \
+    GrB_Matrix_free_(&A) ;   \
 }
 
 GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
@@ -55,7 +55,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // check for empty matrix
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("mxArray_to_Matrix") ;
+    GB_CONTEXT ("mxArray_to_Matrix") ;
 
     GrB_Matrix A = NULL ;
 

@@ -112,7 +112,7 @@ void mexFunction
 
                 // get a deep copy of A and convert it to the requested format
                 C = gb_get_deep (pargin [0]) ;
-                OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
 
             }
             else
@@ -136,7 +136,7 @@ void mexFunction
 
             // set to BY_COL if column vector, BY_ROW if row vector,
             // use global default format otherwise
-            OK (GxB_Matrix_Option_set (C, GxB_FORMAT,
+            OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT,
                 gb_default_format (nrows, ncols))) ;
 
         }
@@ -179,7 +179,7 @@ void mexFunction
 
                 // set to BY_COL if column vector, BY_ROW if row vector,
                 // use global default format otherwise
-                OK (GxB_Matrix_Option_set (C, GxB_FORMAT,
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT,
                     gb_default_format (nrows, ncols))) ;
 
             }
@@ -187,7 +187,7 @@ void mexFunction
             { 
                 // create an m-by-n double matrix of the desired format
                 OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
-                OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
             }
             else
             { 
@@ -225,7 +225,7 @@ void mexFunction
             if (gb_mxarray_is_empty (pargin [0]))
             { 
                 OK (GrB_Matrix_new (&C, type, 0, 0)) ;
-                OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
             }
             else
             { 
@@ -279,7 +279,7 @@ void mexFunction
             }
 
             OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
-            OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+            OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
 
         }
         else

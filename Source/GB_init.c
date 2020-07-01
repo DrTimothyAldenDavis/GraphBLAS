@@ -30,7 +30,6 @@
 // both pass this flag in as false.
 
 #include "GB.h"
-#include "GB_thread_local.h"
 #include "GB_mkl.h"
 
 //------------------------------------------------------------------------------
@@ -63,7 +62,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
-        return (GrB_PANIC) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     GB_Global_GrB_init_called_set (true) ;
@@ -123,8 +122,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // Maximum number of threads for internal parallelization.
     // SuiteSparse:GraphBLAS requires OpenMP to use parallelization within
     // calls to GraphBLAS.  The user application may also call GraphBLAS in
-    // parallel, from multiple user threads.  The user threads can use OpenMP,
-    // or POSIX pthreads.
+    // parallel, from multiple user threads.  The user threads can use
+    // any threading library; this has no effect on GraphBLAS.
 
     GB_Global_nthreads_max_set (GB_Global_omp_get_max_threads ( )) ;
     GB_Global_chunk_set (GB_CHUNK_DEFAULT) ;
@@ -136,24 +135,8 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_use_mkl_set (false) ;
 
     //--------------------------------------------------------------------------
-    // initialize thread-local storage
-    //--------------------------------------------------------------------------
-
-    if (!GB_thread_local_init (free_function)) GB_PANIC ;
-
-    #if defined (USER_POSIX_THREADS)
-    {
-        // TODO in 4.0: delete
-        bool ok = (pthread_mutex_init (&GB_sync, NULL) == 0) ;
-        if (!ok) GB_PANIC ;
-    }
-    #endif
-
-    //--------------------------------------------------------------------------
     // initialize the blocking/nonblocking mode
     //--------------------------------------------------------------------------
-
-    GB_Global_queue_head_set (NULL) ;   // TODO in 4.0: delete
 
     // set the mode: blocking or nonblocking
     GB_Global_mode_set (mode) ;
@@ -197,14 +180,20 @@ GrB_Info GB_init            // start up GraphBLAS
     {
         // query the system for the # of GPUs
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
-        if (!GB_Global_gpu_count_set (true)) GB_PANIC ;
+        if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
         fprintf (stderr, "gpu_count: %d\n", gpu_count) ;
         for (int device = 0 ; device < gpu_count ; device++)
         {
             // query the GPU and then warm it up
-            if (!GB_Global_gpu_device_properties_get (device)) GB_PANIC ;
-            if (!GB_cuda_warmup (device)) GB_PANIC ;
+            if (!GB_Global_gpu_device_properties_get (device))
+            {
+                return (GrB_PANIC) ;
+            }
+            if (!GB_cuda_warmup (device))
+            {
+                return (GrB_PANIC) ;
+            }
             fprintf (stderr, "gpu %d memory %g Gbytes, %d SMs\n", device,
                 ((double) GB_Global_gpu_memorysize_get (device)) / 1e9,
                 GB_Global_gpu_sm_get (device)) ;

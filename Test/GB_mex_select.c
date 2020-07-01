@@ -15,12 +15,12 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_SCALAR_FREE (&Thunk) ;           \
-    GB_MATRIX_FREE (&C) ;               \
-    GB_MATRIX_FREE (&M) ;               \
-    GB_MATRIX_FREE (&A) ;               \
+    GxB_Scalar_free_(&Thunk) ;          \
+    GrB_Matrix_free_(&C) ;              \
+    GrB_Matrix_free_(&M) ;              \
+    GrB_Matrix_free_(&A) ;              \
     GrB_Descriptor_free_(&desc) ;       \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -40,7 +40,6 @@ void mexFunction
     GxB_Scalar Thunk = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 6 || nargin > 8)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -50,7 +49,7 @@ void mexFunction
     #define GET_DEEP_COPY \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
     if (nargin > 7 && C != NULL) C->nvec_nonempty = -1 ;
-    #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
+    #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
     GET_DEEP_COPY ;
     if (C == NULL)
     {

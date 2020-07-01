@@ -112,9 +112,9 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_MATRIX_FREE (Zhandle) ;          \
-    GB_MATRIX_FREE (&C_cleared) ;       \
-    GB_MATRIX_FREE (&R) ;               \
+    GB_Matrix_free (Zhandle) ;          \
+    GB_Matrix_free (&C_cleared) ;       \
+    GB_Matrix_free (&R) ;               \
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ GrB_Info GB_mask                // C<M> = Z
             ASSERT (GB_DEAD_CODE) ;    // the following is no longer used
 
             // free Z if it exists (this is OK if Zhandle is NULL)
-            GB_MATRIX_FREE (Zhandle) ;
+            GB_Matrix_free (Zhandle) ;
 
             if (C_replace)
             {
@@ -304,8 +304,8 @@ GrB_Info GB_mask                // C<M> = Z
         // free temporary matrices Z and C_cleared
         //----------------------------------------------------------------------
 
-        GB_MATRIX_FREE (Zhandle) ;
-        GB_MATRIX_FREE (&C_cleared) ;
+        GB_Matrix_free (Zhandle) ;
+        GB_Matrix_free (&C_cleared) ;
 
         //----------------------------------------------------------------------
         // transplant the result, conform, and free R

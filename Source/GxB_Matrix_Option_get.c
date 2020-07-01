@@ -21,7 +21,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_Option_get (A, field, &value)") ;
+    GB_WHERE1 ("GxB_Matrix_Option_get (A, field, &value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 
@@ -69,11 +69,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 
         default : 
 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                    "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], or GxB_IS_HYPER [%d]",
-                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_IS_HYPER))) ;
+            return (GrB_INVALID_VALUE) ;
 
     }
     return (GrB_SUCCESS) ;

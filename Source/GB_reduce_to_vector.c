@@ -31,7 +31,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_MATRIX_FREE (&T) ;       \
+    GB_Matrix_free (&T) ;       \
 }
 
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
@@ -90,20 +90,20 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     { 
         // all 3 types of z = reduce (x,y) must be the same.  reduce must also
         // be associative but there is no way to check this in general.
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
             "All domains of reduction operator must be identical;\n"
             "operator is: [%s] = %s ([%s],[%s])", reduce->ztype->name,
-            reduce->name, reduce->xtype->name, reduce->ytype->name))) ;
+            reduce->name, reduce->xtype->name, reduce->ytype->name) ;
     }
 
     // T = reduce (T,A) must be compatible
     if (!GB_Type_compatible (A->type, reduce->ztype))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Incompatible type for reduction operator z=%s(x,y):\n"
             "input matrix A of type [%s]\n"
             "cannot be typecast to reduction operator of type [%s]",
-            reduce->name, A->type->name, reduce->ztype->name))) ;
+            reduce->name, A->type->name, reduce->ztype->name) ;
     }
 
     // check the dimensions
@@ -112,20 +112,20 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     {
         if (n != GB_NCOLS (A))
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "w=reduce(A'):  length of w is " GBd ";\n"
                 "it must match the number of columns of A, which is " GBd ".",
-                n, GB_NCOLS (A)))) ;
+                n, GB_NCOLS (A)) ;
         }
     }
     else
     {
         if (n != GB_NROWS(A))
         { 
-            return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "w=reduce(A):  length of w is " GBd ";\n"
                 "it must match the number of rows of A, which is " GBd ".",
-                n, GB_NROWS (A)))) ;
+                n, GB_NROWS (A)) ;
         }
     }
 
@@ -289,7 +289,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         { 
             // out of memory
             GB_FREE_ALL ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------
@@ -477,7 +477,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             { 
                 // out of memory
                 GB_FREE_ALL ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             GB_eslice (pstart_slice, anz, ntasks) ;

@@ -86,7 +86,7 @@ GrB_Info GB_dense_subassign_05d
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, ntasks))
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

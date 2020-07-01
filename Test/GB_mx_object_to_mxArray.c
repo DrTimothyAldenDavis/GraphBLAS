@@ -37,7 +37,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     const bool create_struct        // if true, then return a struct
 )
 {
-    GB_WHERE ("GB_mx_object_to_mxArray") ;
+    GB_CONTEXT ("GB_mx_object_to_mxArray") ;
 
     // get the inputs
     mxArray *A, *Astruct, *X = NULL ;
@@ -193,7 +193,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 
     // free C, but leave any shallow components untouched
     // since these have been transplanted into the MATLAB matrix.
-    GB_MATRIX_FREE (handle) ;
+    GrB_Matrix_free_(handle) ;
 
     if (create_struct)
     {

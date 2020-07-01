@@ -28,7 +28,7 @@ GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)") ;
+    GB_WHERE (C, "GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)") ;
     GB_BURBLE_START ("GxB_subassign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;

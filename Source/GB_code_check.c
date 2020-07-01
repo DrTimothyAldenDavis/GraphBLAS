@@ -52,8 +52,7 @@ GrB_Info GB_code_check          // print an entry using a type code
     const GB_Type_code code,    // type code of value to print
     const void *x,              // entry to print
     int pr,                     // print level
-    FILE *f,                    // file to print to
-    GB_Context Context
+    FILE *f                     // file to print to
 )
 {
 

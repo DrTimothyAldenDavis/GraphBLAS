@@ -20,7 +20,7 @@ GrB_Info GrB_Vector_size    // get the dimension of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_size (&n, v)") ;
+    GB_WHERE1 ("GrB_Vector_size (&n, v)") ;
     GB_RETURN_IF_NULL (n) ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT (GB_VECTOR_OK (v)) ;

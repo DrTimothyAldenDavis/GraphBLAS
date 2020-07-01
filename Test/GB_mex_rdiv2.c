@@ -18,14 +18,14 @@
 
 #define FREE_ALL                            \
 {                                           \
-    GB_MATRIX_FREE (&A) ;                   \
-    GB_MATRIX_FREE (&B) ;                   \
-    GB_MATRIX_FREE (&B64) ;                 \
-    GB_MATRIX_FREE (&C) ;                   \
-    GB_MATRIX_FREE (&T) ;                   \
+    GrB_Matrix_free_(&A) ;                   \
+    GrB_Matrix_free_(&B) ;                   \
+    GrB_Matrix_free_(&B64) ;                 \
+    GrB_Matrix_free_(&C) ;                   \
+    GrB_Matrix_free_(&T) ;                   \
     GrB_BinaryOp_free_(&My_rdiv2) ;         \
     GrB_Semiring_free_(&My_plus_rdiv2) ;    \
-    GB_mx_put_global (true, 0) ;            \
+    GB_mx_put_global (true) ;               \
 }
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
-GrB_Desc_Value AxB_method = GxB_DEFAULT, AxB_method_used ;
+GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 bool flipxy = false ;
 bool done_in_place = false ;
 double C_scalar = 0 ;
@@ -116,7 +116,7 @@ GrB_Info axb (GB_Context Context)
         flipxy,
         &ignore,    // mask_applied
         &done_in_place,
-        AxB_method, &AxB_method_used, Context) ;
+        AxB_method, Context) ;
 
     if (info == GrB_SUCCESS)
     {
@@ -166,7 +166,7 @@ void mexFunction
     My_rdiv2 = NULL ;
     My_plus_rdiv2 = NULL ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < 2 || nargin > 7)
@@ -245,8 +245,7 @@ void mexFunction
     GrB_Matrix_assign_(B, NULL, NULL, B64, GrB_ALL, 0, GrB_ALL, 0, NULL) ;
 
     // B must be completed
-    GrB_Index nvals ;
-    GrB_Matrix_nvals (&nvals, B) ;
+    GrB_Matrix_wait (&B) ;
 
     METHOD (axb (Context)) ;
 

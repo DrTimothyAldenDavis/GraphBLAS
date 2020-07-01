@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#define FAIL(s)                                                     \
-{                                                                   \
-    fprintf (f,"\ntest failure: line %d\n", __LINE__) ;             \
-    fprintf (f,"%s\n", GB_STR(s)) ;                                 \
-    fclose (f) ;                                                    \
-    mexErrMsgTxt (GB_STR(s) " line: " GB_XSTR(__LINE__)) ;          \
+#define FAIL(s)                                                             \
+{                                                                           \
+    fprintf (f,"\ntest failure: line %d\n", __LINE__) ;                     \
+    fprintf (f,"%s\n", GB_STR(s)) ;                                         \
+    fclose (f) ;                                                            \
+    mexErrMsgTxt (GB_STR(s) " line: " GB_XSTR(__LINE__)) ;                  \
 }
 
 #undef CHECK
@@ -20,24 +20,35 @@
 #define CHECK2(x,s) if (!(x)) FAIL(s) ;
 
 // assert that a method should return a particular error code
-#define ERR(method)                                                 \
-{                                                                   \
-    info = method ;                                                 \
-    fprintf (f,"GB_mex_errors, line %d:", __LINE__) ;               \
-    fprintf (f,"%s\n", GrB_error ( )) ;                             \
+#define ERR(method)                                                         \
+{                                                                           \
+    info = method ;                                                         \
+    fprintf (f, "line %d: info %d\n", __LINE__, info) ;                     \
     if (info != expected) fprintf (f, "got %d expected %d\n", info, expected) ; \
-    CHECK2 (info == expected, method) ;                             \
+    CHECK2 (info == expected, method) ;                                     \
+}
+
+// assert that a method should return a particular error code: with logger
+#define ERR1(C,method)                                                      \
+{                                                                           \
+    info = method ;                                                         \
+    fprintf (f, "\nline %d: info %d, error logger:\n", __LINE__, info) ;    \
+    char *error_logger ;                                                    \
+    GrB_error (&error_logger, C) ;                                          \
+    fprintf (f,"[%s]\n", error_logger) ;                                    \
+    if (info != expected) fprintf (f, "got %d expected %d\n", info, expected) ; \
+    CHECK2 (info == expected, method) ;                                     \
 }
 
 // assert that a method should succeed
-#define OK(method)                                                  \
-{                                                                   \
-    info = method ;                                                 \
-    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))            \
-    {                                                               \
-        fprintf (f,"[%d] >>>>>>>>%s\n", info, GrB_error ( )) ;      \
-        printf ("[%d] %s\n", info, GrB_error ( )) ;                 \
-        FAIL (method) ;                                             \
-    }                                                               \
+#define OK(method)                                                          \
+{                                                                           \
+    info = method ;                                                         \
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                    \
+    {                                                                       \
+        fprintf (f,"[%d] >>>>>>>>\n", info) ;                               \
+        printf ("[%d] %s\n", info) ;                                        \
+        FAIL (method) ;                                                     \
+    }                                                                       \
 }
 

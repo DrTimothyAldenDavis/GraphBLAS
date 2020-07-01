@@ -11,7 +11,7 @@
 
 #define USAGE "A = GB_mex_wathen (nx, ny, method, scale, rho)"
 
-#define FREE_ALL GB_mx_put_global (true, 0) ;
+#define FREE_ALL GB_mx_put_global (true) ;   
 
 void mexFunction
 (
@@ -26,7 +26,6 @@ void mexFunction
     GrB_Matrix A = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin > 5)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

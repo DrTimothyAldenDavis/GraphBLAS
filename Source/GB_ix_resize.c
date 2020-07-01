@@ -77,7 +77,7 @@ GrB_Info GB_ix_resize           // resize a matrix
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            GB_PHIX_FREE (A) ;
+            GB_phix_free (A) ;
             return (info) ;
         }
         ASSERT_MATRIX_OK (A, "A increased in size", GB0) ;

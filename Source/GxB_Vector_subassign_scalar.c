@@ -27,7 +27,7 @@ GrB_Info GxB_Vector_subassign_ ## T /* w(Rows)<M> = accum (w(Rows),x)       */ \
     const GrB_Descriptor desc       /* descriptor for w(Rows) and M         */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE ("GxB_Vector_subassign_" GB_STR(T)                                \
+    GB_WHERE (w, "GxB_Vector_subassign_" GB_STR(T)                             \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
     GB_BURBLE_START ("GxB_subassign") ;                                        \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                          \

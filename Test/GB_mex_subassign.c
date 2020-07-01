@@ -42,15 +42,15 @@
     bool A_is_M = (A == M) ;            \
     bool A_is_C = (A == C) ;            \
     bool C_is_M = (C == M) ;            \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     if (A_is_C) C = NULL ;              \
     if (A_is_M) M = NULL ;              \
-    GB_MATRIX_FREE (&C) ;               \
+    GrB_Matrix_free_(&C) ;               \
     if (C_is_M) M = NULL ;              \
-    GB_MATRIX_FREE (&M) ;               \
+    GrB_Matrix_free_(&M) ;               \
     GrB_Descriptor_free_(&desc) ;       \
     if (!user_complex) GrB_Monoid_free_(&reduce) ;                \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 #define GET_DEEP_COPY                                                   \
@@ -70,7 +70,7 @@
 {                               \
     if (A == C) A = NULL ;      \
     if (M == C) M = NULL ;      \
-    GB_MATRIX_FREE (&C) ;       \
+    GrB_Matrix_free_(&C) ;       \
 }
 
 GrB_Matrix C = NULL ;
@@ -113,8 +113,8 @@ GrB_Info many_subassign
     info = method ;                     \
     if (info != GrB_SUCCESS)            \
     {                                   \
-        GB_MATRIX_FREE (&mask) ;        \
-        GB_MATRIX_FREE (&u) ;           \
+        GrB_Matrix_free_(&mask) ;        \
+        GrB_Matrix_free_(&u) ;           \
         return (info) ;                 \
     }                                   \
 }
@@ -296,8 +296,8 @@ GrB_Info assign (GB_Context Context)
         ASSERT (GB_VECTOR_OK (u)) ;
         OK (GxB_Row_subassign_(C, (GrB_Vector) mask, accum, (GrB_Vector) u,
             I [0], J, nj, desc)) ;
-        GB_MATRIX_FREE (&mask) ;
-        GB_MATRIX_FREE (&u) ;
+        GrB_Matrix_free_(&mask) ;
+        GrB_Matrix_free_(&u) ;
     }
     else
     {
@@ -422,8 +422,8 @@ GrB_Info many_subassign
 
         info = assign (Context) ;
 
-        GB_MATRIX_FREE (&A) ;
-        GB_MATRIX_FREE (&M) ;
+        GrB_Matrix_free_(&A) ;
+        GrB_Matrix_free_(&M) ;
         GrB_Descriptor_free_(&desc) ;
 
         if (info != GrB_SUCCESS)
@@ -462,7 +462,7 @@ void mexFunction
     op = NULL ;
     reduce = NULL ;
 
-    GB_WHERE (USAGE) ;
+    GB_CONTEXT (USAGE) ;
     if (!((nargout == 1 && (nargin == 2 || nargin == 6 || nargin == 7)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
     {

@@ -77,8 +77,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
     if (printf_result < 0)                                                  \
     {                                                                       \
         int err = errno ;                                                   \
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,                       \
-            "File output error (%d): %s", err, strerror (err)))) ;          \
+        return (GrB_INVALID_VALUE) ;                                        \
     }                                                                       \
 }
 
@@ -103,20 +102,17 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
             GBPR0 ("already freed!\n") ;                                \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "%s is freed: [%s]", kind, name))) ;                    \
+            return (GrB_UNINITIALIZED_OBJECT) ;                         \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
             GBPR0 ("invalid\n") ;                                       \
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
-                "%s is invalid: [%s]", kind, name))) ;                  \
+            return (GrB_INVALID_OBJECT) ;                               \
                                                                         \
         default :                                                       \
             /* uninitialized */                                         \
             GBPR0 ("uninititialized\n") ;                               \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "%s is uninitialized: [%s]", kind, name))) ;            \
+            return (GrB_UNINITIALIZED_OBJECT) ;                         \
     }                                                                   \
 }
 

@@ -27,7 +27,7 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)") ;
+    GB_WHERE (w, "GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)") ;
     GB_BURBLE_START ("GrB_assign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;

@@ -57,7 +57,7 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)") ;
+    GB_WHERE (C, "GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)");
     GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 
@@ -103,7 +103,8 @@ GrB_Info GrB_Matrix_eWiseAdd_Monoid         // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_eWiseAdd_Monoid (C, M, accum, monoid, A, B, desc)") ;
+    GB_WHERE (C, "GrB_Matrix_eWiseAdd_Monoid "
+        "(C, M, accum, monoid, A, B, desc)") ;
     GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
@@ -149,7 +150,7 @@ GrB_Info GrB_Matrix_eWiseAdd_Semiring       // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_eWiseAdd_Semiring (C, M, accum, semiring, A, B,"
+    GB_WHERE (C, "GrB_Matrix_eWiseAdd_Semiring (C, M, accum, semiring, A, B,"
         " desc)") ;
     GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;

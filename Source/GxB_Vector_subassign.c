@@ -27,7 +27,7 @@ GrB_Info GxB_Vector_subassign       // w(Rows)<M> = accum (w(Rows),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)") ;
+    GB_WHERE (w, "GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)") ;
     GB_BURBLE_START ("GxB_subassign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;

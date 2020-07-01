@@ -14,7 +14,7 @@
 #define FREE_ALL                                        \
 {                                                       \
     GrB_Vector_free_(&v) ;                              \
-    GB_mx_put_global (true, 0) ;                        \
+    GB_mx_put_global (true) ;                           \
 }
 
 void mexFunction
@@ -33,7 +33,6 @@ void mexFunction
     bool is_list ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 2 || nargin > 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

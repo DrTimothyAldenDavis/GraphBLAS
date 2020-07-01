@@ -18,7 +18,7 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     GrB_Vector_free_(&w) ;              \
     GrB_Vector_free_(&mask) ;           \
     GrB_Descriptor_free_(&desc) ;       \
@@ -26,7 +26,7 @@
     {                                   \
         GrB_Monoid_free_(&reduce) ;     \
     }                                   \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -47,7 +47,6 @@ void mexFunction
     bool user_complex = false ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 5 || nargin > 6)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

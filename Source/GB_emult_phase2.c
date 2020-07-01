@@ -236,7 +236,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            GB_MATRIX_FREE (&C) ;
+            GB_Matrix_free (&C) ;
             return (info) ;
         }
     }

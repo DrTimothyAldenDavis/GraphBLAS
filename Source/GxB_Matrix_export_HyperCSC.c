@@ -33,8 +33,8 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals,"
-        " &nonempty, &nvec, &Ah, &Ap, &Ai, &Ax, desc)") ;
+    GB_WHERE1 ("GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols,"
+        " &nvals, &nonempty, &nvec, &Ah, &Ap, &Ai, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_HyperCSC") ;
     GB_EXPORT_CHECK ;
 
@@ -105,7 +105,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
     // free the matrix header; do not free the exported content of the matrix,
     // which has already been removed above.
-    GB_MATRIX_FREE (A) ;
+    GB_Matrix_free (A) ;
     ASSERT (*A == NULL) ;
     GB_BURBLE_END ;
     return (info) ;

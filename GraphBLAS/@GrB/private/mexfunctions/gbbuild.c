@@ -207,7 +207,7 @@ void mexFunction
     GrB_Matrix A ;
     OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
-    OK (GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+    OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
 
     // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;
@@ -225,7 +225,7 @@ void mexFunction
                 sizeof (bool)) ;
             X = (bool *) X2 ;
         }
-        OK (GrB_Matrix_build_BOOL (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_BOOL (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT8)
     { 
@@ -239,7 +239,7 @@ void mexFunction
                 sizeof (int8_t)) ;
             X = (int8_t *) X2 ;
         }
-        OK (GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT16)
     { 
@@ -253,7 +253,7 @@ void mexFunction
                 sizeof (int16_t)) ;
             X = (int16_t *) X2 ;
         }
-        OK (GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT32)
     { 
@@ -267,7 +267,7 @@ void mexFunction
                 sizeof (int32_t)) ;
             X = (int32_t *) X2 ;
         }
-        OK (GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT64)
     { 
@@ -281,7 +281,7 @@ void mexFunction
                 sizeof (int64_t)) ;
             X = (int64_t *) X2 ;
         }
-        OK (GrB_Matrix_build_INT64 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_INT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT8)
     { 
@@ -295,7 +295,7 @@ void mexFunction
                 sizeof (uint8_t)) ;
             X = (uint8_t *) X2 ;
         }
-        OK (GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT16)
     { 
@@ -309,7 +309,7 @@ void mexFunction
                 sizeof (uint16_t)) ;
             X = (uint16_t *) X2 ;
         }
-        OK (GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT32)
     { 
@@ -323,7 +323,7 @@ void mexFunction
                 sizeof (uint32_t)) ;
             X = (uint32_t *) X2 ;
         }
-        OK (GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT64)
     { 
@@ -337,7 +337,7 @@ void mexFunction
                 sizeof (uint64_t)) ;
             X = (uint64_t *) X2 ;
         }
-        OK (GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP32)
     { 
@@ -351,7 +351,7 @@ void mexFunction
                 sizeof (float)) ;
             X = (float *) X2 ;
         }
-        OK (GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP64)
     { 
@@ -365,7 +365,7 @@ void mexFunction
                 sizeof (double)) ;
             X = (double *) X2 ;
         }
-        OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GxB_FC32)
     { 
@@ -380,7 +380,7 @@ void mexFunction
                 sizeof (GxB_FC32_t)) ;
             X = (GxB_FC32_t *) X2 ;
         }
-        OK (GxB_Matrix_build_FC32 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GxB_Matrix_build_FC32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GxB_FC64)
     { 
@@ -395,7 +395,7 @@ void mexFunction
                 sizeof (GxB_FC64_t)) ;
             X = (GxB_FC64_t *) X2 ;
         }
-        OK (GxB_Matrix_build_FC64 (A, I, J, X, nvals, dup)) ;
+        OK1 (A, GxB_Matrix_build_FC64 (A, I, J, X, nvals, dup)) ;
     }
     else
     {

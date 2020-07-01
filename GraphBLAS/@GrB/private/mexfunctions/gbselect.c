@@ -248,7 +248,7 @@ void mexFunction
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
-        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -356,7 +356,7 @@ void mexFunction
     // compute C<M> += select (A, b2)
     //--------------------------------------------------------------------------
 
-    OK (GxB_Matrix_select (C, M, accum, op, A, b2, desc)) ;
+    OK1 (C, GxB_Matrix_select (C, M, accum, op, A, b2, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

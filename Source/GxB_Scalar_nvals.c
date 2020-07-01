@@ -20,7 +20,7 @@ GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Scalar_nvals (&nvals, s)") ;
+    GB_WHERE1 ("GxB_Scalar_nvals (&nvals, s)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     ASSERT (GB_SCALAR_OK (s)) ;
 

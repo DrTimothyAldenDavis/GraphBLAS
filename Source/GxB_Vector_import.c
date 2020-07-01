@@ -28,23 +28,16 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Vector_import (&v, type, n, nvals, &vi, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_import (&v, type, n, nvals, &vi, &vx, desc)") ;
     GB_BURBLE_START ("GxB_Vector_import") ;
     GB_RETURN_IF_NULL (v) ;
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (n > GxB_INDEX_MAX)
+    if (n > GxB_INDEX_MAX || nvals > GxB_INDEX_MAX)
     { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: n " GBu " exceeds " GBu ,
-            n, GxB_INDEX_MAX))) ;
-    }
-    if (nvals > GxB_INDEX_MAX)
-    { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: nvals " GBu " exceeds " GBu ,
-            nvals, GxB_INDEX_MAX))) ;
+        // problem too large
+        return (GrB_INVALID_VALUE) ;
     }
 
     if (nvals > 0)

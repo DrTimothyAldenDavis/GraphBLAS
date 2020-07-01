@@ -14,9 +14,6 @@
 #ifndef GB_GLOBAL_H
 #define GB_GLOBAL_H
 
-GB_PUBLIC void   GB_Global_queue_head_set (void *p) ;   // TODO in 4.0: delete
-GB_PUBLIC void * GB_Global_queue_head_get (void) ;  // TODO in 4.0: delete
-
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_mode_set (GrB_Mode mode) ;
 GrB_Mode GB_Global_mode_get (void) ;

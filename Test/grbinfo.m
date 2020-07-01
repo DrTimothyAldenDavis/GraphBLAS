@@ -6,9 +6,9 @@ function [nth chnk] = grbinfo
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[nthreads threading thread_safety format hyperratio ... 
-name version date about license compiledate compiletime api api_about ...
-chunk ] = GB_mex_init ;
+[nthreads, ~, ~, format, hyperratio,
+name, version, date, about, license, compiledate, compiletime, api, ...
+api_about, chunk ] = GB_mex_init ;
 
 d = stat ;
 
@@ -27,27 +27,6 @@ fprintf ('    # of threads to use:   %d\n', nthreads) ;
 fprintf ('    chunk:                 %g\n', chunk) ;
 fprintf ('    OpenMP max threads:    %d\n', GB_mex_omp_max_threads) ;
 fprintf ('    # of cores for MATLAB: %d\n', ncores) ;
-
-
-switch (threading)
-    case {0}
-        fprintf ('    no internal threading\n') ;
-    case {1}
-        fprintf ('    OpenMP for internal threads\n') ;
-    otherwise
-        error ('?') ;
-end
-
-switch (thread_safety)
-    case {0}
-        fprintf ('    no thread safety\n') ;
-    case {1}
-        fprintf ('    OpenMP for user thread safety\n') ;
-    case {2}
-        fprintf ('    POSIX for user thread safety\n') ;
-    otherwise
-        error ('?') ;
-end
 
 switch (format)
     case {0}

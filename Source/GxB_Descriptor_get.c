@@ -23,7 +23,7 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Descriptor_get (&value, desc, field)") ;
+    GB_WHERE1 ("GxB_Descriptor_get (&value, desc, field)") ;
     GB_RETURN_IF_NULL (val) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
@@ -55,8 +55,7 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
 
         default : 
 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                "invalid descriptor field"))) ;
+            return (GrB_INVALID_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;

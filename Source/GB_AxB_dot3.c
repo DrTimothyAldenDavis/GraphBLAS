@@ -23,7 +23,7 @@
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_FREE_WORK ;                                                      \
-    GB_MATRIX_FREE (Chandle) ;                                          \
+    GB_Matrix_free (Chandle) ;                                          \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -445,8 +445,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
-
-    if (C->nzombies > 0) { if (!GB_queue_insert (C)) GB_PANIC ; } // TODO in 4.0: delete
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;

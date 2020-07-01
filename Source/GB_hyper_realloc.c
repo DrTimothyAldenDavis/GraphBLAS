@@ -53,8 +53,8 @@ GrB_Info GB_hyper_realloc
         if (!ok)
         { 
             // out of memory
-            GB_PHIX_FREE (A) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         // size of A->p and A->h has been changed

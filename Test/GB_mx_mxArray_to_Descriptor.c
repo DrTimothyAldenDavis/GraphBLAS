@@ -128,8 +128,6 @@ bool GB_mx_mxArray_to_Descriptor   // true if successful, false otherwise
     const char *name                // name of the descriptor
 )
 {
-    GB_WHERE ("GB_mx_mxArray_to_Descriptor") ;
-
     // a null descriptor is OK; the method will use defaults
     (*handle) = NULL ;
     if (D_matlab == NULL || mxIsEmpty (D_matlab))

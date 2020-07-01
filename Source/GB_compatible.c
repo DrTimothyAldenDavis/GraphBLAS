@@ -63,10 +63,11 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
     // also C<M> = accum(C,T) for entries in T but not C
     if (!GB_Type_compatible (ctype, ttype))
     { 
-        return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+        printf ("not compatible %s %s\n", ttype->name, ctype->name) ;
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Result of computation of type [%s]\n"
             "cannot be typecast to final output of type [%s]",
-            ttype->name, ctype->name))) ;
+            ttype->name, ctype->name) ;
     }
 
     //--------------------------------------------------------------------------

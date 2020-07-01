@@ -20,7 +20,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Global_Option_set (field, value)") ;
+    GB_WHERE1 ("GxB_Global_Option_set (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -53,10 +53,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_end (ap) ;
                 if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
                 { 
-                    return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                            "unsupported format [%d], must be one of:\n"
-                            "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
-                            (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
+                    return (GrB_INVALID_VALUE) ;
                 }
                 GB_Global_is_csc_set (format != (int) GxB_BY_ROW) ; 
             }
@@ -146,16 +143,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         default : 
 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                    "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_NTHREADS [%d]\n"
-                    "GxB_CHUNK [%d], GxB_BURBLE [%d], GxB_GPU_CONTROL [%d]\n"
-                    "GxB_GPU_CHUNK [%d], or GxB_MKL [%d]\n",
-                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_NTHREADS, (int) GxB_CHUNK, (int) GxB_BURBLE,
-                    (int) GxB_GPU_CONTROL, (int) GxB_GPU_CHUNK, (int)
-                    GxB_MKL))) ;
-
+            return (GrB_INVALID_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;

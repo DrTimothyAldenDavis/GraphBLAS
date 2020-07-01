@@ -26,7 +26,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_new (&v, type, n)") ;
+    GB_WHERE1 ("GrB_Vector_new (&v, type, n)") ;
     GB_RETURN_IF_NULL (v) ;
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
@@ -34,8 +34,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     if (n > GxB_INDEX_MAX)
     { 
         // problem too large
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "problem too large: n " GBu " exceeds " GBu, n, GxB_INDEX_MAX))) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

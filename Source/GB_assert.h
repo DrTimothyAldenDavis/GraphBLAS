@@ -98,60 +98,61 @@
 //------------------------------------------------------------------------------
 
 #define ASSERT_TYPE_OK(t,name,pr)  \
-    ASSERT_OK (GB_Type_check (t, name, pr, NULL, Context))
+    ASSERT_OK (GB_Type_check (t, name, pr, NULL))
 
 #define ASSERT_TYPE_OK_OR_NULL(t,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_Type_check (t, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_Type_check (t, name, pr, NULL))
 
 #define ASSERT_BINARYOP_OK(op,name,pr)  \
-    ASSERT_OK (GB_BinaryOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK (GB_BinaryOp_check (op, name, pr, NULL))
 
 #define ASSERT_BINARYOP_OK_OR_NULL(op,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_BinaryOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_BinaryOp_check (op, name, pr, NULL))
 
 #define ASSERT_UNARYOP_OK(op,name,pr)  \
-    ASSERT_OK (GB_UnaryOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK (GB_UnaryOp_check (op, name, pr, NULL))
 
 #define ASSERT_UNARYOP_OK_OR_NULL(op,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_UnaryOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_UnaryOp_check (op, name, pr, NULL))
 
 #define ASSERT_SELECTOP_OK(op,name,pr)  \
-    ASSERT_OK (GB_SelectOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK (GB_SelectOp_check (op, name, pr, NULL))
 
 #define ASSERT_SELECTOP_OK_OR_NULL(op,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_SelectOp_check (op, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_SelectOp_check (op, name, pr, NULL))
 
 #define ASSERT_MONOID_OK(mon,name,pr)  \
-    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL, Context))
+    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL))
 
 #define ASSERT_SEMIRING_OK(s,name,pr)  \
-    ASSERT_OK (GB_Semiring_check (s, name, pr, NULL, Context))
+    ASSERT_OK (GB_Semiring_check (s, name, pr, NULL))
 
 #define ASSERT_MATRIX_OK(A,name,pr)  \
-    ASSERT_OK (GB_Matrix_check (A, name, pr, NULL, Context))
+    ASSERT_OK (GB_Matrix_check (A, name, pr, NULL))
 
 #define ASSERT_MATRIX_OK_OR_NULL(A,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_Matrix_check (A, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_Matrix_check (A, name, pr, NULL))
 
 #define ASSERT_MATRIX_OK_OR_JUMBLED(A,name,pr)  \
-    ASSERT_OK_OR_JUMBLED (GB_Matrix_check (A, name, pr, NULL, Context))
+    ASSERT_OK_OR_JUMBLED (GB_Matrix_check (A, name, pr, NULL))
 
 #define ASSERT_VECTOR_OK(v,name,pr)  \
-    ASSERT_OK (GB_Vector_check (v, name, pr, NULL, Context))
+    ASSERT_OK (GB_Vector_check (v, name, pr, NULL))
 
 #define ASSERT_VECTOR_OK_OR_NULL(v,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_Vector_check (v, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_Vector_check (v, name, pr, NULL))
 
 #define ASSERT_SCALAR_OK(s,name,pr)  \
-    ASSERT_OK (GB_Scalar_check (s, name, pr, NULL, Context))
+    ASSERT_OK (GB_Scalar_check (s, name, pr, NULL))
 
 #define ASSERT_SCALAR_OK_OR_NULL(s,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_Scalar_check (s, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_Scalar_check (s, name, pr, NULL))
 
 #define ASSERT_DESCRIPTOR_OK(d,name,pr)  \
-    ASSERT_OK (GB_Descriptor_check (d, name, pr, NULL, Context))
+    ASSERT_OK (GB_Descriptor_check (d, name, pr, NULL))
 
 #define ASSERT_DESCRIPTOR_OK_OR_NULL(d,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_Descriptor_check (d, name, pr, NULL, Context))
+    ASSERT_OK_OR_NULL (GB_Descriptor_check (d, name, pr, NULL))
 
 #endif
+

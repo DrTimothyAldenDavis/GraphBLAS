@@ -33,8 +33,6 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
 )
 {
 
-    GB_WHERE ("GB_mx_string_to_BinaryOp") ;
-
     (*op_handle) = NULL ;
     GrB_BinaryOp op = NULL ;
 

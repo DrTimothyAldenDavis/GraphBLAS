@@ -20,7 +20,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Global_Option_get (field, &value)") ;
+    GB_WHERE1 ("GxB_Global_Option_get (field, &value)") ;
 
     //--------------------------------------------------------------------------
     // get the option
@@ -74,47 +74,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (mode) ;
                 (*mode) = GB_Global_mode_get ( )  ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // threading model for synchronizing user threads
-        //----------------------------------------------------------------------
-
-        case GxB_THREAD_SAFETY : 
-
-            { 
-                va_start (ap, field) ;
-                GxB_Thread_Model *safety = va_arg (ap, GxB_Thread_Model *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (safety) ;
-                (*safety) = 
-                    #if defined (USER_POSIX_THREADS)
-                    GxB_THREAD_POSIX ;
-                    #elif defined ( _OPENMP ) || defined (USER_OPENMP_THREADS)
-                    GxB_THREAD_OPENMP ;
-                    #else
-                    GxB_THREAD_NONE ;
-                    #endif
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // internal parallel threading in GraphBLAS
-        //----------------------------------------------------------------------
-
-        case GxB_THREADING : 
-
-            { 
-                va_start (ap, field) ;
-                GxB_Thread_Model *threading = va_arg (ap, GxB_Thread_Model *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (threading) ;
-                #if defined ( _OPENMP )
-                (*threading) = GxB_THREAD_OPENMP ;
-                #else
-                (*threading) = GxB_THREAD_NONE ;
-                #endif
             }
             break ;
 
@@ -366,8 +325,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         default : 
 
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                    "invalid option field [%d]\n", (int) field))) ;
+            return (GrB_INVALID_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;

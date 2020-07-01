@@ -329,6 +329,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 struct GB_Descriptor_opaque // content of GrB_Descriptor
 {
     int64_t magic ;         // for detecting uninitialized objects
+    char *logger ;          // error logger string
     GrB_Desc_Value out ;    // output descriptor
     GrB_Desc_Value mask ;   // mask descriptor
     GrB_Desc_Value in0 ;    // first input descriptor (A for C=A*B, for example)

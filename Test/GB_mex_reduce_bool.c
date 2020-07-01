@@ -15,9 +15,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_MATRIX_FREE (&A) ;               \
+    GrB_Matrix_free_(&A) ;               \
     GrB_Monoid_free_(&reduce) ;         \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -36,7 +36,6 @@ void mexFunction
     GrB_BinaryOp reduceop = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 3 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

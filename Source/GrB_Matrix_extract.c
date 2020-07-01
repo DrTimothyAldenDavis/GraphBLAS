@@ -27,7 +27,7 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)") ;
+    GB_WHERE (C, "GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;

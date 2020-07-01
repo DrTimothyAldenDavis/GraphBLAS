@@ -111,7 +111,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     // free all content of C
-    GB_PHIX_FREE (C) ;
+    GB_phix_free (C) ;
 
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -174,9 +174,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
-                GB_PHIX_FREE (C) ;
-                GB_MATRIX_FREE (Ahandle) ;
-                return (GB_OUT_OF_MEMORY) ;
+                GB_phix_free (C) ;
+                GB_Matrix_free (Ahandle) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
@@ -192,9 +192,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL)
             { 
                 // out of memory
-                GB_PHIX_FREE (C) ;
-                GB_MATRIX_FREE (Ahandle) ;
-                return (GB_OUT_OF_MEMORY) ;
+                GB_phix_free (C) ;
+                GB_Matrix_free (Ahandle) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
 
             if (A_is_dense)
@@ -252,7 +252,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // Ci_keep is not needed after all, since C is empty
         GB_FREE (Ci_keep) ;
         ASSERT_MATRIX_OK (C, "C empty transplant", GB0) ;
-        GB_MATRIX_FREE (Ahandle) ;
+        GB_Matrix_free (Ahandle) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -292,10 +292,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (!ok)
     { 
         // out of memory
-        GB_PHIX_FREE (C) ;
-        GB_MATRIX_FREE (Ahandle) ;
+        GB_phix_free (C) ;
+        GB_Matrix_free (Ahandle) ;
         GB_FREE (Ci_keep) ;
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -408,13 +408,11 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
 
-    if (!GB_queue_insert (C)) GB_PANIC ;    // TODO in 4.0: delete
-
     //--------------------------------------------------------------------------
     // free A and return result
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_FREE (Ahandle) ;
+    GB_Matrix_free (Ahandle) ;
     ASSERT_MATRIX_OK (C, "C after transplant", GB0) ;
     return (GrB_SUCCESS) ;
 }

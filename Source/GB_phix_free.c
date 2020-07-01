@@ -15,13 +15,13 @@
 
 #include "GB.h"
 
-GrB_Info GB_phix_free           // free all content of a matrix
+void GB_phix_free               // free all content of a matrix
 (
     GrB_Matrix A                // handle of matrix with content to free
 )
 { 
 
     GB_ph_free (A) ;
-    return (GB_ix_free (A)) ;
+    GB_ix_free (A) ;
 }
 

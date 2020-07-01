@@ -12,25 +12,13 @@
 // function.  Results are undefined if more than one thread calls this
 // function at the same time.
 
+// In the current version of SuiteSparse:GraphBLAS, this function has nothing
+// to do.
+
 #include "GB.h"
 
 GrB_Info GrB_finalize ( )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE ("GrB_finalize") ;
-
-    #if defined (USER_POSIX_THREADS)
-    { pthread_mutex_destroy (&GB_sync) ; }  // TODO in 4.0: delete
-    #endif
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
     return (GrB_SUCCESS) ;
 }
 

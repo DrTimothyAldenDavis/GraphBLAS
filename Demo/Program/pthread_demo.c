@@ -26,13 +26,18 @@
 #define NTRIALS 10
 #define N 6
 
-#define OK(method)                                                  \
+#define OK(C,method)                                                \
 {                                                                   \
     GrB_Info info = method ;                                        \
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))            \
     {                                                               \
-        printf ("Failure (id: %d, info: %d): %s\n",                 \
-            id, info, GrB_error ( )) ;                              \
+        printf ("Failure (id: %d, info: %d):\n", id, info) ;        \
+        if (C != NULL)                                              \
+        {                                                           \
+            char *s ;                                               \
+            GrB_error (&s, C) ;                                     \
+            printf ("%s\n", s) ;                                    \
+        }                                                           \
         /* return to caller (do not use inside critical section) */ \
         return (0) ;                                                \
     }                                                               \
@@ -60,7 +65,7 @@ void *worker (void *arg)
     printf ("\n================= worker %d starts:\n", id) ;
     fprintf (stderr, "worker %d\n", id) ;
 
-    OK (GrB_Matrix_new (&(my->A), GrB_FP64, N, N)) ;
+    OK (NULL, GrB_Matrix_new (&(my->A), GrB_FP64, N, N)) ;
 
     GrB_Matrix A = my->A ;
 
@@ -83,13 +88,12 @@ void *worker (void *arg)
             for (int j = 0 ; j < N ; j++)
             {
                 double x = (i+1)*100000 + (j+1)*1000 + id ;
-                OK (GrB_Matrix_setElement_FP64 (A, x, i, j)) ;
+                OK (A, GrB_Matrix_setElement_FP64 (A, x, i, j)) ;
             } 
         }
 
         // force completion
-        GrB_Index nvals ;
-        OK (GrB_Matrix_nvals (&nvals, A)) ;
+        OK (A, GrB_Matrix_wait (&A)) ;
     }
 
     // Printing is done in a critical section, just so it is not overly
@@ -106,7 +110,7 @@ void *worker (void *arg)
         info2 = GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout) ;
     }
     pthread_mutex_unlock (&sync) ;
-    OK (info2) ;
+    OK (NULL, info2) ;
 
     // worker generates an intentional error message
     GrB_Matrix_setElement_INT32 (A, 42, 1000+id, 1000+id) ;
@@ -137,34 +141,12 @@ int main (int argc, char **argv)
     int id = -1 ;
 
     // start GraphBLAS
-    OK (GrB_init (GrB_NONBLOCKING)) ;
+    OK (NULL, GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
-    OK (GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
+    OK (NULL, GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
     printf ("pthread demo, nthreads: %d\n", nthreads) ;
 
     // Determine which user-threading model is being used.
-    GxB_Thread_Model thread_safety ;
-    GxB_Global_Option_get (GxB_THREAD_SAFETY, &thread_safety) ;
-    printf ("GraphBLAS is using ") ;
-    switch (thread_safety)
-    {
-        case GxB_THREAD_POSIX :
-            printf ("a POSIX pthread mutex\n") ;
-            break ;
-        case GxB_THREAD_WINDOWS :
-            printf ("a Windows CriticalSection\n") ;
-            break ;
-        case GxB_THREAD_ANSI :
-            printf ("an ANSI C11 mtx_lock\n") ;
-            break ;
-        case GxB_THREAD_OPENMP :
-            printf ("an OpenMP critical section\n") ;
-            break ;
-        default : // GxB_THREAD_NONE
-            printf ("(nothing! This will fail!)\n") ;
-            break ;
-    }
-    printf ("to synchronize user threads.\n") ;
     printf ("User threads in this program are POSIX pthreads.\n") ;
 
     pthread_t threads [NTHREADS] ;
@@ -188,7 +170,7 @@ int main (int argc, char **argv)
     {
         GrB_Matrix A = arg [id].A ;
         printf ("\n---- Master prints matrix %d\n", id) ;
-        OK (GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
+        OK (NULL, GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
         GrB_Matrix_free (&A) ;
     }
 

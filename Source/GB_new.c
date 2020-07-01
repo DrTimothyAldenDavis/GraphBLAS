@@ -72,7 +72,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         if (*Ahandle == NULL)
         { 
             // out of memory
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
         allocated_header = true ;
     }
@@ -140,6 +140,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nvec_nonempty = 0 ;      // all vectors are empty
     A->mkl = NULL ;             // no analysis from MKL yet
 
+    A->logger = NULL ;          // no error logged yet
+
     // content that is freed or reset in GB_ix_free
     A->i = NULL ;
     A->x = NULL ;
@@ -148,13 +150,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->x_shallow = false ;
     A->nzombies = 0 ;
     A->Pending = NULL ;
-
-    A->queue_next = NULL ;      // TODO in 4.0: delete
-    A->queue_prev = NULL ;      // TODO in 4.0: delete
-    A->enqueued = false ;       // TODO in 4.0: delete
-
-    // method used in GrB_mxm, vxm, and mxv
-    A->AxB_method_used = GxB_DEFAULT ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested
@@ -206,9 +201,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         if (allocated_header)
         { 
             // only free the header if it was allocated here
-            GB_MATRIX_FREE (Ahandle) ;
+            GB_Matrix_free (Ahandle) ;
         }
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // The vector pointers A->p are initialized only if Ap_calloc is true

@@ -44,7 +44,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     if (!ok)
     { 
         // problem too large
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -80,14 +80,14 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         // clear prior content and recreate it; use exising header for C.
         // do not malloc C->x if the scalar is zero; calloc it later.
         bool scalar_is_nonzero = GB_is_nonzero (cwork, csize) ;
-        GB_PHIX_FREE (C) ;
+        GB_phix_free (C) ;
         info = GB_create (&C, C->type, cvlen, cvdim, GB_Ap_malloc, C->is_csc,
             GB_FORCE_NONHYPER, C->hyper_ratio, C->vdim, cnzmax,
             scalar_is_nonzero, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         int64_t *GB_RESTRICT Cp = C->p ;
@@ -121,8 +121,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         if (C->x == NULL)
         { 
             // out of memory
-            GB_PHIX_FREE (C) ;
-            return (GB_OUT_OF_MEMORY) ;
+            GB_phix_free (C) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         if (!scalar_is_nonzero)

@@ -66,7 +66,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

@@ -21,7 +21,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Descriptor_new (&descriptor)") ;
+    GB_WHERE1 ("GrB_Descriptor_new (&descriptor)") ;
     GB_RETURN_IF_NULL (descriptor) ;
     (*descriptor) = NULL ;
 
@@ -34,7 +34,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     if (*descriptor == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the descriptor

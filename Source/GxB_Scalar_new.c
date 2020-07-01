@@ -23,7 +23,7 @@ GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_Scalar_new (&s, type)") ;
+    GB_WHERE1 ("GxB_Scalar_new (&s, type)") ;
     GB_RETURN_IF_NULL (s) ;
     (*s) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

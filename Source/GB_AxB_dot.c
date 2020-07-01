@@ -48,7 +48,7 @@
     {                                                           \
         for (int tid = 0 ; tid < naslice ; tid++)               \
         {                                                       \
-            GB_MATRIX_FREE (& (Aslice [tid])) ;                 \
+            GB_Matrix_free (& (Aslice [tid])) ;                 \
         }                                                       \
     }                                                           \
     GB_FREE (Slice) ;                                           \
@@ -192,7 +192,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             { 
                 ASSERT_MATRIX_OK (*Chandle, "C for sequential A*B", GB0) ;
             }
-            return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
+            return (info) ;
         }
 
         //======================================================================
@@ -237,7 +237,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         { 
             // out of memory
             GB_FREE_ALL ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------

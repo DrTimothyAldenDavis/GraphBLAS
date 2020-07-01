@@ -24,7 +24,7 @@ GrB_Info GB_Type_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Type_new (&type, sizeof (ctype))") ;
+    GB_WHERE1 ("GrB_Type_new (&type, sizeof (ctype))") ;
     GB_RETURN_IF_NULL (type) ;
     (*type) = NULL ;
 
@@ -32,9 +32,7 @@ GrB_Info GB_Type_new
 
         if (sizeof_ctype > GB_VLA_MAXSIZE)
         {
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "user-defined types"
-                " are limited to %d bytes (ANSI C99 or later is required)",
-                GB_VLA_MAXSIZE))) ;
+            return (GrB_INVALID_VALUE) ;
         }
 
     #endif
@@ -48,7 +46,7 @@ GrB_Info GB_Type_new
     if (*type == NULL)
     { 
         // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     // initialize the type

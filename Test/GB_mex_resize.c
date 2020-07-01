@@ -14,7 +14,7 @@
 #define FREE_ALL                        \
 {                                       \
     GrB_Matrix_free_(&C) ;              \
-    GB_mx_put_global (true, 0) ;        \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction
@@ -30,7 +30,6 @@ void mexFunction
     GrB_Matrix C = NULL ;
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargout > 1 || nargin < 1 || nargin > 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -38,7 +37,7 @@ void mexFunction
 
     #define GET_DEEP_COPY \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
-    #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
+    #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
     GET_DEEP_COPY ;
     if (C == NULL)

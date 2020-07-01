@@ -84,11 +84,11 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 
     if (cnrows != nRows || cncols != nCols)
     { 
-        return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "required size of output is " GBd "-by-" GBd "\n"
             "but actual size output is  " GBd "-by-" GBd "\n",
-            nRows, nCols, cnrows, cncols))) ;
+            nRows, nCols, cnrows, cncols) ;
     }
 
     // quick return if an empty mask is complemented

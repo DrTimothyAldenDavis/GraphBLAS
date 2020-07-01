@@ -20,7 +20,7 @@ GrB_Info GxB_SelectOp_ttype         // return type of thunk or NULL if generic
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_SelectOp_ttype (&ttype, selectop)") ;
+    GB_WHERE1 ("GxB_SelectOp_ttype (&ttype, selectop)") ;
     GB_RETURN_IF_NULL (ttype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (selectop) ;
     ASSERT_SELECTOP_OK (selectop, "selectop for ttype", GB0) ;

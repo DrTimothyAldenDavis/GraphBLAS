@@ -60,7 +60,7 @@ INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm $(MKL_LDFLAGS)
-CFLAGS = -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS $(MKL_CFLAGS)
+CFLAGS = -fopenmp -fexceptions -fPIC $(MKL_CFLAGS)
 # pick the roptimization level:
   CFLAGS += -O3
 # CFLAGS += -g

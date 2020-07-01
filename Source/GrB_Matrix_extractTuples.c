@@ -29,7 +29,7 @@ GrB_Info prefix ## Matrix_extractTuples_ ## T     /* [I,J,X] = find (A) */    \
     const GrB_Matrix A      /* matrix to extract tuples from             */   \
 )                                                                             \
 {                                                                             \
-    GB_WHERE (GB_STR(prefix) "Matrix_extractTuples_" GB_STR(T)                \
+    GB_WHERE1 (GB_STR(prefix) "Matrix_extractTuples_" GB_STR(T)          \
         " (I, J, X, nvals, A)") ;                                             \
     GB_BURBLE_START ("GrB_Matrix_extractTuples") ;                            \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                         \
