@@ -27,7 +27,6 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 
     if (monoid == NULL)
     { 
-        // GrB_error status not modified since this may be an optional argument
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }

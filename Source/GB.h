@@ -588,9 +588,9 @@ GB_PUBLIC struct GB_SelectOp_opaque
 // error logging and parallel thread control
 //------------------------------------------------------------------------------
 
-// Error messages are logged in GB_DLEN, on the stack, and then copied into
-// thread-local storage of size GB_RLEN.  If the user-defined data types,
-// operators, etc have really long names, the error messages are safely
+// Error messages are logged in Context->logger, on the stack which is handle
+// to the input/output matrix/vector (typically C).  If the user-defined data
+// types, operators, etc have really long names, the error messages are safely
 // truncated (via snprintf).  This is intentional, but gcc with
 // -Wformat-truncation will print a warning (see pragmas above).  Ignore the
 // warning.

@@ -112,7 +112,6 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 
     if (D == NULL)
     { 
-        // GrB_error status not modified since this may be an optional argument
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }

@@ -33,7 +33,6 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
 
     if (type == NULL)
     { 
-        // GrB_error status not modified since this may be an optional argument
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }

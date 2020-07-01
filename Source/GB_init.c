@@ -57,8 +57,6 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    // Do not log the error for GrB_error, since it might not be initialized.
-
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once

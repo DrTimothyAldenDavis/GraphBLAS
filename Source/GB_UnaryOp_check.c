@@ -27,7 +27,6 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 
     if (op == NULL)
     { 
-        // GrB_error status not modified since this may be an optional argument
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
