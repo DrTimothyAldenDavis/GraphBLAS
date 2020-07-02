@@ -746,7 +746,7 @@
         { 
             // C(i,j) = cij
             #if defined ( GB_PHASE_1_OF_2 )
-                C_count [Iter_k] ++ ;
+                C_count [kB] ++ ;
             #else
                 GB_CIJ_SAVE (cij, cnz) ;
                 Ci [cnz++] = i ;

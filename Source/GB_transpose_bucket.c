@@ -84,7 +84,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     // OK if the matrix A is jumbled; this function is intended to sort it.
     ASSERT_MATRIX_OK_OR_JUMBLED (A, "A input for transpose_bucket", GB0) ;
-    ASSERT (!(A->is_slice)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
     // if op1 and op2 are NULL, then no operator is applied

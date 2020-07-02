@@ -154,7 +154,7 @@ char *logger ;          // for error logging
             // not hypersparse.  A->plen gives the size of Ap, as above.  Ap
             // points into an offset of p of the original matrix.
 
-   // hyperslice: A->is_hyper is true
+    // hyperslice: A->is_hyper is true
 
             // Ah is not-NULL.  The original matrix is hypersparse.  Ah points
             // to an offset inside the h of the original matrix.  A->hfirst is
@@ -375,9 +375,90 @@ bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool is_slice ;         // true if the matrix is a slice or hyperslice
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // MKL analysis, if available
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void *mkl ;
+
+//------------------------------------------------------------------------------
+// iterating through a matrix
+//------------------------------------------------------------------------------
+
+// The matrix A can be held in four formats: standard, hypersparse, slice, or
+// hyperslice.  Each can be CSR or CSC.  The comments below assume A is in CSC
+// format.
+
+#ifdef for_comments_only    // only so vim will add color to the code below:
+
+    // A->vdim: the vector dimension of A (ncols(A))
+    // A->nvec: # of vectors that appear in A.  For the hypersparse case,
+    //          these are the number of column indices in Ah [0..nvec-1], since
+    //          A is CSC.  For all cases, Ap [0...nvec] are the pointers.
+
+    //--------------------
+    // (1) standard     // A->is_hyper == false, A->is_slice == false
+                        // A->nvec == A->vdim, A->hfirst == 0
+
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = k ;
+            // operate on column A(:,j)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
+            {
+                // A(i,j) has row i = Ai [p], value aij = Ax [p]
+            }
+        }
+
+    //--------------------
+    // (2) hypersparse  // A->is_hyper == true, A->is_slice == false
+                        // A->nvec <= A->dim, A->hfirst == 0 (ignored)
+
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = A->h [k]
+            // operate on column A(:,j)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
+            {
+                // A(i,j) has row i = Ai [p], value aij = Ax [p]
+            }
+        }
+
+    //--------------------
+    // (3) slice, of another standard matrix S.
+                        // A->i == S->i, A->x == S->x
+                        // A->p = S->p + A->hfirst, A->h is NULL
+                        // A->nvec <= A->vdim == S->vdim
+
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = A->hfirst + k ;
+            // operate on column A(:,j), which is also S (:,j)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
+            {
+                // A(i,j) has row i = Ai [p], value aij = Ax [p]
+                // This is identical to S(i,j)
+            }
+        }
+
+    //--------------------
+    // (4) hyperslice, of another hypersparse matrix S
+                        // A->i == S->i, A->x == S->x, A->p = S->p + kfirst,
+                        // A->h == S->h + kfirst where A(:,0) is the same
+                        // column as S->h [kfirst].  kfirst is not kept.
+                        // A->nvec <= A->vdim == S->vdim
+                        // A->hfirst == 0 (ignored)
+
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = A->h [k] ;
+            // operate on column A(:,j), which is also S (:,j)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
+            {
+                // A(i,j) has row i = Ai [p], value aij = Ax [p].
+                // This is identical to S(i,j)
+            }
+        }
+
+#endif
 

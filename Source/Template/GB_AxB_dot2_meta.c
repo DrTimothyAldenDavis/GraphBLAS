@@ -20,13 +20,11 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     #endif
 
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
+    int64_t bnvec = B->nvec ;
     int64_t bvlen = B->vlen ;
-
-    // create the iterator for B.  Since the iterator is a read-only object
-    // after initialization with GBI1_init, it can be shared by all threads.
-    GBI_single_iterator Iter ;
-    GBI1_init (&Iter, B) ;
 
     //--------------------------------------------------------------------------
     // C=A'*B or C<!M>=A'*B via dot products
