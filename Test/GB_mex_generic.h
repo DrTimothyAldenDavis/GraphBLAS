@@ -28,6 +28,18 @@
 #define GrB_Matrix_free_(...)                       GrB_free (__VA_ARGS__)
 #define GrB_Descriptor_free_(...)                   GrB_free (__VA_ARGS__)
 
+// GrB_error:
+#define GrB_Type_error_(...)                        GrB_error (__VA_ARGS__)
+#define GrB_UnaryOp_error_(...)                     GrB_error (__VA_ARGS__)
+#define GrB_BinaryOp_error_(...)                    GrB_error (__VA_ARGS__)
+#define GxB_SelectOp_error_(...)                    GrB_error (__VA_ARGS__)
+#define GrB_Monoid_error_(...)                      GrB_error (__VA_ARGS__)
+#define GrB_Semiring_error_(...)                    GrB_error (__VA_ARGS__)
+#define GxB_Scalar_error_(...)                      GrB_error (__VA_ARGS__)
+#define GrB_Vector_error_(...)                      GrB_error (__VA_ARGS__)
+#define GrB_Matrix_error_(...)                      GrB_error (__VA_ARGS__)
+#define GrB_Descriptor_error_(...)                  GrB_error (__VA_ARGS__)
+
 // GrB_Monoid_new:
 #define GrB_Monoid_new_BOOL_(...)                   GrB_Monoid_new (__VA_ARGS__)
 #define GrB_Monoid_new_INT8_(...)                   GrB_Monoid_new (__VA_ARGS__)
@@ -471,6 +483,18 @@
 #define GrB_Vector_free_(...)                       GrB_Vector_free (__VA_ARGS__)
 #define GrB_Matrix_free_(...)                       GrB_Matrix_free (__VA_ARGS__)
 #define GrB_Descriptor_free_(...)                   GrB_Descriptor_free (__VA_ARGS__)
+
+// GrB_error:
+#define GrB_Type_error_(...)                        GrB_Type_error (__VA_ARGS__)
+#define GrB_UnaryOp_error_(...)                     GrB_UnaryOp_error (__VA_ARGS__)
+#define GrB_BinaryOp_error_(...)                    GrB_BinaryOp_error (__VA_ARGS__)
+#define GxB_SelectOp_error_(...)                    GxB_SelectOp_error (__VA_ARGS__)
+#define GrB_Monoid_error_(...)                      GrB_Monoid_error (__VA_ARGS__)
+#define GrB_Semiring_error_(...)                    GrB_Semiring_error (__VA_ARGS__)
+#define GxB_Scalar_error_(...)                      GxB_Scalar_error (__VA_ARGS__)
+#define GrB_Vector_error_(...)                      GrB_Vector_error (__VA_ARGS__)
+#define GrB_Matrix_error_(...)                      GrB_Matrix_error (__VA_ARGS__)
+#define GrB_Descriptor_error_(...)                  GrB_Descriptor_error (__VA_ARGS__)
 
 // GrB_Monoid_new:
 #define GrB_Monoid_new_BOOL_(...)                   GrB_Monoid_new_BOOL (__VA_ARGS__)

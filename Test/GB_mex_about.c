@@ -253,7 +253,7 @@ void mexFunction
 
     info = GxB_Desc_set (Duh, GrB_INP1, GrB_REPLACE) ;
     OK (GrB_Descriptor_wait_(&Duh)) ;
-    GrB_error (&err, Duh) ;
+    GrB_Descriptor_error_(&err, Duh) ;
     printf ("%s\n", err) ;
     GB_Descriptor_check (Duh, "\n-----Duh set in1",
         GxB_COMPLETE, stdout) ;
@@ -667,7 +667,7 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GE_THUNK, A, thunk, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
     GxB_Scalar thunk2 = NULL ;
@@ -678,23 +678,23 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GE_ZERO, A, NULL, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GT_ZERO, A, NULL, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_LT_ZERO, A, NULL, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_LE_ZERO, A, NULL, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
     ERR1 (B, GxB_Matrix_select_(B, NULL, NULL, GxB_LE_THUNK, B, thunk, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
     GrB_Matrix_free_(&B) ;
 
@@ -770,13 +770,13 @@ void mexFunction
 
     expected = GrB_INVALID_INDEX ;
     ERR1 (victor, GrB_Vector_removeElement (victor, 9999)) ;
-    GrB_error (&err, victor) ;
+    GrB_Vector_error_(&err, victor) ;
     printf ("expected error: %s\n", err) ;
     ERR1 (A, GrB_Matrix_removeElement (A, 0, 9999)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("expected error: %s\n", err) ;
     ERR1 (A, GrB_Matrix_removeElement (A, 9999, 0)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("expected error: %s\n", err) ;
 
     //--------------------------------------------------------------------------
@@ -885,26 +885,26 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, NULL, NULL)) ;
-    GrB_error (&err, C) ;
+    GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_INVALID_VALUE ;
     OK (GxB_Scalar_clear (thunk)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
-    GrB_error (&err, C) ;
+    GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     GxB_Scalar_free_(&thunk) ;
     OK (GxB_Scalar_new (&thunk, GrB_FP32)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
-    GrB_error (&err, C) ;
+    GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     GxB_SelectOp_free_(&selectop) ;
     OK (GxB_SelectOp_new (&selectop, select_nothing, GrB_FP64, NULL)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
-    GrB_error (&err, C) ;
+    GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -922,7 +922,6 @@ void mexFunction
     thunk->magic = GB_MAGIC ;
     printf ("Error expected: %d\n", info) ;
 
-    GrB_Type_free_(&user_type) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&C) ;
     GxB_Scalar_free_(&thunk) ;
@@ -1123,9 +1122,88 @@ void mexFunction
     expected = GrB_OUT_OF_MEMORY ;
     ERR1 (A, GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 1,
         GrB_ALL, n, GrB_ALL, n, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("\nproblem too large, expected error: %s\n", err) ;
     OK (GrB_Matrix_free_(&A)) ;
+
+    //--------------------------------------------------------------------------
+    // setElement typecast
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+
+    ERR1 (A, GrB_Matrix_setElement_BOOL   (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_INT8   (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_INT16  (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_INT32  (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_INT64  (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_UINT8  (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_UINT16 (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_UINT32 (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_UINT64 (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_FP32   (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GrB_Matrix_setElement_FP64   (A, 0, 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GxB_Matrix_setElement_FC32   (A, GxB_CMPLXF(0,0), 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+    ERR1 (A, GxB_Matrix_setElement_FC64   (A, GxB_CMPLX (0,0), 0, 0)) ;
+    GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_error
+    //--------------------------------------------------------------------------
+
+    GrB_Type_error_(&err, user_type) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_UnaryOp_error_(&err, GrB_AINV_FP32) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_BinaryOp_error_(&err, GrB_PLUS_FP32) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GxB_SelectOp_error_(&err, GxB_TRIL) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_Monoid_error_(&err, GrB_LOR_MONOID_BOOL) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_Semiring_error_(&err, GrB_PLUS_TIMES_SEMIRING_FP32) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_Descriptor_error_(&err, GrB_DESC_T0) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    OK (GxB_Scalar_new (&scalar, GrB_FP32)) ;
+    GxB_Scalar_error_(&err, scalar) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    OK (GrB_Vector_new (&victor, GrB_FP32, 10)) ;
+    GrB_Vector_error_(&err, victor) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    int16_t fortytwo = 42 ;
+    OK (GrB_Matrix_setElement_UDT (A, (void *) &fortytwo, 3, 7)) ;
+    OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL)) ;
+    GrB_Matrix_error_(&err, A) ;
+    CHECK (err != NULL && err [0] == '\0') ;
+
+    GrB_Vector_free_(&victor) ;
+    GxB_Scalar_free_(&scalar) ;
+    GrB_Type_free_(&user_type) ;
+    GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
     // wrapup

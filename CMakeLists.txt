@@ -101,8 +101,8 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
-# set ( GB_BURBLE true )
-  set ( GB_BURBLE false )
+  set ( GB_BURBLE true )
+# set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )

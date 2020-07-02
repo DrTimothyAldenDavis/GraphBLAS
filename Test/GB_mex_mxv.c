@@ -15,7 +15,7 @@
 {                                                   \
     GrB_Vector_free_(&w) ;                          \
     GrB_Vector_free_(&u) ;                          \
-    GrB_Matrix_free_(&A) ;                           \
+    GrB_Matrix_free_(&A) ;                          \
     GrB_Vector_free_(&mask) ;                       \
     if (semiring != Complex_plus_times)             \
     {                                               \
@@ -26,6 +26,7 @@
         GrB_Semiring_free_(&semiring) ;             \
     }                                               \
     GrB_Descriptor_free_(&desc) ;                   \
+    GB_mx_put_global (true) ;                       \
 }
 
 void mexFunction

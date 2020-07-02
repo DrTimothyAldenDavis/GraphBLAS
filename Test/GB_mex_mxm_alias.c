@@ -23,6 +23,7 @@
         GrB_Semiring_free_(&semiring) ;             \
     }                                               \
     GrB_Descriptor_free_(&desc) ;                   \
+    GB_mx_put_global (true) ;                       \
 }
 
 void mexFunction

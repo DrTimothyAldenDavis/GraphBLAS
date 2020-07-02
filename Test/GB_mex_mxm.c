@@ -13,10 +13,10 @@
 
 #define FREE_ALL                                    \
 {                                                   \
-    GrB_Matrix_free_(&A) ;                           \
-    GrB_Matrix_free_(&B) ;                           \
-    GrB_Matrix_free_(&C) ;                           \
-    GrB_Matrix_free_(&Mask) ;                        \
+    GrB_Matrix_free_(&A) ;                          \
+    GrB_Matrix_free_(&B) ;                          \
+    GrB_Matrix_free_(&C) ;                          \
+    GrB_Matrix_free_(&Mask) ;                       \
     if (semiring != Complex_plus_times)             \
     {                                               \
         if (semiring != NULL)                       \
@@ -26,6 +26,7 @@
         GrB_Semiring_free_(&semiring) ;             \
     }                                               \
     GrB_Descriptor_free_(&desc) ;                   \
+    GB_mx_put_global (true) ;                       \
 }
 
 void mexFunction

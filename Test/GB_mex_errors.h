@@ -34,7 +34,7 @@
     info = method ;                                                         \
     fprintf (f, "\nline %d: info %d, error logger:\n", __LINE__, info) ;    \
     char *error_logger ;                                                    \
-    GrB_error (&error_logger, C) ;                                          \
+    GrB_Matrix_error_(&error_logger, ((GrB_Matrix) C)) ;                    \
     fprintf (f,"[%s]\n", error_logger) ;                                    \
     if (info != expected) fprintf (f, "got %d expected %d\n", info, expected) ; \
     CHECK2 (info == expected, method) ;                                     \

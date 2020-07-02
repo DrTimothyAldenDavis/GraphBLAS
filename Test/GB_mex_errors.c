@@ -1079,14 +1079,14 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X, GxB_RANGE, GrB_PLUS_FP64)) ;
-    GrB_error (&err, v) ;
+    GrB_Vector_error_(&err, v) ;
     printf ("%s\n", err) ;
 
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
     I [0] = 10 ;
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X, 5, GrB_PLUS_FP64)) ;
-    GrB_error (&err, v) ;
+    GrB_Vector_error_(&err, v) ;
     printf ("expected error, index out of bounds:\n%s\n", err) ;
 
     GB_Vector_check (v, "v bad", GB3, NULL) ;
@@ -1790,35 +1790,35 @@ void mexFunction
     ERR1 (desc, GrB_Descriptor_set (desc, -1, 0)) ;
 
     ERR1 (desc, GxB_Desc_set (desc, GrB_OUTP, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GxB_Desc_set (desc, GrB_MASK, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GxB_Desc_set (desc, GrB_INP0, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GxB_Desc_set (desc, GrB_INP1, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GrB_Descriptor_set (desc, GxB_AxB_METHOD, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
 
     ERR1 (desc, GrB_Descriptor_set (desc, GrB_OUTP, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GrB_Descriptor_set (desc, GrB_MASK, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GrB_Descriptor_set (desc, GrB_INP0, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GrB_Descriptor_set (desc, GrB_INP1, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
     ERR1 (desc, GrB_Descriptor_set (desc, GxB_AxB_METHOD, -1)) ;
-    GrB_error (&err, desc) ;
+    GrB_Descriptor_error_(&err, desc) ;
     printf ("%s\n", err) ;
 
     OK (GxB_Desc_get (desc, GrB_OUTP, &dval)) ;
@@ -2018,7 +2018,7 @@ void mexFunction
         ERR1 (C, GrB_mxm (C, Z   , NULL, s2, A, B, NULL)) ;
     }
 
-    GrB_error (&err, C) ;
+    GrB_Matrix_error_(&err, C) ;
     printf ("here we are, last error was %s\n", err) ;
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
     printf ("got here\n") ;
@@ -2780,7 +2780,7 @@ void mexFunction
 
     OK (GrB_Matrix_dup (&A4, A)) ;
     ERR1 (A4, GxB_Matrix_subassign_(A4, NULL, GrB_PLUS_FP64, C, I, 3, J, 2, NULL)) ;
-    GrB_error (&err, A4) ;
+    GrB_Matrix_error_(&err, A4) ;
     fprintf (ff, "done bounds test: error returned:\n%s\n", err) ;
     OK (GrB_Matrix_free_(&A4)) ;
 
@@ -3157,7 +3157,7 @@ void mexFunction
     GxB_Vector_fprint_(v5, GB3, NULL) ;
     GxB_Vector_fprint_(v, GB3, NULL) ;
     ERR1 (A,  GrB_Col_assign_(A, v5 , NULL, v, GrB_ALL, 0, 0, NULL)) ; // column assign
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("mask wrong size:\n%s\n", err) ;
     OK (GrB_Vector_free_(&v5)) ;
 
@@ -3167,7 +3167,7 @@ void mexFunction
     GB_Matrix_check (A, "A", GB3, NULL) ;
     GB_Matrix_check (A5, "A5", GB3, NULL) ;
     ERR1 (A,  GrB_Matrix_assign_(A, A5, NULL, A, GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("mask wrong size:\n%s\n", err) ;
     OK (GrB_Matrix_free_(&A5)) ;
 
@@ -4424,12 +4424,12 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Matrix_Option_get_(A, GxB_FORMAT, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected (A format null):%s\n", err) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Matrix_Option_get_(A, GxB_HYPER, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
     expected = GrB_NULL_POINTER ;
@@ -4439,11 +4439,11 @@ void mexFunction
     ERR (GxB_Global_Option_get_(-1, NULL)) ;
 
     ERR (GxB_Matrix_Option_get_(A, 999, NULL)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected (bad field):%s\n", err) ;
 
     ERR1 (A, GxB_Matrix_Option_set_(A, 999, GxB_BY_ROW)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
     ERR (GxB_Global_Option_set_(999, GxB_BY_ROW)) ;
@@ -4452,11 +4452,11 @@ void mexFunction
     ERR (GxB_Global_Option_set_(GxB_FORMAT, 9999)) ;
 
     ERR1 (A, GxB_Matrix_Option_set_(A, 999, GxB_BY_ROW)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
     ERR1 (A, GxB_Matrix_Option_set_(A, GxB_FORMAT, 909090)) ;
-    GrB_error (&err, A) ;
+    GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
     CHECK (A != NULL) ;

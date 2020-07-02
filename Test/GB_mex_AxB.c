@@ -16,14 +16,15 @@
 
 #define FREE_ALL                                \
 {                                               \
-    GrB_Matrix_free_(&A) ;                       \
-    GrB_Matrix_free_(&Aconj) ;                   \
-    GrB_Matrix_free_(&B) ;                       \
-    GrB_Matrix_free_(&Bconj) ;                   \
-    GrB_Matrix_free_(&C) ;                       \
-    GrB_Matrix_free_(&Mask) ;                    \
+    GrB_Matrix_free_(&A) ;                      \
+    GrB_Matrix_free_(&Aconj) ;                  \
+    GrB_Matrix_free_(&B) ;                      \
+    GrB_Matrix_free_(&Bconj) ;                  \
+    GrB_Matrix_free_(&C) ;                      \
+    GrB_Matrix_free_(&Mask) ;                   \
     GrB_Monoid_free_(&add) ;                    \
     GrB_Semiring_free_(&semiring) ;             \
+    GB_mx_put_global (true) ;                   \
 }
 
 //------------------------------------------------------------------------------
