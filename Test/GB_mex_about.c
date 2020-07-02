@@ -780,55 +780,6 @@ void mexFunction
     printf ("expected error: %s\n", err) ;
 
     //--------------------------------------------------------------------------
-    // GxB_Matrix_fprint for a slice or hyperslice
-    //--------------------------------------------------------------------------
-
-    expected = GrB_INVALID_OBJECT ;
-
-    for (int hyper = 0 ; hyper <= 1 ; hyper++)
-    {
-        if (hyper)
-        {
-            OK (GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER)) ;
-        }
-
-        GrB_Matrix Aslice [2] = { NULL, NULL } ;
-        int64_t Slice [8] ;
-        Slice [0] = 0 ;
-        Slice [1] = 4 ;
-        Slice [2] = 8 ;
-        OK (GB_slice (A, 2, Slice, Aslice, NULL)) ;
-        OK (GxB_Matrix_fprint_(Aslice [0], GxB_COMPLETE, NULL)) ;
-        OK (GxB_Matrix_fprint_(Aslice [1], GxB_COMPLETE, NULL)) ;
-
-        GB_Pending gunk ;
-        Aslice [0]->Pending = &gunk ;
-        ERR (GxB_Matrix_fprint_(Aslice [0], GxB_SHORT, NULL)) ;
-        Aslice [0]->Pending = NULL ;
-        OK (GxB_Matrix_fprint_(Aslice [0], GxB_SILENT, NULL)) ;
-
-        int64_t a1save = Aslice [0]->nvec ;
-        Aslice [0]->nvec = 999999 ;
-        ERR (GxB_Matrix_fprint_(Aslice [0], GxB_SHORT, NULL)) ;
-        Aslice [0]->nvec = a1save ;
-        OK (GxB_Matrix_fprint_(Aslice [0], GxB_SILENT, NULL)) ;
-
-        Aslice [0]->i_shallow = false ;
-        ERR (GxB_Matrix_fprint_(Aslice [0], GxB_SHORT, NULL)) ;
-        Aslice [0]->i_shallow = true ;
-        OK (GxB_Matrix_fprint_(Aslice [0], GxB_SILENT, NULL)) ;
-
-        int64_t hfirst = Aslice [0]->hfirst ;
-        Aslice [0]->hfirst = -1 ;
-        ERR (GxB_Matrix_fprint_(Aslice [0], GxB_SHORT, NULL)) ;
-        Aslice [0]->hfirst = 0 ;
-        OK (GxB_Matrix_fprint_(Aslice [0], GxB_SILENT, NULL)) ;
-
-        GrB_Matrix_free_(&Aslice [0]) ;
-        GrB_Matrix_free_(&Aslice [1]) ;
-    }
-
-    //--------------------------------------------------------------------------
     // pending tuples
     //--------------------------------------------------------------------------
 

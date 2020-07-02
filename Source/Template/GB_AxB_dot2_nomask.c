@@ -18,16 +18,8 @@
         int b_tid = tid % nbslice ;
 
         //----------------------------------------------------------------------
-        // get A
+        // get the counts of C for this slice of A
         //----------------------------------------------------------------------
-
-        GrB_Matrix A = Aslice [a_tid] ;
-        bool A_is_slice = A->is_slice ;
-        const int64_t *GB_RESTRICT Ap = A->p ;
-        const int64_t *GB_RESTRICT Ah = A->h ;
-        const int64_t *GB_RESTRICT Ai = A->i ;
-        int64_t anvec = A->nvec ;
-        int64_t A_hfirst = A->hfirst ;
 
         #if defined ( GB_PHASE_1_OF_2 )
         int64_t *GB_RESTRICT C_count = C_counts [a_tid] ;
@@ -36,8 +28,6 @@
             (a_tid == 0) ?         NULL : C_counts [a_tid] ;
         int64_t *GB_RESTRICT C_count_end   =
             (a_tid == naslice-1) ? NULL : C_counts [a_tid+1] ;
-        const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *)
-            (A_is_pattern ? NULL : A->x) ;
         #endif
 
         //----------------------------------------------------------------------
@@ -58,19 +48,6 @@
             int64_t bjnz = pB_end - pB_start ;
             // no work to do if B(:,j) is empty
             if (bjnz == 0) continue ;
-
-            //------------------------------------------------------------------
-            // phase 1 of 2: skip if B(:,j) is dense
-            //------------------------------------------------------------------
-
-            #if defined ( GB_PHASE_1_OF_2 )
-            if (bjnz == bvlen)
-            { 
-                // C(i,j) is if A(:i) not empty
-                C_count [kB] = A->nvec_nonempty ;
-                continue ;
-            }
-            #endif
 
             //------------------------------------------------------------------
             // phase 2 of 2: get the range of entries in C(:,j) to compute
@@ -95,22 +72,14 @@
             int64_t ib_last  = Bi [pB_end-1] ;
 
             // for each vector A(:,i):
-            for (int64_t kA = 0 ; kA < anvec ; kA++)
+            for (int64_t kA = A_slice [a_tid] ; kA < A_slice [a_tid+1] ; kA++)
             {
 
                 //--------------------------------------------------------------
                 // get A(:,i)
                 //--------------------------------------------------------------
 
-                int64_t i ;
-                if (A_is_slice)
-                {
-                    i = (Ah == NULL) ? (A_hfirst + kA) : Ah [kA] ;
-                }
-                else
-                {
-                    i = (Ah == NULL) ? kA : Ah [kA] ;
-                }
+                int64_t i = (Ah == NULL) ? kA : Ah [kA] ;
                 int64_t pA = Ap [kA] ;
                 int64_t pA_end = Ap [kA+1] ;
 

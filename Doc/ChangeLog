@@ -5,6 +5,7 @@ Version 4.0.0, TODO, 2020
     * GrB_*_nvals: no longer guarantees completion; use GrB_wait(&object)
         or non-polymorphic GrB_*_wait (&object) instead
     * GrB_error: now has two parameters: a string (char **) and an object
+    * removed GBI iterator
     * V4.0.0 is otherwise identical to V3.3.1.
 
 Version 3.3.1, June 30, 2020

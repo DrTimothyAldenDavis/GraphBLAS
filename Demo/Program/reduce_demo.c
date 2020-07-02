@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 #include "GraphBLAS.h"
+#if defined ( _OPENMP )
+#include <omp.h>
+#endif
 
 // #define N 65536
    #define N 16384

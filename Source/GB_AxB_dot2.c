@@ -25,11 +25,12 @@
 #define GB_FREE_WORK                                            \
 {                                                               \
     GB_FREE (B_slice) ;                                         \
+    GB_FREE (A_slice) ;                                         \
     if (C_counts != NULL)                                       \
     {                                                           \
-        for (int taskid = 0 ; taskid < naslice ; taskid++)      \
+        for (int tid = 0 ; tid < naslice ; tid++)               \
         {                                                       \
-            GB_FREE (C_counts [taskid]) ;                       \
+            GB_FREE (C_counts [tid]) ;                          \
         }                                                       \
     }                                                           \
     GB_FREE (C_counts) ;                                        \
@@ -42,7 +43,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
                                     // if present, the mask is complemented
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix *Aslice,       // input matrices (already sliced)
+    const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
@@ -59,22 +60,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Aslice != NULL) ;
-    GrB_Matrix A = Aslice [0] ;     // just for type and dimensions
+
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot A'*B", GB0) ;
-    for (int taskid = 0 ; taskid < naslice ; taskid++)
-    {
-        ASSERT_MATRIX_OK (Aslice [taskid], "A slice for dot2 A'*B", GB0) ;
-        ASSERT (!GB_PENDING (Aslice [taskid])) ;
-        ASSERT (!GB_ZOMBIES (Aslice [taskid])) ;
-        ASSERT ((Aslice [taskid])->vlen == B->vlen) ;
-        ASSERT (A->vlen == (Aslice [taskid])->vlen) ;
-        ASSERT (A->vdim == (Aslice [taskid])->vdim) ;
-        ASSERT (A->type == (Aslice [taskid])->type) ;
-    }
     ASSERT_MATRIX_OK (B, "B for dot A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
@@ -84,6 +74,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (mask_applied != NULL) ;
 
     int64_t *GB_RESTRICT B_slice = NULL ;
+    int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t **C_counts = NULL ;
     int64_t cnvec = B->nvec ;
 
@@ -100,8 +91,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
-    // allocate workspace and slice B
+    // allocate workspace and slice A and B
     //--------------------------------------------------------------------------
+
+    if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
+    { 
+        // out of memory
+        GB_FREE_WORK ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     if (!GB_pslice (&B_slice, /* B */ B->p, B->nvec, nbslice))
     { 
@@ -131,7 +129,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
+    for (int a_tid = 0 ; a_tid < naslice ; a_tid++)
     {
         int64_t *GB_RESTRICT C_count = GB_CALLOC (B->nvec, int64_t) ;
         if (C_count == NULL)
@@ -140,19 +138,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        C_counts [a_taskid] = C_count ;
+        C_counts [a_tid] = C_count ;
     }
 
-    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
-    {
-        if ((Aslice [a_taskid])->nvec_nonempty < 0)
-        { 
-            (Aslice [a_taskid])->nvec_nonempty =
-                GB_nvec_nonempty (Aslice [a_taskid], NULL) ;
-        }
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
-    // phase1 parallel region: each thread computes C_counts [taskid]
+    // phase1 parallel region: each thread computes C_counts [tid]
     // for its slice.
     #define GB_PHASE_1_OF_2
     #include "GB_AxB_dot2_meta.c"
@@ -176,9 +170,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     for (k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
-        for (int taskid = 0 ; taskid < naslice ; taskid++)
+        for (int tid = 0 ; tid < naslice ; tid++)
         { 
-            int64_t *GB_RESTRICT C_count = C_counts [taskid] ;
+            int64_t *GB_RESTRICT C_count = C_counts [tid] ;
             int64_t c = C_count [k] ;
             C_count [k] = s ;
             s += c ;
@@ -232,7 +226,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
             info = GB_Adot2B (add,mult,xname) (C, M, Mask_struct,           \
-                Aslice, A_is_pattern, B, B_is_pattern, B_slice,             \
+                A, A_is_pattern, A_slice, B, B_is_pattern, B_slice,         \
                 C_counts, nthreads, naslice, nbslice) ;                     \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \

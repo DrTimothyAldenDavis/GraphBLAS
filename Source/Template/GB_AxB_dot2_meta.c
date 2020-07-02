@@ -10,7 +10,7 @@
 {
 
     //--------------------------------------------------------------------------
-    // get B and C
+    // get A, B, and C
     //--------------------------------------------------------------------------
 
     #if defined ( GB_PHASE_2_OF_2)
@@ -18,6 +18,7 @@
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     #endif
 
     const int64_t *GB_RESTRICT Bp = B->p ;
@@ -25,6 +26,11 @@
     const int64_t *GB_RESTRICT Bi = B->i ;
     int64_t bnvec = B->nvec ;
     int64_t bvlen = B->vlen ;
+
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    int64_t anvec = A->nvec ;
 
     //--------------------------------------------------------------------------
     // C=A'*B or C<!M>=A'*B via dot products

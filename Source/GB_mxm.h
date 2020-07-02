@@ -122,17 +122,13 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
+GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
-#if 0
-    // for dot2, if the mask M is present, this is now always true.
-    // dot3 is used for C<M>=A'*B
-    const bool Mask_comp,           // if true, use !M
-#endif
+                                    // if present, the mask is complemented
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix *Aslice,       // input matrices (already sliced)
+    const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)

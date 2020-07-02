@@ -60,9 +60,6 @@ GrB_Info adotb_complex (GB_Context Context)
 
     GrB_Semiring semiring = Complex_plus_times ;
 
-    GrB_Matrix Aslice [1] ;
-    Aslice [0] = Aconj ;
-
     if (Mask != NULL)
     {
         // C<M> = A'*B using dot product method
@@ -73,7 +70,7 @@ GrB_Info adotb_complex (GB_Context Context)
     else
     {
         // C = A'*B using dot product method
-        info = GB_AxB_dot2 (&C, NULL, false, Aslice, B, semiring, flipxy,
+        info = GB_AxB_dot2 (&C, NULL, false, Aconj, B, semiring, flipxy,
             &mask_applied,
             /* single thread: */
             1, 1, 1, Context) ;
@@ -98,8 +95,6 @@ GrB_Info adotb (GB_Context Context)
     }
     // C = A'*B
     bool mask_applied = false ;
-    GrB_Matrix Aslice [1] ;
-    Aslice [0] = A ;
 
     if (Mask != NULL)
     {
@@ -111,7 +106,7 @@ GrB_Info adotb (GB_Context Context)
     }
     else
     {
-        info = GB_AxB_dot2 (&C, NULL, false, Aslice, B,
+        info = GB_AxB_dot2 (&C, NULL, false, A, B,
             semiring /* GxB_PLUS_TIMES_FP64 */,
             flipxy, &mask_applied,
             // single thread:
