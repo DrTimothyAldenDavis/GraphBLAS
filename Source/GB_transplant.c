@@ -119,7 +119,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     // It is now safe to change the type, dimension, and hypersparsity of C
     C->type = ctype ;
-    C->type_size = ctype->size ;
     C->is_csc = A->is_csc ;
     C->is_hyper = A->is_hyper ;
     C->vlen = avlen ;

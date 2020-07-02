@@ -879,34 +879,6 @@ void mexFunction
     GxB_SelectOp_free_(&selectop) ;
 
     //--------------------------------------------------------------------------
-    // slice vector
-    //--------------------------------------------------------------------------
-
-    // GB_Matrix_wait constructs a slice, Aslice [1], that is then added to the
-    // pending tuples, B = T.  It then calls GB_add to compute Aslice [1] + T,
-    // where Aslice [1] can either be hypersparse or a hyperslice.  Need to
-    // trigger the condition that the index i appears after all entries in the
-    // implicit hyperlist Ah.  It's hard to test this case directly, via
-    // GB_Matrix_wait and GB_add.
-
-    int64_t i, pA = -1, pB = -1 ;
-    int64_t Bh [10] ;
-    for (int i = 0 ; i < 10 ; i++)
-    {
-        Bh [i] = 1000 + i ;
-    }
-    GB_slice_vector (&i, NULL, &pA, &pB,
-        0, 0, NULL,     // Mi is empty
-        0, 10, NULL, 1, // Ah is an implicit hyperlist: [1 2 3 4 5 6 7 8 9 10]
-        0, 10, Bh,      // Bh is an explicit hyperlist
-        2001,           // n
-        (double) 10) ;  // target_work
-    printf ("slice_vector: i "GBd" pA "GBd" pB "GBd"\n", i, pA, pB) ;
-    OK (i == 1000) ;    // n is cut in half, i = floor ((0+(n-1))/2) 
-    OK (pA == 10) ;     // first task does all of A
-    OK (pB == 0) ;      // second task does all of B
-
-    //--------------------------------------------------------------------------
     // GxB_Scalar
     //--------------------------------------------------------------------------
 

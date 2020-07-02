@@ -49,8 +49,6 @@
 // can be changed by turning an entry into a zombie, or by bringing a zombie
 // back to life, but no entry in C->i moves in position.
 
-#define GB_DEBUG
-
 #define GB_FREE_WORK            \
 {                               \
     GB_Matrix_free (&S) ;       \

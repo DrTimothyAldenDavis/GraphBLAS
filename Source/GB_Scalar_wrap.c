@@ -35,7 +35,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 
     s->magic = GB_MAGIC ;
     s->type = type ;
-    s->type_size = type->size ;
     s->hyper_ratio = GB_HYPER_DEFAULT ;
     s->plen = 1 ;
     s->vlen = 1 ;
@@ -47,7 +46,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->i = Si ; Si [0] = 0 ;
     s->x = Sx ;
     s->nzmax = 1 ;
-    s->hfirst = 0 ;
     s->Pending = NULL ;
     s->nzombies = 0 ;
     s->p_shallow = true ;
@@ -56,7 +54,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->x_shallow = true ;
     s->is_hyper = false ;
     s->is_csc = true ;
-    s->is_slice = false ;
     s->mkl = NULL ;
 
     //--------------------------------------------------------------------------

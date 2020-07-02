@@ -197,7 +197,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
                 case GB_FC32_code    : op1 = GxB_IDENTITY_FC32   ; break ;
                 case GB_FC64_code    : op1 = GxB_IDENTITY_FC64   ; break ;
             }
-            // printf ("renamed: ") ; GxB_print (op1, 3) ;
             op2 = NULL ;
         }
         else if (opcode == GB_PAIR_opcode)
@@ -220,7 +219,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
                 case GB_FC32_code    : op1 = GxB_ONE_FC32   ; break ;
                 case GB_FC64_code    : op1 = GxB_ONE_FC64   ; break ;
             }
-            // printf ("renamed: ") ; GxB_print (op1, 3) ;
             op2 = NULL ;
         }
 

@@ -156,7 +156,6 @@ void mexFunction
 
     // This does not affect the extracted values Gx
     G->type = GrB_BOOL ;
-    G->type_size = sizeof (bool) ;
     if (G->nzmax > 0)
     { 
         G->x = mxMalloc (G->nzmax * sizeof (bool)) ;
@@ -179,7 +178,6 @@ void mexFunction
     K->x = Kx ;
     K->x_shallow = false ;
     K->type = GrB_UINT64 ;
-    K->type_size = sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // T<G> = K

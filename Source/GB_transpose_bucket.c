@@ -36,8 +36,6 @@
 // This method is parallel, but not highly scalable.  At most O(e/m) threads
 // are used.
 
-#define GB_DEBUG
-
 #include "GB_transpose.h"
 
 #define GB_FREE_WORK                                                    \

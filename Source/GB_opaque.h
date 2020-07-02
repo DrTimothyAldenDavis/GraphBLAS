@@ -297,9 +297,8 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
 {
     int64_t magic ;         // for detecting uninitialized objects
     GrB_BinaryOp op ;       // binary operator of the monoid
-    void *identity ;        // identity of the monoid
-    size_t op_ztype_size ;  // size of the type (also is op->ztype->size)
-    void *terminal ;        // value that triggers early-exit (NULL if no value)
+    void *identity ;        // identity of the monoid; type is op->ztype
+    void *terminal ;        // early-exit (NULL if no value); type is op->ztype
     bool builtin ;          // built-in or user defined
 } ;
 

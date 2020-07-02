@@ -15,8 +15,6 @@
 // Two variants are handled: C=A'*B and C<!M>=A'*B.
 // The C<M>=A'*B computation is computed by GB_AxB_dot3.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
@@ -24,8 +22,8 @@
 
 #define GB_FREE_WORK                                            \
 {                                                               \
-    GB_FREE (B_slice) ;                                         \
     GB_FREE (A_slice) ;                                         \
+    GB_FREE (B_slice) ;                                         \
     if (C_counts != NULL)                                       \
     {                                                           \
         for (int tid = 0 ; tid < naslice ; tid++)               \
@@ -73,8 +71,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
-    int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t *GB_RESTRICT A_slice = NULL ;
+    int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t **C_counts = NULL ;
     int64_t cnvec = B->nvec ;
 

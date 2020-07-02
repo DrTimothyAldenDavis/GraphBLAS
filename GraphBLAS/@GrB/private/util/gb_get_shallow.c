@@ -104,7 +104,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *Ax = mxGetField (X, 0, "x") ;
         IF (Ax == NULL, ".x missing") ;
         IF (mxGetM (Ax) != 1, ".x wrong size") ;
-        IF (mxGetN (Ax) != MAX (A->type_size*A->nzmax, 1), ".x wrong size") ;
+        IF (mxGetN (Ax) != MAX (A->type->size*A->nzmax, 1), ".x wrong size") ;
         A->x = (A->nzmax == 0) ? NULL : ((void *) mxGetUint8s (Ax)) ;
         IF (A->x == NULL && A->nzmax > 0, ".x wrong type") ;
 

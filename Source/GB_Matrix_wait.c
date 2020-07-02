@@ -40,8 +40,7 @@
     GB_phix_free (A) ;                  \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
-    GB_Matrix_free (&(Aslice [0])) ;    \
-    GB_Matrix_free (&(Aslice [1])) ;    \
+    GB_Matrix_free (&A1) ;              \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -75,7 +74,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // an in-place algorithm.  No memory is allocated so this step always
     // succeeds.  Pending tuples are ignored, so A can have pending tuples.
 
-    GrB_Matrix T = NULL, S = NULL, Aslice [2] = { NULL, NULL } ;
+    GrB_Matrix T = NULL, S = NULL, A1 = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
     int64_t nzombies = A->nzombies ;
@@ -234,30 +233,36 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t kA = 0 ;
     int64_t jlast ;
 
+    int64_t *GB_RESTRICT Ap = A->p ;
+    int64_t *GB_RESTRICT Ah = A->h ;
+    int64_t *GB_RESTRICT Ai = A->i ;
+    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+
+    int64_t anvec = A->nvec ;
+    int64_t asize = A->type->size ;
+
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
     if (A->is_hyper)
     { 
         // find tjfirst in A->h 
-        int64_t pright = A->nvec - 1 ;
+        int64_t pright = anvec - 1 ;
         bool found ;
-        int64_t *GB_RESTRICT Ah = A->h ;
-        GB_SPLIT_BINARY_SEARCH (tjfirst, Ah, kA, pright, found) ;
-        // Ah [0 ... kA-1] excludes vector tjfirst.  The list
-        // Ah [kA ... A->nvec-1] includes tjfirst.
-        ASSERT (kA >= 0 && kA <= A->nvec) ;
-        ASSERT (GB_IMPLIES (kA > 0 && kA < A->nvec, Ah [kA-1] < tjfirst)) ;
-        ASSERT (GB_IMPLIES (found, Ah [kA] == tjfirst)) ;
-        anz0 = A->p [kA] ;
-        jlast = (kA > 0) ? Ah [kA-1] : (-1) ;
+        GB_SPLIT_BINARY_SEARCH (tjfirst, A->h, kA, pright, found) ;
+        // A->h [0 ... kA-1] excludes vector tjfirst.  The list
+        // A->h [kA ... anvec-1] includes tjfirst.
+        ASSERT (kA >= 0 && kA <= anvec) ;
+        ASSERT (GB_IMPLIES (kA > 0 && kA < anvec, A->h [kA-1] < tjfirst)) ;
+        ASSERT (GB_IMPLIES (found, A->h [kA] == tjfirst)) ;
+        jlast = (kA > 0) ? A->h [kA-1] : (-1) ;
     }
     else
     { 
         kA = tjfirst ;
-        anz0 = A->p [tjfirst] ;
         jlast = tjfirst - 1 ;
     }
 
-    // anz1 = nnz (A1) = nnz (A (:, tjfirst:end)), the region modifed by T
+    // anz1 = nnz (A1) = nnz (A (:, kA:end)), the region modified by T
+    anz0 = A->p [kA] ;
     int64_t anz1 = anz - anz0 ;
 
     // A + T will have anz_new entries
@@ -271,7 +276,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         //----------------------------------------------------------------------
 
         // A is growing incrementally.  It splits into two parts: A = [A0 A1].
-        // where A0 = A (:, 0:tjfirst-1) and A1 = A (:, tjfirst:end).  The
+        // where A0 = A (:, 0:kA-1) and A1 = A (:, kA:end).  The
         // first part (A0 with anz = nnz (A0) entries) is not modified.  The
         // second part (A1, with anz1 = nnz (A1) entries) overlaps with T.
         // If anz1 is zero, or small compared to anz0, then it is faster to
@@ -279,7 +284,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         // FUTURE:: this does not tolerate zombies.  So do it only if A has no
         // zombies on input.  Or, when GB_add can tolerate zombies, set the
-        // Aslice [1] to start at the first zombie.  Keep track of the vector
+        // A1 to start at the first zombie.  Keep track of the vector
         // containing the first zombie.
 
         // make sure A has enough space for the new tuples
@@ -287,6 +292,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             // double the size if not enough space
             GB_OK (GB_ix_resize (A, 2*anz_new, Context)) ;
+            Ai = A->i ;
+            Ax = (GB_void *) A->x ;
         }
 
         //----------------------------------------------------------------------
@@ -294,40 +301,75 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         //----------------------------------------------------------------------
 
         if (anz1 > 0)
-        { 
+        {
 
-            // extract A0 and A1, and then compute T = A1 + T.
+            //------------------------------------------------------------------
+            // extract A1 = A (:, kA:end) as a shallow copy
+            //------------------------------------------------------------------
 
-            // A0 = A (:, 0:tjfirst-1), not used
-            // A1 = A (:, tjfirst:end)
-            // T = A1 + T
+            // A1 = [0, A (:, kA:end)], hypersparse with same dimensions as A
+            GB_OK (GB_new (&A1, A->type, A->vlen, A->vdim, 
+                GB_Ap_malloc, A->is_csc, GB_FORCE_HYPER, GB_ALWAYS_HYPER,
+                anvec - kA, Context)) ;
 
-            int64_t Slice [3] ;
-            Slice [0] = 0 ;         // A0 is not needed
-            Slice [1] = kA ;        // kA is the first vector in A1
-            Slice [2] = A->nvec ;   // A->nvec-1 is the last vector in A1
-            GB_OK (GB_slice (A, 2, Slice, Aslice, Context)) ;
+            // the A1->i and A1->x content are shallow copies of A(:,kA:end)
+            A1->x = (void *) (Ax + asize * anz0) ;
+            A1->i = Ai + anz0 ;
+            A1->x_shallow = true ;
+            A1->i_shallow = true ;
+            A1->nzmax = anz1 ;
 
-            ASSERT_MATRIX_OK (Aslice [1], "A1 slice for GB_Matrix_wait", GB0) ;
+            // fill the column A1->h and A1->p with A->h and A->p, shifted
+            int64_t *GB_RESTRICT A1p = A1->p ;
+            int64_t *GB_RESTRICT A1h = A1->h ;
+            int64_t a1nvec = 0 ;
+            for (int64_t k = kA ; k < anvec ; k++)
+            {
+                // get A (:,k)
+                int64_t pA_start = Ap [k] ;
+                int64_t pA_end = Ap [k+1] ;
+                if (pA_end > pA_start)
+                { 
+                    // add this column to A1 if A (:,k) is not empty
+                    int64_t j = (Ah == NULL) ? k : Ah [k] ;
+                    A1p [a1nvec] = pA_start - anz0 ; 
+                    A1h [a1nvec] = j ;
+                    a1nvec++ ;
+                }
+            }
 
-            // free A0, which is not used
-            GB_Matrix_free (&(Aslice [0])) ;
+            // finalize A1
+            A1p [a1nvec] = anz1 ;
+            A1->nvec = a1nvec ;
+            A1->nvec_nonempty = a1nvec ;
+            A1->magic = GB_MAGIC ;
 
-            // S = A1 + T, but with no operator
-            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, Aslice [1], T,
-                NULL, Context)) ;
+            ASSERT_MATRIX_OK (A1, "A1 slice for GB_Matrix_wait", GB0) ;
+
+            //------------------------------------------------------------------
+            // S = A1 + T, with no operator
+            //------------------------------------------------------------------
+
+            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, A1, T, NULL,
+                Context)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
             // free A1 and T
             GB_Matrix_free (&T) ;
-            GB_Matrix_free (&(Aslice [1])) ;
+            GB_Matrix_free (&A1) ;
 
+            //------------------------------------------------------------------
             // replace T with S
+            //------------------------------------------------------------------
+
             T = S ;
             S = NULL ;
 
-            // remove A1 from the vectors of A
+            //------------------------------------------------------------------
+            // remove A1 from the vectors of A, if A is hypersparse
+            //------------------------------------------------------------------
+
             if (A->is_hyper)
             { 
                 A->nvec = kA ;
@@ -337,10 +379,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         //----------------------------------------------------------------------
         // append T to the end of A0
         //----------------------------------------------------------------------
-
-        int64_t *GB_RESTRICT Ai = A->i ;
-        GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-        int64_t asize = A->type->size ;
 
         const int64_t *GB_RESTRICT Tp = T->p ;
         const int64_t *GB_RESTRICT Th = T->h ;

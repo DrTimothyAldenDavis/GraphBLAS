@@ -29,9 +29,6 @@
 
 int64_t magic ;         // for detecting uninitialized objects
 GrB_Type type ;         // the type of each numerical entry
-size_t type_size ;      // type->size, copied here since the type could be
-                        // user-defined, and freed before the matrix or vector
-
 char *logger ;          // for error logging
 
 //------------------------------------------------------------------------------
@@ -59,10 +56,8 @@ char *logger ;          // for error logging
 // A->nvec_nonempty is equal to -1.
 
 //------------------------------------------------------------------------------
-// The Primary 4 formats:  (standard or hypersparse) * (CSR or CSC)
+// The 4 formats:  (standard or hypersparse) * (CSR or CSC)
 //------------------------------------------------------------------------------
-
-// A->is_slice is false.  These are the only matrices returned to the user.
 
 // --------------------------------------
 // A->is_hyper is false: standard format.
@@ -137,30 +132,6 @@ char *logger ;          // for error logging
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
 //------------------------------------------------------------------------------
-// Internal formats: a slice or hyperslice (either CSR or CSC)
-//------------------------------------------------------------------------------
-
-    // A->is_slice is true.  This format is only used inside GraphBLAS, for
-    // internal slices or hyperslices of another matrix.
-
-    // It is the same as the hypersparse format, except that Ah may be NULL.
-    // All Ah, Ap, Ai, Ax content of the slice is shallow.
-    // Ap [0] == 0 only for the leftmost slice; it is normally >= 0.
-
-    // slice: A->is_hyper is false
-
-            // Ah is NULL: Ah [0..A->nvec-1] is implicitly the contiguous list:
-            // [A->hfirst ... A->hfirst + A->nvec - 1].  The original matrix is
-            // not hypersparse.  A->plen gives the size of Ap, as above.  Ap
-            // points into an offset of p of the original matrix.
-
-    // hyperslice: A->is_hyper is true
-
-            // Ah is not-NULL.  The original matrix is hypersparse.  Ah points
-            // to an offset inside the h of the original matrix.  A->hfirst is
-            // zero, and not used.
-
-//------------------------------------------------------------------------------
 
 // Like MATLAB, the indices in a GraphBLAS matrix (as implemented here) are
 // "always" kept sorted.  There is one temporary exception to this rule.
@@ -214,13 +185,6 @@ int64_t *p ;            // array of size plen+1
 int64_t *i ;            // array of size nzmax
 void *x ;               // size nzmax; each entry of size A->type->size
 int64_t nzmax ;         // size of i and x arrays
-
-int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
-                        // then A->h is NULL, and the matrix A is a slice
-                        // of another standard matrix S.  The vectors in
-                        // A are the contiguous list:
-                        // [A->hfirst ... A->hfirst+A->nvec-1].
-                        // Otherwise, A->hfirst is zero.
 
 // The hyper_ratio determines how the matrix is converted between the
 // hypersparse and non-hypersparse formats.  Let n = A->vdim and let k be the
@@ -373,7 +337,6 @@ bool x_shallow ;        // true if x is a shallow copy
 
 bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
-bool is_slice ;         // true if the matrix is a slice or hyperslice
 
 //------------------------------------------------------------------------------
 // MKL analysis, if available
@@ -385,9 +348,8 @@ void *mkl ;
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
-// The matrix A can be held in four formats: standard, hypersparse, slice, or
-// hyperslice.  Each can be CSR or CSC.  The comments below assume A is in CSC
-// format.
+// The matrix can be held in four formats: (standard, hypersparse)x(CSR, CSC).
+// The comments below assume A is in CSC format.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
@@ -397,8 +359,8 @@ void *mkl ;
     //          A is CSC.  For all cases, Ap [0...nvec] are the pointers.
 
     //--------------------
-    // (1) standard     // A->is_hyper == false, A->is_slice == false
-                        // A->nvec == A->vdim, A->hfirst == 0
+    // (1) standard     // A->is_hyper == false and A->h is NULL
+                        // A->nvec == A->vdim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -411,8 +373,8 @@ void *mkl ;
         }
 
     //--------------------
-    // (2) hypersparse  // A->is_hyper == true, A->is_slice == false
-                        // A->nvec <= A->dim, A->hfirst == 0 (ignored)
+    // (2) hypersparse  // A->is_hyper == true and A->h is non-NULL
+                        // A->nvec <= A->dim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -421,42 +383,6 @@ void *mkl ;
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
-            }
-        }
-
-    //--------------------
-    // (3) slice, of another standard matrix S.
-                        // A->i == S->i, A->x == S->x
-                        // A->p = S->p + A->hfirst, A->h is NULL
-                        // A->nvec <= A->vdim == S->vdim
-
-        for (k = 0 ; k < A->nvec ; k++)
-        {
-            j = A->hfirst + k ;
-            // operate on column A(:,j), which is also S (:,j)
-            for (p = Ap [k] ; p < Ap [k+1] ; p++)
-            {
-                // A(i,j) has row i = Ai [p], value aij = Ax [p]
-                // This is identical to S(i,j)
-            }
-        }
-
-    //--------------------
-    // (4) hyperslice, of another hypersparse matrix S
-                        // A->i == S->i, A->x == S->x, A->p = S->p + kfirst,
-                        // A->h == S->h + kfirst where A(:,0) is the same
-                        // column as S->h [kfirst].  kfirst is not kept.
-                        // A->nvec <= A->vdim == S->vdim
-                        // A->hfirst == 0 (ignored)
-
-        for (k = 0 ; k < A->nvec ; k++)
-        {
-            j = A->h [k] ;
-            // operate on column A(:,j), which is also S (:,j)
-            for (p = Ap [k] ; p < Ap [k+1] ; p++)
-            {
-                // A(i,j) has row i = Ai [p], value aij = Ax [p].
-                // This is identical to S(i,j)
             }
         }
 

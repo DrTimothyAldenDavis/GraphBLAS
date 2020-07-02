@@ -2,10 +2,9 @@
 // GB_lookup_template: find k so that j == Ah [k]
 //------------------------------------------------------------------------------
 
-// Given a sparse, hypersparse, or hyperslice matrix, find k so that j == Ah
-// [k], if it appears in the list.  k is not needed by the caller, just the
-// variables pstart, pend, pleft, and found.  GB_lookup cannot be used if
-// A is a slice (it could be extended to handle this case).
+// Given a sparse or hypersparse matrix, find k so that j == Ah [k], if it
+// appears in the list.  k is not needed by the caller, just the variables
+// pstart, pend, pleft, and found.
 
 // This fine is #included' by GB.h, so the #include'ing file does either:
 //      #include "GB.h"

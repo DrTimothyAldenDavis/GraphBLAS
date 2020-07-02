@@ -34,8 +34,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
     bool *p_Ch_is_Mh,           // if true, then Ch == Mh
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
-    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
-    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    const GrB_Matrix A,         // first input matrix
+    const GrB_Matrix B,         // second input matrix
     GB_Context Context
 ) ;
 

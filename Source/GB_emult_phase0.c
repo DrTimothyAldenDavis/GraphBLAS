@@ -13,9 +13,8 @@
 // On input, A and B are the two matrices being ewise multiplied, and M is the
 // optional mask matrix.  If present, it is not complemented.
 
-// The M, A, and B matrices are sparse or hypersparse (not a slice or
-// hyperslice).  C will be standard (if Ch is returned NULL) or hypersparse
-// (if Ch is returned non-NULL).
+// The M, A, and B matrices are sparse or hypersparse.  C will be standard (if
+// Ch is returned NULL) or hypersparse (if Ch is returned non-NULL).
 
 //      Ch: the vectors to compute in C.  Not allocated, but equal to either
 //      A->h, B->h, or M->h, or NULL if C is not hypersparse.
@@ -94,12 +93,10 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t Anvec = A->nvec ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     bool A_is_hyper = A->is_hyper ;
-    ASSERT (!A->is_slice) ;
 
     int64_t Bnvec = B->nvec ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     bool B_is_hyper = B->is_hyper ;
-    ASSERT (!B->is_slice) ;
 
     int64_t Mnvec = 0 ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -110,7 +107,6 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         Mnvec = M->nvec ;
         Mh = M->h ;
         M_is_hyper = M->is_hyper ;
-        ASSERT (!M->is_slice) ;
     }
 
     //--------------------------------------------------------------------------

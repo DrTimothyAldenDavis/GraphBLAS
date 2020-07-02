@@ -69,9 +69,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // print the header
     //--------------------------------------------------------------------------
 
-    GBPR0 (", %s", A->is_hyper ?
-            (A->is_slice ? "hyperslice" : "hypersparse") :
-            (A->is_slice ? "slice" : "sparse")) ;
+    GBPR0 (", %s", A->is_hyper ?  "hypersparse" : "sparse") ;
     GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
 
     #if GB_DEVELOPER
@@ -101,45 +99,22 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check vector structure
     //--------------------------------------------------------------------------
 
-    if (A->is_slice)
+    if (A->is_hyper)
     {
-        if (A->is_hyper)
+        // A is hypersparse
+        if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
         { 
-            // A is a hyperslice of a hypersparse matrix
-            GBPR0 ("  hyperslice\n") ;
-        }
-        else
-        { 
-            // A is a slice of a standard matrix
-            GBPR0 ("  slice [" GBd ":" GBd "]\n",
-                A->hfirst, A->hfirst + A->nvec + - 1) ;
-        }
-        if (! (A->nvec <= A->vdim && A->plen == A->nvec))
-        { 
-            // invalid slice
-            GBPR0 ("  invalid slice %s structure\n", kind) ;
+            GBPR0 ("  invalid hypersparse %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
     }
     else
     {
-        if (A->is_hyper)
-        {
-            // A is hypersparse
-            if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
-            { 
-                GBPR0 ("  invalid hypersparse %s structure\n", kind) ;
-                return (GrB_INVALID_OBJECT) ;
-            }
-        }
-        else
-        {
-            // A is standard
-            if (! (A->nvec == A->plen && A->plen == A->vdim))
-            { 
-                GBPR0 ("  invalid sparse %s structure\n", kind) ;
-                return (GrB_INVALID_OBJECT) ;
-            }
+        // A is standard
+        if (! (A->nvec == A->plen && A->plen == A->vdim))
+        { 
+            GBPR0 ("  invalid sparse %s structure\n", kind) ;
+            return (GrB_INVALID_OBJECT) ;
         }
     }
 
@@ -171,7 +146,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_Type_check (A->type, "", pr_type, f) ;
-    if (info != GrB_SUCCESS || (A->type->size != A->type_size))
+    if (info != GrB_SUCCESS)
     { 
         GBPR0 ("  %s has an invalid type\n", kind) ;
         return (GrB_INVALID_OBJECT) ;
@@ -190,17 +165,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR ("  ->x: %p shallow: %d\n", A->x, A->x_shallow) ;
     }
     #endif
-
-    if (A->is_slice)
-    {
-        // a slice or hyperslice must have shallow i and x content
-        if (!A->i_shallow || !A->x_shallow)
-        { 
-            // bad slice: must have shallow i and x
-            GBPR0 ("  invalid non-shallow slice %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
 
     //--------------------------------------------------------------------------
     // check p
@@ -236,37 +200,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
-    // check hfirst
-    //--------------------------------------------------------------------------
-
-    if (A->is_slice && !A->is_hyper)
-    {
-        // hfirst is the first vector in a slice of a standard sparse matrix
-        if (A->hfirst < 0 || A->hfirst + A->nvec > A->vdim)
-        { 
-            // bad slice: hfirst invalid
-            GBPR0 ("  hfirst: invalid slice %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
-    else
-    {
-        // only a standard slice can have a nonzero hfirst
-        if (A->hfirst != 0)
-        { 
-            // bad hyperslice: only a standard slice can have a nonzero hfirst
-            GBPR0 ("  hfirst: invalid slice %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
     // check an empty matrix
     //--------------------------------------------------------------------------
 
     bool A_empty = (A->nzmax == 0) ;
 
-    if (A_empty && !(A->is_slice))
+    if (A_empty)
     {
         // A->x and A->i pointers must be NULL and shallow must be false
 
@@ -301,7 +240,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the content of p
     //--------------------------------------------------------------------------
 
-    if (A->is_slice ? (A->p [0] < 0) : (A->p [0] != 0))
+    if (A->p [0] != 0)
     { 
         GBPR0 ("  ->p [0] = " GBd " invalid\n", A->p [0]) ;
         return (GrB_INVALID_OBJECT) ;
@@ -366,12 +305,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (Pending != NULL || A->nzombies != 0)
     { 
-        if (A->is_slice)
-        { 
-            // a slice or hyperslice cannot have pending work
-            GBPR0 ("  slice %s invalid: unfinished\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
         GBPR0 ("  pending tuples: " GBd " max pending: " GBd 
             " zombies: " GBd "\n", GB_Pending_n (A),
             (Pending == NULL) ? 0 : (Pending->nmax),
@@ -403,16 +336,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     for (int64_t k = 0 ; k < A->nvec ; k++)
     {
         int64_t ilast = -1 ;
-
-        int64_t j ;
-        if (A->is_slice)
-        {
-            j = (A->h == NULL) ? (A->hfirst + k) : A->h [k] ;
-        }
-        else
-        {
-            j = (A->h == NULL) ? k : A->h [k] ;
-        }
+        int64_t j = (A->h == NULL) ? k : A->h [k] ;
         int64_t p = A->p [k] ;
         int64_t pend = A->p [k+1] ;
 

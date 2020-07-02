@@ -29,12 +29,7 @@
 // The lists Ai and Bi can also be any sorted integer array.  This is used by
 // GB_add_phase0 to construct the set union of A->h and B->h.  In this case,
 // pA_start and pB_start are both zero, and pA_end and pB_end are A->nvec and
-// B->nvec, respectively.  A can be a non-hypersparse slice, so that A->h is
-// NULL.  In this case, Ai is NULL, and represents the implicit list
-// A_hfirst:A_hfirst+pA_end-1, inclusive.
-
-// This macro defines the kth entry in the Ai list, for k = 0 to pA_end-1:
-#define GB_Ai(k) ((Ai != NULL) ? Ai [k] : (A_hfirst + (k)))
+// B->nvec, respectively.
 
 // If n = A->vlen = B->vlen, anz = nnz (A (:,kA)), and bnz = nnz (B (:,kB)),
 // then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
@@ -42,7 +37,6 @@
 
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_slice_vector
 (
     // output: return i, pA, and pB
@@ -53,14 +47,13 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *GB_RESTRICT Mi,     // indices of M (or NULL)
+    const int64_t *GB_RESTRICT Mi,  // indices of M (or NULL)
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *GB_RESTRICT Ai,     // indices of A
-    const int64_t A_hfirst,         // if Ai is an implicit hyperlist
+    const int64_t *GB_RESTRICT Ai,  // indices of A
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *GB_RESTRICT Bi,     // indices of B
+    const int64_t *GB_RESTRICT Bi,  // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 )
@@ -114,33 +107,11 @@ void GB_slice_vector
             // Ai is empty so i does not appear
             pA = -1 ;
         }
-        else if (Ai == NULL)
-        { 
-            // Ai is an implicit hyperlist: A_hfirst, A_first+1, ... to
-            // A_hfirst + pA_end - 1, inclusive.  No need for a binary search.
-            ASSERT (pA_start == 0) ;
-            if (i < A_hfirst)
-            { 
-                // i comes before the first entry, so it does not appear
-                pA = 0 ;
-            }
-            else if (A_hfirst + pA_end - 1 < i)
-            { 
-                // i comes after the last entry, so it does not appear
-                pA = pA_end ;
-            }
-            else // (A_hfirst <= i && i <= A_hfirst + pA_end - 1)
-            { 
-                // i is in the implicit hyperlist
-                pA = i - A_hfirst ;
-                ASSERT (GB_Ai (pA) == i) ;
-            }
-        }
         else if (aknz == vlen)
         { 
             // A(:,kA) is dense; no need for a binary search
             pA = pA_start + i ;
-            ASSERT (GB_Ai (pA) == i) ;
+            ASSERT (Ai [pA] == i) ;
         }
         else
         { 
@@ -150,12 +121,12 @@ void GB_slice_vector
             bool afound ;
             int64_t apright = pA_end - 1 ;
             GB_SPLIT_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
-            ASSERT (GB_IMPLIES (afound, GB_Ai (pA) == i)) ;
+            ASSERT (GB_IMPLIES (afound, Ai [pA] == i)) ;
             ASSERT (pA_start <= pA && pA <= pA_end) ;
         }
 
-        ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end, (GB_Ai (pA-1) < i)));
-        ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end, (GB_Ai (pA) >= i )));
+        ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end, (Ai [pA-1] < i)));
+        ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end, (Ai [pA] >= i )));
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -290,8 +261,8 @@ void GB_slice_vector
 
     ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end), Mi [pM-1] <  i)) ;
     ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end), Mi [pM  ] >= i)) ;
-    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), GB_Ai (pA-1) <  i)) ;
-    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), GB_Ai (pA  ) >= i)) ;
+    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), Ai [pA-1] <  i)) ;
+    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), Ai [pA  ] >= i)) ;
     ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end), Bi [pB-1] <  i)) ;
     ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end), Bi [pB  ] >= i)) ;
 

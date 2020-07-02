@@ -104,7 +104,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxArray *Ax = mxCreateNumericMatrix (1, 1, mxUINT8_CLASS, mxREAL) ;
     if (A->nzmax > 0)
     { 
-        mxSetN (Ax, A->nzmax * A->type_size) ;
+        mxSetN (Ax, A->nzmax * A->type->size) ;
         p = mxGetUint8s (Ax) ;
         gb_mxfree (&p) ;
         mxSetUint8s (Ax, A->x) ;

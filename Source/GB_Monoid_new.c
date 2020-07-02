@@ -144,7 +144,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->op = op ;
     mon->builtin = false ;
     size_t zsize = op->ztype->size ;
-    mon->op_ztype_size = zsize ;
     mon->identity = NULL ;                  // defined below
     mon->terminal = NULL ;                  // defined below (if present)
 

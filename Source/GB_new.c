@@ -86,7 +86,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // basic information
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
-    A->type_size = type->size ; // save the type->size for safe GrB_free
 
     // CSR/CSC format
     A->is_csc = is_csc ;
@@ -133,8 +132,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     }
     A->p = NULL ;
     A->h = NULL ;
-    A->hfirst = 0 ;
-    A->is_slice = false ;       // true if A is a slice or hyperslice
     A->p_shallow = false ;
     A->h_shallow = false ;
     A->nvec_nonempty = 0 ;      // all vectors are empty

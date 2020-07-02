@@ -433,7 +433,6 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
     GB_MAGIC,                                                               \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
-    sizeof (ztype),                                                         \
     NULL,                                                                   \
     true                                                                    \
 } ;                                                                         \
@@ -448,7 +447,6 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
     GB_MAGIC,                                                               \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
-    sizeof (ztype),                                                         \
     & GB_opaque_terminal_ ## op,                                            \
     true                                                                    \
 } ;                                                                         \

@@ -364,10 +364,9 @@ GB_PUBLIC int GB_cover_max ;
 
 // If A->nzmax is zero, then A->p might not be allocated.  Note that this
 // function does not count pending tuples; use GB_MATRIX_WAIT(A) first, if
-// needed.  For sparse or hypersparse matrix, Ap [0] == 0.  For a slice or
-// hyperslice, Ap [0] >= 0 points to the first entry in the slice.  For all 4
-// cases (sparse, hypersparse, slice, hyperslice), nnz(A) = Ap [nvec] - Ap [0].
-#define GB_NNZ(A) (((A)->nzmax > 0) ? ((A)->p [(A)->nvec] - (A)->p [0]) : 0 )
+// needed.  For both sparse and hypersparse matrices Ap [0] == 0,
+// and nnz(A) = Ap [nvec].
+#define GB_NNZ(A) (((A)->nzmax > 0) ? ((A)->p [(A)->nvec]) : 0 )
 
 // Upper bound on nnz(A) when the matrix has zombies and pending tuples;
 // does not need GB_MATRIX_WAIT(A) first.
@@ -1060,7 +1059,6 @@ void GB_slice_vector
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
     const int64_t *GB_RESTRICT Ai,     // indices of A
-    const int64_t A_hfirst,         // if Ai is an implicit hyperlist
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
     const int64_t *GB_RESTRICT Bi,     // indices of B
@@ -1180,16 +1178,6 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 (
     const GB_Type_code code,    // type code to convert
     const GrB_Type type         // user type if code is GB_UDT_code
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
-(
-    GrB_Matrix B,       // matrix to slice
-    int nthreads,       // # of slices to create
-    int64_t *Slice,     // array of size nthreads+1 that defines the slice
-    GrB_Matrix *Bslice, // array of output slices, of size nthreads
-    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
