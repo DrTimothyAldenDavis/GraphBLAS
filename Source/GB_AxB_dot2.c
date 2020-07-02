@@ -15,6 +15,8 @@
 // Two variants are handled: C=A'*B and C<!M>=A'*B.
 // The C<M>=A'*B computation is computed by GB_AxB_dot3.
 
+#define GB_DEBUG
+
 #include "GB_mxm.h"
 #include "GB_iterator.h"
 #ifndef GBCOMPACT

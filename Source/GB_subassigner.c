@@ -49,6 +49,8 @@
 // can be changed by turning an entry into a zombie, or by bringing a zombie
 // back to life, but no entry in C->i moves in position.
 
+#define GB_DEBUG
+
 #define GB_FREE_WORK            \
 {                               \
     GB_Matrix_free (&S) ;       \
@@ -64,9 +66,6 @@
 #include "GB_subassign_methods.h"
 #include "GB_subref.h"
 #include "GB_dense.h"
-#ifdef GB_DEBUG
-#include "GB_iterator.h"
-#endif
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \
@@ -826,18 +825,31 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
 
+        //----------------------------------------------------------------------
+        // check the result of S=C(I,J)
+        //----------------------------------------------------------------------
+
+        // this body of code explains what S contains.
+        // S is nI-by-nJ where nI = length (I) and nJ = length (J)
+
         ASSERT_MATRIX_OK (C, "C for subref extraction", GB0) ;
         ASSERT_MATRIX_OK (S, "S for subref extraction", GB0) ;
 
         #ifdef GB_DEBUG
+        // get S
+        const int64_t *GB_RESTRICT Sp = S->p ;
+        const int64_t *GB_RESTRICT Sh = S->h ;
         const int64_t *GB_RESTRICT Si = S->i ;
         const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
-        // this body of code explains what S contains.
-        // S is nI-by-nJ where nI = length (I) and nJ = length (J)
-        GBI_for_each_vector (S)
+
+        // for each vector of S
+        for (int64_t k = 0 ; k < S->nvec ; k++)
         {
             // prepare to iterate over the entries of vector S(:,jnew)
-            GBI_jth_iteration (jnew, pS_start, pS_end) ;
+            int64_t jnew = (Sh == NULL) ? k : Sh [k] ;
+            int64_t pS_start = Sp [k] ;
+            int64_t pS_end = Sp [k+1] ;
+
             // S (inew,jnew) corresponds to C (iC, jC) ;
             // jC = J [j] ; or J is a colon expression
             int64_t jC = GB_ijlist (J, jnew, Jkind, Jcolon) ;

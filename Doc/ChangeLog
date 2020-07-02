@@ -37,7 +37,7 @@ Version 3.3.0, June 26, 2020
     * DRAFT interfaces: A few functions have been added to use CUDA and the
         Intel MKL library.  These are visible in GraphBLAS.h but are
         undocumented; do *not* use them yet.  They will likely change without
-        warning, and without change the SuiteSparse:GraphBLAS version number.
+        warning, and without changing the SuiteSparse:GraphBLAS version number.
 
 Version 3.2.2, Apr 2, 2020
 

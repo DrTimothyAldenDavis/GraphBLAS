@@ -16,8 +16,6 @@ fprintf (f, '// http://suitesparse.com   See GraphBLAS/Doc/License.txt for licen
 fprintf (f, '\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_binop.h') ;
 fprintf (f, '\n\n') ;
-fprintf (f, '#include "GB_iterator.h"\n') ;
-fprintf (f, '\n\n') ;
 fclose (f) ;
 
 % The ANY operator is not used as a binary operator in the generated functions.

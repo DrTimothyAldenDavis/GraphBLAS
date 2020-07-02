@@ -98,7 +98,6 @@ GrB_Info GB_unop_tran__identity_fc64_int8
     GrB_Matrix C,
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
-    GBI_single_iterator Iter,
     const int64_t *GB_RESTRICT A_slice,
     int naslice
 )

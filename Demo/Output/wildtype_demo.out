@@ -357,4 +357,3 @@ function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
 Incompatible type for z=wildtype_add(x,y):
 second input of type [float]
 cannot be typecast to y input of type [wildtype]
-

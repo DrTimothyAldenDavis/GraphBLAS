@@ -119,7 +119,6 @@ GrB_Info GB_bind1st_tran
     const GB_void *x_input,
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
-    GBI_single_iterator Iter,
     const int64_t *GB_RESTRICT A_slice,
     int naslice
 ) ;
@@ -132,7 +131,6 @@ GrB_Info GB_bind2nd_tran
     const GrB_Matrix A,
     const GB_void *y_input,
     int64_t *GB_RESTRICT *Rowcounts,
-    GBI_single_iterator Iter,
     const int64_t *GB_RESTRICT A_slice,
     int naslice
 ) ;

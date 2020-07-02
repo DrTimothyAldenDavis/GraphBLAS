@@ -33,7 +33,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
     int naslice                         // # of slices of A
 )
@@ -73,7 +72,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             #define GB_WORKER(opname,zname,ztype,aname,atype)       \
             {                                                       \
                 info = GB_unop_tran (opname,zname,aname)            \
-                    (C, A, Rowcounts, Iter, A_slice, naslice) ;     \
+                    (C, A, Rowcounts, A_slice, naslice) ;           \
                 if (info == GrB_SUCCESS) return ;                   \
             }                                                       \
             break ;
@@ -188,8 +187,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
                 #define GB_BINOP_WORKER(op,xname)                             \
                 {                                                             \
-                    if (GB_bind1st_tran (op, xname) (C, scalarx, A, Rowcounts,\
-                        Iter, A_slice, naslice) == GrB_SUCCESS) return ;      \
+                    if (GB_bind1st_tran (op, xname) (C, scalarx, A,           \
+                        Rowcounts, A_slice, naslice) == GrB_SUCCESS) return ; \
                 }                                                             \
                 break ;
 
@@ -224,8 +223,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #undef  GB_BINOP_WORKER
                 #define GB_BINOP_WORKER(op,xname)                             \
                 {                                                             \
-                    if (GB_bind2nd_tran (op, xname) (C, A, scalarx, Rowcounts,\
-                        Iter, A_slice, naslice) == GrB_SUCCESS) return ;      \
+                    if (GB_bind2nd_tran (op, xname) (C, A, scalarx,           \
+                        Rowcounts, A_slice, naslice) == GrB_SUCCESS) return ; \
                 }                                                             \
                 break ;
 

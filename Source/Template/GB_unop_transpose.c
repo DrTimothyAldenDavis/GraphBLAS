@@ -19,6 +19,8 @@
     // get A and C
     //--------------------------------------------------------------------------
 
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
 
     #if defined ( GB_PHASE_2_OF_2 )
@@ -31,19 +33,21 @@
     // C = op (cast (A'))
     //--------------------------------------------------------------------------
 
-    int taskid ;
+    int tid ;
     #pragma omp parallel for num_threads(naslice) schedule(static)
-    for (taskid = 0 ; taskid < naslice ; taskid++)
+    for (tid = 0 ; tid < naslice ; tid++)
     {
         // get the rowcount for this slice, of size A->vlen
-        int64_t *GB_RESTRICT rowcount = Rowcounts [taskid] ;
-        for (int64_t Iter_k = A_slice [taskid] ;
-                     Iter_k < A_slice [taskid+1] ;
-                     Iter_k++)
+        int64_t *GB_RESTRICT rowcount = Rowcounts [tid] ;
+        for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
         {
-            GBI_jth_iteration_with_iter (Iter, j, pA, pA_end) ;
-            for ( ; pA < pA_end ; pA++)
+            // iterate over the entries in A(:,j)
+            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t pA_start = Ap [k] ;
+            int64_t pA_end = Ap [k+1] ;
+            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 
+                // get A(i,j) where i = Ai [pA]
                 #if defined ( GB_PHASE_1_OF_2)
                 // count one more entry in C(i,:) for this slice
                 rowcount [Ai [pA]]++ ;

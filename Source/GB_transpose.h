@@ -10,7 +10,6 @@
 #ifndef GB_TRANSPOSE_H
 #define GB_TRANSPOSE_H
 #include "GB.h"
-#include "GB_iterator.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
@@ -48,7 +47,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
     int naslice                         // # of slices of A
 ) ;
@@ -63,7 +61,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
     int naslice                         // # of slices of A
 ) ;

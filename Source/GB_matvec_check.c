@@ -11,7 +11,6 @@
 // #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
-#include "GB_iterator.h"
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -400,10 +399,25 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     int64_t jcount = 0 ;
     bool truncated = false ;
 
-    GBI_for_each_vector (A)
+    // for each vector of A
+    for (int64_t k = 0 ; k < A->nvec ; k++)
     {
         int64_t ilast = -1 ;
-        GBI_for_each_entry (j, p, pend)
+
+        int64_t j ;
+        if (A->is_slice)
+        {
+            j = (A->h == NULL) ? (A->hfirst + k) : A->h [k] ;
+        }
+        else
+        {
+            j = (A->h == NULL) ? k : A->h [k] ;
+        }
+        int64_t p = A->p [k] ;
+        int64_t pend = A->p [k+1] ;
+
+        // for each entry in A(:,j), the kth vector of A
+        for ( ; p < pend ; p++)
         {
             bool prcol = ((pr_short && jcount < GB_NBRIEF) || pr_complete) ;
             if (ilast == -1)

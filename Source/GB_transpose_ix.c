@@ -23,7 +23,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
     int naslice                         // # of slices of A
 )
@@ -50,7 +49,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         #define GB_WORKER(ignore1,zname,ztype,aname,atype)          \
         {                                                           \
             info = GB_unop_tran (zname,aname)                       \
-                (C, A, Rowcounts, Iter, A_slice, naslice) ;         \
+                (C, A, Rowcounts, A_slice, naslice) ;               \
             if (info == GrB_SUCCESS) return ;                       \
         }                                                           \
         break ;

@@ -36,6 +36,8 @@
 // This method is parallel, but not highly scalable.  At most O(e/m) threads
 // are used.
 
+#define GB_DEBUG
+
 #include "GB_transpose.h"
 
 #define GB_FREE_WORK                                                    \
@@ -82,6 +84,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     // OK if the matrix A is jumbled; this function is intended to sort it.
     ASSERT_MATRIX_OK_OR_JUMBLED (A, "A input for transpose_bucket", GB0) ;
+    ASSERT (!(A->is_slice)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
     // if op1 and op2 are NULL, then no operator is applied
@@ -159,16 +162,13 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // phase1: symbolic analysis
     //--------------------------------------------------------------------------
 
-    // create the iterator for A
-    GBI_single_iterator Iter ;
+    // slice the A matrix
     if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    GBI1_init (&Iter, A) ;
 
     // sum up the row counts and find C->p
     if (naslice == 1)
@@ -247,14 +247,14 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     if (op1 == NULL && op2 == NULL)
     { 
         // do not apply an operator; optional typecast to ctype
-        GB_transpose_ix (C, A, Rowcounts, Iter, A_slice, naslice) ;
+        GB_transpose_ix (C, A, Rowcounts, A_slice, naslice) ;
     }
     else
     { 
         // apply an operator, C has type op->ztype
         GB_transpose_op (C, 
             op1, op2, scalar, binop_bind1st,
-            A, Rowcounts, Iter, A_slice, naslice) ;
+            A, Rowcounts, A_slice, naslice) ;
     }
 
     //--------------------------------------------------------------------------
