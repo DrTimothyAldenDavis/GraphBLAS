@@ -56,6 +56,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
     cmake_policy ( SET CMP0048 NEW )
     cmake_policy ( SET CMP0054 NEW )
 endif ( )
+set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
 set ( GraphBLAS_DATE "July 2, 2020 (DRAFT)" )
