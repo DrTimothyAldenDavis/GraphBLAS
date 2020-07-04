@@ -13,6 +13,8 @@
 
 // See also GB_assign_zombie3 and GB_assign_zombie4.
 
+// DENSE TODO: convert Z to sparse
+
 #include "GB_assign.h"
 #include "GB_ek_slice.h"
 

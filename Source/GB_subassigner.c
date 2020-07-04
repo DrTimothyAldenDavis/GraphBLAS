@@ -242,7 +242,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // duplicates are removed.
 
     // A side benefit of this pre-sort is that it ensures that the results of
-    // GrB_assign and GxB_subassign are fully defined if I and J have
+    // GrB_assign and GxB_subassign are completely defined if I and J have
     // duplicates.  The definition of this pre-sort is given in the M-file
     // below.
 

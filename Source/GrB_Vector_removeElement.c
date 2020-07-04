@@ -9,6 +9,9 @@
 
 // Removes a single entry, V (i), from the vector V.
 
+// DENSE TODO: convert V to sparse
+// DENSE TODO: if all entries in V are present, do not use binary search
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;

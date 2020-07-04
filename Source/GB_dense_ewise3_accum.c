@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FULL: or DENSE: this function is only called when C,A,B are full or dense
+
 #include "GB_dense.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT

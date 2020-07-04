@@ -16,6 +16,10 @@
 // A:           matrix
 // S:           constructed (see also Method 06n)
 
+// FULL: if A is sparse and C dense, then C is likely to become sparse.
+// FULL TODO: kernel: C(I,J)<M>=A when A and C are dense; no need for S.
+// FULL TODO: if A is sparse and C dense: convert C to sparse
+
 #define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign_methods.h"

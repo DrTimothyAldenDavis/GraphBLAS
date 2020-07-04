@@ -9,6 +9,8 @@
 
 // C(:,:) = x where C is a matrix and x is a scalar
 
+// FULL: do not create the pattern of C, convert to full
+
 #include "GB_dense.h"
 #include "GB_select.h"
 #include "GB_Pending.h"

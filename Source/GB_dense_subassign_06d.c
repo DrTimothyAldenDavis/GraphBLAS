@@ -16,6 +16,8 @@
 // A:           matrix, and aliased to M
 // S:           none
 
+// FULL: if C sparse, convert to full
+
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #ifndef GBCOMPACT

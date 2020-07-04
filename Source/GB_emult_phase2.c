@@ -13,7 +13,7 @@
 // the entries in each vector C(:,j) and computes Cp.
 
 // GB_emult_phase2 computes the pattern and values of each vector of C(:,j),
-// fully in parallel.
+// entirely in parallel.
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
 // GB_emult_phase0.  If present, the mask M is not complemented.

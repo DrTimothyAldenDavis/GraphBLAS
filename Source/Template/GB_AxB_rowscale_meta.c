@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C=D*B are computed fully in parallel. 
+// All entries in C=D*B are computed entirely in parallel. 
 
 {
     // Bx is unused if the operator is FIRST or PAIR

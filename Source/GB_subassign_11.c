@@ -16,6 +16,9 @@
 // A:           scalar
 // S:           constructed
 
+// FULL: C almost certain to become sparse because of <M,replace>.
+// FULL TODO: convert C to sparse on input
+
 #define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign_methods.h"

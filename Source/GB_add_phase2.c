@@ -13,7 +13,7 @@
 // entries in each vector C(:,j) and computes Cp.
 
 // GB_add_phase2 computes the pattern and values of each vector of C(:,j),
-// fully in parallel.
+// entirely in parallel.
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
 // GB_add_phase0.  The mask can be either: not present, or present and

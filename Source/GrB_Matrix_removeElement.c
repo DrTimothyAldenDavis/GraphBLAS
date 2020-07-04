@@ -9,6 +9,9 @@
 
 // Removes a single entry, C (row,col), from the matrix C.
 
+// DENSE TODO: convert C to sparse
+// DENSE TODO: if all entries in C are present, do not use binary search
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;

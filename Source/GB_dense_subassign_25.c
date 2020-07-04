@@ -17,6 +17,8 @@
 // A:           matrix
 // S:           none
 
+// FULL: C remains sparse
+
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #ifndef GBCOMPACT

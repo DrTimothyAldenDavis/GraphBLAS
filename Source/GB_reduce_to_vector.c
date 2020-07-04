@@ -221,6 +221,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
+        // DENSE TODO: construct T as a dense if A not hypersparse and all A(:,j) nonempty
+
         T->p [0] = 0 ;
         T->p [1] = anvec ;
         int64_t *GB_RESTRICT Ti = T->i ;

@@ -12,8 +12,8 @@
 
 // If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
 // initialized, and A->magic is set to GB_MAGIC to denote a valid matrix.
-// Otherwise, the matrix has not yet been fully initialized, and A->magic is
-// set to GB_MAGIC2 to denote this.  This case only occurs internally in
+// Otherwise, the matrix has not yet been completelyinitialized, and A->magic
+// is set to GB_MAGIC2 to denote this.  This case only occurs internally in
 // GraphBLAS.  The internal function that calls GB_new must then allocate or
 // initialize A->p itself, and then set A->magic = GB_MAGIC when it does so.
 
@@ -168,10 +168,10 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     else if (Ap_option == GB_Ap_malloc)
     {
         // This is faster but can only be used internally by GraphBLAS since
-        // the matrix is allocated but not yet fully initialized.  The caller
-        // must set A->p [0..plen] and then set A->magic to GB_MAGIC, before
-        // returning the matrix to the user application.  GB_NNZ(A) must check
-        // A->nzmax == 0 since A->p [A->nvec] is undefined.
+        // the matrix is allocated but not yet completely initialized.  The
+        // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
+        // before returning the matrix to the user application.  GB_NNZ(A) must
+        // check A->nzmax == 0 since A->p [A->nvec] is undefined.
         A->magic = GB_MAGIC2 ;
         A->p = GB_MALLOC (A->plen+1, int64_t) ;
         ok = (A->p != NULL) ;

@@ -34,7 +34,7 @@
 
 // If both A(:,i) and B(:,j) are sparse, then the intersection must still be
 // found, so these optimizations can be used only if A(:,i) and/or B(:,j) are
-// fully populated.
+// entirely populated.
 
 // For built-in, pre-generated semirings, the PAIR operator is only coupled
 // with either the ANY, PLUS, EQ, or XOR monoids, since the other monoids are
@@ -735,7 +735,7 @@
         else
         { 
             // C(i,j) becomes a zombie
-            task_nzombies++ ;
+            task_nzombies++ ;           // GB_AxB_dot3: computing C<M>=A'*B
             Ci [pC] = GB_FLIP (i) ;
         }
 

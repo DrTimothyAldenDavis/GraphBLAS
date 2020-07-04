@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C=A*D are computed fully in parallel, using the same kind of
-// parallelism as Template/GB_reduce_each_vector.c.
+// All entries in C=A*D are computed entirely in parallel, using the same kind
+// of parallelism as Template/GB_reduce_each_vector.c.
 
 {
 

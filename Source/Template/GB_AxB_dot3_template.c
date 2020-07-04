@@ -93,7 +93,7 @@
             }
             else
             { 
-                // task fully owns this vector C(:,k).
+                // task completely owns this vector C(:,k).
                 pC_start = Cp [k] ;
                 pC_end   = Cp [k+1] ;
             }
@@ -167,7 +167,7 @@
                         // M(i,j) is false, so C(i,j) is a zombie
                         //------------------------------------------------------
 
-                        task_nzombies++ ;
+                        task_nzombies++ ;   // GB_AxB_dot3: computing C<M>=A'*B
                         Ci [pC] = GB_FLIP (i) ;
                     }
                 }

@@ -12,10 +12,10 @@
 // of entries, which means that a vector A(:,k) may be reduced by more than one
 // thread.  The first vector A(:,kfirst) reduced by thread tid may be partial,
 // where the prior thread tid-1 (and other prior threads) may also do some of
-// the reductions for this same vector A(:,kfirst).  The thread tid fully
-// reduces all vectors A(:,k) for k in the range kfirst+1 to klast-1.  The last
-// vector A(:,klast) reduced by thread tid may also be partial.  Thread tid+1,
-// and following threads, may also do some of the reduces for A(:,klast).
+// the reductions for this same vector A(:,kfirst).  The thread tid reduces all
+// vectors A(:,k) for k in the range kfirst+1 to klast-1.  The last vector
+// A(:,klast) reduced by thread tid may also be partial.  Thread tid+1, and
+// following threads, may also do some of the reduces for A(:,klast).
 
 #ifndef GB_GET_J
 #define GB_GET_J ;

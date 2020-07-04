@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FULL: A and B already full or dense; C becomes full.
+
 // FUTURE: extend to handle typecasting and generic operators.
 
 #include "GB_dense.h"
@@ -63,6 +65,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 
     if (!C_is_dense)
     { 
+        // TODO: convert C to full; just allocate C->x
         bool C_is_csc = C->is_csc ;
         GB_phix_free (C) ;
         GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;

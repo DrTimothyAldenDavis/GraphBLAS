@@ -49,7 +49,7 @@
 // vector for the fine tasks).  It is set to twice the smallest power of 2 that
 // is greater than the flop count to compute that vector (plus the # of entries
 // in M(:,j) for tasks that compute C<M>=A*B or C<!M>=A*B).  This size ensures
-// the results will fit in the hash table, and with hopefully only a modest
+// the results will fit in the hash table, and with ideally only a modest
 // number of collisions.  If the hash table size exceeds a threshold (currently
 // m/16 if C is m-by-n), then Gustavson's method is used instead, and the hash
 // table size is set to m, to serve as the gather/scatter workspace for

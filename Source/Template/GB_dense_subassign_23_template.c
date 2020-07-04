@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C+=B are computed fully in parallel, using the same kind of
+// All entries in C+=B are computed entirely in parallel, using the same kind of
 // parallelism as Template/GB_AxB_colscale.c.
 
 #include "GB_unused.h"

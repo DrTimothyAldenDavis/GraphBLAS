@@ -14,6 +14,8 @@
 // the function is a bit of a misnomer since it implies that only the dense
 // case is handled.
 
+// FULL: if C sparse and A dense/full, convert C to full
+
 #include "GB_dense.h"
 #define GB_FREE_ALL ;
 

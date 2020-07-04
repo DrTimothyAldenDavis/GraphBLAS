@@ -13,6 +13,8 @@
 
 // GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
 
+// DENSE TODO: convert C to sparse
+
 #include "GB_assign.h"
 
 void GB_assign_zombie4

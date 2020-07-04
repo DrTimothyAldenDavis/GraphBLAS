@@ -22,7 +22,7 @@ fclose (f) ;
 % the monoid: MIN, MAX, PLUS, TIMES, ANY, OR, AND, XOR, EQ
 %-------------------------------------------------------------------------------
 
-% Note that the min and max monoids are carefully written to obtain the correct
+% Note that the min and max monoids are written to obtain the correct
 % NaN behavior for float and double.  Comparisons with NaN are always false.
 % zarg is the accumulator.  If zarg is not NaN and the comparison is false,
 % zarg is not modified and the value of yarg is properly ignored.  Thus if zarg

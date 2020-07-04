@@ -16,6 +16,9 @@
 // A:           scalar
 // S:           constructed
 
+// FULL: C almost certain to become sparse because of <!M,replace>.
+// FULL TODO: convert C to sparse on input
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_19

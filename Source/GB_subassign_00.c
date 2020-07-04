@@ -16,6 +16,10 @@
 // A:           any (scalar or matrix; result is the same)
 // S:           constructed
 
+// FULL: C must become sparse
+// FULL TODO: convert C to sparse
+// TODO: rename this GB_assign_zombie0
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_00
@@ -49,7 +53,7 @@ GrB_Info GB_subassign_00
     // Time: Optimal, O(nnz(S)), assuming S has already been constructed.
 
     //--------------------------------------------------------------------------
-    // Parallel: all entries in S can be processed fully in parallel.
+    // Parallel: all entries in S can be processed entirely in parallel.
     //--------------------------------------------------------------------------
 
     // All entries in C(I,J) are deleted.  The result does not depend on A or

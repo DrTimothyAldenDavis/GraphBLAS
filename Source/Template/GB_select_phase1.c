@@ -13,11 +13,11 @@
     // declarations for Template/GB_reduce_each_vector.c
     //--------------------------------------------------------------------------
 
-    // The two if tests below are written carefully so that typecasting from
-    // Bool works properly.  The user might import a Bool array whose values
-    // are not 0 and 1, and this can lead to subtle errors with compiler
-    // optimization.  The compiler may assume that the array contains only 0's
-    // and 1's, which leads to a miscount.
+    // The two if tests below are written so that typecasting from Bool works
+    // properly.  The user might import a Bool array whose values are not 0 and
+    // 1, and this can lead to subtle errors with compiler optimization.  The
+    // compiler may assume that the array contains only 0's and 1's, which
+    // leads to a miscount.
 
     // declare scalar and initialize it to zero
     #define GB_SCALAR(s)                                    \

@@ -71,7 +71,7 @@
             }
             else
             {
-                // full panel
+                // whole panel
                 for (int64_t k = 0 ; k < GB_PANEL ; k++)
                 { 
                     // Panel [k] = op (Panel [k], Ax [p+k]) ;
@@ -194,7 +194,7 @@
                     }
                     else
                     {
-                        // full panel
+                        // whole panel
                         for (int64_t k = 0 ; k < GB_PANEL ; k++)
                         { 
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;

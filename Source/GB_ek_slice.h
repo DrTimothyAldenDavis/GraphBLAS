@@ -80,7 +80,7 @@ static inline void GB_get_pA_and_pC
     }
     else
     { 
-        // task tid fully owns this vector A(:,k).
+        // task tid entirely owns this vector A(:,k).
         (*pA_start) = Ap [k] ;
         (*pA_end  ) = Ap [k+1] ;
         if (pC != NULL) (*pC) = Cp [k] ;

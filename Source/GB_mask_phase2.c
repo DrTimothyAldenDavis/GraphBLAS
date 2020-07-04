@@ -13,7 +13,7 @@
 // entries in each vector R(:,j) and computes Rp.
 
 // GB_mask_phase2 computes the pattern and values of each vector of R(:,j),
-// fully in parallel.
+// entirely in parallel.
 
 // R, M, C, and Z can be standard sparse or hypersparse, as determined by
 // GB_add_phase0.  All cases of the mask M are handled: present and not

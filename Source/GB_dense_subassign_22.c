@@ -9,6 +9,8 @@
 
 // C += b where C is a dense matrix and b is a scalar
 
+// FULL: convert C from sparse to full
+
 #include "GB_dense.h"
 #include "GB_binop.h"
 #include "GB_unused.h"

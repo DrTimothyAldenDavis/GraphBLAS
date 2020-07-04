@@ -254,6 +254,7 @@
     {                                                                       \
         /* turn C(iC,jC) into a zombie */                                   \
         task_nzombies++ ;                                                   \
+        /* DENSE TODO: assert C is sparse */                                \
         Ci [pC] = GB_FLIP (iC) ;                                            \
     }
 
@@ -262,6 +263,7 @@
         /* bring a zombie C(iC,jC) back to life;                 */         \
         /* the value of C(iC,jC) must also be assigned.          */         \
         Ci [pC] = iC ;                                                      \
+        /* DENSE TODO: assert C is sparse */                                \
         task_nzombies-- ;                                                   \
     }
 

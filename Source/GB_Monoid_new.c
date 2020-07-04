@@ -118,7 +118,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // compared with the input op->ztype parameter.  Only the type code,
     // GB_UDT_code, can be checked to see if it matches.  In
     // that case, all that is known is that identity is a void * pointer that
-    // points to something, hopefully a scalar of the proper user-defined type.
+    // points to something; it must a scalar of the proper user-defined type.
 
     GB_Type_code zcode = op->ztype->code ;
     if (idcode != zcode)

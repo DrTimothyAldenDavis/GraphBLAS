@@ -16,6 +16,16 @@
 // A:           matrix
 // S:           none (see also GB_subassign_06s)
 
+// FULL: if A and C are dense, then C remains dense.
+// If A is sparse and C dense, C will likely become sparse,
+// except if M(i,j)=0 wherever A(i,j) is not present.  So if M==A is
+// aliased and A is sparse, then C remains dense.  Need C(I,J)<A,struct>=A
+// kernel.  Then in that case, if C is dense it remains dense, even if A
+// is sparse.   If that change is made, this kernel can start with
+// converting C to sparse if A is sparse.
+// FULL TODO: kernel: C(I,J)<A,struct>=A
+// FULL TODO: if A sparse then convert C to sparse on input
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_06n

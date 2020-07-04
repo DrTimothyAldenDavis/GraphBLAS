@@ -16,6 +16,8 @@
 // A:           scalar
 // S:           none
 
+// FULL: TODO: if C sparse, convert to full
+
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #include "GB_unused.h"
