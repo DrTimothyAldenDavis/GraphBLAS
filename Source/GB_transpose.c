@@ -200,7 +200,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t avdim = A->vdim ;
     int64_t aplen = A->plen ;
 
-    bool A_is_hyper = A->is_hyper ;
     double A_hyper_ratio = A->hyper_ratio ;
 
     int64_t anzmax = A->nzmax ;
@@ -211,6 +210,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t *GB_RESTRICT Ai = A->i ;
     GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
 
+    bool A_is_hyper = (Ah != NULL) ;
     bool Ap_shallow = A->p_shallow ;
     bool Ah_shallow = A->h_shallow ;
     bool Ai_shallow = A->i_shallow ;

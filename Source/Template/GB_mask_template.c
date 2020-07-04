@@ -88,7 +88,7 @@
         Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         // Mnvec = M->nvec ;
-        // M_is_hyper = M->is_hyper ;
+        // M_is_hyper = (Mh != NULL) ;
     }
 
     #if defined ( GB_PHASE_2_OF_2 )

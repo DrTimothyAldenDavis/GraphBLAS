@@ -33,10 +33,8 @@ GrB_Info GB_hyper_realloc
     // reallocate the hyperlist
     //--------------------------------------------------------------------------
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
-
-        ASSERT (A->h != NULL) ;
 
         // old size of A->p and A->h
         int64_t plen_old = A->plen ;

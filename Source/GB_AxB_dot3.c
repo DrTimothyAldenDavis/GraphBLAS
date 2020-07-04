@@ -109,7 +109,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t mvdim = M->vdim ;
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
-    const bool M_is_hyper = M->is_hyper ;
+    const bool M_is_hyper = (Mh != NULL) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -118,7 +118,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // const int64_t avdim = A->vdim ;
     // const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
-    const bool A_is_hyper = A->is_hyper ;
+    const bool A_is_hyper = (Ah != NULL) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
@@ -127,7 +127,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // const int64_t bvdim = B->vdim ;
     // const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
-    const bool B_is_hyper = B->is_hyper ;
+    const bool B_is_hyper = (Bh != NULL) ;
 
     //--------------------------------------------------------------------------
     // allocate C, the same size and # of entries as M

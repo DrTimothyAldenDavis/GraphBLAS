@@ -54,7 +54,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     mxArray *G = mxCreateStructMatrix (1, 1,
-        A->is_hyper ? NFIELDS : (NFIELDS-1), MatrixFields) ;
+        (A->h != NULL) ? NFIELDS : (NFIELDS-1), MatrixFields) ;
 
     //--------------------------------------------------------------------------
     // export content into the output struct
@@ -71,7 +71,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     s [2] = A->vdim ;
     s [3] = A->nvec ;
     s [4] = A->nvec_nonempty ;
-    s [5] = (int64_t) (A->is_hyper) ;
+    s [5] = (int64_t) (A->h != NULL) ;
     s [6] = (int64_t) (A->is_csc) ;
     s [7] = A->nzmax ;
     mxSetFieldByNumber (G, 0, 1, opaque) ;
@@ -112,7 +112,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     A->x = NULL ;
     mxSetFieldByNumber (G, 0, 4, Ax) ;
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
         // export the hyperlist
         if (A->nvec < A->plen)

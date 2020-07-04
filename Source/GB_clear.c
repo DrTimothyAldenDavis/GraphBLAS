@@ -51,7 +51,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     ASSERT (!GB_ZOMBIES (A)) ;
 
     //--------------------------------------------------------------------------
-    // check hypersparsity status of an empty matrix
+    // allocate new A->p and A->h components
     //--------------------------------------------------------------------------
 
     // By default, an empty matrix with n > 1 vectors is held in hypersparse
@@ -59,38 +59,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // non-hypersparse.  If A->hyper_ratio is negative, A will be always be
     // non-hypersparse.
 
-    A->is_hyper = true ;
-    A->nvec_nonempty = 0 ;
-    if (GB_to_nonhyper_test (A, A->nvec_nonempty, A->vdim))
-    { 
-        A->is_hyper = false ;
-    }
-
-    //--------------------------------------------------------------------------
-    // allocate new A->p and A->h components
-    //--------------------------------------------------------------------------
-
-    if (A->is_hyper)
-    {
-
-        //----------------------------------------------------------------------
-        // A is hypersparse
-        //----------------------------------------------------------------------
-
-        int64_t plen = GB_IMIN (1, A->vdim) ;
-        A->nvec = 0 ;
-        A->plen = plen ;
-        A->p = GB_CALLOC (plen+1, int64_t) ;
-        A->h = GB_CALLOC (plen  , int64_t) ;
-        if (A->p == NULL || A->h == NULL)
-        { 
-            // out of memory
-            GB_phix_free (A) ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-    }
-    else
+    if (GB_to_nonhyper_test (A->hyper_ratio, 0, A->vdim))
     {
 
         //----------------------------------------------------------------------
@@ -103,6 +72,26 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         A->p = GB_CALLOC (plen+1, int64_t) ;
         ASSERT (A->h == NULL) ;
         if (A->p == NULL)
+        { 
+            // out of memory
+            GB_phix_free (A) ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // A is hypersparse
+        //----------------------------------------------------------------------
+
+        int64_t plen = GB_IMIN (1, A->vdim) ;
+        A->nvec = 0 ;
+        A->plen = plen ;
+        A->p = GB_CALLOC (plen+1, int64_t) ;
+        A->h = GB_CALLOC (plen  , int64_t) ;
+        if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
             GB_phix_free (A) ;

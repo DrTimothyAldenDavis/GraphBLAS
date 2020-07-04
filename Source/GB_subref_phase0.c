@@ -264,7 +264,7 @@ GrB_Info GB_subref_phase0
     // jmax is avdim-1, so there is nothing to trim from Ah.  If C is empty,
     // then Ah and Ap will not be accessed at all, so this can be skipped.
 
-    bool A_is_hyper = A->is_hyper ;
+    bool A_is_hyper = (Ah != NULL) ;
 
     if (A_is_hyper && !C_empty)
     {
@@ -665,9 +665,9 @@ GrB_Info GB_subref_phase0
         int64_t kA = 0 ;
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
-        bool found = GB_lookup (A->is_hyper, A->h, A->p, &kA, pright, jA,
+        bool found = GB_lookup (A->h != NULL, A->h, A->p, &kA, pright, jA,
             &pA_start_all, &pA_end_all) ;
-        if (found && A->is_hyper)
+        if (found && A->h != NULL)
         {
             ASSERT (jA == A->h [kA]) ;
         }

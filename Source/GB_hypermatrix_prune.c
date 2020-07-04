@@ -22,7 +22,7 @@ GrB_Info GB_hypermatrix_prune
 
     ASSERT (A != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
-    if (!A->is_hyper)
+    if (A->h == NULL)
     { 
         // nothing to do
         return (GrB_SUCCESS) ;

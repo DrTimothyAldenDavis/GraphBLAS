@@ -4032,7 +4032,7 @@ void mexFunction
     CHECK (v == NULL) ;
     OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
     CHECK (v != NULL) ;
-    CHECK (!v->is_hyper) ;
+    CHECK (v->h == NULL) ;
 
     Context->where = "GB_Vector_check" ;
     OK (GB_Vector_check (v, "v ok", GB3, ff)) ;
@@ -4095,7 +4095,7 @@ void mexFunction
 
     Context->where = "GB_Matrix_check" ;
     OK (GB_Matrix_check (A, "A ok", GB3, ff)) ;
-    CHECK (A->is_hyper) ;
+    CHECK (A->h != NULL) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -4347,16 +4347,16 @@ void mexFunction
 
     OK (GB_to_hyper (A, Context)) ;
     OK (GB_Matrix_check (A, "A now hyper", GB3, NULL)) ;
-    CHECK (A->is_hyper) ;
+    CHECK (A->h != NULL) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_NEVER_HYPER)) ;
-    CHECK (!A->is_hyper) ;
+    CHECK (A->h == NULL) ;
     bool A_is_hyper ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
     CHECK (!A_is_hyper) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER)) ;
-    CHECK (A->is_hyper) ;
+    CHECK (A->h != NULL) ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
     CHECK (A_is_hyper) ;
 

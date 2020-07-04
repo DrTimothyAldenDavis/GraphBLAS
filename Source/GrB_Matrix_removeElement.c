@@ -36,10 +36,10 @@ static inline bool GB_removeElement
 
     // remove an entry from vector j of a GrB_Matrix
     int64_t k ;
-    if (C->is_hyper)
+    const int64_t *Ch = C->h ;
+    if (Ch != NULL)
     {
         // look for vector j in hyperlist C->h [0 ... C->nvec-1]
-        const int64_t *Ch = C->h ;
         int64_t pleft = 0 ;
         int64_t pright = C->nvec-1 ;
         GB_BINARY_SEARCH (j, Ch, pleft, pright, found) ;

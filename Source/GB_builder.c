@@ -797,7 +797,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         return (info) ;
     }
 
-    ASSERT (T->is_hyper) ;
+    ASSERT (T->h != NULL) ;
     ASSERT (T->nzmax == 0) ;        // T->i and T->x not yet allocated
     ASSERT (T->x == NULL) ;
     ASSERT (T->i == NULL) ;

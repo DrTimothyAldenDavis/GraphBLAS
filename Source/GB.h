@@ -24,7 +24,6 @@
 //------------------------------------------------------------------------------
 
 // to turn on Debug for a single file of GraphBLAS, add:
-// #define GB_DEBUG
 // just before the statement:
 // #include "GB.h"
 
@@ -356,7 +355,7 @@ GB_PUBLIC int GB_cover_max ;
 // if A is hypersparse but all vectors are present, then
 // treat A as if it were non-hypersparse
 #define GB_IS_HYPER(A) \
-    (((A) != NULL) && ((A)->is_hyper && ((A)->nvec < (A)->vdim)))
+    (((A) != NULL) && (((A)->h != NULL) && ((A)->nvec < (A)->vdim)))
 
 //------------------------------------------------------------------------------
 // macros for matrices and vectors
@@ -398,7 +397,6 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #define GB_VECTOR_OK(v)             \
 (                                   \
     ((v) != NULL) &&                \
-    ((v)->is_hyper == false) &&     \
     ((v)->is_csc == true) &&        \
     ((v)->plen == 1) &&             \
     ((v)->vdim == 1) &&             \
@@ -1413,20 +1411,20 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     GB_Context Context
 ) ;
 
-bool GB_to_nonhyper_test    // test for conversion to hypersparse
+bool GB_to_nonhyper_test    // test for conversion from hypersparse to sparse
 (
-    GrB_Matrix A,           // matrix to test
+    double hyper_ratio,     // A->hyper_ratio
     int64_t k,              // # of non-empty vectors of A, an estimate is OK,
                             // but normally A->nvec_nonempty
-    int64_t vdim            // normally A->vdim
+    int64_t vdim            // A->vdim
 ) ;
 
-bool GB_to_hyper_test       // test for conversion to hypersparse
+bool GB_to_hyper_test       // test for conversion from sparse to hypersparse
 (
-    GrB_Matrix A,           // matrix to test
+    double hyper_ratio,     // A->hyper_ratio
     int64_t k,              // # of non-empty vectors of A, an estimate is OK,
                             // but normally A->nvec_nonempty
-    int64_t vdim            // normally A->vdim
+    int64_t vdim            // A->vdim
 ) ;
 
 GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format

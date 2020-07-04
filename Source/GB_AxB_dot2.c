@@ -151,7 +151,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     #undef  GB_PHASE_1_OF_2
 
     info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (B->is_hyper), B->hyper_ratio, cnvec, Context) ;
+        GB_SAME_HYPER_AS (B->h != NULL), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -185,7 +185,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cnz = Cp [cnvec] ;
 
     // C->h = B->h
-    if (B->is_hyper)
+    if (B->h != NULL)
     { 
         GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nthreads) ;
     }

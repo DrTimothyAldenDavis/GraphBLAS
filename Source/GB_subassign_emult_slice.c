@@ -95,11 +95,11 @@ GrB_Info GB_subassign_emult_slice
     GrB_Info info ;
     int64_t *GB_RESTRICT Ci = C->i ;
     int64_t nzombies = C->nzombies ;
-    const bool C_is_hyper = C->is_hyper ;
     const int64_t Cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
+    const bool C_is_hyper = (Ch != NULL) ;
 
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;

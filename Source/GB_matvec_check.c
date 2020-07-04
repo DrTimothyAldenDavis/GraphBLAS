@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -69,7 +69,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // print the header
     //--------------------------------------------------------------------------
 
-    GBPR0 (", %s", A->is_hyper ?  "hypersparse" : "sparse") ;
+    GBPR0 (", %s", (A->h != NULL) ?  "hypersparse" : "sparse") ;
     GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
 
     #if GB_DEVELOPER
@@ -99,7 +99,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check vector structure
     //--------------------------------------------------------------------------
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
         // A is hypersparse
         if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
@@ -177,29 +177,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
-    // check h
-    //--------------------------------------------------------------------------
-
-    if (A->is_hyper)
-    {
-        // A is hypersparse
-        if (A->h == NULL)
-        { 
-            GBPR0 ("  ->h NULL, invalid hypersparse %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
-    else
-    {
-        // A is standard
-        if (A->h != NULL)
-        { 
-            GBPR0 ("  ->h not NULL, invalid non-hypersparse %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
     // check an empty matrix
     //--------------------------------------------------------------------------
 
@@ -259,7 +236,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the content of h
     //--------------------------------------------------------------------------
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
         int64_t jlast = -1 ;
         for (int64_t k = 0 ; k < A->nvec ; k++)

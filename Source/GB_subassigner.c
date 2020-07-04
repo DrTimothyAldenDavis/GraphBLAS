@@ -861,7 +861,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 int64_t p = Sx [pS] ;
                 ASSERT (p >= 0 && p < GB_NNZ (C)) ;
                 int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-                bool found = GB_lookup (C->is_hyper, C->h, C->p,
+                bool found = GB_lookup (C->h != NULL, C->h, C->p,
                     &pleft, pright, jC, &pC_start, &pC_end) ;
                 ASSERT (found) ;
                 // If iC == I [inew] and jC == J [jnew], (or the equivaleent

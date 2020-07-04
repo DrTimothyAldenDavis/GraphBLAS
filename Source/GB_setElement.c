@@ -108,7 +108,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     //--------------------------------------------------------------------------
 
     int64_t pC_start, pC_end, pleft = 0, pright = C->nvec - 1 ;
-    bool found = GB_lookup (C->is_hyper, C->h, C->p, &pleft, pright, j,
+    bool found = GB_lookup (C->h != NULL, C->h, C->p, &pleft, pright, j,
         &pC_start, &pC_end) ;
 
     //--------------------------------------------------------------------------

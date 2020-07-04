@@ -43,16 +43,16 @@ GrB_Info GB_subassign_06n
 
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
-    const bool C_is_hyper = C->is_hyper ;
     const int64_t Cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
+    const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_MASK ;
     GB_GET_A ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t Anvec = A->nvec ;
-    const bool A_is_hyper = A->is_hyper ;
+    const bool A_is_hyper = (Ah != NULL) ;
     const int64_t avlen = A->vlen ;
     GrB_BinaryOp accum = NULL ;
 

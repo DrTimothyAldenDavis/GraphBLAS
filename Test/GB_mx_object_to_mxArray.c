@@ -62,7 +62,6 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     GxB_Matrix_Option_set_(C, GxB_HYPER, GxB_NEVER_HYPER) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper", GB0) ;
-    ASSERT (!C->is_hyper) ;
     ASSERT (C->h == NULL) ;
 
     // make sure it's CSC
@@ -73,7 +72,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     }
 
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
-    ASSERT (!C->is_hyper) ;
+    ASSERT (C->h == NULL) ;
     ASSERT (C->is_csc) ;
 
     // MATLAB doesn't want NULL pointers in its empty matrices

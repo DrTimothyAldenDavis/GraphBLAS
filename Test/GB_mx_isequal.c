@@ -34,7 +34,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
 
     if (GB_NNZ (A)  != GB_NNZ (B) ) return (false) ;
 
-    if (A->is_hyper != B->is_hyper) return (false) ;
+    if ((A->h != NULL) != (B->h != NULL)) return (false) ;
     if (A->is_csc   != B->is_csc  ) return (false) ;
 
     // these differences are OK:
@@ -67,7 +67,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     ASSERT (n >= 0 && n <= A->vdim) ;
 
     if (!GB_mx_same  ((char *) A->p, (char *) B->p, (n+1) * s)) return (false) ;
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
         if (!GB_mx_same ((char *) A->h, (char *) B->h, n * s)) return (false) ;
     }

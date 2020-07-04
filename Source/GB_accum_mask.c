@@ -313,7 +313,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // transplant if needed.  Z has the same hypersparsity as T.
 
             info = GB_new (&Z, C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
-                GB_SAME_HYPER_AS (T->is_hyper), T->hyper_ratio, T->plen,
+                GB_SAME_HYPER_AS (T->h != NULL), T->hyper_ratio, T->plen,
                 Context) ;
             GB_OK (info) ;
 
@@ -321,7 +321,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // may need to do a deep copy if T is shallow.  T is always freed
             // by GB_transplant.
 
-            // Z and T have same vlen, vdim, is_csc, is_hyper
+            // Z and T have same vlen, vdim, is_csc, hypersparsity
             GB_OK (GB_transplant (Z, C->type, Thandle, Context)) ;
             // Z initialized, and Z->p, Z->h, Z->i, and Z->x are allocated ]
 

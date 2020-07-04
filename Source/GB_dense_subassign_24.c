@@ -69,8 +69,8 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
             && !(C->h_shallow)
             && !(C->i_shallow)
             && !(C->x_shallow)
-            && !C->is_hyper             //      both A and C are standard
-            && !A->is_hyper
+            && (C->h == NULL)           //      both A and C are standard
+            && (A->h == NULL)
             && C->vdim == A->vdim       //      A and C have the same size
             && C->vlen == A->vlen
             && C->is_csc == A->is_csc   //      A and C have the same format

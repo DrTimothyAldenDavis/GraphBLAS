@@ -41,7 +41,7 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     // const int64_t bvlen = B->vlen ;
     // const int64_t bnvec = B->nvec ;
-    // const bool B_is_hyper = B->is_hyper ;
+    // const bool B_is_hyper = (Bh != NULL) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -65,7 +65,7 @@
         Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
-        M_is_hyper = M->is_hyper ;
+        M_is_hyper = (Mh != NULL) ;
     }
 
     // 3 cases:

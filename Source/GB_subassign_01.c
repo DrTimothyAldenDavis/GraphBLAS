@@ -42,15 +42,15 @@ GrB_Info GB_subassign_01
     //--------------------------------------------------------------------------
 
     GB_GET_C ;
-    const bool C_is_hyper = C->is_hyper ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
+    const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
     GB_GET_SCALAR ;
     GB_GET_S ;
     const int64_t *GB_RESTRICT Sh = S->h ;
     const int64_t Snvec = S->nvec ;
-    const bool S_is_hyper = S->is_hyper ;
+    const bool S_is_hyper = (Sh != NULL) ;
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------

@@ -49,7 +49,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
     info = GB_new (&C, A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, 0, Context) ;
+        GB_SAME_HYPER_AS (A->h != NULL), A->hyper_ratio, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

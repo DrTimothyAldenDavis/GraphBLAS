@@ -91,15 +91,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->is_csc = is_csc ;
 
     // hypersparsity
-    bool is_hyper ;
+    bool A_is_hyper ;
     if (hyper_option == GB_FORCE_HYPER)
     { 
-        is_hyper = true ;               // force hypersparse
+        A_is_hyper = true ;               // force hypersparse
         A->hyper_ratio = hyper_ratio ;
     }
     else if (hyper_option == GB_FORCE_NONHYPER)
     { 
-        is_hyper = false ;              // force non-hypersparse
+        A_is_hyper = false ;              // force non-hypersparse
         A->hyper_ratio = hyper_ratio ;
     }
     else // GB_AUTO_HYPER
@@ -110,16 +110,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         ASSERT (hyper_option == GB_AUTO_HYPER) ;
         double hyper_ratio = GB_Global_hyper_ratio_get ( ) ;
         A->hyper_ratio = hyper_ratio ;
-        is_hyper = !(vdim <= 1 || 0 > hyper_ratio) ;
+        A_is_hyper = !(vdim <= 1 || 0 > hyper_ratio) ;
     }
-    A->is_hyper = is_hyper ;
 
     // matrix dimensions
     A->vlen = vlen ;
     A->vdim = vdim ;
 
     // content that is freed or reset in GB_ph_free
-    if (is_hyper)
+    if (A_is_hyper)
     { 
         A->plen = GB_IMIN (plen, vdim) ;
         A->nvec = 0 ;           // no vectors present
@@ -159,7 +158,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->magic = GB_MAGIC ;
         A->p = GB_CALLOC (A->plen+1, int64_t) ;
         ok = (A->p != NULL) ;
-        if (is_hyper)
+        if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
             A->h = GB_MALLOC (A->plen, int64_t) ;
@@ -176,7 +175,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->magic = GB_MAGIC2 ;
         A->p = GB_MALLOC (A->plen+1, int64_t) ;
         ok = (A->p != NULL) ;
-        if (is_hyper)
+        if (A_is_hyper)
         { 
             A->h = GB_MALLOC (A->plen, int64_t) ;
             ok = ok && (A->h != NULL) ;

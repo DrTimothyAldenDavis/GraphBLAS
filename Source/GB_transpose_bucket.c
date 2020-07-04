@@ -260,7 +260,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
-    ASSERT (!C->is_hyper) ;
+    ASSERT (C->h == NULL) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

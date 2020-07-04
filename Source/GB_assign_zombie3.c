@@ -39,7 +39,7 @@ void GB_assign_zombie3
     const int64_t *GB_RESTRICT Zp = Z->p ;
     int64_t *GB_RESTRICT Zi = Z->i ;
     int64_t pZ_start, pZ_end, pleft = 0, pright = Z->nvec-1 ;
-    GB_lookup (Z->is_hyper, Zh, Zp, &pleft, pright, j, &pZ_start, &pZ_end) ;
+    GB_lookup (Z->h != NULL, Zh, Zp, &pleft, pright, j, &pZ_start, &pZ_end) ;
     int64_t nzombies = Z->nzombies ;
     const int64_t zjnz = pZ_end - pZ_start ;
 

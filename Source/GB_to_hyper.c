@@ -40,7 +40,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // convert A to hypersparse form
     //--------------------------------------------------------------------------
 
-    if (!A->is_hyper)
+    if (A->h == NULL)
     {
 
         //----------------------------------------------------------------------
@@ -58,8 +58,6 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         // count the number of non-empty vectors in A in each slice
         //----------------------------------------------------------------------
 
-        A->is_hyper = true ;    // A becomes hypersparse
-        ASSERT (A->h == NULL) ;
         ASSERT (A->nvec == A->plen && A->plen == n) ;
 
         const int64_t *GB_RESTRICT Ap_old = A->p ;
@@ -164,7 +162,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
 
     ASSERT (anz == GB_NNZ (A)) ;
     ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to hypersparse", GB0) ;
-    ASSERT (A->is_hyper) ;
+    ASSERT (A->h != NULL) ;
     return (GrB_SUCCESS) ;
 }
 

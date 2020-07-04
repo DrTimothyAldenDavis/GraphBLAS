@@ -92,11 +92,11 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
     int64_t Anvec = A->nvec ;
     const int64_t *GB_RESTRICT Ah = A->h ;
-    bool A_is_hyper = A->is_hyper ;
+    bool A_is_hyper = (Ah != NULL) ;
 
     int64_t Bnvec = B->nvec ;
     const int64_t *GB_RESTRICT Bh = B->h ;
-    bool B_is_hyper = B->is_hyper ;
+    bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -106,7 +106,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     { 
         Mnvec = M->nvec ;
         Mh = M->h ;
-        M_is_hyper = M->is_hyper ;
+        M_is_hyper = (Mh != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -498,7 +498,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         if (C_to_A != NULL)
         {
             // A is hypersparse
-            ASSERT (A->is_hyper)
+            ASSERT (A_is_hyper)
             int64_t kA = C_to_A [k] ;
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
@@ -507,7 +507,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                 ASSERT (j == jA) ;
             }
         }
-        else if (A->is_hyper)
+        else if (A_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
             ASSERT (Ch == A->h) ;
@@ -517,7 +517,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         if (C_to_B != NULL)
         {
             // B is hypersparse
-            ASSERT (B->is_hyper)
+            ASSERT (B_is_hyper)
             int64_t kB = C_to_B [k] ;
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
@@ -526,7 +526,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                 ASSERT (j == jB) ;
             }
         }
-        else if (B->is_hyper)
+        else if (B_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
             ASSERT (Ch == B->h) ;
@@ -537,7 +537,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         {
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
-            ASSERT (M->is_hyper) ;
+            ASSERT (M->h != NULL) ;
             ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
             ASSERT (C_to_M == NULL) ;
         }
@@ -545,7 +545,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         {
             // M is present and hypersparse
             ASSERT (M != NULL) ;
-            ASSERT (M->is_hyper) ;
+            ASSERT (M->h != NULL) ;
             int64_t kM = C_to_M [k] ;
             ASSERT (kM >= -1 && kM < M->nvec) ;
             if (kM >= 0)
@@ -557,7 +557,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         else
         {
             // M is not present, or in standard form
-            ASSERT (M == NULL || !(M->is_hyper)) ;
+            ASSERT (M == NULL || M->h == NULL) ;
         }
     }
 

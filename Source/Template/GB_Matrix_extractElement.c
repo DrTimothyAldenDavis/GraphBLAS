@@ -92,7 +92,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     // extract from vector j of a GrB_Matrix
     int64_t k ;
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
         // look for vector j in hyperlist A->h [0 ... A->nvec-1]
         const int64_t *Ah = A->h ;

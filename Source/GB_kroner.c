@@ -99,7 +99,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT (ok) ;
 
     // C is hypersparse if either A or B are hypersparse
-    bool C_is_hyper = (cvdim > 1) && (A->is_hyper || B->is_hyper) ;
+    bool C_is_hyper = (cvdim > 1) && (Ah != NULL || Bh != NULL) ;
 
     GrB_Matrix C = NULL ;           // allocate a new header for C
     info = GB_create (&C, op->ztype, (int64_t) cvlen, (int64_t) cvdim,

@@ -170,12 +170,12 @@ GrB_Info GB_ewise_slice
         if (C_to_A != NULL)
         { 
             // A is hypersparse and the C_to_A mapping has been created
-            ASSERT (A->is_hyper) ;
+            ASSERT (A->h != NULL) ;
             kA = C_to_A [k] ;
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                ASSERT (j == ((A->is_hyper) ? A->h [kA] : kA)) ;
+                ASSERT (j == ((A->h != NULL) ? A->h [kA] : kA)) ;
             }
         }
         else if (Ch_is_Ah)
@@ -187,7 +187,6 @@ GrB_Info GB_ewise_slice
         else
         { 
             // A is standard
-            ASSERT (!A->is_hyper) ;
             ASSERT (A->h == NULL) ;
             kA = j ;
         }
@@ -200,12 +199,12 @@ GrB_Info GB_ewise_slice
         if (C_to_B != NULL)
         { 
             // B is hypersparse and the C_to_B mapping has been created
-            ASSERT (B->is_hyper) ;
+            ASSERT (B->h != NULL) ;
             kB = C_to_B [k] ;
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                ASSERT (j == ((B->is_hyper) ? B->h [kB] : kB)) ;
+                ASSERT (j == ((B->h != NULL) ? B->h [kB] : kB)) ;
             }
         }
         else if (Ch_is_Bh)
@@ -217,7 +216,6 @@ GrB_Info GB_ewise_slice
         else
         { 
             // B is standard
-            ASSERT (!B->is_hyper) ;
             ASSERT (B->h == NULL) ;
             kB = j ;
         }

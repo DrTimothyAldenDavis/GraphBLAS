@@ -15,7 +15,6 @@
 // the same struct, but then the compiler gets confused with Generic(x).
 
 // For a GrB_Vector object, as an m-by-1 non-hypersparse CSC matrix:
-//      bool is_hyper ;         // always false
 //      bool is_csc ;           // always true
 //      int64_t plen ;          // always 1, so A->p always has length 2, and
 //                              // contains [0 k] if the vector has k entries
@@ -39,7 +38,7 @@ char *logger ;          // for error logging
 // sparse vectors.  The vector "names" are in the range 0 to A->vdim-1.  Each
 // vector has length A->vlen.  These two values define the dimension of the
 // matrix, where A is m-by-n.  The m and n dimenions are vlen and vdim for the
-// standard CSC and hypersparse-CSC formats, and reversed for the standard CSR
+// sparse CSC and hypersparse-CSC formats, and reversed for the sparse CSR
 // and hypersparse-CSR formats.
 
 // Ap, Ai, Ax, and Ah are abbreviations for A->p, A->i, A->x, and A->h.
@@ -56,18 +55,43 @@ char *logger ;          // for error logging
 // A->nvec_nonempty is equal to -1.
 
 //------------------------------------------------------------------------------
-// The 4 formats:  (standard or hypersparse) * (CSR or CSC)
+// The 6 formats:  (dense, sparse, hypersparse) * (CSR or CSC)
 //------------------------------------------------------------------------------
 
 // --------------------------------------
-// A->is_hyper is false: standard format.
+// Dense format:
+// --------------------------------------
+
+    // Ah, Ap, and Ai are all NULL.
+    // A->nvec == A->vdim.   A->plen is not needed.  (set to zero? -1?)
+
+    // --------------------------------------
+    // A->is_csc is true:  dense CSC format
+    // --------------------------------------
+
+        // A is m-by-n: where A->vdim = n, and A->vlen = m
+
+        // Column A(:,j) is held in Ax [p1:p2-1] where p1 = k*m, p2 = (k+1)*m.
+        // A(i,j) at position p has row index i = p%m and value Ax [p]
+
+    // --------------------------------------
+    // A->is_csc is false:  dense CSR format
+    // --------------------------------------
+
+        // A is m-by-n: where A->vdim = m, and A->vlen = n
+
+        // Row A(i,:) is held in Ax [p1:p2-1] where p1 = k*n, p2 = (k+1)*n.
+        // A(i,j) at position p has column index j = p%n and value Ax [p]
+
+// --------------------------------------
+// Sparse format:
 // --------------------------------------
 
     // Ah is NULL
     // A->nvec == A->plen == A->vdim
 
     // --------------------------------------
-    // A->is_csc is true:  standard CSC format
+    // A->is_csc is true:  sparse CSC format
     // --------------------------------------
 
         // Ap, Ai, and Ax store a sparse matrix in the a very similar style
@@ -80,7 +104,7 @@ char *logger ;          // for error logging
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
     // --------------------------------------
-    // A->is_csc is false:  standard CSR format
+    // A->is_csc is false:  sparse CSR format
     // --------------------------------------
 
         // Ap, Ai, and Ax store a sparse matrix in CSR format, as a collection
@@ -93,7 +117,7 @@ char *logger ;          // for error logging
         // A is m-by-n: where A->vdim = m, and A->vlen = n
 
 // --------------------------------------
-// A->is_hyper is true: hypersparse format
+// Hypersparse format:
 // --------------------------------------
 
     // Ah is non-NULL and has size A->plen; it is always kept sorted,
@@ -165,7 +189,6 @@ char *logger ;          // for error logging
 
 // The bool content is placed last, to reduce the size of the struct.
 
-// bool is_hyper ;      // true if the matrix is hypersparse
 // bool is_csc ;        // true if stored by column (CSC or hypersparse CSC)
                         // false if by row (CSR or hypersparse CSR)
 
@@ -335,7 +358,6 @@ bool x_shallow ;        // true if x is a shallow copy
 
 // The boolean content appears last, to reduce the size of the struct
 
-bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 
 //------------------------------------------------------------------------------
@@ -348,7 +370,7 @@ void *mkl ;
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
-// The matrix can be held in four formats: (standard, hypersparse)x(CSR, CSC).
+// The matrix can be held in 6 formats: (dense, sparse, hypersparse)x(CSR, CSC).
 // The comments below assume A is in CSC format.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
@@ -359,8 +381,23 @@ void *mkl ;
     //          A is CSC.  For all cases, Ap [0...nvec] are the pointers.
 
     //--------------------
-    // (1) standard     // A->is_hyper == false and A->h is NULL
-                        // A->nvec == A->vdim
+    // (1) dense      // A->h, A->p, A->i are NULL, A->nvec == A->vdim
+
+        int64_t m = A->vlen ;
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = k ;
+            // operate on column A(:,j)
+            int64_t pA_start = k * m ;
+            int64_t pA_end   = (k+1) * m ;
+            for (p = pA_start ; p < pA_end ; p++)
+            {
+                // A(i,j) has row i = (p % m), value aij = Ax [p]
+            }
+        }
+
+    //--------------------
+    // (2) sparse     // A->h is NULL, A->nvec == A->vdim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -373,8 +410,7 @@ void *mkl ;
         }
 
     //--------------------
-    // (2) hypersparse  // A->is_hyper == true and A->h is non-NULL
-                        // A->nvec <= A->dim
+    // (3) hypersparse  // A->h is non-NULL, A->nvec <= A->dim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -383,6 +419,24 @@ void *mkl ;
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
+            }
+        }
+
+    //--------------------
+    // generic: for any matrix
+
+        int64_t m = A->vlen ;
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = (Ah == NULL) ? k : Ah [k] ;
+            // operate on column A(:,j)
+            int64_t pA_start = (Ap == NULL) ? (k*m) : Ap [k] ;
+            int64_t pA_end   = (Ap == NULL) ? ((k+1)*m) : Ap [k+1] ;
+            for (p = pA_start ; p < pA_end ; p++)
+            {
+                // A(i,j) has row i = (p % m), value aij = Ax [p]
+                int64_t i = (Ai == NULL) ? (p%m) : Ai [p] ;
+                double aij = Ax [p] ;
             }
         }
 

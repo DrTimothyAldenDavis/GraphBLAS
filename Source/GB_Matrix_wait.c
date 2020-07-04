@@ -203,7 +203,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     ASSERT (!GB_PENDING (T)) ;
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (GB_NNZ (T) > 0) ;
-    ASSERT (T->is_hyper) ;
+    ASSERT (T->h != NULL) ;
     ASSERT (T->nvec == T->nvec_nonempty) ;
 
     //--------------------------------------------------------------------------
@@ -222,7 +222,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     // If anz > 0, T is hypersparse, even if A is a GrB_Vector
-    ASSERT (T->is_hyper) ;
+    ASSERT (T->h != NULL) ;
     ASSERT (GB_NNZ (T) > 0) ;
     ASSERT (T->nvec > 0) ;
     ASSERT (A->nvec > 0) ;
@@ -242,7 +242,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t asize = A->type->size ;
 
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
-    if (A->is_hyper)
+    if (A->h != NULL)
     { 
         // find tjfirst in A->h 
         int64_t pright = anvec - 1 ;
@@ -370,7 +370,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             // remove A1 from the vectors of A, if A is hypersparse
             //------------------------------------------------------------------
 
-            if (A->is_hyper)
+            if (A->h != NULL)
             { 
                 A->nvec = kA ;
             }

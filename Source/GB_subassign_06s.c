@@ -46,7 +46,7 @@ GrB_Info GB_subassign_06s
 
     GB_GET_C ;
     GB_GET_MASK ;
-    const bool M_is_hyper = M->is_hyper ;
+    const bool M_is_hyper = (Mh != NULL) ;
     const int64_t Mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
     GB_GET_A ;

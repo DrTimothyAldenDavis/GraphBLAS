@@ -69,7 +69,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 
     int64_t pC ;
 
-    if (GB_NNZ (C) < cnzmax || C->x_shallow || C->i_shallow || C->is_hyper
+    if (GB_NNZ (C) < cnzmax || C->x_shallow || C->i_shallow || (C->h != NULL)
         || GB_ZOMBIES (C))
     {
 

@@ -391,7 +391,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
-    const bool A_is_hyper = A->is_hyper ;
+    const bool A_is_hyper = (Ah != NULL) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
@@ -399,7 +399,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
-    const bool B_is_hyper = B->is_hyper ;
+    const bool B_is_hyper = (Bh != NULL) ;
 
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
@@ -506,7 +506,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         // msize = M->type->size ;
         mnvec = M->nvec ;
-        M_is_hyper = M->is_hyper ;
+        M_is_hyper = (Mh != NULL) ;
     }
 
     //--------------------------------------------------------------------------

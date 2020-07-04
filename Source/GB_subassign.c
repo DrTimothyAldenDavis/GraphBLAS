@@ -290,7 +290,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // is need.  Instead of duplicating it, create an empty matrix Z2.
             // This also prevents the C_replace_phase from being needed.
             GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio,
+                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio,
                 1, Context)) ;
             GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;

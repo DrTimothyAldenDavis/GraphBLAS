@@ -46,7 +46,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // existing header if (*Chandle) is not NULL.
     GrB_Matrix C = (*Chandle) ;
     GrB_Info info = GB_create (&C, numeric ? A->type : ctype, A->vlen, A->vdim,
-        GB_Ap_malloc, A->is_csc, GB_SAME_HYPER_AS (A->is_hyper),
+        GB_Ap_malloc, A->is_csc, GB_SAME_HYPER_AS (A->h != NULL),
         A->hyper_ratio, A->plen, anz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -67,7 +67,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
 
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
     GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
-    if (A->is_hyper)
+    if (Ah != NULL)
     { 
         GB_memcpy (Ch, Ah, anvec * sizeof (int64_t), nthreads) ;
     }

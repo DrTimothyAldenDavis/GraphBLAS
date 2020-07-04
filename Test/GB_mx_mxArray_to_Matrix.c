@@ -204,7 +204,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     // MATLAB matrices are non-hypersparse CSC
     bool is_csc = true ;
-    bool is_hyper = false ;
+    bool A_is_hyper = false ;
 
     //--------------------------------------------------------------------------
     // get the pattern of A
@@ -215,7 +215,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // create the GraphBLAS matrix
         info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_calloc, is_csc, is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
+            GB_Ap_calloc, is_csc, A_is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -245,7 +245,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // [ create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_null, is_csc, is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
+            GB_Ap_null, is_csc, A_is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -324,7 +324,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         fieldnumber = mxGetFieldNumber (A_matlab, "is_hyper") ;
         if (fieldnumber >= 0)
         {
-            is_hyper = mxGetScalar (mxGetFieldByNumber (A_matlab,
+            A_is_hyper = mxGetScalar (mxGetFieldByNumber (A_matlab,
                 0, fieldnumber)) ;
         }
 
@@ -345,7 +345,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     A->nvec_nonempty = -1 ; // compute when needed; see also GxB_Matrix_import
 
     ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;
-    ASSERT (!A->is_hyper) ;
+    ASSERT (A->h == NULL) ;
 
     //--------------------------------------------------------------------------
     // convert to CSR if requested
@@ -364,7 +364,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     }
 
     ASSERT_MATRIX_OK (A, "conformed from MATLAB", GB0) ;
-    ASSERT (!A->is_hyper) ;
+    ASSERT (A->h == NULL) ;
     ASSERT (A->is_csc == is_csc) ;
 
     //--------------------------------------------------------------------------
@@ -377,18 +377,18 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // desired hypersparsity.  It may stay non-hypersparse.
         GxB_Matrix_Option_set_(A, GxB_HYPER, hyper_ratio) ;
     }
-    else if (is_hyper)
+    else if (A_is_hyper)
     {
         // this forces the matrix to be always hypersparse
         GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER) ;
         if (A->vdim > 1)
         {
-            ASSERT (A->is_hyper == is_hyper) ;
+            ASSERT (A->h != NULL) ;
         }
         else
         {
             // column vectors are never hypersparse
-            ASSERT (!A->is_hyper) ;
+            ASSERT (A->h == NULL) ;
         }
     }
 

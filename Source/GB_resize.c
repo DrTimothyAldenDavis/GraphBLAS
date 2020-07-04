@@ -82,7 +82,8 @@ GrB_Info GB_resize              // change the size of a matrix
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
-    if (GB_to_hyper_test (A, A->nvec_nonempty, vdim_new))
+    if (A->h == NULL &&
+        GB_to_hyper_test (A->hyper_ratio, A->nvec_nonempty, vdim_new))
     { 
         GB_OK (GB_to_hyper (A, Context)) ;
     }
@@ -97,7 +98,7 @@ GrB_Info GB_resize              // change the size of a matrix
     int64_t *GB_RESTRICT Ap = A->p ;
     A->vdim = vdim_new ;
 
-    if (A->is_hyper)
+    if (Ah != NULL)
     {
 
         //----------------------------------------------------------------------

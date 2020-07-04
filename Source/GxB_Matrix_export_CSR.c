@@ -53,7 +53,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
         GB_OK (GB_transpose (NULL, NULL, false, (*A),
             NULL, NULL, NULL, false, Context)) ;
     }
-    if ((*A)->is_hyper)
+    if ((*A)->h != NULL)
     { 
         // convert A from hypersparse to standard format
         GB_OK (GB_to_nonhyper ((*A), Context)) ;
@@ -61,7 +61,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
     ASSERT_MATRIX_OK ((*A), "A export: standard CSR", GB0) ;
     ASSERT (!((*A)->is_csc)) ;
-    ASSERT (!((*A)->is_hyper)) ;
+    ASSERT ((*A)->h == NULL) ;
 
     if ((*A)->nvec_nonempty < 0)
     { 

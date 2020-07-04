@@ -60,10 +60,10 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 
             {
                 va_start (ap, field) ;
-                bool *is_hyper = va_arg (ap, bool *) ;
+                bool *A_is_hyper = va_arg (ap, bool *) ;
                 va_end (ap) ;
-                GB_RETURN_IF_NULL (is_hyper) ;
-                (*is_hyper) = A->is_hyper ;
+                GB_RETURN_IF_NULL (A_is_hyper) ;
+                (*A_is_hyper) = (A->h != NULL) ;
             }
             break ;
 

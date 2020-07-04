@@ -52,7 +52,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->h_shallow = false ;
     s->i_shallow = true ;
     s->x_shallow = true ;
-    s->is_hyper = false ;
     s->is_csc = true ;
     s->mkl = NULL ;
 

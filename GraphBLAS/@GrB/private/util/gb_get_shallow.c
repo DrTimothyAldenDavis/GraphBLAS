@@ -80,7 +80,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         A->vdim          = s [2] ;
         A->nvec          = s [3] ;
         A->nvec_nonempty = s [4] ;
-        A->is_hyper      = (bool) (s [5]) ;
+        bool A_is_hyper  = (bool) (s [5]) ;
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
 
@@ -109,7 +109,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         IF (A->x == NULL && A->nzmax > 0, ".x wrong type") ;
 
         A->h = NULL ;
-        if (A->is_hyper)
+        if (A_is_hyper)
         { 
             // get the hyperlist
             mxArray *Ah = mxGetField (X, 0, "h") ;

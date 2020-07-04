@@ -174,7 +174,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (op2 != NULL)
     { 
-        // GxB_print (op2, 3) ;
         // first(A,x), second(y,A), and any(...) become identity(A)
         if ((opcode == GB_ANY_opcode) ||
             (opcode == GB_FIRST_opcode  && !binop_bind1st) ||

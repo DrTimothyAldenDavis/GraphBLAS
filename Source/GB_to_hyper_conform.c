@@ -42,12 +42,16 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
-    if (GB_to_hyper_test (A, A->nvec_nonempty, A->vdim))
+    if (A->h == NULL &&
+        GB_to_hyper_test (A->hyper_ratio, A->nvec_nonempty, A->vdim))
     { 
+        // A is sparse but should be converted to hypersparse
         info = GB_to_hyper (A, Context) ;
     }
-    else if (GB_to_nonhyper_test (A, A->nvec_nonempty, A->vdim))
+    else if (A->h != NULL &&
+        GB_to_nonhyper_test (A->hyper_ratio, A->nvec_nonempty, A->vdim))
     { 
+        // A is hypersparse but should be converted to sparse
         info = GB_to_nonhyper (A, Context) ;
     }
     else

@@ -40,7 +40,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // convert A to non-hypersparse form
     //--------------------------------------------------------------------------
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     {
 
         //----------------------------------------------------------------------
@@ -64,7 +64,6 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         if (Ap_new == NULL)
         { 
             // out of memory
-            A->is_hyper = false ;    // A is non-hypersparse, but invalid
             GB_phix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -203,7 +202,6 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         // transplant the new vector pointers; matrix is no longer hypersparse
         A->p = Ap_new ;
         A->h = NULL ;
-        A->is_hyper = false ;
         A->nvec = n ;
         A->nvec_nonempty = nvec_nonempty ;
         A->plen = n ;
@@ -219,7 +217,6 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to nonhypersparse", GB0) ;
-    ASSERT (!(A->is_hyper)) ;
     return (GrB_SUCCESS) ;
 }
 

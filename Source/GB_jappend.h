@@ -34,7 +34,7 @@ static inline void GB_jstartup          // no longer used in v3.2.0
     (*cnz) = 0 ;            //
     (*cnz_last) = 0 ;
     (*jlast) = -1 ;         // last sentinal vector is -1
-    if (C->is_hyper)
+    if (C->h != NULL)
     {
         C->nvec = 0 ;       // clear existing vectors from C
     }
@@ -48,9 +48,10 @@ static inline void GB_jstartup          // no longer used in v3.2.0
 
 // Append a new vector to the end of a matrix C.
 
-// If C->is_hyper is true, C is in hypersparse form with
+// If C->h != NULL, C is in hypersparse form with
 // C->nvec <= C->plen <= C->vdim.  C->h has size C->plen.
-// If C->is_hyper is false, C is in non-hypersparse form with
+
+// If C->h == NULL, C is in non-hypersparse form with
 // C->nvec == C->plen == C->vdim.  C->h is NULL.
 // In both cases, C->p has size C->plen+1.
 
@@ -86,7 +87,7 @@ static inline GrB_Info GB_jappend
     // one more non-empty vector
     C->nvec_nonempty++ ;
 
-    if (C->is_hyper)
+    if (C->h != NULL)
     { 
 
         //----------------------------------------------------------------------
@@ -167,7 +168,7 @@ static inline void GB_jwrapup
 )
 {
 
-    if (!C->is_hyper)
+    if (C->h == NULL)
     {
 
         //----------------------------------------------------------------------

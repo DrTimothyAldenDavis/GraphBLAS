@@ -78,8 +78,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             && !GB_ZOMBIES (A)
             && !(C->p_shallow)          //      Cp and Ci are not shallow
             && !(C->i_shallow)
-            && !C->is_hyper             //      both A and C are standard
-            && !A->is_hyper
+            && (C->h == NULL)           //      both A and C are standard
+            && (A->h == NULL)
             && C->vdim == avdim         //      A and C have the same size
             && C->vlen == avlen
             && C->is_csc == A->is_csc   //      A and C have the same format
@@ -120,7 +120,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // It is now safe to change the type, dimension, and hypersparsity of C
     C->type = ctype ;
     C->is_csc = A->is_csc ;
-    C->is_hyper = A->is_hyper ;
     C->vlen = avlen ;
     C->vdim = avdim ;
     ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
@@ -163,7 +162,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
         int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
 
-        if (A->is_hyper)
+        if (A->h != NULL)
         {
             // A is hypersparse, create new C->p and C->h
             C->plen = anvec ;

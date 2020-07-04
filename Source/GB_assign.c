@@ -440,6 +440,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // GrB_Row_assign and GrB_Col_assign pass A as a typecasted vector,
     // which is then quickly transposed to a hypersparse matrix.
 
+    ASSERT_MATRIX_OK (C, "C here in GB_assign", GB0) ;
+
     if (!scalar_expansion && A_transpose)
     { 
         // AT = A', with no typecasting
@@ -591,7 +593,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // duplicating it, create an empty matrix Z2.  This also prevents
             // the C_replace_phase from being needed.
             GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio, 1,
+                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio, 1,
                 Context)) ;
             GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
@@ -617,6 +619,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // it now.  This also prevents the C_replace_phase from being
             // needed.
             GB_OK (GB_clear (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C cleared by GB_assign", GB0) ;
             GBBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
             C_replace = false ;
             C_replace_phase = false ;
@@ -751,7 +754,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             // M is a single column so it is never hypersparse
             ASSERT (nJ == 1) ;
-            ASSERT (M->vlen == Z->vlen && M->vdim == 1 && !M->is_hyper) ;
+            ASSERT (M->vlen == Z->vlen && M->vdim == 1 && M->h == NULL) ;
             ASSERT (Jkind == GB_LIST) ;
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;

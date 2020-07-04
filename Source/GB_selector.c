@@ -327,7 +327,7 @@ GrB_Info GB_selector
         // transplant C back into A
         //----------------------------------------------------------------------
 
-        if (A->is_hyper && C_nvec_nonempty < anvec)
+        if (A->h != NULL && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap
             int64_t cnvec = 0 ;
@@ -379,10 +379,10 @@ GrB_Info GB_selector
         //----------------------------------------------------------------------
 
         info = GB_new (&C, A->type, avlen, avdim, GB_Ap_null, true,
-            GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, aplen, Context) ;
+            GB_SAME_HYPER_AS (A->h != NULL), A->hyper_ratio, aplen, Context) ;
         GB_OK (info) ;
 
-        if (A->is_hyper)
+        if (A->h != NULL)
         {
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)

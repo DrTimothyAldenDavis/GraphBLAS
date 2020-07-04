@@ -58,7 +58,7 @@ GrB_Info GB_assign_zombie5
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mnvec = M->nvec ;
-    const bool M_is_hyper = M->is_hyper ;
+    const bool M_is_hyper = (Mh != NULL) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

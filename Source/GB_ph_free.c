@@ -44,7 +44,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
     A->h = NULL ;
     A->h_shallow = false ;
 
-    if (A->is_hyper)
+    if (A->h != NULL)
     { 
         A->plen = 0 ;
         A->nvec = 0 ;

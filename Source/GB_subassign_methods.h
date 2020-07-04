@@ -47,12 +47,6 @@
     int64_t nzombies = C->nzombies ;                                        \
     const bool is_matrix = (cvdim > 1) ;
 
-//  const bool C_is_hyper = C->is_hyper ;
-//  const int64_t Cnvec = C->nvec ;
-//  const int64_t cvlen = C->vlen ;
-//  const int64_t *GB_RESTRICT Ch = C->h ;
-//  const int64_t *GB_RESTRICT Cp = C->p ;
-
 //------------------------------------------------------------------------------
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
@@ -64,9 +58,6 @@
     const int64_t *GB_RESTRICT Mi = M->i ;                                     \
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;\
     const size_t msize = M->type->size ;
-
-//  const bool M_is_hyper = M->is_hyper ;
-//  const int64_t Mnvec = M->nvec ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
@@ -95,10 +86,6 @@
     const int64_t *GB_RESTRICT Ai = A->i ;                                  \
     const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;                      \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
-
-//  const int64_t *GB_RESTRICT Ah = A->h ;
-//  const int64_t Anvec = A->nvec ;
-//  const bool A_is_hyper = A->is_hyper ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -131,10 +118,6 @@
     const int64_t *GB_RESTRICT Sp = S->p ;                                  \
     const int64_t *GB_RESTRICT Si = S->i ;                                  \
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
-
-//  const int64_t *GB_RESTRICT Sh = S->h ;
-//  const int64_t Snvec = S->nvec ;
-//  const bool S_is_hyper = S->is_hyper ;
 
 //------------------------------------------------------------------------------
 // basic actions
