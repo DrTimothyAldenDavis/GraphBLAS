@@ -120,8 +120,8 @@ GrB_Info GB_subassign_13
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? Si [pS] : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -237,8 +237,8 @@ GrB_Info GB_subassign_13
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? Si [pS] : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)

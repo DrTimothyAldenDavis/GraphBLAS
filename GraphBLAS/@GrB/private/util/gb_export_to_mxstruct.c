@@ -21,9 +21,9 @@ static const char *MatrixFields [NFIELDS] =
     "GraphBLAS",        // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
-    "p",                // 2: array of int64_t, size plen+1
-    "i",                // 3: array of int64_t, size nzmax
-    "x",                // 4: array of uint8, size (sizeof(type) * nzmax)
+    "x",                // 2: array of uint8, size (sizeof(type) * nzmax)
+    "p",                // 3: array of int64_t, size plen+1
+    "i",                // 4: array of int64_t, size nzmax
     "h"                 // 5: array of int64_t, size plen if hypersparse
 } ;
 
@@ -53,8 +53,33 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // construct the output struct
     //--------------------------------------------------------------------------
 
-    mxArray *G = mxCreateStructMatrix (1, 1,
-        (A->h != NULL) ? NFIELDS : (NFIELDS-1), MatrixFields) ;
+    int nfields, sparsity ;
+    if (GB_is_dense (A) && !GB_IS_FULL (A))
+    {
+        // convert A to full
+        GB_sparse_to_full (A) ;
+    }
+
+    if (GB_IS_FULL (A))
+    {
+        // A is full
+        sparsity = GB_FULL ;
+        nfields = 3 ;
+    }
+    else if (A->h == NULL)
+    {
+        // A is sparse
+        sparsity = GB_SPARSE ;
+        nfields = 5 ;
+    }
+    else
+    {
+        // A is hypersparse
+        sparsity = GB_HYPER ;
+        nfields = 6 ;
+    }
+
+    mxArray *G = mxCreateStructMatrix (1, 1, nfields, MatrixFields) ;
 
     //--------------------------------------------------------------------------
     // export content into the output struct
@@ -71,7 +96,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     s [2] = A->vdim ;
     s [3] = A->nvec ;
     s [4] = A->nvec_nonempty ;
-    s [5] = (int64_t) (A->h != NULL) ;
+    s [5] = (int64_t) sparsity ;  // 0:sparse, 1:hyper, 2:full
     s [6] = (int64_t) (A->is_csc) ;
     s [7] = A->nzmax ;
     mxSetFieldByNumber (G, 0, 1, opaque) ;
@@ -79,40 +104,43 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // These components do not need to be exported: Pending, nzombies,
     // queue_next, queue_head, enqueued, *_shallow.
 
-    // export the pointers
-    mxArray *Ap = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-    mxSetN (Ap, A->plen+1) ;
-    void *p = mxGetInt64s (Ap) ;
-    gb_mxfree (&p) ;
-    mxSetInt64s (Ap, A->p) ;
-    A->p = NULL ;
-    mxSetFieldByNumber (G, 0, 2, Ap) ;
-
-    // export the indices
-    mxArray *Ai = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-    if (A->nzmax > 0)
-    { 
-        mxSetN (Ai, A->nzmax) ;
-        p = mxGetInt64s (Ai) ;
+    if (sparsity != GB_FULL)
+    {
+        // export the pointers
+        mxArray *Ap = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+        mxSetN (Ap, A->plen+1) ;
+        void *p = mxGetInt64s (Ap) ;
         gb_mxfree (&p) ;
-        mxSetInt64s (Ai, A->i) ;
+        mxSetInt64s (Ap, A->p) ;
+        A->p = NULL ;
+        mxSetFieldByNumber (G, 0, 3, Ap) ;
+
+        // export the indices
+        mxArray *Ai = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+        if (A->nzmax > 0)
+        { 
+            mxSetN (Ai, A->nzmax) ;
+            p = mxGetInt64s (Ai) ;
+            gb_mxfree (&p) ;
+            mxSetInt64s (Ai, A->i) ;
+        }
+        A->i = NULL ;
+        mxSetFieldByNumber (G, 0, 4, Ai) ;
     }
-    A->i = NULL ;
-    mxSetFieldByNumber (G, 0, 3, Ai) ;
 
     // export the values as uint8
     mxArray *Ax = mxCreateNumericMatrix (1, 1, mxUINT8_CLASS, mxREAL) ;
     if (A->nzmax > 0)
     { 
         mxSetN (Ax, A->nzmax * A->type->size) ;
-        p = mxGetUint8s (Ax) ;
+        void *p = mxGetUint8s (Ax) ;
         gb_mxfree (&p) ;
         mxSetUint8s (Ax, A->x) ;
     }
     A->x = NULL ;
-    mxSetFieldByNumber (G, 0, 4, Ax) ;
+    mxSetFieldByNumber (G, 0, 2, Ax) ;
 
-    if (A->h != NULL)
+    if (sparsity == GB_HYPER)
     {
         // export the hyperlist
         if (A->nvec < A->plen)
@@ -125,7 +153,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         if (A->plen > 0)
         { 
             mxSetN (Ah, A->plen) ;
-            p = mxGetInt64s (Ah) ;
+            void *p = mxGetInt64s (Ah) ;
             gb_mxfree (&p) ;
             mxSetInt64s (Ah, A->h) ;
         }

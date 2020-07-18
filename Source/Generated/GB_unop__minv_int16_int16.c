@@ -99,7 +99,8 @@ GrB_Info GB_unop_tran__minv_int16_int16
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 )
 { 
     #if GB_DISABLE

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FULL: or DENSE: this function is only called when C,A,B are full or dense
-
 #include "GB_dense.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
@@ -43,6 +41,12 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (op->ztype == op->ytype) ;
     ASSERT (op->opcode >= GB_MIN_opcode) ;
     ASSERT (op->opcode <= GB_RDIV_opcode) ;
+
+    if (!GB_IS_FULL (C))
+    { 
+        // convert C from sparse to full
+        GB_sparse_to_full (C) ;
+    }
 
     // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 

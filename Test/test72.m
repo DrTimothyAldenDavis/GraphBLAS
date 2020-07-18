@@ -24,7 +24,6 @@ semiring.multiply = 'times' ;
 semiring.add = 'plus' ;
 semiring.class = 'double' ;
 
-
 Mask = sparse (ones (n)) ;
 C0 = GB_spec_mxm (Z, Mask, [ ], semiring, A, B, dtt);
 C1 = GB_mex_mxm  (Z, Mask, [ ], semiring, A, B, dtt);

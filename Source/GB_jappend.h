@@ -30,7 +30,7 @@ static inline void GB_jstartup          // no longer used in v3.2.0
     int64_t *cnz_last       // set to zero
 )
 {
-    C->p [0] = 0 ;          // log the start of C(:,0)
+    C->p [0] = 0 ;          // log the start of C(:,0)  // ok: not used
     (*cnz) = 0 ;            //
     (*cnz_last) = 0 ;
     (*jlast) = -1 ;         // last sentinal vector is -1
@@ -55,7 +55,7 @@ static inline void GB_jstartup          // no longer used in v3.2.0
 // C->nvec == C->plen == C->vdim.  C->h is NULL.
 // In both cases, C->p has size C->plen+1.
 
-// For both hypersparse and non-hypersparse, C->nvec_nonemty <= C->nvec
+// For both hypersparse and non-hypersparse, C->nvec_nonempty <= C->nvec
 // is the number of vectors with at least one entry.
 
 static inline GrB_Info GB_jappend
@@ -77,6 +77,7 @@ static inline GrB_Info GB_jappend
     ASSERT (!C->p_shallow) ;
     ASSERT (!C->h_shallow) ;
     ASSERT (C->p != NULL) ;
+    ASSERT (!GB_IS_FULL (C)) ;
 
     if (cnz <= (*cnz_last))
     {
@@ -94,7 +95,7 @@ static inline GrB_Info GB_jappend
         // C is hypersparse; make sure space exists in the hyperlist
         //----------------------------------------------------------------------
 
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
+        ASSERT (C->p [C->nvec] == (*cnz_last)) ;    // ok: C is hypersparse
         ASSERT (C->h != NULL) ;
 
         // check if space exists
@@ -114,10 +115,13 @@ static inline GrB_Info GB_jappend
         ASSERT (C->nvec >= 0) ;
         ASSERT (C->nvec < C->plen) ;
         ASSERT (C->plen <= C->vdim) ;
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
+        ASSERT (C->p [C->nvec] == (*cnz_last)) ;    // ok: C is hypersparse
 
-        C->h [C->nvec] = j ;            // add j to the hyperlist
-        C->p [C->nvec+1] = cnz ;        // mark the end of C(:,j)
+        // add j to the hyperlist
+        C->h [C->nvec] = j ;            // ok: C is hypersparse
+
+        // mark the end of C(:,j)
+        C->p [C->nvec+1] = cnz ;        // ok: C is hypersparse
         C->nvec++ ;                     // one more vector in the hyperlist
 
     }
@@ -132,7 +136,7 @@ static inline GrB_Info GB_jappend
 
         ASSERT (C->nvec == C->plen && C->plen == C->vdim) ;
         ASSERT (C->h == NULL) ;
-        ASSERT (Cp [(*jlast)+1] == (*cnz_last)) ;
+        ASSERT (Cp [(*jlast)+1] == (*cnz_last)) ;   // ok: C is sparse
 
         // Even if C is non-hypersparse, the iteration that uses this function
         // may iterate over a hypersparse input matrix, so not every vector j
@@ -141,9 +145,11 @@ static inline GrB_Info GB_jappend
 
         for (int64_t jprior = (*jlast)+1 ; jprior < j ; jprior++)
         { 
-            Cp [jprior+1] = (*cnz_last) ;   // mark the end of C(:,jprior)
+            // mark the end of C(:,jprior)
+            Cp [jprior+1] = (*cnz_last) ;       // ok: C is sparse
         }
-        Cp [j+1] = cnz ;                    // mark the end of C(:,j)
+        // mark the end of C(:,j)
+        Cp [j+1] = cnz ;                        // ok: C is sparse
     }
 
     // record the last vector added to C
@@ -183,7 +189,8 @@ static inline void GB_jwrapup
 
         for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)
         { 
-            Cp [jprior+1] = cnz ;           // mark the end of C(:,jprior)
+            // mark the end of C(:,jprior)
+            Cp [jprior+1] = cnz ;           // ok: C is sparse
         }
     }
 

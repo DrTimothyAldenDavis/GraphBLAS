@@ -17,7 +17,7 @@ accum.opname = '' ;
 accum.optype = 'logical'
 
 C = GB_mex_transpose  (Cin, [ ], accum, A, [ ]) ;
-assert (spok (C.matrix*1) == 1) ;
+assert (GB_spok (C.matrix*1) == 1) ;
 S = GB_spec_transpose (Cin, [ ], accum, A, [ ]) ;
 
 assert (isequal (full (double (C.matrix)), double (S.matrix))) ;

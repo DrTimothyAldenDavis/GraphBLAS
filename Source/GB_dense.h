@@ -105,10 +105,10 @@ GrB_Info GB_dense_subassign_06d
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_24: C(:,:) = A ; C is dense
+// GB_subassign_24: C = A
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_24   // C = A, copy A into an existing matrix C
+GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 (
     GrB_Matrix C,           // output matrix to modify
     const GrB_Matrix A,     // input matrix to copy

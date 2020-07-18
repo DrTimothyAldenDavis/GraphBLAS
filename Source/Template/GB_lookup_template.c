@@ -22,6 +22,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
     const bool A_is_hyper,          // true if A is hypersparse
     const int64_t *GB_RESTRICT Ah,  // A->h [0..A->nvec-1]: list of vectors
     const int64_t *GB_RESTRICT Ap,  // A->p [0..A->nvec  ]: pointers to vectors
+    const int64_t avlen,            // A->vlen
     int64_t *GB_RESTRICT pleft,     // look only in A->h [pleft..pright]
     int64_t pright,                 // normally A->nvec-1, but can be trimmed
 //  const int64_t nvec,             // A->nvec: number of vectors
@@ -54,12 +55,11 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
     }
     else
     { 
-        // A is not hypersparse; j always appears
+        // A is sparse or full; j always appears
         // k = j
-        (*pstart) = Ap [j] ;
-        (*pend)   = Ap [j+1] ;
+        (*pstart) = GBP (Ap, j, avlen) ;
+        (*pend)   = GBP (Ap, j+1, avlen) ;
         return (true) ;
     }
 }
-
 

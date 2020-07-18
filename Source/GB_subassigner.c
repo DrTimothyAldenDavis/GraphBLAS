@@ -150,8 +150,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 // case in other GraphBLAS functions, except here only the
                 // sub-case of C_replace == false is handled.  The C_replace ==
                 // true sub-case needs to delete all entries in C(I,J), which
-                // is handled below in GB_subassign_00.  This "quick" case is
-                // checked again if C_replace becomes effectively false, below.
+                // is handled below in GB_subassign_zombie.  This "quick" case
+                // is checked again if C_replace becomes effectively false,
+                // below.
                 GBBURBLE ("quick ") ;
                 return (GrB_SUCCESS) ;
             }
@@ -321,7 +322,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // A2 = A (I2k, J2k)
             GB_OK (GB_subref (&A2, A->is_csc, A,
                 I_jumbled ? I2k : GrB_ALL, ni,
-                J_jumbled ? J2k : GrB_ALL, nj, false, true, Context)) ;
+                J_jumbled ? J2k : GrB_ALL, nj, false, Context)) ;
             A = A2 ;
         }
 
@@ -330,7 +331,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // M2 = M (I2k, J2k)
             GB_OK (GB_subref (&M2, M->is_csc, M,
                 I_jumbled ? I2k : GrB_ALL, ni,
-                J_jumbled ? J2k : GrB_ALL, nj, false, true, Context)) ;
+                J_jumbled ? J2k : GrB_ALL, nj, false, Context)) ;
             M = M2 ;
         }
 
@@ -706,7 +707,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_dense_update = false ;
     if (C_is_dense)
     { 
-        GBBURBLE ("(C dense) ") ;
+        // C is dense or full
+        GB_BURBLE_DENSE (C, "(C %s) ") ;
         if (whole_C_matrix && no_mask && (accum != NULL)
             && (C->type == accum->ztype) && (C->type == accum->xtype))
         { 
@@ -821,7 +823,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // in the same hypersparse form as C (unless S is empty, in which case
         // it is always returned as hypersparse). This also checks I and J.
 
-        GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
+        GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, Context)) ;
 
         //----------------------------------------------------------------------
         // check the result of S=C(I,J)
@@ -839,29 +841,27 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         const int64_t *GB_RESTRICT Sh = S->h ;
         const int64_t *GB_RESTRICT Si = S->i ;
         const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
-
         // for each vector of S
         for (int64_t k = 0 ; k < S->nvec ; k++)
         {
             // prepare to iterate over the entries of vector S(:,jnew)
-            int64_t jnew = (Sh == NULL) ? k : Sh [k] ;
-            int64_t pS_start = Sp [k] ;
-            int64_t pS_end = Sp [k+1] ;
-
+            int64_t jnew = GBH (Sh, k) ;
+            int64_t pS_start = GBP (Sp, k, S->vlen) ;
+            int64_t pS_end   = GBP (Sp, k+1, S->vlen) ;
             // S (inew,jnew) corresponds to C (iC, jC) ;
             // jC = J [j] ; or J is a colon expression
             int64_t jC = GB_ijlist (J, jnew, Jkind, Jcolon) ;
             for (int64_t pS = pS_start ; pS < pS_end ; pS++)
             {
                 // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-                int64_t inew = Si [pS] ;
+                int64_t inew = GBI (Si, pS, S->vlen) ;
                 ASSERT (inew >= 0 && inew < nI) ;
                 // iC = I [iA] ; or I is a colon expression
                 int64_t iC = GB_ijlist (I, inew, Ikind, Icolon) ;
                 int64_t p = Sx [pS] ;
                 ASSERT (p >= 0 && p < GB_NNZ (C)) ;
                 int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-                bool found = GB_lookup (C->h != NULL, C->h, C->p,
+                bool found = GB_lookup (C->h != NULL, C->h, C->p, C->vlen,
                     &pleft, pright, jC, &pC_start, &pC_end) ;
                 ASSERT (found) ;
                 // If iC == I [inew] and jC == J [jnew], (or the equivaleent
@@ -869,7 +869,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 // assigned to C(iC,jC), and p = S(inew,jnew) gives the pointer
                 // into C to where the entry (C(iC,jC) appears in C:
                 ASSERT (pC_start <= p && p < pC_end) ;
-                ASSERT (iC == GB_UNFLIP (C->i [p])) ;
+                ASSERT (iC == GB_UNFLIP (GBI (C->i, p, C->vlen))) ;
             }
         }
         #endif
@@ -972,18 +972,18 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT (S != NULL) ;
 
         // Method 00: C(I,J) = empty ; using S
-        GBBURBLE ("Method 00: C(%s,%s) = empty ; using S ",
+        GBBURBLE ("Method 00: C(%s,%s)<!,repl> = empty ; using S ",
             Istring, Jstring) ;
-        GB_OK (GB_subassign_00 (C,
-            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-            S, Context)) ;
+        GB_ENSURE_SPARSE (C) ;
+        GB_subassign_zombie (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+            S, Context) ;
 
     }
     else if (C_splat_scalar)
     { 
 
         //----------------------------------------------------------------------
-        // C = x where x is a scalar; C becomes dense
+        // C = x where x is a scalar; C becomes full
         //----------------------------------------------------------------------
 
         //  =====================       ==============
@@ -999,8 +999,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT (S == NULL) ;                // S is not used
         ASSERT (scalar_expansion) ;         // x is a scalar
 
-        // Method 21: C = x where x is a scalar; C becomes dense
-        GBBURBLE ("Method 21: (C dense) = scalar ") ;
+        // Method 21: C = x where x is a scalar; C becomes full
+        GBBURBLE ("Method 21: (C full) = scalar ") ;
         GB_OK (GB_dense_subassign_21 (C, scalar, atype, Context)) ;
 
     }
@@ -1026,14 +1026,14 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         // Method 24: C = A
         GBBURBLE ("Method 24: C = Z ") ;
-        GB_OK (GB_dense_subassign_24 (C, A, Context)) ;
+        GB_OK (GB_subassign_24 (C, A, Context)) ;
 
     }
     else if (C_dense_update)
     { 
 
         //----------------------------------------------------------------------
-        // C += A or x where C is dense
+        // C += A or x where C is dense or full (and becomes full)
         //----------------------------------------------------------------------
 
         //  =====================       ==============
@@ -1051,14 +1051,14 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         if (scalar_expansion)
         {
-            // Method 22: C(:,:) += x where C is dense
-            GBBURBLE ("Method 22: (C dense) += scalar ") ;
+            // Method 22: C(:,:) += x where C is dense or full
+            GBBURBLE (C, "Method 22: (C full) += scalar ") ;
             GB_OK (GB_dense_subassign_22 (C, scalar, atype, accum, Context)) ;
         }
         else
         {
-            // Method 23: C(:,:) += A where C is dense
-            GBBURBLE ("Method 23: (C dense) += Z ") ;
+            // Method 23: C(:,:) += A where C is dense or full
+            GBBURBLE (C, "Method 23: (C full) += Z ") ;
             GB_OK (GB_dense_subassign_23 (C, A, accum, Context)) ;
         }
 
@@ -1093,8 +1093,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             }
             else if (C_is_dense && whole_C_matrix)
             { 
-                // Method 05d: C(:,:)<M> = scalar ; no S; C is dense
-                GBBURBLE ("Method 05d: (C dense)<M> = scalar ") ;
+                // Method 05d: C(:,:)<M> = scalar ; no S; C is dense or full;
+                // C becomes full.
+                GBBURBLE ("Method 05d: (C full)<M> = scalar ") ;
                 GB_OK (GB_dense_subassign_05d (C,
                     M, Mask_struct, scalar, atype, Context)) ;
             }
@@ -1151,13 +1152,15 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         else if (C_is_dense && whole_C_matrix && M == A)
         { 
-            // Method 06d: C(:,:)<A> = A ; no S, C dense
-            GBBURBLE ("Method 06d: (C dense)<Z> = Z ") ;
+            // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
+            // C becomes full.
+            GBBURBLE ("Method 06d: (C full)<Z> = Z ") ;
             GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Context)) ;
         }
         else if (C_is_empty && whole_C_matrix && A_is_dense && Mask_struct)
         { 
-            GBBURBLE ("Method 25: (C empty)<M> = (Z dense) ") ;
+            // A is dense or full; remains unchanged
+            GB_BURBLE_DENSE (A, "Method 25: (C empty)<M> = (Z %s) ") ;
             GB_OK (GB_dense_subassign_25 (C, M, A, Context)) ;
         }
         else if (S == NULL)

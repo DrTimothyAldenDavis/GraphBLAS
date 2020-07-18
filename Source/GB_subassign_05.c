@@ -48,7 +48,6 @@ GrB_Info GB_subassign_05
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t cvlen = C->vlen ;
     GB_GET_MASK ;
     GB_GET_SCALAR ;
     GrB_BinaryOp accum = NULL ;
@@ -102,8 +101,8 @@ GrB_Info GB_subassign_05
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = (Mh == NULL) ? k : Mh [k] ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k) ;
+            int64_t j = GBH (Mh, k) ;
+            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -113,7 +112,7 @@ GrB_Info GB_subassign_05
 
             GB_GET_jC ;
             int64_t cjnz = pC_end - pC_start ;
-            bool cjdense = (cjnz == cvlen) ;
+            bool cjdense = (cjnz == Cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = scalar ; no S
@@ -135,7 +134,7 @@ GrB_Info GB_subassign_05
 
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -162,7 +161,7 @@ GrB_Info GB_subassign_05
 
                     if (GB_mcast (Mx, pM, msize))
                     {
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
@@ -216,8 +215,8 @@ GrB_Info GB_subassign_05
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = (Mh == NULL) ? k : Mh [k] ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k) ;
+            int64_t j = GBH (Mh, k) ;
+            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -226,7 +225,7 @@ GrB_Info GB_subassign_05
             //------------------------------------------------------------------
 
             GB_GET_jC ;
-            bool cjdense = ((pC_end - pC_start) == cvlen) ;
+            bool cjdense = ((pC_end - pC_start) == Cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = scalar ; no S
@@ -248,7 +247,7 @@ GrB_Info GB_subassign_05
 
                     if (GB_mcast (Mx, pM, msize))
                     {
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;

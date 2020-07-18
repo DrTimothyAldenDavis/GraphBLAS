@@ -86,9 +86,6 @@ void GB_slice_vector
     int64_t pA = (a_empty) ? -1 : pA_start ;
     int64_t pB = (b_empty) ? -1 : pB_start ;
 
-    ASSERT (GB_IMPLIES (!b_empty, Bi != NULL)) ;
-    ASSERT (GB_IMPLIES (!m_empty, Mi != NULL)) ;
-
     while (ileft < iright)
     {
 
@@ -111,7 +108,7 @@ void GB_slice_vector
         { 
             // A(:,kA) is dense; no need for a binary search
             pA = pA_start + i ;
-            ASSERT (Ai [pA] == i) ;
+            ASSERT (GBI (Ai, pA, vlen) == i) ;
         }
         else
         { 
@@ -121,12 +118,14 @@ void GB_slice_vector
             bool afound ;
             int64_t apright = pA_end - 1 ;
             GB_SPLIT_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
-            ASSERT (GB_IMPLIES (afound, Ai [pA] == i)) ;
+            ASSERT (GB_IMPLIES (afound, GBI (Ai, pA, vlen) == i)) ;
             ASSERT (pA_start <= pA && pA <= pA_end) ;
         }
 
-        ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end, (Ai [pA-1] < i)));
-        ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end, (Ai [pA] >= i )));
+        ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end,
+            (GBI (Ai, pA-1, vlen) < i))) ;
+        ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end,
+            (GBI (Ai, pA, vlen) >= i ))) ;
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -153,20 +152,23 @@ void GB_slice_vector
         { 
             // B(:,kB) is dense; no need for a binary search
             pB = pB_start + i ;
-            ASSERT (Bi [pB] == i) ;
+            ASSERT (GBI (Bi, pB, vlen) == i) ;
         }
         else
         { 
             // B(:,kB) is sparse, and not empty
             ASSERT (bknz > 0) ;
+            ASSERT (Bi != NULL) ;
             pB = pB_start ;
             bool bfound ;
             int64_t bpright = pB_end - 1 ;
             GB_SPLIT_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
             ASSERT (pB_start <= pB && pB <= pB_end) ;
         }
-        ASSERT (GB_IMPLIES (pB >  pB_start && pB < pB_end, (Bi [pB-1] < i))) ;
-        ASSERT (GB_IMPLIES (pB >= pB_start && pB < pB_end, (Bi [pB] >= i ))) ;
+        ASSERT (GB_IMPLIES (pB >  pB_start && pB < pB_end,
+            (GBI (Bi, pB-1, vlen) < i))) ;
+        ASSERT (GB_IMPLIES (pB >= pB_start && pB < pB_end,
+            (GBI (Bi, pB, vlen) >= i ))) ;
 
         // Bi has been split.  If bfound is false:
         //      Bi [pB_start : pB-1] < i
@@ -240,12 +242,13 @@ void GB_slice_vector
     { 
         // M(:,kM) is dense; no need for a binary search
         pM = pM_start + i ;
-        ASSERT (Mi [pM] == i) ;
+        ASSERT (GBI (Mi, pM, vlen) == i) ;
     }
     else
     { 
         // M(:,kM) is sparse, and not empty
         ASSERT (mknz > 0) ;
+        ASSERT (Mi != NULL) ;
         pM = pM_start ;
         bool mfound ;
         int64_t mpright = pM_end - 1 ;
@@ -259,12 +262,18 @@ void GB_slice_vector
     // pM, pA, and pB partition the three vectors M(:,j), A(:,j), and B(:,j),
     // or if any vector is empty, their p* pointer is -1.
 
-    ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end), Mi [pM-1] <  i)) ;
-    ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end), Mi [pM  ] >= i)) ;
-    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), Ai [pA-1] <  i)) ;
-    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), Ai [pA  ] >= i)) ;
-    ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end), Bi [pB-1] <  i)) ;
-    ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end), Bi [pB  ] >= i)) ;
+    ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end),
+        GBI (Mi, pM-1, vlen) <  i)) ;
+    ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end),
+        GBI (Mi, pM, vlen) >= i)) ;
+    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end),
+        GBI (Ai, pA-1, vlen) <  i)) ;
+    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end),
+        GBI (Ai, pA, vlen) >= i)) ;
+    ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end),
+        GBI (Bi, pB-1, vlen) <  i)) ;
+    ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end),
+        GBI (Bi, pB, vlen) >= i)) ;
 
     if (p_i != NULL)
     { 

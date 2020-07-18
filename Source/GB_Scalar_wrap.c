@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This method construct a shallow statically-defined scalar, with no memory
-// allocations.
+// allocations.  The scalar is full, with a single entry.
 
 #include "GB.h"
 #include "GB_scalar.h"
@@ -17,8 +17,6 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 (
     GxB_Scalar s,           // GxB_Scalar to create
     GrB_Type type,          // type of GxB_Scalar to create
-    int64_t *Sp,            // becomes S->p, an array of size 2
-    int64_t *Si,            // becomes S->i, an array of size 1
     void *Sx                // becomes S->x, an array of size 1 * type->size
 )
 { 
@@ -36,21 +34,21 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->magic = GB_MAGIC ;
     s->type = type ;
     s->hyper_ratio = GB_HYPER_DEFAULT ;
-    s->plen = 1 ;
+    s->plen = -1 ;
     s->vlen = 1 ;
     s->vdim = 1 ;
     s->nvec = 1 ;
     s->nvec_nonempty = 1 ;
-    s->p = Sp ; Sp [0] = 0 ; Sp [1] = 1 ;
+    s->p = NULL ;
     s->h = NULL ;
-    s->i = Si ; Si [0] = 0 ;
+    s->i = NULL ;
     s->x = Sx ;
     s->nzmax = 1 ;
     s->Pending = NULL ;
     s->nzombies = 0 ;
-    s->p_shallow = true ;
+    s->p_shallow = false ;
     s->h_shallow = false ;
-    s->i_shallow = true ;
+    s->i_shallow = false ;
     s->x_shallow = true ;
     s->is_csc = true ;
     s->mkl = NULL ;

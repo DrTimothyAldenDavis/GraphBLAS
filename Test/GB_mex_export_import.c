@@ -135,6 +135,7 @@ GrB_Info export_import
         case 1 :    // standard CSC
         //----------------------------------------------------------------------
 
+            GxB_print (C, 3) ;
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
                 &nonempty, &Cp, &Ci, &Cx, NULL)) ;
             nvec = ncols ;

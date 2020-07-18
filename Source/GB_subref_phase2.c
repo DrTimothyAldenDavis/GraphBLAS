@@ -57,7 +57,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;
+    int64_t cnz = Cp [Cnvec] ;      // ok: C is sparse
     (*Chandle) = NULL ;
 
     bool C_is_hyper = (Ch != NULL) ;
@@ -127,10 +127,8 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // return result
     //--------------------------------------------------------------------------
 
-    // caller must not free Cp or Ch.   The matrix may have jumbled indices.
-    // If it will be transposed in GB_accum_mask, but needs sorting, then the
-    // sort is skipped since the transpose will handle the sort.
-    ASSERT_MATRIX_OK_OR_JUMBLED (C, "C output for subref phase2", GB0) ;
+    // caller must not free Cp or Ch
+    ASSERT_MATRIX_OK (C, "C output for subref phase2", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

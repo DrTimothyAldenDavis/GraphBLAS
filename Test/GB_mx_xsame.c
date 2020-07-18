@@ -21,11 +21,13 @@ bool GB_mx_xsame    // true if arrays X and Y are the same (ignoring zombies)
     if (X == Y) return (true) ;
     if (X == NULL) return (false) ;
     if (Y == NULL) return (false) ;
-    if (I == NULL) return (false) ;
     for (int64_t i = 0 ; i < len ; i++)
     {
         // check X [i] and Y [i], but ignore zombies
-        if (I [i] >= 0 && !GB_mx_same (X+i*s, Y+i*s, s)) return (false) ;
+        if (I == NULL || I [i] >= 0)
+        {
+            if (!GB_mx_same (X+i*s, Y+i*s, s)) return (false) ;
+        }
     }
     return (true) ;
 }

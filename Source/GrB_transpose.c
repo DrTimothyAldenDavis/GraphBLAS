@@ -71,6 +71,10 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_MATRIX_WAIT (M) ;
     GB_MATRIX_WAIT (A) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+
     //--------------------------------------------------------------------------
     // T = A or A', where T can have the type of C or the type of A
     //--------------------------------------------------------------------------
@@ -138,6 +142,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     info = GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp, 
         Mask_struct, Context) ;
     ASSERT (T == NULL) ;
+    ASSERT_MATRIX_OK (C, "final C for GrB_transpose", GB0) ;
 
     GB_BURBLE_END ;
     return (info) ;

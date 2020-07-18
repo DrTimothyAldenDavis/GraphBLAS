@@ -810,8 +810,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // Step 4 scans the J_work indices and constructs T->h and T->p.
 
-    int64_t *GB_RESTRICT Th = T->h ;
-    int64_t *GB_RESTRICT Tp = T->p ;
+    int64_t *GB_RESTRICT Th = T->h ;    // ok: T is hypersparse
+    int64_t *GB_RESTRICT Tp = T->p ;    // ok: T is hypersparse
 
     if (vdim <= 1)
     {
@@ -823,8 +823,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ASSERT (tnvec == 0 || tnvec == 1) ;
         if (tnvec > 0)
         { 
-            Th [0] = 0 ;
-            Tp [0] = 0 ;
+            Th [0] = 0 ;    // ok: T is hypersparse
+            Tp [0] = 0 ;    // ok: T is hypersparse
         }
 
     }
@@ -852,8 +852,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 if (j > jlast)
                 { 
                     // vector j starts in this slice
-                    Th [my_tnvec] = j ;
-                    Tp [my_tnvec] = t ;
+                    Th [my_tnvec] = j ; // ok: T is hypersparse
+                    Tp [my_tnvec] = t ; // ok: T is hypersparse
                     my_tnvec++ ;
                     jlast = j ;
                 }
@@ -890,8 +890,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     if (j > jlast)
                     { 
                         // vector j starts in this slice 
-                        Th [my_tnvec] = j ;
-                        Tp [my_tnvec] = my_tnz ;
+                        Th [my_tnvec] = j ;         // ok: T is hypersparse
+                        Tp [my_tnvec] = my_tnz ;    // ok: T is hypersparse
                         my_tnvec++ ;
                         jlast = j ;
                     }
@@ -904,7 +904,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // log the end of the last vector
     T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
-    Tp [tnvec] = tnz ;
+    Tp [tnvec] = tnz ;  // ok: T is hypersparse
     ASSERT (T->nvec == T->plen) ;
     T->magic = GB_MAGIC ;                      // T->p and T->h are now valid ]
 

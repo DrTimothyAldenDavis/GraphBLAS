@@ -44,7 +44,7 @@
     const int64_t  *GB_RESTRICT Bh = B->h ;
     const int64_t  *GB_RESTRICT Bi = B->i ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
-    const int64_t bvlen = B->vlen ;
+    const int64_t vlen = B->vlen ;
 
     const int64_t  *GB_RESTRICT Ap = A->p ;
     const int64_t  *GB_RESTRICT Ah = A->h ;
@@ -90,14 +90,14 @@
             // get B(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Bh == NULL) ? bk : Bh [bk] ;
-            int64_t pB_start = Bp [bk] ;
-            int64_t pB_end   = Bp [bk+1] ;
+            int64_t j = GBH (Bh, bk) ;
+            int64_t pB_start = GBP (Bp, bk, vlen) ;
+            int64_t pB_end   = GBP (Bp, bk+1, vlen) ;
             int64_t pC_start = j * cvlen ;
             int64_t bjnz = pB_end - pB_start ;
             if (bjnz == 0) continue ;
 
-            if (bjnz == bvlen)
+            if (bjnz == vlen)
             {
 
                 //--------------------------------------------------------------
@@ -111,9 +111,9 @@
                     // get A(:,i)
                     //----------------------------------------------------------
 
-                    int64_t i = (Ah == NULL) ? ak : Ah [ak] ;
-                    int64_t pA     = Ap [ak] ;
-                    int64_t pA_end = Ap [ak+1] ;
+                    int64_t i = GBH (Ah, ak) ;
+                    int64_t pA     = GBP (Ap, ak, vlen) ;
+                    int64_t pA_end = GBP (Ap, ak+1, vlen) ;
                     int64_t ainz = pA_end - pA ;
                     if (ainz == 0) continue ;
 
@@ -162,7 +162,7 @@
                     // general case
                     //----------------------------------------------------------
 
-                    if (ainz == bvlen)
+                    if (ainz == vlen)
                     {
 
                         //------------------------------------------------------
@@ -170,7 +170,7 @@
                         //------------------------------------------------------
 
                         GB_PRAGMA_SIMD_DOT (cij)
-                        for (int64_t k = 0 ; k < bvlen ; k++)
+                        for (int64_t k = 0 ; k < vlen ; k++)
                         { 
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
                             // cij += A(k,i) * B(k,j)
@@ -191,7 +191,7 @@
                         for (int64_t p = pA ; p < pA_end ; p++)
                         { 
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
-                            int64_t k = Ai [p] ;
+                            int64_t k = GBI (Ai, p, vlen) ;
                             // cij += A(k,i) * B(k,j)
                             GB_GETA (aki, Ax, p   ) ;       // aki = A(k,i)
                             GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
@@ -212,8 +212,8 @@
                 //--------------------------------------------------------------
 
                 // get the first and last index in B(:,j)
-                int64_t ib_first = Bi [pB_start] ;
-                int64_t ib_last  = Bi [pB_end-1] ;
+                int64_t ib_first = GBI (Bi, pB_start, vlen) ;
+                int64_t ib_last  = GBI (Bi, pB_end-1, vlen) ;
 
                 for (int64_t ak = akfirst ; ak < aklast ; ak++)
                 {
@@ -222,13 +222,14 @@
                     // get A(:,i)
                     //----------------------------------------------------------
 
-                    int64_t i = (Ah == NULL) ? ak : Ah [ak] ;
-                    int64_t pA     = Ap [ak] ;
-                    int64_t pA_end = Ap [ak+1] ;
+                    int64_t i = GBH (Ah, ak) ;
+                    int64_t pA     = GBP (Ap, ak, vlen) ;
+                    int64_t pA_end = GBP (Ap, ak+1, vlen) ;
                     int64_t ainz = pA_end - pA ;
                     if (ainz == 0) continue ;
                     // get the first and last index in A(:,i)
-                    if (Ai [pA_end-1] < ib_first || ib_last < Ai [pA]) continue;
+                    if (GBI (Ai, pA_end-1, vlen) < ib_first) continue ;
+                    if (ib_last < GBI (Ai, pA, vlen)) continue;
 
                     //----------------------------------------------------------
                     // C(i,j) += A(:,i)'*B(:,j)
@@ -238,7 +239,7 @@
                     int64_t pC = i + pC_start ;     // C(i,j) is at Cx [pC]
                     int64_t pB = pB_start ;
 
-                    if (ainz == bvlen)
+                    if (ainz == vlen)
                     {
 
                         //------------------------------------------------------
@@ -280,7 +281,7 @@
                             for (int64_t p = pB ; p < pB_end ; p++)
                             { 
                                 GB_DOT_TERMINAL (cij) ;   // break if terminal
-                                int64_t k = Bi [p] ;
+                                int64_t k = GBI (Bi, p, vlen) ;
                                 // cij += A(k,i) * B(k,j)
                                 GB_GETA (aki, Ax, pA+k) ;     // aki = A(k,i)
                                 GB_GETB (bkj, Bx, p   ) ;     // bkj = B(k,j)
@@ -302,8 +303,8 @@
                         bool cij_updated = false ;
                         while (pA < pA_end && pB < pB_end)
                         {
-                            int64_t ia = Ai [pA] ;
-                            int64_t ib = Bi [pB] ;
+                            int64_t ia = GBI (Ai, pA, vlen) ;
+                            int64_t ib = GBI (Bi, pB, vlen) ;
                             if (ia < ib)
                             { 
                                 // A(ia,i) appears before B(ib,j)
@@ -338,8 +339,8 @@
                         bool cij_updated = false ;
                         while (pA < pA_end && pB < pB_end)
                         {
-                            int64_t ia = Ai [pA] ;
-                            int64_t ib = Bi [pB] ;
+                            int64_t ia = GBI (Ai, pA, vlen) ;
+                            int64_t ib = GBI (Bi, pB, vlen) ;
                             if (ia < ib)
                             { 
                                 // A(ia,i) appears before B(ib,j)
@@ -374,8 +375,8 @@
                         bool cij_updated = false ;
                         while (pA < pA_end && pB < pB_end)
                         {
-                            int64_t ia = Ai [pA] ;
-                            int64_t ib = Bi [pB] ;
+                            int64_t ia = GBI (Ai, pA, vlen) ;
+                            int64_t ib = GBI (Bi, pB, vlen) ;
                             if (ia < ib)
                             { 
                                 // A(ia,i) appears before B(ib,j)

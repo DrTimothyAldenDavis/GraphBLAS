@@ -81,7 +81,7 @@ for k0 = 1:size (problems,1) ;
 
         % C = A (:,:)
         C = GB_mex_Matrix_extract  (Cempty, [ ], [ ], A, [ ], [ ], [ ]) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_Matrix_extract (Cempty, [ ], [ ], A, [ ], [ ], [ ]) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -94,7 +94,7 @@ for k0 = 1:size (problems,1) ;
         clear D
         D = struct ('inp0', 'tran') ;
         C = GB_mex_Matrix_extract  (Cempty2, [ ], [ ], A, [ ], [ ], D) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_Matrix_extract (Cempty2, [ ], [ ], A, [ ], [ ], D) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -105,7 +105,7 @@ for k0 = 1:size (problems,1) ;
 
         % C<Mask> = A (:,:)
         C = GB_mex_Matrix_extract  (Cempty, Mask, [ ], A, [ ], [ ], [ ]) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_Matrix_extract (Cempty, Mask, [ ], A, [ ], [ ], [ ]) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -118,7 +118,7 @@ for k0 = 1:size (problems,1) ;
         clear D
         D = struct ('inp0', 'tran') ;
         C = GB_mex_Matrix_extract  (Cempty2, Mask', [ ], A, [ ], [ ], D) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_Matrix_extract (Cempty2, Mask', [ ], A, [ ], [ ], D) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -241,7 +241,7 @@ for k0 = 1:size (problems,1) ;
                             % C = op (Csub,A(I,J))
                             C = GB_mex_Matrix_extract  (Csub, [ ], accum, ...
                                 A, I-1, J-1, [ ]) ;
-                            assert (spok (C.matrix*1) == 1) ;
+                            assert (GB_spok (C.matrix*1) == 1) ;
                             S = GB_spec_Matrix_extract (Csub, [ ], accum,  ...
                                 A, I, J, [ ]) ;
                             assert (isequal (C.class, cintype)) ;
@@ -260,7 +260,7 @@ for k0 = 1:size (problems,1) ;
                                 % C = op (Csub,A(I,1))
                                 C = GB_mex_Vector_extract  (Csub, [ ], ...
                                     accum, A, I-1, [ ]) ;
-                                assert (spok (C.matrix*1) == 1) ;
+                                assert (GB_spok (C.matrix*1) == 1) ;
                                 S = GB_spec_Vector_extract (Csub, [ ], ...
                                     accum, A, I, [ ]) ;
                                 assert (isequal (C.class, cintype)) ;
@@ -275,7 +275,7 @@ for k0 = 1:size (problems,1) ;
                                 % C = op (Csub,A(I,j))
                                 C = GB_mex_Col_extract  (Csub, [ ], ...
                                     accum, A, I-1, J-1, [ ]) ;
-                                assert (spok (C.matrix*1) == 1) ;
+                                assert (GB_spok (C.matrix*1) == 1) ;
                                 S = GB_spec_Col_extract (Csub, [ ], ...
                                     accum, A, I, J, [ ]) ;
                                 assert (isequal (C.class, cintype)) ;
@@ -291,7 +291,7 @@ for k0 = 1:size (problems,1) ;
 
                             C = GB_mex_Matrix_extract  (Csub2, [ ], accum,  ...
                                 A, J-1, I-1, D) ;
-                            assert (spok (C.matrix*1) == 1) ;
+                            assert (GB_spok (C.matrix*1) == 1) ;
                             S = GB_spec_Matrix_extract (Csub2, [ ], accum,  ...
                                 A, J, I, D) ;
                             assert (isequal (C.class, cintype)) ;
@@ -305,7 +305,7 @@ for k0 = 1:size (problems,1) ;
                                 % C = op (Csub,A(i,J)')
                                 C = GB_mex_Col_extract  (Csub2, [ ], ...
                                     accum, A, J-1, I-1, D) ;
-                                assert (spok (C.matrix*1) == 1) ;
+                                assert (GB_spok (C.matrix*1) == 1) ;
                                 S = GB_spec_Col_extract (Csub2, [ ], ...
                                     accum, A, J, I, D) ;
                                 assert (isequal (C.class, cintype)) ;
@@ -326,7 +326,7 @@ for k0 = 1:size (problems,1) ;
                                 % C = op (Csub2,A (I,J))
                                 C = GB_mex_Matrix_extract  (Csub, Msub,  ...
                                     accum, A, I-1, J-1, [ ]) ;
-                                assert (spok (C.matrix*1) == 1) ;
+                                assert (GB_spok (C.matrix*1) == 1) ;
                                 S = GB_spec_Matrix_extract (Csub, Msub,  ...
                                     accum, A, I, J, [ ]) ;
                                 assert (isequal (C.class, cintype)) ;
@@ -340,7 +340,7 @@ for k0 = 1:size (problems,1) ;
                                     % C = op (Csub,A(I,1))
                                     C = GB_mex_Vector_extract  (Csub, Msub, ...
                                         accum, A, I-1, [ ]) ;
-                                    assert (spok (C.matrix*1) == 1) ;
+                                    assert (GB_spok (C.matrix*1) == 1) ;
                                     S = GB_spec_Vector_extract (Csub, Msub, ...
                                         accum, A, I, [ ]) ;
                                     assert (isequal (C.class, cintype)) ;
@@ -355,7 +355,7 @@ for k0 = 1:size (problems,1) ;
                                     % C = op (Csub,A(I,j))
                                     C = GB_mex_Col_extract  (Csub, Msub, ...
                                         accum, A, I-1, J-1, [ ]) ;
-                                    assert (spok (C.matrix*1) == 1) ;
+                                    assert (GB_spok (C.matrix*1) == 1) ;
                                     S = GB_spec_Col_extract (Csub, Msub, ...
                                         accum, A, I, J, [ ]) ;
                                     assert (isequal (C.class, cintype)) ;
@@ -370,7 +370,7 @@ for k0 = 1:size (problems,1) ;
                                 D = struct ('inp0', 'tran') ;
                                 C = GB_mex_Matrix_extract  (Csub2, Msub',  ...
                                     accum, A, J-1, I-1, D) ;
-                                assert (spok (C.matrix*1) == 1) ;
+                                assert (GB_spok (C.matrix*1) == 1) ;
                                 S = GB_spec_Matrix_extract (Csub2, Msub',  ...
                                     accum, A, J, I, D) ;
                                 assert (isequal (C.class, cintype)) ;
@@ -384,7 +384,7 @@ for k0 = 1:size (problems,1) ;
                                     % C = op (Csub,A(i,J)')
                                     C = GB_mex_Col_extract  (Csub2, Msub', ...
                                         accum, A, J-1, I-1, D) ;
-                                    assert (spok (C.matrix*1) == 1) ;
+                                    assert (GB_spok (C.matrix*1) == 1) ;
                                     S = GB_spec_Col_extract (Csub2, Msub', ...
                                         accum, A, J, I, D) ;
                                     assert (isequal (C.class, cintype)) ;

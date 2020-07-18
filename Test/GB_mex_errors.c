@@ -818,27 +818,33 @@ void mexFunction
     OK (GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
     OK (GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
     CHECK (i_scalar == 42) ;
-    i_scalar = 33 ;
+    GxB_Scalar_fprint_(a_scalar, 3, NULL) ;
 
     // force a zombie
-    a_scalar->i [0] = GB_FLIP (0) ;
-    a_scalar->nzombies = 1 ;
+    i_scalar = 33 ;
+    bool scalar_is_full = GB_IS_FULL (a_scalar) ;
+    if (!scalar_is_full)
+    {
+        a_scalar->i [0] = GB_FLIP (0) ;
+        a_scalar->nzombies = 1 ;
+    }
 
     info = GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar) ;
-    CHECK (i_scalar == 33) ;
-    CHECK (info == GrB_NO_VALUE) ;
+    CHECK (i_scalar == (scalar_is_full) ? 42 : 33) ;
+    CHECK (info == (scalar_is_full) ? GrB_SUCCESS : GrB_NO_VALUE) ;
 
     OK (GxB_Scalar_free_(&a_scalar)) ;
 
     OK (GrB_Type_new (&T, sizeof (int))) ;
 
+    i_scalar = 207 ;
     expected = GrB_DOMAIN_MISMATCH ;
     OK (GxB_Scalar_new (&a_scalar, T)) ;
     GxB_Scalar_fprint_(a_scalar, 3, NULL) ;
     GxB_Type_fprint_(T, 3, NULL) ;
     ERR1 (a_scalar, GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
     ERR (GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
-    CHECK (i_scalar == 33) ;
+    CHECK (i_scalar == 207) ;
 
     printf ("error expected: %d\n", info) ;
 
@@ -2019,9 +2025,8 @@ void mexFunction
     }
 
     GrB_Matrix_error_(&err, C) ;
-    printf ("here we are, last error was %s\n", err) ;
+    printf ("last error was [%s]\n", err) ;
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
-    printf ("got here\n") ;
 
     // The following are now allocated; keep them for the rest the tests:
     // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty,
@@ -2785,7 +2790,6 @@ void mexFunction
     GrB_Index I3 [5] = { 0,   1,   2,   3,    4 } ;
     GrB_Index J3 [5] = { 0,   1,   2,   3,    4 } ;
 
-    printf ("here2\n") ;
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL)) ;
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, ff)) ;
     OK (GxB_Matrix_subassign_(A, NULL, GrB_PLUS_FP64, C, I3, 3, J3, 2, NULL)) ;
@@ -4045,6 +4049,7 @@ void mexFunction
     OK (GxB_Vector_fprint (v, "v ok", GB3, ff)) ;
 
     expected = GrB_INVALID_OBJECT ;
+    CHECK (!GB_IS_FULL (v)) ;
     v->i [0] = 1 ;
     v->i [1] = 0 ;
     ERR (GxB_Vector_fprint (v, "v jumbled", GB3, ff)) ;
@@ -4066,6 +4071,7 @@ void mexFunction
     ERR (GB_Vector_check (v, "v invalid", GB1, ff)) ;
     v->vdim = 1 ;
 
+    CHECK (!GB_IS_FULL (v)) ;
     v->p [0] = 1 ;
     ERR (GB_Vector_check (v, "v p[0] invalid", GB1, ff)) ;
 
@@ -4105,6 +4111,7 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
 
+    CHECK (!GB_IS_FULL (A)) ;
     A->p [0] = 1 ;
     ERR (GB_Matrix_check (A, "p[0] invalid", GB1, ff)) ;
     A->p [0] = 0 ;
@@ -4146,7 +4153,7 @@ void mexFunction
 
     OK (GrB_Matrix_free_(&A)) ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 4)) ;
-    OK (GB_Matrix_check (A, "A empty here", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A empty", GB3, NULL)) ;
 
     // change the type of the pending tuples, forcing a wait
     OK (GrB_Matrix_assign_BOOL (A, NULL, GrB_SECOND_FP64, (bool) true,
@@ -4188,6 +4195,7 @@ void mexFunction
     A->i = psave ;
     OK (GB_Matrix_check (A, "valid pi", GB0, NULL)) ;
 
+    CHECK (!GB_IS_FULL (A)) ;
     A->p [0] = 1 ;
     ERR (GB_Matrix_check (A, "Ap[0] invalid", GB1, NULL)) ;
     A->p [0] = 0 ;
@@ -4296,6 +4304,7 @@ void mexFunction
 
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
+    CHECK (!GB_IS_FULL (A)) ;
     A->i [0] = 1 ;
     A->i [1] = 0 ;
 
@@ -4307,6 +4316,7 @@ void mexFunction
     printf ("jumbled info %d\n", info) ;
     CHECK (info == GrB_INVALID_OBJECT) ;
 
+    CHECK (!GB_IS_FULL (A)) ;
     A->i [0] = 0 ;
     A->i [1] = 1 ;
     OK (GB_Matrix_check (A, "OK", GB3, NULL)) ;
@@ -4345,7 +4355,9 @@ void mexFunction
     // #define FREE_DEEP_COPY ;
     // #define GET_DEEP_COPY ;
 
+    CHECK (!GB_IS_FULL (A)) ;
     OK (GB_to_hyper (A, Context)) ;
+    CHECK (!GB_IS_FULL (A)) ;
     OK (GB_Matrix_check (A, "A now hyper", GB3, NULL)) ;
     CHECK (A->h != NULL) ;
 
@@ -4361,16 +4373,19 @@ void mexFunction
     CHECK (A_is_hyper) ;
 
     // make sure A->nvec_nonempty is valid
+    CHECK (!GB_IS_FULL (A)) ;
     if (A->nvec_nonempty < 0)
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
-    // now make invalid.  GB_Matrix_check requires it to be -1, or the correct value
-    expected = GrB_INVALID_OBJECT ;
+    // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
+    CHECK (!GB_IS_FULL (A)) ;
     isave = A->p [1] ;
     A->p [1] = 0 ;
+    expected = GrB_INDEX_OUT_OF_BOUNDS ;
     ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", GB1, NULL)) ;
+    expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "A", GB1, ff)) ;
     A->p [1] = isave ;
     OK (GB_Matrix_check (A, "A fixed", GB0, NULL)) ;
@@ -4477,6 +4492,8 @@ void mexFunction
     A->nvec = nvec ;
     OK (GB_Matrix_check (A, "nvec restored", GB1, NULL)) ;
 
+    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (A->h != NULL) ;
     int64_t jsave = A->h [0] ;
     A->h [0] = -1 ;
     ERR (GB_Matrix_check (A, "h[0] invalid", GB1, NULL)) ;
@@ -4499,7 +4516,7 @@ void mexFunction
     AP->type = tsave ;
     OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL)) ;
 
-    GB_Matrix_wait (Eleven, Context) ;
+    if (!GB_IS_FULL (Eleven)) GB_Matrix_wait (Eleven, Context) ;
 
     for (int pr = -4 ; pr <= 3 ; pr++)
     {
@@ -4723,7 +4740,7 @@ void mexFunction
 
     CHECK (A != NULL) ;
     Context->where = "GB_ix_alloc" ;
-    info = GB_ix_alloc (A, GxB_INDEX_MAX+1, true, Context) ;
+    info = GB_ix_alloc (A, GxB_INDEX_MAX+1, true, true, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     Context->where = "GB_ix_realloc" ;
@@ -5036,29 +5053,32 @@ void mexFunction
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
 
-        GB_Matrix_wait (B, Context) ;
+        if (!GB_IS_FULL (B)) GB_Matrix_wait (B, Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
-        GB_Matrix_wait (B, Context) ;
+        if (!GB_IS_FULL (B)) GB_Matrix_wait (B, Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        GB_Matrix_wait ((GrB_Matrix) v, Context) ;
+        if (!GB_IS_FULL (v)) GB_Matrix_wait ((GrB_Matrix) v, Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, ilist, n, NULL)) ;
-        GB_Matrix_wait ((GrB_Matrix) v, Context) ;
-        GB_Matrix_wait ((GrB_Matrix) u, Context) ;
+        if (!GB_IS_FULL (v)) GB_Matrix_wait ((GrB_Matrix) v, Context) ;
+        if (!GB_IS_FULL (u)) GB_Matrix_wait ((GrB_Matrix) u, Context) ;
+
+        OK (GxB_Vector_fprint_(v, GB3, NULL)) ;
+        OK (GxB_Vector_fprint_(u, GB3, NULL)) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5075,8 +5095,8 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_Matrix_assign_(B, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         OK (GrB_Matrix_assign_(A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
-        GB_Matrix_wait (B, Context) ;
-        GB_Matrix_wait (A, Context) ;
+        if (!GB_IS_FULL (B)) GB_Matrix_wait (B, Context) ;
+        if (!GB_IS_FULL (A)) GB_Matrix_wait (A, Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
@@ -5089,8 +5109,8 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_Vector_assign_(v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GrB_Vector_assign_(u, umask, NULL, u, ilist, n, NULL)) ;
-        GB_Matrix_wait ((GrB_Matrix) v, Context) ;
-        GB_Matrix_wait ((GrB_Matrix) u, Context) ;
+        if (!GB_IS_FULL (v)) GB_Matrix_wait ((GrB_Matrix) v, Context) ;
+        if (!GB_IS_FULL (u)) GB_Matrix_wait ((GrB_Matrix) u, Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5107,6 +5127,8 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_Vector_apply_(v, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
         OK (GrB_Vector_apply_(u, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
+        OK (GxB_Vector_fprint_(v, GB3, NULL)) ;
+        OK (GxB_Vector_fprint_(u, GB3, NULL)) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5184,7 +5206,7 @@ void mexFunction
     for (int64_t i = 0 ; i < ((int64_t) nrows) ; i++)
     {
         printf ("exported row %lld\n", j) ;
-        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++)
+        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++) // ok:
         {
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
@@ -5418,7 +5440,7 @@ void mexFunction
     printf ("nvals %llu\n", nvals) ;
     for (int64_t p = 0 ; p < ((int64_t) nvals) ; p++)
     {
-        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ;
+        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ; // ok:
     }
     OK (GxB_Vector_import (&u, utype, n, nvals, &Ai, &Ax, desc)) ;
     OK (GxB_Vector_fprint (u, "u imported", GxB_COMPLETE, stdout)) ;
@@ -5454,7 +5476,7 @@ void mexFunction
     // free all
     //--------------------------------------------------------------------------
 
-    // this is also done by FREE_ALL, but the list here is meant to be
+    // this is also done by FREE_ALL, but the list is meant to be
     // accurate, so nmalloc should be zero at the check below
 
     nmalloc = GB_Global_nmalloc_get ( ) ;

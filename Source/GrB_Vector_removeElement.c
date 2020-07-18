@@ -9,9 +9,6 @@
 
 // Removes a single entry, V (i), from the vector V.
 
-// DENSE TODO: convert V to sparse
-// DENSE TODO: if all entries in V are present, do not use binary search
-
 #include "GB.h"
 
 #define GB_FREE_ALL ;
@@ -56,7 +53,7 @@ static inline bool GB_removeElement
     if (found && !is_zombie)
     { 
         // V(i) becomes a zombie
-        V->i [pleft] = GB_FLIP (i) ;
+        V->i [pleft] = GB_FLIP (i) ;        // ok: V is sparse
         V->nzombies++ ;
     }
 
@@ -79,6 +76,18 @@ GrB_Info GrB_Vector_removeElement
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+
+    // GB_ENSURE_SPARSE (V) ;
+    if (GB_IS_FULL (V))
+    { 
+        // convert V from full to sparse
+        GB_WHERE (V, GB_WHERE_STRING) ;
+        GrB_Info info = GB_full_to_sparse ((GrB_Matrix) V, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            return (info) ;
+        }
+    }
 
     // check index
     if (i >= V->vlen)

@@ -84,6 +84,13 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     // >= 0: nvec_nonempty must be exact
     (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
 
+    // the matrix may be 0-by-0 and thus considered a full matrix
+    if (GB_IS_FULL (*A))
+    {
+        (*A)->plen = -1 ;
+        (*A)->nvec_nonempty = (nrows == 0) ? 0 : ncols ;
+    }
+
     //--------------------------------------------------------------------------
     // import is successful
     //--------------------------------------------------------------------------

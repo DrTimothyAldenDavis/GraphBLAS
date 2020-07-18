@@ -100,6 +100,11 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // delete any lingering zombies and assemble any pending tuples
     GB_MATRIX_WAIT (M) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+    GB_BURBLE_DENSE (B, "(B %s) ") ;
+
     //--------------------------------------------------------------------------
     // transpose A and B if requested
     //--------------------------------------------------------------------------

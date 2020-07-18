@@ -59,7 +59,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 2, 2020 (DRAFT)" )
+set ( GraphBLAS_DATE "July 17, 2020 (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 4 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -84,8 +84,7 @@ endif ( )
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# TODO
- set ( CMAKE_BUILD_TYPE Debug )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -103,6 +102,7 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
+# TODO: burble is on
   set ( GB_BURBLE true )
 # set ( GB_BURBLE false )
 

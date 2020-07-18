@@ -42,6 +42,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     ASSERT (A != NULL) ;
     ASSERT (p_nvals != NULL) ;
     GB_MATRIX_WAIT (A) ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
     ASSERT (xcode <= GB_UDT_code) ;
 
     // xcode and A must be compatible
@@ -98,7 +99,21 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (I != NULL)
     { 
-        GB_memcpy (I, A->i, anz * sizeof (int64_t), nthreads) ;
+        if (A->i == NULL)
+        { 
+            // A is full; construct the row indices
+            int64_t avlen = A->vlen ;
+            int64_t p ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < anz ; p++)
+            {
+                I [p] = (p % avlen) ;
+            }
+        }
+        else
+        { 
+            GB_memcpy (I, A->i, anz * sizeof (int64_t), nthreads) ;
+        }
     }
 
     //--------------------------------------------------------------------------

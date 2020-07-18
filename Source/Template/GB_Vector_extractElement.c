@@ -65,23 +65,31 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     }
 
     //--------------------------------------------------------------------------
-    // get the pattern of the vector
+    // find the entry V(i)
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Vp = V->p ;
-    const int64_t *GB_RESTRICT Vi = V->i ;
+    int64_t pleft ;
     bool found ;
+    const int64_t *GB_RESTRICT Vp = V->p ;
 
-    // extract from a GrB_Vector
-    int64_t pleft = 0 ;
-    int64_t pright = Vp [1] - 1 ;
+    if (Vp != NULL)
+    { 
+        // V is sparse
+        const int64_t *GB_RESTRICT Vi = V->i ;
 
-    //--------------------------------------------------------------------------
-    // binary search in kth vector for index i
-    //--------------------------------------------------------------------------
+        pleft = 0 ;
+        int64_t pright = Vp [1] - 1 ;
 
-    // Time taken for this step is at most O(log(nnz(V))).
-    GB_BINARY_SEARCH (i, Vi, pleft, pright, found) ;
+        // binary search for index i
+        // Time taken for this step is at most O(log(nnz(V))).
+        GB_BINARY_SEARCH (i, Vi, pleft, pright, found) ;
+    }
+    else
+    {
+        // V is full
+        pleft = i ;
+        found = true ;
+    }
 
     //--------------------------------------------------------------------------
     // extract the element

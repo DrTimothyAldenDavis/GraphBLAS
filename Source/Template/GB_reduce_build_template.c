@@ -98,7 +98,7 @@
                 ASSERT (i >= 0) ;
                 // Tx [my_tnz] = S [k] ; with typecast
                 GB_CAST_ARRAY_TO_ARRAY (Tx, my_tnz, S, k) ;
-                Ti [my_tnz] = i ;
+                Ti [my_tnz] = i ;       // ok: T is sparse
 
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice(s) (up to but not

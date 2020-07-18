@@ -112,7 +112,7 @@ GrB_Info GB_subassign_01
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (Si [pS] == iA) ;
+                bool found = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -178,7 +178,7 @@ GrB_Info GB_subassign_01
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (Si [pS] == iA) ;
+                bool found = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------

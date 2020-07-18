@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_00: C(I,J)<!,repl> = empty ; using S
+// GB_subassign_zombie: C(I,J)<!,repl> = empty ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -16,13 +16,9 @@
 // A:           any (scalar or matrix; result is the same)
 // S:           constructed
 
-// FULL: C must become sparse
-// FULL TODO: convert C to sparse
-// TODO: rename this GB_assign_zombie0
-
 #include "GB_subassign_methods.h"
 
-GrB_Info GB_subassign_00
+void GB_subassign_zombie
 (
     GrB_Matrix C,
     // input:
@@ -43,6 +39,7 @@ GrB_Info GB_subassign_00
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_FULL (C)) ;
     int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
 
@@ -73,7 +70,7 @@ GrB_Info GB_subassign_00
     { 
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
         int64_t pC = Sx [pS] ;
-        int64_t i = Ci [pC] ;
+        int64_t i = Ci [pC] ;       // ok: C is sparse
         // ----[X A 0] or [X . 0]-----------------------------------------------
         // action: ( X ): still a zombie
         // ----[C A 0] or [C . 0]-----------------------------------------------
@@ -81,7 +78,7 @@ GrB_Info GB_subassign_00
         if (!GB_IS_ZOMBIE (i))
         {
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;
+            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
         }
     }
 
@@ -90,6 +87,5 @@ GrB_Info GB_subassign_00
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
-    return (GrB_SUCCESS) ;
 }
 

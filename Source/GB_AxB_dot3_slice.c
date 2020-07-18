@@ -63,6 +63,10 @@ GrB_Info GB_AxB_dot3_slice
     // ASSERT_MATRIX_OK (C, ...) cannot be done since C->i is the work need to
     // compute the entry, not the row index itself.
 
+    // C is always constructed as sparse or hypersparse, not full, since it
+    // must accomodate zombies
+    ASSERT (!GB_IS_FULL (C)) ;
+
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;
@@ -78,9 +82,10 @@ GrB_Info GB_AxB_dot3_slice
     // get C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Cwork = C->i ;
+    const int64_t *GB_RESTRICT Cp = C->p ;  // ok: C is sparse
+    int64_t *GB_RESTRICT Cwork = C->i ;     // ok: C is sparse
     const int64_t cnvec = C->nvec ;
+    const int64_t cvlen = C->vlen ;
     const int64_t cnz = GB_NNZ (C) ;
 
     //--------------------------------------------------------------------------
@@ -162,11 +167,13 @@ GrB_Info GB_AxB_dot3_slice
         { 
             // find the first vector of the slice for task taskid: the
             // vector that owns the entry Ci [pfirst] and Cx [pfirst].
-            int64_t kfirst = GB_search_for_vector (pfirst, Cp, 0, cnvec) ;
+            int64_t kfirst = GB_search_for_vector (pfirst, Cp, 0, cnvec,
+                cvlen) ;
 
             // find the last vector of the slice for task taskid: the
             // vector that owns the entry Ci [plast] and Cx [plast].
-            int64_t klast = GB_search_for_vector (plast, Cp, kfirst, cnvec) ;
+            int64_t klast = GB_search_for_vector (plast, Cp, kfirst, cnvec,
+                cvlen) ;
 
             // construct a coarse task that computes Ci,Cx [pfirst:plast].
             // These entries appear in C(:,kfirst:klast), but this task does

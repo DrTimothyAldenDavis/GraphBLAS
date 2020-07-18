@@ -17,8 +17,6 @@
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
-// The input matrix may be jumbled; this is not an error condition.
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -33,20 +31,21 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A being converted to nonhyper", GB0) ;
+    ASSERT_MATRIX_OK (A, "A being converted from hyper to sparse", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
     //--------------------------------------------------------------------------
-    // convert A to non-hypersparse form
+    // convert A from hypersparse to sparse
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (A->h != NULL && !GB_IS_FULL (A))
     {
 
         //----------------------------------------------------------------------
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
+        GBBURBLE ("(hyper to sparse) ") ;
         int64_t n = A->vdim ;
 
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -216,7 +215,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // A is now in non-hypersparse form
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to nonhypersparse", GB0) ;
+    ASSERT_MATRIX_OK (A, "A converted to sparse (or left full)", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

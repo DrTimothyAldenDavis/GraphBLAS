@@ -19,7 +19,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 (
     int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,         // array of size n+1
+    const int64_t *GB_RESTRICT Ap,         // array of size n+1 (null if full)
     const int64_t n,
     const int ntasks                    // # of tasks
 )
@@ -43,33 +43,45 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
         Slice = (*Slice_handle) ;
     }
 
-    const double work = (Ap == NULL) ? 0 : Ap [n] ;
-
     Slice [0] = 0 ;
-    if (Ap == NULL || n == 0 || ntasks <= 1 || work == 0)
+    Slice [ntasks] = n ;
+
+    if (Ap == NULL)
     {
-        // matrix is empty, or a single thread is used
+        // A is full
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        { 
-            Slice [taskid] = 0 ;
+        {
+            Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;
         }
     }
     else
     {
-        // slice Ap by # of entries
-        int64_t k = 0 ;
-        for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        { 
-            // binary search to find k so that Ap [k] == (taskid * work) /
-            // ntasks.  The exact value will not typically not be found;
-            // just pick what the binary search comes up with.
-            int64_t wtask = ((taskid * work) / (double) ntasks) ;
-            int64_t pright = n ;
-            GB_TRIM_BINARY_SEARCH (wtask, Ap, k, pright) ;
-            Slice [taskid] = k ;
+        // A is sparse or hypersparse
+        const double work = (double) (Ap [n]) ;
+        if (n == 0 || ntasks <= 1 || work == 0)
+        {
+            // matrix is empty, or a single thread is used
+            for (int taskid = 1 ; taskid < ntasks ; taskid++)
+            { 
+                Slice [taskid] = 0 ;
+            }
+        }
+        else
+        {
+            // slice Ap by # of entries
+            int64_t k = 0 ;
+            for (int taskid = 1 ; taskid < ntasks ; taskid++)
+            { 
+                // binary search to find k so that Ap [k] == (taskid * work) /
+                // ntasks.  The exact value will not typically not be found;
+                // just pick what the binary search comes up with.
+                int64_t wtask = (int64_t) GB_PART (taskid, work, ntasks) ;
+                int64_t pright = n ;
+                GB_TRIM_BINARY_SEARCH (wtask, Ap, k, pright) ;
+                Slice [taskid] = k ;
+            }
         }
     }
-    Slice [ntasks] = n ;
     return (true) ;
 }
 

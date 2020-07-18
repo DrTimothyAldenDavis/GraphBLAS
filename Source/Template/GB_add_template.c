@@ -94,7 +94,7 @@
             // get j, the kth vector of C
             //------------------------------------------------------------------
 
-            int64_t j = (Ch == NULL) ? k : Ch [k] ;
+            int64_t j = GBH (Ch, k) ;
 
             #if defined ( GB_PHASE_1_OF_2 )
             int64_t cjnz = 0 ;
@@ -110,8 +110,8 @@
             else
             { 
                 // The vectors of C are never sliced for a coarse task.
-                pC     = Cp [k] ;
-                pC_end = Cp [k+1] ;
+                pC     = Cp [k  ] ;     // ok: C is sparse
+                pC_end = Cp [k+1] ;     // ok: C is sparse
             }
             int64_t cjnz = pC_end - pC ;
             if (cjnz == 0) continue ;
@@ -121,7 +121,7 @@
             // get A(:,j)
             //------------------------------------------------------------------
 
-            // GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, C_to_A) ;
+            // GB_GET_MAPPED (pA, pA_end, pA, pA_end, Ap, j, k, C_to_A, avlen) ;
             int64_t pA = -1, pA_end = -1 ;
             if (fine_task)
             { 
@@ -136,8 +136,8 @@
                 int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
                 if (kA >= 0)
                 { 
-                    pA     = Ap [kA] ;
-                    pA_end = Ap [kA+1] ;
+                    pA     = GBP (Ap, kA, vlen) ;
+                    pA_end = GBP (Ap, kA+1, vlen) ;
                 }
             }
             // ----
@@ -149,15 +149,15 @@
             if (ajnz > 0)
             { 
                 // get the first and last indices in A(:,j) for this vector
-                iA_first = Ai [pA] ;
-                iA_last  = Ai [pA_end-1] ;
+                iA_first = GBI (Ai, pA, vlen) ;
+                iA_last  = GBI (Ai, pA_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
             // get B(:,j)
             //------------------------------------------------------------------
 
-            // GB_GET_MAPPED_VECTOR (pB, pB_end, pB, pB_end, Bp, j, k, C_to_B) ;
+            // GB_GET_MAPPED (pB, pB_end, pB, pB_end, Bp, j, k, C_to_B, bvlen) ;
             int64_t pB = -1, pB_end = -1 ;
             if (fine_task)
             { 
@@ -172,8 +172,8 @@
                 int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
                 if (kB >= 0)
                 { 
-                    pB     = Bp [kB] ;
-                    pB_end = Bp [kB+1] ;
+                    pB     = GBP (Bp, kB, vlen) ;
+                    pB_end = GBP (Bp, kB+1, vlen) ;
                 }
             }
             // ----
@@ -185,8 +185,8 @@
             if (bjnz > 0)
             {
                 // get the first and last indices in B(:,j) for this vector
-                iB_first = Bi [pB] ;
-                iB_last  = Bi [pB_end-1] ;
+                iB_first = GBI (Bi, pB, vlen) ;
+                iB_last  = GBI (Bi, pB_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
@@ -234,7 +234,7 @@
                     ASSERT (cjnz == ajnz) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = p + iA_first ;
+                        Ci [pC + p] = p + iA_first ;        // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + p) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
@@ -255,12 +255,12 @@
                     ASSERT (cjnz == ajnz) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = p + iA_first ;
+                        Ci [pC + p] = p + iA_first ;        // ok: C is sparse
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        int64_t ii = Bi [pB + p] - iA_first ;
+                        int64_t ii = GBI (Bi, pB + p, vlen) - iA_first ;
                         GB_GETA (aij, Ax, pA + ii) ;
                         GB_GETB (bij, Bx, pB + p) ;
                         GB_BINOP (GB_CX (pC + ii), aij, bij) ;
@@ -281,12 +281,12 @@
                     ASSERT (cjnz == bjnz) ;
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        Ci [pC + p] = p + iB_first ;
+                        Ci [pC + p] = p + iB_first ;    // ok: C is sparse
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        int64_t ii = Ai [pA + p] - iB_first ;
+                        int64_t ii = GBI (Ai, pA + p, vlen) - iB_first ;
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + ii) ;
                         GB_BINOP (GB_CX (pC + ii), aij, bij) ;
@@ -307,7 +307,7 @@
                     ASSERT (cjnz == bjnz) ;
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        Ci [pC + p] = Bi [pB + p] ;
+                        Ci [pC + p] = GBI (Bi, pB + p, vlen) ;  // ok: C sparse
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
                     #endif
@@ -326,7 +326,7 @@
                     ASSERT (cjnz == ajnz) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = Ai [pA + p] ;
+                        Ci [pC + p] = GBI (Ai, pA + p, vlen) ;
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
                     #endif
@@ -345,13 +345,13 @@
                     ASSERT (cjnz == ajnz + bjnz) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = Ai [pA + p] ;
+                        Ci [pC + p] = GBI (Ai, pA + p, vlen) ;
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
                     pC += ajnz ;
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        Ci [pC + p] = Bi [pB + p] ;
+                        Ci [pC + p] = GBI (Bi, pB + p, vlen) ;
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
                     #endif
@@ -370,13 +370,13 @@
                     ASSERT (cjnz == ajnz + bjnz) ;
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        Ci [pC + p] = Bi [pB + p] ;
+                        Ci [pC + p] = GBI (Bi, pB + p, vlen) ;  // ok: C sparse
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
                     pC += bjnz ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = Ai [pA + p] ;
+                        Ci [pC + p] = GBI (Ai, pA + p, vlen) ;  // ok: C sparse
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
                     #endif
@@ -396,7 +396,7 @@
                     cjnz = ajnz + bjnz ;
                     for ( ; pB < pB_end ; pB++)
                     { 
-                        int64_t i = Bi [pB] ;
+                        int64_t i = GBI (Bi, pB, vlen) ;
                         // find i in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
@@ -417,7 +417,7 @@
                     cjnz = ajnz + bjnz ;
                     for ( ; pA < pA_end ; pA++)
                     { 
-                        int64_t i = Ai [pA] ;
+                        int64_t i = GBI (Ai, pA, vlen) ;
                         // find i in B(:,j)
                         int64_t pright = pB_end - 1 ;
                         bool found ;
@@ -437,13 +437,13 @@
 
                     while (pA < pA_end && pB < pB_end)
                     {
-                        int64_t iA = Ai [pA] ;
-                        int64_t iB = Bi [pB] ;
+                        int64_t iA = GBI (Ai, pA, vlen) ;
+                        int64_t iB = GBI (Bi, pB, vlen) ;
                         if (iA < iB)
                         { 
                             // C (iA,j) = A (iA,j)
                             #if defined ( GB_PHASE_2_OF_2 )
-                            Ci [pC] = iA ;
+                            Ci [pC] = iA ;      // ok: C is sparse
                             GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
                             #endif
                             pA++ ;
@@ -452,7 +452,7 @@
                         { 
                             // C (iB,j) = B (iB,j)
                             #if defined ( GB_PHASE_2_OF_2 )
-                            Ci [pC] = iB ;
+                            Ci [pC] = iB ;      // ok: C is sparse
                             GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
                             #endif
                             pB++ ;
@@ -461,7 +461,7 @@
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
                             #if defined ( GB_PHASE_2_OF_2 )
-                            Ci [pC] = iB ;
+                            Ci [pC] = iB ;      // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -489,13 +489,13 @@
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
-                        Ci [pC + p] = Ai [pA + p] ;
+                        Ci [pC + p] = GBI (Ai, pA + p, vlen) ;   // ok: C sparse
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
-                        Ci [pC + p] = Bi [pB + p] ;
+                        Ci [pC + p] = GBI (Bi, pB + p, vlen) ;   // ok: C sparse
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
                     ASSERT (pC + ajnz + bjnz == pC_end) ;
@@ -527,7 +527,7 @@
                         // Ch is the same as Mh (a deep copy)
                         ASSERT (Ch != NULL) ;
                         ASSERT (M->h != NULL) ;
-                        ASSERT (Ch [k] == M->h [k]) ;
+                        ASSERT (Ch [k] == M->h [k]) ;   // ok: C, M hypersparse
                         kM = k ;
                     }
                     else
@@ -536,8 +536,8 @@
                     }
                     if (kM >= 0)
                     { 
-                        pM     = Mp [kM] ;
-                        pM_end = Mp [kM+1] ;
+                        pM     = GBP (Mp, kM  , vlen) ;
+                        pM_end = GBP (Mp, kM+1, vlen) ;
                     }
                 }
 
@@ -590,10 +590,10 @@
                         {
                             int64_t pM = p + pM_start ;
                             int64_t pC = p + pC_start ;
-                            int64_t i = Mi [pM] ;
+                            int64_t i = GBI (Mi, pM, vlen) ;
                             ASSERT (GB_mcast (Mx, pM, msize)) ;
-                            ASSERT (Ai [pA_offset + i] == i) ;
-                            ASSERT (Bi [pM] == i) ;
+                            ASSERT (GBI (Ai, pA_offset + i, vlen) == i) ;
+                            ASSERT (GBI (Bi, pM, vlen) == i) ;
                             GB_GETA (aij, Ax, pA_offset + i) ;
                             GB_GETB (bij, Bx, pM) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -612,10 +612,10 @@
                         {
                             int64_t pM = p + pM_start ;
                             int64_t pC = p + pC_start ;
-                            int64_t i = Mi [pM] ;
+                            int64_t i = GBI (Mi, pM, vlen) ;
                             ASSERT (GB_mcast (Mx, pM, msize)) ;
-                            ASSERT (Ai [pM] == i) ;
-                            ASSERT (Bi [pB_offset + i] == i) ;
+                            ASSERT (GBI (Ai, pM, vlen) == i) ;
+                            ASSERT (GBI (Bi, pB_offset + i, vlen) == i) ;
                             GB_GETA (aij, Ax, pM) ;
                             GB_GETB (bij, Bx, pB_offset + i) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -660,7 +660,7 @@
                         // get M(i,j) for A(i,j) + B (i,j)
                         //------------------------------------------------------
 
-                        int64_t i = Mi [pM] ;
+                        int64_t i = GBI (Mi, pM, vlen) ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
                         if (!mij) continue ;
 
@@ -688,7 +688,7 @@
                             GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
                         }
 
-                        ASSERT (GB_IMPLIES (afound, Ai [pA] == i)) ;
+                        ASSERT (GB_IMPLIES (afound, GBI (Ai, pA, vlen) == i)) ;
 
                         //------------------------------------------------------
                         // get B(i,j)
@@ -714,7 +714,7 @@
                             GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
                         }
 
-                        ASSERT (GB_IMPLIES (bfound, Bi [pB] == i)) ;
+                        ASSERT (GB_IMPLIES (bfound, GBI (Bi, pB, vlen) == i)) ;
 
                         //------------------------------------------------------
                         // C(i,j) = A(i,j) + B(i,j)
@@ -726,7 +726,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
-                            Ci [pC] = i ;
+                            Ci [pC] = i ;       // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -739,7 +739,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
-                            Ci [pC] = i ;
+                            Ci [pC] = i ;       // ok: C is sparse
                             GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
                             pC++ ;
                             #endif
@@ -750,7 +750,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
-                            Ci [pC] = i ;
+                            Ci [pC] = i ;       // ok: C is sparse
                             GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
                             pC++ ;
                             #endif
@@ -774,7 +774,7 @@
             }
             else
             { 
-                Cp [k] = cjnz ;
+                Cp [k] = cjnz ;     // ok: C is sparse
             }
             #endif
         }

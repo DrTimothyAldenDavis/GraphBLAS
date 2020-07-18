@@ -77,7 +77,7 @@ for k0 = 1:size (problems,1) ;
 
         % C = A'
         C = GB_mex_transpose  (Cempty2, [ ], [ ], A, [ ]) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_transpose (Cempty2, [ ], [ ], A, [ ]) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -90,7 +90,7 @@ for k0 = 1:size (problems,1) ;
         clear desc
         desc = struct ('inp0', 'tran') ;
         C = GB_mex_transpose  (Cempty, [ ], [ ], A, desc) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_transpose (Cempty, [ ], [ ], A, desc) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -102,7 +102,7 @@ for k0 = 1:size (problems,1) ;
         % C<Mask> = A'
         Cempty2.class = A.class ;
         C = GB_mex_transpose  (Cempty2, Mask', [ ], A, [ ]) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_transpose (Cempty2, Mask', [ ], A, [ ]) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -116,7 +116,7 @@ for k0 = 1:size (problems,1) ;
         desc = struct ('inp0', 'tran') ;
         Cempty.class = A.class ;
         C = GB_mex_transpose  (Cempty, Mask, [ ], A, desc) ;
-        assert (spok (C.matrix*1) == 1) ;
+        assert (GB_spok (C.matrix*1) == 1) ;
         S = GB_spec_transpose (Cempty, Mask, [ ], A, desc) ;
         assert (isequal (C.class, A.class)) ;
         assert (isequal (C.class, S.class)) ;
@@ -162,7 +162,7 @@ for k0 = 1:size (problems,1) ;
 
                     % C = op (Cin2,A')
                     C = GB_mex_transpose  (Cin2, [ ], accum, A, [ ]) ;
-                    assert (spok (C.matrix*1) == 1) ;
+                    assert (GB_spok (C.matrix*1) == 1) ;
                     S = GB_spec_transpose (Cin2, [ ], accum, A, [ ]) ;
                     assert (isequal (C.class, cinclass)) ;
                     assert (isequal (C.class, S.class)) ;
@@ -175,7 +175,7 @@ for k0 = 1:size (problems,1) ;
                     clear desc
                     desc = struct ('inp0', 'tran') ;
                     C = GB_mex_transpose  (Cin, [ ], accum, A, desc) ;
-                    assert (spok (C.matrix*1) == 1) ;
+                    assert (GB_spok (C.matrix*1) == 1) ;
                     S = GB_spec_transpose (Cin, [ ], accum, A, desc) ;
                     assert (isequal (C.class, cinclass)) ;
                     assert (isequal (C.class, S.class)) ;
@@ -189,7 +189,7 @@ for k0 = 1:size (problems,1) ;
 
                         % C = op (Cin2,A')
                         C = GB_mex_transpose  (Cin2, M', accum, A, [ ]) ;
-                        assert (spok (C.matrix*1) == 1) ;
+                        assert (GB_spok (C.matrix*1) == 1) ;
                         S = GB_spec_transpose (Cin2, M', accum, A, [ ]) ;
                         assert (isequal (C.class, cinclass)) ;
                         assert (isequal (C.class, S.class)) ;
@@ -201,7 +201,7 @@ for k0 = 1:size (problems,1) ;
                         clear desc
                         desc = struct ('inp0', 'tran') ;
                         C = GB_mex_transpose  (Cin, M, accum, A, desc) ;
-                        assert (spok (C.matrix*1) == 1) ;
+                        assert (GB_spok (C.matrix*1) == 1) ;
                         S = GB_spec_transpose (Cin, M, accum, A, desc) ;
                         assert (isequal (C.class, cinclass)) ;
                         assert (isequal (C.class, S.class)) ;

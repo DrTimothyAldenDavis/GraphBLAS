@@ -11,8 +11,8 @@
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
 // typecast the values.  The transpose may be done in place, in which case C or
-// A are modified in place.  If the matrix to be transposed has more than one
-// vector, it may have jumbled indices in its vectors, which must be sorted.
+// A are modified in place.
+
 // If the input matrix has a single vector, it must be already sorted on input.
 // The input matrix may have shallow components (even if in place), and the
 // output may also have shallow components (even in the input matrix is not
@@ -168,13 +168,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     bool in_place = (in_place_A || in_place_C) ;
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A input for GB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
     ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
     ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+
+    bool A_is_dense = GB_is_dense (A) ;
+    if (in_place && A_is_dense && !GB_IS_FULL (A))
+    { 
+        // convert C from sparse to full
+        GBBURBLE ("(C=A' to full) ") ;
+        GB_sparse_to_full (C) ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use here
@@ -198,7 +206,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
-    int64_t aplen = A->plen ;
 
     double A_hyper_ratio = A->hyper_ratio ;
 
@@ -227,7 +234,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ntasks = GB_IMAX (ntasks, 1) ;
     int64_t *GB_RESTRICT Count = NULL ;    // size ntasks+1, if allocated
 
-    if (anz > 0 && avdim != 1 && avlen == 1)
+    if (anz > 0 && avdim != 1 && avlen == 1 && !A_is_dense)
     {
         // Count is only used in one case below
         Count = GB_CALLOC (ntasks+1, int64_t) ;
@@ -303,7 +310,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool allocate_new_Cx = (ctype != atype) || (op1 != NULL) || (op2 != NULL) ;
 
     if (anz == 0)
-    {
+    { 
 
         //======================================================================
         // quick return if A is empty
@@ -349,7 +356,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, ctype, 1, avlen, GB_Ap_null, C_is_csc,
-            GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
+            A_is_dense ? GB_FULL : GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -370,14 +377,24 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate new space for the values and pattern
         GB_void *GB_RESTRICT Cx = NULL ;
-        int64_t *GB_RESTRICT Cp = GB_MALLOC (anz+1, int64_t) ;
-        int64_t *GB_RESTRICT Ci = GB_CALLOC (anz  , int64_t) ;
+        int64_t *GB_RESTRICT Cp = NULL ;
+        int64_t *GB_RESTRICT Ci = NULL ;
+        bool ok = true ;
+        if (!A_is_dense)
+        {
+            Cp = GB_MALLOC (anz+1, int64_t) ;
+            Ci = GB_CALLOC (anz  , int64_t) ;
+            ok = (Cp != NULL && Ci != NULL) ;
+        }
+
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
             Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            ok = ok && (Cx != NULL) ;
         }
-        if (Cp == NULL || Ci == NULL || (allocate_new_Cx && (Cx == NULL)))
+
+        if (!ok)
         { 
             // out of memory
             GB_FREE (Cp) ;
@@ -396,7 +413,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op ((op->xtype) Ax)
-            C->x = Cx ; C->x_shallow = false ;
+            C->x = Cx ;
+            C->x_shallow = false ;
             GB_apply_op ((GB_void *) Cx,
                 op1, op2, scalar, binop_bind1st,
                 (const GB_void *) Ax, atype, anz, Context) ;
@@ -405,38 +423,42 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         else if (ctype != atype)
         { 
             // copy the values from A into C and cast from atype to ctype
-            C->x = Cx ; C->x_shallow = false ;
+            C->x = Cx ;
+            C->x_shallow = false ;
             GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype
         { 
             // no type change; numerical values of C are a shallow copy of A.
-            C->x = Ax ; C->x_shallow = (in_place) ? Ax_shallow : true ;
+            C->x = Ax ;
+            C->x_shallow = (in_place) ? Ax_shallow : true ;
             Ax = NULL ;  // do not free prior Ax
         }
 
         // each entry in A becomes a non-empty vector in C
-        C->h = Ai ; C->h_shallow = (in_place) ? Ai_shallow : true ;
-        Ai = NULL ;     // do not free prior Ai
+        if (!A_is_dense)
+        { 
+            // C is a hypersparse 1-by-avlen matrix
+            C->h = Ai ;
+            C->h_shallow = (in_place) ? Ai_shallow : true ;
+            Ai = NULL ;     // do not free prior Ai
+            // C->p = 0:anz and C->i = zeros (1,anz), newly allocated
+            C->plen = anz ;
+            C->nvec = anz ;
+            C->nvec_nonempty = anz ;
+            C->i = Ci ;
+            C->p = Cp ;
+            // fill the vector pointers C->p
+            int64_t k ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (k = 0 ; k <= anz ; k++)
+            { 
+                Cp [k] = k ;
+            }
+        }
 
         C->nzmax = anz ;
-
-        // C->p = 0:anz and C->i = zeros (1,anz), newly allocated
-        C->plen = anz ;
-        C->nvec = anz ;
-        C->nvec_nonempty = anz ;
-
-        C->i = Ci ; C->i_shallow = false ;
-        C->p = Cp ; C->p_shallow = false ;
-
-        // fill the vector pointers C->p
-        int64_t k ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (k = 0 ; k <= anz ; k++)
-        { 
-            Cp [k] = k ;
-        }
         C->magic = GB_MAGIC ;
 
         //----------------------------------------------------------------------
@@ -469,7 +491,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, ctype, avdim, 1, GB_Ap_null, C_is_csc,
-            GB_FORCE_NONHYPER, A_hyper_ratio, 0, Context) ;
+            A_is_dense ? GB_FULL : GB_FORCE_NONHYPER, A_hyper_ratio, 0,
+            Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -490,26 +513,30 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate new space for the values and pattern
         GB_void *GB_RESTRICT Cx = NULL ;
-        int64_t *GB_RESTRICT Cp ;
+        int64_t *GB_RESTRICT Cp = NULL ;
         int64_t *GB_RESTRICT Ci = NULL ;
-        Cp = GB_CALLOC (2, int64_t) ;
-
-        bool allocate_new_Ci = (!A_is_hyper) ;
-
-        if (allocate_new_Ci)
+        bool ok = true ;
+        if (!A_is_dense)
         { 
-            // A is not hypersparse, so new space is needed for Ci
+            Cp = GB_CALLOC (2, int64_t) ;
+            ok = ok && (Cp != NULL) ;
+        }
+
+        if (!(A_is_hyper || A_is_dense))
+        { 
+            // A is sparse, so new space is needed for Ci
             Ci = GB_MALLOC (anz, int64_t) ;
+            ok = ok && (Ci != NULL) ;
         }
 
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
             Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            ok = ok && (Cx != NULL) ;
         }
 
-        if (Cp == NULL || (allocate_new_Cx && (Cx == NULL))
-                       || (allocate_new_Ci && (Ci == NULL)))
+        if (!ok)
         { 
             // out of memory
             GB_FREE (Cp) ;
@@ -527,7 +554,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op ((op->xtype) Ax)
-            C->x = Cx ; C->x_shallow = false ;
+            C->x = Cx ;
+            C->x_shallow = false ;
             GB_apply_op ((GB_void *) Cx,
                 op1, op2, scalar, binop_bind1st,
                 (const GB_void *) Ax, atype, anz, Context) ;
@@ -536,14 +564,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         else if (ctype != atype)
         { 
             // copy the values from A into C and cast from atype to ctype
-            C->x = Cx ; C->x_shallow = false ;
+            C->x = Cx ;
+            C->x_shallow = false ;
             GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype
         { 
             // no type change; numerical values of C are a shallow copy of A
-            C->x = Ax ; C->x_shallow = (in_place) ? Ax_shallow : true ;
+            C->x = Ax ;
+            C->x_shallow = (in_place) ? Ax_shallow : true ;
             Ax = NULL ;  // do not free prior Ax
         }
 
@@ -551,27 +581,36 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // pattern of C
         //----------------------------------------------------------------------
 
-        if (A_is_hyper)
+        if (A_is_dense)
+        {
+
+            //------------------------------------------------------------------
+            // C and A are full: no pattern to create
+            //------------------------------------------------------------------
+
+            ;
+
+        }
+        else if (A_is_hyper)
         { 
 
             //------------------------------------------------------------------
             // each non-empty vector in A becomes an entry in C
             //------------------------------------------------------------------
 
-            ASSERT (!allocate_new_Ci) ;
-            C->i = Ah ; C->i_shallow = (in_place) ? Ah_shallow : true ;
+            C->i = Ah ;
+            C->i_shallow = (in_place) ? Ah_shallow : true ;
             ASSERT (anvec == anz) ;
             Ah = NULL ;  // do not free prior Ah
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // find the non-empty vectors of A, which become entries in C
             //------------------------------------------------------------------
 
-            ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
 
             if (nth == 1)
@@ -586,7 +625,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 {
                     if (Ap [j] < Ap [j+1])
                     { 
-                        Ci [k++] = j ;
+                        Ci [k++] = j ;      // ok: C is sparse
                     }
                 }
                 ASSERT (k == anz) ;
@@ -646,26 +685,31 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (k == anz) ;
             #endif
 
-            C->i = Ci ; C->i_shallow = false ;
+            C->i = Ci ;
+            C->i_shallow = false ;
         }
 
         //----------------------------------------------------------------------
         // vector pointers of C
         //----------------------------------------------------------------------
 
+        if (!A_is_dense)
+        {
+            // C->p = [0 anz] and C->h = NULL
+            ASSERT (C->plen == 1) ;
+            ASSERT (C->nvec == 1) ;
+            ASSERT (C->h == NULL) ;
+            C->p = Cp ;
+            C->p_shallow = false ;
+
+            C->nvec_nonempty = (anz == 0) ? 0 : 1 ;
+
+            // fill the vector pointers C->p
+            Cp [0] = 0 ;
+            Cp [1] = anz ;
+        }
+
         C->nzmax = anz ;
-
-        // C->p = [0 anz] and C->h = NULL
-        ASSERT (C->plen == 1) ;
-        ASSERT (C->nvec == 1) ;
-        ASSERT (C->h == NULL) ;
-        C->p = Cp ; C->p_shallow = false ;
-
-        C->nvec_nonempty = (anz == 0) ? 0 : 1 ;
-
-        // fill the vector pointers C->p
-        Cp [0] = 0 ;
-        Cp [1] = anz ;
         C->magic = GB_MAGIC ;
 
         //----------------------------------------------------------------------
@@ -675,14 +719,79 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_FREE_IN_PLACE_A ;
 
     }
+    else if (A_is_dense)
+    { 
+
+        //======================================================================
+        // transpose a dense matrix
+        //======================================================================
+
+        // allocate T
+        GrB_Matrix T = NULL ;
+        info = GB_create (&T, ctype, avdim, avlen, GB_Ap_null,
+            C_is_csc, GB_FULL, A_hyper_ratio, 1, anzmax, true, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            GB_FREE_A_AND_C ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        T->magic = GB_MAGIC ;
+
+        //------------------------------------------------------------------
+        // T = A'
+        //------------------------------------------------------------------
+
+        // Since A is full, # threads to use is nthreads, and the
+        // naslice parameter is not used
+
+        if (op1 == NULL && op2 == NULL)
+        { 
+            // do not apply an operator; optional typecast to C->type
+            GB_transpose_ix (T, A, NULL, NULL, 0, nthreads) ;
+        }
+        else
+        { 
+            // apply an operator, C has type op->ztype
+            GB_transpose_op (T, 
+                op1, op2, scalar, binop_bind1st,
+                A, NULL, NULL, 0, nthreads) ;
+        }
+
+        //------------------------------------------------------------------
+        // free prior space and transplant T into C
+        //------------------------------------------------------------------
+
+        // Free the prior content of the input matrix, if done in place.
+        GB_FREE_IN_PLACE_A ;
+
+        // allocate the output matrix C as a full matrix
+        // if *Chandle == NULL, allocate a new header; otherwise reuse existing
+        info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+            GB_FULL, A_hyper_ratio, 0, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            ASSERT (!in_place) ;    // cannot fail if in place
+            GB_FREE_C ;
+            GB_Matrix_free (&T) ;
+            return (info) ;
+        }
+
+        // Transplant T in to the result C.  The matrix T is not shallow
+        // and no typecasting is done, so this will always succeed.
+        info = GB_transplant (*Chandle, ctype, &T, Context) ;
+        ASSERT (info == GrB_SUCCESS) ;
+
+    }
     else
     {
 
         //======================================================================
-        // transpose a general matrix
+        // transpose a general sparse or hypersparse matrix
         //======================================================================
 
-        ASSERT_MATRIX_OK_OR_JUMBLED (A, "A GB_transpose jumbled ok", GB0) ;
+        ASSERT_MATRIX_OK (A, "A for GB_transpose", GB0) ;
         ASSERT (avdim > 1 && avlen > 1) ;
 
         // T=A' with optional typecasting, or T=op(A')
@@ -885,7 +994,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
 
-            GrB_Matrix T ;
+            GrB_Matrix T = NULL ;
             info = GB_builder
             (
                 &T,         // create T
@@ -950,7 +1059,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!A_is_hyper) ;
 
             // T is also typecasted to ctype, if not NULL
-            GrB_Matrix T ;
+            GrB_Matrix T = NULL ;
             info = GB_transpose_bucket (&T, ctype, C_is_csc, A,
                 op1, op2, scalar, binop_bind1st,
                 Context) ;

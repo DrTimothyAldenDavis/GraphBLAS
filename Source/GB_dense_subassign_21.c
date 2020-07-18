@@ -8,8 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C(:,:) = x where C is a matrix and x is a scalar
-
-// FULL: do not create the pattern of C, convert to full
+// FULL: C is created as a full matrix.
 
 #include "GB_dense.h"
 #include "GB_select.h"
@@ -32,7 +31,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     ASSERT_MATRIX_OK (C, "C for C(:,:)=x", GB0) ;
     ASSERT (scalar != NULL) ;
     // any prior pending tuples are discarded, and all zombies will be killed
-    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT_TYPE_OK (atype, "atype for C(:,:)=x", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -63,55 +63,25 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     cast_A_to_C (cwork, scalar, atype->size) ;
 
     //--------------------------------------------------------------------------
-    // create the pattern, and allocate space for values, if needed
+    // ensure C is a full matrix
     //--------------------------------------------------------------------------
 
     // discard any prior pending tuples
     GB_Pending_free (&(C->Pending)) ;
 
-    int64_t pC ;
-
-    if (GB_NNZ (C) < cnzmax || C->x_shallow || C->i_shallow || (C->h != NULL)
-        || GB_ZOMBIES (C))
+    if (!GB_IS_FULL (C))
     {
-
-        //----------------------------------------------------------------------
-        // C is not yet dense: create pattern and allocate values
-        //----------------------------------------------------------------------
 
         // clear prior content and recreate it; use exising header for C.
         // do not malloc C->x if the scalar is zero; calloc it later.
         bool scalar_is_nonzero = GB_is_nonzero (cwork, csize) ;
         GB_phix_free (C) ;
-        info = GB_create (&C, C->type, cvlen, cvdim, GB_Ap_malloc, C->is_csc,
-            GB_FORCE_NONHYPER, C->hyper_ratio, C->vdim, cnzmax,
-            scalar_is_nonzero, Context) ;
+        info = GB_create (&C, C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
+            GB_FULL, GB_HYPER_DEFAULT, -1, cnzmax, scalar_is_nonzero, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        int64_t *GB_RESTRICT Cp = C->p ;
-        int64_t *GB_RESTRICT Ci = C->i ;
-        int nth = GB_nthreads (cvdim, chunk, nthreads_max) ;
-
-        // FUTURE:: dense data structure, where Cp and Ci will be implicit
-
-        int64_t k ;
-        #pragma omp parallel for num_threads(nth) schedule(static)
-        for (k = 0 ; k <= cvdim ; k++)
-        { 
-            Cp [k] = k * cvlen ;
-        }
-
-        C->magic = GB_MAGIC ;
-        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (pC = 0 ; pC < cnzmax ; pC++)
-        { 
-            Ci [pC] = pC % cvlen ;
         }
 
         if (!scalar_is_nonzero)
@@ -119,6 +89,9 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
             GBBURBLE ("calloc ") ;
             C->x = GB_CALLOC (cnzmax * csize, GB_void) ;
         }
+
+        C->magic = GB_MAGIC ;
+        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
 
         if (C->x == NULL)
         { 
@@ -135,9 +108,13 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         }
     }
 
+    ASSERT (GB_IS_FULL (C)) ;
+
     //--------------------------------------------------------------------------
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
+
+    int64_t pC ;
 
     // worker for built-in types
     #define GB_WORKER(ctype)                                                \

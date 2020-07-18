@@ -9,7 +9,7 @@
 
 #include "GB_subref.h"
 
-#define GB_Ai(p) GB_UNFLIP (Ai [p])
+#define GB_Ai(p) GBI_UNFLIP (Ai, p, avlen)
 
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end
@@ -42,8 +42,8 @@ static inline void GB_find_Ap_start_end
     // get A(:,kA)
     //--------------------------------------------------------------------------
 
-    int64_t pA = Ap [kA] ;
-    int64_t pA_end = Ap [kA+1] ;
+    int64_t pA     = GBP (Ap, kA, avlen) ;
+    int64_t pA_end = GBP (Ap, kA+1, avlen) ;
     int64_t ajnz = pA_end - pA ;
 
     //--------------------------------------------------------------------------
@@ -114,7 +114,7 @@ static inline void GB_find_Ap_start_end
 
         #ifdef GB_DEBUG
         ajnz = pA_end - pA ;
-        if (ajnz > 0)
+        if (ajnz > 0 && Ap != NULL)
         {
             // A(imin:imax,kA) is now in Ai [pA:pA_end-1]
             ASSERT (GB_IMPLIES (Ap [kA] < pA,  GB_Ai (pA-1) < imin)) ;
@@ -161,7 +161,7 @@ GrB_Info GB_subref_phase0
     const int64_t ni,       // length of I, or special
     const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,       // length of J, or special
-    const bool must_sort,   // true if C must be returned sorted
+//  const bool must_sort,   // true if C must be returned sorted
     GB_Context Context
 )
 {
@@ -238,15 +238,6 @@ GrB_Info GB_subref_phase0
     }
 
     bool need_qsort = I_unsorted ;
-
-    // For the symbolic case, GB_subref must always return C sorted.  For the
-    // numeric case, GB_subref may return C with jumbled indices in each
-    // vector, if C will be transposed later by GB_accum_mask.
-    if (must_sort == false)
-    { 
-        // The caller does not need C to be returned with sorted vectors.
-        need_qsort = false ;
-    }
 
     //--------------------------------------------------------------------------
     // determine if C is empty
@@ -659,14 +650,14 @@ GrB_Info GB_subref_phase0
     for (int64_t kC = 0 ; kC < Cnvec ; kC++)
     {
         // jC is the (kC)th vector of C = A(I,J)
-        int64_t jC = (Ch == NULL) ? kC : Ch [kC] ;
+        int64_t jC = GBH (Ch, kC) ;
         int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
         // jA is the corresponding (kA)th vector of A.
         int64_t kA = 0 ;
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
-        bool found = GB_lookup (A->h != NULL, A->h, A->p, &kA, pright, jA,
-            &pA_start_all, &pA_end_all) ;
+        bool found = GB_lookup (A->h != NULL, A->h, A->p, A->vlen, &kA,
+            pright, jA, &pA_start_all, &pA_end_all) ;
         if (found && A->h != NULL)
         {
             ASSERT (jA == A->h [kA]) ;

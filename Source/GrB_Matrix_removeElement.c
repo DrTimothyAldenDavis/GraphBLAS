@@ -9,9 +9,6 @@
 
 // Removes a single entry, C (row,col), from the matrix C.
 
-// DENSE TODO: convert C to sparse
-// DENSE TODO: if all entries in C are present, do not use binary search
-
 #include "GB.h"
 
 #define GB_FREE_ALL ;
@@ -65,6 +62,8 @@ static inline bool GB_removeElement
     // binary search in kth vector for index i
     //--------------------------------------------------------------------------
 
+    // TODO: if all entries in C(:,j) are present, do not use binary search
+
     // Time taken for this step is at most O(log(nnz(C(:,j))).
     bool is_zombie ;
     int64_t nzombies = C->nzombies ;
@@ -77,7 +76,7 @@ static inline bool GB_removeElement
     if (found && !is_zombie)
     { 
         // C(i,j) becomes a zombie
-        C->i [pleft] = GB_FLIP (i) ;
+        C->i [pleft] = GB_FLIP (i) ;        // ok: C is sparse
         C->nzombies++ ;
     }
 
@@ -101,6 +100,18 @@ GrB_Info GrB_Matrix_removeElement
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
+
+    // GB_ENSURE_SPARSE (C) ;
+    if (GB_IS_FULL (C))
+    { 
+        // convert C from full to sparse
+        GB_WHERE (C, GB_WHERE_STRING) ;
+        GrB_Info info = GB_full_to_sparse (C, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            return (info) ;
+        }
+    }
 
     // look for index i in vector j
     int64_t i, j, nrows, ncols ;

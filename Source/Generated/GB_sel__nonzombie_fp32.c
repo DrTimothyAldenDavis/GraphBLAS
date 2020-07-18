@@ -27,7 +27,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    GB_IS_NOT_ZOMBIE (Ai [p])
+    GB_IS_NOT_ZOMBIE (Ai, p)
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \

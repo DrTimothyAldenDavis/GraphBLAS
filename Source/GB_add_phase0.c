@@ -26,7 +26,7 @@
 //      It is pruned at the end of GB_add_phase2.  If Ch is NULL then it is an
 //      implicit list of size n, and Ch [k] == k for all k = 0:n-1.  In this
 //      case, C will be a standard matrix, not hypersparse.  Thus, the kth
-//      vector is j = (Ch == NULL) ? k : Ch [k].
+//      vector is j = GBH (Ch, k).
 
 //      Ch is freed by GB_add if phase1 fails.  phase2 either frees it or
 //      transplants it into C.
@@ -37,20 +37,20 @@
 //      is always false for GB_masker).  This is determined by passing in
 //      p_Ch_is_Mh as a NULL or non-NULL pointer.
 
-//      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
-//      = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
-//      not appear in A, then C_to_A [k] = -1.  If A is not hypersparse, then
-//      C_to_A is returned as NULL.
+//      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector,
+//      j = GBH (Ch, k) appears in A, as j = Ah [kA].  If j does not appear in
+//      A, then C_to_A [k] = -1.  If A is not hypersparse, then C_to_A is
+//      returned as NULL.
 
-//      C_to_B:  if B is hypersparse, then C_to_B [k] = kB if the kth vector, j
-//      = (Ch == NULL) ? k : Ch [k] appears in B, as j = Bh [kB].  If j does
-//      not appear in B, then C_to_B [k] = -1.  If B is not hypersparse, then
-//      C_to_B is returned as NULL.
+//      C_to_B:  if B is hypersparse, then C_to_B [k] = kB if the kth vector,
+//      j = GBH (Ch, k) appears in B, as j = Bh [kB].  If j does not appear in
+//      B, then C_to_B [k] = -1.  If B is not hypersparse, then C_to_B is
+//      returned as NULL.
 
 //      C_to_M:  if M is hypersparse, and Ch_is_Mh is false, then C_to_M [k] =
-//      kM if the kth vector, j = (Ch == NULL) ? k : Ch [k] appears in M, as j
-//      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
-//      not hypersparse, then C_to_M is returned as NULL.
+//      kM if the kth vector, j = GBH (Ch, k) appears in M, as j = Mh [kM].  If
+//      j does not appear in M, then C_to_M [k] = -1.  If M is not hypersparse,
+//      then C_to_M is returned as NULL.
 
 #include "GB_add.h"
 
@@ -150,7 +150,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     ASSERT_MATRIX_OK (B, "B for add phase0", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase0", GB0) ;
     ASSERT (A->vdim == B->vdim) ;
+    ASSERT (A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
+    ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -189,6 +191,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
     int64_t n = A->vdim ;
     int64_t Anvec = A->nvec ;
+    int64_t vlen = A->vlen ;
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
@@ -253,14 +256,16 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty
                     int64_t kA = 0, pA, pA_end ;
-                    GB_lookup (true, Ah, Ap, &kA, Anvec-1, j, &pA, &pA_end) ;
+                    GB_lookup (true, Ah, Ap, vlen, &kA, Anvec-1, j,
+                        &pA, &pA_end) ;
                     C_to_A [k] = (pA < pA_end) ? kA : -1 ;
                 }
                 if (B_is_hyper)
                 { 
                     // C_to_B [k] = kB if Bh [kB] == j and B(:,j) is non-empty
                     int64_t kB = 0, pB, pB_end ;
-                    GB_lookup (true, Bh, Bp, &kB, Bnvec-1, j, &pB, &pB_end) ;
+                    GB_lookup (true, Bh, Bp, vlen, &kB, Bnvec-1, j,
+                        &pB, &pB_end) ;
                     C_to_B [k] = (pB < pB_end) ? kB : -1 ;
                 }
             }
@@ -619,7 +624,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 int64_t j = Ch [k] ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
                 int64_t kM = 0, pM, pM_end ;
-                GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
+                GB_lookup (true, Mh, Mp, vlen, &kM, Mnvec-1, j, &pM, &pM_end) ;
                 C_to_M [k] = (pM < pM_end) ? kM : -1 ;
             }
         }

@@ -206,6 +206,10 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_MATRIX_WAIT (M) ;
     GB_MATRIX_WAIT (A) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format and the transposed case
     //--------------------------------------------------------------------------

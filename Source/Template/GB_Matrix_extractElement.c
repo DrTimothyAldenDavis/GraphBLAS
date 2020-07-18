@@ -83,43 +83,53 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     }
 
     //--------------------------------------------------------------------------
-    // binary search in A->h for vector j
+    // find the entry A(i,j)
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    int64_t pleft ;
     bool found ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
 
-    // extract from vector j of a GrB_Matrix
-    int64_t k ;
-    if (A->h != NULL)
-    {
-        // look for vector j in hyperlist A->h [0 ... A->nvec-1]
-        const int64_t *Ah = A->h ;
-        int64_t pleft = 0 ;
-        int64_t pright = A->nvec-1 ;
-        GB_BINARY_SEARCH (j, Ah, pleft, pright, found) ;
-        if (!found)
-        { 
-            // vector j is empty
-            return (GrB_NO_VALUE) ;
+    if (Ap != NULL)
+    { 
+        // A is sparse or hypersparse
+        const int64_t *GB_RESTRICT Ai = A->i ;
+
+        // extract from vector j of a GrB_Matrix
+        int64_t k ;
+        if (A->h != NULL)
+        {
+            // look for vector j in hyperlist A->h [0 ... A->nvec-1]
+            const int64_t *GB_RESTRICT Ah = A->h ;
+            int64_t pleft = 0 ;
+            int64_t pright = A->nvec-1 ;
+            GB_BINARY_SEARCH (j, Ah, pleft, pright, found) ;
+            if (!found)
+            { 
+                // vector j is empty
+                return (GrB_NO_VALUE) ;
+            }
+            ASSERT (j == Ah [pleft]) ;
+            k = pleft ;
         }
-        ASSERT (j == Ah [pleft]) ;
-        k = pleft ;
+        else
+        { 
+            k = j ;
+        }
+
+        pleft = Ap [k] ;
+        int64_t pright = Ap [k+1] - 1 ;
+
+        // binary search in kth vector for index i
+        // Time taken for this step is at most O(log(nnz(A(:,j))).
+        GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
     }
     else
-    { 
-        k = j ;
+    {
+        // A is full
+        pleft = i + j * A->vlen ;
+        found = true ;
     }
-    int64_t pleft = Ap [k] ;
-    int64_t pright = Ap [k+1] - 1 ;
-
-    //--------------------------------------------------------------------------
-    // binary search in kth vector for index i
-    //--------------------------------------------------------------------------
-
-    // Time taken for this step is at most O(log(nnz(A(:,j))).
-    GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
 
     //--------------------------------------------------------------------------
     // extract the element

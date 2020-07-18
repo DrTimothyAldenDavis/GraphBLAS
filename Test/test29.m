@@ -34,15 +34,6 @@ for m = [1 5 10]
             for kk4 = 1:length(add_ops)
 
                 op = add_ops {kk4} ;
-                try
-                    GB_spec_operator (op, atype) ;
-                    cin = GB_spec_identity (op, atype) ;
-                catch
-                    continue
-                end
-                if (isempty (cin))
-                    cin = GB_mex_cast (0, atype) ;
-                end
 
                 if (~builtin)
                     % no user-defined Complex_any_monoid
@@ -51,6 +42,27 @@ for m = [1 5 10]
                             continue ;
                         end
                     end
+                end
+
+                try
+                    GB_spec_operator (op, atype) ;
+                    GB_builtin_complex_set (1) ;
+                    cin = GB_spec_identity (op, atype) ;
+                    GB_builtin_complex_set (builtin) ;
+                catch % me
+                    % me
+                    % op
+                    % atype
+                    % if (contains (me.message, 'assert'))
+                    %    pause
+                    % end
+                    continue
+                end
+
+                if (isempty (cin))
+                    GB_builtin_complex_set (1) ;
+                    cin = GB_mex_cast (0, atype) ;
+                    GB_builtin_complex_set (builtin) ;
                 end
 
                 [C3,c1,c3] = GB_mex_subassign (C, [ ], [ ], A, ...

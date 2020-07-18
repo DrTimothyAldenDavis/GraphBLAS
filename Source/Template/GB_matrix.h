@@ -55,7 +55,7 @@ char *logger ;          // for error logging
 // A->nvec_nonempty is equal to -1.
 
 //------------------------------------------------------------------------------
-// The 6 formats:  (dense, sparse, hypersparse) * (CSR or CSC)
+// The 6 formats:  (full, sparse, hypersparse) * (CSR or CSC)
 //------------------------------------------------------------------------------
 
 // --------------------------------------
@@ -66,7 +66,7 @@ char *logger ;          // for error logging
     // A->nvec == A->vdim.   A->plen is not needed.  (set to zero? -1?)
 
     // --------------------------------------
-    // A->is_csc is true:  dense CSC format
+    // A->is_csc is true:  full CSC format
     // --------------------------------------
 
         // A is m-by-n: where A->vdim = n, and A->vlen = m
@@ -75,7 +75,7 @@ char *logger ;          // for error logging
         // A(i,j) at position p has row index i = p%m and value Ax [p]
 
     // --------------------------------------
-    // A->is_csc is false:  dense CSR format
+    // A->is_csc is false:  full CSR format
     // --------------------------------------
 
         // A is m-by-n: where A->vdim = m, and A->vlen = n
@@ -370,7 +370,7 @@ void *mkl ;
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
-// The matrix can be held in 6 formats: (dense, sparse, hypersparse)x(CSR, CSC).
+// The matrix can be held in 6 formats: (full, sparse, hypersparse)x(CSR, CSC).
 // The comments below assume A is in CSC format.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
@@ -381,18 +381,18 @@ void *mkl ;
     //          A is CSC.  For all cases, Ap [0...nvec] are the pointers.
 
     //--------------------
-    // (1) dense      // A->h, A->p, A->i are NULL, A->nvec == A->vdim
+    // (1) full      // A->h, A->p, A->i are NULL, A->nvec == A->vdim
 
-        int64_t m = A->vlen ;
+        int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)
         {
             j = k ;
             // operate on column A(:,j)
-            int64_t pA_start = k * m ;
-            int64_t pA_end   = (k+1) * m ;
+            int64_t pA_start = k * vlen ;
+            int64_t pA_end   = (k+1) * vlen ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row i = (p % m), value aij = Ax [p]
+                // A(i,j) has row i = (p % vlen), value aij = Ax [p]
             }
         }
 
@@ -425,17 +425,17 @@ void *mkl ;
     //--------------------
     // generic: for any matrix
 
-        int64_t m = A->vlen ;
+        int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)
         {
-            j = (Ah == NULL) ? k : Ah [k] ;
+            j = GBH (Ah, k) ;
             // operate on column A(:,j)
-            int64_t pA_start = (Ap == NULL) ? (k*m) : Ap [k] ;
-            int64_t pA_end   = (Ap == NULL) ? ((k+1)*m) : Ap [k+1] ;
+            int64_t pA_start = GBP (Ap, k, vlen) ;
+            int64_t pA_end   = GBP (Ap, k+1, vlen) ;
             for (p = pA_start ; p < pA_end ; p++)
             {
                 // A(i,j) has row i = (p % m), value aij = Ax [p]
-                int64_t i = (Ai == NULL) ? (p%m) : Ai [p] ;
+                int64_t i = GBI (Ai, p, vlen) ;
                 double aij = Ax [p] ;
             }
         }

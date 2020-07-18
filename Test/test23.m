@@ -131,7 +131,7 @@ for k0 = 1:size (problems,1) ;
                         A = GB_mex_Matrix_build (I, J, X, nrows, ncols, op, ...
                             ctype, A_is_csc) ;
                         % A is sparse but may have explicit zeros
-                        if (~spok (A.matrix*1))
+                        if (~GB_spok (A.matrix*1))
                             fprintf ('test failure: invalid sparse matrix\n') ;
                             assert (false) ;
                         end
@@ -178,7 +178,7 @@ for k0 = 1:size (problems,1) ;
                     % fprintf ('xtype: %s\n', xtype) ;
                     A = GB_mex_Vector_build (I, X, nrows, op, ctype) ;
                     % A is sparse but may have explicit zeros
-                    if (~spok (A.matrix*1))
+                    if (~GB_spok (A.matrix*1))
                         fprintf ('test failure: invalid sparse matrix\n') ;
                         assert (false) ;
                     end

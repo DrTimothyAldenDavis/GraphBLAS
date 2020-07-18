@@ -402,7 +402,8 @@ GrB_Info GB_bind1st_tran__eq_int32
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 )
 { 
     // GB_unop_transpose.c uses GB_ATYPE, but A is
@@ -446,7 +447,8 @@ GrB_Info GB_bind2nd_tran__eq_int32
     const GB_void *y_input,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 )
 { 
     #if GB_DISABLE

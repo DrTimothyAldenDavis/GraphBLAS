@@ -255,6 +255,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (row_assign || col_assign)
             {
                 // all pending tuples must first be assembled; zombies OK
+                GB_ENSURE_SPARSE (C) ;
                 GB_MATRIX_WAIT_PENDING (C) ;
                 ASSERT_MATRIX_OK (C, "waited C for quick mask", GB0) ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
@@ -328,9 +329,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // delete any lingering zombies and assemble any pending tuples
     // but only in A and M, not C
     GB_MATRIX_WAIT (M) ;
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
     if (!scalar_expansion)
     { 
         GB_MATRIX_WAIT (A) ;
+        GB_BURBLE_DENSE (A, "(A %s) ") ;
     }
 
     //--------------------------------------------------------------------------
@@ -477,14 +481,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 // SubMask = Mask (J,:)
                 ASSERT (J == J2 || J == Cols) ;
                 GB_OK (GB_subref (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, false, true, Context)) ;
+                    J, nj, GrB_ALL, 1, false, Context)) ;
             }
             else
             { 
                 // SubMask = Mask (I,:)
                 ASSERT (I == I2 || I == Cols) ;
                 GB_OK (GB_subref (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, false, true, Context)) ;
+                    I, ni, GrB_ALL, 1, false, Context)) ;
             }
             ASSERT (GB_VECTOR_OK (SubMask)) ;
         }
@@ -498,14 +502,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 // SubMask = Mask (I,:)
                 ASSERT (I == I2 || I == Rows) ;
                 GB_OK (GB_subref (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, false, true, Context)) ;
+                    I, ni, GrB_ALL, 1, false, Context)) ;
             }
             else
             { 
                 // SubMask = Mask (J,:)
                 ASSERT (J == J2 || J == Rows) ;
                 GB_OK (GB_subref (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, false, true, Context)) ;
+                    J, nj, GrB_ALL, 1, false, Context)) ;
             }
             ASSERT (GB_VECTOR_OK (SubMask)) ;
         }
@@ -515,12 +519,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (M->is_csc == C_is_csc)
             { 
                 GB_OK (GB_subref (&SubMask, M->is_csc,
-                    M, I, ni, J, nj, false, true, Context)) ;
+                    M, I, ni, J, nj, false, Context)) ;
             }
             else
             { 
                 GB_OK (GB_subref (&SubMask, M->is_csc,
-                    M, J, nj, I, ni, false, true, Context)) ;
+                    M, J, nj, I, ni, false, Context)) ;
             }
         }
         M = SubMask ;
@@ -744,6 +748,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         //----------------------------------------------------------------------
         // delete entries outside Z(I,J) for which M(i,j) is false
         //----------------------------------------------------------------------
+
+        GB_ENSURE_SPARSE (Z) ;
 
         if ((row_assign && !C->is_csc) || (col_assign && C->is_csc))
         { 

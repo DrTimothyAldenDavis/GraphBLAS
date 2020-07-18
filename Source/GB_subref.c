@@ -93,7 +93,6 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,           // length of J, or special
     const bool symbolic,        // if true, construct Cx as symbolic
-    const bool must_sort,       // if true, must return C sorted
     GB_Context Context
 )
 {
@@ -104,6 +103,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) subref", GB0) ;
+
+    // TODO: write C=A(I,J) when A is full; then C is full too
 
     //--------------------------------------------------------------------------
     // phase0: find vectors for C=A(I,J), and I,J properties
@@ -126,7 +127,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase0:
         &Ch, &Ap_start, &Ap_end, &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
         // original input:
-        A, I, ni, J, nj, must_sort, Context) ;
+        A, I, ni, J, nj, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -209,17 +210,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // return result
     //--------------------------------------------------------------------------
 
-    if (must_sort)
-    {
-        ASSERT_MATRIX_OK (C, "sorted C output for C=A(I,J)", GB0) ;
-    }
-    else
-    {
-        // The matrix may have jumbled indices.  If it will be transposed in
-        // GB_accum_mask, but needs sorting, then the sort is skipped since the
-        // transpose will handle the sort.
-        ASSERT_MATRIX_OK_OR_JUMBLED (C, "C output for C=A(I,J)", GB0) ;
-    }
+    ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

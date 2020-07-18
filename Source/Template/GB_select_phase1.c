@@ -13,8 +13,8 @@
     // declarations for Template/GB_reduce_each_vector.c
     //--------------------------------------------------------------------------
 
-    // The two if tests below are written so that typecasting from Bool works
-    // properly.  The user might import a Bool array whose values are not 0 and
+    // The two if tests below are written so that typecasting from bool works
+    // properly.  The user might import a bool array whose values are not 0 and
     // 1, and this can lead to subtle errors with compiler optimization.  The
     // compiler may assume that the array contains only 0's and 1's, which
     // leads to a miscount.
@@ -76,8 +76,8 @@
         // get A(:,k)
         //----------------------------------------------------------------------
 
-        int64_t pA_start = Ap [k] ;
-        int64_t pA_end   = Ap [k+1] ;
+        int64_t pA_start = GBP (Ap, k, avlen) ;
+        int64_t pA_end   = GBP (Ap, k+1, avlen) ;
         int64_t p = pA_start ;
         int64_t cjnz = 0 ;
         int64_t ajnz = pA_end - pA_start ;
@@ -90,13 +90,13 @@
             // search for the entry A(i,k)
             //------------------------------------------------------------------
 
-            int64_t ifirst = Ai [pA_start] ;
-            int64_t ilast  = Ai [pA_end-1] ;
+            int64_t ifirst = GBI (Ai, pA_start, avlen) ;
+            int64_t ilast  = GBI (Ai, pA_end-1, avlen) ;
 
             #if defined ( GB_RESIZE_SELECTOR )
             int64_t i = ithunk ;
             #else
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t j = GBH (Ah, k) ;
             int64_t i = j-ithunk ;
             #endif
 
@@ -115,7 +115,7 @@
                 // A(:,k) is dense
                 found = true ;
                 p += i ;
-                ASSERT (Ai [p] == i) ;
+                ASSERT (GBI (Ai, p, avlen) == i) ;
             }
             else
             { 
@@ -172,8 +172,8 @@
         // log the result for the kth vector
         //----------------------------------------------------------------------
 
-        Zp [k] = p ;
-        Cp [k] = cjnz ;
+        Zp [k] = p ;        // ok: Z is sparse
+        Cp [k] = cjnz ;     // ok: C is sparse
     }
 
     //--------------------------------------------------------------------------
@@ -196,7 +196,8 @@
         if (kfirst <= klast)
         {
             int64_t pA_start = pstart_slice [tid] ;
-            int64_t pA_end = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
+            int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
+            pA_end = GB_IMIN (pA_end, pstart_slice [tid+1]) ;
             if (pA_start < pA_end)
             { 
                 #if defined ( GB_TRIL_SELECTOR )
@@ -235,7 +236,7 @@
 
         if (kfirst < klast)
         {
-            int64_t pA_start = Ap [klast] ;
+            int64_t pA_start = GBP (Ap, klast, avlen) ;
             int64_t pA_end   = pstart_slice [tid+1] ;
             if (pA_start < pA_end)
             { 

@@ -61,29 +61,35 @@ static inline void GB_get_pA_and_pC
     const int64_t *GB_RESTRICT pstart_slice,   // start of each slice in A
     const int64_t *GB_RESTRICT C_pstart_slice, // start of each slice in C
     const int64_t *GB_RESTRICT Cp,             // vector pointers for C
-    const int64_t *GB_RESTRICT Ap              // vector pointers for A
+    int64_t cvlen,                             // C->vlen
+    const int64_t *GB_RESTRICT Ap,             // vector pointers for A
+    int64_t avlen                              // A->vlen
 )
 {
+
+    int64_t p0 = GBP (Ap, k, avlen) ;
+    int64_t p1 = GBP (Ap, k+1, avlen) ;
+
     if (k == kfirst)
     { 
         // First vector for task tid; may only be partially owned.
         (*pA_start) = pstart_slice [tid] ;
-        (*pA_end  ) = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
+        (*pA_end  ) = GB_IMIN (p1, pstart_slice [tid+1]) ;
         if (pC != NULL) (*pC) = C_pstart_slice [tid] ;
     }
     else if (k == klast)
     { 
         // Last vector for task tid; may only be partially owned.
-        (*pA_start) = Ap [k] ;
+        (*pA_start) = p0 ;
         (*pA_end  ) = pstart_slice [tid+1] ;
-        if (pC != NULL) (*pC) = Cp [k] ;
+        if (pC != NULL) (*pC) = GBP (Cp, k, cvlen) ;
     }
     else
     { 
         // task tid entirely owns this vector A(:,k).
-        (*pA_start) = Ap [k] ;
-        (*pA_end  ) = Ap [k+1] ;
-        if (pC != NULL) (*pC) = Cp [k] ;
+        (*pA_start) = p0 ;
+        (*pA_end  ) = p1 ;
+        if (pC != NULL) (*pC) = GBP (Cp, k, cvlen) ;
     }
 }
 

@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C += b where C is a dense matrix and b is a scalar
-
-// FULL: convert C from sparse to full
+// C += b where C is a dense or full matrix and b is a scalar
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -39,6 +37,12 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     ASSERT (GB_is_dense (C)) ;
     ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
+
+    if (!GB_IS_FULL (C))
+    { 
+        // convert C from sparse to full
+        GB_sparse_to_full (C) ;
+    }
 
     //--------------------------------------------------------------------------
     // get the operator

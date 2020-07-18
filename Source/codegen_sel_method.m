@@ -36,7 +36,7 @@ fprintf (f, 'define(`GB_kind'', `#define %s'')\n', kind) ;
 
 % get vector index for user-defined select operator
 if (isequal (opname, 'user'))
-    fprintf (f, 'define(`GB_get_j'', `int64_t j = (Ah == NULL) ? k : Ah [k]'')\n') ;
+    fprintf (f, 'define(`GB_get_j'', `int64_t j = GBH (Ah, k)'')\n') ;
 else
     fprintf (f, 'define(`GB_get_j'', `;'')\n') ;
 end

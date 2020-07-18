@@ -73,8 +73,8 @@
 
             GB_GET_J ;
             int64_t pA_start, pA_end ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, NULL,
-                tid, k, kfirst, klast, pstart_slice, NULL, NULL, Ap) ;
+            GB_get_pA_and_pC (&pA_start, &pA_end, NULL, tid, k,
+                kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // reduce Ax [pA_start ... pA_end-1] to a scalar, if non-empty
@@ -144,7 +144,8 @@
         if (kfirst <= klast)
         {
             int64_t pA_start = pstart_slice [tid] ;
-            int64_t pA_end   = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
+            int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
+            pA_end = GB_IMIN (pA_end, pstart_slice [tid+1]) ;
             if (pA_start < pA_end)
             {
                 if (kprior < kfirst)
@@ -169,7 +170,7 @@
 
         if (kfirst < klast)
         {
-            int64_t pA_start = Ap [klast] ;
+            int64_t pA_start = GBP (Ap, klast, avlen) ;
             int64_t pA_end   = pstart_slice [tid+1] ;
             if (pA_start < pA_end)
             {

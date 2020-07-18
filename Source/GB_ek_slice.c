@@ -57,8 +57,9 @@ bool GB_ek_slice        // true if successful, false if out of memory
     //--------------------------------------------------------------------------
 
     int64_t anvec = A->nvec ;
+    int64_t avlen = A->vlen ;
     int64_t anz = GB_NNZ (A) ;
-    const int64_t *Ap = A->p ;
+    const int64_t *Ap = A->p ;      // A may be full so Ap can be NULL
 
     if (anz == 0)
     { 
@@ -102,11 +103,11 @@ bool GB_ek_slice        // true if successful, false if out of memory
 
         // find the first vector of the slice for task taskid: the
         // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-        int64_t kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec) ;
+        int64_t kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;
 
         // find the last vector of the slice for task taskid: the
         // vector that owns the entry Ai [plast] and Ax [plast].
-        int64_t klast = GB_search_for_vector (plast, Ap, kfirst, anvec) ;
+        int64_t klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;
 
         kfirst_slice [taskid] = kfirst ;
         klast_slice  [taskid] = klast ;

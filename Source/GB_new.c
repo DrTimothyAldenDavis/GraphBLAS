@@ -17,6 +17,10 @@
 // GraphBLAS.  The internal function that calls GB_new must then allocate or
 // initialize A->p itself, and then set A->magic = GB_MAGIC when it does so.
 
+// To allocate a full matrix, hyper_option is GB_FULL (which is 2).
+// The Ap_option is ignored.  For a full matrix, only the header is allocated,
+// if NULL on input.
+
 // Only GrB_SUCCESS and GrB_OUT_OF_MEMORY can be returned by this function.
 
 // The GrB_Matrix object holds both a sparse vector and a sparse matrix.  A
@@ -44,7 +48,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
+    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto, 2:full
     const double hyper_ratio,   // A->hyper_ratio, unless auto
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
@@ -92,21 +96,27 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 
     // hypersparsity
     bool A_is_hyper ;
+    bool A_is_full = false ;
+    A->hyper_ratio = hyper_ratio ;
     if (hyper_option == GB_FORCE_HYPER)
     { 
-        A_is_hyper = true ;               // force hypersparse
-        A->hyper_ratio = hyper_ratio ;
+        A_is_hyper = true ;             // force A to be hypersparse
     }
     else if (hyper_option == GB_FORCE_NONHYPER)
     { 
-        A_is_hyper = false ;              // force non-hypersparse
-        A->hyper_ratio = hyper_ratio ;
+        A_is_hyper = false ;            // force A to be sparse
+    }
+    else if (hyper_option == GB_FULL)
+    {
+        A_is_full = true ;              // force A to be full
+        A_is_hyper = false ;
     }
     else // GB_AUTO_HYPER
     { 
         // auto selection:  non-hypersparse if one vector or less, or
         // if the global hyper_ratio is negative.  This is only used by
         // GrB_Matrix_new, and in a special case in GB_mask.
+        // Never select A to be full, since A is created with no entries.
         ASSERT (hyper_option == GB_AUTO_HYPER) ;
         double hyper_ratio = GB_Global_hyper_ratio_get ( ) ;
         A->hyper_ratio = hyper_ratio ;
@@ -120,20 +130,32 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // content that is freed or reset in GB_ph_free
     if (A_is_hyper)
     { 
+        // A is hypersparse
         A->plen = GB_IMIN (plen, vdim) ;
         A->nvec = 0 ;           // no vectors present
+        A->nvec_nonempty = 0 ;      // all vectors are empty
     }
-    else
+    else if (!A_is_full)
     { 
+        // A is sparse
         A->plen = vdim ;
         A->nvec = vdim ;        // all vectors present in the data structure
                                 // (but all are currently empty)
+        A->nvec_nonempty = 0 ;      // all vectors are empty
     }
+    else
+    { 
+        // A is full
+        A->plen = -1 ;
+        A->nvec = vdim ;
+        // all vectors present, unless matrix has a zero dimension 
+        A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
+    }
+
     A->p = NULL ;
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    A->nvec_nonempty = 0 ;      // all vectors are empty
     A->mkl = NULL ;             // no analysis from MKL yet
 
     A->logger = NULL ;          // no error logged yet
@@ -152,7 +174,18 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     //--------------------------------------------------------------------------
 
     bool ok ;
-    if (Ap_option == GB_Ap_calloc)
+    if (A_is_full || Ap_option == GB_Ap_null)
+    { 
+        // A is not initialized yet; A->p and A->h are both NULL.
+        // sparse case: GB_NNZ(A) must check A->nzmax == 0 since A->p is not
+        // allocated.
+        // full case: A->x not yet allocated.  A->nzmax still zero
+        A->magic = GB_MAGIC2 ;
+        A->p = NULL ;
+        A->h = NULL ;
+        ok = true ;
+    }
+    else if (Ap_option == GB_Ap_calloc)
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
@@ -165,7 +198,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
             ok = ok && (A->h != NULL) ;
         }
     }
-    else if (Ap_option == GB_Ap_malloc)
+    else // Ap_option == GB_Ap_malloc
     {
         // This is faster but can only be used internally by GraphBLAS since
         // the matrix is allocated but not yet completely initialized.  The
@@ -181,15 +214,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
             ok = ok && (A->h != NULL) ;
         }
     }
-    else // Ap_option == GB_Ap_null
-    { 
-        // A is not initialized yet; A->p and A->h are both NULL.
-        // GB_NNZ(A) must check A->nzmax == 0 since A->p is not allocated.
-        A->magic = GB_MAGIC2 ;
-        A->p = NULL ;
-        A->h = NULL ;
-        ok = true ;
-    }
 
     if (!ok)
     {
@@ -202,8 +226,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     // The vector pointers A->p are initialized only if Ap_calloc is true
-    if (Ap_option == GB_Ap_calloc)
+    if (A->magic == GB_MAGIC)
     { 
         ASSERT_MATRIX_OK (A, "new matrix from GB_new", GB0) ;
     }

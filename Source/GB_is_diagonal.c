@@ -40,6 +40,12 @@ bool GB_is_diagonal             // true if A is diagonal
         return (false) ;
     }
 
+    if (GB_IS_FULL (A))
+    { 
+        // A is full, and is diagonal only if 1-by-1
+        return (n == 1) ;
+    }
+
     int64_t anz  = GB_NNZ (A) ;
     int64_t nvec = A->nvec ;
 
@@ -96,14 +102,14 @@ bool GB_is_diagonal             // true if A is diagonal
         GB_PARTITION (jstart, jend, n, tid, ntasks) ;
         for (int64_t j = jstart ; diag && j < jend ; j++)
         {
-            int64_t p = Ap [j] ;
-            int64_t ajnz = Ap [j+1] - p ;
+            int64_t p = Ap [j] ;                // ok: A is sparse
+            int64_t ajnz = Ap [j+1] - p ;       // ok: A is sparse
             if (ajnz != 1)
             { 
                 // A(:,j) must have exactly one entry
                 diag = false ;
             }
-            int64_t i = Ai [p] ;
+            int64_t i = Ai [p] ;        // ok: A is sparse
             if (i != j)
             { 
                 // the single entry must be A(i,i)

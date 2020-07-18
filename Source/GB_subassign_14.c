@@ -16,8 +16,6 @@
 // A:           matrix
 // S:           constructed
 
-// FULL: if A is sparse and C dense then C is likely to become sparse
-// FULL TODO: if A sparse, convert C to sparse on input
 // FULL TODO: kernel: C(I,J)<!M>=A when A and C are both dense
 
 #define GB_FREE_WORK GB_FREE_TWO_SLICE
@@ -48,11 +46,11 @@ GrB_Info GB_subassign_14
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     GB_GET_MASK ;
     const bool M_is_hyper = (Mh != NULL) ;
     const int64_t Mnvec = M->nvec ;
-    const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     GB_GET_S ;
     GrB_BinaryOp accum = NULL ;
@@ -100,9 +98,9 @@ GrB_Info GB_subassign_14
             // get A(:,j) and S(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
-            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_MAPPED (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X, Avlen) ;
+            GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
@@ -110,7 +108,7 @@ GrB_Info GB_subassign_14
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
-            bool mjdense = (pM_end - pM_start) == mvlen ;
+            bool mjdense = (pM_end - pM_start) == Mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -122,8 +120,8 @@ GrB_Info GB_subassign_14
             // while both list S (:,j) and A (:,j) have entries
             while (pS < pS_end && pA < pA_end)
             {
-                int64_t iS = Si [pS] ;
-                int64_t iA = Ai [pA] ;
+                int64_t iS = GBI (Si, pS, Svlen) ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
 
                 if (iS < iA)
                 {
@@ -175,7 +173,7 @@ GrB_Info GB_subassign_14
             while (pS < pS_end)
             {
                 // S (i,j) is present but A (i,j) is not
-                int64_t iS = Si [pS] ;
+                int64_t iS = GBI (Si, pS, Svlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
                 mij = !mij ;
                 if (mij)
@@ -193,7 +191,7 @@ GrB_Info GB_subassign_14
             while (pA < pA_end)
             {
                 // S (i,j) is not present, A (i,j) is present
-                int64_t iA = Ai [pA] ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 mij = !mij ;
                 if (mij)
@@ -237,9 +235,9 @@ GrB_Info GB_subassign_14
             // get A(:,j) and S(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
-            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_MAPPED (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X, Avlen) ;
+            GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
@@ -247,7 +245,7 @@ GrB_Info GB_subassign_14
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
-            bool mjdense = (pM_end - pM_start) == mvlen ;
+            bool mjdense = (pM_end - pM_start) == Mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -259,8 +257,8 @@ GrB_Info GB_subassign_14
             // while both list S (:,j) and A (:,j) have entries
             while (pS < pS_end && pA < pA_end)
             {
-                int64_t iS = Si [pS] ;
-                int64_t iA = Ai [pA] ;
+                int64_t iS = GBI (Si, pS, Svlen) ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
 
                 if (iS < iA)
                 { 
@@ -293,7 +291,7 @@ GrB_Info GB_subassign_14
             while (pA < pA_end)
             {
                 // S (i,j) is not present, A (i,j) is present
-                int64_t iA = Ai [pA] ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 mij = !mij ;
                 if (mij)

@@ -90,7 +90,7 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     { 
         // the type of C and dup must be compatible
         GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "Operator dup [%s] has type [%s]\n"
+            "Operator [%s] for assembling duplicates has type [%s],\n"
             "cannot be typecast to entries in output of type [%s]",
             dup->name, dup->ztype->name, C->type->name) ;
     }

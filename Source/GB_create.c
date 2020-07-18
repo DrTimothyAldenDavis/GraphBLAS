@@ -41,7 +41,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
+    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto, 2:full
     const double hyper_ratio,   // A->hyper_ratio, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
@@ -77,7 +77,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     // allocate the indices and values
     //--------------------------------------------------------------------------
 
-    info = GB_ix_alloc (A, anz, numeric, Context) ;
+    info = GB_ix_alloc (A, anz, hyper_option != GB_FULL, numeric, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory

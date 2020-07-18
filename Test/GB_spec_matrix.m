@@ -19,12 +19,12 @@ function Cout = GB_spec_matrix (Cin, identity)
 % of X is given by Cin.pattern; otherwise the pattern for a sparse X is
 % GB_spones_mex(X) and entries outside the pattern are assumed to be equal to
 % identity.  For a dense X, with no Cin.pattern present the pattern of X is
-% just X ~= identity.
+% all true (TODO: was X ~= identity).
 %
-% Cin is a matrix, then its type is given by GB_spec_type (Cin).  If the
+% If Cin is a matrix, then its type is given by GB_spec_type (Cin).  If the
 % matrix is sparse, its pattern is GB_spones_mex(Cin) and entries not in the
-% pattern are assumed equal to identity.  Otherwise the pattern of Cin is given
-% by Cin ~= identity.
+% pattern are assumed equal to identity.  Otherwise the pattern of Cin is
+% all true (TODO: was given by Cin ~= identity).
 %
 % The output Cout is a struct with all three fields present (matrix, pattern,
 % and type).  Cout.matrix is dense, and it has been typecast into the type
@@ -108,7 +108,8 @@ else
         % the pattern are assumed to be equal to the addititve identity.
         xpattern = GB_mex_cast (full (GB_spones_mex (X)), 'logical') ;
     else
-        xpattern = (X ~= identity) ;
+        xpattern = true (size (X)) ;
+        % xpattern = (X ~= identity) ;
     end
 end
 

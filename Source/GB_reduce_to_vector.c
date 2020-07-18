@@ -183,6 +183,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     const int64_t *GB_RESTRICT Ai = A->i ;
     const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
+    int64_t avlen = A->vlen ;
     int64_t anz = GB_NNZ (A) ;
 
     zsize = reduce->ztype->size ;
@@ -221,7 +222,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
-        // DENSE TODO: construct T as a dense if A not hypersparse and all A(:,j) nonempty
+        // FULL TODO: construct T as a dense if A not hypersparse and all
+        // A(:,j) nonempty
 
         T->p [0] = 0 ;
         T->p [1] = anvec ;
@@ -249,18 +251,18 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         for (k = 0 ; k < anvec ; k++)
         {
             // if A(:,j) is empty, then the entry in T becomes a zombie
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
-            int64_t jnz = Ap [k+1] - Ap [k] ;
+            int64_t j = GBH (Ah, k) ;
+            int64_t jnz = (Ap == NULL) ? avlen : (Ap [k+1] - Ap [k]) ;
             if (jnz == 0)
             { 
                 // A(:,j) is empty: T(j) is a zombie
-                Ti [k] = GB_FLIP (j) ;
+                Ti [k] = GB_FLIP (j) ;      // ok: T is sparse
                 nzombies++ ;
             }
             else
             { 
                 // A(:,j) has at least one entry; T(j) is live
-                Ti [k] = j ;
+                Ti [k] = j ;                // ok: T is sparse
             }
         }
 

@@ -41,9 +41,9 @@
             // get B(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Bh == NULL) ? kB : Bh [kB] ;
-            int64_t pB_start = Bp [kB] ;
-            int64_t pB_end = Bp [kB+1] ;
+            int64_t j = GBH (Bh, kB) ;
+            int64_t pB_start = GBP (Bp, kB, bvlen) ;
+            int64_t pB_end   = GBP (Bp, kB+1, bvlen) ;
 
             int64_t bjnz = pB_end - pB_start ;
             // no work to do if B(:,j) is empty
@@ -68,8 +68,8 @@
             //------------------------------------------------------------------
 
             // get the first and last index in B(:,j)
-            int64_t ib_first = Bi [pB_start] ;
-            int64_t ib_last  = Bi [pB_end-1] ;
+            int64_t ib_first = GBI (Bi, pB_start, bvlen) ;
+            int64_t ib_last  = GBI (Bi, pB_end-1, bvlen) ; ;
 
             // for each vector A(:,i):
             for (int64_t kA = A_slice [a_tid] ; kA < A_slice [a_tid+1] ; kA++)
@@ -79,9 +79,9 @@
                 // get A(:,i)
                 //--------------------------------------------------------------
 
-                int64_t i = (Ah == NULL) ? kA : Ah [kA] ;
-                int64_t pA = Ap [kA] ;
-                int64_t pA_end = Ap [kA+1] ;
+                int64_t i = GBH (Ah, kA) ;
+                int64_t pA     = GBP (Ap, kA, avlen) ;
+                int64_t pA_end = GBP (Ap, kA+1, avlen) ;
 
                 //--------------------------------------------------------------
                 // C(i,j) = A(:,i)'*B(:,j)

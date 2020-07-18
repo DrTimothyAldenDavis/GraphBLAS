@@ -169,7 +169,7 @@ GrB_Info GB_subref_slice
     for (kC = 0 ; kC < Cnvec ; kC++)
     { 
         // jC is the (kC)th vector of C = A(I,J)
-        // int64_t jC = (Ch == NULL) ? kC : Ch [kC] ;
+        // int64_t jC = GBH (Ch, kC) ;
         // C(:,kC) = A(I,kA) will be constructed
         int64_t pA      = Ap_start [kC] ;
         int64_t pA_end  = Ap_end   [kC] ;

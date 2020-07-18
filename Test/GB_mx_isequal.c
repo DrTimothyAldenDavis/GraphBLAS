@@ -42,10 +42,10 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     // if (A->nzmax != B->nzmax) return (false) ;
     // if (AP->nmax != BP->nmax) return (false) ;
 
-    if (A->p_shallow        != B->p_shallow        ) return (false) ;
-    if (A->h_shallow        != B->h_shallow        ) return (false) ;
-    if (A->i_shallow        != B->i_shallow        ) return (false) ;
-    if (A->x_shallow        != B->i_shallow        ) return (false) ;
+//  if (A->p_shallow        != B->p_shallow        ) return (false) ;
+//  if (A->h_shallow        != B->h_shallow        ) return (false) ;
+//  if (A->i_shallow        != B->i_shallow        ) return (false) ;
+//  if (A->x_shallow        != B->i_shallow        ) return (false) ;
     if (A->nzombies         != B->nzombies         ) return (false) ;
 
     if ((AP != NULL) != (BP != NULL)) return (false) ;
@@ -66,16 +66,33 @@ bool GB_mx_isequal     // true if A and B are exactly the same
 
     ASSERT (n >= 0 && n <= A->vdim) ;
 
-    if (!GB_mx_same  ((char *) A->p, (char *) B->p, (n+1) * s)) return (false) ;
-    if (A->h != NULL)
+    bool A_is_dense = GB_is_dense (A) || GB_IS_FULL (A) ;
+    bool B_is_dense = GB_is_dense (B) || GB_IS_FULL (B) ;
+
+    if (A_is_dense != B_is_dense) return (false) ;
+
+    if (!A_is_dense)
     {
-        if (!GB_mx_same ((char *) A->h, (char *) B->h, n * s)) return (false) ;
+        if (!GB_mx_same  ((char *) A->p, (char *) B->p, (n+1) * s))
+        {
+            return (false) ;
+        }
+        if (A->h != NULL)
+        {
+            if (!GB_mx_same ((char *) A->h, (char *) B->h, n * s))
+                return (false) ;
+        }
     }
 
     if (A->nzmax > 0 && B->nzmax > 0)
     {
-        if (!GB_mx_same  ((char *) A->i, (char *) B->i, nnz * s))
-            return (false) ;
+        if (!A_is_dense)
+        {
+            if (!GB_mx_same  ((char *) A->i, (char *) B->i, nnz * s))
+            {
+                return (false) ;
+            }
+        }
 
         if (A->type == GrB_FP32 && eps > 0)
         {

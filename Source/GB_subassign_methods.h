@@ -44,6 +44,7 @@
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t cvdim = C->vdim ;                                         \
+    const int64_t Cvlen = C->vlen ;                                         \
     int64_t nzombies = C->nzombies ;                                        \
     const bool is_matrix = (cvdim > 1) ;
 
@@ -57,7 +58,8 @@
     const int64_t *GB_RESTRICT Mh = M->h ;                                     \
     const int64_t *GB_RESTRICT Mi = M->i ;                                     \
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;\
-    const size_t msize = M->type->size ;
+    const size_t msize = M->type->size ;                                       \
+    const size_t Mvlen = M->vlen ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
@@ -85,7 +87,8 @@
     const int64_t *GB_RESTRICT Ap = A->p ;                                  \
     const int64_t *GB_RESTRICT Ai = A->i ;                                  \
     const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;                      \
-    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
+    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
+    const int64_t Avlen = A->vlen ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -117,7 +120,8 @@
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
     const int64_t *GB_RESTRICT Sp = S->p ;                                  \
     const int64_t *GB_RESTRICT Si = S->i ;                                  \
-    const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
+    const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;                      \
+    const int64_t Svlen = S->vlen ;
 
 //------------------------------------------------------------------------------
 // basic actions
@@ -140,7 +144,7 @@
 
     #define GB_C_S_LOOKUP                                                   \
         int64_t pC = Sx [pS] ;                                              \
-        int64_t iC = Ci [pC] ;                                              \
+        int64_t iC = GBI (Ci, pC, Cvlen) ;                                  \
         bool is_zombie = GB_IS_ZOMBIE (iC) ;                                \
         if (is_zombie) iC = GB_FLIP (iC) ;
 
@@ -153,8 +157,8 @@
     #define GB_VECTOR_LOOKUP(pX_start,pX_end,X,j)                           \
     {                                                                       \
         int64_t pleft = 0, pright = X ## nvec-1 ;                           \
-        GB_lookup (X ## _is_hyper, X ## h, X ## p, &pleft, pright, j,       \
-            &pX_start, &pX_end) ;                                           \
+        GB_lookup (X ## _is_hyper, X ## h, X ## p, X ## vlen, &pleft,       \
+            pright, j, &pX_start, &pX_end) ;                                \
     }
 
     //--------------------------------------------------------------------------
@@ -187,8 +191,8 @@
     #define GB_iC_DENSE_LOOKUP                                              \
         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;                     \
         int64_t pC = pC_start + iC ;                                        \
-        bool is_zombie = GB_IS_ZOMBIE (Ci [pC]) ;                           \
-        ASSERT (GB_UNFLIP (Ci [pC]) == iC) ;
+        bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ;           \
+        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNFLIP (Ci [pC]) == iC)) ;
 
     //--------------------------------------------------------------------------
     // get C(iC,jC) via binary search of C(:,jC)
@@ -253,8 +257,8 @@
     #define GB_DELETE                                                       \
     {                                                                       \
         /* turn C(iC,jC) into a zombie */                                   \
+        ASSERT (!GB_IS_FULL (C)) ;                                          \
         task_nzombies++ ;                                                   \
-        /* DENSE TODO: assert C is sparse */                                \
         Ci [pC] = GB_FLIP (iC) ;                                            \
     }
 
@@ -262,8 +266,8 @@
     {                                                                       \
         /* bring a zombie C(iC,jC) back to life;                 */         \
         /* the value of C(iC,jC) must also be assigned.          */         \
+        ASSERT (!GB_IS_FULL (C)) ;                                          \
         Ci [pC] = iC ;                                                      \
-        /* DENSE TODO: assert C is sparse */                                \
         task_nzombies-- ;                                                   \
     }
 
@@ -983,10 +987,10 @@
             // The M(i,j) entry has no effect.  There is nothing to do.
 
 //------------------------------------------------------------------------------
-// GB_subassign_00: C(I,J) = empty ; using S
+// GB_subassign_zombie: C(I,J) = empty ; using S
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_00
+void GB_subassign_zombie
 (
     GrB_Matrix C,
     // input:
@@ -1722,10 +1726,10 @@ GrB_Info GB_subassign_emult_slice
     int64_t task_pending = 0 ;
 
 //------------------------------------------------------------------------------
-// GB_GET_MAPPED_VECTOR: get the content of a vector for a coarse/fine task
+// GB_GET_MAPPED: get the content of a vector for a coarse/fine task
 //------------------------------------------------------------------------------
 
-#define GB_GET_MAPPED_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, j, k, Z_to_X) \
+#define GB_GET_MAPPED(pX_start, pX_fini, pX, pX_end, Xp, j, k, Z_to_X, Xvlen) \
     int64_t pX_start = -1, pX_fini = -1 ;                                   \
     if (fine_task)                                                          \
     {                                                                       \
@@ -1739,16 +1743,16 @@ GrB_Info GB_subassign_emult_slice
         int64_t kX = (Z_to_X == NULL) ? j : Z_to_X [k] ;                    \
         if (kX >= 0)                                                        \
         {                                                                   \
-            pX_start = Xp [kX] ;                                            \
-            pX_fini  = Xp [kX+1] ;                                          \
+            pX_start = GBP (Xp, kX, Xvlen) ;                                \
+            pX_fini  = GBP (Xp, kX+1, Xvlen) ;                              \
         }                                                                   \
     }
 
 //------------------------------------------------------------------------------
-// GB_GET_EMULT_VECTOR: get the content of a vector for EMULT_SLICE method
+// GB_GET_EVEC: get the content of a vector for EMULT_SLICE method
 //------------------------------------------------------------------------------
 
-#define GB_GET_EMULT_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, Xh, j,k,Z_to_X) \
+#define GB_GET_EVEC(pX_start, pX_fini, pX, pX_end, Xp, Xh, j,k,Z_to_X,Xvlen)\
     int64_t pX_start = -1, pX_fini = -1 ;                                   \
     if (fine_task)                                                          \
     {                                                                       \
@@ -1762,8 +1766,8 @@ GrB_Info GB_subassign_emult_slice
         int64_t kX = (Zh == Xh) ? k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ; \
         if (kX >= 0)                                                        \
         {                                                                   \
-            pX_start = Xp [kX] ;                                            \
-            pX_fini  = Xp [kX+1] ;                                          \
+            pX_start = GBP (Xp, kX, Xvlen) ;                                \
+            pX_fini  = GBP (Xp, kX+1, Xvlen) ;                              \
         }                                                                   \
     }
 

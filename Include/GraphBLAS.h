@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 2, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 17, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1174,7 +1174,7 @@ GB_PUBLIC GrB_BinaryOp
 //      z = (x >= y)    1 0 1 1     GE, ISGE, POW, and "x implies y"
 //
 //      z = ~x          1 1 0 0     (not(x), not predefined)
-//      z = (x >= y)    1 1 0 1     LE, ISLE, and "y implies x"
+//      z = (x <= y)    1 1 0 1     LE, ISLE, and "y implies x"
 //      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
 //      z = 1           1 1 1 1     PAIR
 //
@@ -4127,9 +4127,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_GPU_CHUNK, double chunk) ;
 //      GxB_get (GrB_Matrix A, GxB_GPU_CHUNK, double *chunk) ;
 
-// To get a matrix status (modified with GxB_HYPER, double h parameter):
+// To get a matrix status:
 //
 //      GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ;
+//      TODO:
+//      GxB_get (GrB_Matrix A, GxB_SPARSITY, int *sparsity) ;
 
 // To set/get a descriptor field:
 //
@@ -8568,6 +8570,32 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     //      columns that have at least one entry: if not known, use -1;
     //      if nonempty >= 0 the value must be exact.
 
+GrB_Info GxB_Matrix_import_FullC    // import a full matrix, held by column
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create
+    GrB_Index nrows,        // matrix dimension is nrows-by-ncols
+    GrB_Index ncols,
+    void      **Ax,         // values, size nrows*ncols
+    const GrB_Descriptor desc       // descriptor for # of threads to use
+) ;
+
+    // TODO: describe.  Add GxB_Matrix_import_FullR,
+    // GxB_Matrix_export_FullR.  Also the Vector versions.
+    // Also add GxB_Matrix_import: for any sparsity and format.
+    // Also add GxB_Matrix_export: for any sparsity and format.
+    // same for Vector case.
+
+GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
+(
+    GrB_Matrix *A,          // handle of matrix to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
+    GrB_Index *ncols,
+    void      **Ax,         // values, size nrows*ncols
+    const GrB_Descriptor desc       // descriptor for # of threads to use
+) ;
+
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8833,13 +8861,12 @@ GrB_Info GxB_Vector_export  // export and free a vector
 // modify A, the GxB_Vector_export does not modify v, and the user arrays are
 // returned as NULL.
 
-// SuiteSparse:GraphBLAS supports all four formats natively (CSR, CSC,
-// HYPER_CSR, and HYPER_CSC).  On export, they take O(1) time if the internal
-// format matches the requested output format.  The internal format can be
-// queried via GxB_Matrix_Option_get, to determine if the format is by row or
-// by column, if desired.  If the formats do not match, SuiteSparse:GraphBLAS
-// first reformats the GrB_Matrix A into the desired format, and then exports
-// the result.
+// SuiteSparse:GraphBLAS supports all six formats natively (CSR, CSC) x (full,
+// sparse, hypersparse).  On export, they take O(1) time if the internal format
+// matches the requested output format.  The internal format can be queried via
+// GxB_Matrix_Option_get, to determine if the format is by row or by column, if
+// desired.  If the formats do not match, SuiteSparse:GraphBLAS first reformats
+// the GrB_Matrix A into the desired format, and then exports the result.
 
 //------------------------------------------------------------------------------
 // CUDA memory management (DRAFT: in progress, do not use)

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -69,7 +69,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // print the header
     //--------------------------------------------------------------------------
 
-    GBPR0 (", %s", (A->h != NULL) ?  "hypersparse" : "sparse") ;
+    bool is_hyper = (A->h != NULL) ;
+    bool is_full = GB_IS_FULL (A) ;
+    bool is_sparse = !is_full ;
+
+    GBPR0 (", %s", is_hyper ? "hypersparse" : (is_sparse ? "sparse" : "full")) ;
     GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
 
     #if GB_DEVELOPER
@@ -99,7 +103,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check vector structure
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (is_hyper)
     {
         // A is hypersparse
         if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
@@ -108,12 +112,21 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             return (GrB_INVALID_OBJECT) ;
         }
     }
-    else
+    else if (is_sparse)
     {
-        // A is standard
+        // A is sparse
         if (! (A->nvec == A->plen && A->plen == A->vdim))
         { 
             GBPR0 ("  invalid sparse %s structure\n", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+    }
+    else
+    {
+        // A is full
+        if (! (A->nvec == A->vdim && A->plen == -1))
+        { 
+            GBPR0 ("  invalid full %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
     }
@@ -170,10 +183,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check p
     //--------------------------------------------------------------------------
 
-    if (A->p == NULL)
-    { 
-        GBPR0 ("  ->p is NULL, invalid %s\n", kind) ;
-        return (GrB_INVALID_OBJECT) ;
+    if (is_hyper || is_sparse)
+    {
+        if (A->p == NULL)
+        { 
+            GBPR0 ("  ->p is NULL, invalid %s\n", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -185,7 +201,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A_empty)
     {
         // A->x and A->i pointers must be NULL and shallow must be false
-
         if (A->i != NULL || A->i_shallow || A->x_shallow)
         { 
             GBPR0 ("  invalid empty %s\n", kind) ;
@@ -193,12 +208,15 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
 
         // check the vector pointers
-        for (int64_t j = 0 ; j <= A->nvec ; j++)
+        if (is_hyper || is_sparse)
         {
-            if (A->p [j] != 0)
-            { 
-                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j, A->p [j]) ;
-                return (GrB_INVALID_OBJECT) ;
+            for (int64_t j = 0 ; j <= A->nvec ; j++)
+            {
+                if (A->p [j] != 0)
+                { 
+                    GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j, A->p [j]) ;
+                    return (GrB_INVALID_OBJECT) ;
+                }
             }
         }
     }
@@ -207,28 +225,34 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check a non-empty matrix
     //--------------------------------------------------------------------------
 
-    if (!A_empty && A->i == NULL)
-    { 
-        GBPR0 ("  ->i is NULL, invalid %s\n", kind) ;
-        return (GrB_INVALID_OBJECT) ;
+    if (is_hyper || is_sparse)
+    {
+        if (!A_empty && A->i == NULL)
+        { 
+            GBPR0 ("  ->i is NULL, invalid %s\n", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // check the content of p
     //--------------------------------------------------------------------------
 
-    if (A->p [0] != 0)
-    { 
-        GBPR0 ("  ->p [0] = " GBd " invalid\n", A->p [0]) ;
-        return (GrB_INVALID_OBJECT) ;
-    }
-
-    for (int64_t j = 0 ; j < A->nvec ; j++)
+    if (is_hyper || is_sparse)
     {
-        if (A->p [j+1] < A->p [j] || A->p [j+1] > A->nzmax)
+        if (A->p [0] != 0)
         { 
-            GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, A->p [j+1]) ;
+            GBPR0 ("  ->p [0] = " GBd " invalid\n", A->p [0]) ;
             return (GrB_INVALID_OBJECT) ;
+        }
+
+        for (int64_t j = 0 ; j < A->nvec ; j++)
+        {
+            if (A->p [j+1] < A->p [j] || A->p [j+1] > A->nzmax)
+            { 
+                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, A->p [j+1]) ;
+                return (GrB_INVALID_OBJECT) ;
+            }
         }
     }
 
@@ -236,7 +260,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the content of h
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (is_hyper)
     {
         int64_t jlast = -1 ;
         for (int64_t k = 0 ; k < A->nvec ; k++)
@@ -295,6 +319,15 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         return (GrB_INVALID_OBJECT) ;
     }
 
+    if (is_full)
+    {
+        if (A->nzombies != 0 || Pending != NULL)
+        { 
+            GBPR0 ("  full matrix cannot have zombies or pending tuples\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+    }
+
     //--------------------------------------------------------------------------
     // check and print the row indices and numerical values
     //--------------------------------------------------------------------------
@@ -304,7 +337,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #define GB_NBRIEF 10
     #define GB_NZBRIEF 30
 
-    bool jumbled = false ;
     int64_t nzombies = 0 ;
     int64_t jcount = 0 ;
     bool truncated = false ;
@@ -313,9 +345,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     for (int64_t k = 0 ; k < A->nvec ; k++)
     {
         int64_t ilast = -1 ;
-        int64_t j = (A->h == NULL) ? k : A->h [k] ;
-        int64_t p = A->p [k] ;
-        int64_t pend = A->p [k+1] ;
+        int64_t j = GBH (A->h, k) ;
+        int64_t p = GBP (A->p, k, A->vlen) ;
+        int64_t pend = GBP (A->p, k+1, A->vlen) ;
 
         // for each entry in A(:,j), the kth vector of A
         for ( ; p < pend ; p++)
@@ -340,7 +372,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 }
                 jcount++ ;      // count # of vectors printed so far
             }
-            int64_t i = A->i [p] ;
+            int64_t i = GBI (A->i, p, A->vlen) ;
             bool is_zombie = GB_IS_ZOMBIE (i) ;
             i = GB_UNFLIP (i) ;
             if (is_zombie) nzombies++ ;
@@ -398,9 +430,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if (i <= ilast)
             { 
                 // indices unsorted, or duplicates present
-                GBPR0 (" index (" GBd "," GBd ") jumbled", row, col) ;
-                jumbled = true ;
-                print_value = (!pr_silent) ;
+                GBPR0 (" index (" GBd "," GBd ") jumbled\n", row, col) ;
+                return (GrB_INDEX_OUT_OF_BOUNDS) ;
+                // print_value = (!pr_silent) ;
             }
 
             if (print_value)
@@ -561,20 +593,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // return result
     //--------------------------------------------------------------------------
 
-    // Returns GrB_INVALID_OBJECT if a row or column index is out of bounds,
-    // since this indicates the object is corrupted.  No valid matrix is ever
-    // built with indices out of bounds since the indices are checked when the
-    // matrix is built.
-
-    // Returns GrB_INDEX_OUT_OF_BOUNDS if a column has unsorted indices, and
-    // perhaps duplicates as well.  For matrices passed back to the user, or
-    // obtained from the user, this is an error.  For some matrices internally,
-    // the row indices may be jumbled.  These are about to be sorted via qsort
-    // or transpose.  In this case, a jumbled matrix is OK.  Duplicates are
-    // still an error but this function does not distinguish between the two
-    // cases (it would require workspace to do so).  See the
-    // ASSERT_OK_OR_JUMBLED macro.
-
-    return (jumbled ? GrB_INDEX_OUT_OF_BOUNDS : GrB_SUCCESS) ;
+    return (GrB_SUCCESS) ;
 }
 

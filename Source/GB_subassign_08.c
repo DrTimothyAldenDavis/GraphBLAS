@@ -107,12 +107,10 @@ GrB_Info GB_subassign_08
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t cvlen = C->vlen ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_MASK ;
-    // const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     GB_GET_ACCUM ;
@@ -165,9 +163,9 @@ GrB_Info GB_subassign_08
             // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_EMULT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
-            GB_GET_EMULT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
+            GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)
@@ -176,10 +174,10 @@ GrB_Info GB_subassign_08
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = Ai [pA] ;
-            int64_t iA_last  = Ai [pA_end-1] ;
-            int64_t iM_first = Mi [pM] ;
-            int64_t iM_last  = Mi [pM_end-1] ;
+            int64_t iA_first = GBI (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
             int64_t pM_start = pM ;
 
@@ -188,7 +186,7 @@ GrB_Info GB_subassign_08
             //------------------------------------------------------------------
 
             GB_GET_jC ;
-            bool cjdense = (pC_end - pC_start == cvlen) ;
+            bool cjdense = (pC_end - pC_start == Cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
@@ -205,7 +203,7 @@ GrB_Info GB_subassign_08
                 {
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
@@ -228,7 +226,7 @@ GrB_Info GB_subassign_08
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-                    int64_t iA = Ai [pA] ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE1_ACTION ;
                 }
@@ -245,8 +243,8 @@ GrB_Info GB_subassign_08
 
                 while (pA < pA_end && pM < pM_end)
                 {
-                    int64_t iA = Ai [pA] ;
-                    int64_t iM = Mi [pM] ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iM = GBI (Mi, pM, Mvlen) ;
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)
@@ -300,9 +298,9 @@ GrB_Info GB_subassign_08
             // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_EMULT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
-            GB_GET_EMULT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
+            GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)
@@ -311,10 +309,10 @@ GrB_Info GB_subassign_08
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = Ai [pA] ;
-            int64_t iA_last  = Ai [pA_end-1] ;
-            int64_t iM_first = Mi [pM] ;
-            int64_t iM_last  = Mi [pM_end-1] ;
+            int64_t iA_first = GBI (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
             int64_t pM_start = pM ;
 
@@ -323,7 +321,7 @@ GrB_Info GB_subassign_08
             //------------------------------------------------------------------
 
             GB_GET_jC ;
-            bool cjdense = (pC_end - pC_start == cvlen) ;
+            bool cjdense = (pC_end - pC_start == Cvlen) ;
             if (cjdense) continue ;
 
             //------------------------------------------------------------------
@@ -341,7 +339,7 @@ GrB_Info GB_subassign_08
                 {
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
@@ -364,7 +362,7 @@ GrB_Info GB_subassign_08
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-                    int64_t iA = Ai [pA] ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE2_ACTION ;
                 }
@@ -381,8 +379,8 @@ GrB_Info GB_subassign_08
 
                 while (pA < pA_end && pM < pM_end)
                 {
-                    int64_t iA = Ai [pA] ;
-                    int64_t iM = Mi [pM] ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iM = GBI (Mi, pM, Mvlen) ;
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)

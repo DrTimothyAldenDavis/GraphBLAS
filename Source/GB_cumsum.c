@@ -61,7 +61,7 @@ void GB_cumsum                      // cumulative sum of an array
     {
 
 #if 0
-        // FIXME
+        // TODO for GPU: GB_cumsum on the GPU
         #if defined ( GBCUDA )
         if (GB_cuda_is_on_GPU (count))
         {

@@ -24,8 +24,8 @@ fclose (f) ;
 fprintf ('\nuser       ') ;
 codegen_sel_method ('user',  ...
     [ 'user_select (' ...
-      ' flipij ? j : Ai[p], ' ...
-      ' flipij ? Ai[p] : j, ' ...
+      ' flipij ? j : GBI (Ai, p, avlen), ' ...
+      ' flipij ? GBI (Ai, p, avlen) : j, ' ...
       ' flipij ? avdim : avlen, ' ...
       ' flipij ? avlen : avdim, Ax +((p)*asize), xthunk)' ] , 'GB_void') ;
 
@@ -45,20 +45,20 @@ codegen_sel_method ('resize'    , [ ], 'GB_void' , 'GB_RESIZE_SELECTOR'  ) ;
 % phase1: depends on Ai only, so only nonzombie_any is used
 % phase2: use all 14 workers
 fprintf ('\nnonzombie  ') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'bool'      ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'int8_t'    ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'int16_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'int32_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'int64_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'uint8_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'uint16_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'uint32_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'uint64_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'float'     ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'double'    ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'GxB_FC32_t') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'GxB_FC64_t') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai [p])', 'GB_void'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'bool'      ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int8_t'    ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int16_t'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int32_t'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int64_t'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint8_t'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint16_t'  ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint32_t'  ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint64_t'  ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'float'     ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'double'    ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC32_t') ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC64_t') ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   ) ;
 
 % NONZERO            name         selector       type
 fprintf ('\nnonzero    ') ;

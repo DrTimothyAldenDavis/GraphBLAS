@@ -53,6 +53,12 @@ GrB_Info GB_dense_subassign_06d
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
     const GB_Type_code ccode = C->type->code ;
 
+    if (!GB_IS_FULL (C))
+    { 
+        // convert C from sparse to full
+        GB_sparse_to_full (C) ;
+    }
+
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
     //--------------------------------------------------------------------------

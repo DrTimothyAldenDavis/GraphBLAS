@@ -10,8 +10,6 @@
 // C(:,j)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
 
-// DENSE TODO: convert C to sparse
-
 #include "GB_assign.h"
 
 void GB_assign_zombie1
@@ -26,9 +24,11 @@ void GB_assign_zombie1
     // get C(:,j)
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_FULL (C)) ;
     int64_t *GB_RESTRICT Ci = C->i ;
     int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-    GB_lookup (C->h != NULL, C->h, C->p, &pleft, pright, j, &pC_start, &pC_end);
+    GB_lookup (C->h != NULL, C->h, C->p, C->vlen, &pleft, pright, j,
+        &pC_start, &pC_end) ;
     int64_t cjnz = pC_end - pC_start ;
     int64_t nzombies = C->nzombies ;
 
@@ -48,12 +48,12 @@ void GB_assign_zombie1
         reduction(+:nzombies)
     for (pC = pC_start ; pC < pC_end ; pC++)
     {
-        int64_t i = Ci [pC] ;
+        int64_t i = Ci [pC] ;       // ok: C is sparse
         if (!GB_IS_ZOMBIE (i))
         { 
             // delete C(i,j) by marking it as a zombie
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;
+            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
         }
     }
 

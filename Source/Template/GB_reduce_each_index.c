@@ -103,7 +103,7 @@
 
         for (int64_t p = pstart_slice [tid] ; p < pstart_slice [tid+1] ;p++)
         {
-            int64_t i = Ai [p] ;
+            int64_t i = GBI (Ai, p, n) ;
             // ztype aij = (ztype) Ax [p], with typecast
             GB_SCALAR (aij) ;
             GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
@@ -196,8 +196,8 @@
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    T->p [0] = 0 ;
-    T->p [1] = tnz ;
+    T->p [0] = 0 ;      // ok: T is sparse
+    T->p [1] = tnz ;    // ok: T is sparse
     int64_t  *GB_RESTRICT Ti = T->i ;
     GB_CTYPE *GB_RESTRICT Tx = (GB_CTYPE *) T->x ;
     T->nvec_nonempty = (tnz > 0) ? 1 : 0 ;
@@ -217,7 +217,7 @@
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (i = 0 ; i < n ; i++)
         { 
-            Ti [i] = i ;
+            Ti [i] = i ;        // ok: T is sparse (TODO: make it full)
         }
         GB_FREE (T->x) ;
         T->x = Work0 ;
@@ -243,7 +243,7 @@
             {
                 if (Mark0 [i])
                 { 
-                    Ti [p] = i ;
+                    Ti [p] = i ;        // ok: T is sparse
                     // Tx [p] = Work0 [i], no typecast
                     GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
                     p++ ;
@@ -289,7 +289,7 @@
                     {
                         if (Mark0 [i])
                         { 
-                            Ti [p] = i ;
+                            Ti [p] = i ;        // ok: T is sparse
                             // Tx [p] = Work0 [i], no typecast
                             GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
                             p++ ;
@@ -305,7 +305,7 @@
             {
                 if (Mark0 [i])
                 {
-                    ASSERT (Ti [p] == i) ;
+                    ASSERT (Ti [p] == i) ;      // ok: T is sparse
                     p++ ;
                 }
             }

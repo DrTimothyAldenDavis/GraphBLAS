@@ -32,6 +32,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // design.  Thus, ASSERT_MATRIX_OK (A, "A", ...) ;  cannot be
     // used here.
     ASSERT (A != NULL && A->p != NULL) ;
+    ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!A->i_shallow && !A->x_shallow) ;
 
     // This function tolerates pending tuples and zombies

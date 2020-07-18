@@ -10,7 +10,6 @@
 // Cx = op ((xtype) Ax)
 
 // Cx and Ax may be aliased.
-// Compare with GB_transpose_op.c
 
 #include "GB_apply.h"
 #include "GB_binop.h"

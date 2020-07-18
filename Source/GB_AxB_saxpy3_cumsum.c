@@ -26,7 +26,7 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     // get C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Cp = C->p ;        // ok: C is sparse
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
 
@@ -108,19 +108,19 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = TaskList [taskid].vector ;
-        Cp [kk] = 0 ;
+        Cp [kk] = 0 ;       // ok: C is sparse
     }
 
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = TaskList [taskid].vector ;
         int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        Cp [kk] += my_cjnz ;
+        Cp [kk] += my_cjnz ;        // ok: C is sparse
         ASSERT (my_cjnz <= cvlen) ;
     }
 
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
-    // fine tasks or coarse tasks, and where j == (Bh == NULL) ? kk : Bh [kk].
+    // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
@@ -139,7 +139,7 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
             if (!use_Gustavson)
             { 
                 int64_t kk = TaskList [taskid].vector ;
-                int64_t cjnz = Cp [kk+1] - Cp [kk] ;
+                int64_t cjnz = Cp [kk+1] - Cp [kk] ;        // ok: C is sparse
                 cjnz_max = GB_IMAX (cjnz_max, cjnz) ;
             }
         }

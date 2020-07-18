@@ -95,7 +95,7 @@
             // get j, the kth vector of C
             //------------------------------------------------------------------
 
-            int64_t j = (Ch == NULL) ? k : Ch [k] ;
+            int64_t j = GBH (Ch, k) ;
 
             #if defined ( GB_PHASE_1_OF_2 )
             int64_t cjnz = 0 ;
@@ -111,8 +111,8 @@
             else
             { 
                 // The vectors of C are never sliced for a coarse task.
-                pC     = Cp [k] ;
-                pC_end = Cp [k+1] ;
+                pC     = Cp [k] ;       // ok: C is sparse
+                pC_end = Cp [k+1] ;     // ok: C is sparse
             }
             int64_t cjnz = pC_end - pC ;
             if (cjnz == 0) continue ;
@@ -138,8 +138,8 @@
                             ((C_to_A == NULL) ? j : C_to_A [k]) ;
                 if (kA >= 0)
                 { 
-                    pA     = Ap [kA] ;
-                    pA_end = Ap [kA+1] ;
+                    pA     = GBP (Ap, kA, vlen) ;
+                    pA_end = GBP (Ap, kA+1, vlen) ;
                 }
             }
 
@@ -151,13 +151,13 @@
             int64_t iA_first = -1 ;
             if (ajnz > 0)
             { 
-                iA_first = Ai [pA] ;
+                iA_first = GBI (Ai, pA, vlen) ;
             }
             #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
             int64_t iA_last = -1 ;
             if (ajnz > 0)
             { 
-                iA_last  = Ai [pA_end-1] ;
+                iA_last  = GBI (Ai, pA_end-1, vlen) ;
             }
             #endif
 
@@ -180,8 +180,8 @@
                             ((C_to_B == NULL) ? j : C_to_B [k]) ;
                 if (kB >= 0)
                 { 
-                    pB     = Bp [kB] ;
-                    pB_end = Bp [kB+1] ;
+                    pB     = GBP (Bp, kB, vlen) ;
+                    pB_end = GBP (Bp, kB+1, vlen) ;
                 }
             }
 
@@ -193,13 +193,13 @@
             int64_t iB_first = -1 ;
             if (bjnz > 0)
             { 
-                iB_first = Bi [pB] ;
+                iB_first = GBI (Bi, pB, vlen) ;
             }
             #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
             int64_t iB_last = -1 ;
             if (bjnz > 0)
             { 
-                iB_last  = Bi [pB_end-1] ;
+                iB_last  = GBI (Bi, pB_end-1, vlen) ;
             }
             #endif
 
@@ -255,7 +255,7 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = p + iA_first ;
+                        Ci [pC + p] = p + iA_first ;        // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + p) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
@@ -277,8 +277,8 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        int64_t i = Bi [pB + p] ;
-                        Ci [pC + p] = i ;
+                        int64_t i = Bi [pB + p] ;           // ok: B is sparse
+                        Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + i - iA_first) ;
                         GB_GETB (bij, Bx, pB + p) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
@@ -300,8 +300,8 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        int64_t i = Ai [pA + p] ;
-                        Ci [pC + p] = i ;
+                        int64_t i = Ai [pA + p] ;           // ok: A is sparse
+                        Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + i - iB_first) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
@@ -318,8 +318,8 @@
 
                     for ( ; pB < pB_end ; pB++)
                     {
-                        int64_t i = Bi [pB] ;
-                        // find i in A(:,j)
+                        int64_t i = Bi [pB] ;               // ok: B is sparse
+                        // find i in A(:,j)                 // ok: A is sparse
                         int64_t pright = pA_end - 1 ;
                         bool found ;
                         GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
@@ -329,7 +329,7 @@
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = i ;
+                            Ci [pC] = i ;                   // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -351,8 +351,8 @@
 
                     for ( ; pA < pA_end ; pA++)
                     {
-                        int64_t i = Ai [pA] ;
-                        // find i in B(:,j)
+                        int64_t i = Ai [pA] ;               // ok: A is sparse
+                        // find i in B(:,j)                 // ok: B is sparse
                         int64_t pright = pB_end - 1 ;
                         bool found ;
                         GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
@@ -362,7 +362,7 @@
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = i ;
+                            Ci [pC] = i ;                   // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -386,8 +386,8 @@
 
                     while (pA < pA_end && pB < pB_end)
                     {
-                        int64_t iA = Ai [pA] ;
-                        int64_t iB = Bi [pB] ;
+                        int64_t iA = Ai [pA] ;              // ok: A is sparse
+                        int64_t iB = Bi [pB] ;              // ok: B is sparse
                         if (iA < iB)
                         { 
                             // A(i,j) exists but not B(i,j)
@@ -405,7 +405,7 @@
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = iB ;
+                            Ci [pC] = iB ;                  // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -452,8 +452,8 @@
                     }
                     if (kM >= 0)
                     { 
-                        pM     = Mp [kM] ;
-                        pM_end = Mp [kM+1] ;
+                        pM     = GBP (Mp, kM, vlen) ;
+                        pM_end = GBP (Mp, kM+1, vlen) ;
                     }
                 }
 
@@ -468,7 +468,7 @@
                     // get M(i,j) for A(i,j) .* B (i,j)
                     //----------------------------------------------------------
 
-                    int64_t i = Mi [pM] ;
+                    int64_t i = GBI (Mi, pM, vlen) ;
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (!mij) continue ;
 
@@ -489,7 +489,7 @@
                         GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
                         if (!afound) continue ;
                     }
-                    ASSERT (Ai [pA] == i) ;
+                    ASSERT (GBI (Ai, pA, vlen) == i) ;
 
                     //----------------------------------------------------------
                     // get B(i,j)
@@ -508,7 +508,7 @@
                         GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
                         if (!bfound) continue ;
                     }
-                    ASSERT (Bi [pB] == i) ;
+                    ASSERT (GBI (Bi, pB, vlen) == i) ;
 
                     //----------------------------------------------------------
                     // C(i,j) = A(i,j) .* B(i,j)
@@ -518,7 +518,7 @@
                     #if defined ( GB_PHASE_1_OF_2 )
                     cjnz++ ;
                     #else
-                    Ci [pC] = i ;
+                    Ci [pC] = i ;                   // ok: C is sparse
                     GB_GETA (aij, Ax, pA) ;
                     GB_GETB (bij, Bx, pB) ;
                     GB_BINOP (GB_CX (pC), aij, bij) ;
@@ -542,7 +542,7 @@
             }
             else
             { 
-                Cp [k] = cjnz ;
+                Cp [k] = cjnz ;     // ok: C is sparse
             }
             #endif
         }

@@ -120,7 +120,8 @@ GrB_Info GB_bind1st_tran
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 ) ;
 endif_binop_bind1st_is_enabled
 
@@ -132,7 +133,8 @@ GrB_Info GB_bind2nd_tran
     const GB_void *y_input,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 ) ;
 endif_binop_bind2nd_is_enabled
 

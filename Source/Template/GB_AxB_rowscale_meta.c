@@ -20,7 +20,8 @@
     const GB_ATYPE *GB_RESTRICT Dx = (GB_ATYPE *) (D_is_pattern ? NULL : D->x) ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t  *GB_RESTRICT Bi = B->i ;
-    int64_t bnz = GB_NNZ (B) ;
+    const int64_t bnz = GB_NNZ (B) ;
+    const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------
     // C=D*B
@@ -38,7 +39,7 @@
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
-            int64_t i = Bi [p] ;                // get row index of B(i,j)
+            int64_t i = GBI (Bi, p, bvlen) ;    // get row index of B(i,j)
             GB_GETA (dii, Dx, i) ;              // dii = D(i,i)
             GB_GETB (bij, Bx, p) ;              // bij = B(i,j)
             GB_BINOP (GB_CX (p), dii, bij) ;    // C(i,j) = dii*bij

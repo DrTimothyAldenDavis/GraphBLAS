@@ -5,18 +5,18 @@ function Mask = GB_spec_getmask (Mask, Mask_struct)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (isstruct (Mask))
-    if (Mask_struct)
-        if (isfield (Mask, 'pattern'))
-            Mask = Mask.pattern ;
-        elseif (issparse (Mask))
-            Mask = GB_spones_mex (Mask) ;
-        end
+    if (Mask_struct && isfield (Mask, 'pattern'))
+        Mask = Mask.pattern ;
     else
         Mask = Mask.matrix ;
     end
-else
-    if (Mask_struct && issparse (Mask))
+end
+
+if (Mask_struct)
+    if (issparse (Mask))
         Mask = GB_spones_mex (Mask) ;
+    else
+        Mask = true (size (Mask)) ;
     end
 end
 

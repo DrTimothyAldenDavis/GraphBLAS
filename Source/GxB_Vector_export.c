@@ -48,6 +48,8 @@ GrB_Info GxB_Vector_export  // export and free a vector
     GB_RETURN_IF_NULL (vi) ;
     GB_RETURN_IF_NULL (vx) ;
 
+    GB_ENSURE_SPARSE ((GrB_Vector) (*v)) ;
+
     //--------------------------------------------------------------------------
     // export the vector
     //--------------------------------------------------------------------------

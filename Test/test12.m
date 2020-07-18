@@ -22,7 +22,7 @@ end
 rng ('default') ;
 
 A = GB_mex_wathen (2,2) ;
-assert (spok (A) == 1) ;
+assert (GB_spok (A) == 1) ;
 assert (nnz (A-A') == 0) ;
 
 % this test is too slow when debugging

@@ -24,5 +24,21 @@ C = GB_mex_clear (A) ;
 S = sparse (4,1) ;
 assert (isequal (S, C.matrix)) ;
 
+A = sparse (eye (4)) ;
+C = GB_mex_clear (A) ;
+S = sparse (4,4) ;
+assert (isequal (S, C.matrix)) ;
+
+Ahyper.matrix = A ;
+Ahyper.is_hyper = true ;
+
+C = GB_mex_clear (Ahyper) ;
+assert (isequal (S, C.matrix)) ;
+
+A = sparse (eye (4,1)) ;
+C = GB_mex_clear (A) ;
+S = sparse (4,1) ;
+assert (isequal (S, C.matrix)) ;
+
 fprintf ('\ntest131: all tests passed\n') ;
 

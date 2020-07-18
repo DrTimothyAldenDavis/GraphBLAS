@@ -16,11 +16,9 @@
 // A:           scalar
 // S:           constructed
 
-// FULL: C almost certain to become sparse because of <M,replace>.
-// FULL TODO: convert C to sparse on input
-
 #define GB_FREE_WORK GB_FREE_TWO_SLICE
 
+#include "GB_unused.h"
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_11
@@ -49,13 +47,9 @@ GrB_Info GB_subassign_11
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
-    // GB_GET_MASK ;
-    const int64_t *GB_RESTRICT Mp = M->p ;
-//  const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-    const size_t msize = M->type->size ;
+    GB_GET_MASK ;
     GB_GET_ACCUM_SCALAR ;
     GB_GET_S ;
 
@@ -107,9 +101,9 @@ GrB_Info GB_subassign_11
             // get S(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_MAPPED_VECTOR (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X) ;
-            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_MAPPED (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X, Mvlen) ;
+            GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen) ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and M(:,j)
@@ -121,8 +115,8 @@ GrB_Info GB_subassign_11
             // while both list S (:,j) and M (:,j) have entries
             while (pS < pS_end && pM < pM_end)
             {
-                int64_t iS = Si [pS] ;
-                int64_t iM = Mi [pM] ;
+                int64_t iS = GBI (Si, pS, Svlen) ;
+                int64_t iM = GBI (Mi, pM, Mvlen) ;
 
                 if (iS < iM)
                 { 
@@ -225,9 +219,9 @@ GrB_Info GB_subassign_11
             // get S(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_MAPPED_VECTOR (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X) ;
-            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_MAPPED (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X, Mvlen) ;
+            GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen) ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and M(:,j)
@@ -239,8 +233,8 @@ GrB_Info GB_subassign_11
             // while both list S (:,j) and M (:,j) have entries
             while (pS < pS_end && pM < pM_end)
             {
-                int64_t iS = Si [pS] ;
-                int64_t iM = Mi [pM] ;
+                int64_t iS = GBI (Si, pS, Svlen) ;
+                int64_t iM = GBI (Mi, pM, Mvlen) ;
 
                 if (iS < iM)
                 { 
@@ -275,7 +269,7 @@ GrB_Info GB_subassign_11
                 { 
                     // ----[. A 1]------------------------------------------
                     // [. A 1]: action: ( insert )
-                    int64_t iM = Mi [pM] ;
+                    int64_t iM = GBI (Mi, pM, Mvlen) ;
                     int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
                     GB_PENDING_INSERT (scalar) ;
                 }

@@ -98,6 +98,10 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GB_MATRIX_WAIT (M) ;
     GB_MATRIX_WAIT (A) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format and transpose; T = A (I,J) or T = A (J,I)
     //--------------------------------------------------------------------------
@@ -151,33 +155,13 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 
     // T has the same hypersparsity as A.
 
-    // If T and C have different CRS/CSC formats, then GB_accum_mask must
-    // transpose T, and thus T can be returned from GB_subref with
-    // jumbled indices.  If T and C have the same CSR/CSC formats, then
-    // GB_subref must return T with sorted indices in each vector
-    // because GB_accum_mask will not transpose T.
-
-    // If T is a single column or a single row, it must be sorted, because the
-    // row/column transpose methods in GB_transpose do not do the sort.
-
-    bool must_sort = (T_is_csc == C->is_csc) || (cnrows == 1) || (cncols == 1) ;
-
     //--------------------------------------------------------------------------
     // T = A (I,J)
     //--------------------------------------------------------------------------
 
     GrB_Matrix T ;
-    GB_OK (GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, must_sort,
-        Context)) ;
-
-    if (must_sort)
-    { 
-        ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
-    }
-    else
-    { 
-        ASSERT_MATRIX_OK_OR_JUMBLED (T, "T extracted (jumbled OK)", GB0) ;
-    }
+    GB_OK (GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
+    ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M

@@ -12,7 +12,7 @@
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -84,6 +84,13 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     // >= 0: nvec_nonempty must be exact
     (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
 
+    // the matrix may be 0-by-0 and thus considered a full matrix
+    if (GB_IS_FULL (*A))
+    {
+        (*A)->plen = -1 ;
+        (*A)->nvec_nonempty = (nrows == 0) ? 0 : ncols ;
+    }
+
     //--------------------------------------------------------------------------
     // import is successful
     //--------------------------------------------------------------------------
@@ -91,7 +98,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     ASSERT (*Ap == NULL) ;
     ASSERT (*Ai == NULL) ;
     ASSERT (*Ax == NULL) ;
-    ASSERT_MATRIX_OK (*A, "A CSC imported", GB0) ;
+    ASSERT_MATRIX_OK ((*A), "A CSC imported", GB0) ;
     GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }

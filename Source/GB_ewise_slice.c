@@ -160,7 +160,7 @@ GrB_Info GB_ewise_slice
         // get the C(:,j) vector
         //----------------------------------------------------------------------
 
-        int64_t j = (Ch == NULL) ? k : Ch [k] ;
+        int64_t j = GBH (Ch, k) ;
 
         //----------------------------------------------------------------------
         // get the corresponding vector of A
@@ -175,7 +175,7 @@ GrB_Info GB_ewise_slice
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                ASSERT (j == ((A->h != NULL) ? A->h [kA] : kA)) ;
+                ASSERT (j == GBH (A->h, kA)) ;
             }
         }
         else if (Ch_is_Ah)
@@ -186,7 +186,7 @@ GrB_Info GB_ewise_slice
         }
         else
         { 
-            // A is standard
+            // A is sparse or full
             ASSERT (A->h == NULL) ;
             kA = j ;
         }
@@ -204,7 +204,7 @@ GrB_Info GB_ewise_slice
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                ASSERT (j == ((B->h != NULL) ? B->h [kB] : kB)) ;
+                ASSERT (j == GBH (B->h, kB)) ;
             }
         }
         else if (Ch_is_Bh)
@@ -215,7 +215,7 @@ GrB_Info GB_ewise_slice
         }
         else
         { 
-            // B is standard
+            // B is sparse or full
             ASSERT (B->h == NULL) ;
             kB = j ;
         }
@@ -226,8 +226,10 @@ GrB_Info GB_ewise_slice
 
         ASSERT (kA >= -1 && kA < A->nvec) ;
         ASSERT (kB >= -1 && kB < B->nvec) ;
-        int64_t aknz = (kA < 0) ? 0 : (Ap [kA+1] - Ap [kA]) ;
-        int64_t bknz = (kB < 0) ? 0 : (Bp [kB+1] - Bp [kB]) ;
+        int64_t aknz = (kA < 0) ? 0 :
+            ((Ap == NULL) ? vlen : (Ap [kA+1] - Ap [kA])) ;
+        int64_t bknz = (kB < 0) ? 0 :
+            ((Bp == NULL) ? vlen : (Bp [kB+1] - Bp [kB])) ;
 
         Cwork [k] = aknz + bknz + 1 ;
     }
@@ -334,7 +336,7 @@ GrB_Info GB_ewise_slice
             // get the vector of C
             //------------------------------------------------------------------
 
-            int64_t j = (Ch == NULL) ? k : Ch [k] ;
+            int64_t j = GBH (Ch, k) ;
 
             //------------------------------------------------------------------
             // get the corresponding vector of A
@@ -353,11 +355,11 @@ GrB_Info GB_ewise_slice
             }
             else
             { 
-                // A is standard
+                // A is sparse or full
                 kA = j ;
             }
-            int64_t pA_start = (kA < 0) ? -1 : Ap [kA] ;
-            int64_t pA_end   = (kA < 0) ? -1 : Ap [kA+1] ;
+            int64_t pA_start = (kA < 0) ? (-1) : GBP (Ap, kA, vlen) ;
+            int64_t pA_end   = (kA < 0) ? (-1) : GBP (Ap, kA+1, vlen) ;
             bool a_empty = (pA_end == pA_start) ;
 
             //------------------------------------------------------------------
@@ -377,11 +379,11 @@ GrB_Info GB_ewise_slice
             }
             else
             { 
-                // B is standard
+                // B is sparse or full
                 kB = j ;
             }
-            int64_t pB_start = (kB < 0) ? -1 : Bp [kB] ;
-            int64_t pB_end   = (kB < 0) ? -1 : Bp [kB+1] ;
+            int64_t pB_start = (kB < 0) ? (-1) : GBP (Bp, kB, vlen) ;
+            int64_t pB_end   = (kB < 0) ? (-1) : GBP (Bp, kB+1, vlen) ;
             bool b_empty = (pB_end == pB_start) ;
 
             //------------------------------------------------------------------
@@ -405,11 +407,11 @@ GrB_Info GB_ewise_slice
                 }
                 else
                 { 
-                    // M is standard
+                    // M is sparse or full
                     kM = j ;
                 }
-                pM_start = (kM < 0) ? -1 : Mp [kM] ;
-                pM_end   = (kM < 0) ? -1 : Mp [kM+1] ;
+                pM_start = (kM < 0) ? -1 : GBP (Mp, kM, vlen) ;
+                pM_end   = (kM < 0) ? -1 : GBP (Mp, kM+1, vlen) ;
             }
             bool m_empty = (pM_end == pM_start) ;
 

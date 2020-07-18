@@ -16,9 +16,6 @@
 // A:           scalar
 // S:           constructed
 
-// FULL: C almost certain to become sparse, because of <!M,replace>.
-// FULL TODO: convert C to sparse on input
-
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_17
@@ -46,6 +43,7 @@ GrB_Info GB_subassign_17
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     const int64_t Cnvec = C->nvec ;
     const int64_t *GB_RESTRICT Ch = C->h ;
@@ -123,8 +121,8 @@ GrB_Info GB_subassign_17
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? Si [pS] : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -247,8 +245,8 @@ GrB_Info GB_subassign_17
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? Si [pS] : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)

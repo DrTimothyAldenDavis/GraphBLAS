@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FULL: A and B already full or dense; C becomes full.
+// C becomes a full matrix.
 
 // FUTURE: extend to handle typecasting and generic operators.
 
@@ -21,7 +21,7 @@
 GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
-    const bool C_is_dense,          // true if C is dense
+    const bool C_is_dense,          // true if C is dense on input
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,
@@ -56,20 +56,21 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     int nthreads = GB_nthreads (2 * anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // if C not already dense, allocate it and create its pattern (same as A)
+    // if C not already dense, allocate it as full
     //--------------------------------------------------------------------------
 
-    // clear prior content and then create a copy of the pattern of A.  Keep
-    // the same type and CSR/CSC for C.  Allocate the values of C but do not
-    // initialize them.
+    // clear prior content and create C as a full matrix.  Keep the same type
+    // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
     if (!C_is_dense)
     { 
-        // TODO: convert C to full; just allocate C->x
-        bool C_is_csc = C->is_csc ;
-        GB_phix_free (C) ;
-        GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;
-        C->is_csc = C_is_csc ;
+        // convert C to full; just allocate C->x.  Keep the dimensions of C.
+        GB_OK (GB_to_full (C)) ;
+    }
+    else if (!GB_IS_FULL (C))
+    {
+        // C is dense, but not full; convert to full
+        GB_sparse_to_full (C) ;
     }
 
     //--------------------------------------------------------------------------

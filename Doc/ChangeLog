@@ -1,4 +1,4 @@
-Version 4.0.0, TODO, 2020
+Version 4.0.0, TODO:, 2020
 
     * GrB_wait(), with no inputs: removed
     * GrB_wait(&object): polymorphic function added
@@ -7,6 +7,11 @@ Version 4.0.0, TODO, 2020
     * GrB_error: now has two parameters: a string (char **) and an object
     * removed internal features: GBI iterator, slice and hyperslice matrices
     * V4.0.0 is otherwise identical to V3.3.1.
+
+Version 3.3.3, July 14, 2020
+
+    * (20) bug fix: w<mask>=A*u with mask non-empty and u empty (issue #13).
+        affects mxm (A*B when B is a vector), vxm, and mxv.
 
 Version 3.3.2, July 3, 2020
 

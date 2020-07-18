@@ -27,7 +27,7 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_matvec_check ((GrB_Matrix) v, name, pr, f, "vector") ;
-    if (! (info == GrB_INDEX_OUT_OF_BOUNDS || info == GrB_SUCCESS))
+    if (info != GrB_SUCCESS)
     { 
         // GrB_Matrix form is invalid already
         return (info) ;
@@ -43,6 +43,6 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
         return (GrB_INVALID_OBJECT) ;
     }
 
-    return (info) ; // pass info directly from GB_matvec_check (jumbled case)
+    return (GrB_SUCCESS) ;
 }
 

@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Convert a MATLAB sparse matrix or struct to a GraphBLAS sparse matrix.  The
-// mxArray is either a struct containing two terms: a sparse matrix or vector,
-// and type (a string, "logical", "double", etc), or it is just a plain sparse
-// matrix.  If A.class is present, it is used to typecast the MATLAB matrix
-// into the corresponding type in GraphBLAS.
+// Convert a MATLAB sparse or full matrix, or a struct to a GraphBLAS sparse
+// matrix.  The mxArray is either a struct containing two terms: a sparse or
+// full matrix or vector, and type (a string, "logical", "double", etc), or it
+// is just a plain sparse or full matrix.  If A.class is present, it is used to
+// typecast the MATLAB matrix into the corresponding type in GraphBLAS.
 
 // That is:
 // A = sparse (...) ;   % a sparse double or logical GraphBLAS matrix
 
-// A.matrix = A ; A.class = 'int8' ; Represents  A MATLAB sparse matrix that
-// represents a GraphBLAS int8 matrix.  On input, the MATLAB sparse matrix is
-// typecasted.
+// A.matrix = A ; A.class = 'int8' ; Represents a MATLAB sparse or full matrix
+// that represents a GraphBLAS int8 matrix.  On input, the MATLAB sparse or
+// full matrix is typecasted.
 
 // The MATLAB matrix or struct is not modified.  If deep_copy is true, the
 // GraphBLAS matrix is always a deep copy and can be modified by GraphBLAS.
@@ -38,7 +38,7 @@
 
 #define FREE_ALL            \
 {                           \
-    GrB_Matrix_free_(&A) ;   \
+    GrB_Matrix_free_(&A) ;  \
 }
 
 GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
@@ -86,7 +86,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
     // get the matrix
     //--------------------------------------------------------------------------
-
 
     const mxArray *Amatrix = NULL ;
     GrB_Type atype_in, atype_out ;
@@ -139,12 +138,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         atype_out = atype_in ;
     }
 
-    if (!mxIsSparse (Amatrix))
-    {
-        FREE_ALL ;
-        mexWarnMsgIdAndTxt ("GB:warn", "input matrix must be sparse") ;
-        return (NULL) ;
-    }
+    bool A_is_sparse = mxIsSparse (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // get the matrix type
@@ -159,11 +153,24 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     int64_t nrows = mxGetM (Amatrix) ;
     int64_t ncols = mxGetN (Amatrix) ;
-    int64_t *Mp = (int64_t *) mxGetJc (Amatrix) ;
-    int64_t *Mi = (int64_t *) mxGetIr (Amatrix) ;
-    int64_t anz = Mp [ncols] ;
+    int64_t *Mp, *Mi, anz, anzmax ;
+
+    if (A_is_sparse)
+    {
+        Mp = (int64_t *) mxGetJc (Amatrix) ;
+        Mi = (int64_t *) mxGetIr (Amatrix) ;
+        anz = Mp [ncols] ;
+        anzmax = mxGetNzmax (Amatrix) ;
+    }
+    else
+    {
+        Mp = NULL ;
+        Mi = NULL ;
+        anz = nrows * ncols ;
+        anzmax = anz ;
+    }
+
     GB_void *Mx = mxGetData (Amatrix) ;     // OK:any type
-    int64_t anzmax = mxGetNzmax (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // look for A.values
@@ -202,9 +209,9 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     GrB_Info info ;
 
-    // MATLAB matrices are non-hypersparse CSC
+    // MATLAB matrices are sparse or full CSC, not hypersparse
     bool is_csc = true ;
-    bool A_is_hyper = false ;
+    int sparsity = (A_is_sparse) ? GB_SPARSE : GB_FULL ;
 
     //--------------------------------------------------------------------------
     // get the pattern of A
@@ -215,7 +222,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // create the GraphBLAS matrix
         info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_calloc, is_csc, A_is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
+            GB_Ap_calloc, is_csc, sparsity, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -224,7 +231,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_ix_alloc (A, anz, true, Context) ;
+        info = GB_ix_alloc (A, anz, sparsity != GB_FULL, true, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -232,8 +239,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
-        memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
-        memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
+        if (sparsity != GB_FULL)
+        {
+            memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
+            memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
+        }
         A->magic = GB_MAGIC ;
 
     }
@@ -245,7 +255,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // [ create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_null, is_csc, A_is_hyper, GB_HYPER_DEFAULT, 0, Context) ;
+            GB_Ap_null, is_csc, sparsity, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -253,23 +263,41 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
-        A->p = Mp ;
-        A->magic = GB_MAGIC ;       // A->p now initialized ]
-        A->i = Mi ;
-        A->p_shallow = true ;
+        if (sparsity != GB_FULL)
+        {
+            A->p = Mp ;
+            A->i = Mi ;
+            A->p_shallow = true ;
+            A->i_shallow = true ;
+        }
+        else
+        {
+            A->p = NULL ;
+            A->i = NULL ;
+            A->p_shallow = false ;
+            A->i_shallow = false ;
+        }
+
         A->h_shallow = false ;      // A->h is NULL
-        A->i_shallow = true ;
+        A->magic = GB_MAGIC ;       // A->p now initialized ]
     }
 
     //--------------------------------------------------------------------------
     // copy the numerical values from MATLAB to the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    A->x_shallow = (!deep_copy &&
-           ((atype_out_code == GB_BOOL_code ||
-             atype_out_code == GB_FP64_code ||
-             atype_out_code == GB_FC64_code)
-         && (atype_out_code == atype_in_code))) ;
+    if (sparsity == GB_FULL)
+    {
+        A->x_shallow = (!deep_copy && (atype_out_code == atype_in_code)) ;
+    }
+    else
+    {
+        A->x_shallow = (!deep_copy &&
+               ((atype_out_code == GB_BOOL_code ||
+                 atype_out_code == GB_FP64_code ||
+                 atype_out_code == GB_FC64_code)
+             && (atype_out_code == atype_in_code))) ;
+    }
 
     if (A->x_shallow)
     {
@@ -299,7 +327,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code,
             Mx,
             (atype_in_code == GB_UDT_code) ? GB_FC64_code : atype_in_code,
-            (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) : atype_in->size,
+            (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) :atype_in->size,
             anz, 1) ;
     }
 
@@ -307,6 +335,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // look for CSR/CSC and hyper/non-hyper format
     //--------------------------------------------------------------------------
 
+    bool A_is_hyper = false ;
     bool has_hyper_ratio = false ;
     double hyper_ratio = GB_HYPER_DEFAULT ;
 
@@ -320,7 +349,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 0, fieldnumber)) ;
         }
 
-        // look for A.is_hyper (ignored if hyper_ratio present)
+        // look for A.is_hyper (ignored if hyper_ratio present
+        // or if A is full)
         fieldnumber = mxGetFieldNumber (A_matlab, "is_hyper") ;
         if (fieldnumber >= 0)
         {
@@ -328,7 +358,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 0, fieldnumber)) ;
         }
 
-        // look for A.hyper_ratio
+        // look for A.hyper_ratio (ignored if A is full)
         fieldnumber = mxGetFieldNumber (A_matlab, "hyper_ratio") ;
         if (fieldnumber >= 0)
         {
@@ -342,7 +372,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // compute the # of non-empty vectors in A only when needed
     //--------------------------------------------------------------------------
 
-    A->nvec_nonempty = -1 ; // compute when needed; see also GxB_Matrix_import
+    if (sparsity != GB_FULL)
+    {
+        A->nvec_nonempty = -1 ; // compute when needed; see GxB_Matrix_import
+    }
 
     ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;
     ASSERT (A->h == NULL) ;
@@ -359,7 +392,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // this might convert A to hypersparse
         GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_ROW) ;
         // so convert it back; hypersparsity is defined below
-        GB_to_nonhyper (A, Context) ;
+        if (sparsity != GB_FULL)
+        {
+            GB_to_nonhyper (A, Context) ;
+        }
         ASSERT (!A->is_csc) ;
     }
 
@@ -371,7 +407,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // convert to hypersparse or set hypersparse ratio, if requested
     //--------------------------------------------------------------------------
 
-    if (has_hyper_ratio)
+    if (sparsity == GB_FULL)
+    {
+        // leave as-is
+        ;
+    }
+    else if (has_hyper_ratio)
     {
         // this sets the hyper_ratio and then conforms the matrix to its
         // desired hypersparsity.  It may stay non-hypersparse.
@@ -379,9 +420,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     }
     else if (A_is_hyper)
     {
-        // this forces the matrix to be always hypersparse
+        // this forces the matrix to be always hypersparse, but
+        // if A is dense, it is converted to full
+        ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
         GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER) ;
-        if (A->vdim > 1)
+        ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
+        if (A->vdim > 1 && !GB_IS_FULL (A))
         {
             ASSERT (A->h != NULL) ;
         }
@@ -392,7 +436,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
     }
 
-    ASSERT_MATRIX_OK (A, "final hyper/nonhyper", GB0) ;
     ASSERT (A->is_csc == is_csc) ;
     ASSERT (nrows_old == GB_NROWS (A)) ;
     ASSERT (ncols_old == GB_NCOLS (A)) ;

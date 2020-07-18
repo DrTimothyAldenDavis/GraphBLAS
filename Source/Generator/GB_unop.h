@@ -16,6 +16,7 @@ GrB_Info GB_unop_tran
     const GrB_Matrix A,
     int64_t *GB_RESTRICT *Rowcounts,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice
+    int naslice,
+    int nthreads
 ) ;
 

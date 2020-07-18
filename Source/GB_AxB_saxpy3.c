@@ -399,6 +399,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
+    const int64_t bvlen = B->vlen ;
     const bool B_is_hyper = (Bh != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -432,6 +433,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_memcpy (Ch, Bh, cnvec * sizeof (int64_t), nth) ;
         C->nvec = bnvec ;
     }
+
+    // C is constructed as sparse, not full.
+    // TODO: create methods for mxm for sparse-times-full and full-times-full
 
     //==========================================================================
     // phase0: create parallel tasks
@@ -497,6 +501,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // const GB_void *GB_RESTRICT Mx = NULL ;
     // size_t msize = 0 ;
     int64_t mnvec = 0 ;
+    int64_t mvlen = 0 ;
     bool M_is_hyper = false ;
     if (M != NULL)
     { 
@@ -506,6 +511,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         // msize = M->type->size ;
         mnvec = M->nvec ;
+        mvlen = M->vlen ;
         M_is_hyper = (Mh != NULL) ;
     }
 
@@ -573,10 +579,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 for (int64_t kk = kfirst ; kk < klast ; kk++)
                 {
                     // jflops = # of flops to compute a single vector A*B(:,j)
-                    // where j == (Bh == NULL) ? kk : Bh [kk].
+                    // where j == GBH (Bh, kk)
                     double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
-                    int64_t bjnz = Bp [kk+1] - Bp [kk] ;
+                    int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]);
 
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
@@ -700,7 +706,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                     // jflops = # of flops to compute a single vector A*B(:,j)
                     double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
-                    int64_t bjnz = Bp [kk+1] - Bp [kk] ;
+                    int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]);
 
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
@@ -721,12 +727,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         int64_t im_first = -1, im_last = -1 ;
                         if (mask_is_M)
                         {
-                            int64_t j = (Bh == NULL) ? kk : Bh [kk] ;
+                            int64_t j = GBH (Bh, kk) ;
                             int64_t mpleft = 0 ;
                             int64_t mpright = mnvec-1 ;
                             int64_t pM, pM_end ;
-                            GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
-                                &pM, &pM_end) ;
+                            GB_lookup (M_is_hyper, Mh, Mp, mvlen, &mpleft,
+                                mpright, j, &pM, &pM_end) ;
                             int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
                             // For C<M>=A*B, if M(:,j) is empty, then there
                             // would be no flops to compute C(:,j), and thus
@@ -735,8 +741,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             ASSERT (mjnz > 0) ;
                             if (mjnz > 0)   // but check anyway, just to be safe
                             { 
-                                im_first = Mi [pM] ;
-                                im_last  = Mi [pM_end-1] ;
+                                im_first = GBI (Mi, pM, mvlen) ;
+                                im_last  = GBI (Mi, pM_end-1, mvlen) ;
                             }
                         }
 
@@ -745,7 +751,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // be evenly divided between all tasks in this team.
                         // Do check if M(:,j) and A(:,k) are disjoint, for
                         // C<M>=A*B, when accounting for the flops for B(k,j).
-                        int64_t pB_start = Bp [kk] ;
+                        int64_t pB_start = GBP (Bp, kk, bvlen) ;
                         int nth = GB_nthreads (bjnz, chunk, nthreads_max) ;
                         int64_t s ;
                         #pragma omp parallel for num_threads(nth) \
@@ -753,18 +759,20 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         for (s = 0 ; s < bjnz ; s++)
                         {
                             // get B(k,j)
-                            int64_t k = Bi [pB_start + s] ;
+                            int64_t k = GBI (Bi, pB_start + s, bvlen) ;
                             // fl = flop count for just A(:,k)*B(k,j)
                             int64_t pA, pA_end ;
                             int64_t pleft = 0 ;
-                            GB_lookup (A_is_hyper, Ah, Ap, &pleft, anvec-1, k,
-                                &pA, &pA_end) ;
+                            GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft,
+                                anvec-1, k, &pA, &pA_end) ;
                             int64_t fl = pA_end - pA ;
                             if (mask_is_M && fl > 0)
                             { 
                                 // no work if A(:,k) and M(:,j) disjoint
-                                int64_t alo = Ai [pA] ;      // get first A(:,k)
-                                int64_t ahi = Ai [pA_end-1] ;// get last A(:,k)
+                                // get first A(:,k)
+                                int64_t alo = GBI (Ai, pA, avlen) ;
+                                // get last A(:,k)
+                                int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
                                 if (ahi < im_first || alo > im_last) fl = 0 ;
                             }
                             Bflops2 [s] = fl ;

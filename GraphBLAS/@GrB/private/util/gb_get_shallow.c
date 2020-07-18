@@ -80,25 +80,28 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         A->vdim          = s [2] ;
         A->nvec          = s [3] ;
         A->nvec_nonempty = s [4] ;
-        bool A_is_hyper  = (bool) (s [5]) ;
+        int sparsity     = (int) (s [5]) ;
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
 
-        // get the pointers
-        mxArray *Ap = mxGetField (X, 0, "p") ;
-        IF (Ap == NULL, ".p missing") ;
-        IF (mxGetM (Ap) != 1, ".p wrong size") ;
-        IF (mxGetN (Ap) != A->plen+1, ".p wrong size") ;
-        A->p = mxGetInt64s (Ap) ;
-        IF (A->p == NULL, ".p wrong type") ;
+        if (sparsity != GB_FULL)
+        {
+            // get the pointers
+            mxArray *Ap = mxGetField (X, 0, "p") ;
+            IF (Ap == NULL, ".p missing") ;
+            IF (mxGetM (Ap) != 1, ".p wrong size") ;
+            IF (mxGetN (Ap) != A->plen+1, ".p wrong size") ;
+            A->p = mxGetInt64s (Ap) ;
+            IF (A->p == NULL, ".p wrong type") ;
 
-        // get the indices
-        mxArray *Ai = mxGetField (X, 0, "i") ;
-        IF (Ai == NULL, ".i missing") ;
-        IF (mxGetM (Ai) != 1, ".i wrong size") ;
-        IF (mxGetN (Ai) != MAX (A->nzmax, 1), ".i wrong size") ;
-        A->i = (A->nzmax == 0) ? NULL : mxGetInt64s (Ai) ;
-        IF (A->i == NULL && A->nzmax > 0, ".i wrong type") ;
+            // get the indices
+            mxArray *Ai = mxGetField (X, 0, "i") ;
+            IF (Ai == NULL, ".i missing") ;
+            IF (mxGetM (Ai) != 1, ".i wrong size") ;
+            IF (mxGetN (Ai) != MAX (A->nzmax, 1), ".i wrong size") ;
+            A->i = (A->nzmax == 0) ? NULL : mxGetInt64s (Ai) ;
+            IF (A->i == NULL && A->nzmax > 0, ".i wrong type") ;
+        }
 
         // get the values
         mxArray *Ax = mxGetField (X, 0, "x") ;
@@ -109,7 +112,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         IF (A->x == NULL && A->nzmax > 0, ".x wrong type") ;
 
         A->h = NULL ;
-        if (A_is_hyper)
+        if (sparsity == GB_HYPER)
         { 
             // get the hyperlist
             mxArray *Ah = mxGetField (X, 0, "h") ;
@@ -121,7 +124,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
 
         // tell GraphBLAS the matrix is shallow
-        A->p_shallow = true ;
+        A->p_shallow = (A->p != NULL) ;
         A->i_shallow = (A->i != NULL) ;
         A->x_shallow = (A->x != NULL) ;
         A->h_shallow = (A->h != NULL) ;
@@ -155,13 +158,10 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         else
         { 
-            // X is a MATLAB dense matrix; create a partially shallow
-            // GrB_Matrix copy by allocating the row indices Xi and pointers Xp
-            // but keeping Xx shallow.
+            // X is a MATLAB dense matrix; so is the GrB_Matrix
             nzmax = MAX (nrows * ncols, 1) ;
-            Xp = (GrB_Index *) mxMalloc ((ncols+1) * sizeof (GrB_Index)) ;
-            Xi = (GrB_Index *) mxMalloc (nzmax * sizeof (GrB_Index)) ;
-            GB_matlab_helper2 (Xp, Xi, (int64_t) ncols, (int64_t) nrows) ;
+            Xp = NULL ;
+            Xi = NULL ;
         }
 
         // get the numeric data
@@ -241,22 +241,23 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             ERROR ("unsupported type") ;
         }
 
-        // import the matrix in CSC format.  This sets Xp, Xi, and Xx to NULL,
-        // but it does not change the MATLAB matrix they came from.
-        OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
-            &Xp, &Xi, &Xx, NULL)) ;
-
-        // tell GraphBLAS the matrix is shallow
         if (X_is_sparse)
         { 
+            // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
+            // NULL, but it does not change the MATLAB matrix they came from.
+            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
+                &Xp, &Xi, &Xx, NULL)) ;
+            // tell GraphBLAS the matrix is shallow
             A->p_shallow = true ;
             A->i_shallow = (A->i != NULL) ;
         }
         else
         { 
-            A->p_shallow = false ;
-            A->i_shallow = false ;
+            // import a full matrix
+            OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols, &Xx, NULL)) ;
         }
+
+        // tell GraphBLAS the matrix is shallow
         A->h_shallow = (A->h != NULL) ;
         A->x_shallow = (A->x != NULL) ;
     }

@@ -17,6 +17,7 @@
     const int64_t  *GB_RESTRICT Ah = A->h ;
     const int64_t  *GB_RESTRICT Ai = A->i ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
+    const int64_t avlen = A->vlen ;
 
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
@@ -45,10 +46,10 @@
             // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t j = GBH (Ah, k) ;
             int64_t pA_start, pA_end ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, NULL,
-                taskid, k, kfirst, klast, pstart_slice, NULL, NULL, Ap) ;
+            GB_get_pA_and_pC (&pA_start, &pA_end, NULL, taskid, k,
+                kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
 
             // pC points to the start of C(:,j) if C is dense
             int64_t pC = j * cvlen ;
@@ -62,7 +63,7 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 { 
-                    int64_t p = pC + Ai [pA] ;
+                    int64_t p = pC + GBI (Ai, pA, avlen) ;
                     GB_COPY_A_TO_C (Cx, p, Ax, pA) ;    // Cx [p] = Ax [pA]
                 }
             }
@@ -73,7 +74,7 @@
                 {
                     if (GB_AX_MASK (Ax, pA, asize))
                     { 
-                        int64_t p = pC + Ai [pA] ;
+                        int64_t p = pC + GBI (Ai, pA, avlen) ;
                         GB_COPY_A_TO_C (Cx, p, Ax, pA) ;    // Cx [p] = Ax [pA]
                     }
                 }

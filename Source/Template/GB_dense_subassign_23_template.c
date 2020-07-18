@@ -78,6 +78,7 @@
         const int64_t *GB_RESTRICT Bp = B->p ;
         const int64_t *GB_RESTRICT Bh = B->h ;
         const int64_t *GB_RESTRICT Bi = B->i ;
+        const int64_t bvlen = B->vlen ;
         const int64_t cvlen = C->vlen ;
 
         int taskid ;
@@ -100,13 +101,14 @@
                 // find the part of B(:,k) and C(:,k) for this task
                 //--------------------------------------------------------------
 
-                int64_t j = (Bh == NULL) ? k : Bh [k] ;
+                int64_t j = GBH (Bh, k) ;
                 int64_t my_pB_start, my_pB_end ;
-                GB_get_pA_and_pC (&my_pB_start, &my_pB_end, NULL,
-                    taskid, k, kfirst, klast, pstart_slice, NULL, NULL, Bp) ;
+                GB_get_pA_and_pC (&my_pB_start, &my_pB_end, NULL, taskid, k,
+                    kfirst, klast, pstart_slice, NULL, NULL, 0, Bp, bvlen) ;
 
-                int64_t pB_start = Bp [k] ;
-                bool ajdense = ((Bp [k+1] - pB_start) == cvlen) ;
+                int64_t pB_start = GBP (Bp, k, bvlen) ;
+                int64_t pB_end   = GBP (Bp, k+1, bvlen) ;
+                bool ajdense = ((pB_end - pB_start) == cvlen) ;
 
                 // pC points to the start of C(:,j) if C is dense
                 int64_t pC = j * cvlen ;
@@ -186,7 +188,7 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
                     { 
-                        int64_t i = Bi [pB] ;
+                        int64_t i = Bi [pB] ;               // ok: B is sparse
                         int64_t p = pC + i ;
                         GB_GETB (bij, Bx, pB) ;                 // bij = B(i,j)
                         GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // C(i,j) += bij

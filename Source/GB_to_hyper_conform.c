@@ -10,9 +10,8 @@
 // The input matrix can have shallow A->p and/or A->h components.  If the
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
-// The input matrix may be jumbled; this is not an error condition.  Zombies
-// are OK, but A never has pending tuples.  However, this function is agnostic
-// about pending tuples so they could be OK.
+// Zombies are OK, but A never has pending tuples.  However, this function is
+// agnostic about pending tuples so they could be OK.
 
 #include "GB.h"
 
@@ -27,12 +26,32 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A to conform", GB0) ;
+    ASSERT_MATRIX_OK (A, "A to conform", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
-    // convert to hypersparse or non-hypersparse
+    // convert to full if all entries present
+    //--------------------------------------------------------------------------
+
+    if (GB_IS_FULL (A))
+    {
+        // A is already full; nothing to do
+        ASSERT (!GB_ZOMBIES (A)) ;
+        ASSERT_MATRIX_OK (A, "A conformed: already full", GB0) ;
+        return (GrB_SUCCESS) ;
+    }
+
+    if (GB_is_dense (A) && !GB_ZOMBIES (A))
+    {
+        // A is sparse or hypersparse with all entries present; convert to full
+        GB_sparse_to_full (A) ;
+        ASSERT_MATRIX_OK (A, "A conformed: converted to full", GB0) ;
+        return (GrB_SUCCESS) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // convert to sparse or hypersparse
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
@@ -52,6 +71,7 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
         GB_to_nonhyper_test (A->hyper_ratio, A->nvec_nonempty, A->vdim))
     { 
         // A is hypersparse but should be converted to sparse
+        ASSERT (!GB_IS_FULL (A)) ;
         info = GB_to_nonhyper (A, Context) ;
     }
     else
@@ -71,7 +91,7 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A conformed", GB0) ;
+    ASSERT_MATRIX_OK (A, "A conformed", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

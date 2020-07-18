@@ -179,7 +179,7 @@ int main (int argc, char **argv)
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
-    OK (GxB_set (GxB_BURBLE, true)) ;
+    // OK (GxB_set (GxB_BURBLE, true)) ;
     fprintf (stderr, "\nmis_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
@@ -188,7 +188,6 @@ int main (int argc, char **argv)
 
     OK (get_matrix (&A, argc, argv, true, true)) ;
     OK (GrB_Matrix_nrows (&n, A)) ;
-    printf ("nrows: %ld\n", n) ;
 
     //--------------------------------------------------------------------------
     // convert A to boolean

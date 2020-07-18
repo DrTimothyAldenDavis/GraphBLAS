@@ -137,52 +137,68 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 // define the function to use to burble
 #define GBBURBLE(...)                               \
 {                                                   \
-    bool burble = GB_Global_burble_get ( ) ;        \
-    if (burble)                                     \
+    if (GB_Global_burble_get ( ))                   \
     {                                               \
         GBDUMP (__VA_ARGS__) ;                      \
     }                                               \
 }
 
+// burble if a matrix is dense or full
+#define GB_BURBLE_DENSE(A,format)                               \
+{                                                               \
+    if (GB_IS_FULL (A))                                         \
+    {                                                           \
+        GBBURBLE (format, "full") ;                             \
+    }                                                           \
+    else if (GB_is_dense (A) && !GB_PENDING_OR_ZOMBIES (A))     \
+    {                                                           \
+        GBBURBLE (format, "dense") ;                            \
+    }                                                           \
+}
+
 #if defined ( _OPENMP )
 
-// burble with timing
-#define GB_BURBLE_START(func)                       \
-double t_burble = 0 ;                               \
-bool burble = GB_Global_burble_get ( ) ;            \
-{                                                   \
-    if (burble)                                     \
-    {                                               \
-        GBBURBLE (" [ " func " ") ;                 \
-        t_burble = GB_OPENMP_GET_WTIME ;            \
-    }                                               \
-}
+    // burble with timing
+    #define GB_BURBLE_START(func)                       \
+    double t_burble = 0 ;                               \
+    {                                                   \
+        if (GB_Global_burble_get ( ))                   \
+        {                                               \
+            GBBURBLE (" [ " func " ") ;                 \
+            t_burble = GB_OPENMP_GET_WTIME ;            \
+        }                                               \
+    }
 
-#define GB_BURBLE_END                               \
-{                                                   \
-    if (burble)                                     \
-    {                                               \
-        t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-        GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
-    }                                               \
-}
+    #define GB_BURBLE_END                               \
+    {                                                   \
+        if (GB_Global_burble_get ( ))                   \
+        {                                               \
+            t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
+            GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
+        }                                               \
+    }
 
 #else
 
-// burble with no timing
-#define GB_BURBLE_START(func)                   \
-    GBBURBLE (" [ " func " ")
+    // burble with no timing
 
-#define GB_BURBLE_END                           \
-    GBBURBLE ("]\n")
+    #define GB_BURBLE_START(func)                       \
+        GBBURBLE (" [ " func " ")
+
+    #define GB_BURBLE_END                               \
+        GBBURBLE ("]\n")
 
 #endif
 
-#define GB_BURBLE_N(n,...)                      \
-    if (n > 1) GBBURBLE (__VA_ARGS__)
+#define GB_BURBLE_N(n,...)                              \
+{                                                       \
+    if (n > 1) GBBURBLE (__VA_ARGS__)                   \
+}
 
-#define GB_BURBLE_MATRIX(A, ...)                \
-    if (!(A->vlen <= 1 && A->vdim <= 1)) GBBURBLE (__VA_ARGS__)
+#define GB_BURBLE_MATRIX(A, ...)                                    \
+{                                                                   \
+    if (!(A->vlen <= 1 && A->vdim <= 1)) GBBURBLE (__VA_ARGS__)     \
+}
 
 #else
 
@@ -192,6 +208,7 @@ bool burble = GB_Global_burble_get ( ) ;            \
 #define GB_BURBLE_END
 #define GB_BURBLE_N(n,...)
 #define GB_BURBLE_MATRIX(A,...)
+#define GB_BURBLE_DENSE
 
 #endif
 #endif

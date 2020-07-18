@@ -259,6 +259,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     { 
         // MT = M_in' also typecasting to boolean.  It is not freed here
         // unless an error occurs, but is returned to the caller.
+        GBBURBLE ("(M transpose) ") ;
         GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in,
             NULL, NULL, NULL, false, Context)) ;
         M = MT ;

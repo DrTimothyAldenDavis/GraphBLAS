@@ -114,7 +114,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     // const int64_t *GB_RESTRICT Ai = A->i ;
-    // const int64_t avlen = A->vlen ;
+    const int64_t avlen = A->vlen ;
     // const int64_t avdim = A->vdim ;
     // const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
@@ -123,7 +123,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     // const int64_t *GB_RESTRICT Bi = B->i ;
-    // const int64_t bvlen = B->vlen ;
+    const int64_t bvlen = B->vlen ;
     // const int64_t bvdim = B->vdim ;
     // const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
@@ -139,6 +139,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
 
+    // C is sparse or hypersparse, not full
     info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
@@ -154,7 +155,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
+    int64_t *GB_RESTRICT Cwork = C->i ;    // ok: C is sparse; use as workspace
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -171,14 +172,30 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // GB_accum_mask later on.
 
     nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
-    GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
-    if (M_is_hyper)
+    if (GB_IS_FULL (M))
     { 
-        GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
+        // M is full, but C is sparse
+        int64_t k ;
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (k = 0 ; k <= cnvec ; k++)
+        {
+            Cp [k] = k * cvlen ;
+        }
+        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+        C->nvec = cvdim ;
+    }
+    else
+    {
+        // M is sparse or hypersparse; C is the same as M
+        GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
+        if (M_is_hyper)
+        { 
+            GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
+        }
+        C->nvec_nonempty = M->nvec_nonempty ;
+        C->nvec = M->nvec ;
     }
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = M->nvec_nonempty ;
-    C->nvec = M->nvec ;
 
     //--------------------------------------------------------------------------
     // construct the tasks for the first phase
@@ -227,15 +244,16 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             // get j, the kth vector of C and M
             //------------------------------------------------------------------
 
-            int64_t j = (Mh == NULL) ? k : Mh [k] ;
-            GB_GET_VECTOR (pM, pM_end, pM, pM_end, Mp, k) ;
+            int64_t j = GBH (Mh, k) ;
+            GB_GET_VECTOR (pM, pM_end, pM, pM_end, Mp, k, mvlen) ;
 
             //------------------------------------------------------------------
             // get B(:,j)
             //------------------------------------------------------------------
 
             int64_t pB, pB_end ;
-            GB_lookup (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j, &pB, &pB_end) ;
+            GB_lookup (B_is_hyper, Bh, Bp, bvlen, &bpleft, bnvec-1, j,
+                &pB, &pB_end) ;
             int64_t bjnz = pB_end - pB ;
 
             //------------------------------------------------------------------
@@ -270,9 +288,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                     int64_t work = 1 ;
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t pA, pA_end, i = Mi [pM] ;
-                        GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,
-                            &pA, &pA_end) ;
+                        int64_t pA, pA_end ;
+                        int64_t i = GBI (Mi, pM, mvlen) ;
+                        GB_lookup (A_is_hyper, Ah, Ap, avlen, &apleft,
+                            anvec-1, i, &pA, &pA_end) ;
                         int64_t ajnz = pA_end - pA ;
                         work += GB_IMIN (ajnz, bjnz) ;
                     }

@@ -24,7 +24,7 @@
 // is sparse.   If that change is made, this kernel can start with
 // converting C to sparse if A is sparse.
 // FULL TODO: kernel: C(I,J)<A,struct>=A
-// FULL TODO: if A sparse then convert C to sparse on input
+// FULL TODO: kernel: C(I,J)<M>=A when both A and C are dense/full
 
 #include "GB_subassign_methods.h"
 
@@ -51,10 +51,10 @@ GrB_Info GB_subassign_06n
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t cvlen = C->vlen ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -63,7 +63,6 @@ GrB_Info GB_subassign_06n
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t Anvec = A->nvec ;
     const bool A_is_hyper = (Ah != NULL) ;
-    const int64_t avlen = A->vlen ;
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
@@ -113,8 +112,8 @@ GrB_Info GB_subassign_06n
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = (Mh == NULL) ? k : Mh [k] ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k) ;
+            int64_t j = GBH (Mh, k) ;
+            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -125,7 +124,7 @@ GrB_Info GB_subassign_06n
             int64_t pA, pA_end ;
             GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
             int64_t ajnz = pA_end - pA ;
-            bool ajdense = (ajnz == avlen) ;
+            bool ajdense = (ajnz == Avlen) ;
             int64_t pA_start = pA ;
 
             //------------------------------------------------------------------
@@ -135,7 +134,7 @@ GrB_Info GB_subassign_06n
             GB_GET_jC ;
             int64_t cjnz = pC_end - pC_start ;
             if (cjnz == 0 && ajnz == 0) continue ;
-            bool cjdense = (cjnz == cvlen) ;
+            bool cjdense = (cjnz == Cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = A(:,j) ; no S
@@ -157,13 +156,13 @@ GrB_Info GB_subassign_06n
 
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // find iA in A(:,j)
                         // A(:,j) is dense; no need for binary search
                         pA = pA_start + iA ;
-                        ASSERT (Ai [pA] == iA) ;
+                        ASSERT (GBI (Ai, pA, Avlen) == iA) ;
                         // ----[C A 1] or [X A 1]-----------------------
                         // [C A 1]: action: ( =A ): copy A to C, no acc
                         // [X A 1]: action: ( undelete ): zombie lives
@@ -188,7 +187,7 @@ GrB_Info GB_subassign_06n
 
                     if (GB_mcast (Mx, pM, msize))
                     { 
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // find iA in A(:,j)
@@ -231,14 +230,14 @@ GrB_Info GB_subassign_06n
 
                     if (GB_mcast (Mx, pM, msize))
                     {
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
 
                         // lookup iA in A(:,j)
                         pA = pA_start + iA ;
-                        ASSERT (Ai [pA] == iA) ;
+                        ASSERT (GBI (Ai, pA, Avlen) == iA) ;
 
                         if (cij_found)
                         { 
@@ -274,7 +273,7 @@ GrB_Info GB_subassign_06n
 
                     if (GB_mcast (Mx, pM, msize))
                     {
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
@@ -343,8 +342,8 @@ GrB_Info GB_subassign_06n
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = (Mh == NULL) ? k : Mh [k] ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k) ;
+            int64_t j = GBH (Mh, k) ;
+            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -356,7 +355,7 @@ GrB_Info GB_subassign_06n
             GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
             int64_t ajnz = pA_end - pA ;
             if (ajnz == 0) continue ;
-            bool ajdense = (ajnz == avlen) ;
+            bool ajdense = (ajnz == Avlen) ;
             int64_t pA_start = pA ;
 
             //------------------------------------------------------------------
@@ -364,7 +363,7 @@ GrB_Info GB_subassign_06n
             //------------------------------------------------------------------
 
             GB_GET_jC ;
-            bool cjdense = ((pC_end - pC_start) == cvlen) ;
+            bool cjdense = ((pC_end - pC_start) == Cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = A(:,j)
@@ -386,14 +385,14 @@ GrB_Info GB_subassign_06n
 
                     if (GB_mcast (Mx, pM, msize))
                     {
-                        int64_t iA = Mi [pM] ;
+                        int64_t iA = GBI (Mi, pM, Mvlen) ;
 
                         // find iA in A(:,j)
                         if (ajdense)
                         {
                             // A(:,j) is dense; no need for binary search
                             pA = pA_start + iA ;
-                            ASSERT (Ai [pA] == iA) ;
+                            ASSERT (GBI (Ai, pA, Avlen) == iA) ;
                         }
                         else
                         {

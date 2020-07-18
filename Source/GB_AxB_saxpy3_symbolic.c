@@ -22,7 +22,7 @@
 
 void GB_AxB_saxpy3_symbolic
 (
-    GrB_Matrix C,               // Cp [k] is computed for coarse tasks
+    GrB_Matrix C,               // Cp is computed for coarse tasks
     const GrB_Matrix M,         // mask matrix M
     bool Mask_comp,             // M complemented, or not
     bool Mask_struct,           // M structural, or not
@@ -48,7 +48,7 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     // const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
-    // const int64_t bvlen = B->vlen ;
+    const int64_t bvlen = B->vlen ;
     // const int64_t bnvec = B->nvec ;
     // const bool B_is_hyper = (Bh != NULL) ;
 
@@ -56,6 +56,7 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
+    const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
     // const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
 
@@ -65,6 +66,7 @@ void GB_AxB_saxpy3_symbolic
     const GB_void *GB_RESTRICT Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
+    int64_t mvlen = 0 ;
     bool M_is_hyper = false ;
     if (M != NULL)
     { 
@@ -74,6 +76,7 @@ void GB_AxB_saxpy3_symbolic
         Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
+        mvlen = M->vlen ;
         M_is_hyper = (Mh != NULL) ;
     }
 
@@ -118,6 +121,10 @@ void GB_AxB_saxpy3_symbolic
             //------------------------------------------------------------------
         
             int64_t kk = TaskList [taskid].vector ;
+            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
+            // no work to do if B(:,j) is empty
+            if (bjnz == 0) continue ;
+
             // partition M(:,j)
             GB_GET_M_j ;        // get M(:,j)
             int team_size = TaskList [taskid].team_size ;
@@ -168,7 +175,7 @@ void GB_AxB_saxpy3_symbolic
                 {
                     GB_GET_M_ij ;                   // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = Mi [pM] ;
+                    int64_t i = GBI (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                     for (GB_HASH (i))
                     { 
@@ -224,12 +231,12 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;            // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
                         if (bjnz == 1)
                         { 
-                            int64_t k = Bi [pB] ;   // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;            // get A(:,k)
                             Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
                             continue ;
@@ -238,7 +245,7 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == cvlen)
                             { 
@@ -248,7 +255,7 @@ void GB_AxB_saxpy3_symbolic
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                int64_t i = Ai [pA] ;    // get A(i,k)
+                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 if (Hf [i] != mark)     // if true, i is new
                                 { 
                                     Hf [i] = mark ; // mark C(i,j) as seen
@@ -256,7 +263,8 @@ void GB_AxB_saxpy3_symbolic
                                 }
                             }
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;            // ok: C is sparse
                     }
 
                 }
@@ -278,13 +286,13 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;            // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;           // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j ;            // get M(:,j)
                         if (mjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;           // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
@@ -295,7 +303,7 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
@@ -309,7 +317,8 @@ void GB_AxB_saxpy3_symbolic
                             GB_SCAN_M_j_OR_A_k ;
                             #undef GB_IKJ
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;        // ok: C is sparse
                     }
 
                 }
@@ -331,7 +340,7 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;                    // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j ;            // get M(:,j)
@@ -342,12 +351,12 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 if (Hf [i] < mark)      // if true, M(i,j) is 0
                                 { 
                                     Hf [i] = mark1 ;    // mark C(i,j) as seen
@@ -355,7 +364,8 @@ void GB_AxB_saxpy3_symbolic
                                 }
                             }
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;        // ok: C is sparse
                     }
                 }
 
@@ -388,11 +398,12 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;            // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ; continue ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
+                            continue ;
                         }
                         if (bjnz == 1)
                         { 
-                            int64_t k = Bi [pB] ;   // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;            // get A(:,k)
                             Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
                             continue ;
@@ -401,12 +412,12 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
                                     if (Hf [hash] < mark)
@@ -420,7 +431,8 @@ void GB_AxB_saxpy3_symbolic
                                 }
                             }
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;        // ok: C is sparse
                     }
 
                 }
@@ -428,7 +440,7 @@ void GB_AxB_saxpy3_symbolic
                 {
 
                     //----------------------------------------------------------
-                    // phase1: hash task, C<M>=A*B
+                    // phase1: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
                     // Initially, Hf [...] < mark for all of Hf.
@@ -444,13 +456,13 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;            // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j ;            // get M(:,j)
                         if (mjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
@@ -460,7 +472,7 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
@@ -483,7 +495,8 @@ void GB_AxB_saxpy3_symbolic
                             GB_SCAN_M_j_OR_A_k ;
                             #undef GB_IKJ
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;        // ok: C is sparse
                     }
 
                 }
@@ -506,7 +519,7 @@ void GB_AxB_saxpy3_symbolic
                         GB_GET_B_j ;            // get B(:,j)
                         if (bjnz == 0)
                         { 
-                            Cp [kk] = 0 ;
+                            Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
                         GB_GET_M_j ;            // get M(:,j)
@@ -516,12 +529,12 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
                                     if (Hf [hash] < mark)   // if true, i is new
@@ -535,7 +548,8 @@ void GB_AxB_saxpy3_symbolic
                                 }
                             }
                         }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
+                        // count the entries in C(:,j)
+                        Cp [kk] = cjnz ;        // ok: C is sparse
                     }
                 }
             }
@@ -553,6 +567,9 @@ void GB_AxB_saxpy3_symbolic
         {
             int64_t kk = TaskList [taskid].vector ;
             ASSERT (kk >= 0 && kk < B->nvec) ;
+            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
+            // no work to do if B(:,j) is empty
+            if (bjnz == 0) continue ;
             int64_t hash_size = TaskList [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
             int master = TaskList [taskid].master ;
@@ -573,7 +590,7 @@ void GB_AxB_saxpy3_symbolic
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij ;                    // get M(i,j)
-                    ASSERT (Hf [Mi [pM]] == mij) ;
+                    ASSERT (Hf [GBI (Mi, pM, mvlen)] == mij) ;
                 }
                 for (int64_t i = 0 ; i < cvlen ; i++)
                 {
@@ -594,7 +611,7 @@ void GB_AxB_saxpy3_symbolic
                 {
                     GB_GET_M_ij ;                   // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = Mi [pM] ;
+                    int64_t i = GBI (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                     int64_t probe = 0 ;
                     for (GB_HASH (i))

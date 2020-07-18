@@ -92,6 +92,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // allocate workspace and slice A and B
     //--------------------------------------------------------------------------
 
+    // A and B can have any sparsity: full, sparse, or hypersparse.
+    // C is always created as sparse or hypersparse.
+
     if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
     { 
         // out of memory
@@ -175,14 +178,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             C_count [k] = s ;
             s += c ;
         }
-        Cp [k] = s ;
+        Cp [k] = s ;    // ok: C is sparse
     }
-    Cp [cnvec] = 0 ;
+    Cp [cnvec] = 0 ;    // ok: C is sparse
     C->nvec = cnvec ;
 
     // Cp = cumulative sum of Cp
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
-    int64_t cnz = Cp [cnvec] ;
+    int64_t cnz = Cp [cnvec] ;  // ok: C is sparse
 
     // C->h = B->h
     if (B->h != NULL)
@@ -198,7 +201,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // allocate C->x and C->i
     //--------------------------------------------------------------------------
 
-    info = GB_ix_alloc (C, cnz, true, Context) ;
+    info = GB_ix_alloc (C, cnz, true, true, Context) ;  // ok: C is sparse
     if (info != GrB_SUCCESS)
     { 
         // out of memory

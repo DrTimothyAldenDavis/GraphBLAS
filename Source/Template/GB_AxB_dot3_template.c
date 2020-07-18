@@ -21,6 +21,7 @@
     const int64_t *GB_RESTRICT Ch = C->h ;
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const int64_t cvlen = C->vlen ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
@@ -33,11 +34,13 @@
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
+    const size_t mvlen = M->vlen ;
 
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
+    const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
 
@@ -77,25 +80,23 @@
             // get C(:,k) and M(:k)
             //------------------------------------------------------------------
 
-            int64_t j = (Ch == NULL) ? k : Ch [k] ;
-            int64_t pC_start, pC_end ;
+            int64_t j = GBH (Ch, k) ;
+            int64_t pC_start = GBP (Cp, k, cvlen) ;
+            int64_t pC_end   = GBP (Cp, k+1, cvlen) ;
             if (k == kfirst)
             { 
                 // First vector for task; may only be partially owned.
                 pC_start = pC_first ;
-                pC_end   = GB_IMIN (Cp [k+1], pC_last) ;
+                pC_end   = GB_IMIN (pC_end, pC_last) ;
             }
             else if (k == klast)
             { 
                 // Last vector for task; may only be partially owned.
-                pC_start = Cp [k] ;
                 pC_end   = pC_last ;
             }
             else
             { 
                 // task completely owns this vector C(:,k).
-                pC_start = Cp [k] ;
-                pC_end   = Cp [k+1] ;
             }
 
             //------------------------------------------------------------------
@@ -103,7 +104,7 @@
             //------------------------------------------------------------------
 
             int64_t pB_start, pB_end ;
-            GB_lookup (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j,
+            GB_lookup (B_is_hyper, Bh, Bp, bvlen, &bpleft, bnvec-1, j,
                 &pB_start, &pB_end) ;
             int64_t bjnz = pB_end - pB_start ;
 
@@ -122,7 +123,8 @@
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
                 { 
                     // C(i,j) is a zombie
-                    Ci [pC] = GB_FLIP (Mi [pC]) ;
+                    int64_t i = GBI (Mi, pC, mvlen) ;
+                    Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
                 }
             }
             else
@@ -132,8 +134,8 @@
                 // B(:,j) not empty
                 //--------------------------------------------------------------
 
-                int64_t ib_first = Bi [pB_start] ;
-                int64_t ib_last  = Bi [pB_end-1] ;
+                int64_t ib_first = GBI (Bi, pB_start, bvlen) ;
+                int64_t ib_last  = GBI (Bi, pB_end-1, bvlen) ;
                 int64_t apleft = 0 ;
 
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
@@ -144,7 +146,7 @@
                     //----------------------------------------------------------
 
                     // get the value of M(i,j)
-                    int64_t i = Mi [pC] ;
+                    int64_t i = GBI (Mi, pC, mvlen) ;
                     if (GB_mcast (Mx, pC, msize))   // note: Mx [pC], same as Cx
                     { 
 
@@ -154,8 +156,8 @@
 
                         // get A(:,i), if it exists
                         int64_t pA, pA_end ;
-                        GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,
-                            &pA, &pA_end) ;
+                        GB_lookup (A_is_hyper, Ah, Ap, avlen, &apleft,
+                            anvec-1, i, &pA, &pA_end) ;
 
                         // C(i,j) = A(:,i)'*B(:,j)
                         #include "GB_AxB_dot_cij.c"
@@ -168,7 +170,7 @@
                         //------------------------------------------------------
 
                         task_nzombies++ ;   // GB_AxB_dot3: computing C<M>=A'*B
-                        Ci [pC] = GB_FLIP (i) ;
+                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
                     }
                 }
             }

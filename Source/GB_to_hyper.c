@@ -17,8 +17,6 @@
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
-// The input matrix may be jumbled; this is not an error condition.
-
 #include "GB.h"
 
 GrB_Info GB_to_hyper        // convert a matrix to hypersparse
@@ -32,7 +30,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converting to hypersparse", GB0) ;
+    ASSERT_MATRIX_OK (A, "A converting to hypersparse", GB0) ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
@@ -40,13 +38,14 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // convert A to hypersparse form
     //--------------------------------------------------------------------------
 
-    if (A->h == NULL)
+    if (A->h == NULL && !GB_IS_FULL (A))
     {
 
         //----------------------------------------------------------------------
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
+        GBBURBLE ("(sparse to hyper) ") ;
         int64_t n = A->vdim ;
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
         int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
@@ -161,8 +160,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT (anz == GB_NNZ (A)) ;
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to hypersparse", GB0) ;
-    ASSERT (A->h != NULL) ;
+    ASSERT_MATRIX_OK (A, "A converted to hypersparse (or left full)", GB0) ;
+    ASSERT (GB_IS_FULL (A) || A->h != NULL) ;
     return (GrB_SUCCESS) ;
 }
 

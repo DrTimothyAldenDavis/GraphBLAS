@@ -96,7 +96,7 @@ GrB_Info GB_subassign_emult_slice
     int64_t *GB_RESTRICT Ci = C->i ;
     int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -104,10 +104,12 @@ GrB_Info GB_subassign_emult_slice
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
+    const int64_t Mvlen = M->vlen ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t Avlen = A->vlen ;
 
     //--------------------------------------------------------------------------
     // construct fine/coarse tasks for eWise multiply of A.*M
@@ -166,9 +168,9 @@ GrB_Info GB_subassign_emult_slice
             //------------------------------------------------------------------
 
             int64_t k = kfirst ;
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_EMULT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
-            GB_GET_EMULT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+            int64_t j = GBH (Zh, k) ;
+            GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
+            GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)
@@ -177,10 +179,10 @@ GrB_Info GB_subassign_emult_slice
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = Ai [pA] ;
-            int64_t iA_last  = Ai [pA_end-1] ;
-            int64_t iM_first = Mi [pM] ;
-            int64_t iM_last  = Mi [pM_end-1] ;
+            int64_t iA_first = GBI (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
 
             //------------------------------------------------------------------
@@ -188,7 +190,7 @@ GrB_Info GB_subassign_emult_slice
             //------------------------------------------------------------------
 
             int64_t GB_LOOKUP_jC ;
-            bool cjdense = (pC_end - pC_start == cvlen) ;
+            bool cjdense = (pC_end - pC_start == Cvlen) ;
 
             //------------------------------------------------------------------
             // slice C(:,jC) for this fine task

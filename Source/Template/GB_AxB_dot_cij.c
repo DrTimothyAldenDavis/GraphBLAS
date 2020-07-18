@@ -154,7 +154,8 @@
         ;
 
     }
-    else if (Ai [pA_end-1] < ib_first || ib_last < Ai [pA])
+    else if (GBI (Ai, pA_end-1, avlen) < ib_first
+        || ib_last < GBI (Ai, pA, avlen))
     { 
 
         //----------------------------------------------------------------------
@@ -243,7 +244,8 @@
 
             #else
 
-                int64_t k = Bi [pB] ;               // first row index of B(:,j)
+                // first row index of B(:,j)
+                int64_t k = Bi [pB] ;               // ok: B is sparse
                 // cij = A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
                 GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
@@ -252,7 +254,8 @@
                 for (int64_t p = pB+1 ; p < pB_end ; p++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                    int64_t k = Bi [p] ;                // next index of B(:,j)
+                    // next index of B(:,j)
+                    int64_t k = Bi [p] ;                // ok: B is sparse
                     // cij += A(k,i) * B(k,j)
                     GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
                     GB_GETB (bkj, Bx, p   ) ;           // bkj = B(k,j)
@@ -295,7 +298,8 @@
 
             #else
 
-                int64_t k = Ai [pA] ;               // first row index of A(:,i)
+                // first row index of A(:,i)
+                int64_t k = Ai [pA] ;               // ok: A is sparse
                 // cij = A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
                 GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
@@ -304,7 +308,8 @@
                 for (int64_t p = pA+1 ; p < pA_end ; p++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                    int64_t k = Ai [p] ;                // next index of A(:,i)
+                    // next index of A(:,i)
+                    int64_t k = Ai [p] ;                // ok: A is sparse
                     // cij += A(k,i) * B(k,j)
                     GB_GETA (aki, Ax, p   ) ;           // aki = A(k,i)
                     GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
@@ -329,8 +334,8 @@
 
         while (pA < pA_end && pB < pB_end)
         {
-            int64_t ia = Ai [pA] ;
-            int64_t ib = Bi [pB] ;
+            int64_t ia = Ai [pA] ;              // ok: A is sparse
+            int64_t ib = Bi [pB] ;              // ok: B is sparse
             if (ia < ib)
             { 
                 // A(ia,i) appears before B(ib,j)
@@ -365,8 +370,8 @@
 
         while (pA < pA_end && pB < pB_end)
         {
-            int64_t ia = Ai [pA] ;
-            int64_t ib = Bi [pB] ;
+            int64_t ia = Ai [pA] ;              // ok: A is sparse
+            int64_t ib = Bi [pB] ;              // ok: B is sparse
             if (ia < ib)
             { 
                 // A(ia,i) appears before B(ib,j)
@@ -702,8 +707,8 @@
             // cleanup for remaining entries of A(:,i) and B(:,j)
             while (pA < pA_end && pB < pB_end)
             {
-                int64_t ia = Ai [pA] ;
-                int64_t ib = Bi [pB] ;
+                int64_t ia = Ai [pA] ;              // ok: A is sparse
+                int64_t ib = Bi [pB] ;              // ok: B is sparse
                 if (ia == ib)
                 {
                     GB_DOT (0,0) ;
@@ -730,13 +735,13 @@
         { 
             // C(i,j) = cij
             GB_CIJ_SAVE (cij, pC) ;
-            Ci [pC] = i ;
+            Ci [pC] = i ;               // ok: C is sparse
         }
         else
         { 
             // C(i,j) becomes a zombie
             task_nzombies++ ;           // GB_AxB_dot3: computing C<M>=A'*B
-            Ci [pC] = GB_FLIP (i) ;
+            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
         }
 
     #else
@@ -749,7 +754,7 @@
                 C_count [kB] ++ ;
             #else
                 GB_CIJ_SAVE (cij, cnz) ;
-                Ci [cnz++] = i ;
+                Ci [cnz++] = i ;        // ok: C is sparse
                 if (cnz > cnz_last) break ;
             #endif
         }

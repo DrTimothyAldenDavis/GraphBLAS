@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Convert a GraphBLAS sparse matrix to a MATLAB struct C containing
+// Convert a GraphBLAS sparse or full matrix to a MATLAB struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.
 
 // This could be done using only user-callable GraphBLAS functions, by
@@ -51,21 +51,30 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (!C->i_shallow && !C->x_shallow && !C->p_shallow && !C->h_shallow) ;
 
     // make sure there are no pending computations
-    GB_Matrix_wait (C, Context) ;
+    bool C_is_full = GB_IS_FULL (C) ;
+    if (C_is_full)
+    {
+        ASSERT (!GB_ZOMBIES (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+    }
+    else
+    {
+        // this may convert C to full
+        GB_Matrix_wait (C, Context) ;
+    }
 
     // must be done after GB_Matrix_wait:
     int64_t cnz = GB_NNZ (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
-    // convert C to non-hypersparse
+    // ensure C is not hypersparse
     GxB_Matrix_Option_set_(C, GxB_HYPER, GxB_NEVER_HYPER) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper", GB0) ;
     ASSERT (C->h == NULL) ;
 
     // make sure it's CSC
-    // GrB_Matrix CT ;
     if (!C->is_csc)
     {
         GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL) ;
@@ -82,17 +91,25 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         C->x = GB_CALLOC (2 * sizeof (double), GB_void) ;
         C->x_shallow = false ;
     }
-    if (C->i == NULL)
+
+    C_is_full = GB_IS_FULL (C) ;
+    if (!C_is_full)
     {
-        ASSERT (C->nzmax == 0 && cnz == 0) ;
-        C->i = GB_CALLOC (1, int64_t) ;
-        C->i_shallow = false ;
-    }
-    if (C->p == NULL)
-    {
-        ASSERT (C->nzmax == 0 && cnz == 0) ;
-        C->p = GB_CALLOC (C->vdim + 1, int64_t) ;
-        C->p_shallow = false ;
+        // MATLAB doesn't want NULL pointers in its empty sparse matrices
+        if (C->i == NULL)
+        {
+            // printf ("C->nzmax %ld cnz %ld\n", C->nzmax, cnz) ;
+            ASSERT (C->nzmax == 0 && cnz == 0) ;
+            C->i = GB_CALLOC (1, int64_t) ;
+            C->i_shallow = false ;
+        }
+        if (C->p == NULL)
+        {
+            // printf ("C->nzmax %ld cnz %ld\n", C->nzmax, cnz) ;
+            ASSERT (C->nzmax == 0 && cnz == 0) ;
+            C->p = GB_CALLOC (C->vdim + 1, int64_t) ;
+            C->p_shallow = false ;
+        }
     }
 
     C->nzmax = GB_IMAX (C->nzmax, 1) ;
@@ -101,7 +118,89 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     // create the MATLAB matrix A and link in the numerical values of C
     //--------------------------------------------------------------------------
 
-    if (C->type == GrB_BOOL)
+    if (C_is_full)
+    {
+        // C is full.  See gb_export_to_mxfull
+        // allocate an empty dense matrix of the right type, then set content
+
+        void *Cx = (void *) C->x ;
+
+        if (ctype == GrB_BOOL)
+        { 
+            A = mxCreateLogicalMatrix (0, 0) ;
+            mxSetData (A, Cx) ;      // OK:bool
+        }
+        else if (ctype == GrB_FP32)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxREAL) ;
+            mxSetSingles (A, Cx) ;
+        }
+        else if (ctype == GrB_FP64)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxREAL) ;
+            mxSetDoubles (A, Cx) ;
+        }
+        else if (ctype == GrB_INT8)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxINT8_CLASS, mxREAL) ;
+            mxSetInt8s (A, Cx) ;
+        }
+        else if (ctype == GrB_INT16)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxINT16_CLASS, mxREAL) ;
+            mxSetInt16s (A, Cx) ;
+        }
+        else if (ctype == GrB_INT32)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxINT32_CLASS, mxREAL) ;
+            mxSetInt32s (A, Cx) ;
+        }
+        else if (ctype == GrB_INT64)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxINT64_CLASS, mxREAL) ;
+            mxSetInt64s (A, Cx) ;
+        }
+        else if (ctype == GrB_UINT8)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxUINT8_CLASS, mxREAL) ;
+            mxSetUint8s (A, Cx) ;
+        }
+        else if (ctype == GrB_UINT16)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxUINT16_CLASS, mxREAL) ;
+            mxSetUint16s (A, Cx) ;
+        }
+        else if (ctype == GrB_UINT32)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxUINT32_CLASS, mxREAL) ;
+            mxSetUint32s (A, Cx) ;
+        }
+        else if (ctype == GrB_UINT64)
+        { 
+            A = mxCreateNumericMatrix (0, 0, mxUINT64_CLASS, mxREAL) ;
+            mxSetUint64s (A, Cx) ;
+        }
+        else if (ctype == GxB_FC32)
+        {
+            A = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxCOMPLEX) ;
+            mxSetComplexSingles (A, Cx) ;
+        }
+        else if (ctype == Complex || ctype == GxB_FC64)
+        {
+            A = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxCOMPLEX) ;
+            mxSetComplexDoubles (A, Cx) ;
+        }
+        else
+        {
+            mexErrMsgTxt ("... unsupported type") ;
+        }
+
+        mexMakeMemoryPersistent (C->x) ;
+        C->x_shallow = false ;
+        AS_IF_FREE (C->x) ;   // unlink C->x from C since it's now in MATLAB C
+
+    }
+    else if (C->type == GrB_BOOL)
     {
         // C is boolean, which is the same as a MATLAB logical sparse matrix
         A = mxCreateSparseLogicalMatrix (0, 0, 0) ;
@@ -176,19 +275,23 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     mxSetM (A, C->vlen) ;
     mxSetN (A, C->vdim) ;
     mxSetNzmax (A, C->nzmax) ;
-    mxFree (mxGetJc (A)) ;
-    mxFree (mxGetIr (A)) ;
-    mexMakeMemoryPersistent (C->p) ;
-    mexMakeMemoryPersistent (C->i) ;
-    mxSetJc (A, (size_t *) C->p) ;
-    mxSetIr (A, (size_t *) C->i) ;
 
-    // treat C->p as if freed
-    AS_IF_FREE (C->p) ;
+    if (!C_is_full)
+    {
+        mxFree (mxGetJc (A)) ;
+        mxFree (mxGetIr (A)) ;
+        mexMakeMemoryPersistent (C->p) ;
+        mexMakeMemoryPersistent (C->i) ;
+        mxSetJc (A, (size_t *) C->p) ;
+        mxSetIr (A, (size_t *) C->i) ;
 
-    // treat C->i as if freed
-    C->i_shallow = false ;
-    AS_IF_FREE (C->i) ;
+        // treat C->p as if freed
+        AS_IF_FREE (C->p) ;
+
+        // treat C->i as if freed
+        C->i_shallow = false ;
+        AS_IF_FREE (C->i) ;
+    }
 
     // free C, but leave any shallow components untouched
     // since these have been transplanted into the MATLAB matrix.

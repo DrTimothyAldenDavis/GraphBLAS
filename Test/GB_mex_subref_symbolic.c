@@ -67,7 +67,7 @@ void mexFunction
     }
 
     // C = A(I,J) or A(J,I)', no need to check dimensions of C
-    METHOD (GB_subref (&C, true , A, I, ni, J, nj, true, true, Context)) ;
+    METHOD (GB_subref (&C, true , A, I, ni, J, nj, true, Context)) ;
 
     // return C to MATLAB as a struct
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C subref symbolic", true) ;

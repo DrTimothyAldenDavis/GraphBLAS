@@ -8,10 +8,17 @@
 //------------------------------------------------------------------------------
 
 // The values of A are typecasted to C->type, the type of the C matrix.
-// A can be sparse or hypersparse, but C is not hypersparse.
 
-// This method is parallel, but not highly scalable.  It uses only naslice =
-// nnz(A)/(A->vlen) threads.
+// If A is sparse or hypersparse
+//      The pattern of C is constructed.  C is sparse.
+//      Rowcounts and A_slice are non-NULL.
+//      This method is parallel, but not highly scalable.  It uses only
+//      nthreads = nnz(A)/(A->vlen) threads.
+
+// If A is full:
+//      The pattern of C is not constructed.  C is full.
+//      Rowcounts and A_slice are NULL.
+//      This method is parallel and fully scalable.
 
 #include "GB_transpose.h"
 #ifndef GBCOMPACT
@@ -22,9 +29,12 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
-    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
-    int naslice                         // # of slices of A
+    // for sparse case:
+    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
+    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
+    int naslice,                        // # of slices (and # threads to use)
+    // for full case:
+    int nthreads                        // # of threads to use
 )
 { 
 
@@ -49,7 +59,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         #define GB_WORKER(ignore1,zname,ztype,aname,atype)          \
         {                                                           \
             info = GB_unop_tran (zname,aname)                       \
-                (C, A, Rowcounts, A_slice, naslice) ;               \
+                (C, A, Rowcounts, A_slice, naslice, nthreads) ;     \
             if (info == GrB_SUCCESS) return ;                       \
         }                                                           \
         break ;
@@ -75,7 +85,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 
     // Cx [pC] = (ctype) Ax [pA]
     #define GB_CAST_OP(pC,pA)  \
-        cast_A_to_X (Cx +(pC*csize), Ax +(pA*asize), asize) ;
+        cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
 
     #define GB_ATYPE GB_void
     #define GB_CTYPE GB_void

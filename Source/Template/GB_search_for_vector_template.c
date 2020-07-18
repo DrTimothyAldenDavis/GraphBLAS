@@ -20,7 +20,8 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
     const int64_t p,                // search for vector k that contains p
     const int64_t *GB_RESTRICT Ap,  // vector pointers to search
     int64_t kleft,                  // left-most k to search
-    int64_t anvec                   // Ap is of size anvec+1
+    int64_t anvec,                  // Ap is of size anvec+1
+    int64_t avlen                   // A->vlen
 )
 {
 
@@ -28,6 +29,14 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
     // check inputs
     //--------------------------------------------------------------------------
 
+    if (Ap == NULL)
+    { 
+        // A is full
+        ASSERT (p >= 0 && p < avlen * anvec) ;
+        return ((avlen == 0) ? 0 : (p / avlen)) ;
+    }
+
+    // A is sparse
     ASSERT (p >= 0 && p < Ap [anvec]) ;
 
     //--------------------------------------------------------------------------

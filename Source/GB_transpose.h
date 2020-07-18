@@ -46,9 +46,12 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
-    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
-    int naslice                         // # of slices of A
+    // for sparse case:
+    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
+    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
+    int naslice,                        // # of slices (and # threads to use)
+    // for full case:
+    int nthreads                        // # of threads to use
 ) ;
 
 void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
@@ -60,9 +63,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         const GxB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
-    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
-    const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
-    int naslice                         // # of slices of A
+    // for sparse case:
+    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
+    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
+    int naslice,                        // # of slices of A
+    // for full case:
+    int nthreads                        // # of threads to use
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB interface only

@@ -48,14 +48,10 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         CHECK_ERROR ((double) nrows * (double) ncols != (double) nvals,
             "matrix must be full to export as full matrix") ;
 
-        GrB_Index nzmax, *Cp, *Ci ;
-        int64_t nonempty ;
         void *Cx ;
         GrB_Type ctype ;
-        OK (GxB_Matrix_export_CSC (C_handle, &ctype, &nrows, &ncols, &nzmax,
-            &nonempty, &Cp, &Ci, &Cx, NULL)) ;
-        gb_mxfree (&Cp) ;
-        gb_mxfree (&Ci) ;
+        OK (GxB_Matrix_export_FullC (C_handle, &ctype, &nrows, &ncols,
+            &Cx, NULL)) ;
 
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 

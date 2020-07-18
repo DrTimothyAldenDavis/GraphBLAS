@@ -41,7 +41,7 @@ for probs = 1:nprobs
             A3 = sparse (10,10) ;
             A4 = GB_mex_Matrix_eWiseAdd (A3, [], [], 'minus', A1, A2, [ ]) ;
             A = A4.matrix ;
-            % spok(A) will fail since it has intentional explicit zeros
+            % GB_spok(A) will fail since it has intentional explicit zeros
         case 4
             A = sparse (rand (6000)) ;
         case 5

@@ -113,8 +113,8 @@ GrB_Info many_subassign
     info = method ;                     \
     if (info != GrB_SUCCESS)            \
     {                                   \
-        GrB_Matrix_free_(&mask) ;        \
-        GrB_Matrix_free_(&u) ;           \
+        GrB_Matrix_free_(&mask) ;       \
+        GrB_Matrix_free_(&u) ;          \
         return (info) ;                 \
     }                                   \
 }
@@ -277,7 +277,7 @@ GrB_Info assign (GB_Context Context)
         OK (GxB_Col_subassign_(C, (GrB_Vector) M, accum, (GrB_Vector) A,
             I, ni, J [0], desc)) ;
     }
-    else if (A->vlen == 1 && ni == 1 &&
+    else if (A->vlen == 1 && ni == 1 && nj > 0 &&
         (M == NULL || M->vlen == 1) && !at)
     {
         // test GxB_Row_subassign; this is not meant to be efficient,
@@ -285,14 +285,22 @@ GrB_Info assign (GB_Context Context)
         if (ph) printf ("row assign\n") ;
         if (M != NULL)
         {
-            OK (GB_transpose_bucket (&mask, GrB_BOOL, true, M,
-                NULL, NULL, NULL, false,
-                Context)) ;
+            // mask = M'
+            int64_t mnrows, mncols ;
+            OK (GrB_Matrix_nrows (&mnrows, M)) ;
+            OK (GrB_Matrix_ncols (&mncols, M)) ;
+            OK (GrB_Matrix_new (&mask, M->type, mncols, mnrows)) ;
+            OK (GrB_transpose (mask, NULL, NULL, M, NULL)) ;
+            mask->is_csc = true ;
             ASSERT (GB_VECTOR_OK (mask)) ;
         }
-        OK (GB_transpose_bucket (&u, A->type, true, A,
-            NULL, NULL, NULL, false,
-            Context)) ;
+        // u = A'
+        int64_t ancols, anrows ;
+        OK (GrB_Matrix_nrows (&anrows, A)) ;
+        OK (GrB_Matrix_ncols (&ancols, A)) ;
+        OK (GrB_Matrix_new (&u, A->type, ancols, anrows)) ;
+        OK (GrB_transpose (u, NULL, NULL, A, NULL)) ;
+        u->is_csc = true ;
         ASSERT (GB_VECTOR_OK (u)) ;
         OK (GxB_Row_subassign_(C, (GrB_Vector) mask, accum, (GrB_Vector) u,
             I [0], J, nj, desc)) ;

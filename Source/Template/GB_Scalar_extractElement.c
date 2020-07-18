@@ -50,7 +50,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    if (S->nzmax == 0 || S->p [1] == 0)
+    if (S->nzmax == 0 || (S->p != NULL && S->p [1] == 0))
     { 
         // quick return
         return (GrB_NO_VALUE) ;

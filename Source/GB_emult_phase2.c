@@ -78,7 +78,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;
+    int64_t cnz = Cp [Cnvec] ;      // ok: C is sparse
     (*Chandle) = NULL ;
 
     bool C_is_hyper = (Ch != NULL) ;

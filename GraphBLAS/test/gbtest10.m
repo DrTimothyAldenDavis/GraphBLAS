@@ -53,12 +53,12 @@ C2 (I,J) = B ;
 assert (gbtest_eq (C2, Cout)) ;
 
 A = rand (4) ;
-G = GrB (A, 'by row') ;
+G = GrB (A, 'by row') 
 M = logical (eye (4)) ;
 B = rand (4) ;
-H = GrB (B, 'by row') ;
-A (M) = B (M) ;
-G (M) = H (M) ;
+H = GrB (B, 'by row') 
+A (M) = B (M) 
+G (M) = H (M)
 assert (isequal (A, G)) ;
 
 A = sprand (4, 4, 0.5) %#ok<*NOPRT>

@@ -15,9 +15,6 @@
 // typecasted into the type of x).  These conditions must be checked in the
 // caller.
 
-// The input matrix A may have jumbled row indices; this is OK.
-// The output matrix C will always have sorted row indices.
-
 // This function is agnostic for the CSR/CSC format of C and A.  C_is_csc is
 // defined by the caller and assigned to C->is_csc, but otherwise unused.
 // A->is_csc is ignored.
@@ -57,7 +54,6 @@
     GB_FREE_WORK ;                                                      \
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
     GrB_Matrix *Chandle,        // output matrix (unallocated on input)
@@ -80,11 +76,15 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (Chandle != NULL) ;
     (*Chandle) = NULL ;
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
-    // OK if the matrix A is jumbled; this function is intended to sort it.
-    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A input for transpose_bucket", GB0) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
 
     // if op1 and op2 are NULL, then no operator is applied
+
+    // This method is only be used when A is sparse or hypersparse.
+    // The full case is handled in GB_transpose.
+    ASSERT (!GB_IS_FULL (A)) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -100,7 +100,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     // # of threads to use in the O(vlen) loops below
-    int nthreads = GB_nthreads (vlen, chunk, nthreads_max) ;
+    int nth = GB_nthreads (vlen, chunk, nthreads_max) ;
 
     // A is sliced into naslice parts, so that each part has at least vlen
     // entries.  The workspace required is naslice*vlen, so this ensures
@@ -180,12 +180,12 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         const int64_t *GB_RESTRICT Ai = A->i ;
         for (int64_t p = 0 ; p < anz ; p++)
         { 
-            rowcount [Ai [p]]++ ;
+            rowcount [Ai [p]]++ ;       // ok: A is sparse, with no zombies
         }
 
         // cumulative sum of the rowcount, and copy back into C->p
-        GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nthreads) ;
-        GB_memcpy (Cp, rowcount, (vlen+1) * sizeof (int64_t), nthreads) ;
+        GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nth) ;
+        GB_memcpy (Cp, rowcount, (vlen+1) * sizeof (int64_t), nth) ;
 
     }
     else
@@ -195,13 +195,14 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // A is sliced
         //----------------------------------------------------------------------
 
-        // compute the row counts of A for each slice
+        // compute the row counts of A for each slice, using naslice threads;
+        // the nthreads parameter is not used in the symbolic phase1.
         #define GB_PHASE_1_OF_2
         #include "GB_unop_transpose.c"
 
         // cumulative sum of the rowcounts across the slices
         int64_t i ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        #pragma omp parallel for num_threads(nth) schedule(static)
         for (i = 0 ; i < vlen ; i++)
         {
             int64_t s = 0 ;
@@ -217,10 +218,10 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         Cp [vlen] = 0 ;
 
         // compute the vector pointers for C; also compute C->nvec_nonempty
-        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nthreads) ;
+        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth) ;
 
         // add Cp back to all Rowcounts
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        #pragma omp parallel for num_threads(nth) schedule(static)
         for (i = 0 ; i < vlen ; i++)
         {
             int64_t s = Cp [i] ;
@@ -240,18 +241,21 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // phase2: transpose A into C
     //--------------------------------------------------------------------------
 
+    // Since A is sparse, # threads to use is naslice, and the
+    // nthreads parameter is not used
+
     // transpose both the pattern and the values
     if (op1 == NULL && op2 == NULL)
     { 
-        // do not apply an operator; optional typecast to ctype
-        GB_transpose_ix (C, A, Rowcounts, A_slice, naslice) ;
+        // do not apply an operator; optional typecast to C->type
+        GB_transpose_ix (C, A, Rowcounts, A_slice, naslice, 0) ;
     }
     else
     { 
         // apply an operator, C has type op->ztype
         GB_transpose_op (C, 
             op1, op2, scalar, binop_bind1st,
-            A, Rowcounts, A_slice, naslice) ;
+            A, Rowcounts, A_slice, naslice, 0) ;
     }
 
     //--------------------------------------------------------------------------

@@ -36,11 +36,17 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
         return (0) ;
     }
 
+    int64_t anvec = A->nvec ;
+
+    if (GB_IS_FULL (A))
+    { 
+        int64_t avlen = A->vlen ;
+        return (avlen == 0 ? 0 : anvec) ;
+    }
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
-
-    int64_t anvec = A->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
@@ -57,7 +63,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
             reduction(+:nvec_nonempty)
     for (k = 0 ; k < anvec ; k++)
     { 
-        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;
+        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;    // ok: A is sparse
     }
 
     ASSERT (nvec_nonempty >= 0 && nvec_nonempty <= A->vdim) ;

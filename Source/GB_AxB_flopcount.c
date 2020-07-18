@@ -138,6 +138,7 @@ GrB_Info GB_AxB_flopcount
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     int64_t mnvec = 0 ;
+    int64_t mvlen = 0 ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
     if (M != NULL)
     { 
@@ -145,6 +146,7 @@ GrB_Info GB_AxB_flopcount
         Mp = M->p ;
         Mi = M->i ;
         mnvec = M->nvec ;
+        mvlen = M->vlen ;
     }
 
     //--------------------------------------------------------------------------
@@ -155,12 +157,14 @@ GrB_Info GB_AxB_flopcount
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     int64_t anvec = A->nvec ;
+    int64_t avlen = A->vlen ;
     bool A_is_hyper = GB_IS_HYPER (A) ;
 
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     bool B_is_hyper = GB_IS_HYPER (B) ;
+    int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------
     // construct the parallel tasks
@@ -227,7 +231,7 @@ GrB_Info GB_AxB_flopcount
         {
 
             // nnz (B (:,j)), for all tasks
-            int64_t bjnz = Bp [kk+1] - Bp [kk] ;
+            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
             // C(:,j) is empty if the entire vector B(:,j) is empty
             if (bjnz == 0) continue ;
 
@@ -236,8 +240,8 @@ GrB_Info GB_AxB_flopcount
             //------------------------------------------------------------------
 
             int64_t pB, pB_end ;
-            GB_get_pA_and_pC (&pB, &pB_end, NULL,
-                taskid, kk, kfirst, klast, pstart_slice, NULL, NULL, Bp) ;
+            GB_get_pA_and_pC (&pB, &pB_end, NULL, taskid, kk,
+                kfirst, klast, pstart_slice, NULL, NULL, 0, Bp, bvlen) ;
             int64_t my_bjnz = pB_end - pB ;
             int64_t j = (B_is_hyper) ? Bh [kk] : kk ;
 
@@ -252,7 +256,7 @@ GrB_Info GB_AxB_flopcount
             {
                 int64_t mpright = mnvec - 1 ;
                 int64_t pM, pM_end ;
-                GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
+                GB_lookup (M_is_hyper, Mh, Mp, mvlen, &mpleft, mpright, j,
                     &pM, &pM_end) ;
                 mjnz = pM_end - pM ;
                 // If M not complemented: C(:,j) is empty if M(:,j) is empty.
@@ -260,9 +264,9 @@ GrB_Info GB_AxB_flopcount
                 if (mjnz > 0)
                 {
                     // M(:,j) not empty; get 1st and last index in M(:,j)
-                    im_first = Mi [pM] ;
-                    im_last  = Mi [pM_end-1] ;
-                    if (pB == Bp [kk])
+                    im_first = GBI (Mi, pM, mvlen) ;
+                    im_last  = GBI (Mi, pM_end-1, mvlen) ;
+                    if (pB == GBP (Bp, kk, bvlen))
                     { 
                         // this task owns the top part of B(:,j), so it can
                         // account for the work to access M(:,j), without the
@@ -295,7 +299,8 @@ GrB_Info GB_AxB_flopcount
             if (A_is_hyper && my_bjnz > 2)
             { 
                 // trim Ah [0..pright] to remove any entries past last B(:,j)
-                GB_bracket_right (Bi [pB_end-1], Ah, 0, &pright) ;
+                int64_t ilast = GBI (Bi, pB_end-1, bvlen) ;
+                GB_bracket_right (ilast, Ah, 0, &pright) ;
             }
 
             //------------------------------------------------------------------
@@ -307,11 +312,12 @@ GrB_Info GB_AxB_flopcount
             for ( ; pB < pB_end ; pB++)
             {
                 // B(k,j) is nonzero
-                int64_t k = Bi [pB] ;
+                int64_t k = GBI (Bi, pB, bvlen) ;
 
                 // find A(:,k), reusing pleft since Bi [...] is sorted
                 int64_t pA, pA_end ;
-                GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end);
+                GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,
+                    &pA, &pA_end) ;
 
                 // skip if A(:,k) empty
                 int64_t aknz = pA_end - pA ;
@@ -324,8 +330,8 @@ GrB_Info GB_AxB_flopcount
                 if (mask_is_M)
                 {
                     // A(:,k) is non-empty; get first and last index of A(:,k)
-                    int64_t alo = Ai [pA] ;
-                    int64_t ahi = Ai [pA_end-1] ;
+                    int64_t alo = GBI (Ai, pA, avlen) ;
+                    int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
                     if (ahi < im_first || alo > im_last) continue ;
                     if (aknz > 256 && mjnz_much < aknz)
                     { 
@@ -392,8 +398,8 @@ GrB_Info GB_AxB_flopcount
         if (kfirst <= klast)
         {
             int64_t pB = pstart_slice [taskid] ;
-            int64_t pB_end =
-                GB_IMIN (Bp [kfirst+1], pstart_slice [taskid+1]) ;
+            int64_t pB_end = GBP (Bp, kfirst+1, bvlen) ;
+            pB_end = GB_IMIN (pB_end, pstart_slice [taskid+1]) ;
             if (pB < pB_end)
             {
                 if (kprior < kfirst)
@@ -417,8 +423,8 @@ GrB_Info GB_AxB_flopcount
 
         if (kfirst < klast)
         {
-            int64_t pB = Bp [klast] ;
-            int64_t pB_end   = pstart_slice [taskid+1] ;
+            int64_t pB = GBP (Bp, klast, bvlen) ;
+            int64_t pB_end = pstart_slice [taskid+1] ;
             if (pB < pB_end)
             {
                 /* if */ ASSERT (kprior < klast) ;

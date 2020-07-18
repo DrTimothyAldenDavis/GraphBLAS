@@ -48,25 +48,24 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     // export the matrix
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is in hypersparse CSR format
-    (*A)->hyper_ratio = GB_ALWAYS_HYPER ;
-    if ((*A)->h == NULL)
-    { 
-        // convert A from standard to hypersparse format
-        GB_OK (GB_to_hyper ((*A), Context)) ;
-    }
+    // ensure the matrix is in CSR format
     if ((*A)->is_csc)
     {
         // A = A', done in place, to put A in CSR format
         GBBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, false, (*A),
             NULL, NULL, NULL, false, Context)) ;
-        // the transpose might make it non-hypersparse (if vdim is 1)
-        if ((*A)->h == NULL)
-        { 
-            // convert A from standard to hypersparse format
-            GB_OK (GB_to_hyper ((*A), Context)) ;
-        }
+    }
+
+    // ensure the matrix is in sparse format, not full
+    GB_ENSURE_SPARSE (*A) ;
+
+    // ensure the matrix is in hypersparse format, not sparse
+    (*A)->hyper_ratio = GB_ALWAYS_HYPER ;
+    if ((*A)->h == NULL)
+    { 
+        // convert A from sparse to hypersparse format
+        GB_OK (GB_to_hyper ((*A), Context)) ;
     }
 
     ASSERT_MATRIX_OK ((*A), "A export: hyper CSR", GB0) ;

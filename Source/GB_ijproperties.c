@@ -73,7 +73,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     //--------------------------------------------------------------------------
 
     // scan the list of indices: check if OK, determine if they are
-    // jumbled, or contiguous, their min and max index, and actual length
+    // unsorted, or contiguous, their min and max index, and actual length
     bool I_unsorted = false ;
     bool I_has_duplicates = false ;
     bool I_contig = true ;

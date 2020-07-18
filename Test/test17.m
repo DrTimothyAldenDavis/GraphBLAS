@@ -1,4 +1,4 @@
-% function test17
+function test17
 %TEST17 test GrB_*_extractElement
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

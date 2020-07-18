@@ -170,6 +170,7 @@ GrB_Info GB_build               // build matrix
     // transplant and typecast T into C, conform C, and free T
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_DENSE (T, "(C %s) ") ;
     return (GB_transplant_conform (C, C->type, &T, Context)) ;
 }
 

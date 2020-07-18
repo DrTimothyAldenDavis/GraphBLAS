@@ -104,6 +104,11 @@ void mexFunction
                 FREE_ALL ;
                 mexErrMsgTxt ("Thunk failed") ;
             }
+            if (!GB_SCALAR_OK (Thunk))
+            { 
+                FREE_ALL ;
+                mexErrMsgTxt ("Thunk not a valid scalar") ;
+            }
         }
         else
         {

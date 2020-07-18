@@ -159,12 +159,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
 
     // pending work in T will be finished now
-    ASSERT (GB_PENDING_OK (T)) ; ASSERT (GB_ZOMBIES_OK (T)) ;
-
-    // GB_extract can pass in a matrix T that is jumbled, but it does so
-    // only if T->is_csc and C->is_csc are different.  In that case, T is
-    // transposed, so the sort can be skipped.
-    ASSERT_MATRIX_OK_OR_JUMBLED (T, "[T = results of computation]", GB0) ;
+    ASSERT (GB_PENDING_OK (T)) ;
+    ASSERT (GB_ZOMBIES_OK (T)) ;
+    ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
     //--------------------------------------------------------------------------
     // remove zombies and pending tuples from T
@@ -187,7 +184,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     if (C->is_csc != T->is_csc)
     { 
-        // transpose: no typecast, no op, in place of T, jumbled, but T
+        // transpose: no typecast, no op, in place of T, but T
         // cannot have any zombies or pending tuples.
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL,
             NULL, NULL, NULL, false, Context)) ;

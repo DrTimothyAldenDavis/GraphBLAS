@@ -192,7 +192,6 @@ GrB_Info GB_mask                // C<M> = Z
             // C_result = Z, but make sure a deep copy is made as needed.  It is
             // possible that Z is a shallow copy of another matrix.
             // Z is freed by GB_transplant_conform.
-            ASSERT (C_result->p != NULL) ;
             ASSERT (!C_result->p_shallow) ;
             ASSERT (!C_result->h_shallow) ;
 

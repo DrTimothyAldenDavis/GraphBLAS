@@ -47,15 +47,14 @@
 // A coarse task computes C(:,j1:j2) = A*B(:,j1:j2), for a contiguous set of
 // vectors j1:j2.  A coarse taskid is denoted byTaskList [taskid].vector == -1,
 // kfirst = TaskList [taskid].start, and klast = TaskList [taskid].end, and
-// where j1 = (Bh == NULL) ? kstart : Bh [kstart] and likewise for j2.  No
-// summation is needed for the final result of each coarse task.
+// where j1 = GBH (Bh, kstart) and likewise for j2.  No summation is needed for
+// the final result of each coarse task.
 
 // A fine taskid computes A*B(k1:k2,j) for a single vector C(:,j), for a
 // contiguous range k1:k2, where kk = Tasklist[taskid].vector (which is >= 0),
 // k1 = Bi [TaskList [taskid].start], k2 = Bi [TaskList [taskid].end].  It sums
 // its computations in a hash table shared by all fine tasks that compute
-// C(:,j), via atomics.  The vector index j is either kk if B is standard, or j
-// = B->h [kk] if B is hypersparse.
+// C(:,j), via atomics.  The vector index j is GBH (B->h, kk).
 
 // Both tasks use a hash table allocated uniquely for the task, in Hi, Hf, and
 // Hx.  The size of the hash table is determined by the maximum # of flops

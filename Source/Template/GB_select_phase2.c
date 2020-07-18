@@ -49,8 +49,8 @@
             //------------------------------------------------------------------
 
             int64_t pA_start, pA_end, pC ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, &pC,
-                tid, k, kfirst, klast, pstart_slice, C_pstart_slice, Cp, Ap) ;
+            GB_get_pA_and_pC (&pA_start, &pA_end, &pC, tid, k, kfirst, klast,
+                pstart_slice, C_pstart_slice, Cp, avlen, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // compact Ai and Ax [pA_start ... pA_end-1] into Ci and Cx
@@ -61,11 +61,11 @@
                 GB_GET_J ;
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
-                    int64_t i = Ai [pA] ;
+                    int64_t i = GBI (Ai, pA, avlen) ;
                     if (GB_TEST_VALUE_OF_ENTRY (pA))
                     { 
-                        ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ;
-                        Ci [pC] = i ;
+                        ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ; // ok: C sparse
+                        Ci [pC] = i ;                            // ok: C sparse
                         // Cx [pC] = Ax [pA] ;
                         GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
                         pC++ ;
@@ -76,12 +76,27 @@
               ||  defined ( GB_RESIZE_SELECTOR )
 
                 // keep pA_start to Zp[k]-1
-                int64_t p = GB_IMIN (Zp [k], pA_end) ;
+                int64_t p = GB_IMIN (Zp [k], pA_end) ;  // ok: Z is sparse
                 int64_t mynz = p - pA_start ;
                 if (mynz > 0)
                 { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
+                    if (Ai != NULL)
+                    { 
+                        // A and C are both sparse or hypersparse
+                        memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
+                    }
+                    else
+                    {
+                        // A is full and C is sparse
+                        int64_t i_start = pA_start % avlen ;
+                        for (int64_t s = 0 ; s < mynz ; s++)
+                        {
+                            int64_t i = i_start + s ;
+                            ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
+                            Ci [pC+s] = i ;
+                        }
+                    }
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
                 }
 
@@ -92,7 +107,7 @@
                 if (pA_start <= p && p < pA_end)
                 { 
                     ASSERT (pC >= Cp [k] && pC + 1 <= Cp [k+1]) ;
-                    Ci [pC] = Ai [p] ;
+                    Ci [pC] = GBI (Ai, p, avlen) ;               // ok: C sparse
                     memcpy (Cx +pC*asize, Ax +p*asize, asize) ;
                 }
 
@@ -104,7 +119,23 @@
                 if (mynz > 0)
                 { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
+                    if (Ai != NULL)
+                    { 
+                        // A and C are both sparse or hypersparse
+                        memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
+                    }
+                    else
+                    {
+                        // A is full and C is sparse or hypersparse
+                        int64_t i_start = pA_start % avlen ;
+                        for (int64_t s = 0 ; s < mynz ; s++)
+                        {
+                            int64_t i = i_start + s ;
+                            ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
+                            Ci [pC+s] = i ;
+                        }
+                    }
+
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
                     pC += mynz ;
                 }
@@ -116,7 +147,23 @@
                 { 
                     ASSERT (pA_start <= p && p < pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
+                    if (Ai != NULL)
+                    { 
+                        // A and C are both sparse or hypersparse
+                        memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
+                    }
+                    else
+                    {
+                        // A is full and C is sparse or hypersparse
+                        int64_t i_start = p % avlen ;
+                        for (int64_t s = 0 ; s < mynz ; s++)
+                        {
+                            int64_t i = i_start + s ;
+                            ASSERT (GBI (Ai, p+s, avlen) == i) ;
+                            Ci [pC+s] = i ;
+                        }
+                    }
+
                     memcpy (Cx +pC*asize, Ax +p*asize, mynz*asize) ;
                 }
 
@@ -129,7 +176,22 @@
                 { 
                     ASSERT (pA_start <= p && p + mynz <= pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
+                    if (Ai != NULL)
+                    { 
+                        // A and C are both sparse or hypersparse
+                        memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
+                    }
+                    else
+                    {
+                        // A is full and C is sparse or hypersparse
+                        int64_t i_start = p % avlen ;
+                        for (int64_t s = 0 ; s < mynz ; s++)
+                        {
+                            int64_t i = i_start + s ;
+                            ASSERT (GBI (Ai, p+s, avlen) == i) ;
+                            Ci [pC+s] = i ;
+                        }
+                    }
                     memcpy (Cx +pC*asize, Ax +p*asize, mynz*asize) ;
                 }
 

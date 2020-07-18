@@ -23,8 +23,8 @@
     int64_t mpleft = 0 ;                                        \
     int64_t mpright = mnvec-1 ;                                 \
     int64_t pM_start, pM_end ;                                  \
-    GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright,            \
-        ((Bh == NULL) ? kk : Bh [kk]), &pM_start, &pM_end) ;    \
+    GB_lookup (M_is_hyper, Mh, Mp, mvlen, &mpleft, mpright,     \
+        GBH (Bh, kk), &pM_start, &pM_end) ;                     \
     int64_t mjnz = pM_end - pM_start ;    /* nnz (M (:,j)) */
 
 //------------------------------------------------------------------------------
@@ -35,8 +35,8 @@
     int64_t im_first = -1, im_last = -1 ;                       \
     if (mjnz > 0)                                               \
     {                                                           \
-        im_first = Mi [pM_start] ;  /* get first M(:,j) */      \
-        im_last  = Mi [pM_end-1] ;  /* get last M(:,j) */       \
+        im_first = GBI (Mi, pM_start, mvlen) ;  /* get first M(:,j) */      \
+        im_last  = GBI (Mi, pM_end-1, mvlen) ;  /* get last M(:,j) */       \
     }                                                           \
     int64_t mjnz_much = mjnz * gamma
 
@@ -49,7 +49,7 @@
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \
     for (int64_t pM = pMstart ; pM < pMend ; pM++) /* scan M(:,j) */    \
     {                                                                   \
-        if (Mxx [pM]) Hf [Mi [pM]] = mark ;   /* Hf [i] = M(i,j) */     \
+        if (Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ; /* Hf [i] = M(i,j) */ \
     }                                                                   \
 }                                                                       \
 break ;
@@ -61,7 +61,7 @@ break ;
         /* mask is structural, not valued */                                \
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                      \
         {                                                                   \
-            Hf [Mi [pM]] = mark ;   /* Hf [i] = M(i,j) */                   \
+            Hf [GBI (Mi, pM, mvlen)] = mark ;   /* Hf [i] = M(i,j) */       \
         }                                                                   \
     }                                                                       \
     else                                                                    \
@@ -87,7 +87,7 @@ break ;
     {                                                                   \
         GB_GET_M_ij ;           /* get M(i,j) */                        \
         if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
-        int64_t i = Mi [pM] ;                                           \
+        int64_t i = GBI (Mi, pM, mvlen) ;                               \
         for (GB_HASH (i))       /* find i in hash */                    \
         {                                                               \
             if (Hf [hash] < mark)                                       \
@@ -103,21 +103,21 @@ break ;
 // GB_GET_B_j: prepare to iterate over B(:,j)
 //------------------------------------------------------------------------------
 
-// prepare to iterate over the vector B(:,j), the (kk)th vector in B,
-// where j == ((Bh == NULL) ? kk : Bh [kk]).  Note that j itself is never
-// needed; just kk.
+// prepare to iterate over the vector B(:,j), the (kk)th vector in B, where 
+// j == GBH (Bh, kk).  Note that j itself is never needed; just kk.
+
 #define GB_GET_B_j                                                          \
     int64_t pleft = 0 ;                                                     \
     int64_t pright = anvec-1 ;                                              \
-    int64_t pB = Bp [kk] ;                                                  \
-    int64_t pB_end = Bp [kk+1] ;                                            \
+    int64_t pB     = GBP (Bp, kk, bvlen) ;                                  \
+    int64_t pB_end = GBP (Bp, kk+1, bvlen) ;                                \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
     /* FUTURE::: can skip if mjnz == 0 for C<M>=A*B tasks */                \
     if (A_is_hyper && bjnz > 2)                                             \
     {                                                                       \
         /* trim Ah [0..pright] to remove any entries past last B(:,j), */   \
         /* to speed up GB_lookup in GB_GET_A_k. */                          \
-        GB_bracket_right (Bi [pB_end-1], Ah, 0, &pright) ;                  \
+        GB_bracket_right (GBI (Bi, pB_end-1, bvlen), Ah, 0, &pright) ;      \
     }
 
 //------------------------------------------------------------------------------
@@ -133,7 +133,8 @@ break ;
 
 #define GB_GET_A_k                                                          \
     int64_t pA_start, pA_end ;                                              \
-    GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA_start, &pA_end) ; \
+    GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,                \
+        &pA_start, &pA_end) ;                                               \
     int64_t aknz = pA_end - pA_start ;    /* nnz (A (:,k)) */
 
 //------------------------------------------------------------------------------
@@ -143,9 +144,13 @@ break ;
 // skip C(:,j)<M> += A(:,k)*B(k,j) if A(:,k) and M(:,j), for C<M>=A*B methods
 #define GB_SKIP_IF_A_k_DISJOINT_WITH_M_j                    \
     if (aknz == 0) continue ;                               \
-    int64_t alo = Ai [pA_start] ;   /* get first A(:,k) */  \
-    int64_t ahi = Ai [pA_end-1] ;   /* get last A(:,k) */   \
-    if (ahi < im_first || alo > im_last) continue
+    if (Ai != NULL)                                         \
+    {                                                       \
+        /* get first and last A(:,k) */                     \
+        int64_t alo = Ai [pA_start] ; /* ok: A is sparse */ \
+        int64_t ahi = Ai [pA_end-1] ; /* ok: A is sparse */ \
+        if (ahi < im_first || alo > im_last) continue ;     \
+    }
 
 //------------------------------------------------------------------------------
 // GB_GET_M_ij: get the numeric value of M(i,j)
@@ -187,7 +192,7 @@ break ;
     #define GB_COMPUTE_DENSE_C_j                                \
         for (int64_t i = 0 ; i < cvlen ; i++)                   \
         {                                                       \
-            Ci [pC + i] = i ;                                   \
+            Ci [pC + i] = i ;       /* ok: C is sparse */       \
         }
 
 #else
@@ -196,12 +201,12 @@ break ;
     #define GB_COMPUTE_DENSE_C_j                                    \
         for (int64_t i = 0 ; i < cvlen ; i++)                       \
         {                                                           \
-            Ci [pC + i] = i ;                                       \
+            Ci [pC + i] = i ;       /* ok: C is sparse */           \
             GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; /* C(i,j)=0 */     \
         }                                                           \
         for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */           \
         {                                                           \
-            int64_t k = Bi [pB] ;       /* get B(k,j) */            \
+            int64_t k = GBI (Bi, pB, bvlen) ;   /* get B(k,j) */    \
             GB_GET_A_k ;                /* get A(:,k) */            \
             if (aknz == 0) continue ;                               \
             GB_GET_B_kj ;               /* bkj = B(k,j) */          \
@@ -209,7 +214,7 @@ break ;
             /* scan A(:,k) */                                       \
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)        \
             {                                                       \
-                int64_t i = Ai [pA] ;    /* get A(i,k) */           \
+                int64_t i = GBI (Ai, pA, avlen) ;   /* get A(i,k) */\
                 GB_MULT_A_ik_B_kj ;      /* t = A(i,k)*B(k,j) */    \
                 GB_CIJ_UPDATE (pC + i, t) ; /* Cx [pC+i]+=t */      \
             }                                                       \
@@ -226,7 +231,7 @@ break ;
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
     #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-        int64_t k = Bi [pB] ;       /* get B(k,j) */                \
+        int64_t k = GBI (Bi, pB, bvlen) ;       /* get B(k,j) */    \
         GB_GET_A_k ;                /* get A(:,k) */                \
         memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ;
 
@@ -234,16 +239,16 @@ break ;
 
     // typical semiring
     #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-        int64_t k = Bi [pB] ;       /* get B(k,j) */                \
+        int64_t k = GBI (Bi, pB, bvlen) ;       /* get B(k,j) */    \
         GB_GET_A_k ;                /* get A(:,k) */                \
         GB_GET_B_kj ;               /* bkj = B(k,j) */              \
         /* scan A(:,k) */                                           \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)            \
         {                                                           \
-            int64_t i = Ai [pA] ;       /* get A(i,k) */            \
+            int64_t i = GBI (Ai, pA, avlen) ;  /* get A(i,k) */     \
             GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
             GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
-            Ci [pC++] = i ;                                         \
+            Ci [pC++] = i ;             /* ok: C is sparse */       \
         }
 
 #endif
@@ -261,7 +266,7 @@ break ;
         {                                                           \
             if (Hf [i] == mark)                                     \
             {                                                       \
-                Ci [pC++] = i ;                                     \
+                Ci [pC++] = i ;         /* ok: C is sparse */       \
             }                                                       \
         }
 
@@ -274,7 +279,7 @@ break ;
             if (Hf [i] == mark)                                     \
             {                                                       \
                 GB_CIJ_GATHER (pC, i) ; /* Cx [pC] = Hx [i] */      \
-                Ci [pC++] = i ;                                     \
+                Ci [pC++] = i ;         /* ok: C is sparse */       \
             }                                                       \
         }
 
@@ -301,7 +306,7 @@ break ;
         /* gather the values into C(:,j) */                     \
         for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)      \
         {                                                       \
-            int64_t i = Ci [pC] ;                               \
+            int64_t i = Ci [pC] ;       /* ok: C is sparse */   \
             GB_CIJ_GATHER (pC, i) ;   /* Cx [pC] = Hx [i] */    \
         }
 
@@ -326,7 +331,7 @@ break ;
         GB_qsort_1a (Ci + Cp [kk], cjnz) ;                                  \
         for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                  \
         {                                                                   \
-            int64_t i = Ci [pC] ;                                           \
+            int64_t i = Ci [pC] ;       /* ok: C is sparse */               \
             int64_t marked = (hash_mark) ;                                  \
             for (GB_HASH (i))           /* find i in hash table */          \
             {                                                               \
@@ -358,7 +363,7 @@ break ;
         {                                                               \
             GB_GET_M_ij ;           /* get M(i,j) */                    \
             if (!mij) continue ;    /* skip if M(i,j)=0 */              \
-            int64_t i = Mi [pM] ;                                       \
+            int64_t i = GBI (Mi, pM, mvlen) ;                           \
             bool found ;            /* search for A(i,k) */             \
             int64_t apright = pA_end - 1 ;                              \
             GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;              \
@@ -381,7 +386,7 @@ break ;
         /* scan A(:,k), and lookup M(i,j) */                            \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
         {                                                               \
-            int64_t i = Ai [pA] ;    /* get A(i,k) */                   \
+            int64_t i = GBI (Ai, pA, avlen) ;    /* get A(i,k) */       \
             /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */  \
             /* M(i,j) may be 0 or 1, as given in the hash table */      \
             GB_IKJ ;                                                    \

@@ -231,7 +231,7 @@ for k1 = k1_list % 1:length(mult_ops)
                                             Mask.is_csc = M_is_csc ;
                                             Mask.is_hyper = M_is_hyper ;
                                             clear Mask1 Mask2 Mask3
-                                            % the Mask matrix will not pass spok(Mask) test since
+                                            % the Mask matrix will not pass GB_spok(Mask) test since
                                             % it will have explicit zeros
 
                                             C0 = GB_spec_mxm (C, Mask, accum, semiring, A, B, dnn);
@@ -291,7 +291,7 @@ for k1 = k1_list % 1:length(mult_ops)
                                             Mask.is_csc = M_is_csc ;
                                             Mask.is_hyper = M_is_hyper ;
                                             clear Mask1 Mask2 Mask3
-                                            % the Mask matrix will not pass spok(Mask) test since
+                                            % the Mask matrix will not pass GB_spok(Mask) test since
                                             % it will have explicit zeros
                                             C0 = GB_spec_mxm (C, Mask, accum, semiring, A, B, dtn);
                                             C1 = GB_mex_mxm  (C, Mask, accum, semiring, A, B, dtn);

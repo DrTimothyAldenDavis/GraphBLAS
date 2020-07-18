@@ -13,8 +13,6 @@
 
 // GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
 
-// DENSE TODO: convert C to sparse
-
 #include "GB_assign.h"
 
 void GB_assign_zombie4
@@ -36,6 +34,7 @@ void GB_assign_zombie4
     // get Z
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_FULL (Z)) ;
     const int64_t *GB_RESTRICT Zh = Z->h ;
     const int64_t *GB_RESTRICT Zp = Z->p ;
     const int64_t Znvec = Z->nvec ;
@@ -52,6 +51,7 @@ void GB_assign_zombie4
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mnvec = M->nvec ;
+    const int64_t mvlen = M->vlen ;
     const bool M_is_hyper = (Mh != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void GB_assign_zombie4
             // get Z(:,j) and determine if j is outside the list J
             //------------------------------------------------------------------
 
-            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            int64_t j = GBH (Zh, k) ;
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
             if (j_outside)
             {
@@ -92,8 +92,8 @@ void GB_assign_zombie4
                 // j is not in J; find Z(i,j)
                 //--------------------------------------------------------------
 
-                int64_t pZ = Zp [k] ;
-                int64_t pZ_end = Zp [k+1] ;
+                int64_t pZ = Zp [k] ;           // ok: Z is sparse
+                int64_t pZ_end = Zp [k+1] ;     // ok: Z is sparse
                 int64_t pright = pZ_end - 1 ;
                 bool found, is_zombie ;
                 GB_BINARY_SEARCH_ZOMBIE (i, Zi, pZ, pright, found, zorig,
@@ -115,7 +115,7 @@ void GB_assign_zombie4
                     int64_t pM, pM_end ;
                     int64_t pleft = 0 ;
                     int64_t pright = Mnvec - 1 ;
-                    GB_lookup (M_is_hyper, Mh, Mp, &pleft, pright, j,
+                    GB_lookup (M_is_hyper, Mh, Mp, mvlen, &pleft, pright, j,
                         &pM, &pM_end) ;
                     bool mij = false ;
                     if (pM < pM_end)
@@ -132,7 +132,7 @@ void GB_assign_zombie4
                     { 
                         // delete Z(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Zi [pZ] = GB_FLIP (i) ;
+                        Zi [pZ] = GB_FLIP (i) ;     // ok: Z is sparse
                     }
                 }
             }

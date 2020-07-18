@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// Cp is never NULL.  C is created as sparse or hypersparse.
+
 #include "GB.h"
 
 void GB_task_cumsum

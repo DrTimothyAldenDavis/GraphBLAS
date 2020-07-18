@@ -24,7 +24,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,           // length of J, or special
     const bool symbolic,        // if true, construct Cx as symbolic
-    const bool must_sort,       // if true, must return C sorted
+//  const bool must_sort,       // if true, must return C sorted
     GB_Context Context
 ) ;
 
@@ -46,7 +46,7 @@ GrB_Info GB_subref_phase0
     const int64_t ni,       // length of I, or special
     const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,       // length of J, or special
-    const bool must_sort,   // true if C must be returned sorted
+//  const bool must_sort,   // true if C must be returned sorted
     GB_Context Context
 ) ;
 

@@ -110,6 +110,9 @@ void mexFunction
                 // C = GrB (A, format)
                 //--------------------------------------------------------------
 
+                // TODO: it would be faster to get a shallow copy and
+                // transpose it.
+
                 // get a deep copy of A and convert it to the requested format
                 C = gb_get_deep (pargin [0]) ;
                 OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;

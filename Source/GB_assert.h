@@ -17,7 +17,6 @@
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
-#undef ASSERT_OK_OR_JUMBLED
 
 #ifdef GB_DEBUG
 
@@ -26,8 +25,7 @@
     {                                                                       \
         if (!(X))                                                           \
         {                                                                   \
-            GBDUMP ("assert(" GB_STR(X) ") failed: "                        \
-                __FILE__ " line %d\n", __LINE__) ;                          \
+            GBDUMP ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
             GB_Global_abort_function ( ) ;                                  \
         }                                                                   \
     }
@@ -47,22 +45,12 @@
         ASSERT (Info == GrB_SUCCESS || Info == GrB_NULL_POINTER) ;          \
     }
 
-    // call a GraphBLAS method and assert that it returns GrB_SUCCESS
-    // or GrB_INDEX_OUT_OF_BOUNDS.  Used by GB_Matrix_check(A,...) when the
-    // indices in the vectors of A may be jumbled.
-    #define ASSERT_OK_OR_JUMBLED(X)                                         \
-    {                                                                       \
-        GrB_Info Info = (X) ;                                               \
-        ASSERT (Info == GrB_SUCCESS || Info == GrB_INDEX_OUT_OF_BOUNDS) ;   \
-    }
-
 #else
 
     // debugging disabled
     #define ASSERT(X)
     #define ASSERT_OK(X)
     #define ASSERT_OK_OR_NULL(X)
-    #define ASSERT_OK_OR_JUMBLED(X)
 
 #endif
 
@@ -132,9 +120,6 @@
 
 #define ASSERT_MATRIX_OK_OR_NULL(A,name,pr)  \
     ASSERT_OK_OR_NULL (GB_Matrix_check (A, name, pr, NULL))
-
-#define ASSERT_MATRIX_OK_OR_JUMBLED(A,name,pr)  \
-    ASSERT_OK_OR_JUMBLED (GB_Matrix_check (A, name, pr, NULL))
 
 #define ASSERT_VECTOR_OK(v,name,pr)  \
     ASSERT_OK (GB_Vector_check (v, name, pr, NULL))

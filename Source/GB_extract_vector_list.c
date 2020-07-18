@@ -40,6 +40,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t avlen = A->vlen ;
 
     //--------------------------------------------------------------------------
     // determine the # of tasks to use
@@ -85,10 +86,10 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
             // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t j = GBH (Ah, k) ;
             int64_t pA_start, pA_end ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, NULL,
-                tid, k, kfirst, klast, pstart_slice, NULL, NULL, Ap) ;
+            GB_get_pA_and_pC (&pA_start, &pA_end, NULL, tid, k, 
+                kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // extract vector indices of A(:,j)

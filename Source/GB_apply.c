@@ -161,6 +161,10 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_MATRIX_WAIT (A) ;
     GB_SCALAR_WAIT (scalar) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+
     if (op2 != NULL && GB_NNZ (scalar) != 1)
     {
         // the scalar entry must be present

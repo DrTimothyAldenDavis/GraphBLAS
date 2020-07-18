@@ -16,8 +16,6 @@
 // A:           scalar
 // S:           none
 
-// FULL: TODO: if C sparse, convert to full
-
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #include "GB_unused.h"
@@ -56,6 +54,12 @@ GrB_Info GB_dense_subassign_05d
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
+
+    if (!GB_IS_FULL (C))
+    { 
+        // convert C from sparse to full
+        GB_sparse_to_full (C) ;
+    }
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

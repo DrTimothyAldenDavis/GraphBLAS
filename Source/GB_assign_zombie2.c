@@ -10,8 +10,6 @@
 // C(i,:)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in C(i,:) to be deleted.
 
-// DENSE TODO: convert C to sparse
-
 #include "GB_assign.h"
 
 void GB_assign_zombie2
@@ -26,6 +24,7 @@ void GB_assign_zombie2
     // get C
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_FULL (C)) ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t Cnvec = C->nvec ;
@@ -58,8 +57,8 @@ void GB_assign_zombie2
             // find C(i,j)
             //------------------------------------------------------------------
 
-            int64_t pC = Cp [k] ;
-            int64_t pC_end = Cp [k+1] ;
+            int64_t pC = Cp [k] ;           // ok: C is sparse
+            int64_t pC_end = Cp [k+1] ;     // ok: C is sparse
             int64_t pright = pC_end - 1 ;
             bool found, is_zombie ;
             GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
@@ -71,9 +70,9 @@ void GB_assign_zombie2
 
             if (found && !is_zombie)
             { 
-                ASSERT (i == Ci [pC]) ;
+                ASSERT (i == Ci [pC]) ;     // ok: C is sparse
                 nzombies++ ;
-                Ci [pC] = GB_FLIP (i) ;
+                Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
             }
         }
     }

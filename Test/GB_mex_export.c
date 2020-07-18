@@ -82,7 +82,7 @@ GrB_Info import_export ( )
 
             for (int64_t p = 0 ; p < nvals ; p++)
             {
-                printf ("  row %llu value ", Ai [p]) ;
+                printf ("  row %llu value ", Ai [p]) ;  // ok: A is sparse
                 GB_code_check (code, Ax + p*asize, 5, stdout) ;
                 printf ("\n") ;
             }
@@ -121,9 +121,9 @@ GrB_Info import_export ( )
                 for (int64_t i = 0 ; i < nrows ; i++)
                 {
                     printf ("Row %lld\n", i) ;
-                    for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
+                    for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)   // ok:
                     {
-                        printf ("  col %llu value ", Aj [p]) ;
+                        printf ("  col %llu value ", Aj [p]) ;  // ok: A sparse
                         GB_code_check (code, Ax + p*asize, 5, stdout) ;
                         printf ("\n") ;
                     }
@@ -158,9 +158,9 @@ GrB_Info import_export ( )
                 for (int64_t j = 0 ; j < ncols ; j++)
                 {
                     printf ("Col %lld\n", j) ;
-                    for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
+                    for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)   // ok:
                     {
-                        printf ("  row %llu value ", Ai [p]) ;
+                        printf ("  row %llu value ", Ai [p]) ;  // ok:
                         GB_code_check (code, Ax + p*asize, 5, stdout) ;
                         printf ("\n") ;
                     }
@@ -194,9 +194,9 @@ GrB_Info import_export ( )
 
                 for (int64_t k = 0 ; k < nvec ; k++)
                 {
-                    int64_t i = Ah [k] ;
+                    int64_t i = Ah [k] ;    // ok: A is hypersparse
                     printf ("Row %lld\n", i) ;
-                    for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
+                    for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)   // ok:
                     {
                         printf ("  col %llu value ", Aj [p]) ;
                         GB_code_check (code, Ax + p*asize, 5, stdout) ;
@@ -231,11 +231,11 @@ GrB_Info import_export ( )
 
                 for (int64_t k = 0 ; k < nvec ; k++)
                 {
-                    int64_t j = Ah [k] ;
+                    int64_t j = Ah [k] ;    // ok: A is hypersparse
                     printf ("Col %lld\n", j) ;
-                    for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
+                    for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)   // ok:
                     {
-                        printf ("  row %llu value ", Ai [p]) ;
+                        printf ("  row %llu value ", Ai [p]) ;  // ok:
                         GB_code_check (code, Ax + p*asize, 5, stdout) ;
                         printf ("\n") ;
                     }
@@ -315,7 +315,7 @@ void mexFunction
                 NULL, NULL, NULL, false,                                    \
                 NULL) ;                                                     \
         }                                                                   \
-        if (is_hyper)                                                       \
+        if (is_hyper && !GB_IS_FULL (C))                                    \
         {                                                                   \
             /* convert C to hypersparse */                                  \
             GB_to_nonhyper (C, NULL) ;                                      \

@@ -14,8 +14,6 @@
 // shallow.  This function is not user-callable.  The new type of C (ctype)
 // must be compatible with A->type.
 
-// Only GrB_SUCCESS and GrB_OUT_OF_MEMORY are returned by this function.
-
 #include "GB.h"
 
 GrB_Info GB_transplant          // transplant one matrix into another
@@ -46,7 +44,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
     // C is about to be cleared, so zombies and pending tuples are OK
-    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
 
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
@@ -63,48 +62,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-
-    //--------------------------------------------------------------------------
-    // save prior pattern of C, if dense
-    //--------------------------------------------------------------------------
-
-    bool A_is_dense = GB_is_dense (A) ;
-
-    bool keep_Cp_and_Ci =               // keep C->p and C->i if:
-        (
-            GB_is_dense (C)             //      both A and C are dense
-            && A_is_dense
-            && !GB_ZOMBIES (C)          //      neither have zombies
-            && !GB_ZOMBIES (A)
-            && !(C->p_shallow)          //      Cp and Ci are not shallow
-            && !(C->i_shallow)
-            && (C->h == NULL)           //      both A and C are standard
-            && (A->h == NULL)
-            && C->vdim == avdim         //      A and C have the same size
-            && C->vlen == avlen
-            && C->is_csc == A->is_csc   //      A and C have the same format
-            && C->p != NULL         
-            && C->i != NULL             //      Cp and Ci exist
-        ) ;
-
-    int64_t *GB_RESTRICT Cp_keep = NULL ;
-    int64_t *GB_RESTRICT Ci_keep = NULL ;
-    int64_t cplen_keep = 0 ;
-    int64_t cnvec_keep = 0 ;
-
-    if (keep_Cp_and_Ci)
-    { 
-        // Keep C->p and C->i by removing them from C.  They already contain
-        // the right pattern for a dense matrix C.  No need to free it and
-        // recreate the same thing.
-        GBBURBLE ("(remains dense) ") ;
-        Cp_keep = C->p ;
-        Ci_keep = C->i ;
-        cplen_keep = C->plen ;
-        cnvec_keep = C->nvec ;
-        C->p = NULL ;
-        C->i = NULL ;
-    }
 
     //--------------------------------------------------------------------------
     // clear C and transplant the type, size, and hypersparsity
@@ -132,22 +89,22 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (!C->p_shallow && !C->h_shallow && !C->i_shallow && !C->x_shallow) ;
     ASSERT (C->h == NULL && C->p == NULL && C->i == NULL && C->x == NULL) ;
 
+    // determine if C should be constructed as a full matrix
+    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) ;
+
     //--------------------------------------------------------------------------
     // transplant A->p vector pointers and A->h hyperlist
     //--------------------------------------------------------------------------
 
-    if (keep_Cp_and_Ci)
+    if (C_is_full)
     { 
 
         //----------------------------------------------------------------------
-        // keep existing C->p
+        // C is full
         //----------------------------------------------------------------------
 
-        C->p = Cp_keep ;
-        Cp_keep = NULL ;
-        C->h = NULL ;
-        C->plen = cplen_keep ;
-        C->nvec = cnvec_keep ;
+        C->plen = -1 ;
+        C->nvec = avdim ;
 
         // free any non-shallow A->p and A->h content of A
         GB_ph_free (A) ;
@@ -195,22 +152,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
-            if (A_is_dense)
-            {
-                // create C->p for a dense matrix C
-                int64_t *GB_RESTRICT Cp = C->p ;
-                int64_t k ;
-                #pragma omp parallel for num_threads(nth) schedule(static)
-                for (k = 0 ; k <= avdim ; k++)
-                { 
-                    Cp [k] = k * avlen ;
-                }
-            }
-            else
-            { 
-                // copy A->p into the newly created C->p
-                GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
-            }
+            // copy A->p into the newly created C->p
+            GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
         }
 
         // free any non-shallow A->p and A->h content of A
@@ -247,8 +190,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (anz == 0)
     { 
         // quick return if A has no entries
-        // Ci_keep is not needed after all, since C is empty
-        GB_FREE (Ci_keep) ;
         ASSERT_MATRIX_OK (C, "C empty transplant", GB0) ;
         GB_Matrix_free (Ahandle) ;
         return (GrB_SUCCESS) ;
@@ -262,10 +203,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // is set to their minimum size.  Otherwise, if both C->x and C->i can
     // be transplanted from A, then they inherit the nzmax of A.
 
-    // Do not allocate C->i if the pattern of a dense matrix C is being kept.
+    // Do not allocate C->i if C is full.
 
     ASSERT (C->x == NULL && C->i == NULL) ;
-    bool allocate_Ci = (A->i_shallow) && !keep_Cp_and_Ci ;
+    bool allocate_Ci = (A->i_shallow) && (!C_is_full) ;
     bool allocate_Cx = (A->x_shallow || C->type != A->type) ;
     C->nzmax = (allocate_Cx || allocate_Ci) ? anz : A->nzmax ;
     C->nzmax = GB_IMAX (C->nzmax, 1) ;
@@ -281,7 +222,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     if (allocate_Ci)
     { 
-
         // allocate new C->i component
         C->i = GB_MALLOC (C->nzmax, int64_t) ;
         ok = ok && (C->i != NULL) ;
@@ -292,7 +232,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // out of memory
         GB_phix_free (C) ;
         GB_Matrix_free (Ahandle) ;
-        GB_FREE (Ci_keep) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -350,16 +289,15 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // transplant or copy A->i row indices
     //--------------------------------------------------------------------------
 
-    if (keep_Cp_and_Ci)
+    if (C_is_full)
     { 
 
         //----------------------------------------------------------------------
-        // keep existing C->i
+        // C is full
         //----------------------------------------------------------------------
 
-        // C is dense; restore the prior C->i.  A->i will be freed
-        C->i = Ci_keep ;
-        Ci_keep = NULL ;
+        // C is dense; C->i stays NULL
+        C->i = NULL ;
 
     }
     else if (A->i_shallow)
@@ -369,22 +307,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // A->i is a shallow copy of another matrix, so we need a deep copy
         //----------------------------------------------------------------------
 
-        if (A_is_dense && !GB_ZOMBIES (A))
-        {
-            // create C->i for a dense matrix C
-            int64_t *GB_RESTRICT Ci = C->i ;
-            int64_t pC ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (pC = 0 ; pC < anz ; pC++)
-            { 
-                Ci [pC] = pC % avlen ;
-            }
-        }
-        else
-        { 
-            // copy A->i into C->i
-            GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
-        }
+        // copy A->i into C->i
+        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
         A->i = NULL ;
         A->i_shallow = false ;
 
@@ -401,9 +325,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         A->i_shallow = false ;
     }
 
-    ASSERT (C->i != NULL) ;
     C->i_shallow = false ;
-
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
 
     //--------------------------------------------------------------------------

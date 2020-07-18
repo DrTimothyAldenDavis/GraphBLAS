@@ -67,7 +67,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // allocate the output matrix R
     //--------------------------------------------------------------------------
 
-    int64_t rnz = Rp [Rnvec] ;
+    int64_t rnz = Rp [Rnvec] ;      // ok: R is sparse
     (*Rhandle) = NULL ;
 
     // R is hypersparse if both C and Z are hypersparse.

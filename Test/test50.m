@@ -44,7 +44,7 @@ for trial = 1:2
     tic
     S = GB_mex_AxB (A, B) ;
     toc
-    assert (spok (S*1) == 1) ;
+    assert (GB_spok (S*1) == 1) ;
     err = norm (C-S,1) / cnorm ;
     fprintf ('err %g\n', err) ;
     assert (isequal (C, S)) ;

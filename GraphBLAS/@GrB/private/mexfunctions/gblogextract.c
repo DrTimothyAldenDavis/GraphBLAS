@@ -207,7 +207,7 @@ void mexFunction
 
     // Vectors are always stored by column, and are never hypersparse.  This
     // step takes constant time, using a transplant of the row indices Tx from
-    // T and the values Gx from G.
+    // T and the values Gx from G.  V is sparse (not full, not hypersparse).
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;

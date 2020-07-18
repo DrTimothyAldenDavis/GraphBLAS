@@ -177,7 +177,7 @@ void mexFunction
         ERROR (ERR) ;
     }
 
-    int64_t *Ai = A->i ;
+    GrB_Index *Ai = (GrB_Index *) A->i ;        // NULL if A is full
     void *Ax = A->x ;
     double empty ;
     if (Ax == NULL) Ax = &empty ;
@@ -197,7 +197,7 @@ void mexFunction
     GrB_Index *Si = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
     GrB_Index *Sj = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
 
-    GB_matlab_helper5 (Si, Sj, Mi, Mj, (GrB_Index *) Ai, anz) ;
+    GB_matlab_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
 
     GrB_Matrix S ;
     OK (GrB_Matrix_new (&S, atype, nrows, ncols)) ;

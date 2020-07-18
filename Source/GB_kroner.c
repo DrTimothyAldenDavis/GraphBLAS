@@ -100,10 +100,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     // C is hypersparse if either A or B are hypersparse
     bool C_is_hyper = (cvdim > 1) && (Ah != NULL || Bh != NULL) ;
+    bool C_is_full = GB_is_dense (A) && GB_is_dense (B) ;
 
     GrB_Matrix C = NULL ;           // allocate a new header for C
     info = GB_create (&C, op->ztype, (int64_t) cvlen, (int64_t) cvdim,
-        GB_Ap_malloc, C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
+        GB_Ap_malloc, C_is_csc,
+        C_is_full ? GB_FULL : GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
         cnvec, cnzmax, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -132,34 +134,37 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     int64_t kC ;
-    #pragma omp parallel for num_threads(nthreads) schedule(guided)
-    for (kC = 0 ; kC < cnvec ; kC++)
-    {
-        int64_t kA = kC / bnvec ;
-        int64_t kB = kC % bnvec ;
+
+    if (!C_is_full)
+    { 
+        #pragma omp parallel for num_threads(nthreads) schedule(guided)
+        for (kC = 0 ; kC < cnvec ; kC++)
+        {
+            int64_t kA = kC / bnvec ;
+            int64_t kB = kC % bnvec ;
 
             // get A(:,jA), the (kA)th vector of A
-            int64_t jA = (Ah == NULL) ? kA : Ah [kA] ;
-            int64_t aknz = Ap [kA+1] - Ap [kA] ;
+            int64_t jA = GBH (Ah, kA) ;
+            int64_t aknz = (Ap == NULL) ? avlen : (Ap [kA+1] - Ap [kA]) ;
             // get B(:,jB), the (kB)th vector of B
-            int64_t jB = (Bh == NULL) ? kB : Bh [kB] ;
-            int64_t bknz = Bp [kB+1] - Bp [kB] ;
+            int64_t jB = GBH (Bh, kB) ;
+            int64_t bknz = (Bp == NULL) ? bvlen : (Bp [kB+1] - Bp [kB]) ;
             // determine # entries in C(:,jC), the (kC)th vector of C
             // int64_t kC = kA * bnvec + kB ;
-            Cp [kC] = aknz * bknz ;
+            if (!C_is_full)
+            { 
+                Cp [kC] = aknz * bknz ;
+            }
             if (C_is_hyper)
             { 
                 Ch [kC] = jA * bvdim + jB ;
             }
+        }
 
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
+        if (C_is_hyper) C->nvec = cnvec ;
     }
 
-    //--------------------------------------------------------------------------
-    // replace Cp with its cumulative sum
-    //--------------------------------------------------------------------------
-
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
-    if (C_is_hyper) C->nvec = cnvec ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -173,35 +178,38 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t kB = kC % bnvec ;
 
         // get B(:,jB), the (kB)th vector of B
-        int64_t pB_start = Bp [kB] ;
-        int64_t pB_end   = Bp [kB+1] ;
+        int64_t pB_start = GBP (Bp, kB, bvlen) ;
+        int64_t pB_end   = GBP (Bp, kB+1, bvlen) ;
         int64_t bknz = pB_start - pB_end ;
         if (bknz == 0) continue ;
         GB_void bwork [GB_VLA(bsize)] ;
 
         // get C(:,jC), the (kC)th vector of C
         // int64_t kC = kA * bnvec + kB ;
-        int64_t pC = Cp [kC] ;
+        int64_t pC = GBP (Cp, kC, cvlen) ;
 
         // get A(:,jA), the (kA)th vector of A
-        int64_t pA_start = Ap [kA] ;
-        int64_t pA_end   = Ap [kA+1] ;
+        int64_t pA_start = GBP (Ap, kA, avlen) ;
+        int64_t pA_end   = GBP (Ap, kA+1, avlen) ;
         GB_void awork [GB_VLA(asize)] ;
 
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
         {
             // awork = A(iA,jA), typecasted to op->xtype
-            int64_t iA = Ai [pA] ;
+            int64_t iA = GBI (Ai, pA, avlen) ;
             int64_t iAblock = iA * bvlen ;
             cast_A (awork, Ax +(pA*asize), asize) ;
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
             { 
                 // bwork = B(iB,jB), typecasted to op->ytype
-                int64_t iB = Bi [pB] ;
+                int64_t iB = GBI (Bi, pB, bvlen) ;
                 cast_B (bwork, Bx +(pB*bsize), bsize) ;
                 // C(iC,jC) = A(iA,jA) * B(iB,jB)
-                int64_t iC = iAblock + iB ;
-                Ci [pC] = iC ;
+                if (!C_is_full)
+                { 
+                    int64_t iC = iAblock + iB ;
+                    Ci [pC] = iC ;                  // ok: C is sparse
+                }
                 fmult (Cx +(pC*csize), awork, bwork) ;
                 pC++ ;
             }

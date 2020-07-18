@@ -13,6 +13,8 @@ for m = [0 1 5 100]
             A = GB_spec_random (m, n, d) ;
             for format_matrix = 0:3
                 for format_export = 0:3
+
+save gunk A format_matrix format_export
                     C = GB_mex_export_import (A, format_matrix, format_export) ;
                     GB_spec_compare (C, A) ;
                 end

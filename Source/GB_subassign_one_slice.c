@@ -90,6 +90,7 @@ GrB_Info GB_subassign_one_slice
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
+    const int64_t avlen = A->vlen ;
 
     const int64_t *GB_RESTRICT Cp = C->p ;
     const int64_t *GB_RESTRICT Ch = C->h ;
@@ -97,7 +98,7 @@ GrB_Info GB_subassign_one_slice
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -141,6 +142,7 @@ GrB_Info GB_subassign_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
+    // A may be full, sparse, or hypersparse
     if (!GB_pslice (&Coarse, /* A */ A->p, A->nvec, ntasks1))
     { 
         // out of memory
@@ -219,17 +221,17 @@ GrB_Info GB_subassign_one_slice
             //------------------------------------------------------------------
 
             ASSERT (k >= 0 && k < anvec) ;
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t j = GBH (Ah, k) ;
             ASSERT (j >= 0 && j < nJ) ;
             int64_t GB_LOOKUP_jC ;
 
-            bool jC_dense = (pC_end - pC_start == cvlen) ;
+            bool jC_dense = (pC_end - pC_start == Cvlen) ;
 
             //------------------------------------------------------------------
             // determine the # of fine-grain tasks to create for vector k
             //------------------------------------------------------------------
 
-            int64_t aknz = Ap [k+1] - Ap [k] ;
+            int64_t aknz = (Ap == NULL) ? avlen : (Ap [k+1] - Ap [k]) ;
             int nfine = ((double) aknz) / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
 
@@ -271,8 +273,9 @@ GrB_Info GB_subassign_one_slice
                     // slice A(:,k) for this task
                     int64_t p1, p2 ;
                     GB_PARTITION (p1, p2, aknz, tfine, nfine) ;
-                    int64_t pA     = Ap [k] + p1 ;
-                    int64_t pA_end = Ap [k] + p2 ;
+                    int64_t pA_start = GBP (Ap, k, avlen) ;
+                    int64_t pA     = pA_start + p1 ;
+                    int64_t pA_end = pA_start + p2 ;
                     TaskList [ntasks].pA     = pA ;
                     TaskList [ntasks].pA_end = pA_end ;
 
@@ -285,9 +288,9 @@ GrB_Info GB_subassign_one_slice
                     else
                     { 
                         // find where this task starts and ends in C(:,jC)
-                        int64_t iA_start = Ai [pA] ;
+                        int64_t iA_start = GBI (Ai, pA, avlen) ;
                         int64_t iC1 = GB_ijlist (I, iA_start, Ikind, Icolon) ;
-                        int64_t iA_end = Ai [pA_end-1] ;
+                        int64_t iA_end = GBI (Ai, pA_end-1, avlen) ;
                         int64_t iC2 = GB_ijlist (I, iA_end, Ikind, Icolon) ;
 
                         // If I is an explicit list, it must be already sorted

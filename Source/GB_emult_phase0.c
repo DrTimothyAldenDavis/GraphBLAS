@@ -30,7 +30,7 @@
 //      C is always hypersparse in this case.
 
 //      C_to_M:  if M is hypersparse, and Ch is not M->h, then C_to_M [k] = kM
-//      if the kth vector j = (Ch == NULL) ? k : Ch [k] is equal to Mh [kM].
+//      if the kth vector j = GBH (Ch, k) is equal to Mh [kM].
 //      If j does not appear in M, then C_to_M [k] = -1.  Otherwise, C_to_M is
 //      returned as NULL.  C is always hypersparse in this case.
 
@@ -65,7 +65,9 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     ASSERT_MATRIX_OK (B, "B for emult phase0", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase0", GB0) ;
     ASSERT (A->vdim == B->vdim) ;
+    ASSERT (A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
+    ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -91,6 +93,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t n = A->vdim ;
 
     int64_t Anvec = A->nvec ;
+    int64_t vlen  = A->vlen ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
 
@@ -386,7 +389,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pM, pM_end, kM = 0 ;
             int64_t j = Ch [k] ;
-            GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
+            GB_lookup (true, Mh, Mp, vlen, &kM, Mnvec-1, j, &pM, &pM_end) ;
             C_to_M [k] = (pM < pM_end) ? kM : -1 ;
         }
     }
@@ -416,7 +419,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pA, pA_end, kA = 0 ;
             int64_t j = Ch [k] ;
-            GB_lookup (true, Ah, Ap, &kA, Anvec-1, j, &pA, &pA_end) ;
+            GB_lookup (true, Ah, Ap, vlen, &kA, Anvec-1, j, &pA, &pA_end) ;
             C_to_A [k] = (pA < pA_end) ? kA : -1 ;
         }
     }
@@ -447,7 +450,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pB, pB_end, kB = 0 ;
             int64_t j = Ch [k] ;
-            GB_lookup (true, Bh, Bp, &kB, Bnvec-1, j, &pB, &pB_end) ;
+            GB_lookup (true, Bh, Bp, vlen, &kB, Bnvec-1, j, &pB, &pB_end) ;
             C_to_B [k] = (pB < pB_end) ? kB : -1 ;
         }
     }

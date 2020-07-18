@@ -100,12 +100,12 @@ GrB_Info GB_hyper_prune
         if (Ap_old [k] < Ap_old [k+1])
         { 
             int64_t knew = W [k] ;
-            Ap [knew] = Ap_old [k] ;
-            Ah [knew] = Ah_old [k] ;
+            Ap [knew] = Ap_old [k] ;        // ok: A is hypersparse
+            Ah [knew] = Ah_old [k] ;        // ok: A is hypersparse
         }
     }
 
-    Ap [nvec] = Ap_old [nvec_old] ;
+    Ap [nvec] = Ap_old [nvec_old] ;     // ok: A is hypersparse
 
     //--------------------------------------------------------------------------
     // free workspace and return result

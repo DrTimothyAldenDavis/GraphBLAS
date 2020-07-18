@@ -121,6 +121,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_MATRIX_WAIT (A) ;
     GB_MATRIX_WAIT (B) ;
 
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+    GB_BURBLE_DENSE (B, "(B %s) ") ;
+
     //--------------------------------------------------------------------------
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
@@ -151,18 +156,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
-    // determine if any matrices are dense
+    // determine if any matrices are dense or full
     //--------------------------------------------------------------------------
 
     bool C_is_dense = GB_is_dense (C) && !GB_PENDING_OR_ZOMBIES (C) ;
     bool A_is_dense = GB_is_dense (A) ;
     bool B_is_dense = GB_is_dense (B) ;
-    bool M_is_dense = GB_is_dense (M) ;
-
-    if (C_is_dense) { GBBURBLE ("(C dense) ") ; }
-    if (A_is_dense) { GBBURBLE ("(A dense) ") ; }
-    if (B_is_dense) { GBBURBLE ("(B dense) ") ; }
-    if (M_is_dense) { GBBURBLE ("(M dense) ") ; }
 
     //--------------------------------------------------------------------------
     // decide when to apply the mask
@@ -248,7 +247,16 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // special cases
     //--------------------------------------------------------------------------
 
-    // FUTURE::: handle more special cases
+    // FUTURE::: handle more special cases:
+    // C<M>=A+B when C and A are dense, B is sparse.  M can be sparse.
+    // C<M>=A+B when C and B are dense, A is sparse.  M can be sparse.
+    // C<M>=A+B when C, A, and B are dense.  M can be sparse.
+    // Also do:
+    // C<M>+=A+B when C and A are dense, B is sparse.  M can be sparse.
+    // C<M>+=A+B when C and B are dense, A is sparse.  M can be sparse.
+    // C<M>+=A+B when C, A, and B are dense.  M can be sparse.
+    // In all cases above, C remains dense and can be updated in place
+    // C_replace must be false.  M can be valued or structural.
 
     if (A_is_dense && B_is_dense)
     { 
@@ -318,7 +326,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     #endif
 
     //--------------------------------------------------------------------------
-    // T = A+B or A.*B
+    // T = A+B or A.*B, or with any mask M (does not handle complmented mask)
     //--------------------------------------------------------------------------
 
     if (eWiseAdd)

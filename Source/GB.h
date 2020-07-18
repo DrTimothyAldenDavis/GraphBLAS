@@ -14,7 +14,6 @@
 // FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
 // FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 // FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
-// FUTURE: allow matrices and vectors to be left jumbled (sort left pending)
 
 #ifndef GB_H
 #define GB_H
@@ -306,6 +305,14 @@ GB_PUBLIC int GB_cover_max ;
 #endif
 
 //------------------------------------------------------------------------------
+// Accessing the pattern of a matrix or vector
+//------------------------------------------------------------------------------
+
+#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
+#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
+#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
+
+//------------------------------------------------------------------------------
 // GraphBLAS include files
 //------------------------------------------------------------------------------
 
@@ -346,8 +353,11 @@ GB_PUBLIC int GB_cover_max ;
 #define GB_NEVER_HYPER  (-1.0)
 
 #define GB_FORCE_HYPER 1
+#define GB_HYPER GB_FORCE_HYPER
 #define GB_FORCE_NONHYPER 0
+#define GB_SPARSE GB_FORCE_NONHYPER
 #define GB_AUTO_HYPER (-1)
+#define GB_FULL 2
 
 #define GB_SAME_HYPER_AS(A_is_hyper) \
     ((A_is_hyper) ? GB_FORCE_HYPER : GB_FORCE_NONHYPER)
@@ -364,12 +374,13 @@ GB_PUBLIC int GB_cover_max ;
 // If A->nzmax is zero, then A->p might not be allocated.  Note that this
 // function does not count pending tuples; use GB_MATRIX_WAIT(A) first, if
 // needed.  For both sparse and hypersparse matrices Ap [0] == 0,
-// and nnz(A) = Ap [nvec].
-#define GB_NNZ(A) (((A)->nzmax > 0) ? ((A)->p [(A)->nvec]) : 0 )
+// and nnz(A) = Ap [nvec].  For full matrices, Ap is NULL.
+#define GB_NNZ(A) (((A)->nzmax <= 0) ? 0 : \
+    (((A)->p == NULL) ? ((A)->vlen * (A)->vdim) : (A)->p [(A)->nvec]))
 
 // Upper bound on nnz(A) when the matrix has zombies and pending tuples;
 // does not need GB_MATRIX_WAIT(A) first.
-#define GB_NNZ_UPPER_BOUND(A) ((GB_NNZ (A) - A->nzombies) + GB_Pending_n (A))
+#define GB_NNZ_UPPER_BOUND(A) ((GB_NNZ (A) - (A)->nzombies) + GB_Pending_n (A))
 
 int64_t GB_Pending_n        // return # of pending tuples in A
 (
@@ -394,14 +405,14 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // in the GraphBLAS/Test directory only.  The macro is also used in
 // GB_Vector_check, to ensure the content of a GrB_Vector is valid.
 
-#define GB_VECTOR_OK(v)             \
-(                                   \
-    ((v) != NULL) &&                \
-    ((v)->is_csc == true) &&        \
-    ((v)->plen == 1) &&             \
-    ((v)->vdim == 1) &&             \
-    ((v)->nvec == 1) &&             \
-    ((v)->h == NULL)                \
+#define GB_VECTOR_OK(v)                     \
+(                                           \
+    ((v) != NULL) &&                        \
+    ((v)->is_csc == true) &&                \
+    ((v)->plen == 1 || (v)->plen == -1) &&  \
+    ((v)->vdim == 1) &&                     \
+    ((v)->nvec == 1) &&                     \
+    ((v)->h == NULL)                        \
 )
 
 // A GxB_Vector is a GrB_Vector of length 1
@@ -804,7 +815,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
+    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto, 2:full
     const double hyper_ratio,   // A->hyper_ratio, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
@@ -870,6 +881,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
     const GrB_Index nzmax,  // number of entries the matrix can hold
+    const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
     GB_Context Context
 ) ;
@@ -1078,7 +1090,7 @@ void GB_task_cumsum
 // GB_GET_VECTOR: get the content of a vector for a coarse/fine task
 //------------------------------------------------------------------------------
 
-#define GB_GET_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, kX)                \
+#define GB_GET_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, kX, Xvlen)         \
     int64_t pX_start, pX_fini ;                                             \
     if (fine_task)                                                          \
     {                                                                       \
@@ -1089,8 +1101,8 @@ void GB_task_cumsum
     else                                                                    \
     {                                                                       \
         /* vectors are never sliced for a coarse task */                    \
-        pX_start = Xp [kX] ;                                                \
-        pX_fini  = Xp [kX+1] ;                                              \
+        pX_start = GBP (Xp, kX, Xvlen) ;                                    \
+        pX_fini  = GBP (Xp, kX+1, Xvlen) ;                                  \
     }
 
 //------------------------------------------------------------------------------
@@ -1297,23 +1309,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     const GB_Type_code idcode,  // identity and terminal type code
     GB_Context Context
 ) ;
-
-//------------------------------------------------------------------------------
-// GB_is_dense: check if a matrix is completely dense
-//------------------------------------------------------------------------------
-
-static inline bool GB_is_dense
-(
-    const GrB_Matrix A
-)
-{
-    // check if A is competely dense:  all entries present.
-    // zombies and pending tuples are not considered
-    if (A == NULL) return (false) ;
-    GrB_Index anzmax ;
-    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
-    return (ok && (anzmax == GB_NNZ (A))) ;
-}
 
 //------------------------------------------------------------------------------
 // OpenMP definitions
@@ -1542,7 +1537,7 @@ void GB_cast_array              // typecast an array
 // Pending upddate and zombies
 //------------------------------------------------------------------------------
 
-// GB_FLIP is a kind of  "negation" about (-1) of a zero-based index.
+// GB_FLIP is a kind of "negation" about (-1) of a zero-based index.
 // If i >= 0 then it is not flipped.
 // If i < 0 then it has been flipped.
 // Like negation, GB_FLIP is its own inverse: GB_FLIP (GB_FLIP (i)) == i.
@@ -1577,8 +1572,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 #define GB_IS_FLIPPED(i)       ((i) < 0)
 #define GB_IS_ZOMBIE(i)        ((i) < 0)
 #define GB_IS_NOT_FLIPPED(i)   ((i) >= 0)
-#define GB_IS_NOT_ZOMBIE(i)    ((i) >= 0)
+#define GB_IS_NOT_ZOMBIE(Ai,p) ((Ai == NULL) ? true : (Ai [p] >= 0))
 #define GB_UNFLIP(i)           (((i) < 0) ? GB_FLIP(i) : (i))
+#define GBI_UNFLIP(Ai,p,avlen)      \
+    ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
 
 // true if a matrix has pending tuples
 #define GB_PENDING(A) ((A) != NULL && (A)->Pending != NULL)
@@ -1624,6 +1621,62 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
 // true if a matrix has no entries; zombies OK
 #define GB_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))
+
+//------------------------------------------------------------------------------
+// full matrices and vectors
+//------------------------------------------------------------------------------
+
+#define GB_IS_FULL(A) \
+    ((A) != NULL && (A)->h == NULL && (A)->p == NULL && (A)->i == NULL)
+
+GrB_Info GB_full_to_sparse      // convert matrix from full to sparse
+(
+    GrB_Matrix A,               // matrix to convert from full to sparse
+    GB_Context Context
+) ;
+
+GB_PUBLIC                       // used by MATLAB interface
+void GB_sparse_to_full          // convert matrix from sparse to full
+(
+    GrB_Matrix A                // matrix to convert from sparse to full
+) ;
+
+GrB_Info GB_to_full             // convert matrix to full; delete prior values
+(
+    GrB_Matrix A                // matrix to convert to full
+) ;
+
+#define GB_ENSURE_SPARSE(C)                                 \
+{                                                           \
+    if (GB_IS_FULL (C))                                     \
+    {                                                       \
+        /* convert C from full to sparse */                 \
+        GrB_Info info = GB_full_to_sparse (C, Context) ;    \
+        if (info != GrB_SUCCESS)                            \
+        {                                                   \
+            return (info) ;                                 \
+        }                                                   \
+    }                                                       \
+}
+
+static inline bool GB_is_dense
+(
+    const GrB_Matrix A
+)
+{
+    // check if A is competely dense:  all entries present.
+    // zombies and pending tuples are not considered
+    if (A == NULL) return (false) ;
+    if (GB_IS_FULL (A))
+    { 
+        // A is full; the pattern is not present
+        return (true) ;
+    }
+    // A is sparse: check if all entries present
+    GrB_Index anzmax ;
+    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
+    return (ok && (anzmax == GB_NNZ (A))) ;
+}
 
 //------------------------------------------------------------------------------
 // built-in unary and binary operators

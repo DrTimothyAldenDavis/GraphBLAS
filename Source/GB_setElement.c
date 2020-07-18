@@ -103,29 +103,43 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         j = row ;
     }
 
-    //--------------------------------------------------------------------------
-    // binary search in C->h for vector j, or constant time lookup if not hyper
-    //--------------------------------------------------------------------------
-
-    int64_t pC_start, pC_end, pleft = 0, pright = C->nvec - 1 ;
-    bool found = GB_lookup (C->h != NULL, C->h, C->p, &pleft, pright, j,
-        &pC_start, &pC_end) ;
-
-    //--------------------------------------------------------------------------
-    // binary search in kth vector for index i
-    //--------------------------------------------------------------------------
-
+    int64_t pleft ;
+    bool found ;
     bool is_zombie ;
-    if (found)
-    { 
-        // vector j has been found; now look for index i
-        pleft = pC_start ;
-        pright = pC_end - 1 ;
 
-        // Time taken for this step is at most O(log(nnz(C(:,j))).
-        const int64_t *Ci = C->i ;
-        GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found, C->nzombies,
-            is_zombie) ;
+    if (GB_IS_FULL (C))
+    {
+        pleft = i + j * C->vlen ;
+        found = true ;
+        is_zombie = false ;
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // binary search in C->h for vector j, or constant time lookup if sparse
+        //----------------------------------------------------------------------
+
+        int64_t pC_start, pC_end, pright = C->nvec - 1 ;
+        pleft = 0 ;
+        found = GB_lookup (C->h != NULL, C->h, C->p, C->vlen, &pleft,
+            pright, j, &pC_start, &pC_end) ;
+
+        //----------------------------------------------------------------------
+        // binary search in kth vector for index i
+        //----------------------------------------------------------------------
+
+        if (found)
+        { 
+            // vector j has been found; now look for index i
+            pleft = pC_start ;
+            pright = pC_end - 1 ;
+
+            // Time taken for this step is at most O(log(nnz(C(:,j))).
+            const int64_t *GB_RESTRICT Ci = C->i ;
+            GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found, C->nzombies,
+                is_zombie) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -152,7 +166,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         {
             // bring the zombie back to life
-            C->i [pleft] = i ;
+            C->i [pleft] = i ;      // ok: C is sparse
             C->nzombies-- ;
         }
 

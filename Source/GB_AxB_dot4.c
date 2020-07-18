@@ -144,7 +144,11 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // slice A and B
     //--------------------------------------------------------------------------
 
+    // A and B can have any sparsity: full, sparse, or hypersparse.
+    // C is always full.
+
     int64_t anvec = A->nvec ;
+    int64_t vlen  = A->vlen ;
     int64_t bnvec = B->nvec ;
 
     int naslice = (nthreads == 1) ? 1 : (16 * nthreads) ;

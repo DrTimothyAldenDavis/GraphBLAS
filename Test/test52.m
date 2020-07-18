@@ -34,13 +34,13 @@ for m = 1:10
             C2 = GB_mex_AdotB (A,B) ;
 
             assert (isequal (C, C2)) ;
-            assert (spok (C2) == 1)
+            assert (GB_spok (C2) == 1)
 
             C = spones (Mask) .* C ;
             C2 = GB_mex_AdotB (A,B, Mask) ;
 
             assert (isequal (C, C2)) ;
-            assert (spok (C2) == 1)
+            assert (GB_spok (C2) == 1)
         end
     end
 end

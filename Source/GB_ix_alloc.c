@@ -21,6 +21,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
     const GrB_Index nzmax,  // number of entries the matrix can hold
+    const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
     GB_Context Context
 )
@@ -49,13 +50,27 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 
     // allocate the new A->x and A->i content
     A->nzmax = GB_IMAX (nzmax, 1) ;
-    A->i = GB_MALLOC (A->nzmax, int64_t) ;
-    if (numeric)
-    { 
-        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
+
+    bool ok = true ;
+    if (is_sparse)
+    {
+        A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        ok = (A->i != NULL) ;
     }
 
-    if (A->i == NULL || (numeric && A->x == NULL))
+    if (numeric)
+    { 
+        #ifdef GB_DEBUG
+        // use calloc when debugging, so a newly allocated matrix can be printed
+        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
+        #else
+        // use malloc in production
+        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
+        #endif
+        ok = ok && (A->x != NULL) ;
+    }
+
+    if (!ok)
     { 
         // out of memory
         GB_phix_free (A) ;
