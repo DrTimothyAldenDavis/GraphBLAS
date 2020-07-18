@@ -1052,13 +1052,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         if (scalar_expansion)
         {
             // Method 22: C(:,:) += x where C is dense or full
-            GBBURBLE (C, "Method 22: (C full) += scalar ") ;
+            GBBURBLE ("Method 22: (C full) += scalar ") ;
             GB_OK (GB_dense_subassign_22 (C, scalar, atype, accum, Context)) ;
         }
         else
         {
             // Method 23: C(:,:) += A where C is dense or full
-            GBBURBLE (C, "Method 23: (C full) += Z ") ;
+            GBBURBLE ("Method 23: (C full) += Z ") ;
             GB_OK (GB_dense_subassign_23 (C, A, accum, Context)) ;
         }
 

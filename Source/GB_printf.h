@@ -208,7 +208,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 #define GB_BURBLE_END
 #define GB_BURBLE_N(n,...)
 #define GB_BURBLE_MATRIX(A,...)
-#define GB_BURBLE_DENSE
+#define GB_BURBLE_DENSE(A,format)
 
 #endif
 #endif
