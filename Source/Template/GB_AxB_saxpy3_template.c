@@ -144,81 +144,27 @@
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine Gustavson task, C=A*B
+                // phase2: fine Gustavson task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // Hf [i] is initially 0.
-
-                // 0 -> 3 : to lock, if i seen for first time
-                // 2 -> 3 : to lock, if i seen already
-                // 3 -> 2 : to unlock; now i has been seen
-
-                for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                {
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
-                    GB_GET_A_k ;                // get A(:,k)
-                    if (aknz == 0) continue ;
-                    GB_GET_B_kj ;               // bkj = B(k,j)
-                    // scan A(:,k)
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-                        GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
-                        int8_t f ;
-
-                        #if GB_IS_ANY_MONOID
-
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        if (f == 2) continue ;  // check if already updated
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // flag the entry
-                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-
-                        #else
-
-                        #if GB_HAS_ATOMIC
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        if (f == 2)             // if true, update C(i,j)
-                        {
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                            continue ;          // C(i,j) has been updated
-                        }
-                        #endif
-                        do  // lock the entry
-                        {
-                            // do this atomically:
-                            // { f = Hf [i] ; Hf [i] = 3 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
-                        } while (f == 3) ; // lock owner gets f=0 or 2
-                        if (f == 0)
-                        { 
-                            // C(i,j) is a new entry
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-                        }
-                        else // f == 2
-                        { 
-                            // C(i,j) already appears in C(:,j)
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                        }
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
-
-                        #endif
-                    }
-                }
+                // TODO: treat this as:
+                // (Mx == NULL && mjnz == mvlen && !Mask_comp)
+                // no mask present
+                #undef  GB_CHECK_MASK_ij
+                #define GB_CHECK_MASK_ij ;
+                #include "GB_AxB_saxpy3_fineGus_phase2.c"
 
             }
             else if (mask_is_M)
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine Gustavson task, C<M>=A*B
+                // phase2: fine Gustavson task, C(:,j)<M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
-                // 0 -> 1 : has already been done in phase0 if M(i,j)=1
+                // 0 -> 1 : has already been done in phase0 if M(i,j)=1.
+                // If M(:,j) is dense, then it is not scattered into Hf.
 
                 // 0 -> 0 : to ignore, if M(i,j)=0
                 // 1 -> 3 : to lock, if i seen for first time
@@ -226,6 +172,57 @@
                 // 3 -> 2 : to unlock; now i has been seen
 
                 GB_GET_M_j ;                // get M(:,j)
+                if (mjnz == mvlen)
+                { 
+                    // M(:,j) is dense.  M is not scattered into Hf.
+                    if (Mx == NULL)
+                    {
+                        // Full structural mask, not complemented.
+                        // The Mask is ignored, and C(:,j)=A*B(:,j)
+                        #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                    }
+                    #undef  GB_CHECK_MASK_ij
+                    #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+                    switch (msize)
+                    {
+                        default:
+                        case 1:
+                        {
+                            const uint8_t *GB_RESTRICT Mask = 
+                                ((uint8_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 2:
+                        {
+                            const uint16_t *GB_RESTRICT Mask = 
+                                ((uint16_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 4:
+                        {
+                            const uint32_t *GB_RESTRICT Mask = 
+                                ((uint32_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 8:
+                        {
+                            const uint64_t *GB_RESTRICT Mask = 
+                                ((uint64_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 16:
+                        {
+                            const uint64_t *GB_RESTRICT Mask = 
+                                ((uint64_t *) Mx) + (2 * pM_start) ;
+                            #undef  GB_CHECK_MASK_ij
+                            #define GB_CHECK_MASK_ij                        \
+                                if (Mask [2*i] == 0 && Mask [2*i+1] == 0)   \
+                                    continue ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                    }
+                }
+
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
@@ -291,16 +288,69 @@
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine Gustavson task, C<!M>=A*B
+                // phase2: fine Gustavson task, C(:,j)<!M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
                 // 0 -> 1 : has already been done in phase0 if M(i,j)=1
 
+                // If M(:,j) is dense, then it is not scattered into Hf.
+
                 // 1 -> 1 : to ignore, if M(i,j)=1
                 // 0 -> 3 : to lock, if i seen for first time
                 // 2 -> 3 : to lock, if i seen already
                 // 3 -> 2 : to unlock; now i has been seen
+
+                GB_GET_M_j ;                // get M(:,j)
+                if (mjnz == mvlen)
+                { 
+                    // M(:,j) is dense.  M is not scattered into Hf.
+                    if (Mx == NULL)
+                    {
+                        // structural mask, complemented.  No work to do.
+                        continue ;
+                    }
+                    #undef  GB_CHECK_MASK_ij
+                    #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                    switch (msize)
+                    {
+                        default:
+                        case 1:
+                        {
+                            const uint8_t *GB_RESTRICT Mask = 
+                                ((uint8_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 2:
+                        {
+                            const uint16_t *GB_RESTRICT Mask = 
+                                ((uint16_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 4:
+                        {
+                            const uint32_t *GB_RESTRICT Mask = 
+                                ((uint32_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 8:
+                        {
+                            const uint64_t *GB_RESTRICT Mask = 
+                                ((uint64_t *) Mx) + pM_start ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                        case 16:
+                        {
+                            const uint64_t *GB_RESTRICT Mask = 
+                                ((uint64_t *) Mx) + (2 * pM_start) ;
+                            #undef  GB_CHECK_MASK_ij
+                            #define GB_CHECK_MASK_ij                        \
+                                if (Mask [2*i] != 0 || Mask [2*i+1] != 0)   \
+                                    continue ;
+                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                        }
+                    }
+                }
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
@@ -399,7 +449,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine hash task, C=A*B
+                // phase2: fine hash task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
                 // Given Hf [hash] split into (h,f)
@@ -479,8 +529,13 @@
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine hash task, C<M>=A*B
+                // phase2: fine hash task, C(:,j)<M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
+
+                // TODO:: phase2, fine hash C<M>=A*B: if M(:,j) is dense,
+                // do not scatter into the workspace.  Instead check M(i,j)
+                // directly.  Use a 6-way switch case for M: struct, 1, 2, 4,
+                // 8, 16 bytes.
 
                 // Given Hf [hash] split into (h,f)
 
@@ -557,8 +612,13 @@
             {
 
                 //--------------------------------------------------------------
-                // phase2: fine hash task, C<!M>=A*B
+                // phase2: fine hash task, C(:,j)<!M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
+
+                // TODO:: phase2, fine hash C<!M>=A*B: if M(:,j) is dense,
+                // do not scatter into the workspace.  Instead check M(i,j)
+                // directly.  Use a 6-way switch case for M: struct, 1, 2, 4,
+                // 8, 16 bytes.
 
                 // Given Hf [hash] split into (h,f)
 
@@ -667,6 +727,8 @@
 
     #if GB_IS_ANY_PAIR_SEMIRING
 
+        // TODO: create C as a constant-value matrix.
+
         // ANY_PAIR semiring: result is purely symbolic
         int64_t pC ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -732,6 +794,8 @@
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)
                 {
+                    // TODO: if all of C is dense, skip this step and
+                    // free the pattern of C.
                     // C(:,j) is dense
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
@@ -898,6 +962,11 @@
                     // phase5: coarse Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
+                    // TODO:: phase5, coarse Gus C<M>=A*B: if M(:,j) is dense,
+                    // do not scatter into the workspace.  Instead check M(i,j)
+                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
+                    // 4, 8, 16 bytes.
+
                     // Initially, Hf [...] < mark for all of Hf.
 
                     // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
@@ -992,7 +1061,12 @@
                     // phase5: coarse Gustavson task, C<!M>=A*B
                     //----------------------------------------------------------
 
-                    // if !M:
+                    // TODO:: phase5, coarse Gus C<!M>=A*B: if M(:,j) is dense,
+                    // do not scatter into the workspace.  Instead check M(i,j)
+                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
+                    // 4, 8, 16 bytes.
+
+                    // Since the mask is !M:
                     // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
                     // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
                     // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
@@ -1163,6 +1237,11 @@
                     // phase5: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
+                    // TODO:: phase5, coarse hash C<M>=A*B: if M(:,j) is dense,
+                    // do not scatter into the workspace.  Instead check M(i,j)
+                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
+                    // 4, 8, 16 bytes.
+
                     // Initially, Hf [...] < mark for all of Hf.
                     // Let h = Hi [hash] and f = Hf [hash].
 
@@ -1226,6 +1305,11 @@
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C<!M>=A*B
                     //----------------------------------------------------------
+
+                    // TODO:: phase5, coarse hash C<!M>=A*B: if M(:,j) is dense,
+                    // do not scatter into the workspace.  Instead check M(i,j)
+                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
+                    // 4, 8, 16 bytes.
 
                     // Initially, Hf [...] < mark for all of Hf.
                     // Let h = Hi [hash] and f = Hf [hash].

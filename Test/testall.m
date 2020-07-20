@@ -134,7 +134,7 @@ logstat ('test130',t) ; % GrB_apply, hypersparse cases
 logstat ('test14',t) ;  % GrB_reduce
 
 logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
-logstat ('test102',t);  % GB_AxB_flopcount
+logstat ('test102',t);  % GB_AxB_saxpy3_flopcount
 logstat ('test12',t) ;  % Wathen finite-element matrices (short test)
 logstat ('test28',t) ;  % mxm with aliased inputs, C<C> = accum(C,C*C)
 logstat ('test107',t) ; % monoids with terminal values

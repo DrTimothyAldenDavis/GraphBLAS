@@ -102,6 +102,10 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     // phase4: compute Cp with cumulative sum
     //==========================================================================
 
+    //--------------------------------------------------------------------------
+    // sum nnz (C (:,j)) for fine tasks
+    //--------------------------------------------------------------------------
+
     // TaskList [taskid].my_cjnz is the # of unique entries found in C(:,j) by
     // that task.  Sum these terms to compute total # of entries in C(:,j).
 
@@ -119,13 +123,20 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
         ASSERT (my_cjnz <= cvlen) ;
     }
 
+    //--------------------------------------------------------------------------
+    // cumulative sum for Cp (fine and coarse tasks)
+    //--------------------------------------------------------------------------
+
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
     // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
 
+    //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
+    //--------------------------------------------------------------------------
+
     int64_t cjnz_sum = 0 ;
     int64_t cjnz_max = 0 ;
     for (taskid = 0 ; taskid < nfine ; taskid++)

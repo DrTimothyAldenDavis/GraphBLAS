@@ -169,7 +169,7 @@
 %   test99   - test GB_mex_transpose with explicit zeros in the Mask
 %   test100  - test GB_mex_isequal
 %   test101  - test import/export
-%   test102  - test GB_AxB_flopcount
+%   test102  - test GB_AxB_saxpy3_flopcount
 %   test103  - test aliases in GrB_transpose
 %   test104  - export/import
 %   test105  - eWiseAdd with hypersparse matrices

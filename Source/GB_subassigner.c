@@ -708,7 +708,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (C_is_dense)
     { 
         // C is dense or full
-        GB_BURBLE_DENSE (C, "(C %s) ") ;
+        GB_BURBLE_DENSE (C, "(subassign: C %s) ") ;
         if (whole_C_matrix && no_mask && (accum != NULL)
             && (C->type == accum->ztype) && (C->type == accum->xtype))
         { 
@@ -1159,6 +1159,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         else if (C_is_empty && whole_C_matrix && A_is_dense && Mask_struct)
         { 
+            // Method 25:  C<M,struct> = A, A dense, C empty
             // A is dense or full; remains unchanged
             GB_BURBLE_DENSE (A, "Method 25: (C empty)<M> = (Z %s) ") ;
             GB_OK (GB_dense_subassign_25 (C, M, A, Context)) ;

@@ -127,6 +127,7 @@ void GB_AxB_saxpy3_symbolic
 
             // partition M(:,j)
             GB_GET_M_j ;        // get M(:,j)
+
             int team_size = TaskList [taskid].team_size ;
             int master    = TaskList [taskid].master ;
             int my_teamid = taskid - master ;
@@ -143,15 +144,24 @@ void GB_AxB_saxpy3_symbolic
                 //--------------------------------------------------------------
 
                 // Scatter the values of M(:,j) into Hf.  No atomics needed
-                // since all indices i in M(;,j) are unique.
+                // since all indices i in M(;,j) are unique.  Do not scatter
+                // the mask if M(:,j) is a dense vector, since in that case
+                // the numeric phase accesses M(:,j) directly, not via Hf.
 
-                int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                GB_SCATTER_M_j (mystart, myend, 1) ;
+                if (mjnz > 0 && mjnz < mvlen)
+                {
+                    ASSERT (Mi != NULL) ;
+                    int8_t *GB_RESTRICT
+                        Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    GB_SCATTER_M_j (mystart, myend, 1) ;
+                }
 
             }
             else
             {
+
+// TODO:: phase1: fine hash, C<M>=A*B, C<!M>=A*B, do not scatter if M(:,j)
+// dense
 
                 //--------------------------------------------------------------
                 // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
@@ -575,6 +585,7 @@ void GB_AxB_saxpy3_symbolic
             int master = TaskList [taskid].master ;
             if (master != taskid) continue ;
             GB_GET_M_j ;        // get M(:,j)
+            if (mjnz == 0 || mjnz == mvlen) continue ;
             int64_t mjcount2 = 0 ;
             int64_t mjcount = 0 ;
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)

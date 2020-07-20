@@ -1,0 +1,560 @@
+//------------------------------------------------------------------------------
+// GB_select: apply a select operator
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)').
+
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_Matrix_free (&T) ;                   \
+}
+
+#include "GB_select.h"
+#include "GB_accum_mask.h"
+
+GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const bool C_replace,           // C descriptor
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const bool Mask_comp,           // descriptor for M
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GxB_SelectOp op,          // operator to select the entries
+    const GrB_Matrix A,             // input matrix
+    const GxB_Scalar Thunk_in,      // optional input for select operator
+    const bool A_transpose,         // A matrix descriptor
+    GB_Context Context
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // C may be aliased with M and/or A
+
+    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY (Thunk_in) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+
+    ASSERT_MATRIX_OK (C, "C input for GB_select", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_select", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_select", GB0) ;
+    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in for GB_select", GB0) ;
+
+    GrB_Matrix T = NULL ;
+
+    // check domains and dimensions for C<M> = accum (C,T)
+    GrB_Info info ;
+    GB_OK (GB_compatible (C->type, C, M, accum, A->type, Context)) ;
+
+    GB_Type_code typecode = A->type->code ;
+    GB_Select_Opcode opcode = op->opcode ;
+
+    // this opcodes are not availabe to the user
+    ASSERT (opcode != GB_RESIZE_opcode) ;
+    ASSERT (opcode != GB_NONZOMBIE_opcode) ;
+
+    // check if the op is a GT, GE, LT, or LE comparator
+    bool op_is_ordered_comparator =
+        opcode == GB_GT_ZERO_opcode || opcode == GB_GT_THUNK_opcode ||
+        opcode == GB_GE_ZERO_opcode || opcode == GB_GE_THUNK_opcode ||
+        opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
+        opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
+
+    if (op_is_ordered_comparator && typecode == GB_UDT_code)
+    {   GB_cov[2917]++ ;
+// covered (2917): 10
+        // built-in GT, GE, LT, and LE operators cannot be used with
+        // user-defined types.  There are no built-in ordered comparators
+        // for built-in complex types.
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Operator %s not defined for user-defined types", op->name) ;
+    }
+
+    // C = op (A) must be compatible, already checked in GB_compatible
+    // A must also be compatible with op->xtype, unless op->xtype is NULL
+    if (op->xtype != NULL && !GB_Type_compatible (A->type, op->xtype))
+    {   GB_cov[2918]++ ;
+// covered (2918): 2
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Incompatible type for C=%s(A,Thunk):\n"
+            "input A type [%s]\n"
+            "cannot be typecast to operator input of type [%s]",
+            op->name, A->type->name, op->xtype->name) ;
+    }
+
+    // check the dimensions
+    int64_t tnrows = (A_transpose) ? GB_NCOLS (A) : GB_NROWS (A) ;
+    int64_t tncols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
+    if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
+    {   GB_cov[2919]++ ;
+// covered (2919): 2
+        GB_ERROR (GrB_DIMENSION_MISMATCH,
+            "Dimensions not compatible:\n"
+            "output is " GBd "-by-" GBd "\n"
+            "input is " GBd "-by-" GBd "%s",
+            GB_NROWS (C), GB_NCOLS (C),
+            tnrows, tncols, A_transpose ? " (transposed)" : "") ;
+    }
+
+    // check if op is (NE, EQ, GT, GE, LT, LE)_THUNK
+    bool op_is_thunk_comparator =
+        (opcode >= GB_NE_THUNK_opcode && opcode <= GB_LE_THUNK_opcode) ;
+
+    // check if op is TRIL, TRIU, DIAG, or OFFDIAG
+    bool op_is_positional =
+        (opcode >= GB_TRIL_opcode && opcode <= GB_OFFDIAG_opcode) ;
+
+    // check if op is user-defined
+    bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;
+
+    int64_t nz_thunk = 0 ;
+    GB_void *GB_RESTRICT xthunk_in = NULL ;
+
+    if (Thunk_in != NULL)
+    {
+
+        // finish any pending work on the Thunk
+        GB_SCALAR_WAIT (Thunk_in) ;
+        nz_thunk = GB_NNZ (Thunk_in) ;
+
+        // if present, Thunk_in must be 1-by-1
+        if (GB_NROWS (Thunk_in) != 1 || GB_NCOLS (Thunk_in) != 1)
+        {   GB_cov[2920]++ ;
+// NOT COVERED (2920):
+            // Thunk present, but empty, or wrong dimensions
+            GB_ERROR (GrB_DIMENSION_MISMATCH,
+                "Thunk must be a %s", "GxB_Scalar") ;
+        }
+
+        // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be
+        // compatible with GrB_INT64
+        if (op_is_positional && !GB_Type_compatible (GrB_INT64, Thunk_in->type))
+        {   GB_cov[2921]++ ;
+// covered (2921): 1
+            // Thunk not a built-in type, for a built-in select operator
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
+                "Incompatible type for C=%s(A,Thunk):\n"
+                "input Thunk type [%s]\n"
+                "not compatible with GrB_INT64 input to built-in operator %s",
+                op->name, Thunk_in->type->name, op->name) ;
+        }
+
+        // if op is (NE, EQ, GT, GE, LT, LE)_THUNK, then Thunk must be
+        // compatible with the matrix type
+        if (op_is_thunk_comparator &&
+           !GB_Type_compatible (A->type, Thunk_in->type))
+        {   GB_cov[2922]++ ;
+// covered (2922): 2
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
+                "Incompatible type for C=%s(A,Thunk):\n"
+                "input A type [%s] and Thunk type [%s] not compatible",
+                op->name, A->type->name, Thunk_in->type->name) ;
+        }
+
+        // get the pointer to the value of Thunk_in
+        xthunk_in = (GB_void *) Thunk_in->x ;
+    }
+
+    // if op is user-defined, Thunk must match the op->ttype exactly
+    if (op_is_user_defined)
+    {
+        if (op->ttype == NULL && Thunk_in != NULL)
+        {   GB_cov[2923]++ ;
+// covered (2923): 2
+            // select operator does not take a Thunk, but one is present
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
+                "User-defined operator %s(A,Thunk) does not take a Thunk\n"
+                "input, but Thunk parameter is non-NULL", op->name) ;
+        }
+        else if (op->ttype != NULL && Thunk_in == NULL)
+        {   GB_cov[2924]++ ;
+// covered (2924): 2
+            // select operator takes a Thunk, but Thunk parameter is missing
+            GB_ERROR (GrB_NULL_POINTER,
+                "Required argument is null: [%s]", "Thunk") ;
+        }
+        else if (op->ttype != NULL && Thunk_in != NULL)
+        {
+            // select operator takes a Thunk, and it is present on input.
+            // The types must match exactly.
+            if (op->ttype != Thunk_in->type)
+            {   GB_cov[2925]++ ;
+// covered (2925): 2
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "User-defined operator %s(A,Thunk) has a Thunk input\n"
+                    "type of [%s], which must exactly match the type of the\n"
+                    "Thunk parameter; parameter to GxB_select has type [%s]",
+                    op->name, op->ttype->name, Thunk_in->type->name) ;
+            }
+            if (nz_thunk != 1)
+            {   GB_cov[2926]++ ;
+// covered (2926): 2
+                GB_ERROR (GrB_INVALID_VALUE,
+                    "User-defined operator %s(A,Thunk) has a Thunk input,\n"
+                    "which must not be empty", op->name) ;
+            }
+        }
+    }
+
+    // quick return if an empty mask is complemented
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+
+    //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
+
+    GB_BURBLE_DENSE (C, "(C %s) ") ;
+    GB_BURBLE_DENSE (M, "(M %s) ") ;
+    GB_BURBLE_DENSE (A, "(A %s) ") ;
+
+    //--------------------------------------------------------------------------
+    // handle the CSR/CSC format and the transposed case
+    //--------------------------------------------------------------------------
+
+    // A and C can be in CSR or CSC format (in any combination), and A can be
+    // transposed first via A_transpose.  However, A is not explicitly
+    // transposed first.  Instead, the selection operation is modified by
+    // changing the operator, and the resulting matrix T is transposed, if
+    // needed.
+
+    // Instead of explicitly transposing the input matrix A and output T:
+    // If A in CSC format and not transposed: treat as if A and T were CSC
+    // If A in CSC format and transposed:     treat as if A and T were CSR
+    // If A in CSR format and not transposed: treat as if A and T were CSR
+    // If A in CSR format and transposed:     treat as if A and T were CSC
+
+    bool A_csc = (A->is_csc == !A_transpose) ;
+
+    // The final transpose, if needed, is accomplished in GB_accum_mask, by
+    // tagging T as the same CSR/CSC format as A_csc.  If the format of T and C
+    // do not match, GB_accum_mask transposes T, computing C<M>=accum(C,T').
+
+    //--------------------------------------------------------------------------
+    // change the opcode if needed
+    //--------------------------------------------------------------------------
+
+    bool flipij = !A_csc ;
+
+    ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in now GB_select", GB0) ;
+
+    // if A is boolean, get the value of Thunk typecasted to boolean
+    bool bthunk = false ;
+
+    if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
+    {   GB_cov[2927]++ ;
+// covered (2927): 1544
+        // bthunk = (bool) Thunk_in
+        GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
+            xthunk_in, Thunk_in->type->code, Thunk_in->type->size, 1, 1) ;
+    }
+
+    int64_t ithunk = 0 ;        // ithunk = (int64_t) Thunk (0)
+    bool use_dup = false ;
+    bool is_empty = false ;
+
+    if (op_is_positional)
+    {
+
+        //----------------------------------------------------------------------
+        // tril, triu, diag, offdiag: get k and handle the flip
+        //----------------------------------------------------------------------
+
+        // The built-in operators are modified so they can always work as if A
+        // were in CSC format.  If A is not in CSC, then the operation is
+        // flipped.
+        // 0: tril(A,k)    becomes triu(A,-k)
+        // 1: triu(A,k)    becomes tril(A,-k)
+        // 2: diag(A,k)    becomes diag(A,-k)
+        // 3: offdiag(A,k) becomes offdiag(A,-k)
+        // all others      Thunk is unchanged
+        // userop(A)       row/col indices and dimensions are swapped
+
+        // if Thunk is not present, or has no entries, then k defaults to zero
+        if (nz_thunk > 0)
+        {   GB_cov[2928]++ ;
+// covered (2928): 38232
+            // ithunk = (int64_t) (Thunk_in (0)) ;
+            GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
+                xthunk_in, Thunk_in->type->code, Thunk_in->type->size, 1, 1) ;
+        }
+
+        if (flipij)
+        {
+            ithunk = -ithunk ;
+            if (opcode == GB_TRIL_opcode)
+            {   GB_cov[2929]++ ;
+// covered (2929): 18983
+                opcode = GB_TRIU_opcode ;
+            }
+            else if (opcode == GB_TRIU_opcode)
+            {   GB_cov[2930]++ ;
+// covered (2930): 2496
+                opcode = GB_TRIL_opcode ;
+            }
+            flipij = false ;
+        }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // (NE, EQ, GT, GE, LT, LE) x (0, thunk): handle bool and uint cases
+        //----------------------------------------------------------------------
+
+        switch (opcode)
+        {
+
+            case GB_GT_ZERO_opcode    : GB_cov[2931]++ ;   // A(i,j) > 0
+// covered (2931): 1786
+
+                // bool and uint: rename GxB_GT_ZERO to GxB_NONZERO
+                // user type: return error above
+                switch (typecode)
+                {
+                    case GB_BOOL_code    : GB_cov[2932]++ ;  
+// covered (2932): 128
+                    case GB_UINT8_code   : GB_cov[2933]++ ;  
+// covered (2933): 256
+                    case GB_UINT16_code  : GB_cov[2934]++ ;  
+// covered (2934): 384
+                    case GB_UINT32_code  : GB_cov[2935]++ ;  
+// covered (2935): 512
+                    case GB_UINT64_code  : GB_cov[2936]++ ;  opcode = GB_NONZERO_opcode ; break ;
+// covered (2936): 640
+                    default: ;
+                }
+                break ;
+
+            case GB_GE_ZERO_opcode    : GB_cov[2937]++ ;   // A(i,j) >= 0
+// covered (2937): 1786
+
+                // bool and uint: always true; use GB_dup
+                // user type: return error above
+                switch (typecode)
+                {
+                    case GB_BOOL_code    : GB_cov[2938]++ ;  
+// covered (2938): 128
+                    case GB_UINT8_code   : GB_cov[2939]++ ;  
+// covered (2939): 256
+                    case GB_UINT16_code  : GB_cov[2940]++ ;  
+// covered (2940): 384
+                    case GB_UINT32_code  : GB_cov[2941]++ ;  
+// covered (2941): 512
+                    case GB_UINT64_code  : GB_cov[2942]++ ;  use_dup = true ; break ;
+// covered (2942): 640
+                    default: ;
+                }
+                break ;
+
+            case GB_LT_ZERO_opcode    : GB_cov[2943]++ ;   // A(i,j) < 0
+// covered (2943): 1813
+
+                // bool and uint: always false; return an empty matrix
+                // user type: return error above
+                switch (typecode)
+                {
+                    case GB_BOOL_code    : GB_cov[2944]++ ;  
+// covered (2944): 128
+                    case GB_UINT8_code   : GB_cov[2945]++ ;  
+// covered (2945): 256
+                    case GB_UINT16_code  : GB_cov[2946]++ ;  
+// covered (2946): 384
+                    case GB_UINT32_code  : GB_cov[2947]++ ;  
+// covered (2947): 512
+                    case GB_UINT64_code  : GB_cov[2948]++ ;  is_empty = true ; break ;
+// covered (2948): 640
+                    default: ;
+                }
+                break ;
+
+            case GB_LE_ZERO_opcode    : GB_cov[2949]++ ;   // A(i,j) <= 0
+// covered (2949): 1786
+
+                // bool and uint: rename GxB_LE_ZERO to GxB_EQ_ZERO
+                // user type: return error above
+                switch (typecode)
+                {
+                    case GB_BOOL_code    : GB_cov[2950]++ ;  
+// covered (2950): 128
+                    case GB_UINT8_code   : GB_cov[2951]++ ;  
+// covered (2951): 256
+                    case GB_UINT16_code  : GB_cov[2952]++ ;  
+// covered (2952): 384
+                    case GB_UINT32_code  : GB_cov[2953]++ ;  
+// covered (2953): 512
+                    case GB_UINT64_code  : GB_cov[2954]++ ;  opcode = GB_EQ_ZERO_opcode ; break ;
+// covered (2954): 640
+                    default: ;
+                }
+                break ;
+
+            case GB_NE_THUNK_opcode    : GB_cov[2955]++ ;  // A(i,j) != thunk
+// covered (2955): 3710
+
+                // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_EQ_ZERO 
+                //       if thunk is false, rename GxB_NE_THUNK to GxB_NONZERO 
+                if (typecode == GB_BOOL_code)
+                {   GB_cov[2956]++ ;
+// covered (2956): 256
+                    opcode = (bthunk) ? GB_EQ_ZERO_opcode : GB_NONZERO_opcode ;
+                }
+                break ;
+
+            case GB_EQ_THUNK_opcode    : GB_cov[2957]++ ;  // A(i,j) == thunk
+// covered (2957): 3729
+
+                // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_NONZERO 
+                //       if thunk is false, rename GxB_NE_THUNK to GxB_EQ_ZERO 
+                if (typecode == GB_BOOL_code)
+                {   GB_cov[2958]++ ;
+// covered (2958): 256
+                    opcode = (bthunk) ? GB_NONZERO_opcode : GB_EQ_ZERO_opcode ;
+                }
+                break ;
+
+            case GB_GT_THUNK_opcode    : GB_cov[2959]++ ;  // A(i,j) > thunk
+// covered (2959): 3208
+
+                // bool: if thunk is true,  return an empty matrix
+                //       if thunk is false, rename GxB_GT_THUNK to GxB_NONZERO
+                // user type: return error above
+                if (typecode == GB_BOOL_code)
+                {
+                    if (bthunk)
+                    {   GB_cov[2960]++ ;
+// covered (2960): 128
+                        is_empty = true ;
+                    }
+                    else
+                    {   GB_cov[2961]++ ;
+// covered (2961): 130
+                        // rename GT_THUNK to NONZERO for boolean
+                        opcode = GB_NONZERO_opcode ;
+                    }
+                }
+                break ;
+
+            case GB_GE_THUNK_opcode    : GB_cov[2962]++ ;  // A(i,j) >= thunk
+// covered (2962): 3205
+
+                // bool: if thunk is true,  rename GxB_GE_THUNK to GxB_NONZERO
+                //       if thunk is false, use GB_dup
+                // user type: return error above
+                if (typecode == GB_BOOL_code)
+                {
+                    if (bthunk)
+                    {   GB_cov[2963]++ ;
+// covered (2963): 128
+                        opcode = GB_NONZERO_opcode ;
+                    }
+                    else
+                    {   GB_cov[2964]++ ;
+// covered (2964): 130
+                        // use dup for GE_THUNK if thunk is false
+                        use_dup = true ;
+                    }
+                }
+                break ;
+
+            case GB_LT_THUNK_opcode    : GB_cov[2965]++ ;  // A(i,j) < thunk
+// covered (2965): 3211
+
+                // bool: if thunk is true,  rename GxB_LT_THUNK to GxB_EQ_ZERO
+                //       if thunk is false, return an empty matrix
+                // user type: return error above
+                if (typecode == GB_BOOL_code)
+                {
+                    if (bthunk)
+                    {   GB_cov[2966]++ ;
+// covered (2966): 128
+                        opcode = GB_EQ_ZERO_opcode ;
+                    }
+                    else
+                    {   GB_cov[2967]++ ;
+// covered (2967): 130
+                        // matrix empty for LT_THUNK_BOOL, if thunk false
+                        is_empty = true ;
+                    }
+                }
+                break ;
+
+            case GB_LE_THUNK_opcode    : GB_cov[2968]++ ;  // A(i,j) <= thunk
+// covered (2968): 3208
+
+                // bool: if thunk is true,  use GB_dup
+                //       if thunk is false, rename GxB_LE_ZERO to GxB_EQ_ZERO
+                // user type: return error
+                if (typecode == GB_BOOL_code)
+                {
+                    if (bthunk)
+                    {   GB_cov[2969]++ ;
+// covered (2969): 128
+                        // use dup for LE_THUNK if thunk is true
+                        use_dup = true ;
+                    }
+                    else
+                    {   GB_cov[2970]++ ;
+// covered (2970): 130
+                        opcode = GB_EQ_ZERO_opcode ;
+                    }
+                }
+                break ;
+
+            default  : GB_cov[2971]++ ;  ;     // use the opcode as-is
+// covered (2971): 146666
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // create T
+    //--------------------------------------------------------------------------
+
+    if (use_dup)
+    {   GB_cov[2972]++ ;
+// covered (2972): 898
+        // selectop is always true, so use GB_dup to do T = A
+        GB_OK (GB_dup (&T, A, true, A->type, Context)) ;
+    }
+    else if (is_empty)
+    {   GB_cov[2973]++ ;
+// covered (2973): 898
+        // selectop is always false, so T is an empty matrix
+        info = GB_new (&T, A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
+            GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
+        GB_OK (info) ;
+    }
+    else
+    {   GB_cov[2974]++ ;
+// covered (2974): 228461
+        // T = select (A, Thunk)
+        GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk,
+            (op_is_thunk_comparator || op_is_user_defined) ? Thunk_in : NULL,
+            Context)) ;
+    }
+
+    T->is_csc = A_csc ;
+    ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for accum; T=select(A,Thunk) output", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // C<M> = accum (C,T): accumulate the results into C via the mask
+    //--------------------------------------------------------------------------
+
+    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
+        Mask_struct, Context)) ;
+}
+

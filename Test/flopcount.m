@@ -7,7 +7,7 @@ function [flops mwork] = flopcount (M,Mask_complement,A,B) ;
 % flopcount, if B is m-by-n.
 %
 % Each 'flop' counted is actually a multiply-add.  M can be [ ]. The
-% flopcount m-file returns the same thing as GB_AxB_flopcount.  Also
+% flopcount m-file returns the same thing as GB_AxB_saxpy3_flopcount.  Also
 % included in flops(j) is the work needed to access the mask M(:,j).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

@@ -26,7 +26,8 @@ void GB_ph_free                 // free A->p and A->h of a matrix
     //--------------------------------------------------------------------------
 
     if (A == NULL)
-    { 
+    {   GB_cov[2853]++ ;
+// covered (2853): 2
         return ;
     }
 
@@ -44,8 +45,13 @@ void GB_ph_free                 // free A->p and A->h of a matrix
     A->h = NULL ;
     A->h_shallow = false ;
 
-    A->plen = 0 ;
-    A->nvec = 0 ;
+    if (A->h != NULL)
+    {   GB_cov[2854]++ ;
+// NOT COVERED (2854):
+        A->plen = 0 ;
+        A->nvec = 0 ;
+    }
+
     A->nvec_nonempty = 0 ;
 
     //--------------------------------------------------------------------------

@@ -44,6 +44,7 @@
 // GB_SCATTER_M_j: scatter M(:,j) for a fine or coarse Gustavson task
 //------------------------------------------------------------------------------
 
+// TODO: do not scatter M(:,j) if it is dense
 #define GB_SCATTER_M_j_TYPE(mask_t,pMstart,pMend,mark)                  \
 {                                                                       \
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \

@@ -98,7 +98,8 @@
                 // A(:,i) and B(:,j) are both present.  Check M(i,j).
                 bool mij = false ;
                 if (mdense)
-                { 
+                {   GB_cov[299]++ ;
+// NOT COVERED (299):
                     // M(:,j) is dense (M is full or M sparse and M(:,j) dense)
                     mij = GB_mcast (Mx, pM + i, msize) ;
                 }
@@ -109,13 +110,14 @@
                     int64_t pright = pM_end - 1 ;
                     GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                     if (found)
-                    { 
+                    {
                         mij = GB_mcast (Mx, pM, msize) ;
                     }
                 }
 
                 if (!mij)
-                { 
+                {   GB_cov[300]++ ;
+// covered (300): 405
 
                     //----------------------------------------------------------
                     // C(i,j) = A(:,i)'*B(:,j)

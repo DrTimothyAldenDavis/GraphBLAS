@@ -75,7 +75,7 @@ void mexFunction
     // compute the flop count
     int64_t Mwork = 0 ;
 
-    GB_AxB_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context) ;
+    GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context) ;
 
     // return result to MATLAB
     pargout [0] = mxCreateDoubleMatrix (1, bnvec+1, mxREAL) ;

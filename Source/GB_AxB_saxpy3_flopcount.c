@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_flopcount:  compute flops for C=A*B, C<M>=A*B, or C<!M>=A*B
+// GB_AxB_saxpy3_flopcount:  compute flops for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -85,7 +85,7 @@
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_AxB_flopcount
+GrB_Info GB_AxB_saxpy3_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M
     int64_t *Bflops,            // size B->nvec+1 and all zero
@@ -248,6 +248,9 @@ GrB_Info GB_AxB_flopcount
             //------------------------------------------------------------------
             // see if M(:,j) is present and non-empty
             //------------------------------------------------------------------
+
+// TODO:: if M is full, or M(:,j) is dense, then do not add mjnz to bjflops
+// or task_MWork.  Let mjnz=0, im_first = 0, and im_last = mvlen-1.
 
             int64_t bjflops = 0 ;
             int64_t im_first = -1, im_last = -1 ;

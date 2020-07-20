@@ -445,14 +445,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // compute flop counts for each vector of B and C
     //--------------------------------------------------------------------------
 
+    // TODO:: if M(:,j) is dense, do not account for it in Mwork
+
     int64_t Mwork = 0 ;
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
-    GB_OK (GB_AxB_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context)) ;
+    GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
+        Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
     //--------------------------------------------------------------------------
+
+    // TODO:: if M is full, use it during A*B
 
     // If M is very large as compared to A*B, then it is too costly to apply
     // during the computation of A*B.  In this case, compute C=A*B, ignoring
@@ -473,7 +478,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
         int64_t kk ;
-        // GB_AxB_flopcount requires Bflops be set to zero here
+        // GB_AxB_saxpy3_flopcount requires Bflops be set to zero here
         #pragma omp parallel for num_threads(nth) schedule(static)
         for (kk = 0 ; kk <= bnvec ; kk++)
         { 
@@ -481,7 +486,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
 
         // redo the flop count analysis, without the mask
-        GB_OK (GB_AxB_flopcount (&Mwork, Bflops, NULL, false, A, B, Context)) ;
+        GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, NULL, false, A, B,
+            Context)) ;
         total_flops = Bflops [bnvec] ;
         GBBURBLE ("(discard mask) ") ;
     }
@@ -722,6 +728,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
                         // next coarse task (if any) starts at kk+1
                         kcoarse_start = kk+1 ;
+
+// TODO: if M is full, im_first = 0 and im_last = mvlen-1
 
                         // get the mask M(:,j), for C<M>=A*B
                         int64_t im_first = -1, im_last = -1 ;
