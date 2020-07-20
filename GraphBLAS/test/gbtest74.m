@@ -194,7 +194,6 @@ for k = 1:8
         C2 = bitor (A2, B2) ;
         assert (isequal (C1, full (C2))) ;
 
-save gunk Afull Bfull A2 B2
         C1 = bitshift (Afull, Bfull) ;
         C2 = bitshift (A2, B2) ;
         assert (isequal (C1, full (C2))) ;
