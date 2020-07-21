@@ -253,7 +253,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 // or task_MWork.  Let mjnz=0, im_first = 0, and im_last = mvlen-1.
 
             int64_t bjflops = 0 ;
-            int64_t im_first = -1, im_last = -1 ;
+//          int64_t im_first = -1, im_last = -1 ;
             int64_t mjnz = 0 ;
             if (M != NULL)
             {
@@ -267,8 +267,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (mjnz > 0)
                 {
                     // M(:,j) not empty; get 1st and last index in M(:,j)
-                    im_first = GBI (Mi, pM, mvlen) ;
-                    im_last  = GBI (Mi, pM_end-1, mvlen) ;
+//                  im_first = GBI (Mi, pM, mvlen) ;
+//                  im_last  = GBI (Mi, pM_end-1, mvlen) ;
                     if (pB == GBP (Bp, kk, bvlen))
                     { 
                         // this task owns the top part of B(:,j), so it can
@@ -333,9 +333,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (mask_is_M)
                 {
                     // A(:,k) is non-empty; get first and last index of A(:,k)
-                    int64_t alo = GBI (Ai, pA, avlen) ;
-                    int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
-                    if (ahi < im_first || alo > im_last) continue ;
+//                  int64_t alo = GBI (Ai, pA, avlen) ;
+//                  int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
+//                  if (ahi < im_first || alo > im_last) continue ;
                     if (aknz > 256 && mjnz_much < aknz)
                     { 
                         // scan M(:j), and do binary search for A(i,j)

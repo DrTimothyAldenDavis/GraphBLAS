@@ -430,14 +430,23 @@ void GB_AxB_saxpy3_symbolic
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
-                                    if (Hf [hash] < mark)
+                                    if (Hf [hash] == mark)
+                                    {
+                                        // position is occupied
+                                        if (Hi [hash] == i)
+                                        { 
+                                            // i already in the hash table
+                                            break ;
+                                        }
+                                    }
+                                    else
                                     { 
+                                        // empty slot found
                                         Hf [hash] = mark ; // insert C(i,j)
                                         Hi [hash] = i ;
                                         cjnz++ ;  // C(i,j) is a new entry.
                                         break ;
                                     }
-                                    if (Hi [hash] == i) break ;
                                 }
                             }
                         }
