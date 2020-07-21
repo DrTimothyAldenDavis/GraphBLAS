@@ -230,7 +230,7 @@
                 { 
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
-                    GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                  GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
 
                     #if GB_IS_ANY_MONOID
@@ -485,7 +485,7 @@
                 { 
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
-                    GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                  GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     #define GB_IKJ                                             \
                     {                                                          \
@@ -961,7 +961,7 @@
                             { 
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
-                                GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                              GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
@@ -991,7 +991,7 @@
                             { 
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
-                                GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                              GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
@@ -1133,7 +1133,7 @@
 
                     // no mask present
                     #undef GB_CHECK_MASK_ij
-                    printf ("coarse hash phase 5 no mask\n") ;
+                    // printf ("coarse hash phase 5 no mask\n") ;
                     #include "GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
@@ -1152,7 +1152,7 @@
                             // Full structural mask, not complemented.
                             // The Mask is ignored, and C(:,j)=A*B(:,j)
                             // TODO: remove this case in caller
-                            printf ("coarse hash phase 5 M mask struct\n") ;
+                            // printf ("coarse hash phase 5 M mask struct\n") ;
                             #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
@@ -1162,30 +1162,30 @@
                             case 1:
                             {
                                 #define M_TYPE uint8_t
-                                printf ("coarse hash phase 5 M 1\n") ;
+                                // printf ("coarse hash phase 5 M 1\n") ;
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                printf ("coarse hash phase 5 M 2\n") ;
+                                // printf ("coarse hash phase 5 M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                printf ("coarse hash phase 5 M 3\n") ;
+                                // printf ("coarse hash phase 5 M 3\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                printf ("coarse hash phase 5 M 8\n") ;
+                                // printf ("coarse hash phase 5 M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                printf ("coarse hash phase 5 M 16\n") ;
+                                // printf ("coarse hash phase 5 M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -1219,7 +1219,7 @@
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                          GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             GB_GET_B_kj ;               // bkj = B(k,j)
                             #define GB_IKJ                                     \
                             {                                                  \
@@ -1277,31 +1277,31 @@
                             default:
                             case 1:
                             {
-                                printf ("coarse hash phase 5 !M 1\n") ;
+                                // printf ("coarse hash phase 5 !M 1\n") ;
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                printf ("coarse hash phase 5 !M 2\n") ;
+                                // printf ("coarse hash phase 5 !M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                printf ("coarse hash phase 5 !M 4\n") ;
+                                // printf ("coarse hash phase 5 !M 4\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                printf ("coarse hash phase 5 !M 8\n") ;
+                                // printf ("coarse hash phase 5 !M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                printf ("coarse hash phase 5 !M 16\n") ;
+                                // printf ("coarse hash phase 5 !M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij

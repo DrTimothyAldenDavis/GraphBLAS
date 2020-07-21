@@ -149,6 +149,10 @@ void GB_AxB_saxpy3_symbolic
                 // the mask if M(:,j) is a dense vector, since in that case
                 // the numeric phase accesses M(:,j) directly, not via Hf.
 
+                // M_dense_in_place is true only if M is dense, and all tasks
+                // are fine or coarse hash tasks (no Gustvason tasks).
+                ASSERT (!M_dense_in_place) ;
+
                 if (mjnz > 0)
                 {
                     ASSERT (Mi != NULL) ;
@@ -158,15 +162,15 @@ void GB_AxB_saxpy3_symbolic
                 }
 
             }
-            else (!M_dense_in_place)
+            else if (!M_dense_in_place)
             {
 
                 //--------------------------------------------------------------
                 // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
                 //--------------------------------------------------------------
 
-                // M_dense_in_place is true only if M is dense, and all tasks
-                // are fine or coarse hash tasks (no Gustvason tasks).
+                // If M_dense_in_place is true, this is skipped.  The mask M
+                // is dense, and is used in place.
 
                 // The least significant 2 bits of Hf [hash] is the flag f, and
                 // the upper bits contain h, as (h,f).  After this phase1, if
@@ -316,7 +320,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                          GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
@@ -494,7 +498,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+//                          GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 for (GB_HASH (i))       /* find i in hash */   \

@@ -31,6 +31,7 @@
 // GB_GET_M_j_RANGE: get the first and last indices in M(:,j)
 //------------------------------------------------------------------------------
 
+#if 0
 #define GB_GET_M_j_RANGE(gamma)                                 \
     int64_t im_first = -1, im_last = -1 ;                       \
     if (mjnz > 0)                                               \
@@ -38,6 +39,10 @@
         im_first = GBI (Mi, pM_start, mvlen) ;  /* get first M(:,j) */      \
         im_last  = GBI (Mi, pM_end-1, mvlen) ;  /* get last M(:,j) */       \
     }                                                           \
+    int64_t mjnz_much = mjnz * gamma
+#endif
+
+#define GB_GET_M_j_RANGE(gamma)                                 \
     int64_t mjnz_much = mjnz * gamma
 
 //------------------------------------------------------------------------------
@@ -76,7 +81,7 @@ break ;
             case 8: GB_SCATTER_M_j_TYPE (uint64_t, pMstart, pMend, mark) ;  \
             case 16:                                                        \
             {                                                               \
-                const uint64_t *GB_RESTRICT Mxx = (mask_t *) Mx ;           \
+                const uint64_t *GB_RESTRICT Mxx = (uint64_t *) Mx ;         \
                 /* scan M(:,j) */                                           \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
