@@ -98,7 +98,7 @@
 #define GB_COSTLY 1.2
 #define GB_FINE_WORK 2
 #define GB_MWORK_ALPHA 0.01
-#define GB_MWORK_BETA 0.25
+#define GB_MWORK_BETA 0.10
 
 //------------------------------------------------------------------------------
 // free workspace

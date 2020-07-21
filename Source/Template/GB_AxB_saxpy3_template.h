@@ -31,7 +31,6 @@
 // GB_GET_M_j_RANGE: get the first and last indices in M(:,j)
 //------------------------------------------------------------------------------
 
-#if 0
 #define GB_GET_M_j_RANGE(gamma)                                 \
     int64_t im_first = -1, im_last = -1 ;                       \
     if (mjnz > 0)                                               \
@@ -40,10 +39,11 @@
         im_last  = GBI (Mi, pM_end-1, mvlen) ;  /* get last M(:,j) */       \
     }                                                           \
     int64_t mjnz_much = mjnz * gamma
-#endif
 
+#if 0
 #define GB_GET_M_j_RANGE(gamma)                                 \
     int64_t mjnz_much = mjnz * gamma
+#endif
 
 //------------------------------------------------------------------------------
 // GB_SCATTER_M_j: scatter M(:,j) for a fine or coarse Gustavson task

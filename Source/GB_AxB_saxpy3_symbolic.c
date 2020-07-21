@@ -320,7 +320,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-//                          GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
@@ -498,7 +498,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-//                          GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 for (GB_HASH (i))       /* find i in hash */   \
