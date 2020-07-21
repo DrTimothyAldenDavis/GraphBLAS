@@ -98,6 +98,7 @@
 #define GB_COSTLY 1.2
 #define GB_FINE_WORK 2
 #define GB_MWORK_ALPHA 0.01
+#define GB_MWORK_BETA 0.25
 
 //------------------------------------------------------------------------------
 // free workspace
@@ -268,7 +269,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
-    const GrB_Desc_Value AxB_method,    // Default, Gustavson, or Hash
+    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     GB_Context Context
 )
 {
@@ -445,8 +446,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // compute flop counts for each vector of B and C
     //--------------------------------------------------------------------------
 
-    // TODO:: if M(:,j) is dense, do not account for it in Mwork
-
     int64_t Mwork = 0 ;
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
     GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
@@ -457,8 +456,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // determine if the mask M should be applied, or done later
     //--------------------------------------------------------------------------
 
-    // TODO:: if M is full, use it during A*B
-
     // If M is very large as compared to A*B, then it is too costly to apply
     // during the computation of A*B.  In this case, compute C=A*B, ignoring
     // the mask.  Tell the caller that the mask was not applied, so that it
@@ -466,17 +463,58 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     double axbflops = total_flops - Mwork ;
     GBBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
+    int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
-    if ((M != NULL) && (axbflops < ((double) Mwork * GB_MWORK_ALPHA)))
+    bool M_is_dense = GB_is_dense (M) ;
+    bool M_dense_in_place = false ;
+
+    if (M_is_dense
+       && (AxB_method == GxB_DEFAULT || AxB_method == GxB_AxB_SAXPY))
+    { 
+
+        // M is present but dense.  The work for M has not yet been added
+        // to Bflops.
+
+        // each vector M(:,j) has cvlen entries
+        ASSERT (M != NULL) ;
+        Mwork = cvlen * cvdim ;
+
+        if (axbflops < (double) Mwork * GB_MWORK_BETA)
+        { 
+            // Use the hash method for all tasks.  Do not scatter the mask into
+            // the Hf hash workspace.  The work for the mask is not accounted
+            // for in Bflops, so the hash tables can be small.
+            M_dense_in_place = true ;
+            AxB_method = GxB_AxB_HASH ;
+            GBBURBLE ("(use dense mask in place) ") ;
+        }
+        else
+        { 
+            // Use the Gustavson method for all tasks, and scatter M
+            // into the fine Gustavson workspace.  The work for M is not
+            // yet in the Bflops cumulative sum.  Add it now.
+            AxB_method = GxB_AxB_GUSTAVSON ;
+
+            int64_t kk ;
+            #pragma omp parallel for num_threads(nth) schedule(static)
+            for (kk = 0 ; kk <= bnvec ; kk++)
+            { 
+                Bflops [kk] += cvlen * (kk+1) ;
+            }
+            total_flops = Bflops [bnvec] ;
+            GBBURBLE ("(use dense mask) ") ;
+        }
+
+    }
+    else if ((M != NULL) && (axbflops < ((double) Mwork * GB_MWORK_ALPHA)))
     {
-        // M is present but costly to use.  Do not use it during the
-        // computation of A*B.  Instead, compute C=A*B and then apply the mask
-        // later.
+
+        // M is sparse but costly to use.  Do not use it during the computation
+        // of A*B.  Instead, compute C=A*B and then apply the mask later.
 
         M = NULL ;
         Mask_comp = false ;
 
-        int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
         int64_t kk ;
         // GB_AxB_saxpy3_flopcount requires Bflops be set to zero here
         #pragma omp parallel for num_threads(nth) schedule(static)
@@ -490,35 +528,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             Context)) ;
         total_flops = Bflops [bnvec] ;
         GBBURBLE ("(discard mask) ") ;
+
     }
     else if (M != NULL)
     { 
         GBBURBLE ("(use mask) ") ;
-    }
-
-    //--------------------------------------------------------------------------
-    // get M
-    //--------------------------------------------------------------------------
-
-    bool mask_is_M = (M != NULL && !Mask_comp) ;
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
-    // const GB_void *GB_RESTRICT Mx = NULL ;
-    // size_t msize = 0 ;
-    int64_t mnvec = 0 ;
-    int64_t mvlen = 0 ;
-    bool M_is_hyper = false ;
-    if (M != NULL)
-    { 
-        Mp = M->p ;
-        Mh = M->h ;
-        Mi = M->i ;
-        // Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-        // msize = M->type->size ;
-        mnvec = M->nvec ;
-        mvlen = M->vlen ;
-        M_is_hyper = (Mh != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -729,36 +743,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // next coarse task (if any) starts at kk+1
                         kcoarse_start = kk+1 ;
 
-// TODO: if M is full, im_first = 0 and im_last = mvlen-1
-
-                        // get the mask M(:,j), for C<M>=A*B
-                        int64_t im_first = -1, im_last = -1 ;
-                        if (mask_is_M)
-                        {
-                            int64_t j = GBH (Bh, kk) ;
-                            int64_t mpleft = 0 ;
-                            int64_t mpright = mnvec-1 ;
-                            int64_t pM, pM_end ;
-                            GB_lookup (M_is_hyper, Mh, Mp, mvlen, &mpleft,
-                                mpright, j, &pM, &pM_end) ;
-                            int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
-                            // For C<M>=A*B, if M(:,j) is empty, then there
-                            // would be no flops to compute C(:,j), and thus
-                            // no fine tasks constructed for C(:,j).
-                            // Thus mjnz > 0 must hold.
-                            ASSERT (mjnz > 0) ;
-                            if (mjnz > 0)   // but check anyway, just to be safe
-                            { 
-                                im_first = GBI (Mi, pM, mvlen) ;
-                                im_last  = GBI (Mi, pM_end-1, mvlen) ;
-                            }
-                        }
-
                         // count the work for each entry B(k,j).  Do not
                         // include the work to scan M(:,j), since that will
                         // be evenly divided between all tasks in this team.
-                        // Do check if M(:,j) and A(:,k) are disjoint, for
-                        // C<M>=A*B, when accounting for the flops for B(k,j).
                         int64_t pB_start = GBP (Bp, kk, bvlen) ;
                         int nth = GB_nthreads (bjnz, chunk, nthreads_max) ;
                         int64_t s ;
@@ -774,15 +761,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft,
                                 anvec-1, k, &pA, &pA_end) ;
                             int64_t fl = pA_end - pA ;
-                            if (mask_is_M && fl > 0)
-                            { 
-                                // no work if A(:,k) and M(:,j) disjoint
-                                // get first A(:,k)
-                                int64_t alo = GBI (Ai, pA, avlen) ;
-                                // get last A(:,k)
-                                int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
-                                if (ahi < im_first || alo > im_last) fl = 0 ;
-                            }
                             Bflops2 [s] = fl ;
                             ASSERT (fl >= 0) ;
                         }
@@ -1101,8 +1079,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // phase1: symbolic analysis
     //==========================================================================
 
-    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, A, B, TaskList,
-        ntasks, nfine, nthreads) ;
+    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
+        A, B, TaskList, ntasks, nfine, nthreads) ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
@@ -1122,8 +1100,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
             info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
-                Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
-                TaskList, ntasks, nfine, nthreads, Context) ;               \
+                Mask_struct, M_dense_in_place, A, A_is_pattern,  B,         \
+                B_is_pattern, TaskList, ntasks, nfine, nthreads, Context) ; \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -1147,8 +1125,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         GB_BURBLE_MATRIX (C, "generic ") ;
         info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
-            A, A_is_pattern, B, B_is_pattern, semiring, flipxy,
-            TaskList, ntasks, nfine, nthreads, Context) ;
+            M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
+            flipxy, TaskList, ntasks, nfine, nthreads, Context) ;
     }
 
     if (info != GrB_SUCCESS)

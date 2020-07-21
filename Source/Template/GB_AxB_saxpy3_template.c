@@ -147,12 +147,65 @@
                 // phase2: fine Gustavson task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // TODO: treat this as:
-                // (Mx == NULL && mjnz == mvlen && !Mask_comp)
-                // no mask present
-                #undef  GB_CHECK_MASK_ij
-                #define GB_CHECK_MASK_ij ;
-                #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                // Hf [i] is initially 0.
+                // 0 -> 3 : to lock, if i seen for first time
+                // 2 -> 3 : to lock, if i seen already
+                // 3 -> 2 : to unlock; now i has been seen
+
+                for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                {
+                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_A_k ;                // get A(:,k)
+                    if (aknz == 0) continue ;
+                    GB_GET_B_kj ;               // bkj = B(k,j)
+                    // scan A(:,k)
+                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                    {
+                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+
+                        GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
+                        int8_t f ;
+                        #if GB_IS_ANY_MONOID
+                        GB_ATOMIC_READ
+                        f = Hf [i] ;            // grab the entry
+                        if (f == 2) continue ;  // check if already updated
+                        GB_ATOMIC_WRITE
+                        Hf [i] = 2 ;                // flag the entry
+                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+
+                        #else
+
+                        #if GB_HAS_ATOMIC
+                        GB_ATOMIC_READ
+                        f = Hf [i] ;            // grab the entry
+                        if (f == 2)             // if true, update C(i,j)
+                        {
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            continue ;          // C(i,j) has been updated
+                        }
+                        #endif
+                        do  // lock the entry
+                        {
+                            // do this atomically:
+                            // { f = Hf [i] ; Hf [i] = 3 ; }
+                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
+                        } while (f == 3) ; // lock owner gets f=0 or 2
+                        if (f == 0)
+                        { 
+                            // C(i,j) is a new entry
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                        }
+                        else // f == 2
+                        { 
+                            // C(i,j) already appears in C(:,j)
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                        }
+                        GB_ATOMIC_WRITE
+                        Hf [i] = 2 ;                // unlock the entry
+
+                        #endif
+                    }
+                }
 
             }
             else if (mask_is_M)
@@ -172,57 +225,6 @@
                 // 3 -> 2 : to unlock; now i has been seen
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (mjnz == mvlen)
-                { 
-                    // M(:,j) is dense.  M is not scattered into Hf.
-                    if (Mx == NULL)
-                    {
-                        // Full structural mask, not complemented.
-                        // The Mask is ignored, and C(:,j)=A*B(:,j)
-                        #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                    }
-                    #undef  GB_CHECK_MASK_ij
-                    #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
-                    switch (msize)
-                    {
-                        default:
-                        case 1:
-                        {
-                            const uint8_t *GB_RESTRICT Mask = 
-                                ((uint8_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 2:
-                        {
-                            const uint16_t *GB_RESTRICT Mask = 
-                                ((uint16_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 4:
-                        {
-                            const uint32_t *GB_RESTRICT Mask = 
-                                ((uint32_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 8:
-                        {
-                            const uint64_t *GB_RESTRICT Mask = 
-                                ((uint64_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 16:
-                        {
-                            const uint64_t *GB_RESTRICT Mask = 
-                                ((uint64_t *) Mx) + (2 * pM_start) ;
-                            #undef  GB_CHECK_MASK_ij
-                            #define GB_CHECK_MASK_ij                        \
-                                if (Mask [2*i] == 0 && Mask [2*i+1] == 0)   \
-                                    continue ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                    }
-                }
-
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
@@ -302,56 +304,6 @@
                 // 3 -> 2 : to unlock; now i has been seen
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (mjnz == mvlen)
-                { 
-                    // M(:,j) is dense.  M is not scattered into Hf.
-                    if (Mx == NULL)
-                    {
-                        // structural mask, complemented.  No work to do.
-                        continue ;
-                    }
-                    #undef  GB_CHECK_MASK_ij
-                    #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
-                    switch (msize)
-                    {
-                        default:
-                        case 1:
-                        {
-                            const uint8_t *GB_RESTRICT Mask = 
-                                ((uint8_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 2:
-                        {
-                            const uint16_t *GB_RESTRICT Mask = 
-                                ((uint16_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 4:
-                        {
-                            const uint32_t *GB_RESTRICT Mask = 
-                                ((uint32_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 8:
-                        {
-                            const uint64_t *GB_RESTRICT Mask = 
-                                ((uint64_t *) Mx) + pM_start ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                        case 16:
-                        {
-                            const uint64_t *GB_RESTRICT Mask = 
-                                ((uint64_t *) Mx) + (2 * pM_start) ;
-                            #undef  GB_CHECK_MASK_ij
-                            #define GB_CHECK_MASK_ij                        \
-                                if (Mask [2*i] != 0 || Mask [2*i+1] != 0)   \
-                                    continue ;
-                            #include "GB_AxB_saxpy3_fineGus_phase2.c"
-                        }
-                    }
-                }
-
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
@@ -452,77 +404,9 @@
                 // phase2: fine hash task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // Given Hf [hash] split into (h,f)
-
-                // h == 0  , f == 0 : unlocked and unoccupied.
-                // h == i+1, f == 2 : unlocked, occupied by C(i,j).
-                //                    Hx is initialized.
-                // h == ..., f == 3 : locked.
-
-                // 0 -> 3 : to lock, if i seen for first time
-                // 2 -> 3 : to lock, if i seen already
-                // 3 -> 2 : to unlock; now i has been seen
-
-                for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                {
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
-                    GB_GET_A_k ;                // get A(:,k)
-                    if (aknz == 0) continue ;
-                    GB_GET_B_kj ;               // bkj = B(k,j)
-                    // scan A(:,k)
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-                        GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
-                        int64_t i1 = i + 1 ;        // i1 = one-based index
-                        int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
-                        for (GB_HASH (i))           // find i in hash table
-                        {
-                            int64_t hf ;
-                            GB_ATOMIC_READ
-                            hf = Hf [hash] ;        // grab the entry
-                            #if GB_HAS_ATOMIC
-                            if (hf == i_unlocked)  // if true, update C(i,j)
-                            {
-                                GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
-                                break ;         // C(i,j) has been updated
-                            }
-                            #endif
-                            int64_t h = (hf >> 2) ;
-                            if (h == 0 || h == i1)
-                            {
-                                // h=0: unoccupied, h=i1: occupied by i
-                                do  // lock the entry
-                                {
-                                    // do this atomically:
-                                    // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
-                                    GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3) ;
-                                } while ((hf & 3) == 3) ; // owner: f=0 or 2
-                                if (hf == 0) // f == 0
-                                { 
-                                    // C(i,j) is a new entry in C(:,j)
-                                    // Hx [hash] = t
-                                    GB_ATOMIC_WRITE_HX (hash, t) ;
-                                    GB_ATOMIC_WRITE
-                                    Hf [hash] = i_unlocked ; // unlock entry
-                                    break ;
-                                }
-                                if (hf == i_unlocked) // f == 2
-                                { 
-                                    // C(i,j) already appears in C(:,j)
-                                    // Hx [hash] += t
-                                    GB_ATOMIC_UPDATE_HX (hash, t) ;
-                                    GB_ATOMIC_WRITE
-                                    Hf [hash] = i_unlocked ; // unlock entry
-                                    break ;
-                                }
-                                // hash table occupied, but not with i
-                                GB_ATOMIC_WRITE
-                                Hf [hash] = hf ;  // unlock with prior value
-                            }
-                        }
-                    }
-                }
+                // no mask present
+                #undef GB_CHECK_MASK_ij
+                #include "GB_AxB_saxpy3_fineHash_phase2.c"
 
             }
             else if (mask_is_M)
@@ -532,10 +416,54 @@
                 // phase2: fine hash task, C(:,j)<M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // TODO:: phase2, fine hash C<M>=A*B: if M(:,j) is dense,
-                // do not scatter into the workspace.  Instead check M(i,j)
-                // directly.  Use a 6-way switch case for M: struct, 1, 2, 4,
-                // 8, 16 bytes.
+                GB_GET_M_j ;                // get M(:,j)
+                if (M_dense_in_place)
+                { 
+                    // M(:,j) is dense.  M is not scattered into Hf.
+                    if (Mx == NULL)
+                    {
+                        // Full structural mask, not complemented.
+                        // The Mask is ignored, and C(:,j)=A*B(:,j)
+                        // TODO: remove this case in caller
+                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                    }
+                    #undef  GB_CHECK_MASK_ij
+                    #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+                    switch (msize)
+                    {
+                        default:
+                        case 1:
+                        {
+                            #define M_TYPE uint8_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 2:
+                        {
+                            #define M_TYPE uint16_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 4:
+                        {
+                            #define M_TYPE uint32_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 8:
+                        {
+                            #define M_TYPE uint64_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 16:
+                        {
+                            #define M_TYPE uint64_t
+                            #define M_SIZE 2
+                            #undef  GB_CHECK_MASK_ij
+                            #define GB_CHECK_MASK_ij                        \
+                                if (Mask [2*i] == 0 && Mask [2*i+1] == 0)   \
+                                    continue ;
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                    }
+                }
 
                 // Given Hf [hash] split into (h,f)
 
@@ -552,7 +480,6 @@
                 // 2 -> 3 : to lock, if i seen already
                 // 3 -> 2 : to unlock; now i has been seen
 
-                GB_GET_M_j ;                // get M(:,j)
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
@@ -615,10 +542,53 @@
                 // phase2: fine hash task, C(:,j)<!M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // TODO:: phase2, fine hash C<!M>=A*B: if M(:,j) is dense,
-                // do not scatter into the workspace.  Instead check M(i,j)
-                // directly.  Use a 6-way switch case for M: struct, 1, 2, 4,
-                // 8, 16 bytes.
+                GB_GET_M_j ;                // get M(:,j)
+                if (M_dense_in_place)
+                { 
+                    // M(:,j) is dense.  M is not scattered into Hf.
+                    if (Mx == NULL)
+                    {
+                        // structural mask, complemented.  No work to do.
+                        // TODO: remove this case in caller
+                        continue ;
+                    }
+                    #undef  GB_CHECK_MASK_ij
+                    #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                    switch (msize)
+                    {
+                        default:
+                        case 1:
+                        {
+                            #define M_TYPE uint8_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 2:
+                        {
+                            #define M_TYPE uint16_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 4:
+                        {
+                            #define M_TYPE uint32_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 8:
+                        {
+                            #define M_TYPE uint64_t
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                        case 16:
+                        {
+                            #define M_TYPE uint64_t
+                            #define M_SIZE 2
+                            #undef  GB_CHECK_MASK_ij
+                            #define GB_CHECK_MASK_ij                        \
+                                if (Mask [2*i] != 0 || Mask [2*i+1] != 0)   \
+                                    continue ;
+                            #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        }
+                    }
+                }
 
                 // Given Hf [hash] split into (h,f)
 
@@ -962,11 +932,6 @@
                     // phase5: coarse Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    // TODO:: phase5, coarse Gus C<M>=A*B: if M(:,j) is dense,
-                    // do not scatter into the workspace.  Instead check M(i,j)
-                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
-                    // 4, 8, 16 bytes.
-
                     // Initially, Hf [...] < mark for all of Hf.
 
                     // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
@@ -1060,11 +1025,6 @@
                     //----------------------------------------------------------
                     // phase5: coarse Gustavson task, C<!M>=A*B
                     //----------------------------------------------------------
-
-                    // TODO:: phase5, coarse Gus C<!M>=A*B: if M(:,j) is dense,
-                    // do not scatter into the workspace.  Instead check M(i,j)
-                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
-                    // 4, 8, 16 bytes.
 
                     // Since the mask is !M:
                     // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
@@ -1171,63 +1131,10 @@
                     // phase5: coarse hash task, C=A*B
                     //----------------------------------------------------------
 
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let f = Hf [hash] and h = Hi [hash]
-
-                    // f < mark          : unoccupied.
-                    // h == i, f == mark : occupied with C(i,j)
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
-                        if (cjnz == 0) continue ;   // nothing to do
-                        GB_GET_B_j ;                // get B(:,j)
-                        if (bjnz == 1)              // C(:,j) = A(:,k)*B(k,j)
-                        { 
-                            GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
-                            continue ;
-                        }
-                        mark++ ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == 0) continue ;
-                            GB_GET_B_kj ;               // bkj = B(k,j)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
-                                for (GB_HASH (i))   // find i in hash table
-                                {
-                                    if (Hf [hash] == mark)
-                                    {
-                                        // hash entry is occupied
-                                        if (Hi [hash] == i)
-                                        { 
-                                            // i already in the hash table
-                                            // Hx [hash] += t ;
-                                            GB_HX_UPDATE (hash, t) ;
-                                            break ;
-                                        }
-                                    }
-                                    else
-                                    { 
-                                        // hash entry is not occupied
-                                        Hf [hash] = mark ;
-                                        Hi [hash] = i ;
-                                        GB_HX_WRITE (hash, t) ;// Hx[hash]=t
-                                        Ci [pC++] = i ;        // ok: C sparse
-                                        break ;
-                                    }
-                                }
-                            }
-                        }
-                        // found i if: Hf [hash] == mark and Hi [hash] == i
-                        GB_SORT_AND_GATHER_HASHED_C_j (mark, Hi [hash] == i)
-                    }
+                    // no mask present
+                    #undef GB_CHECK_MASK_ij
+                    printf ("coarse hash phase 5 no mask\n") ;
+                    #include "GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
                 else if (mask_is_M)
@@ -1237,10 +1144,58 @@
                     // phase5: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    // TODO:: phase5, coarse hash C<M>=A*B: if M(:,j) is dense,
-                    // do not scatter into the workspace.  Instead check M(i,j)
-                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
-                    // 4, 8, 16 bytes.
+                    if (M_dense_in_place)
+                    { 
+                        // M(:,j) is dense.  M is not scattered into Hf.
+                        if (Mx == NULL)
+                        {
+                            // Full structural mask, not complemented.
+                            // The Mask is ignored, and C(:,j)=A*B(:,j)
+                            // TODO: remove this case in caller
+                            printf ("coarse hash phase 5 M mask struct\n") ;
+                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                        }
+                        #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+                        switch (msize)
+                        {
+                            default:
+                            case 1:
+                            {
+                                #define M_TYPE uint8_t
+                                printf ("coarse hash phase 5 M 1\n") ;
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 2:
+                            {
+                                printf ("coarse hash phase 5 M 2\n") ;
+                                #define M_TYPE uint16_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 4:
+                            {
+                                printf ("coarse hash phase 5 M 3\n") ;
+                                #define M_TYPE uint32_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 8:
+                            {
+                                printf ("coarse hash phase 5 M 8\n") ;
+                                #define M_TYPE uint64_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 16:
+                            {
+                                printf ("coarse hash phase 5 M 16\n") ;
+                                #define M_TYPE uint64_t
+                                #define M_SIZE 2
+                                #undef  GB_CHECK_MASK_ij
+                                #define GB_CHECK_MASK_ij                      \
+                                    if (Mask [2*i] == 0 && Mask [2*i+1] == 0) \
+                                        continue ;
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                        }
+                    }
 
                     // Initially, Hf [...] < mark for all of Hf.
                     // Let h = Hi [hash] and f = Hf [hash].
@@ -1306,10 +1261,57 @@
                     // phase5: coarse hash task, C<!M>=A*B
                     //----------------------------------------------------------
 
-                    // TODO:: phase5, coarse hash C<!M>=A*B: if M(:,j) is dense,
-                    // do not scatter into the workspace.  Instead check M(i,j)
-                    // directly.  Use a 6-way switch case for M: struct, 1, 2,
-                    // 4, 8, 16 bytes.
+                    if (M_dense_in_place)
+                    { 
+                        // M(:,j) is dense.  M is not scattered into Hf.
+                        if (Mx == NULL)
+                        {
+                            // structural mask, complemented.  No work to do.
+                            // TODO: remove this case in caller
+                            continue ;
+                        }
+                        #undef  GB_CHECK_MASK_ij
+                        #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                        switch (msize)
+                        {
+                            default:
+                            case 1:
+                            {
+                                printf ("coarse hash phase 5 !M 1\n") ;
+                                #define M_TYPE uint8_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 2:
+                            {
+                                printf ("coarse hash phase 5 !M 2\n") ;
+                                #define M_TYPE uint16_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 4:
+                            {
+                                printf ("coarse hash phase 5 !M 4\n") ;
+                                #define M_TYPE uint32_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 8:
+                            {
+                                printf ("coarse hash phase 5 !M 8\n") ;
+                                #define M_TYPE uint64_t
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                            case 16:
+                            {
+                                printf ("coarse hash phase 5 !M 16\n") ;
+                                #define M_TYPE uint64_t
+                                #define M_SIZE 2
+                                #undef  GB_CHECK_MASK_ij
+                                #define GB_CHECK_MASK_ij                      \
+                                    if (Mask [2*i] != 0 || Mask [2*i+1] != 0) \
+                                        continue ;
+                                #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            }
+                        }
+                    }
 
                     // Initially, Hf [...] < mark for all of Hf.
                     // Let h = Hi [hash] and f = Hf [hash].

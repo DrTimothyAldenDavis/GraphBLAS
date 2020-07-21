@@ -53,18 +53,11 @@
         if (B (:,j) is empty) continue ;
         mjnz = nnz (M (:,j))
         if (M is present, not complemented, and M (:,j) is empty) continue ;
-        im_first = min row index of nonzeros in M(:,j)
-        im_last  = max row index of nonzeros in M(:,j)
-        Bflops (j) = mjnz if M present, to scatter M(:,j) (M or !M case)
+        Bflops (j) = mjnz if M present and not dense, to scatter M(:,j)
         Mwork += mjnz
         for each k where B (k,j) is nonzero:
             aknz = nnz (A (:,k))
             if (aknz == 0) continue ;
-            alo = min row index of nonzeros in A(:,k)
-            ahi = max row index of nonzeros in A(:,k)
-            if (M is present and not complemented)
-                if (intersection (alo:ahi, im_first:im_last) empty) continue
-            end
             % numerical phase will compute: C(:,j)<#M(:,j)> += A(:,k)*B(k,j)
             % where #M is no mask, M, or !M.  This typically takes aknz flops,
             % or with a binary search if nnz(M(:,j)) << nnz(A(:,k)).
@@ -140,6 +133,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
+    bool M_is_dense = false ;
     if (M != NULL)
     { 
         Mh = M->h ;
@@ -147,6 +141,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
         Mi = M->i ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
+        M_is_dense = GB_is_dense (M) ;
     }
 
     //--------------------------------------------------------------------------
@@ -249,13 +244,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // see if M(:,j) is present and non-empty
             //------------------------------------------------------------------
 
-// TODO:: if M is full, or M(:,j) is dense, then do not add mjnz to bjflops
-// or task_MWork.  Let mjnz=0, im_first = 0, and im_last = mvlen-1.
+            // if M(:,j) is dense, do not add mjnz to bjflops or task_MWork.
 
             int64_t bjflops = 0 ;
-//          int64_t im_first = -1, im_last = -1 ;
             int64_t mjnz = 0 ;
-            if (M != NULL)
+            if (M != NULL && !M_is_dense)
             {
                 int64_t mpright = mnvec - 1 ;
                 int64_t pM, pM_end ;
@@ -266,9 +259,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (mjnz == 0 && !Mask_comp) continue ;
                 if (mjnz > 0)
                 {
-                    // M(:,j) not empty; get 1st and last index in M(:,j)
-//                  im_first = GBI (Mi, pM, mvlen) ;
-//                  im_last  = GBI (Mi, pM_end-1, mvlen) ;
+                    // M(:,j) not empty
                     if (pB == GBP (Bp, kk, bvlen))
                     { 
                         // this task owns the top part of B(:,j), so it can
@@ -333,10 +324,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (mask_is_M)
                 {
                     // A(:,k) is non-empty; get first and last index of A(:,k)
-//                  int64_t alo = GBI (Ai, pA, avlen) ;
-//                  int64_t ahi = GBI (Ai, pA_end-1, avlen) ;
-//                  if (ahi < im_first || alo > im_last) continue ;
-                    if (aknz > 256 && mjnz_much < aknz)
+                    if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen &&
+                        aknz < avlen)
                     { 
                         // scan M(:j), and do binary search for A(i,j)
                         bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;

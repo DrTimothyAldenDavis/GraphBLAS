@@ -107,6 +107,7 @@ void GB_AxB_saxpy3_symbolic
     const GrB_Matrix M,         // mask matrix M
     bool Mask_comp,             // M complemented, or not
     bool Mask_struct,           // M structural, or not
+    bool M_dense_in_place,
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
     GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
@@ -136,6 +137,7 @@ GrB_Info GB_AxB_saxpy3_generic
 (
     GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
+    bool M_dense_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B

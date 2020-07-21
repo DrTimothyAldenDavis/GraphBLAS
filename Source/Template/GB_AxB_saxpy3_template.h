@@ -44,7 +44,6 @@
 // GB_SCATTER_M_j: scatter M(:,j) for a fine or coarse Gustavson task
 //------------------------------------------------------------------------------
 
-// TODO: do not scatter M(:,j) if it is dense
 #define GB_SCATTER_M_j_TYPE(mask_t,pMstart,pMend,mark)                  \
 {                                                                       \
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \
@@ -75,6 +74,19 @@ break ;
             case 2: GB_SCATTER_M_j_TYPE (uint16_t, pMstart, pMend, mark) ;  \
             case 4: GB_SCATTER_M_j_TYPE (uint32_t, pMstart, pMend, mark) ;  \
             case 8: GB_SCATTER_M_j_TYPE (uint64_t, pMstart, pMend, mark) ;  \
+            case 16:                                                        \
+            {                                                               \
+                const uint64_t *GB_RESTRICT Mxx = (mask_t *) Mx ;           \
+                /* scan M(:,j) */                                           \
+                for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
+                {                                                           \
+                    if (Mxx [2*pM] || Mxx [2*pM+1])                         \
+                    {                                                       \
+                        /* Hf [i] = M(i,j) */                               \
+                        Hf [GBI (Mi, pM, mvlen)] = mark ;                   \
+                    }                                                       \
+                }                                                           \
+            }                                                               \
         }                                                                   \
     }
 
@@ -228,6 +240,7 @@ break ;
 //------------------------------------------------------------------------------
 
 // C(:,j) = A(:,k)*B(k,j) when there is a single entry in B(:,j)
+// The mask must not be present.
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
@@ -355,16 +368,16 @@ break ;
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #define GB_SCAN_M_j_OR_A_k                                              \
 {                                                                       \
-    if (aknz > 256 && mjnz_much < aknz)                                 \
-    /* nnz(M(:,j)) much less than nnz(A(:,k)) */                        \
+    if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen && aknz < avlen) \
     {                                                                   \
-        /* scan M(:,j), and do binary search for A(i,k) */              \
+        /* M and A are both sparse, and nnz(M(:,j)) much less than */   \
+        /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k) */ \
         int64_t pA = pA_start ;                                         \
         for (int64_t pM = pM_start ; pM < pM_end ; pM++)                \
         {                                                               \
             GB_GET_M_ij ;           /* get M(i,j) */                    \
             if (!mij) continue ;    /* skip if M(i,j)=0 */              \
-            int64_t i = GBI (Mi, pM, mvlen) ;                           \
+            int64_t i = Mi [pM] ;   /* ok: M and A are sparse */        \
             bool found ;            /* search for A(i,k) */             \
             int64_t apright = pA_end - 1 ;                              \
             GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;              \
@@ -384,6 +397,8 @@ break ;
     }                                                                   \
     else                                                                \
     {                                                                   \
+        /* A(:,j) is sparse enough relative to M(:,j) */                \
+        /* M and/or A can dense */                                      \
         /* scan A(:,k), and lookup M(i,j) */                            \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
         {                                                               \

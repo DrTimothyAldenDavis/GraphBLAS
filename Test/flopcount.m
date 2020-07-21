@@ -34,39 +34,26 @@ else
     % C<M>=A*B and C<!M>=A*B
 
     mask_is_M = (~Mask_complement) ;    % true for C<M>=A*B
+    mask_is_dense = (nnz (M) == prod (size (M))) ;
 
     for j = 1:n
         brows = find (B (:,j)) ;
         if (isempty (brows))
             continue ;
         end
-        mrows = find (M (:,j)) ;
-        mjnz = length (mrows) ;
-        
-        if (mask_is_M & mjnz == 0)
-            continue ;
-        end
-        imin = min (mrows) ;
-        imax = max (mrows) ;
-        brows = brows (:)' ;
 
-        flops (j) = flops (j) + mjnz ;
-        mwork = mwork + mjnz ;
-
-        for k = brows
-            [arows ignore] = find (A (:,k)) ;
-            if (isempty (arows))
-                % A(:,k) is empty
+        if (~mask_is_dense)
+            mrows = find (M (:,j)) ;
+            mjnz = length (mrows) ;
+            if (mask_is_M & mjnz == 0)
                 continue ;
             end
-            if (mask_is_M)
-                amin = min (arows) ;
-                amax = max (arows) ;
-                if (amax < imin || amin > imax)
-                    % intersection of A(:,k) and M(:,j) is empty
-                    continue ;
-                end
-            end
+            flops (j) = flops (j) + mjnz ;
+            mwork = mwork + mjnz ;
+        end
+
+        brows = brows (:)' ;
+        for k = brows
             flops (j) = flops (j) + nnz (A (:,k)) ;
         end
     end
