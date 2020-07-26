@@ -38,6 +38,9 @@
 // for integer types only:
 //      bitcmp
 
+// for int32 and int64:
+//      positioni, positioni1, positionj, positionj1
+
 // The following equivalent synonyms are available:
 //  identity    +       uplus
 //  ainv        -       uminus  negate
@@ -49,6 +52,12 @@
 //  lgamma      gammaln
 //  tgamma      gamma
 //  exp2        pow2
+// TODO: use "i" for 1-based, add aliases "i0" and "i1".
+// ditto for binary ops
+//  i           positioni
+//  i1          positioni1
+//  j           positionj
+//  j1          positionj1
 
 GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 (
@@ -56,8 +65,6 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
     const GrB_Type type         // type of the x,y inputs to the operator
 )
 {
-
-    CHECK_ERROR (type == NULL, "unsupported type") ;
 
     if (MATCH (op_name, "identity") || MATCH (op_name, "+") ||
         MATCH (op_name, "uplus"))
@@ -502,6 +509,26 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
         if (type == GrB_UINT32) return (GrB_BNOT_UINT32) ;
         if (type == GrB_UINT64) return (GrB_BNOT_UINT64) ;
 
+    }
+    else if (MATCH (op_name, "positioni") || MATCH (op_name, "i"))
+    { 
+        if (type == GrB_INT32) return (GxB_POSITIONI_INT32) ;
+        if (type == GrB_INT64) return (GxB_POSITIONI_INT64) ;
+    }
+    else if (MATCH (op_name, "positioni1") || MATCH (op_name, "i1"))
+    { 
+        if (type == GrB_INT32) return (GxB_POSITIONI1_INT32) ;
+        if (type == GrB_INT64) return (GxB_POSITIONI1_INT64) ;
+    }
+    else if (MATCH (op_name, "positionj") || MATCH (op_name, "j"))
+    { 
+        if (type == GrB_INT32) return (GxB_POSITIONJ_INT32) ;
+        if (type == GrB_INT64) return (GxB_POSITIONJ_INT64) ;
+    }
+    else if (MATCH (op_name, "positionj1") || MATCH (op_name, "j1"))
+    { 
+        if (type == GrB_INT32) return (GxB_POSITIONJ1_INT32) ;
+        if (type == GrB_INT64) return (GxB_POSITIONJ1_INT64) ;
     }
 
     ERROR2 ("unknown unary operator", op_name) ;

@@ -89,6 +89,11 @@ void mexFunction
         op_xtype = op2->xtype ; op_xsize = op_xtype->size ;
         op_ytype = op2->ytype ; op_ysize = op_ytype->size ;
         ASSERT_BINARYOP_OK (op2, "binary op", GB0) ;
+        if (GB_OP_IS_POSITIONAL (op2))
+        { 
+            FREE_ALL ;
+            mexErrMsgTxt ("binary positional op not supported") ;
+        }
     }
     else
     {
@@ -103,6 +108,11 @@ void mexFunction
         op_xtype = op1->xtype ; op_xsize = op_xtype->size ;
         op_ytype = NULL       ; op_ysize = 1 ;
         ASSERT_UNARYOP_OK (op1, "unary op", GB0) ;
+        if (GB_OP_IS_POSITIONAL (op1))
+        { 
+            FREE_ALL ;
+            mexErrMsgTxt ("unary positional op not supported") ;
+        }
     }
 
     ASSERT_TYPE_OK (op_ztype, "Z type", GB0) ;

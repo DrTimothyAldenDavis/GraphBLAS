@@ -139,7 +139,7 @@ GrB_Info GB_selector
     GxB_select_function user_select = NULL ;
     if (op != NULL && opcode >= GB_USER_SELECT_opcode)
     { 
-        GB_BURBLE_MATRIX (A, "generic ") ;
+        GB_BURBLE_MATRIX (A, "(generic select: %s) ", op->name) ;
         user_select = (GxB_select_function) (op->function) ;
     }
 

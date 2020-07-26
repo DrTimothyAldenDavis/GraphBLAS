@@ -51,6 +51,8 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     ntasks = GB_IMIN (ntasks, anz) ;
     ntasks = GB_IMAX (ntasks, 1) ;
 
+    // TODO: use #include "GB_positional_op_ijp.c" here
+
     //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------

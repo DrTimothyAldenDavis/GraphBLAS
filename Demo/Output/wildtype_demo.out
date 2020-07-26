@@ -351,6 +351,22 @@ Printing the matrix with GxB_Matrix_fprint:
 
 The matrix D is not wild enough to print.
 
+  10x10 GraphBLAS int64_t matrix, sparse by row:
+  E (positional i), 3 entries
+
+    (2,4)   2
+    (2,7)   2
+    (3,7)   3
+
+
+  10x10 GraphBLAS int64_t matrix, sparse by row:
+  E (positional j), 3 entries
+
+    (2,4)   4
+    (2,7)   7
+    (3,7)   7
+
+
 This is supposed to fail, as a demo of GrB_error:
 GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)

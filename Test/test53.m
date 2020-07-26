@@ -166,6 +166,10 @@ for k0 = 1:size (problems,1) ;
                     accum.opname = op ;
                     accum.optype = optype ;
 
+                    if (GB_spec_is_positional (accum))
+                        continue ;
+                    end
+
                     try
                         GB_spec_operator (accum) ;
                     catch

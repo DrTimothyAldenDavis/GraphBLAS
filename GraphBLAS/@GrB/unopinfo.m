@@ -78,6 +78,12 @@ function unopinfo (op, type)
 % For integer types only (result is same type as input):
 %   bitcmp      z = ~(x)        bitwise complement, also 'bitnot'
 %
+% For int32 and int64 types, applied to an entry A(i,j)
+%   positioni   z = i-1
+%   positioni1  z = i
+%   positionj   z = i-1
+%   positionj1  z = i
+%
 % Example:
 %
 %   % valid unary operators

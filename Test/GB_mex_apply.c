@@ -120,12 +120,6 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // printf ("\nin GB_mex_op ---------------------------\n")  ;
-    // GxB_print (A, 3) ;
-    // GxB_print (op, 3) ;
-    // GxB_print (accum, 3) ;
-    // printf ("input:\n") ; GxB_print (C, 3) ;
-
     // C<Mask> = accum(C,op(A))
     if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT))
     {
@@ -137,14 +131,9 @@ void mexFunction
         METHOD (apply (true)) ;
     }
 
-    // printf ("result:\n") ; GxB_print (C, 3) ;
-
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
 
     FREE_ALL ;
-
-    // printf ("\nfinished GB_mex_op ---------------------------\n")  ;
-
 }
 

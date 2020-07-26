@@ -5,6 +5,7 @@ function test75b
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+% mult_ops = binops.positional
 mult_ops = binops.all ;
 types = types.all ;
 
@@ -125,73 +126,27 @@ for k1 = 1:length(mult_ops)
             n_semirings = n_semirings + 1 ;
             fprintf ('.') ;
 
-            % C<M> = A'*B, with mask
-%             C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn_dot);
-%             C2 = GB_spec_mxm (Cin, Mask, [ ], semiring, A, B, dtn) ;
-%             GB_spec_compare (C1, C2, id) ;
-%             C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn_saxpy);
-%             GB_spec_compare (C1, C2, id) ;
-
-            % C<M> += A'*B, C dense, typecasting of C
-%             C1 = GB_mex_mxm  (Din, Mask, add_op, semiring, A, B, dtn_dot) ;
-%             C2 = GB_spec_mxm (Din, Mask, add_op, semiring, A, B, dtn) ;
-%             GB_spec_compare (C1, C2, id) ;
-%             C1 = GB_mex_mxm  (Din, Mask, add_op, semiring, A, B, dtn_saxpy) ;
-%             GB_spec_compare (C1, C2, id) ;
-
-            % C<M> += A'*B, C dense, no typecasting of C
-%             C1 = GB_mex_mxm  (D, Mask, add_op, semiring, A, B, dtn_dot) ;
-%             C2 = GB_spec_mxm (D, Mask, add_op, semiring, A, B, dtn) ;
-%             GB_spec_compare (C1, C2, id) ;
-%             C1 = GB_mex_mxm  (D, Mask, add_op, semiring, A, B, dtn_saxpy) ;
-%             GB_spec_compare (C1, C2, id) ;
-
             % C += A'*B, C dense, typecasting of C
             % (test coverage: 96)
             C1 = GB_mex_mxm  (Din, [ ], add_op, semiring, A, B, dtn_dot) ;
             C2 = GB_spec_mxm (Din, [ ], add_op, semiring, A, B, dtn) ;
             GB_spec_compare (C1, C2, id) ;
-%            C1 = GB_mex_mxm  (Din, [ ], add_op, semiring, A, B, dtn_saxpy) ;
-%            GB_spec_compare (C1, C2, id) ;
 
             % C += A'*B, C sparse, no typecasting of C
             % (test coverage: 1,234)
             C1 = GB_mex_mxm  (D, [ ], add_op, semiring, A, B, dtn_dot) ;
             C2 = GB_spec_mxm (D, [ ], add_op, semiring, A, B, dtn) ;
             GB_spec_compare (C1, C2, id) ;
-%             C1 = GB_mex_mxm  (D, [ ], add_op, semiring, A, B, dtn_saxpy) ;
-%             GB_spec_compare (C1, C2, id) ;
 
             % X = u*A, with mask (test coverage: 12)
             C1 = GB_mex_vxm  (Xin, mask, [ ], semiring, X, A, [ ]) ;
             C2 = GB_spec_vxm (Xin, mask, [ ], semiring, X, A, [ ]) ;
             GB_spec_compare (C1, C2, id) ;
 
-%             if (k3 == 1)
-%               % repeat but with typecasting, to test generic A'*B
-%               A.class = 'double' ;
-
-%               % C = A'*B, with mask
-%               C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn);
-%               C2 = GB_spec_mxm (Cin, Mask, [ ], semiring, A, B, dtn);
-%               GB_spec_compare (C1, C2, id) ;
-
-%               % X = u*A, with mask
-%               C1 = GB_mex_vxm  (Xin, mask, [ ], semiring, X, A, [ ]);
-%               C2 = GB_spec_vxm (Xin, mask, [ ], semiring, X, A, [ ]);
-%               GB_spec_compare (C1, C2, id) ;
-
-%               % X = u*A, with mask
-%               C1 = GB_mex_vxm  (Xin, mask, [ ], semiring, Y, A, [ ]);
-%               C2 = GB_spec_vxm (Xin, mask, [ ], semiring, Y, A, [ ]);
-%               GB_spec_compare (C1, C2, id) ;
-
-%            end
-
         end
     end
 end
 
-fprintf ('semirings tested: %d\n', n_semirings) ;
+fprintf ('\nsemirings tested: %d\n', n_semirings) ;
 fprintf ('\ntest75b: all tests passed\n') ;
 

@@ -67,6 +67,7 @@
 
 #define GB_GET_ACCUM                                                        \
     ASSERT_BINARYOP_OK (accum, "accum for assign", GB0) ;                   \
+    ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;                                 \
     GxB_binary_function faccum = accum->function ;                          \
     GB_cast_function cast_A_to_Y = GB_cast_factory (accum->ytype->code, acode);\
     GB_cast_function cast_C_to_X = GB_cast_factory (accum->xtype->code, ccode);\
@@ -663,24 +664,6 @@
                 GB_COPY_scalar_to_C ;                                       \
             }
 
-            // [C A 1] scalar case, with accum
-            #define GB_C_A_1_accum_matrix                                   \
-            {                                                               \
-                /* ----[C A 1] with accum, scalar expansion              */ \
-                /* action: ( =C+A ): apply the accumulator               */ \
-                GB_void ywork [GB_VLA(ysize)] ;                             \
-                GB_COPY_aij_to_ywork ;                                      \
-                GB_ACCUMULATE ;                                             \
-            }                                                               \
-
-            // [C A 1] scalar case, with accum
-            #define GB_C_A_1_accum_scalar                                   \
-            {                                                               \
-                /* ----[C A 1] with accum, scalar expansion              */ \
-                /* action: ( =C+A ): apply the accumulator               */ \
-                GB_ACCUMULATE ;                                             \
-            }
-
             // [C A 1] matrix case when accum is present
             #define GB_withaccum_C_A_1_matrix                               \
             {                                                               \
@@ -692,9 +675,28 @@
                 }                                                           \
                 else                                                        \
                 {                                                           \
+                    /* ----[C A 1] with accum                            */ \
+                    /* action: ( =C+A ): apply the accumulator           */ \
+                    GB_void ywork [GB_VLA(ysize)] ;                         \
+                    GB_COPY_aij_to_ywork ;                                  \
+                    GB_ACCUMULATE ;                                         \
+                }                                                           \
+            }
+
+            // [C A 1] scalar case when accum is present
+            #define GB_withaccum_C_A_1_scalar                               \
+            {                                                               \
+                if (is_zombie)                                              \
+                {                                                           \
+                    /* ----[X A 1]                                       */ \
+                    /* action: ( undelete ): bring a zombie back to life */ \
+                    GB_X_A_1_scalar ;                                       \
+                }                                                           \
+                else                                                        \
+                {                                                           \
                     /* ----[C A 1] with accum, scalar expansion          */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_C_A_1_accum_matrix ;                                 \
+                    GB_ACCUMULATE ;                                         \
                 }                                                           \
             }
 
@@ -712,23 +714,6 @@
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
                     GB_COPY_aij_to_C ;                                      \
-                }                                                           \
-            }
-
-            // [C A 1] scalar case when accum is present
-            #define GB_withaccum_C_A_1_scalar                               \
-            {                                                               \
-                if (is_zombie)                                              \
-                {                                                           \
-                    /* ----[X A 1]                                       */ \
-                    /* action: ( undelete ): bring a zombie back to life */ \
-                    GB_X_A_1_scalar ;                                       \
-                }                                                           \
-                else                                                        \
-                {                                                           \
-                    /* ----[C A 1] with accum, scalar expansion          */ \
-                    /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_C_A_1_accum_scalar ;                                 \
                 }                                                           \
             }
 

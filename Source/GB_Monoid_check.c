@@ -39,7 +39,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     GBPR0 (monoid->builtin ? "(built-in)" : "(user-defined)") ;
 
     GrB_Info info = GB_BinaryOp_check (monoid->op, "monoid->op", pr, f) ;
-    if (info != GrB_SUCCESS)
+    if (info != GrB_SUCCESS || GB_OP_IS_POSITIONAL (monoid->op))
     { 
         GBPR0 ("    Monoid contains an invalid operator\n") ;
         return (GrB_INVALID_OBJECT) ;

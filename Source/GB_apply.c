@@ -40,7 +40,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     // C may be aliased with M and/or A
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     ASSERT_MATRIX_OK (C, "C input for GB_apply", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_apply", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_apply", GB0) ;
@@ -57,14 +57,17 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         ASSERT_UNARYOP_OK (op1, "op1 for GB_apply", GB0) ;
         T_type = op1->ztype ;
         opcode = op1->opcode ;
-        // A must also be compatible with op1->xtype
-        if (!GB_Type_compatible (A->type, op1->xtype))
-        { 
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Incompatible type for z=%s(x):\n"
-                "input A of type [%s]\n"
-                "cannot be typecast to x input of type [%s]",
-                op1->name, A->type->name, op1->xtype->name) ;
+        if (!GB_OPCODE_IS_POSITIONAL (opcode))
+        {
+            // A must also be compatible with op1->xtype
+            if (!GB_Type_compatible (A->type, op1->xtype))
+            { 
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "Incompatible type for z=%s(x):\n"
+                    "input A of type [%s]\n"
+                    "cannot be typecast to x input of type [%s]",
+                    op1->name, A->type->name, op1->xtype->name) ;
+            }
         }
     }
     else if (op2 != NULL)
@@ -75,55 +78,58 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         ASSERT_SCALAR_OK (scalar, "scalar for GB_apply", GB0) ;
         T_type = op2->ztype ;
         opcode = op2->opcode ;
-        bool op_is_first  = opcode == GB_FIRST_opcode ;
-        bool op_is_second = opcode == GB_SECOND_opcode ;
-        bool op_is_pair   = opcode == GB_PAIR_opcode ;
-        if (binop_bind1st)
+        if (!GB_OPCODE_IS_POSITIONAL (opcode))
         {
-            // C = op (scalar,A)
-            // A must be compatible with op2->ytype
-            if (!(op_is_first || op_is_pair ||
-                  GB_Type_compatible (A->type, op2->ytype)))
-            { 
-                GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Incompatible type for z=%s(x,y):\n"
-                    "input A of type [%s]\n"
-                    "cannot be typecast to y input of type [%s]",
-                    op2->name, A->type->name, op2->ytype->name) ;
+            bool op_is_first  = opcode == GB_FIRST_opcode ;
+            bool op_is_second = opcode == GB_SECOND_opcode ;
+            bool op_is_pair   = opcode == GB_PAIR_opcode ;
+            if (binop_bind1st)
+            {
+                // C = op (scalar,A)
+                // A must be compatible with op2->ytype
+                if (!(op_is_first || op_is_pair ||
+                      GB_Type_compatible (A->type, op2->ytype)))
+                { 
+                    GB_ERROR (GrB_DOMAIN_MISMATCH,
+                        "Incompatible type for z=%s(x,y):\n"
+                        "input A of type [%s]\n"
+                        "cannot be typecast to y input of type [%s]",
+                        op2->name, A->type->name, op2->ytype->name) ;
+                }
+                // scalar must be compatible with op2->xtype
+                if (!(op_is_second || op_is_pair ||
+                      GB_Type_compatible (scalar->type, op2->xtype)))
+                { 
+                    GB_ERROR (GrB_DOMAIN_MISMATCH,
+                        "Incompatible type for z=%s(x,y):\n"
+                        "input scalar of type [%s]\n"
+                        "cannot be typecast to x input of type [%s]",
+                        op2->name, scalar->type->name, op2->xtype->name) ;
+                }
             }
-            // scalar must be compatible with op2->xtype
-            if (!(op_is_second || op_is_pair ||
-                  GB_Type_compatible (scalar->type, op2->xtype)))
-            { 
-                GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Incompatible type for z=%s(x,y):\n"
-                    "input scalar of type [%s]\n"
-                    "cannot be typecast to x input of type [%s]",
-                    op2->name, scalar->type->name, op2->xtype->name) ;
-            }
-        }
-        else
-        {
-            // C = op (A,scalar)
-            // A must be compatible with op2->xtype
-            if (!(op_is_first || op_is_pair ||
-                  GB_Type_compatible (A->type, op2->xtype)))
-            { 
-                GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Incompatible type for z=%s(x,y):\n"
-                    "input scalar of type [%s]\n"
-                    "cannot be typecast to x input of type [%s]",
-                    op2->name, A->type->name, op2->xtype->name) ;
-            }
-            // scalar must be compatible with op2->ytype
-            if (!(op_is_second || op_is_pair
-                  || GB_Type_compatible (scalar->type, op2->ytype)))
-            { 
-                GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Incompatible type for z=%s(x,y):\n"
-                    "input A of type [%s]\n"
-                    "cannot be typecast to y input of type [%s]",
-                    op2->name, scalar->type->name, op2->ytype->name) ;
+            else
+            {
+                // C = op (A,scalar)
+                // A must be compatible with op2->xtype
+                if (!(op_is_first || op_is_pair ||
+                      GB_Type_compatible (A->type, op2->xtype)))
+                { 
+                    GB_ERROR (GrB_DOMAIN_MISMATCH,
+                        "Incompatible type for z=%s(x,y):\n"
+                        "input scalar of type [%s]\n"
+                        "cannot be typecast to x input of type [%s]",
+                        op2->name, A->type->name, op2->xtype->name) ;
+                }
+                // scalar must be compatible with op2->ytype
+                if (!(op_is_second || op_is_pair
+                      || GB_Type_compatible (scalar->type, op2->ytype)))
+                { 
+                    GB_ERROR (GrB_DOMAIN_MISMATCH,
+                        "Incompatible type for z=%s(x,y):\n"
+                        "input A of type [%s]\n"
+                        "cannot be typecast to y input of type [%s]",
+                        op2->name, scalar->type->name, op2->ytype->name) ;
+                }
             }
         }
     }
@@ -261,11 +267,26 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // T = op(A) or op(A')
     //--------------------------------------------------------------------------
 
-    bool C_is_csc = C->is_csc ;
-    if (C_is_csc != A->is_csc)
+    bool T_is_csc = C->is_csc ;
+    if (T_is_csc != A->is_csc)
     { 
         // Flip the sense of A_transpose
         A_transpose = !A_transpose ;
+    }
+
+    if (!T_is_csc)
+    {
+        // positional ops must be flipped, with i and j swapped
+        if (op1 != NULL)
+        {
+            op1 = GB_positional_unop_ijflip (op1) ;
+            opcode = op1->opcode ;
+        }
+        else if (op2 != NULL)
+        {
+            op2 = GB_positional_binop_ijflip (op2) ;
+            opcode = op2->opcode ;
+        }
     }
 
     GrB_Matrix T = NULL ;
@@ -273,35 +294,36 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (A_transpose)
     { 
         // T = op (A'), typecasting to op*->ztype
-        // transpose: typecast, apply an op, not in place
+        // transpose: typecast, apply an op, not in place.
         GBBURBLE ("(transpose-op) ") ;
-        info = GB_transpose (&T, T_type, C_is_csc, A,
-            op1, op2, scalar, binop_bind1st,
-            Context) ;
+        info = GB_transpose (&T, T_type, T_is_csc, A,
+            op1, op2, scalar, binop_bind1st, Context) ;
+        // A positional op is applied to C after the transpose is computed,
+        // using the T_is_csc format.  The ijflip is handled
+        // above.
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
     { 
         GBBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in place, with no typecasting
-        // of the output of the operator with the matrix C.  Always succeeds.
+        // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
         // FUTURE::: also handle C += op(C), with accum.
         if (opcode != GB_IDENTITY_opcode)
         { 
+            // the output Cx is aliased with C->x in GB_apply_op.
             GB_void *Cx = (GB_void *) C->x ;
-            GB_apply_op (Cx,
-                op1, op2, scalar, binop_bind1st,
-                Cx, C->type, GB_NNZ (C), Context) ;
+            info = GB_apply_op (Cx, op1, op2, scalar, binop_bind1st, C,
+                Context) ;
         }
-        return (GrB_SUCCESS) ;
+        return (info) ;
     }
     else
     { 
         // T = op (A), pattern is a shallow copy of A, type is op*->ztype.
         GBBURBLE ("(shallow-op) ") ;
-        info = GB_shallow_op (&T, C_is_csc,
-            op1, op2, scalar, binop_bind1st,
-            A, Context) ;
+        info = GB_shallow_op (&T, T_is_csc,
+            op1, op2, scalar, binop_bind1st, A, Context) ;
     }
 
     if (info != GrB_SUCCESS)

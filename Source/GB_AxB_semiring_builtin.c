@@ -44,6 +44,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
 
     // add is a monoid
     ASSERT (add->xtype == add->ztype && add->ytype == add->ztype) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (add)) ;
 
     // in a semiring, the ztypes of add and mult are always the same:
     ASSERT (add->ztype == mult->ztype) ;

@@ -115,7 +115,7 @@ GrB_Info GB_subassign_emult_slice
     // construct fine/coarse tasks for eWise multiply of A.*M
     //--------------------------------------------------------------------------
 
-    // Compare with the first part of GB_emult (A,B).  Note that M in this
+    // Compare with the first part of GB_emult for A.*B.  Note that M in this
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;

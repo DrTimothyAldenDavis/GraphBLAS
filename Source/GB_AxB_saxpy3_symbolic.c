@@ -41,17 +41,12 @@ void GB_AxB_saxpy3_symbolic
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Cp = C->p ;
-    // const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t cvlen = C->vlen ;
-    // const int64_t cnvec = C->nvec ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    // const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
     const int64_t bvlen = B->vlen ;
-    // const int64_t bnvec = B->nvec ;
-    // const bool B_is_hyper = (Bh != NULL) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -59,7 +54,6 @@ void GB_AxB_saxpy3_symbolic
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
-    // const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -151,11 +145,11 @@ void GB_AxB_saxpy3_symbolic
 
                 // M_dense_in_place is true only if M is dense, and all tasks
                 // are fine or coarse hash tasks (no Gustvason tasks).
+                // The mask M may be dense or full, sparse, or hypersparse.
                 ASSERT (!M_dense_in_place) ;
 
                 if (mjnz > 0)
                 {
-                    ASSERT (Mi != NULL) ;
                     int8_t *GB_RESTRICT
                         Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                     GB_SCATTER_M_j (mystart, myend, 1) ;
@@ -403,7 +397,6 @@ void GB_AxB_saxpy3_symbolic
 
                     // no mask present
                     #undef GB_CHECK_MASK_ij
-                    // printf ("coarse hash phase 1 no mask\n") ;
                     #include "GB_AxB_saxpy3_coarseHash_phase1.c"
 
                 }
@@ -422,7 +415,6 @@ void GB_AxB_saxpy3_symbolic
                             // Full structural mask, not complemented.
                             // The Mask is ignored, and C(:,j)=A*B(:,j)
                             // TODO: remove this case in caller
-                            // printf ("coarse hash phase 1 M struct\n") ;
                             #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                         }
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
@@ -431,31 +423,26 @@ void GB_AxB_saxpy3_symbolic
                             default:
                             case 1:
                             {
-                                // printf ("coarse hash phase 1 M 1\n") ;
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 1 M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 1 M 4\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 1 M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 1 M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -538,7 +525,6 @@ void GB_AxB_saxpy3_symbolic
                         {
                             // structural mask, complemented.  No work to do.
                             // TODO: remove this case in caller
-                            // printf ("coarse hash phase 1 !M struct\n") ;
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)
                             { 
                                 ASSERT (Cp [kk] == 0) ;
@@ -552,31 +538,26 @@ void GB_AxB_saxpy3_symbolic
                             default:
                             case 1:
                             {
-                                // printf ("coarse hash phase 1 !M 1\n") ;
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 1 !M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 1 !M 4\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 1 !M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 1 !M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -641,7 +622,6 @@ void GB_AxB_saxpy3_symbolic
     // check result for phase1 for fine tasks
     //--------------------------------------------------------------------------
 
-    // printf ("phase1 done\n") ;
     #ifdef GB_DEBUG
     if (M != NULL)
     {

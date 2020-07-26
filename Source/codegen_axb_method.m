@@ -10,9 +10,21 @@ end
 
 f = fopen ('control.m4', 'w') ;
 
-is_first     = isequal (multop, 'first') ;
-is_second    = isequal (multop, 'second') ;
-is_pair      = isequal (multop, 'pair') ;
+is_first  = false ;
+is_second = false ;
+is_pair   = false ;
+is_positional = false ;
+switch (multop)
+    case { 'firsti', 'firsti1', 'firstj', 'firstj1', 'secondj', 'secondj1' }
+        is_positional = true ;
+    case { 'first' }
+        is_first = true ;
+    case { 'second' }
+        is_second = true ;
+    case { 'pair' }
+        is_pair = true ;
+end
+
 is_any       = isequal (addop, 'any') ;
 is_eq        = isequal (addop, 'eq') ;
 is_any_pair  = is_any && isequal (multop, 'pair') ;
@@ -206,20 +218,8 @@ end
 fprintf (f, 'define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
 fprintf (f, 'define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
-% MIN and MAX for floating-point types need unsigned integer puns
-% pun for compare-and-swap of ztype
-if (isequal (ztype, 'float'))
-    pun = 'uint32_t' ;
-elseif (isequal (ztype, 'double'))
-    pun = 'uint64_t' ;
-else
-    % no type punning needed for compare-and-swap
-    pun = ztype ;
-end
-fprintf (f, 'define(`GB_ctype_pun'', `%s'')\n', pun) ;
-
 % to get an entry from A
-if (is_second || is_pair)
+if (is_second || is_pair || is_positional)
     % value of A is ignored for the SECOND and PAIR operators
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
@@ -227,7 +227,7 @@ else
 end
 
 % to get an entry from B
-if (is_first || is_pair)
+if (is_first || is_pair || is_positional)
     % value of B is ignored for the FIRST and PAIR operators
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
@@ -260,9 +260,11 @@ add2 = strrep (add2,     't', '`$2''') ;
 fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 
 % create the multiply-add operator
-if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
-    isequal (ztype, 'bool') || is_first || is_second || is_pair || ...
-    isequal (multop (1:2), 'is') || isequal (multop, 'any'))
+is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && contains (ztype, 'int') ;
+
+if (~is_imin_or_imax && ...
+    (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
+     isequal (ztype, 'bool') || is_first || is_second || is_pair || is_positional))
     % float and double do not get promoted.
     % bool is OK since promotion of the result (0 or 1) to int is safe.
     % first and second are OK since no promotion occurs.
@@ -305,14 +307,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +34 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +34 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

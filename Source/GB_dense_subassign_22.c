@@ -37,6 +37,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     ASSERT (GB_is_dense (C)) ;
     ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
     if (!GB_IS_FULL (C))
     { 
@@ -122,7 +123,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
     if (!done)
     { 
-        GB_BURBLE_MATRIX (C, "generic ") ;
+        GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of b and C
@@ -135,7 +136,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
         //----------------------------------------------------------------------
 
         // C(i,j) = C(i,j) + scalar
-        #define GB_BINOP(cout_ij, cin_aij, bwork) \
+        #define GB_BINOP(cout_ij, cin_aij, bwork, i, j) \
             fadd (cout_ij, cin_aij, bwork)
 
         // address of Cx [p]

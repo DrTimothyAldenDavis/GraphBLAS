@@ -35,7 +35,7 @@
 // C type:   GB_ctype
 // A type:   GB_atype
 // B,b type: GB_btype
-// BinaryOp: GB_binaryop(cij,aij,bij)
+// BinaryOp: GB_binaryop(cij,aij,bij,i,j)
 
 #define GB_ATYPE \
     GB_atype
@@ -81,8 +81,8 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y)   \
-    GB_binaryop(z, x, y) ;
+#define GB_BINOP(z, x, y, i, j) \
+    GB_binaryop(z, x, y, i, j) ;
 
 // op is second
 #define GB_OP_IS_SECOND \
@@ -339,7 +339,7 @@ GrB_Info GB_bind1st
     for (p = 0 ; p < anz ; p++)
     {
         GB_getb(bij, Bx, p) ;
-        GB_binaryop(Cx [p], x, bij) ;
+        GB_binaryop(Cx [p], x, bij, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -373,7 +373,7 @@ GrB_Info GB_bind2nd
     for (p = 0 ; p < anz ; p++)
     {
         GB_geta(aij, Ax, p) ;
-        GB_binaryop(Cx [p], aij, y) ;
+        GB_binaryop(Cx [p], aij, y, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -389,10 +389,10 @@ if_binop_bind1st_is_enabled
 
 // cij = op (x, aij), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    GB_getb(aij, Ax, pA) ;              \
-    GB_binaryop(Cx [pC], x, aij) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    GB_getb(aij, Ax, pA) ;                      \
+    GB_binaryop(Cx [pC], x, aij, 0, 0) ;        \
 }
 
 GrB_Info GB_bind1st_tran
@@ -434,10 +434,10 @@ if_binop_bind2nd_is_enabled
 
 // cij = op (aij, y), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    GB_geta(aij, Ax, pA) ;              \
-    GB_binaryop(Cx [pC], aij, y) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    GB_geta(aij, Ax, pA) ;                      \
+    GB_binaryop(Cx [pC], aij, y, 0, 0) ;        \
 }
 
 GrB_Info GB_bind2nd_tran

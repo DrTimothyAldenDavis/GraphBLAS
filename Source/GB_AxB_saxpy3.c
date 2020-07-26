@@ -1123,7 +1123,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (!done)
     { 
-        GB_BURBLE_MATRIX (C, "generic ") ;
         info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
             M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, TaskList, ntasks, nfine, nthreads, Context) ;

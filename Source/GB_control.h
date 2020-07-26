@@ -224,6 +224,15 @@
 // #define GxB_NO_CMPLX     1
 // #define GxB_NO_POW       1
 
+// #define GxB_NO_FIRSTI    1
+// #define GxB_NO_FIRSTI1   1
+// #define GxB_NO_FIRSTJ    1
+// #define GxB_NO_FIRSTJ1   1
+// #define GxB_NO_SECONDI   1
+// #define GxB_NO_SECONDI1  1
+// #define GxB_NO_SECONDJ   1
+// #define GxB_NO_SECONDJ1  1
+
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the binary operators for each type
 //------------------------------------------------------------------------------
@@ -683,6 +692,24 @@
 // #define GxB_NO_BSHIFT_UINT16    1
 // #define GxB_NO_BSHIFT_UINT32    1
 // #define GxB_NO_BSHIFT_UINT64    1
+
+// #define GxB_NO_FIRSTI_INT64    1
+// #define GxB_NO_FIRSTI1_INT64   1
+// #define GxB_NO_FIRSTJ_INT64    1
+// #define GxB_NO_FIRSTJ1_INT64   1
+// #define GxB_NO_SECONDI_INT64   1
+// #define GxB_NO_SECONDI1_INT64  1
+// #define GxB_NO_SECONDJ_INT64   1
+// #define GxB_NO_SECONDJ1_INT64  1
+
+// #define GxB_NO_FIRSTI_INT32    1
+// #define GxB_NO_FIRSTI1_INT32   1
+// #define GxB_NO_FIRSTJ_INT32    1
+// #define GxB_NO_FIRSTJ1_INT32   1
+// #define GxB_NO_SECONDI_INT32   1
+// #define GxB_NO_SECONDI1_INT32  1
+// #define GxB_NO_SECONDJ_INT32   1
+// #define GxB_NO_SECONDJ1_INT32  1
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the corresponding semiring
@@ -2117,4 +2144,80 @@
 // #define GxB_NO_BXNOR_BXNOR_UINT16    1
 // #define GxB_NO_BXNOR_BXNOR_UINT32    1
 // #define GxB_NO_BXNOR_BXNOR_UINT64    1
+
+//----------------------------------------
+// positional semirings:
+//----------------------------------------
+
+// #define GxB_NO_MIN_FIRSTI_INT64      1
+// #define GxB_NO_MAX_FIRSTI_INT64      1
+// #define GxB_NO_ANY_FIRSTI_INT64      1
+// #define GxB_NO_PLUS_FIRSTI_INT64     1
+// #define GxB_NO_TIMES_FIRSTI_INT64    1
+
+// #define GxB_NO_MIN_FIRSTI1_INT64     1
+// #define GxB_NO_MAX_FIRSTI1_INT64     1
+// #define GxB_NO_ANY_FIRSTI1_INT64     1
+// #define GxB_NO_PLUS_FIRSTI1_INT64    1
+// #define GxB_NO_TIMES_FIRSTI1_INT64   1
+
+// #define GxB_NO_MIN_FIRSTJ_INT64      1
+// #define GxB_NO_MAX_FIRSTJ_INT64      1
+// #define GxB_NO_ANY_FIRSTJ_INT64      1
+// #define GxB_NO_PLUS_FIRSTJ_INT64     1
+// #define GxB_NO_TIMES_FIRSTJ_INT64    1
+
+// #define GxB_NO_MIN_FIRSTJ1_INT64     1
+// #define GxB_NO_MAX_FIRSTJ1_INT64     1
+// #define GxB_NO_ANY_FIRSTJ1_INT64     1
+// #define GxB_NO_PLUS_FIRSTJ1_INT64    1
+// #define GxB_NO_TIMES_FIRSTJ1_INT64   1
+
+// #define GxB_NO_MIN_SECONDJ_INT64     1
+// #define GxB_NO_MAX_SECONDJ_INT64     1
+// #define GxB_NO_ANY_SECONDJ_INT64     1
+// #define GxB_NO_PLUS_SECONDJ_INT64    1
+// #define GxB_NO_TIMES_SECONDJ_INT64   1
+
+// #define GxB_NO_MIN_SECONDJ1_INT64    1
+// #define GxB_NO_MAX_SECONDJ1_INT64    1
+// #define GxB_NO_ANY_SECONDJ1_INT64    1
+// #define GxB_NO_PLUS_SECONDJ1_INT64   1
+// #define GxB_NO_TIMES_SECONDJ1_INT64  1
+
+// #define GxB_NO_MIN_FIRSTI_INT32      1
+// #define GxB_NO_MAX_FIRSTI_INT32      1
+// #define GxB_NO_ANY_FIRSTI_INT32      1
+// #define GxB_NO_PLUS_FIRSTI_INT32     1
+// #define GxB_NO_TIMES_FIRSTI_INT32    1
+
+// #define GxB_NO_MIN_FIRSTI1_INT32     1
+// #define GxB_NO_MAX_FIRSTI1_INT32     1
+// #define GxB_NO_ANY_FIRSTI1_INT32     1
+// #define GxB_NO_PLUS_FIRSTI1_INT32    1
+// #define GxB_NO_TIMES_FIRSTI1_INT32   1
+
+// #define GxB_NO_MIN_FIRSTJ_INT32      1
+// #define GxB_NO_MAX_FIRSTJ_INT32      1
+// #define GxB_NO_ANY_FIRSTJ_INT32      1
+// #define GxB_NO_PLUS_FIRSTJ_INT32     1
+// #define GxB_NO_TIMES_FIRSTJ_INT32    1
+
+// #define GxB_NO_MIN_FIRSTJ1_INT32     1
+// #define GxB_NO_MAX_FIRSTJ1_INT32     1
+// #define GxB_NO_ANY_FIRSTJ1_INT32     1
+// #define GxB_NO_PLUS_FIRSTJ1_INT32    1
+// #define GxB_NO_TIMES_FIRSTJ1_INT32   1
+
+// #define GxB_NO_MIN_SECONDJ_INT32     1
+// #define GxB_NO_MAX_SECONDJ_INT32     1
+// #define GxB_NO_ANY_SECONDJ_INT32     1
+// #define GxB_NO_PLUS_SECONDJ_INT32    1
+// #define GxB_NO_TIMES_SECONDJ_INT32   1
+
+// #define GxB_NO_MIN_SECONDJ1_INT32    1
+// #define GxB_NO_MAX_SECONDJ1_INT32    1
+// #define GxB_NO_ANY_SECONDJ1_INT32    1
+// #define GxB_NO_PLUS_SECONDJ1_INT32   1
+// #define GxB_NO_TIMES_SECONDJ1_INT32  1
 

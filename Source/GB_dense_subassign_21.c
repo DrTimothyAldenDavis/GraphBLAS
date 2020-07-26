@@ -151,7 +151,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         default:
             {
                 // worker for all user-defined types
-                GB_BURBLE_N (cnzmax, "generic ") ;
+                GB_BURBLE_N (cnzmax, "(generic C(:,:)=x assign) ") ;
                 GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (pC = 0 ; pC < cnzmax ; pC++)

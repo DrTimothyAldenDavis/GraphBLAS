@@ -1,9 +1,6 @@
 function test128
 %TEST128 test eWiseMult and eWiseAdd, special cases
 
-% C = GB_mex_Matrix_eWiseMult (C, Mask, accum, mult, A, B, desc)
-% C = GB_mex_Matrix_eWiseAdd  (C, Mask, accum, add,  A, B, desc, test)
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 

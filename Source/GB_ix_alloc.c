@@ -61,10 +61,15 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     if (numeric)
     { 
         #ifdef GB_DEBUG
-        // use calloc when debugging, so a newly allocated matrix can be printed
+        // Use calloc when debugging, so a newly allocated matrix can be
+        // printed.  This will affect valgrind results, however.  Accessing the
+        // values of this matrix will not result in warnings of uninitialized
+        // values.
         A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
         #else
-        // use malloc in production
+        // Use malloc in production.  Accessing the values of the matrix will
+        // result in valgrind errors, but the matrix should not be accessed
+        // anyway.
         A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
         #endif
         ok = ok && (A->x != NULL) ;

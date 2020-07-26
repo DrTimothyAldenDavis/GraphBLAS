@@ -115,10 +115,11 @@ for k2 = 1:length(binops)
         % C += A+B
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], op, op, A, B, [ ]) ;
-        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], op, op, A, B, [ ]) ;
-        GB_spec_compare (C0, C1) ;
-
+        if (~GB_spec_is_positional (op))
+            C0 = GB_spec_Matrix_eWiseAdd (C, [ ], op, op, A, B, [ ]) ;
+            C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], op, op, A, B, [ ]) ;
+            GB_spec_compare (C0, C1) ;
+        end
     end
 end
 

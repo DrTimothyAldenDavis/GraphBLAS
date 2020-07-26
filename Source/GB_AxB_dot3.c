@@ -11,6 +11,7 @@
 // complemented, either valued or structural.  The mask is always applied.
 
 #include "GB_mxm.h"
+#include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -354,111 +355,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     if (!done)
     {
-        GB_BURBLE_MATRIX (C, "generic ") ;
-
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of A, B, C, and M
-        //----------------------------------------------------------------------
-
-        GxB_binary_function fmult = mult->function ;
-        GxB_binary_function fadd  = add->op->function ;
-
-        size_t csize = C->type->size ;
-        size_t asize = A_is_pattern ? 0 : A->type->size ;
-        size_t bsize = B_is_pattern ? 0 : B->type->size ;
-
-        size_t xsize = mult->xtype->size ;
-        size_t ysize = mult->ytype->size ;
-
-        // scalar workspace: because of typecasting, the x/y types need not
-        // be the same as the size of the A and B types.
-        // flipxy false: aki = (xtype) A(k,i) and bkj = (ytype) B(k,j)
-        // flipxy true:  aki = (ytype) A(k,i) and bkj = (xtype) B(k,j)
-        size_t aki_size = flipxy ? ysize : xsize ;
-        size_t bkj_size = flipxy ? xsize : ysize ;
-
-        GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
-
-        GB_cast_function cast_A, cast_B ;
-        if (flipxy)
-        { 
-            // A is typecasted to y, and B is typecasted to x
-            cast_A = A_is_pattern ? NULL : 
-                     GB_cast_factory (mult->ytype->code, A->type->code) ;
-            cast_B = B_is_pattern ? NULL : 
-                     GB_cast_factory (mult->xtype->code, B->type->code) ;
-        }
-        else
-        { 
-            // A is typecasted to x, and B is typecasted to y
-            cast_A = A_is_pattern ? NULL :
-                     GB_cast_factory (mult->xtype->code, A->type->code) ;
-            cast_B = B_is_pattern ? NULL :
-                     GB_cast_factory (mult->ytype->code, B->type->code) ;
-        }
-
-        //----------------------------------------------------------------------
-        // C<M> = A'*B via dot products, function pointers, and typecasting
-        //----------------------------------------------------------------------
-
-        // aki = A(k,i), located in Ax [pA]
-        #define GB_GETA(aki,Ax,pA)                                          \
-            GB_void aki [GB_VLA(aki_size)] ;                                \
-            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize)
-
-        // bkj = B(k,j), located in Bx [pB]
-        #define GB_GETB(bkj,Bx,pB)                                          \
-            GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
-
-        // break if cij reaches the terminal value
-        #define GB_DOT_TERMINAL(cij)                                        \
-            if (terminal != NULL && memcmp (cij, terminal, csize) == 0)     \
-            {                                                               \
-                break ;                                                     \
-            }
-
-        // C(i,j) = A(i,k) * B(k,j)
-        #define GB_MULT(cij, aki, bkj)                                      \
-            GB_FMULT (cij, aki, bkj)
-
-        // C(i,j) += A(i,k) * B(k,j)
-        #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_void zwork [GB_VLA(csize)] ;                                 \
-            GB_MULT (zwork, aki, bkj) ;                                     \
-            fadd (cij, cij, zwork)
-
-        // define cij for each task
-        #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_VLA(csize)]
-
-        // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
-
-        // save the value of C(i,j)
-        #define GB_CIJ_SAVE(cij,p)                                          \
-            memcpy (GB_CX (p), cij, csize)
-
-        #define GB_ATYPE GB_void
-        #define GB_BTYPE GB_void
-        #define GB_CTYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
-        #define GB_PRAGMA_SIMD_DOT(cij) ;
-
-        if (flipxy)
-        { 
-            #define GB_FMULT(z,x,y) fmult (z,y,x)
-            #include "GB_AxB_dot3_template.c"
-            #undef GB_FMULT
-        }
-        else
-        { 
-            #define GB_FMULT(z,x,y) fmult (z,x,y)
-            #include "GB_AxB_dot3_template.c"
-            #undef GB_FMULT
-        }
+        #define GB_DOT3_GENERIC
+        GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
+        #include "GB_AxB_dot_generic.c"
     }
 
     //--------------------------------------------------------------------------

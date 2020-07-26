@@ -31,12 +31,12 @@
 // A type:   GB_atype
 // B type:   GB_btype
 
-// Multiply: GB_multiply(z,aik,bkj)
+// Multiply: GB_multiply(z,aik,bkj,i,k,j)
 // Add:      GB_add_update(cij, z)
 //           'any' monoid?  GB_is_any_monoid
 //           atomic?        GB_has_atomic
 //           OpenMP atomic? GB_has_omp_atomic
-// MultAdd:  GB_multiply_add(cij,aik,bkj)
+// MultAdd:  GB_multiply_add(cij,aik,bkj,i,k,j)
 // Identity: GB_identity
 // Terminal: GB_terminal
 
@@ -64,16 +64,16 @@
 #define GB_CX(p) Cx [p]
 
 // multiply operator
-#define GB_MULT(z, x, y) \
-    GB_multiply(z, x, y)
+#define GB_MULT(z, x, y, i, k, j) \
+    GB_multiply(z, x, y, i, k, j)
 
 // cast from a real scalar (or 2, if C is complex) to the type of C
 #define GB_CTYPE_CAST(x,y) \
     GB_ctype_cast(x,y)
 
 // multiply-add
-#define GB_MULTADD(z, x, y) \
-    GB_multiply_add(z, x, y)
+#define GB_MULTADD(z, x, y, i, k, j) \
+    GB_multiply_add(z, x, y, i, k, j)
 
 // monoid identity value
 #define GB_IDENTITY \
@@ -105,16 +105,11 @@
         GB_ctype cij
 #endif
 
-// save the value of C(i,j)
-#define GB_CIJ_SAVE(cij,p) Cx [p] = cij
-
 // cij = Cx [pC]
-#define GB_GETC(cij,pC) \
-    cij = Cx [pC]
+#define GB_GETC(cij,p) cij = Cx [p]
 
 // Cx [pC] = cij
-#define GB_PUTC(cij,pC) \
-    Cx [pC] = cij
+#define GB_PUTC(cij,p) Cx [p] = cij
 
 // Cx [p] = t
 #define GB_CIJ_WRITE(p,t) Cx [p] = t
@@ -126,10 +121,6 @@
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
     GB_add_function(x, y)
-
-// type with size of GB_CTYPE, and can be used in compare-and-swap
-#define GB_CTYPE_PUN \
-    GB_ctype_pun
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

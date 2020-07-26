@@ -77,6 +77,7 @@
 
 //      These are copied from the GrB_Descriptor into the Context.
 
+// TODO: make this a static inline, and cut it down
 
 #include "GB.h"
 

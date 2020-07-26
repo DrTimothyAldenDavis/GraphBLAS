@@ -39,10 +39,10 @@
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
-            int64_t i = GBI (Bi, p, bvlen) ;    // get row index of B(i,j)
-            GB_GETA (dii, Dx, i) ;              // dii = D(i,i)
-            GB_GETB (bij, Bx, p) ;              // bij = B(i,j)
-            GB_BINOP (GB_CX (p), dii, bij) ;    // C(i,j) = dii*bij
+            int64_t i = GBI (Bi, p, bvlen) ;        // get row index of B(i,j)
+            GB_GETA (dii, Dx, i) ;                  // dii = D(i,i)
+            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_BINOP (GB_CX (p), dii, bij, 0, 0) ;  // C(i,j) = dii*bij
         }
     }
 }

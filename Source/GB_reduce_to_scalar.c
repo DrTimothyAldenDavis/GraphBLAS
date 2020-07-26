@@ -39,7 +39,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     GrB_Info info ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (c) ;
 
     ASSERT_TYPE_OK (ctype, "type of scalar c", GB0) ;
@@ -176,7 +176,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         if (!done)
         { 
-            GB_BURBLE_MATRIX (A, "generic ") ;
+            GB_BURBLE_MATRIX (A, "(generic reduce to scalar: %s) ",
+                reduce->op->name) ;
 
             // the switch factory didn't handle this case
             GxB_binary_function freduce = reduce->op->function ;
@@ -253,7 +254,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // generic worker: sum up the entries, with typecasting
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "generic ") ;
+        GB_BURBLE_MATRIX (A, "(generic reduce to scalar, with typecast: %s) ",
+            reduce->op->name) ;
 
         GxB_binary_function freduce = reduce->op->function ;
         GB_cast_function

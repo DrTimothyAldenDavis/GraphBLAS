@@ -12,6 +12,7 @@
 // The input matrices A and B are optionally transposed.
 
 #include "GB_kron.h"
+#include "GB_mxm.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 
@@ -27,7 +28,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp op,          // defines '*' for kron(A,B)
+    const GrB_BinaryOp op_in,       // defines '*' for kron(A,B)
     const GrB_Matrix A,             // input matrix
     bool A_transpose,               // if true, use A' instead of A
     const GrB_Matrix B,             // input matrix
@@ -45,13 +46,14 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GrB_Info info ;
     GrB_Matrix AT = NULL ;
     GrB_Matrix BT = NULL ;
+    GrB_BinaryOp op = op_in ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (B) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_kron", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_kron", GB0) ;
@@ -109,25 +111,38 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // transpose A and B if requested
     //--------------------------------------------------------------------------
 
-    bool is_csc = C->is_csc ;
-    if (is_csc != A->is_csc)
+    bool T_is_csc = C->is_csc ;
+    if (T_is_csc != A->is_csc)
     { 
         // Flip the sense of A_transpose
         A_transpose = !A_transpose ;
     }
-    if (is_csc != B->is_csc)
+    if (T_is_csc != B->is_csc)
     { 
         // Flip the sense of B_transpose
         B_transpose = !B_transpose ;
     }
+
+    if (!T_is_csc)
+    { 
+        if (GB_OP_IS_POSITIONAL (op))
+        { 
+            // positional ops must be flipped, with i and j swapped
+            op = GB_positional_binop_ijflip (op) ;
+        }
+    }
+
+    // TODO: if A, B are pattern: do not compute values of AT=A', BT=B'
+    bool A_is_pattern, B_is_pattern ;
+    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
 
     if (A_transpose)
     {
         // AT = A' and typecast to op->xtype
         // transpose: typecast, no op, not in place
         GBBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, op->xtype, is_csc, A,
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose (&AT, A_is_pattern ? A->type : op->xtype, T_is_csc,
+            A, NULL, NULL, NULL, false, Context)) ;
         ASSERT_MATRIX_OK (A , "A after AT kron", GB0) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
     }
@@ -137,8 +152,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         // BT = B' and typecast to op->ytype
         // transpose: typecast, no op, not in place
         GBBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT, op->ytype, is_csc, B,
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose (&BT, B_is_pattern ? B->type : op->ytype, T_is_csc,
+            B, NULL, NULL, NULL, false, Context)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
     }
 
@@ -147,8 +162,9 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
 
     GrB_Matrix T ;
-    GB_OK (GB_kroner (&T, C->is_csc, op,
-        A_transpose ? AT : A, B_transpose ? BT : B, Context)) ;
+    GB_OK (GB_kroner (&T, T_is_csc, op,
+        A_transpose ? AT : A, A_is_pattern,
+        B_transpose ? BT : B, B_is_pattern, Context)) ;
 
     // free workspace
     GB_FREE_ALL ;

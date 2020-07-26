@@ -38,7 +38,8 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     GB_CHECK_MAGIC (op, "BinaryOp") ;
 
-    if (op->opcode >= GB_USER_opcode)
+    GB_Opcode opcode = op->opcode ;
+    if (opcode >= GB_USER_opcode)
     { 
         GBPR0 ("(user-defined) ") ;
     }
@@ -49,13 +50,18 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     GBPR0 ("z=%s(x,y)\n", op->name) ;
 
-    if (op->function == NULL)
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
+    bool op_is_second = (opcode == GB_SECOND_opcode) ;
+    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
+
+    if (!op_is_positional && op->function == NULL)
     { 
         GBPR0 ("    BinaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (op->opcode < GB_FIRST_opcode || op->opcode > GB_USER_opcode)
+    if (opcode < GB_FIRST_opcode || opcode > GB_USER_opcode)
     { 
         GBPR0 ("    BinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;
@@ -70,18 +76,27 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    info = GB_Type_check (op->xtype, "xtype", pr, f) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GBPR0 ("    BinaryOp has an invalid xtype\n") ;
-        return (GrB_INVALID_OBJECT) ;
-    }
+    if (!op_is_positional && !op_is_pair)
+    {
+        if (!op_is_second)
+        {
+            info = GB_Type_check (op->xtype, "xtype", pr, f) ;
+            if (info != GrB_SUCCESS)
+            { 
+                GBPR0 ("    BinaryOp has an invalid xtype\n") ;
+                return (GrB_INVALID_OBJECT) ;
+            }
+        }
 
-    info = GB_Type_check (op->ytype, "ytype", pr, f) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GBPR0 ("    BinaryOp has an invalid ytype\n") ;
-        return (GrB_INVALID_OBJECT) ;
+        if (!op_is_first)
+        {
+            info = GB_Type_check (op->ytype, "ytype", pr, f) ;
+            if (info != GrB_SUCCESS)
+            { 
+                GBPR0 ("    BinaryOp has an invalid ytype\n") ;
+                return (GrB_INVALID_OBJECT) ;
+            }
+        }
     }
 
     return (GrB_SUCCESS) ;

@@ -28,18 +28,16 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_Context Context
 ) ;
 
-// Cx and Ax may be aliased in GB_apply_op
+// Cx and A->x may be aliased in GB_apply_op
 
-void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
+GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 (
     GB_void *Cx,                    // output array, of type op->ztype
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
         const GxB_Scalar scalar,        // scalar to bind to binary operator
-        bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
-    const GB_void *Ax,              // input array, of type Atype
-    const GrB_Type Atype,           // type of Ax
-    const int64_t anz,              // size of Ax and Cx
+        bool binop_bind1st,             // if true, binop(x,Ax) else binop(Ax,y)
+    const GrB_Matrix A,             // input matrix
     GB_Context Context
 ) ;
 

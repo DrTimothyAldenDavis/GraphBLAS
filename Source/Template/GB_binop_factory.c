@@ -19,6 +19,9 @@
     // launch the switch factory
     //--------------------------------------------------------------------------
 
+    // this switch factory does not handle positional operators
+    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+
     switch (opcode)
     {
 

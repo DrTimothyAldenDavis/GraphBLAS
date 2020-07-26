@@ -110,6 +110,8 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
+    ASSERT (dup != NULL) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (dup)) ;
 
     //--------------------------------------------------------------------------
     // free all content of C

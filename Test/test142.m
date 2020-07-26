@@ -150,45 +150,49 @@ for k1 = 1:length (types)
                     C.matrix = Cmat ;
             end
 
-            op.opname = binop ;
-            op.optype = type ;
+            accum.opname = binop ;
+            accum.optype = type ;
 
             try
-                GB_spec_operator (op) ;
+                GB_spec_operator (accum) ;
             catch
                 continue
+            end
+
+            if (GB_spec_is_positional (accum))
+                continue ;
             end
 
             %---------------------------------------
             % C += A where A is dense
             %---------------------------------------
 
-            C0 = GB_spec_assign (C, [ ], op, A, [ ], [ ], [ ], false) ;
-            C1 = GB_mex_assign  (C, [ ], op, A, [ ], [ ], [ ]) ;
+            C0 = GB_spec_assign (C, [ ], accum, A, [ ], [ ], [ ], false) ;
+            C1 = GB_mex_assign  (C, [ ], accum, A, [ ], [ ], [ ]) ;
             GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C += B where B is sparse
             %---------------------------------------
 
-            C0 = GB_spec_assign (C, [ ], op, B, [ ], [ ], [ ], false) ;
-            C1 = GB_mex_assign  (C, [ ], op, B, [ ], [ ], [ ]) ;
+            C0 = GB_spec_assign (C, [ ], accum, B, [ ], [ ], [ ], false) ;
+            C1 = GB_mex_assign  (C, [ ], accum, B, [ ], [ ], [ ]) ;
             GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C += x
             %---------------------------------------
 
-            C0 = GB_spec_assign (C, [ ], op, X, [ ], [ ], [ ], true) ;
-            C1 = GB_mex_assign  (C, [ ], op, X, [ ], [ ], [ ]) ;
+            C0 = GB_spec_assign (C, [ ], accum, X, [ ], [ ], [ ], true) ;
+            C1 = GB_mex_assign  (C, [ ], accum, X, [ ], [ ], [ ]) ;
             GB_spec_compare (C0, C1, 0, tol) ;
 
             %---------------------------------------
             % C<replace> += x
             %---------------------------------------
 
-            C0 = GB_spec_assign (C, [ ], op, X, [ ], [ ], drep, true) ;
-            C1 = GB_mex_subassign  (C, [ ], op, X, [ ], [ ], drep) ;
+            C0 = GB_spec_assign (C, [ ], accum, X, [ ], [ ], drep, true) ;
+            C1 = GB_mex_subassign  (C, [ ], accum, X, [ ], [ ], drep) ;
             GB_spec_compare (C0, C1, 0, tol) ;
 
         end

@@ -37,7 +37,7 @@ fprintf ('\nhelp GrB.binopinfo:\n') ;
 GrB.binopinfo ;
 
 fprintf ('number of valid binary operators: %d\n', nbinop) ;
-assert (nbinop == 385) ;
+assert (nbinop == 401) ;
 
 fprintf ('gbtest2: all tests passed\n') ;
 

@@ -37,6 +37,10 @@ end
 assert (isequal (zt, xt)) ;
 assert (isequal (zt, yt)) ;
 
+if (GB_spec_is_positional (reduce_op))
+    error ('reduce operator cannot be positional') ;
+end
+
 % get the identity
 identity = GB_spec_identity (reduce_op, reduce_optype) ;
 if (isempty (identity))
@@ -48,6 +52,10 @@ A = GB_spec_matrix (A, identity) ;
 
 % get the accumulator and its types for z = accum(x,y)
 [accum_op accum_optype ztype xtype ytype ] = GB_spec_operator (accum, cin_type) ;
+
+if (GB_spec_is_positional (accum_op))
+    error ('accum operator cannot be positional') ;
+end
 
 %-------------------------------------------------------------------------------
 % do the work via a clean MATLAB interpretation of the entire GraphBLAS spec

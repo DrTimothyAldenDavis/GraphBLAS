@@ -81,7 +81,7 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y)   \
+#define GB_BINOP(z, x, y, i, j) \
     z = GB_BITSET (x, y, uint32_t, 32) ;
 
 // op is second
@@ -389,10 +389,10 @@ GrB_Info GB_bind2nd__bset_uint32
 
 // cij = op (x, aij), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint32_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_BITSET (x, aij, uint32_t, 32) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint32_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_BITSET (x, aij, uint32_t, 32) ;        \
 }
 
 GrB_Info GB_bind1st_tran__bset_uint32
@@ -434,10 +434,10 @@ GrB_Info GB_bind1st_tran__bset_uint32
 
 // cij = op (aij, y), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint32_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_BITSET (aij, y, uint32_t, 32) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint32_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_BITSET (aij, y, uint32_t, 32) ;        \
 }
 
 GrB_Info GB_bind2nd_tran__bset_uint32

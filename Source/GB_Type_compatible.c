@@ -20,7 +20,13 @@ bool GB_Type_compatible             // check if two types can be typecast
 )
 {
 
-    if (atype->code == GB_UDT_code || btype->code == GB_UDT_code)
+    if (atype == NULL || btype == NULL)
+    { 
+        // built-in positional ops have null op->[xy]type, and are compatible
+        // with anything.  TODO: FIXME.
+        return (true) ;
+    }
+    else if (atype->code == GB_UDT_code || btype->code == GB_UDT_code)
     { 
         // two user types must be identical to be compatible
         return (atype == btype) ;

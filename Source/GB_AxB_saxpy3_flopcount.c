@@ -238,7 +238,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             GB_get_pA_and_pC (&pB, &pB_end, NULL, taskid, kk,
                 kfirst, klast, pstart_slice, NULL, NULL, 0, Bp, bvlen) ;
             int64_t my_bjnz = pB_end - pB ;
-            int64_t j = (B_is_hyper) ? Bh [kk] : kk ;
+            int64_t j = GBH (Bh, kk) ;
 
             //------------------------------------------------------------------
             // see if M(:,j) is present and non-empty

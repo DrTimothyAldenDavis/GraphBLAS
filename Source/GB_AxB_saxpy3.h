@@ -54,7 +54,7 @@
 // contiguous range k1:k2, where kk = Tasklist[taskid].vector (which is >= 0),
 // k1 = Bi [TaskList [taskid].start], k2 = Bi [TaskList [taskid].end].  It sums
 // its computations in a hash table shared by all fine tasks that compute
-// C(:,j), via atomics.  The vector index j is GBH (B->h, kk).
+// C(:,j), via atomics.  The vector index j is GBH (Bh, kk).
 
 // Both tasks use a hash table allocated uniquely for the task, in Hi, Hf, and
 // Hx.  The size of the hash table is determined by the maximum # of flops

@@ -71,7 +71,7 @@ for k1 = 1:length (types)
                         end
 
                         try
-                            GB_spec_operate (unary_op) ;
+                            GB_spec_operator (unary_op) ;
                         catch
                             continue
                         end
@@ -97,8 +97,12 @@ for k1 = 1:length (types)
                                     accum_type = '' ;
                                 end
 
+                                if (GB_spec_is_positional (accum))
+                                    continue ;
+                                end
+
                                 try
-                                    GB_spec_operate (accum) ;
+                                    GB_spec_operator (accum) ;
                                 catch
                                     continue
                                 end

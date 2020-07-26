@@ -16,16 +16,16 @@
 
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT_MERGE
-#define GB_DOT_MERGE                                                \
+#define GB_DOT_MERGE(k)                                             \
 {                                                                   \
     if (!cij_updated)                                               \
     {                                                               \
         cij_updated = true ;                                        \
-        GB_GETC (cij, pC) ;                                         \
+        GB_GETC (cij, pC) ;                 /* cij = Cx [pC] */     \
     }                                                               \
-    GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
-    GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
-    GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */          \
+    GB_GETA (aki, Ax, pA) ;                 /* aki = A(k,i) */      \
+    GB_GETB (bkj, Bx, pB) ;                 /* bkj = B(k,j) */      \
+    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */   \
     GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
     pA++ ;                                                          \
     pB++ ;                                                          \
@@ -134,7 +134,7 @@
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
                         // cij = 1, or CMPLX(1,0) for complex ANY
-                        GB_MULT (cij, ignore, ignore) ;
+                        GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
                         #elif GB_IS_EQ_MONOID
                         // A(:,i)'*B(:j) is one, so this result must be
                         // accumulated into cij, as cij += 1, where the
@@ -176,7 +176,8 @@
                             // cij += A(k,i) * B(k,j)
                             GB_GETA (aki, Ax, pA+k) ;       // aki = A(k,i)
                             GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
-                            GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
+                            // cij += aki * bkj
+                            GB_MULTADD (cij, aki, bkj, i, k, j) ;
                         }
 
                     }
@@ -195,7 +196,8 @@
                             // cij += A(k,i) * B(k,j)
                             GB_GETA (aki, Ax, p   ) ;       // aki = A(k,i)
                             GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
-                            GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
+                            // cij += aki * bkj
+                            GB_MULTADD (cij, aki, bkj, i, k, j) ;
                         }
                     }
 
@@ -253,7 +255,7 @@
                             #if GB_IS_ANY_MONOID
                             // ANY monoid: take the first entry found
                             // cij = 1, or CMPLX(1,0) for complex ANY
-                            GB_MULT (cij, ignore, ignore) ;
+                            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
                             #elif GB_IS_EQ_MONOID
                             // A(:,i)'*B(:j) is one, so this result must be
                             // accumulated into cij, as cij += 1, where the
@@ -285,7 +287,8 @@
                                 // cij += A(k,i) * B(k,j)
                                 GB_GETA (aki, Ax, pA+k) ;     // aki = A(k,i)
                                 GB_GETB (bkj, Bx, p   ) ;     // bkj = B(k,j)
-                                GB_MULTADD (cij, aki, bkj) ;  // cij += aki*bkj
+                                // cij += aki*bkj
+                                GB_MULTADD (cij, aki, bkj, i, k, j) ;
                             }
 
                         #endif
@@ -323,10 +326,10 @@
                             else // ia == ib == k
                             { 
                                 // A(k,i) and B(k,j) are next entries to merge
-                                GB_DOT_MERGE ;
+                                GB_DOT_MERGE (ia) ;
                             }
                         }
-                        if (cij_updated) GB_PUTC (cij, pC) ;
+                        if (cij_updated) GB_PUTC (cij, pC) ;    // Cx [pC] = cij
 
                     }
                     else if (bjnz > 8 * ainz)
@@ -359,10 +362,10 @@
                             else // ia == ib == k
                             { 
                                 // A(k,i) and B(k,j) are next entries to merge
-                                GB_DOT_MERGE ;
+                                GB_DOT_MERGE (ia) ;
                             }
                         }
-                        if (cij_updated) GB_PUTC (cij, pC) ;
+                        if (cij_updated) GB_PUTC (cij, pC) ;    // Cx [pC] = cij
 
                     }
                     else
@@ -390,7 +393,7 @@
                             else // ia == ib == k
                             { 
                                 // A(k,i) and B(k,j) are the entries to merge
-                                GB_DOT_MERGE ;
+                                GB_DOT_MERGE (ia) ;
                             }
                         }
                         if (cij_updated) GB_PUTC (cij, pC) ;
@@ -400,4 +403,6 @@
         }
     }
 }
+
+#undef GB_DOT_MERGE
 

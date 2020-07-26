@@ -62,8 +62,8 @@
             GB_PRAGMA_SIMD_VECTORIZE
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
-                GB_GETA (aij, Ax, p) ;              // aij = A(i,j)
-                GB_BINOP (GB_CX (p), aij, djj) ;    // C(i,j) = aij * djj
+                GB_GETA (aij, Ax, p) ;                  // aij = A(i,j)
+                GB_BINOP (GB_CX (p), aij, djj, 0, 0) ;  // C(i,j) = aij * djj
             }
         }
     }

@@ -24,10 +24,7 @@ end
 
 % types to test:
 kk = 1 ;
-
-% accum ops to test
-% accumops = 0:length(mult_ops) ;       % test all accum operators
-% accumops = 0 ;                        % test with no accum
+% ops to test
 aa = 1 ;
 
 if (fulltest > 0)
@@ -52,6 +49,9 @@ ntrials = 0 ;
 
 for k1 = k1_list % 1:length(mult_ops)
     mulop = mult_ops {k1} ;
+    % if (~GB_spec_is_positional (mulop))
+    %     continue ;
+    % end
 
     for k2 = k2_list % 1:length(add_ops)
         addop = add_ops {k2} ;
@@ -110,6 +110,10 @@ for k1 = k1_list % 1:length(mult_ops)
                     else
                         accum = '' ;
                         accum_type = '' ;
+                    end
+
+                    if (GB_spec_is_positional (accum))
+                        continue ;
                     end
 
                     try

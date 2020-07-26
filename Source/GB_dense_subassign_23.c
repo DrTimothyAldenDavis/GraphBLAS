@@ -49,6 +49,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=B", GB0) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
     ASSERT (B->vlen == C->vlen) ;
     ASSERT (B->vdim == C->vdim) ;
 
@@ -153,7 +154,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         // get operators, functions, workspace, contents of B and C
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (B, "generic ") ;
+        GB_BURBLE_MATRIX (B, "(generic C+=B) ") ;
 
         GxB_binary_function fadd = accum->function ;
 
@@ -185,7 +186,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         // no vectorization
         #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-        #define GB_BINOP(z,x,y) fadd (z,x,y)
+        #define GB_BINOP(z,x,y,i,j) fadd (z,x,y)
         #include "GB_dense_subassign_23_template.c"
     }
 

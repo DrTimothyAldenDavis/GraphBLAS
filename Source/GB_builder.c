@@ -156,6 +156,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (I_work_handle != NULL) ;
     ASSERT (J_work_handle != NULL) ;
     ASSERT (S_work_handle != NULL) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (dup)) ;
 
     //--------------------------------------------------------------------------
     // get S
@@ -1209,7 +1210,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
-                GB_BURBLE_N (nvals, "generic ") ;
+                GB_BURBLE_N (nvals, "(generic build) ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1261,7 +1262,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // assemble the values S into T, typecasting as needed
             //------------------------------------------------------------------
 
-            GB_BURBLE_N (nvals, "generic ") ;
+            GB_BURBLE_N (nvals, "(generic build with typecast) ") ;
 
             // S (either S_work or S_input) must be permuted and copied into
             // T->x, since the tuples had to be sorted, or duplicates appear.

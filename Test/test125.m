@@ -6,6 +6,7 @@ function test125
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+% mult_ops = binops.positional ;
 mult_ops = binops.all ;
 types = types.all ;
 
@@ -90,6 +91,7 @@ for k1 = 1:length(mult_ops)
             C.class = type ;
 
             % C = A*B
+save gunk C semiring A B dnn identity
             C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn);
             C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn);
             GB_spec_compare (C0, C1, identity) ;

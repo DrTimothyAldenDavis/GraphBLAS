@@ -25,8 +25,6 @@ dtn = struct ('axb', 'dot', 'in0', 'tran') ;
 dnt = struct ('axb', 'dot', 'in1', 'tran') ;
 dtt = struct ('axb', 'dot', 'in0', 'tran', 'in1', 'tran') ;
 
-% C = GB_mex_mxm (C, Mask, accum, semiring, A, B, desc)
-
 C2 = GB_mex_mxm  (C, [ ], add_op, semiring, A, B, dnn) ;
 C1 = GB_spec_mxm (C, [ ], add_op, semiring, A, B, dnn) ;
 GB_spec_compare (C1, C2) ;

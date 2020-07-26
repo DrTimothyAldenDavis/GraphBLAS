@@ -27,20 +27,20 @@ typedef enum
 {
     // the 14 scalar types: 13 built-in types, and one user-defined type code
     GB_ignore_code  = 0,
-    GB_BOOL_code    = 0,        // 'logical' in MATLAB
-    GB_INT8_code    = 1,
-    GB_UINT8_code   = 2,
-    GB_INT16_code   = 3,
-    GB_UINT16_code  = 4,
-    GB_INT32_code   = 5,
-    GB_UINT32_code  = 6,
-    GB_INT64_code   = 7,
-    GB_UINT64_code  = 8,
-    GB_FP32_code    = 9,        // float ('single' in MATLAB)
-    GB_FP64_code    = 10,       // double
-    GB_FC32_code    = 11,       // float complex ('single complex' in MATLAB)
-    GB_FC64_code    = 12,       // double complex
-    GB_UDT_code     = 13        // void *, user-defined type
+    GB_BOOL_code    = 1,        // 'logical' in MATLAB
+    GB_INT8_code    = 2,
+    GB_UINT8_code   = 3,
+    GB_INT16_code   = 4,
+    GB_UINT16_code  = 5,
+    GB_INT32_code   = 6,
+    GB_UINT32_code  = 7,
+    GB_INT64_code   = 8,
+    GB_UINT64_code  = 9,
+    GB_FP32_code    = 10,       // float ('single' in MATLAB)
+    GB_FP64_code    = 11,       // double
+    GB_FC32_code    = 12,       // float complex ('single complex' in MATLAB)
+    GB_FC64_code    = 13,       // double complex
+    GB_UDT_code     = 14        // void *, user-defined type
 }
 GB_Type_code ;                  // enumerated type code
 
@@ -138,6 +138,15 @@ typedef enum
     GB_ISFINITE_opcode, // z = isfinite (x)
 
     //--------------------------------------------------------------------------
+    // positional unary operators: z is int64, x is ignored
+    //--------------------------------------------------------------------------
+
+    GB_POSITIONI_opcode,      // z = position_i(A(i,j)) == i
+    GB_POSITIONI1_opcode,     // z = position_i1(A(i,j)) == i+1
+    GB_POSITIONJ_opcode,      // z = position_j(A(i,j)) == j
+    GB_POSITIONJ1_opcode,     // z = position_j1(A(i,j)) == j+1
+
+    //--------------------------------------------------------------------------
     // binary operators z=f(x,y) that return the same type as their inputs
     //--------------------------------------------------------------------------
 
@@ -204,12 +213,55 @@ typedef enum
     GB_CMPLX_opcode,        // z = cmplx (x,y)
 
     //--------------------------------------------------------------------------
+    // positional binary operators: z is int64, x and y are ignored
+    //--------------------------------------------------------------------------
+
+    GB_FIRSTI_opcode,      // z = first_i(A(i,j),y) == i
+    GB_FIRSTI1_opcode,     // z = first_i1(A(i,j),y) == i+1
+    GB_FIRSTJ_opcode,      // z = first_j(A(i,j),y) == j
+    GB_FIRSTJ1_opcode,     // z = first_j1(A(i,j),y) == j+1
+
+    GB_SECONDI_opcode,     // z = second_i(x,B(i,j)) == i
+    GB_SECONDI1_opcode,    // z = second_i1(x,B(i,j)) == i+1
+    GB_SECONDJ_opcode,     // z = second_j(x,B(i,j)) == j
+    GB_SECONDJ1_opcode,    // z = second_j1(x,B(i,j)) == j+1
+
+    //--------------------------------------------------------------------------
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
     GB_USER_opcode          // user-defined operator
 }
 GB_Opcode ;
+
+// true if the opcode is for a unary or binary positional operator
+#define GB_OPCODE_IS_POSITIONAL(opcode) \
+    (((opcode) >= GB_POSITIONI_opcode && (opcode) <= GB_POSITIONJ1_opcode) \
+    || ((opcode) >= GB_FIRSTI_opcode && (opcode) <= GB_SECONDJ1_opcode))
+
+// true if the op is a unary or binary positional operator
+#define GB_OP_IS_POSITIONAL(op) \
+    (((op) == NULL) ? false : GB_OPCODE_IS_POSITIONAL ((op)->opcode))
+
+GB_Opcode GB_positional_opcode_ijflip   // return the flipped opcode
+(
+    GB_Opcode opcode                    // opcode to flip
+) ;
+
+GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator
+(
+    GrB_UnaryOp op                      // operator to flip
+) ;
+
+GrB_BinaryOp GB_positional_binop_ijflip // return flipped operator
+(
+    GrB_BinaryOp op                     // operator to flip
+) ;
+
+int64_t GB_positional_offset        // return 0 or 1
+(
+    GB_Opcode opcode                // opcode of positional operator
+) ;
 
 //------------------------------------------------------------------------------
 // select opcodes
@@ -247,6 +299,8 @@ typedef enum
 }
 GB_Select_Opcode ;
 
+#define GB_SELECTOP_IS_POSITIONAL(opcode) \
+    ((opcode) >= GB_TRIL_opcode && (opcode) <= GB_OFFDIAG_opcode)
 
 //------------------------------------------------------------------------------
 // opaque content of GraphBLAS objects

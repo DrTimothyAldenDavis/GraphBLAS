@@ -253,13 +253,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     // If a unary or binary operator is present, C is always returned as
     // the ztype of the operator.  The input ctype is ignored.
 
-    GrB_UnaryOp op1 = NULL ;
-    GrB_BinaryOp op2 = NULL ;
+    GrB_UnaryOp op1 = NULL, save_op1 ;
+    GrB_BinaryOp op2 = NULL, save_op2 ;
+    GB_Opcode opcode = GB_ignore_code ;
 
     if (op1_in != NULL)
     {
         // get the unary operator
-        if (atype == op1_in->xtype && op1_in->opcode == GB_IDENTITY_opcode)
+        opcode = op1_in->opcode ;
+        if (atype == op1_in->xtype && opcode == GB_IDENTITY_opcode)
         { 
             // op1 is a built-in identity operator, with the same type as A, so
             // do not apply the operator and do not typecast.
@@ -276,7 +278,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     {
         // get the binary operator
         GrB_Type op2_intype = binop_bind1st ? op2_in->xtype : op2_in->ytype ;
-        GB_Opcode opcode = op2_in->opcode ;
+        opcode = op2_in->opcode ;
         // only GB_apply calls GB_transpose with op2_in, and it ensures this
         // condition holds: the first(A,y), second(x,A), and any(...) have
         // been renamed to identity(A), so these cases do not occur here.
@@ -300,6 +302,23 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     GB_Type_code ccode = ctype->code ;
     size_t csize = ctype->size ;
+
+    //--------------------------------------------------------------------------
+    // check for positional operators
+    //--------------------------------------------------------------------------
+
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    save_op1 = op1 ;
+    save_op2 = op2 ;
+    if (op_is_positional)
+    {
+        // do not apply the op until after the transpose
+        op1 = NULL ;
+        op2 = NULL ;
+        // replace op1 with the ONE operator, as a placeholder
+        ASSERT (ctype == GrB_INT64 || ctype == GrB_INT32) ;
+        op1 = (ctype == GrB_INT64) ? GxB_ONE_INT64 : GxB_ONE_INT32 ;
+    }
 
     //--------------------------------------------------------------------------
     // C = A'
@@ -412,12 +431,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // numerical values: apply the operator, typecast, or make shallow copy
         if (op1 != NULL || op2 != NULL)
         { 
-            // Cx = op ((op->xtype) Ax)
+            // Cx = op (A)
+            info = GB_apply_op ((GB_void *) Cx,
+                op1, op2, scalar, binop_bind1st, A, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_FREE (Cp) ;
+                GB_FREE (Ci) ;
+                GB_FREE (Cx) ;
+                GB_FREE_A_AND_C ;
+                GB_FREE_WORK ;
+                return (info) ;
+            }
             C->x = Cx ;
             C->x_shallow = false ;
-            GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st,
-                (const GB_void *) Ax, atype, anz, Context) ;
             // prior Ax will be freed
         }
         else if (ctype != atype)
@@ -553,12 +581,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         if (op1 != NULL || op2 != NULL)
         { 
-            // Cx = op ((op->xtype) Ax)
+            // Cx = op (A)
+            info = GB_apply_op ((GB_void *) Cx,
+                op1, op2, scalar, binop_bind1st, A, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_FREE (Cp) ;
+                GB_FREE (Ci) ;
+                GB_FREE (Cx) ;
+                GB_FREE_A_AND_C ;
+                GB_FREE_WORK ;
+                return (info) ;
+            }
             C->x = Cx ;
             C->x_shallow = false ;
-            GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st,
-                (const GB_void *) Ax, atype, anz, Context) ;
             // prior Ax will be freed
         }
         else if (ctype != atype)
@@ -753,9 +790,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         else
         { 
             // apply an operator, C has type op->ztype
-            GB_transpose_op (T, 
-                op1, op2, scalar, binop_bind1st,
-                A, NULL, NULL, 0, nthreads) ;
+            GB_transpose_op (T, op1, op2, scalar, binop_bind1st, A,
+                NULL, NULL, 0, nthreads) ;
         }
 
         //------------------------------------------------------------------
@@ -953,10 +989,19 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // numerical values: apply the op, typecast, or make shallow copy
             if (op1 != NULL || op2 != NULL)
             { 
-                // Swork = op ((op->xtype) Ax)
-                GB_apply_op ((GB_void *) Swork,
-                    op1, op2, scalar, binop_bind1st,
-                    (const GB_void *) Ax, atype, anz, Context) ;
+                // Swork = op (A)
+                info = GB_apply_op ((GB_void *) Swork,
+                    op1, op2, scalar, binop_bind1st, A, Context) ;
+                if (info != GrB_SUCCESS)
+                { 
+                    // out of memory
+                    GB_FREE (iwork) ;
+                    GB_FREE (jwork) ;
+                    GB_FREE (Swork) ;
+                    GB_FREE_A_AND_C ;
+                    GB_FREE_WORK ;
+                    return (info) ;
+                }
                 // GB_builder will not need to typecast Swork to T->x, and it
                 // may choose to transplant it into T->x
                 scode = ccode ;
@@ -1112,11 +1157,33 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GB_FREE_WORK ;
 
     //--------------------------------------------------------------------------
-    // conform the result to the desired hypersparsity of A
+    // get the output matrix
     //--------------------------------------------------------------------------
 
-    // get the output matrix
     C = (*Chandle) ;
+
+    //--------------------------------------------------------------------------
+    // apply a positional operator, after transposing the matrix
+    //--------------------------------------------------------------------------
+
+    if (op_is_positional)
+    { 
+        // the positional operator is applied in place to the values of C
+        op1 = save_op1 ;
+        op2 = save_op2 ;
+        // Cx = op (C)
+        info = GB_apply_op (C->x, op1, op2, scalar, binop_bind1st, C, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            GB_FREE_C ;
+            return (info) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // conform the result to the desired hypersparsity of A
+    //--------------------------------------------------------------------------
 
     // transplant the hyper_ratio from A to C
     C->hyper_ratio = A_hyper_ratio ;

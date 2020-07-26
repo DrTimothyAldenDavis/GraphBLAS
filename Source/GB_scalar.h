@@ -17,10 +17,12 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     void *Sx                // becomes S->x, an array of size 1 * type->size
 ) ;
 
+// stype can be NULL if op is positional
+
 // wrap a bare scalar inside a statically-allocated GxB_Scalar
 #define GB_SCALAR_WRAP(scalar,prefix,T,ampersand,bare,stype)                \
     struct GB_Scalar_opaque scalar ## _struct ;                             \
-    size_t ssize = stype->size ;                                            \
+    size_t ssize = (stype == NULL) ? 1 : (stype->size) ;                    \
     GB_void Sx [GB_VLA (ssize)] ;                                           \
     GxB_Scalar scalar = GB_Scalar_wrap (& scalar ## _struct, stype, Sx) ;   \
     memcpy (Sx, ampersand bare, ssize) ;

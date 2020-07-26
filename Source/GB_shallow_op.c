@@ -46,24 +46,29 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
-    GrB_Type ztype, op_intype ;
-    GB_Opcode opcode ;
+    GrB_Type ztype, op_intype = NULL ;
+    GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     if (op1 != NULL)
     {
         ASSERT_UNARYOP_OK (op1, "unop for shallow_op", GB0) ;
-        ASSERT (GB_Type_compatible (op1->xtype, A->type)) ;
-        op_intype = op1->xtype ;
+        if (!op_is_positional)
+        {
+            ASSERT (GB_Type_compatible (op1->xtype, A->type)) ;
+            op_intype = op1->xtype ;
+        }
         ztype = op1->ztype ;
-        opcode = op1->opcode ;
     }
     else // op2 != NULL
     {
         ASSERT_BINARYOP_OK (op2, "binop for shallow_op", GB0) ;
-        op_intype = (binop_bind1st) ? op2->xtype : op2->ytype ;
+        if (!op_is_positional)
+        {
+            op_intype = (binop_bind1st) ? op2->xtype : op2->ytype ;
+            ASSERT (GB_Type_compatible (op_intype, A->type)) ;
+        }
         ztype = op2->ztype ;
-        opcode = op2->opcode ;
     }
-    ASSERT (GB_Type_compatible (op_intype, A->type)) ;
     ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
@@ -166,11 +171,14 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-          GB_void *Cx = (GB_void *) C->x ;
-    const GB_void *Ax = (GB_void *) A->x ;
-    GB_apply_op (Cx, 
-        op1, op2, scalar, binop_bind1st,
-        Ax, A->type, anz, Context) ;
+    GB_void *Cx = (GB_void *) C->x ;
+    info = GB_apply_op (Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_Matrix_free (&C) ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     //--------------------------------------------------------------------------
     // return the result

@@ -255,10 +255,11 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = p + iA_first ;        // ok: C is sparse
+                        int64_t i = p + iA_first ;
+                        Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -281,7 +282,7 @@
                         Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + i - iA_first) ;
                         GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -304,7 +305,7 @@
                         Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + i - iB_first) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -332,7 +333,7 @@
                             Ci [pC] = i ;                   // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
                         }
@@ -365,7 +366,7 @@
                             Ci [pC] = i ;                   // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
                         }
@@ -408,7 +409,7 @@
                             Ci [pC] = iB ;                  // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                             pC++ ;
                             #endif
                             pA++ ;
@@ -521,7 +522,7 @@
                     Ci [pC] = i ;                   // ok: C is sparse
                     GB_GETA (aij, Ax, pA) ;
                     GB_GETB (bij, Bx, pB) ;
-                    GB_BINOP (GB_CX (pC), aij, bij) ;
+                    GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                     pC++ ;
                     #endif
                 }

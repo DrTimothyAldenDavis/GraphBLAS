@@ -288,6 +288,68 @@ GrB_BinaryOp GrB_LXOR  = & GB_opaque_GxB_LXOR_BOOL ;
 GrB_BinaryOp GrB_LXNOR = & GB_opaque_GrB_EQ_BOOL ;
 
 //------------------------------------------------------------------------------
+// positional unary and binary operators
+//------------------------------------------------------------------------------
+
+// The function pointer inside a positional operator cannot be called directly,
+// since it does not depend on the values of its two arguments.  The operator
+// can only be implemented via its opcode.
+
+// helper macros to define positional unary operators
+#define GB_OP1_POS(op,str,type)                                             \
+    struct GB_UnaryOp_opaque GB_opaque_GxB_ ## op ## type =                 \
+    {                                                                       \
+        GB_MAGIC,                                                           \
+        & GB_opaque (GrB ## type),                                          \
+        & GB_opaque (GrB ## type),                                          \
+        NULL,  /* op->function is NULL; it cannot be called */              \
+        str,                                                                \
+        GB_ ## op ## _opcode                                                \
+    } ;                                                                     \
+    GrB_UnaryOp GxB_ ## op ## type = & GB_opaque_GxB_ ## op ## type ;
+
+// helper macros to define positional binary operators
+#define GB_OP2_POS(op,str,type)                                             \
+    struct GB_BinaryOp_opaque GB_opaque_GxB_ ## op ## type =                \
+    {                                                                       \
+        GB_MAGIC,                                                           \
+        & GB_opaque (GrB ## type),                                          \
+        & GB_opaque (GrB ## type),                                          \
+        & GB_opaque (GrB ## type),                                          \
+        NULL,  /* op->function is NULL; it cannot be called */              \
+        str,                                                                \
+        GB_ ## op ## _opcode                                                \
+    } ;                                                                     \
+    GrB_BinaryOp GxB_ ## op ## type = & GB_opaque_GxB_ ## op ## type ;
+
+GB_OP1_POS (POSITIONI , "positioni" , _INT32) ;
+GB_OP1_POS (POSITIONI , "positioni" , _INT64) ;
+GB_OP1_POS (POSITIONI1, "positioni1", _INT32) ;
+GB_OP1_POS (POSITIONI1, "positioni1", _INT64) ;
+GB_OP1_POS (POSITIONJ , "positionj" , _INT32) ;
+GB_OP1_POS (POSITIONJ , "positionj" , _INT64) ;
+GB_OP1_POS (POSITIONJ1, "positionj1", _INT32) ;
+GB_OP1_POS (POSITIONJ1, "positionj1", _INT64) ;
+
+GB_OP2_POS (FIRSTI    , "firsti"    , _INT32) ;
+GB_OP2_POS (FIRSTI    , "firsti"    , _INT64) ;
+GB_OP2_POS (FIRSTI1   , "firsti1"   , _INT32) ;
+GB_OP2_POS (FIRSTI1   , "firsti1"   , _INT64) ;
+GB_OP2_POS (FIRSTJ    , "firstj"    , _INT32) ;
+GB_OP2_POS (FIRSTJ    , "firstj"    , _INT64) ;
+GB_OP2_POS (FIRSTJ1   , "firstj1"   , _INT32) ;
+GB_OP2_POS (FIRSTJ1   , "firstj1"   , _INT64) ;
+
+GB_OP2_POS (SECONDI   , "secondi"   , _INT32) ;
+GB_OP2_POS (SECONDI   , "secondi"   , _INT64) ;
+GB_OP2_POS (SECONDI1  , "secondi1"  , _INT32) ;
+GB_OP2_POS (SECONDI1  , "secondi1"  , _INT64) ;
+GB_OP2_POS (SECONDJ   , "secondj"   , _INT32) ;
+GB_OP2_POS (SECONDJ   , "secondj"   , _INT64) ;
+GB_OP2_POS (SECONDJ1  , "secondj1"  , _INT32) ;
+GB_OP2_POS (SECONDJ1  , "secondj1"  , _INT64) ;
+
+//------------------------------------------------------------------------------
 // built-in select operators
 //------------------------------------------------------------------------------
 
@@ -664,6 +726,47 @@ GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 #define GxB_NAME(x)   GxB_ ## x ## _INT32
 #define GB(x)         GB_opaque_ ## x ## _INT32
 #define GB_MONOID(x)  GB_opaque_GxB_ ## x ## _INT32_MONOID
+    // 40 positional semirings for INT64 types:
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDJ1 )
 #include "GB_semiring_template.c"
 
 #define GB_UNSIGNED_INT
@@ -675,6 +778,47 @@ GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 #define GxB_NAME(x)   GxB_ ## x ## _INT64
 #define GB(x)         GB_opaque_ ## x ## _INT64
 #define GB_MONOID(x)  GB_opaque_GxB_ ## x ## _INT64_MONOID
+    // 40 positional semirings for INT64 types:
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( MIN   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( MAX   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( ANY   , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( PLUS  , GxB_, SECONDJ1 )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTI   )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTI1  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTJ   )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, FIRSTJ1  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDI  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDI1 )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDJ  )
+    GB_SEMIRING_DEFINE ( TIMES , GxB_, SECONDJ1 )
 #include "GB_semiring_template.c"
 
 #define GB_UNSIGNED_INT

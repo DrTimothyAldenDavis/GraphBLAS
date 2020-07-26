@@ -7,11 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// C = op ((xtype) A')
+// C = op (A')
 
 // The values of A are typecasted to op->xtype and then passed to the unary
 // operator.  The output is assigned to C, which must be of type op->ztype; no
 // output typecasting done with the output of the operator.
+
+// If the op is positional, it has been replaced with the unary op
+// GxB_ONE_INT64, as a placeholder.  The true op (either op1 or op2) is applied
+// later, in GB_transpose.
 
 // If A is sparse or hypersparse
 //      The pattern of C is constructed.  C is sparse.
@@ -49,9 +53,17 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     GrB_Info info ;
     GrB_Type Atype = A->type ;
     ASSERT (op1 != NULL || op2 != NULL) ;
+    GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;
+
+    // positional operators are applied after the transpose
+    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
 
     //--------------------------------------------------------------------------
     // transpose the matrix and apply the operator
@@ -64,12 +76,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         // built-in unary operator
         //----------------------------------------------------------------------
 
+        ASSERT_UNARYOP_OK (op1, "op1 for transpose", GB0) ;
         GrB_UnaryOp op = op1 ;
 
         #ifndef GBCOMPACT
         bool no_typecasting = (Atype == op->xtype)
-            || (op->opcode == GB_IDENTITY_opcode)
-            || (op->opcode == GB_ONE_opcode) ;
+            || (opcode == GB_IDENTITY_opcode) || (opcode == GB_ONE_opcode) ;
 
         if (no_typecasting)
         { 
@@ -102,7 +114,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         // generic worker: transpose, typecast, and apply unary operator
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "generic ") ;
+        GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op1->name) ;
 
         size_t asize = Atype->size ;
         size_t zsize = op->ztype->size ;
@@ -110,6 +122,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         GB_cast_function
             cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
         GxB_unary_function fop = op->function ;
+
+        ASSERT_TYPE_OK (op1->ztype, "op1 ztype", GB0) ;
+        ASSERT_TYPE_OK (op1->xtype, "op1 xtype", GB0) ;
+        ASSERT_TYPE_OK (C->type, "C type", GB0) ;
+        ASSERT (C->type->size == zsize) ;
+        ASSERT (C->type == op->ztype) ;
 
         // Cx [pC] = op (cast (Ax [pA]))
         #define GB_CAST_OP(pC,pA)                                       \
@@ -134,11 +152,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         // built-in binary operator
         //----------------------------------------------------------------------
 
-        GB_Opcode opcode = op2->opcode ;
+        ASSERT_BINARYOP_OK (op2, "op2 for transpose", GB0) ;
+
         GB_Type_code xcode, ycode, zcode ;
-        bool op_is_first  = opcode == GB_FIRST_opcode ;
-        bool op_is_second = opcode == GB_SECOND_opcode ;
-        bool op_is_pair   = opcode == GB_PAIR_opcode ;
+        bool op_is_first  = (opcode == GB_FIRST_opcode) ;
+        bool op_is_second = (opcode == GB_SECOND_opcode) ;
+        bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -257,7 +276,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         // generic worker: transpose, typecast and apply a binary operator
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "generic ") ;
+        GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op2->name) ;
         GB_Type_code acode = Atype->code ;
         GxB_binary_function fop = op2->function ;
 

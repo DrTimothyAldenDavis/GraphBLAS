@@ -152,6 +152,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_accum_mask", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (MT_in, "MT_in for GB_accum_mask", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_accum_mask", GB0) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassigner is used, so it is not finished here.

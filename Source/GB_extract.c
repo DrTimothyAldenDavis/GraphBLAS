@@ -52,7 +52,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GrB_Info info ;
     GB_RETURN_IF_NULL (Rows) ;
     GB_RETURN_IF_NULL (Cols) ;
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_Matrix_extract", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_Matrix_extract", GB0) ;

@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-GrB_Info GxB_BinaryOp_xtype         // return the type of x
+GrB_Info GxB_BinaryOp_xtype         // type of x
 (
     GrB_Type *xtype,                // return type of input x
     GrB_BinaryOp binaryop           // binary operator to query

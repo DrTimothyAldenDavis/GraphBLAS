@@ -60,6 +60,14 @@
 //      4 bitwise multiply operators: BOR, BAND, BXOR, BXNOR
 //      4 unsigned integer types: UINT8, UINT16, UINT32, UINT64
 
+// 80 positional semirings:
+
+//      5 monoids: MIN, MAX, PLUS, TIMES, ANY
+//      8 multiply operators:
+//          FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1,
+//          SECONDI, SECONDI1, SECONDJ, SECONDJ1
+//      2 types: INT32, INT64
+
 #if defined ( GB_BOOLEAN )
 
     //--------------------------------------------------------------------------

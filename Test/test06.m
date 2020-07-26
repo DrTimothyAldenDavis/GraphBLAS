@@ -15,6 +15,7 @@ function test06 (A,B,fulltests,method_list)
 fprintf ('test06: GrB_mxm on all semirings\n') ;
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+% mult_ops = binops.positional ;
 mult_ops = binops.all ;
 types = types.all ;
 

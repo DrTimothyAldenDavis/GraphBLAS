@@ -159,11 +159,14 @@ for k1 = k1test % 1:length (types)
                     if (k4 == 0)
                         accum = ''  ;
                         ntypes = 1 ;
-                        % fprintf ('accum: [ none ]') ;
                     else
                         accum.opname = bin_ops {k4}  ;
                         ntypes = length (types) ;
                         fprintf ('accum: %s ', accum.opname) ;
+                    end
+
+                    if (GB_spec_is_positional (accum))
+                        continue
                     end
 
                     for k5 = randi ([1 ntypes]) % ntypes

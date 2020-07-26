@@ -11,6 +11,10 @@ function [Z simple] = GB_spec_accum (accum, C, T, identity)
 % get the operator; of is type(C) if type is not present in the accum op
 [opname optype ztype xtype ytype] = GB_spec_operator (accum, C.class) ;
 
+if (GB_spec_is_positional (opname))
+    error ('accum operator cannot be positional') ;
+end
+
 if (nargin < 4)
     identity = 0 ;
 end

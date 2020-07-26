@@ -16,8 +16,6 @@ rng ('default') ;
 
 for N = [10 100] % 1000]
 
-    N
-
     % create the problem
     A = sprand (4*N, 5*N, 0.01) ;
     B = sprand (5*N, 3*N, 0.01) ;

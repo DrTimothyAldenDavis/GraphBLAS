@@ -53,8 +53,8 @@
             { 
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
                 GB_CTYPE_SCALAR (t) ;                   // declare scalar t
-                GB_BINOP (t, aij, aij) ;                // t = aij + aij
-                GB_BINOP (GB_CX (p), GB_CX (p), t) ;    // Cx [p] = cij + t
+                GB_BINOP (t, aij, aij, 0, 0) ;          // t = aij + aij
+                GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
             }
 
         #endif
@@ -87,8 +87,8 @@
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
                 GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
                 GB_CTYPE_SCALAR (t) ;                   // declare scalar t
-                GB_BINOP (t, aij, bij) ;                // t = aij + bij
-                GB_BINOP (GB_CX (p), GB_CX (p), t) ;    // Cx [p] = cij + t
+                GB_BINOP (t, aij, bij, 0, 0) ;          // t = aij + bij
+                GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
             }
 
         #endif

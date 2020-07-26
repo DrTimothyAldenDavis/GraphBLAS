@@ -97,6 +97,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
     GrB_Matrix S = NULL ;
     GrB_Matrix A2 = NULL ;
     GrB_Matrix M2 = NULL ;

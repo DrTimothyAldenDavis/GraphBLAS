@@ -46,7 +46,7 @@ for k = [false true]
     A = GB_mex_random (10, 30, 15, 1, 1, 1, 1, 1) ;
     GB_mex_dump (A,2) ;
     A = GB_mex_random (3, 3, 5, 0, 1, 1, 1, 3) 
-    GB_mex_dump (A) 
+    GB_mex_dump (A)
 end
 
 fprintf ('\ntest03: all object check tests passed\n') ;

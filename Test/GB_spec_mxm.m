@@ -93,16 +93,27 @@ T.class = ztype ;
 A_matrix = GB_mex_cast (A.matrix, xtype) ;
 B_matrix = GB_mex_cast (B.matrix, ytype) ;
 
+op_is_positional = GB_spec_is_positional (multiply) ;
+multop = multiply.opname ;
+
 for j = 1:n
     for i = 1:m
         for k = 1:s
             % T (i,j) += A (i,k) * B (k,j), using the semiring
             if (A.pattern (i,k) && B.pattern (k,j))
-                z = GB_spec_op (multiply, A_matrix (i,k), B_matrix (k,j)) ;
+                if (op_is_positional)
+                    z = GB_spec_binop_positional (multop, i, k, k, j) ;
+                    % fprintf ('multop %s (%d,%d,%d) = %d\n', multop, i, k, j, z) ;
+                else
+                    z = GB_spec_op (multiply, A_matrix (i,k), B_matrix (k,j)) ;
+                end
                 T.matrix (i,j) = GB_spec_op (add, T.matrix (i,j), z) ;
                 T.pattern (i,j) = true ;
             end
         end
+%       if (T.pattern (i,j))
+%           fprintf ('result T(%d,%d) = %d\n', i, j, T.matrix (i,j)) ;
+%       end
     end
 end
 

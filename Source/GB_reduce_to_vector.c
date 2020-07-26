@@ -55,9 +55,17 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
+
+    if (GB_OP_IS_POSITIONAL (reduce))
+    { 
+        // reduce operator cannot be a positional op
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Positional op z=%s(x,y) not supported as reduce op\n",
+                reduce->name) ;
+    }
 
     ASSERT_MATRIX_OK (C, "C input for reduce_BinaryOp", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for reduce_BinaryOp", GB0) ;
@@ -336,7 +344,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         if (!done)
         { 
 
-            GB_BURBLE_MATRIX (A, "generic ") ;
+            GB_BURBLE_MATRIX (A, "(generic reduce to vector: %s) ",
+                reduce->name) ;
 
             #define GB_ATYPE GB_void
             #define GB_CTYPE GB_void
@@ -541,7 +550,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             { 
                 // if this fails, the template frees all workspace with the
                 // GB_FREE_ALL macro, defined above.
-                GB_BURBLE_MATRIX (A, "generic ") ;
+                GB_BURBLE_MATRIX (A, "(generic reduce each index: %s) ",
+                    reduce->name) ;
                 #include "GB_reduce_each_index.c"
             }
         }

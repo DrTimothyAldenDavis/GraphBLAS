@@ -4,8 +4,6 @@ function test133
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-% C = GB_mex_transpose (C, M, accum, A, desc, test)
-
 fprintf ('\ntest133: test the mask operation\n') ;
 
 n = 1000 ;

@@ -39,7 +39,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // C may be aliased with M and/or A
 
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_FAULTY (Thunk_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
@@ -108,8 +108,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         (opcode >= GB_NE_THUNK_opcode && opcode <= GB_LE_THUNK_opcode) ;
 
     // check if op is TRIL, TRIU, DIAG, or OFFDIAG
-    bool op_is_positional =
-        (opcode >= GB_TRIL_opcode && opcode <= GB_OFFDIAG_opcode) ;
+    bool op_is_positional = GB_SELECTOP_IS_POSITIONAL (opcode) ;
 
     // check if op is user-defined
     bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;

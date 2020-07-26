@@ -81,7 +81,7 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y)   \
+#define GB_BINOP(z, x, y, i, j) \
     z = y ;
 
 // op is second
@@ -389,10 +389,10 @@ GrB_Info GB_bind2nd__second_int8
 
 // cij = op (x, aij), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    int8_t aij = Ax [pA] ;              \
-    Cx [pC] = aij ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    int8_t aij = Ax [pA] ;                      \
+    Cx [pC] = aij ;        \
 }
 
 GrB_Info (none)
@@ -434,10 +434,10 @@ GrB_Info (none)
 
 // cij = op (aij, y), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    ; ;              \
-    Cx [pC] = y ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    ; ;                      \
+    Cx [pC] = y ;        \
 }
 
 GrB_Info GB_bind2nd_tran__second_int8

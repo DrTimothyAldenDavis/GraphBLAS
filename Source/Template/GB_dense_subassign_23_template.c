@@ -63,7 +63,7 @@
             for (p = 0 ; p < cnz ; p++)
             { 
                 GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
-                GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // C(i,j) += bij
+                GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
             }
 
         #endif
@@ -172,7 +172,7 @@
                             // bij = B(i,j)
                             GB_GETB (bij, Bx, pB) ;
                             // C(i,j) += bij
-                            GB_BINOP (GB_CX (p), GB_CX (p), bij) ;
+                            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                         }
 
                     #endif
@@ -191,7 +191,8 @@
                         int64_t i = Bi [pB] ;               // ok: B is sparse
                         int64_t p = pC + i ;
                         GB_GETB (bij, Bx, pB) ;                 // bij = B(i,j)
-                        GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // C(i,j) += bij
+                        // C(i,j) += bij
+                        GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
                 }
             }

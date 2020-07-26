@@ -33,7 +33,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
     const GrB_Matrix A,             // input matrix
+    bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B,             // input matrix
+    bool B_is_pattern,              // true if values of B are not used
     GB_Context Context
 ) ;
 

@@ -340,6 +340,16 @@ int main (void)
     GrB_Matrix_new (&D, GrB_FP32, 10, 10) ;
     wildtype_print_matrix (D, "D") ;
 
+    // apply some positional operators
+    GrB_Matrix E ;
+    GrB_Matrix_new (&E, GrB_INT64, 10, 10) ;
+
+    GrB_Matrix_apply (E, NULL, NULL, GxB_POSITIONI_INT64, A, NULL) ;
+    GxB_Matrix_fprint (E, "E (positional i)", GxB_COMPLETE, NULL) ;
+
+    GrB_Matrix_apply (E, NULL, NULL, GxB_POSITIONJ_INT64, A, NULL) ;
+    GxB_Matrix_fprint (E, "E (positional j)", GxB_COMPLETE, NULL) ;
+
     // do something invalid
     info = GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL, WildAdd, A, D, NULL) ;
     if (info != GrB_SUCCESS)
@@ -354,6 +364,7 @@ int main (void)
     GrB_Matrix_free (&A) ;
     GrB_Matrix_free (&B) ;
     GrB_Matrix_free (&D) ;
+    GrB_Matrix_free (&E) ;
     GrB_Semiring_free (&InTheWild) ;
     GrB_Monoid_free (&WildAdder) ;
     GrB_BinaryOp_free (&WildAdd) ;

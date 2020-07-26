@@ -5,8 +5,9 @@ function test75
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
-types = types.all ;
+% mult_ops = binops.positional ;
 mult_ops = binops.all ;
+types = types.all ;
 
 rng ('default') ;
 
@@ -80,8 +81,6 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 n_semirings = 0 ;
-
-% eq_eq_bool: 18, 8, 1
 
 for k1 = 1:length(mult_ops)
     mulop = mult_ops {k1} ;

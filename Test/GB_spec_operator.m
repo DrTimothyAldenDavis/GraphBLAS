@@ -28,9 +28,14 @@ elseif (isstruct (op))
     opname = op.opname ;
     optype = op.optype ;
 else
-    % op is a string, use the default optype unless the op is just logical
+    % op is a string
     opname = op ;
-    optype = optype_default ;
+    if (nargin == 1 && GB_spec_is_positional (opname))
+        % optype_default is ignored
+        optype = 'int64' ;
+    else
+        optype = optype_default ;
+    end
 end
 
 % xtype is always the optype
@@ -290,6 +295,26 @@ switch opname
         ytype = 'none' ;
 
     %--------------------------------------------------------------------------
+    % binary positional ops
+    %--------------------------------------------------------------------------
+
+    case { 'firsti' , 'firsti1' , 'firstj' , 'firstj1', ...
+           'secondi', 'secondi1', 'secondj', 'secondj1' } ;
+        if (~(isequal (ztype, 'int64') || isequal (ztype, 'int32')))
+            error ('invalid op') ;
+        end
+        xtype = optype ;
+        ytype = optype ;
+
+    %--------------------------------------------------------------------------
+    % unary positional ops
+    %--------------------------------------------------------------------------
+
+    case { 'positioni', 'positioni1', 'positionj', 'positionj1' }
+        if (~(isequal (ztype, 'int64') || isequal (ztype, 'int32')))
+            error ('invalid op') ;
+        end
+        ytype = optype ;
 
     otherwise
         error ('unknown op') ;

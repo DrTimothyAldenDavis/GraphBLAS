@@ -9,8 +9,6 @@
 
 // C becomes a full matrix.
 
-// FUTURE: extend to handle typecasting and generic operators.
-
 #include "GB_dense.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
@@ -24,7 +22,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     const bool C_is_dense,          // true if C is dense on input
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,
+    const GrB_BinaryOp op,          // must not be a positional op
     GB_Context Context
 )
 {
@@ -42,6 +40,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;
     ASSERT (op->xtype == A->type) ;
     ASSERT (op->ytype == B->type) ;
@@ -100,7 +99,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     else
     {
         // this function is not called if the op cannot be applied
-        ASSERT (0) ;
+        ASSERT (GB_DEAD_CODE) ;
     }
 
     //--------------------------------------------------------------------------

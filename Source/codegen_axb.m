@@ -252,7 +252,41 @@ for i = 1:4
                 type, id, tm, at, 0) ;
         end
     end
+end
 
+% positional semirings
+mults = { 'firsti', 'firsti1', 'firstj', 'firstj1', 'secondj', 'secondj1' } ;
+funcs = { 'i', '(i+1)', 'k', '(k+1)', 'j', '(j+1)' } ;
+
+% min, max, and times are normally terminal monoids, but there is no reason to terminate
+% them early when used with positional operators. Only the ANY monoid is still terminal.
+addops   = { 'min',                'max',                'any',   'plus',   'times'  } ;
+adds     = { 'w = GB_IMIN (w, t)', 'w = GB_IMAX (w, t)', 'w = t', 'w += t', 'w *= t' } ;
+addfuncs = {     'GB_IMIN (w, t)',     'GB_IMAX (w, t)',     't', 'w + t' , 'w * t'  } ;
+ids      = { 'INT64_MAX',          'INT64_MIN',          '0',     '0',      '1'      } ;
+terms    = { [ ],                  [ ],                  '0',     [ ],      [ ]      } ;
+atomx    = {  0                  ,  0 ,                   0,       1,        1,      } ;
+
+for j = 1:6
+    multop = mults {j} ;
+    mult = funcs {j} ;
+    fprintf ('\n%-9s', multop) ;
+    for i = 1:5
+        addop = addops {i} ;
+        addfunc = strrep (strrep (addfuncs {i}, 'xarg', 'w'), 'yarg', 't') ;
+        add = adds {i} ;
+        identity = ids {i} ;
+        term = terms {i} ;
+        at = atomx {i} ;
+        id = ids {i} ;
+        tm = terms {i} ;
+        at = atomx {i} ;
+        codegen_axb_method (addop, multop, add, addfunc, mult, 'int64_t', ...
+            'int64_t', id, tm, at, 0) ;
+        id = strrep (id, '64', '32')  ;
+        codegen_axb_method (addop, multop, add, addfunc, mult, 'int32_t', ...
+            'int32_t', id, tm, at, 0) ;
+    end
 end
 
 fprintf ('\n') ;

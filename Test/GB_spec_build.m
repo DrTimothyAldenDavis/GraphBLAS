@@ -107,6 +107,10 @@ if (isempty (op))
 end
 [opname optype ztype xtype ytype] = GB_spec_operator (op, GB_spec_type (X)) ;
 
+if (GB_spec_is_positional (opname))
+    error ('dup operator cannot be positional') ;
+end
+
 assert (isequal (ztype, xtype)) ;
 assert (isequal (ztype, ytype)) ;
 

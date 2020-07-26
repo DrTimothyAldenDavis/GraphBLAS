@@ -12,7 +12,7 @@
 // different.  The type of C is the type of z.  C is hypersparse if either A
 // or B are hypersparse.
 
-// FUTURE: GB_kron would be faster with built-in types and operators.
+// FUTURE: this would be faster with built-in types and operators.
 
 // FUTURE: at most one thread is used for each vector of C=kron(A,B).  The
 // matrix C is normally very large, but if both A and B are n-by-1, then C is
@@ -30,7 +30,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
     const GrB_Matrix A,             // input matrix
+    bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B,             // input matrix
+    bool B_is_pattern,              // true if values of B are not used
     GB_Context Context
 )
 {
@@ -57,7 +59,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
-    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    const GB_void *GB_RESTRICT Ax = A_is_pattern ? NULL : ((GB_void *) A->x) ;
     const int64_t asize = A->type->size ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
@@ -67,7 +69,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_void *GB_RESTRICT Bx = (GB_void *) B->x ;
+    const GB_void *GB_RESTRICT Bx = B_is_pattern ? NULL : ((GB_void *) B->x) ;
     const int64_t bsize = B->type->size ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
@@ -114,20 +116,38 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     }
 
     //--------------------------------------------------------------------------
-    // get C
+    // get C and the operator
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
     int64_t *GB_RESTRICT Ci = C->i ;
     GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+    int64_t *GB_RESTRICT Cx_int64 = NULL ;
+    int32_t *GB_RESTRICT Cx_int32 = NULL ;
     const int64_t csize = C->type->size ;
 
     GxB_binary_function fmult = op->function ;
-
-    GB_cast_function
-        cast_A = GB_cast_factory (op->xtype->code, A->type->code),
+    GB_Opcode opcode = op->opcode ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    GB_cast_function cast_A = NULL, cast_B = NULL ;
+    if (!A_is_pattern)
+    { 
+        cast_A = GB_cast_factory (op->xtype->code, A->type->code) ;
+    }
+    if (!B_is_pattern)
+    { 
         cast_B = GB_cast_factory (op->ytype->code, B->type->code) ;
+    }
+
+    int64_t offset = 0 ;
+    if (op_is_positional)
+    { 
+        offset = GB_positional_offset (opcode) ;
+        Cx_int64 = (int64_t *) Cx ;
+        Cx_int32 = (int32_t *) Cx ;
+    }
+    bool is64 = (op->ztype == GrB_INT64) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C, and C->h if C is hypersparse
@@ -178,6 +198,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t kB = kC % bnvec ;
 
         // get B(:,jB), the (kB)th vector of B
+        int64_t jB = GBH (Bh, kB) ;
         int64_t pB_start = GBP (Bp, kB, bvlen) ;
         int64_t pB_end   = GBP (Bp, kB+1, bvlen) ;
         int64_t bknz = pB_start - pB_end ;
@@ -189,6 +210,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t pC = GBP (Cp, kC, cvlen) ;
 
         // get A(:,jA), the (kA)th vector of A
+        int64_t jA = GBH (Ah, kA) ;
         int64_t pA_start = GBP (Ap, kA, avlen) ;
         int64_t pA_end   = GBP (Ap, kA+1, avlen) ;
         GB_void awork [GB_VLA(asize)] ;
@@ -198,19 +220,83 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             // awork = A(iA,jA), typecasted to op->xtype
             int64_t iA = GBI (Ai, pA, avlen) ;
             int64_t iAblock = iA * bvlen ;
-            cast_A (awork, Ax +(pA*asize), asize) ;
+            if (!A_is_pattern) cast_A (awork, Ax +(pA*asize), asize) ;
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
             { 
                 // bwork = B(iB,jB), typecasted to op->ytype
                 int64_t iB = GBI (Bi, pB, bvlen) ;
-                cast_B (bwork, Bx +(pB*bsize), bsize) ;
+                if (!B_is_pattern) cast_B (bwork, Bx +(pB*bsize), bsize) ;
                 // C(iC,jC) = A(iA,jA) * B(iB,jB)
                 if (!C_is_full)
                 { 
                     int64_t iC = iAblock + iB ;
                     Ci [pC] = iC ;                  // ok: C is sparse
                 }
-                fmult (Cx +(pC*csize), awork, bwork) ;
+                if (op_is_positional)
+                { 
+                    // positional binary operator
+                    switch (opcode)
+                    {
+                        case GB_FIRSTI_opcode   :
+                            // z = first_i(A(iA,jA),y) == iA
+                        case GB_FIRSTI1_opcode  :
+                            // z = first_i1(A(iA,jA),y) == iA+1
+                            if (is64)
+                            { 
+                                Cx_int64 [pC] = iA + offset ;
+                            }
+                            else
+                            { 
+                                Cx_int32 [pC] = (int32_t) (iA + offset) ;
+                            }
+                            break ;
+                        case GB_FIRSTJ_opcode   :
+                            // z = first_j(A(iA,jA),y) == jA
+                        case GB_FIRSTJ1_opcode  :
+                            // z = first_j1(A(iA,jA),y) == jA+1
+                            if (is64)
+                            { 
+                                Cx_int64 [pC] = jA + offset ;
+                            }
+                            else
+                            { 
+                                Cx_int32 [pC] = (int32_t) (jA + offset) ;
+                            }
+                            break ;
+                        case GB_SECONDI_opcode  :
+                            // z = second_i(x,B(iB,jB)) == iB
+                        case GB_SECONDI1_opcode :
+                            // z = second_i1(x,B(iB,jB)) == iB+1
+                            if (is64)
+                            { 
+                                Cx_int64 [pC] = iB + offset ;
+                            }
+                            else
+                            { 
+                                Cx_int32 [pC] = (int32_t) (iB + offset) ;
+                            }
+                            break ;
+                        case GB_SECONDJ_opcode  :
+                            // z = second_j(x,B(iB,jB)) == jB
+                        case GB_SECONDJ1_opcode :
+                            // z = second_j1(x,B(iB,jB)) == jB+1
+                            if (is64)
+                            { 
+                                Cx_int64 [pC] = jB + offset ;
+                            }
+                            else
+                            { 
+                                Cx_int32 [pC] = (int32_t) (jB + offset) ;
+                            }
+                            break ;
+                        default: ;
+                    }
+                }
+                else
+                { 
+                    // standard binary operator
+                    fmult (Cx +(pC*csize), awork, bwork) ;
+                }
                 pC++ ;
             }
         }

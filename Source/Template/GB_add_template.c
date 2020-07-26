@@ -234,10 +234,11 @@
                     ASSERT (cjnz == ajnz) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + p] = p + iA_first ;        // ok: C is sparse
+                        int64_t i = p + iA_first ;
+                        Ci [pC + p] = i ;                   // ok: C is sparse
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -260,10 +261,11 @@
                     }
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        int64_t ii = GBI (Bi, pB + p, vlen) - iA_first ;
+                        int64_t i = GBI (Bi, pB + p, vlen) ;
+                        int64_t ii = i - iA_first ;
                         GB_GETA (aij, Ax, pA + ii) ;
                         GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + ii), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -286,10 +288,11 @@
                     }
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        int64_t ii = GBI (Ai, pA + p, vlen) - iB_first ;
+                        int64_t i = GBI (Ai, pA + p, vlen) ;
+                        int64_t ii = i - iB_first ;
                         GB_GETA (aij, Ax, pA + p) ;
                         GB_GETB (bij, Bx, pB + ii) ;
-                        GB_BINOP (GB_CX (pC + ii), aij, bij) ;
+                        GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
                     }
                     #endif
 
@@ -464,7 +467,7 @@
                             Ci [pC] = iB ;      // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                             #endif
                             pA++ ;
                             pB++ ;
@@ -596,7 +599,7 @@
                             ASSERT (GBI (Bi, pM, vlen) == i) ;
                             GB_GETA (aij, Ax, pA_offset + i) ;
                             GB_GETB (bij, Bx, pM) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                         }
 
                     }
@@ -618,7 +621,7 @@
                             ASSERT (GBI (Bi, pB_offset + i, vlen) == i) ;
                             GB_GETA (aij, Ax, pM) ;
                             GB_GETB (bij, Bx, pB_offset + i) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                         }
 
                     }
@@ -639,7 +642,7 @@
                             #else
                             GB_GETA (t, Ax, pM) ;
                             #endif
-                            GB_BINOP (GB_CX (pC), t, t) ;
+                            GB_BINOP (GB_CX (pC), t, t, GBI (Mi, pM, vlen), j) ;
                         }
                     }
 
@@ -729,7 +732,7 @@
                             Ci [pC] = i ;       // ok: C is sparse
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
                         }

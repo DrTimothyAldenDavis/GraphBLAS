@@ -54,6 +54,22 @@ function binopinfo (op, optype)
 %   xor lxor         xor(x,y)       |   .^  pow          x .^ y
 %   pair             1              |   any              pick x or y
 %
+% Positional operators return int32 or int64, and depend only on the position
+% of the entry in the matrix.  They do not depend on the values of their
+% inputs, but on their position in the matrix instead:
+%
+%   postional ops:   in a semiring:     in ewise operators:
+%   operator name(s) f(A(i,k)*B(k,j))   f(A(i,j),B(i,j))
+%   ---------------- ----------------   ----------------
+%   firsti   1sti    i-1                i-1
+%   firsti1  1sti1   i                  i
+%   firstj   1stj    k-1                j-1
+%   firstj1  1stj1   k                  j
+%   secondi  2ndi    k-1                i-1
+%   secondi1 2ndi1   k                  i
+%   secondj  2ndj    j-1                j-1
+%   secondj1 2ndj1   j                  j
+%
 % Comparators (*lt, *gt, *le, *ge) and min/max are not available for
 % complex types.
 %

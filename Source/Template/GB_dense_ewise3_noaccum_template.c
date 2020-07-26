@@ -56,7 +56,8 @@
             for (p = 0 ; p < cnz ; p++)
             { 
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
-                GB_BINOP (GB_CX (p), aij, GB_CX (p)) ;  // Cx [p] = aij + Cx [p]
+                // Cx [p] = aij + Cx [p]
+                GB_BINOP (GB_CX (p), aij, GB_CX (p), 0, 0) ;
             }
 
         #endif
@@ -90,7 +91,7 @@
             for (p = 0 ; p < cnz ; p++)
             { 
                 GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
-                GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // Cx [p] += bij
+                GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ; // Cx [p] += bij
             }
 
         #endif
@@ -126,7 +127,7 @@
             { 
                 GB_GETA (aij, Ax, p) ;              // aij = Ax [p]
                 GB_GETB (bij, Bx, p) ;              // bij = Bx [p]
-                GB_BINOP (GB_CX (p), aij, bij) ;    // Cx [p] = aij + bij
+                GB_BINOP (GB_CX (p), aij, bij, 0, 0) ;  // Cx [p] = aij + bij
             }
 
         #endif

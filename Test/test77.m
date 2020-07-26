@@ -17,7 +17,7 @@ if (fulltest)
     k1test = 1:length(types) ;
 else
     fprintf ('--------------quick tests of GrB_kronecker\n') ;
-    k1test = [10 11] ; % Was [1 2 4 10 11] ;
+    k1test = [4 5 10 11] ;
 end
 
 rng ('default') ;
@@ -31,17 +31,16 @@ n_semirings = 0 ;
 for k1 = k1test
     type = types {k1}  ;
 
-    % fprintf ('\n%s:\n', type) ;
+    fprintf ('\n%s:\n', type) ;
 
     if (fulltest)
         k2test = 1:length(binops) ;
     else
-        k2test = [4 7] ; % randperm (length(binops), 1) ; % Was 2
+        k2test = [44 4 7 51] ; % randperm (length(binops), 1) ; % Was 2
     end
 
     for k2 = k2test % 1:length(binops)
         binop = binops {k2}  ;
-
         op.opname = binop ;
         op.optype = type ;
 
@@ -51,26 +50,32 @@ for k1 = k1test
             continue
         end
 
-        fprintf ('\nbinary op: [ %s %s ] ', binop, type) ;
+        fprintf ('\n    binary op: [ %s %s ] ', binop, type) ;
 
         for k4 = [0 randi([0,length(binops)], 1, 3)] % 0:length(binops)
 
             clear accum
-            fprintf ('\n') ;
             if (k4 == 0)
                 accum = ''  ;
                 ntypes = 1 ;
-                fprintf ('accum: [ none ]') ;
+                fprintf ('\n        accum: [ none ]') ;
             else
                 accum.opname = binops {k4}  ;
+                if (GB_spec_is_positional (accum.opname))
+                    continue ;
+                end
                 ntypes = length (types) ;
-                fprintf ('accum: %s ', accum.opname) ;
+                fprintf ('\n        accum: %s ', accum.opname) ;
             end
 
             for k5 = randi ([1 ntypes], 1, 3) % ntypes
 
                 if (k4 > 0)
                     accum.optype = types {k5}  ;
+                end
+
+                if (GB_spec_is_positional (accum))
+                    continue ;
                 end
 
                 try

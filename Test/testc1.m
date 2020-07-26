@@ -6,14 +6,6 @@ function testc1
 
 rng 'default'
 
-% a = GB_mex_op ('min', complex(1), 1i, 1)  ;
-% b = min (complex (1), 1i)  ;
-% assert (isequal (a, complex (b))) ;
-
-% a = GB_mex_op ('max', complex(1), -1i, 1)  ;
-% b = max (complex (1), -1i)  ;
-% assert (isequal (a, b)) ;
-
 A = sparse (rand (2) + 1i * rand (2))  ;
 
 C = GB_mex_dump (A,0) ;

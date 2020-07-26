@@ -83,8 +83,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
     if (nzombies > 0 || npending > 0)
     { 
-        GB_BURBLE_MATRIX (A, "wait (zombies: " GBd ", pending: " GBd ") ",
-            nzombies, npending) ;
+        GB_BURBLE_MATRIX (A, "(wait: " GBd " %s, " GBd " pending) ",
+            nzombies, (nzombies == 1) ? "zombie" : "zombies", npending) ;
     }
 
     if (nzombies > 0)

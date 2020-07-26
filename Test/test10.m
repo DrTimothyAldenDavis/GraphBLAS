@@ -71,8 +71,9 @@ for k1 = 1:length(types)
     A_pos5_matrix (A_matrix > 5) = 5 ;
     B_pos5_matrix (B_matrix > 5) = 5 ;
 
-    atype_is_double = isequal (atype, 'double') ;
-    if (atype_is_double)
+    % do longer tests for a few types
+    longer_tests = isequal (atype, 'double') || isequal (atype, 'int64') ;
+    if (longer_tests)
         hrange = [0 1] ;
         crange = [0 1] ;
     else
@@ -82,7 +83,7 @@ for k1 = 1:length(types)
 
     for k2 = 1:length(unary_ops)
         op.opname = unary_ops {k2} ;
-        if (atype_is_double)
+        if (longer_tests)
             fprintf ('\n') ;
         end
         fprintf (' %s', op.opname) ;
@@ -161,7 +162,7 @@ for k1 = 1:length(types)
             for A_is_hyper = hrange
             for A_is_csc   = crange
 
-            if (atype_is_double)
+            if (longer_tests)
                 fprintf ('.') ;
             end
 

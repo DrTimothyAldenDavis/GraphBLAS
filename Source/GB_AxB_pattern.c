@@ -28,21 +28,28 @@ void GB_AxB_pattern
     // determine A_is_pattern and B_is_pattern
     //--------------------------------------------------------------------------
 
-    bool op_is_first  = mult_opcode == GB_FIRST_opcode ;
-    bool op_is_second = mult_opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = mult_opcode == GB_PAIR_opcode ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
+    bool op_is_first  = (mult_opcode == GB_FIRST_opcode) ;
+    bool op_is_second = (mult_opcode == GB_SECOND_opcode) ;
+    bool op_is_pair   = (mult_opcode == GB_PAIR_opcode) ;
 
-    if (flipxy)
+    if (op_is_positional || op_is_pair)
+    {
+        // mult (x,y) does not depend on the values of x or y
+        (*A_is_pattern) = true ;
+        (*B_is_pattern) = true ;
+    }
+    else if (flipxy)
     { 
         // z = mult (b,a) will be computed
-        (*A_is_pattern) = op_is_first  || op_is_pair ;
-        (*B_is_pattern) = op_is_second || op_is_pair ;
+        (*A_is_pattern) = op_is_first  ;
+        (*B_is_pattern) = op_is_second ;
     }
     else
     { 
         // z = mult (a,b) will be computed
-        (*A_is_pattern) = op_is_second || op_is_pair ;
-        (*B_is_pattern) = op_is_first  || op_is_pair ;
+        (*A_is_pattern) = op_is_second ;
+        (*B_is_pattern) = op_is_first  ;
     }
 }
 

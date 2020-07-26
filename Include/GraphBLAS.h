@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 17, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 26, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1109,6 +1109,58 @@ GB_PUBLIC GrB_BinaryOp
     // z = cmplx (x,y)
     GxB_CMPLX_FP32,
     GxB_CMPLX_FP64 ;
+
+//------------------------------------------------------------------------------
+// positional unary and binary operators
+//------------------------------------------------------------------------------
+
+// Positional operators do not depend on the value of an entry, but its row or
+// column index in the matrix instead.  For example, for an entry A(i,j),
+// first_i(A(i,j),y) is equal to i.  These operators are useful for returning
+// node id's as the result of a semiring operation.  If used as a mask, zero
+// has a special value, and thus z=first_i1(A(i,j),j) returns i+1 instead of i.
+// This can be useful when using a positional operator to construct a mask
+// matrix or vector for another GraphBLAS operation.  It is also essential for
+// the MATLAB interface, since the user view of matrix indices in MATLAB is
+// 1-based, not 0-based.
+
+// When applied to a vector, j is always equal to 0.  For a GxB_SCALAR,
+// both i and j are always zero.
+
+// GraphBLAS defines a GrB_Index as uint64_t, but these operators return a
+// GrB_INT32 or GrB_INT64 type, which is more flexible to use because the
+// result of this operator can be negated, to flag an entry for example.  The
+// value -1 can be used to denote "no node" or "no position".  GrB_INT32 is
+// useful for graphs smaller than 2^31 nodes.  If the row or column index
+// exceeds INT32_MAX, the result is determined by the typecast from the
+// 64-bit index to the smaller 32-bit index.
+
+// Positional operators cannot be used to construct monoids.  They can be used
+// as multiplicative operators in semirings, and as operators for GrB_eWise*,
+// and GrB_apply (bind first or second).  For the latter, the operator cannot
+// depend on the bound scalar.
+
+// When used as multiplicative operators in a semiring, FIRSTJ and SECONDI
+// are identical.  If C(i,j) += t is computed where t = A(i,k)*B(k,j), then
+// t = k in both cases.  Likewise, FIRSTJ1 and SECONDI1 are identical.
+
+GB_PUBLIC GrB_BinaryOp
+
+    GxB_FIRSTI_INT32,   GxB_FIRSTI_INT64,    // z = first_i(A(i,j),y) == i
+    GxB_FIRSTI1_INT32,  GxB_FIRSTI1_INT64,   // z = first_i1(A(i,j),y) == i+1
+    GxB_FIRSTJ_INT32,   GxB_FIRSTJ_INT64,    // z = first_j(A(i,j),y) == j
+    GxB_FIRSTJ1_INT32,  GxB_FIRSTJ1_INT64,   // z = first_j1(A(i,j),y) == j+1
+    GxB_SECONDI_INT32,  GxB_SECONDI_INT64,   // z = second_i(x,B(i,j)) == i
+    GxB_SECONDI1_INT32, GxB_SECONDI1_INT64,  // z = second_i1(x,B(i,j)) == i+1
+    GxB_SECONDJ_INT32,  GxB_SECONDJ_INT64,   // z = second_j(x,B(i,j)) == j
+    GxB_SECONDJ1_INT32, GxB_SECONDJ1_INT64 ; // z = second_j1(x,B(i,j)) == j+1
+
+GB_PUBLIC GrB_UnaryOp
+
+    GxB_POSITIONI_INT32,  GxB_POSITIONI_INT64,  // z = first_i(A(i,j),y) == i
+    GxB_POSITIONI1_INT32, GxB_POSITIONI1_INT64, // z = first_i1(A(i,j),y) == i+1
+    GxB_POSITIONJ_INT32,  GxB_POSITIONJ_INT64,  // z = first_j(A(i,j),y) == j
+    GxB_POSITIONJ1_INT32, GxB_POSITIONJ1_INT64 ;// z = first_j1(A(i,j),y) == j+1
 
 //------------------------------------------------------------------------------
 // About boolean and bitwise binary operators
@@ -4130,8 +4182,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 // To get a matrix status:
 //
 //      GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ;
-//      TODO:
-//      GxB_get (GrB_Matrix A, GxB_SPARSITY, int *sparsity) ;
+//TODO: GxB_get (GrB_Matrix A, GxB_SPARSITY, int *sparsity) ;
 
 // To set/get a descriptor field:
 //
@@ -7464,7 +7515,7 @@ GB_PUBLIC GrB_Monoid
 //------------------------------------------------------------------------------
 
 // Using built-in types and operators, SuiteSparse:GraphBLAS provides
-// 1473 pre-defined, built-in semirings:
+// 1553 pre-defined, built-in semirings:
 
 // 1000 semirings with a multiply operator TxT -> T where T is non-Boolean,
 // from the complete cross product of:
@@ -7515,6 +7566,14 @@ GB_PUBLIC GrB_Monoid
 //      4 bitwise multiply operators: BOR, BAND, BXOR, BXNOR
 //      4 unsigned integer types: UINT8, UINT16, UINT32, UINT64
 
+// 80 positional semirings: TxT -> T where T is int64:
+
+//      5 monoids: MIN, MAX, PLUS, TIMES, ANY
+//      8 multiply operators:
+//          FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1,
+//          SECONDI, SECONDI1, SECONDJ, SECONDJ1
+//      2 types: int32, int64
+
 // The ANY operator is also valid to use as a multiplicative operator in a
 // semiring, but serves no purpose in that case.  The ANY operator is meant as
 // a fast additive operator for a monoid, that terminates, or short-circuits,
@@ -7534,11 +7593,11 @@ GB_PUBLIC GrB_Monoid
 // always the same.  This is the type T for the first set, and Boolean for
 // the second and third sets of semirngs.
 
-// 1473 = 1000 + 300 + 55 + 54 + 64 semirings are named below, but 35 = 30 + 3
-// + 2 are identical to the corresponding any_pair semirings of the same type.
-// There are thus 1438 unique semirings listed below.  The PAIR multiplier thus
-// appears in 26 unique semirings: 13 any_pair (one per 13 types), 12 plus_pair
-// (for all but bool), and lxor_pair for bool.
+// 1553 = 1000 + 300 + 55 + 54 + 64 + 80 semirings are named below, but 35 = 30
+// + 3 + 2 are identical to the corresponding any_pair semirings of the same
+// type.  For positional semirings, the mulitiply ops FIRSTJ and SECONDI are
+// identical, as are FIRSTJ1 and SECONDI1.  These semirings still appear as
+// predefined, for convenience.
 
 GB_PUBLIC GrB_Semiring
 
@@ -7955,7 +8014,63 @@ GB_PUBLIC GrB_Semiring
     GxB_BXNOR_BOR_UINT8    , GxB_BXNOR_BOR_UINT16   , GxB_BXNOR_BOR_UINT32   , GxB_BXNOR_BOR_UINT64   ,
     GxB_BXNOR_BAND_UINT8   , GxB_BXNOR_BAND_UINT16  , GxB_BXNOR_BAND_UINT32  , GxB_BXNOR_BAND_UINT64  ,
     GxB_BXNOR_BXOR_UINT8   , GxB_BXNOR_BXOR_UINT16  , GxB_BXNOR_BXOR_UINT32  , GxB_BXNOR_BXOR_UINT64  ,
-    GxB_BXNOR_BXNOR_UINT8  , GxB_BXNOR_BXNOR_UINT16 , GxB_BXNOR_BXNOR_UINT32 , GxB_BXNOR_BXNOR_UINT64 ;
+    GxB_BXNOR_BXNOR_UINT8  , GxB_BXNOR_BXNOR_UINT16 , GxB_BXNOR_BXNOR_UINT32 , GxB_BXNOR_BXNOR_UINT64 ,
+
+//------------------------------------------------------------------------------
+// 80 positional semirings
+//------------------------------------------------------------------------------
+
+    // monoids: (MIN, MAX, ANY, PLUS, TIMES) x
+    // mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDI, SECONDI1, SECONDJ, SECONDJ1)
+    // types:   (INT32, INT64)
+
+    GxB_MIN_FIRSTI_INT32,     GxB_MIN_FIRSTI_INT64,
+    GxB_MAX_FIRSTI_INT32,     GxB_MAX_FIRSTI_INT64,
+    GxB_ANY_FIRSTI_INT32,     GxB_ANY_FIRSTI_INT64,
+    GxB_PLUS_FIRSTI_INT32,    GxB_PLUS_FIRSTI_INT64,
+    GxB_TIMES_FIRSTI_INT32,   GxB_TIMES_FIRSTI_INT64,
+
+    GxB_MIN_FIRSTI1_INT32,    GxB_MIN_FIRSTI1_INT64,
+    GxB_MAX_FIRSTI1_INT32,    GxB_MAX_FIRSTI1_INT64,
+    GxB_ANY_FIRSTI1_INT32,    GxB_ANY_FIRSTI1_INT64,
+    GxB_PLUS_FIRSTI1_INT32,   GxB_PLUS_FIRSTI1_INT64,
+    GxB_TIMES_FIRSTI1_INT32,  GxB_TIMES_FIRSTI1_INT64,
+
+    GxB_MIN_FIRSTJ_INT32,     GxB_MIN_FIRSTJ_INT64,
+    GxB_MAX_FIRSTJ_INT32,     GxB_MAX_FIRSTJ_INT64,
+    GxB_ANY_FIRSTJ_INT32,     GxB_ANY_FIRSTJ_INT64,
+    GxB_PLUS_FIRSTJ_INT32,    GxB_PLUS_FIRSTJ_INT64,
+    GxB_TIMES_FIRSTJ_INT32,   GxB_TIMES_FIRSTJ_INT64,
+
+    GxB_MIN_FIRSTJ1_INT32,    GxB_MIN_FIRSTJ1_INT64,
+    GxB_MAX_FIRSTJ1_INT32,    GxB_MAX_FIRSTJ1_INT64,
+    GxB_ANY_FIRSTJ1_INT32,    GxB_ANY_FIRSTJ1_INT64,
+    GxB_PLUS_FIRSTJ1_INT32,   GxB_PLUS_FIRSTJ1_INT64,
+    GxB_TIMES_FIRSTJ1_INT32,  GxB_TIMES_FIRSTJ1_INT64,
+
+    GxB_MIN_SECONDI_INT32,    GxB_MIN_SECONDI_INT64,
+    GxB_MAX_SECONDI_INT32,    GxB_MAX_SECONDI_INT64,
+    GxB_ANY_SECONDI_INT32,    GxB_ANY_SECONDI_INT64,
+    GxB_PLUS_SECONDI_INT32,   GxB_PLUS_SECONDI_INT64,
+    GxB_TIMES_SECONDI_INT32,  GxB_TIMES_SECONDI_INT64,
+
+    GxB_MIN_SECONDI1_INT32,   GxB_MIN_SECONDI1_INT64,
+    GxB_MAX_SECONDI1_INT32,   GxB_MAX_SECONDI1_INT64,
+    GxB_ANY_SECONDI1_INT32,   GxB_ANY_SECONDI1_INT64,
+    GxB_PLUS_SECONDI1_INT32,  GxB_PLUS_SECONDI1_INT64,
+    GxB_TIMES_SECONDI1_INT32, GxB_TIMES_SECONDI1_INT64,
+
+    GxB_MIN_SECONDJ_INT32,    GxB_MIN_SECONDJ_INT64,
+    GxB_MAX_SECONDJ_INT32,    GxB_MAX_SECONDJ_INT64,
+    GxB_ANY_SECONDJ_INT32,    GxB_ANY_SECONDJ_INT64,
+    GxB_PLUS_SECONDJ_INT32,   GxB_PLUS_SECONDJ_INT64,
+    GxB_TIMES_SECONDJ_INT32,  GxB_TIMES_SECONDJ_INT64,
+
+    GxB_MIN_SECONDJ1_INT32,   GxB_MIN_SECONDJ1_INT64,
+    GxB_MAX_SECONDJ1_INT32,   GxB_MAX_SECONDJ1_INT64,
+    GxB_ANY_SECONDJ1_INT32,   GxB_ANY_SECONDJ1_INT64,
+    GxB_PLUS_SECONDJ1_INT32,  GxB_PLUS_SECONDJ1_INT64,
+    GxB_TIMES_SECONDJ1_INT32, GxB_TIMES_SECONDJ1_INT64 ;
 
 //------------------------------------------------------------------------------
 // GrB_* semirings in the specification

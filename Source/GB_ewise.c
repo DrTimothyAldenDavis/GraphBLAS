@@ -34,7 +34,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     const bool Mask_comp,           // if true, complement the mask M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp op,          // defines '+' for C=A+B, or .* for A.*B
+    const GrB_BinaryOp op_in,       // defines '+' for C=A+B, or .* for A.*B
     const GrB_Matrix A,             // input matrix
     bool A_transpose,               // if true, use A' instead of A
     const GrB_Matrix B,             // input matrix
@@ -54,16 +54,17 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GrB_Info info ;
     GrB_Matrix MT = NULL, BT = NULL, AT = NULL, T = NULL ;
 
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_ewise", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_ewise", GB0) ;
-    ASSERT_BINARYOP_OK (op, "op for GB_ewise", GB0) ;
+    ASSERT_BINARYOP_OK (op_in, "op for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK (A, "A for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_ewise", GB0) ;
 
     // T has the same type as the output z for z=op(a,b)
+    GrB_BinaryOp op = op_in ;
     GrB_Type T_type = op->ztype ;
 
     // check domains and dimensions for C<M> = accum (C,T)
@@ -130,10 +131,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
 
-    // CSC/CSR format of T is same as C.  Conform A and B to the format of C.
+    GB_Opcode opcode = op->opcode ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
 
-    bool C_is_csc = C->is_csc ;
-    if (C_is_csc != A->is_csc)
+    // CSC/CSR format of T is same as C.  Conform A and B to the format of C.
+    bool T_is_csc = C->is_csc ;
+    if (T_is_csc != A->is_csc)
     { 
         // Flip the sense of A_transpose.  For example, if C is CSC and A is
         // CSR, and A_transpose is true, then C=A'+B is being computed.  But
@@ -141,7 +144,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         A_transpose = !A_transpose ;
     }
 
-    if (C_is_csc != B->is_csc)
+    if (T_is_csc != B->is_csc)
     { 
         // Flip the sense of B_transpose.
         B_transpose = !B_transpose ;
@@ -149,10 +152,22 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (A_transpose && B_transpose)
     { 
-        // T=A'+B' replaced with T=(A+B)'
+        // T=A'+B' is not computed.  Instead, T=A+B is computed first,
+        // and then C = T' is computed.
         A_transpose = false ;
         B_transpose = false ;
-        C_is_csc = !C_is_csc ;
+        // The CSC format of T and C now differ.
+        T_is_csc = !T_is_csc ;
+    }
+
+    if (!T_is_csc)
+    { 
+        if (op_is_positional)
+        { 
+            // positional ops must be flipped, with i and j swapped
+            op = GB_positional_binop_ijflip (op) ;
+            opcode = op->opcode ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -173,7 +188,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // to apply.
 
     // check the CSR/CSC format of M
-    bool M_is_csc = (M == NULL) ? C_is_csc : M->is_csc ;
+    bool M_is_csc = (M == NULL) ? T_is_csc : M->is_csc ;
     bool mask_applied = false ;
     GrB_Matrix M1 = NULL ;
 
@@ -190,10 +205,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             // to exploit ; use it during GB_add and GB_emult to reduce memory
             // and work.
             M1 = M ;
-            if (C_is_csc != M_is_csc)
+            if (T_is_csc != M_is_csc)
             { 
                 GBBURBLE ("(M transpose) ") ;
-                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+                GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
                     NULL, NULL, NULL, false, Context)) ;
                 M1 = MT ;
             }
@@ -223,7 +238,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // AT = A'
         // transpose: no typecast, no op, not in place
         GBBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
+        GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
     }
@@ -238,7 +253,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // BT = B'
         // transpose: no typecast, no op, not in place
         GBBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT, NULL, C_is_csc, B,
+        GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,
             NULL, NULL, NULL, false, Context)) ;
         B1 = BT ;
     }
@@ -280,16 +295,17 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (A_is_dense                          // A and B are dense
         && B_is_dense
         && (M == NULL) && !Mask_comp        // no mask
-        && (C->is_csc == C_is_csc)          // no transpose of C
+        && (C->is_csc == T_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
-        && (op->opcode < GB_USER_opcode)    // not a user-defined operator
+        && (opcode < GB_USER_opcode)        // not a user-defined operator
+        && (!op_is_positional)              // op is not positional
         )
     {
 
         if (C_is_dense                      // C is dense
         && accum == op                      // accum is same as the op
-        && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
-        && (op->opcode <= GB_RDIV_opcode))
+        && (opcode >= GB_MIN_opcode)        // subset of binary operators
+        && (opcode <= GB_RDIV_opcode))
         { 
 
             //------------------------------------------------------------------
@@ -331,12 +347,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (eWiseAdd)
     { 
-        GB_OK (GB_add (&T, T_type, C_is_csc, M1, Mask_struct, A1, B1, op,
+        GB_OK (GB_add (&T, T_type, T_is_csc, M1, Mask_struct, A1, B1, op,
             Context)) ;
     }
     else
     { 
-        GB_OK (GB_emult (&T, T_type, C_is_csc, M1, Mask_struct, A1, B1, op,
+        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, A1, B1, op,
             Context)) ;
     }
 

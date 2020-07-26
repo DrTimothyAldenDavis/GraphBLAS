@@ -15,6 +15,9 @@ rng ('default') ;
 n_operators = 0 ;
 for k2 = 1:length(ops)
     mulop = ops {k2} ;
+    if (GB_spec_is_positional (mulop))
+        continue
+    end
     fprintf ('\n%-10s ', mulop) ;
 
     for k1 = 1:length (types)

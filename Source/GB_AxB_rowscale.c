@@ -9,6 +9,7 @@
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
+#include "GB_apply.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif
@@ -35,9 +36,88 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric D*A", GB0) ;
-    ASSERT (D->vlen == D->vdim) ;
-    ASSERT (D->vlen == B->vlen) ;
+    ASSERT (D->vdim == B->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
+
+    //--------------------------------------------------------------------------
+    // get the semiring operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp mult = semiring->multiply ;
+    ASSERT (mult->ztype == semiring->add->op->ztype) ;
+    GB_Opcode opcode = mult->opcode ;
+
+    //--------------------------------------------------------------------------
+    // copy the pattern of B into C
+    //--------------------------------------------------------------------------
+
+    // allocate C->x but do not initialize it
+    (*Chandle) = NULL ;
+    info = GB_dup (Chandle, B, false, mult->ztype, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        return (info) ;
+    }
+    GrB_Matrix C = (*Chandle) ;
+
+    //--------------------------------------------------------------------------
+    // apply a positional operator: convert C=D*B to C=op(B)
+    //--------------------------------------------------------------------------
+
+    if (GB_OPCODE_IS_POSITIONAL (opcode))
+    { 
+        if (flipxy)
+        { 
+            // the multiplicatve operator is fmult(y,x), so flip the opcode
+            opcode = GB_binop_flip (opcode) ;
+        }
+        // determine unary operator to compute C=D*B
+        GrB_UnaryOp op1 = NULL ;
+        if (mult->ztype == GrB_INT64)
+        {
+            switch (opcode)
+            { 
+                // first_op(D,B) becomes position_i(B)
+                case GB_FIRSTI_opcode   :
+                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT64  ; break ;
+                case GB_FIRSTI1_opcode  :
+                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT64 ; break ;
+                // second_op(D,B) becomes position_op(B)
+                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT64  ; break ;
+                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT64  ; break ;
+                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT64 ; break ;
+                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT64 ; break ;
+                default:  ;
+            }
+        }
+        else
+        {
+            switch (opcode)
+            { 
+                // first_op(D,B) becomes position_i(B)
+                case GB_FIRSTI_opcode   :
+                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT32  ; break ;
+                case GB_FIRSTI1_opcode  :
+                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT32 ; break ;
+                // second_op(D,B) becomes position_op(B)
+                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT32  ; break ;
+                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT32  ; break ;
+                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT32 ; break ;
+                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT32 ; break ;
+                default:  ;
+            }
+        }
+        info = GB_apply_op (C->x, op1, NULL, NULL, NULL, B, Context) ;
+        if (info != GrB_SUCCESS)
+        {
+            // out of memory
+            GB_Matrix_free (Chandle) ;
+            return (info) ;
+        }
+        ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
+        return (GrB_SUCCESS) ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -47,15 +127,12 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     int nthreads = GB_nthreads (GB_NNZ (B) + B->nvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // get the semiring operators
+    // determine if the values are accessed
     //--------------------------------------------------------------------------
 
-    GrB_BinaryOp mult = semiring->multiply ;
-    ASSERT (mult->ztype == semiring->add->op->ztype) ;
-
-    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
-    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
+    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
+    bool op_is_second = (opcode == GB_SECOND_opcode) ;
+    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
     bool D_is_pattern = false ;
     bool B_is_pattern = false ;
 
@@ -80,21 +157,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             GB_Type_compatible (B->type, mult->ytype))) ;
     }
 
-    (*Chandle) = NULL ;
-
-    //--------------------------------------------------------------------------
-    // copy the pattern of B into C
-    //--------------------------------------------------------------------------
-
-    info = GB_dup (Chandle, B, false, mult->ztype, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
-
-    GrB_Matrix C = (*Chandle) ;
-
     //--------------------------------------------------------------------------
     // C = D*B, row scale, via built-in binary operators
     //--------------------------------------------------------------------------
@@ -109,23 +171,23 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         #define GB_DxB(mult,xname) GB_DxB_ ## mult ## xname
 
-        #define GB_BINOP_WORKER(mult,xname)                                   \
-        {                                                                     \
-            info = GB_DxB(mult,xname) (C, D, D_is_pattern, B, B_is_pattern,   \
-                nthreads) ;                                                   \
-            done = (info != GrB_NO_VALUE) ;                                   \
-        }                                                                     \
+        #define GB_BINOP_WORKER(mult,xname)                                  \
+        {                                                                    \
+            info = GB_DxB(mult,xname) (C, D, D_is_pattern, B, B_is_pattern,  \
+                nthreads) ;                                                  \
+            done = (info != GrB_NO_VALUE) ;                                  \
+        }                                                                    \
         break ;
 
         //----------------------------------------------------------------------
         // launch the switch factory
         //----------------------------------------------------------------------
 
-        GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
         if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
             mult, flipxy, &opcode, &xcode, &ycode, &zcode))
         { 
+            // C=D*B, rowscale with built-in operator
             #define GB_BINOP_IS_SEMIRING_MULTIPLIER
             #include "GB_binop_factory.c"
             #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
@@ -139,11 +201,12 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     if (!done)
     {
-        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of D, B, and C
         //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (C, "(generic C=D*B rowscale) ") ;
 
         GxB_binary_function fmult = mult->function ;
 
@@ -167,9 +230,9 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         if (flipxy)
         { 
             // D is typecasted to y, and B is typecasted to x
-            cast_D = D_is_pattern ? NULL : 
+            cast_D = D_is_pattern ? NULL :
                      GB_cast_factory (mult->ytype->code, D->type->code) ;
-            cast_B = B_is_pattern ? NULL : 
+            cast_B = B_is_pattern ? NULL :
                      GB_cast_factory (mult->xtype->code, B->type->code) ;
         }
         else
@@ -207,13 +270,13 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         if (flipxy)
         { 
-            #define GB_BINOP(z,x,y) fmult (z,y,x)
+            #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
             #include "GB_AxB_rowscale_meta.c"
             #undef GB_BINOP
         }
         else
         { 
-            #define GB_BINOP(z,x,y) fmult (z,x,y)
+            #define GB_BINOP(z,x,y,i,j) fmult (z,x,y)
             #include "GB_AxB_rowscale_meta.c"
             #undef GB_BINOP
         }

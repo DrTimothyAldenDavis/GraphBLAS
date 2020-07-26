@@ -37,7 +37,8 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 
     GB_CHECK_MAGIC (op, "UnaryOp") ;
 
-    if (op->opcode >= GB_USER_opcode)
+    GB_Opcode opcode = op->opcode ;
+    if (opcode >= GB_USER_opcode)
     { 
         GBPR0 ("(user-defined) ") ;
     }
@@ -48,15 +49,18 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 
     GBPR0 ("z=%s(x)\n", op->name) ;
 
-    if (op->function == NULL)
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_one = (opcode == GB_ONE_opcode) ;
+
+    if (!op_is_positional && op->function == NULL)
     { 
         GBPR0 ("    function pointer is NULL\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (op->opcode != GB_USER_opcode)
+    if (opcode != GB_USER_opcode)
     {
-        if (op->opcode < GB_ONE_opcode || op->opcode >= GB_FIRST_opcode)
+        if (opcode < GB_ONE_opcode || opcode >= GB_FIRST_opcode)
         { 
             GBPR0 ("    invalid opcode\n") ;
             return (GrB_INVALID_OBJECT) ;
@@ -72,11 +76,14 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    info = GB_Type_check (op->xtype, "xtype", pr, f) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GBPR0 ("    UnaryOP has an invalid xtype\n") ;
-        return (GrB_INVALID_OBJECT) ;
+    if (!op_is_positional && !op_is_one)
+    {
+        info = GB_Type_check (op->xtype, "xtype", pr, f) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GBPR0 ("    UnaryOP has an invalid xtype\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     return (GrB_SUCCESS) ;

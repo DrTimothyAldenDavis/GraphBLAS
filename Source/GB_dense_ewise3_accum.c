@@ -17,7 +17,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,
+    const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
     GB_Context Context
 )
 {
@@ -34,6 +34,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;
     ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
+    ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;
     ASSERT (op->ztype == A->type) ;
     ASSERT (op->ztype == B->type) ;

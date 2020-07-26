@@ -53,6 +53,14 @@ binops = {
     'bitand'
     'bitxor'
     'bitxnor'
+    'firsti'
+    'firsti1'
+    'firstj'
+    'firstj1'
+    'secondi'
+    'secondi1'
+    'secondj'
+    'secondj1'
     } ;
 
 synonyms = {

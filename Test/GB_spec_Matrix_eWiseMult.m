@@ -45,28 +45,29 @@ end
 % T = A.*B, with typecasting
 T.matrix = GB_spec_zeros (size (A.matrix), ztype) ;
 
-% apply the mult to entries in the intersection of A and B
-p = A.pattern & B.pattern ;
-% first cast the entries into the class of the operator
-A1 = GB_mex_cast (A.matrix (p), xtype) ;
-B1 = GB_mex_cast (B.matrix (p), ytype) ;
-z = GB_spec_op (mult, A1, B1) ;
+% the pattern of T is the intersection of both A and B
+T.pattern = A.pattern & B.pattern ;
 
-% assert (isequal (ztype, GB_spec_type (T.matrix))) ;
-if (~isequal (ztype, GB_spec_type (z)))
-    A1
-    B1
-    mult
-    z
-    assert (false) ;
+% apply the mult to entries in the intersection of A and B
+if (GB_spec_is_positional (mult))
+    [m, n] = size (A.matrix) ;
+    for i = 1:m
+        for j = 1:n
+            if (T.pattern (i,j))
+                T.matrix (i,j) = GB_spec_binop_positional (mult_op, i, j, i, j) ;
+            end
+        end
+    end
+else
+    p = T.pattern ;
+    % first cast the entries into the class of the operator
+    A1 = GB_mex_cast (A.matrix (p), xtype) ;
+    B1 = GB_mex_cast (B.matrix (p), ytype) ;
+    T.matrix (p) = GB_spec_op (mult, A1, B1) ;
 end
 
-% the pattern of T is the intersection of both A and B
-T.matrix (p) = z ;
-T.pattern = p ;
 T.class = ztype ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result
 C = GB_spec_accum_mask (C, Mask, accum, T, C_replace, Mask_comp, 0) ;
-
 

@@ -31,6 +31,10 @@ if (isempty (reduce))
 end
 [reduce_op reduce_class] = GB_spec_operator (reduce, aclass) ;
 
+if (GB_spec_is_positional (reduce_op))
+    error ('reduce op must not be positional') ;
+end
+
 % get the identity
 identity = GB_spec_identity (reduce_op, reduce_class) ;
 if (isempty (identity))

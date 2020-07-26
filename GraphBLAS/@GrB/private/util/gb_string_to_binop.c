@@ -10,8 +10,8 @@
 #include "gb_matlab.h"
 
 // The string has the form op_name.op_type.  For example '+.double' is the
-// GrB_PLUS_FP64 operator.  The type is optional.  If not present, it defaults
-// to the default_type parameter.
+// GrB_PLUS_FP64 operator.  The type is optional.  If not present in the
+// string, it is found by gb_default_type (atype, btype).
 
 GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 (

@@ -138,7 +138,7 @@ for k0 = 1:size (problems,1) ;
                     op = '' ;
                     ntypes = 1 ;
                 else
-                    op = binops {k3,1} ;
+                    op = binops {k3} ;
                     ntypes = length (types) ;
                 end
 
@@ -153,6 +153,10 @@ for k0 = 1:size (problems,1) ;
                     clear accum
                     accum.opname = op ;
                     accum.optype = optype ;
+
+                    if (GB_spec_is_positional (accum))
+                        continue ;
+                    end
 
                     try
                         GB_spec_operator (accum) ;

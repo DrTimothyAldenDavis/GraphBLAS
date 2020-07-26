@@ -53,6 +53,10 @@ for k1 = k1test
             accum_type = '' ;
         end
 
+        if (GB_spec_is_positional (accum))
+            continue ;
+        end
+
         try
             GB_spec_operator (accum) ;
         catch

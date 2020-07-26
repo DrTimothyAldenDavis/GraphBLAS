@@ -81,7 +81,7 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y)   \
+#define GB_BINOP(z, x, y, i, j) \
     z = GB_BITCLR (x, y, uint16_t, 16) ;
 
 // op is second
@@ -389,10 +389,10 @@ GrB_Info GB_bind2nd__bclr_uint16
 
 // cij = op (x, aij), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint16_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_BITCLR (x, aij, uint16_t, 16) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint16_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_BITCLR (x, aij, uint16_t, 16) ;        \
 }
 
 GrB_Info GB_bind1st_tran__bclr_uint16
@@ -434,10 +434,10 @@ GrB_Info GB_bind1st_tran__bclr_uint16
 
 // cij = op (aij, y), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint16_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_BITCLR (aij, y, uint16_t, 16) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint16_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_BITCLR (aij, y, uint16_t, 16) ;        \
 }
 
 GrB_Info GB_bind2nd_tran__bclr_uint16

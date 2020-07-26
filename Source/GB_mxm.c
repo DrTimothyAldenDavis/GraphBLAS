@@ -49,7 +49,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GrB_Info info ;
     GrB_Matrix T = NULL, MT = NULL ;
 
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_mxm", GB0) ;

@@ -152,7 +152,7 @@ GrB_Info GB_dense_subassign_06d
         // get operators, functions, workspace, contents of A and C
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "generic ") ;
+        GB_BURBLE_MATRIX (A, "(generic C(:,:)<A>=A assign) ") ;
 
         const size_t csize = C->type->size ;
         const size_t asize = A->type->size ;

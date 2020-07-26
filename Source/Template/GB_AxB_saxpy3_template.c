@@ -101,6 +101,7 @@
         int64_t pB     = TaskList [taskid].start ;
         int64_t pB_end = TaskList [taskid].end + 1 ;
         int64_t pleft = 0, pright = anvec-1 ;
+        int64_t j = GBH (Bh, kk) ;
 
         #if !GB_IS_ANY_PAIR_SEMIRING
         GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;

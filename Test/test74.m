@@ -5,6 +5,7 @@ function test74
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
+% mult_ops = binops.positional ;
 mult_ops = binops.all ;
 types = types.all ;
 

@@ -65,7 +65,7 @@
 #define GB_CX(p) Cx [p]
 
 // multiply operator
-#define GB_MULT(z, x, y) \
+#define GB_MULT(z, x, y, i, k, j) \
     z = x
 
 // cast from a real scalar (or 2, if C is complex) to the type of C
@@ -73,7 +73,7 @@
     ((int16_t) x)
 
 // multiply-add
-#define GB_MULTADD(z, x, y) \
+#define GB_MULTADD(z, x, y, i, k, j) \
     z += x
 
 // monoid identity value
@@ -106,16 +106,11 @@
         int16_t cij
 #endif
 
-// save the value of C(i,j)
-#define GB_CIJ_SAVE(cij,p) Cx [p] = cij
-
 // cij = Cx [pC]
-#define GB_GETC(cij,pC) \
-    cij = Cx [pC]
+#define GB_GETC(cij,p) cij = Cx [p]
 
 // Cx [pC] = cij
-#define GB_PUTC(cij,pC) \
-    Cx [pC] = cij
+#define GB_PUTC(cij,p) Cx [p] = cij
 
 // Cx [p] = t
 #define GB_CIJ_WRITE(p,t) Cx [p] = t
@@ -127,10 +122,6 @@
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
     x + y
-
-// type with size of GB_CTYPE, and can be used in compare-and-swap
-#define GB_CTYPE_PUN \
-    int16_t
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

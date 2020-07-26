@@ -120,59 +120,50 @@ for k1 = cset
                                     accum_class = '' ;
                                 end
 
+                                if (GB_spec_is_positional (accum))
+                                    continue ;
+                                end
+
                                 try
-                                    [opname optype ztype xtype ytype] = ...
-                                        GB_spec_operator (accum) ;
+                                    [opname optype ztype xtype ytype] = GB_spec_operator (accum) ;
                                 catch
                                     continue
                                 end
 
                                 % reduce matrix to scalar
-                                c = GB_mex_reduce_to_scalar ...
-                                    (cin, accum, reduce, A) ;
-                                c3 = GB_spec_reduce_to_scalar ...
-                                    (cin, accum, reduce, A) ;
+                                c  = GB_mex_reduce_to_scalar  (cin, accum, reduce, A) ;
+                                c3 = GB_spec_reduce_to_scalar (cin, accum, reduce, A) ;
                                 assert (isequal (c, c3))
 
                                 % reduce vector to scalar
-                                c = GB_mex_reduce_to_scalar ...
-                                    (cin, accum, reduce, B) ;
-                                c3 = GB_spec_reduce_to_scalar ...
-                                    (cin, accum, reduce, B) ;
+                                c  = GB_mex_reduce_to_scalar  (cin, accum, reduce, B) ;
+                                c3 = GB_spec_reduce_to_scalar (cin, accum, reduce, B) ;
                                 assert (isequal (c, c3))
 
                                 % row-wise reduce matrix to vector
 
                                 % no mask
-                                x = GB_mex_reduce_to_vector ...
-                                    (xin, [ ], accum, reduce, A, [ ]) ;
-                                x3 = GB_spec_reduce_to_vector ...
-                                    (xin, [ ], accum, reduce, A, [ ]) ;
+                                x  = GB_mex_reduce_to_vector  (xin, [ ], accum, reduce, A, [ ]) ;
+                                x3 = GB_spec_reduce_to_vector (xin, [ ], accum, reduce, A, [ ]) ;
                                 GB_spec_compare (x, x3, identity) ;
 
                                 % with mask
                                 mask = sprandn (m,1,0.3) ~= 0 ;
-                                x = GB_mex_reduce_to_vector ...
-                                    (xin, mask, accum, reduce, A, [ ]) ;
-                                x3 = GB_spec_reduce_to_vector ...
-                                    (xin, mask, accum, reduce, A, [ ]) ;
+                                x  = GB_mex_reduce_to_vector  (xin, mask, accum, reduce, A, [ ]) ;
+                                x3 = GB_spec_reduce_to_vector (xin, mask, accum, reduce, A, [ ]) ;
                                 GB_spec_compare (x, x3, identity) ;
 
                                 % col-wise reduce matrix to vector
 
                                 % no mask
-                                y = GB_mex_reduce_to_vector ...
-                                    (yin, [ ], accum, reduce, A, dt) ;
-                                y3 = GB_spec_reduce_to_vector ...
-                                    (yin, [ ], accum, reduce, A, dt) ;
+                                y  = GB_mex_reduce_to_vector  (yin, [ ], accum, reduce, A, dt) ;
+                                y3 = GB_spec_reduce_to_vector (yin, [ ], accum, reduce, A, dt) ;
                                 GB_spec_compare (y, y3, identity) ;
 
                                 % with mask
                                 mask = sprandn (n,1,0.3) ~= 0 ;
-                                y = GB_mex_reduce_to_vector ...
-                                    (yin, mask, accum, reduce, A, dt) ;
-                                y3 = GB_spec_reduce_to_vector ...
-                                    (yin, mask, accum, reduce, A, dt) ;
+                                y  = GB_mex_reduce_to_vector  (yin, mask, accum, reduce, A, dt) ;
+                                y3 = GB_spec_reduce_to_vector (yin, mask, accum, reduce, A, dt) ;
                                 GB_spec_compare (y, y3, identity) ;
 
                             end

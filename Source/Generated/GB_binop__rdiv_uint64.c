@@ -81,7 +81,7 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y)   \
+#define GB_BINOP(z, x, y, i, j) \
     z = GB_IDIV_UNSIGNED (y, x, 64) ;
 
 // op is second
@@ -389,10 +389,10 @@ GrB_Info GB_bind2nd__rdiv_uint64
 
 // cij = op (x, aij), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint64_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_IDIV_UNSIGNED (aij, x, 64) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint64_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_IDIV_UNSIGNED (aij, x, 64) ;        \
 }
 
 GrB_Info GB_bind1st_tran__rdiv_uint64
@@ -434,10 +434,10 @@ GrB_Info GB_bind1st_tran__rdiv_uint64
 
 // cij = op (aij, y), no typcasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)               \
-{                                       \
-    uint64_t aij = Ax [pA] ;              \
-    Cx [pC] = GB_IDIV_UNSIGNED (y, aij, 64) ;      \
+#define GB_CAST_OP(pC,pA)                       \
+{                                               \
+    uint64_t aij = Ax [pA] ;                      \
+    Cx [pC] = GB_IDIV_UNSIGNED (y, aij, 64) ;        \
 }
 
 GrB_Info GB_bind2nd_tran__rdiv_uint64

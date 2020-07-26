@@ -44,16 +44,25 @@ end
 
 % T = A+B, with typecasting
 T.matrix = GB_spec_zeros (size (A.matrix), ztype) ;
+p = A.pattern & B.pattern ;
 
 % apply the add to entries in the intersection of A and B
-p = A.pattern & B.pattern ;
-% first cast the entries into the class of the operator
-% note that in the spec, all three domains z=op(x,y) can be different
-% here they are assumed to all be the same
-A1 = GB_mex_cast (A.matrix (p), xtype) ;
-B1 = GB_mex_cast (B.matrix (p), ytype) ;
-z = GB_spec_op (add, A1, B1) ;
-T.matrix (p) = z ;
+if (GB_spec_is_positional (add))
+    [m, n] = size (A.matrix) ;
+    for i = 1:m
+        for j = 1:n
+            if (p (i,j))
+                T.matrix (i,j) = GB_spec_binop_positional (add_op, i, j, i, j) ;
+            end
+        end
+    end
+else
+    % cast the entries into the class of the operator
+    A1 = GB_mex_cast (A.matrix (p), xtype) ;
+    B1 = GB_mex_cast (B.matrix (p), ytype) ;
+    % apply the operator
+    T.matrix (p) = GB_spec_op (add, A1, B1) ;
+end
 
 % cast entries in A but not in B, into the result T
 p = A.pattern & ~B.pattern ;

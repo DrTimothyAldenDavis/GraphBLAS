@@ -177,92 +177,72 @@ for k1 = 1:length (types)
         % A+B
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, A, B, dnn);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, A, B, dnn);
+        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, A, B, dnn);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, A, B, dnn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseAdd ...
-            (w, [ ], [ ], op, u, v, dnn);
-        w1 = GB_mex_Vector_eWiseAdd ...
-            (w, [ ], [ ], op, u, v, dnn);
+        w0 = GB_spec_Vector_eWiseAdd (w, [ ], [ ], op, u, v, dnn);
+        w1 = GB_mex_Vector_eWiseAdd  (w, [ ], [ ], op, u, v, dnn);
         GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'+B
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, AT, B, dtn);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, AT, B, dtn);
+        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, AT, B, dtn);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, AT, B, dtn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A+B'
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, A, BT, dnt);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, A, BT, dnt);
+        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, A, BT, dnt);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, A, BT, dnt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'+B'
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, AT, BT, dtt);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, [ ], [ ], op, AT, BT, dtt);
+        C0 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, AT, BT, dtt);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, AT, BT, dtt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, A, B, dnn);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, A, B, dnn);
+        C0 = GB_spec_Matrix_eWiseMult (C, [ ], [ ], op, A, B, dnn);
+        C1 = GB_mex_Matrix_eWiseMult  (C, [ ], [ ], op, A, B, dnn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseMult ...
-            (w, [ ], [ ], op, u, v, dnn);
-        w1 = GB_mex_Vector_eWiseMult ...
-            (w, [ ], [ ], op, u, v, dnn);
+        w0 = GB_spec_Vector_eWiseMult (w, [ ], [ ], op, u, v, dnn);
+        w1 = GB_mex_Vector_eWiseMult  (w, [ ], [ ], op, u, v, dnn);
         GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, AT, B, dtn);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, AT, B, dtn);
+        C0 = GB_spec_Matrix_eWiseMult (C, [ ], [ ], op, AT, B, dtn);
+        C1 = GB_mex_Matrix_eWiseMult  (C, [ ], [ ], op, AT, B, dtn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B'
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, A, BT, dnt);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, A, BT, dnt);
+        C0 = GB_spec_Matrix_eWiseMult (C, [ ], [ ], op, A, BT, dnt);
+        C1 = GB_mex_Matrix_eWiseMult  (C, [ ], [ ], op, A, BT, dnt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B'
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, AT, BT, dtt);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, [ ], [ ], op, AT, BT, dtt);
+        C0 = GB_spec_Matrix_eWiseMult (C, [ ], [ ], op, AT, BT, dtt);
+        C1 = GB_mex_Matrix_eWiseMult  (C, [ ], [ ], op, AT, BT, dtt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %-----------------------------------------------
@@ -289,92 +269,72 @@ for k1 = 1:length (types)
         % A+B, with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, A, B, dnn);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, A, B, dnn);
+        C0 = GB_spec_Matrix_eWiseAdd (C, Mask, [ ], op, A, B, dnn);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, Mask, [ ], op, A, B, dnn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseAdd ...
-            (w, mask, [ ], op, u, v, dnn);
-        w1 = GB_mex_Vector_eWiseAdd ...
-            (w, mask, [ ], op, u, v, dnn);
+        w0 = GB_spec_Vector_eWiseAdd (w, mask, [ ], op, u, v, dnn);
+        w1 = GB_mex_Vector_eWiseAdd  (w, mask, [ ], op, u, v, dnn);
         GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'+B, with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, AT, B, dtn);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, AT, B, dtn);
+        C0 = GB_spec_Matrix_eWiseAdd (C, Mask, [ ], op, AT, B, dtn);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, Mask, [ ], op, AT, B, dtn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A+B', with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, A, BT, dnt);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, A, BT, dnt);
+        C0 = GB_spec_Matrix_eWiseAdd (C, Mask, [ ], op, A, BT, dnt);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, Mask, [ ], op, A, BT, dnt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'+B', with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, AT, BT, dtt);
-        C1 = GB_mex_Matrix_eWiseAdd ...
-            (C, Mask, [ ], op, AT, BT, dtt);
+        C0 = GB_spec_Matrix_eWiseAdd (C, Mask, [ ], op, AT, BT, dtt);
+        C1 = GB_mex_Matrix_eWiseAdd  (C, Mask, [ ], op, AT, BT, dtt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B, with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, A, B, dnn);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, A, B, dnn);
+        C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, A, B, dnn);
+        C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, A, B, dnn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseMult ...
-            (w, mask, [ ], op, u, v, dnn);
-        w1 = GB_mex_Vector_eWiseMult ...
-            (w, mask, [ ], op, u, v, dnn);
+        w0 = GB_spec_Vector_eWiseMult (w, mask, [ ], op, u, v, dnn);
+        w1 = GB_mex_Vector_eWiseMult  (w, mask, [ ], op, u, v, dnn);
         GB_spec_compare (w0, w1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B, with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, AT, B, dtn);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, AT, B, dtn);
+        C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, AT, B, dtn);
+        C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, AT, B, dtn);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A.*B', with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, A, BT, dnt);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, A, BT, dnt);
+        C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, A, BT, dnt);
+        C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, A, BT, dnt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
         %---------------------------------------
         % A'.*B', with mask
         %---------------------------------------
 
-        C0 = GB_spec_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, AT, BT, dtt);
-        C1 = GB_mex_Matrix_eWiseMult ...
-            (C, Mask, [ ], op, AT, BT, dtt);
+        C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, AT, BT, dtt);
+        C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, AT, BT, dtt);
         GB_spec_compare (C0, C1, 0, tol) ;
 
 

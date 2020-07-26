@@ -11,7 +11,7 @@ ops = { 'identity', '~', '-', '1', 'minv', 'abs',  'sqrt', 'log', ...
     'signum', 'ceil', 'floor', 'round', 'trunc', 'pow2', ...
     'expm1', 'log10', 'log1p', 'log2', 'lgamma', 'tgamma', 'erf', ...
     'erfc', 'conj', 'creal', 'cimag', 'carg', 'isinf', 'isnan', ...
-    'isinfinite', 'frexpx', 'frexpe' } ;
+    'isinfinite', 'frexpx', 'frexpe', 'i', 'i1', 'j', 'j1' } ;
 
 nops = 0 ;
 for k1 = 1:length (ops)
@@ -31,7 +31,7 @@ fprintf ('\nhelp GrB.unopinfo:\n') ;
 GrB.unopinfo ;
 
 fprintf ('number of unary ops: %d\n', nops) ;
-assert (nops == 204) ;
+assert (nops == 212) ;
 
 fprintf ('gbtest15: all tests passed\n') ;
 

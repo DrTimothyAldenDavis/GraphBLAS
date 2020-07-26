@@ -173,6 +173,24 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         else if (MATCH (opname, "ldexp"   )) { opcode = GB_LDEXP_opcode ; }
         else if (MATCH (opname, "pow"     )) { opcode = GB_POW_opcode ; }
 
+        // positional ops
+        else if (MATCH (opname, "firsti"  ) ||
+                 MATCH (opname, "1sti"    )) { opcode = GB_FIRSTI_opcode ; }
+        else if (MATCH (opname, "firsti1" ) ||
+                 MATCH (opname, "1sti1"   )) { opcode = GB_FIRSTI1_opcode ; }
+        else if (MATCH (opname, "firstj"  ) ||
+                 MATCH (opname, "1stj"    )) { opcode = GB_FIRSTJ_opcode ; }
+        else if (MATCH (opname, "firstj1" ) ||
+                 MATCH (opname, "1stj1"   )) { opcode = GB_FIRSTJ1_opcode ; }
+        else if (MATCH (opname, "secondi" ) ||
+                 MATCH (opname, "2ndi"    )) { opcode = GB_SECONDI_opcode ; }
+        else if (MATCH (opname, "secondi1") ||
+                 MATCH (opname, "2ndi1"   )) { opcode = GB_SECONDI1_opcode ; }
+        else if (MATCH (opname, "secondj" ) ||
+                 MATCH (opname, "2ndj"    )) { opcode = GB_SECONDJ_opcode ; }
+        else if (MATCH (opname, "secondj1") ||
+                 MATCH (opname, "2ndj1"   )) { opcode = GB_SECONDJ1_opcode ; }
+
         // z is complex, x and y are real
         else if (cmplx_op                  ) { opcode = GB_CMPLX_opcode ; }
 
@@ -201,6 +219,16 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         }
 
         GB_Type_code xcode = optype->code ;
+        bool is64 = (xcode == GB_INT64_code) ;
+
+        if (GB_OPCODE_IS_POSITIONAL (opcode))
+        {
+            if (! (xcode == GB_INT64_code || xcode == GB_INT32_code))
+            {
+                mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
+                return (false) ;
+            }
+        }
 
         switch (opcode)
         {
@@ -1052,6 +1080,15 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
                         return (false) ;
                 }
                 break ;
+
+            case GB_FIRSTI_opcode   : op = is64 ? GxB_FIRSTI_INT64   : GxB_FIRSTI_INT32   ; break ;
+            case GB_FIRSTI1_opcode  : op = is64 ? GxB_FIRSTI1_INT64  : GxB_FIRSTI1_INT32  ; break ;
+            case GB_FIRSTJ_opcode   : op = is64 ? GxB_FIRSTJ_INT64   : GxB_FIRSTJ_INT32   ; break ;
+            case GB_FIRSTJ1_opcode  : op = is64 ? GxB_FIRSTJ1_INT64  : GxB_FIRSTJ1_INT32  ; break ;
+            case GB_SECONDI_opcode  : op = is64 ? GxB_SECONDI_INT64  : GxB_SECONDI_INT32  ; break ;
+            case GB_SECONDI1_opcode : op = is64 ? GxB_SECONDI1_INT64 : GxB_SECONDI1_INT32 ; break ;
+            case GB_SECONDJ_opcode  : op = is64 ? GxB_SECONDJ_INT64  : GxB_SECONDJ_INT32  ; break ;
+            case GB_SECONDJ1_opcode : op = is64 ? GxB_SECONDJ1_INT64 : GxB_SECONDJ1_INT32 ; break ;
 
             default : 
                 mexWarnMsgIdAndTxt ("GB:warn","unknown binary operator") ;

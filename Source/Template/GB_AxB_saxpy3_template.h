@@ -122,11 +122,12 @@ break ;
 //------------------------------------------------------------------------------
 
 // prepare to iterate over the vector B(:,j), the (kk)th vector in B, where 
-// j == GBH (Bh, kk).  Note that j itself is never needed; just kk.
+// j == GBH (Bh, kk).
 
 #define GB_GET_B_j                                                          \
     int64_t pleft = 0 ;                                                     \
     int64_t pright = anvec-1 ;                                              \
+    int64_t j = GBH (Bh, kk) ;                                              \
     int64_t pB     = GBP (Bp, kk, bvlen) ;                                  \
     int64_t pB_end = GBP (Bp, kk+1, bvlen) ;                                \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
@@ -193,10 +194,10 @@ break ;
 #else
 
     // typical semiring
-    #define GB_MULT_A_ik_B_kj                                   \
-        GB_GETA (aik, Ax, pA) ;     /* aik = Ax [pA] ;  */      \
-        GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
-        GB_MULT (t, aik, bkj)       /* t = aik * bkj ;  */
+    #define GB_MULT_A_ik_B_kj                                       \
+        GB_GETA (aik, Ax, pA) ;         /* aik = Ax [pA] ;  */      \
+        GB_CIJ_DECLARE (t) ;            /* ctype t ;        */      \
+        GB_MULT (t, aik, bkj, i, k, j)  /* t = aik * bkj ;  */
 
 #endif
 

@@ -117,7 +117,7 @@ GrB_Info GB_subassign_05e
         default:
             {
                 // worker for all user-defined types
-                GB_BURBLE_N (mnz, "generic ") ;
+                GB_BURBLE_N (mnz, "(generic C(:,:)<M,struct>=x assign) ") ;
                 GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (pC = 0 ; pC < mnz ; pC++)

@@ -1,3 +1,4 @@
+
 --------------------------------------------------------------------------------
 BC:
 
@@ -59,7 +60,7 @@ CC:
     [ GxB_Vector_import 1.14e-06 sec ]
     [ GrB_eWiseAdd (C dense) (A dense) (B full) dense C+=A+B (sparse to full) 0.0337 sec ]
 
-    TODO: need a matrix/vector import/export that never does conversion
+TODO: need a matrix/vector import/export that never does conversion
 
 --------------------------------------------------------------------------------
 PR:
@@ -79,11 +80,10 @@ PR:
     [ GrB_apply (C full) (A full) (inplace-op) 0.0193 sec ]
     [ GrB_reduce (A full) 0.00881 sec ]
 
-TODO:
-    constant-valued matrices/vectors (for r(:)=teleport),
+TODO: constant-valued matrices/vectors (for r(:)=teleport)
     probably coupled with lazy malloc/free of A->x when converting from
     full (non-constant) to constant-valued
 
-    needs aggressive exploit of non-blocking mode, to speedup x = sum (abs (t-r))
+need aggressive exploit of non-blocking mode, to speedup x = sum (abs (t-r))
 
 

@@ -4,9 +4,6 @@ function test154
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-% C = GB_mex_apply1 (C, Mask, accum, op, how, x, A, desc)
-% C = GB_mex_apply2 (C, Mask, accum, op, how, A, y, desc)
-
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
 ops = binops.all ;
 types = types.all ;

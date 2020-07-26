@@ -58,7 +58,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     // C may be aliased with M_in and/or A_in
 
-    GB_RETURN_IF_FAULTY (accum) ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (Rows) ;
     GB_RETURN_IF_NULL (Cols) ;
 
