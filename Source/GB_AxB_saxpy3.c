@@ -86,6 +86,7 @@
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
+#include "GB_Global.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -273,6 +274,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_Context Context
 )
 {
+double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -438,6 +440,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // C is constructed as sparse, not full.
     // TODO: create methods for mxm for sparse-times-full and full-times-full
 
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (3, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     //==========================================================================
     // phase0: create parallel tasks
     //==========================================================================
@@ -451,6 +457,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
         Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (4, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
@@ -926,9 +936,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      than cvlen (otherwise, Gustavson's method is used).
     //
     //      A hash function is used for the ith entry:
-    //          hash = (i * GB_HASH_FACTOR) & (hash_size-1)
+    //          hash = GB_HASH_FUNCTION (i) ; in range 0 to hash_size-1
     //      If a collision occurs, linear probing is used:
-    //          hash = (hash + 1) & (hashsize-1)
+    //          hash = (hash + 1) & (hash_size-1)
     //
     //      (Hf [hash] == mark) is true if the position is occupied.
     //      i = Hi [hash] gives the row index i that occupies that position.
@@ -1079,8 +1089,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // phase1: symbolic analysis
     //==========================================================================
 
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (5, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
         A, B, TaskList, ntasks, nfine, nthreads) ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (6, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
@@ -1139,6 +1157,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // prune empty vectors, free workspace, and return result
     //==========================================================================
 
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (7, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;
     if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }
@@ -1146,6 +1168,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = (M != NULL) ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (8, ttt) ;
+
     return (info) ;
 }
 

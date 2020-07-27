@@ -96,6 +96,7 @@
         //----------------------------------------------------------------------
 
         int64_t kk = TaskList [taskid].vector ;
+        int team_size = TaskList [taskid].team_size ;
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t pB     = TaskList [taskid].start ;

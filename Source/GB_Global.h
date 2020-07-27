@@ -126,5 +126,12 @@ size_t   GB_Global_gpu_memorysize_get (int device) ;
 int      GB_Global_gpu_sm_get (int device) ;
 bool     GB_Global_gpu_device_properties_get (int device) ;
 
+// timing: for code development only
+GB_PUBLIC void GB_Global_timing_clear_all (void) ;
+GB_PUBLIC void GB_Global_timing_clear (int k) ;
+GB_PUBLIC void GB_Global_timing_set (int k, double t) ;
+GB_PUBLIC void GB_Global_timing_add (int k, double t) ;
+GB_PUBLIC double GB_Global_timing_get (int k) ;
+
 #endif
 

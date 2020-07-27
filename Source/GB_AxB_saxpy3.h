@@ -18,12 +18,10 @@
 // functions for the Hash method for C=A*B
 //------------------------------------------------------------------------------
 
-#define GB_HASH_FACTOR 107
-
 // initial hash function, for where to place the integer i in the hash table.
 // hash_bits is a bit mask to compute the result modulo the hash table size,
-// which is always a power of 2.
-#define GB_HASH_FUNCTION(i) ((i * GB_HASH_FACTOR) & (hash_bits))
+// which is always a power of 2.  The function is (i*17)&(hash_bits).
+#define GB_HASH_FUNCTION(i) (((i) << 4 + (i)) & (hash_bits))
 
 // rehash function, for subsequent hash lookups if the initial hash function
 // refers to a hash entry that is already occupied.  Linear probing is used,
@@ -32,13 +30,16 @@
 // the new hash value.
 #define GB_REHASH(hash,i) hash = ((hash + 1) & (hash_bits))
 
-// The hash functions and their parameters are from this paper:
+// The hash functions and their parameters are modified from this paper:
 
 // [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
 // High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
 // Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
 // Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
 // DOI:https://doi.org/10.1145/3229710.3229720
+
+// The hash function in that paper is (i*107)&(hash_bits).  Here, the term
+// 107 is replaced with 17.
 
 //------------------------------------------------------------------------------
 // GB_saxpy3task_struct: task descriptor for GB_AxB_saxpy3

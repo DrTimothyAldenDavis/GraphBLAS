@@ -163,6 +163,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GB_Global_burble_set (false) ;
+    GB_Global_timing_clear_all ( ) ;
 
     //--------------------------------------------------------------------------
     // CUDA initializations

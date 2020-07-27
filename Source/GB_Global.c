@@ -113,6 +113,11 @@ typedef struct
     // properties of each GPU:
     GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
 
+    //--------------------------------------------------------------------------
+    // timing: for code development only
+    //--------------------------------------------------------------------------
+
+    double timing [20] ;
 }
 GB_Global_struct ;
 
@@ -672,4 +677,40 @@ bool GB_Global_gpu_device_properties_get (int device)
     #endif
 }
 
+//------------------------------------------------------------------------------
+// timing: for code development only
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+void GB_Global_timing_clear_all ( )
+{
+    for (int k = 0 ; k < 20 ; k++)
+    {
+        GB_Global.timing [k] = 0 ;
+    }
+}
+
+GB_PUBLIC
+void GB_Global_timing_clear (int k)
+{
+    GB_Global.timing [k] = 0 ;
+}
+
+GB_PUBLIC
+void GB_Global_timing_set (int k, double t)
+{
+    GB_Global.timing [k] = t ;
+}
+
+GB_PUBLIC
+void GB_Global_timing_add (int k, double t)
+{
+    GB_Global.timing [k] += t ;
+}
+
+GB_PUBLIC
+double GB_Global_timing_get (int k)
+{
+    return (GB_Global.timing [k]) ;
+}
 
