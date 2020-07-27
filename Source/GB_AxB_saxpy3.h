@@ -20,8 +20,8 @@
 
 // initial hash function, for where to place the integer i in the hash table.
 // hash_bits is a bit mask to compute the result modulo the hash table size,
-// which is always a power of 2.  The function is (i*17)&(hash_bits).
-#define GB_HASH_FUNCTION(i) (((i) << 4 + (i)) & (hash_bits))
+// which is always a power of 2.  The function is (i*257) & (hash_bits).
+#define GB_HASH_FUNCTION(i) ((((i) << 8) + (i)) & (hash_bits))
 
 // rehash function, for subsequent hash lookups if the initial hash function
 // refers to a hash entry that is already occupied.  Linear probing is used,
@@ -39,7 +39,7 @@
 // DOI:https://doi.org/10.1145/3229710.3229720
 
 // The hash function in that paper is (i*107)&(hash_bits).  Here, the term
-// 107 is replaced with 17.
+// 107 is replaced with 257 to allow for a faster hash function computation.
 
 //------------------------------------------------------------------------------
 // GB_saxpy3task_struct: task descriptor for GB_AxB_saxpy3
