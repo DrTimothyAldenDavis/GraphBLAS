@@ -43,6 +43,10 @@ GrB_Info GB_subassign_13
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (S)) ;
+
     GB_GET_C ;
     const int64_t Cnvec = C->nvec ;
     const int64_t *GB_RESTRICT Ch = C->h ;

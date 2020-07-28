@@ -33,6 +33,8 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     ASSERT (J != NULL) ;
     ASSERT (A != NULL) ;
     ASSERT (nthreads >= 1) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
+    ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
 
     //--------------------------------------------------------------------------
     // get A

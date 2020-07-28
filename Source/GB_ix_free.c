@@ -57,6 +57,9 @@ void GB_ix_free                 // free A->i and A->x of a matrix
     // no zombies remain
     A->nzombies = 0 ;
 
+    // an empty matrix is not jumbled
+    A->jumbled = false ;
+
     // free the list of pending tuples
     GB_Pending_free (&(A->Pending)) ;
 }

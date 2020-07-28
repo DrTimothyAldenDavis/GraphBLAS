@@ -43,6 +43,9 @@ GrB_Info GB_subassign_07
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const int64_t *GB_RESTRICT Ch = C->h ;

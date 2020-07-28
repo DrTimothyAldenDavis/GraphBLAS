@@ -33,6 +33,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     ASSERT_MATRIX_OK (A, "A converting to hypersparse", GB0) ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A to hypersparse form

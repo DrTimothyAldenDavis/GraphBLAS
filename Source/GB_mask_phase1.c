@@ -51,9 +51,22 @@ GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rnvec_nonempty != NULL) ;
+
     ASSERT_MATRIX_OK (M, "M for mask phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+
     ASSERT_MATRIX_OK (C, "C for mask phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (C)) ; 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ; 
+
     ASSERT_MATRIX_OK (Z, "Z for mask phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (Z)) ; 
+    ASSERT (!GB_JUMBLED (Z)) ;
+    ASSERT (!GB_PENDING (Z)) ; 
+
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
 

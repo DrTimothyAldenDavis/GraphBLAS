@@ -15,6 +15,8 @@
 
 #include "GB.h"
 
+#define GB_FREE_ALL GB_phix_free (A) ;
+
 GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 (
     GrB_Matrix A,               // matrix to conform
@@ -26,8 +28,10 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_SUCCESS ;
     ASSERT_MATRIX_OK (A, "A to conform", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
@@ -37,14 +41,19 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     if (GB_IS_FULL (A))
     {
         // A is already full; nothing to do
-        ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT_MATRIX_OK (A, "A conformed: already full", GB0) ;
+        ASSERT (!GB_ZOMBIES (A)) ;
+        ASSERT (!GB_JUMBLED (A)) ;
+        ASSERT (!GB_PENDING (A)) ;
         return (GrB_SUCCESS) ;
     }
 
-    if (GB_is_dense (A) && !GB_ZOMBIES (A))
+    ASSERT (!GB_IS_FULL (A)) ;
+
+    if (GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled))
     {
         // A is sparse or hypersparse with all entries present; convert to full
+        ASSERT_MATRIX_OK (A, "A conformed: converting full", GB0) ;
         GB_sparse_to_full (A) ;
         ASSERT_MATRIX_OK (A, "A conformed: converted to full", GB0) ;
         return (GrB_SUCCESS) ;
@@ -53,8 +62,6 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     //--------------------------------------------------------------------------
     // convert to sparse or hypersparse
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_SUCCESS ;
 
     if (A->nvec_nonempty < 0)
     { 

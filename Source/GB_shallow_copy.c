@@ -34,9 +34,11 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_MATRIX_OK (A, "A for shallow cast", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for shallow copy", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
     (*Chandle) = NULL ;
 

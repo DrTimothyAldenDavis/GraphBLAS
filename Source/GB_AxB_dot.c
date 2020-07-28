@@ -69,9 +69,15 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     ASSERT_MATRIX_OK_OR_NULL (M, "M for parallel A*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for parallel A*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for parallel A*B", GB0) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_PENDING (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_PENDING (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for parallel A*B", GB0) ;
 
     int64_t naslice = 0 ;
@@ -153,6 +159,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         //----------------------------------------------------------------------
         // determine the number of threads to use
         //----------------------------------------------------------------------
+
+        // TODO: move this into GB_AxB_dot2
 
         int64_t anvec = A->nvec ;
         int64_t anz   = GB_NNZ (A) ;

@@ -183,12 +183,12 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     // delete any lingering zombies and assemble any pending tuples
     // but only in A and M, not C
-    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (M) ;        // TODO: allow M to be jumbled in some cases
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;
     if (!scalar_expansion)
     { 
-        GB_MATRIX_WAIT (A) ;
+        GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled in some cases
         GB_BURBLE_DENSE (A, "(A %s) ") ;
     }
 

@@ -50,6 +50,18 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+
+    ASSERT (!GB_ZOMBIES (A)) ; 
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ; 
+
+    ASSERT (!GB_ZOMBIES (B)) ; 
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ; 
+
     GrB_Info info ;
 
     mkl_graph_matrix_t C_mkl = NULL ;
@@ -272,6 +284,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     C->nvec = cnrows ;
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = -1 ;
+    C->jumbled = false ;    // assume MKL returns a non-jumbled matrix
 
     //--------------------------------------------------------------------------
     // prune empty vectors, free workspace, and return result

@@ -540,6 +540,9 @@
                         }
                     }
 
+                    // TODO: skip the sort if C is allowed to be jumbled on
+                    // output.  Flag C as jumbled instead.
+
                     #if defined ( GB_PHASE_2_OF_2 )
                     ASSERT (pC == pC_end) ;
                     if (!fine_task)
@@ -650,6 +653,9 @@
     //--------------------------------------------------------------------------
     // phase2: post sort for any vectors handled by fine tasks with method 10
     //--------------------------------------------------------------------------
+
+    // TODO: skip the sort if C is allowed to be jumbled on output.
+    // Flag C as jumbled instead.
 
     #if defined ( GB_PHASE_2_OF_2 )
     if (post_sort)

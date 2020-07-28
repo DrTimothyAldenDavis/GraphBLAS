@@ -53,13 +53,16 @@ GrB_Info GB_resize              // change the size of a matrix
     // only do so if either dimension is shrinking, or if pending tuples exist
     // and vdim_old <= 1 and vdim_new > 1, since in that case, Pending->j has
     // not been allocated yet, but would be required in the resized matrix.
+    // If A is jumbled, it must be sorted.
 
-    if (vdim_new < vdim_old || vlen_new < vlen_old ||
+    if (vdim_new < vdim_old || vlen_new < vlen_old || A->jumbled ||
         (GB_PENDING (A) && vdim_old <= 1 && vdim_new > 1))
     { 
         GB_MATRIX_WAIT (A) ;
         ASSERT_MATRIX_OK (A, "A to resize, wait", GB0) ;
     }
+
+    ASSERT (!GB_JUMBLED (A)) ;
 
     //--------------------------------------------------------------------------
     // check for sparsity conversion
@@ -296,6 +299,8 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
     // resize the length of each vector
     //--------------------------------------------------------------------------
+
+    // TODO allow resize selector to tolerate jumbled matrix
 
     // if vlen is shrinking, delete entries outside the new matrix
     if (vlen_new < vlen_old)

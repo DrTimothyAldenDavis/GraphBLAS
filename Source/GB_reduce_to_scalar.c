@@ -45,6 +45,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ASSERT_TYPE_OK (ctype, "type of scalar c", GB0) ;
     ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
+
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
 
     // check domains and dimensions for c = accum (c,s)
@@ -61,8 +62,12 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled
     GB_BURBLE_DENSE (A, "(A %s) ") ;
+
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // get A

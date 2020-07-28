@@ -66,6 +66,8 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
 
+    C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
+
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
     if (Ap != NULL)
     { 

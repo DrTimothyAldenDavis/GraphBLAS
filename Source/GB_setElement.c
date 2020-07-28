@@ -76,7 +76,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     }
 
     // pending tuples and zombies are expected
-    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
 
     #if GB_BURBLE
     bool burble = GB_Global_burble_get ( ) ;
@@ -84,6 +85,16 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     // do not burble when waiting on scalars or empty matrices
     burble = burble && ((C->vlen > 1) || (C->vdim > 1)) ;
     #endif
+
+    //--------------------------------------------------------------------------
+    // sort C if needed
+    //--------------------------------------------------------------------------
+
+    if (C->jumbled)
+    { 
+        // C must not be jumbled
+        GB_MATRIX_WAIT (C) ;
+    }
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format

@@ -38,10 +38,22 @@ GrB_Info GB_assign_zombie5
 {
 
     //--------------------------------------------------------------------------
-    // get Z
+    // check inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (Z)) ;
+    ASSERT (GB_ZOMBIES_OK (Z)) ;
+    ASSERT (GB_JUMBLED_OK (Z)) ;
+    ASSERT (GB_PENDING_OK (Z)) ;
+    ASSERT (!GB_IS_FULL (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
+    ASSERT (!GB_PENDING (M)) ; 
+
+    //--------------------------------------------------------------------------
+    // get Z
+    //--------------------------------------------------------------------------
+
     const int64_t *GB_RESTRICT Zh = Z->h ;
     const int64_t *GB_RESTRICT Zp = Z->p ;
     // const int64_t Znvec = Z->nvec ;

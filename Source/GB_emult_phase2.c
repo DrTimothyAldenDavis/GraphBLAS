@@ -62,12 +62,25 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     ASSERT (Cp != NULL) ;
-    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
+
     ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     ASSERT_MATRIX_OK (B, "B for emult phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
     ASSERT (A->vdim == B->vdim) ;
 
+    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     GB_Opcode opcode = op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_opcode) ;

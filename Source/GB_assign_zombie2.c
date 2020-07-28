@@ -21,10 +21,18 @@ void GB_assign_zombie2
 {
 
     //--------------------------------------------------------------------------
-    // get C
+    // check inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;      // binary search is used
+    ASSERT (GB_PENDING_OK (C)) ;
+
+    //--------------------------------------------------------------------------
+    // get C
+    //--------------------------------------------------------------------------
+
     const int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t Cnvec = C->nvec ;

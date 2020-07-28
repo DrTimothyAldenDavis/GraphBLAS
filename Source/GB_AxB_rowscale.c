@@ -31,10 +31,17 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
+
     ASSERT_MATRIX_OK (D, "D for rowscale A*D", GB0) ;
+    ASSERT (!GB_ZOMBIES (D)) ;
+    ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (!GB_PENDING (D)) ;
+
     ASSERT_MATRIX_OK (B, "B for rowscale A*D", GB0) ;
-    ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric D*A", GB0) ;
     ASSERT (D->vdim == B->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;

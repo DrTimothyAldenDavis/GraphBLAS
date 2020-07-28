@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_select_count: count entries in eacn vector for C=select(A,thunk)
+// GB_select_phase1: count entries in eacn vector for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,8 +10,10 @@
 #if defined ( GB_ENTRY_SELECTOR )
 
     //--------------------------------------------------------------------------
-    // declarations for Template/GB_reduce_each_vector.c
+    // entry selector: count via Template/GB_reduce_each_vector.c
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_JUMBLED_OK (A)) ;
 
     // The two if tests below are written so that typecasting from bool works
     // properly.  The user might import a bool array whose values are not 0 and
@@ -54,7 +56,7 @@
 #else
 
     //--------------------------------------------------------------------------
-    // get A
+    // positional selector (tril, triu, diag, offdiag, resize)
     //--------------------------------------------------------------------------
 
     const int64_t *GB_RESTRICT Ap = A->p ;
@@ -62,6 +64,7 @@
     const int64_t *GB_RESTRICT Ai = A->i ;
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
+    ASSERT (!GB_JUMBLED (A)) ;
 
     //--------------------------------------------------------------------------
     // tril, triu, diag, offdiag, resize: binary search in each vector

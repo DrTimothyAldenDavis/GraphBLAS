@@ -33,11 +33,13 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
+// TODO debug is on
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// #define GBCOMPACT 1
+// TODO compact is on
+#define GBCOMPACT 1
 
 // for code development only
 // #define GB_DEVELOPER 1
@@ -1489,6 +1491,12 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     GB_Context Context
 ) ;
 
+GrB_Info GB_unjumble        // unjumble a matrix
+(
+    GrB_Matrix A,           // matrix to unjumble
+    GB_Context Context
+) ;
+
 #define GB_FLIP(i)             (-(i)-2)
 #define GB_IS_FLIPPED(i)       ((i) < 0)
 #define GB_IS_ZOMBIE(i)        ((i) < 0)
@@ -1513,14 +1521,21 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 // true if a matrix has pending tuples or zombies
 #define GB_PENDING_OR_ZOMBIES(A) (GB_PENDING (A) || GB_ZOMBIES (A))
 
+// true if a matrix is jumbled
+#define GB_JUMBLED(A) ((A) != NULL && (A)->jumbled)
+
+// true if a matrix allowed to be jumbled
+#define GB_JUMBLED_OK(A) (GB_JUMBLED (A) || !GB_JUMBLED (A))
+
 // do all pending updates:  delete zombies and assemble any pending tuples
 #define GB_MATRIX_WAIT(A)                                               \
 {                                                                       \
-    if (GB_PENDING_OR_ZOMBIES (A))                                      \
+    if (GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A))                    \
     {                                                                   \
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
         ASSERT (!GB_ZOMBIES (A)) ;                                      \
         ASSERT (!GB_PENDING (A)) ;                                      \
+        ASSERT (!GB_JUMBLED (A)) ;                                      \
     }                                                                   \
 }
 

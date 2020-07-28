@@ -58,6 +58,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     ASSERT (A != NULL) ;
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // determine the max # of threads to use
@@ -81,10 +84,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t nzombies = A->nzombies ;
     int64_t npending = GB_Pending_n (A) ;
 
-    if (nzombies > 0 || npending > 0)
+    if (nzombies > 0 || npending > 0 || A->jumbled)
     { 
-        GB_BURBLE_MATRIX (A, "(wait: " GBd " %s, " GBd " pending) ",
-            nzombies, (nzombies == 1) ? "zombie" : "zombies", npending) ;
+        GB_BURBLE_MATRIX (A, "(wait: " GBd " %s, " GBd " pending%s) ",
+            nzombies, (nzombies == 1) ? "zombie" : "zombies", npending,
+            A->jumbled ? " jumbled" : "") ;
     }
 
     if (nzombies > 0)
@@ -107,6 +111,18 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
     // all the zombies are gone
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+
+    //--------------------------------------------------------------------------
+    // unjumble the matrix
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_unjumble (A, Context)) ;
+
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // check for pending tuples

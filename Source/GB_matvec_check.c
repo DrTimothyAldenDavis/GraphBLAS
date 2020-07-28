@@ -75,6 +75,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GBPR0 (", %s", is_hyper ? "hypersparse" : (is_sparse ? "sparse" : "full")) ;
     GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
+    if (A->jumbled)
+    { 
+        GBPR0 (" (jumbled)") ;
+    }
 
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", A->nzmax) ;
@@ -427,12 +431,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 }
             }
 
-            if (i <= ilast)
+            // If the matrix is known to be jumbled, then out-of-order
+            // indices are OK (but duplicates are not OK).  If the matrix is
+            // unjumbled, then all indices must appear in ascending order.
+            if (A->jumbled ? (i == ilast) : (i <= ilast))
             { 
                 // indices unsorted, or duplicates present
-                GBPR0 (" index (" GBd "," GBd ") jumbled\n", row, col) ;
+                GBPR0 (" index (" GBd "," GBd ") invalid\n", row, col) ;
                 return (GrB_INDEX_OUT_OF_BOUNDS) ;
-                // print_value = (!pr_silent) ;
             }
 
             if (print_value)

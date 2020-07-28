@@ -65,15 +65,12 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     ASSERT_BINARYOP_OK_OR_NULL (op, "op for add", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
-    if (M != NULL)
-    { 
-        ASSERT (A->vdim == M->vdim && A->vlen == M->vlen) ;
-    }
+    ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
-    GB_MATRIX_WAIT (B) ;
+    GB_MATRIX_WAIT (M) ;        // cannot be jumbled
+    GB_MATRIX_WAIT (A) ;        // cannot be jumbled
+    GB_MATRIX_WAIT (B) ;        // cannot be jumbled
 
     //--------------------------------------------------------------------------
     // initializations

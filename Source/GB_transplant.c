@@ -33,19 +33,17 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Matrix A = *Ahandle ;
     ASSERT (!GB_aliased (C, A)) ;
 
-    ASSERT (C != NULL) ;
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C
+    ASSERT (GB_JUMBLED_OK (A)) ;    // if A is jumbled, then C is jumbled
+    ASSERT (!GB_PENDING (A)) ;      // pending tuples may not appear in A
+
+    // C is about to be cleared, any pending work is OK
+    ASSERT (C != NULL) ;
     ASSERT_TYPE_OK (ctype, "new type for C", GB0) ;
-
-    // pending tuples may not appear in A
-    ASSERT (!GB_PENDING (A)) ;
-
-    // zombies in A can be safely transplanted into C
-    ASSERT (GB_ZOMBIES_OK (A)) ;
-
-    // C is about to be cleared, so zombies and pending tuples are OK
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
 
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
@@ -72,6 +70,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (C->nzmax == 0) ;
 
     // It is now safe to change the type, dimension, and hypersparsity of C
@@ -90,7 +89,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C->h == NULL && C->p == NULL && C->i == NULL && C->x == NULL) ;
 
     // determine if C should be constructed as a full matrix
-    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) ;
+    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled) ;
 
     //--------------------------------------------------------------------------
     // transplant A->p vector pointers and A->h hyperlist
@@ -327,6 +326,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     C->i_shallow = false ;
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
+    C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
 
     //--------------------------------------------------------------------------
     // free A and return result

@@ -104,6 +104,10 @@ GrB_Info GB_subassign_08
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;

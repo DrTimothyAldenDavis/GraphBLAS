@@ -157,35 +157,36 @@ char *logger ;          // for error logging
 
 //------------------------------------------------------------------------------
 
-// Like MATLAB, the indices in a GraphBLAS matrix (as implemented here) are
-// "always" kept sorted.  There is one temporary exception to this rule.
-// GB_subref is allowed return a matrix with unsorted vectors, if it will be
-// later be transposed by its caller.  The transpose does the sort.
+// Like MATLAB, the indices in a completed GraphBLAS matrix (as implemented
+// here) are always kept sorted.  If all vectors in a matrix have row indices
+// in strictly ascending order, the matrix is called "unjumbled" in this code.
+// A matrix with one or more unsorted vectors is "jumbled".
+
+// GraphBLAS allows for pending operations, in a matrix with pending work.
+// Pending work includes one or more of the following (1) the presence of
+// zombies, (2) pending tuples, and (3) the matrix is jumbled.
 
 // Unlike MATLAB, explicit zeros are never dropped in a GraphBLAS matrix.  They
 // cannot be since the semiring "zero" might be something else, like -Infinity
 // for a max-plus semiring.  However, dropping zeros is a minor nuance in the
 // data structure.
 
-// Like GraphBLAS, CSparse also keeps explicit zeros.  Unlike GraphBLAS,
-// CSparse allows its sparse matrices to be jumbled; its interface to MATLAB
-// always makes sure its matrices are sorted before returning them to MATLAB.
-// Allowing a matrix to remain jumbled can be faster and simpler, but it means
-// that operations such as GrB_setElement and GrB_*assign are very difficult
-// (CSparse does not provide those operations).
+// Like GraphBLAS, CSparse also keeps explicit zeros.  CSparse allows its
+// matrices to be jumbled at any time, and this is not considered an unfinished
+// matrix.
 
 // Finally, MATLAB only allows for boolean ("logical" class) and double
-// precision sparse matrices.  CSparse only supports double.  By contrast,
-// GraphBLAS supports any type, including types defined at run time by the user
-// application.  In the GraphBLAS code, the term "nonzero" is sometimes used in
-// the comments, but this is short-hand for the phrase "an entry A(i,j) whose
-// value is explicity held in the matrix and which appears in the pattern; its
-// value can be anything".  Entries not in the pattern are simply "not there";
-// see for example GrB_*_extractElement.  The actual numerical value of these
-// implicit entries is dependent upon the identity value of the semiring's
-// monoid operation used on the matrix.  The actual semiring is not held in the
-// matrix itself, and there are no restrictions on using a matrix in multiple
-// semirings.
+// precision sparse matrices (complex and real).  CSparse only supports double.
+// By contrast, GraphBLAS supports any type, including types defined at run
+// time by the user application.  In the GraphBLAS code, the term "nonzero" is
+// sometimes used in the comments, but this is short-hand for the phrase "an
+// entry A(i,j) whose value is explicity held in the matrix and which appears
+// in the pattern; its value can be anything".  Entries not in the pattern are
+// simply "not there"; see for example GrB_*_extractElement.  The actual
+// numerical value of these implicit entries is dependent upon the identity
+// value of the semiring's monoid operation used on the matrix.  The actual
+// semiring is not held in the matrix itself, and there are no restrictions on
+// using a matrix in multiple semirings.
 
 // The bool content is placed last, to reduce the size of the struct.
 
@@ -333,7 +334,19 @@ GB_Pending Pending ;        // list of pending tuples
 uint64_t nzombies ;     // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
-// shallow matrices: like MATLAB but not in CSparse
+// MKL analysis, if available
+//------------------------------------------------------------------------------
+
+void *mkl ;
+
+//------------------------------------------------------------------------------
+// boolean content
+//------------------------------------------------------------------------------
+
+// The boolean content appears last, to reduce the size of the struct
+
+//------------------------------------------------------------------------------
+// shallow matrices
 //------------------------------------------------------------------------------
 
 // Internal matrices in this implementation of GraphBLAS may have "shallow"
@@ -356,15 +369,8 @@ bool x_shallow ;        // true if x is a shallow copy
 // other bool content
 //------------------------------------------------------------------------------
 
-// The boolean content appears last, to reduce the size of the struct
-
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
-
-//------------------------------------------------------------------------------
-// MKL analysis, if available
-//------------------------------------------------------------------------------
-
-void *mkl ;
+bool jumbled ;          // true if the matrix may be jumbled
 
 //------------------------------------------------------------------------------
 // iterating through a matrix

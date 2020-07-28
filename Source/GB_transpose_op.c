@@ -57,6 +57,10 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     GrB_Info info ;
     GrB_Type Atype = A->type ;
     ASSERT (op1 != NULL || op2 != NULL) ;

@@ -202,8 +202,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;        // TODO: delay until accum/mask phase
+    GB_MATRIX_WAIT (A) ;        // TODO: could tolerate jumbled
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;

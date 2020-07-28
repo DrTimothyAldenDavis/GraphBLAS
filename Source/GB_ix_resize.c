@@ -26,6 +26,9 @@ GrB_Info GB_ix_resize           // resize a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     GrB_Info info ;
     int64_t anzmax_orig = A->nzmax ;

@@ -69,14 +69,24 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     GBBURBLE ("mask ") ;
 
     ASSERT (Rhandle != NULL) ;
+
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
+    ASSERT (!GB_PENDING (M)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+
     ASSERT_MATRIX_OK (C, "C for masker", GB0) ;
+    ASSERT (!GB_PENDING (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+
     ASSERT_MATRIX_OK (Z, "Z for masker", GB0) ;
+    ASSERT (!GB_PENDING (Z)) ;
+    ASSERT (!GB_JUMBLED (Z)) ;
+    ASSERT (!GB_ZOMBIES (Z)) ;
+
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (Z)) ; ASSERT (!GB_ZOMBIES (Z)) ;
 
     //--------------------------------------------------------------------------
     // initializations

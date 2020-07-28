@@ -173,6 +173,9 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     GB_BURBLE_DENSE (T, "(C %s) ") ;
+    ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (!GB_JUMBLED (T)) ;
+    ASSERT (!GB_PENDING (T)) ;
     return (GB_transplant_conform (C, C->type, &T, Context)) ;
 }
 

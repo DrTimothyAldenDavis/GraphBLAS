@@ -48,12 +48,21 @@ GrB_Info GB_dense_subassign_25
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_25", GB0) ;
-    ASSERT_MATRIX_OK (M, "M for subassign method_25", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
     ASSERT (GB_NNZ (C) == 0) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
+
+    ASSERT_MATRIX_OK (M, "M for subassign method_25", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
+    ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
@@ -189,6 +198,9 @@ GrB_Info GB_dense_subassign_25
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;
 }
 

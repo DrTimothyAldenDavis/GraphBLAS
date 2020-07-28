@@ -43,6 +43,20 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_ZOMBIES (c)) ;
+    ASSERT (!GB_JUMBLED (c)) ;
+    ASSERT (!GB_PENDING (c)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
     GrB_Info info ;
 
     mkl_graph_descriptor_t mkl_desc = NULL ;

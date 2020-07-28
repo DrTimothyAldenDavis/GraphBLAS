@@ -51,6 +51,10 @@ GrB_Info GB_subassign_06n
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     int64_t zorig = C->nzombies ;

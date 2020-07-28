@@ -21,7 +21,8 @@ GrB_Info GB_hypermatrix_prune
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
+    ASSERT (GB_JUMBLED_OK (A)) ;
     if (A->h == NULL)
     { 
         // nothing to do

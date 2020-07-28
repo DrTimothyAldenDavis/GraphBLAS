@@ -243,11 +243,6 @@ GB_Opcode ;
 #define GB_OP_IS_POSITIONAL(op) \
     (((op) == NULL) ? false : GB_OPCODE_IS_POSITIONAL ((op)->opcode))
 
-GB_Opcode GB_positional_opcode_ijflip   // return the flipped opcode
-(
-    GB_Opcode opcode                    // opcode to flip
-) ;
-
 GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator
 (
     GrB_UnaryOp op                      // operator to flip

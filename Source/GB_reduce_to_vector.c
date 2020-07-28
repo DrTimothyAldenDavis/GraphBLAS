@@ -144,8 +144,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;        // TODO postpone until accum/mask phase
+    GB_MATRIX_WAIT (A) ;        // TODO allow A to be jumbled
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format of A

@@ -154,6 +154,10 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
+    ASSERT (GB_JUMBLED_OK (M)) ;        // pattern not accessed
+    ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
+    ASSERT (GB_JUMBLED_OK (B)) ;        // pattern not accessed
+
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------

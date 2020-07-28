@@ -26,6 +26,9 @@ bool GB_is_diagonal             // true if A is diagonal
 
     ASSERT (A != NULL) ;
     ASSERT_MATRIX_OK (A, "A check diag", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // trivial cases
@@ -132,7 +135,11 @@ bool GB_is_diagonal             // true if A is diagonal
     // return result
     //--------------------------------------------------------------------------
 
-    if (diagonal) A->nvec_nonempty = n ;
+    if (diagonal)
+    { 
+        A->nvec_nonempty = n ;
+        A->jumbled = false ;        // a diagonal matrix is never jumbled
+    }
     return ((bool) diagonal) ;
 }
 

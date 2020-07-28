@@ -156,12 +156,18 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassigner is used, so it is not finished here.
-    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
-    ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+
+    ASSERT (GB_PENDING_OK (M)) ;
+    ASSERT (GB_ZOMBIES_OK (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
 
     // pending work in T will be finished now
     ASSERT (GB_PENDING_OK (T)) ;
     ASSERT (GB_ZOMBIES_OK (T)) ;
+    ASSERT (GB_JUMBLED_OK (T)) ;
     ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -187,12 +193,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     { 
         // transpose: no typecast, no op, in place of T, but T
         // cannot have any zombies or pending tuples.
+        // T can be jumbled.
+        ASSERT (GB_JUMBLED_OK (T)) ;
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL,
             NULL, NULL, NULL, false, Context)) ;
         #if GB_BURBLE
         T_transposed = true ;
         #endif
         T = (*Thandle) ;
+        ASSERT (!GB_JUMBLED (T)) ;
         ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
 
@@ -207,13 +216,16 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         { 
             if (GB_PENDING_OR_ZOMBIES (M))
             {
-                // remove zombies and pending tuples from M
+                // remove zombies and pending tuples from M.
+                // M can be jumbled.
                 GB_OK (GB_Matrix_wait (M, Context)) ;
             }
+            ASSERT (GB_JUMBLED_OK (M)) ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
             // use the transpose mask
             M = MT ;
+            ASSERT (!GB_JUMBLED (M)) ;
             #if GB_BURBLE
             M_transposed = true ;
             #endif
@@ -232,7 +244,12 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (C->is_csc == T->is_csc) ;
     ASSERT (M == NULL || (C->vlen == M->vlen && C->vdim == M->vdim)) ;
     ASSERT (M == NULL || (C->is_csc == M->is_csc)) ;
-    ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (!GB_PENDING (T)) ;
+    ASSERT (!GB_ZOMBIES (T)) ;
+
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
     // apply the accumulator and the mask

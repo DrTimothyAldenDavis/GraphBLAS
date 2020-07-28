@@ -41,7 +41,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // delete any lingering zombies and assemble any pending tuples
     ASSERT (A != NULL) ;
     ASSERT (p_nvals != NULL) ;
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled
     GB_BURBLE_DENSE (A, "(A %s) ") ;
     ASSERT (xcode <= GB_UDT_code) ;
 

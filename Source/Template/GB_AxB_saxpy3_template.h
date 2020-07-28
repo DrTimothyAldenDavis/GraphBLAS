@@ -28,22 +28,11 @@
     int64_t mjnz = pM_end - pM_start ;    /* nnz (M (:,j)) */
 
 //------------------------------------------------------------------------------
-// GB_GET_M_j_RANGE: get the first and last indices in M(:,j)
+// GB_GET_M_j_RANGE
 //------------------------------------------------------------------------------
 
 #define GB_GET_M_j_RANGE(gamma)                                 \
-    int64_t im_first = -1, im_last = -1 ;                       \
-    if (mjnz > 0)                                               \
-    {                                                           \
-        im_first = GBI (Mi, pM_start, mvlen) ;  /* get first M(:,j) */      \
-        im_last  = GBI (Mi, pM_end-1, mvlen) ;  /* get last M(:,j) */       \
-    }                                                           \
     int64_t mjnz_much = mjnz * gamma
-
-#if 0
-#define GB_GET_M_j_RANGE(gamma)                                 \
-    int64_t mjnz_much = mjnz * gamma
-#endif
 
 //------------------------------------------------------------------------------
 // GB_SCATTER_M_j: scatter M(:,j) for a fine or coarse Gustavson task
@@ -155,21 +144,6 @@ break ;
     GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,                \
         &pA_start, &pA_end) ;                                               \
     int64_t aknz = pA_end - pA_start ;    /* nnz (A (:,k)) */
-
-//------------------------------------------------------------------------------
-// GB_SKIP_IF_A_k_DISJOINT_WITH_M_j:  skip if A(:,k) and M(:,j) are disjoint
-//------------------------------------------------------------------------------
-
-// skip C(:,j)<M> += A(:,k)*B(k,j) if A(:,k) and M(:,j), for C<M>=A*B methods
-#define GB_SKIP_IF_A_k_DISJOINT_WITH_M_j                    \
-    if (aknz == 0) continue ;                               \
-    if (Ai != NULL)                                         \
-    {                                                       \
-        /* get first and last A(:,k) */                     \
-        int64_t alo = Ai [pA_start] ; /* ok: A is sparse */ \
-        int64_t ahi = Ai [pA_end-1] ; /* ok: A is sparse */ \
-        if (ahi < im_first || alo > im_last) continue ;     \
-    }
 
 //------------------------------------------------------------------------------
 // GB_GET_M_ij: get the numeric value of M(i,j)

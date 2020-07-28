@@ -51,10 +51,15 @@ GrB_Info GB_selector
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
     ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_opcode) ;
+
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
+    // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
+    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
+    // entry selector: jumbled OK
+    ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
     GrB_Info info ;
     if (Chandle != NULL)
@@ -66,6 +71,8 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT C_pstart_slice = NULL ;
+
+    //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     // determine the number of threads and tasks to use
@@ -95,6 +102,7 @@ GrB_Info GB_selector
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     GB_Type_code typecode = A->type->code ;
+    bool A_jumbled = A->jumbled ;
 
     //--------------------------------------------------------------------------
     // get Thunk
@@ -361,6 +369,7 @@ GrB_Info GB_selector
         A->x = Cx ; Cx = NULL ;
         A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
+        A->jumbled = A_jumbled ;
 
         if (A->nzmax == 0)
         { 
@@ -371,6 +380,11 @@ GrB_Info GB_selector
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_Matrix_wait.
         ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
+
+        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
+        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
+        // entry selector: C can be returned as jumbled
+        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
     }
     else
@@ -417,6 +431,7 @@ GrB_Info GB_selector
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
+        C->jumbled = A->jumbled ;
 
         if (C->nzmax == 0)
         { 
@@ -426,6 +441,11 @@ GrB_Info GB_selector
 
         (*Chandle) = C ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
+
+        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
+        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (C))) ;
+        // entry selector: C can be returned as jumbled
+        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (C))) ;
     }
 
     //--------------------------------------------------------------------------

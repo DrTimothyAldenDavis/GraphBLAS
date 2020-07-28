@@ -47,6 +47,11 @@ GrB_Info GB_subassign_06s
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_JUMBLED (S)) ;
+
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     GB_GET_MASK ;

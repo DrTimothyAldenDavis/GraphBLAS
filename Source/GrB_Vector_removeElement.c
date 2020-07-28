@@ -77,7 +77,30 @@ GrB_Info GrB_Vector_removeElement
 
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
 
-    // GB_ENSURE_SPARSE (V) ;
+    //--------------------------------------------------------------------------
+    // if V is jumbled, wait on the vector first
+    //--------------------------------------------------------------------------
+
+    if (V->jumbled)
+    { 
+        GrB_Info info ;
+        GB_WHERE (V, GB_WHERE_STRING) ;
+        GB_BURBLE_START ("GrB_Vector_removeElement") ;
+        GB_OK (GB_Matrix_wait ((GrB_Vector) V, Context)) ;
+        ASSERT (!GB_ZOMBIES (V)) ;
+        ASSERT (!GB_JUMBLED (V)) ;
+        ASSERT (!GB_PENDING (V)) ;
+        // remove the entry
+        info = GrB_Vector_removeElement (V, i) ;
+        GB_BURBLE_END ;
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // V is not jumbled
+    //--------------------------------------------------------------------------
+
+    // ensure V is sparse
     if (GB_IS_FULL (V))
     { 
         // convert V from full to sparse

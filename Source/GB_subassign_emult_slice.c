@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Constructs a set of tasks to compute C for GB_subassign_80, based on
-// slicing a two input matrix (A and M).  Fine tasks must also find their
+// slicing two input matricies (A and M).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
 // This method is used only by GB_subassign_08.  New zombies cannot be created,
@@ -70,6 +70,10 @@ GrB_Info GB_subassign_emult_slice
     ASSERT_MATRIX_OK (C, "C for emult_slice", GB0) ;
     ASSERT_MATRIX_OK (M, "M for emult_slice", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult_slice", GB0) ;
+
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
 
     ASSERT (p_Znvec != NULL) ;
     ASSERT (Zh_handle != NULL) ;

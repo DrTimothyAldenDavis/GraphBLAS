@@ -103,6 +103,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) subref", GB0) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;      // binary search is used
 
     // TODO: write C=A(I,J) when A is full; then C is full too
 
@@ -210,7 +212,10 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // return result
     //--------------------------------------------------------------------------
 
+    // C can be returned jumbled, even if A is not jumbled
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

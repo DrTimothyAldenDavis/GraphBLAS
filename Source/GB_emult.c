@@ -49,18 +49,25 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     GBBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
 
     ASSERT (Chandle != NULL) ;
+
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     ASSERT_MATRIX_OK (B, "B for emult phased", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phased", GB0) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
+    ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
-    if (M != NULL)
-    { 
-        ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-        ASSERT (A->vdim == M->vdim && A->vlen == M->vlen) ;
-    }
+    ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -175,6 +182,9 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 
     ASSERT_MATRIX_OK (C, "C output for emult phased", GB0) ;
     (*Chandle) = C ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;
 }
 

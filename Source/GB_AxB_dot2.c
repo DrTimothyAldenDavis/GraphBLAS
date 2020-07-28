@@ -65,9 +65,17 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot A'*B", GB0) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;    // C is jumbled if M is jumbled
+    ASSERT (!GB_PENDING (M)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
@@ -266,9 +274,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
+    C->jumbled = GB_JUMBLED (M) ;
     ASSERT_MATRIX_OK (C, "dot2: C = A'*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;        // C is jumbled if M is jumbled
+    ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;
 }
 

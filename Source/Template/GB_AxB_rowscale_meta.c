@@ -9,9 +9,21 @@
 
 // All entries in C=D*B are computed entirely in parallel. 
 
+// B and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
+// never jumbled.
+
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     // Bx is unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
+
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;
 
     //--------------------------------------------------------------------------
     // get C, D, and B

@@ -57,8 +57,20 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
 
     ASSERT (Rp != NULL) ;
     ASSERT_MATRIX_OK (M, "M for mask phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+
     ASSERT_MATRIX_OK (C, "C for mask phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (C)) ; 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ; 
+
     ASSERT_MATRIX_OK (Z, "Z for mask phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (Z)) ; 
+    ASSERT (!GB_JUMBLED (Z)) ;
+    ASSERT (!GB_PENDING (Z)) ; 
+
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
@@ -128,6 +140,9 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
 
     // caller must free R_to_M, R_to_C, and R_to_Z, but not Rp or Rh
     ASSERT_MATRIX_OK (R, "R output for mask phase2", GB0) ;
+    ASSERT (!GB_ZOMBIES (R)) ; 
+    ASSERT (!GB_JUMBLED (R)) ;
+    ASSERT (!GB_PENDING (R)) ; 
     (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }

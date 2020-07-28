@@ -37,6 +37,22 @@ void GB_AxB_saxpy3_symbolic
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+
+    ASSERT (!GB_ZOMBIES (A)) ; 
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ; 
+
+    ASSERT (!GB_ZOMBIES (B)) ; 
+    ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!GB_PENDING (B)) ; 
+
+    //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
@@ -305,7 +321,7 @@ void GB_AxB_saxpy3_symbolic
                             Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
+                        GB_GET_M_j_RANGE (64) ;
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_SCATTER_M_j (pM_start, pM_end, mark) ; // scatter Mj
@@ -314,7 +330,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            if (aknz == 0) continue ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
@@ -476,7 +492,7 @@ void GB_AxB_saxpy3_symbolic
                             Cp [kk] = 0 ;       // ok: C is sparse
                             continue ;
                         }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
+                        GB_GET_M_j_RANGE (64) ;
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_HASH_M_j ;           // hash M(:,j)
@@ -485,7 +501,7 @@ void GB_AxB_saxpy3_symbolic
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            if (aknz == 0) continue ;
                             #define GB_IKJ                                     \
                             {                                                  \
                                 for (GB_HASH (i))       /* find i in hash */   \

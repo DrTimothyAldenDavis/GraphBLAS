@@ -32,13 +32,25 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
     ASSERT_MATRIX_OK (C, "C for dense C=A+B", GB0) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;    // C is entirely overwritten by A+B
+    ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_IMPLIES (!C_is_dense, (C != A && C != B))) ;
+
+    ASSERT_MATRIX_OK (A, "A for dense C=A+B", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_is_dense (A)) ;
+
+    ASSERT_MATRIX_OK (B, "B for dense C=A+B", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
+
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;
@@ -69,8 +81,10 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     else if (!GB_IS_FULL (C))
     {
         // C is dense, but not full; convert to full
+        C->jumbled = false ;    // existing pattern is discarded
         GB_sparse_to_full (C) ;
     }
+    ASSERT (GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

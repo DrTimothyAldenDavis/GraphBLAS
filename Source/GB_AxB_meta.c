@@ -66,12 +66,26 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A_in for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for meta A*B", GB0) ;
-    ASSERT (!GB_PENDING (M_in)) ; ASSERT (!GB_ZOMBIES (M_in)) ;
-    ASSERT (!GB_PENDING (A_in)) ; ASSERT (!GB_ZOMBIES (A_in)) ;
-    ASSERT (!GB_PENDING (B_in)) ; ASSERT (!GB_ZOMBIES (B_in)) ;
+
+    ASSERT (!GB_ZOMBIES (M_in)) ;
+    ASSERT (GB_JUMBLED_OK (M_in)) ;
+    ASSERT (!GB_PENDING (M_in)) ;
+
+    ASSERT (!GB_ZOMBIES (A_in)) ;
+    ASSERT (GB_JUMBLED_OK (A_in)) ;
+    ASSERT (!GB_PENDING (A_in)) ;
+
+    ASSERT (!GB_ZOMBIES (B_in)) ;
+    ASSERT (GB_JUMBLED_OK (B_in)) ;
+    ASSERT (!GB_PENDING (B_in)) ;
+
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*B", GB0) ;
     ASSERT (mask_applied != NULL) ;
     ASSERT (Chandle != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
 
     (*Chandle) = NULL ;
     if (MT_handle != NULL)

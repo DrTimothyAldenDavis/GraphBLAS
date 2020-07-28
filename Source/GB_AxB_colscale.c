@@ -37,8 +37,12 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for colscale A*D", GB0) ;
     ASSERT_MATRIX_OK (D, "D for colscale A*D", GB0) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (D)) ;
+    ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (!GB_PENDING (D)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
@@ -73,7 +77,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     { 
         if (flipxy)
         { 
-            // the multiplicatve operator is fmult(y,x), so flip the opcode
+            // the multiplicative operator is fmult(y,x), so flip the opcode
             opcode = GB_binop_flip (opcode) ;
         }
         // determine unary operator to compute C=A*D

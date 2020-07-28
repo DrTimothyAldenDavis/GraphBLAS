@@ -31,10 +31,21 @@ void GB_assign_zombie4
 {
 
     //--------------------------------------------------------------------------
-    // get Z
+    // check inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (Z)) ;
+    ASSERT (GB_ZOMBIES_OK (Z)) ;
+    ASSERT (!GB_JUMBLED (Z)) ;      // binary search on Z
+    ASSERT (GB_PENDING_OK (Z)) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+
+    //--------------------------------------------------------------------------
+    // get Z
+    //--------------------------------------------------------------------------
+
     const int64_t *GB_RESTRICT Zh = Z->h ;
     const int64_t *GB_RESTRICT Zp = Z->p ;
     const int64_t Znvec = Z->nvec ;
@@ -67,7 +78,7 @@ void GB_assign_zombie4
     //--------------------------------------------------------------------------
 
     // The entry Z(i,j) is deleted if j is not in the J, and if M(0,j)=0 (if
-    // the mask is not complemented) or M(0.j)=1 (if the mask is complemented.
+    // the mask is not complemented) or M(0,j)=1 (if the mask is complemented.
 
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \

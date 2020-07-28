@@ -55,25 +55,26 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 
     int nfields, sparsity ;
     if (GB_is_dense (A) && !GB_IS_FULL (A))
-    {
+    { 
         // convert A to full
         GB_sparse_to_full (A) ;
     }
 
+    // TODO: replace with GxB_Matrix_Option_get (GxB_SPARSITY, &sparsity)
     if (GB_IS_FULL (A))
-    {
+    { 
         // A is full
         sparsity = GB_FULL ;
         nfields = 3 ;
     }
     else if (A->h == NULL)
-    {
+    { 
         // A is sparse
         sparsity = GB_SPARSE ;
         nfields = 5 ;
     }
     else
-    {
+    { 
         // A is hypersparse
         sparsity = GB_HYPER ;
         nfields = 6 ;

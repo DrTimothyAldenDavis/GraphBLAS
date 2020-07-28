@@ -6,8 +6,10 @@ Version 4.0.0, TODO:, 2020
         or non-polymorphic GrB_*_wait (&object) instead
     * GrB_error: now has two parameters: a string (char **) and an object
     * removed internal features: GBI iterator, slice and hyperslice matrices
-    * dense matrices and vectors
-    * positional operators and semirings
+    * dense matrices and vectors: no change to user API, except import/export
+    * positional operators and semirings: GxB_FIRSTI_INT32 and related ops
+    * jumbled matrices: sort left pending, like zombies and pending tuples
+    * TODO: modifications to import/export
 
 Version 3.3.3, July 14, 2020
 

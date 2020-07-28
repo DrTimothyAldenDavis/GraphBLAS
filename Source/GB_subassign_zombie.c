@@ -39,6 +39,9 @@ void GB_subassign_zombie
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (S)) ;
+
     ASSERT (!GB_IS_FULL (C)) ;
     int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;

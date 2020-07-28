@@ -43,6 +43,10 @@ GrB_Info GB_subassign_04
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_JUMBLED (S)) ;
+
     GB_GET_C ;
     GB_GET_A ;
     GB_GET_S ;

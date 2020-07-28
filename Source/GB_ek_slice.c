@@ -56,6 +56,8 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // get A
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_JUMBLED_OK (A)) ;    // pattern of A is not accessed
+
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
     int64_t anz = GB_NNZ (A) ;

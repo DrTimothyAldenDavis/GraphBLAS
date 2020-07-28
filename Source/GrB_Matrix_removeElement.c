@@ -101,7 +101,34 @@ GrB_Info GrB_Matrix_removeElement
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
-    // GB_ENSURE_SPARSE (C) ;
+    //--------------------------------------------------------------------------
+    // if C is jumbled, wait on the matrix first
+    //--------------------------------------------------------------------------
+
+    if (C->jumbled)
+    { 
+        GrB_Info info ;
+        GB_WHERE (C, GB_WHERE_STRING) ;
+        GB_BURBLE_START ("GrB_Matrix_removeElement") ;
+        GB_OK (GB_Matrix_wait (C, Context)) ;
+        ASSERT (!GB_ZOMBIES (C)) ;
+        ASSERT (!GB_JUMBLED (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+        // remove the entry
+        info = GrB_Matrix_removeElement (C, row, col) ;
+        GB_BURBLE_END ;
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C is not jumbled
+    //--------------------------------------------------------------------------
+
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+
+    // ensure C is sparse
     if (GB_IS_FULL (C))
     { 
         // convert C from full to sparse
@@ -168,12 +195,13 @@ GrB_Info GrB_Matrix_removeElement
         GB_BURBLE_START ("GrB_Matrix_removeElement") ;
         GB_OK (GB_Matrix_wait (C, Context)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
+        ASSERT (!GB_JUMBLED (C)) ;
         ASSERT (!GB_PENDING (C)) ;
+        // look again; remove the entry if it was a pending tuple
+        GB_removeElement (C, i, j) ;
         GB_BURBLE_END ;
     }
 
-    // look again; remove the entry if it was a pending tuple
-    GB_removeElement (C, i, j) ;
     return (GrB_SUCCESS) ;
 }
 

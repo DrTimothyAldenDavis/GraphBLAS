@@ -288,11 +288,22 @@ double ttt = omp_get_wtime ( ) ;
     (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
+    ASSERT (!GB_PENDING (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+
     ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+
     ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+
     ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
@@ -1160,6 +1171,8 @@ ttt = omp_get_wtime ( ) ;
 ttt = omp_get_wtime ( ) - ttt ;
 GB_Global_timing_add (7, ttt) ;
 ttt = omp_get_wtime ( ) ;
+
+    C->jumbled = true ; // TODO: determine if C is jumbled on output
 
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;

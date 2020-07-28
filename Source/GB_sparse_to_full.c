@@ -24,6 +24,7 @@ void GB_sparse_to_full          // convert matrix from sparse to full
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (GB_is_dense (A)) ;
     ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     GBBURBLE ("(sparse to full) ") ;
 

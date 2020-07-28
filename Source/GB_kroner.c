@@ -42,11 +42,18 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
+
     ASSERT_MATRIX_OK (A, "A for kron (A,B)", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ; 
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ; 
+
     ASSERT_MATRIX_OK (B, "B for kron (A,B)", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ; 
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ; 
+
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
 
     //--------------------------------------------------------------------------
     // get inputs

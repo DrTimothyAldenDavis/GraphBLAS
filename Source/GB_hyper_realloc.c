@@ -27,7 +27,9 @@ GrB_Info GB_hyper_realloc
     ASSERT (A != NULL) ;
     ASSERT (!A->p_shallow) ;
     ASSERT (!A->h_shallow) ;
-    ASSERT (A->p != NULL) ;
+    ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
+    ASSERT (GB_JUMBLED_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // reallocate the hyperlist

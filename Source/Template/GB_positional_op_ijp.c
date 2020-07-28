@@ -10,6 +10,8 @@
 // TODO: rename, and use #ifdef instead of offset = 0 or 1.
 // TODO: use this kernel for GrB_extractTuples, to create J array.
 
+// A can be jumbled.  If A is jumbled, so is C.
+
 {
 
     //--------------------------------------------------------------------------

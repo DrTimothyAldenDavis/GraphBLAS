@@ -37,6 +37,7 @@
     size_t  asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // workspace for first and last vectors of each slice

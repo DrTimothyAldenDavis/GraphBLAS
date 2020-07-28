@@ -99,9 +99,9 @@ double ttt = omp_get_wtime ( ) ;
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
-    GB_MATRIX_WAIT (B) ;
+    GB_MATRIX_WAIT (M) ;        // TODO allow M to be jumbled
+    GB_MATRIX_WAIT (A) ;        // TODO allow A to be jumbled
+    GB_MATRIX_WAIT (B) ;        // TODO allow B to be jumbled
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (A, "(A %s) ") ;
@@ -188,7 +188,7 @@ ttt = omp_get_wtime ( ) ;
     else
     { 
         // C<M> = accum (C,T)
-        // GB_accum_mask also conforms C to its desired hypersparsity
+        // GB_accum_mask also conforms C to its desired hypersparsity.
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Context) ;
         GB_Matrix_free (&MT) ;

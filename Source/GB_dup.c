@@ -53,7 +53,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;        // TODO: allow C and A to be jumbled
     GB_BURBLE_DENSE (A, "(A %s) ") ;
 
     //--------------------------------------------------------------------------

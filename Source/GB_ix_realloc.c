@@ -36,7 +36,9 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     ASSERT (!A->i_shallow && !A->x_shallow) ;
 
     // This function tolerates pending tuples and zombies
-    ASSERT (GB_PENDING_OK (A)) ; ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     if (nzmax > GxB_INDEX_MAX)
     { 

@@ -21,14 +21,18 @@ GrB_Info GB_to_full             // convert matrix to full; delete prior values
 
     ASSERT_MATRIX_OK (A, "A converting to full", GB0) ;
     GBBURBLE ("(to full) ") ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // free all prior content
     //--------------------------------------------------------------------------
 
     GB_phix_free (A) ;
-    ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     int64_t avdim = A->vdim ;
     int64_t avlen = A->vlen ;

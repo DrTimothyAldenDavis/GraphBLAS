@@ -35,6 +35,8 @@
 // then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
 // or at most O((log(n)^2)).
 
+// The input matrices M, A, and B cannot be jumbled.
+
 #include "GB.h"
 
 void GB_slice_vector

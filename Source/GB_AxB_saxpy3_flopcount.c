@@ -95,11 +95,20 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
     ASSERT_MATRIX_OK (A, "A for flop count A*B", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     ASSERT_MATRIX_OK (B, "B for flop count A*B", GB0) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT (A->vdim == B->vlen) ;
     ASSERT (Bflops != NULL) ;
     ASSERT (Mwork != NULL) ;
@@ -325,7 +334,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 {
                     // A(:,k) is non-empty; get first and last index of A(:,k)
                     if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen &&
-                        aknz < avlen)
+                        aknz < avlen && !(A->jumbled))
                     { 
                         // scan M(:j), and do binary search for A(i,j)
                         bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;

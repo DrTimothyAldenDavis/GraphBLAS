@@ -22,8 +22,9 @@ GrB_Info GB_full_to_sparse      // convert matrix from full to sparse
 
     ASSERT_MATRIX_OK (A, "A converting full to sparse", GB0) ;
     ASSERT (GB_IS_FULL (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     GBBURBLE ("(full to sparse) ") ;
 
     //--------------------------------------------------------------------------
@@ -82,6 +83,9 @@ GrB_Info GB_full_to_sparse      // convert matrix from full to sparse
 
     ASSERT_MATRIX_OK (A, "A converted from full to sparse", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     return (GrB_SUCCESS) ;
 }
 

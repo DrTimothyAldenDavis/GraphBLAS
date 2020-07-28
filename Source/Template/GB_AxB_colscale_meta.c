@@ -10,10 +10,21 @@
 // All entries in C=A*D are computed entirely in parallel, using the same kind
 // of parallelism as Template/GB_reduce_each_vector.c.
 
+// A and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
+// never jumbled.
+
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
     // Dx, j, and Ah are unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
+
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_JUMBLED (D)) ;
 
     //--------------------------------------------------------------------------
     // get C, A, and D

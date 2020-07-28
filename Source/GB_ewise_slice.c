@@ -59,8 +59,21 @@ GrB_Info GB_ewise_slice
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
+
     ASSERT_MATRIX_OK (A, "A for ewise_slice", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ; 
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ; 
+
     ASSERT_MATRIX_OK (B, "B for ewise_slice", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ; 
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ; 
+
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for ewise_slice", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;

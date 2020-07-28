@@ -72,7 +72,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // delete any lingering zombies and assemble any pending tuples in A and B,
     // so that cnz = nnz(A) * nnz(B) can be computed.  Updates of C and M are
     // done after this check.
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;    // TODO: could allow A and B to be jumbled
     GB_MATRIX_WAIT (B) ;
 
     // check the dimensions of C
@@ -100,7 +100,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (M) ;    // TODO: can postpone until accum/mask phase
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;

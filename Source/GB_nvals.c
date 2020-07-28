@@ -43,6 +43,7 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     // tolerated but pending tuples cannot.
 
     ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
     (*nvals) = GB_NNZ (A) - (A->nzombies) ;

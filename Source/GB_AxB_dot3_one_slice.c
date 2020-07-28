@@ -52,6 +52,11 @@ GrB_Info GB_AxB_dot3_one_slice
     ASSERT (p_nthreads != NULL) ;
     ASSERT_MATRIX_OK (M, "M for dot3_one_slice", GB0) ;
 
+    // the pattern of M is not accessed
+    ASSERT (GB_ZOMBIES_OK (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (GB_PENDING_OK (M)) ;
+
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;

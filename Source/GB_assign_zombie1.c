@@ -21,10 +21,18 @@ void GB_assign_zombie1
 {
 
     //--------------------------------------------------------------------------
-    // get C(:,j)
+    // check inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+
+    //--------------------------------------------------------------------------
+    // get C(:,j)
+    //--------------------------------------------------------------------------
+
     int64_t *GB_RESTRICT Ci = C->i ;
     int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
     GB_lookup (C->h != NULL, C->h, C->p, C->vlen, &pleft, pright, j,

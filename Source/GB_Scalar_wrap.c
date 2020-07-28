@@ -46,6 +46,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->nzmax = 1 ;
     s->Pending = NULL ;
     s->nzombies = 0 ;
+    s->jumbled = false ;
     s->p_shallow = false ;
     s->h_shallow = false ;
     s->i_shallow = false ;

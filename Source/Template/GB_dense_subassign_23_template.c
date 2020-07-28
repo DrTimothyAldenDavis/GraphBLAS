@@ -75,11 +75,14 @@
         // C += B when C is dense and B is sparse
         //----------------------------------------------------------------------
 
+        ASSERT (GB_JUMBLED_OK (B)) ;
+
         const int64_t *GB_RESTRICT Bp = B->p ;
         const int64_t *GB_RESTRICT Bh = B->h ;
         const int64_t *GB_RESTRICT Bi = B->i ;
         const int64_t bvlen = B->vlen ;
         const int64_t cvlen = C->vlen ;
+        bool B_jumbled = B->jumbled ;
 
         int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -108,7 +111,7 @@
 
                 int64_t pB_start = GBP (Bp, k, bvlen) ;
                 int64_t pB_end   = GBP (Bp, k+1, bvlen) ;
-                bool ajdense = ((pB_end - pB_start) == cvlen) ;
+                bool bjdense = ((pB_end - pB_start) == cvlen) ;
 
                 // pC points to the start of C(:,j) if C is dense
                 int64_t pC = j * cvlen ;
@@ -117,7 +120,7 @@
                 // C(:,j) += B(:,j)
                 //--------------------------------------------------------------
 
-                if (ajdense)
+                if (bjdense && !B_jumbled)
                 { 
 
                     //----------------------------------------------------------

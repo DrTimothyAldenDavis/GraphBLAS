@@ -79,6 +79,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
 
     // if op1 and op2 are NULL, then no operator is applied
 

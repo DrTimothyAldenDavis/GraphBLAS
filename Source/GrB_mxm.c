@@ -26,7 +26,6 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
                                     // and method used for C=A*B
 )
 { 
-double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -42,16 +41,6 @@ double ttt = omp_get_wtime ( ) ;
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, B_transpose, AxB_method) ;
-
-//  bool C_replace = true ;
-//  bool Mask_comp = true ;
-//  bool Mask_false = true ;
-//  bool A_transpose = true ;
-//  bool B_transpose = false ;
-//  int AxB_method = GxB_DEFAULT ;
-
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (13, ttt) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,A*B) and variations, using the mxm kernel

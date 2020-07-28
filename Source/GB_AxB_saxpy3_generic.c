@@ -36,9 +36,9 @@ GrB_Info GB_AxB_saxpy3_generic
 )
 {
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
@@ -89,9 +89,9 @@ GrB_Info GB_AxB_saxpy3_generic
                  GB_cast_factory (mult->ytype->code, B->type->code) ;
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // C = A*B via saxpy3 method, function pointers, and typecasting
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // memcpy (&(Cx [pC]), &(Hx [i]), len*csize)
     #define GB_CIJ_MEMCPY(pC,i,len) \
@@ -217,7 +217,7 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
                     #undef  GB_MULT
-                    #define GB_MULT(t, aik, bkj, i, k, j) t = (int32_t) (i + offset)
+                    #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
@@ -225,14 +225,14 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
                     #undef  GB_MULT
-                    #define GB_MULT(t, aik, bkj, i, k, j) t = (int32_t) (k + offset)
+                    #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
                     // TODO: this could be moved out of the inner loop
                     #undef  GB_MULT
-                    #define GB_MULT(t, aik, bkj, i, k, j) t = (int32_t) (j + offset)
+                    #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 default: ;

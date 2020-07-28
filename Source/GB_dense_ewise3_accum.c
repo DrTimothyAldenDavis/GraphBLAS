@@ -27,12 +27,23 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C for dense C+=A+B", GB0) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_is_dense (C)) ;
+
+    ASSERT_MATRIX_OK (A, "A for dense C+=A+B", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_is_dense (A)) ;
+
+    ASSERT_MATRIX_OK (B, "B for dense C+=A+B", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
+
     ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;
@@ -48,6 +59,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
         // convert C from sparse to full
         GB_sparse_to_full (C) ;
     }
+    ASSERT (GB_IS_FULL (C)) ;
 
     // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 

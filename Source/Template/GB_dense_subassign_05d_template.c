@@ -13,6 +13,8 @@
     // get C and M
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_JUMBLED_OK (M)) ;
+
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;

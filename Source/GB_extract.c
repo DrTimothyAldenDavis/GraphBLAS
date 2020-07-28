@@ -95,8 +95,8 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;        // cannot be jumbled
+    GB_MATRIX_WAIT (A) ;        // cannot be jumbled
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;
@@ -162,6 +162,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GrB_Matrix T ;
     GB_OK (GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
+    ASSERT (!GB_JUMBLED (T)) ;  // TODO: allow T=A(I,J) to return jumbled T
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M

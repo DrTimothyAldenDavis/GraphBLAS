@@ -103,6 +103,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     // check inputs and determine if transpose is done in place
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     bool in_place_C, in_place_A ;
 
     GrB_Matrix A, C ;
@@ -175,13 +176,30 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
 
     bool A_is_dense = GB_is_dense (A) ;
     if (in_place && A_is_dense && !GB_IS_FULL (A))
     { 
-        // convert C from sparse to full
+        // convert C from sparse to full, discarding prior pattern
         GBBURBLE ("(C=A' to full) ") ;
-        GB_sparse_to_full (C) ;
+        ASSERT (A == C) ;
+        if (C->jumbled)
+        { 
+            // cannot convert a jumbled sparse matrix to full; so sort first
+            info = GB_Matrix_wait (C, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                return (info) ;
+            }
+        }
+        else
+        {
+            GB_sparse_to_full (C) ;
+        }
+        ASSERT_MATRIX_OK (C, "A and C for inplace transpose (full)", GB0) ;
+        ASSERT (GB_IS_FULL (C)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -197,8 +215,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
 
     GrB_Type atype = A->type ;
     size_t asize = atype->size ;
@@ -350,9 +366,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             return (info) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "C transpose empty", GB0) ;
+        ASSERT (!GB_JUMBLED (*Chandle)) ;
 
     }
-    else if (avdim == 1)
+    else if (avdim == 1 && !(A->jumbled))
     {
 
         //======================================================================
@@ -362,6 +379,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // transpose a vector (avlen-by-1) into a "row" matrix (1-by-avlen).
         // A must be already sorted on input
         ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB0) ;
+        ASSERT (!GB_JUMBLED (A)) ;
 
         //----------------------------------------------------------------------
         // allocate space
@@ -748,6 +766,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         C->nzmax = anz ;
         C->magic = GB_MAGIC ;
+        ASSERT (!GB_JUMBLED (C)) ;
 
         //----------------------------------------------------------------------
         // free prior space
@@ -794,6 +813,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 NULL, NULL, 0, nthreads) ;
         }
 
+        ASSERT (!GB_JUMBLED (T)) ;
+
         //------------------------------------------------------------------
         // free prior space and transplant T into C
         //------------------------------------------------------------------
@@ -828,7 +849,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         //======================================================================
 
         ASSERT_MATRIX_OK (A, "A for GB_transpose", GB0) ;
-        ASSERT (avdim > 1 && avlen > 1) ;
 
         // T=A' with optional typecasting, or T=op(A')
 
@@ -1086,6 +1106,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
             // Transplant T in to the result C.  The matrix T is not shallow
             // and no typecasting is done, so this will always succeed.
+            ASSERT (!GB_JUMBLED (T)) ;
             info = GB_transplant (*Chandle, ctype, &T, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
 
@@ -1130,6 +1151,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
 
             ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
+            ASSERT (!GB_JUMBLED (T)) ;
 
             if (in_place_A)
             { 
@@ -1161,6 +1183,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     C = (*Chandle) ;
+    ASSERT (!GB_JUMBLED (C)) ;
 
     //--------------------------------------------------------------------------
     // apply a positional operator, after transposing the matrix

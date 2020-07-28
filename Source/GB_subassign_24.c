@@ -34,9 +34,14 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C_subassign_24", GB0) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+
     ASSERT_MATRIX_OK (A, "A for A_subassign_24", GB0) ;
-    ASSERT (GB_ZOMBIES_OK (A) && GB_PENDING_OK (A)) ;
-    ASSERT (GB_ZOMBIES_OK (C) && GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -47,6 +52,9 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
+
+    // the prior pattern of C is discarded
+    C->jumbled = false ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

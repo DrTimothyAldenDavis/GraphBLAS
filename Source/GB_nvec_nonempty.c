@@ -26,6 +26,8 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
 
     ASSERT (A != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // trivial case

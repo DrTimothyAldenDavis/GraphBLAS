@@ -16,6 +16,8 @@
 #include "GB_binop__include.h"
 #endif
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar 
 (
     GrB_Matrix C,                   // input/output matrix
@@ -32,9 +34,12 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=b", GB0) ;
-    ASSERT (scalar != NULL) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (GB_is_dense (C)) ;
+
+    ASSERT (scalar != NULL) ;
     ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
@@ -44,6 +49,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
         // convert C from sparse to full
         GB_sparse_to_full (C) ;
     }
+    ASSERT (GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // get the operator

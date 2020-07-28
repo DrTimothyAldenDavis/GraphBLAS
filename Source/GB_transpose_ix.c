@@ -38,6 +38,14 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 )
 { 
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     GrB_Info info ;
     GrB_Type ctype = C->type ;
     GB_Type_code code1 = ctype->code ;          // defines ztype

@@ -45,6 +45,11 @@ GrB_Info GB_subassign_16
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_JUMBLED (S)) ;
+
     GB_GET_C ;
     GB_GET_MASK ;
     const bool M_is_hyper = M->h != NULL ;

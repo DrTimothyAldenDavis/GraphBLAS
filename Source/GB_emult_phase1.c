@@ -48,9 +48,22 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cnvec_nonempty != NULL) ;
+
     ASSERT_MATRIX_OK (A, "A for emult phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     ASSERT_MATRIX_OK (B, "B for emult phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase1", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
     ASSERT (A->vdim == B->vdim) ;
 
     //--------------------------------------------------------------------------

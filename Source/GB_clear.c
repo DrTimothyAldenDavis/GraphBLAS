@@ -37,7 +37,9 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     ASSERT (A->magic == GB_MAGIC || A->magic == GB_MAGIC2) ;
 
     // zombies and pending tuples have no effect; about to delete them anyway
-    ASSERT (GB_PENDING_OK (A)) ; ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // clear the content of A
@@ -47,8 +49,9 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     GB_phix_free (A) ;
 
     // no more zombies or pending tuples
-    ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate new A->p and A->h components

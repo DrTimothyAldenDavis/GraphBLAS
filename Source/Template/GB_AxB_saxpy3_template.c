@@ -232,7 +232,7 @@
                 { 
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
-                    GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                    if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
 
                     #if GB_IS_ANY_MONOID
@@ -487,7 +487,7 @@
                 { 
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
-                    GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                    if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     #define GB_IKJ                                             \
                     {                                                          \
@@ -963,7 +963,7 @@
                             { 
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
-                                GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                                if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
@@ -993,7 +993,7 @@
                             { 
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
-                                GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                                if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
@@ -1221,7 +1221,7 @@
                         { 
                             int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            if (aknz == 0) continue ;
                             GB_GET_B_kj ;               // bkj = B(k,j)
                             #define GB_IKJ                                     \
                             {                                                  \

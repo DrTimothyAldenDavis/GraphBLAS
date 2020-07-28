@@ -44,8 +44,15 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // check inputs
     //--------------------------------------------------------------------------
 
+    // TODO: if A is jumbled, T will be jumbled.  That is OK, except then
+    // T cannot be sorted without changing A.
+
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
     GrB_Type ztype, op_intype = NULL ;
     GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
@@ -69,8 +76,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         }
         ztype = op2->ztype ;
     }
+
     ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
     (*Chandle) = NULL ;
 

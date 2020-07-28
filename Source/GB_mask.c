@@ -138,20 +138,23 @@ GrB_Info GB_mask                // C<M> = Z
 
     // C_result may be aliased with M
     ASSERT_MATRIX_OK (C_result, "C_result for GB_mask", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mask", GB0) ;
-
     // C may be cleared anyway, without the need for finishing it
-    ASSERT (GB_PENDING_OK (C_result)) ; ASSERT (GB_ZOMBIES_OK (C_result)) ;
+    ASSERT (GB_ZOMBIES_OK (C_result)) ;
+    ASSERT (GB_JUMBLED_OK (C_result)) ;
+    ASSERT (GB_PENDING_OK (C_result)) ;
 
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mask", GB0) ;
     // M may have zombies and pending tuples
-    ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
-
-    ASSERT (Zhandle != NULL) ;
-    GrB_Matrix Z = *Zhandle ;
+    ASSERT (GB_PENDING_OK (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (GB_ZOMBIES_OK (M)) ;
 
     // Z has the same type as C_result, with no zombies or pending tuples
+    ASSERT (Zhandle != NULL) ;
+    GrB_Matrix Z = *Zhandle ;
     ASSERT_MATRIX_OK (Z, "Z for GB_mask", GB0) ;
     ASSERT (!GB_PENDING (Z)) ;
+    ASSERT (GB_JUMBLED_OK (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
     ASSERT (Z->type == C_result->type) ;
     // Z and C_result are never aliased. C_result and M might be.
@@ -243,7 +246,8 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         // delete any lingering zombies and assemble any pending tuples
-        GB_MATRIX_WAIT (M) ;
+        GB_MATRIX_WAIT (M) ;        // also sort M if jumbled
+        GB_MATRIX_WAIT (Z) ;        // also sort Z if jumbled
 
         // R has the same CSR/CSC format as C_result.  It is hypersparse if
         // both C and Z are hypersparse.
@@ -282,12 +286,16 @@ GrB_Info GB_mask                // C<M> = Z
             C = C_result ;
 
             // delete any lingering zombies and assemble any pending tuples
-            GB_MATRIX_WAIT (C) ;
+            GB_MATRIX_WAIT (C) ;        // also sort C if jumbled
         }
 
         // no more zombies or pending tuples in M or C
-        ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-        ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
+        ASSERT (!GB_PENDING (M)) ;
+        ASSERT (!GB_JUMBLED (M)) ;
+        ASSERT (!GB_ZOMBIES (M)) ;
+        ASSERT (!GB_PENDING (C)) ;
+        ASSERT (!GB_JUMBLED (C)) ;
+        ASSERT (!GB_ZOMBIES (C)) ;
 
         // continue with C, do not use C_result until the end since it may be
         // aliased with M.

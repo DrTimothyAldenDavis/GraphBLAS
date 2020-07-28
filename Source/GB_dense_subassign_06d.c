@@ -46,11 +46,19 @@ GrB_Info GB_dense_subassign_06d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (GB_is_dense (C)) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
+
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
+    ASSERT (GB_is_dense (C)) ;
+
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+
     const GB_Type_code ccode = C->type->code ;
 
     if (!GB_IS_FULL (C))
@@ -58,6 +66,7 @@ GrB_Info GB_dense_subassign_06d
         // convert C from sparse to full
         GB_sparse_to_full (C) ;
     }
+    ASSERT (GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
@@ -84,7 +93,6 @@ GrB_Info GB_dense_subassign_06d
     // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
     // vectors may be shared with prior slices and subsequent slices.
 
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
     { 
         // out of memory

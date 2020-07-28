@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: create hard-coded versions for xsize of 1, 2, 4, 8, and 16.
+// for those, use a typecast of A_1 to uint8_t, etc.
+// Otherwise, use memcpy.
+
 #include "GB_sort.h"
 
 // returns true if A [a] < B [b]

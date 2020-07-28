@@ -44,6 +44,10 @@ GrB_Info GB_subassign_19
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (S)) ;
+
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     const int64_t *GB_RESTRICT Ch = C->h ;

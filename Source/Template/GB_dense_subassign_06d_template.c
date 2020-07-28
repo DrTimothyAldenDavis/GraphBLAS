@@ -13,6 +13,8 @@
     // get C and A
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_JUMBLED_OK (A)) ;
+
     const int64_t  *GB_RESTRICT Ap = A->p ;
     const int64_t  *GB_RESTRICT Ah = A->h ;
     const int64_t  *GB_RESTRICT Ai = A->i ;

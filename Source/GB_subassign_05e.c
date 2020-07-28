@@ -42,8 +42,10 @@ GrB_Info GB_subassign_05e
     ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
     ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;
     ASSERT (GB_NNZ (C) == 0) ;
-    ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (!GB_PENDING (M)) ;
+
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
@@ -133,7 +135,9 @@ GrB_Info GB_subassign_05e
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
+    C->jumbled = M->jumbled ;
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
     return (GrB_SUCCESS) ;
 }
 

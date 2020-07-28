@@ -113,8 +113,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     int64_t nj = nj_input ;
 
     // I and J are either the user inputs, or sorted copies
-    #define I ((I_jumbled) ? I2 : I_input)
-    #define J ((J_jumbled) ? J2 : J_input)
+    #define I ((I_unsorted_or_has_dupl) ? I2 : I_input)
+    #define J ((J_unsorted_or_has_dupl) ? J2 : J_input)
 
     // GB_subassigner cannot tolerate C==A and C==M aliasing.  A==M is OK.
     ASSERT (C != NULL) ;
@@ -128,8 +128,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // subassign tolerates both zombies and pending tuples in C, but not M or A
-    GB_MATRIX_WAIT (M) ;
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (M) ;    // TODO allow M to be jumbled
+    GB_MATRIX_WAIT (A) ;    // TODO allow A to be jumbled
 
     //--------------------------------------------------------------------------
     // check mask conditions
@@ -230,9 +230,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // duplicates are removed.  A and M are adjusted accordingly.  Removing
     // duplicates decreases the length of I and J.
 
-    bool I_jumbled = (I_unsorted || I_has_dupl) ;
-    bool J_jumbled = (J_unsorted || J_has_dupl) ;
-    bool presort = I_jumbled || J_jumbled ;
+    bool I_unsorted_or_has_dupl = (I_unsorted || I_has_dupl) ;
+    bool J_unsorted_or_has_dupl = (J_unsorted || J_has_dupl) ;
+    bool presort = I_unsorted_or_has_dupl || J_unsorted_or_has_dupl ;
 
     // This pre-sort of I and J is required for the parallel subassign.
     // Otherwise, multiple threads may attempt to modify the same part of C.
@@ -292,7 +292,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         ASSERT (Ikind == GB_LIST || Jkind == GB_LIST) ;
 
-        if (I_jumbled)
+        if (I_unsorted_or_has_dupl)
         { 
             // I2 = sort I_input and remove duplicates
             ASSERT (Ikind == GB_LIST) ;
@@ -305,7 +305,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             ASSERT (! (I_unsorted || I_has_dupl)) ;
         }
 
-        if (J_jumbled)
+        if (J_unsorted_or_has_dupl)
         { 
             // J2 = sort J_input and remove duplicates
             ASSERT (Jkind == GB_LIST) ;
@@ -322,8 +322,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         { 
             // A2 = A (I2k, J2k)
             GB_OK (GB_subref (&A2, A->is_csc, A,
-                I_jumbled ? I2k : GrB_ALL, ni,
-                J_jumbled ? J2k : GrB_ALL, nj, false, Context)) ;
+                I_unsorted_or_has_dupl ? I2k : GrB_ALL, ni,
+                J_unsorted_or_has_dupl ? J2k : GrB_ALL, nj, false, Context)) ;
             A = A2 ;
         }
 
@@ -331,8 +331,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         { 
             // M2 = M (I2k, J2k)
             GB_OK (GB_subref (&M2, M->is_csc, M,
-                I_jumbled ? I2k : GrB_ALL, ni,
-                J_jumbled ? J2k : GrB_ALL, nj, false, Context)) ;
+                I_unsorted_or_has_dupl ? I2k : GrB_ALL, ni,
+                J_unsorted_or_has_dupl ? J2k : GrB_ALL, nj, false, Context)) ;
             M = M2 ;
         }
 

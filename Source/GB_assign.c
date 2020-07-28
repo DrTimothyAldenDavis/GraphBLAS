@@ -328,13 +328,21 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // delete any lingering zombies and assemble any pending tuples
     // but only in A and M, not C
-    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (M) ;            // TODO: postpone if MT computed below
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;
     if (!scalar_expansion)
     { 
-        GB_MATRIX_WAIT (A) ;
+        GB_MATRIX_WAIT (A) ;        // TODO: postpone if AT computed below
         GB_BURBLE_DENSE (A, "(A %s) ") ;
+    }
+
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+
+    if (C->jumbled)
+    { 
+        GB_MATRIX_WAIT (C) ;
     }
 
     //--------------------------------------------------------------------------
@@ -528,6 +536,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
         }
         M = SubMask ;
+        // GB_subref can return a jumbled result
+        GB_MATRIX_WAIT (M) ;
         ASSERT_MATRIX_OK (M, "extracted submask M", GB0) ;
     }
 

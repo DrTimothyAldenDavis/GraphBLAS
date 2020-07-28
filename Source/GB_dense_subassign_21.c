@@ -31,8 +31,9 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     ASSERT_MATRIX_OK (C, "C for C(:,:)=x", GB0) ;
     ASSERT (scalar != NULL) ;
     // any prior pending tuples are discarded, and all zombies will be killed
-    ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
     ASSERT_TYPE_OK (atype, "atype for C(:,:)=x", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -104,11 +105,13 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         { 
             // quick return if the scalar is zero
             ASSERT_MATRIX_OK (C, "C(:,:)=0 output", GB0) ;
+            ASSERT (GB_IS_FULL (C)) ;
+            ASSERT (!GB_ZOMBIES (C)) ;
+            ASSERT (!GB_JUMBLED (C)) ;
+            ASSERT (!GB_PENDING (C)) ;
             return (GrB_SUCCESS) ;
         }
     }
-
-    ASSERT (GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory
@@ -167,6 +170,10 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C(:,:)=x output", GB0) ;
+    ASSERT (GB_IS_FULL (C)) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;
 }
 

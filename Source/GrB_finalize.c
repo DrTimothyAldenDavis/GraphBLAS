@@ -8,12 +8,12 @@
 //------------------------------------------------------------------------------
 
 // GrB_finalize must be called as the last GraphBLAS function, per the
-// GraphBLAS C API Specification.  Only one user thread can call this
-// function.  Results are undefined if more than one thread calls this
-// function at the same time.
+// GraphBLAS C API Specification.  Only one user thread can call this function.
+// Results are undefined if more than one thread calls this function at the
+// same time.
 
-// In the current version of SuiteSparse:GraphBLAS, this function has nothing
-// to do.
+// However, in the current version of SuiteSparse:GraphBLAS, this function has
+// nothing to do.
 
 #include "GB.h"
 

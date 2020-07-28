@@ -19,6 +19,9 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 )
 {
 
+    // TODO: add an option to export as a MATLAB matrix: full if C is
+    // dense or full, sparse otherwise.
+
     if (kind == KIND_SPARSE)
     { 
 
