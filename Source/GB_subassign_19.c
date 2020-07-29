@@ -44,9 +44,10 @@ GrB_Info GB_subassign_19
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;

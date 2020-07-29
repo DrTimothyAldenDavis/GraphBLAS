@@ -34,6 +34,47 @@ void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
     const int64_t n
 ) ;
 
+void GB_qsort_1b_size1  // GB_qsort_1b with A1 with sizeof = 1
+(
+    int64_t *GB_RESTRICT A_0,       // size n array
+    uint8_t *GB_RESTRICT A_1,       // size n array
+    const int64_t n
+) ;
+
+void GB_qsort_1b_size2  // GB_qsort_1b with A1 with sizeof = 2
+(
+    int64_t *GB_RESTRICT A_0,       // size n array
+    uint16_t *GB_RESTRICT A_1,      // size n array
+    const int64_t n
+) ;
+
+void GB_qsort_1b_size4  // GB_qsort_1b with A1 with sizeof = 4
+(
+    int64_t *GB_RESTRICT A_0,       // size n array
+    uint32_t *GB_RESTRICT A_1,      // size n array
+    const int64_t n
+) ;
+
+void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
+(
+    int64_t *GB_RESTRICT A_0,       // size n array
+    uint64_t *GB_RESTRICT A_1,      // size n array
+    const int64_t n
+) ;
+
+typedef struct
+{
+    uint8_t stuff [16] ;            // not accessed directly
+}
+GB_blob16 ;                         // sizeof (GB_blob16) is 16.
+
+void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
+(
+    int64_t *GB_RESTRICT A_0,       // size n array
+    GB_blob16 *GB_RESTRICT A_1,     // size n array
+    const int64_t n
+) ;
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
@@ -111,8 +152,7 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
 // GB_lt_1 returns true if A [a] < B [b], for GB_qsort_1a and GB_qsort_1b
 
-#define GB_lt_1(A_0, a, B_0, b)                                             \
-    (A_0 [a] < B_0 [b])
+#define GB_lt_1(A_0, a, B_0, b) (A_0 [a] < B_0 [b])
 
 //------------------------------------------------------------------------------
 // GB_lt_2: sorting comparator function, two keys

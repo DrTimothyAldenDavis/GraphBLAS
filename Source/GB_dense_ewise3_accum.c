@@ -54,12 +54,8 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (op->opcode >= GB_MIN_opcode) ;
     ASSERT (op->opcode <= GB_RDIV_opcode) ;
 
-    if (!GB_IS_FULL (C))
-    { 
-        // convert C from sparse to full
-        GB_sparse_to_full (C) ;
-    }
-    ASSERT (GB_IS_FULL (C)) ;
+    // ensure C is full
+    GB_ENSURE_FULL (C) ;
 
     // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 

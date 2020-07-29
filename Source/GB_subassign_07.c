@@ -43,8 +43,9 @@ GrB_Info GB_subassign_07
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;
+    GB_EMPTY_TASKLIST ;
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
@@ -67,7 +68,7 @@ GrB_Info GB_subassign_07
     // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_ONE_SLICE (M) ;
+    GB_SUBASSIGN_ONE_SLICE (M) ;        // requires M to not be jumbled
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

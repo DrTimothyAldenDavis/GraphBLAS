@@ -565,7 +565,7 @@
                     // Case 11 works well when I has many entries and A(:,kA)
                     // has few entries.  It requires that I be sorted on input,
                     // so that no sort is required for C(:,kC).  It is
-                    // otherwise identical to Case 9.
+                    // otherwise identical to Case 10.
 
                     ASSERT (Ikind == GB_LIST) ;
                     for (int64_t k = 0 ; k < alen ; k++)

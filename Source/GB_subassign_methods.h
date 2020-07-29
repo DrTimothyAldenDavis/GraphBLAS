@@ -28,6 +28,11 @@
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORK ;          \
+    GB_FREE (Zh) ;          \
+    GB_FREE (Z_to_X) ;      \
+    GB_FREE (Z_to_S) ;      \
+    GB_FREE (Z_to_A) ;      \
+    GB_FREE (Z_to_M) ;      \
     GB_FREE (Npending) ;    \
     GB_FREE (TaskList) ;    \
 }
@@ -1503,7 +1508,12 @@ GrB_Info GB_subassign_20
 #define GB_EMPTY_TASKLIST                                                   \
     int ntasks = 0, max_ntasks = 0, nthreads ;                              \
     GB_task_struct *TaskList = NULL ;                                       \
-    int64_t *GB_RESTRICT Npending = NULL ;
+    int64_t *GB_RESTRICT Npending = NULL ;                                  \
+    int64_t *GB_RESTRICT Zh = NULL ;                                        \
+    int64_t *GB_RESTRICT Z_to_X = NULL ;                                    \
+    int64_t *GB_RESTRICT Z_to_S = NULL ;                                    \
+    int64_t *GB_RESTRICT Z_to_A = NULL ;                                    \
+    int64_t *GB_RESTRICT Z_to_M = NULL ;
 
 //------------------------------------------------------------------------------
 // GB_ALLOCATE_NPENDING: allocate Npending workspace
@@ -1527,7 +1537,6 @@ GrB_Info GB_subassign_20
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
 
 #define GB_SUBASSIGN_ONE_SLICE(X)                                           \
-    GB_EMPTY_TASKLIST ;                                                     \
     GB_OK (GB_subassign_one_slice (                                         \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
@@ -1545,11 +1554,7 @@ GrB_Info GB_subassign_20
 // via binary search.
 
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
-    GB_EMPTY_TASKLIST ;                                                     \
     int64_t Znvec ;                                                         \
-    int64_t *GB_RESTRICT Zh = NULL ;                                           \
-    int64_t *GB_RESTRICT Z_to_X = NULL ;                                       \
-    int64_t *GB_RESTRICT Z_to_S = NULL ;                                       \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL,                          \
         NULL, X, S, Context)) ;                                             \
@@ -1558,13 +1563,6 @@ GrB_Info GB_subassign_20
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
         NULL, X, S, Context)) ;                                             \
     GB_ALLOCATE_NPENDING ;
-
-#define GB_FREE_TWO_SLICE                                                   \
-{                                                                           \
-    GB_FREE (Zh) ;                                                          \
-    GB_FREE (Z_to_X) ;                                                      \
-    GB_FREE (Z_to_S) ;                                                      \
-}
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_EMULT_SLICE: slice A.*M (just Method 08)
@@ -1576,23 +1574,13 @@ GrB_Info GB_subassign_20
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
 
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
-    GB_EMPTY_TASKLIST ;                                                     \
     int64_t Znvec ;                                                         \
-    const int64_t *GB_RESTRICT Zh = NULL ;                                  \
-    int64_t *GB_RESTRICT Z_to_A = NULL ;                                    \
-    int64_t *GB_RESTRICT Z_to_M = NULL ;                                    \
     GB_OK (GB_subassign_emult_slice (                                       \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         &Znvec, &Zh, &Z_to_A, &Z_to_M,                                      \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         A, M, Context)) ;                                                   \
     GB_ALLOCATE_NPENDING ;
-
-#define GB_FREE_EMULT_SLICE                                                 \
-{                                                                           \
-    GB_FREE (Z_to_A) ;                                                      \
-    GB_FREE (Z_to_M) ;                                                      \
-}
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_IXJ_SLICE: slice IxJ for a scalar assignement method
@@ -1602,7 +1590,6 @@ GrB_Info GB_subassign_20
 // via S, not via binary search.
 
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
-    GB_EMPTY_TASKLIST ;                                                     \
     GB_OK (GB_subassign_IxJ_slice (                                         \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                         \

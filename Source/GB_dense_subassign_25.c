@@ -19,6 +19,8 @@
 
 // FULL: C remains sparse
 
+// M may be jumbled.  If so, C is constructed as jumbled.
+
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #ifndef GBCOMPACT

@@ -16,8 +16,6 @@
 // A:           scalar
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_TWO_SLICE
-
 #include "GB_unused.h"
 #include "GB_subassign_methods.h"
 
@@ -46,9 +44,10 @@ GrB_Info GB_subassign_09
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;

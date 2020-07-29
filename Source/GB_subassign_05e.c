@@ -42,6 +42,8 @@ GrB_Info GB_subassign_05e
     ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
     ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;
     ASSERT (GB_NNZ (C) == 0) ;
+
+    // M can be jumbled, in which case C is jumbled on output 
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;

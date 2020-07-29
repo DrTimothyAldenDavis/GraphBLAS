@@ -179,7 +179,7 @@ int main (int argc, char **argv)
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
-    // OK (GxB_set (GxB_BURBLE, true)) ;
+    OK (GxB_set (GxB_BURBLE, false)) ;
     fprintf (stderr, "\nmis_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------

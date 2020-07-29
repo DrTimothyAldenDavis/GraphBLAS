@@ -16,8 +16,6 @@
 // A:           matrix
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_TWO_SLICE
-
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_04
@@ -43,9 +41,10 @@ GrB_Info GB_subassign_04
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_GET_C ;
     GB_GET_A ;

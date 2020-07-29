@@ -44,7 +44,7 @@ GrB_Info GB_assign_zombie5
     ASSERT (!GB_IS_FULL (Z)) ;
     ASSERT (GB_ZOMBIES_OK (Z)) ;
     ASSERT (GB_JUMBLED_OK (Z)) ;
-    ASSERT (GB_PENDING_OK (Z)) ;
+    ASSERT (!GB_PENDING (Z)) ;
     ASSERT (!GB_IS_FULL (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M

@@ -38,8 +38,15 @@ GrB_Info GB_unjumble        // unjumble a matrix
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_NNZ (A) ;
     const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    int64_t *GB_RESTRICT Ai = A->i ;
     const size_t asize = A->type->size ;
+
+    GB_void   *Ax   = (GB_void *) A->x ;
+    uint8_t   *Ax1  = (uint8_t *) A->x ;
+    uint16_t  *Ax2  = (uint16_t *) A->x ;
+    uint32_t  *Ax4  = (uint32_t *) A->x ;
+    uint64_t  *Ax8  = (uint64_t *) A->x ;
+    GB_blob16 *Ax16 = (GB_blob16 *) A->x ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -66,54 +73,50 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // sort the vectors
     //--------------------------------------------------------------------------
 
-    int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (tid = 0 ; tid < ntasks ; tid++)
-    {
+    switch (asize)
+    { 
+        case 1:
+            // GrB_BOOL, GrB_UINT8, GrB_INT8, and user defined types of size 1
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b_size1 (Ai+pA_start, Ax1+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
 
-        //----------------------------------------------------------------------
-        // get the task description
-        //----------------------------------------------------------------------
+        case 2:
+            // GrB_UINT16, GrB_INT16, and user-defined types of size 2
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b_size2 (Ai+pA_start, Ax2+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
 
-        int64_t kfirst = A_slice [tid] ;
-        int64_t klast  = A_slice [tid+1] ;
+        case 4:
+            // GrB_UINT32, GrB_INT32, GrB_FP32, and user-defined types of size 4
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b_size4 (Ai+pA_start, Ax4+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
 
-        //----------------------------------------------------------------------
-        // sort vectors kfirst to klast
-        //----------------------------------------------------------------------
+        case 8:
+            // GrB_UINT64, GrB_INT64, GrB_FP64, GxB_FC32, and user-defined
+            // types of size 8
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b_size8 (Ai+pA_start, Ax8+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
 
-        for (int64_t k = kfirst ; k < klast ; k++)
-        {
+        case 16:
+            // GxB_FC64, and user-defined types of size 16
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b_size16 (Ai+pA_start, Ax16+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
 
-            //------------------------------------------------------------------
-            // check if the vector needs sorting
-            //------------------------------------------------------------------
-
-            bool jumbled = false ;
-            int64_t pA_start = Ap [k] ;     // ok: A is sparse
-            int64_t pA_end   = Ap [k+1] ;
-            int64_t ilast = -1 ;
-            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-            {
-                int64_t i = Ai [pA] ;       // ok: A is sparse
-                if (i < ilast)
-                { 
-                    jumbled = true ;
-                    break ;
-                }
-                ilast = i ;
-            }
-
-            //------------------------------------------------------------------
-            // sort the vector
-            //------------------------------------------------------------------
-
-            if (jumbled)
-            { 
-                GB_qsort_1b (A->i + pA_start, A->x + pA_start*asize, asize,
-                    pA_end - pA_start) ;
-            }
-        }
+        default:
+            // user-defined types of arbitrary size
+            #define GB_QSORT_WORKER \
+                GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
     }
 
     //--------------------------------------------------------------------------

@@ -25,13 +25,6 @@
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
 #include "GB_unused.h"
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_EMULT_SLICE ;       \
-    GB_FREE (TaskList) ;        \
-}
-
 GrB_Info GB_subassign_emult_slice
 (
     // output:
@@ -63,6 +56,7 @@ GrB_Info GB_subassign_emult_slice
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
@@ -89,8 +83,6 @@ GrB_Info GB_subassign_emult_slice
     (*Zh_handle    ) = NULL ;
     (*Z_to_A_handle) = NULL ;
     (*Z_to_M_handle) = NULL ;
-
-    GB_EMPTY_TASKLIST ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -123,9 +115,6 @@ GrB_Info GB_subassign_emult_slice
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
-    const int64_t *GB_RESTRICT Zh = NULL ;
-    int64_t *GB_RESTRICT Z_to_A = NULL ;
-    int64_t *GB_RESTRICT Z_to_M = NULL ;
 
     GB_OK (GB_emult_phase0 (
         &Znvec, &Zh, NULL, &Z_to_A, &Z_to_M,

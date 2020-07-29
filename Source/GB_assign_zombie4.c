@@ -37,7 +37,7 @@ void GB_assign_zombie4
     ASSERT (!GB_IS_FULL (Z)) ;
     ASSERT (GB_ZOMBIES_OK (Z)) ;
     ASSERT (!GB_JUMBLED (Z)) ;      // binary search on Z
-    ASSERT (GB_PENDING_OK (Z)) ;
+    ASSERT (!GB_PENDING (Z)) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ; 

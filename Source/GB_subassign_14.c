@@ -18,8 +18,6 @@
 
 // FULL TODO: kernel: C(I,J)<!M>=A when A and C are both dense
 
-#define GB_FREE_WORK GB_FREE_TWO_SLICE
-
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_14
@@ -46,10 +44,11 @@ GrB_Info GB_subassign_14
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;

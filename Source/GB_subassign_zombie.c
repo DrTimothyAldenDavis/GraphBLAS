@@ -39,7 +39,9 @@ void GB_subassign_zombie
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_JUMBLED_OK (C)) ;
+    // C and S can be jumbled, but when GB_subref constructs S=C(I,J), it
+    // sorts C.  S may be returned as jumbled, however, which is OK here.
+    ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;
 
     ASSERT (!GB_IS_FULL (C)) ;

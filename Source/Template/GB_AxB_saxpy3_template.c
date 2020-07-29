@@ -20,6 +20,8 @@
 
 {
 
+double ttt = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // get the chunk size
     //--------------------------------------------------------------------------
@@ -50,6 +52,7 @@
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -674,12 +677,20 @@
         }
     }
 
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (9, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     //==========================================================================
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
     int64_t cjnz_max = GB_AxB_saxpy3_cumsum (C, TaskList,
         nfine, chunk, nthreads) ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (10, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
@@ -724,7 +735,13 @@
 
     #endif
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (11, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
+    bool C_jumbled = false ;
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(||:C_jumbled)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -776,6 +793,10 @@
                     #if !GB_IS_ANY_PAIR_SEMIRING
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
+
+                    // TODO: if C is a single vector, skip the memcpy of
+                    // Hx into Cx.  Instead, free C->x and transplant
+                    // C->x = Hx, and do not free Hx.
                     #endif
                 }
                 else
@@ -786,9 +807,7 @@
                     {
                         if (Hf [i] == 2)
                         { 
-                            #if !GB_IS_ANY_PAIR_SEMIRING
                             GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
-                            #endif
                             Ci [pC++] = i ;         // ok: C is sparse
                         }
                     }
@@ -816,9 +835,13 @@
                     if ((hf & 3) == 2)
                     { 
                         int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash
-                        Ci [pC++] = i ;         // ok: C is sparse
+                        Ci [pC] = i ;               // ok: C is sparse
+                        // added after deleting phase 6:
+                        GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx [hash]
+                        pC++ ;
                     }
                 }
+                C_jumbled = true ;
             }
 
         }
@@ -1376,81 +1399,15 @@
         }
     }
 
-    //==========================================================================
-    // phase6: final gather phase for fine hash tasks
-    //==========================================================================
+    //--------------------------------------------------------------------------
+    // log the state of C->jumbled
+    //--------------------------------------------------------------------------
 
-    if (cjnz_max > 0)
-    {
-        int64_t *GB_RESTRICT W = NULL ;
-        int nthreads_msort = GB_MSORT_NTHREADS (nthreads) ;
-        if (cjnz_max <= GB_BASECASE) nthreads_msort = 1 ;
-        if (nthreads_msort > 1)
-        {
-            // allocate workspace for parallel mergesort
-            W = GB_MALLOC (cjnz_max, int64_t) ;
-            if (W == NULL)
-            { 
-                // out of memory
-                return (GrB_OUT_OF_MEMORY) ;
-            }
-        }
+    C->jumbled = C_jumbled ;
 
-        for (taskid = 0 ; taskid < nfine ; taskid++)
-        {
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            if (!use_Gustavson && taskid == TaskList [taskid].master)
-            {
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (12, ttt) ;
 
-                //--------------------------------------------------------------
-                // phase6: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
-                // and the index i of the entry is (Hf [hash] >> 2) - 1.
-
-                int64_t kk = TaskList [taskid].vector ;
-                int64_t hash_bits = (hash_size-1) ;
-                int64_t  *GB_RESTRICT
-                    Hf = (int64_t  *GB_RESTRICT) TaskList [taskid].Hf ;
-                int64_t cjnz = Cp [kk+1] - Cp [kk] ;        // ok: C is sparse
-
-                // sort the pattern of C(:,j)
-                int nth = GB_nthreads (cjnz, chunk, nthreads_msort) ;
-                GB_msort_1 (Ci + Cp [kk], W, cjnz, nth) ;   // ok: C is sparse
-
-                #if !GB_IS_ANY_PAIR_SEMIRING
-
-                    GB_CTYPE *GB_RESTRICT Hx =
-                        (GB_CTYPE *) TaskList [taskid].Hx ;
-                    // gather the values of C(:,j)
-                    int64_t pC ;
-                    #pragma omp parallel for num_threads(nth) schedule(static)
-                    for (pC = Cp [kk] ; pC < Cp [kk+1] ; pC++) // ok: C sparse
-                    {
-                        // get C(i,j)
-                        int64_t i = Ci [pC] ;   // ok: C is sparse
-                        int64_t i1 = i + 1 ;
-                        for (GB_HASH (i))       // find i in hash table
-                        {
-                            int64_t hf = Hf [hash] ;
-                            if ((hf & 3) == 2 && (hf >> 2) == i1)
-                            { 
-                                // found i in the hash table
-                                GB_CIJ_GATHER (pC, hash) ; // Cx[pC] = Hx[hash]
-                                break ;
-                            }
-                        }
-                    }
-
-                #endif
-            }
-        }
-
-        // free workspace
-        GB_FREE (W) ;
-    }
 }
 
 #undef Cx

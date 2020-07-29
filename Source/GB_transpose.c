@@ -42,6 +42,8 @@
     GB_FREE (Count) ;   \
 }                       \
 
+#define GB_FREE_ALL ;
+
 // free prior content of A, if transpose is done in place
 #define GB_FREE_IN_PLACE_A                                                  \
 {                                                                           \
@@ -174,6 +176,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
+
+    // wait if A has pending tuples or zombies, but leave it jumbled
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -184,22 +189,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // convert C from sparse to full, discarding prior pattern
         GBBURBLE ("(C=A' to full) ") ;
         ASSERT (A == C) ;
-        if (C->jumbled)
-        { 
-            // cannot convert a jumbled sparse matrix to full; so sort first
-            info = GB_Matrix_wait (C, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                return (info) ;
-            }
-        }
-        else
-        {
-            GB_sparse_to_full (C) ;
-        }
+        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+        GB_ENSURE_FULL (C) ;
         ASSERT_MATRIX_OK (C, "A and C for inplace transpose (full)", GB0) ;
-        ASSERT (GB_IS_FULL (C)) ;
     }
 
     //--------------------------------------------------------------------------

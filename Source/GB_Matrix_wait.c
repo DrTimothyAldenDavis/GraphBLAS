@@ -88,7 +88,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     { 
         GB_BURBLE_MATRIX (A, "(wait: " GBd " %s, " GBd " pending%s) ",
             nzombies, (nzombies == 1) ? "zombie" : "zombies", npending,
-            A->jumbled ? " jumbled" : "") ;
+            A->jumbled ? ", jumbled" : "") ;
     }
 
     if (nzombies > 0)
@@ -179,6 +179,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         Context
     ) ;
 
+    ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (!GB_JUMBLED (T)) ;
+    ASSERT (!GB_PENDING (T)) ;
+
     //--------------------------------------------------------------------------
     // free pending tuples
     //--------------------------------------------------------------------------
@@ -197,8 +201,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // free the list of pending tuples
     GB_Pending_free (&(A->Pending)) ;
 
-    ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     // No pending operations on A
     ASSERT_MATRIX_OK (A, "A after moving pending tuples to T", GB0) ;

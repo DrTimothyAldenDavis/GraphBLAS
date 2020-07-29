@@ -10,6 +10,13 @@
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
 
+// TODO: if C is a single vector computed via fine hash tasks only, skip this
+// step.  Instead, allocate C->x and C->i as the upper bound (same as the hash
+// table size).  Use atomic increment to grab a slot to place a single entry in
+// C->i in phase 2.  Then in phase 5, iterate across C->i and gather from the
+// hash table.  For the ANY monoid, phase 5 can be skipped, if the first
+// value is placed in C->x in phase 2.
+
 #include "GB_AxB_saxpy3.h"
 
 int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks

@@ -16,8 +16,6 @@
 // A:           matrix
 // S:           none
 
-#define GB_FREE_WORK GB_FREE_EMULT_SLICE
-
 #include "GB_subassign_methods.h"
 
 //------------------------------------------------------------------------------
@@ -104,9 +102,10 @@ GrB_Info GB_subassign_08
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
+    GB_EMPTY_TASKLIST ;
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_GET_C ;
     int64_t zorig = C->nzombies ;

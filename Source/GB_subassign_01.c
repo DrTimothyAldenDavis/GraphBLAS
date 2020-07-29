@@ -41,8 +41,9 @@ GrB_Info GB_subassign_01
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
 
     GB_GET_C ;
     const int64_t *GB_RESTRICT Ch = C->h ;

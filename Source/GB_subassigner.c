@@ -128,8 +128,20 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // subassign tolerates both zombies and pending tuples in C, but not M or A
-    GB_MATRIX_WAIT (M) ;    // TODO allow M to be jumbled
-    GB_MATRIX_WAIT (A) ;    // TODO allow A to be jumbled
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+
+    GB_BURBLE_DENSE (M, "(subassign: M %s) ") ;
+    GB_BURBLE_DENSE (A, "(subassign: A %s) ") ;
+
+    // some kernels allow for M and A to be jumbled
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+
+    // C can have any kind of pending work
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // check mask conditions
@@ -197,10 +209,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     int64_t cvlen = C->vlen ;
     int64_t cvdim = C->vdim ;
 
-    // the matrix C may have pending tuples and/or zombies
-    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
-    ASSERT (scalar_code <= GB_UDT_code) ;
-
     //--------------------------------------------------------------------------
     // determine the length and kind of I and J, and check their properties
     //--------------------------------------------------------------------------
@@ -245,8 +253,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     // A side benefit of this pre-sort is that it ensures that the results of
     // GrB_assign and GxB_subassign are completely defined if I and J have
-    // duplicates.  The definition of this pre-sort is given in the M-file
-    // below.
+    // duplicates.  The definition of this pre-sort is given in MATLAB below.
 
     /*
         function C = subassign (C, I, J, A)
@@ -324,6 +331,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GB_OK (GB_subref (&A2, A->is_csc, A,
                 I_unsorted_or_has_dupl ? I2k : GrB_ALL, ni,
                 J_unsorted_or_has_dupl ? J2k : GrB_ALL, nj, false, Context)) ;
+            // GB_subref can return a jumbled result
+            ASSERT (GB_JUMBLED_OK (A2)) ;
             A = A2 ;
         }
 
@@ -333,6 +342,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GB_OK (GB_subref (&M2, M->is_csc, M,
                 I_unsorted_or_has_dupl ? I2k : GrB_ALL, ni,
                 J_unsorted_or_has_dupl ? J2k : GrB_ALL, nj, false, Context)) ;
+            // GB_subref can return a jumbled result
+            ASSERT (GB_JUMBLED_OK (M2)) ;
             M = M2 ;
         }
 
@@ -366,6 +377,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // The input is a scalar; the matrix A is not present.  Scalar
         // expansion results in an implicit dense matrix A whose type is
         // defined by the scalar_code.
+        ASSERT (scalar_code <= GB_UDT_code) ;
         ASSERT (A == NULL) ;
         ASSERT (scalar != NULL) ;
         anz = mn ;
@@ -384,15 +396,21 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // A is an nI-by-nJ matrix, with no pending computations
         ASSERT_MATRIX_OK (A, "A for subassign kernel", GB0) ;
         ASSERT (nI == A->vlen && nJ == A->vdim) ;
-        ASSERT (!GB_PENDING (A)) ;   ASSERT (!GB_ZOMBIES (A)) ;
+        ASSERT (!GB_PENDING (A)) ;
+        ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (scalar == NULL) ;
         anz = GB_NNZ (A) ;
         A_is_dense = (mn_ok && anz == (int64_t) mn) ;
+        if (A_is_dense)
+        { 
+            // methods that rely on A being dense assume A is not jumbled
+            GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+        }
         atype = A->type ;
     }
 
     //--------------------------------------------------------------------------
-    // check the size of the mask
+    // check the size and status of the mask M
     //--------------------------------------------------------------------------
 
     // For subassignment, the mask must be |I|-by-|J|
@@ -401,7 +419,10 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     { 
         // M can have no pending tuples nor zombies
         ASSERT_MATRIX_OK (M, "M for subassign kernel", GB0) ;
-        ASSERT (!GB_PENDING (M)) ;  ASSERT (!GB_ZOMBIES (M)) ;
+        ASSERT (!GB_PENDING (M)) ;
+        ASSERT (!GB_ZOMBIES (M)) ;
+        // some kernels allow for M to be jumbled
+        ASSERT (GB_JUMBLED_OK (M)) ;
         ASSERT (nI == M->vlen && nJ == M->vdim) ;
     }
 
@@ -638,7 +659,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
         ASSERT_MATRIX_OK (C, "C before wait", GB0) ;
-        GB_OK (GB_Matrix_wait (C, Context)) ;
+        GB_MATRIX_WAIT (C) ;
     }
 
     ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;
@@ -710,6 +731,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     { 
         // C is dense or full
         GB_BURBLE_DENSE (C, "(subassign: C %s) ") ;
+        // convert C to full, if not full already
+        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
         if (whole_C_matrix && no_mask && (accum != NULL)
             && (C->type == accum->ztype) && (C->type == accum->xtype))
         { 
@@ -820,11 +843,20 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // FUTURE:: the properties of I and J are already known, and thus do
         // not need to be recomputed by GB_subref.
 
-        // S and C have the same CSR/CSC format.  S is always returned sorted,
+        // S and C have the same CSR/CSC format.  S can be jumbled.  It is in
         // in the same hypersparse form as C (unless S is empty, in which case
         // it is always returned as hypersparse). This also checks I and J.
-
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, Context)) ;
+
+        // GB_subref can return a jumbled S.  Some methods can tolerate
+        // a jumbled .
+        ASSERT (GB_JUMBLED_OK (S)) ;
+
+        // GB_subref sorts its input matrix, so C is no longer jumbled
+        // if S is constructed.
+        ASSERT (!GB_JUMBLED (C)) ;
+
+        // All methods that use S can now assume C and S are not jumbled.
 
         //----------------------------------------------------------------------
         // check the result of S=C(I,J)

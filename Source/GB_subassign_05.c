@@ -42,8 +42,9 @@ GrB_Info GB_subassign_05
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_GET_C ;
     int64_t zorig = C->nzombies ;

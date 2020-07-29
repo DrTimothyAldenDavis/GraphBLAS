@@ -142,21 +142,32 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
+    // M, A, and B can be jumbled for this phase, but not phase1 or phase2
+
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
-    ASSERT_MATRIX_OK (A, "A for add phase0", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for add phase0", GB0) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase0", GB0) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;        // pattern not accessed
+    ASSERT (!GB_PENDING (M)) ;
+
+    ASSERT_MATRIX_OK (A, "A for add phase0", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;        // pattern not accessed
+    ASSERT (!GB_PENDING (A)) ;
+
+    ASSERT_MATRIX_OK (B, "B for add phase0", GB0) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
+    ASSERT (!GB_PENDING (B)) ;
+
     ASSERT (A->vdim == B->vdim) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
-
-    ASSERT (GB_JUMBLED_OK (M)) ;        // pattern not accessed
-    ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
-    ASSERT (GB_JUMBLED_OK (B)) ;        // pattern not accessed
 
     //--------------------------------------------------------------------------
     // initializations

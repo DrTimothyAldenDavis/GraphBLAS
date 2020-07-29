@@ -51,9 +51,10 @@ GrB_Info GB_subassign_06n
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
+    GB_EMPTY_TASKLIST ;
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
@@ -87,7 +88,7 @@ GrB_Info GB_subassign_06n
     // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_ONE_SLICE (M) ;
+    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled 
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

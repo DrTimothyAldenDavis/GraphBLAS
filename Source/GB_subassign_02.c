@@ -20,8 +20,6 @@
 // If A and C are both dense: write a kernel for that case.
 // FULL TODO: kernel: C(I,J)=A kernel when C and A are dense; do not build S
 
-#define GB_FREE_WORK GB_FREE_TWO_SLICE
-
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_02
@@ -46,9 +44,10 @@ GrB_Info GB_subassign_02
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_JUMBLED (S)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;

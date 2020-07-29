@@ -1172,8 +1172,6 @@ ttt = omp_get_wtime ( ) - ttt ;
 GB_Global_timing_add (7, ttt) ;
 ttt = omp_get_wtime ( ) ;
 
-    C->jumbled = true ; // TODO: determine if C is jumbled on output
-
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;
     if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }

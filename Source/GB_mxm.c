@@ -98,10 +98,9 @@ double ttt = omp_get_wtime ( ) ;
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;        // TODO allow M to be jumbled
-    GB_MATRIX_WAIT (A) ;        // TODO allow A to be jumbled
-    GB_MATRIX_WAIT (B) ;        // TODO allow B to be jumbled
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (A, "(A %s) ") ;
@@ -143,6 +142,7 @@ ttt = omp_get_wtime ( ) ;
     ASSERT_MATRIX_OK (T, "T=A*B from GB_AxB_meta", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (MT, "MT from GB_AxB_meta", GB0) ;
     ASSERT (GB_ZOMBIES_OK (T)) ;
+    ASSERT (GB_JUMBLED_OK (T)) ;
     ASSERT (!GB_PENDING (T)) ;
 
     //--------------------------------------------------------------------------

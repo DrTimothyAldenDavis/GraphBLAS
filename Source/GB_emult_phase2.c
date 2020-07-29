@@ -188,7 +188,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     if (!done)
     { 
-        GB_BURBLE_MATRIX (C, "(generic emult %s) ", op->name) ;
+        GB_BURBLE_MATRIX (C, "(generic emult: %s) ", op->name) ;
 
         GxB_binary_function fmult ;
         size_t csize, asize, bsize, xsize, ysize, zsize ;

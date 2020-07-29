@@ -43,12 +43,8 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     // export the matrix
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is full
-    if (!GB_IS_FULL (*A))
-    { 
-        // convert A from dense to full
-        GB_sparse_to_full (*A) ;
-    }
+    // ensure A is full
+    GB_ENSURE_FULL (*A) ;
 
     // ensure the matrix is in full CSC format
     (*A)->hyper_ratio = GB_NEVER_HYPER ;

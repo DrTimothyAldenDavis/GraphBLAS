@@ -162,7 +162,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GrB_Matrix T ;
     GB_OK (GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
-    ASSERT (!GB_JUMBLED (T)) ;  // TODO: allow T=A(I,J) to return jumbled T
+    ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M

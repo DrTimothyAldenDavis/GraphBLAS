@@ -27,7 +27,7 @@ void GB_assign_zombie2
     ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;      // binary search is used
-    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
 
     //--------------------------------------------------------------------------
     // get C

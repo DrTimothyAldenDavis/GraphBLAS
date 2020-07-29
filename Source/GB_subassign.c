@@ -176,23 +176,6 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // apply pending updates to A and M
-    //--------------------------------------------------------------------------
-
-    // if C == M or C == A, pending updates are applied to C as well
-
-    // delete any lingering zombies and assemble any pending tuples
-    // but only in A and M, not C
-    GB_MATRIX_WAIT (M) ;        // TODO: allow M to be jumbled in some cases
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-    if (!scalar_expansion)
-    { 
-        GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled in some cases
-        GB_BURBLE_DENSE (A, "(A %s) ") ;
-    }
-
-    //--------------------------------------------------------------------------
     // handle the CSR/CSC format of C:
     //--------------------------------------------------------------------------
 
@@ -280,26 +263,28 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     if (C_aliased)
     { 
-        // If C is aliased, it no longer has any pending work, A and M have
-        // been finished, above.  This also ensures GB_dup does not need to
-        // finish any pending work in C.
+        // C is aliased with M or A
         GBBURBLE ("(C aliased) ") ;
-        ASSERT (!GB_ZOMBIES (C)) ;
-        ASSERT (!GB_PENDING (C)) ;
         if (whole_C_matrix && C_replace && accum == NULL)
         { 
             // C(:,:)<any mask, replace> = A or x, with C aliased to M or A.  C
             // is about to be cleared in GB_subassigner anyway, but a duplicate
-            // is need.  Instead of duplicating it, create an empty matrix Z2.
-            // This also prevents the C_replace_phase from being needed.
+            // is needed since C is aliased with M or A.  Instead of
+            // duplicating it, create an empty matrix Z2.  This also prevents
+            // the C_replace_phase from being needed.
             GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio,
-                1, Context)) ;
+                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio, 1,
+                Context)) ;
             GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
         }
         else
         { 
+            // finish any computations in C, but leave it jumbled
+            GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (C) ;
+            ASSERT (!GB_ZOMBIES (C)) ;
+            ASSERT (GB_JUMBLED_OK (C)) ;
+            ASSERT (!GB_PENDING (C)) ;
             // Z2 = duplicate of C, which must be freed when done
             GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
         }
@@ -349,11 +334,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (C_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
-        if (GB_PENDING (Z2))
-        { 
-            // assemble all pending tuples, and delete all zombies too
-            GB_OK (GB_Matrix_wait (Z2, Context)) ;
-        }
+        GB_MATRIX_WAIT_IF_PENDING (Z2) ;
         // transplants the content of Z2 into C and frees Z2
         GB_OK (GB_transplant (C, C->type, &Z2, Context)) ;
     }

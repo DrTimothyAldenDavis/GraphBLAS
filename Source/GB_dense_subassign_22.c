@@ -44,12 +44,8 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
-    if (!GB_IS_FULL (C))
-    { 
-        // convert C from sparse to full
-        GB_sparse_to_full (C) ;
-    }
-    ASSERT (GB_IS_FULL (C)) ;
+    // ensure C is full
+    GB_ENSURE_FULL (C) ;
 
     //--------------------------------------------------------------------------
     // get the operator

@@ -33,13 +33,11 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// TODO debug is on
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// TODO compact is on
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 // for code development only
 // #define GB_DEVELOPER 1
@@ -1524,35 +1522,50 @@ GrB_Info GB_unjumble        // unjumble a matrix
 // true if a matrix is jumbled
 #define GB_JUMBLED(A) ((A) != NULL && (A)->jumbled)
 
-// true if a matrix allowed to be jumbled
+// true if a matrix is allowed to be jumbled
 #define GB_JUMBLED_OK(A) (GB_JUMBLED (A) || !GB_JUMBLED (A))
 
-// do all pending updates:  delete zombies and assemble any pending tuples
+// do all pending work:  zombies, pending tuples, and unjumble
 #define GB_MATRIX_WAIT(A)                                               \
 {                                                                       \
     if (GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A))                    \
     {                                                                   \
+        GrB_Info info ;                                                 \
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-        ASSERT (!GB_ZOMBIES (A)) ;                                      \
-        ASSERT (!GB_PENDING (A)) ;                                      \
-        ASSERT (!GB_JUMBLED (A)) ;                                      \
     }                                                                   \
 }
 
 #define GB_VECTOR_WAIT(v) GB_MATRIX_WAIT (v)
 #define GB_SCALAR_WAIT(s) GB_MATRIX_WAIT (s)
 
-// do all pending updates:  but only if pending tuples; zombies are OK
-#define GB_MATRIX_WAIT_PENDING(A)                                             \
-{                                                                             \
-    if (GB_PENDING (A))                                                       \
-    {                                                                         \
-        /* do all pending work: delete zombies and assemble pending tuples */ \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;                    \
-        ASSERT (!GB_ZOMBIES (A)) ;                                            \
-        ASSERT (!GB_PENDING (A)) ;                                            \
-    }                                                                         \
-    ASSERT (GB_ZOMBIES_OK (A)) ;                                              \
+// do all pending work if pending tuples; zombies and jumbled are OK
+#define GB_MATRIX_WAIT_IF_PENDING(A)                                    \
+{                                                                       \
+    if (GB_PENDING (A))                                                 \
+    {                                                                   \
+        GrB_Info info ;                                                 \
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
+    }                                                                   \
+}
+
+// delete zombies and assemble any pending tuples; jumbled is O
+#define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
+{                                                                       \
+    if (GB_PENDING_OR_ZOMBIES (A))                                      \
+    {                                                                   \
+        GrB_Info info ;                                                 \
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
+    }                                                                   \
+}
+
+// ensure A is not jumbled
+#define GB_MATRIX_WAIT_IF_JUMBLED(A)                                    \
+{                                                                       \
+    if (GB_JUMBLED (A))                                                 \
+    {                                                                   \
+        GrB_Info info ;                                                 \
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
+    }                                                                   \
 }
 
 // true if a matrix has no entries; zombies OK
@@ -1592,6 +1605,16 @@ GrB_Info GB_to_full             // convert matrix to full; delete prior values
         {                                                   \
             return (info) ;                                 \
         }                                                   \
+    }                                                       \
+}
+
+#define GB_ENSURE_FULL(C)                                   \
+{                                                           \
+    ASSERT (GB_is_dense (C)) ;                              \
+    if (!GB_IS_FULL (C))                                    \
+    {                                                       \
+        /* convert C from sparse to full */                 \
+        GB_sparse_to_full (C) ;                             \
     }                                                       \
 }
 

@@ -189,13 +189,14 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+                    // TODO: this could be moved out of the inner loop
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-                    // TODO: this could be moved out of the inner loop
+                    // TODO: this could be moved out of 2 inner loops
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
                     #include "GB_AxB_saxpy3_template.c"
@@ -224,13 +225,14 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+                    // TODO: this could be moved out of the inner loop
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-                    // TODO: this could be moved out of the inner loop
+                    // TODO: this could be moved out of 2 inner loops
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy3_template.c"

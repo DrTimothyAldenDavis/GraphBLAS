@@ -1157,10 +1157,10 @@ GB_PUBLIC GrB_BinaryOp
 
 GB_PUBLIC GrB_UnaryOp
 
-    GxB_POSITIONI_INT32,  GxB_POSITIONI_INT64,  // z = first_i(A(i,j),y) == i
-    GxB_POSITIONI1_INT32, GxB_POSITIONI1_INT64, // z = first_i1(A(i,j),y) == i+1
-    GxB_POSITIONJ_INT32,  GxB_POSITIONJ_INT64,  // z = first_j(A(i,j),y) == j
-    GxB_POSITIONJ1_INT32, GxB_POSITIONJ1_INT64 ;// z = first_j1(A(i,j),y) == j+1
+    GxB_POSITIONI_INT32,  GxB_POSITIONI_INT64,  // z=position_i(A(i,j)) == i
+    GxB_POSITIONI1_INT32, GxB_POSITIONI1_INT64, // z=position_i1(A(i,j)) == i+1
+    GxB_POSITIONJ_INT32,  GxB_POSITIONJ_INT64,  // z=position_j(A(i,j)) == j
+    GxB_POSITIONJ1_INT32, GxB_POSITIONJ1_INT64 ;// z=position_j1(A(i,j)) == j+1
 
 //------------------------------------------------------------------------------
 // About boolean and bitwise binary operators

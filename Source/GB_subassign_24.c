@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_24: make a deep copy of a sparse matrix
+// GB_subassign_24: make a deep copy of a sparse or dense matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -15,6 +15,8 @@
 // case is handled.
 
 // FULL: if C sparse and A dense/full, convert C to full
+
+// A can be jumbled, in which case C is also jumbled.
 
 #include "GB_dense.h"
 #include "GB_Pending.h"
@@ -41,13 +43,13 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     ASSERT_MATRIX_OK (A, "A for A_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     if (A->nvec_nonempty < 0)
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
@@ -55,6 +57,10 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 
     // the prior pattern of C is discarded
     C->jumbled = false ;
+
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -70,6 +76,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         (
             GB_is_dense (C)             // both A and C are dense
             && GB_is_dense (A)
+            && !(A->jumbled)            // A cannot be jumbled
             && C->vdim == A->vdim       // A and C have the same size
             && C->vlen == A->vlen
             && C->is_csc == A->is_csc   // A and C have the same format
@@ -88,10 +95,8 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBBURBLE ("(dense copy) ") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
-        if (!GB_IS_FULL (C))
-        { 
-            GB_sparse_to_full (C) ;
-        }
+        // ensure C is full
+        GB_ENSURE_FULL (C) ;
 
     }
     else
