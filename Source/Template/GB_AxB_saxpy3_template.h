@@ -110,6 +110,14 @@ break ;
 // GB_GET_B_j: prepare to iterate over B(:,j)
 //------------------------------------------------------------------------------
 
+#if GB_IS_SECONDJ_MULTIPLIER
+    #define GB_GET_T_FOR_SECONDJ \
+        GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
+        GB_MULT (t, ignore, ignore, i, k, j)  /* t = aik * bkj ;  */
+#else
+    #define GB_GET_T_FOR_SECONDJ ;
+#endif
+
 // prepare to iterate over the vector B(:,j), the (kk)th vector in B, where 
 // j == GBH (Bh, kk).
 
@@ -117,6 +125,7 @@ break ;
     int64_t pleft = 0 ;                                                     \
     int64_t pright = anvec-1 ;                                              \
     int64_t j = GBH (Bh, kk) ;                                              \
+    GB_GET_T_FOR_SECONDJ ;  /* t = j for SECONDJ, or j+1 for SECONDJ1 */    \
     int64_t pB     = GBP (Bp, kk, bvlen) ;                                  \
     int64_t pB_end = GBP (Bp, kk+1, bvlen) ;                                \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
@@ -132,8 +141,20 @@ break ;
 // GB_GET_B_kj: get the numeric value of B(k,j)
 //------------------------------------------------------------------------------
 
-#define GB_GET_B_kj \
-    GB_GETB (bkj, Bx, pB)       /* bkj = Bx [pB] */
+#if GB_IS_FIRSTJ_MULTIPLIER
+
+    // FIRSTJ or FIRSTJ1 multiplier
+    // t = aik * bkj = k or k+1
+    #define GB_GET_B_kj \
+        GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
+        GB_MULT (t, ignore, ignore, i, k, j)  /* t = aik * bkj ;  */
+
+#else
+
+    #define GB_GET_B_kj \
+        GB_GETB (bkj, Bx, pB)       /* bkj = Bx [pB] */
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_GET_A_k: prepare to iterate over the vector A(:,k)
@@ -165,18 +186,19 @@ break ;
     #define t (GB_CTYPE_CAST (1, 0))
     #define GB_MULT_A_ik_B_kj
 
-#else
+#elif ( GB_IS_FIRSTJ_MULTIPLIER || GB_IS_SECONDJ_MULTIPLIER )
 
-    // TODO: for FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1: do not declare t here.
-    // Instead, move t=j out of 2 inner loops (for SECONDJ/J1),
-    // and move t=k out of 1 inner loop (for FIRSTJ/J1)
+    // nothing to do; t = aik*bkj already defined in an outer loop
+    #define GB_MULT_A_ik_B_kj
+
+#else
 
     // typical semiring
     #define GB_MULT_A_ik_B_kj                                       \
         GB_GETA (aik, Ax, pA) ;         /* aik = Ax [pA] ;  */      \
         GB_CIJ_DECLARE (t) ;            /* ctype t ;        */      \
         GB_MULT (t, aik, bkj, i, k, j)  /* t = aik * bkj ;  */
-
+    
 #endif
 
 //------------------------------------------------------------------------------

@@ -56,8 +56,40 @@
                 GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                 int64_t i1 = i + 1 ;        // i1 = one-based index
                 int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
-                for (GB_HASH (i))           // find i in hash table
+
+//#define GB_HASH_FUNCTION(i) ((((i) << 8) + (i)) & (hash_bits))
+//#define GB_HASH(i) int64_t hash = GB_HASH_FUNCTION (i) ; ; GB_REHASH (hash,i)
+// #define GB_REHASH(hash,i) hash = ((hash + 1) & (hash_bits))
+
+int64_t hash = GB_HASH_FUNCTION (i) ;
+
                 {
+                    int64_t hf = Hf [hash] ;    // grab the entry
+                    if (hf == i_unlocked)       // if true, update C(i,j)
+                    { 
+                        // hash entry occuppied by C(i,j): update it
+                        GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
+                        continue ;         // C(i,j) has been updated
+                    }
+                    if (hf == 0)
+                    { 
+                        // hash entry unoccuppied: fill it with C(i,j)
+                        // Hx [hash] = t
+                        GB_HX_WRITE (hash, t) ;
+                        Hf [hash] = i_unlocked ; // unlock entry
+                        continue ;
+                    }
+                    // otherwise: hash table occupied, but not with i
+                }
+
+                //for (GB_HASH (i))           // find i in hash table
+
+                while (1)
+                {
+                    GB_REHASH (hash, i) ;
+                    // hash++ ;
+                    // hash &= hash_bits ;
+
                     int64_t hf = Hf [hash] ;    // grab the entry
                     if (hf == i_unlocked)       // if true, update C(i,j)
                     { 

@@ -163,6 +163,18 @@
 #define GB_IS_PLUS_FC64_MONOID \
     GB_is_plus_fc64_monoid
 
+// 1 for the FIRSTI or FIRSTI1 multiply operator
+#define GB_IS_FIRSTI_MULTIPLIER \
+    GB_is_firsti_multiplier
+
+// 1 for the FIRSTJ or FIRSTJ1 multiply operator
+#define GB_IS_FIRSTJ_MULTIPLIER \
+    GB_is_firstj_multiplier
+
+// 1 for the SECONDJ or SECONDJ1 multiply operator
+#define GB_IS_SECONDJ_MULTIPLIER \
+    GB_is_secondj_multiplier
+
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_atomic_compare_exchange (target, expected, desired)

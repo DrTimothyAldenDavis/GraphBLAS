@@ -198,6 +198,27 @@ else
     end
 end
 
+% firsti multiply operator
+if (contains (multop, 'firsti'))
+    fprintf (f, 'define(`GB_is_firsti_multiplier'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_firsti_multiplier'', `0'')\n') ;
+end
+
+% firstj multiply operator
+if (contains (multop, 'firstj'))
+    fprintf (f, 'define(`GB_is_firstj_multiplier'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_firstj_multiplier'', `0'')\n') ;
+end
+
+% secondj multiply operator
+if (contains (multop, 'secondj'))
+    fprintf (f, 'define(`GB_is_secondj_multiplier'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_secondj_multiplier'', `0'')\n') ;
+end
+
 % plus_fc32 monoid:
 if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC32_t'))
     fprintf (f, 'define(`GB_is_plus_fc32_monoid'', `1'')\n') ;
@@ -307,14 +328,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +34 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +37 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +34 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +37 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

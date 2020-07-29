@@ -107,6 +107,13 @@ double ttt = omp_get_wtime ( ) ;
         int64_t pleft = 0, pright = anvec-1 ;
         int64_t j = GBH (Bh, kk) ;
 
+        #if GB_IS_SECONDJ_MULTIPLIER
+        // SECONDJ or SECONDJ1 multiplier
+        // t = aik*bkj = j or j+1
+        GB_CIJ_DECLARE (t) ;
+        GB_MULT (t, ignore, ignore, i, k, j) ;
+        #endif
+
         #if !GB_IS_ANY_PAIR_SEMIRING
         GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
         #endif
