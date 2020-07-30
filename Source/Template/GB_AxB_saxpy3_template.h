@@ -130,10 +130,11 @@ break ;
     int64_t pB_end = GBP (Bp, kk+1, bvlen) ;                                \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
     /* FUTURE::: can skip if mjnz == 0 for C<M>=A*B tasks */                \
-    if (A_is_hyper && bjnz > 2)                                             \
+    if (A_is_hyper && bjnz > 2 && !B_jumbled)                               \
     {                                                                       \
         /* trim Ah [0..pright] to remove any entries past last B(:,j), */   \
         /* to speed up GB_lookup in GB_GET_A_k. */                          \
+        /* This requires that B is not jumbled */                           \
         GB_bracket_right (GBI (Bi, pB_end-1, bvlen), Ah, 0, &pright) ;      \
     }
 
@@ -382,7 +383,8 @@ break ;
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #define GB_SCAN_M_j_OR_A_k                                              \
 {                                                                       \
-    if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen && aknz < avlen) \
+    if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen && aknz < avlen  \
+        && !A_jumbled)                                                  \
     {                                                                   \
         /* M and A are both sparse, and nnz(M(:,j)) much less than */   \
         /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k) */ \
@@ -394,6 +396,7 @@ break ;
             int64_t i = Mi [pM] ;   /* ok: M and A are sparse */        \
             bool found ;            /* search for A(i,k) */             \
             int64_t apright = pA_end - 1 ;                              \
+            /* the binary search can only be done if A is not jumbled */\
             GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;              \
             if (found)                                                  \
             {                                                           \

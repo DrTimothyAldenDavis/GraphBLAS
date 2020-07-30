@@ -44,6 +44,7 @@ double ttt = omp_get_wtime ( ) ;
     const int64_t bvlen = B->vlen ;
     // const int64_t bnvec = B->nvec ;
     // const bool B_is_hyper = (Bh != NULL) ;
+    const bool B_jumbled = B->jumbled ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
