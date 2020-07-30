@@ -13,8 +13,8 @@
     // phase 5: coarse hash task, C=A*B
     //--------------------------------------------------------------------------
 
-    // Initially, Hf [...] < mark for all of Hf.
-    // Let f = Hf [hash] and h = Hi [hash]
+    // Initially, H [...].f < mark for all of H [...].f.
+    // Let f = H [hash].f and h = H [hash].i
 
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
@@ -33,8 +33,9 @@
         #endif
         const M_TYPE *GB_RESTRICT Mask = ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
         #else
-        if (bjnz == 1)              // C(:,j) = A(:,k)*B(k,j), no mask
+        if (bjnz == 1)
         { 
+            // C(:,j) = A(:,k)*B(k,j), no mask, when nnz (B (:,j)) == 1
             GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
             continue ;
         }
@@ -61,13 +62,13 @@
                 GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
                 for (GB_HASH (i))   // find i in hash table
                 {
-                    if (Hf [hash] == mark)
+                    if (H [hash].f == mark)
                     {
                         // hash entry is occupied
-                        if (Hi [hash] == i)
+                        if (H [hash].i == i)
                         { 
                             // i already in the hash table
-                            // Hx [hash] += t ;
+                            // Hx (hash) += t ;
                             GB_HX_UPDATE (hash, t) ;
                             break ;
                         }
@@ -75,17 +76,17 @@
                     else
                     { 
                         // hash entry is not occupied
-                        Hf [hash] = mark ;
-                        Hi [hash] = i ;
-                        GB_HX_WRITE (hash, t) ;// Hx[hash]=t
+                        H [hash].f = mark ;
+                        H [hash].i = i ;
+                        GB_HX_WRITE (hash, t) ;// Hx (hash) = t
                         Ci [pC++] = i ;        // ok: C sparse
                         break ;
                     }
                 }
             }
         }
-        // found i if: Hf [hash] == mark and Hi [hash] == i
-        GB_SORT_AND_GATHER_HASHED_C_j (mark, Hi [hash] == i)
+        // found i if: H [hash].f == mark and H [hash].i == i
+        GB_SORT_AND_GATHER_HASHED_C_j (mark, H [hash].i == i)
     }
 
     continue ;

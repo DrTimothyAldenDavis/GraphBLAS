@@ -181,29 +181,36 @@
 
 #if GB_IS_ANY_PAIR_SEMIRING
 
-    // result is purely symbolic; no numeric work to do.  Hx is not used.
+    // result is purely symbolic; no numeric work to do.
     #define GB_HX_WRITE(i,t)
     #define GB_CIJ_GATHER(p,i)
     #define GB_HX_UPDATE(i,t)
-    #define GB_CIJ_MEMCPY(p,i,len)
 
 #else
 
-    // Hx [i] = t
-    #define GB_HX_WRITE(i,t) Hx [i] = t
+    // Hx (i) = t
+    #define GB_HX_WRITE(i,t) H [i].x = t
 
-    // Cx [p] = Hx [i]
-    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+    // Cx [p] = Hx (i)
+    #define GB_CIJ_GATHER(p,i) Cx [p] = H [i].x
 
-    // Hx [i] += t
+    // Hx (i) += t
     #define GB_HX_UPDATE(i,t) \
-        Hx [i] = GB_IMAX (Hx [i], t)
-
-    // memcpy (&(Cx [p]), &(Hx [i]), len)
-    #define GB_CIJ_MEMCPY(p,i,len) \
-        memcpy (Cx +(p), Hx +(i), (len) * sizeof(int8_t))
+        H [i].x = GB_IMAX (H [i].x, t)
 
 #endif
+
+// for fine Gustavson:
+#define GB_HASH_FINEGUS \
+    GB_CONCATENATE (GB_hash_fineGus_, int8_t)
+
+// for fine hash and coarse Gustavson:
+#define GB_HASH_TYPE \
+    GB_CONCATENATE (GB_hash_, int8_t)
+
+// for coarse hash:
+#define GB_HASH_COARSE \
+    GB_CONCATENATE (GB_hash_coarse_, int8_t)
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

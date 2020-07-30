@@ -55,19 +55,13 @@
 // table size is set to m, to serve as the gather/scatter workspace for
 // Gustavson's method.
 
-// The workspace allocated depends on the type of task.  Let s be the hash
-// table size for the task, and C is m-by-n (assuming all matrices are CSC; if
-// CSR, then m is replaced with n).
-//
-//      fine Gustavson task (shared):   int8_t  Hf [m] ; ctype Hx [m] ;
-//      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
-//      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
-//      coarse hash task:               int64_t Hf [s] ; ctype Hx [s] ;
-//                                      int64_t Hi [s] ; 
-//
-// Note that the Hi array is needed only for the coarse hash task.  Additional
-// workspace is allocated to construct the list of tasks, but this is freed
-// before C is constructed.
+// The workspace allocated depends on the type of task and the type of value.
+// Let s be the hash table size for the task, and C is m-by-n (assuming all
+// matrices are CSC; if CSR, then m is replaced with n).  See GB_AxB_saxpy3.h
+// for a list of the hash entry types (the GB_hash_* typedefs).
+
+// Additional workspace is allocated to construct the list of tasks, but this
+// is freed before C is constructed.
 
 // References:
 
@@ -117,10 +111,12 @@
 #define GB_FREE_WORK                                                        \
 {                                                                           \
     GB_FREE_INITIAL_WORK ;                                                  \
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)                       \
+    {                                                                       \
+        GB_FREE (TaskList [taskid].H) ;                                     \
+        GB_FREE (TaskList [taskid].Hx) ;                                    \
+    }                                                                       \
     GB_FREE (TaskList) ;                                                    \
-    GB_FREE (Hi_all) ;                                                      \
-    GB_FREE (Hf_all) ;                                                      \
-    GB_FREE (Hx_all) ;                                                      \
 }
 
 #define GB_FREE_ALL                                                         \
@@ -246,12 +242,10 @@ static inline void GB_create_coarse_task
     TaskList [taskid].end     = klast ;
     TaskList [taskid].vector  = -1 ;
     TaskList [taskid].hsize   = GB_hash_table_size (flmax, cvlen, AxB_method) ;
-    TaskList [taskid].Hi      = NULL ;      // assigned later
-    TaskList [taskid].Hf      = NULL ;      // assigned later
-    TaskList [taskid].Hx      = NULL ;      // assigned later
+    TaskList [taskid].H       = NULL ;      // assigned later
     TaskList [taskid].my_cjnz = 0 ;         // unused
     TaskList [taskid].flops   = Bflops [klast+1] - Bflops [kfirst] ;
-    TaskList [taskid].master  = taskid ;
+    TaskList [taskid].master  = taskid ;    // coarse task its own master
     TaskList [taskid].team_size = 1 ;
 }
 
@@ -357,9 +351,6 @@ double ttt = omp_get_wtime ( ) ;
     // define workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_all = NULL ;
-    int64_t *GB_RESTRICT Hf_all = NULL ;
-    GB_void *GB_RESTRICT Hx_all = NULL ;
     int64_t *GB_RESTRICT Coarse_initial = NULL ;    // initial coarse tasks
     int64_t *GB_RESTRICT Coarse_Work = NULL ;       // workspace for flop counts
     GB_saxpy3task_struct *GB_RESTRICT TaskList = NULL ;
@@ -368,9 +359,6 @@ double ttt = omp_get_wtime ( ) ;
 
     int ntasks = 0 ;
     int ntasks_initial = 0 ;
-    size_t Hi_size_total = 0 ;
-    size_t Hf_size_total = 0 ;
-    size_t Hx_size_total = 0 ;
     int64_t max_bjnz = 0 ;
 
     //--------------------------------------------------------------------------
@@ -503,8 +491,8 @@ ttt = omp_get_wtime ( ) ;
         if (axbflops < (double) Mwork * GB_MWORK_BETA)
         { 
             // Use the hash method for all tasks.  Do not scatter the mask into
-            // the Hf hash workspace.  The work for the mask is not accounted
-            // for in Bflops, so the hash tables can be small.
+            // the H[*].f hash workspace.  The work for the mask is not
+            // accounted for in Bflops, so the hash tables can be small.
             M_dense_in_place = true ;
             AxB_method = GxB_AxB_HASH ;
             GBBURBLE ("(use dense mask in place) ") ;
@@ -809,9 +797,7 @@ ttt = omp_get_wtime ( ) ;
                             TaskList [nf].end    = pB_start + pend - 1 ;
                             TaskList [nf].vector = kk ;
                             TaskList [nf].hsize  = hsize ;
-                            TaskList [nf].Hi = NULL ;   // assigned later
-                            TaskList [nf].Hf = NULL ;   // assigned later
-                            TaskList [nf].Hx = NULL ;   // assigned later
+                            TaskList [nf].H = NULL ;   // assigned later
                             TaskList [nf].my_cjnz = 0 ;
                             TaskList [nf].flops = fl ;
                             TaskList [nf].master = master ;
@@ -929,11 +915,11 @@ ttt = omp_get_wtime ( ) ;
     // If Gustavson's method is used (coarse tasks):
     //
     //      hash_size is cvlen.
-    //      Hi is not allocated.
-    //      Hf and Hx are both of size hash_size.
+    //      H [*].i is in the hash table entry.
+    //      H [*].f and H [*].x are both of size hash_size.
     //
-    //      (Hf [i] == mark) is true if i is in the hash table.
-    //      Hx [i] is the value of C(i,j) during the numeric phase.
+    //      (H [i].f == mark) is true if i is in the hash table.
+    //      H [i].x is the value of C(i,j) during the numeric phase.
     //
     //      Gustavson's method is used if the hash_size for the Hash method
     //      is a significant fraction of cvlen. 
@@ -951,27 +937,23 @@ ttt = omp_get_wtime ( ) ;
     //      If a collision occurs, linear probing is used:
     //          hash = (hash + 1) & (hash_size-1)
     //
-    //      (Hf [hash] == mark) is true if the position is occupied.
-    //      i = Hi [hash] gives the row index i that occupies that position.
-    //      Hx [hash] is the value of C(i,j) during the numeric phase.
+    //      (H [hash].f == mark) is true if the position is occupied.
+    //      i = H [hash].i gives the row index i that occupies that position.
+    //      H [hash].x is the value of C(i,j) during the numeric phase.
     //
     // For both coarse methods:
     //
-    //      Hf starts out all zero (via calloc), and mark starts out as 1.  To
-    //      clear Hf, mark is incremented, so that all entries in Hf are not
-    //      equal to mark.
+    //      H [*].f starts out all zero (via calloc), and mark starts out as 1.
+    //      To clear H [*].f, mark is incremented, so that all entries in H
+    //      [*].f are not equal to mark.
 
-    // add some padding to the end of each hash table, to avoid false
-    // sharing of cache lines between the hash tables.
-    size_t hx_pad = 64 ;
-    size_t hi_pad = 64 / sizeof (int64_t) ;
+    GB_Type_code ccode = (is_any_pair_semiring) ? GB_ignore_code : ctype->code ;
+    bool ok = true ;
 
-    Hi_size_total = 0 ;
-    Hf_size_total = 0 ;
-    Hx_size_total = 0 ;
+    #define GB_HSIZE(T) s = sizeof (T) ; break ;
 
-    // determine the total size of all hash tables
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    // allocate workspace for fine tasks
+    for (int taskid = 0 ; taskid < nfine ; taskid++)
     {
         if (taskid != TaskList [taskid].master)
         { 
@@ -979,121 +961,127 @@ ttt = omp_get_wtime ( ) ;
             // tasks that compute a single C(:,j)
             continue ;
         }
-
         int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t k = TaskList [taskid].vector ;
-        bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        // int64_t kfirst = TaskList [taskid].start ;
-        // int64_t klast = TaskList [taskid].end ;
-
-        if (is_fine && use_Gustavson)
-        { 
-            // Hf is int8_t for the fine Gustavson tasks, but round up
-            // to the nearest number of int64_t values.
-            Hf_size_total += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
+        size_t s ;
+        if (use_Gustavson)
+        {
+            // fine Gustavson using GB_HASH_FINEGUS
+            switch (ccode)
+            {
+                case GB_BOOL_code   : GB_HSIZE (GB_hash_fineGus_bool) ;
+                case GB_INT8_code   : GB_HSIZE (GB_hash_fineGus_int8_t) ;
+                case GB_INT16_code  : GB_HSIZE (GB_hash_fineGus_int16_t) ;
+                case GB_INT32_code  : GB_HSIZE (GB_hash_fineGus_int32_t) ;
+                case GB_INT64_code  : GB_HSIZE (GB_hash_fineGus_int64_t) ;
+                case GB_UINT8_code  : GB_HSIZE (GB_hash_fineGus_uint8_t) ;
+                case GB_UINT16_code : GB_HSIZE (GB_hash_fineGus_uint16_t) ;
+                case GB_UINT32_code : GB_HSIZE (GB_hash_fineGus_uint32_t) ;
+                case GB_UINT64_code : GB_HSIZE (GB_hash_fineGus_uint64_t) ;
+                case GB_FP32_code   : GB_HSIZE (GB_hash_fineGus_float) ;
+                case GB_FP64_code   : GB_HSIZE (GB_hash_fineGus_double) ;
+                case GB_FC32_code   : GB_HSIZE (GB_hash_fineGus_GxB_FC32_t) ;
+                case GB_FC64_code   : GB_HSIZE (GB_hash_fineGus_GxB_FC64_t) ;
+                default             : GB_HSIZE (GB_hash_fineGus_GB_void) ;
+            }
         }
         else
-        { 
-            // all other methods use Hf as int64_t
-            Hf_size_total += (hash_size + hi_pad) ;
+        {
+            // fine hash using GB_HASH_TYPE
+            switch (ccode)
+            {
+                case GB_BOOL_code   : GB_HSIZE (GB_hash_bool) ;
+                case GB_INT8_code   : GB_HSIZE (GB_hash_int8_t) ;
+                case GB_INT16_code  : GB_HSIZE (GB_hash_int16_t) ;
+                case GB_INT32_code  : GB_HSIZE (GB_hash_int32_t) ;
+                case GB_INT64_code  : GB_HSIZE (GB_hash_int64_t) ;
+                case GB_UINT8_code  : GB_HSIZE (GB_hash_uint8_t) ;
+                case GB_UINT16_code : GB_HSIZE (GB_hash_uint16_t) ;
+                case GB_UINT32_code : GB_HSIZE (GB_hash_uint32_t) ;
+                case GB_UINT64_code : GB_HSIZE (GB_hash_uint64_t) ;
+                case GB_FP32_code   : GB_HSIZE (GB_hash_float) ;
+                case GB_FP64_code   : GB_HSIZE (GB_hash_double) ;
+                case GB_FC32_code   : GB_HSIZE (GB_hash_GxB_FC32_t) ;
+                case GB_FC64_code   : GB_HSIZE (GB_hash_GxB_FC64_t) ;
+                default             : GB_HSIZE (GB_hash_GB_void) ;
+            }
         }
-        if (!is_fine && !use_Gustavson)
+        TaskList [taskid].H = (GB_void *) GB_calloc_memory (hash_size, s) ;
+        ok = ok && (TaskList [taskid].H != NULL) ;
+        if (ccode == GB_UDT_code)
         { 
-            // only coarse hash tasks need Hi
-            Hi_size_total += (hash_size + hi_pad) ;
-        }
-        // all tasks use an Hx array of size hash_size
-        if (!is_any_pair_semiring)
-        { 
-            // except that the ANY_PAIR semiring does not use Hx
-            Hx_size_total += (hash_size * csize + hx_pad) ;
+            // allocate Hx for user-defined types
+            TaskList [taskid].Hx = (GB_void *) GB_malloc_memory (hash_size,
+                csize) ;
+            ok = ok && (TaskList [taskid].Hx != NULL) ;
         }
     }
 
-    // allocate space for all hash tables
-    if (Hi_size_total > 0)
-    { 
-        Hi_all = GB_MALLOC (Hi_size_total, int64_t) ;
-    }
-    if (Hf_size_total > 0)
-    { 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
-    }
-    if (Hx_size_total > 0)
-    { 
-        Hx_all = GB_MALLOC (Hx_size_total, GB_void) ;
+    // allocate workspace for coarse tasks
+    for (int taskid = nfine ; taskid < ntasks ; taskid++)
+    {
+        int64_t hash_size = TaskList [taskid].hsize ;
+        bool use_Gustavson = (hash_size == cvlen) ;
+        ASSERT (taskid == TaskList [taskid].master) ;
+        size_t s ;
+        if (use_Gustavson)
+        {
+            // coarse Gustavson using GB_HASH_TYPE
+            switch (ccode)
+            {
+                case GB_BOOL_code   : GB_HSIZE (GB_hash_bool) ;
+                case GB_INT8_code   : GB_HSIZE (GB_hash_int8_t) ;
+                case GB_INT16_code  : GB_HSIZE (GB_hash_int16_t) ;
+                case GB_INT32_code  : GB_HSIZE (GB_hash_int32_t) ;
+                case GB_INT64_code  : GB_HSIZE (GB_hash_int64_t) ;
+                case GB_UINT8_code  : GB_HSIZE (GB_hash_uint8_t) ;
+                case GB_UINT16_code : GB_HSIZE (GB_hash_uint16_t) ;
+                case GB_UINT32_code : GB_HSIZE (GB_hash_uint32_t) ;
+                case GB_UINT64_code : GB_HSIZE (GB_hash_uint64_t) ;
+                case GB_FP32_code   : GB_HSIZE (GB_hash_float) ;
+                case GB_FP64_code   : GB_HSIZE (GB_hash_double) ;
+                case GB_FC32_code   : GB_HSIZE (GB_hash_GxB_FC32_t) ;
+                case GB_FC64_code   : GB_HSIZE (GB_hash_GxB_FC64_t) ;
+                default             : GB_HSIZE (GB_hash_GB_void) ;
+            }
+        }
+        else
+        {
+            // coarse hash using GB_HASH_COARSE
+            switch (ccode)
+            {
+                case GB_BOOL_code   : GB_HSIZE (GB_hash_coarse_bool) ;
+                case GB_INT8_code   : GB_HSIZE (GB_hash_coarse_int8_t) ;
+                case GB_INT16_code  : GB_HSIZE (GB_hash_coarse_int16_t) ;
+                case GB_INT32_code  : GB_HSIZE (GB_hash_coarse_int32_t) ;
+                case GB_INT64_code  : GB_HSIZE (GB_hash_coarse_int64_t) ;
+                case GB_UINT8_code  : GB_HSIZE (GB_hash_coarse_uint8_t) ;
+                case GB_UINT16_code : GB_HSIZE (GB_hash_coarse_uint16_t) ;
+                case GB_UINT32_code : GB_HSIZE (GB_hash_coarse_uint32_t) ;
+                case GB_UINT64_code : GB_HSIZE (GB_hash_coarse_uint64_t) ;
+                case GB_FP32_code   : GB_HSIZE (GB_hash_coarse_float) ;
+                case GB_FP64_code   : GB_HSIZE (GB_hash_coarse_double) ;
+                case GB_FC32_code   : GB_HSIZE (GB_hash_coarse_GxB_FC32_t) ;
+                case GB_FC64_code   : GB_HSIZE (GB_hash_coarse_GxB_FC64_t) ;
+                default             : GB_HSIZE (GB_hash_coarse_GB_void) ;
+            }
+        }
+        TaskList [taskid].H = (GB_void *) GB_calloc_memory (hash_size, s) ;
+        ok = ok && (TaskList [taskid].H != NULL) ;
+        if (ccode == GB_UDT_code)
+        { 
+            // allocate Hx for user-defined types
+            TaskList [taskid].Hx = (GB_void *) GB_malloc_memory (hash_size,
+                csize) ;
+            ok = ok && (TaskList [taskid].Hx != NULL) ;
+        }
     }
 
-    if ((Hi_size_total > 0 && Hi_all == NULL) ||
-        (Hf_size_total > 0 && Hf_all == NULL) || 
-        (Hx_size_total > 0 && Hx_all == NULL))
+    if (!ok)
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    // split the space into separate hash tables
-    int64_t *GB_RESTRICT Hi_split = Hi_all ;
-    int64_t *GB_RESTRICT Hf_split = Hf_all ;
-    GB_void *GB_RESTRICT Hx_split = Hx_all ;
-
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        if (taskid != TaskList [taskid].master)
-        { 
-            // allocate a single hash table for all fine
-            // tasks that compute a single C(:,j)
-            continue ;
-        }
-
-        TaskList [taskid].Hi = Hi_split ;
-        TaskList [taskid].Hf = (GB_void *) Hf_split ;
-        TaskList [taskid].Hx = Hx_split ;
-
-        int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t k = TaskList [taskid].vector ;
-        bool is_fine = (k >= 0) ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        // int64_t kfirst = TaskList [taskid].start ;
-        // int64_t klast = TaskList [taskid].end ;
-
-        if (is_fine && use_Gustavson)
-        { 
-            // Hf is int8_t for the fine Gustavson method
-            Hf_split += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
-        }
-        else
-        { 
-            // Hf is int64_t for all other methods
-            Hf_split += (hash_size + hi_pad) ;
-        }
-        if (!is_fine && !use_Gustavson)
-        { 
-            // only coarse hash tasks need Hi
-            Hi_split += (hash_size + hi_pad) ;
-        }
-        // all tasks use an Hx array of size hash_size
-        if (!is_any_pair_semiring)
-        { 
-            Hx_split += (hash_size * csize + hx_pad) ;
-        }
-    }
-
-    // assign shared hash tables to fine task teams
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        int master = TaskList [taskid].master ;
-        ASSERT (TaskList [master].vector >= 0) ;
-        if (taskid != master)
-        { 
-            // this fine task (Gustavson or hash) shares its hash table
-            // with all other tasks in its team, for a single vector C(:,j).
-            ASSERT (TaskList [taskid].vector == TaskList [master].vector) ;
-            TaskList [taskid].Hf = TaskList [master].Hf ;
-            TaskList [taskid].Hx = TaskList [master].Hx ;
-        }
+        return (info) ;
     }
 
     //==========================================================================
@@ -1117,6 +1105,7 @@ ttt = omp_get_wtime ( ) ;
 
     bool done = false ;
 
+#if 1
     #ifndef GBCOMPACT
 
         //----------------------------------------------------------------------
@@ -1145,6 +1134,7 @@ ttt = omp_get_wtime ( ) ;
         }
 
     #endif
+#endif
 
     //==========================================================================
     // C = A*B, via the generic saxpy3 method, with typecasting

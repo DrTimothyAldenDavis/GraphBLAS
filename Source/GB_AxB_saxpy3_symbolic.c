@@ -63,6 +63,7 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
+    const bool B_jumbled = B->jumbled ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -70,6 +71,7 @@ void GB_AxB_saxpy3_symbolic
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -99,628 +101,69 @@ void GB_AxB_saxpy3_symbolic
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
 
+    // Ignore the mask if not complemented, dense and used in-place, and
+    // structural (and thus the same as no mask at all).  For this case,
+    // all-hash tasks are used (see M_dense_in_place computation in
+    // GB_AxB_saxpy3).
+    bool ignore_mask = (mask_is_M && M_dense_in_place && Mask_struct) ;
+
     //==========================================================================
     // phase1: count nnz(C(:,j)) for coarse tasks, scatter M for fine tasks
     //==========================================================================
 
-    // At this point, all of Hf [...] is zero, for all tasks.
-    // Hi and Hx are not initialized.
+    // At this point, all of H [...].f is zero, for all tasks.
+    // H [...].i and H [...].x are not initialized.
 
-    int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    // phase1 does not depend on the type or values of C, but the hash table
+    // data structure does, so a switch is necessary.  Since H [...].x is not
+    // accessed, some of the methods are combined to reduce code size.
+
+    switch (C->type->code)
     {
+        case GB_BOOL_code   :
+        case GB_INT8_code   :
+        case GB_UINT8_code  :
+            #define GB_HASH_FINEGUS GB_hash_fineGus_uint8_t
+            #define GB_HASH_TYPE    GB_hash_uint8_t
+            #define GB_HASH_COARSE  GB_hash_coarse_uint8_t
+            #include "GB_AxB_saxpy3_symbolic_template.c"
 
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
+        case GB_INT16_code  :
+        case GB_UINT16_code :
+            #define GB_HASH_FINEGUS GB_hash_fineGus_uint16_t
+            #define GB_HASH_TYPE    GB_hash_uint16_t
+            #define GB_HASH_COARSE  GB_hash_coarse_uint16_t
+            #include "GB_AxB_saxpy3_symbolic_template.c"
 
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cvlen) ;
+        case GB_INT32_code  :
+        case GB_UINT32_code :
+        case GB_FP32_code   :
+            #define GB_HASH_FINEGUS GB_hash_fineGus_uint32_t
+            #define GB_HASH_TYPE    GB_hash_uint32_t
+            #define GB_HASH_COARSE  GB_hash_coarse_uint32_t
+            #include "GB_AxB_saxpy3_symbolic_template.c"
 
-        if (taskid < nfine)
-        {
+        case GB_INT64_code  :
+        case GB_UINT64_code :
+        case GB_FP64_code   :
+        case GB_FC32_code   :
+            #define GB_HASH_FINEGUS GB_hash_fineGus_uint64_t
+            #define GB_HASH_TYPE    GB_hash_uint64_t
+            #define GB_HASH_COARSE  GB_hash_coarse_uint64_t
+            #include "GB_AxB_saxpy3_symbolic_template.c"
 
-            //------------------------------------------------------------------
-            // no work for fine tasks in phase1 if M is not present
-            //------------------------------------------------------------------
+        case GB_FC64_code   :
+            #define GB_HASH_FINEGUS GB_hash_fineGus_GxB_FC64_t
+            #define GB_HASH_TYPE    GB_hash_GxB_FC64_t
+            #define GB_HASH_COARSE  GB_hash_coarse_GxB_FC64_t
+            #include "GB_AxB_saxpy3_symbolic_template.c"
 
-            if (M == NULL) continue ;
-
-            //------------------------------------------------------------------
-            // get the task descriptor
-            //------------------------------------------------------------------
-
-            int64_t kk = TaskList [taskid].vector ;
-            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
-            // no work to do if B(:,j) is empty
-            if (bjnz == 0) continue ;
-
-            // partition M(:,j)
-            GB_GET_M_j ;        // get M(:,j)
-
-            int team_size = TaskList [taskid].team_size ;
-            int master    = TaskList [taskid].master ;
-            int my_teamid = taskid - master ;
-            int64_t mystart, myend ;
-            GB_PARTITION (mystart, myend, mjnz, my_teamid, team_size) ;
-            mystart += pM_start ;
-            myend   += pM_start ;
-
-            if (use_Gustavson)
-            { 
-
-                //--------------------------------------------------------------
-                // phase1: fine Gustavson task, C<M>=A*B or C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // Scatter the values of M(:,j) into Hf.  No atomics needed
-                // since all indices i in M(;,j) are unique.  Do not scatter
-                // the mask if M(:,j) is a dense vector, since in that case
-                // the numeric phase accesses M(:,j) directly, not via Hf.
-
-                // M_dense_in_place is true only if M is dense, and all tasks
-                // are fine or coarse hash tasks (no Gustvason tasks).
-                // The mask M may be dense or full, sparse, or hypersparse.
-                ASSERT (!M_dense_in_place) ;
-
-                if (mjnz > 0)
-                {
-                    int8_t *GB_RESTRICT
-                        Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                    GB_SCATTER_M_j (mystart, myend, 1) ;
-                }
-
-            }
-            else if (!M_dense_in_place)
-            {
-
-                //--------------------------------------------------------------
-                // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // If M_dense_in_place is true, this is skipped.  The mask M
-                // is dense, and is used in place.
-
-                // The least significant 2 bits of Hf [hash] is the flag f, and
-                // the upper bits contain h, as (h,f).  After this phase1, if
-                // M(i,j)=1 then the hash table contains ((i+1),1) in Hf [hash]
-                // at some location.
-
-                // Later, the flag values of f = 2 and 3 are also used.
-                // Only f=1 is set in this phase.
-
-                // h == 0,   f == 0: unoccupied and unlocked
-                // h == i+1, f == 1: occupied with M(i,j)=1
-
-                int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                int64_t hash_bits = (hash_size-1) ;
-                // scan my M(:,j)
-                for (int64_t pM = mystart ; pM < myend ; pM++)
-                {
-                    GB_GET_M_ij ;                   // get M(i,j)
-                    if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = GBI (Mi, pM, mvlen) ;
-                    int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
-                    for (GB_HASH (i))
-                    { 
-                        int64_t hf ;
-                        // swap my hash entry into the hash table;
-                        // does the following using an atomic capture:
-                        // { hf = Hf [hash] ; Hf [hash] = i_mine ; }
-                        GB_ATOMIC_CAPTURE_INT64 (hf, Hf [hash], i_mine) ;
-                        if (hf == 0) break ;        // success
-                        // i_mine has been inserted, but a prior entry was
-                        // already there.  It needs to be replaced, so take
-                        // ownership of this displaced entry, and keep
-                        // looking until a new empty slot is found for it.
-                        i_mine = hf ;
-                    }
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // coarse tasks: compute nnz in each vector of A*B(:,kfirst:klast)
-            //------------------------------------------------------------------
-
-            int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast  = TaskList [taskid].end ;
-            int64_t mark = 0 ;
-            // int64_t nk = klast - kfirst + 1 ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // phase1: coarse Gustavson task
-                //--------------------------------------------------------------
-
-                if (M == NULL)
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse Gustavson task, C=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all Hf.
-                    // Hf [i] is set to mark when C(i,j) is found.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        if (bjnz == 1)
-                        { 
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;            // get A(:,k)
-                            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-                            continue ;
-                        }
-                        mark++ ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == cvlen)
-                            { 
-                                cjnz = cvlen ;  // A(:,k) is dense
-                                break ;         // so nnz(C(:,j)) = cvlen
-                            }
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                if (Hf [i] != mark)     // if true, i is new
-                                { 
-                                    Hf [i] = mark ; // mark C(i,j) as seen
-                                    cjnz++ ;        // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;            // ok: C is sparse
-                    }
-
-                }
-                else if (mask_is_M)
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse Gustavson task, C<M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
-                    // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j_RANGE (64) ;
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ; // scatter Mj
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        { 
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == 0) continue ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
-                                {                                              \
-                                    Hf [i] = mark1 ;  /* mark C(i,j) as seen */\
-                                    cjnz++ ;          /* C(i,j) is new */      \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse Gustavson task, C<!M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
-                    // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
-                    // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ; // scatter Mj
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                if (Hf [i] < mark)      // if true, M(i,j) is 0
-                                { 
-                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
-                                    cjnz++ ;            // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
-                }
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // phase1: coarse hash task
-                //--------------------------------------------------------------
-
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
-                int64_t hash_bits = (hash_size-1) ;
-
-                if (M == NULL)
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse hash task, C=A*B
-                    //----------------------------------------------------------
-
-                    // no mask present
-                    #undef GB_CHECK_MASK_ij
-                    #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-
-                }
-                else if (mask_is_M)
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse hash task, C<M>=A*B
-                    //----------------------------------------------------------
-
-                    if (M_dense_in_place)
-                    { 
-                        // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
-                        {
-                            // Full structural mask, not complemented.
-                            // The Mask is ignored, and C(:,j)=A*B(:,j)
-                            // TODO: remove this case in caller
-                            #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                        }
-                        #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
-                        switch (msize)
-                        {
-                            default:
-                            case 1:
-                            {
-                                #define M_TYPE uint8_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 2:
-                            {
-                                #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 4:
-                            {
-                                #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 8:
-                            {
-                                #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 16:
-                            {
-                                #define M_TYPE uint64_t
-                                #define M_SIZE 2
-                                #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] == 0 && Mask [2*i+1] == 0) \
-                                        continue ;
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                        }
-                    }
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, C(i,j) ignored if
-                    //           this case occurs while scanning A(:,k)
-                    // h == i, f == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // h == i, f == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j_RANGE (64) ;
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        { 
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == 0) continue ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                for (GB_HASH (i))       /* find i in hash */   \
-                                {                                              \
-                                    int64_t f = Hf [hash] ;                    \
-                                    if (f < mark) break ; /* M(i,j)=0; ignore*/\
-                                    if (Hi [hash] == i)   /* if true, i found*/\
-                                    {                                          \
-                                        if (f == mark)  /* if true, i is new */\
-                                        {                                      \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            cjnz++ ;    /* C(i,j) is new */    \
-                                        }                                      \
-                                        break ;                                \
-                                    }                                          \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // phase1: coarse hash task, C<!M>=A*B
-                    //----------------------------------------------------------
-
-                    if (M_dense_in_place)
-                    { 
-                        // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
-                        {
-                            // structural mask, complemented.  No work to do.
-                            // TODO: remove this case in caller
-                            for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                            { 
-                                ASSERT (Cp [kk] == 0) ;
-                            }
-                            continue ;
-                        }
-                        #undef  GB_CHECK_MASK_ij
-                        #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
-                        switch (msize)
-                        {
-                            default:
-                            case 1:
-                            {
-                                #define M_TYPE uint8_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 2:
-                            {
-                                #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 4:
-                            {
-                                #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 8:
-                            {
-                                #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 16:
-                            {
-                                #define M_TYPE uint64_t
-                                #define M_SIZE 2
-                                #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] != 0 || Mask [2*i+1] != 0) \
-                                        continue ;
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                        }
-                    }
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, and C(i,j) not yet seen.
-                    // h == i, f == mark   : M(i,j)=1. C(i,j) ignored.
-                    // h == i, f == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                for (GB_HASH (i))       // find i in hash
-                                {
-                                    if (Hf [hash] < mark)   // if true, i is new
-                                    { 
-                                        Hf [hash] = mark1 ; // mark C(i,j) seen
-                                        Hi [hash] = i ;
-                                        cjnz++ ;        // C(i,j) is a new entry
-                                        break ;
-                                    }
-                                    if (Hi [hash] == i) break ;
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
-                }
-            }
-        }
+        default             :
+            // C->type == op->ztype is a user-defined type
+            #define GB_HASH_FINEGUS GB_hash_fineGus_GB_void
+            #define GB_HASH_TYPE    GB_hash_GB_void
+            #define GB_HASH_COARSE  GB_hash_coarse_GB_void
+            #include "GB_AxB_saxpy3_symbolic_template.c"
     }
-
-    //--------------------------------------------------------------------------
-    // check result for phase1 for fine tasks
-    //--------------------------------------------------------------------------
-
-    #ifdef GB_DEBUG
-    if (M != NULL)
-    {
-        for (taskid = 0 ; taskid < nfine ; taskid++)
-        {
-            int64_t kk = TaskList [taskid].vector ;
-            ASSERT (kk >= 0 && kk < B->nvec) ;
-            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
-            // no work to do if B(:,j) is empty
-            if (bjnz == 0) continue ;
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            int master = TaskList [taskid].master ;
-            if (master != taskid) continue ;
-            GB_GET_M_j ;        // get M(:,j)
-            if (mjnz == 0) continue ;
-            int64_t mjcount2 = 0 ;
-            int64_t mjcount = 0 ;
-            for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-            {
-                GB_GET_M_ij ;           // get M(i,j)
-                if (mij) mjcount++ ;
-            }
-            if (use_Gustavson)
-            {
-                // phase1: fine Gustavson task, C<M>=A*B or C<!M>=A*B
-                int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                {
-                    GB_GET_M_ij ;                    // get M(i,j)
-                    ASSERT (Hf [GBI (Mi, pM, mvlen)] == mij) ;
-                }
-                for (int64_t i = 0 ; i < cvlen ; i++)
-                {
-                    ASSERT (Hf [i] == 0 || Hf [i] == 1) ;
-                    if (Hf [i] == 1) mjcount2++ ;
-                }
-                ASSERT (mjcount == mjcount2) ;
-            }
-            else if (!M_dense_in_place)
-            {
-                // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
-                // h == 0,   f == 0: unoccupied and unlocked
-                // h == i+1, f == 1: occupied with M(i,j)=1
-                int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                int64_t hash_bits = (hash_size-1) ;
-                for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                {
-                    GB_GET_M_ij ;                   // get M(i,j)
-                    if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = GBI (Mi, pM, mvlen) ;
-                    int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
-                    int64_t probe = 0 ;
-                    for (GB_HASH (i))
-                    {
-                        int64_t hf = Hf [hash] ;
-                        if (hf == i_mine) 
-                        {
-                            mjcount2++ ;
-                            break ;
-                        }
-                        ASSERT (hf != 0) ;
-                        probe++ ;
-                        ASSERT (probe < cvlen) ;
-                    }
-                }
-                ASSERT (mjcount == mjcount2) ;
-                mjcount2 = 0 ;
-                for (int64_t hash = 0 ; hash < hash_size ; hash++)
-                {
-                    int64_t hf = Hf [hash] ;
-                    int64_t h = (hf >> 2) ;     // empty (0), or a 1-based 
-                    int64_t f = (hf & 3) ;      // 0 if empty or 1 if occupied
-                    if (f == 1) ASSERT (h >= 1 && h <= cvlen) ;
-                    ASSERT (hf == 0 || f == 1) ;
-                    if (f == 1) mjcount2++ ;
-                }
-                ASSERT (mjcount == mjcount2) ;
-            }
-        }
-    }
-    #endif
 }
 

@@ -42,6 +42,88 @@
 // 107 is replaced with 257 to allow for a faster hash function computation.
 
 //------------------------------------------------------------------------------
+// hash / Gustavson data structures
+//------------------------------------------------------------------------------
+
+// Each hash entry is a struct, contain 1 to 3 components: f, value x, index i.
+
+// The GB_hash_*_GB_void structs entries do not include the value x.  They are
+// are used for the symbolic ANY_PAIR semirings, and for user-defined types.
+
+// The index i appears only in the hash entry for the coarse hash method.
+
+// For the fine and coarse Gustavson methods, the index i does not appear,
+// since the workspace is size C->vlen, with H [i] being the entry for C(i,*).
+
+// For the fine hash method, the index i (62 bits) and the status flag f2 (2
+// bits) are held together in H [hash].f.
+
+//------------------------------------------------------------------------------
+// fine Gustavson:                                                      size
+//------------------------------------------------------------------------------
+
+// f is 0, 1, 2, or 3.  x is the value of the entry.
+
+typedef struct { int8_t f ;                   bool       x ; } GB_hash_fineGus_bool       ; // 2
+typedef struct { int8_t f ;                   int8_t     x ; } GB_hash_fineGus_int8_t     ; // 2
+typedef struct { int8_t f ; int8_t pad [ 1] ; int16_t    x ; } GB_hash_fineGus_int16_t    ; // 4
+typedef struct { int8_t f ; int8_t pad [ 3] ; int32_t    x ; } GB_hash_fineGus_int32_t    ; // 8
+typedef struct { int8_t f ; int8_t pad [ 7] ; int64_t    x ; } GB_hash_fineGus_int64_t    ; // 16
+typedef struct { int8_t f ;                   uint8_t    x ; } GB_hash_fineGus_uint8_t    ; // 2
+typedef struct { int8_t f ; int8_t pad [ 1] ; uint16_t   x ; } GB_hash_fineGus_uint16_t   ; // 4
+typedef struct { int8_t f ; int8_t pad [ 3] ; uint32_t   x ; } GB_hash_fineGus_uint32_t   ; // 8
+typedef struct { int8_t f ; int8_t pad [ 7] ; uint64_t   x ; } GB_hash_fineGus_uint64_t   ; // 16
+typedef struct { int8_t f ; int8_t pad [ 3] ; float      x ; } GB_hash_fineGus_float      ; // 8
+typedef struct { int8_t f ; int8_t pad [ 7] ; double     x ; } GB_hash_fineGus_double     ; // 16
+typedef struct { int8_t f ; int8_t pad [ 7] ; GxB_FC32_t x ; } GB_hash_fineGus_GxB_FC32_t ; // 16
+typedef struct { int8_t f ; int8_t pad [15] ; GxB_FC64_t x ; } GB_hash_fineGus_GxB_FC64_t ; // 32
+typedef struct { int8_t f ;                                  } GB_hash_fineGus_GB_void    ; // 1
+
+//------------------------------------------------------------------------------
+// fine hash and coarse Gustavson:
+//------------------------------------------------------------------------------
+
+// fine hash: f is [i,f2]   where i is an index in 62 bits and f2 is 2 bits.
+// coarse Gustavson:  f is a 64-bit mark.
+// x is the value of the entry, for both methods.
+
+typedef struct { int64_t f ; bool       x ; bool     pad [7] ; } GB_hash_bool       ; // 16
+typedef struct { int64_t f ; int8_t     x ; int8_t   pad [7] ; } GB_hash_int8_t     ; // 16
+typedef struct { int64_t f ; int16_t    x ; int16_t  pad [3] ; } GB_hash_int16_t    ; // 16
+typedef struct { int64_t f ; int32_t    x ; int32_t  pad [1] ; } GB_hash_int32_t    ; // 16
+typedef struct { int64_t f ; int64_t    x ;                    } GB_hash_int64_t    ; // 16
+typedef struct { int64_t f ; uint8_t    x ; uint8_t  pad [7] ; } GB_hash_uint8_t    ; // 16
+typedef struct { int64_t f ; uint16_t   x ; uint16_t pad [3] ; } GB_hash_uint16_t   ; // 16
+typedef struct { int64_t f ; uint32_t   x ; uint32_t pad [1] ; } GB_hash_uint32_t   ; // 16
+typedef struct { int64_t f ; uint64_t   x ;                    } GB_hash_uint64_t   ; // 16
+typedef struct { int64_t f ; float      x ; float    pad [1] ; } GB_hash_float      ; // 16
+typedef struct { int64_t f ; double     x ;                    } GB_hash_double     ; // 16
+typedef struct { int64_t f ; GxB_FC32_t x ;                    } GB_hash_GxB_FC32_t ; // 16
+typedef struct { int64_t f ; GxB_FC64_t x ; double   pad [1] ; } GB_hash_GxB_FC64_t ; // 32
+typedef struct { int64_t f ;                                   } GB_hash_GB_void    ; // 8
+
+//------------------------------------------------------------------------------
+// coarse hash:
+//------------------------------------------------------------------------------
+
+// f is a 64-bit mark, i is an index (64 bits).  x is the value.
+
+typedef struct { int64_t f ; int64_t i ; bool       x ; bool     pad [15] ; } GB_hash_coarse_bool       ; // 32
+typedef struct { int64_t f ; int64_t i ; int8_t     x ; int8_t   pad [15] ; } GB_hash_coarse_int8_t     ; // 32
+typedef struct { int64_t f ; int64_t i ; int16_t    x ; int16_t  pad [ 7] ; } GB_hash_coarse_int16_t    ; // 32
+typedef struct { int64_t f ; int64_t i ; int32_t    x ; int32_t  pad [ 3] ; } GB_hash_coarse_int32_t    ; // 32
+typedef struct { int64_t f ; int64_t i ; int64_t    x ; int64_t  pad [ 1] ; } GB_hash_coarse_int64_t    ; // 32
+typedef struct { int64_t f ; int64_t i ; uint8_t    x ; uint8_t  pad [15] ; } GB_hash_coarse_uint8_t    ; // 32
+typedef struct { int64_t f ; int64_t i ; uint16_t   x ; uint16_t pad [ 7] ; } GB_hash_coarse_uint16_t   ; // 32
+typedef struct { int64_t f ; int64_t i ; uint32_t   x ; uint32_t pad [ 3] ; } GB_hash_coarse_uint32_t   ; // 32
+typedef struct { int64_t f ; int64_t i ; uint64_t   x ; uint64_t pad [ 1] ; } GB_hash_coarse_uint64_t   ; // 32
+typedef struct { int64_t f ; int64_t i ; float      x ; float    pad [ 3] ; } GB_hash_coarse_float      ; // 32
+typedef struct { int64_t f ; int64_t i ; double     x ; double   pad [ 1] ; } GB_hash_coarse_double     ; // 32
+typedef struct { int64_t f ; int64_t i ; GxB_FC32_t x ; float    pad [ 2] ; } GB_hash_coarse_GxB_FC32_t ; // 32
+typedef struct { int64_t f ; int64_t i ; GxB_FC64_t x ;                     } GB_hash_coarse_GxB_FC64_t ; // 32
+typedef struct { int64_t f ; int64_t i ;                                    } GB_hash_coarse_GB_void    ; // 16
+
+//------------------------------------------------------------------------------
 // GB_saxpy3task_struct: task descriptor for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
@@ -57,14 +139,14 @@
 // its computations in a hash table shared by all fine tasks that compute
 // C(:,j), via atomics.  The vector index j is GBH (Bh, kk).
 
-// Both tasks use a hash table allocated uniquely for the task, in Hi, Hf, and
-// Hx.  The size of the hash table is determined by the maximum # of flops
-// needed to compute any vector in C(:,j1:j2) for a coarse task, or the entire
-// computation of the single vector in a fine task.  For the Hash method, the
-// table has a size that is twice the smallest a power of 2 larger than the
-// flop count.  If this size is a significant fraction of C->vlen, then the
-// Hash method is not used, and Gustavson's method is used, with the hash size
-// is set to C->vlen.
+// Both tasks use a hash table allocated uniquely for the task, in H, and (for
+// user-defined types only) in Hx.  The size of the hash table is determined by
+// the maximum # of flops needed to compute any vector in C(:,j1:j2) for a
+// coarse task, or the entire computation of the single vector in a fine task.
+// For the Hash method, the table has a size that is twice the smallest a power
+// of 2 larger than the flop count.  If this size is a significant fraction of
+// C->vlen, then the Hash method is not used, and Gustavson's method is used,
+// with the hash size is set to C->vlen.
 
 typedef struct
 {
@@ -72,9 +154,8 @@ typedef struct
     int64_t end ;       // ending vector for coarse task, p for fine task
     int64_t vector ;    // -1 for coarse task, vector j for fine task
     int64_t hsize ;     // size of hash table
-    int64_t *Hi ;       // Hi array for hash table (coarse hash tasks only)
-    GB_void *Hf ;       // Hf array for hash table (int8_t or int64_t)
-    GB_void *Hx ;       // Hx array for hash table
+    GB_void *H ;        // hash table (one of the GB_hash_* structs above)
+    GB_void *Hx ;       // hash table values for user-defined types
     int64_t my_cjnz ;   // # entries in C(:,j) found by this fine task
     int64_t flops ;     // # of flops in this task
     int master ;        // master fine task for the vector C(:,j)

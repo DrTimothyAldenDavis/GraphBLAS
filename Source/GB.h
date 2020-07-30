@@ -11,7 +11,6 @@
 // GraphBLAS itself.
 
 // Future plans: (see also 'grep -r FUTURE')
-// FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
 // FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 // FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
 
@@ -33,7 +32,7 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
@@ -224,6 +223,8 @@ GB_PUBLIC int GB_cover_max ;
 //------------------------------------------------------------------------------
 // GraphBLAS include files
 //------------------------------------------------------------------------------
+
+#define GB_CONCATENATE(a,b) a ## b
 
 #include "GB_cplusplus.h"
 #include "GB_Global.h"

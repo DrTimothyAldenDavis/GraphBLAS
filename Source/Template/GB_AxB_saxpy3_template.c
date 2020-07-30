@@ -33,7 +33,6 @@ double ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Cp = C->p ;                // ok: C is sparse
-    // const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
 
@@ -42,8 +41,7 @@ double ttt = omp_get_wtime ( ) ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
-    // const int64_t bnvec = B->nvec ;
-    // const bool B_is_hyper = (Bh != NULL) ;
+    const bool B_jumbled = B->jumbled ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -82,12 +80,27 @@ double ttt = omp_get_wtime ( ) ;
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
 
+    // Ignore the mask if not complemented, dense and used in-place, and
+    // structural (and thus the same as no mask at all).  For this case,
+    // all-hash tasks are used (see M_dense_in_place computation in
+    // GB_AxB_saxpy3).
+    bool ignore_mask = (mask_is_M && M_dense_in_place && Mask_struct) ;
+
+    //--------------------------------------------------------------------------
+    // get the monoid identity value for GB_AxB_saxpy3_generic
+    //--------------------------------------------------------------------------
+
+    #if defined ( GB_SAXPY_GENERIC )
+    GB_CTYPE add_identity ;
+    memcpy (&add_identity, identity, sizeof (GB_CTYPE)) ;
+    #endif
+
     //==========================================================================
     // phase2: numeric work for fine tasks
     //==========================================================================
 
     // Coarse tasks: nothing to do in phase2.
-    // Fine tasks: compute nnz (C(:,j)), and values in Hx via atomics.
+    // Fine tasks: compute nnz (C(:,j)), and values in Hx (...) via atomics.
 
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -98,11 +111,12 @@ double ttt = omp_get_wtime ( ) ;
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t kk = TaskList [taskid].vector ;
-        int team_size = TaskList [taskid].team_size ;
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        int64_t pB     = TaskList [taskid].start ;
+        int master = TaskList [taskid].master ;
+        int64_t kk = TaskList [taskid].vector ;
+        int team_size = TaskList [taskid].team_size ;
+        int64_t pB = TaskList [taskid].start ;
         int64_t pB_end = TaskList [taskid].end + 1 ;
         int64_t pleft = 0, pright = anvec-1 ;
         int64_t j = GBH (Bh, kk) ;
@@ -114,17 +128,11 @@ double ttt = omp_get_wtime ( ) ;
         GB_MULT (t, ignore, ignore, i, k, j) ;
         #endif
 
-        #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
-        #endif
-
-        #if GB_IS_PLUS_FC32_MONOID
-        float  *GB_RESTRICT Hx_real = (float *) Hx ;
-        float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
-        #elif GB_IS_PLUS_FC64_MONOID
-        double *GB_RESTRICT Hx_real = (double *) Hx ;
-        double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
-        #endif
+        // The Hx array is for user-defined types only.  For all built-in
+        // types, H [...].x is used instead.
+        GB_void *GB_RESTRICT Hx = TaskList [master].Hx ;
+        GB_void *Hash = TaskList [master].H ;
+        ASSERT (Hash != NULL) ;
 
         if (use_Gustavson)
         {
@@ -133,24 +141,24 @@ double ttt = omp_get_wtime ( ) ;
             // phase2: fine Gustavson task
             //------------------------------------------------------------------
 
-            // Hf [i] == 0: unlocked, i has not been seen in C(:,j).
-            //      Hx [i] is not initialized.
+            // H [i].f == 0: unlocked, i has not been seen in C(:,j).
+            //      Hx (i) is not initialized.
             //      M(i,j) is 0, or M is not present.
-            //      if M: Hf [i] stays equal to 0 (or 3 if locked)
+            //      if M: H [i].f stays equal to 0 (or 3 if locked)
             //      if !M, or no M: C(i,j) is a new entry seen for 1st time
 
-            // Hf [i] == 1: unlocked, i has not been seen in C(:,j).
-            //      Hx [i] is not initialized.  M is present.
+            // H [i].f == 1: unlocked, i has not been seen in C(:,j).
+            //      Hx (i) is not initialized.  M is present.
             //      M(i,j) is 1. (either M or !M case)
             //      if M: C(i,j) is a new entry seen for the first time.
-            //      if !M: Hf [i] stays equal to 1 (or 3 if locked)
+            //      if !M: H [i].f stays equal to 1 (or 3 if locked)
 
-            // Hf [i] == 2: unlocked, i has been seen in C(:,j).
-            //      Hx [i] is initialized.  This case is independent of M.
+            // H [i].f == 2: unlocked, i has been seen in C(:,j).
+            //      Hx (i) is initialized.  This case is independent of M.
 
-            // Hf [i] == 3: locked.  Hx [i] cannot be accessed.
+            // H [i].f == 3: locked.  Hx (i) cannot be accessed.
 
-            int8_t *GB_RESTRICT Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf;
+            GB_HASH_FINEGUS *GB_RESTRICT H = (GB_HASH_FINEGUS *) Hash ;
 
             if (M == NULL)
             {
@@ -159,7 +167,7 @@ double ttt = omp_get_wtime ( ) ;
                 // phase2: fine Gustavson task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // Hf [i] is initially 0.
+                // H [i].f is initially 0.
                 // 0 -> 3 : to lock, if i seen for first time
                 // 2 -> 3 : to lock, if i seen already
                 // 3 -> 2 : to unlock; now i has been seen
@@ -179,41 +187,41 @@ double ttt = omp_get_wtime ( ) ;
                         int8_t f ;
                         #if GB_IS_ANY_MONOID
                         GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
+                        f = H [i].f ;            // grab the entry
                         if (f == 2) continue ;  // check if already updated
                         GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // flag the entry
-                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                        H [i].f = 2 ;                // flag the entry
+                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx (i) = t
 
                         #else
 
                         #if GB_HAS_ATOMIC
                         GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
+                        f = H [i].f ;            // grab the entry
                         if (f == 2)             // if true, update C(i,j)
                         {
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx (i) += t
                             continue ;          // C(i,j) has been updated
                         }
                         #endif
                         do  // lock the entry
                         {
                             // do this atomically:
-                            // { f = Hf [i] ; Hf [i] = 3 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
+                            // { f = H [i].f ; H [i].f = 3 ; }
+                            GB_ATOMIC_CAPTURE_INT8 (f, H [i].f, 3) ;
                         } while (f == 3) ; // lock owner gets f=0 or 2
                         if (f == 0)
                         { 
                             // C(i,j) is a new entry
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx (i) = t
                         }
                         else // f == 2
                         { 
                             // C(i,j) already appears in C(:,j)
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx (i) += t
                         }
                         GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
+                        H [i].f = 2 ;                // unlock the entry
 
                         #endif
                     }
@@ -227,9 +235,9 @@ double ttt = omp_get_wtime ( ) ;
                 // phase2: fine Gustavson task, C(:,j)<M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
+                // H [i].f is 0 if M(i,j) not present or M(i,j)=0.
                 // 0 -> 1 : has already been done in phase0 if M(i,j)=1.
-                // If M(:,j) is dense, then it is not scattered into Hf.
+                // If M(:,j) is dense, then it is not scattered into H [...].f.
 
                 // 0 -> 0 : to ignore, if M(i,j)=0
                 // 1 -> 3 : to lock, if i seen for first time
@@ -250,12 +258,12 @@ double ttt = omp_get_wtime ( ) ;
                     #define GB_IKJ                                             \
                         int8_t f ;                                             \
                         GB_ATOMIC_READ                                         \
-                        f = Hf [i] ;            /* grab the entry */           \
+                        f = H [i].f ;            /* grab the entry */          \
                         if (f == 0 || f == 2) continue ;                       \
                         GB_ATOMIC_WRITE                                        \
-                        Hf [i] = 2 ;            /* unlock the entry */         \
+                        H [i].f = 2 ;            /* unlock the entry */        \
                         GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
-                        GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */
+                        GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx (i) = t */
 
                     #else
 
@@ -264,32 +272,32 @@ double ttt = omp_get_wtime ( ) ;
                         GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
                         int8_t f ;                                             \
                         GB_ATOMIC_READ                                         \
-                        f = Hf [i] ;            /* grab the entry */           \
+                        f = H [i].f ;            /* grab the entry */          \
                         if (GB_HAS_ATOMIC && (f == 2))                         \
                         {                                                      \
                             /* C(i,j) already seen; update it */               \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
+                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx (i) += t */     \
                             continue ;       /* C(i,j) has been updated */     \
                         }                                                      \
                         if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/    \
                         do  /* lock the entry */                               \
                         {                                                      \
                             /* do this atomically: */                          \
-                            /* { f = Hf [i] ; Hf [i] = 3 ; } */                \
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;            \
+                            /* { f = H [i].f ; H [i].f = 3 ; } */              \
+                            GB_ATOMIC_CAPTURE_INT8 (f, H [i].f, 3) ;           \
                         } while (f == 3) ; /* lock owner gets f=1 or 2 */      \
                         if (f == 1)                                            \
                         {                                                      \
                             /* C(i,j) is a new entry */                        \
-                            GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */       \
+                            GB_ATOMIC_WRITE_HX (i, t) ; /* Hx (i) = t */       \
                         }                                                      \
                         else /* f == 2 */                                      \
                         {                                                      \
                             /* C(i,j) already appears in C(:,j) */             \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
+                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx (i) += t */     \
                         }                                                      \
                         GB_ATOMIC_WRITE                                        \
-                        Hf [i] = 2 ;                /* unlock the entry */     \
+                        H [i].f = 2 ;               /* unlock the entry */     \
                     }
                     #endif
 
@@ -305,10 +313,10 @@ double ttt = omp_get_wtime ( ) ;
                 // phase2: fine Gustavson task, C(:,j)<!M(:,j)>=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
+                // H [i].f is 0 if M(i,j) not present or M(i,j)=0.
                 // 0 -> 1 : has already been done in phase0 if M(i,j)=1
 
-                // If M(:,j) is dense, then it is not scattered into Hf.
+                // If M(:,j) is dense, then it is not scattered into H [...].f.
 
                 // 1 -> 1 : to ignore, if M(i,j)=1
                 // 0 -> 3 : to lock, if i seen for first time
@@ -332,20 +340,20 @@ double ttt = omp_get_wtime ( ) ;
                         #if GB_IS_ANY_MONOID
 
                         GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
+                        f = H [i].f ;            // grab the entry
                         if (f == 1 || f == 2) continue ;
                         GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
-                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                        H [i].f = 2 ;                // unlock the entry
+                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx (i) = t
 
                         #else
 
                         GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
+                        f = H [i].f ;            // grab the entry
                         #if GB_HAS_ATOMIC
                         if (f == 2)             // if true, update C(i,j)
                         {
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx (i) += t
                             continue ;          // C(i,j) has been updated
                         }
                         #endif
@@ -353,21 +361,21 @@ double ttt = omp_get_wtime ( ) ;
                         do  // lock the entry
                         {
                             // do this atomically:
-                            // { f = Hf [i] ; Hf [i] = 3 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
+                            // { f = H [i].f ; H [i].f = 3 ; }
+                            GB_ATOMIC_CAPTURE_INT8 (f, H [i].f, 3) ;
                         } while (f == 3) ; // lock owner of gets f=0 or 2
                         if (f == 0)
                         { 
                             // C(i,j) is a new entry
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx (i) = t
                         }
                         else // f == 2
                         { 
                             // C(i,j) already seen
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx (i) += t
                         }
                         GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
+                        H [i].f = 2 ;                // unlock the entry
                         #endif
                     }
                 }
@@ -381,7 +389,7 @@ double ttt = omp_get_wtime ( ) ;
             // phase2: fine hash task
             //------------------------------------------------------------------
 
-            // Each hash entry Hf [hash] splits into two parts, (h,f).  f
+            // Each hash entry H [hash].f splits into two parts, (h,f).  f
             // is in the 2 least significant bits.  h is 62 bits, and is
             // the 1-based index i of the C(i,j) entry stored at that
             // location in the hash table.
@@ -389,7 +397,7 @@ double ttt = omp_get_wtime ( ) ;
             // If M is present (M or !M), and M(i,j)=1, then (i+1,1)
             // has been inserted into the hash table, in phase0.
 
-            // Given Hf [hash] split into (h,f)
+            // Given H [hash].f split into (h,f)
 
             // h == 0, f == 0: unlocked and unoccupied.
             //                  note that if f=0, h must be zero too.
@@ -405,18 +413,19 @@ double ttt = omp_get_wtime ( ) ;
 
             // h == (anything), f == 3: locked.
 
-            int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
+            GB_HASH_TYPE *GB_RESTRICT H = (GB_HASH_TYPE *) Hash ;
             int64_t hash_bits = (hash_size-1) ;
 
-            if (M == NULL)
+            if (M == NULL || ignore_mask)
             {
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // no mask present
+                // no mask present, or the mask is C<M>=A*B, dense, not
+                // complemented, and structural (and thus effectively no mask
+                // at all).
                 #undef GB_CHECK_MASK_ij
                 #include "GB_AxB_saxpy3_fineHash_phase2.c"
 
@@ -431,15 +440,8 @@ double ttt = omp_get_wtime ( ) ;
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
-                    // M(:,j) is dense.  M is not scattered into Hf.
-                    if (Mx == NULL)
-                    {
-                        // Full structural mask, not complemented.
-                        // The Mask is ignored, and C(:,j)=A*B(:,j)
-                        // TODO: remove this case in caller
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
-                    }
-                    #undef  GB_CHECK_MASK_ij
+                    // M(:,j) is dense.  M is not scattered into H [...].f.
+                    ASSERT (Mx != NULL) ; // ignore_mask case handled above
                     #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
                     switch (msize)
                     {
@@ -477,7 +479,7 @@ double ttt = omp_get_wtime ( ) ;
                     }
                 }
 
-                // Given Hf [hash] split into (h,f)
+                // Given H [hash].f split into (h,f)
 
                 // h == 0  , f == 0 : unlocked, unoccupied. C(i,j) ignored
                 // h == i+1, f == 1 : unlocked, occupied by M(i,j)=1.
@@ -508,10 +510,10 @@ double ttt = omp_get_wtime ( ) ;
                         {                                                      \
                             int64_t hf ;                                       \
                             GB_ATOMIC_READ                                     \
-                            hf = Hf [hash] ;        /* grab the entry */       \
+                            hf = H [hash].f ;    /* grab the entry */          \
                             if (GB_HAS_ATOMIC && (hf == i_unlocked))           \
                             {                                                  \
-                                /* Hx [hash] += t */                           \
+                                /* Hx (hash) += t */                           \
                                 GB_ATOMIC_UPDATE_HX (hash, t) ;                \
                                 break ;     /* C(i,j) has been updated */      \
                             }                                                  \
@@ -521,23 +523,23 @@ double ttt = omp_get_wtime ( ) ;
                                 do /* lock the entry */                        \
                                 {                                              \
                                     /* do this atomically: */                  \
-                                    /* { hf = Hf [hash] ; Hf [hash] |= 3 ; }*/ \
-                                    GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3);\
+                                    /* { hf = H [hash].f ; H [hash].f |= 3 ;}*/\
+                                    GB_ATOMIC_CAPTURE_INT64_OR(hf,H[hash].f,3);\
                                 } while ((hf & 3) == 3) ; /* own: f=1,2 */     \
                                 if ((hf & 3) == 1) /* f == 1 */                \
                                 {                                              \
                                     /* C(i,j) is a new entry in C(:,j) */      \
-                                    /* Hx [hash] = t */                        \
+                                    /* Hx (hash) = t */                        \
                                     GB_ATOMIC_WRITE_HX (hash, t) ;             \
                                 }                                              \
                                 else /* f == 2 */                              \
                                 {                                              \
                                     /* C(i,j) already appears in C(:,j) */     \
-                                    /* Hx [hash] += t */                       \
+                                    /* Hx (hash) += t */                       \
                                     GB_ATOMIC_UPDATE_HX (hash, t) ;            \
                                 }                                              \
                                 GB_ATOMIC_WRITE                                \
-                                Hf [hash] = i_unlocked ; /* unlock entry */    \
+                                H [hash].f = i_unlocked ; /* unlock entry */   \
                                 break ;                                        \
                             }                                                  \
                         }                                                      \
@@ -557,11 +559,10 @@ double ttt = omp_get_wtime ( ) ;
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
-                    // M(:,j) is dense.  M is not scattered into Hf.
+                    // M(:,j) is dense.  M is not scattered into H [...].f.
                     if (Mx == NULL)
                     {
                         // structural mask, complemented.  No work to do.
-                        // TODO: remove this case in caller
                         continue ;
                     }
                     #undef  GB_CHECK_MASK_ij
@@ -602,7 +603,7 @@ double ttt = omp_get_wtime ( ) ;
                     }
                 }
 
-                // Given Hf [hash] split into (h,f)
+                // Given H [hash].f split into (h,f)
 
                 // h == 0  , f == 0 : unlocked and unoccupied.
                 // h == i+1, f == 1 : unlocked, occupied by M(i,j)=1.
@@ -635,11 +636,12 @@ double ttt = omp_get_wtime ( ) ;
                         {
                             int64_t hf ;
                             GB_ATOMIC_READ
-                            hf = Hf [hash] ;        // grab the entry
+                            hf = H [hash].f ;        // grab the entry
                             #if GB_HAS_ATOMIC
                             if (hf == i_unlocked)  // if true, update C(i,j)
                             {
-                                GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
+                                // Hx (hash) += t
+                                GB_ATOMIC_UPDATE_HX (hash, t) ;
                                 break ;         // C(i,j) has been updated
                             }
                             #endif
@@ -651,31 +653,31 @@ double ttt = omp_get_wtime ( ) ;
                                 do // lock the entry
                                 {
                                     // do this atomically:
-                                    // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
-                                    GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3) ;
+                                    // { hf = H [hash].f ; H [hash].f |= 3 ; }
+                                    GB_ATOMIC_CAPTURE_INT64_OR (hf,H[hash].f,3);
                                 } while ((hf & 3) == 3) ; // owner: f=0,1,2
                                 if (hf == 0)            // f == 0
                                 { 
                                     // C(i,j) is a new entry in C(:,j)
-                                    // Hx [hash] = t
+                                    // Hx (hash) = t
                                     GB_ATOMIC_WRITE_HX (hash, t) ;
                                     GB_ATOMIC_WRITE
-                                    Hf [hash] = i_unlocked ; // unlock entry
+                                    H [hash].f = i_unlocked ; // unlock entry
                                     break ;
                                 }
                                 if (hf == i_unlocked)   // f == 2
                                 { 
                                     // C(i,j) already appears in C(:,j)
-                                    // Hx [hash] += t
+                                    // Hx (hash) += t
                                     GB_ATOMIC_UPDATE_HX (hash, t) ;
                                     GB_ATOMIC_WRITE
-                                    Hf [hash] = i_unlocked ; // unlock entry
+                                    H [hash].f = i_unlocked ; // unlock entry
                                     break ;
                                 }
                                 // hash table occupied, but not with i,
                                 // or with i but M(i,j)=1 so C(i,j) ignored
                                 GB_ATOMIC_WRITE
-                                Hf [hash] = hf ;  // unlock with prior value
+                                H [hash].f = hf ;  // unlock with prior value
                             }
                         }
                     }
@@ -689,7 +691,72 @@ GB_Global_timing_add (9, ttt) ;
 ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
-    // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
+    // phase3: count nnz(C(:,j)) for fine tasks
+    //==========================================================================
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (taskid = 0 ; taskid < nfine ; taskid++)
+    {
+
+        //----------------------------------------------------------------------
+        // get the task descriptor
+        //----------------------------------------------------------------------
+
+        int64_t hash_size = TaskList [taskid].hsize ;
+        bool use_Gustavson = (hash_size == cvlen) ;
+        int team_size = TaskList [taskid].team_size ;
+        int master = TaskList [taskid].master ;
+        int my_teamid = taskid - master ;
+        int64_t my_cjnz = 0 ;
+        GB_void *Hash = TaskList [master].H ;
+        ASSERT (Hash != NULL) ;
+
+        if (use_Gustavson)
+        {
+
+            //------------------------------------------------------------------
+            // phase3: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
+            //------------------------------------------------------------------
+
+            // H [i].f == 2 if C(i,j) is an entry in C(:,j)
+
+            GB_HASH_FINEGUS *GB_RESTRICT H = (GB_HASH_FINEGUS *) Hash ;
+            int64_t istart, iend ;
+            GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
+            for (int64_t i = istart ; i < iend ; i++)
+            { 
+                my_cjnz += (H [i].f == 2) ;
+            }
+
+        }
+        else
+        {
+
+            //------------------------------------------------------------------
+            // phase3: fine hash task, C=A*B, C<M>=A*B, or C<!M>=A*B
+            //------------------------------------------------------------------
+
+            // (H [hash].f & 3) == 2 if C(i,j) is an entry in C(:,j),
+            // and the index i of the entry is (H [hash].f >> 2) - 1.
+        
+            GB_HASH_TYPE *GB_RESTRICT H = (GB_HASH_TYPE *) Hash ;
+            int64_t mystart, myend ;
+            GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
+            for (int64_t hash = mystart ; hash < myend ; hash++)
+            { 
+                my_cjnz += ((H [hash].f & 3) == 2) ;
+            }
+
+        }
+        TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
+    }
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (13, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
+    //==========================================================================
+    // phase4: cumulative sum of Cp
     //==========================================================================
 
     int64_t cjnz_max = GB_AxB_saxpy3_cumsum (C, TaskList,
@@ -717,6 +784,14 @@ ttt = omp_get_wtime ( ) ;
 
     #if GB_IS_ANY_PAIR_SEMIRING
 
+        // These semirings have been renamed to ANY_PAIR:
+        // EQ_PAIR
+        // LAND_PAIR
+        // LOR_PAIR
+        // MAX_PAIR
+        // MIN_PAIR
+        // TIMES_PAIR
+
         // TODO: create C as a constant-value matrix.
 
         // ANY_PAIR semiring: result is purely symbolic
@@ -727,18 +802,7 @@ ttt = omp_get_wtime ( ) ;
             Cx [pC] = GB_CTYPE_CAST (1, 0) ;
         }
 
-        // Just a precaution; these variables are not used below.  Any attempt
-        // to access them will lead to a compile error.
-        #define Cx is not used
-        #define Hx is not used
-
-        // these have been renamed to ANY_PAIR:
-        // EQ_PAIR
-        // LAND_PAIR
-        // LOR_PAIR
-        // MAX_PAIR
-        // MIN_PAIR
-        // TIMES_PAIR
+        // C->x and H [...].x are not modified below.
 
     #endif
 
@@ -756,11 +820,15 @@ ttt = omp_get_wtime ( ) ;
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
-        #endif
+        int master = TaskList [taskid].master ;
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
+
+        // The Hx array is for user-defined types only.  For all built-in
+        // types, H [...].x is used instead.
+        GB_void *GB_RESTRICT Hx = TaskList [master].Hx ;
+        GB_void *Hash = TaskList [master].H ;
+        ASSERT (Hash != NULL) ;
 
         if (taskid < nfine)
         {
@@ -771,7 +839,6 @@ ttt = omp_get_wtime ( ) ;
 
             int64_t kk = TaskList [taskid].vector ;
             int team_size = TaskList [taskid].team_size ;
-            int master    = TaskList [taskid].master ;
             int my_teamid = taskid - master ;
             int64_t pC = Cp [kk] ;      // ok: C is sparse
 
@@ -782,29 +849,20 @@ ttt = omp_get_wtime ( ) ;
                 // phase5: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
                 //--------------------------------------------------------------
 
-                // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
-                int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                // H [i].f == 2 if C(i,j) is an entry in C(:,j)
+                GB_HASH_FINEGUS *GB_RESTRICT H = (GB_HASH_FINEGUS *) Hash ;
+
                 int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)
                 {
-                    // TODO: if all of C is dense, skip this step and
-                    // free the pattern of C.
                     // C(:,j) is dense
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
                         Ci [pC + i] = i ;           // ok: C is sparse
+                        GB_CIJ_GATHER (pC+i, i) ;   // Cx [pC+i] = Hx (i)
                     }
-                    #if !GB_IS_ANY_PAIR_SEMIRING
-                    // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
-                    GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
-
-                    // TODO: if C is a single vector, skip the memcpy of
-                    // Hx into Cx.  Instead, free C->x and transplant
-                    // C->x = Hx, and do not free Hx.
-                    #endif
                 }
                 else
                 {
@@ -812,9 +870,9 @@ ttt = omp_get_wtime ( ) ;
                     pC += TaskList [taskid].my_cjnz ;
                     for (int64_t i = istart ; i < iend ; i++)
                     {
-                        if (Hf [i] == 2)
+                        if (H [i].f == 2)
                         { 
-                            GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
+                            GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx (i)
                             Ci [pC++] = i ;         // ok: C is sparse
                         }
                     }
@@ -828,23 +886,23 @@ ttt = omp_get_wtime ( ) ;
                 // phase5: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
                 //--------------------------------------------------------------
 
-                // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
-                // and the index i of the entry is (Hf [hash] >> 2) - 1.
+                // (H [hash].f & 3) == 2 if C(i,j) is an entry in C(:,j),
+                // and the index i of the entry is (H [hash].f >> 2) - 1.
+            
+                GB_HASH_TYPE *GB_RESTRICT H = (GB_HASH_TYPE *) Hash ;
 
-                int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 int64_t mystart, myend ;
                 GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
                 pC += TaskList [taskid].my_cjnz ;
                 for (int64_t hash = mystart ; hash < myend ; hash++)
                 {
-                    int64_t hf = Hf [hash] ;
+                    int64_t hf = H [hash].f ;
                     if ((hf & 3) == 2)
                     { 
                         int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash
                         Ci [pC] = i ;               // ok: C is sparse
                         // added after deleting phase 6:
-                        GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx [hash]
+                        GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx (hash)
                         pC++ ;
                     }
                 }
@@ -856,11 +914,9 @@ ttt = omp_get_wtime ( ) ;
         {
 
             //------------------------------------------------------------------
-            // numeric coarse task: compute C(:,kfirst:klast)
+            // phase 5: numeric coarse task: compute C(:,kfirst:klast)
             //------------------------------------------------------------------
 
-            int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast = TaskList [taskid].end ;
             int64_t nk = klast - kfirst + 1 ;
@@ -872,6 +928,8 @@ ttt = omp_get_wtime ( ) ;
                 //--------------------------------------------------------------
                 // phase5: coarse Gustavson task
                 //--------------------------------------------------------------
+
+                GB_HASH_TYPE *GB_RESTRICT H = (GB_HASH_TYPE *) Hash ;
 
                 if (M == NULL)
                 {
@@ -909,16 +967,16 @@ ttt = omp_get_wtime ( ) ;
                                     // get A(i,k)
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
-                                    if (Hf [i] != mark)
+                                    if (H [i].f != mark)
                                     { 
                                         // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark ;
-                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
+                                        H [i].f = mark ;
+                                        GB_HX_WRITE (i, t) ;    // Hx (i) = t
                                     }
                                     else
                                     { 
                                         // C(i,j) += A(i,k) * B(k,j)
-                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                        GB_HX_UPDATE (i, t) ;   // Hx (i) += t
                                     }
                                 }
                             }
@@ -938,17 +996,17 @@ ttt = omp_get_wtime ( ) ;
                                     // get A(i,k)
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
-                                    if (Hf [i] != mark)
+                                    if (H [i].f != mark)
                                     { 
                                         // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark ;
-                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                        H [i].f = mark ;
+                                        GB_HX_WRITE (i, t) ; // Hx (i) = t
                                         Ci [pC++] = i ;      // ok: C is sparse
                                     }
                                     else
                                     { 
                                         // C(i,j) += A(i,k) * B(k,j)
-                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                        GB_HX_UPDATE (i, t) ;   // Hx (i) += t
                                     }
                                 }
                             }
@@ -964,11 +1022,11 @@ ttt = omp_get_wtime ( ) ;
                     // phase5: coarse Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    // Initially, Hf [...] < mark for all of Hf.
+                    // Initially, H [...].f < mark for all of H [...].f.
 
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
-                    // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
+                    // H [i].f < mark    : M(i,j)=0, C(i,j) is ignored.
+                    // H [i].f == mark   : M(i,j)=1, and C(i,j) not yet seen.
+                    // H [i].f == mark+1 : M(i,j)=1, and C(i,j) has been seen.
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
@@ -997,19 +1055,19 @@ ttt = omp_get_wtime ( ) ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
-                                    int64_t hf = Hf [i] ;                      \
+                                    int64_t hf = H [i].f ;                     \
                                     if (hf == mark)                            \
                                     {                                          \
                                         /* C(i,j) = A(i,k) * B(k,j) */         \
-                                        Hf [i] = mark1 ;     /* mark as seen */\
+                                        H [i].f = mark1 ;    /* mark as seen */\
                                         GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
+                                        GB_HX_WRITE (i, t) ; /* Hx (i) = t */  \
                                     }                                          \
                                     else if (hf == mark1)                      \
                                     {                                          \
                                         /* C(i,j) += A(i,k) * B(k,j) */        \
                                         GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
+                                        GB_HX_UPDATE (i, t) ;/* Hx (i) += t */ \
                                     }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
@@ -1027,20 +1085,20 @@ ttt = omp_get_wtime ( ) ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ                                 \
                                 {                                              \
-                                    int64_t hf = Hf [i] ;                      \
+                                    int64_t hf = H [i].f ;                     \
                                     if (hf == mark)                            \
                                     {                                          \
                                         /* C(i,j) = A(i,k) * B(k,j) */         \
-                                        Hf [i] = mark1 ;     /* mark as seen */\
+                                        H [i].f = mark1 ;    /* mark as seen */\
                                         GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
+                                        GB_HX_WRITE (i, t) ; /* Hx (i) = t */  \
                                         Ci [pC++] = i ; /* C(:,j) pattern */   \
                                     }                                          \
                                     else if (hf == mark1)                      \
                                     {                                          \
                                         /* C(i,j) += A(i,k) * B(k,j) */        \
                                         GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
+                                        GB_HX_UPDATE (i, t) ;/* Hx (i) += t */ \
                                     }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
@@ -1059,9 +1117,9 @@ ttt = omp_get_wtime ( ) ;
                     //----------------------------------------------------------
 
                     // Since the mask is !M:
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
-                    // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
-                    // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
+                    // H [i].f < mark    : M(i,j)=0, C(i,j) is not yet seen.
+                    // H [i].f == mark   : M(i,j)=1, so C(i,j) is ignored.
+                    // H [i].f == mark+1 : M(i,j)=0, and C(i,j) has been seen.
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
@@ -1092,19 +1150,19 @@ ttt = omp_get_wtime ( ) ;
                                 {
                                     // get A(i,k)
                                     int64_t i = GBI (Ai, pA, avlen) ;
-                                    int64_t hf = Hf [i] ;
+                                    int64_t hf = H [i].f ;
                                     if (hf < mark)
                                     { 
                                         // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark1 ;     // mark as seen
+                                        H [i].f = mark1 ;     // mark as seen
                                         GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
-                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                        GB_HX_WRITE (i, t) ; // Hx (i) = t
                                     }
                                     else if (hf == mark1)
                                     { 
                                         // C(i,j) += A(i,k) * B(k,j)
                                         GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
-                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                        GB_HX_UPDATE (i, t) ;// Hx (i) += t
                                     }
                                 }
                             }
@@ -1123,20 +1181,20 @@ ttt = omp_get_wtime ( ) ;
                                 {
                                     // get A(i,k)
                                     int64_t i = GBI (Ai, pA, avlen) ;
-                                    int64_t hf = Hf [i] ;
+                                    int64_t hf = H [i].f ;
                                     if (hf < mark)
                                     { 
                                         // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark1 ;        // mark as seen
+                                        H [i].f = mark1 ;        // mark as seen
                                         GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
-                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
+                                        GB_HX_WRITE (i, t) ;    // Hx (i) = t
                                         Ci [pC++] = i ; // create C(:,j) pattern
                                     }
                                     else if (hf == mark1)
                                     { 
                                         // C(i,j) += A(i,k) * B(k,j)
                                         GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
-                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                        GB_HX_UPDATE (i, t) ;   // Hx (i) += t
                                     }
                                 }
                             }
@@ -1153,19 +1211,20 @@ ttt = omp_get_wtime ( ) ;
                 // phase5: coarse hash task
                 //--------------------------------------------------------------
 
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
+                GB_HASH_COARSE *GB_RESTRICT H = (GB_HASH_COARSE *) Hash ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL)
+                if (M == NULL || ignore_mask)
                 {
 
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C=A*B
                     //----------------------------------------------------------
 
-                    // no mask present
+                    // no mask present, or the mask is C<M>=A*B, dense, not
+                    // complemented, and structural (and thus effectively no
+                    // mask at all).
                     #undef GB_CHECK_MASK_ij
-                    // printf ("coarse hash phase 5 no mask\n") ;
                     #include "GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
@@ -1178,15 +1237,8 @@ ttt = omp_get_wtime ( ) ;
 
                     if (M_dense_in_place)
                     { 
-                        // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
-                        {
-                            // Full structural mask, not complemented.
-                            // The Mask is ignored, and C(:,j)=A*B(:,j)
-                            // TODO: remove this case in caller
-                            // printf ("coarse hash phase 5 M mask struct\n") ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
-                        }
+                        // M(:,j) is dense.  M is not scattered into H [...].f.
+                        ASSERT (Mx != NULL) ; // ignore_mask case handled above
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
                         switch (msize)
                         {
@@ -1194,30 +1246,25 @@ ttt = omp_get_wtime ( ) ;
                             case 1:
                             {
                                 #define M_TYPE uint8_t
-                                // printf ("coarse hash phase 5 M 1\n") ;
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 5 M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 5 M 3\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 5 M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 5 M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -1229,8 +1276,8 @@ ttt = omp_get_wtime ( ) ;
                         }
                     }
 
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
+                    // Initially, H [...].f < mark for all of H [...].f.
+                    // Let h = H [hash].i and f = H [hash].f.
 
                     // f < mark            : M(i,j)=0, C(i,j) is ignored.
                     // h == i, f == mark   : M(i,j)=1, and C(i,j) not yet seen.
@@ -1257,16 +1304,17 @@ ttt = omp_get_wtime ( ) ;
                             {                                                  \
                                 for (GB_HASH (i))       /* find i in hash */   \
                                 {                                              \
-                                    int64_t f = Hf [hash] ;                    \
+                                    int64_t f = H [hash].f ;                   \
                                     if (f < mark) break ; /* M(i,j)=0, ignore*/\
-                                    if (Hi [hash] == i)                        \
+                                    if (H [hash].i == i)                       \
                                     {                                          \
                                         GB_MULT_A_ik_B_kj ; /* t = aik*bkj */  \
                                         if (f == mark) /* if true, i is new */ \
                                         {                                      \
                                             /* C(i,j) is new */                \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            GB_HX_WRITE (hash, t) ;/*Hx[.]=t */\
+                                            H [hash].f = mark1 ;/* mark seen */\
+                                            /* Hx (hash) = t */                \
+                                            GB_HX_WRITE (hash, t) ;            \
                                             Ci [pC++] = i ;                    \
                                         }                                      \
                                         else                                   \
@@ -1281,8 +1329,8 @@ ttt = omp_get_wtime ( ) ;
                             GB_SCAN_M_j_OR_A_k ;
                             #undef GB_IKJ
                         }
-                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
-                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
+                        // found i if: H [hash].f == mark1 and H [hash].i == i
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, H [hash].i == i) ;
                     }
 
                 }
@@ -1295,11 +1343,10 @@ ttt = omp_get_wtime ( ) ;
 
                     if (M_dense_in_place)
                     { 
-                        // M(:,j) is dense.  M is not scattered into Hf.
+                        // M(:,j) is dense.  M is not scattered into H [*].f.
                         if (Mx == NULL)
                         {
                             // structural mask, complemented.  No work to do.
-                            // TODO: remove this case in caller
                             continue ;
                         }
                         #undef  GB_CHECK_MASK_ij
@@ -1309,31 +1356,26 @@ ttt = omp_get_wtime ( ) ;
                             default:
                             case 1:
                             {
-                                // printf ("coarse hash phase 5 !M 1\n") ;
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 5 !M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 5 !M 4\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 5 !M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 5 !M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -1345,8 +1387,8 @@ ttt = omp_get_wtime ( ) ;
                         }
                     }
 
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
+                    // Initially, H [...].f < mark for all of H [...].f.
+                    // Let h = H [hash].i and f = H [hash].f.
 
                     // f < mark: unoccupied, M(i,j)=0, and C(i,j) not yet seen.
                     // h == i, f == mark   : M(i,j)=1. C(i,j) ignored.
@@ -1374,32 +1416,33 @@ ttt = omp_get_wtime ( ) ;
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
-                                    int64_t f = Hf [hash] ;
+                                    int64_t f = H [hash].f ;
                                     if (f < mark)   // if true, i is new
                                     { 
                                         // C(i,j) is new
-                                        Hf [hash] = mark1 ; // mark C(i,j) seen
-                                        Hi [hash] = i ;
+                                        H [hash].f = mark1 ; // mark C(i,j) seen
+                                        H [hash].i = i ;
                                         GB_MULT_A_ik_B_kj ; // t = A(i,k)*B(k,j)
-                                        GB_HX_WRITE (hash, t) ; // Hx [hash] = t
+                                        GB_HX_WRITE (hash, t) ; // Hx (hash) = t
                                         Ci [pC++] = i ;         // ok: C sparse
                                         break ;
                                     }
-                                    if (Hi [hash] == i)
+                                    if (H [hash].i == i)
                                     {
                                         if (f == mark1)
                                         { 
                                             // C(i,j) has been seen; update it.
                                             GB_MULT_A_ik_B_kj ;//t=A(i,k)*B(k,j)
-                                            GB_HX_UPDATE (hash, t) ;//Hx[ ] += t
+                                            // Hx (hash) += t
+                                            GB_HX_UPDATE (hash, t) ;
                                         }
                                         break ;
                                     }
                                 }
                             }
                         }
-                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
-                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
+                        // found i if: H [hash].f == mark1 and H [hash].i == i
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, H [hash].i == i) ;
                     }
                 }
             }
@@ -1416,7 +1459,4 @@ ttt = omp_get_wtime ( ) - ttt ;
 GB_Global_timing_add (12, ttt) ;
 
 }
-
-#undef Cx
-#undef Hx
 

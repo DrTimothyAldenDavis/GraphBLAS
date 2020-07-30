@@ -65,9 +65,11 @@ bool GB_binop_builtin               // true if binary operator is builtin
         return (false) ;
     }
 
+    // positional ops are int32 or int64
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (*opcode) ;
-    ASSERT (op_is_positional == (op_xtype == GrB_INT64)) ;
-    ASSERT (op_is_positional == (op_ytype == GrB_INT64)) ;
+    ASSERT (GB_IMPLIES (op_is_positional,
+        ((op_xtype == GrB_INT64 || op_xtype == GrB_INT32) &&
+         (op_ytype == GrB_INT64 || op_ytype == GrB_INT32)))) ;
 
     // check if A matches the input to the operator
     if (!A_is_pattern && !op_is_positional)

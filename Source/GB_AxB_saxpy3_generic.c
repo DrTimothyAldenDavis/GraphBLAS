@@ -43,6 +43,8 @@ GrB_Info GB_AxB_saxpy3_generic
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
+    ASSERT (mult->ztype == C->type) ;
+    GB_Type_code ccode = C->type->code ;
 
     GxB_binary_function fmult = mult->function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->function ;
@@ -93,10 +95,6 @@ GrB_Info GB_AxB_saxpy3_generic
     // C = A*B via saxpy3 method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    // memcpy (&(Cx [pC]), &(Hx [i]), len*csize)
-    #define GB_CIJ_MEMCPY(pC,i,len) \
-        memcpy (GB_CX (pC), GB_HX (i), (len)*csize)
-
     // atomic update not available for function pointers
     #define GB_HAS_ATOMIC 0
 
@@ -118,6 +116,12 @@ GrB_Info GB_AxB_saxpy3_generic
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
 
+    // Cx [p] += t
+    #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), GB_ADDR (t))
+
+    // Hx (i) += t
+    #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), GB_ADDR (t))
+
     // definitions for GB_AxB_saxpy3_template.c
     #include "GB_AxB_saxpy3_template.h"
 
@@ -128,11 +132,11 @@ GrB_Info GB_AxB_saxpy3_generic
         // generic semirings with positional mulitiply operators
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
+        GB_BURBLE_MATRIX (C, "(generic positional A*B) ") ;
 
-        // C always has type int64_t.  The monoid must be used via its function
-        // pointer.  The positional multiply operator must be hard-coded since
-        // it has no function pointer.
+        // C always has type int32_t or int64_t.  The monoid must be used via
+        // its function pointer.  The positional multiply operator must be
+        // hard-coded since it has no function pointer.
 
         // aik = A(i,k), located in Ax [pA], value not used
         #define GB_GETA(aik,Ax,pA) ;
@@ -149,34 +153,30 @@ GrB_Info GB_AxB_saxpy3_generic
         // Cx [p] = t
         #define GB_CIJ_WRITE(p,t) Cx [p] = t
 
-        // address of Hx [i]
-        #define GB_HX(i) (&Hx [i])
+        // address of Hx (i)
+        #define GB_HX(i) (&(H [i].x))
 
-        // Hx [i] = t
-        #define GB_HX_WRITE(i, t) Hx [i] = t
+        // Hx (i) = t
+        #define GB_HX_WRITE(i, t) H [i].x = t
 
-        // Cx [p] = Hx [i]
-        #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+        // Cx [p] = Hx (i)
+        #define GB_CIJ_GATHER(p,i) Cx [p] = H [i].x
 
-        // Cx [p] += t
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), &t)
+        // address of a scalar for fadd and fmult functions
+        #define GB_ADDR(t) &t
 
-        // Hx [i] += t
-        #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), &t)
-
+        #define GB_SAXPY_GENERIC
         #define GB_IDENTITY add_identity
 
         int64_t offset = GB_positional_offset (opcode) ;
 
-        if (mult->ztype == GrB_INT64)
+        if (ccode == GB_INT64_code)
         {
-            // monoid identity value
-            int64_t add_identity ;
-            memcpy (&add_identity, identity, sizeof (int64_t)) ;
             #undef  GB_CTYPE
             #define GB_CTYPE int64_t
-            ASSERT (C->type == GrB_INT64) ;
-            ASSERT (csize == sizeof (int64_t)) ;
+            #define GB_HASH_COARSE  GB_hash_coarse_int64_t
+            #define GB_HASH_FINEGUS GB_hash_fineGus_int64_t
+            #define GB_HASH_TYPE    GB_hash_int64_t
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
@@ -189,14 +189,12 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
-                    // TODO: this could be moved out of the inner loop
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-                    // TODO: this could be moved out of 2 inner loops
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
                     #include "GB_AxB_saxpy3_template.c"
@@ -206,13 +204,14 @@ GrB_Info GB_AxB_saxpy3_generic
         }
         else
         {
-            // monoid identity value
-            int32_t add_identity ;
-            memcpy (&add_identity, identity, sizeof (int32_t)) ;
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
-            ASSERT (C->type == GrB_INT32) ;
-            ASSERT (csize == sizeof (int32_t)) ;
+            #undef  GB_HASH_COARSE
+            #undef  GB_HASH_FINEGUS
+            #undef  GB_HASH_TYPE
+            #define GB_HASH_COARSE  GB_hash_coarse_int32_t
+            #define GB_HASH_FINEGUS GB_hash_fineGus_int32_t
+            #define GB_HASH_TYPE    GB_hash_int32_t
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
@@ -225,14 +224,12 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
-                    // TODO: this could be moved out of the inner loop
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy3_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-                    // TODO: this could be moved out of 2 inner loops
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy3_template.c"
@@ -249,11 +246,7 @@ GrB_Info GB_AxB_saxpy3_generic
         // generic semirings with standard mulitiply operators
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
-
-        // monoid identity value
-        #undef  GB_IDENTITY
-        #define GB_IDENTITY identity
+        GB_BURBLE_MATRIX (C, "(generic A*B) ") ;
 
         // aik = A(i,k), located in Ax [pA]
         #undef  GB_GETA
@@ -267,54 +260,159 @@ GrB_Info GB_AxB_saxpy3_generic
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
 
-        // define t for each task
-        #undef  GB_CIJ_DECLARE
-        #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
+        #undef  GB_HASH_COARSE
+        #undef  GB_HASH_FINEGUS
+        #undef  GB_HASH_TYPE
 
-        // address of Cx [p]
-        #undef  GB_CX
-        #define GB_CX(p) (Cx +((p)*csize))
+        switch (ccode)
+        {
+            case GB_BOOL_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE bool
+                #define GB_HASH_FINEGUS GB_hash_fineGus_bool
+                #define GB_HASH_TYPE    GB_hash_bool
+                #define GB_HASH_COARSE  GB_hash_coarse_bool
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // Cx [p] = t
-        #undef  GB_CIJ_WRITE
-        #define GB_CIJ_WRITE(p,t) memcpy (GB_CX (p), t, csize)
+            case GB_INT8_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE int8_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_int8_t
+                #define GB_HASH_TYPE    GB_hash_int8_t
+                #define GB_HASH_COARSE  GB_hash_coarse_int8_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // address of Hx [i]
-        #undef  GB_HX
-        #define GB_HX(i) (Hx +((i)*csize))
+            case GB_INT16_code  :
+                #undef  GB_CTYPE
+                #define GB_CTYPE int16_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_int16_t
+                #define GB_HASH_TYPE    GB_hash_int16_t
+                #define GB_HASH_COARSE  GB_hash_coarse_int16_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // Hx [i] = t
-        #undef  GB_HX_WRITE
-        #define GB_HX_WRITE(i, t) memcpy (GB_HX (i), t, csize)
+            case GB_INT32_code  :
+                #undef  GB_CTYPE
+                #define GB_CTYPE int32_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_int32_t
+                #define GB_HASH_TYPE    GB_hash_int32_t
+                #define GB_HASH_COARSE  GB_hash_coarse_int32_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // Cx [p] = Hx [i]
-        #undef  GB_CIJ_GATHER
-        #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
+            case GB_INT64_code  :
+                #undef  GB_CTYPE
+                #define GB_CTYPE int64_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_int64_t
+                #define GB_HASH_TYPE    GB_hash_int64_t
+                #define GB_HASH_COARSE  GB_hash_coarse_int64_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // Cx [p] += t
-        #undef  GB_CIJ_UPDATE
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), t)
+            case GB_UINT8_code  :
+                #undef  GB_CTYPE
+                #define GB_CTYPE uint8_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_uint8_t
+                #define GB_HASH_TYPE    GB_hash_uint8_t
+                #define GB_HASH_COARSE  GB_hash_coarse_uint8_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        // Hx [i] += t
-        #undef  GB_HX_UPDATE
-        #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), t)
+            case GB_UINT16_code :
+                #undef  GB_CTYPE
+                #define GB_CTYPE uint16_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_uint16_t
+                #define GB_HASH_TYPE    GB_hash_uint16_t
+                #define GB_HASH_COARSE  GB_hash_coarse_uint16_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        #undef  GB_CTYPE
-        #define GB_CTYPE GB_void
+            case GB_UINT32_code :
+                #undef  GB_CTYPE
+                #define GB_CTYPE uint32_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_uint32_t
+                #define GB_HASH_TYPE    GB_hash_uint32_t
+                #define GB_HASH_COARSE  GB_hash_coarse_uint32_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
 
-        if (flipxy)
-        { 
-            // t = B(k,j) * A(i,k)
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
-            #include "GB_AxB_saxpy3_template.c"
-        }
-        else
-        { 
-            // t = A(i,k) * B(k,j)
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
-            #include "GB_AxB_saxpy3_template.c"
+            case GB_UINT64_code :
+                #undef  GB_CTYPE
+                #define GB_CTYPE uint64_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_uint64_t
+                #define GB_HASH_TYPE    GB_hash_uint64_t
+                #define GB_HASH_COARSE  GB_hash_coarse_uint64_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
+
+            case GB_FP32_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE float
+                #define GB_HASH_FINEGUS GB_hash_fineGus_float
+                #define GB_HASH_TYPE    GB_hash_float
+                #define GB_HASH_COARSE  GB_hash_coarse_float
+                #include "GB_AxB_saxpy3_flipxy_template.c"
+
+            case GB_FP64_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE double
+                #define GB_HASH_FINEGUS GB_hash_fineGus_double
+                #define GB_HASH_TYPE    GB_hash_double
+                #define GB_HASH_COARSE  GB_hash_coarse_double
+                #include "GB_AxB_saxpy3_flipxy_template.c"
+
+            case GB_FC32_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE GxB_FC32_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_GxB_FC32_t
+                #define GB_HASH_TYPE    GB_hash_GxB_FC32_t
+                #define GB_HASH_COARSE  GB_hash_coarse_GxB_FC32_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
+
+            case GB_FC64_code   :
+                #undef  GB_CTYPE
+                #define GB_CTYPE GxB_FC64_t
+                #define GB_HASH_FINEGUS GB_hash_fineGus_GxB_FC64_t
+                #define GB_HASH_TYPE    GB_hash_GxB_FC64_t
+                #define GB_HASH_COARSE  GB_hash_coarse_GxB_FC64_t
+                #include "GB_AxB_saxpy3_flipxy_template.c"
+
+            default             :
+
+                // C->type == op->ztype is a user-defined type
+                #undef  GB_CTYPE
+                #define GB_CTYPE GB_void
+                #define GB_HASH_FINEGUS GB_hash_fineGus_GB_void
+                #define GB_HASH_TYPE    GB_hash_GB_void
+                #define GB_HASH_COARSE  GB_hash_coarse_GB_void
+
+                // monoid identity value
+                #undef  GB_SAXPY_GENERIC
+                #undef  GB_IDENTITY
+                #define GB_IDENTITY identity
+
+                // define t for each task
+                #undef  GB_CIJ_DECLARE
+                #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
+
+                // address of Cx [p]
+                #undef  GB_CX
+                #define GB_CX(p) (Cx +((p)*csize))
+
+                // Cx [p] = t
+                #undef  GB_CIJ_WRITE
+                #define GB_CIJ_WRITE(p,t) memcpy (GB_CX (p), t, csize)
+
+                // address of Hx [i]
+                #undef  GB_HX
+                #define GB_HX(i) (Hx +((i)*csize))
+
+                // Hx [i] = t
+                #undef  GB_HX_WRITE
+                #define GB_HX_WRITE(i, t) memcpy (GB_HX (i), t, csize)
+
+                // Cx [p] = Hx [i]
+                #undef  GB_CIJ_GATHER
+                #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
+
+                // address of a scalar for fadd and fmult functions
+                #undef  GB_ADDR
+                #define GB_ADDR(t) t
+
+                #include "GB_AxB_saxpy3_flipxy_template.c"
         }
     }
 

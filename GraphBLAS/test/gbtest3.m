@@ -25,6 +25,7 @@ Y1 = dnn_matlab (W, bias, Y0) ;
 Y2 = GrB.dnn (W, bias, Y0) ;
 
 err = norm (Y1-Y2,1) ;
+err
 assert (err < 1e-5) ;
 
 fprintf ('gbtest3: all tests passed\n') ;
