@@ -149,17 +149,17 @@ int main (int argc, char **argv)
         worker (&Aarray [id], id) ;
     }
 
-    // the master thread prints them again, and frees them
+    // the leader thread prints them again, and frees them
     for (int id = 0 ; id < NTHREADS ; id++)
     {
         GrB_Matrix A = Aarray [id] ;
-        printf ("\n---- Master prints matrix %d\n", id) ;
+        printf ("\n---- Leader prints matrix %d\n", id) ;
         OK (GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
         GrB_Matrix_free (&A) ;
     }
 
     // print an error message
-    printf ("\n\n---- Master thread prints an error message:\n") ;
+    printf ("\n\n---- Leader thread prints an error message:\n") ;
     GrB_Info info = GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
     printf ("Error: %d\n", info) ;
 

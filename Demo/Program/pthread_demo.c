@@ -165,19 +165,19 @@ int main (int argc, char **argv)
         pthread_join (threads [id], NULL) ;
     }
 
-    // the master thread prints them again, and frees them
+    // the leader thread prints them again, and frees them
     for (int id = 0 ; id < NTHREADS ; id++)
     {
         GrB_Matrix A = arg [id].A ;
-        printf ("\n---- Master prints matrix %d\n", id) ;
+        printf ("\n---- Leader prints matrix %d\n", id) ;
         OK (NULL, GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
         GrB_Matrix_free (&A) ;
     }
 
     // print an error message
-    printf ("\n\n---- Master thread prints an error message:\n") ;
+    printf ("\n\n---- Leader thread prints an error message:\n") ;
     GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
-    printf ("master %d : Error: %s\n", id, GrB_error ( )) ;
+    printf ("leader %d : Error: %s\n", id, GrB_error ( )) ;
 
     // finish GraphBLAS
     GrB_finalize ( ) ;
