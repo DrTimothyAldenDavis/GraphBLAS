@@ -77,7 +77,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     (*Chandle) = NULL ;
     int64_t Cnvec, Cnvec_nonempty ;
     int64_t *GB_RESTRICT Cp = NULL ;
-    const int64_t *GB_RESTRICT Ch = NULL ;  // shallow; must not be freed
+    const int64_t *GB_RESTRICT Ch = NULL ;
     int64_t *GB_RESTRICT C_to_M = NULL ;
     int64_t *GB_RESTRICT C_to_A = NULL ;
     int64_t *GB_RESTRICT C_to_B = NULL ;

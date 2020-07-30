@@ -37,35 +37,19 @@ switch (ztype)
         ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0x1L' ;
-    case { 'int8_t' }
+    case { 'int8_t', 'uint8_t' }
         ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0xffL' ;
-    case { 'uint8_t' }
-        ztype_ignore_overflow = false ;
-        nbits = 8 ;
-        bits = '0xffL' ;
-    case { 'int16_t' }
+    case { 'int16_t', 'uint16_t' }
         ztype_ignore_overflow = false ;
         nbits = 16 ;
         bits = '0xffffL' ;
-    case { 'uint16_t' }
-        ztype_ignore_overflow = false ;
-        nbits = 16 ;
-        bits = '0xffffL' ;
-    case { 'int32_t' }
+    case { 'int32_t', 'uint32_t' }
         ztype_ignore_overflow = false ;
         nbits = 32 ;
         bits = '0xffffffffL' ;
-    case { 'uint32_t' }
-        ztype_ignore_overflow = false ;
-        nbits = 32 ;
-        bits = '0xffffffffL' ;
-    case { 'int64_t' }
-        ztype_ignore_overflow = true ;
-        nbits = 64 ;
-        bits = '0' ;
-    case { 'uint64_t' }
+    case { 'int64_t', 'uint64_t' }
         ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
@@ -73,11 +57,7 @@ switch (ztype)
         ztype_ignore_overflow = true ;
         nbits = 32 ;
         bits = '0' ;
-    case { 'double' }
-        ztype_ignore_overflow = true ;
-        nbits = 64 ;
-        bits = '0' ;
-    case { 'GxB_FC32_t' }
+    case { 'double', 'GxB_FC32_t' }
         ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;

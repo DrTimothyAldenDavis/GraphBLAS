@@ -160,16 +160,15 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ai = A->i ;
-    const int64_t anvec = A->nvec ;
-    const int64_t avlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPER (A) ;
+    int64_t anvec = A->nvec ;
+    int64_t avlen = A->vlen ;
+    bool A_is_hyper = GB_IS_HYPER (A) ;
 
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    const bool B_is_hyper = GB_IS_HYPER (B) ;
-    const int64_t bvlen = B->vlen ;
-    const bool B_jumbled = B->jumbled ;
+    bool B_is_hyper = GB_IS_HYPER (B) ;
+    int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------
     // construct the parallel tasks
@@ -296,12 +295,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // search space on the right, so the remaining calls to GB_lookup
             // will only need to search Ah [pleft...pright-1].  pright does not
             // change.  pleft is advanced as B(:,j) is traversed, since the
-            // indices in B(:,j) are sorted in ascending order if B is not
-            // jumbled.
+            // indices in B(:,j) are sorted in ascending order.
 
             int64_t pleft = 0 ;
             int64_t pright = anvec-1 ;
-            if (A_is_hyper && my_bjnz > 2 && !B_jumbled)
+            if (A_is_hyper && my_bjnz > 2)
             { 
                 // trim Ah [0..pright] to remove any entries past last B(:,j)
                 int64_t ilast = GBI (Bi, pB_end-1, bvlen) ;

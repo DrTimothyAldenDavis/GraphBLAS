@@ -284,7 +284,6 @@ for k1 = k1_list % 1:length(mult_ops)
 
                 % C = A'*B, with mask
                 % tic
-save gunk Cin Mask semiring A B dtn id
                 C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn);
                 t2 = grbresults ; % toc ;
                 if (n < 200)

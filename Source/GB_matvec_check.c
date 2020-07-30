@@ -73,9 +73,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_full = GB_IS_FULL (A) ;
     bool is_sparse = !is_full ;
 
-    GBPR0 (", %s %s%s:\n",
-        is_hyper ? "hypersparse" : (is_sparse ? "sparse" : "full"),
-        A->is_csc ? "by col" : "by row", A->jumbled ? " (jumbled)" : "") ;
+    GBPR0 (", %s", is_hyper ? "hypersparse" : (is_sparse ? "sparse" : "full")) ;
+    GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
+    if (A->jumbled)
+    { 
+        GBPR0 (" (jumbled)") ;
+    }
 
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", A->nzmax) ;
@@ -327,11 +330,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  full matrix cannot have zombies or pending tuples\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
-        if (A->jumbled)
-        { 
-            GBPR0 ("  full matrix cannot be jumbled\n") ;
-            return (GrB_INVALID_OBJECT) ;
-        }
     }
 
     //--------------------------------------------------------------------------
@@ -436,7 +434,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             // If the matrix is known to be jumbled, then out-of-order
             // indices are OK (but duplicates are not OK).  If the matrix is
             // unjumbled, then all indices must appear in ascending order.
-            // If A is jumbled, this only does a minimal check for duplicates.
             if (A->jumbled ? (i == ilast) : (i <= ilast))
             { 
                 // indices unsorted, or duplicates present

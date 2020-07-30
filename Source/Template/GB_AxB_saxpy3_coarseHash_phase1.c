@@ -13,8 +13,8 @@
     // phase1: coarse hash task, C=A*B
     //--------------------------------------------------------------------------
 
-    // Initially, H [...].f < mark for all of H [...].f.
-    // Let f = H [hash].f and h = H [hash].i
+    // Initially, Hf [...] < mark for all of Hf.
+    // Let f = Hf [hash] and h = Hi [hash]
 
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
@@ -63,10 +63,10 @@
 
                 for (GB_HASH (i))       // find i in hash
                 {
-                    if (H [hash].f == mark)
+                    if (Hf [hash] == mark)
                     {
                         // position is occupied
-                        if (H [hash].i == i)
+                        if (Hi [hash] == i)
                         { 
                             // i already in the hash table
                             break ;
@@ -75,8 +75,8 @@
                     else
                     { 
                         // empty slot found
-                        H [hash].f = mark ; // insert C(i,j)
-                        H [hash].i = i ;
+                        Hf [hash] = mark ; // insert C(i,j)
+                        Hi [hash] = i ;
                         cjnz++ ;  // C(i,j) is a new entry.
                         break ;
                     }

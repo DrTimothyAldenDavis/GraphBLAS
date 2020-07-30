@@ -13,7 +13,7 @@
     // phase2: fine hash task, C(:,j)=A*B(:,j)
     //--------------------------------------------------------------------------
 
-    // Given H [hash].f split into (h,f)
+    // Given Hf [hash] split into (h,f)
 
     // h == 0  , f == 0 : unlocked and unoccupied.
     // h == i+1, f == 2 : unlocked, occupied by C(i,j).
@@ -64,19 +64,19 @@
 int64_t hash = GB_HASH_FUNCTION (i) ;
 
                 {
-                    int64_t hf = H [hash].f ;   // grab the entry
+                    int64_t hf = Hf [hash] ;    // grab the entry
                     if (hf == i_unlocked)       // if true, update C(i,j)
                     { 
                         // hash entry occuppied by C(i,j): update it
-                        GB_HX_UPDATE (hash, t) ;    // Hx (hash) += t
+                        GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                         continue ;         // C(i,j) has been updated
                     }
                     if (hf == 0)
                     { 
                         // hash entry unoccuppied: fill it with C(i,j)
-                        // Hx (hash) = t
+                        // Hx [hash] = t
                         GB_HX_WRITE (hash, t) ;
-                        H [hash].f = i_unlocked ; // unlock entry
+                        Hf [hash] = i_unlocked ; // unlock entry
                         continue ;
                     }
                     // otherwise: hash table occupied, but not with i
@@ -90,19 +90,19 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
                     // hash++ ;
                     // hash &= hash_bits ;
 
-                    int64_t hf = H [hash].f ;    // grab the entry
+                    int64_t hf = Hf [hash] ;    // grab the entry
                     if (hf == i_unlocked)       // if true, update C(i,j)
                     { 
                         // hash entry occuppied by C(i,j): update it
-                        GB_HX_UPDATE (hash, t) ;    // Hx (hash) += t
+                        GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                         break ;         // C(i,j) has been updated
                     }
                     if (hf == 0)
                     { 
                         // hash entry unoccuppied: fill it with C(i,j)
-                        // Hx (hash) = t
+                        // Hx [hash] = t
                         GB_HX_WRITE (hash, t) ;
-                        H [hash].f = i_unlocked ; // unlock entry
+                        Hf [hash] = i_unlocked ; // unlock entry
                         break ;
                     }
                     // otherwise: hash table occupied, but not with i
@@ -140,11 +140,11 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
                 {
                     int64_t hf ;
                     GB_ATOMIC_READ
-                    hf = H [hash].f ;        // grab the entry
+                    hf = Hf [hash] ;        // grab the entry
                     #if GB_HAS_ATOMIC
                     if (hf == i_unlocked)  // if true, update C(i,j)
                     {
-                        GB_ATOMIC_UPDATE_HX (hash, t) ; // Hx (hash) += t
+                        GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                         break ;         // C(i,j) has been updated
                     }
                     #endif
@@ -155,30 +155,30 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
                         do  // lock the entry
                         {
                             // do this atomically:
-                            // { hf = H [hash].f ; H [hash].f |= 3 ; }
-                            GB_ATOMIC_CAPTURE_INT64_OR (hf, H [hash].f, 3) ;
+                            // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
+                            GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3) ;
                         } while ((hf & 3) == 3) ; // owner: f=0 or 2
                         if (hf == 0) // f == 0
                         { 
                             // C(i,j) is a new entry in C(:,j)
-                            // Hx (hash) = t
+                            // Hx [hash] = t
                             GB_ATOMIC_WRITE_HX (hash, t) ;
                             GB_ATOMIC_WRITE
-                            H [hash].f = i_unlocked ; // unlock entry
+                            Hf [hash] = i_unlocked ; // unlock entry
                             break ;
                         }
                         if (hf == i_unlocked) // f == 2
                         { 
                             // C(i,j) already appears in C(:,j)
-                            // Hx (hash) += t
+                            // Hx [hash] += t
                             GB_ATOMIC_UPDATE_HX (hash, t) ;
                             GB_ATOMIC_WRITE
-                            H [hash].f = i_unlocked ; // unlock entry
+                            Hf [hash] = i_unlocked ; // unlock entry
                             break ;
                         }
                         // hash table occupied, but not with i
                         GB_ATOMIC_WRITE
-                        H [hash].f = hf ;  // unlock with prior value
+                        Hf [hash] = hf ;  // unlock with prior value
                     }
                 }
             }
