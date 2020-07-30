@@ -166,7 +166,7 @@ GrB_Info GB_subassign_08
             // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Zh, k) ;
+            int64_t j = GBH (Zh_shallow, k) ;
             GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
             GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 
@@ -301,7 +301,7 @@ GrB_Info GB_subassign_08
             // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Zh, k) ;
+            int64_t j = GBH (Zh_shallow, k) ;
             GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
             GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 

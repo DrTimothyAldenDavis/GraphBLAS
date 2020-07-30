@@ -363,7 +363,7 @@ void GB_msort_1     // sort array A of size n.
             // parallel mergesort: start a parallel region
             // -----------------------------------------------------------------
 
-            GB_TASK_MASTER (nthreads)
+            GB_TASK_LEADER (nthreads)
             GB_mergesort_1 (A_0, W_0, n) ;
 
         }

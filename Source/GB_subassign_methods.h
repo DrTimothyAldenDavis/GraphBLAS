@@ -1575,9 +1575,10 @@ GrB_Info GB_subassign_20
 
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
     int64_t Znvec ;                                                         \
+    int64_t *GB_RESTRICT Zh_shallow = NULL ;                                \
     GB_OK (GB_subassign_emult_slice (                                       \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
-        &Znvec, &Zh, &Z_to_A, &Z_to_M,                                      \
+        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,                              \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         A, M, Context)) ;                                                   \
     GB_ALLOCATE_NPENDING ;
@@ -1660,7 +1661,7 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
+    const int64_t *GB_RESTRICT *Zh_handle, // Zh_shallow is A->h, M->h, or NULL
     int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output, size Znvec, or NULL
     int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output, size Znvec, or NULL
     // input:
@@ -1735,7 +1736,8 @@ GrB_Info GB_subassign_emult_slice
     else                                                                    \
     {                                                                       \
         /* vectors are never sliced for a coarse task */                    \
-        int64_t kX = (Zh == Xh) ? k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ; \
+        int64_t kX = (Zh_shallow == Xh) ? k :                               \
+            ((Z_to_X == NULL) ? j : Z_to_X [k]) ;                           \
         if (kX >= 0)                                                        \
         {                                                                   \
             pX_start = GBP (Xp, kX, Xvlen) ;                                \

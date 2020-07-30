@@ -139,7 +139,7 @@
         GB_PRAGMA(omp task firstprivate(__VA_ARGS__))   \
         func (__VA_ARGS__)
     #define GB_TASK_WAIT GB_PRAGMA (omp taskwait)
-    #define GB_TASK_MASTER(nthreads)                    \
+    #define GB_TASK_LEADER(nthreads)                    \
         GB_PRAGMA (omp parallel num_threads (nthreads)) \
         GB_PRAGMA (omp master)
 
@@ -148,7 +148,7 @@
     // OpenMP tasks not available
     #define GB_TASK(func, ...) func (__VA_ARGS__)
     #define GB_TASK_WAIT
-    #define GB_TASK_MASTER(nthreads)
+    #define GB_TASK_LEADER(nthreads)
 
 #endif
 

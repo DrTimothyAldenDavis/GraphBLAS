@@ -140,8 +140,8 @@ void GB_AxB_saxpy3_symbolic
             GB_GET_M_j ;        // get M(:,j)
 
             int team_size = TaskList [taskid].team_size ;
-            int master    = TaskList [taskid].master ;
-            int my_teamid = taskid - master ;
+            int leader    = TaskList [taskid].leader ;
+            int my_teamid = taskid - leader ;
             int64_t mystart, myend ;
             GB_PARTITION (mystart, myend, mjnz, my_teamid, team_size) ;
             mystart += pM_start ;
@@ -650,8 +650,8 @@ void GB_AxB_saxpy3_symbolic
             if (bjnz == 0) continue ;
             int64_t hash_size = TaskList [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
-            int master = TaskList [taskid].master ;
-            if (master != taskid) continue ;
+            int leader = TaskList [taskid].leader ;
+            if (leader != taskid) continue ;
             GB_GET_M_j ;        // get M(:,j)
             if (mjnz == 0) continue ;
             int64_t mjcount2 = 0 ;
