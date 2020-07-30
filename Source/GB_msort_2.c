@@ -403,7 +403,7 @@ void GB_msort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
             // parallel mergesort: start a parallel region
             // -----------------------------------------------------------------
 
-            GB_TASK_MASTER (nthreads)
+            GB_TASK_LEADER (nthreads)
             GB_mergesort_2 (A_0, A_1, W_0, W_1, n) ;
 
         }

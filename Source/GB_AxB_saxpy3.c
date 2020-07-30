@@ -251,7 +251,7 @@ static inline void GB_create_coarse_task
     TaskList [taskid].Hx      = NULL ;      // assigned later
     TaskList [taskid].my_cjnz = 0 ;         // unused
     TaskList [taskid].flops   = Bflops [klast+1] - Bflops [kfirst] ;
-    TaskList [taskid].master  = taskid ;
+    TaskList [taskid].leader  = taskid ;
     TaskList [taskid].team_size = 1 ;
 }
 
@@ -799,7 +799,7 @@ ttt = omp_get_wtime ( ) ;
                             GB_hash_table_size (jflops, cvlen, AxB_method) ;
 
                         // construct the fine tasks for C(:,j)=A*B(:,j)
-                        int master = nf ;
+                        int leader = nf ;
                         for (int fid = 0 ; fid < team_size ; fid++)
                         { 
                             int64_t pstart = Fine_slice [fid] ;
@@ -814,7 +814,7 @@ ttt = omp_get_wtime ( ) ;
                             TaskList [nf].Hx = NULL ;   // assigned later
                             TaskList [nf].my_cjnz = 0 ;
                             TaskList [nf].flops = fl ;
-                            TaskList [nf].master = master ;
+                            TaskList [nf].leader = leader ;
                             TaskList [nf].team_size = team_size ;
                             nf++ ;
                         }
@@ -973,7 +973,7 @@ ttt = omp_get_wtime ( ) ;
     // determine the total size of all hash tables
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
-        if (taskid != TaskList [taskid].master)
+        if (taskid != TaskList [taskid].leader)
         { 
             // allocate a single shared hash table for all fine
             // tasks that compute a single C(:,j)
@@ -1041,7 +1041,7 @@ ttt = omp_get_wtime ( ) ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
-        if (taskid != TaskList [taskid].master)
+        if (taskid != TaskList [taskid].leader)
         { 
             // allocate a single hash table for all fine
             // tasks that compute a single C(:,j)
@@ -1084,15 +1084,15 @@ ttt = omp_get_wtime ( ) ;
     // assign shared hash tables to fine task teams
     for (int taskid = 0 ; taskid < nfine ; taskid++)
     {
-        int master = TaskList [taskid].master ;
-        ASSERT (TaskList [master].vector >= 0) ;
-        if (taskid != master)
+        int leader = TaskList [taskid].leader ;
+        ASSERT (TaskList [leader].vector >= 0) ;
+        if (taskid != leader)
         { 
             // this fine task (Gustavson or hash) shares its hash table
             // with all other tasks in its team, for a single vector C(:,j).
-            ASSERT (TaskList [taskid].vector == TaskList [master].vector) ;
-            TaskList [taskid].Hf = TaskList [master].Hf ;
-            TaskList [taskid].Hx = TaskList [master].Hx ;
+            ASSERT (TaskList [taskid].vector == TaskList [leader].vector) ;
+            TaskList [taskid].Hf = TaskList [leader].Hf ;
+            TaskList [taskid].Hx = TaskList [leader].Hx ;
         }
     }
 

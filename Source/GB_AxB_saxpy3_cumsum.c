@@ -54,8 +54,8 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         int team_size = TaskList [taskid].team_size ;
-        int master    = TaskList [taskid].master ;
-        int my_teamid = taskid - master ;
+        int leader    = TaskList [taskid].leader ;
+        int my_teamid = taskid - leader ;
         int64_t my_cjnz = 0 ;
 
         if (use_Gustavson)
@@ -148,7 +148,7 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     int64_t cjnz_max = 0 ;
     for (taskid = 0 ; taskid < nfine ; taskid++)
     {
-        if (taskid == TaskList [taskid].master)
+        if (taskid == TaskList [taskid].leader)
         {
             cjnz_sum = 0 ;
             // also find the max (C (:,j)) for any fine hash tasks

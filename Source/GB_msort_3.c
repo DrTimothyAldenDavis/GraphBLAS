@@ -446,7 +446,7 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             // parallel mergesort: start a parallel region
             // -----------------------------------------------------------------
 
-            GB_TASK_MASTER (nthreads)
+            GB_TASK_LEADER (nthreads)
             GB_mergesort_3 (A_0, A_1, A_2, W_0, W_1, W_2, n) ;
 
         }

@@ -772,8 +772,8 @@ ttt = omp_get_wtime ( ) ;
 
             int64_t kk = TaskList [taskid].vector ;
             int team_size = TaskList [taskid].team_size ;
-            int master    = TaskList [taskid].master ;
-            int my_teamid = taskid - master ;
+            int leader    = TaskList [taskid].leader ;
+            int my_teamid = taskid - leader ;
             int64_t pC = Cp [kk] ;      // ok: C is sparse
 
             if (use_Gustavson)
