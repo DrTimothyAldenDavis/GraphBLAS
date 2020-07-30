@@ -23,6 +23,8 @@
 
 int gb_flush ( void )       // flush mexPrintf output to MATLAB Command Window
 {
-    return (mexEvalString ("drawnow ; pause (1e-8) ;")) ;
+    // 'drawnow' is slow when logging in remotely: disable it.
+    // return (mexEvalString ("drawnow ; pause (1e-8) ;")) ;
+    return (mexEvalString ("pause (1e-8) ;")) ;
 }
 
