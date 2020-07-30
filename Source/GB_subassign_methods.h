@@ -1573,11 +1573,14 @@ GrB_Info GB_subassign_20
 // C(:,jC) is not sliced, so the fine task must do a direct lookup via
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
 
+// Zh_shallow is shallow (A->h, M->h, or NULL) and must not be freed.
+
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
     int64_t Znvec ;                                                         \
+    const int64_t *GB_RESTRICT Zh_shallow = NULL ;                          \
     GB_OK (GB_subassign_emult_slice (                                       \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
-        &Znvec, &Zh, &Z_to_A, &Z_to_M,                                      \
+        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,                              \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         A, M, Context)) ;                                                   \
     GB_ALLOCATE_NPENDING ;
@@ -1735,7 +1738,8 @@ GrB_Info GB_subassign_emult_slice
     else                                                                    \
     {                                                                       \
         /* vectors are never sliced for a coarse task */                    \
-        int64_t kX = (Zh == Xh) ? k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ; \
+        int64_t kX = (Zh_shallow == Xh) ?                                   \
+            k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ;                       \
         if (kX >= 0)                                                        \
         {                                                                   \
             pX_start = GBP (Xp, kX, Xvlen) ;                                \

@@ -858,51 +858,52 @@ ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     #if GB_BURBLE
-    int nfine_hash = 0 ;
-    int nfine_gus = 0 ;
-    int ncoarse_hash = 0 ;
-    int ncoarse_1hash = 0 ;
-    int ncoarse_gus = 0 ;
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    if (GB_Global_burble_get ( ))
     {
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool is_fine = (taskid < nfine) ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        if (is_fine)
+        int nfine_hash = 0 ;
+        int nfine_gus = 0 ;
+        int ncoarse_hash = 0 ;
+        int ncoarse_gus = 0 ;
+        for (int taskid = 0 ; taskid < ntasks ; taskid++)
         {
-            // fine task
-            if (use_Gustavson)
+            int64_t hash_size = TaskList [taskid].hsize ;
+            bool is_fine = (taskid < nfine) ;
+            bool use_Gustavson = (hash_size == cvlen) ;
+            if (is_fine)
             {
-                // fine Gustavson task
-                nfine_gus++ ;
+                // fine task
+                if (use_Gustavson)
+                {
+                    // fine Gustavson task
+                    nfine_gus++ ;
+                }
+                else
+                {
+                    // fine hash task
+                    nfine_hash++ ;
+                }
             }
             else
             {
-                // fine hash task
-                nfine_hash++ ;
+                // coarse task
+                int64_t kfirst = TaskList [taskid].start ;
+                int64_t klast = TaskList [taskid].end ;
+                if (use_Gustavson)
+                {
+                    // coarse Gustavson task
+                    ncoarse_gus++ ;
+                }
+                else
+                {
+                    // hash task
+                    ncoarse_hash++ ;
+                }
             }
         }
-        else
-        {
-            // coarse task
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast = TaskList [taskid].end ;
-            if (use_Gustavson)
-            {
-                // coarse Gustavson task
-                ncoarse_gus++ ;
-            }
-            else
-            {
-                // hash task
-                ncoarse_hash++ ;
-            }
-        }
+        GBBURBLE ("nthreads %d ntasks %d coarse: (gus: %d hash: %d)"
+            " fine: (gus: %d hash: %d) ", nthreads, ntasks,
+            ncoarse_gus, ncoarse_hash, nfine_gus, nfine_hash) ;
     }
-
-    GBBURBLE ("nthreads %d ntasks %d coarse: (gus: %d hash: %d)"
-        " fine: (gus: %d hash: %d) ", nthreads, ntasks,
-        ncoarse_gus, ncoarse_hash, nfine_gus, nfine_hash) ;
     #endif
 
     // Bflops is no longer needed as an alias for Cp

@@ -33,7 +33,7 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
+    const int64_t *GB_RESTRICT *Zh_handle, // Zh_shallow is A->h, M->h, or NULL
     int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output size Znvec, or NULL
     int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output size Znvec, or NULL
     // input:
@@ -115,14 +115,15 @@ GrB_Info GB_subassign_emult_slice
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
+    const int64_t *GB_RESTRICT Zh_shallow = NULL ;
 
     GB_OK (GB_emult_phase0 (
-        &Znvec, &Zh, NULL, &Z_to_A, &Z_to_M,
+        &Znvec, &Zh_shallow, NULL, &Z_to_A, &Z_to_M,
         NULL, A, M, Context)) ;
 
     GB_OK (GB_ewise_slice (
         &TaskList, &max_ntasks, &ntasks, &nthreads,
-        Znvec, Zh, NULL, Z_to_A, Z_to_M, false,
+        Znvec, Zh_shallow, NULL, Z_to_A, Z_to_M, false,
         NULL, A, M, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -161,7 +162,7 @@ GrB_Info GB_subassign_emult_slice
             //------------------------------------------------------------------
 
             int64_t k = kfirst ;
-            int64_t j = GBH (Zh, k) ;
+            int64_t j = GBH (Zh_shallow, k) ;
             GB_GET_EVEC (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A, Avlen) ;
             GB_GET_EVEC (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M, Mvlen) ;
 
@@ -241,7 +242,7 @@ GrB_Info GB_subassign_emult_slice
     (*p_nthreads  ) = nthreads ;
 
     (*p_Znvec      ) = Znvec ;
-    (*Zh_handle    ) = Zh ;
+    (*Zh_handle    ) = Zh_shallow ;
     (*Z_to_A_handle) = Z_to_A ;
     (*Z_to_M_handle) = Z_to_M ;
 
