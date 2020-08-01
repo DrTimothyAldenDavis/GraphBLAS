@@ -561,12 +561,26 @@ break ;
 #endif
 
 //------------------------------------------------------------------------------
-// hash
+// hash iteration
 //------------------------------------------------------------------------------
 
 // to iterate over the hash table, looking for index i:
-// for (GB_HASH (i)) { ... }
-#define GB_HASH(i) int64_t hash = GB_HASH_FUNCTION (i) ; ; GB_REHASH (hash,i)
+// 
+//      for (GB_HASH (i))
+//      {
+//          ...
+//      }
+//
+// which expands into the following, where f(i) is the GB_HASHF(i) hash
+// function:
+//
+//      for (int64_t hash = f(i) ; ; hash = (hash+1)&(hash_size-1))
+//      {
+//          ...
+//      }
+
+#define GB_HASH(i) \
+    int64_t hash = GB_HASHF (i) ; ; GB_REHASH (hash,i)
 
 #endif
 

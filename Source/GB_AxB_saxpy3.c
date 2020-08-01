@@ -947,8 +947,10 @@ ttt = omp_get_wtime ( ) ;
     //      than cvlen (otherwise, Gustavson's method is used).
     //
     //      A hash function is used for the ith entry:
-    //          hash = GB_HASH_FUNCTION (i) ; in range 0 to hash_size-1
+    //          hash = GB_HASHF (i) ; in range 0 to hash_size-1
     //      If a collision occurs, linear probing is used:
+    //          GB_REHASH (hash, i)
+    //      which is:
     //          hash = (hash + 1) & (hash_size-1)
     //
     //      (Hf [hash] == mark) is true if the position is occupied.

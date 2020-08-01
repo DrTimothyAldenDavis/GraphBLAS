@@ -327,17 +327,35 @@ double ttt = omp_get_wtime ( ) ;
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
                         #if GB_IS_ANY_MONOID
 
+                        // lock state (3) not needed
+                        // 0: not seen: update with new value, f becomes 2
+                        // 1: masked, do nothing, f stays 1
+                        // 2: already updated, do nothing, f stays 2
+                        // 3: state not used, f can be 2
+                        GB_ATOMIC_READ
+                        f = Hf [i] ;
+                        if (!f)
+                        {
+                            GB_ATOMIC_WRITE
+                            Hf [i] = 2 ;
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                        }
+
+#if 0
+OLD:
                         GB_ATOMIC_READ
                         f = Hf [i] ;            // grab the entry
                         if (f == 1 || f == 2) continue ;
                         GB_ATOMIC_WRITE
                         Hf [i] = 2 ;                // unlock the entry
                         GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+#endif
 
                         #else
 
@@ -410,14 +428,14 @@ double ttt = omp_get_wtime ( ) ;
                 Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
             int64_t hash_bits = (hash_size-1) ;
 
-            if (M == NULL)
+            if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
             {
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)=A*B(:,j)
                 //--------------------------------------------------------------
 
-                // no mask present
+                // no mask present, or mask ignored
                 #undef GB_CHECK_MASK_ij
                 #include "GB_AxB_saxpy3_fineHash_phase2.c"
 
@@ -433,13 +451,8 @@ double ttt = omp_get_wtime ( ) ;
                 if (M_dense_in_place)
                 { 
                     // M(:,j) is dense.  M is not scattered into Hf.
-                    if (Mx == NULL)
-                    {
-                        // Full structural mask, not complemented.
-                        // The Mask is ignored, and C(:,j)=A*B(:,j)
-                        // TODO: remove this case in caller
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
-                    }
+                    // If the mask is structural, it is ignored (see above).
+                    ASSERT (Mx != NULL) ;
                     #undef  GB_CHECK_MASK_ij
                     #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
                     switch (msize)
@@ -562,7 +575,6 @@ double ttt = omp_get_wtime ( ) ;
                     if (Mx == NULL)
                     {
                         // structural mask, complemented.  No work to do.
-                        // TODO: remove this case in caller
                         continue ;
                     }
                     #undef  GB_CHECK_MASK_ij
@@ -1157,16 +1169,15 @@ ttt = omp_get_wtime ( ) ;
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL)
+                if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
                 {
 
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C=A*B
                     //----------------------------------------------------------
 
-                    // no mask present
+                    // no mask present, or mask ignored (see below)
                     #undef GB_CHECK_MASK_ij
-                    // printf ("coarse hash phase 5 no mask\n") ;
                     #include "GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
@@ -1180,14 +1191,8 @@ ttt = omp_get_wtime ( ) ;
                     if (M_dense_in_place)
                     { 
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
-                        {
-                            // Full structural mask, not complemented.
-                            // The Mask is ignored, and C(:,j)=A*B(:,j)
-                            // TODO: remove this case in caller
-                            // printf ("coarse hash phase 5 M mask struct\n") ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
-                        }
+                        // If the mask is structural, it is ignored (see above).
+                        ASSERT (Mx != NULL) ;
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
                         switch (msize)
                         {
@@ -1195,30 +1200,25 @@ ttt = omp_get_wtime ( ) ;
                             case 1:
                             {
                                 #define M_TYPE uint8_t
-                                // printf ("coarse hash phase 5 M 1\n") ;
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 5 M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 5 M 3\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 5 M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 5 M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
@@ -1300,7 +1300,6 @@ ttt = omp_get_wtime ( ) ;
                         if (Mx == NULL)
                         {
                             // structural mask, complemented.  No work to do.
-                            // TODO: remove this case in caller
                             continue ;
                         }
                         #undef  GB_CHECK_MASK_ij
@@ -1310,31 +1309,26 @@ ttt = omp_get_wtime ( ) ;
                             default:
                             case 1:
                             {
-                                // printf ("coarse hash phase 5 !M 1\n") ;
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 2:
                             {
-                                // printf ("coarse hash phase 5 !M 2\n") ;
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 4:
                             {
-                                // printf ("coarse hash phase 5 !M 4\n") ;
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 8:
                             {
-                                // printf ("coarse hash phase 5 !M 8\n") ;
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                             case 16:
                             {
-                                // printf ("coarse hash phase 5 !M 16\n") ;
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij

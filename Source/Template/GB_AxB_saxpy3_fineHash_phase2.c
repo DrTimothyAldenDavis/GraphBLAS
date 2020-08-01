@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_fineHash_phase2_template:
+// GB_AxB_saxpy3_fineHash_phase2_template: no mask, or dense mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -16,13 +16,15 @@
     // Given Hf [hash] split into (h,f)
 
     // h == 0  , f == 0 : unlocked and unoccupied.
-    // h == i+1, f == 2 : unlocked, occupied by C(i,j).
-    //                    Hx is initialized.
+    // h == i+1, f == 2 : unlocked, occupied by C(i,j).  Hx is initialized.
     // h == ..., f == 3 : locked.
 
     // 0 -> 3 : to lock, if i seen for first time
     // 2 -> 3 : to lock, if i seen already
     // 3 -> 2 : to unlock; now i has been seen
+
+    // The mask M can be optionally checked, if it is dense and checked in
+    // place.  This method is not used if M is present and sparse.
 
     #ifdef GB_CHECK_MASK_ij
     #ifndef M_SIZE
@@ -37,6 +39,12 @@
         //----------------------------------------------------------------------
         // single-threaded version
         //----------------------------------------------------------------------
+
+        // the hash state 3 is not used, since only a single thread is
+        // doing all the work for this vector C(:,j).
+
+        // 0: if i seen for first time
+        // 2: if i seen already
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
@@ -54,58 +62,30 @@
                 GB_CHECK_MASK_ij ;
                 #endif
                 GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
-                int64_t i1 = i + 1 ;        // i1 = one-based index
-                int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
-
-//#define GB_HASH_FUNCTION(i) ((((i) << 8) + (i)) & (hash_bits))
-//#define GB_HASH(i) int64_t hash = GB_HASH_FUNCTION (i) ; ; GB_REHASH (hash,i)
-// #define GB_REHASH(hash,i) hash = ((hash + 1) & (hash_bits))
-
-int64_t hash = GB_HASH_FUNCTION (i) ;
-
-                {
+                int64_t i_unlocked = ((i+1) << 2) + 2 ;    // (i+1,2)
+                // find the entry i in the hash table
+                bool hf_unlocked = false ;  // true if i found
+                bool hf_empty = false ;     // true if empty slot found
+                bool hf_found = false ;
+                int64_t hash ;
+                for (hash = GB_HASHF (i) ; !hf_found ; GB_REHASH (hash,i))
+                { 
                     int64_t hf = Hf [hash] ;    // grab the entry
-                    if (hf == i_unlocked)       // if true, update C(i,j)
-                    { 
-                        // hash entry occuppied by C(i,j): update it
-                        GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
-                        continue ;         // C(i,j) has been updated
-                    }
-                    if (hf == 0)
-                    { 
-                        // hash entry unoccuppied: fill it with C(i,j)
-                        // Hx [hash] = t
-                        GB_HX_WRITE (hash, t) ;
-                        Hf [hash] = i_unlocked ; // unlock entry
-                        continue ;
-                    }
-                    // otherwise: hash table occupied, but not with i
+                    hf_unlocked = (hf == i_unlocked) ;
+                    hf_empty = (hf == 0) ;
+                    hf_found = (hf_unlocked || hf_empty) ;
                 }
-
-                //for (GB_HASH (i))           // find i in hash table
-
-                while (1)
-                {
-                    GB_REHASH (hash, i) ;
-                    // hash++ ;
-                    // hash &= hash_bits ;
-
-                    int64_t hf = Hf [hash] ;    // grab the entry
-                    if (hf == i_unlocked)       // if true, update C(i,j)
-                    { 
-                        // hash entry occuppied by C(i,j): update it
-                        GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
-                        break ;         // C(i,j) has been updated
-                    }
-                    if (hf == 0)
-                    { 
-                        // hash entry unoccuppied: fill it with C(i,j)
-                        // Hx [hash] = t
-                        GB_HX_WRITE (hash, t) ;
-                        Hf [hash] = i_unlocked ; // unlock entry
-                        break ;
-                    }
-                    // otherwise: hash table occupied, but not with i
+                if (hf_unlocked)    // if true, update C(i,j)
+                { 
+                    // hash entry occuppied by C(i,j): update it
+                    GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
+                }
+                else // hf_empty:   if true, load the hash entry with C(i,j)
+                { 
+                    // hash entry unoccuppied: fill it with C(i,j)
+                    ASSERT (hf_empty) ;
+                    GB_HX_WRITE (hash, t) ;     // Hx [hash] = t
+                    Hf [hash] = i_unlocked ;    // unlock entry
                 }
             }
         }
@@ -156,8 +136,13 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
                         {
                             // do this atomically:
                             // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
-                            GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3) ;
+                            GB_ATOMIC_CAPTURE_INT64_OR (hf, Hf [hash], 3) ;
                         } while ((hf & 3) == 3) ; // owner: f=0 or 2
+
+                        // TODO: this can be simplified by combining the
+                        // 2 actions below into a single update, if Hx [..]
+                        // is initialized with the monoid identity value.
+
                         if (hf == 0) // f == 0
                         { 
                             // C(i,j) is a new entry in C(:,j)
@@ -176,6 +161,7 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
                             Hf [hash] = i_unlocked ; // unlock entry
                             break ;
                         }
+
                         // hash table occupied, but not with i
                         GB_ATOMIC_WRITE
                         Hf [hash] = hf ;  // unlock with prior value
@@ -185,6 +171,7 @@ int64_t hash = GB_HASH_FUNCTION (i) ;
         }
     }
 
+    // this task is done; go to the next one
     continue ;
 }
 

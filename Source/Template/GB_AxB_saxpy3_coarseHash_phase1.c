@@ -19,6 +19,9 @@
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
 
+    // The mask M can be optionally checked, if it is dense and checked in
+    // place.  This method is not used if M is present and sparse.
+
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
         GB_GET_B_j ;            // get B(:,j)
@@ -61,6 +64,33 @@
                 GB_CHECK_MASK_ij ;
                 #endif
 
+                int64_t hash ;
+                bool marked = false ;
+                bool done = false ;
+                for (hash = GB_HASHF (i) ; !done ; GB_REHASH (hash, i))
+                {
+                    // if the hash entry is marked then it is occuppied with
+                    // some row index in the current C(:,j).
+                    marked = (Hf [hash] == mark) ;
+                    // if found, then the hash entry holds the row index i.
+                    bool found = marked && (Hi [hash] == i) ;
+                    // if the hash entry is unmarked, then it is empty, and i
+                    // is not in the hash table.  In this case, C(i,j) is a new
+                    // entry.  The search terminates if either i is found, or
+                    // if an empty (unmarked) slot is found.
+                    done = found || !marked ;
+                }
+
+                if (!marked)
+                { 
+                    // empty slot found, insert C(i,j)
+                    Hf [hash] = mark ;
+                    Hi [hash] = i ;
+                    cjnz++ ;            // C(i,j) is a new entry.
+                }
+
+#if 0
+// OLD:
                 for (GB_HASH (i))       // find i in hash
                 {
                     if (Hf [hash] == mark)
@@ -81,12 +111,15 @@
                         break ;
                     }
                 }
+#endif
+
             }
         }
         // count the entries in C(:,j)
         Cp [kk] = cjnz ;        // ok: C is sparse
     }
 
+    // this task is done; go to the next one
     continue ;
 }
 

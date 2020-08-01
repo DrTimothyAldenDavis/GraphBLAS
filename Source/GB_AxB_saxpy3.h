@@ -21,7 +21,7 @@
 // initial hash function, for where to place the integer i in the hash table.
 // hash_bits is a bit mask to compute the result modulo the hash table size,
 // which is always a power of 2.  The function is (i*257) & (hash_bits).
-#define GB_HASH_FUNCTION(i) ((((i) << 8) + (i)) & (hash_bits))
+#define GB_HASHF(i) ((((i) << 8) + (i)) & (hash_bits))
 
 // rehash function, for subsequent hash lookups if the initial hash function
 // refers to a hash entry that is already occupied.  Linear probing is used,

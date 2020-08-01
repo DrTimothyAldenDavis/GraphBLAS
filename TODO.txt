@@ -1,3 +1,5 @@
+TODO: try initialize Hx with identity value, and simplifying saxpy3
+TODO: bitmap data structure for GrB_Matrix 
 
 --------------------------------------------------------------------------------
 BC:
