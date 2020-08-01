@@ -121,7 +121,7 @@ void GB_AxB_saxpy3_symbolic
 // GB_AxB_saxpy3_cumsum: cumulative sum of C->p for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
+void GB_AxB_saxpy3_cumsum
 (
     GrB_Matrix C,               // finalize C->p
     GB_saxpy3task_struct *TaskList, // list of tasks, and workspace

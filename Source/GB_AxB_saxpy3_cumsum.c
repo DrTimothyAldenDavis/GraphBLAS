@@ -10,16 +10,9 @@
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
 
-// TODO: if C is a single vector computed via fine hash tasks only, skip this
-// step.  Instead, allocate C->x and C->i as the upper bound (same as the hash
-// table size).  Use atomic increment to grab a slot to place a single entry in
-// C->i in phase 2.  Then in phase 5, iterate across C->i and gather from the
-// hash table.  For the ANY monoid, phase 5 can be skipped, if the first
-// value is placed in C->x in phase 2.
-
 #include "GB_AxB_saxpy3.h"
 
-int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
+void GB_AxB_saxpy3_cumsum
 (
     GrB_Matrix C,               // finalize C->p
     GB_saxpy3task_struct *TaskList, // list of tasks, and workspace
@@ -145,7 +138,6 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     //--------------------------------------------------------------------------
 
     int64_t cjnz_sum = 0 ;
-    int64_t cjnz_max = 0 ;
     for (taskid = 0 ; taskid < nfine ; taskid++)
     {
         if (taskid == TaskList [taskid].leader)
@@ -158,18 +150,11 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
             { 
                 int64_t kk = TaskList [taskid].vector ;
                 int64_t cjnz = Cp [kk+1] - Cp [kk] ;        // ok: C is sparse
-                cjnz_max = GB_IMAX (cjnz_max, cjnz) ;
             }
         }
         int64_t my_cjnz = TaskList [taskid].my_cjnz ;
         TaskList [taskid].my_cjnz = cjnz_sum ;
         cjnz_sum += my_cjnz ;
     }
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    return (cjnz_max) ;
 }
 

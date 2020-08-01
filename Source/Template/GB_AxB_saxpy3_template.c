@@ -230,7 +230,6 @@ double ttt = omp_get_wtime ( ) ;
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
                 // 0 -> 1 : has already been done in phase0 if M(i,j)=1.
-                // If M(:,j) is dense, then it is not scattered into Hf.
 
                 // 0 -> 0 : to ignore, if M(i,j)=0
                 // 1 -> 3 : to lock, if i seen for first time
@@ -308,8 +307,6 @@ double ttt = omp_get_wtime ( ) ;
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
                 // 0 -> 1 : has already been done in phase0 if M(i,j)=1
-
-                // If M(:,j) is dense, then it is not scattered into Hf.
 
                 // 1 -> 1 : to ignore, if M(i,j)=1
                 // 0 -> 3 : to lock, if i seen for first time
@@ -705,8 +702,7 @@ ttt = omp_get_wtime ( ) ;
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    int64_t cjnz_max = GB_AxB_saxpy3_cumsum (C, TaskList,
-        nfine, chunk, nthreads) ;
+    GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads) ;
 
 ttt = omp_get_wtime ( ) - ttt ;
 GB_Global_timing_add (10, ttt) ;
@@ -856,7 +852,6 @@ ttt = omp_get_wtime ( ) ;
                     { 
                         int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash
                         Ci [pC] = i ;               // ok: C is sparse
-                        // added after deleting phase 6:
                         GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx [hash]
                         pC++ ;
                     }
