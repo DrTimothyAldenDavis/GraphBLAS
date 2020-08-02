@@ -406,14 +406,14 @@ void GB_AxB_saxpy3_symbolic
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL)
+                if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
                 {
 
                     //----------------------------------------------------------
                     // phase1: coarse hash task, C=A*B
                     //----------------------------------------------------------
 
-                    // no mask present
+                    // no mask present, or mask ignored
                     #undef GB_CHECK_MASK_ij
                     #include "GB_AxB_saxpy3_coarseHash_phase1.c"
 
@@ -428,13 +428,9 @@ void GB_AxB_saxpy3_symbolic
                     if (M_dense_in_place)
                     { 
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
-                        {
-                            // Full structural mask, not complemented.
-                            // The Mask is ignored, and C(:,j)=A*B(:,j)
-                            // TODO: remove this case in caller
-                            #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                        }
+                        // If the mask is M, dense and done in place, and
+                        // structural, then it can be ignored (see above).
+                        ASSERT (Mx != NULL)
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
                         switch (msize)
                         {
@@ -542,11 +538,12 @@ void GB_AxB_saxpy3_symbolic
                         if (Mx == NULL)
                         {
                             // structural mask, complemented.  No work to do.
-                            // TODO: remove this case in caller
+                            #ifdef GB_DEBUG
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)
                             { 
                                 ASSERT (Cp [kk] == 0) ;
                             }
+                            #endif
                             continue ;
                         }
                         #undef  GB_CHECK_MASK_ij

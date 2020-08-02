@@ -66,14 +66,13 @@
                 // find the entry i in the hash table
                 bool hf_unlocked = false ;  // true if i found
                 bool hf_empty = false ;     // true if empty slot found
-                bool hf_found = false ;
                 int64_t hash ;
-                for (hash = GB_HASHF (i) ; !hf_found ; GB_REHASH (hash,i))
+                for (hash = GB_HASHF (i) ; ; GB_REHASH (hash,i))
                 { 
                     int64_t hf = Hf [hash] ;    // grab the entry
                     hf_unlocked = (hf == i_unlocked) ;
                     hf_empty = (hf == 0) ;
-                    hf_found = (hf_unlocked || hf_empty) ;
+                    if (hf_unlocked || hf_empty) break ;
                 }
                 if (hf_unlocked)    // if true, update C(i,j)
                 { 

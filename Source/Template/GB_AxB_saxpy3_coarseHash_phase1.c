@@ -64,10 +64,11 @@
                 GB_CHECK_MASK_ij ;
                 #endif
 
+#if 1
                 int64_t hash ;
                 bool marked = false ;
                 bool done = false ;
-                for (hash = GB_HASHF (i) ; !done ; GB_REHASH (hash, i))
+                for (hash = GB_HASHF (i) ; ; GB_REHASH (hash, i))
                 {
                     // if the hash entry is marked then it is occuppied with
                     // some row index in the current C(:,j).
@@ -78,7 +79,7 @@
                     // is not in the hash table.  In this case, C(i,j) is a new
                     // entry.  The search terminates if either i is found, or
                     // if an empty (unmarked) slot is found.
-                    done = found || !marked ;
+                    if (found || !marked) break ;
                 }
 
                 if (!marked)
@@ -88,7 +89,7 @@
                     Hi [hash] = i ;
                     cjnz++ ;            // C(i,j) is a new entry.
                 }
-
+#endif
 #if 0
 // OLD:
                 for (GB_HASH (i))       // find i in hash

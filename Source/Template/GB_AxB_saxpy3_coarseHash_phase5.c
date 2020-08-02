@@ -19,8 +19,10 @@
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
 
+// printf ("hash size %ld\n", hash_size) ;
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
+// printf ("\n======================================= kk %ld\n", kk) ;
         int64_t pC = Cp [kk] ;      // ok: C is sparse
         int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
         if (cjnz == 0) continue ;   // nothing to do

@@ -20,7 +20,7 @@
 
 {
 
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get the chunk size
@@ -694,9 +694,9 @@ OLD:
         }
     }
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (9, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (9, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
@@ -704,9 +704,9 @@ ttt = omp_get_wtime ( ) ;
 
     GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (10, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (10, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
@@ -751,9 +751,9 @@ ttt = omp_get_wtime ( ) ;
 
     #endif
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (11, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (11, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     bool C_jumbled = false ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -1402,8 +1402,8 @@ ttt = omp_get_wtime ( ) ;
 
     C->jumbled = C_jumbled ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (12, ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (12, ttt) ;
 
 }
 
