@@ -75,6 +75,10 @@ GrB_Info GB_ewise_slice
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ; 
 
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;

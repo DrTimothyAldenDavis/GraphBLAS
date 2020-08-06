@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
@@ -24,6 +26,8 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
+    ASSERT (GB_IS_FULL (A) || GB_IS_BITMAP (A) || GB_IS_SPARSE (A) ||
+        GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // free all prior content
@@ -53,7 +57,7 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     // in debug mode, calloc the matrix so it can be safely printed below
     A->x = GB_CALLOC (anzmax * A->type->size, GB_void) ;
     #else
-    // in production mode, A->x is unitialized
+    // in production mode, A->x is uninitialized
     A->x = GB_MALLOC (anzmax * A->type->size, GB_void) ;
     #endif
 

@@ -10,6 +10,8 @@
 // Casts an input array Ax to an output array Cx with a different built-in
 // type.  Does not handle user-defined types.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_unop__include.h"

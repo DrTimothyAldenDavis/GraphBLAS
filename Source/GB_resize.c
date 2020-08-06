@@ -26,6 +26,8 @@ GrB_Info GB_resize              // change the size of a matrix
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     bool ok = true ;
 
     //--------------------------------------------------------------------------
@@ -77,6 +79,7 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // A is dense but held in sparse format, and it is shrinking;
             // convert A to full
+            // TODO: do this only if A->sparsity == GxB_DEFAULT
             GB_convert_any_to_full (A) ;
         }
         if (vdim_new == vdim_old && vlen_new == vlen_old)
@@ -208,8 +211,8 @@ GrB_Info GB_resize              // change the size of a matrix
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
-    if (A->h == NULL &&
-        GB_convert_sparse_to_hyper_test (A->hyper_switch, A->nvec_nonempty, vdim_new))
+    if (A->h == NULL && GB_convert_sparse_to_hyper_test (A->hyper_switch,
+        A->nvec_nonempty, vdim_new))
     { 
         GB_OK (GB_convert_sparse_to_hyper (A, Context)) ;
     }

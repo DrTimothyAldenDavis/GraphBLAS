@@ -9,6 +9,8 @@
 
 // Sort an index array and remove duplicates.  In MATLAB notation:
 
+// OK: no change for BITMAP
+
 /*
     [I1 I1k] = sort (I) ;
     Iduplicate = [(I1 (1:end-1) == I1 (2:end)), false] ;

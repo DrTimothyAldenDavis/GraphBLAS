@@ -76,6 +76,7 @@ GrB_Info GrB_Vector_removeElement
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    ASSERT (!GB_IS_BITMAP (V)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // if V is jumbled, wait on the vector first

@@ -12,6 +12,8 @@
 // and thus can be shallow content from another matrix.  New hyperlists Ap and
 // Ah are allocated, for nvec vectors, all nonempty.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_hyper_prune

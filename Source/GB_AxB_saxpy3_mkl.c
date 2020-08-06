@@ -62,6 +62,10 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ; 
 
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     GrB_Info info ;
 
     mkl_graph_matrix_t C_mkl = NULL ;

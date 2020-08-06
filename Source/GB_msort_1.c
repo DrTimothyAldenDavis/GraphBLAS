@@ -9,6 +9,8 @@
 
 // A parallel mergesort of an array of n integers.
 
+// OK: no change for BITMAP
+
 // TODO: GB_msort_1 currently unused except in Test/GB_mex_msort_1
 
 #include "GB_msort_1.h"

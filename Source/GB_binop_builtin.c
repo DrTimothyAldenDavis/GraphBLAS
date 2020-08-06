@@ -14,6 +14,8 @@
 // This is a built-in operator for built-in types.  This feature is only used
 // by GB_Matrix_wait.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 #include "GB_binop.h"
 #include "GB_unused.h"

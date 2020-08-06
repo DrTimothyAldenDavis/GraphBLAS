@@ -13,6 +13,8 @@
 // or non-blocking), for pointers to malloc/calloc/realloc/free functions,
 // global matrix options, and other settings.
 
+// OK: no change for BITMAP (TODO: do I add bitmap_switch, like hyper_switch?)
+
 #include "GB_atomics.h"
 
 //------------------------------------------------------------------------------

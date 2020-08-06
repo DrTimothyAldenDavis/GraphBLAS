@@ -40,6 +40,8 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GB_RETURN_IF_NULL (Aj) ;
     GB_RETURN_IF_NULL (Ax) ;
 
+    ASSERT (!GB_IS_BITMAP (*A)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------

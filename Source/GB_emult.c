@@ -65,6 +65,10 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;

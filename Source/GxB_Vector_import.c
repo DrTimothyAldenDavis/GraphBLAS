@@ -34,7 +34,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    // TODO: full case
+    // TODO: full case, bitmap case
     // TODO: import shallow. for MATLAB
 
     if (n > GxB_INDEX_MAX || nvals > GxB_INDEX_MAX)

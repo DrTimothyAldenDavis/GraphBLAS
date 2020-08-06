@@ -113,11 +113,15 @@ GrB_Info GB_AxB_saxpy3_flopcount
     ASSERT (Bflops != NULL) ;
     ASSERT (Mwork != NULL) ;
 
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t bnz = GB_NNZ (B) ;
+    int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t bnvec = B->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -183,10 +187,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     int64_t *GB_RESTRICT Wlast = NULL ;        // size ntasks
 
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, bnz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
     int64_t *pstart_slice, *kfirst_slice, *klast_slice ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, &ntasks))
     { 
         // out of memory
         GB_FREE_WORK ;

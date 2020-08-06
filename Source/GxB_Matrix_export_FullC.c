@@ -33,6 +33,8 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
 
     GB_RETURN_IF_NULL (Ax) ;
 
+    ASSERT (!GB_IS_BITMAP (*A)) ;        // TODO
+
     if (!GB_is_dense (*A))
     { 
         // A must be dense or full

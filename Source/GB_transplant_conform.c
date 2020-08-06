@@ -11,6 +11,8 @@
 // All prior content of C is cleared; zombies and pending tuples are abandoned
 // in C.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
@@ -33,6 +35,8 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     ASSERT (GB_ZOMBIES_OK (*Thandle)) ;
     ASSERT (GB_JUMBLED_OK (*Thandle)) ;
     ASSERT (!GB_PENDING (*Thandle)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (*Thandle)) ;
 
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, and free T

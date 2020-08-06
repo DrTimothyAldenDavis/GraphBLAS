@@ -61,6 +61,8 @@ GrB_Info GB_selector
     // entry selector: jumbled OK
     ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     GrB_Info info ;
     if (Chandle != NULL)
     { 
@@ -71,23 +73,6 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT C_pstart_slice = NULL ;
-
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads and tasks to use
-    //--------------------------------------------------------------------------
-
-    int64_t anz = GB_NNZ (A) ;
-    int64_t anvec = A->nvec ;
-    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : anz) ;
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-
-    int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, anz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -101,6 +86,7 @@ GrB_Info GB_selector
     int64_t aplen = A->plen ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
+    int64_t anvec = A->nvec ;
     GB_Type_code typecode = A->type->code ;
     bool A_jumbled = A->jumbled ;
 
@@ -171,6 +157,17 @@ GrB_Info GB_selector
     Cp [anvec] = 0 ;        // ok: C is sparse
 
     //--------------------------------------------------------------------------
+    // determine the number of threads and tasks to use
+    //--------------------------------------------------------------------------
+
+    int64_t anz = GB_NNZ_HELD (A) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : anz) ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+    int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
+
+    //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
@@ -179,7 +176,7 @@ GrB_Info GB_selector
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
     { 
         // out of memory
         GB_FREE_ALL ;

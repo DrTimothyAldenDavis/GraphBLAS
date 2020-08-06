@@ -19,6 +19,8 @@
 
 // If the input matrix A is sparse, bitmap or full, it is unchanged.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -36,12 +38,13 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     ASSERT_MATRIX_OK (A, "A being converted from hyper to sparse", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A from hypersparse to sparse
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (GB_IS_HYPERSPARSE (A))
     { 
 
         //----------------------------------------------------------------------
@@ -219,13 +222,20 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->magic = GB_MAGIC ;
         ASSERT (anz == GB_NNZ (A)) ;
         ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
+
+        //----------------------------------------------------------------------
+        // A is now sparse
+        //----------------------------------------------------------------------
+
+        ASSERT (GB_IS_SPARSE (A)) ;
     }
 
     //--------------------------------------------------------------------------
-    // A is now in non-hypersparse form
+    // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A converted to sparse (or left full)", GB0) ;
+    ASSERT_MATRIX_OK (A, "A converted to sparse (or left as-is)", GB0) ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB_Pending.h"
 
 #define GB_FREE_ALL ;

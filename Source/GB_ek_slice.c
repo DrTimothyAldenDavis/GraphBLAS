@@ -13,8 +13,10 @@
 // vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
 // may be shared with prior slices and subsequent slices.
 
-// On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
-// case, ntasks must be 1.
+// On input, ntasks is the # of tasks requested.  On output, it may be
+// modified if too large or too small.
+
+// OK: BITMAP
 
 #include "GB_ek_slice.h"
 
@@ -26,9 +28,43 @@ bool GB_ek_slice        // true if successful, false if out of memory
     int64_t *GB_RESTRICT *klast_slice_handle,  // size ntasks
     // input:
     GrB_Matrix A,                   // matrix to slice
-    int ntasks                      // # of tasks
+    // input/output:
+    int *ntasks_handle              // # of tasks (may be modified)
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (pstart_slice_handle != NULL) ;
+    ASSERT (kfirst_slice_handle != NULL) ;
+    ASSERT (klast_slice_handle  != NULL) ;
+    ASSERT (ntasks_handle != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // get A
+    //--------------------------------------------------------------------------
+
+    ASSERT (GB_JUMBLED_OK (A)) ;    // pattern of A is not accessed
+
+    int64_t anvec = A->nvec ;
+    int64_t avlen = A->vlen ;
+    int64_t anz = GB_NNZ_HELD (A) ;
+    const int64_t *Ap = A->p ;      // NULL if bitmap or full
+
+    // ntasks must be in the range [1,anz], inclusive, unless anz is zero.
+    int ntasks = (*ntasks_handle) ;
+    if (anz == 0)
+    { 
+        ntasks = 1 ;
+    }
+    else
+    { 
+        ntasks = GB_IMIN (ntasks, anz) ;
+        ntasks = GB_IMAX (ntasks, 1) ;
+    }
+    (*ntasks_handle) = ntasks ;
 
     //--------------------------------------------------------------------------
     // allocate result
@@ -53,19 +89,12 @@ bool GB_ek_slice        // true if successful, false if out of memory
     (*klast_slice_handle ) = klast_slice ;
 
     //--------------------------------------------------------------------------
-    // get A
+    // quick return for empty matrices
     //--------------------------------------------------------------------------
-
-    ASSERT (GB_JUMBLED_OK (A)) ;    // pattern of A is not accessed
-
-    int64_t anvec = A->nvec ;
-    int64_t avlen = A->vlen ;
-    int64_t anz = GB_NNZ (A) ;
-    const int64_t *Ap = A->p ;      // A may be full so Ap can be NULL
 
     if (anz == 0)
     { 
-        // quick return for empty matrices
+        // construct a single empty task
         ASSERT (ntasks == 1) ;
         pstart_slice [0] = 0 ;
         pstart_slice [1] = 0 ;
@@ -73,8 +102,6 @@ bool GB_ek_slice        // true if successful, false if out of memory
         klast_slice  [0] = -2 ;
         return (true) ;
     }
-
-    ASSERT (ntasks <= anz) ;
 
     //--------------------------------------------------------------------------
     // find the first and last entries in each slice

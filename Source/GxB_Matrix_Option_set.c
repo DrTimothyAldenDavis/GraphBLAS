@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB_transpose.h"
 
 #define GB_FREE_ALL ;
@@ -28,9 +30,6 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     GB_BURBLE_START ("GxB_set") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
-
-    GB_MATRIX_WAIT (A) ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
 
     //--------------------------------------------------------------------------
     // set the matrix option
@@ -59,7 +58,6 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                printf ("sparsity: %d ", sparsity) ;
                 switch (sparsity)
                 {
                     case GxB_DEFAULT :
@@ -79,7 +77,6 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                             (int) GxB_HYPERSPARSE, (int) GxB_SPARSE,
                             (int) GxB_BITMAP, (int) GxB_FULL) ;
                 }
-                printf (" ok\n") ;
             }
             break ;
 
@@ -123,7 +120,6 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
     }
 
-    printf ("here \n") ;
     GB_BURBLE_END ;
     return (info) ;
 }

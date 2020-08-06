@@ -33,6 +33,9 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C for GB_matvec_build", GB0) ;
+    ASSERT (!GB_IS_FULL (C)) ;          // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+
     GB_RETURN_IF_NULL (I) ;
     if (I == GrB_ALL)
     { 

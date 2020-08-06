@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
@@ -52,7 +54,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
                 int *sparsity = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (sparsity) ;
-                if (A->h != NULL)
+                if (GB_IS_HYPERSPARSE (A))
                 { 
                     (*sparsity) = GxB_HYPERSPARSE ;
                 }

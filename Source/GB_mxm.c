@@ -12,6 +12,8 @@
 // This function is not user-callable.  It does the work for user-callable
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
+// OK: BITMAP (in progress)
+
 #include "GB_mxm.h"
 #include "GB_accum_mask.h"
 

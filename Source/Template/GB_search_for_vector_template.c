@@ -10,6 +10,9 @@
 // Given an index p, find k so that Ap [k] <= p && p < Ap [k+1].  The search is
 // limited to k in the range Ap [kleft ... anvec].
 
+// A->p can come from any matrix: hypersparse, sparse, bitmap, or full.
+// For the latter two cases, A->p is NULL.
+
 #ifdef GB_KERNEL
 __device__
 static inline int64_t GB_search_for_vector_device
@@ -31,7 +34,7 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
 
     if (Ap == NULL)
     { 
-        // A is full
+        // A is full or bitmap
         ASSERT (p >= 0 && p < avlen * anvec) ;
         return ((avlen == 0) ? 0 : (p / avlen)) ;
     }

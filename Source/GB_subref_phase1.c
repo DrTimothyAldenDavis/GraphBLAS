@@ -47,6 +47,7 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase1", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // allocate the result

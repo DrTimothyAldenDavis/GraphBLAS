@@ -46,6 +46,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (D)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -131,13 +133,11 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz   = GB_NNZ (A) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
     int64_t anvec = A->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, anz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -148,7 +148,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
     { 
         // out of memory
         GB_Matrix_free (Chandle) ;

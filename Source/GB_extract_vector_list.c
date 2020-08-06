@@ -35,6 +35,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     ASSERT (nthreads >= 1) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
     ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // get A
@@ -48,10 +49,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     // determine the # of tasks to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ (A) ;
     int ntasks = (nthreads == 1) ? 1 : (2 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, anz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     // TODO: use #include "GB_positional_op_ijp.c" here
 
@@ -64,7 +62,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
     { 
         // out of memory
         return (false) ;

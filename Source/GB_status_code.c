@@ -9,6 +9,8 @@
 
 // GB_status_code: convert GrB_Info enum into a string
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

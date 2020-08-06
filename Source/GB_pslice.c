@@ -13,15 +13,20 @@
 // the work needed for computing each vector of a matrix (see GB_ewise_slice
 // and GB_subref_slice, for example).
 
+// If Ap is NULL then the matrix A (not provided here) is full or bitmap,
+// which this function handles (Ap is implicit).
+
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 (
     int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,         // array of size n+1 (null if full)
+    const int64_t *GB_RESTRICT Ap,  // array size n+1 (NULL if full or bitmap)
     const int64_t n,
-    const int ntasks                    // # of tasks
+    const int ntasks                // # of tasks
 )
 {
 
@@ -48,7 +53,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 
     if (Ap == NULL)
     {
-        // A is full
+        // A is full or bitmap
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
         {
             Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;

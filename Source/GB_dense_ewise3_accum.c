@@ -44,6 +44,10 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;

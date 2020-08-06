@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB_sort.h"
 
 GrB_Info GB_unjumble        // unjumble a matrix
@@ -21,7 +23,6 @@ GrB_Info GB_unjumble        // unjumble a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A to unjumble", GB0) ;
-    ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;      // zombies must be killed first
     ASSERT (GB_PENDING_OK (A)) ;    // pending tuples are not modified
 
@@ -30,6 +31,11 @@ GrB_Info GB_unjumble        // unjumble a matrix
         // nothing to do
         return (GrB_SUCCESS) ;
     }
+
+    // full and bitmap matrices are never jumbled 
+    ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // get A

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB_ek_slice.h"
 
 void GB_ek_slice_free

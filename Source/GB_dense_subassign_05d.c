@@ -60,6 +60,9 @@ GrB_Info GB_dense_subassign_05d
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
@@ -78,13 +81,11 @@ GrB_Info GB_dense_subassign_05d
     // Parallel: slice M into equal-sized chunks
     //--------------------------------------------------------------------------
 
-    int64_t mnz   = GB_NNZ (M) ;
+    int64_t mnz = GB_NNZ_HELD (M) ;
     int64_t mnvec = M->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (mnz + mnvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, mnz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -94,7 +95,7 @@ GrB_Info GB_dense_subassign_05d
     // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
     // vectors may be shared with prior slices and subsequent slices.
 
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, &ntasks))
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;

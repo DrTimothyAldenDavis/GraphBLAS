@@ -85,6 +85,10 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     ASSERT (!GB_JUMBLED (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
+
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
 

@@ -114,8 +114,9 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) subref", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
-    ASSERT (GB_JUMBLED_OK (A)) ;      // A is sorted, below, if jumbled on input
+    ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
     ASSERT (GB_PENDING_OK (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO
 
     int64_t *GB_RESTRICT Cp = NULL ;
     int64_t *GB_RESTRICT Ch = NULL ;

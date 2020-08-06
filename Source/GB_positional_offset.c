@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 int64_t GB_positional_offset        // return 0 or 1

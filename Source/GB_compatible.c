@@ -10,6 +10,8 @@
 // Check if the types for C<M> = accum (C,T) are all compatible,
 // and (if present) make sure the size of C and M match.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise

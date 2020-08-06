@@ -24,6 +24,8 @@
 
 // See discussion on Source/GB.h on boolean and integer division
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 #include "GB_binop.h"
 

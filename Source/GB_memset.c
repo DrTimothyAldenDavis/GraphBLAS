@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_memcpy: parallel memcpy
+// GB_memset: parallel memset
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -15,11 +15,11 @@
 
 #define GB_MEM_CHUNK (1024*1024)
 
-void GB_memcpy                  // parallel memcpy
+void GB_memset                  // parallel memset
 (
     void *dest,                 // destination
-    const void *src,            // source
-    size_t n,                   // # of bytes to copy
+    const int c,                // value to to set
+    size_t n,                   // # of bytes to set
     int nthreads                // # of threads to use
 )
 {
@@ -28,16 +28,16 @@ void GB_memcpy                  // parallel memcpy
     { 
 
         //----------------------------------------------------------------------
-        // memcpy using a single thread
+        // memset using a single thread
         //----------------------------------------------------------------------
 
-        memcpy (dest, src, n) ;
+        memset (dest, c, n) ;
     }
     else
     {
 
         //----------------------------------------------------------------------
-        // memcpy using a multiple threads
+        // memset using a multiple threads
         //----------------------------------------------------------------------
 
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;
@@ -46,7 +46,6 @@ void GB_memcpy                  // parallel memcpy
             nthreads = (int) nchunks ;
         }
         GB_void *pdest = (GB_void *) dest ;
-        const GB_void *psrc = (GB_void *) src ;
 
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -56,7 +55,7 @@ void GB_memcpy                  // parallel memcpy
             if (start < n)
             { 
                 size_t chunk = GB_IMIN (n - start, GB_MEM_CHUNK) ;
-                memcpy (pdest + start, psrc + start, chunk) ;
+                memset (pdest + start, c, chunk) ;
             }
         }
     }

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 // Construct a set of tasks to compute C(I,J)<...> = x or += x, for a subassign
 // method that performs scalar assignment, based on slicing the Cartesian
 // product IxJ.  If enough tasks can be constructed by just slicing J, then all

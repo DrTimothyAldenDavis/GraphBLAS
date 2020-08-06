@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 // Create a user-defined monoid with an operator, identity value, and
 // (optionally) a terminal value.  If using a built-in operator, a duplicate
 // boolean operators is first replaced with its unique equivalent.  If the

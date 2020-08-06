@@ -10,6 +10,8 @@
 // This method construct a shallow statically-defined scalar, with no memory
 // allocations.  The scalar is full, with a single entry.
 
+// OK: BITMAP
+
 #include "GB.h"
 #include "GB_scalar.h"
 

@@ -63,6 +63,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     ASSERT_MATRIX_OK (A, "A for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_ewise", GB0) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     // T has the same type as the output z for z=op(a,b)
     GrB_BinaryOp op = op_in ;
     GrB_Type T_type = op->ztype ;

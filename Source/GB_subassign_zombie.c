@@ -44,6 +44,9 @@ void GB_subassign_zombie
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
+
     ASSERT (!GB_IS_FULL (C)) ;
     int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;

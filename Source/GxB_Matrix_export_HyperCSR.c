@@ -44,6 +44,8 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GB_RETURN_IF_NULL (Aj) ;
     GB_RETURN_IF_NULL (Ax) ;
 
+    ASSERT (!GB_IS_BITMAP (*A)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------

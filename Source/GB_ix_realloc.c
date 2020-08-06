@@ -11,6 +11,8 @@
 // preserving the existing content of A->x and A->i.  Preserves pending tuples
 // and zombies, if any.  If numeric is false, then A->x is freed instead.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -27,16 +29,19 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // GB_new does not always initialize A->p; GB_Matrix_check fails in this
-    // case.  So the following assertion is not possible here.  This is by
-    // design.  Thus, ASSERT_MATRIX_OK (A, "A", ...) ;  cannot be
-    // used here.
-    ASSERT (A != NULL && A->p != NULL) ;
+    // This method is used only by GB_ix_resize, which itself is used only by
+    // GrB_Matrix_wait.  Full and bitmap matrices never have pending work, so
+    // this function is only called for hypersparse and sparse matrices.
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+
+    // GB_new does not always initialize A->p; GB_Matrix_check fails in this
+    // case.  Thus, ASSERT_MATRIX_OK (A, "A", ...) ;  cannot be used here.
+    ASSERT (A != NULL && A->p != NULL) ;
     ASSERT (!A->i_shallow && !A->x_shallow) ;
 
-    // This function tolerates pending tuples and zombies
+    // This function tolerates pending tuples, zombies, and jumbled matrices.
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

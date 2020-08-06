@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB_sort.h"
 
 // returns true if A [a] < B [b]

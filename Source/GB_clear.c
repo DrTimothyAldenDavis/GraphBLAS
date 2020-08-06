@@ -20,6 +20,8 @@
 // the matrix A is left in an invalid state (A->magic == GB_MAGIC2).  Only the
 // header is left.
 
+// OK: no change for BITMAP (converts A to sparse or hypersparse, O(1) memory)
+
 #include "GB.h"
 
 GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged

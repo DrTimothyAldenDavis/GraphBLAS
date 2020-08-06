@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 // Only prints entries of built-in types; user-defined types can't be printed.
 
 #include "GB.h"

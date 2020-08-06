@@ -97,6 +97,10 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
+    //--------------------------------------------------------------------------
+    // prototype bitmap case:
+    //--------------------------------------------------------------------------
+
     info = GB_AxB_dot5 (Chandle, C_in_place, M, Mask_comp, Mask_struct, NULL,
         A, B, semiring, flipxy, Context) ;
     if (info != GrB_NO_VALUE)
@@ -105,6 +109,15 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         (*mask_applied) = (M != NULL) ; // mask applied if present
         return (info) ;
     }
+
+    ASSERT (!GB_IS_BITMAP (C_in_place)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
+    //--------------------------------------------------------------------------
+    // general case (no bitmaps yet)
+    //--------------------------------------------------------------------------
 
     if (M != NULL && !Mask_comp)
     { 

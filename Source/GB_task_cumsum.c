@@ -9,6 +9,8 @@
 
 // Cp is never NULL.  C is created as sparse or hypersparse.
 
+// OK: no change for BITMAP (used to create C sparse or hypersparse only)
+
 #include "GB.h"
 
 void GB_task_cumsum

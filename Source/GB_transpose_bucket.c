@@ -80,6 +80,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     // if op1 and op2 are NULL, then no operator is applied
 

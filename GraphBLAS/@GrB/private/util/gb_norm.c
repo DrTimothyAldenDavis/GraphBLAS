@@ -103,13 +103,13 @@ double gb_norm              // compute norm (A,kind)
                     // X = X.^2
                     if (atype == GxB_FC32)
                     {
-                        OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL, NULL,
-                            GxB_POW_FP32, X, (float) 2.0, NULL)) ;
+                        OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL,
+                            NULL, GxB_POW_FP32, X, (float) 2.0, NULL)) ;
                     }
                     else
                     {
-                        OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL, NULL,
-                            GxB_POW_FP64, X, (double) 2.0, NULL)) ;
+                        OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL,
+                            NULL, GxB_POW_FP64, X, (double) 2.0, NULL)) ;
                     }
                 }
                 else
@@ -192,7 +192,8 @@ double gb_norm              // compute norm (A,kind)
                 // t = zeros (nrows,1)
                 OK (GrB_Vector_new (&t, xtype, nrows)) ;
                 // t(i) = sum of the ith row, X(i,:)
-                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X, NULL)) ;
+                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
+                    NULL)) ;
                 // s = max (t)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
                 break ;

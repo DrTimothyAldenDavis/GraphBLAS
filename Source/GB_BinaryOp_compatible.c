@@ -11,6 +11,8 @@
 // op->xtype, B is cast to op->ytype, the operator is computed, and then the
 // result of op->ztype is cast to C->type.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_BinaryOp_compatible     // check for domain mismatch

@@ -170,18 +170,17 @@ GrB_Info GB_subref_phase0
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     ASSERT (p_Ch != NULL) ;
     ASSERT (p_Ap_start != NULL) ;
     ASSERT (p_Ap_end != NULL) ;
     ASSERT (p_Cnvec != NULL) ;
-
     ASSERT (p_nJ != NULL) ;
-
     ASSERT (p_Ikind != NULL) ;
     ASSERT (p_nI != NULL) ;
     ASSERT (Icolon != NULL) ;
-
-    ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
     ASSERT (I != NULL) ;
     ASSERT (J != NULL) ;
 

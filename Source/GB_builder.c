@@ -86,6 +86,9 @@
 // able to transplant S_work into T->x since the input will almost always be
 // unsorted.
 
+// OK: no change for BITMAP: this method always returns T as hypersparse,
+// and has no matrix inputs. Use another method to built a bitmap T.
+
 #include "GB_build.h"
 #include "GB_sort.h"
 #include "GB_binop.h"

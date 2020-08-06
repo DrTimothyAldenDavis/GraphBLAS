@@ -47,6 +47,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
 
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;

@@ -37,6 +37,15 @@ GrB_Info GB_AxB_saxpy3_generic
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
+    //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C
     //--------------------------------------------------------------------------
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 // A wrapper for realloc_function.
 
 // If p is non-NULL on input, it points to a previously allocated object of

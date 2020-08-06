@@ -65,6 +65,20 @@ GrB_Info GB_dense_subassign_25
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
+    printf ("method 25: %d %d %d\n",
+    GB_IS_BITMAP (C),
+    GB_IS_BITMAP (M),
+    GB_IS_BITMAP (A)) ;
+
+    if (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (A))
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
@@ -79,11 +93,9 @@ GrB_Info GB_dense_subassign_25
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int64_t mnz = GB_NNZ (M) ;
+    int64_t mnz = GB_NNZ_HELD (M) ;
     int nthreads = GB_nthreads (mnz + M->nvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, mnz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -94,7 +106,7 @@ GrB_Info GB_dense_subassign_25
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, &ntasks))
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;

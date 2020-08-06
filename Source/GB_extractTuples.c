@@ -37,11 +37,13 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (p_nvals != NULL) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    ASSERT (A != NULL) ;
-    ASSERT (p_nvals != NULL) ;
     GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled
+
     GB_BURBLE_DENSE (A, "(A %s) ") ;
     ASSERT (xcode <= GB_UDT_code) ;
 
@@ -50,8 +52,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
-
-    ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
 
     int64_t anz = GB_NNZ (A) ;
 

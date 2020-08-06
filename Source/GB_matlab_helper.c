@@ -334,6 +334,10 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
     GrB_Index *nvec     // # of non-empty vectors
 )
 {
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (!GB_IS_FULL (A)) ;          // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     int64_t anvec = A->nvec ;
     GB_NTHREADS (anvec) ;
 

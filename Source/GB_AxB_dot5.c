@@ -16,6 +16,8 @@
 //      C_replace: true
 //      accum: not present
 
+// OK: BITMAP (in progress)
+
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT

@@ -17,6 +17,8 @@
 
 // Compare with GB_subassign_scalar, which uses M and C_replace differently
 
+// OK: no change for BITMAP
+
 #include "GB_assign.h"
 
 GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x

@@ -51,6 +51,10 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // all prior content of C is cleared
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
     ASSERT (op->ztype == C->type) ;
@@ -72,6 +76,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
+
+    // TODO: construct C according to C->sparsity, or conform it when done.
 
     if (!C_is_dense)
     { 

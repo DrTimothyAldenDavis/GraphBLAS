@@ -49,6 +49,8 @@ GrB_Info GB_assign_zombie5
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
+    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // get Z
@@ -59,7 +61,6 @@ GrB_Info GB_assign_zombie5
     // const int64_t Znvec = Z->nvec ;
     int64_t *GB_RESTRICT Zi = Z->i ;
     int64_t nzombies = Z->nzombies ;
-    const int64_t znz = GB_NNZ (Z) ;
     const int64_t zvlen = Z->vlen ;
 
     //--------------------------------------------------------------------------
@@ -79,11 +80,10 @@ GrB_Info GB_assign_zombie5
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    const int64_t znz = GB_NNZ_HELD (Z) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (znz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, znz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -94,7 +94,7 @@ GrB_Info GB_assign_zombie5
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, Z, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, Z, &ntasks))
     {
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;

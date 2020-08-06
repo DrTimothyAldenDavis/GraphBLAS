@@ -43,11 +43,14 @@
 
 // C is operated on in-place and thus cannot be aliased with the inputs A or M.
 
-// Since the pattern of C does not change here, C->p, C->h, C->nvec, and
-// C->nvec_nonempty are constant.  C->x and C->i can be modified, but only one
-// entry at a time.  No entries are shifted.  C->x can be modified, and C->i
-// can be changed by turning an entry into a zombie, or by bringing a zombie
-// back to life, but no entry in C->i moves in position.
+// Since the pattern of C isn't reallocated here, and entries do not move in
+// position, C->p, C->h, C->nvec, and C->nvec_nonempty are constant.  C->x and
+// C->i can be modified, but only one entry at a time.  No entries are shifted.
+// C->x can be modified, and C->i can be changed by turning an entry into a
+// zombie, or by bringing a zombie back to life, but no entry in C->i moves in
+// position.  C->b can be modified for a C bitmap.
+
+// TODO: BITMAP (in progress).  Just method 06d so far.
 
 #define GB_FREE_WORK            \
 {                               \
@@ -68,7 +71,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \
 {                                                       \
-    GB_phbix_free (C) ;                                  \
+    GB_phbix_free (C) ;                                 \
     GB_FREE_WORK ;                                      \
 }
 
@@ -123,6 +126,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     ASSERT_MATRIX_OK (C, "C input for subassigner", GB0) ;
 
+    // TODO: only method 06d handles bitmaps, so far
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (M)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
+
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
@@ -130,9 +138,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // subassign tolerates both zombies and pending tuples in C, but not M or A
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
-
-    GB_BURBLE_DENSE (M, "(subassign: M %s) ") ;
-    GB_BURBLE_DENSE (A, "(subassign: A %s) ") ;
 
     // some kernels allow for M and A to be jumbled
     ASSERT (GB_JUMBLED_OK (M)) ;
@@ -725,7 +730,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // check if C is competely dense:  all entries present and no pending work.
-    bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C) && GB_is_dense (C) ;
+    bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C) && GB_is_dense (C) 
+        && !C_is_bitmap ;
     bool C_dense_update = false ;
     if (C_is_dense)
     { 
@@ -791,7 +798,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // method 06s (with S) is faster when nnz (A) < nnz (M).
             // If M and A are aliased, then nnz (A) == nnz (M), so method
             // 06n is used.
-            if (C_is_dense && whole_C_matrix && M == A)
+            if ((C_is_dense || C_is_bitmap) && whole_C_matrix && M == A)
             {
                 // Method 06d: C<A> = A
                 S_Extraction = false ;
@@ -1183,11 +1190,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, A, Context)) ;
         }
-        else if (C_is_dense && whole_C_matrix && M == A)
+        if ((C_is_dense || C_is_bitmap) && whole_C_matrix && M == A)
         { 
             // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
             // C becomes full.
             GBURBLE ("Method 06d: (C full)<Z> = Z ") ;
+            ASSERT (GB_IS_ANY_SPARSITY (C)) ;
+            ASSERT (GB_IS_ANY_SPARSITY (A)) ;
             GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Context)) ;
         }
         else if (C_is_empty && whole_C_matrix && A_is_dense && Mask_struct)

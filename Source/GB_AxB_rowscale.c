@@ -46,6 +46,9 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (D->vdim == B->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
 
+    ASSERT (!GB_IS_BITMAP (D)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // get the semiring operators
     //--------------------------------------------------------------------------

@@ -14,6 +14,8 @@
 // shallow.  This function is not user-callable.  The new type of C (ctype)
 // must be compatible with A->type.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_transplant          // transplant one matrix into another
@@ -44,6 +46,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
+
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;

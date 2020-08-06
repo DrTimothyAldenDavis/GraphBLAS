@@ -38,6 +38,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (GB_is_dense (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
 
     ASSERT (scalar != NULL) ;
     ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;

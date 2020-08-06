@@ -11,12 +11,20 @@
 
 // M:           present
 // Mask_comp:   false
+// Mask_struct: true or false (both cases handled)
 // C_replace:   false
 // accum:       NULL
 // A:           matrix, and aliased to M
 // S:           none
 
-// FULL: if C sparse, convert to full
+// C must be a packed matrix.  No entries are deleted and thus no zombies are
+// introduced into C.  C can be hypersparse, sparse, bitmap, or full.  If C is
+// hypersparse, sparse, or full, then the pattern does not change (all entries
+// are present, and this does not change), and these cases can all be treated
+// the same (as if full).  If C is bitmap, new entries can be inserted into the
+// bitmap C->b.  The matrix A can have any sparsity structure.
+
+// OK: BITMAP (in progress)
 
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
@@ -52,17 +60,23 @@ GrB_Info GB_dense_subassign_06d
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_is_packed (C)) ;
 
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
-    ASSERT (!GB_PENDING (A)) ;
-    ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
+
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     const GB_Type_code ccode = C->type->code ;
+    const bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_dense = GB_is_dense (A) && !(A->jumbled) ;
 
-    // ensure C is full
-    GB_ENSURE_FULL (C) ;
+    if (C_is_bitmap) GBURBLE ("(C bitmap) ") ;
+    if (A_is_bitmap) GBURBLE ("(Z bitmap) ") ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
@@ -75,11 +89,10 @@ GrB_Info GB_dense_subassign_06d
     // Parallel: slice A into equal-sized chunks
     //--------------------------------------------------------------------------
 
+    int64_t anz = GB_NNZ_HELD (A) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (GB_NNZ (A) + A->nvec, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, GB_NNZ (A)) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -89,10 +102,19 @@ GrB_Info GB_dense_subassign_06d
     // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
     // vectors may be shared with prior slices and subsequent slices.
 
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (A_is_bitmap || A_is_dense)
     { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
+        // no need to construct tasks
+        ;
+    }
+    else
+    {
+        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
+            &ntasks))
+        { 
+            // out of memory
+            return (GrB_OUT_OF_MEMORY) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -156,7 +178,7 @@ GrB_Info GB_dense_subassign_06d
         // get operators, functions, workspace, contents of A and C
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "(generic C(:,:)<A>=A assign) ") ;
+        GB_BURBLE_MATRIX (A, "(generic C(:,:)<Z>=Z assign) ") ;
 
         const size_t csize = C->type->size ;
         const size_t asize = A->type->size ;

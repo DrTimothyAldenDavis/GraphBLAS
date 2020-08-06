@@ -37,6 +37,8 @@ GrB_Info GxB_Vector_export  // export and free a vector
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     ASSERT_VECTOR_OK (*v, "v to export", GB0) ;
 
+    ASSERT (!GB_IS_BITMAP (*v)) ;        // TODO
+
     // finish any pending work
     GrB_Info info ;
     GB_VECTOR_WAIT (*v) ;

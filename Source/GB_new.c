@@ -37,6 +37,8 @@
 // grep "allocate a new header"
 // which shows all uses of GB_new and GB_create
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

@@ -14,6 +14,8 @@
 
 // If this method fails, all content of A is freed (including A->p and A->h).
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

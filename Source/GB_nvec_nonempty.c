@@ -10,6 +10,8 @@
 // All pending tuples are ignored.  If a vector has all zombies it is still
 // counted as non-empty.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -28,6 +30,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     //--------------------------------------------------------------------------
     // trivial cases

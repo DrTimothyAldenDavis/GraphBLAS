@@ -9,6 +9,8 @@
 
 // GxB_Scalar: same as a GrB_Vector of length 1
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar

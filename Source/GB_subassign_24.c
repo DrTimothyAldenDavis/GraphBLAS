@@ -34,6 +34,9 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // prior content of C is discard
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
@@ -96,7 +99,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
         // ensure C is full
-        GB_ENSURE_FULL (C) ;
+        GB_ENSURE_FULL (C) ;    // TODO: only if C->sparsity allows it
 
     }
     else

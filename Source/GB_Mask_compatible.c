@@ -9,6 +9,8 @@
 
 // check the type and dimensions of the mask
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_Mask_compatible     // check type and dimensions of mask
@@ -28,7 +30,7 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
     if (M != NULL)
     { 
 
-        // M  is typecast to boolean
+        // M is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,

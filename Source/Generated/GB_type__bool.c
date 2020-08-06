@@ -124,5 +124,29 @@ GrB_Info GB_Cdense_25__bool
     #endif
 }
 
+//------------------------------------------------------------------------------
+// convert sparse to bitmap
+//------------------------------------------------------------------------------
+
+GrB_Info GB_convert_s2b__bool
+(
+    GrB_Matrix A,
+    bool *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_convert_sparse_to_bitmap_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
 #endif
 

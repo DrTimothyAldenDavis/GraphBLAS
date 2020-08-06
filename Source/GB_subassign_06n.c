@@ -51,6 +51,10 @@ GrB_Info GB_subassign_06n
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     GB_EMPTY_TASKLIST ;
     GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;

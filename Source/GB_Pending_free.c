@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB_Pending.h"
 
 void GB_Pending_free        // free a list of pending tuples

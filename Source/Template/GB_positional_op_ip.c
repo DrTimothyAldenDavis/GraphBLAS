@@ -15,19 +15,13 @@
     // Cx = positional_op (A)
     //--------------------------------------------------------------------------
 
-    int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (tid = 0 ; tid < ntasks ; tid++)
-    {
-        int64_t pstart, pend ;
-        GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-        GB_PRAGMA_SIMD
-        for (int64_t p = pstart ; p < pend ; p++)
-        { 
-            // GB_POSITION is either i or i+1
-            int64_t i = GBI (Ai, p, avlen) ;
-            Cx_int [p] = GB_POSITION ;
-        }
+    int64_t p ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (p = 0 ; p < anz ; p++)
+    { 
+        // GB_POSITION is either i or i+1
+        int64_t i = GBI (Ai, p, avlen) ;
+        Cx_int [p] = GB_POSITION ;
     }
 }
 

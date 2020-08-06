@@ -10,6 +10,8 @@
 // c = a*b where c is GrB_Index (uint64_t), and a and b are int64_t.
 // Check for overflow.  Requires a >= 0 and b >= 0.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 bool GB_Index_multiply      // true if ok, false if overflow

@@ -52,6 +52,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     GrB_Type ztype, op_intype = NULL ;
     GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;

@@ -13,6 +13,8 @@
 
 // This function is not directly user-callable.  Use GrB_BinaryOp_new instead.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 #include <ctype.h>
 

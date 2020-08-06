@@ -166,6 +166,10 @@ GrB_Info GB_mask                // C<M> = Z
     // M must be compatible with C_result
     ASSERT_OK (GB_Mask_compatible (M, C_result, 0, 0, Context)) ;
 
+    ASSERT (!GB_IS_BITMAP (C_result)) ; // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
+
     GrB_Info info = GrB_SUCCESS ;
 
     GrB_Matrix R = NULL ;

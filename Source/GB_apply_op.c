@@ -44,11 +44,16 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     ASSERT (op1 != NULL || op2 != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
 
-    ASSERT (GB_JUMBLED_OK (A)) ;    // A can be jumbled
+    ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
+    //--------------------------------------------------------------------------
+    // get A
+    //--------------------------------------------------------------------------
 
     const GB_void *Ax = (GB_void *) A->x ;  // A->x has type A->type
     const GrB_Type Atype = A->type ;        // type of A->x
-    const int64_t anz = GB_NNZ (A) ;        // size of A->x and Cx
+    const int64_t anz = GB_NNZ_HELD (A) ;   // size of A->x and Cx
 
     //--------------------------------------------------------------------------
     // determine the maximum number of threads to use
@@ -95,8 +100,6 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
         int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
         int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-        ntasks = GB_IMIN (ntasks, anz) ;
-        ntasks = GB_IMAX (ntasks, 1) ;
 
         //----------------------------------------------------------------------
         // Cx = positional_op (A)

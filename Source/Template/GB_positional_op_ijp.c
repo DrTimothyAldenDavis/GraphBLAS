@@ -19,7 +19,7 @@
     //--------------------------------------------------------------------------
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;

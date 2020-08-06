@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_hypermatrix_prune
@@ -23,7 +25,9 @@ GrB_Info GB_hypermatrix_prune
     ASSERT (A != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
     ASSERT (GB_JUMBLED_OK (A)) ;
-    if (A->h == NULL)
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
+
+    if (!GB_IS_HYPERSPARSE (A))
     { 
         // nothing to do
         return (GrB_SUCCESS) ;

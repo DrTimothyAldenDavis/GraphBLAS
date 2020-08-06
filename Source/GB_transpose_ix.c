@@ -42,6 +42,9 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;

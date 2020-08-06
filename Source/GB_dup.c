@@ -27,6 +27,8 @@
 
 // A is the new copy and B is the old copy.  Each should be freed when done.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;

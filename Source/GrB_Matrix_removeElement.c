@@ -100,6 +100,7 @@ GrB_Info GrB_Matrix_removeElement
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // if C is jumbled, wait on the matrix first

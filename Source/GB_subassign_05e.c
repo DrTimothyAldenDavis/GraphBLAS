@@ -38,6 +38,9 @@ GrB_Info GB_subassign_05e
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
     ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;

@@ -13,6 +13,8 @@
 
 // This function normally returns GrB_SUCCESS. 
 
+// OK: BITMAP
+
 #include "GB.h"
 
 void GB_phbix_free              // free all content of a matrix

@@ -10,6 +10,8 @@
 // C(:,:) = x where C is a matrix and x is a scalar
 // FULL: C is created as a full matrix.
 
+// OK: BITMAP
+
 #include "GB_dense.h"
 #include "GB_select.h"
 #include "GB_Pending.h"
@@ -30,10 +32,12 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C(:,:)=x", GB0) ;
     ASSERT (scalar != NULL) ;
-    // any prior pending tuples are discarded, and all zombies will be killed
+    // any prior pending tuples are discarded, and all zombies will be killed,
+    // so C can be anything on input.
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
     ASSERT_TYPE_OK (atype, "atype for C(:,:)=x", GB0) ;
 
     //--------------------------------------------------------------------------

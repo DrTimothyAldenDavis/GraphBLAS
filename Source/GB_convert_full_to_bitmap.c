@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
@@ -23,6 +25,8 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     ASSERT_MATRIX_OK (A, "A converting full to bitmap", GB0) ;
     ASSERT (GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_SPARSE (A)) ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -53,21 +57,10 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // fill the A->b bitmap
+    // fill the A->b bitmap in parallel
     //--------------------------------------------------------------------------
 
-    int8_t *GB_RESTRICT Ab = A->b ;
-
-    int64_t taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (taskid = 0 ; taskid < nthreads ; taskid++)
-    {
-        // Ab [p1:p2-1] = 1
-        int64_t pstart, pend ;
-        GB_PARTITION (pstart, pend, anz, taskid, nthreads) ;
-        memset (Ab + pstart, 1, pend - pstart + 1) ;
-    }
-
+    GB_memset (A->b, 1, anz, nthreads) ;
     A->nvals = anz ;
 
     //--------------------------------------------------------------------------

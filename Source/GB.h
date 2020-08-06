@@ -283,8 +283,19 @@ GB_PUBLIC int GB_cover_max ;
 #define GB_NNZ_NONEMPTY(A) \
     (((A)->p == NULL) ? GB_NNZ_FULL_OR_BITMAP (A) : GB_NNZ_SPARSE (A))
 
-// nnz(A) for any matrix
+// nnz(A) for any matrix: includes zombies for hypersparse and sparse,
+// but excluding entries flagged as not present in a bitmap.
 #define GB_NNZ(A) (((A)->nzmax <= 0) ? 0 : GB_NNZ_NONEMPTY (A))
+
+// nnz_held(A) is the number of entries held in the data structure, including
+// zombies and all entries in a bitmap.  For hypersparse, sparse, and full,
+// nnz(A) and nzspace(A) are the same.  For bitmap, nzspace(A) is the
+// same as the # of entries in a full matrix (# rows times # columns).
+#define GB_NNZ_HELD(A) (((A)->nzmax <= 0) ? 0 : GB_NNZ_HELD_NONEMPTY (A))
+
+// nnz_held(A) for all non-empty matrices
+#define GB_NNZ_HELD_NONEMPTY(A) \
+    (((A)->p == NULL) ? GB_NNZ_FULL (A) : GB_NNZ_SPARSE (A))
 
 // Upper bound on nnz(A) when the matrix has zombies and pending tuples;
 // does not need GB_MATRIX_WAIT(A) first.
@@ -769,6 +780,14 @@ void GB_memcpy                  // parallel memcpy
     void *dest,                 // destination
     const void *src,            // source
     size_t n,                   // # of bytes to copy
+    int nthreads                // # of threads to use
+) ;
+
+void GB_memset                  // parallel memset
+(
+    void *dest,                 // destination
+    const int c,                // value to to set
+    size_t n,                   // # of bytes to set
     int nthreads                // # of threads to use
 ) ;
 

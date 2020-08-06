@@ -20,6 +20,8 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
+// OK: BITMAP (in progress)
+
 #include "GB_subassign.h"
 #include "GB_transpose.h"
 

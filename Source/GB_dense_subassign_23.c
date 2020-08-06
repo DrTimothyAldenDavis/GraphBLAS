@@ -55,6 +55,9 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     ASSERT_BINARYOP_OK (accum, "accum for C+=B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
     ASSERT (B->vlen == C->vlen) ;
@@ -79,13 +82,11 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t bnz   = GB_NNZ (B) ;
+    int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t bnvec = B->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, bnz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -99,13 +100,15 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     if (GB_is_dense (B))
     { 
         // both C and B are dense; no need to construct tasks
+        // TODO: bitmap can use this too
         GBURBLE ("(Z dense) ") ;
+        ntasks = 0 ;   // unused
     }
     else
     {
         // create tasks to compute over the matrix B
         if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B,
-            ntasks))
+            &ntasks))
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_matvec_type            // get the type of a matrix

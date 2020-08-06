@@ -11,6 +11,8 @@
 
 // if numeric is false, C->x is allocated but not initialized.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_dup2            // make an exact copy of a matrix
@@ -38,7 +40,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
-    // [ create C; allocate C->p and do not initialize it
+    // create C; allocate C->p and do not initialize it
     // C has the exact same hypersparsity as A.
     int64_t anz = GB_NNZ (A) ;
 
@@ -59,36 +61,34 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     int64_t anvec = A->nvec ;
     C->nvec = anvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t *GB_RESTRICT Ci = C->i ;
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
 
     C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
 
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
-    if (Ap != NULL)
+    if (A->p != NULL)
     { 
-        GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nthreads) ;
     }
-    if (Ah != NULL)
+    if (A->h != NULL)
     { 
-        GB_memcpy (Ch, Ah, anvec * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->h, A->h, anvec * sizeof (int64_t), nthreads) ;
     }
 
     nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-    if (Ai != NULL)
+    if (A->b != NULL)
+    { 
+        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads) ;
+    }
+    if (A->i != NULL)
     {
-        GB_memcpy (Ci, Ai, anz * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
     }
     if (numeric)
     { 
         GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
     }
 
-    C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
+    C->magic = GB_MAGIC ;      // C->p and C->h are now initialized
     #ifdef GB_DEBUG
     if (numeric) ASSERT_MATRIX_OK (C, "C duplicate of A", GB0) ;
     #endif

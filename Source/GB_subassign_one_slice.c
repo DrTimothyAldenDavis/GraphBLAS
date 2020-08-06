@@ -70,6 +70,9 @@ GrB_Info GB_subassign_one_slice
     ASSERT_MATRIX_OK (C, "C for 1_slice", GB0) ;
     ASSERT_MATRIX_OK (A, "A/M for 1_slice", GB0) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_JUMBLED (A)) ;
 

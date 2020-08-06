@@ -66,6 +66,10 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 
     ASSERT (A->vdim == B->vdim) ;
 
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------

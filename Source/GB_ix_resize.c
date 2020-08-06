@@ -11,6 +11,8 @@
 // in which case the extra space is trimmed.  If the existing space is not
 // sufficient, the matrix is doubled in size to accomodate the new entries.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_ix_resize           // resize a matrix
@@ -25,9 +27,15 @@ GrB_Info GB_ix_resize           // resize a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    // This function is only called by GB_Matrix_wait.  Full and bitmap
+    // matrices never have any pending work, so this method is needed only for
+    // sparse and hypersparse matrices.
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+
+    // This function tolerates pending tuples, zombies, and jumbled matrices.
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

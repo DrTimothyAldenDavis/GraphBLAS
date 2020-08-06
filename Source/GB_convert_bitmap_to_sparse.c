@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 #define GB_FREE_ALL     \
@@ -31,6 +33,8 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     ASSERT_MATRIX_OK (A, "A converting bitmap to sparse", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_SPARSE (A)) ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_PENDING (A)) ;      // bitmap never has pending tuples
     ASSERT (!GB_JUMBLED (A)) ;      // bitmap is never jumbled
     ASSERT (!GB_ZOMBIES (A)) ;      // bitmap never has zomies

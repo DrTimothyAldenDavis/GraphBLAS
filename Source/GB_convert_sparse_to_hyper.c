@@ -19,6 +19,8 @@
 
 // If the input matrix A is hypersparse, bitmap or full, it is unchanged.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
@@ -37,12 +39,13 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A from sparse to hypersparse
     //--------------------------------------------------------------------------
 
-    if (A->h == NULL && !GB_IS_FULL (A) && !GB_IS_BITMAP (A))
+    if (GB_IS_SPARSE (A))
     { 
 
         //----------------------------------------------------------------------
@@ -157,6 +160,12 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         { 
             GB_FREE (Ap_old) ;
         }
+
+        //----------------------------------------------------------------------
+        // A is now hypersparse
+        //----------------------------------------------------------------------
+
+        ASSERT (GB_IS_HYPERSPARSE (A)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -165,7 +174,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
     ASSERT (anz == GB_NNZ (A)) ;
     ASSERT_MATRIX_OK (A, "A conv to hypersparse (or left full/bitmap)", GB0) ;
-    ASSERT (GB_IS_FULL (A) || GB_IS_BITMAP (A) || A->h != NULL) ;
+    ASSERT (!GB_IS_SPARSE (A)) ;
     return (GrB_SUCCESS) ;
 }
 

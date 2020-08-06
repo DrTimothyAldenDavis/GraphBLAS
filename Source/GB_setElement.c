@@ -48,6 +48,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     ASSERT (C != NULL) ;
     GB_RETURN_IF_NULL (scalar) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+
     if (row >= GB_NROWS (C))
     { 
         GB_ERROR (GrB_INVALID_INDEX,

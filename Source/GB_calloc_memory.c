@@ -14,6 +14,8 @@
 // instead.  This allows the return pointer p to be checked for the
 // out-of-memory condition, even when allocating an object of size zero.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

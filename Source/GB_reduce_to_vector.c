@@ -59,6 +59,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     if (GB_OP_IS_POSITIONAL (reduce))
     { 
         // reduce operator cannot be a positional op
@@ -192,7 +196,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
 
     zsize = reduce->ztype->size ;
     GB_Type_code zcode = reduce->ztype->code ;
@@ -290,14 +294,19 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // last vectors may be shared with prior slices and subsequent slices.
 
         ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-        ntasks = GB_IMIN (ntasks, anz) ;
-        ntasks = GB_IMAX (ntasks, 1) ;
+
+        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
+            &ntasks))
+        { 
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
 
         Wfirst_space = GB_MALLOC (ntasks * zsize, GB_void) ;
         Wlast_space  = GB_MALLOC (ntasks * zsize, GB_void) ;
 
-        if (Wfirst_space == NULL || Wlast_space == NULL ||
-           !GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+        if (Wfirst_space == NULL || Wlast_space == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;

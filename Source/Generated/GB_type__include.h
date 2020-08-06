@@ -45,6 +45,18 @@ GrB_Info GB_Cdense_25__bool
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__bool
+(
+    GrB_Matrix A,
+    bool *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__int8
 (
@@ -76,6 +88,18 @@ GrB_Info GB_Cdense_25__int8
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__int8
+(
+    GrB_Matrix A,
+    int8_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -121,6 +145,18 @@ GrB_Info GB_Cdense_25__int16
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__int16
+(
+    GrB_Matrix A,
+    int16_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__int32
 (
@@ -152,6 +188,18 @@ GrB_Info GB_Cdense_25__int32
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__int32
+(
+    GrB_Matrix A,
+    int32_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -197,6 +245,18 @@ GrB_Info GB_Cdense_25__int64
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__int64
+(
+    GrB_Matrix A,
+    int64_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__uint8
 (
@@ -228,6 +288,18 @@ GrB_Info GB_Cdense_25__uint8
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__uint8
+(
+    GrB_Matrix A,
+    uint8_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -273,6 +345,18 @@ GrB_Info GB_Cdense_25__uint16
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__uint16
+(
+    GrB_Matrix A,
+    uint16_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__uint32
 (
@@ -304,6 +388,18 @@ GrB_Info GB_Cdense_25__uint32
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__uint32
+(
+    GrB_Matrix A,
+    uint32_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -349,6 +445,18 @@ GrB_Info GB_Cdense_25__uint64
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__uint64
+(
+    GrB_Matrix A,
+    uint64_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__fp32
 (
@@ -380,6 +488,18 @@ GrB_Info GB_Cdense_25__fp32
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__fp32
+(
+    GrB_Matrix A,
+    float *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -425,6 +545,18 @@ GrB_Info GB_Cdense_25__fp64
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__fp64
+(
+    GrB_Matrix A,
+    double *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__fc32
 (
@@ -463,6 +595,18 @@ GrB_Info GB_Cdense_25__fc32
     const int nthreads
 ) ;
 
+GrB_Info GB_convert_s2b__fc32
+(
+    GrB_Matrix A,
+    GxB_FC32_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
 
 GrB_Info GB_Cdense_05d__fc64
 (
@@ -494,6 +638,18 @@ GrB_Info GB_Cdense_25__fc64
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_convert_s2b__fc64
+(
+    GrB_Matrix A,
+    GxB_FC64_t *GB_RESTRICT Ax_new,
+    int8_t *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,

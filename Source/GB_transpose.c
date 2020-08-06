@@ -176,6 +176,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;    // TODO: bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;    // TODO: bitmap
 
     // wait if A has pending tuples or zombies, but leave it jumbled

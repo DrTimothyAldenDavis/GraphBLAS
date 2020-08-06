@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;
@@ -24,6 +26,7 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
 
     GB_RETURN_IF_NULL (nvals) ;
 

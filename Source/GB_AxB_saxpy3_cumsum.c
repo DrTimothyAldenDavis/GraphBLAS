@@ -26,6 +26,7 @@ void GB_AxB_saxpy3_cumsum
     // get C
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
     int64_t *GB_RESTRICT Cp = C->p ;        // ok: C is sparse
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;

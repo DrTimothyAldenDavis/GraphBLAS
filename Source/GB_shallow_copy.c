@@ -40,6 +40,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     ASSERT (!GB_PENDING (A)) ;
     ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
 
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------

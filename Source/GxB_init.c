@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: BITMAP set bitmap_switch?
+
 // GrB_init (or GxB_init) must called before any other GraphBLAS operation.
 // GrB_finalize must be called as the last GraphBLAS operation.  GxB_init is
 // identical to GrB_init, except that it allows the user application to define

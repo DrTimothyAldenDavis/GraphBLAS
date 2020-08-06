@@ -10,6 +10,8 @@
 // This function maps the 1,438 semrings available in GraphBLAS to the 13
 // semirings that currently appear in the Intel MKL_graph library.
 
+// OK: no change for BITMAP
+
 #include "GB_mkl.h"
 
 #if GB_HAS_MKL_GRAPH

@@ -10,6 +10,8 @@
 // A parallel mergesort of an array of 2-by-n integers.  Each key consists
 // of two integers.
 
+// OK: no change for BITMAP
+
 #include "GB_msort_2.h"
 
 //------------------------------------------------------------------------------

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 int (* GB_printf_function ) (const char *format, ...) = NULL ;

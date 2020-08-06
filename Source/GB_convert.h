@@ -44,6 +44,13 @@
 // treat A as if it were non-hypersparse
 #define GB_IS_HYPER(A) (GB_IS_HYPERSPARSE (A) && ((A)->nvec < (A)->vdim))
 
+// true if A has any sparsit structure (only useful for commenting via
+// assertions, since this is always true).
+#define GB_IS_ANY_SPARSITY(A) \
+    ((A) == NULL || GB_IS_FULL (A) || GB_IS_BITMAP (A) || \
+     GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
+    
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
@@ -154,15 +161,51 @@ static inline bool GB_is_dense
 )
 {
     // check if A is competely dense:  all entries present.
-    // zombies and pending tuples are not considered.
+    // zombies, pending tuples, and jumbled status are not considered.
     // A can have any sparsity structure: hyper, sparse, bitmap, or full.
-    if (A == NULL) return (false) ;
+    if (A == NULL)
+    {
+        return (false) ;
+    }
     if (GB_IS_FULL (A))
     { 
         // A is full; the pattern is not present
         return (true) ;
     }
     // A is sparse: check if all entries present
+    GrB_Index anzmax ;
+    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
+    return (ok && (anzmax == GB_NNZ (A))) ;
+}
+
+static inline bool GB_is_packed
+(
+    const GrB_Matrix A
+)
+{
+    // check if A is a packed matrix.  A is packed if it is bitmap or full.  If
+    // A is hypersparse or sparse, it is packed if it is not jumbled, all
+    // entries are present, and it has no zombies or pending tuples. 
+    // If A is sparse or hypersparse, it can be converted to full via
+    // GB_convert_any_to_full, by deleting A->p, A->h, and A->i.  If bitmap,
+    // it cannot be converted to full unless GB_is_dense (A) is also true
+    // (it must have all entries present).
+
+    if (A == NULL)
+    { 
+        return (false) ;
+    }
+    if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
+    { 
+        // A is full or bitmap
+        return (true) ;
+    }
+    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
+    { 
+        // A is sparse or hypersparse with pending work
+        return (false) ;
+    }
+    // A is sparse or hypersparse: check if all entries present
     GrB_Index anzmax ;
     bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
     return (ok && (anzmax == GB_NNZ (A))) ;

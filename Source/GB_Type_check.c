@@ -12,6 +12,8 @@
 // matrix A:", for example.  The internal name is the C typedef with which the
 // GraphBLAS GrB_Type was created.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

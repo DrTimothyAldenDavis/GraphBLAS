@@ -10,8 +10,8 @@
 // The input matrix can have shallow A->p and/or A->h components.  If the
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
-// Zombies are OK, but A never has pending tuples.  However, this function is
-// agnostic about pending tuples so they could be OK.
+
+// OK: BITMAP
 
 #include "GB.h"
 
@@ -128,10 +128,10 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
             if (GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled)
                 && !GB_PENDING (A))
             { 
-                // A is sparse, hypersparse, or bitmmap with all entries
+                // A is sparse, hypersparse, or bitmap with all entries
                 // present; convert to full.  A bitmap matrix cannot have
                 // zombies, pending tuples, or be jumbled, so this step
-                // converts any dense bitmap matrix to full.  The conversion
+                // converts any dense bitmap to full.  The conversion
                 // cannot be done if A has any pending work.
                 ASSERT_MATRIX_OK (A, "A conformed: converting full", GB0) ;
                 GB_convert_any_to_full (A) ;

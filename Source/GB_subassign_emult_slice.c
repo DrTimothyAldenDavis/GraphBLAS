@@ -56,6 +56,10 @@ GrB_Info GB_subassign_emult_slice
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+
     GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_max_ntasks != NULL) ;

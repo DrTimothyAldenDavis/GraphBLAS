@@ -55,6 +55,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
 
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------

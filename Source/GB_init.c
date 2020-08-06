@@ -29,6 +29,8 @@
 // caller_is_GxB_cuda_init as true to this function.  GxB_init and GrB_init
 // both pass this flag in as false.
 
+// OK: no change for BITMAP (TODO: set default bitmap_switch?)
+
 #include "GB.h"
 #include "GB_mkl.h"
 

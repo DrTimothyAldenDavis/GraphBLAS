@@ -9,6 +9,8 @@
 
 // A wrapper for free.  If p is NULL on input, it is not freed.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

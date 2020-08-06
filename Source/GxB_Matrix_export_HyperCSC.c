@@ -44,6 +44,8 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GB_RETURN_IF_NULL (Ai) ;
     GB_RETURN_IF_NULL (Ax) ;
 
+    ASSERT (!GB_IS_BITMAP (*A)) ;        // TODO
+
     //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------

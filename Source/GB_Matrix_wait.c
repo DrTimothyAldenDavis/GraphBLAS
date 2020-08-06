@@ -29,6 +29,8 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
+// OK: BITMAP
+
 #include "GB_select.h"
 #include "GB_add.h"
 #include "GB_Pending.h"
@@ -55,10 +57,19 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (A != NULL) ;
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
-    ASSERT (!GB_IS_FULL (A)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
+    { 
+        // full and bitmap matrices never have any pending work
+        ASSERT (!GB_ZOMBIES (A)) ;
+        ASSERT (!GB_JUMBLED (A)) ;
+        ASSERT (!GB_PENDING (A)) ;
+        return (GrB_SUCCESS) ;
+    }
+
+    // only sparse and hypersparse matrices can have pending work
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

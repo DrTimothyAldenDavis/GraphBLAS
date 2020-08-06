@@ -154,6 +154,11 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_accum_mask", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (MT_in)) ;    // TODO
+    ASSERT (!GB_IS_BITMAP (T)) ;        // TODO
+
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassigner is used, so it is not finished here.
     ASSERT (GB_PENDING_OK (C)) ;

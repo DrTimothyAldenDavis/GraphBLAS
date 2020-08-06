@@ -13,6 +13,8 @@
 // A may be hypersparse, sparse, bitmap, or full on input.
 // A is full on output.
 
+// OK: BITMAP
+
 #include "GB.h"
 
 GB_PUBLIC                       // used by MATLAB interface

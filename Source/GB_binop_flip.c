@@ -11,6 +11,8 @@
 // This function is only used for semirings, for matrix-matrix multiply.
 // It is not used for GrB_apply or GrB_eWise*.
 
+// OK: no change for BITMAP
+
 #include "GB.h"
 #include "GB_binop.h"
 
