@@ -145,11 +145,13 @@ end
 if (is_any)
     % the ANY monoid terminates on the first entry seen
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `{ cij_is_terminal = true ; break ; }'')\n') ;
+    fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 elseif (~isempty (terminal))
+    % terminal monoids terminate when cij equals the terminal value
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) { cij_is_terminal = true ; break ; }'')\n', terminal) ;
+    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', ...
+        terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;

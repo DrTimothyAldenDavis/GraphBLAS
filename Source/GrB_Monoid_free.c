@@ -18,7 +18,7 @@ GrB_Info GrB_Monoid_free            // free a user-created monoid
     if (monoid != NULL)
     {
         GrB_Monoid mon = *monoid ;
-        if (mon != NULL && !mon->builtin)
+        if (mon != NULL && !mon->monoid_is_builtin)
         {
             if (mon->magic == GB_MAGIC)
             { 

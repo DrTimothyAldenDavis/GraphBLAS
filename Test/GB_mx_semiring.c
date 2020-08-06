@@ -2780,7 +2780,7 @@ GrB_Semiring GB_mx_semiring         // semiring, or NULL if error
     {
 
         //----------------------------------------------------------------------
-        // 300 semirings with TxT->bool multiply operators
+        // 300 semirings with TxT -> bool multiply operators
         //----------------------------------------------------------------------
 
         // x,y are one of the 10 non-Boolean types, z is Boolean

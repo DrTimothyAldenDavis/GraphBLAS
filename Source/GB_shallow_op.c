@@ -90,7 +90,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
     info = GB_new (&C, ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (A->h != NULL), A->hyper_ratio, 0, Context) ;
+        GB_SAME_HYPER_AS (A->h != NULL), A->hyper_switch, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -154,7 +154,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
          (opcode == GB_SECOND_opcode &&  binop_bind1st)))
     { 
         // no work is done at all.  C is a pure shallow copy
-        GBBURBLE ("(pure shallow) ") ;
+        GBURBLE ("(pure shallow) ") ;
         C->nzmax = A->nzmax ;
         C->x = A->x ;
         C->x_shallow = true ;       // C->x will not be freed when freeing C

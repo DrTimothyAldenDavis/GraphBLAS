@@ -17,8 +17,8 @@ for k = 1:length (types)
             GB_mex_dump (A,2) ;
         end
     end
-    for hyper_ratio = -0.1:0.1:0.4
-        A = GB_spec_random (10,30,0.02,100,aclass, is_csc, [ ], hyper_ratio) ;
+    for hyper_switch = -0.1:0.1:0.4
+        A = GB_spec_random (10,30,0.02,100,aclass, is_csc, [ ], hyper_switch) ;
         GB_mex_dump (A,2) ;
     end
 end

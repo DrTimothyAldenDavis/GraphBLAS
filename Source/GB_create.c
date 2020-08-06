@@ -41,8 +41,9 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto, 2:full
-    const double hyper_ratio,   // A->hyper_ratio, unless auto
+    const int sparsity_structure,   // 1:hyper, 0:nonhyper, -1:auto,
+                                    // 2:full, or 3:bitmap
+    const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
@@ -62,7 +63,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
 
     bool preexisting_header = (*Ahandle != NULL) ;
     GrB_Info info = GB_new (Ahandle, type, vlen, vdim, Ap_option,
-        is_csc, hyper_option, hyper_ratio, plen, Context) ;
+        is_csc, sparsity_structure, hyper_switch, plen, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.  If *Ahandle was non-NULL on input, it has not
@@ -77,11 +78,13 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     // allocate the indices and values
     //--------------------------------------------------------------------------
 
-    info = GB_ix_alloc (A, anz, hyper_option != GB_FULL, numeric, Context) ;
+    info = GB_bix_alloc (A, anz, sparsity_structure == GB_BITMAP,
+        ! (sparsity_structure == GB_FULL || sparsity_structure == GB_BITMAP),
+        numeric, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory
-        // GB_ix_alloc has already freed all content of A
+        // GB_bix_alloc has already freed all content of A
         if (!preexisting_header)
         { 
             // also free the header *Ahandle itself

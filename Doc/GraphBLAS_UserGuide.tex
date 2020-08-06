@@ -2186,7 +2186,7 @@ operators for creating semirings with Boolean monoids.
 \hline
 GraphBLAS name        & types (domains)            & $z=f(x,y)$      & description \\
 \hline
-% 6 TxT->bool comparison
+% 6 TxT -> bool comparison
 \verb'GrB_EQ_'$T$     & $T \times T \rightarrow $\verb'bool' & $z = (x == y)$  & equal \\
 \verb'GrB_NE_'$T$     & $T \times T \rightarrow $\verb'bool' & $z = (x \ne y)$ & not equal \\
 \hline
@@ -6366,20 +6366,20 @@ independent of \verb'm' and \verb'n'.  Algorithms that must visit all non-empty
 columns of a matrix are much faster when working with hypersparse matrices,
 since empty columns can be skipped.
 
-The \verb'hyper_ratio' parameter controls the hypersparsity of the internal
+The \verb'hyper_switch' parameter controls the hypersparsity of the internal
 data structure for a matrix.  The parameter is typically in the range 0 to 1.
-The default is \verb'hyper_ratio' = \verb'GxB_HYPER_DEFAULT', which is an
+The default is \verb'hyper_switch' = \verb'GxB_HYPER_DEFAULT', which is an
 \verb'extern' \verb'const' \verb'double' value, currently set to 0.0625, or
 1/16.  This default ratio may change in the future.
 
-The \verb'hyper_ratio' determines how the matrix is converted between the
+The \verb'hyper_switch' determines how the matrix is converted between the
 hypersparse and non-hypersparse formats.  Let $n$ be the number of columns of a
 CSC matrix, or the number of rows of a CSR matrix.  The matrix can have at most
 $n$ non-empty vectors.
 
 Let $k$ be the actual number of non-empty vectors.  That is, for the CSC
 format, $k \le n$ is the number of columns that have at least one entry.  Let
-$h$ be the value of \verb'hyper_ratio'.
+$h$ be the value of \verb'hyper_switch'.
 
 If a matrix is currently hypersparse, it can be converted to non-hypersparse if
 the either condition $n \le 1$ or $k > 2nh$ holds, or both.  Otherwise, it
@@ -6391,20 +6391,20 @@ both conditions $n > 1$ and $k \le nh$ hold.  Otherwise, it stays
 non-hypersparse.  Note that if $n \le 1$ the matrix always remains
 non-hypersparse.
 
-The default value of \verb'hyper_ratio' is assigned at startup by
+The default value of \verb'hyper_switch' is assigned at startup by
 \verb'GrB_init', and can then be modified globally with \verb'GxB_set'.  All
-new matrices are created with the same \verb'hyper_ratio', determined by the
+new matrices are created with the same \verb'hyper_switch', determined by the
 global value.  Once a particular matrix \verb'A' has been constructed, its
 hypersparsity ratio can be modified from the default with:
 
     {\footnotesize
     \begin{verbatim}
-    double hyper_ratio = 0.2 ;
-    GxB_set (A, GxB_HYPER, hyper_ratio) ; \end{verbatim}}
+    double hyper_switch = 0.2 ;
+    GxB_set (A, GxB_HYPER_SWITCH, hyper_switch) ; \end{verbatim}}
 
-To force a matrix to always be non-hypersparse, use \verb'hyper_ratio' equal to
+To force a matrix to always be non-hypersparse, use \verb'hyper_switch' equal to
 \verb'GxB_NEVER_HYPER'.  To force a matrix to always stay hypersparse, set
-\verb'hyper_ratio' to \verb'GxB_ALWAYS_HYPER'.
+\verb'hyper_switch' to \verb'GxB_ALWAYS_HYPER'.
 
 A \verb'GrB_Matrix' can thus be held in one of four formats: any combination of
 hyper/non-hyper and CSR/CSC.  All \verb'GrB_Vector' objects are always stored
@@ -6412,12 +6412,12 @@ in non-hypersparse CSC format.
 
 A new matrix created via \verb'GrB_Matrix_new' starts with $k=0$ and is created
 in hypersparse form by default unless $n \le 1$ or if $h<0$, where $h$ is the
-global \verb'hyper_ratio' value.  The matrix is created in either
+global \verb'hyper_switch' value.  The matrix is created in either
 \verb'GxB_BY_ROW' or \verb'GxB_BY_COL' format, as determined by the last call
 to \verb'GxB_set(GxB_FORMAT,...)' or \verb'GrB_init'.
 
 A new matrix \verb'C' created via \verb'GrB_dup (&C,A)' inherits the CSR/CSC
-format, hypersparsity format, and \verb'hyper_ratio' from \verb'A'.
+format, hypersparsity format, and \verb'hyper_switch' from \verb'A'.
 
 %-------------------------------------------------------------------------------
 {\bf Parameter types:}
@@ -6430,13 +6430,15 @@ for setting global options or matrix options.
 \begin{verbatim}
 typedef enum
 {
-    GxB_HYPER = 0,      // defines switch to hypersparse format (double value)
+    GxB_HYPER_SWITCH = 0,  // defines switch to hypersparse (double value)
     GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
     GxB_IS_HYPER = 6     // query a matrix to see if it hypersparse or not
                          // (GxB_Matrix_Option_get only)
+
+    TODO: add new options here
 }
 GxB_Option_Field ;
 \end{verbatim} }
@@ -6465,14 +6467,14 @@ SuiteSparse: GraphBLAS library with \verb'-DBYCOL'.  This changes
 \verb'GxB_FORMAT_DEFAULT' to \verb'GxB_BY_COL'.  The default hypersparsity
 ratio is 0.0625 (1/16), but this value may change in the future.
 
-Setting the \verb'GxB_HYPER' field to \verb'GxB_ALWAYS_HYPER' ensures a matrix
+Setting the \verb'GxB_HYPER_SWITCH' field to \verb'GxB_ALWAYS_HYPER' ensures a matrix
 always stays hypersparse.  If set to \verb'GxB_NEVER_HYPER', it always stays
 non-hypersparse.  At startup, \verb'GrB_init' defines the following initial
 settings:
 
 {\footnotesize
 \begin{verbatim}
-    GxB_set (GxB_HYPER, GxB_HYPER_DEFAULT) ;
+    GxB_set (GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT) ;
     GxB_set (GxB_FORMAT, GxB_FORMAT_DEFAULT) ;
 \end{verbatim} }
 
@@ -6486,7 +6488,7 @@ all future matrices to be in non-hypersparse CSC when created, use:
 
 {\footnotesize
 \begin{verbatim}
-    GxB_set (GxB_HYPER, GxB_NEVER_HYPER) ;
+    GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 \end{verbatim} }
 
@@ -6494,7 +6496,7 @@ Then if a particular matrix needs a different format, then (as an example):
 
 {\footnotesize
 \begin{verbatim}
-    GxB_set (A, GxB_HYPER, 0.1) ;
+    GxB_set (A, GxB_HYPER_SWITCH, 0.1) ;
     GxB_set (A, GxB_FORMAT, GxB_BY_ROW) ;
 \end{verbatim} }
 
@@ -6509,12 +6511,12 @@ SuiteSparse:GraphBLAS that is equivalent to the MATLAB format is:
 {\footnotesize
 \begin{verbatim}
     GrB_init (...) ;
-    GxB_set (GxB_HYPER, GxB_NEVER_HYPER) ;
+    GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
-    // no subsequent use of GxB_HYPER or GxB_FORMAT
+    // no subsequent use of GxB_HYPER_SWITCH or GxB_FORMAT
 \end{verbatim} }
 
-The \verb'GxB_HYPER' and \verb'GxB_FORMAT' options should be considered as
+The \verb'GxB_HYPER_SWITCH' and \verb'GxB_FORMAT' options should be considered as
 suggestions from the user application as to how SuiteSparse:GraphBLAS can
 obtain the best performance for a particular application.
 SuiteSparse:GraphBLAS is free to ignore any of these suggestions, both now and
@@ -6561,7 +6563,7 @@ GrB_Info GxB_set                    // set a global default option
 \end{verbatim} } \end{mdframed}
 
 This usage of \verb'GxB_set' sets the value of a global option.
-The \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_FORMAT',
+The \verb'field' parameter can be \verb'GxB_HYPER_SWITCH', \verb'GxB_FORMAT',
 \verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
@@ -6571,7 +6573,7 @@ No existing matrices are changed.
 
 {\footnotesize
 \begin{verbatim}
-    GxB_set (GxB_HYPER, 0.2) ;
+    GxB_set (GxB_HYPER_SWITCH, 0.2) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     GxB_set (GxB_NTHREADS, 4) ;
     GxB_set (GxB_CHUNK, (double) 10000) ;
@@ -6594,7 +6596,7 @@ GrB_Info GxB_set                    // set an option in a matrix
 
 This usage of \verb'GxB_set' sets the value of a matrix option, for a
 particular matrix.
-The \verb'field' parameter can be \verb'GxB_HYPER' or \verb'GxB_FORMAT'.
+The \verb'field' parameter can be \verb'GxB_HYPER_SWITCH' or \verb'GxB_FORMAT'.
 
 For example, the following usage sets the hypersparsity
 ratio to 0.2, and the format of \verb'GxB_BY_COL', for a particular matrix
@@ -6604,7 +6606,7 @@ delay the change in format if it can obtain better performance.
 
 {\footnotesize
 \begin{verbatim}
-    GxB_set (A, GxB_HYPER, 0.2) ;
+    GxB_set (A, GxB_HYPER_SWITCH, 0.2) ;
     GxB_set (A, GxB_FORMAT, GxB_BY_COL) ;
 \end{verbatim} }
 
@@ -6654,7 +6656,7 @@ GrB_Info GxB_get                    // gets the current global default option
 \end{verbatim} } \end{mdframed}
 
 This usage of \verb'GxB_get' retrieves the value of a global option.  The
-\verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_FORMAT'.
+\verb'field' parameter can be \verb'GxB_HYPER_SWITCH', \verb'GxB_FORMAT'.
 \verb'GxB_MODE',
 \verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
 For example:
@@ -6662,8 +6664,8 @@ For example:
 {\footnotesize
 \begin{verbatim}
     double h ;
-    GxB_get (GxB_HYPER, &h) ;
-    printf ("hyper_ratio = %g for all new matrices\n", h) ;
+    GxB_get (GxB_HYPER_SWITCH, &h) ;
+    printf ("hyper_switch = %g for all new matrices\n", h) ;
 
     GxB_Format_Value s ;
     GxB_get (GxB_FORMAT, &s) ;
@@ -6701,7 +6703,7 @@ GrB_Info GxB_get                    // gets the current option of a matrix
 \end{verbatim} } \end{mdframed}
 
 This usage of \verb'GxB_get' retrieves the value of a matrix option.
-The \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_IS_HYPER',
+The \verb'field' parameter can be \verb'GxB_HYPER_SWITCH', \verb'GxB_IS_HYPER',
 or \verb'GxB_FORMAT'.
 For example:
 
@@ -6711,8 +6713,8 @@ For example:
     double h ;
     bool is_hyper ;
     GxB_get (A, GxB_IS_HYPER, &is_hyper) ;
-    GxB_get (A, GxB_HYPER, &h) ;
-    printf ("matrix A has hyper_ratio = %g\n", h) ;
+    GxB_get (A, GxB_HYPER_SWITCH, &h) ;
+    printf ("matrix A has hyper_switch = %g\n", h) ;
     printf ("matrix A is currently %shypersparse\n", is_hyper ? "not " : " ") ; 
     GxB_Format_Value s ;
     GxB_get (A, GxB_FORMAT, &s) ;
@@ -6751,10 +6753,10 @@ To set/get the global options:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_set (GxB_HYPER, double h) ;
-    GxB_set (GxB_HYPER, GxB_ALWAYS_HYPER) ;
-    GxB_set (GxB_HYPER, GxB_NEVER_HYPER) ;
-    GxB_get (GxB_HYPER, double *h) ;
+    GxB_set (GxB_HYPER_SWITCH, double h) ;
+    GxB_set (GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
+    GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
+    GxB_get (GxB_HYPER_SWITCH, double *h) ;
 
     GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
@@ -6781,14 +6783,16 @@ To set/get a matrix option:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_set (GrB_Matrix A, GxB_HYPER, double h) ;
-    GxB_set (GrB_Matrix A, GxB_HYPER, GxB_ALWAYS_HYPER) ;
-    GxB_set (GrB_Matrix A, GxB_HYPER, GxB_NEVER_HYPER) ;
-    GxB_get (GrB_Matrix A, GxB_HYPER, double *h) ;
+    GxB_set (GrB_Matrix A, GxB_HYPER_SWITCH, double h) ;
+    GxB_set (GrB_Matrix A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
+    GxB_set (GrB_Matrix A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
+    GxB_get (GrB_Matrix A, GxB_HYPER_SWITCH, double *h) ;
 
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ; \end{verbatim} }
+
+    TODO: add SPARSITY here
 
 \noindent
 To get the hypersparse status of a matrix:
@@ -10053,9 +10057,7 @@ appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 \end{enumerate}
 
 Additional examples appear in the newly created LAGraph project, currently in
-progress.  Finally, the \verb'Extras' folder includes triangle counting and
-k-truss algorithms in GraphBLAS, and methods that do not GraphBLAS (both simple
-sequential methods, and methods that use OpenMP).
+progress.
 
 %-------------------------------------------------------------------------------
 \subsection{LAGraph}
@@ -10070,7 +10072,7 @@ centrality, PageRank, single-source shortest path (via delta stepping), minimum
 spanning trees, connected components, and many more.  Refer to
 \url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms
 (the one below will soon be out of date).  Most of the functions in the
-\verb'Demo/' and the \verb'Extras' folder in SuiteSparse:GraphBLAS will
+\verb'Demo/' folder in SuiteSparse:GraphBLAS will
 eventually be translated into algorithms or utilities for LAGraph.
 
 To use LAGraph with SuiteSparse:GraphBLAS, place the two folders \verb'LAGraph'

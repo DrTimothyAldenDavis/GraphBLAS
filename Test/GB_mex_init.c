@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "[nthreads_max threading thread_safety format hyperratio" \
+#define USAGE "[nthreads_max threading thread_safety format hyper_switch" \
 "name version date about license compiledate compiletime api api_about" \
 " chunk] = GB_mex_init"
 
@@ -41,9 +41,9 @@ void mexFunction
     GxB_Global_Option_get_(GxB_FORMAT, &format) ;
     pargout [3] = mxCreateDoubleScalar (format) ;
 
-    double hyperratio ;
-    GxB_Global_Option_get_(GxB_HYPER, &hyperratio) ;
-    pargout [4] = mxCreateDoubleScalar (hyperratio) ;
+    double hyper_switch ;
+    GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hyper_switch) ;
+    pargout [4] = mxCreateDoubleScalar (hyper_switch) ;
 
     char *name ;
     GxB_Global_Option_get_(GxB_LIBRARY_NAME, &name) ;

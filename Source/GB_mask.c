@@ -270,7 +270,7 @@ GrB_Info GB_mask                // C<M> = Z
                 C_cleared = NULL;   // allocate a new header for C_cleared
                 GB_OK (GB_create (&C_cleared, C_result->type, vlen, vdim,
                     GB_Ap_calloc, R_is_csc, GB_AUTO_HYPER,
-                    C_result->hyper_ratio, 0, 0, true, Context)) ;
+                    C_result->hyper_switch, 0, 0, true, Context)) ;
                 C = C_cleared ;
             }
             else

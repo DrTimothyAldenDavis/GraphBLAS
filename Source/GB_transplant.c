@@ -55,7 +55,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_IS_BITMAP (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
     int64_t anvec = A->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -66,7 +66,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     // free all content of C
-    GB_phix_free (C) ;
+    GB_phbix_free (C) ;
 
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -82,24 +82,27 @@ GrB_Info GB_transplant          // transplant one matrix into another
             A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
 
-    // C->hyper_ratio is not modified by the transplant
+    // C->hyper_switch is not modified by the transplant
 
     // C is not shallow, and has no content
     ASSERT (!C->p_shallow && !C->h_shallow && !C->i_shallow && !C->x_shallow) ;
+    ASSERT (!C->b_shallow && C->b == NULL) ;
     ASSERT (C->h == NULL && C->p == NULL && C->i == NULL && C->x == NULL) ;
 
-    // determine if C should be constructed as a full matrix
-    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled) ;
+    // determine if C should be constructed as a bitmap or full matrix
+    bool C_is_bitmap = GB_IS_BITMAP (A) ;
+    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled) 
+        && !C_is_bitmap ;
 
     //--------------------------------------------------------------------------
     // transplant A->p vector pointers and A->h hyperlist
     //--------------------------------------------------------------------------
 
-    if (C_is_full)
+    if (C_is_full || C_is_bitmap)
     { 
 
         //----------------------------------------------------------------------
-        // C is full
+        // C is full or bitmap: C->p and C->h do not exist
         //----------------------------------------------------------------------
 
         C->plen = -1 ;
@@ -128,7 +131,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
-                GB_phix_free (C) ;
+                GB_phbix_free (C) ;
                 GB_Matrix_free (Ahandle) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
@@ -139,14 +142,14 @@ GrB_Info GB_transplant          // transplant one matrix into another
         }
         else
         {
-            // A is non-hypersparse, create new C->p
+            // A is sparse, create new C->p
             C->plen = avdim ;
             C->nvec = avdim ;
             C->p = GB_MALLOC (C->plen+1, int64_t) ;
             if (C->p == NULL)
             { 
                 // out of memory
-                GB_phix_free (C) ;
+                GB_phbix_free (C) ;
                 GB_Matrix_free (Ahandle) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
@@ -167,7 +170,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // Quick transplant of A->p and A->h into C.  This works for both
-        // standard and hypersparse cases.
+        // sparse and hypersparse cases.
         ASSERT (C->p == NULL) ;
         ASSERT (C->h == NULL) ;
         C->p = A->p ;
@@ -195,28 +198,32 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
 
     //--------------------------------------------------------------------------
-    // allocate new space for C->i and C->x if A is shallow
+    // allocate new space for C->b, C->i, and C->x if A is shallow
     //--------------------------------------------------------------------------
 
-    // get C->nzmax:  if either C->x or C->i must be allocated, then C->nzmax
-    // is set to their minimum size.  Otherwise, if both C->x and C->i can
+    // get C->nzmax:  if C->b, C->i, or C->x must be allocated, then C->nzmax
+    // is set to their minimum size.  Otherwise, if C->b, C->i, and C->x can
     // be transplanted from A, then they inherit the nzmax of A.
 
-    // Do not allocate C->i if C is full.
+    // C->b is allocated only if A->b exists and is shallow.
+    // C->i is not allocated if C is full or bitmap.
+    // C->x is allocated if A->x is shallow, or if the type is changing
 
-    ASSERT (C->x == NULL && C->i == NULL) ;
-    bool allocate_Ci = (A->i_shallow) && (!C_is_full) ;
+    ASSERT (C->b == NULL && C->i == NULL && C->x == NULL) ;
+    bool allocate_Cb = (A->b_shallow) && (C_is_bitmap) ;
+    bool allocate_Ci = (A->i_shallow) && (!(C_is_full || C_is_bitmap)) ;
     bool allocate_Cx = (A->x_shallow || C->type != A->type) ;
-    C->nzmax = (allocate_Cx || allocate_Ci) ? anz : A->nzmax ;
+    C->nzmax = (allocate_Cb || allocate_Ci || allocate_Cx) ? anz : A->nzmax ;
     C->nzmax = GB_IMAX (C->nzmax, 1) ;
 
     // allocate new components if needed
     bool ok = true ;
-    if (allocate_Cx)
+
+    if (allocate_Cb)
     { 
-        // allocate new C->x component
-        C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
-        ok = ok && (C->x != NULL) ;
+        // allocate new C->b component
+        C->b = GB_MALLOC (C->nzmax, int8_t) ;
+        ok = ok && (C->b != NULL) ;
     }
 
     if (allocate_Ci)
@@ -226,10 +233,17 @@ GrB_Info GB_transplant          // transplant one matrix into another
         ok = ok && (C->i != NULL) ;
     }
 
+    if (allocate_Cx)
+    { 
+        // allocate new C->x component
+        C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
+        ok = ok && (C->x != NULL) ;
+    }
+
     if (!ok)
     { 
         // out of memory
-        GB_phix_free (C) ;
+        GB_phbix_free (C) ;
         GB_Matrix_free (Ahandle) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -288,14 +302,14 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // transplant or copy A->i row indices
     //--------------------------------------------------------------------------
 
-    if (C_is_full)
+    if (C_is_full || C_is_bitmap)
     { 
 
         //----------------------------------------------------------------------
-        // C is full
+        // C is full or bitmap
         //----------------------------------------------------------------------
 
-        // C is dense; C->i stays NULL
+        // C is full or bitmap; C->i stays NULL
         C->i = NULL ;
 
     }
@@ -327,6 +341,49 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->i_shallow = false ;
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
     C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
+
+    //--------------------------------------------------------------------------
+    // transplant or copy A->b bitmap
+    //--------------------------------------------------------------------------
+
+    if (!C_is_bitmap)
+    { 
+
+        //----------------------------------------------------------------------
+        // A is not bitmap; A->b does not exist
+        //----------------------------------------------------------------------
+
+        // C is not bitmap; C->b stays NULL
+        C->b = NULL ;
+
+    }
+    else if (A->b_shallow)
+    { 
+
+        //----------------------------------------------------------------------
+        // A->b is a shallow copy of another matrix, so we need a deep copy
+        //----------------------------------------------------------------------
+
+        // copy A->b into C->b
+        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads) ;
+        A->b = NULL ;
+        A->b_shallow = false ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // A->b is not shallow, so just transplant the pointer from A to C
+        //----------------------------------------------------------------------
+
+        C->b = A->b ;
+        A->b = NULL ;
+        A->b_shallow = false ;
+    }
+
+    C->b_shallow = false ;
+    C->nvals = A->nvals ;
 
     //--------------------------------------------------------------------------
     // free A and return result

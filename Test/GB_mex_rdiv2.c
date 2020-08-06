@@ -99,9 +99,7 @@ GrB_Info axb (GB_Context Context)
     }
 
     // C = A*B or C += A*B
-    info = GB_AxB_meta (
-        &T,
-        C,
+    info = GB_AxB_meta (&T, C,  // can be done in place if C != NULL
         false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned

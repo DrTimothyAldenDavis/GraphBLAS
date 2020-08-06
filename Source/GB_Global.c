@@ -41,7 +41,7 @@ typedef struct
     // hypersparsity and CSR/CSC format control
     //--------------------------------------------------------------------------
 
-    double hyper_ratio ;        // default hyper_ratio for new matrices
+    float hyper_switch ;        // default hyper_switch for new matrices
     bool is_csc ;               // default CSR/CSC format for new matrices
 
     //--------------------------------------------------------------------------
@@ -95,7 +95,7 @@ typedef struct
     //--------------------------------------------------------------------------
 
     int64_t hack ;                  // ad hoc setting (for draft versions only)
-    bool burble ;                   // controls GBBURBLE output
+    bool burble ;                   // controls GBURBLE output
 
     //--------------------------------------------------------------------------
     // for MATLAB interface only
@@ -140,7 +140,7 @@ GB_Global_struct GB_Global =
     .chunk = GB_CHUNK_DEFAULT,
 
     // default format
-    .hyper_ratio = GB_HYPER_DEFAULT,
+    .hyper_switch = GB_HYPER_DEFAULT,
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
     // abort function for debugging only
@@ -253,17 +253,17 @@ double GB_Global_chunk_get (void)
 }
 
 //------------------------------------------------------------------------------
-// hyper_ratio
+// hyper_switch
 //------------------------------------------------------------------------------
 
-void GB_Global_hyper_ratio_set (double hyper_ratio)
+void GB_Global_hyper_switch_set (float hyper_switch)
 { 
-    GB_Global.hyper_ratio = hyper_ratio ;
+    GB_Global.hyper_switch = hyper_switch ;
 }
 
-double GB_Global_hyper_ratio_get (void)
+float GB_Global_hyper_switch_get (void)
 { 
-    return (GB_Global.hyper_ratio) ;
+    return (GB_Global.hyper_switch) ;
 }
 
 //------------------------------------------------------------------------------

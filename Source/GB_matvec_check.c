@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -71,14 +71,35 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     bool is_hyper = (A->h != NULL) ;
     bool is_full = GB_IS_FULL (A) ;
-    bool is_sparse = !is_full ;
+    bool is_bitmap = GB_IS_BITMAP (A) ;
+    bool is_sparse = !(is_full || is_bitmap || is_hyper) ;
 
-    GBPR0 (", %s", is_hyper ? "hypersparse" : (is_sparse ? "sparse" : "full")) ;
-    GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
+    if (is_full)
+    { 
+        GBPR0 (", full") ;
+    }
+    else if (is_bitmap)
+    { 
+        GBPR0 (", bitmap") ;
+    }
+    else if (is_sparse)
+    { 
+        GBPR0 (", sparse") ;
+    }
+    else if (is_hyper)
+    { 
+        GBPR0 (", hypersparse") ;
+    }
+    else
+    {
+        GBPR0 (" invalid structure\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
     if (A->jumbled)
     { 
         GBPR0 (" (jumbled)") ;
     }
+    GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
 
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", A->nzmax) ;
@@ -87,8 +108,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         GBPR0 (" nvec_nonempty: " GBd , A->nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd " hyper_ratio %g\n",
-        A->nvec, A->plen, A->vdim, A->hyper_ratio) ;
+    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd " hyper_switch %g\n",
+        A->nvec, A->plen, A->vdim, A->hyper_switch) ;
+    GBPR0 ("  sparsity control: ") ;
+    switch (A->sparsity)
+    {
+        default :
+        case GxB_DEFAULT :      GBPR0 (" default\n") ;      break ;
+        case GxB_HYPERSPARSE :  GBPR0 (" hypersparse\n") ;  break ;
+        case GxB_SPARSE :       GBPR0 (" sparse\n") ;       break ;
+        case GxB_BITMAP :       GBPR0 (" bitmap\n") ;       break ;
+        case GxB_FULL :         GBPR0 (" full\n") ;         break ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -107,12 +138,22 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check vector structure
     //--------------------------------------------------------------------------
 
-    if (is_hyper)
+    if (is_full) 
     {
-        // A is hypersparse
-        if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
+        // A is full
+        if (! (A->nvec == A->vdim && A->plen == -1))
         { 
-            GBPR0 ("  invalid hypersparse %s structure\n", kind) ;
+            GBPR0 ("  invalid full %s structure\n", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+    }
+    else if (is_bitmap) 
+    {
+        // A is bitmap
+        if (! (A->nvec == A->vdim && A->plen == -1 &&
+               A->h == NULL && A->p == NULL && A->i == NULL))
+        { 
+            GBPR0 ("  invalid bitmap %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
     }
@@ -125,12 +166,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             return (GrB_INVALID_OBJECT) ;
         }
     }
-    else
+    else // if (is_hyper)
     {
-        // A is full
-        if (! (A->nvec == A->vdim && A->plen == -1))
+        // A is hypersparse
+        if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
         { 
-            GBPR0 ("  invalid full %s structure\n", kind) ;
+            GBPR0 ("  invalid hypersparse %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
     }
@@ -147,6 +188,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
         (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
+        (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow
         (A->x != NULL && !A->x_shallow) +       // A->x, if not shallow
         (Pending != NULL) +
         (Pending != NULL && Pending->i != NULL) +
@@ -179,6 +221,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR ("  ->h: %p shallow: %d\n", A->h, A->h_shallow) ;
         GBPR ("  ->p: %p shallow: %d\n", A->p, A->p_shallow) ;
         GBPR ("  ->i: %p shallow: %d\n", A->i, A->i_shallow) ;
+        GBPR ("  ->b: %p shallow: %d\n", A->b, A->b_shallow) ;
         GBPR ("  ->x: %p shallow: %d\n", A->x, A->x_shallow) ;
     }
     #endif
@@ -323,13 +366,27 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (is_full)
+    if (is_full || is_bitmap)
     {
-        if (A->nzombies != 0 || Pending != NULL)
+        if (A->nzombies != 0)
         { 
-            GBPR0 ("  full matrix cannot have zombies or pending tuples\n") ;
+            GBPR0 ("  %s %s cannot have zombies\n",
+                is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
+        if (Pending != NULL)
+        { 
+            GBPR0 ("  %s %s cannot have pending tuples\n",
+                is_full ? "full" : "bitmap", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+        if (A->jumbled)
+        { 
+            GBPR0 ("  %s %s cannot be jumbled\n",
+                is_full ? "full" : "bitmap", kind) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+
     }
 
     //--------------------------------------------------------------------------
@@ -343,7 +400,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     int64_t nzombies = 0 ;
     int64_t jcount = 0 ;
+    int64_t icount = 0 ;
     bool truncated = false ;
+    int64_t anz_actual = 0 ;
 
     // for each vector of A
     for (int64_t k = 0 ; k < A->nvec ; k++)
@@ -353,29 +412,42 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         int64_t p = GBP (A->p, k, A->vlen) ;
         int64_t pend = GBP (A->p, k+1, A->vlen) ;
 
+        // count the entries in A(:,j)
+        int64_t ajnz = pend - p ;
+        if (is_bitmap)
+        {
+            ajnz = 0 ;
+            for (int64_t p2 = p ; p2 < pend ; p2++)
+            {
+                ajnz += (A->b [p2] != 0)  ;
+            }
+        }
+
+        bool prcol = ((pr_short && jcount < GB_NBRIEF) || pr_complete) ;
+        // print the header for vector j
+        if (prcol)
+        { 
+            #if GB_DEVELOPER
+            GBPR ("  %s: " GBd " : " GBd " entries [" GBd ":" GBd "]\n",
+                A->is_csc ? "column" : "row", j, ajnz, p, pend-1) ;
+            #endif
+        }
+        else if (pr_short && jcount == GB_NBRIEF)
+        { 
+            truncated = true ;
+            #if GB_DEVELOPER
+            GBPR ("    ...\n") ;
+            #endif
+        }
+        jcount++ ;      // count # of vectors printed so far
+
         // for each entry in A(:,j), the kth vector of A
         for ( ; p < pend ; p++)
         {
-            bool prcol = ((pr_short && jcount < GB_NBRIEF) || pr_complete) ;
-            if (ilast == -1)
-            {
-                // print the header for vector j
-                if (prcol)
-                { 
-                    #if GB_DEVELOPER
-                    GBPR ("  %s: " GBd " : " GBd " entries [" GBd ":" GBd "]\n",
-                        A->is_csc ? "column" : "row", j, pend - p, p, pend-1) ;
-                    #endif
-                }
-                else if (pr_short && jcount == GB_NBRIEF)
-                { 
-                    truncated = true ;
-                    #if GB_DEVELOPER
-                    GBPR ("    ...\n") ;
-                    #endif
-                }
-                jcount++ ;      // count # of vectors printed so far
-            }
+            if (!GBB (A->b, p)) continue ;
+            anz_actual++ ;
+            icount++ ;
+
             int64_t i = GBI (A->i, p, A->vlen) ;
             bool is_zombie = GB_IS_ZOMBIE (i) ;
             i = GB_UNFLIP (i) ;
@@ -397,7 +469,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     }
                     #endif
                 }
-                else if (pr_short && (ilast == -1 || p == GB_NZBRIEF))
+                else if (pr_short && (ilast == -1 || icount == GB_NZBRIEF))
                 { 
                     truncated = true ;
                     #if GB_DEVELOPER
@@ -415,7 +487,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
             // print the value
             bool print_value = prcol &&
-                ((pr_short && p < GB_NZBRIEF) || pr_complete) ;
+                ((pr_short && icount < GB_NZBRIEF) || pr_complete) ;
             if (print_value)
             { 
                 if (is_zombie)
@@ -454,6 +526,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #else
     if (pr_short && truncated) GBPR ("    ...\n") ;
     #endif
+
+    //--------------------------------------------------------------------------
+    // check the entry count in the bitmap
+    //--------------------------------------------------------------------------
+
+    if (is_bitmap && anz != anz_actual)
+    { 
+        // this case can only occur for bitmapped matrices
+        GBPR0 ("  invalid bitmap count: " GBd " exist but"
+            " A->nvals = " GBd "\n", anz_actual, anz) ;
+        return (GrB_INVALID_OBJECT) ;
+    }
 
     //--------------------------------------------------------------------------
     // check the zombie count

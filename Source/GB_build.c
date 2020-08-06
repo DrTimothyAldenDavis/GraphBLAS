@@ -117,8 +117,8 @@ GrB_Info GB_build               // build matrix
     // free all content of C
     //--------------------------------------------------------------------------
 
-    // the type, dimensions, and hyper ratio are still preserved in C.
-    GB_phix_free (C) ;
+    // the type, dimensions, and hyper_switch are still preserved in C.
+    GB_phbix_free (C) ;
     ASSERT (GB_EMPTY (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (C->magic == GB_MAGIC2) ;

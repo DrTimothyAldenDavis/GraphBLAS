@@ -36,8 +36,8 @@ void     GB_Global_chunk_set (double chunk) ;
 GB_PUBLIC   // accessed by the MATLAB interface only
 double   GB_Global_chunk_get (void) ;
 
-void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
-double   GB_Global_hyper_ratio_get (void) ;
+void     GB_Global_hyper_switch_set (float hyper_switch) ;
+float    GB_Global_hyper_switch_get (void) ;
 
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;

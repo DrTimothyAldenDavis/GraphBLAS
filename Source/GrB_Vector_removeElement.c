@@ -105,7 +105,7 @@ GrB_Info GrB_Vector_removeElement
     { 
         // convert V from full to sparse
         GB_WHERE (V, GB_WHERE_STRING) ;
-        GrB_Info info = GB_full_to_sparse ((GrB_Matrix) V, Context) ;
+        GrB_Info info = GB_convert_full_to_sparse ((GrB_Matrix) V, Context) ;
         if (info != GrB_SUCCESS)
         { 
             return (info) ;

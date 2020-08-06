@@ -38,7 +38,7 @@
 //           OpenMP atomic? 0
 // MultAdd:  int16_t x_op_y = ((aik != 0) || (bkj != 0)) ; cij = GB_IMAX (cij, x_op_y)
 // Identity: INT16_MIN
-// Terminal: if (cij == INT16_MAX) { cij_is_terminal = true ; break ; }
+// Terminal: if (cij == INT16_MAX) break ;
 
 #define GB_ATYPE \
     int16_t
@@ -81,7 +81,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    if (cij == INT16_MAX) { cij_is_terminal = true ; break ; }
+    if (cij == INT16_MAX) break ;
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \

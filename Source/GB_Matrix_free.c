@@ -26,7 +26,7 @@ void GB_Matrix_free             // free a matrix
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
         { 
             // free all content of A
-            GB_phix_free (A) ;
+            GB_phbix_free (A) ;
             // free the MKL optimization, if it exists
             #if GB_HAS_MKL
             GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;

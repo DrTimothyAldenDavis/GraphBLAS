@@ -238,7 +238,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             #if GB_BURBLE
             if (burble)
             {
-                GBBURBLE (" [ *_setElement ") ;
+                GBURBLE (" [ *_setElement ") ;
                 #if defined ( _OPENMP )
                 t_burble = GB_OPENMP_GET_WTIME ;
                 #endif
@@ -278,7 +278,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             stype, NULL, i, j, C->vdim > 1))
         { 
             // out of memory
-            GB_phix_free (C) ;
+            GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -298,7 +298,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         burble = (burble && GB_shall_block (C)) ;
         if (burble)
         {
-            GBBURBLE (" [ *_setElement ") ;
+            GBURBLE (" [ *_setElement ") ;
             #if defined ( _OPENMP )
             t_burble = GB_OPENMP_GET_WTIME ;
             #endif

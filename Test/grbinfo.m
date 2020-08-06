@@ -6,7 +6,7 @@ function [nth chnk] = grbinfo
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[nthreads, ~, ~, format, hyperratio,
+[nthreads, ~, ~, format, hyper_switch,
 name, version, date, about, license, compiledate, compiletime, api, ...
 api_about, chunk ] = GB_mex_init ;
 
@@ -37,7 +37,7 @@ switch (format)
         error ('?') ;
 end
 
-fprintf ('    hyperratio: %g\n', hyperratio) ;
+fprintf ('    hyper_switch: %g\n', hyper_switch) ;
 fprintf ('    date: %s\n', date) ;
 fprintf ('    compile date: %s\n', compiledate) ;
 fprintf ('    compile time: %s\n\n', compiletime) ;

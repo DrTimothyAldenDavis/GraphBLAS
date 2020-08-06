@@ -66,7 +66,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("mask ") ;
+    GBURBLE ("mask ") ;
 
     ASSERT (Rhandle != NULL) ;
 

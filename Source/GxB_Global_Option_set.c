@@ -35,13 +35,13 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         // matrix format
         //----------------------------------------------------------------------
 
-        case GxB_HYPER : 
+        case GxB_HYPER_SWITCH : 
 
             { 
                 va_start (ap, field) ;
-                double hyper_ratio = va_arg (ap, double) ;
+                double hyper_switch = va_arg (ap, double) ;
                 va_end (ap) ;
-                GB_Global_hyper_ratio_set (hyper_ratio) ;
+                GB_Global_hyper_switch_set ((float) hyper_switch) ;
             }
             break ;
 

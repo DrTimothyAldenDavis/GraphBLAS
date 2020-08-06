@@ -135,7 +135,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 #if GB_BURBLE
 
 // define the function to use to burble
-#define GBBURBLE(...)                               \
+#define GBURBLE(...)                                \
 {                                                   \
     if (GB_Global_burble_get ( ))                   \
     {                                               \
@@ -148,11 +148,15 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 {                                                               \
     if (GB_IS_FULL (A))                                         \
     {                                                           \
-        GBBURBLE (format, "full") ;                             \
+        GBURBLE (format, "full") ;                              \
+    }                                                           \
+    else if (GB_IS_BITMAP (A))                                  \
+    {                                                           \
+        GBURBLE (format, "bitmap") ;                            \
     }                                                           \
     else if (GB_is_dense (A) && !GB_PENDING_OR_ZOMBIES (A))     \
     {                                                           \
-        GBBURBLE (format, "dense") ;                            \
+        GBURBLE (format, "dense") ;                             \
     }                                                           \
 }
 
@@ -164,7 +168,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
     {                                                   \
         if (GB_Global_burble_get ( ))                   \
         {                                               \
-            GBBURBLE (" [ " func " ") ;                 \
+            GBURBLE (" [ " func " ") ;                  \
             t_burble = GB_OPENMP_GET_WTIME ;            \
         }                                               \
     }
@@ -174,7 +178,7 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
         if (GB_Global_burble_get ( ))                   \
         {                                               \
             t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-            GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
+            GBURBLE ("%.3g sec ]\n", t_burble) ;        \
         }                                               \
     }
 
@@ -183,27 +187,27 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
     // burble with no timing
 
     #define GB_BURBLE_START(func)                       \
-        GBBURBLE (" [ " func " ")
+        GBURBLE (" [ " func " ")
 
     #define GB_BURBLE_END                               \
-        GBBURBLE ("]\n")
+        GBURBLE ("]\n")
 
 #endif
 
 #define GB_BURBLE_N(n,...)                              \
 {                                                       \
-    if (n > 1) GBBURBLE (__VA_ARGS__)                   \
+    if (n > 1) GBURBLE (__VA_ARGS__)                    \
 }
 
 #define GB_BURBLE_MATRIX(A, ...)                                    \
 {                                                                   \
-    if (!(A->vlen <= 1 && A->vdim <= 1)) GBBURBLE (__VA_ARGS__)     \
+    if (!(A->vlen <= 1 && A->vdim <= 1)) GBURBLE (__VA_ARGS__)      \
 }
 
 #else
 
 // no burble
-#define GBBURBLE(...)
+#define GBURBLE(...)
 #define GB_BURBLE_START(func)
 #define GB_BURBLE_END
 #define GB_BURBLE_N(n,...)

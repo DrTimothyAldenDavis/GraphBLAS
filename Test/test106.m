@@ -18,19 +18,19 @@ for m = [0 1 5 100]
                 for is_hyper = 0:1
 
                     if (is_hyper)
-                        hyper_ratio = 1 ;
+                        hyper_switch = 1 ;
                     else
-                        hyper_ratio = 0 ;
+                        hyper_switch = 0 ;
                     end
 
                     A = GB_spec_random (m, n, d, 100, 'double', ...
-                        is_csc, is_hyper, hyper_ratio) ;
+                        is_csc, is_hyper, hyper_switch) ;
                     B = GB_spec_random (m, n, d, 100, 'double', ...
-                        is_csc, is_hyper, hyper_ratio) ;
+                        is_csc, is_hyper, hyper_switch) ;
                     C = GB_spec_random (m, n, d, 100, 'double', ...
-                        is_csc, is_hyper, hyper_ratio) ;
+                        is_csc, is_hyper, hyper_switch) ;
                     M = GB_spec_random (m, n, d, 100, 'double', ...
-                        is_csc, is_hyper, hyper_ratio) ;
+                        is_csc, is_hyper, hyper_switch) ;
 
                     C1a = GB_mex_subassign  (C, [ ], [ ],  C,  I0, J0, [ ]) ;
                     C2  = GB_spec_subassign (C, [ ], [ ],  C,  I1, J1, [ ], 0) ;

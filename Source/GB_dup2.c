@@ -48,7 +48,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     GrB_Info info = GB_create (&C, numeric ? A->type : ctype, A->vlen, A->vdim,
         GB_Ap_malloc, A->is_csc,
         GB_IS_FULL (A) ? GB_FULL : GB_SAME_HYPER_AS (A->h != NULL),
-        A->hyper_ratio, A->plen, anz, true, Context) ;
+        A->hyper_switch, A->plen, anz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

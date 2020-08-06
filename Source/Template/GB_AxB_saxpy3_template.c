@@ -714,7 +714,8 @@ OLD:
 
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;      // ok: C is sparse
-    GrB_Info info = GB_ix_alloc (C, cnz, true, true, Context) ; // ok: C sparse
+    GrB_Info info =
+        GB_bix_alloc (C, cnz, false, true, true, Context) ; // ok: C is sparse
     if (info != GrB_SUCCESS)
     { 
         // out of memory

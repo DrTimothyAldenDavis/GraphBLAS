@@ -150,7 +150,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     // C is sparse or hypersparse, not full
     info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
+        GB_SAME_HYPER_AS (M_is_hyper), M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)
@@ -318,7 +318,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 
-    GBBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
+    GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and built-in semiring

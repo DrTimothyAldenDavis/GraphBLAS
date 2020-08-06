@@ -47,11 +47,11 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GB_ENSURE_FULL (*A) ;
 
     // ensure the matrix is in full CSC format
-    (*A)->hyper_ratio = GB_NEVER_HYPER ;
+    (*A)->hyper_switch = GB_NEVER_HYPER ;
     if (!((*A)->is_csc))
     { 
         // A = A', done in place, to put A in CSC format
-        GBBURBLE ("(transpose) ") ;
+        GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, true, (*A),
             NULL, NULL, NULL, false, Context)) ;
     }

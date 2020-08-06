@@ -128,7 +128,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GrB_Info info ;
     GrB_Matrix C = NULL ;
     GB_OK (GB_create (&C, ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GB_FORCE_NONHYPER, A->hyper_ratio, vlen, anz, true, Context)) ;
+        GB_FORCE_NONHYPER, A->hyper_switch, vlen, anz, true, Context)) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
 

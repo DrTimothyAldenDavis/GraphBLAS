@@ -479,9 +479,9 @@ void mexFunction
 
     double h ;
     GxB_Format_Value ff ;
-    GxB_Global_Option_get_(GxB_HYPER, &h) ;
+    GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
     GxB_Global_Option_get_(GxB_FORMAT, &ff) ;
-    printf ("hyper_ratio %g csc %d\n", h, (ff == GxB_BY_COL)) ;
+    printf ("hyper_switch %g csc %d\n", h, (ff == GxB_BY_COL)) ;
 
     GrB_Mode mode ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;

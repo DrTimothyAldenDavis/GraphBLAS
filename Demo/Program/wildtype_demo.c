@@ -192,9 +192,9 @@ int main (void)
         api_about) ;
     fprintf (stderr, "compiled: %s %s\n", cdate, ctime) ;
 
-    double hyper_ratio ;
-    GxB_Global_Option_get (GxB_HYPER, &hyper_ratio) ;
-    fprintf (stderr, "hyper ratio: %g\n", hyper_ratio) ;
+    double hyper_switch ;
+    GxB_Global_Option_get (GxB_HYPER_SWITCH, &hyper_switch) ;
+    fprintf (stderr, "hyper switch: %g\n", hyper_switch) ;
 
     GxB_Format_Value format ;
     GxB_Global_Option_get (GxB_FORMAT, &format) ;

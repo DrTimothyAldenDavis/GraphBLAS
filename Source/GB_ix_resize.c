@@ -26,6 +26,8 @@ GrB_Info GB_ix_resize           // resize a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
+    ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
@@ -80,7 +82,7 @@ GrB_Info GB_ix_resize           // resize a matrix
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            GB_phix_free (A) ;
+            GB_phbix_free (A) ;
             return (info) ;
         }
         ASSERT_MATRIX_OK (A, "A increased in size", GB0) ;

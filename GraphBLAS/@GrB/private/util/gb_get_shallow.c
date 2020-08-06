@@ -74,7 +74,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *opaque = mxGetField (X, 0, "s") ;
         IF (opaque == NULL, ".s missing") ;
         int64_t *s = mxGetInt64s (opaque) ;
-        A->hyper_ratio   = GxB_HYPER_DEFAULT ;
+        A->hyper_switch   = GxB_HYPER_DEFAULT ;
         A->plen          = s [0] ;
         A->vlen          = s [1] ;
         A->vdim          = s [2] ;

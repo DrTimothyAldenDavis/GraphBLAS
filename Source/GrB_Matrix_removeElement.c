@@ -133,7 +133,7 @@ GrB_Info GrB_Matrix_removeElement
     { 
         // convert C from full to sparse
         GB_WHERE (C, GB_WHERE_STRING) ;
-        GrB_Info info = GB_full_to_sparse (C, Context) ;
+        GrB_Info info = GB_convert_full_to_sparse (C, Context) ;
         if (info != GrB_SUCCESS)
         { 
             return (info) ;

@@ -57,7 +57,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     if (GB_is_dense (A) && !GB_IS_FULL (A))
     { 
         // convert A to full
-        GB_sparse_to_full (A) ;
+        GB_convert_any_to_full (A) ;
     }
 
     // TODO: replace with GxB_Matrix_Option_get (GxB_SPARSITY, &sparsity)

@@ -348,7 +348,7 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid; type is op->ztype
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
-    bool builtin ;          // built-in or user defined
+    bool monoid_is_builtin ;       // built-in or user defined
 } ;
 
 struct GB_Semiring_opaque   // content of GrB_Semiring
@@ -356,7 +356,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     int64_t magic ;         // for detecting uninitialized objects
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
-    bool builtin ;          // built-in or user defined
+    bool semiring_is_builtin ;       // built-in or user defined
 } ;
 
 struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix

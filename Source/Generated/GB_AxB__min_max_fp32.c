@@ -38,7 +38,7 @@
 //           OpenMP atomic? 0
 // MultAdd:  cij = fminf (cij, fmaxf (aik, bkj))
 // Identity: INFINITY
-// Terminal: if (cij == (-INFINITY)) { cij_is_terminal = true ; break ; }
+// Terminal: if (cij == (-INFINITY)) break ;
 
 #define GB_ATYPE \
     float
@@ -81,7 +81,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    if (cij == (-INFINITY)) { cij_is_terminal = true ; break ; }
+    if (cij == (-INFINITY)) break ;
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \

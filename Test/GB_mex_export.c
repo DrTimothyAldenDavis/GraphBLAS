@@ -318,7 +318,8 @@ void mexFunction
         if (is_hyper && !GB_IS_FULL (C))                                    \
         {                                                                   \
             /* convert C to hypersparse */                                  \
-            GB_to_nonhyper (C, NULL) ;                                      \
+            /* TODO: this was backwards before ??? */ \
+            GB_convert_sparse_to_hyper (C, NULL) ;                          \
         }                                                                   \
     }
     #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;

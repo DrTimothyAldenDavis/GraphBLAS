@@ -120,10 +120,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied,             // if true, mask was applied
-    int nthreads,
-    int naslice,
-    int nbslice,
     GB_Context Context
 ) ;
 
@@ -204,6 +200,22 @@ void GB_AxB_pattern
     const bool flipxy,      // if true,  z = mult (b,a) will be computed
                             // if false, z = mult (a,b) will be computed
     const GB_Opcode mult_opcode // opcode of multiply operator
+) ;
+
+// C and B are bitmap:
+GrB_Info GB_AxB_dot5                // A'*B, dot product method
+(
+    GrB_Matrix *Chandle,            // output matrix (if not done in place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_BinaryOp accum,       // accum operator for C+=A'*B
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Context Context
 ) ;
 
 #endif

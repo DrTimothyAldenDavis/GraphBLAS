@@ -300,7 +300,7 @@
     GB_SEMIRING_DEFINE ( ANY   , GxB_, LXOR   )
 
     //--------------------------------------------------------------------------
-    // 30 semirings of the form TxT->bool
+    // 30 semirings of the form TxT -> bool
     //--------------------------------------------------------------------------
 
     // The multiply operator has the form z=compare(x,y), where x and y are of

@@ -283,7 +283,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     if (!use_transplant)
     { 
-        GBBURBLE ("(C%s%s=Z via %s%s%s) ",
+        GBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),
             ((use_subassigner) ? "assign" :
@@ -328,7 +328,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // transplant if needed.  Z has the same hypersparsity as T.
 
             info = GB_new (&Z, C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
-                GB_SAME_HYPER_AS (T->h != NULL), T->hyper_ratio, T->plen,
+                GB_SAME_HYPER_AS (T->h != NULL), T->hyper_switch, T->plen,
                 Context) ;
             GB_OK (info) ;
 
@@ -372,7 +372,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // see GB_spec_mask.m for a description of this step.
 
-        // C->hyper_ratio is not modified by GB_mask, which conforms
+        // C->hyper_switch is not modified by GB_mask, which conforms
         // the hypersparsity of C to that parameter.
 
         // apply the mask, storing the results back into C, and free Z.

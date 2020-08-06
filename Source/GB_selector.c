@@ -395,7 +395,7 @@ GrB_Info GB_selector
         //----------------------------------------------------------------------
 
         info = GB_new (&C, A->type, avlen, avdim, GB_Ap_null, true,
-            GB_SAME_HYPER_AS (A->h != NULL), A->hyper_ratio, aplen, Context) ;
+            GB_SAME_HYPER_AS (A->h != NULL), A->hyper_switch, aplen, Context) ;
         GB_OK (info) ;
 
         if (A->h != NULL)

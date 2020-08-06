@@ -76,13 +76,13 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     if (!C_is_dense)
     { 
         // convert C to full; just allocate C->x.  Keep the dimensions of C.
-        GB_OK (GB_to_full (C)) ;
+        GB_OK (GB_convert_to_full (C)) ;    // prior content deleted
     }
     else if (!GB_IS_FULL (C))
     {
         // C is dense, but not full; convert to full
         C->jumbled = false ;    // existing pattern is discarded
-        GB_sparse_to_full (C) ;
+        GB_convert_any_to_full (C) ;
     }
     ASSERT (GB_IS_FULL (C)) ;
 

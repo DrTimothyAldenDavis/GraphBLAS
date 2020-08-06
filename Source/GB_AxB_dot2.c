@@ -46,10 +46,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied,             // if true, mask was applied
-    int nthreads,
-    int naslice,
-    int nbslice,
     GB_Context Context
 )
 {
@@ -78,12 +74,56 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
-    ASSERT (mask_applied != NULL) ;
 
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t **C_counts = NULL ;
     int64_t cnvec = B->nvec ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    int64_t naslice = 0 ;
+    int64_t nbslice = 0 ;
+
+    int64_t anvec = A->nvec ;
+    int64_t anz   = GB_NNZ (A) ;
+
+    int64_t bnvec = B->nvec ;
+    int64_t bnz   = GB_NNZ (B) ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
+
+    if (nthreads == 1)
+    {
+        // do the entire computation with a single thread
+        naslice = 1 ;
+        nbslice = 1 ;
+    }
+    else
+    {
+        // determine number of slices for A' and B
+        if (bnvec > 32 * nthreads || bnvec == 0)
+        { 
+            // just slice B
+            nbslice = 32 * nthreads ;
+            naslice = 1 ;
+        }
+        else
+        { 
+            // slice B into individual vectors
+            nbslice = bnvec ;
+
+            // slice A' to get a total of about 32*nthreads tasks
+            naslice = (32 * nthreads) / nbslice ;
+
+            // but do not slice A too finely
+            naslice = GB_IMIN (naslice, anvec/4) ;
+            naslice = GB_IMAX (naslice, nthreads) ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -104,14 +144,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // A and B can have any sparsity: full, sparse, or hypersparse.
     // C is always created as sparse or hypersparse.
 
-    if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
+    if (!GB_pslice (&A_slice, A->p, A->nvec, naslice))
     { 
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    if (!GB_pslice (&B_slice, /* B */ B->p, B->nvec, nbslice))
+    if (!GB_pslice (&B_slice, B->p, B->nvec, nbslice))
     { 
         // out of memory
         GB_FREE_WORK ;
@@ -163,7 +203,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     #undef  GB_PHASE_1_OF_2
 
     info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (B->h != NULL), B->hyper_ratio, cnvec, Context) ;
+        GB_SAME_HYPER_AS (B->h != NULL), B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -210,7 +250,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // allocate C->x and C->i
     //--------------------------------------------------------------------------
 
-    info = GB_ix_alloc (C, cnz, true, true, Context) ;  // ok: C is sparse
+    info = GB_bix_alloc (C, cnz, false, true, true, Context) ; // ok: C sparse
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -277,7 +317,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     C->jumbled = GB_JUMBLED (M) ;
     ASSERT_MATRIX_OK (C, "dot2: C = A'*B output", GB0) ;
     ASSERT (*Chandle == C) ;
-    (*mask_applied) = (M != NULL) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;        // C is jumbled if M is jumbled
     ASSERT (!GB_PENDING (C)) ;

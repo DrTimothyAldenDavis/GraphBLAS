@@ -462,10 +462,10 @@ GxB_SelectOp GxB_LE_THUNK = & GB_opaque_GxB_LE_THUNK ;
 GrB_Index GB_opaque_GrB_ALL = 0 ;
 const GrB_Index *GrB_ALL = & GB_opaque_GrB_ALL ;
 
-// the default hypersparsity ratio is (1/16)
+// the default hyper_switch is (1/16)
 const double GxB_HYPER_DEFAULT = GB_HYPER_DEFAULT ;
 
-// set GxB_HYPER to either of these to ensure matrix is always, or never,
+// set GxB_HYPER_SWITCH to either of these to ensure matrix is always, or never,
 // stored in hypersparse format, respectively.
 const double GxB_ALWAYS_HYPER = GB_ALWAYS_HYPER ;
 const double GxB_NEVER_HYPER  = GB_NEVER_HYPER ;

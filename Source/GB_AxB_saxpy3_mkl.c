@@ -172,13 +172,13 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 // TODO for MKL: figure out how to call mkl_mxv for both dense and sparse v
 
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
-    GBBURBLE ("(MKL start) ") ;
+    GBURBLE ("(MKL start) ") ;
     double t = omp_get_wtime ( ) ;
     GB_MKL_OK (mkl_graph_mxm (C_mkl, M_mkl, MKL_GRAPH_ACCUMULATOR_NONE,
         mkl_semiring, A_mkl, B_mkl, NULL,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    GBBURBLE ("(MKL time: %g) ", t) ;
+    GBURBLE ("(MKL time: %g) ", t) ;
 
     //--------------------------------------------------------------------------
     // get the contents of C
@@ -193,7 +193,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     GB_MKL_OK (mkl_graph_matrix_get_csr (C_mkl, &cnrows, &cncols,
         &Tp, &Tp_type, &Ti, &Ti_type, &Tx, &Tx_type)) ;
-    GBBURBLE ("(got csr) ") ;
+    GBURBLE ("(got csr) ") ;
 
     if (Tp == NULL || Ti == NULL || Tx == NULL)
     {
@@ -246,11 +246,11 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // free MKL matrices C, M, A, and B
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("(copied) ") ;
-    GB_MKL_GRAPH_MATRIX_DESTROY (M_mkl) ; GBBURBLE ("(freed M) ") ;
-    GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ; GBBURBLE ("(freed A) ") ;
-    GB_MKL_GRAPH_MATRIX_DESTROY (B_mkl) ; GBBURBLE ("(freed B) ") ;
-    GB_MKL_GRAPH_MATRIX_DESTROY (C_mkl) ; GBBURBLE ("(freed C) ") ;
+    GBURBLE ("(copied) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (M_mkl) ; GBURBLE ("(freed M) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (A_mkl) ; GBURBLE ("(freed A) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (B_mkl) ; GBURBLE ("(freed B) ") ;
+    GB_MKL_GRAPH_MATRIX_DESTROY (C_mkl) ; GBURBLE ("(freed C) ") ;
 
     //--------------------------------------------------------------------------
     // import result in C as a CSR matrix
@@ -259,7 +259,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // C may be flagged as a CSC matrix in the caller
 
     info = GB_new (Chandle, ctype, cncols, cnrows, GB_Ap_null, false,
-        GB_FORCE_NONHYPER, B->hyper_ratio, cnrows, Context) ;
+        GB_FORCE_NONHYPER, B->hyper_switch, cnrows, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory
@@ -292,7 +292,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     // MKL never computes C as hypersparse, so skip this step:
     // info = GB_hypermatrix_prune (C, Context) ;
-    GBBURBLE ("(done) ") ;
+    GBURBLE ("(done) ") ;
     if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "mkl: output", GB0) ; }
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

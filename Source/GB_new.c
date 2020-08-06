@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Creates a new matrix but does not allocate space for A->i and A->x.
+// Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
 // See GB_create instead.
 
 // If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
@@ -17,9 +17,9 @@
 // GraphBLAS.  The internal function that calls GB_new must then allocate or
 // initialize A->p itself, and then set A->magic = GB_MAGIC when it does so.
 
-// To allocate a full matrix, hyper_option is GB_FULL (which is 2).
-// The Ap_option is ignored.  For a full matrix, only the header is allocated,
-// if NULL on input.
+// To allocate a full or bitmap matrix, sparsity_structure is GB_FULL (which is
+// 2) or GB_BITMAP (which is 3).  The Ap_option is ignored.  For a full or
+// bitmap matrix, only the header is allocated, if NULL on input.
 
 // Only GrB_SUCCESS and GrB_OUT_OF_MEMORY can be returned by this function.
 
@@ -48,8 +48,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto, 2:full
-    const double hyper_ratio,   // A->hyper_ratio, unless auto
+    const int sparsity_structure,   // 1:hyper, 0:nonhyper, -1:auto,
+                                    // 2:full, or 3:bitmap
+    const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
     GB_Context Context
@@ -96,31 +97,31 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 
     // hypersparsity
     bool A_is_hyper ;
-    bool A_is_full = false ;
-    A->hyper_ratio = hyper_ratio ;
-    if (hyper_option == GB_FORCE_HYPER)
+    bool A_is_full_or_bitmap = false ;
+    A->hyper_switch = hyper_switch ;
+    if (sparsity_structure == GB_FORCE_HYPER)
     { 
         A_is_hyper = true ;             // force A to be hypersparse
     }
-    else if (hyper_option == GB_FORCE_NONHYPER)
+    else if (sparsity_structure == GB_FORCE_NONHYPER)
     { 
         A_is_hyper = false ;            // force A to be sparse
     }
-    else if (hyper_option == GB_FULL)
-    {
-        A_is_full = true ;              // force A to be full
+    else if (sparsity_structure == GB_FULL || sparsity_structure == GB_BITMAP)
+    { 
+        A_is_full_or_bitmap = true ;    // force A to be full or bitmap
         A_is_hyper = false ;
     }
     else // GB_AUTO_HYPER
     { 
         // auto selection:  non-hypersparse if one vector or less, or
-        // if the global hyper_ratio is negative.  This is only used by
+        // if the global hyper_switch is negative.  This is only used by
         // GrB_Matrix_new, and in a special case in GB_mask.
         // Never select A to be full, since A is created with no entries.
-        ASSERT (hyper_option == GB_AUTO_HYPER) ;
-        double hyper_ratio = GB_Global_hyper_ratio_get ( ) ;
-        A->hyper_ratio = hyper_ratio ;
-        A_is_hyper = !(vdim <= 1 || 0 > hyper_ratio) ;
+        ASSERT (sparsity_structure == GB_AUTO_HYPER) ;
+        float hyper_switch = GB_Global_hyper_switch_get ( ) ;
+        A->hyper_switch = hyper_switch ;
+        A_is_hyper = !(vdim <= 1 || 0 > hyper_switch) ;
     }
 
     // matrix dimensions
@@ -128,28 +129,28 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->vdim = vdim ;
 
     // content that is freed or reset in GB_ph_free
-    if (A_is_hyper)
+    if (A_is_full_or_bitmap)
+    {  
+        // A is full or bitmap
+        A->plen = -1 ;
+        A->nvec = vdim ;
+        // all vectors present, unless matrix has a zero dimension 
+        A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
+    }
+    else if (A_is_hyper)
     { 
         // A is hypersparse
         A->plen = GB_IMIN (plen, vdim) ;
         A->nvec = 0 ;           // no vectors present
         A->nvec_nonempty = 0 ;      // all vectors are empty
     }
-    else if (!A_is_full)
+    else
     { 
         // A is sparse
         A->plen = vdim ;
         A->nvec = vdim ;        // all vectors present in the data structure
                                 // (but all are currently empty)
         A->nvec_nonempty = 0 ;      // all vectors are empty
-    }
-    else
-    { 
-        // A is full
-        A->plen = -1 ;
-        A->nvec = vdim ;
-        // all vectors present, unless matrix has a zero dimension 
-        A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
     }
 
     A->p = NULL ;
@@ -160,10 +161,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 
     A->logger = NULL ;          // no error logged yet
 
-    // content that is freed or reset in GB_ix_free
+    // content that is freed or reset in GB_bix_free
+    A->b = NULL ;
     A->i = NULL ;
     A->x = NULL ;
     A->nzmax = 0 ;              // GB_NNZ(A) checks nzmax==0 before Ap[nvec]
+    A->nvals = 0 ;              // for bitmapped matrices only
+    A->b_shallow = false ;
     A->i_shallow = false ;
     A->x_shallow = false ;
     A->nzombies = 0 ;
@@ -175,12 +179,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     //--------------------------------------------------------------------------
 
     bool ok ;
-    if (A_is_full || Ap_option == GB_Ap_null)
+    if (A_is_full_or_bitmap || Ap_option == GB_Ap_null)
     { 
         // A is not initialized yet; A->p and A->h are both NULL.
         // sparse case: GB_NNZ(A) must check A->nzmax == 0 since A->p is not
         // allocated.
         // full case: A->x not yet allocated.  A->nzmax still zero
+        // bitmap case: A->b, A->x not yet allocated.  A->nzmax still zero
         A->magic = GB_MAGIC2 ;
         A->p = NULL ;
         A->h = NULL ;

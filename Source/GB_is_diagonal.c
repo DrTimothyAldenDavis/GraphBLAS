@@ -43,6 +43,12 @@ bool GB_is_diagonal             // true if A is diagonal
         return (false) ;
     }
 
+    if (GB_IS_BITMAP (A))
+    { 
+        // never treat bitmaps as diagonal
+        return (false) ;
+    }
+
     if (GB_IS_FULL (A))
     { 
         // A is full, and is diagonal only if 1-by-1

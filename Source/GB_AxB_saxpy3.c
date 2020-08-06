@@ -346,7 +346,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             return (info) ;
         }
 
-        GBBURBLE ("(MKL tried) ") ;
+        GBURBLE ("(MKL tried) ") ;
 
         // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
         // so fall through to use GraphBLAS, below.
@@ -428,7 +428,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     // calloc Cp so it can be used as the Bflops workspace
     info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
-        GB_SAME_HYPER_AS (B_is_hyper), B->hyper_ratio, cnvec, Context) ;
+        GB_SAME_HYPER_AS (B_is_hyper), B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -483,7 +483,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // will be applied later in GB_mxm.
 
     double axbflops = total_flops - Mwork ;
-    GBBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
+    GBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
     int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
     bool M_is_dense = GB_is_dense (M) ;
@@ -507,7 +507,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // for in Bflops, so the hash tables can be small.
             M_dense_in_place = true ;
             AxB_method = GxB_AxB_HASH ;
-            GBBURBLE ("(use dense mask in place) ") ;
+            GBURBLE ("(use dense mask in place) ") ;
         }
         else
         { 
@@ -523,7 +523,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 Bflops [kk] += cvlen * (kk+1) ;
             }
             total_flops = Bflops [bnvec] ;
-            GBBURBLE ("(use dense mask) ") ;
+            GBURBLE ("(use dense mask) ") ;
         }
 
     }
@@ -548,12 +548,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, NULL, false, A, B,
             Context)) ;
         total_flops = Bflops [bnvec] ;
-        GBBURBLE ("(discard mask) ") ;
+        GBURBLE ("(discard mask) ") ;
 
     }
     else if (M != NULL)
     { 
-        GBBURBLE ("(use mask) ") ;
+        GBURBLE ("(use mask) ") ;
     }
 
     //--------------------------------------------------------------------------
@@ -914,7 +914,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
-    GBBURBLE ("nthreads %d ntasks %d coarse: (gus: %d hash: %d)"
+    GBURBLE ("nthreads %d ntasks %d coarse: (gus: %d hash: %d)"
         " fine: (gus: %d hash: %d) ", nthreads, ntasks,
         ncoarse_gus, ncoarse_hash, nfine_gus, nfine_hash) ;
     #endif

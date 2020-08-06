@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This is used by GB_AxB_saxpy3.c and GB_AxB_dot[234].c to create TODO
+// This is used by GB_AxB_saxpy3.c and GB_AxB_dot[234].c to create the
 // built-in versions of sparse matrix-matrix multiplication.  The #include'ing
 // file defines the GB_AxB_WORKER macro, and mult_opcode, add_opcode, xcode,
 // ycode, and zcode.
@@ -18,8 +18,8 @@
 //          is TxT->T (as is the monoid).
 
 //      GB_AxB_compare_factory: handles all semirings where the multiply
-//          operator is TxT->bool (for the comparison operators, LT, GT, etc),
-//          and where the monoid is bool x bool -> bool.
+//          operator is TxT -> bool (for the comparison operators, LT, GT,
+//          etc), and where the monoid is bool x bool -> bool.
 
 //      GB_AxB_bitwise_factory: handles all semirings for bitwise operators.
 

@@ -207,7 +207,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             M1 = M ;
             if (T_is_csc != M_is_csc)
             { 
-                GBBURBLE ("(M transpose) ") ;
+                GBURBLE ("(M transpose) ") ;
                 GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
                     NULL, NULL, NULL, false, Context)) ;
                 M1 = MT ;
@@ -215,16 +215,16 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             mask_applied = true ;
             if (mask_is_easy)
             { 
-                GBBURBLE ("(mask is easy) ") ;
+                GBURBLE ("(mask is easy) ") ;
             }
             else // mask_is_very_sparse
             { 
-                GBBURBLE ("(mask applied) ") ;
+                GBURBLE ("(mask applied) ") ;
             }
         }
         else
         { 
-            GBBURBLE ("(mask later) ") ;
+            GBURBLE ("(mask later) ") ;
         }
     }
 
@@ -237,7 +237,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // AT = A'
         // transpose: no typecast, no op, not in place
-        GBBURBLE ("(A transpose) ") ;
+        GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
@@ -252,7 +252,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // BT = B'
         // transpose: no typecast, no op, not in place
-        GBBURBLE ("(B transpose) ") ;
+        GBURBLE ("(B transpose) ") ;
         GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,
             NULL, NULL, NULL, false, Context)) ;
         B1 = BT ;
@@ -313,7 +313,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             //------------------------------------------------------------------
 
             // C_replace is ignored
-            GBBURBLE ("dense C+=A+B ") ;
+            GBURBLE ("dense C+=A+B ") ;
             GB_dense_ewise3_accum (C, A1, B1, op, Context) ;    // cannot fail
             GB_FREE_ALL ;
             ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C+=A+B", GB0) ;
@@ -328,7 +328,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             //------------------------------------------------------------------
 
             // C_replace is ignored
-            GBBURBLE ("dense C=A+B ") ;
+            GBURBLE ("dense C=A+B ") ;
             info = GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context);
             GB_FREE_ALL ;
             if (info == GrB_SUCCESS)

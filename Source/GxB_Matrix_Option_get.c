@@ -34,14 +34,40 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
     switch (field)
     {
 
-        case GxB_HYPER : 
+        case GxB_HYPER_SWITCH : 
 
             {
                 va_start (ap, field) ;
-                double *hyper_ratio = va_arg (ap, double *) ;
+                double *hyper_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
-                GB_RETURN_IF_NULL (hyper_ratio) ;
-                (*hyper_ratio) = A->hyper_ratio ;
+                GB_RETURN_IF_NULL (hyper_switch) ;
+                (*hyper_switch) = (double) A->hyper_switch ;
+            }
+            break ;
+
+        case GxB_SPARSITY :
+
+            {
+                va_start (ap, field) ;
+                int *sparsity = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (sparsity) ;
+                if (A->h != NULL)
+                { 
+                    (*sparsity) = GxB_HYPERSPARSE ;
+                }
+                else if (GB_IS_FULL (A))
+                { 
+                    (*sparsity) = GxB_FULL ;
+                }
+                else if (GB_IS_BITMAP (A))
+                { 
+                    (*sparsity) = GxB_BITMAP ;
+                }
+                else
+                { 
+                    (*sparsity) = GxB_SPARSE ;
+                }
             }
             break ;
 

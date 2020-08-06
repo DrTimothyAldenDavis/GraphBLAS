@@ -53,7 +53,7 @@ for k1 = 1:length(types)
     B = GB_spec_random (n, m, 0.3, 100, atype, A_is_csc, A_is_hyper, ha) ;
     cin = GB_mex_cast (0, atype) ;
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
-    Mask.hyper_ratio = hm ;
+    Mask.hyper_switch = hm ;
 
     fprintf ('.') ;
 

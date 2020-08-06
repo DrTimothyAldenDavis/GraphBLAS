@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// C = (type) T, then conform C to its desired hypersparsity.  T is freed.
+// C = (type) T, then conform C to its desired sparsity structure.  T is freed.
 // All prior content of C is cleared; zombies and pending tuples are abandoned
 // in C.
 
 #include "GB.h"
 
-GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
+GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
 (
     GrB_Matrix C,                   // destination matrix to transplant into
     GrB_Type ctype,                 // type to cast into
@@ -52,9 +52,17 @@ GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
     ASSERT_MATRIX_OK (C, "C transplanted", GB0) ;
 
     //--------------------------------------------------------------------------
-    // conform C to its desired hypersparsity
+    // conform C to its desired sparsity structure
     //--------------------------------------------------------------------------
 
-    return (GB_to_hyper_conform (C, Context)) ;
+    info = GB_conform (C, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        return (info) ;
+    }
+
+    ASSERT_MATRIX_OK (C, "C conformed", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

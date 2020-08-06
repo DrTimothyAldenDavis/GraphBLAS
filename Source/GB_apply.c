@@ -295,7 +295,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A'), typecasting to op*->ztype
         // transpose: typecast, apply an op, not in place.
-        GBBURBLE ("(transpose-op) ") ;
+        GBURBLE ("(transpose-op) ") ;
         info = GB_transpose (&T, T_type, T_is_csc, A,
             op1, op2, scalar, binop_bind1st, Context) ;
         // A positional op is applied to C after the transpose is computed,
@@ -304,7 +304,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
     { 
-        GBBURBLE ("(inplace-op) ") ;
+        GBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in place, with no typecasting
         // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
@@ -321,7 +321,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     else
     { 
         // T = op (A), pattern is a shallow copy of A, type is op*->ztype.
-        GBBURBLE ("(shallow-op) ") ;
+        GBURBLE ("(shallow-op) ") ;
         info = GB_shallow_op (&T, T_is_csc,
             op1, op2, scalar, binop_bind1st, A, Context) ;
     }

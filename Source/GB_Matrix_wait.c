@@ -37,7 +37,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_phix_free (A) ;                  \
+    GB_phbix_free (A) ;                 \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
     GB_Matrix_free (&A1) ;              \
@@ -58,6 +58,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     ASSERT (A != NULL) ;
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
@@ -138,8 +139,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // guaranteed not to fail.
         GB_OK (GB_ix_resize (A, anz, Context)) ;
 
-        // conform A to its desired hypersparsity
-        return (GB_to_hyper_conform (A, Context)) ;
+        // conform A to its desired sparsity structure
+        return (GB_conform (A, Context)) ;
     }
 
     // There are pending tuples that will now be assembled.
@@ -437,8 +438,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         GB_Matrix_free (&T) ;
 
-        // conform A to its desired hypersparsity
-        return (GB_to_hyper_conform (A, Context)) ;
+        // conform A to its desired sparsity structure
+        return (GB_conform (A, Context)) ;
 
     }
     else

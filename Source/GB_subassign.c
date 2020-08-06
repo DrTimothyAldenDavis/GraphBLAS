@@ -213,7 +213,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
-        GBBURBLE ("(A transpose) ") ;
+        GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A = AT ;
@@ -242,7 +242,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: no typecast, no op, not in place
-            GBBURBLE ("(M transpose) ") ;
+            GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
             M = MT ;
@@ -264,7 +264,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (C_aliased)
     { 
         // C is aliased with M or A
-        GBBURBLE ("(C aliased) ") ;
+        GBURBLE ("(C aliased) ") ;
         if (whole_C_matrix && C_replace && accum == NULL)
         { 
             // C(:,:)<any mask, replace> = A or x, with C aliased to M or A.  C
@@ -273,9 +273,9 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // duplicating it, create an empty matrix Z2.  This also prevents
             // the C_replace_phase from being needed.
             GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio, 1,
+                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_switch, 1,
                 Context)) ;
-            GBBURBLE ("(C alias cleared; C_replace early) ") ;
+            GBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
         }
         else
@@ -301,7 +301,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // A.  C is about to be cleared in GB_subassigner anyway, so clear
             // it now.
             GB_OK (GB_clear (C, Context)) ;
-            GBBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
+            GBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
             C_replace = false ;
         }
         Z = C ;

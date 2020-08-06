@@ -12,7 +12,7 @@
 // had after GrB_Matrix_new (&A, ...), with A->magic == GB_MAGIC to denote a
 // valid, initialized matrix, with nnz(A) equal to zero.  The dimensions, type,
 // and CSR/CSC format are unchanged.  The hypersparsity of the newly empty
-// matrix A is determined by the A->hyper_ratio for the matrix.  The matrix is
+// matrix A is determined by the A->hyper_switch for the matrix.  The matrix is
 // valid.
 
 // However, if this method runs out of memory, and the A->p and A->h structure
@@ -46,7 +46,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     // free all content
-    GB_phix_free (A) ;
+    GB_phbix_free (A) ;
 
     // no more zombies or pending tuples
     ASSERT (!GB_ZOMBIES (A)) ;
@@ -59,14 +59,14 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
 
     // By default, an empty matrix with n > 1 vectors is held in hypersparse
     // form.  A GrB_Matrix with n <= 1, or a GrB_Vector (with n == 1) is always
-    // non-hypersparse.  If A->hyper_ratio is negative, A will be always be
+    // non-hypersparse.  If A->hyper_switch is negative, A will be always be
     // non-hypersparse.
 
-    if (GB_to_nonhyper_test (A->hyper_ratio, 0, A->vdim))
+    if (GB_convert_hyper_to_sparse_test (A->hyper_switch, 0, A->vdim))
     {
 
         //----------------------------------------------------------------------
-        // A is non-hypersparse
+        // A is sparse
         //----------------------------------------------------------------------
 
         int64_t plen = A->vdim ;
@@ -77,7 +77,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         if (A->p == NULL)
         { 
             // out of memory
-            GB_phix_free (A) ;
+            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -97,7 +97,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
-            GB_phix_free (A) ;
+            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }

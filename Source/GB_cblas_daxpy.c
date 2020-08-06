@@ -33,7 +33,7 @@ void GB_cblas_daxpy         // Y += alpha*X
     ASSERT (X != NULL) ;
     ASSERT (nthreads >= 1) ;
 
-    GBBURBLE ("(cblas_daxpy) ") ;
+    GBURBLE ("(cblas_daxpy) ") ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

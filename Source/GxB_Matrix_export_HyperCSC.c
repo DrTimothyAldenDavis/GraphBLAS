@@ -52,7 +52,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     if (!((*A)->is_csc))
     {
         // A = A', done in place, to put A in CSC format
-        GBBURBLE ("(transpose) ") ;
+        GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, true, (*A),
             NULL, NULL, NULL, false, Context)) ;
     }
@@ -61,11 +61,11 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GB_ENSURE_SPARSE (*A) ;
 
     // ensure the matrix is in hypersparse format, not sparse
-    (*A)->hyper_ratio = GB_ALWAYS_HYPER ;
+    (*A)->hyper_switch = GB_ALWAYS_HYPER ;
     if ((*A)->h == NULL)
     { 
         // convert A from sparse to hypersparse format
-        GB_OK (GB_to_hyper ((*A), Context)) ;
+        GB_OK (GB_convert_sparse_to_hyper ((*A), Context)) ;
     }
 
     ASSERT_MATRIX_OK ((*A), "A export: hyper CSC", GB0) ;

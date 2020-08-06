@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 
     // allocate just the header of the matrix, not the content
     info = GB_new (A, type, nrows, ncols, GB_Ap_null, true,
-        GB_FORCE_NONHYPER, GB_Global_hyper_ratio_get ( ), 0, Context) ;
+        GB_FORCE_NONHYPER, GB_Global_hyper_switch_get ( ), 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory for matrix header (size O(1))

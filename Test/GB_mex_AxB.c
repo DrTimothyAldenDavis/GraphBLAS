@@ -65,8 +65,7 @@ GrB_Info axb (GB_Context Context)
     }
 
     // C = A*B, A'*B, A*B', or A'*B'
-    info = GB_AxB_meta (&C,
-        NULL,       // not in place
+    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned
@@ -74,7 +73,8 @@ GrB_Info axb (GB_Context Context)
         false,      // mask not complemented
         false,      // mask not structural
         NULL,       // no accum
-        A, B,
+        A,
+        B,
         semiring,   // GrB_PLUS_TIMES_FP64
         atranspose,
         btranspose,
@@ -155,10 +155,9 @@ GrB_Info axb_complex (GB_Context Context)
         }
     }
 
-    info = GB_AxB_meta (&C,
-        NULL,       // not in place
+    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace
-        true,       //CSC
+        true,       // CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented

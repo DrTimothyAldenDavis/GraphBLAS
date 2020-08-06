@@ -64,6 +64,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
 
@@ -86,8 +87,24 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
 
-    int64_t naslice = 0 ;
-    int64_t nbslice = 0 ;
+    if (B->nvec_nonempty < 0)
+    { 
+        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+    }
+
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    }
+
+    info = GB_AxB_dot5 (Chandle, C_in_place, M, Mask_comp, Mask_struct, NULL,
+        A, B, semiring, flipxy, Context) ;
+    if (info != GrB_NO_VALUE)
+    {
+        (*done_in_place) = false ;
+        (*mask_applied) = (M != NULL) ; // mask applied if present
+        return (info) ;
+    }
 
     if (M != NULL && !Mask_comp)
     { 
@@ -97,8 +114,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         //======================================================================
 
         // use dot3 if M is present and not complemented
-        GBBURBLE ("dot3 ") ;
-        (*mask_applied) = true ;
+        GBURBLE ("dot3 ") ;
+        (*mask_applied) = true ;    // mask is always applied
 
         #if defined ( GBCUDA )
 
@@ -111,7 +128,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // ops) then the type of A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
-        if (ngpus_to_use > 0 && semiring->builtin &&
+        if (ngpus_to_use > 0 && semiring->semiring_is_builtin &&
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code))
         {
@@ -135,92 +152,21 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // C<!M>=A'*B or C=A'*B
         //======================================================================
 
-        GrB_Info info ;
-
-        //----------------------------------------------------------------------
-        // get A and B
-        //----------------------------------------------------------------------
-
-        if (B->nvec_nonempty < 0)
-        { 
-            B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-        }
-
-        if (A->nvec_nonempty < 0)
-        { 
-            A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-        }
-
-        //======================================================================
-        // in place C+=A'*B
-        //======================================================================
-
         if (C_in_place != NULL && M == NULL && !Mask_comp)
         { 
-            GBBURBLE ("dense, C+=A'*B in place ") ;
+            // in place C+=A'*B.  mask is not present (and not applied)
+            GBURBLE ("dense, C+=A'*B in place ") ;
             (*done_in_place) = true ;
+            (*mask_applied) = false ;    // no mask to apply
             return (GB_AxB_dot4 (C_in_place, A, B, semiring, flipxy, Context)) ;
-        }
-
-        //----------------------------------------------------------------------
-        // determine the number of threads to use
-        //----------------------------------------------------------------------
-
-        // TODO: move this into GB_AxB_dot2
-
-        int64_t anvec = A->nvec ;
-        int64_t anz   = GB_NNZ (A) ;
-
-        int64_t bnvec = B->nvec ;
-        int64_t bnz   = GB_NNZ (B) ;
-
-        ASSERT (A->vlen == B->vlen) ;
-
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-        int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
-
-        if (nthreads == 1)
-        {
-            // do the entire computation with a single thread
-            naslice = 1 ;
-            nbslice = 1 ;
         }
         else
         {
-            // determine number of slices for A' and B
-            if (bnvec > 32 * nthreads || bnvec == 0)
-            { 
-                // just slice B
-                nbslice = 32 * nthreads ;
-                naslice = 1 ;
-            }
-            else
-            { 
-                // slice B into individual vectors
-                nbslice = bnvec ;
-
-                // slice A' to get a total of about 32*nthreads tasks
-                naslice = (32 * nthreads) / nbslice ;
-
-                // but do not slice A too finely
-                naslice = GB_IMIN (naslice, anvec/4) ;
-                naslice = GB_IMAX (naslice, nthreads) ;
-            }
+            // C<!M>=A'*B or C=A'*B, not in-place
+            (*mask_applied) = (M != NULL) ; // mask applied if present
+            return (GB_AxB_dot2 (Chandle, M, Mask_struct, A, B, semiring,
+                flipxy, Context)) ;
         }
-
-        //----------------------------------------------------------------------
-        // C = A'*B or C<!M> = A'*B
-        //----------------------------------------------------------------------
-
-        GB_OK (GB_AxB_dot2 (Chandle, M, Mask_struct, A, B, semiring,
-            flipxy, mask_applied, nthreads, naslice, nbslice, Context)) ;
-
-        //----------------------------------------------------------------------
-        // return result
-        //----------------------------------------------------------------------
-
-        ASSERT_MATRIX_OK (*Chandle, "C for dot2 A'*B", GB0) ;
-        return (GrB_SUCCESS) ;
     }
 }
 

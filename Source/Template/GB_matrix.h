@@ -34,20 +34,21 @@ char *logger ;          // for error logging
 // compressed sparse vector data structure
 //------------------------------------------------------------------------------
 
-// The matrix can be held in one of 6 formats, each one consisting of a set of
-// sparse vectors.  The vector "names" are in the range 0 to A->vdim-1.  Each
+// The matrix can be held in one of 8 formats, each one consisting of a set of
+// vectors.  The vector "names" are in the range 0 to A->vdim-1.  Each
 // vector has length A->vlen.  These two values define the dimension of the
 // matrix, where A is m-by-n.  The m and n dimenions are vlen and vdim for the
-// sparse CSC and hypersparse-CSC formats, and reversed for the sparse CSR
-// and hypersparse-CSR formats.
+// CSC formats, and reversed for the CSR formats.
 
-// Ap, Ai, Ax, and Ah are abbreviations for A->p, A->i, A->x, and A->h.
+// Ap, Ai, Ax, Ah, and Ab are abbreviations for A->p, A->i, A->x, A->h, and
+// A->b, respectively.
 
-// For all formats Ap is an integer array of size A->plen+1, with Ap [0] always
-// zero.  The matrix contains A->nvec sparse vectors, where A->nvec <= A->plen
-// <= A->vdim.  The arrays Ai and Ax are both of size A->nzmax, and define the
-// indices and values in each sparse vector.  The total number of entries in
-// the matrix is Ap [nvec] <= A->nzmax.
+// For the sparse and hypersparse formats, Ap is an integer array of size
+// A->plen+1, with Ap [0] always zero.  The matrix contains A->nvec sparse
+// vectors, where A->nvec <= A->plen <= A->vdim.  The arrays Ai and Ax are both
+// of size A->nzmax, and define the indices and values in each sparse vector.
+// The total number of entries in the matrix is Ap [nvec] <= A->nzmax.
+// For the bitmap and full formats, Ap and Ai are NULL.
 
 // For both hypersparse and non-hypersparse matrices, if A->nvec_nonempty is
 // computed, it is the number of vectors that contain at least one entry, where
@@ -55,15 +56,15 @@ char *logger ;          // for error logging
 // A->nvec_nonempty is equal to -1.
 
 //------------------------------------------------------------------------------
-// The 6 formats:  (full, sparse, hypersparse) * (CSR or CSC)
+// The 8 formats:  (hypersparse, sparse, bitmap, full) x (CSR or CSC)
 //------------------------------------------------------------------------------
 
 // --------------------------------------
-// Dense format:
+// Full format:
 // --------------------------------------
 
-    // Ah, Ap, and Ai are all NULL.
-    // A->nvec == A->vdim.   A->plen is not needed.  (set to zero? -1?)
+    // Ah, Ap, Ai, and Ab are all NULL.
+    // A->nvec == A->vdim.   A->plen is not needed (set to -1)
 
     // --------------------------------------
     // A->is_csc is true:  full CSC format
@@ -84,10 +85,42 @@ char *logger ;          // for error logging
         // A(i,j) at position p has column index j = p%n and value Ax [p]
 
 // --------------------------------------
+// Bitmap format:
+// --------------------------------------
+
+    // Ah, Ap, and Ai are NULL.  Ab is an int8_t array of size m*n.
+    // A->nvec == A->vdim.   A->plen is not needed (set to -1)
+
+    // The bitmap format is identical to the full format, except for the
+    // addition of the bitmap array A->b.
+
+    // --------------------------------------
+    // A->is_csc is true:  bitmap CSC format
+    // --------------------------------------
+
+        // A is m-by-n: where A->vdim = n, and A->vlen = m
+
+        // Column A(:,j) is held in Ax [p1:p2-1] where p1 = k*m, p2 = (k+1)*m.
+        // A(i,j) at position p has row index i = p%m and value Ax [p].
+        // The entry A(i,j) is present if Ab [p] > 0, and not present of
+        // Ab [p] <= 0.
+
+    // --------------------------------------
+    // A->is_csc is false:  bitmat CSR format
+    // --------------------------------------
+
+        // A is m-by-n: where A->vdim = m, and A->vlen = n
+
+        // Row A(i,:) is held in Ax [p1:p2-1] where p1 = k*n, p2 = (k+1)*n.
+        // A(i,j) at position p has column index j = p%n and value Ax [p]
+        // The entry A(i,j) is present if Ab [p] != 0, and not present of
+        // Ab [p] == 0.
+
+// --------------------------------------
 // Sparse format:
 // --------------------------------------
 
-    // Ah is NULL
+    // Ah and Ab are NULL
     // A->nvec == A->plen == A->vdim
 
     // --------------------------------------
@@ -120,6 +153,7 @@ char *logger ;          // for error logging
 // Hypersparse format:
 // --------------------------------------
 
+    // Ab is NULL
     // Ah is non-NULL and has size A->plen; it is always kept sorted,
     // A->nvec <= A->plen <= A->vdim
 
@@ -173,7 +207,7 @@ char *logger ;          // for error logging
 
 // Like GraphBLAS, CSparse also keeps explicit zeros.  CSparse allows its
 // matrices to be jumbled at any time, and this is not considered an unfinished
-// matrix.
+// GraphBLAS matrix.
 
 // Finally, MATLAB only allows for boolean ("logical" class) and double
 // precision sparse matrices (complex and real).  CSparse only supports double.
@@ -193,7 +227,9 @@ char *logger ;          // for error logging
 // bool is_csc ;        // true if stored by column (CSC or hypersparse CSC)
                         // false if by row (CSR or hypersparse CSR)
 
-double hyper_ratio ;    // controls conversion to/from hypersparse
+float hyper_switch ;    // controls conversion to/from hypersparse
+int sparsity ;          // controls sparsity structure: default, hypersparse,
+                        // sparse, bitmap, or full.
 
 int64_t plen ;          // A->h has size plen, A->p has size plen+1
 int64_t vlen ;          // length of each sparse vector
@@ -208,39 +244,44 @@ int64_t *h ;            // list of non-empty vectors of size plen
 int64_t *p ;            // array of size plen+1
 int64_t *i ;            // array of size nzmax
 void *x ;               // size nzmax; each entry of size A->type->size
+int8_t *b ;             // size nzmax; bitmap
 int64_t nzmax ;         // size of i and x arrays
+int64_t nvals ;         // nvals(A) if A is bitmap
 
-// The hyper_ratio determines how the matrix is converted between the
+// The hyper_switch determines how the matrix is converted between the
 // hypersparse and non-hypersparse formats.  Let n = A->vdim and let k be the
 // actual number of non-empty vectors.  If A is hypersparse, k can be less than
 // A->nvec since the latter can include vectors that appear in A->h but are
 // actually empty.
 
 // If a matrix is currently hypersparse, it can be converted to non-hypersparse
-// if the condition (n <= 1 || k > n*hyper_ratio*2) holds.  Otherwise, it stays
+// if the condition (n <= 1 || k > n*hyper_switch*2) holds.  Otherwise, it stays
 // hypersparse.  Note that if n <= 1 the matrix is always stored as
 // non-hypersparse.
 
 // If currently non-hypersparse, it can be converted to hypersparse if the
-// condition (n > 1 && k <= n*hyper_ratio) holds.  Otherwise, it stays
+// condition (n > 1 && k <= n*hyper_switch) holds.  Otherwise, it stays
 // non-hypersparse.  Note that if n <= 1 the matrix remains non-hypersparse.
 
-// The default value of hyper_ratio is assigned to be GxB_HYPER_DEFAULT at
+// The default value of hyper_switch is assigned to be GxB_HYPER_DEFAULT at
 // startup by GrB_init, and can then be modified globally with
-// GxB_Global_Option_set.  All new matrices are created with the same ratio.
-// Once a particular matrix has been constructed, its hypersparsity ratio can
-// be modified from the default with GxB_Matrix_Option_set.  GrB_Vectors are
-// always stored as non-hypersparse.
+// GxB_Global_Option_set.  All new matrices are created with the same
+// hyper_switch.  Once a particular matrix has been constructed, its
+// hyper_switch can be modified from the default with GxB_Matrix_Option_set.
+// GrB_Vectors are never stored as hypersparse.
 
 // A new matrix created via GrB_Matrix_new starts with k=0 and is created in
-// hypersparse form unless (n <= 1 || 0 > hyper_ratio) holds, where hyper_ratio
-// is the global default value.  GrB_Vectors are always non-hypersparse.
+// hypersparse form unless (n <= 1 || 0 > hyper_switch) holds, where
+// hyper_switch is the global default value.  GrB_Vectors are always
+// non-hypersparse.
 
-// To force a matrix to always stay non-hypersparse, use hyper_ratio = -1 (or
+// To force a matrix to always stay non-hypersparse, use hyper_switch = -1 (or
 // any negative number).  To force a matrix to always stay hypersparse, use
-// hyper_ratio = 1 or more.  For code readability, these values are also
+// hyper_switch = 1 or more.  For code readability, these values are also
 // predefined for the user application as the constants GxB_ALWAYS_HYPER and
 // GxB_NEVER_HYPER.
+
+// TODO: describe A->sparsity
 
 //------------------------------------------------------------------------------
 // pending tuples
@@ -350,11 +391,10 @@ void *mkl ;
 //------------------------------------------------------------------------------
 
 // Internal matrices in this implementation of GraphBLAS may have "shallow"
-// components.  These are pointers A->p, A->i, and A->x that point to the
-// content of another matrix.  Using shallow components speeds up computations
-// and saves memory, but shallow matrices are never passed back to the user
-// application.  They could be in the future, since the GraphBLAS objects are
-// opaque to the user application.
+// components.  These are pointers A->p, A->h, A->i, A->b, and A->x that point
+// to the content of another matrix.  Using shallow components speeds up
+// computations and saves memory, but shallow matrices are never passed back to
+// the user application.
 
 // If the following are true, then the corresponding component of the
 // object is a pointer into components of another object.  They must not
@@ -362,6 +402,7 @@ void *mkl ;
 
 bool p_shallow ;        // true if p is a shallow copy
 bool h_shallow ;        // true if h is a shallow copy
+bool b_shallow ;        // true if b is a shallow copy
 bool i_shallow ;        // true if i is a shallow copy
 bool x_shallow ;        // true if x is a shallow copy
 
@@ -376,8 +417,8 @@ bool jumbled ;          // true if the matrix may be jumbled
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
-// The matrix can be held in 6 formats: (full, sparse, hypersparse)x(CSR, CSC).
-// The comments below assume A is in CSC format.
+// The matrix can be held in 8 formats: (hypersparse, sparse, bitmap, full) x
+// (CSR, CSC).  The comments below assume A is in CSC format.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
@@ -387,7 +428,7 @@ bool jumbled ;          // true if the matrix may be jumbled
     //          A is CSC.  For all cases, Ap [0...nvec] are the pointers.
 
     //--------------------
-    // (1) full      // A->h, A->p, A->i are NULL, A->nvec == A->vdim
+    // (1) full      // A->h, A->p, A->i, A->b are NULL, A->nvec == A->vdim
 
         int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)
@@ -403,7 +444,30 @@ bool jumbled ;          // true if the matrix may be jumbled
         }
 
     //--------------------
-    // (2) sparse     // A->h is NULL, A->nvec == A->vdim
+    // (2) bitmap    // A->h, A->p, A->i are NULL, A->nvec == A->vdim
+
+        int64_t vlen = A->vlen ;
+        for (k = 0 ; k < A->nvec ; k++)
+        {
+            j = k ;
+            // operate on column A(:,j)
+            int64_t pA_start = k * vlen ;
+            int64_t pA_end   = (k+1) * vlen ;
+            for (p = pA_start ; p < pA_end ; p++)
+            {
+                if (Ab [p] > 0)
+                {
+                    // A(i,j) has row i = (p % vlen), value aij = Ax [p]
+                }
+                else
+                {
+                    // A(i,j) is not present
+                }
+            }
+        }
+
+    //--------------------
+    // (3) sparse     // A->h is NULL, A->nvec == A->vdim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -416,7 +480,7 @@ bool jumbled ;          // true if the matrix may be jumbled
         }
 
     //--------------------
-    // (3) hypersparse  // A->h is non-NULL, A->nvec <= A->dim
+    // (4) hypersparse  // A->h is non-NULL, A->nvec <= A->dim
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -440,7 +504,8 @@ bool jumbled ;          // true if the matrix may be jumbled
             int64_t pA_end   = GBP (Ap, k+1, vlen) ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row i = (p % m), value aij = Ax [p]
+                // A(i,j) has row index i, value aij = Ax [p]
+                if (!GBB (Ab, p)) continue ;
                 int64_t i = GBI (Ai, p, vlen) ;
                 double aij = Ax [p] ;
             }

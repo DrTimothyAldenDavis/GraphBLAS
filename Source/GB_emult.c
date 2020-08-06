@@ -46,7 +46,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
+    GBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
 
     ASSERT (Chandle != NULL) ;
 

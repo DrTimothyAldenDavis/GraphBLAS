@@ -45,10 +45,10 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     int64_t vlen = (int64_t) n ;
 
     // v is always non-hypersparse, but use the auto rule so that
-    // v->hyper_ratio is assigned from the global option.  This way, if the
+    // v->hyper_switch is assigned from the global option.  This way, if the
     // vector is ever typecast into a matrix, and used in a matrix computation,
-    // the hyper_ratio will propagate to the result matrix.  A vector will not
-    // use its hyper_ratio, since vdim == 1 ensures that v always remains
+    // the hyper_switch will propagate to the result matrix.  A vector will not
+    // use its hyper_switch, since vdim == 1 ensures that v always remains
     // non-hypersparse.
 
     // *v == NULL ;                 // allocate a new header for v

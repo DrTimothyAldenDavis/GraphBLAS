@@ -57,7 +57,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GBBURBLE ((M == NULL) ? "add " : "masked_add ") ;
+    GBURBLE ((M == NULL) ? "add " : "masked_add ") ;
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for add", GB0) ;

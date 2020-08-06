@@ -9,7 +9,10 @@ Version 4.0.0, TODO:, 2020
     * dense matrices and vectors: no change to user API, except import/export
     * positional operators and semirings: GxB_FIRSTI_INT32 and related ops
     * jumbled matrices: sort left pending, like zombies and pending tuples
-    * TODO: modifications to import/export
+    * bitmap matrices
+    * GxB_get/set: added GxB_SPARSITY (hyper, sparse, bitmap, or full)
+    * GxB_HYPER: enum renamed to GxB_HYPER_SWITCH
+    * TODO: need to modify import/export
 
 Version 3.3.3, July 14, 2020
 

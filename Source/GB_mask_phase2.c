@@ -90,7 +90,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // allocate the result R (but do not allocate R->p or R->h)
     GrB_Matrix R = NULL ;
     GrB_Info info = GB_create (&R, C->type, C->vlen, C->vdim, GB_Ap_null,
-        R_is_csc, GB_SAME_HYPER_AS (R_is_hyper), C->hyper_ratio, Rnvec, rnz,
+        R_is_csc, GB_SAME_HYPER_AS (R_is_hyper), C->hyper_switch, Rnvec, rnz,
         true, Context) ;
     if (info != GrB_SUCCESS)
     { 

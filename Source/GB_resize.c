@@ -9,7 +9,7 @@
 
 #include "GB_select.h"
 
-#define GB_FREE_ALL GB_phix_free (A) ;
+#define GB_FREE_ALL GB_phbix_free (A) ;
 
 GrB_Info GB_resize              // change the size of a matrix
 (
@@ -77,7 +77,7 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // A is dense but held in sparse format, and it is shrinking;
             // convert A to full
-            GB_sparse_to_full (A) ;
+            GB_convert_any_to_full (A) ;
         }
         if (vdim_new == vdim_old && vlen_new == vlen_old)
         { 
@@ -209,9 +209,9 @@ GrB_Info GB_resize              // change the size of a matrix
     }
 
     if (A->h == NULL &&
-        GB_to_hyper_test (A->hyper_ratio, A->nvec_nonempty, vdim_new))
+        GB_convert_sparse_to_hyper_test (A->hyper_switch, A->nvec_nonempty, vdim_new))
     { 
-        GB_OK (GB_to_hyper (A, Context)) ;
+        GB_OK (GB_convert_sparse_to_hyper (A, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -300,7 +300,7 @@ GrB_Info GB_resize              // change the size of a matrix
     // resize the length of each vector
     //--------------------------------------------------------------------------
 
-    // TODO allow resize selector to tolerate jumbled matrix
+    // TODO allow resize selector to tolerate a jumbled matrix
 
     // if vlen is shrinking, delete entries outside the new matrix
     if (vlen_new < vlen_old)
@@ -317,9 +317,9 @@ GrB_Info GB_resize              // change the size of a matrix
     ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;
 
     //--------------------------------------------------------------------------
-    // check for conversion to hypersparse or to non-hypersparse
+    // conform the matrix to its desired sparsity structure
     //--------------------------------------------------------------------------
 
-    return (GB_to_hyper_conform (A, Context)) ;
+    return (GB_conform (A, Context)) ;
 }
 

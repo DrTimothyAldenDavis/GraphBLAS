@@ -59,7 +59,7 @@
 
     // symbolic phase (phase 1 of 2 for dot2):
     bool cij_exists = false ;
-    #define GB_DOT(adelta,bdelta)                                           \
+    #define GB_DOT                                                          \
         cij_exists = true ;                                                 \
         break ;
 
@@ -80,27 +80,41 @@
             #define GB_CIJ_CHECK false
             #undef  GB_CIJ_EXISTS
             #define GB_CIJ_EXISTS (cij != 0)
-            #define GB_DOT(adelta,bdelta)                                   \
+            #define GB_DOT                                                  \
                 cij++ ;
 
         #else
 
             // PLUS_PAIR semiring for small integers
             bool cij_exists = false ;
-            #define GB_DOT(adelta,bdelta)                                   \
+            #define GB_DOT                                                  \
                 cij_exists = true ;                                         \
                 cij++ ;
 
         #endif
 
+    #elif GB_IS_ANY_MONOID
+
+        // ANY monoid
+        bool cij_exists = false ;
+        #define GB_DOT                                                      \
+        {                                                                   \
+            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
+            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
+            /* cij = (A')(i,k) * B(k,j), and add to the pattern */          \
+            cij_exists = true ;                                             \
+            GB_MULT (cij, aki, bkj, i, k, j) ;                              \
+            break ;                                                         \
+        }
+
     #else
 
         // all other semirings
         bool cij_exists = false ;
-        #define GB_DOT(adelta,bdelta)                                       \
+        #define GB_DOT                                                      \
         {                                                                   \
-            GB_GETA (aki, Ax, (pA + adelta)) ;  /* aki = A(k,i) */          \
-            GB_GETB (bkj, Bx, (pB + bdelta)) ;  /* bkj = B(k,j) */          \
+            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
+            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
             if (cij_exists)                                                 \
             {                                                               \
                 /* cij += (A')(i,k) * B(k,j) */                             \
@@ -112,7 +126,7 @@
                 cij_exists = true ;                                         \
                 GB_MULT (cij, aki, bkj, i, k, j) ;                          \
             }                                                               \
-            /* if (cij is terminal) { cij_is_terminal = true ; break ; } */ \
+            /* if (cij is terminal) break ; */                              \
             GB_DOT_TERMINAL (cij) ;                                         \
         }
 
@@ -128,7 +142,6 @@
     // get the start of A(:,i) and B(:,j)
     //--------------------------------------------------------------------------
 
-    bool cij_is_terminal = false ;  // C(i,j) not yet reached terminal condition
     int64_t pB = pB_start ;
     int64_t ainz = pA_end - pA ;
     ASSERT (ainz >= 0) ;
@@ -356,7 +369,7 @@
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 int64_t k = ia ;
-                GB_DOT (0,0) ;
+                GB_DOT ;
                 pA++ ;
                 pB++ ;
             }
@@ -393,7 +406,7 @@
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 int64_t k = ia ;
-                GB_DOT (0,0) ;
+                GB_DOT ;
                 pA++ ;
                 pB++ ;
             }
@@ -407,323 +420,21 @@
         // A(:,i) and B(:,j) have about the same sparsity
         //----------------------------------------------------------------------
 
-        // This uses the following AVX2 instructions, for the PLUS_PAIR_T
-        // semirings (for T = int64, float, and double only):
-
-        // v =_mm256_set1_epi64x (int64_t x) ;
-        //      loads x into all 4 entries of the vector v:
-        //      for (k = 0 to 3) v [k] = x
-
-        // v = _mm256_loadu_si256 ((__m256i const *) x) ;
-        //      loads 4 entries from x [0...3] into the vector v:
-        //      for (k = 0 to 3) v [k] = x [k]
-
-        // c = _mm256_cmpeq_epi64 (a, b) ;
-        //      compares the vectors a and b, for k = 0:3
-        //      for (k = 0 to 3) c [k] = (a [k] == b [k]) ? -1 : 0
-
-        // c = _mm256_or_si256 (a,b) ;
-        //      logical or:
-        //      for (k = 0 to 3) c [k] = a [k] | b [k]
-
-        // mask = _mm256_movemask_pd (c) ;
-        //      sets each bit of the mask from most sig. bit of each entry in c
-        //      for (k = 0 to 3) mask bit [k] = (most sig. bit of c [k])
-
-        // k = _mm_popcnt_u32 (mask) ;
-        //      counts the number of bits set in a 32-bit integer (mask)
-
-        // load the next 4 entries of Ai [pA ...] and broadcast them
-        #define GB_BROADCAST(X)                     \
-            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0]) ; \
-            (X ## 1).m = _mm256_set1_epi64x (X ## i [p ## X +1]) ; \
-            (X ## 2).m = _mm256_set1_epi64x (X ## i [p ## X +2]) ; \
-            (X ## 3).m = _mm256_set1_epi64x (X ## i [p ## X +3])
-
-        // load the next entries of Ai [pA ...] and broadcast it
-        #define GB_BROADCAST1(X)                        \
-            (X ## 0).m = _mm256_set1_epi64x (X ## i [p ## X +0])
-
-        // load the next 4 entries of Bi [pB ...]
-        #define GB_LOAD(X) \
-            (X ## 0).m = _mm256_loadu_si256 ((__m256i const *)(X ## i + p ## X))
-
-        // munch the next 4 entries of Ai [pA ...] and load the next 4
-        #define GB_MUNCH_BROADCAST(X)                   \
-        {                                               \
-            p ## X += 4 ;                               \
-            if (p ## X ## _end - p ## X < 4) break ;    \
-            GB_BROADCAST (X) ;                          \
-            continue ;                                  \
-        }
-
-        // munch the next entries of Ai [pA ...]
-        #define GB_MUNCH_BROADCAST1(X)                  \
-        {                                               \
-            p ## X += 1 ;                               \
-            if (p ## X ## _end - p ## X < 1) break ;    \
-            GB_BROADCAST1 (X) ;                         \
-            continue ;                                  \
-        }
-
-        // munch the next 4 entries of Bi [pB ...] and load the next 4
-        #define GB_MUNCH_LOAD(X)                        \
-        {                                               \
-            p ## X += 4 ;                               \
-            if (p ## X ## _end - p ## X < 4) break ;    \
-            GB_LOAD (X) ;                               \
-            continue ;                                  \
-        }
-
-        #if defined ( GB_USE_AVX2 )
-
-        if (ainz >= 4 && bjnz >= 4)
+        while (pA < pA_end && pB < pB_end)
         {
-            // if (ainz < bjnz)
+            int64_t ia = Ai [pA] ;              // ok: A is sparse
+            int64_t ib = Bi [pB] ;              // ok: B is sparse
+            if (ia == ib)
             {
-                GB_vector B0, A0, A1, A2, A3 ;
-                GB_BROADCAST (A) ;
-                GB_LOAD (B) ;
-                while (1)
-                {
-                    ASSERT (pA_end - pA >= 4) ;
-                    ASSERT (pB_end - pB >= 4) ;
-
-                    // skip if last entry of a comes before first entry of b
-                    if (A3.i [3] < B0.i [0]) GB_MUNCH_BROADCAST (A) ;
-
-                    // skip if last entry of b comes before first entry of a
-                    if (B0.i [3] < A0.i [0]) GB_MUNCH_LOAD (B)  ;
-
-                    // count the intersections
-
-                    // compare (4 instructions)
-                    GB_vector C0, C1, C2, C3 ;
-                    C0.m = _mm256_cmpeq_epi64 (A0.m, B0.m) ;
-                    C1.m = _mm256_cmpeq_epi64 (A1.m, B0.m) ;
-                    C2.m = _mm256_cmpeq_epi64 (A2.m, B0.m) ;
-                    C3.m = _mm256_cmpeq_epi64 (A3.m, B0.m) ;
-
-                    // or (3 instructions)
-                    C0.m = _mm256_or_si256 (C0.m, C1.m) ;
-                    C2.m = _mm256_or_si256 (C2.m, C3.m) ;
-                    C0.m = _mm256_or_si256 (C0.m, C2.m) ;
-
-                    // count (2 instructions)
-                    uint32_t mask = _mm256_movemask_pd (C0.d) ;
-                    cij += _mm_popcnt_u32 (mask) ;
-
-                    if (A3.i [3] < B0.i [3])
-                    {
-                        GB_MUNCH_BROADCAST (A) ;
-                    }
-                    else
-                    {
-                        GB_MUNCH_LOAD (B) ;
-                    }
-                }
+                int64_t k = ia ;
+                GB_DOT ;
+                pA++ ;
+                pB++ ;
             }
-            #if 0
             else
             {
-
-                GB_vector A0, B0, B1, B2, B3 ;
-                GB_LOAD (A) ;
-                GB_BROADCAST (B) ;
-                while (1)
-                {
-                    ASSERT (pA_end - pA >= 4) ;
-                    ASSERT (pB_end - pB >= 4) ;
-
-                    // skip if last entry of a comes before first entry of b
-                    if (A0.i [3] < B0.i [0]) GB_MUNCH_LOAD (A) ;
-
-                    // skip if last entry of b comes before first entry of a
-                    if (B3.i [3] < A0.i [0]) GB_MUNCH_BROADCAST (B)  ;
-
-                    // count the intersections
-
-                    // compare (4 instructions)
-                    GB_vector C0, C1, C2, C3 ;
-                    C0.m = _mm256_cmpeq_epi64 (A0.m, B0.m) ;
-                    C1.m = _mm256_cmpeq_epi64 (A0.m, B1.m) ;
-                    C2.m = _mm256_cmpeq_epi64 (A0.m, B2.m) ;
-                    C3.m = _mm256_cmpeq_epi64 (A0.m, B3.m) ;
-
-                    // or (3 instructions)
-                    C0.m = _mm256_or_si256 (C0.m, C1.m) ;
-                    C2.m = _mm256_or_si256 (C2.m, C3.m) ;
-                    C0.m = _mm256_or_si256 (C0.m, C2.m) ;
-
-                    // count (2 instructions)
-                    uint32_t mask = _mm256_movemask_pd (C0.d) ;
-                    cij += _mm_popcnt_u32 (mask) ;
-
-                    if (A0.i [3] < B3.i [3])
-                    {
-                        GB_MUNCH_LOAD (A) ;
-                    }
-                    else
-                    {
-                        GB_MUNCH_BROADCAST (B) ;
-                    }
-                }
-            }
-            #endif
-        }
-        #endif
-
-#if 0
-        // load the next 3 entries of Ai [pA ...]
-        #define GB_LOAD_A                   \
-            a [0] = Ai [pA  ] ;             \
-            a [1] = Ai [pA+1] ;             \
-            a [2] = Ai [pA+2]
-
-        // load the next 3 entries of Bi [pB ...]
-        #define GB_LOAD_B                   \
-            b [0] = Bi [pB  ] ;             \
-            b [1] = Bi [pB+1] ;             \
-            b [2] = Bi [pB+2]
-
-        // munch the next 3 entries of Ai [pA ...] and load the next 3
-        #define GB_MUNCH_A                  \
-        {                                   \
-            pA += 3 ;                       \
-            if (pA_end - pA < 3) break ;    \
-            GB_LOAD_A ;                     \
-            continue ;                      \
-        }
-
-        // munch the next 3 entries of Bi [pB ...] and load the next 3
-        #define GB_MUNCH_B                  \
-        {                                   \
-            pB += 3 ;                       \
-            if (pB_end - pB < 3) break ;    \
-            GB_LOAD_B ;                     \
-            continue ;                      \
-        }
-
-        // munch the next 3 entries of both Ai and Bi, and load next 3 of both
-        #define GB_MUNCH_AB                 \
-        {                                   \
-            pA += 3 ;                       \
-            pB += 3 ;                       \
-            if (pB_end - pB < 3) break ;    \
-            if (pA_end - pA < 3) break ;    \
-            GB_LOAD_A ;                     \
-            GB_LOAD_B ;                     \
-            continue ;                      \
-        }
-
-        // compute the dot product for vectors longer than 3 entries
-        if (ainz >= 3 && bjnz >= 3)
-        {
-            int64_t a [3] ; GB_LOAD_A ;
-            int64_t b [3] ; GB_LOAD_B ;
-            while (1)
-            {
-                // get the next 3 entries from each list
-                ASSERT (pA_end - pA >= 3) ;
-                ASSERT (pB_end - pB >= 3) ;
-                if (a [2] < b [0]) GB_MUNCH_A ;
-                if (b [2] < a [0]) GB_MUNCH_B ;
-
-                #if GB_IS_PLUS_PAIR_REAL_SEMIRING
-
-                    #if GB_CTYPE_IGNORE_OVERFLOW
-
-                        // no need to handle overflow 
-                        cij +=
-                        (a [0] == b [0]) + (a [0] == b [1]) + (a [0] == b [2]) +
-                        (a [1] == b [0]) + (a [1] == b [1]) + (a [1] == b [2]) +
-                        (a [2] == b [0]) + (a [2] == b [1]) + (a [2] == b [2]) ;
-
-                        #if ( GB_PHASE_1_OF_2 )
-                        if (cij != 0)
-                        {
-                            cij_exists = true ;
-                            break ;
-                        }
-                        #endif
-
-                    #else
-
-                        // cij might overflow
-                        GB_CTYPE cij_delta =
-                        (a [0] == b [0]) + (a [0] == b [1]) + (a [0] == b [2]) +
-                        (a [1] == b [0]) + (a [1] == b [1]) + (a [1] == b [2]) +
-                        (a [2] == b [0]) + (a [2] == b [1]) + (a [2] == b [2]) ;
-                        if (cij_delta !=0)
-                        {
-                            cij_exists = true ;
-                            #if ( GB_PHASE_1_OF_2 )
-                            break ;
-                            #else
-                            cij += cij_delta ;
-                            #endif
-                        }
-
-                    #endif
-
-                #else
-
-                    int c [3][3] ;
-
-                    c [0][0] = (a [0] == b [0]) ;
-                    c [1][0] = (a [1] == b [0]) ;
-                    c [2][0] = (a [2] == b [0]) ;
-
-                    c [0][1] = (a [0] == b [1]) ;
-                    c [1][1] = (a [1] == b [1]) ;
-                    c [2][1] = (a [2] == b [1]) ;
-
-                    c [0][2] = (a [0] == b [2]) ;
-                    c [1][2] = (a [1] == b [2]) ;
-                    c [2][2] = (a [2] == b [2]) ;
-
-                    if (c [0][0]) { GB_DOT (0, 0) ; }
-                    if (c [1][0]) { GB_DOT (1, 0) ; }
-                    if (c [2][0]) { GB_DOT (2, 0) ; }
-
-                    if (c [0][1]) { GB_DOT (0, 1) ; }
-                    if (c [1][1]) { GB_DOT (1, 1) ; }
-                    if (c [2][1]) { GB_DOT (2, 1) ; }
-
-                    if (c [0][2]) { GB_DOT (0, 2) ; }
-                    if (c [1][2]) { GB_DOT (1, 2) ; }
-                    if (c [2][2]) { GB_DOT (2, 2) ; GB_MUNCH_AB ; }
-
-                #endif
-
-                if (a [2] < b [2]) GB_MUNCH_A else GB_MUNCH_B ;
-            }
-        }
-
-        #if defined ( GB_PHASE_1_OF_2 )
-            // symbolic phase: if C(i,j) already exists, skip the cleanup
-            cij_is_terminal = GB_CIJ_EXISTS ;
-        #endif
-        if (!cij_is_terminal)
-#endif
-        {
-            // cleanup for remaining entries of A(:,i) and B(:,j)
-            while (pA < pA_end && pB < pB_end)
-            {
-                int64_t ia = Ai [pA] ;              // ok: A is sparse
-                int64_t ib = Bi [pB] ;              // ok: B is sparse
-                if (ia == ib)
-                {
-                    int64_t k = ia ;
-                    GB_DOT (0,0) ;
-                    pA++ ;
-                    pB++ ;
-                }
-                else
-                {
-                    pA += (ia < ib) ;
-                    pB += (ib < ia) ;
-                }
+                pA += (ia < ib) ;
+                pB += (ib < ia) ;
             }
         }
     }

@@ -18,7 +18,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
     if (semiring != NULL)
     {
         GrB_Semiring s = *semiring ;
-        if (s != NULL && !s->builtin)
+        if (s != NULL && !s->semiring_is_builtin)
         {
             if (s->magic == GB_MAGIC)
             { 

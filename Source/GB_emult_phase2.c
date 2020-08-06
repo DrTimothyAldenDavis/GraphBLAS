@@ -105,7 +105,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GrB_Info info = GB_create (&C, ctype, A->vlen, A->vdim, GB_Ap_null,
-        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), A->hyper_ratio, Cnvec, cnz,
+        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), A->hyper_switch, Cnvec, cnz,
         true, Context) ;
     if (info != GrB_SUCCESS)
     { 

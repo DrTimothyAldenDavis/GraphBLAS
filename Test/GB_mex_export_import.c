@@ -81,7 +81,7 @@ GrB_Info export_import
         case 0 :    // standard CSR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_HYPER,  GxB_NEVER_HYPER)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH,  GxB_NEVER_HYPER)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_ROW)) ;
             break ;
 
@@ -89,7 +89,7 @@ GrB_Info export_import
         case 1 :    // standard CSC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_HYPER,  GxB_NEVER_HYPER)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH,  GxB_NEVER_HYPER)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 
@@ -97,7 +97,7 @@ GrB_Info export_import
         case 2 :    // hypersparse CSR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_HYPER,  GxB_ALWAYS_HYPER)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH,  GxB_ALWAYS_HYPER)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_ROW)) ;
             break ;
 
@@ -105,7 +105,7 @@ GrB_Info export_import
         case 3 :    // hypersparse CSC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_HYPER,  GxB_ALWAYS_HYPER)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH,  GxB_ALWAYS_HYPER)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 

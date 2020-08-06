@@ -112,35 +112,57 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // see if the work can be done in place
     //--------------------------------------------------------------------------
 
-    // C can be computed in place if it is already dense, and if it is
-    // guaranteed to remain dense after the computation is done.  This case
-    // requires the accum operator to be present and it must match the monoid
-    // of the semiring.  C_replace must be false, or effectively false.
-    // Finally, C must not transposed on output.
+    // If C is hypersparse, sparse, or full:
+    //
+    //      C can be computed in place if it is already dense, and if it is
+    //      guaranteed to remain dense after the computation is done.  This
+    //      case requires the accum operator to be present and it must match
+    //      the monoid of the semiring.  C_replace must be false, or
+    //      effectively false.
+    //
+    // If C is bitmap:
+    //
+    //      C can be computed in place if its type is the same as the semiring
+    //      monoid.  The accum must not be present, or if present it must match
+    //      the semiring monoid.  C_replace can be true or false.
+    //
+    // In both cases, C must not be transposed, nor can it be aliased with any
+    // input matrix.
 
     bool can_do_in_place = false ;
-    if (C_in_place != NULL && accum != NULL)
+
+    if (C_in_place != NULL)
     { 
-        // check if C_in_place is competely dense:  all entries present and no
-        // pending work
-        bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C_in_place)
-            && GB_is_dense (C_in_place) ;
+        if (GB_IS_BITMAP (C_in_place))
+        {
+            ASSERT (!GB_PENDING (C_in_place)) ; // no pending tuples in bitmap
+            ASSERT (!GB_ZOMBIES (C_in_place)) ; // bitmap never has zombies
+            can_do_in_place = (C_in_place->type == semiring->add->op->ztype)
+                && ((accum == NULL) || (accum == semiring->add->op)) ;
+        }
+        else if (accum != NULL)
+        { 
+            // check if C_in_place is competely dense:  no zombies and
+            // pending tuples.
+            bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C_in_place)
+                && GB_is_dense (C_in_place) ;
 
-        // accum must be present, and must match the monoid of the semiring,
-        // and the ztype of the monoid must match the type of C
-        bool accum_is_monoid = (accum == semiring->add->op) 
-            && (C_in_place->type == accum->ztype) ;
+            // accum must be present, and must match the monoid of the
+            // semiring, and the ztype of the monoid must match the type of C
+            bool accum_is_monoid = (accum == semiring->add->op) 
+                && (C_in_place->type == accum->ztype) ;
 
-        // C += A*B with C_replace ignored (effectively false)
-        // C<M> += A*B with C_replace false
-        // C<!M> += A*B with C_replace false
-        can_do_in_place =
-            C_is_dense
-            && accum_is_monoid
-            && ((M_in == NULL) || (M_in != NULL && !C_replace)) ;
+            // C += A*B with C_replace ignored (effectively false)
+            // C<M> += A*B with C_replace false
+            // C<!M> += A*B with C_replace false
+            can_do_in_place = C_is_dense && accum_is_monoid
+                && ((M_in == NULL) || (M_in != NULL && !C_replace)) ;
+        }
 
-        // C must also not be transposed on output; see below.
-        // Nor can it be aliased with any input matrix.
+        // C must also not be transposed on output; see below.  Nor can it be
+        // aliased with any input matrix.  This test is done after handling the
+        // CSR/CSC formats since the input matrices may be transposed (thus
+        // breaking the alias with C).
     }
 
     //--------------------------------------------------------------------------
@@ -275,7 +297,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     { 
         // MT = M_in' also typecasting to boolean.  It is not freed here
         // unless an error occurs, but is returned to the caller.
-        GBBURBLE ("(M transpose) ") ;
+        GBURBLE ("(M transpose) ") ;
         GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in,
             NULL, NULL, NULL, false, Context)) ;
         M = MT ;
@@ -297,7 +319,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     if (can_do_in_place)
     {
         // C cannot be done in place if it is aliased with any input matrix.
-        // Also cannot compute C in place (yet) if it is to be transposed.
+        // Also cannot compute C in place if it is to be transposed.
         bool C_aliased =
             GB_aliased (C_in_place, M) ||
             GB_aliased (C_in_place, A) ||
@@ -306,6 +328,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
             can_do_in_place = false ;
         }
+
+        // TODO: A and B can be transposed below, so this check should be
+        // done after any such transposings.
     }
 
     //--------------------------------------------------------------------------
@@ -457,13 +482,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (do_rowscale)
         { 
             // C = D*B
-            GBBURBLE ("C%s=A'*B, rowscale ", M_str) ;
+            GBURBLE ("C%s=A'*B, rowscale ", M_str) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (do_colscale)
         { 
             // C = A'*D
-            GBBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
+            GBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_colscale (Chandle, AT, B, semiring, flipxy, Context));
@@ -471,7 +496,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (do_adotb)
         { 
             // C<M>=A'*B via dot product, or C_in_place<M>+=A'*B if in place
-            GBBURBLE ("C%s=A'*B, %sdot_product ", M_str,
+            GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                 (M != NULL && !Mask_comp) ? "masked_" : "") ;
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
@@ -480,7 +505,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A'*B via saxpy3: Gustavson + Hash method
-            GBBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
+            GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
@@ -498,13 +523,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D
-            GBBURBLE ("C%s=A*B', colscale ", M_str) ;
+            GBURBLE ("C%s=A*B', colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B'
-            GBBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
+            GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B,
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy, Context));
@@ -512,7 +537,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M>=A*B' via dot product, or C_in_place<M>+=A*B' if in place
-            GBBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
+            GBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
                 M_str, A_str, B_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
@@ -525,7 +550,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A*B' via saxpy3: Gustavson + Hash method
-            GBBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
+            GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B,
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
@@ -543,19 +568,19 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D, column scale
-            GBBURBLE ("C%s=A*B, colscale ", M_str) ;
+            GBURBLE ("C%s=A*B, colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B, row scale
-            GBBURBLE ("C%s=A*B, rowscale ", M_str) ;
+            GBURBLE ("C%s=A*B, rowscale ", M_str) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M>=A*B via dot product, or C_in_place<M>+=A*B if in place
-            GBBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
+            GBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
@@ -565,14 +590,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A*B via saxpy3: Gustavson + Hash method
-            GBBURBLE ("C%s=A*B, saxpy ", M_str) ;
+            GBURBLE ("C%s=A*B, saxpy ", M_str) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
                 A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
         }
     }
 
-    if (M_transposed) { GBBURBLE ("(M transposed) ") ; }
-    if ((M != NULL) && !(*mask_applied)) { GBBURBLE ("(mask later) ") ; }
+    if (M_transposed) { GBURBLE ("(M transposed) ") ; }
+    if ((M != NULL) && !(*mask_applied)) { GBURBLE ("(mask later) ") ; }
 
     //--------------------------------------------------------------------------
     // handle C_transpose and assign the CSR/CSC format

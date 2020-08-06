@@ -7,8 +7,8 @@
 %   codegen                      - generate all code for Generated/*
 %   codegen_axb                  - create all C=A*B functions for all semirings
 %   codegen_axb_method           - create a function to compute C=A*B over a semiring
-%   codegen_axb_template         - create a function for a semiring with a TxT->T multiplier
-%   codegen_axb_compare_template - create a function for a semiring with a TxT->bool multiplier
+%   codegen_axb_template         - create a function for a semiring with a TxT -> T multiplier
+%   codegen_axb_compare_template - create a function for a semiring with a TxT -> bool multiplier
 %   codegen_binop                - create functions for all binary operators
 %   codegen_binop_method         - create a function to compute C=binop(A,B)
 %   codegen_binop_template       - create binop functions

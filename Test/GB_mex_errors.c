@@ -968,7 +968,7 @@ void mexFunction
     GrB_Vector zz ;
     OK (GrB_Vector_dup (&zz, v)) ;
     OK (GB_Vector_check (zz, "zz ok vector", GB3, NULL)) ;
-    GB_to_hyper ((GrB_Matrix) zz, Context) ;
+    GB_convert_sparse_to_hyper ((GrB_Matrix) zz, Context) ;
     ERR (GB_Vector_check (zz, "zz mangled: vectors cannot be hyper", GB3, ff)) ;
     OK (GrB_Vector_free_(&zz)) ;
 
@@ -2042,9 +2042,8 @@ void mexFunction
     GB_Matrix_check (HugeRow, "huge row", GB3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", GB3, ff) ;
 
-    bool mask_applied = false ;
     OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, HugeRow, HugeRow,
-        GxB_PLUS_TIMES_FP64, false, &mask_applied, 1, 1, 1, Context)) ;
+        GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", GB3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;
@@ -4356,18 +4355,18 @@ void mexFunction
     // #define GET_DEEP_COPY ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    OK (GB_to_hyper (A, Context)) ;
+    OK (GB_convert_sparse_to_hyper (A, Context)) ;
     CHECK (!GB_IS_FULL (A)) ;
     OK (GB_Matrix_check (A, "A now hyper", GB3, NULL)) ;
     CHECK (A->h != NULL) ;
 
-    OK (GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_NEVER_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
     CHECK (A->h == NULL) ;
     bool A_is_hyper ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
     CHECK (!A_is_hyper) ;
 
-    OK (GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
     CHECK (A->h != NULL) ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
     CHECK (A_is_hyper) ;
@@ -4391,10 +4390,10 @@ void mexFunction
     OK (GB_Matrix_check (A, "A fixed", GB0, NULL)) ;
 
     double hratio = 0.5;
-    OK (GxB_Matrix_Option_set_(A, GxB_HYPER, hratio)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, hratio)) ;
 
     double hratio2 = 0 ;
-    OK (GxB_Matrix_Option_get_(A, GxB_HYPER, &hratio2)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_HYPER_SWITCH, &hratio2)) ;
     CHECK (hratio == hratio2) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
@@ -4420,12 +4419,13 @@ void mexFunction
 
 //    OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
-    OK (GxB_Global_Option_set_(GxB_HYPER, 77.33)) ;
-    OK (GxB_Global_Option_get_(GxB_HYPER, &hratio)) ;
-    CHECK (hratio == 77.33) ;
+    OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, 77.33f)) ;
+    OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
+    printf ("%g\n", hratio) ;
+    CHECK (hratio == 77.33f) ;
 
-    OK (GxB_Global_Option_set_(GxB_HYPER, GxB_HYPER_DEFAULT)) ;
-    OK (GxB_Global_Option_get_(GxB_HYPER, &hratio)) ;
+    OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT)) ;
+    OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     CHECK (hratio == GxB_HYPER_DEFAULT) ;
 
     expected = GrB_NULL_POINTER ;
@@ -4441,12 +4441,12 @@ void mexFunction
     printf ("error expected (A format null):%s\n", err) ;
 
     expected = GrB_NULL_POINTER ;
-    ERR (GxB_Matrix_Option_get_(A, GxB_HYPER, NULL)) ;
+    ERR (GxB_Matrix_Option_get_(A, GxB_HYPER_SWITCH, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
     expected = GrB_NULL_POINTER ;
-    ERR (GxB_Global_Option_get_(GxB_HYPER, NULL)) ;
+    ERR (GxB_Global_Option_get_(GxB_HYPER_SWITCH, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_get_(-1, NULL)) ;
@@ -4525,7 +4525,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (Eleven, "Eleven", pr, ff)) ;
     }
 
-    OK (GB_to_nonhyper (Eleven, Context)) ;
+    OK (GB_convert_hyper_to_sparse (Eleven, Context)) ;
     int64_t nothing = 42 ;
     Eleven->h = &nothing ;
     ERR (GB_Matrix_check (Eleven, "Eleven invalid", GB2, NULL)) ;
@@ -4739,8 +4739,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     CHECK (A != NULL) ;
-    Context->where = "GB_ix_alloc" ;
-    info = GB_ix_alloc (A, GxB_INDEX_MAX+1, true, true, Context) ;
+    Context->where = "GB_bix_alloc" ;
+    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, false, true, true, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     Context->where = "GB_ix_realloc" ;
@@ -4754,7 +4754,7 @@ void mexFunction
     CHECK (info == GrB_SUCCESS) ;
     OK (GB_Matrix_check (A, "A pattern 2", GB3, NULL)) ;
 
-    GB_ix_free (NULL) ;
+    GB_bix_free (NULL) ;
     GB_ph_free (NULL) ;
 
     GrB_Matrix_free_(&C) ;
@@ -4822,7 +4822,7 @@ void mexFunction
             OK (random_matrix (&Amask, false, false, n, n, nvals, 0, false)) ;
             OK (random_matrix (&F,     false, false, n, 1, uvals, 0, false)) ;
             // vectors cannot be hypersparse
-            GB_to_nonhyper (F, Context) ;
+            GB_convert_hyper_to_sparse (F, Context) ;
             // vectors cannot be CSC: this is a hack just for brutal testing
             OK (GxB_Matrix_Option_set_(F, GxB_FORMAT, GxB_BY_COL)) ;
             umask = (GrB_Vector) F ;

@@ -108,14 +108,24 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_BURBLE_DENSE (M, "(M %s) ") ;
 
     //--------------------------------------------------------------------------
-    // T = A*B, A'*B, A*B', or A'*B', also using the mask to cut time and memory
+    // T = A*B, A'*B, A*B', or A'*B', also using the mask if present
     //--------------------------------------------------------------------------
 
     // If C is dense (with no pending work), and the accum is present, then
     // C+=A*B can be done in place (C_replace is effectively false).  If C is
     // dense, M is present, and C_replace is false, then C<M>+=A*B or
     // C<!M>+=A*B can also be done in place.  In all of these cases, C remains
-    // dense.
+    // dense with all entries present.  C can have any sparsity structure;
+    // its pattern is ignored.
+
+    // If C is bitmap, then it can always be be done in place (assuming the
+    // type of C is OK).  The accum operator need not be present.  GB_AxB_meta
+    // can easily insert non-entries into C and check for non-entries, via the
+    // bitmap.
+
+    // To compute C in-place, its type must match the accum->ztype, or the
+    // semiring->add->ztype if accum is not present.  To compute in-place,
+    // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (0, ttt) ;
@@ -133,7 +143,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     if (done_in_place)
     { 
-        // C<...>+=A*B has been computed in place; no more work to do
+        // C has been computed in place; no more work to do
         GB_Matrix_free (&MT) ;
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
         return (info) ;
@@ -171,7 +181,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
             // Typecasting a zombie is safe, since the values of all zombies
             // are ignored.  But valgrind complains about it, so they are
             // killed now.  Also see the discussion in GB_transplant.
-            GBBURBLE ("(wait, so zombies are not typecasted) ") ;
+            GBURBLE ("(wait, so zombies are not typecasted) ") ;
             GB_OK (GB_Matrix_wait (T, Context)) ;
         }
         info = GB_transplant_conform (C, C->type, &T, Context) ;
@@ -209,6 +219,100 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (2, ttt) ;
+
+#if 0
+    #define OK(method) ASSERT (method == GrB_SUCCESS)
+    #ifdef GB_DEBUG
+// HACK: move this to Test/
+    if (C->vlen <= 100 && C->vdim <= 100 && !GB_PENDING (C)
+        && info == GrB_SUCCESS)
+    {
+        GrB_Info info1, info2 ;
+//      printf ("testing conversion to bitmap and back:\n") ;
+        ASSERT_MATRIX_OK (C, "C before conversion", GB0) ;
+        bool is_hyper = (C->h != NULL) ;
+        bool is_full = GB_IS_FULL (C) ;
+        bool is_bitmap = GB_IS_BITMAP (C) ;
+        bool is_sparse = !(is_full || is_bitmap || is_hyper) ;
+        // ASSERT (!is_bitmap) ;
+
+//      printf ("is: %d %d %d %d\n",
+//          is_hyper, is_full, is_bitmap, is_sparse) ;
+        ASSERT (is_hyper + is_full + is_bitmap + is_sparse == 1) ;
+
+        if (is_hyper)
+        {
+//          printf ("convert hyper to bitmap:\n") ;
+            OK (GB_convert_sparse_to_bitmap (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C hyper to bitmap", GB0) ;
+            OK (GB_convert_bitmap_to_sparse (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C bitmap to sparse", GB0) ;
+            OK (GB_convert_sparse_to_hyper (C, Context)) ;
+        }
+        else if (is_sparse)
+        {
+//          printf ("convert sparse to bitmap:\n") ;
+            OK (GB_convert_sparse_to_bitmap (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C sparse to bitmap", GB0) ;
+            OK (GB_convert_bitmap_to_sparse (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C bitmap back to sparse", GB0) ;
+            ASSERT (!GB_IS_BITMAP (C)) ;
+        }
+        else if (is_bitmap)
+        {
+//          printf ("already bitmap\n") ;
+        }
+        else if (is_full)
+        {
+//          printf ("convert full to bitmap:\n") ;
+            OK (GB_convert_full_to_bitmap (C, Context)) ;
+            ASSERT_MATRIX_OK (C, "C full to bitmap", GB0) ;
+            GB_convert_any_to_full (C) ;
+        }
+
+        // now test C->sparsity (all conversions)
+        int save_sparsity ;
+        if (A->h != NULL)
+        { 
+            save_sparsity = GxB_HYPERSPARSE ;
+        }
+        else if (GB_IS_FULL (C))
+        { 
+            save_sparsity = GxB_FULL ;
+        }
+        else if (GB_IS_BITMAP (C))
+        { 
+            save_sparsity = GxB_BITMAP ;
+            ASSERT (0) ;
+        }
+        else
+        { 
+            save_sparsity = GxB_SPARSE ;
+        }
+
+        float save_switch = C->hyper_switch ;
+        for (int k1 = 0 ; k1 <= 4 ; k1++)
+        {
+            int s1 = (k1 == 0) ? GxB_DEFAULT : (10 + k1) ;
+//          printf ("s1 =============== : %d\n", s1) ;
+            for (int k2 = 0 ; k2 <= 4 ; k2++)
+            {
+                int s2 = (k2 == 0) ? GxB_DEFAULT : (10 + k2) ;
+//              printf ("s2: %d\n", s2) ;
+                C->sparsity = s1 ; OK (GB_conform (C, Context)) ;
+                C->sparsity = s2 ; OK (GB_conform (C, Context)) ;
+            }
+        }
+
+        // convert back to original form
+        C->sparsity = save_sparsity ;
+        C->hyper_switch = save_switch ;
+        OK (GB_conform (C, Context)) ;
+        ASSERT_MATRIX_OK (C, "C after conversion back to original", GB0) ;
+        ASSERT (!GB_IS_BITMAP (C)) ;
+    }
+    #endif
+    #endif
 
     return (info) ;
 }

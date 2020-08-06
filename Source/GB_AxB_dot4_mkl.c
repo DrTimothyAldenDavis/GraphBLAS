@@ -163,7 +163,7 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
         mkl_semiring, A_mkl, b_mkl, mkl_desc,
         MKL_GRAPH_REQUEST_COMPUTE_ALL, MKL_GRAPH_METHOD_AUTO)) ;
     t = omp_get_wtime ( ) - t ;
-    GBBURBLE ("(MKL mxv time: %g) ", t) ;
+    GBURBLE ("(MKL mxv time: %g) ", t) ;
 
     //--------------------------------------------------------------------------
     // c += z

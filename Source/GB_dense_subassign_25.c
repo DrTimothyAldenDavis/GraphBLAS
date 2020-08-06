@@ -109,7 +109,7 @@ GrB_Info GB_dense_subassign_25
     // initialize them.
 
     bool C_is_csc = C->is_csc ;
-    GB_phix_free (C) ;
+    GB_phbix_free (C) ;
     GB_OK (GB_dup2 (&C, M, false, C->type, Context)) ;
     C->is_csc = C_is_csc ;
 

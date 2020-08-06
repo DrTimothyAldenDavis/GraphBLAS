@@ -12,9 +12,9 @@
 
 {
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     GxB_binary_function fmult = mult->function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->function ;
@@ -55,9 +55,9 @@
                  GB_cast_factory (mult->ytype->code, B->type->code) ;
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // C = A'*B via dot products, function pointers, and typecasting
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     #define GB_ATYPE GB_void
     #define GB_BTYPE GB_void
@@ -70,9 +70,9 @@
     if (op_is_positional)
     {
 
-        //------------------------------------------------------------------
-        // generic semirings with positional mulitiply operators
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // generic semirings with positional multiply operators
+        //----------------------------------------------------------------------
 
         if (flipxy)
         {
@@ -180,7 +180,7 @@
                 case GB_FIRSTI_opcode   :   // z = first_i(A'(i,k),y) == i
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A'(i,k),y) == i+1
                     #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = (int32_t) (i + offset)
+                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (i + offset)
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
@@ -194,7 +194,7 @@
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
                     #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = (int32_t) (k + offset)
+                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (k + offset)
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
@@ -206,7 +206,7 @@
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
                     #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = (int32_t) (j + offset)
+                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (j + offset)
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
@@ -223,9 +223,9 @@
     else
     {
 
-        //------------------------------------------------------------------
-        // generic semirings with standard mulitiply operators
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // generic semirings with standard multiply operators
+        //----------------------------------------------------------------------
 
         // aki = A(k,i), located in Ax [pA]
         #undef  GB_GETA

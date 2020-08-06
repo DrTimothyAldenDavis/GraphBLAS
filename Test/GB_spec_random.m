@@ -1,7 +1,7 @@
-function A = GB_spec_random (m, n, d, scale, type, is_csc,is_hyper,hyper_ratio)
+function A = GB_spec_random (m, n, d, scale, type, is_csc,is_hyper,hyper_switch)
 %GB_SPEC_RANDOM generate random matrix
 %
-% A = GB_spec_random (m, n, d, scale, type, is_csc, is_hyper, hyper_ratio)
+% A = GB_spec_random (m, n, d, scale, type, is_csc, is_hyper, hyper_switch)
 %
 % m,n,d: parameters to sprandn (m,n,d)
 % m,n: defaults to 4
@@ -43,7 +43,7 @@ if (nargin >= 7 && ~isempty (is_hyper))
 end
 
 if (nargin >= 8)
-    A.hyper_ratio = hyper_ratio ;
+    A.hyper_switch = hyper_switch ;
 end
 
 if (isinf (d))

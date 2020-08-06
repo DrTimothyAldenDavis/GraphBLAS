@@ -67,8 +67,7 @@ GrB_Info axb (GB_Context Context, bool cprint)
     }
 
     // C = A*B
-    info = GB_AxB_meta (&C,
-        NULL,       // not in place
+    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned

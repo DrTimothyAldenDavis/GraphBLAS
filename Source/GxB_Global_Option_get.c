@@ -32,17 +32,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
     {
 
         //----------------------------------------------------------------------
-        // hyper_ratio
+        // hyper_switch
         //----------------------------------------------------------------------
 
-        case GxB_HYPER :
+        case GxB_HYPER_SWITCH :
 
             { 
                 va_start (ap, field) ;
-                double *hyper_ratio = va_arg (ap, double *) ;
+                double *hyper_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
-                GB_RETURN_IF_NULL (hyper_ratio) ;
-                (*hyper_ratio) = GB_Global_hyper_ratio_get ( ) ;
+                GB_RETURN_IF_NULL (hyper_switch) ;
+                (*hyper_switch) = (double) GB_Global_hyper_switch_get ( ) ;
             }
             break ;
 

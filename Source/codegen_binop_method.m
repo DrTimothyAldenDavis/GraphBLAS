@@ -123,7 +123,7 @@ end
 % determine type of z, x, and y from xtype and binop
 switch (binop)
     case { 'eq', 'ne', 'gt', 'lt', 'ge', 'le' }
-        % GrB_LT_* and related operators are TxT->bool
+        % GrB_LT_* and related operators are TxT -> bool
         ztype = 'bool' ;
         ytype = xtype ;
     case { 'cmplx' }

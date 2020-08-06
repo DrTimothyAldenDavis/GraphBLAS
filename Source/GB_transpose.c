@@ -176,6 +176,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO: bitmap
 
     // wait if A has pending tuples or zombies, but leave it jumbled
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
@@ -187,7 +188,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     if (in_place && A_is_dense && !GB_IS_FULL (A))
     { 
         // convert C from sparse to full, discarding prior pattern
-        GBBURBLE ("(C=A' to full) ") ;
+        GBURBLE ("(C=A' to full) ") ;
         ASSERT (A == C) ;
         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
         GB_ENSURE_FULL (C) ;
@@ -215,7 +216,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
 
-    double A_hyper_ratio = A->hyper_ratio ;
+    float A_hyper_switch = A->hyper_switch ;
 
     int64_t anzmax = A->nzmax ;
 
@@ -349,7 +350,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // dimensions.  C is hypersparse for now but may convert when
         // returned.
         info = GB_create (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
-            C_is_csc, GB_FORCE_HYPER, A_hyper_ratio, 1, 1, true, Context) ;
+            C_is_csc, GB_FORCE_HYPER, A_hyper_switch, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -385,7 +386,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, ctype, 1, avlen, GB_Ap_null, C_is_csc,
-            A_is_dense ? GB_FULL : GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
+            A_is_dense ? GB_FULL : GB_FORCE_HYPER, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -529,7 +530,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, ctype, avdim, 1, GB_Ap_null, C_is_csc,
-            A_is_dense ? GB_FULL : GB_FORCE_NONHYPER, A_hyper_ratio, 0,
+            A_is_dense ? GB_FULL : GB_FORCE_NONHYPER, A_hyper_switch, 0,
             Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -777,7 +778,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate T
         GrB_Matrix T = NULL ;
         info = GB_create (&T, ctype, avdim, avlen, GB_Ap_null,
-            C_is_csc, GB_FULL, A_hyper_ratio, 1, anzmax, true, Context) ;
+            C_is_csc, GB_FULL, A_hyper_switch, 1, anzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -817,7 +818,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate the output matrix C as a full matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-            GB_FULL, A_hyper_ratio, 0, Context) ;
+            GB_FULL, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -919,7 +920,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
             // if *Chandle == NULL, allocate a new header; otherwise reuse
             info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                GB_FORCE_HYPER, A_hyper_ratio, 0, Context) ;
+                GB_FORCE_HYPER, A_hyper_switch, 0, Context) ;
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
@@ -1126,7 +1127,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (in_place_A)
             { 
                 // free all content of A, but not the header, if in place of A
-                GB_phix_free (A) ;   // transpose in-place
+                GB_phbix_free (A) ;   // transpose in-place
             }
             else if (in_place_C)
             { 
@@ -1200,12 +1201,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     // conform the result to the desired hypersparsity of A
     //--------------------------------------------------------------------------
 
-    // transplant the hyper_ratio from A to C
-    C->hyper_ratio = A_hyper_ratio ;
+    // transplant the hyper_switch from A to C
+    C->hyper_switch = A_hyper_switch ;
 
     ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
 
-    info = GB_to_hyper_conform (C, Context) ;
+    info = GB_conform (C, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

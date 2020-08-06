@@ -99,7 +99,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     if (GB_is_dense (B))
     { 
         // both C and B are dense; no need to construct tasks
-        GBBURBLE ("(Z dense) ") ;
+        GBURBLE ("(Z dense) ") ;
     }
     else
     {

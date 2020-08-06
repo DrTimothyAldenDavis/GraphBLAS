@@ -76,7 +76,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         // clear prior content and recreate it; use exising header for C.
         // do not malloc C->x if the scalar is zero; calloc it later.
         bool scalar_is_nonzero = GB_is_nonzero (cwork, csize) ;
-        GB_phix_free (C) ;
+        GB_phbix_free (C) ;
         info = GB_create (&C, C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
             GB_FULL, GB_HYPER_DEFAULT, -1, cnzmax, scalar_is_nonzero, Context) ;
         if (info != GrB_SUCCESS)
@@ -87,7 +87,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 
         if (!scalar_is_nonzero)
         { 
-            GBBURBLE ("calloc ") ;
+            GBURBLE ("calloc ") ;
             C->x = GB_CALLOC (cnzmax * csize, GB_void) ;
         }
 
@@ -97,7 +97,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         if (C->x == NULL)
         { 
             // out of memory
-            GB_phix_free (C) ;
+            GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

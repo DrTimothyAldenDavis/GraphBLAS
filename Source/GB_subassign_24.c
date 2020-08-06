@@ -92,7 +92,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // make C full, if not full already
-        GBBURBLE ("(dense copy) ") ;
+        GBURBLE ("(dense copy) ") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
         // ensure C is full
@@ -107,9 +107,9 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // clear prior content of C, but keep the CSR/CSC format and its type
-        GBBURBLE ("(deep copy) ") ;
+        GBURBLE ("(deep copy) ") ;
         bool C_is_csc = C->is_csc ;
-        GB_phix_free (C) ;
+        GB_phbix_free (C) ;
         // copy the pattern, not the values
         GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
@@ -121,7 +121,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 
     if (C->type != A->type)
     { 
-        GBBURBLE ("(typecast) ") ;
+        GBURBLE ("(typecast) ") ;
     }
 
     int64_t anz = GB_NNZ (A) ;

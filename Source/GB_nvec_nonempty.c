@@ -30,26 +30,26 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
-    // trivial case
+    // trivial cases
     //--------------------------------------------------------------------------
+
+    if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
+    { 
+        // A is full or bitmap; nvec_nonempty depends only on the dimensions
+        return ((A->vlen == 0) ? 0 : A->vdim) ;
+    }
 
     if (GB_NNZ (A) == 0)
     { 
+        // A is sparse or hypersparse, with no entries
         return (0) ;
-    }
-
-    int64_t anvec = A->nvec ;
-
-    if (GB_IS_FULL (A))
-    { 
-        int64_t avlen = A->vlen ;
-        return (avlen == 0 ? 0 : anvec) ;
     }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    int64_t anvec = A->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
 

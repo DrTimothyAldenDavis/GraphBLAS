@@ -33,6 +33,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // used here.
     ASSERT (A != NULL && A->p != NULL) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (!A->i_shallow && !A->x_shallow) ;
 
     // This function tolerates pending tuples and zombies

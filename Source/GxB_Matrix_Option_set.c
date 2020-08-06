@@ -41,17 +41,44 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     switch (field)
     {
 
-        case GxB_HYPER : 
+        case GxB_HYPER_SWITCH : 
 
             {
                 va_start (ap, field) ;
-                double hyper_ratio = va_arg (ap, double) ;
+                double hyper_switch = va_arg (ap, double) ;
                 va_end (ap) ;
-                A->hyper_ratio = hyper_ratio ;
-                // conform the matrix to its new desired hypersparsity
-                info = GB_to_hyper_conform (A, Context) ;
+                A->hyper_switch = (float) hyper_switch ;
+                // conform the matrix to its new desired sparsity structure
+                info = GB_conform (A, Context) ;
             }
             break ;
+
+        case GxB_SPARSITY :
+
+            {
+                va_start (ap, field) ;
+                int sparsity = va_arg (ap, int) ;
+                va_end (ap) ;
+                switch (sparsity)
+                {
+                    case GxB_DEFAULT :
+                    case GxB_HYPERSPARSE :
+                    case GxB_SPARSE :
+                    case GxB_BITMAP :
+                    case GxB_FULL :
+                        A->sparsity = sparsity ;
+                        info = GB_conform (A, Context) ;
+                        break ;
+                    default :
+                        GB_ERROR (GrB_INVALID_VALUE, "unsupported sparsity"
+                            " [%d], must be one of: GxB_DEFAULT [%d]\n"
+                            "GxB_HYPERSPARSE [%d], GxB_SPARSE [%d], "
+                            "GxB_BITMAP [%d], or GxB_FULL [%d]\n",
+                            sparsity, (int) GxB_DEFAULT,
+                            (int) GxB_HYPERSPARSE, (int) GxB_SPARSE,
+                            (int) GxB_BITMAP, (int) GxB_FULL) ;
+                }
+            }
 
         case GxB_FORMAT : 
 
@@ -87,8 +114,9 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
             GB_ERROR (GrB_INVALID_VALUE,
                 "invalid option field [%d], must be one of:\n"
-                "GxB_HYPER [%d], GxB_FORMAT [%d]",
-                (int) field, (int) GxB_HYPER, (int) GxB_FORMAT) ;
+                "GxB_HYPER_SWITCH [%d], GxB_SPARSITY [%d], or GxB_FORMAT [%d]",
+                (int) field, (int) GxB_HYPER_SWITCH, (int) GxB_SPARSITY,
+                (int) GxB_FORMAT) ;
 
     }
 

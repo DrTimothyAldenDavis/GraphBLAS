@@ -231,7 +231,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_ix_alloc (A, anz, sparsity != GB_FULL, true, Context) ;
+        info = GB_bix_alloc (A, anz, false, sparsity != GB_FULL, true,
+            Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -336,8 +337,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     bool A_is_hyper = false ;
-    bool has_hyper_ratio = false ;
-    double hyper_ratio = GB_HYPER_DEFAULT ;
+    bool has_hyper_switch = false ;
+    double hyper_switch = GB_HYPER_DEFAULT ;
 
     if (mxIsStruct (A_matlab))
     {
@@ -349,7 +350,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 0, fieldnumber)) ;
         }
 
-        // look for A.is_hyper (ignored if hyper_ratio present
+        // look for A.is_hyper (ignored if hyper_switch present
         // or if A is full)
         fieldnumber = mxGetFieldNumber (A_matlab, "is_hyper") ;
         if (fieldnumber >= 0)
@@ -358,12 +359,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 0, fieldnumber)) ;
         }
 
-        // look for A.hyper_ratio (ignored if A is full)
-        fieldnumber = mxGetFieldNumber (A_matlab, "hyper_ratio") ;
+        // look for A.hyper_switch (ignored if A is full)
+        fieldnumber = mxGetFieldNumber (A_matlab, "hyper_switch") ;
         if (fieldnumber >= 0)
         {
-            has_hyper_ratio = true ;
-            hyper_ratio = mxGetScalar (mxGetFieldByNumber (A_matlab,
+            has_hyper_switch = true ;
+            hyper_switch = mxGetScalar (mxGetFieldByNumber (A_matlab,
                 0, fieldnumber)) ;
         }
     }
@@ -394,7 +395,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // so convert it back; hypersparsity is defined below
         if (sparsity != GB_FULL)
         {
-            GB_to_nonhyper (A, Context) ;
+            GB_convert_hyper_to_sparse (A, Context) ;
         }
         ASSERT (!A->is_csc) ;
     }
@@ -412,18 +413,18 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // leave as-is
         ;
     }
-    else if (has_hyper_ratio)
+    else if (has_hyper_switch)
     {
-        // this sets the hyper_ratio and then conforms the matrix to its
+        // this sets the hyper_switch and then conforms the matrix to its
         // desired hypersparsity.  It may stay non-hypersparse.
-        GxB_Matrix_Option_set_(A, GxB_HYPER, hyper_ratio) ;
+        GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, hyper_switch) ;
     }
     else if (A_is_hyper)
     {
         // this forces the matrix to be always hypersparse, but
         // if A is dense, it is converted to full
         ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_HYPER, GxB_ALWAYS_HYPER) ;
+        GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
         ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
         if (A->vdim > 1 && !GB_IS_FULL (A))
         {

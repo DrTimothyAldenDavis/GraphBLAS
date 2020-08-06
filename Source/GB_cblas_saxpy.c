@@ -37,7 +37,7 @@ void GB_cblas_saxpy         // Y += alpha*X
     ASSERT (X != NULL) ;
     ASSERT (nthreads >= 1) ;
 
-    GBBURBLE ("(cblas_saxpy) ") ;
+    GBURBLE ("(cblas_saxpy) ") ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

@@ -68,10 +68,14 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
-    // ensure C is not hypersparse
-    GxB_Matrix_Option_set_(C, GxB_HYPER, GxB_NEVER_HYPER) ;
-
-    ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper", GB0) ;
+    // ensure C is sparse or full, not hypersparse or bitmap
+    int sparsity ;
+    GxB_Matrix_Option_get_(C, GxB_SPARSITY, &sparsity) ;
+    if (sparsity != GxB_FULL)
+    { 
+        GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_SPARSE) ;
+        ASSERT_MATRIX_OK (C, "TO MATLAB, sparse", GB0) ;
+    }
     ASSERT (C->h == NULL) ;
 
     // make sure it's CSC

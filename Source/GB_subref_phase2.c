@@ -69,7 +69,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GrB_Info info = GB_create (&C, ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (C_is_hyper), A->hyper_ratio, Cnvec, cnz, true,
+        GB_SAME_HYPER_AS (C_is_hyper), A->hyper_switch, Cnvec, cnz, true,
         Context) ;
     if (info != GrB_SUCCESS)
     { 

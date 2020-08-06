@@ -261,14 +261,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 { 
                     // delete all entries in vector j
-                    GBBURBLE ("C(:,j)=zombie ") ;
+                    GBURBLE ("C(:,j)=zombie ") ;
                     int64_t j = (col_assign) ? Cols [0] : Rows [0] ;
                     GB_assign_zombie1 (C, j, Context) ;
                 }
                 else
                 { 
                     // delete all entries in each vector with index i
-                    GBBURBLE ("C(i,:)=zombie ") ;
+                    GBURBLE ("C(i,:)=zombie ") ;
                     int64_t i = (row_assign) ? Rows [0] : Cols [0] ;
                     GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                     GB_assign_zombie2 (C, i, Context) ;
@@ -434,7 +434,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
-        GBBURBLE ("(A transpose) ") ;
+        GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A = AT ;
@@ -540,7 +540,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: typecast, no op, not in place
-            GBBURBLE ("(M transpose) ") ;
+            GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
             M = MT ;
@@ -570,7 +570,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (C_aliased)
     {
         // C is aliased with M or A
-        GBBURBLE ("(C aliased) ") ;
+        GBURBLE ("(C aliased) ") ;
         if (whole_C_matrix && C_replace && accum == NULL)
         { 
             // C(:,:)<any mask, replace> = A or x, with C aliased to M or A.  C
@@ -579,9 +579,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // duplicating it, create an empty matrix Z2.  This also prevents
             // the C_replace_phase from being needed.
             GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_ratio, 1,
+                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_switch, 1,
                 Context)) ;
-            GBBURBLE ("(C alias cleared; C_replace early) ") ;
+            GBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
             C_replace_phase = false ;
         }
@@ -611,7 +611,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // This also prevents the C_replace_phase from being needed.
             GB_OK (GB_clear (C, Context)) ;
             ASSERT_MATRIX_OK (C, "C cleared by GB_assign", GB0) ;
-            GBBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
+            GBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
             C_replace = false ;
             C_replace_phase = false ;
         }
@@ -690,7 +690,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: typecast, no op, not in place
-            GBBURBLE ("(M transpose) ") ;
+            GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
             M = MT ;
@@ -748,7 +748,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
 
-            GBBURBLE ("assign zombies outside C(I,j) ") ;
+            GBURBLE ("assign zombies outside C(I,j) ") ;
             GB_MATRIX_WAIT (M) ;
             GB_assign_zombie3 (Z, M, Mask_comp, Mask_struct,
                 j, I, nI, Ikind, Icolon, Context) ;
@@ -768,7 +768,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 
-            GBBURBLE ("assign zombies outside C(i,J) ") ;
+            GBURBLE ("assign zombies outside C(i,J) ") ;
             GB_MATRIX_WAIT_IF_JUMBLED (Z) ;
             GB_MATRIX_WAIT (M) ;
             GB_assign_zombie4 (Z, M, Mask_comp, Mask_struct,
@@ -784,7 +784,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M has the same size as Z
             ASSERT (M->vlen == Z->vlen && M->vdim == Z->vdim) ;
 
-            GBBURBLE ("assign zombies outside C(I,J) ") ;
+            GBURBLE ("assign zombies outside C(I,J) ") ;
             GB_MATRIX_WAIT (M) ;
             GB_OK (GB_assign_zombie5 (Z, M, Mask_comp, Mask_struct,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
