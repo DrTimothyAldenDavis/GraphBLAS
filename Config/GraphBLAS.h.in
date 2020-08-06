@@ -3987,6 +3987,8 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 // ADDED in V3.0: GxB_CHUNK, GxB_LIBRARY_*, GxB_API_* options:
 // ADDED in V3.3: GxB_MKL and GxB_GPU* (DRAFT: in progress, do not use)
 
+#define GxB_HYPER 0     // (deprecated)
+
 typedef enum            // for global options or matrix options
 {
     // GxB_Matrix_Option_get/set and GxB_Global_Option_get/set:
