@@ -140,7 +140,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
 
     int ntasks = naslice * nbslice ;
 
-    printf ("dot5\n") ;
+    GBURBLE ("(dot5) ") ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
