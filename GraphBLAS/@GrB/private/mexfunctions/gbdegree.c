@@ -19,6 +19,8 @@
 //                          col degree if X is held by row,
 //                          row degree if X is held by col.
 
+// TODO: X bitmap or full
+
 #include "gb_matlab.h"
 
 #define USAGE "usage: degree = gbdegree (X, dim)"
