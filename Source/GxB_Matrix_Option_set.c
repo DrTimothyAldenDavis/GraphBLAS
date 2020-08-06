@@ -59,6 +59,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
+                printf ("sparsity: %d ", sparsity) ;
                 switch (sparsity)
                 {
                     case GxB_DEFAULT :
@@ -78,7 +79,9 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                             (int) GxB_HYPERSPARSE, (int) GxB_SPARSE,
                             (int) GxB_BITMAP, (int) GxB_FULL) ;
                 }
+                printf (" ok\n") ;
             }
+            break ;
 
         case GxB_FORMAT : 
 
@@ -120,6 +123,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
     }
 
+    printf ("here \n") ;
     GB_BURBLE_END ;
     return (info) ;
 }
