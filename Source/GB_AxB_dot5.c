@@ -363,8 +363,10 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                     GB_CIJ_DECLARE (cij) ;
 
                     // A(:,i) is sparse and B(:,j) is bitmap
+                    #if !GB_IS_ANY_MONOID
                     bool cij_exists = false ;
                     cij = GB_IDENTITY ;
+                    #endif
                     for (int64_t p = pA ; p < pA_end ; p++)
                     { 
                         // next index of A(:,k)
@@ -384,12 +386,20 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                         // cij += A(k,i) * B(k,j)
                         GB_GETA (aki, Ax, pA) ;             // aki = A(k,i)
                         GB_GETB (bkj, Bx, pB_start+k) ;     // bkj = B(k,j)
-                        cij_exists = true ;
                         GB_MULTADD (cij, aki, bkj, i, k, j) ;
+                        #if GB_IS_ANY_MONOID
                         // for the ANY monoid: always terminal:
+                        cnvals++ ;              // one more entry in the bitmap
+                        Cb [pC] = 1 ;           // assumes Cb is calloc'ed
+                        GB_PUTC (cij, pC) ;     // Cx [pC] = cij
                         break ;
+                        #else
+                        cij_exists = true ;
+                        // test terminal condition here
+                        #endif
                     }
 
+                    #if !GB_IS_ANY_MONOID
                     if (cij_exists)
                     { 
                         cnvals++ ;              // one more entry in the bitmap
@@ -397,6 +407,8 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                         GB_PUTC (cij, pC) ;     // Cx [pC] = cij
                     }
                     ASSERT (Cb [pC] == cij_exists) ;
+                    #endif
+
                 }
                 else
                 { 
