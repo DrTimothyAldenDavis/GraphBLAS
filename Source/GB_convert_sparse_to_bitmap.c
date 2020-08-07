@@ -183,7 +183,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             // launch the switch factory
             //------------------------------------------------------------------
 
-double t = omp_get_wtime ( ) ;
+// double t = omp_get_wtime ( ) ;
 
             GB_Type_code acode = A->type->code ;
             if (acode < GB_UDT_code)
@@ -207,8 +207,8 @@ double t = omp_get_wtime ( ) ;
                 }
             }
 
-t = omp_get_wtime ( ) - t ;
-printf ("{ s2b: %12.4f } ", t) ;
+// t = omp_get_wtime ( ) - t ;
+// printf ("{ s2b: %12.4f } ", t) ;
 
         #endif
 
