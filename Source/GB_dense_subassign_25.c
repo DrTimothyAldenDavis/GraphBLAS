@@ -65,10 +65,10 @@ GrB_Info GB_dense_subassign_25
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    printf ("method 25: %d %d %d\n",
-    GB_IS_BITMAP (C),
-    GB_IS_BITMAP (M),
-    GB_IS_BITMAP (A)) ;
+//  printf ("method 25: %d %d %d\n",
+//  GB_IS_BITMAP (C),
+//  GB_IS_BITMAP (M),
+//  GB_IS_BITMAP (A)) ;
 
     if (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (A))
     { 

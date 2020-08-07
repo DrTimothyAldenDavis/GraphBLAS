@@ -97,10 +97,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     }
     else
     {
-        // A->x must be modified to fit the bitmap structure.  calloc is used
-        // so that all of A->x can be memcpy'd in bulk, with no complaints from
-        // valgrind about uninitialized space, for GrB_Matrix_dup.
-        Ax_new = GB_CALLOC (anzmax * asize, GB_void) ;
+        // A->x must be modified to fit the bitmap structure
+        Ax_new = GB_MALLOC (anzmax * asize, GB_void) ;
         Ax_shallow = false ;
         if (Ax_new == NULL)
         { 
@@ -185,6 +183,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             // launch the switch factory
             //------------------------------------------------------------------
 
+double t = omp_get_wtime ( ) ;
+
             GB_Type_code acode = A->type->code ;
             if (acode < GB_UDT_code)
             { 
@@ -206,6 +206,9 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
                     default: ;
                 }
             }
+
+t = omp_get_wtime ( ) - t ;
+printf ("{ s2b: %12.4f } ", t) ;
 
         #endif
 
