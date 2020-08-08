@@ -70,7 +70,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     anzmax = GB_IMAX (anzmax, 1) ;
 
     // if in-place, all of Ab will be modified below, so malloc is fine
-    Ab = (in_place) ? GB_MALLOC (anzmax, int8_t) : GB_CALLOC (anzmax, int8_t) ;
+    Ab = (in_place) ? GB_MALLOC (anzmax, int8_t) : GB_CALLOC (anzmax, int8_t) ; // BIG
     if (Ab == NULL)
     { 
         // out of memory

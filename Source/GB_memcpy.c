@@ -37,7 +37,7 @@ void GB_memcpy                  // parallel memcpy
     {
 
         //----------------------------------------------------------------------
-        // memcpy using a multiple threads
+        // memcpy using multiple threads
         //----------------------------------------------------------------------
 
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;

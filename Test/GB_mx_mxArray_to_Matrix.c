@@ -209,9 +209,9 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     GrB_Info info ;
 
-    // MATLAB matrices are sparse or full CSC, not hypersparse
+    // MATLAB matrices are sparse or full CSC, not hypersparse or bitmap
     bool is_csc = true ;
-    int sparsity = (A_is_sparse) ? GB_SPARSE : GB_FULL ;
+    int sparsity = (A_is_sparse) ? GxB_SPARSE : GxB_FULL ;
 
     //--------------------------------------------------------------------------
     // get the pattern of A
@@ -219,9 +219,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (deep_copy)
     {
+        // TODO use GB_new_bix here instead
 
         // create the GraphBLAS matrix
-        info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+        info = GB_new (&A, // sparse or full, new header
+            atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_calloc, is_csc, sparsity, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -231,7 +233,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_bix_alloc (A, anz, false, sparsity != GB_FULL, true,
+        info = GB_bix_alloc (A, anz, false, sparsity != GxB_FULL, true,
             Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -240,7 +242,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
-        if (sparsity != GB_FULL)
+        if (sparsity != GxB_FULL)
         {
             memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
             memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
@@ -255,7 +257,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // MATLAB matrix and must not be modified.
 
         // [ create the GraphBLAS matrix, do not allocate A->p
-        info = GB_new (&A, atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+        info = GB_new (&A, // sparse or full, new header
+            atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_null, is_csc, sparsity, GB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -264,7 +267,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
-        if (sparsity != GB_FULL)
+        if (sparsity != GxB_FULL)
         {
             A->p = Mp ;
             A->i = Mi ;
@@ -287,7 +290,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // copy the numerical values from MATLAB to the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    if (sparsity == GB_FULL)
+    if (sparsity == GxB_FULL)
     {
         A->x_shallow = (!deep_copy && (atype_out_code == atype_in_code)) ;
     }
@@ -373,7 +376,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // compute the # of non-empty vectors in A only when needed
     //--------------------------------------------------------------------------
 
-    if (sparsity != GB_FULL)
+    if (sparsity != GxB_FULL)
     {
         A->nvec_nonempty = -1 ; // compute when needed; see GxB_Matrix_import
     }
@@ -393,7 +396,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // this might convert A to hypersparse
         GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_ROW) ;
         // so convert it back; hypersparsity is defined below
-        if (sparsity != GB_FULL)
+        if (sparsity != GxB_FULL)
         {
             GB_convert_hyper_to_sparse (A, Context) ;
         }
@@ -408,7 +411,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // convert to hypersparse or set hypersparse ratio, if requested
     //--------------------------------------------------------------------------
 
-    if (sparsity == GB_FULL)
+    if (sparsity == GxB_FULL)
     {
         // leave as-is
         ;

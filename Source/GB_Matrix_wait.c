@@ -342,8 +342,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             //------------------------------------------------------------------
 
             // A1 = [0, A (:, kA:end)], hypersparse with same dimensions as A
-            GB_OK (GB_new (&A1, A->type, A->vlen, A->vdim, 
-                GB_Ap_malloc, A->is_csc, GB_FORCE_HYPER, GB_ALWAYS_HYPER,
+            GB_OK (GB_new (&A1, // hyper, new header
+                A->type, A->vlen, A->vdim, 
+                GB_Ap_malloc, A->is_csc, GxB_HYPERSPARSE, GB_ALWAYS_HYPER,
                 anvec - kA, Context)) ;
 
             // the A1->i and A1->x content are shallow copies of A(:,kA:end)

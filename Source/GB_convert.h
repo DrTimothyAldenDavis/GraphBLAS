@@ -15,17 +15,6 @@
 #define GB_ALWAYS_HYPER (1.0)
 #define GB_NEVER_HYPER  (-1.0)
 
-#define GB_FORCE_HYPER 1
-#define GB_HYPER GB_FORCE_HYPER
-#define GB_FORCE_NONHYPER 0
-#define GB_SPARSE GB_FORCE_NONHYPER
-#define GB_AUTO_HYPER (-1)
-#define GB_FULL 2
-#define GB_BITMAP 3
-
-#define GB_SAME_HYPER_AS(A_is_hyper) \
-    ((A_is_hyper) ? GB_FORCE_HYPER : GB_FORCE_NONHYPER)
-
 // true if A is bitmap
 #define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
 
@@ -44,12 +33,37 @@
 // treat A as if it were non-hypersparse
 #define GB_IS_HYPER(A) (GB_IS_HYPERSPARSE (A) && ((A)->nvec < (A)->vdim))
 
-// true if A has any sparsit structure (only useful for commenting via
+// true if A has any sparsity structure (only useful for commenting via
 // assertions, since this is always true).
 #define GB_IS_ANY_SPARSITY(A) \
     ((A) == NULL || GB_IS_FULL (A) || GB_IS_BITMAP (A) || \
      GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
-    
+
+// GB_sparsity: determine the current sparsity structure of a matrix
+static inline int GB_sparsity (GrB_Matrix A)
+{
+    if (A == NULL)
+    {
+        // if A is NULL, pretend it is sparse
+        return (GxB_SPARSE) ;
+    }
+    else if (A->h != NULL)
+    { 
+        return (GxB_HYPERSPARSE) ;
+    }
+    else if (GB_IS_FULL (A))
+    { 
+        return (GxB_FULL) ;
+    }
+    else if (GB_IS_BITMAP (A))
+    { 
+        return (GxB_BITMAP) ;
+    }
+    else
+    { 
+        return (GxB_SPARSE) ;
+    }
+}
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
@@ -78,6 +92,22 @@ bool GB_convert_sparse_to_hyper_test  // test sparse to hypersparse conversion
     float hyper_switch,     // A->hyper_switch
     int64_t k,              // # of non-empty vectors of A, an estimate is OK,
                             // but normally A->nvec_nonempty
+    int64_t vdim            // A->vdim
+) ;
+
+bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
+(
+    float bitmap_switch,    // A->bitmap_switch
+    int64_t anz,            // # of entries in A = GB_NNZ (A)
+    int64_t vlen,           // A->vlen
+    int64_t vdim            // A->vdim
+) ;
+
+bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
+(
+    float bitmap_switch,    // A->bitmap_switch
+    int64_t anz,            // # of entries in A = GB_NNZ (A)
+    int64_t vlen,           // A->vlen
     int64_t vdim            // A->vdim
 ) ;
 

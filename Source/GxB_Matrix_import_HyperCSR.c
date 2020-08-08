@@ -55,8 +55,9 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     //--------------------------------------------------------------------------
 
     // allocate just the header of the matrix, not the content
-    info = GB_new (A, type, ncols, nrows, GB_Ap_null, false,
-        GB_FORCE_HYPER, GB_Global_hyper_switch_get ( ), nvec, Context) ;
+    info = GB_new (A, // hyper, new header
+        type, ncols, nrows, GB_Ap_null, false,
+        GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), nvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory for matrix header (size O(1))

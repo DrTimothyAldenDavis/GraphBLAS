@@ -187,8 +187,9 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     GrB_Type ctype = add->op->ztype ;
 
     // TODO: C->b could be malloc'd
-    info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
-        GB_BITMAP, B->hyper_switch, cnvec, cnz, true, Context) ;
+    info = GB_new_bix (Chandle, // bitmap, new header
+        ctype, cvlen, cvdim, GB_Ap_calloc, true,
+        GxB_BITMAP, B->hyper_switch, cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -34,9 +34,9 @@ GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entries
 
     GrB_Info info ;
 
-    // *s == NULL ;                 // allocate a new header for s
-    info = GB_new ((GrB_Matrix *) s, type, 1, 1, GB_Ap_calloc, true,
-        GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
+    info = GB_new ((GrB_Matrix *) s,    // new scalar (sparse), new header
+        type, 1, 1, GB_Ap_calloc, true,
+        GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1, Context) ;
     ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_SCALAR_OK (*s))) ;
     return (info) ;
 }

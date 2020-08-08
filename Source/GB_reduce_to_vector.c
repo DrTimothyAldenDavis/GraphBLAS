@@ -230,8 +230,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         //----------------------------------------------------------------------
 
         // since T is a GrB_Vector, it is CSC and not hypersparse
-        GB_OK (GB_create (&T, ttype, n, 1, GB_Ap_calloc, true,
-            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
+        GB_OK (GB_new_bix (&T, // sparse, new header
+            ttype, n, 1, GB_Ap_calloc, true,
+            GxB_SPARSE, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
         // FULL TODO: construct T as a dense if A not hypersparse and all
@@ -448,8 +449,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // on n.
 
             // since T is a GrB_Vector, it is not hypersparse
-            GB_OK (GB_new (&T, ttype, n, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
-                GB_HYPER_DEFAULT, 1, Context)) ;
+            GB_OK (GB_new (&T, // sparse, new header
+                ttype, n, 1, GB_Ap_null, true,
+                GxB_SPARSE, GB_HYPER_DEFAULT, 1, Context)) ;
 
             // GB_build treats Ai and Ax as read-only; they must not be modified
             GB_OK (GB_build

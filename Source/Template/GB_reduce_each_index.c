@@ -184,8 +184,9 @@
     //--------------------------------------------------------------------------
 
     // since T is a GrB_Vector, it is CSC and not hypersparse
-    info = GB_create (&T, ttype, n, 1, GB_Ap_calloc, true,
-        GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, true, Context) ;
+    info = GB_new_bix (&T, // sparse, new header
+        ttype, n, 1, GB_Ap_calloc, true,
+        GxB_SPARSE, GB_HYPER_DEFAULT, 1, tnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

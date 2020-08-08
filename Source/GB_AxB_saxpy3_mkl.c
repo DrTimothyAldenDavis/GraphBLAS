@@ -50,6 +50,9 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (Chandle != NULL) ;
+    ASSERT (*Chandle == NULL) ;
+
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ; 
@@ -262,8 +265,9 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     // C may be flagged as a CSC matrix in the caller
 
-    info = GB_new (Chandle, ctype, cncols, cnrows, GB_Ap_null, false,
-        GB_FORCE_NONHYPER, B->hyper_switch, cnrows, Context) ;
+    info = GB_new (Chandle, // sparse, new header
+        ctype, cncols, cnrows, GB_Ap_null, false,
+        GxB_SPARSE, B->hyper_switch, cnrows, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory

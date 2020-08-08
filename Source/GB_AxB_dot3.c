@@ -151,9 +151,11 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
 
-    // C is sparse or hypersparse, not full
-    info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (M_is_hyper), M->hyper_switch, cnvec,
+    // C is sparse or hypersparse, not full or bitmap
+    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
+        ctype, cvlen, cvdim, GB_Ap_malloc, true,
+        sparsity, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_new: create a new GraphBLAS matrix
+// GB_new: create a new GraphBLAS matrix, but do not allocate A->{b,i,x}
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
-// See GB_create instead.
+// See GB_new_bix instead.
 
 // If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
 // initialized, and A->magic is set to GB_MAGIC to denote a valid matrix.
@@ -17,8 +17,8 @@
 // GraphBLAS.  The internal function that calls GB_new must then allocate or
 // initialize A->p itself, and then set A->magic = GB_MAGIC when it does so.
 
-// To allocate a full or bitmap matrix, sparsity_structure is GB_FULL (which is
-// 2) or GB_BITMAP (which is 3).  The Ap_option is ignored.  For a full or
+// To allocate a full or bitmap matrix, the sparsity parameter
+// is GxB_FULL or GxB_BITMAP.  The Ap_option is ignored.  For a full or
 // bitmap matrix, only the header is allocated, if NULL on input.
 
 // Only GrB_SUCCESS and GrB_OUT_OF_MEMORY can be returned by this function.
@@ -33,10 +33,6 @@
 // returned as NULL, and the existing header is freed as well, if non-NULL on
 // input.
 
-// To see where these options are used in SuiteSparse:GraphBLAS:
-// grep "allocate a new header"
-// which shows all uses of GB_new and GB_create
-
 // OK: BITMAP
 
 #include "GB.h"
@@ -50,9 +46,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity_structure,   // 1:hyper, 0:nonhyper, -1:auto,
-                                    // 2:full, or 3:bitmap
-    const float hyper_switch,   // A->hyper_switch, unless auto
+    const int sparsity,         // hyper, sparse, bitmap, full, or
+                                // auto (hyper + sparse)
+    const float hyper_switch,   // A->hyper_switch
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
     GB_Context Context
@@ -97,32 +93,32 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // CSR/CSC format
     A->is_csc = is_csc ;
 
-    // hypersparsity
+    // initial sparsity format
     bool A_is_hyper ;
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
-    if (sparsity_structure == GB_FORCE_HYPER)
+    A->bitmap_switch = 0.125 ; // TODO: GB_BITMAP_SWITCH_DEFAULT ;
+    A->sparsity = GxB_AUTO_SPARSITY ;
+
+    if (sparsity == GxB_HYPERSPARSE)
     { 
         A_is_hyper = true ;             // force A to be hypersparse
     }
-    else if (sparsity_structure == GB_FORCE_NONHYPER)
+    else if (sparsity == GxB_SPARSE)
     { 
         A_is_hyper = false ;            // force A to be sparse
     }
-    else if (sparsity_structure == GB_FULL || sparsity_structure == GB_BITMAP)
+    else if (sparsity == GxB_FULL || sparsity == GxB_BITMAP)
     { 
         A_is_full_or_bitmap = true ;    // force A to be full or bitmap
         A_is_hyper = false ;
     }
-    else // GB_AUTO_HYPER
+    else // auto: sparse or hypersparse
     { 
-        // auto selection:  non-hypersparse if one vector or less, or
-        // if the global hyper_switch is negative.  This is only used by
-        // GrB_Matrix_new, and in a special case in GB_mask.
-        // Never select A to be full, since A is created with no entries.
-        ASSERT (sparsity_structure == GB_AUTO_HYPER) ;
-        float hyper_switch = GB_Global_hyper_switch_get ( ) ;
-        A->hyper_switch = hyper_switch ;
+        // auto selection:  sparse if one vector or less or
+        // if the global hyper_switch is negative; hypersparse otherwise.
+        // Never select A to be full or bitmap for this case.
+        ASSERT (sparsity == GxB_SPARSE + GxB_HYPERSPARSE) ;
         A_is_hyper = !(vdim <= 1 || 0 > hyper_switch) ;
     }
 

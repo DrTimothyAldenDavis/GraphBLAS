@@ -431,8 +431,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
 
     // calloc Cp so it can be used as the Bflops workspace
-    info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
-        GB_SAME_HYPER_AS (B_is_hyper), B->hyper_switch, cnvec, Context) ;
+    int sparsity = B_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    info = GB_new (Chandle, // sparse or hyper, new header
+        ctype, cvlen, cvdim, GB_Ap_calloc, true,
+        sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -1024,7 +1026,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     if (Hf_size_total > 0)
     { 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
+        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;   // BIG?
     }
     if (Hx_size_total > 0)
     { 

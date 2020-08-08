@@ -34,12 +34,6 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
 
-    // ensure that vectors are never converted to hypersparse
-    if (A->sparsity == GxB_HYPERSPARSE && A->vdim <= 1)
-    { 
-        A->sparsity = GxB_SPARSE ;
-    }
-
     //--------------------------------------------------------------------------
     // select the sparsity structure
     //--------------------------------------------------------------------------
@@ -86,6 +80,7 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
         //---------------------------------------------------------------------
 
         case GxB_FULL :
+        case GxB_FULL+GxB_BITMAP :
 
             // sparse and hypersparse matrices may have zombies, pending tuples,
             // and may be jumbled.  All pending work must be finished now.
@@ -110,7 +105,7 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
         //----------------------------------------------------------------------
 
         default :
-        case GxB_DEFAULT :
+        case GxB_AUTO_SPARSITY :
 
             if (GB_IS_FULL (A))
             {

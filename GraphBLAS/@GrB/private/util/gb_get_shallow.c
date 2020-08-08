@@ -84,7 +84,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
 
-        if (sparsity != GB_FULL)
+        if (sparsity != GxB_FULL)
         {
             // get the pointers
             mxArray *Ap = mxGetField (X, 0, "p") ;
@@ -112,7 +112,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         IF (A->x == NULL && A->nzmax > 0, ".x wrong type") ;
 
         A->h = NULL ;
-        if (sparsity == GB_HYPER)
+        if (sparsity == GxB_HYPERSPARSE)
         { 
             // get the hyperlist
             mxArray *Ah = mxGetField (X, 0, "h") ;

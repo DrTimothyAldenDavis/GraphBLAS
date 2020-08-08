@@ -36,8 +36,9 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
-    // GB_new does not always initialize A->p; GB_Matrix_check fails in this
-    // case.  Thus, ASSERT_MATRIX_OK (A, "A", ...) ;  cannot be used here.
+    // A->p has been allocated but might not be initialized.  GB_Matrix_check
+    // fails in this case.  Thus, ASSERT_MATRIX_OK (A, "A", ...) ;  cannot be
+    // used here.
     ASSERT (A != NULL && A->p != NULL) ;
     ASSERT (!A->i_shallow && !A->x_shallow) ;
 

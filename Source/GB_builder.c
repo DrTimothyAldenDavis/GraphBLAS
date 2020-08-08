@@ -792,8 +792,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // [ allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
-    info = GB_new (&T, ttype, vlen, vdim, GB_Ap_malloc, is_csc, GB_FORCE_HYPER,
-        GB_ALWAYS_HYPER, tnvec, Context) ;
+    info = GB_new (&T, // always hyper (even vectors), new header
+        ttype, vlen, vdim, GB_Ap_malloc, is_csc,
+        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

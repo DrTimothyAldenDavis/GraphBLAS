@@ -3813,12 +3813,6 @@ typedef enum
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
 
-    // for GxB_SPARSITY only:
-    GxB_HYPERSPARSE = 11,   // store matrix in hypersparse form
-    GxB_SPARSE = 12,        // store matrix as sparse form (compressed vector)
-    GxB_BITMAP = 13,        // store matrix as a bitmap
-    GxB_FULL = 14,          // store matrix as full; all entries must be present
-
     // for GxB_GPU_CONTROL only:
     GxB_GPU_ALWAYS  = 2001,
     GxB_GPU_NEVER   = 2002,
@@ -4057,6 +4051,17 @@ GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 // the default hypersparsity ratio
 GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 
+// for GxB_SPARSITY can be any sum or bitwise OR of these values:
+typedef enum
+{
+    GxB_HYPERSPARSE = 1,    // store matrix in hypersparse form
+    GxB_SPARSE = 2,         // store matrix as sparse form (compressed vector)
+    GxB_BITMAP = 4,         // store matrix as a bitmap
+    GxB_FULL = 8,           // store matrix as full; all entries must be present
+    GxB_AUTO_SPARSITY = 15, // store matrix in any form
+}
+GxB_Sparsity_Value ;
+
 // Let k be the actual number of non-empty vectors (with at least one entry).
 // This value k is not dependent on whether or not the matrix is stored in
 // hypersparse format.  Let n be the number of vectors (the # of columns if
@@ -4074,7 +4079,7 @@ GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 // GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity) provides hints about
 // which data structure GraphBLAS should use for the matrix A:
 //
-//      GxB_DEFAULT: GraphBLAS selects automatically
+//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically
 //      GxB_HYPERSPARSE: always hypersparse, taking O(nvals(A)) space.
 //          Not available for GrB_Vector, or a GrB_Matrix consisting of a
 //          single vector (GxB_SPARSE is used instead).
@@ -4085,6 +4090,11 @@ GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 //      GxB_FULL: always in full format, taking O(nrows*ncols) space, unless
 //          not all entries are present, in which case the bitmap storage
 //          is used.
+//
+// These options can be summed.  For example, to allow a matrix to be sparse
+// or hypersparse, but not bitmap or full, use GxB_SPARSE + GxB_HYPERSPARSE.
+// Since GxB_FULL can only be used when all entries are present, it is the
+// same as GxB_FULL + GxB_BITMAP.
 //
 // GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) returns the current data
 // structure currently used for the matrix A (either hypersparse, sparse,

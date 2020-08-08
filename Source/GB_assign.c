@@ -578,9 +578,10 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // is needed because C is aliased with M or A.  Instead of
             // duplicating it, create an empty matrix Z2.  This also prevents
             // the C_replace_phase from being needed.
-            GB_OK (GB_new (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
-                C->is_csc, GB_SAME_HYPER_AS (C->h != NULL), C->hyper_switch, 1,
-                Context)) ;
+            int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+            GB_OK (GB_new (&Z2, // sparse or hyper, new header
+                C->type, C->vlen, C->vdim, GB_Ap_calloc, C->is_csc,
+                sparsity, C->hyper_switch, 1, Context)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
             C_replace_phase = false ;

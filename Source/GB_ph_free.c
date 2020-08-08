@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Free the A->p and A->h content of a matrix.  If followed by GB_bix_free(A),
-// the header of A is just like GB_new with GB_Ap_null.  No content is left
-// except the header.  The matrix becomes invalid, and would generate a
-// GrB_INVALID_OBJECT error if passed to a user-callable GraphBLAS function.
+// Free the A->p and A->h content of a matrix.  The matrix becomes invalid, and
+// would generate a GrB_INVALID_OBJECT error if passed to a user-callable
+// GraphBLAS function.
 
 // OK: BITMAP
 

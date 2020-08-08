@@ -37,7 +37,7 @@ void GB_memset                  // parallel memset
     {
 
         //----------------------------------------------------------------------
-        // memset using a multiple threads
+        // memset using multiple threads
         //----------------------------------------------------------------------
 
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;

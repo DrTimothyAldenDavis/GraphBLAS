@@ -292,7 +292,7 @@ GrB_Info GB_selector
     { 
         // since Cx [0..cnz-1] is all zero, phase2 only needs to construct
         // the pattern in Ci
-        Cx = GB_CALLOC (cnz * asize, GB_void) ;
+        Cx = GB_CALLOC (cnz * asize, GB_void) ;     // BIG
     }
     else
     { 
@@ -391,8 +391,11 @@ GrB_Info GB_selector
         // create C and transplant Cp, Ch, Ci, Cx into C
         //----------------------------------------------------------------------
 
-        info = GB_new (&C, A->type, avlen, avdim, GB_Ap_null, true,
-            GB_SAME_HYPER_AS (A->h != NULL), A->hyper_switch, aplen, Context) ;
+        ASSERT (C == NULL) ;
+        int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        info = GB_new (&C, // sparse or hyper (from A), new header
+            A->type, avlen, avdim, GB_Ap_null, true,
+            sparsity, A->hyper_switch, aplen, Context) ;
         GB_OK (info) ;
 
         if (A->h != NULL)

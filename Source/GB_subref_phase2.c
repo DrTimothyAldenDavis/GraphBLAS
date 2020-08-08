@@ -68,10 +68,11 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Matrix C = NULL ;           // allocate a new header for C
-    GrB_Info info = GB_create (&C, ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (C_is_hyper), A->hyper_switch, Cnvec, cnz, true,
-        Context) ;
+    GrB_Matrix C = NULL ;
+    int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    GrB_Info info = GB_new_bix (&C, // sparse or hyper, new header
+        ctype, nI, nJ, GB_Ap_null, C_is_csc,
+        sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

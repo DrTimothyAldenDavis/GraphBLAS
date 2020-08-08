@@ -125,17 +125,22 @@ GrB_Info builder
     (*Chandle) = NULL ;
 
     // create the GraphBLAS output object C
+    int sparsity = GxB_SPARSE + GxB_HYPERSPARSE ;
     #ifdef MATRIX
     if (C_is_csc)
     {
         // create a hypersparse CSC matrix
-        info = GrB_Matrix_new (Chandle, ctype, nrows, ncols) ;
+        // was: info = GrB_Matrix_new (Chandle, ctype, nrows, ncols) ;
+        info = GB_new (Chandle, // auto (sparse or hyper), new header
+            ctype, nrows, ncols, GB_Ap_calloc,
+            true, sparsity, GB_HYPER_DEFAULT, 1, Context) ;
     }
     else
     {
         // create a hypersparse CSR matrix
-        info = GB_new (Chandle, ctype, ncols, nrows, GB_Ap_calloc,
-            false, GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
+        info = GB_new (Chandle, // auto (sparse or hyper), new header
+            ctype, ncols, nrows, GB_Ap_calloc,
+            false, sparsity, GB_HYPER_DEFAULT, 1, Context) ;
     }
     #else
     info = GrB_Vector_new (Chandle, ctype, nrows) ;

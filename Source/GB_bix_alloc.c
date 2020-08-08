@@ -34,9 +34,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // GB_new does not always initialize or even allocate A->p
     ASSERT (A != NULL) ;
-
     if (nzmax > GxB_INDEX_MAX)
     { 
         // problem too large
@@ -63,7 +61,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     else if (is_bitmap)
     { 
         // TODO: provide control to the caller to select calloc or malloc:
-        A->b = GB_CALLOC (A->nzmax, int8_t) ;
+        A->b = GB_CALLOC (A->nzmax, int8_t) ;   // BIG
         A->magic = GB_MAGIC ;
         ok = (A->b != NULL) ;
     }
@@ -75,7 +73,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
         // printed.  This will affect valgrind results, however.  Accessing the
         // values of this matrix will not result in warnings of uninitialized
         // values.
-        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
+        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;  // BIG (debog)
         #else
         // Use malloc in production.  Accessing the values of the matrix will
         // result in valgrind errors, but the matrix should not be accessed

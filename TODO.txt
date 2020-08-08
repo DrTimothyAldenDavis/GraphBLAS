@@ -20,28 +20,6 @@ phase2: how to make this faster?
 
     [ GrB_mxm C<M>=A*B, saxpy axbflops 1.03031e+10 Mwork 1.04727e+07 (use mask) nthreads 40 ntasks 163 coarse: (gus: 0 hash: 0) fine: (gus: 163 hash: 0) 12.7 sec ]
 
---------------------------------------------------------------------------------
-BFS:
-
-    // v<q> = level: set v(i) = level for all nodes i in q
-    [ GrB_assign (C full) (C full) Method 05d: (C full)<M> = scalar 0.0152 sec ]
-    bfs push:
-    [ GrB_vxm (M full) C<!M>=A*B, saxpy axbflops 3.6581e+09 Mwork 1.34218e+08 (use mask) nthreads 40 ntasks 160 coarse: (gus: 0 hash: 0) fine: (gus: 160 hash: 0) 2.59 sec ]
-    assign parents:
-    [ GrB_assign (C full) (C full) Method 06d: (C full)<Z> = Z 0.0264 sec ]
-
-observations:  need to exploit full mask without scattering
-into Gustavson workspace (same as BC).  Fine Gus and fine Hash.
-
-If M is full/dense, do not include it in flop counts for determining
-    hash table size
- 
-pull phase:  M is full as well:
-
-    [ GrB_assign (C full) (C full) Method 05d: (C full)<M> = scalar 0.0152 sec ]
-    [ GrB_vxm (M full) C<!M>=A*B, saxpy axbflops 3.6581e+09 Mwork 1.34218e+08 (use mask) nthreads 40 ntasks 160 coarse: (gus: 0 hash: 0) fine: (gus: 160 hash: 0) 2.59 sec ]
-    [ GrB_assign (C full) (C full) Method 06d: (C full)<Z> = Z 0.0264 sec ]
-
 
 --------------------------------------------------------------------------------
 CC:

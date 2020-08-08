@@ -55,7 +55,7 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
 
     #ifdef GB_DEBUG
     // in debug mode, calloc the matrix so it can be safely printed below
-    A->x = GB_CALLOC (anzmax * A->type->size, GB_void) ;
+    A->x = GB_CALLOC (anzmax * A->type->size, GB_void) ;    // BIG (debug)
     #else
     // in production mode, A->x is uninitialized
     A->x = GB_MALLOC (anzmax * A->type->size, GB_void) ;

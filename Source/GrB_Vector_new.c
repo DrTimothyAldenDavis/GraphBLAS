@@ -44,16 +44,9 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     GrB_Info info ;
     int64_t vlen = (int64_t) n ;
 
-    // v is always non-hypersparse, but use the auto rule so that
-    // v->hyper_switch is assigned from the global option.  This way, if the
-    // vector is ever typecast into a matrix, and used in a matrix computation,
-    // the hyper_switch will propagate to the result matrix.  A vector will not
-    // use its hyper_switch, since vdim == 1 ensures that v always remains
-    // non-hypersparse.
-
-    // *v == NULL ;                 // allocate a new header for v
-    info = GB_new ((GrB_Matrix *) v, type, vlen, 1, GB_Ap_calloc, true,
-        GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
+    info = GB_new ((GrB_Matrix *) v, // new vector (sparse), new header
+        type, vlen, 1, GB_Ap_calloc, true,
+        GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1, Context) ;
     ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (*v))) ;
     return (info) ;
 }

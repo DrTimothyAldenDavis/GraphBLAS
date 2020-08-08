@@ -77,33 +77,48 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     if (!GB_IS_FULL (C))
     {
 
+#define USE_CALLOC 0
+
         // clear prior content and recreate it; use exising header for C.
         // do not malloc C->x if the scalar is zero; calloc it later.
         bool scalar_is_nonzero = GB_is_nonzero (cwork, csize) ;
         GB_phbix_free (C) ;
-        info = GB_create (&C, C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
-            GB_FULL, GB_HYPER_DEFAULT, -1, cnzmax, scalar_is_nonzero, Context) ;
+        info = GB_new_bix (&C,  // full, old header
+            C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
+            GxB_FULL, GB_HYPER_DEFAULT, -1, cnzmax,
+#if USE_CALLOC
+            scalar_is_nonzero,
+#else
+            true,
+#endif
+            Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
 
+#if USE_CALLOC
         if (!scalar_is_nonzero)
         { 
             GBURBLE ("calloc ") ;
-            C->x = GB_CALLOC (cnzmax * csize, GB_void) ;
+            C->x = GB_CALLOC (cnzmax * csize, GB_void) ;    // BIG
         }
-
-        C->magic = GB_MAGIC ;
-        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
-
         if (C->x == NULL)
         { 
             // out of memory
             GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+#else
+        if (!scalar_is_nonzero)
+        { 
+            GB_memset (C->x, 0, cnzmax * csize, nthreads) ;
+        }
+#endif
+
+        C->magic = GB_MAGIC ;
+        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
 
         if (!scalar_is_nonzero)
         { 

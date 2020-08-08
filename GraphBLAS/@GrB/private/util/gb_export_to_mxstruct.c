@@ -43,6 +43,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     GrB_Matrix A = (*A_handle) ;
     CHECK_ERROR (gb_is_shallow (A), "internal error 4") ;
 
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO
+
     //--------------------------------------------------------------------------
     // make sure the matrix is finished
     //--------------------------------------------------------------------------
@@ -64,19 +66,19 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     if (GB_IS_FULL (A))
     { 
         // A is full
-        sparsity = GB_FULL ;
+        sparsity = GxB_FULL ;
         nfields = 3 ;
     }
     else if (A->h == NULL)
     { 
         // A is sparse
-        sparsity = GB_SPARSE ;
+        sparsity = GxB_SPARSE ;
         nfields = 5 ;
     }
     else
     { 
         // A is hypersparse
-        sparsity = GB_HYPER ;
+        sparsity = GxB_HYPERSPARSE ;
         nfields = 6 ;
     }
 
@@ -105,7 +107,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // These components do not need to be exported: Pending, nzombies,
     // queue_next, queue_head, enqueued, *_shallow.
 
-    if (sparsity != GB_FULL)
+    if (sparsity != GxB_FULL)
     {
         // export the pointers
         mxArray *Ap = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
@@ -141,7 +143,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     A->x = NULL ;
     mxSetFieldByNumber (G, 0, 2, Ax) ;
 
-    if (sparsity == GB_HYPER)
+    if (sparsity == GxB_HYPERSPARSE)
     {
         // export the hyperlist
         if (A->nvec < A->plen)

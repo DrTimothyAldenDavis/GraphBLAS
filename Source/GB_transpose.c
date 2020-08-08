@@ -350,8 +350,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // A is empty; create a new empty matrix C, with the new type and
         // dimensions.  C is hypersparse for now but may convert when
         // returned.
-        info = GB_create (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
-            C_is_csc, GB_FORCE_HYPER, A_hyper_switch, 1, 1, true, Context) ;
+        info = GB_new_bix (Chandle, // hyper, old or new header
+            ctype, avdim, avlen, GB_Ap_calloc, C_is_csc,
+            GxB_HYPERSPARSE, A_hyper_switch, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -386,8 +387,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, ctype, 1, avlen, GB_Ap_null, C_is_csc,
-            A_is_dense ? GB_FULL : GB_FORCE_HYPER, A_hyper_switch, 0, Context) ;
+        int sparsity = A_is_dense ? GxB_FULL : GxB_HYPERSPARSE ;
+        info = GB_new (Chandle, // full or hyper, old or new header
+            ctype, 1, avlen, GB_Ap_null, C_is_csc,
+            sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -414,7 +417,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (!A_is_dense)
         {
             Cp = GB_MALLOC (anz+1, int64_t) ;
-            Ci = GB_CALLOC (anz  , int64_t) ;
+            Ci = GB_CALLOC (anz  , int64_t) ;       // BIG
             ok = (Cp != NULL && Ci != NULL) ;
         }
 
@@ -530,9 +533,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, ctype, avdim, 1, GB_Ap_null, C_is_csc,
-            A_is_dense ? GB_FULL : GB_FORCE_NONHYPER, A_hyper_switch, 0,
-            Context) ;
+        int sparsity = A_is_dense ? GxB_FULL : GxB_SPARSE ; 
+        info = GB_new (Chandle, // full or sparse, old or new header
+            ctype, avdim, 1, GB_Ap_null, C_is_csc,
+            sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -778,8 +782,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate T
         GrB_Matrix T = NULL ;
-        info = GB_create (&T, ctype, avdim, avlen, GB_Ap_null,
-            C_is_csc, GB_FULL, A_hyper_switch, 1, anzmax, true, Context) ;
+        info = GB_new_bix (&T,  // full, new header
+            ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+            GxB_FULL, A_hyper_switch, 1, anzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -818,8 +823,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate the output matrix C as a full matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-            GB_FULL, A_hyper_switch, 0, Context) ;
+        info = GB_new (Chandle, // full, old or new header
+            ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+            GxB_FULL, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -920,8 +926,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // allocate anything if in place.
 
             // if *Chandle == NULL, allocate a new header; otherwise reuse
-            info = GB_new (Chandle, ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                GB_FORCE_HYPER, A_hyper_switch, 0, Context) ;
+            info = GB_new (Chandle, // hyper, old or new header
+                ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+                GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
             if (info != GrB_SUCCESS)
             { 
                 // out of memory

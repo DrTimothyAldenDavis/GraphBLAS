@@ -107,10 +107,11 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     bool C_is_hyper = (Ch != NULL) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Matrix C = NULL ;           // allocate a new header for C
-    GrB_Info info = GB_create (&C, ctype, A->vlen, A->vdim, GB_Ap_null,
-        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), A->hyper_switch, Cnvec, cnz,
-        true, Context) ;
+    GrB_Matrix C = NULL ;
+    int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    GrB_Info info = GB_new_bix (&C,     // sparse or hyper, new header
+        ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+        sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B

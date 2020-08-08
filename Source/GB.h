@@ -702,7 +702,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Context Context      // from GrB_init or GxB_init
 ) ;
 
-typedef enum                    // input parameter to GB_new and GB_create
+typedef enum                    // input parameter to GB_new and GB_new_bix
 {
     GB_Ap_calloc,               // 0: calloc A->p, malloc A->h if hypersparse
     GB_Ap_malloc,               // 1: malloc A->p, malloc A->h if hypersparse
@@ -719,15 +719,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity_structure,   // 1:hyper, 0:nonhyper, -1:auto,
-                                    // 2:full, or 3:bitmap
-    const float hyper_switch,   // A->hyper_switch, unless auto
+    const int sparsity,         // hyper, sparse, bitmap, full, or
+                                // auto (hyper + sparse)
+    const float hyper_switch,   // A->hyper_switch, ignored if auto
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
     GB_Context Context
 ) ;
 
-GrB_Info GB_create              // create a new matrix, including A->i and A->x
+GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 (
     GrB_Matrix *Ahandle,        // output matrix to create
     const GrB_Type type,        // type of output matrix
@@ -735,8 +735,8 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity_structure,   // 1:hyper, 0:nonhyper, -1:auto,
-                                    // 2:full, or 3:bitmap
+    const int sparsity,         // hyper, sparse, bitmap, full, or
+                                // auto (hyper + sparse)
     const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold

@@ -10,7 +10,7 @@
 // OK: BITMAP
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -115,12 +115,78 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GBPR0 ("  sparsity control: ") ;
     switch (A->sparsity)
     {
+
+        // 1
+        case GxB_HYPERSPARSE :
+            GBPR0 (" hypersparse only\n") ;
+            break ;
+
+        // 2
+        case GxB_SPARSE :
+            GBPR0 (" sparse only\n") ;
+            break ;
+
+        // 3
+        case GxB_HYPERSPARSE + GxB_SPARSE :
+            GBPR0 (" sparse or hypersparse\n") ;
+            break ;
+
+        // 4
+        case GxB_BITMAP :
+            GBPR0 (" bitmap only\n") ;
+            break ;
+
+        // 5
+        case GxB_HYPERSPARSE + GxB_BITMAP :
+            GBPR0 (" hypersparse or bitmap\n") ;
+            break ;
+
+        // 6
+        case GxB_SPARSE + GxB_BITMAP :
+            GBPR0 (" sparse or bitmap\n") ;
+            break ;
+
+        // 7
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP :
+            GBPR0 (" hypersparse, sparse, or bitmap\n") ;
+            break ;
+
+        // 8 and 12: these options are treated the same
+        case GxB_FULL :
+        case GxB_FULL + GxB_BITMAP :
+            GBPR0 (" bitmap or full\n") ;
+            break ;
+
+        // 9
+        case GxB_HYPERSPARSE + GxB_FULL :
+            GBPR0 (" hypersparse or full\n") ;
+            break ;
+
+        // 10
+        case GxB_SPARSE + GxB_FULL :
+            GBPR0 (" sparse or full\n") ;
+            break ;
+
+        // 11
+        case GxB_SPARSE + GxB_FULL :
+            GBPR0 (" sparse or full\n") ;
+            break ;
+
+        // 13
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL ;
+            GBPR0 (" hypersparse, bitmap, or full\n") ;
+            break ;
+
+        // 14
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL ;
+            GBPR0 (" sparse, bitmap, or full\n") ;
+            break ;
+
+        // 15
         default :
-        case GxB_DEFAULT :      GBPR0 (" default\n") ;      break ;
-        case GxB_HYPERSPARSE :  GBPR0 (" hypersparse\n") ;  break ;
-        case GxB_SPARSE :       GBPR0 (" sparse\n") ;       break ;
-        case GxB_BITMAP :       GBPR0 (" bitmap\n") ;       break ;
-        case GxB_FULL :         GBPR0 (" full\n") ;         break ;
+        case GxB_AUTO_SPARSITY :
+            GBPR0 (" auto\n") ;
+            break ;
     }
     #endif
 

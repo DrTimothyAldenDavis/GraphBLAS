@@ -93,9 +93,10 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
 
     // allocate the result R (but do not allocate R->p or R->h)
     GrB_Matrix R = NULL ;
-    GrB_Info info = GB_create (&R, C->type, C->vlen, C->vdim, GB_Ap_null,
-        R_is_csc, GB_SAME_HYPER_AS (R_is_hyper), C->hyper_switch, Rnvec, rnz,
-        true, Context) ;
+    int sparsity = (R_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    GrB_Info info = GB_new_bix (&R, // sparse or hyper, new header
+        C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
+        sparsity, C->hyper_switch, Rnvec, rnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z

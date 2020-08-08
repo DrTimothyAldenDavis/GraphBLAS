@@ -113,12 +113,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // C is hypersparse if either A or B are hypersparse
     bool C_is_hyper = (cvdim > 1) && (Ah != NULL || Bh != NULL) ;
     bool C_is_full = GB_is_dense (A) && GB_is_dense (B) ;
+    int sparsity = C_is_full ? GxB_FULL :
+        ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
     GrB_Matrix C = NULL ;           // allocate a new header for C
-    info = GB_create (&C, op->ztype, (int64_t) cvlen, (int64_t) cvdim,
-        GB_Ap_malloc, C_is_csc,
-        C_is_full ? GB_FULL : GB_SAME_HYPER_AS (C_is_hyper), B->hyper_switch,
-        cnvec, cnzmax, true, Context) ;
+    info = GB_new_bix (&C, // full, sparse, or hyper; new header
+        op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
+        sparsity, B->hyper_switch, cnvec, cnzmax, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -205,8 +205,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     #include "GB_AxB_dot2_meta.c"
     #undef  GB_PHASE_1_OF_2
 
-    info = GB_new (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (B->h != NULL), B->hyper_switch, cnvec, Context) ;
+    int sparsity = (B->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    info = GB_new (Chandle, // sparse or hyper, new header
+        ctype, cvlen, cvdim, GB_Ap_malloc, true,
+        sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

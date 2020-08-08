@@ -47,10 +47,9 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // allocate a new header for C if (*Chandle) is NULL, or reuse the
     // existing header if (*Chandle) is not NULL.
     GrB_Matrix C = (*Chandle) ;
-    GrB_Info info = GB_create (&C, numeric ? A->type : ctype, A->vlen, A->vdim,
-        GB_Ap_malloc, A->is_csc,
-        GB_IS_FULL (A) ? GB_FULL : GB_SAME_HYPER_AS (A->h != NULL),
-        A->hyper_switch, A->plen, anz, true, Context) ;
+    GrB_Info info = GB_new_bix (&C, // same sparsity as A; old or new header
+        numeric ? A->type : ctype, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
+        GB_sparsity (A), A->hyper_switch, A->plen, anz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

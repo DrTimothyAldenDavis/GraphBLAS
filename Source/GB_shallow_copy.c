@@ -51,9 +51,11 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // allocate the struct for C, but do not allocate C->h, C->p, C->i, or C->x.
     // C has the exact same hypersparsity as A.
     GrB_Info info ;
-    GrB_Matrix C = NULL ;           // allocate a new header for C
-    info = GB_new (&C, A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (A->h != NULL), A->hyper_switch, 0, Context) ;
+    GrB_Matrix C = NULL ;
+    int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    info = GB_new (&C, // sparse or hyper, new header
+        A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+        sparsity, A->hyper_switch, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -61,9 +61,10 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-    // *A == NULL ;                 // allocate a new header for A
-    info = GB_new (A, type, vlen, vdim, GB_Ap_calloc, A_is_csc,
-        GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
+    info = GB_new (A, // new matrix (auto sparse or hyper), new header
+        type, vlen, vdim, GB_Ap_calloc, A_is_csc,
+        GxB_SPARSE + GxB_HYPERSPARSE,
+        GB_Global_hyper_switch_get ( ), 1, Context) ;
     return (info) ;
 }
 
