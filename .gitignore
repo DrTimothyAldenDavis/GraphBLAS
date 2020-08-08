@@ -36,6 +36,7 @@ my_*.out
 .nfs*
 .pyc
 *.tmp
+gunk*
 
 Demo/bfs_demo.out
 Demo/mis_demo.out

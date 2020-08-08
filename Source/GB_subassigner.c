@@ -1190,7 +1190,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, A, Context)) ;
         }
-        if ((C_is_dense || C_is_bitmap) && whole_C_matrix && M == A)
+        else if ((C_is_dense || C_is_bitmap) && whole_C_matrix && M == A)
         { 
             // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
             // C becomes full.

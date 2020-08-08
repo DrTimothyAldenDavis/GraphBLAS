@@ -62,11 +62,11 @@ void mexFunction
             OK (GxB_Global_Option_set (GxB_FORMAT, fmt)) ;
 
         }
-        else
+        else if (mxIsStruct (pargin [0]))
         { 
 
             //------------------------------------------------------------------
-            // GrB.format (G)
+            // GrB.format (G) for a GraphBLAS matrix G
             //------------------------------------------------------------------
 
             // get the format of the input matrix G
@@ -75,6 +75,17 @@ void mexFunction
             int64_t *s = mxGetInt64s (opaque) ;
             bool is_csc = (bool) (s [6]) ;
             fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
+
+        }
+        else
+        { 
+
+            //------------------------------------------------------------------
+            // GrB.format (A) for a MATLAB matrix A
+            //------------------------------------------------------------------
+
+            // MATLAB matrices are always stored by column
+            fmt = GxB_BY_COL ;
         }
     }
 
