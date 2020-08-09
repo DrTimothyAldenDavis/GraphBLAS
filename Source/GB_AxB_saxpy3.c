@@ -1026,7 +1026,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     if (Hf_size_total > 0)
     { 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;   // BIG?
+        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
     }
     if (Hx_size_total > 0)
     { 

@@ -417,7 +417,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (!A_is_dense)
         {
             Cp = GB_MALLOC (anz+1, int64_t) ;
-            Ci = GB_CALLOC (anz  , int64_t) ;       // BIG
+            Ci = GB_CALLOC (anz  , int64_t) ;
             ok = (Cp != NULL && Ci != NULL) ;
         }
 

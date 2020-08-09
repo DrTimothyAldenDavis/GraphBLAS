@@ -73,7 +73,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
         // printed.  This will affect valgrind results, however.  Accessing the
         // values of this matrix will not result in warnings of uninitialized
         // values.
-        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;  // BIG (debug)
+        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
         #else
         // Use malloc in production.  Accessing the values of the matrix will
         // result in valgrind errors, but the matrix should not be accessed
