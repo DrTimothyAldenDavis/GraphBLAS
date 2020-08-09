@@ -48,6 +48,16 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     ASSERT (GB_ZOMBIES_OK (A)) ;        // A can have zombies on input
     GBURBLE ("(sparse to bitmap) ") ;
 
+    //--------------------------------------------------------------------------
+    // determine the maximum number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    //--------------------------------------------------------------------------
+    // determine if the conversion can be done in place
+    //--------------------------------------------------------------------------
+
     // if in_place is true, then A->x does not change if A is dense and not
     // jumbled (zombies are OK).
     bool in_place = (GB_is_dense (A) && !(A->jumbled)) ;
@@ -66,16 +76,25 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
     anzmax = GB_IMAX (anzmax, 1) ;
-
-    // if in-place, all of Ab will be modified below, so malloc is fine
-    Ab = (in_place) ? GB_MALLOC (anzmax, int8_t) : GB_CALLOC (anzmax, int8_t) ; // BIG
+    Ab = GB_MALLOC (anzmax, int8_t) ;
     if (Ab == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // clear A->b
+    //--------------------------------------------------------------------------
+
+    if (!in_place)
+    { 
+        // if done in-place, this work is skipped since all of Ab will
+        // be set below
+        int nthreads = GB_nthreads (anzmax + anvec, chunk, nthreads_max) ;
+        GB_memset (Ab, 0, anzmax, nthreads) ;
     }
 
     //--------------------------------------------------------------------------
@@ -109,18 +128,11 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     }
 
     //--------------------------------------------------------------------------
-    // Parallel: slice A into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int64_t anz = GB_NNZ (A) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-
-    //--------------------------------------------------------------------------
     // scatter the pattern and values into the new bitmap
     //--------------------------------------------------------------------------
 
     // A retains its CSR/CSC format.
+    int64_t anz = GB_NNZ (A) ;
 
     if (in_place)
     { 
@@ -129,6 +141,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // the sparse A has all entries: convert in-place
         //----------------------------------------------------------------------
 
+        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         if (A->nzombies == 0)
         { 
             // set all of Ab [0..anz-1] to 1, in parallel
@@ -151,9 +164,10 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     {
 
         //----------------------------------------------------------------------
-        // convert a general sparse matrix to bitmap
+        // scatter the values and pattern of A into the bitmap
         //----------------------------------------------------------------------
 
+        int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
         int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
         if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
             &ntasks))
@@ -183,8 +197,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             // launch the switch factory
             //------------------------------------------------------------------
 
-// double t = omp_get_wtime ( ) ;
-
             GB_Type_code acode = A->type->code ;
             if (acode < GB_UDT_code)
             { 
@@ -206,9 +218,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
                     default: ;
                 }
             }
-
-// t = omp_get_wtime ( ) - t ;
-// printf ("{ s2b: %12.4f } ", t) ;
 
         #endif
 
