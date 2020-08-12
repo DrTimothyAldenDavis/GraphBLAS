@@ -118,7 +118,8 @@ void mexFunction
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
     OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
+    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
+        NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
 
     GrB_Index mnz ;
@@ -216,7 +217,7 @@ void mexFunction
     V->i = (int64_t *) Tx ; // transplant values of T as the row indices of V
     T->x = NULL ;
     V->x = Gx ;             // transplant the values of G as the values of V
-    V->nzmax = tnvals ;
+    V->nzmax = T->nzmax ;
     int64_t *Vp = V->p ;
     Vp [0] = 0 ;
     Vp [1] = tnvals ;

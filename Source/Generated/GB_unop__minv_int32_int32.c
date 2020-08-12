@@ -62,32 +62,49 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB_unop_apply__minv_int32_int32
 (
     int32_t *Cx,       // Cx and Ax may be aliased
     const int32_t *Ax,
+    const int8_t *GB_RESTRICT Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
 )
-{ 
+{
+
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
-    {
-        int32_t aij = Ax [p] ;
-        int32_t z = aij ;
-        Cx [p] = GB_IMINV_SIGNED (z, 32) ;
+    if (Ab == NULL)
+    { 
+        // TODO: this case is not needed for the identity operator,
+        // when Ab is NULL
+        // A and C are hypersparse, sparse, or full
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            int32_t aij = Ax [p] ;
+            int32_t z = aij ;
+            Cx [p] = GB_IMINV_SIGNED (z, 32) ;
+        }
+    }
+    else
+    { 
+        // bitmap case, no transpose
+        // A->b has already been memcpy'd into C->b
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            if (!Ab [p]) continue ;
+            int32_t aij = Ax [p] ;
+            int32_t z = aij ;
+            Cx [p] = GB_IMINV_SIGNED (z, 32) ;
+        }
     }
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

@@ -1,0 +1,99 @@
+--------------------------------------------------------------------------------
+GrB_Matrix_build and GrB_Vector_build:
+--------------------------------------------------------------------------------
+
+    both call GB_matvec_build
+
+    remove the order guarantee from my spec (fallback to C API;
+        duplicates assembled in any order)
+
+        operators: ANY, first, min, max, plus, second, times
+            bool: eq, land, lor, lxor
+
+    for first and second: always guarantee the order, so do not use
+        the bitmap if those operators are used.  Instead, sort tuples
+        and build sparse form, and conform when done.
+
+    if dup is NULL:  assume no duplicates; results undefined if present
+        # of entries = # of tuples
+
+    decide automatically which method to use based on # of tuples and
+        size of output matrix
+
+    do not add bitmap to GB_build or GB_builder; use new code, only
+        used by GrB_Matrix_build and GrB_Vector_build:
+
+    if building a bitmap:  same as fine Gustavson saxpy
+        ANY or NULL: atomic writes
+        plus, times, and, or: use atomic updates
+        min, max: compare and swap
+        user-defined: critical section
+
+    calloc the bitmap A->b
+    initialize A->x to identity (skip if dup is ANY or NULL)
+    when done, sum up A->b to find A->nvals (skip if dup is NULL)
+
+    need 4 built-in versions for ANY (no typecast) and NULL: 1 2 4 8
+    treat ANY for double-complex as user-defined
+
+--------------------------------------------------------------------------------
+GrB_assign, GxB_subassign and variants
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_extract
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_mxm, mxv, vxm
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_kronecker
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_reduce to scalar
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_reduce to vector
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_transpose, also apply a unary op: works
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+utilities: GrB_clear, dup: these work now with bitmaps
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_*extractTuples
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+removeElement, setElement, extractElement: O(1) time
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_eWiseAdd
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_eWiseAdd
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+GrB_apply: works for bitmap, except for M
+--------------------------------------------------------------------------------
+
+    C<M> = accum (C, op(A)) or op(A')
+    now works for the bitmap case, except when M is a bitmap (need to update
+    GB_mask to handle it).
+
+    FUTURE:
+    if C is bitmap, and M sparse, M could be scattered into the bitmap,
+        and then GrB_apply could handle the mask entirely.
+        If both C and M are bitmap then this would also be simple.
+

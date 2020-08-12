@@ -19,16 +19,7 @@ is_identity = isequal (unop, 'identity') ;
 no_typecast = isequal (ztype, xtype) ;
 
 % function names
-if (is_identity && no_typecast)
-    % disable this worker
-    fprintf (f, 'define(`GB_unop_apply'', `(none)'')\n', name) ;
-    fprintf (f, 'define(`if_operator_is_enabled'', `#if 0'')\n') ;
-    fprintf (f, 'define(`endif_operator_is_enabled'', `#endif'')\n') ;
-else
-    fprintf (f, 'define(`GB_unop_apply'', `GB_unop_apply__%s'')\n', name) ;
-    fprintf (f, 'define(`if_operator_is_enabled'', `'')\n') ;
-    fprintf (f, 'define(`endif_operator_is_enabled'', `'')\n') ;
-end
+fprintf (f, 'define(`GB_unop_apply'', `GB_unop_apply__%s'')\n', name) ;
 fprintf (f, 'define(`GB_unop_tran'', `GB_unop_tran__%s'')\n', name) ;
 
 % type of C and A
@@ -84,14 +75,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.c | m4 | tail -n +11 > Generated/GB_unop__%s.c', ...
+'cat control.m4 Generator/GB_unop.c | m4 | tail -n +9 > Generated/GB_unop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.h | m4 | tail -n +11 >> Generated/GB_unop__include.h') ;
+'cat control.m4 Generator/GB_unop.h | m4 | tail -n +9 >> Generated/GB_unop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

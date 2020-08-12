@@ -9,22 +9,31 @@
 
 // The input GrB_Matrix A is exported to a GraphBLAS matrix struct G, and freed.
 
-// The input GrB_Matrix A must be deep.  The output is a standard MATLAB sparse
-// matrix as an mxArray.
+// The input GrB_Matrix A must be deep.  The output is a MATLAB struct
+// holding the content of the GrB_Matrix.
 
 #include "gb_matlab.h"
 
-#define NFIELDS 6
-
-static const char *MatrixFields [NFIELDS] =
+// for hypersparse, sparse, or full matrices
+static const char *MatrixFields [6] =
 {
-    "GraphBLAS",        // 0: "logical", "int8", ... "double",
+    "GraphBLASv4",      // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type) * nzmax)
     "p",                // 3: array of int64_t, size plen+1
     "i",                // 4: array of int64_t, size nzmax
     "h"                 // 5: array of int64_t, size plen if hypersparse
+} ;
+
+// for bitmap matrices only
+static const char *Bitmap_MatrixFields [4] =
+{
+    "GraphBLASv4",      // 0: "logical", "int8", ... "double",
+                        //    "single complex", or "double complex"
+    "s",                // 1: all scalar info goes here
+    "x",                // 2: array of uint8, size (sizeof(type) * nzmax)
+    "b"                 // 3: array of int8_t, size nzmax, for bitmap only
 } ;
 
 //------------------------------------------------------------------------------
@@ -43,8 +52,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     GrB_Matrix A = (*A_handle) ;
     CHECK_ERROR (gb_is_shallow (A), "internal error 4") ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO
-
     //--------------------------------------------------------------------------
     // make sure the matrix is finished
     //--------------------------------------------------------------------------
@@ -55,34 +62,34 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // construct the output struct
     //--------------------------------------------------------------------------
 
-    int nfields, sparsity ;
-    if (GB_is_dense (A) && !GB_IS_FULL (A))
-    { 
-        // convert A to full
-        GB_convert_any_to_full (A) ;
-    }
+    int sparsity ;
+    GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) ;
+    mxArray *G ;
 
-    // TODO: replace with GxB_Matrix_Option_get (GxB_SPARSITY, &sparsity)
-    if (GB_IS_FULL (A))
-    { 
-        // A is full
-        sparsity = GxB_FULL ;
-        nfields = 3 ;
-    }
-    else if (A->h == NULL)
-    { 
-        // A is sparse
-        sparsity = GxB_SPARSE ;
-        nfields = 5 ;
-    }
-    else
-    { 
-        // A is hypersparse
-        sparsity = GxB_HYPERSPARSE ;
-        nfields = 6 ;
-    }
+    switch (sparsity)
+    {
+        case GxB_FULL :
+            // A is full, with 3 fields: GraphBLASv4, s, x
+            G = mxCreateStructMatrix (1, 1, 3, MatrixFields) ;
+            break ;
 
-    mxArray *G = mxCreateStructMatrix (1, 1, nfields, MatrixFields) ;
+        case GxB_SPARSE :
+            // A is sparse, with 5 fields: GraphBLASv4, s, x, p, i
+            G = mxCreateStructMatrix (1, 1, 5, MatrixFields) ;
+            break ;
+
+        case GxB_HYPERSPARSE :
+            // A is hypersparse, with 6 fields: GraphBLASv4, s, x, p, i, h
+            G = mxCreateStructMatrix (1, 1, 6, MatrixFields) ;
+            break ;
+
+        case GxB_BITMAP :
+            // A is bitmap, with 4 fields: GraphBLASv4, s, x, b
+            G = mxCreateStructMatrix (1, 1, 4, Bitmap_MatrixFields) ;
+            break ;
+
+        default : ERROR ("invalid GraphBLAS struct") ;
+    }
 
     //--------------------------------------------------------------------------
     // export content into the output struct
@@ -92,22 +99,24 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (A->type)) ;
 
     // export the scalar content
-    mxArray *opaque = mxCreateNumericMatrix (1, 8, mxINT64_CLASS, mxREAL) ;
+    mxArray *opaque = mxCreateNumericMatrix (1, 9, mxINT64_CLASS, mxREAL) ;
     int64_t *s = mxGetInt64s (opaque) ;
     s [0] = A->plen ;
     s [1] = A->vlen ;
     s [2] = A->vdim ;
     s [3] = A->nvec ;
     s [4] = A->nvec_nonempty ;
-    s [5] = (int64_t) sparsity ;  // 0:sparse, 1:hyper, 2:full
+    s [5] = A->sparsity ;
     s [6] = (int64_t) (A->is_csc) ;
     s [7] = A->nzmax ;
+    s [8] = A->nvals ;
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,
-    // queue_next, queue_head, enqueued, *_shallow.
+    // queue_next, queue_head, enqueued, *_shallow, jumbled, logger, mkl,
+    // hyper_switch, bitmap_switch.
 
-    if (sparsity != GxB_FULL)
+    if (sparsity == GxB_SPARSE || sparsity == GxB_HYPERSPARSE)
     {
         // export the pointers
         mxArray *Ap = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
@@ -115,7 +124,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         void *p = mxGetInt64s (Ap) ;
         gb_mxfree (&p) ;
         mxSetInt64s (Ap, A->p) ;
-        A->p = NULL ;
         mxSetFieldByNumber (G, 0, 3, Ap) ;
 
         // export the indices
@@ -127,7 +135,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             gb_mxfree (&p) ;
             mxSetInt64s (Ai, A->i) ;
         }
-        A->i = NULL ;
         mxSetFieldByNumber (G, 0, 4, Ai) ;
     }
 
@@ -140,7 +147,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         gb_mxfree (&p) ;
         mxSetUint8s (Ax, A->x) ;
     }
-    A->x = NULL ;
     mxSetFieldByNumber (G, 0, 2, Ax) ;
 
     if (sparsity == GxB_HYPERSPARSE)
@@ -162,12 +168,30 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         }
         mxSetFieldByNumber (G, 0, 5, Ah) ;
     }
-    A->h = NULL ;
+
+    if (sparsity == GxB_BITMAP)
+    { 
+        // export the bitmap
+        mxArray *Ab = mxCreateNumericMatrix (1, 1, mxINT8_CLASS, mxREAL) ;
+        if (A->nzmax > 0)
+        { 
+            mxSetN (Ab, A->nzmax) ;
+            void *p = mxGetInt8s (Ab) ;
+            gb_mxfree (&p) ;
+            mxSetInt8s (Ab, A->b) ;
+        }
+        mxSetFieldByNumber (G, 0, 3, Ab) ;
+    }
 
     //--------------------------------------------------------------------------
     // free the header of A
     //--------------------------------------------------------------------------
 
+    A->p = NULL ;
+    A->h = NULL ;
+    A->b = NULL ;
+    A->i = NULL ;
+    A->x = NULL ;
     OK (GrB_Matrix_free (A_handle)) ;
 
     //--------------------------------------------------------------------------

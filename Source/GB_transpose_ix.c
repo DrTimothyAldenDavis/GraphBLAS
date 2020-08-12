@@ -20,6 +20,11 @@
 //      Rowcounts and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
+// If A is bitmap:
+//      C->b is constructed.  C is bitmap.
+//      Rowcounts and A_slice are NULL.
+//      This method is parallel and fully scalable.
+
 #include "GB_transpose.h"
 #ifndef GBCOMPACT
 #include "GB_unop__include.h"
@@ -33,7 +38,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
     const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
     int naslice,                        // # of slices (and # threads to use)
-    // for full case:
+    // for full or bitmap case:
     int nthreads                        // # of threads to use
 )
 { 
@@ -41,9 +46,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;

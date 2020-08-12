@@ -68,7 +68,7 @@ GrB_Info GB_dense_subassign_05d
     GB_GET_SCALAR ;
 
     // ensure C is full
-    GB_ENSURE_FULL (C) ;
+    GB_ENSURE_FULL (C) ;    // TODO only if C->sparsity allows it
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

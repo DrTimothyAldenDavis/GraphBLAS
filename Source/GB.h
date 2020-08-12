@@ -33,14 +33,16 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
+// TODO debug is on
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
 // #define GBCOMPACT 1
 
 // for code development only
-// #define GB_DEVELOPER 1
+// TODO dev is on
+#define GB_DEVELOPER 1
 
 // manage compiler warnings
 #include "GB_warnings.h"
@@ -1354,6 +1356,7 @@ void GB_cast_array              // typecast an array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
+    const int8_t *GB_RESTRICT Ab,   // bitmap for Ax
     const size_t user_size,     // size of Ax and Cx if user-defined
     const int64_t anz,          // number of entries in Cx and Ax
     const int nthreads          // number of threads to use
@@ -1562,7 +1565,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
 }
 
 // true if a matrix has no entries; zombies OK
-#define GB_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))
+#define GB_IS_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))
 
 //------------------------------------------------------------------------------
 

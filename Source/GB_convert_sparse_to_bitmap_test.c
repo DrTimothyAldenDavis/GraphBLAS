@@ -41,7 +41,10 @@ bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
     int64_t vdim            // A->vdim
 )
 {
+    // TODO: for now, never do this automatically
+    return (false) ;
 
+#if 0
     // current number of entries in the matrix or vector
     float nnz = (float) anz ;
 
@@ -51,5 +54,6 @@ bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
     // A should switch to bitmap if the following condition is true:
     return (nnz > bitmap_switch * nnz_dense &&
             nnz_dense < (float) GxB_INDEX_MAX) ;
+#endif
 }
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 {
 
     // Ax unused for some uses of this template
@@ -28,7 +30,7 @@
     {
 
         //----------------------------------------------------------------------
-        // A and C are full
+        // A and C are both full or both bitmap
         //----------------------------------------------------------------------
 
         // A is avlen-by-avdim; C is avdim-by-avlen
@@ -36,24 +38,55 @@
         int64_t avdim = A->vdim ;
         int64_t anz = avlen * avdim ;
 
+        const int8_t *GB_RESTRICT Ab = A->b ;
+        int8_t *GB_RESTRICT Cb = C->b ;
+        ASSERT ((Cb == NULL) == (Ab == NULL)) ;
+
+        //----------------------------------------------------------------------
+        // A and C are both full or bitmap
+        //----------------------------------------------------------------------
+
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
         {
             int64_t pC_start, pC_end ;
             GB_PARTITION (pC_start, pC_end, anz, tid, nthreads) ;
-            for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+            if (Ab == NULL)
             {
-                // get i and j of the entry C(i,j)
-                // i = (pC % avdim) ;
-                // j = (pC / avdim) ;
-                // find the position of the entry A(j,i) 
-                // pA = j + i * avlen
-                // Cx [pC] = op (Ax [pA])
-                GB_CAST_OP (pC, ((pC / avdim) + (pC % avdim) * avlen)) ;
+                // A and C are both full
+                for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+                {
+                    // get i and j of the entry C(i,j)
+                    // i = (pC % avdim) ;
+                    // j = (pC / avdim) ;
+                    // find the position of the entry A(j,i) 
+                    // pA = j + i * avlen
+                    // Cx [pC] = op (Ax [pA])
+                    GB_CAST_OP (pC, ((pC / avdim) + (pC % avdim) * avlen)) ;
+                }
+            }
+            else
+            {
+                // A and C are both bitmap
+                for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+                {
+                    // get i and j of the entry C(i,j)
+                    // i = (pC % avdim) ;
+                    // j = (pC / avdim) ;
+                    // find the position of the entry A(j,i) 
+                    // pA = j + i * avlen
+                    int64_t pA = ((pC / avdim) + (pC % avdim) * avlen) ;
+                    int8_t cij_exists = Ab [pA] ;
+                    Cb [pC] = cij_exists ;
+                    if (cij_exists)
+                    { 
+                        // Cx [pC] = op (Ax [pA])
+                        GB_CAST_OP (pC, pA) ;
+                    }
+                }
             }
         }
-
     }
     else
     #endif

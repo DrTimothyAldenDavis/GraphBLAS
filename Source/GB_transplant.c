@@ -273,6 +273,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
+            // TODO handle the bitmap better
             GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
             A->x = NULL ;
         }
@@ -289,7 +290,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
         GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
         GB_cast_array (Cx, C->type->code,
-            Ax, A->type->code, A->type->size, anz, nthreads) ;
+            Ax, A->type->code, A->b, A->type->size, anz, nthreads) ;
         if (!A->x_shallow)
         { 
             GB_FREE (A->x) ;

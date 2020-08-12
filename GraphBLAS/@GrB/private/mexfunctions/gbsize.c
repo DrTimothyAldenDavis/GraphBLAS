@@ -46,9 +46,13 @@ void mexFunction
         // get the size of a GraphBLAS matrix
         //----------------------------------------------------------------------
 
+        // get the type
+        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
+        CHECK_ERROR (mx_type == NULL, "invalid GraphBLASv4 struct") ;
+
         // get the scalar info
         mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-        CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
+        CHECK_ERROR (opaque == NULL, "invalid GraphBLASv4 struct") ;
         int64_t *s = mxGetInt64s (opaque) ;
         int64_t vlen = s [1] ;
         int64_t vdim = s [2] ;
@@ -58,14 +62,12 @@ void mexFunction
         ncols = (is_csc) ? vdim : vlen ;
 
         //----------------------------------------------------------------------
-        // get the type of a GraphBLAS matrix, if requested
+        // return type of a GraphBLAS matrix, if requested
         //----------------------------------------------------------------------
 
         if (nargout > 2)
         { 
-            // get the type
-            mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-            CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
+            // return the type
             pargout [2] = mxDuplicateArray (mx_type) ;
         }
 

@@ -28,6 +28,11 @@
 //      Rowcounts and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
+// If A is bitmap:
+//      C->b is constructed.  C is bitmap.
+//      Rowcounts and A_slice are NULL.
+//      This method is parallel and fully scalable.
+
 #include "GB_transpose.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
@@ -44,11 +49,11 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         const GxB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
-    // for sparse case:
+    // for sparse or hypersparse case:
     int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
     const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
     int naslice,                        // # of slices of A
-    // for full case:
+    // for full or bitmap case:
     int nthreads                        // # of threads to use
 )
 {
@@ -56,9 +61,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;

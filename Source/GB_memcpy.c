@@ -20,7 +20,7 @@ void GB_memcpy                  // parallel memcpy
     void *dest,                 // destination
     const void *src,            // source
     size_t n,                   // # of bytes to copy
-    int nthreads                // # of threads to use
+    int nthreads                // max # of threads to use
 )
 {
 

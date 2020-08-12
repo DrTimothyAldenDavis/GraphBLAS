@@ -24,6 +24,7 @@ void GB_cast_array              // typecast an array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
+    const int8_t *GB_RESTRICT Ab,   // bitmap for Ax
     const size_t user_size,     // size of Ax and Cx if user-defined
     const int64_t anz,          // number of entries in Cx and Ax
     const int nthreads          // number of threads to use
@@ -50,15 +51,11 @@ void GB_cast_array              // typecast an array
     // quick memcpy if no typecast is needed
     //--------------------------------------------------------------------------
 
-    if (code1 == code2)
+    if (code1 == code2 && Ab == NULL)
     { 
         GB_memcpy (Cx, Ax, anz * GB_code_size (code2, user_size), nthreads) ;
         return ;
     }
-
-    // user-defined types cannot be typecast, so if either is user-defined,
-    // they must be the same type, and have just been handled above.
-    ASSERT (code1 != GB_UDT_code && code2 != GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
     // typecast the array
@@ -76,7 +73,7 @@ void GB_cast_array              // typecast an array
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)          \
         {                                                           \
             GrB_Info info = GB_unop_apply (zname,xname)             \
-                ((ztype *) Cx, (xtype *) Ax, anz, nthreads) ;       \
+                ((ztype *) Cx, (xtype *) Ax, Ab, anz, nthreads) ;   \
             if (info == GrB_SUCCESS) return ;                       \
         }                                                           \
         break ;
@@ -94,9 +91,6 @@ void GB_cast_array              // typecast an array
     // generic worker: typecasting for compact case only
     //--------------------------------------------------------------------------
 
-    // This is dead code unless GBCOMPACT is enabled.  Do not burble,
-    // since everything is generic.
-
     int64_t csize = GB_code_size (code1, 1) ;
     int64_t asize = GB_code_size (code2, 1) ;
     GB_cast_function cast_A_to_C = GB_cast_factory (code1, code2) ;
@@ -105,6 +99,7 @@ void GB_cast_array              // typecast an array
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     {
+        if (!GBB (Ab, p)) continue ;
         // Cx [p] = Ax [p]
         cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize) ;
     }

@@ -16,10 +16,13 @@
 // error here, since the caller might be getting an optional input matrix, such
 // as Cin or the Mask.
 
+// FUTURE: it would be better to use the GxB* import/export functions,
+// instead of accessing the opaque content of the GrB_Matrix directly.
+
 #include "gb_matlab.h"
 
 #define IF(error,message) \
-    CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
+    CHECK_ERROR (error, "invalid GraphBLASv4 struct (" message ")" ) ;
 
 GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 (
@@ -59,8 +62,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         //----------------------------------------------------------------------
 
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLAS") ;
-        CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
+        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv4") ;
+        CHECK_ERROR (mx_type == NULL, "not a GraphBLASv4 struct") ;
         GrB_Type type = gb_mxstring_to_type (mx_type) ;
 
         // allocate the header, with no content
@@ -69,23 +72,31 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         gb_mxfree (&(A->h)) ;
         gb_mxfree (&(A->i)) ;
         gb_mxfree (&(A->x)) ;
+        gb_mxfree (&(A->b)) ;
 
         // get the scalar info
         mxArray *opaque = mxGetField (X, 0, "s") ;
         IF (opaque == NULL, ".s missing") ;
+        IF (mxGetM (opaque) != 1, ".s wrong size") ;
+        IF (mxGetN (opaque) != 9, ".s wrong size") ;
         int64_t *s = mxGetInt64s (opaque) ;
         A->hyper_switch   = GxB_HYPER_DEFAULT ;
+        A->bitmap_switch  = 0.125 ;
         A->plen          = s [0] ;
         A->vlen          = s [1] ;
         A->vdim          = s [2] ;
         A->nvec          = s [3] ;
         A->nvec_nonempty = s [4] ;
-        int sparsity     = (int) (s [5]) ;
+        A->sparsity      = (int) (s [5]) ;
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
+        A->nvals         = s [8] ;
 
-        if (sparsity != GxB_FULL)
+        int nfields = mxGetNumberOfFields (X) ;
+
+        if (nfields == 5 || nfields == 6)
         {
+            // A is hypersparse or sparse
             // get the pointers
             mxArray *Ap = mxGetField (X, 0, "p") ;
             IF (Ap == NULL, ".p missing") ;
@@ -93,7 +104,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             IF (mxGetN (Ap) != A->plen+1, ".p wrong size") ;
             A->p = mxGetInt64s (Ap) ;
             IF (A->p == NULL, ".p wrong type") ;
-
             // get the indices
             mxArray *Ai = mxGetField (X, 0, "i") ;
             IF (Ai == NULL, ".i missing") ;
@@ -112,8 +122,9 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         IF (A->x == NULL && A->nzmax > 0, ".x wrong type") ;
 
         A->h = NULL ;
-        if (sparsity == GxB_HYPERSPARSE)
+        if (nfields == 6)
         { 
+            // A is hypersparse
             // get the hyperlist
             mxArray *Ah = mxGetField (X, 0, "h") ;
             IF (Ah == NULL, ".h missing") ;
@@ -123,11 +134,25 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             IF (A->h == NULL, ".h wrong type") ;
         }
 
+        A->b = NULL ;
+        if (nfields == 4)
+        { 
+            // A is bitmap
+            // get the bitmap
+            mxArray *Ab = mxGetField (X, 0, "b") ;
+            IF (Ab == NULL, ".b missing") ;
+            IF (mxGetM (Ab) != 1, ".b wrong size") ;
+            IF (mxGetN (Ab) != MAX (A->nzmax, 1), ".b wrong size") ;
+            A->b = (void *) mxGetInt8s (Ab) ;
+            IF (A->b == NULL, ".b wrong type") ;
+        }
+
         // tell GraphBLAS the matrix is shallow
         A->p_shallow = (A->p != NULL) ;
         A->i_shallow = (A->i != NULL) ;
         A->x_shallow = (A->x != NULL) ;
         A->h_shallow = (A->h != NULL) ;
+        A->b_shallow = (A->b != NULL) ;
 
         // matrix is now initialized
         A->magic = GB_MAGIC ;
@@ -258,6 +283,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
 
         // tell GraphBLAS the matrix is shallow
+        A->b_shallow = (A->b != NULL) ;
         A->h_shallow = (A->h != NULL) ;
         A->x_shallow = (A->x != NULL) ;
     }

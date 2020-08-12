@@ -19,10 +19,8 @@
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
 
-// printf ("hash size %ld\n", hash_size) ;
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
-// printf ("\n======================================= kk %ld\n", kk) ;
         int64_t pC = Cp [kk] ;      // ok: C is sparse
         int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
         if (cjnz == 0) continue ;   // nothing to do
@@ -53,13 +51,11 @@
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j) is protected by
                 // the mask
                 GB_CHECK_MASK_ij ;
                 #endif
-
                 GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
                 for (GB_HASH (i))   // find i in hash table
                 {

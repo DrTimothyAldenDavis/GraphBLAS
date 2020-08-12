@@ -154,11 +154,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_accum_mask", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (MT_in)) ;    // TODO
-    ASSERT (!GB_IS_BITMAP (T)) ;        // TODO
-
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassigner is used, so it is not finished here.
     ASSERT (GB_PENDING_OK (C)) ;
@@ -304,6 +299,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
         //----------------------------------------------------------------------
 
+        // TODO: BITMAP works in some cases
+
         GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, Mask_struct, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, GB_ignore_code, Context)) ;
 
@@ -315,10 +312,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C<M> = accum (C,T) via GB_transplant or GB_add, and GB_mask
         //----------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // apply the accumulator (Z = accum (C,T) or Z=T if accum not present)
-        //----------------------------------------------------------------------
-
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
 
@@ -328,14 +321,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             //------------------------------------------------------------------
             // Z = (ctype) T ;
             //------------------------------------------------------------------
+        
+            // OK: BITMAP
 
             // [ Z is just the header; the rest can be allocated by the
             // transplant if needed.  Z has the same hypersparsity as T.
 
-            int sparsity = (T->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
             info = GB_new (&Z, // sparse or hyper, new header
                 C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
-                sparsity, T->hyper_switch, T->plen, Context) ;
+                GB_sparsity (T), T->hyper_switch, T->plen, Context) ;
             GB_OK (info) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This
@@ -353,6 +347,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             //------------------------------------------------------------------
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
+
+            // TODO: BITMAP doesn't work here yet
 
             // use the mask if present, not complemented, and very sparse
             GrB_Matrix M1 = NULL ;
@@ -375,6 +371,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         //----------------------------------------------------------------------
         // apply the mask (C<M> = Z)
         //----------------------------------------------------------------------
+
+        // TODO: BITMAP doesn't work here yet
 
         // see GB_spec_mask.m for a description of this step.
 

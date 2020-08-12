@@ -20,7 +20,7 @@ void GB_memset                  // parallel memset
     void *dest,                 // destination
     const int c,                // value to to set
     size_t n,                   // # of bytes to set
-    int nthreads                // # of threads to use
+    int nthreads                // max # of threads to use
 )
 {
 

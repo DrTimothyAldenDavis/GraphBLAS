@@ -31,6 +31,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     GB_RETURN_IF_NULL_OR_FAULTY (S) ;
     GB_RETURN_IF_NULL (x) ;
 
+    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
+
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (S))
     { 
@@ -73,7 +75,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     { 
         // typecast the value from S into x
         GB_cast_array ((GB_void *) x, GB_XCODE,
-            ((GB_void *) S->x), scode, S->type->size, 1, 1) ;
+            ((GB_void *) S->x), scode, NULL, S->type->size, 1, 1) ;
     }
     return (GrB_SUCCESS) ;
 }

@@ -41,7 +41,7 @@ void mexFunction
 
     if (class == mxSTRUCT_CLASS)
     {
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
         if (mx_type != NULL)
         { 
             // X is a GraphBLAS G.opaque struct; get its type

@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 8, 2020 (DRAFT4)"
+#define GxB_IMPLEMENTATION_DATE "Aug 10, 2020 (DRAFT5)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3969,6 +3969,8 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 
 //      GxB_Matrix_Option_set:  sets an option for a specific matrix
 //      GxB_Matrix_Option_get:  queries the current option of a specific matrix
+//      GxB_Vector_Option_set:  sets an option for a specific vector
+//      GxB_Vector_Option_get:  queries the current option of a specific vector
 //      GxB_Global_Option_set:  sets an option for all future matrices
 //      GxB_Global_Option_get:  queries current option for all future matrices
 
@@ -4048,60 +4050,64 @@ GxB_Format_Value ;
 // recompiled, it will acquire the new default values.
 GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
-// the default hypersparsity ratio
+// the default hyper_switch parameter
 GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 
-// for GxB_SPARSITY can be any sum or bitwise OR of these values:
-typedef enum
-{
-    GxB_HYPERSPARSE = 1,    // store matrix in hypersparse form
-    GxB_SPARSE = 2,         // store matrix as sparse form (compressed vector)
-    GxB_BITMAP = 4,         // store matrix as a bitmap
-    GxB_FULL = 8,           // store matrix as full; all entries must be present
-    GxB_AUTO_SPARSITY = 15, // store matrix in any form
-}
-GxB_Sparsity_Value ;
+// for GxB_SPARSITY can be any sum or bitwise OR of these 4 values:
+#define GxB_HYPERSPARSE 1   // store matrix in hypersparse form
+#define GxB_SPARSE      2   // store matrix as sparse form (compressed vector)
+#define GxB_BITMAP      4   // store matrix as a bitmap
+#define GxB_FULL        8   // store matrix as full; all entries must be present
 
-// Let k be the actual number of non-empty vectors (with at least one entry).
-// This value k is not dependent on whether or not the matrix is stored in
-// hypersparse format.  Let n be the number of vectors (the # of columns if
-// CSC, or rows if CSR).  Let h be the value of the GxB_HYPER_SWITCH setting of
-// the matrix.
-//
-// If a matrix is currently hypersparse, it can be converted to non-hypersparse
-// if (n <= 1  || k > 2*n*h).  Otherwise ti stays hypersparse.  If (n <= 1) the
-// matrix is always stored as non-hypersparse.
-//
-// If currently non-hypersparse, it can be converted to hypersparse if (n > 1
-// && k <= n*h).  Otherwise, it stays non-hypersparse.  If (n <= 1) the matrix
-// always remains non-hypersparse.
+// the default is to store the matrix in any form:
+#define GxB_AUTO_SPARSITY 15
 
 // GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity) provides hints about
 // which data structure GraphBLAS should use for the matrix A:
 //
-//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically
+//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between all
+//          four sparsity structures.
 //      GxB_HYPERSPARSE: always hypersparse, taking O(nvals(A)) space.
-//          Not available for GrB_Vector, or a GrB_Matrix consisting of a
-//          single vector (GxB_SPARSE is used instead).
-//      GxB_SPARSE: always in sparse format (compressed-sparse row/column,
+//      GxB_SPARSE: always in a sparse struture (compressed-sparse row/column,
 //          taking O(nrows+nvals(A)) space if stored by row, or
 //          O(ncols+nvals(A)) if stored by column.
-//      GxB_BITMAP: always in bitmap format, taking O(nrows*ncols) space.
-//      GxB_FULL: always in full format, taking O(nrows*ncols) space, unless
-//          not all entries are present, in which case the bitmap storage
-//          is used.
+//      GxB_BITMAP: always in a bitmap struture, taking O(nrows*ncols) space.
+//      GxB_FULL: always in a full structure, taking O(nrows*ncols) space,
+//          unless not all entries are present, in which case the bitmap
+//          storage is used.
 //
 // These options can be summed.  For example, to allow a matrix to be sparse
 // or hypersparse, but not bitmap or full, use GxB_SPARSE + GxB_HYPERSPARSE.
-// Since GxB_FULL can only be used when all entries are present, it is the
-// same as GxB_FULL + GxB_BITMAP.
+// Since GxB_FULL can only be used when all entries are present, it has the
+// same effect as GxB_FULL + GxB_BITMAP.
+//
+// A GrB_Vector cannot be hypersparse; if this option is requested, the vector
+// may be stored in a sparse structure instead.
 //
 // GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) returns the current data
 // structure currently used for the matrix A (either hypersparse, sparse,
 // bitmap, or full).
 
-// Setting GxB_HYPER_SWITCH to either of these values ensures a matrix always
-// stays hypersparse, or always stays non-hypersparse, respectively.
+// If the matrix or vector structure can be sparse or hypersparse, the
+// GxB_HYPER_SWITCH parameter controls when each of these structures are used.
+// The parameter is not used if the matrix or vector is full or bitmap.
+//
+// Let k be the actual number of non-empty vectors (with at least one entry).
+// This value k is not dependent on whether or not the matrix is stored in
+// hypersparse structure.  Let n be the number of vectors (the # of columns if
+// CSC, or rows if CSR).  Let h be the value of the GxB_HYPER_SWITCH setting of
+// the matrix.
+//
+// If a matrix is currently hypersparse, it can be converted to non-hypersparse
+// if (n <= 1  || k > 2*n*h).  Otherwise it stays hypersparse.  If (n <= 1) the
+// matrix is always stored as non-hypersparse.
+//
+// If currently non-hypersparse, it can be converted to hypersparse if (n > 1
+// && k <= n*h).  Otherwise, it stays non-hypersparse.  If (n <= 1) the matrix
+// always remains non-hypersparse.
+//
+// Setting GxB_HYPER_SWITCH to either of the following values ensures a matrix
+// always stays hypersparse, or always stays non-hypersparse, respectively.
 GB_PUBLIC const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
 
 GB_PUBLIC
@@ -4120,6 +4126,22 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
     ...                             // return value of the matrix option
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_Option_set      // set an option in a vector
+(
+    GrB_Vector A,                   // vector to modify
+    GxB_Option_Field field,         // option to change
+    ...                             // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
+(
+    GrB_Vector A,                   // vector to query
+    GxB_Option_Field field,         // option to query
+    ...                             // return value of the vector option
+) ;
+
 // GxB_Global_Option_set controls the global defaults used when a new matrix is
 // created.  GrB_init defines the following initial settings:
 //
@@ -4127,10 +4149,10 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 //      GxB_Global_Option_set (GxB_FORMAT, GxB_FORMAT_DEFAULT) ;
 //
 // The compile-time constants GxB_HYPER_DEFAULT and GxB_FORMAT_DEFAULT are
-// equal to 0.625 and GxB_BY_ROW, by default.  That is, by default, all new
+// equal to 0.0625 and GxB_BY_ROW, by default.  That is, by default, all new
 // matrices are held by row in CSR format.  If a matrix has fewer than n/16
-// columns, it can be converted to hypersparse format.  If it has more than n/8
-// columns, it can be converted to non-hypersparse format.  Modifying these
+// columns, it can be converted to hypersparse structure.  If it has more than
+// n/8 columns, it can be converted to a sparse structure.  Modifying these
 // global settings via GxB_Global_Option_set has no effect on matrices already
 // created.
 
@@ -4209,7 +4231,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
 //      GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
 //
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_DEFAULT) ;
+//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_AUTO_SPARSITY) ;
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_HYPERSPARSE) ;
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_SPARSE) ;
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_BITMAP) ;
@@ -4286,6 +4308,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
         (arg1),                                             \
               int              : GxB_Global_Option_set ,    \
               GxB_Option_Field : GxB_Global_Option_set ,    \
+              GrB_Vector       : GxB_Vector_Option_set ,    \
               GrB_Matrix       : GxB_Matrix_Option_set ,    \
               GrB_Descriptor   : GxB_Desc_set               \
     )                                                       \
@@ -4299,6 +4322,8 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
               int              : GxB_Global_Option_get ,    \
         const GxB_Option_Field : GxB_Global_Option_get ,    \
               GxB_Option_Field : GxB_Global_Option_get ,    \
+        const GrB_Vector       : GxB_Vector_Option_get ,    \
+              GrB_Vector       : GxB_Vector_Option_get ,    \
         const GrB_Matrix       : GxB_Matrix_Option_get ,    \
               GrB_Matrix       : GxB_Matrix_Option_get ,    \
         const GrB_Descriptor   : GxB_Desc_get          ,    \

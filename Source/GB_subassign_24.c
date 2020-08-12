@@ -129,8 +129,8 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 
     int64_t anz = GB_NNZ (A) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-    GB_cast_array (C->x, C->type->code, A->x, A->type->code, A->type->size,
-                       anz, nthreads) ;
+    GB_cast_array (C->x, C->type->code, A->x, A->type->code,
+        A->b, A->type->size, anz, nthreads) ;
 
     //-------------------------------------------------------------------------
     // return the result

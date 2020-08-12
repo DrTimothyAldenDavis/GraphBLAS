@@ -134,10 +134,10 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     (*base) = BASE_DEFAULT ;
 
     if (desc_matlab == NULL || !mxIsStruct (desc_matlab)
-        || mxGetField (desc_matlab, 0, "GraphBLAS") != NULL)
+        || mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
     {
         // If present, the descriptor is a struct whose first field is not
-        // "desc.GraphBLAS" (since that is a GrB matrix struct, not a
+        // "desc.GraphBLASv4" (since that is a GrB matrix struct, not a
         // descriptor).  If not present, the GraphBLAS descriptor is NULL.
         // This is not an error.
         return (NULL) ;
@@ -194,8 +194,10 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     mxArray *mxfmt = mxGetField (desc_matlab, 0, "format") ;
     if (mxfmt != NULL)
     {
-        (*fmt) = gb_mxstring_to_format (mxfmt) ;
-        if ((*fmt) == GxB_NO_FORMAT)
+        // TODO: add sparsity to the descriptor
+        int sparsity ;
+        bool ok = gb_mxstring_to_format (mxfmt, &fmt, &sparsity) ;
+        if (!ok)
         { 
             ERROR ("unknown format") ;
         }

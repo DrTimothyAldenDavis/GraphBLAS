@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     //--------------------------------------------------------------------------
 
     // ensure A is full
-    GB_ENSURE_FULL (*A) ;
+    GB_ENSURE_FULL (*A) ;   // TODO use GB_conform, with A->sparsity=GxB_FULL
 
     // ensure the matrix is in full CSC format
     (*A)->hyper_switch = GB_NEVER_HYPER ;

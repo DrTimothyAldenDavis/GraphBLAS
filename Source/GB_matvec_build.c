@@ -12,6 +12,11 @@
 
 // This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
 
+// TODO: BITMAP
+// C must be empty on input, but it could be an empty bitmap matrix.
+// In that case, build it in place.  C cannot be full on input, unless it is
+// of zero dimension with no entries.  See the GB_IS_EMPTY(C) test below.
+
 #include "GB_build.h"
 
 GrB_Info GB_matvec_build        // check inputs then build matrix or vector
@@ -33,8 +38,6 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C for GB_matvec_build", GB0) ;
-    ASSERT (!GB_IS_FULL (C)) ;          // TODO
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
 
     GB_RETURN_IF_NULL (I) ;
     if (I == GrB_ALL)
@@ -120,7 +123,7 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
             GB_code_string (scode), dup->name, dup->ztype->name) ;
     }
 
-    if (!GB_EMPTY (C))
+    if (!GB_IS_EMPTY (C))
     { 
         // The matrix has existing entries.  This is required by the GraphBLAS
         // API specification to generate an error, so the test is made here.

@@ -57,14 +57,11 @@
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j) is protected by
                 // the mask
                 GB_CHECK_MASK_ij ;
                 #endif
-
-#if 1
                 int64_t hash ;
                 bool marked = false ;
                 bool done = false ;
@@ -81,7 +78,6 @@
                     // if an empty (unmarked) slot is found.
                     if (found || !marked) break ;
                 }
-
                 if (!marked)
                 { 
                     // empty slot found, insert C(i,j)
@@ -89,31 +85,6 @@
                     Hi [hash] = i ;
                     cjnz++ ;            // C(i,j) is a new entry.
                 }
-#endif
-#if 0
-// OLD:
-                for (GB_HASH (i))       // find i in hash
-                {
-                    if (Hf [hash] == mark)
-                    {
-                        // position is occupied
-                        if (Hi [hash] == i)
-                        { 
-                            // i already in the hash table
-                            break ;
-                        }
-                    }
-                    else
-                    { 
-                        // empty slot found
-                        Hf [hash] = mark ; // insert C(i,j)
-                        Hi [hash] = i ;
-                        cjnz++ ;  // C(i,j) is a new entry.
-                        break ;
-                    }
-                }
-#endif
-
             }
         }
         // count the entries in C(:,j)

@@ -46,10 +46,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_apply", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;    // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO
-
     GrB_UnaryOp  op1 = op1_in ;
     GrB_BinaryOp op2 = op2_in ;
     GB_Opcode opcode ;

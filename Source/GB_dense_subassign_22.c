@@ -46,7 +46,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
     // ensure C is full
-    GB_ENSURE_FULL (C) ;
+    GB_ENSURE_FULL (C) ;    // TODO only if C->sparsity allows it
 
     //--------------------------------------------------------------------------
     // get the operator

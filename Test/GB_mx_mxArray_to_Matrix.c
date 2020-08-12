@@ -331,6 +331,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code,
             Mx,
             (atype_in_code == GB_UDT_code) ? GB_FC64_code : atype_in_code,
+            NULL,
             (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) :atype_in->size,
             anz, 1) ;
     }

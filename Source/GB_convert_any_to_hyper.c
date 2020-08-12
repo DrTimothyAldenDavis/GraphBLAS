@@ -33,7 +33,7 @@ GrB_Info GB_convert_any_to_hyper // convert to hypersparse
     // convert A to hypersparse
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (GB_IS_HYPERSPARSE (A))
     { 
         // already hypersparse, nothing to do
         ;
@@ -61,7 +61,7 @@ GrB_Info GB_convert_any_to_hyper // convert to hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A to hypersparse", GB0) ;
-    ASSERT (A->h != NULL) ;
+    ASSERT (GB_IS_HYPERSPARSE (A)) ;
     return (GrB_SUCCESS) ;
 }
 

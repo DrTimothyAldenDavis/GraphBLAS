@@ -23,7 +23,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converting full to sparse", GB0) ;
-    ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_FULL (A) || A->nzmax == 0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (!GB_IS_SPARSE (A)) ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
@@ -41,9 +41,17 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     int64_t anz = avdim * avlen ;
     ASSERT (GB_Index_multiply (&anz, avdim, avlen) == true) ;
 
+    if (A->x == NULL)
+    { 
+        ASSERT (A->nzmax == 0 && anz == 0) ;
+        A->nzmax = 1 ;
+        A->x = GB_CALLOC (A->type->size, GB_void) ;
+    }
+
     A->p = GB_MALLOC (avdim+1, int64_t) ;
     A->i = GB_MALLOC (anz, int64_t) ;
-    if (A->p == NULL || A->i == NULL)
+
+    if (A->p == NULL || A->i == NULL || A->x == NULL)
     { 
         // out of memory
         GB_phbix_free (A) ;
@@ -87,7 +95,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converted from full to sparse", GB0) ;
-    ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_SPARSE (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;

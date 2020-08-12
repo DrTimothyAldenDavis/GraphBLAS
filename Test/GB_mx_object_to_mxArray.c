@@ -69,14 +69,15 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
     // ensure C is sparse or full, not hypersparse or bitmap
+    GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_FULL + GxB_SPARSE) ;
+    ASSERT_MATRIX_OK (C, "TO MATLAB, sparse or full", GB0) ;
+    ASSERT (!GB_IS_HYPERSPARSE (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;
+
+    // get the current sparsity
     int sparsity ;
     GxB_Matrix_Option_get_(C, GxB_SPARSITY, &sparsity) ;
-    if (sparsity != GxB_FULL)
-    { 
-        GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_SPARSE) ;
-        ASSERT_MATRIX_OK (C, "TO MATLAB, sparse", GB0) ;
-    }
-    ASSERT (C->h == NULL) ;
+    ASSERT (sparsity == GxB_FULL || sparsity == GxB_SPARSE) ;
 
     // make sure it's CSC
     if (!C->is_csc)
@@ -85,7 +86,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     }
 
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
-    ASSERT (C->h == NULL) ;
+    ASSERT (!GB_IS_HYPERSPARSE (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (C->is_csc) ;
 
     // MATLAB doesn't want NULL pointers in its empty matrices
@@ -96,7 +98,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         C->x_shallow = false ;
     }
 
-    C_is_full = GB_IS_FULL (C) ;
+    C_is_full = (sparsity == GxB_FULL) ;
     if (!C_is_full)
     {
         // MATLAB doesn't want NULL pointers in its empty sparse matrices
@@ -242,7 +244,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         // C is single complex, typecast to sparse double complex
         A = mxCreateSparse (C->vlen, C->vdim, C->nzmax, mxCOMPLEX) ;
         GB_cast_array (mxGetComplexDoubles (A), GB_FC64_code,
-            C->x, C->type->code, C->type->size, cnz, 1) ;
+            C->x, C->type->code, NULL, C->type->size, cnz, 1) ;
 
     }
     else
@@ -252,7 +254,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         double *Sx = GB_MALLOC (cnz+1, double) ;
         GB_cast_array (Sx, GB_FP64_code,
-            C->x, C->type->code, C->type->size, cnz, 1) ;
+            C->x, C->type->code, NULL, C->type->size, cnz, 1) ;
         mexMakeMemoryPersistent (Sx) ;
         mxSetPr (A, Sx) ;
 

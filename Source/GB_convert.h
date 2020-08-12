@@ -241,9 +241,9 @@ static inline bool GB_is_packed
     return (ok && (anzmax == GB_NNZ (A))) ;
 }
 
-GrB_Info GB_conform             // conform a matrix to its desired format
+GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 (
-    GrB_Matrix A,               // matrix to conform
+    GrB_Matrix A,       // matrix to conform
     GB_Context Context
 ) ;
 

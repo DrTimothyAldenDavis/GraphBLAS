@@ -7,25 +7,91 @@
 
 //------------------------------------------------------------------------------
 
+// Valid format strings:
+
+//  'by row'            sparsity is GxB_AUTO_SPARSITY for these 2 strings
+//  'by col'
+
+//  'sparse by row'
+//  'hypersparse by row'
+//  'bitmap by row'
+//  'full by row'
+
+//  'sparse by col'
+//  'hypersparse by col'
+//  'bitmap by col'
+//  'full by col'
+
+//  'sparse'            fmt is GxB_BY_COL for these four strings
+//  'hypersparse'
+//  'bitmap'
+//  'full'
+
 #include "gb_matlab.h"
 
-GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
+bool gb_mxstring_to_format      // true if a valid format is found
 (
-    const mxArray *mxformat             // MATLAB string, 'by row' or 'by col'
+    // input
+    const mxArray *mxformat,    // MATLAB string, 'by row' or 'by col'
+    // output
+    GxB_Format_Value *fmt,
+    int *sparsity
 )
 {
 
-    GxB_Format_Value fmt ;
+    (*fmt) = GxB_BY_COL ;
+    (*sparsity) = GxB_AUTO_SPARSITY ;
     #define LEN 256
     char format_string [LEN+2] ;
     gb_mxstring_to_string (format_string, LEN, mxformat, "format") ;
+
     if (MATCH (format_string, "by row"))
     { 
-        fmt = GxB_BY_ROW  ;
+        (*fmt) = GxB_BY_ROW ;
     }
     else if (MATCH (format_string, "by col"))
     { 
-        fmt = GxB_BY_COL  ;
+        ;
+    }
+    else if (MATCH (format_string, "sparse") ||
+             MATCH (format_string, "sparse by col"))
+    { 
+        (*sparsity) = GxB_SPARSE ;
+    }
+    else if (MATCH (format_string, "hypersparse") ||
+             MATCH (format_string, "hypersparse by col"))
+    { 
+        (*sparsity) = GxB_HYPERSPARSE ;
+    }
+    else if (MATCH (format_string, "bitmap") ||
+             MATCH (format_string, "bitmap by col"))
+    { 
+        (*sparsity) = GxB_BITMAP ;
+    }
+    else if (MATCH (format_string, "full") ||
+             MATCH (format_string, "full by col"))
+    { 
+        (*sparsity) = GxB_FULL + GxB_BITMAP ;
+    }
+    else if (MATCH (format_string, "sparse by row"))
+    { 
+        (*sparsity) = GxB_SPARSE ;
+        (*fmt) = GxB_BY_ROW ;
+    }
+    else if (MATCH (format_string, "hypersparse by row"))
+    { 
+        (*sparsity) = GxB_HYPERSPARSE ;
+        (*fmt) = GxB_BY_ROW ;
+    }
+    else if (MATCH (format_string, "bitmap by row"))
+    { 
+        (*sparsity) = GxB_BITMAP ;
+        (*fmt) = GxB_BY_ROW ;
+    }
+    else if (MATCH (format_string, "full by row"))
+    { 
+        (*sparsity) = GxB_FULL + GxB_BITMAP ;
+        (*fmt) = GxB_BY_ROW ;
     }
     else
     { 
@@ -33,8 +99,9 @@ GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
         // For example, G = GrB (m,n,'double','by row') queries both its string
         // input arguments with this function and gb_mxstring_to_type, to parse
         // its inputs.
-        fmt = GxB_NO_FORMAT ;
+        return (false) ;
     }
-    return (fmt) ;
+
+    return (true) ;
 }
 

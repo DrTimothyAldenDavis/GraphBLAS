@@ -46,6 +46,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C ;
+    GxB_Format_Value fmt ;
+    int sparsity ;
 
     if (nargin == 1)
     { 
@@ -76,7 +78,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
-            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [1]) ;
+            bool ok = gb_mxstring_to_format (pargin [1], &fmt, &sparsity) ;
 
             if (type != NULL)
             {
@@ -103,7 +105,7 @@ void mexFunction
                 }
 
             }
-            else if (fmt != GxB_NO_FORMAT)
+            else if (ok)
             { 
 
                 //--------------------------------------------------------------
@@ -116,6 +118,7 @@ void mexFunction
                 // get a deep copy of A and convert it to the requested format
                 C = gb_get_deep (pargin [0]) ;
                 OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
 
             }
             else
@@ -172,7 +175,7 @@ void mexFunction
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
             GrB_Type type = gb_mxstring_to_type (pargin [2]) ;
-            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
+            bool ok = gb_mxstring_to_format (pargin [2], &fmt, &sparsity) ;
 
             if (type != NULL)
             { 
@@ -186,11 +189,12 @@ void mexFunction
                     gb_default_format (nrows, ncols))) ;
 
             }
-            else if (fmt != GxB_NO_FORMAT)
+            else if (ok)
             { 
                 // create an m-by-n double matrix of the desired format
                 OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
                 OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
             }
             else
             { 
@@ -207,20 +211,20 @@ void mexFunction
             //------------------------------------------------------------------
 
             GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
-            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
+            bool ok = gb_mxstring_to_format (pargin [2], &fmt, &sparsity) ;
 
-            if (type != NULL && fmt != GxB_NO_FORMAT)
+            if (ok)
             { 
                 // C = GrB (A, type, format)
             }
             else
             { 
                 // C = GrB (A, format, type)
-                fmt = gb_mxstring_to_format (pargin [1]) ;
+                ok = gb_mxstring_to_format (pargin [1], &fmt, &sparsity) ;
                 type = gb_mxstring_to_type (pargin [2]) ;
             }
 
-            if (type == NULL || fmt == GxB_NO_FORMAT)
+            if (type == NULL || !ok)
             { 
                 ERROR ("unknown type and/or format") ;
             }
@@ -237,6 +241,7 @@ void mexFunction
                 C = gb_typecast (type, fmt, A) ;
                 OK (GrB_Matrix_free (&A)) ;
             }
+            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
         }
         else
         { 
@@ -263,26 +268,27 @@ void mexFunction
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
 
             GrB_Type type = gb_mxstring_to_type (pargin [2]) ;
-            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [3]) ;
+            bool ok = gb_mxstring_to_format (pargin [3], &fmt, &sparsity) ;
 
-            if (type != NULL && fmt != GxB_NO_FORMAT)
+            if (ok)
             { 
                 // C = GrB (m, n, type, format)
             }
             else
             { 
                 // C = GrB (m, n, format, type)
-                fmt = gb_mxstring_to_format (pargin [2]) ;
+                ok = gb_mxstring_to_format (pargin [2], &fmt, &sparsity) ;
                 type = gb_mxstring_to_type (pargin [3]) ;
             }
 
-            if (type == NULL || fmt == GxB_NO_FORMAT)
+            if (type == NULL || !ok)
             { 
                 ERROR ("unknown type and/or format") ;
             }
 
             OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
             OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
 
         }
         else

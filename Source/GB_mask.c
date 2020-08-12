@@ -166,10 +166,6 @@ GrB_Info GB_mask                // C<M> = Z
     // M must be compatible with C_result
     ASSERT_OK (GB_Mask_compatible (M, C_result, 0, 0, Context)) ;
 
-    ASSERT (!GB_IS_BITMAP (C_result)) ; // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
-
     GrB_Info info = GrB_SUCCESS ;
 
     GrB_Matrix R = NULL ;
@@ -195,6 +191,8 @@ GrB_Info GB_mask                // C<M> = Z
             //------------------------------------------------------------------
             // mask is not complemented: this is the default
             //------------------------------------------------------------------
+
+            // OK: BITMAP
 
             // C_result = Z, but make sure a deep copy is made as needed.  It is
             // possible that Z is a shallow copy of another matrix.
@@ -248,6 +246,8 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
         // the mask is present
         //----------------------------------------------------------------------
+
+        // OK: BITMAP
 
         // delete any lingering zombies and assemble any pending tuples
         GB_MATRIX_WAIT (M) ;        // also sort M if jumbled
@@ -309,6 +309,8 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
         // R = masker (M, C, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
+
+        // TODO: BITMAP fails in GB_masker
 
         GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
             Context)) ;

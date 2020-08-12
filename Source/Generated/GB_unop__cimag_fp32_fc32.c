@@ -62,32 +62,49 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB_unop_apply__cimag_fp32_fc32
 (
     float *Cx,       // Cx and Ax may be aliased
     const GxB_FC32_t *Ax,
+    const int8_t *GB_RESTRICT Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
 )
-{ 
+{
+
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
-    {
-        GxB_FC32_t aij = Ax [p] ;
-        GxB_FC32_t z = (aij) ;
-        Cx [p] = cimagf (z) ;
+    if (Ab == NULL)
+    { 
+        // TODO: this case is not needed for the identity operator,
+        // when Ab is NULL
+        // A and C are hypersparse, sparse, or full
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            GxB_FC32_t aij = Ax [p] ;
+            GxB_FC32_t z = (aij) ;
+            Cx [p] = cimagf (z) ;
+        }
+    }
+    else
+    { 
+        // bitmap case, no transpose
+        // A->b has already been memcpy'd into C->b
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            if (!Ab [p]) continue ;
+            GxB_FC32_t aij = Ax [p] ;
+            GxB_FC32_t z = (aij) ;
+            Cx [p] = cimagf (z) ;
+        }
     }
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

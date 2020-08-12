@@ -1,14 +1,11 @@
-if_operator_is_enabled
-
 GrB_Info GB_unop_apply
 (
     GB_ctype *Cx,
     const GB_atype *Ax,
+    const int8_t *GB_RESTRICT Ab,
     int64_t anz,
     int nthreads
 ) ;
-
-endif_operator_is_enabled
 
 GrB_Info GB_unop_tran
 (

@@ -37,6 +37,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->type = (type == NULL) ? GrB_BOOL : type ;
     s->hyper_switch = GB_HYPER_DEFAULT ;
     s->bitmap_switch = 0.125 ; // TODO: GB_BITMAP_SWITCH_DEFAULT ;
+    s->sparsity = GxB_FULL ;
     s->plen = -1 ;
     s->vlen = 1 ;
     s->vdim = 1 ;

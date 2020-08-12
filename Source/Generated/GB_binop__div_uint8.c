@@ -324,6 +324,7 @@ GrB_Info GB_bind1st__div_uint8
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
+    const int8_t *GB_RESTRICT Bb,
     int64_t anz,
     int nthreads
 )
@@ -338,6 +339,7 @@ GrB_Info GB_bind1st__div_uint8
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     {
+        if (!GBB (Bb, p)) continue ;
         uint8_t bij = Bx [p] ;
         Cx [p] = GB_IDIV_UNSIGNED (x, bij, 8) ;
     }
@@ -358,6 +360,7 @@ GrB_Info GB_bind2nd__div_uint8
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
     const GB_void *y_input,
+    const int8_t *GB_RESTRICT Ab,
     int64_t anz,
     int nthreads
 )
@@ -372,6 +375,7 @@ GrB_Info GB_bind2nd__div_uint8
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     {
+        if (!GBB (Ab, p)) continue ;
         uint8_t aij = Ax [p] ;
         Cx [p] = GB_IDIV_UNSIGNED (aij, y, 8) ;
     }
@@ -387,7 +391,7 @@ GrB_Info GB_bind2nd__div_uint8
 
 
 
-// cij = op (x, aij), no typcasting (in spite of the macro name)
+// cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
@@ -432,7 +436,7 @@ GrB_Info GB_bind1st_tran__div_uint8
 
 
 
-// cij = op (aij, y), no typcasting (in spite of the macro name)
+// cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \

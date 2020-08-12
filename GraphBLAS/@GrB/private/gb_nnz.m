@@ -5,5 +5,10 @@ function e = gb_nnz (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
-e = gbnvals (G) - gbnvals (gbselect (G, '==0')) ;
+try
+    % TODO: gbselect doesn't work for bitmap yet
+    e = gbnvals (G) - gbnvals (gbselect (G, '==0')) ;
+catch
+    e = gbnvals (G) ;
+end
 

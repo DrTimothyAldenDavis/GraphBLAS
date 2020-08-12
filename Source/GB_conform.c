@@ -7,9 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// The input matrix can have shallow A->p and/or A->h components.  If the
-// hypersparsity is changed, these components are no longer shallow.  If the
-// method fails and the matrix is shallow, all content is removed or freed.
+// On input, the matrix has any one of four sparsity structures: hypersparse,
+// sparse, bitmap, or full.  A bitmap or full matrix never has pending work.  A
+// sparse or hypersparse matrix may have pending work (zombies, jumbled, and/or
+// pending tuples).  The pending work is not finished unless the matrix is
+// converted to bitmap or full.  If this method fails, the matrix is cleared
+// of all entries.
 
 // OK: BITMAP
 
@@ -17,9 +20,106 @@
 
 #define GB_FREE_ALL GB_phbix_free (A) ;
 
-GrB_Info GB_conform             // conform a matrix to its desired structure
+//------------------------------------------------------------------------------
+// GB_hyper_or_bitmap: ensure a matrix is either hypersparse or bitmap
+//------------------------------------------------------------------------------
+
+static inline GrB_Info GB_hyper_or_bitmap
 (
-    GrB_Matrix A,               // matrix to conform
+    bool is_hyper, bool is_sparse, bool is_bitmap, bool is_full,
+    GrB_Matrix A, GB_Context Context
+)
+{
+    GrB_Info info ;
+    if (is_full || ((is_hyper || is_sparse) &&
+        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim)))
+    {
+        // if full or sparse/hypersparse with many entries: to bitmap
+        GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+    }
+    else if (is_sparse || (is_bitmap &&
+        GB_convert_bitmap_to_sparse_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim)))
+    { 
+        // if sparse or bitmap with few entries: to hypersparse
+        GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_sparse_or_bitmap: ensure a matrix is either sparse or bitmap
+//------------------------------------------------------------------------------
+
+static inline GrB_Info GB_sparse_or_bitmap
+(
+    bool is_hyper, bool is_sparse, bool is_bitmap, bool is_full,
+    GrB_Matrix A, GB_Context Context
+)
+{
+    GrB_Info info ;
+    if (is_full || ((is_hyper || is_sparse) &&
+        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim)))
+    {
+        // if full or sparse/hypersparse with many entries: to bitmap
+        GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+    }
+    else if (is_hyper || (is_bitmap &&
+        GB_convert_bitmap_to_sparse_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim)))
+    { 
+        // if hypersparse or bitmap with few entries: to sparse
+        GB_OK (GB_convert_any_to_sparse (A, Context)) ;
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_hyper_sparse_or_bitmap: ensure a matrix is hypersparse, sparse, or bitmap
+//------------------------------------------------------------------------------
+
+static inline GrB_Info GB_hyper_sparse_or_bitmap
+(
+    bool is_hyper, bool is_sparse, bool is_bitmap, bool is_full,
+    GrB_Matrix A, GB_Context Context
+)
+{
+    GrB_Info info ;
+    if (is_full || ((is_hyper || is_sparse) &&
+        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim)))
+    {
+        // if full or sparse/hypersparse with many entries: to bitmap
+        GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+    }
+    else if (is_bitmap)
+    {
+        if (GB_convert_bitmap_to_sparse_test (A->bitmap_switch,
+            GB_NNZ (A), A->vlen, A->vdim))
+        { 
+            // if bitmap with few entries: to sparse
+            GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
+            // conform between sparse and hypersparse
+            GB_OK (GB_conform_hyper (A, Context)) ;
+        }
+    }
+    else // is_hyper || is_sparse
+    {
+        // conform between sparse and hypersparse
+        GB_OK (GB_conform_hyper (A, Context)) ;
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_conform
+//------------------------------------------------------------------------------
+
+GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
+(
+    GrB_Matrix A,       // matrix to conform
     GB_Context Context
 )
 {
@@ -28,11 +128,17 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
+    GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to conform", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
+    bool is_hyper = GB_IS_HYPERSPARSE (A) ;
+    bool is_sparse = GB_IS_SPARSE (A) ;
+    bool is_full = GB_IS_FULL (A) ;
+    bool is_bitmap = GB_IS_BITMAP (A) ;
+    bool is_full_or_dense_with_no_pending_work = is_full || (GB_is_dense (A)
+        && !GB_ZOMBIES (A) && !GB_JUMBLED (A) && !GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // select the sparsity structure
@@ -42,130 +148,216 @@ GrB_Info GB_conform             // conform a matrix to its desired structure
     { 
 
         //----------------------------------------------------------------------
-        // always hypersparse
+        // (1) always hypersparse
         //----------------------------------------------------------------------
 
         case GxB_HYPERSPARSE :
 
-            A->hyper_switch = GB_ALWAYS_HYPER ;
             GB_OK (GB_convert_any_to_hyper (A, Context)) ;
             break ;
 
         //----------------------------------------------------------------------
-        // always sparse
+        // (2) always sparse
         //----------------------------------------------------------------------
 
         case GxB_SPARSE :
 
-            A->hyper_switch = GB_NEVER_HYPER ;
             GB_OK (GB_convert_any_to_sparse (A, Context)) ;
             break ;
 
         //----------------------------------------------------------------------
-        // always bitmap
+        // (3) sparse or hypersparse
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_SPARSE :
+
+            if (is_full || is_bitmap)
+            { 
+                // if full or bitmap: to sparse
+                GB_OK (GB_convert_any_to_sparse (A, Context)) ;
+            }
+            // conform between sparse and hypersparse
+            GB_OK (GB_conform_hyper (A, Context)) ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // (4) always bitmap
         //----------------------------------------------------------------------
 
         case GxB_BITMAP :
 
-            // sparse and hypersparse matrices may have zombies, pending tuples,
-            // and may be jumbled.  Pending tuples must be assembled, but
-            // zombies and jumbled are OK.
-            A->hyper_switch = GB_NEVER_HYPER ;
-            GB_MATRIX_WAIT_IF_PENDING (A) ;
             GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
             break ;
 
-        //---------------------------------------------------------------------
-        // always full (or bitmap if not all entries present)
-        //---------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // (5) hypersparse or bitmap
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_BITMAP :
+
+            // ensure the matrix is hypersparse or bitmap
+            GB_OK (GB_hyper_or_bitmap (is_hyper, is_sparse, is_bitmap,
+                is_full, A, Context)) ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // (6) sparse or bitmap
+        //----------------------------------------------------------------------
+
+        case GxB_SPARSE + GxB_BITMAP :
+
+            // ensure the matrix is sparse or bitmap
+            GB_OK (GB_sparse_or_bitmap (is_hyper, is_sparse, is_bitmap,
+                is_full, A, Context)) ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // (7) hypersparse, sparse, or bitmap
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP :
+
+            // ensure the matrix is hypersparse, sparse, or bitmap
+            GB_OK (GB_hyper_sparse_or_bitmap (is_hyper, is_sparse,
+                is_bitmap, is_full, A, Context)) ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // (8), (12): bitmap or full
+        //----------------------------------------------------------------------
 
         case GxB_FULL :
-        case GxB_FULL+GxB_BITMAP :
+        case GxB_FULL + GxB_BITMAP :
 
-            // sparse and hypersparse matrices may have zombies, pending tuples,
-            // and may be jumbled.  All pending work must be finished now.
-            A->hyper_switch = GB_NEVER_HYPER ;
-            GB_MATRIX_WAIT (A) ;
-            if (GB_is_dense (A))
+            if (is_full_or_dense_with_no_pending_work)
             {
-                // all entries are present: convert to full
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to bitmap
+                GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (9) hypersparse or full
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_FULL :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to hypersparse
+                GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (10) sparse or full
+        //----------------------------------------------------------------------
+
+        case GxB_SPARSE + GxB_FULL :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to sparse
+                GB_OK (GB_convert_any_to_sparse (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (11) hypersparse, sparse, or full
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else if (is_bitmap)
+            { 
+                // if bitmap: to sparse
+                GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
+                // conform between sparse and hypersparse
+                GB_OK (GB_conform_hyper (A, Context)) ;
+            }
+            else
+            {
+                // conform between sparse and hypersparse
+                GB_OK (GB_conform_hyper (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (13) hypersparse, bitmap, or full
+        //----------------------------------------------------------------------
+
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // ensure the matrix is hypersparse or bitmap
+                GB_OK (GB_hyper_or_bitmap (is_hyper, is_sparse, is_bitmap,
+                    is_full, A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (14) sparse, bitmap, or full
+        //----------------------------------------------------------------------
+
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // ensure the matrix is sparse or bitmap
+                GB_OK (GB_sparse_or_bitmap (is_hyper, is_sparse, is_bitmap,
+                    is_full, A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (15) default: hypersparse, sparse, bitmap, or full
+        //----------------------------------------------------------------------
+
+        case GxB_AUTO_SPARSITY :
+        default :
+
+            if (is_full_or_dense_with_no_pending_work)
+            {
+                // if full or all entries present: to full
                 GB_convert_any_to_full (A) ;
             }
             else
             {
-                // some entries not present: convert to bitmap
-                // TODO: use bitmap instead
-                GB_OK (GB_convert_any_to_sparse (A, Context)) ;
-                // GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+                // ensure the matrix is hypersparse, sparse, or bitmap
+                GB_OK (GB_hyper_sparse_or_bitmap (is_hyper, is_sparse,
+                    is_bitmap, is_full, A, Context)) ;
             }
-            break ;
-
-        //----------------------------------------------------------------------
-        // default: automatic selection of sparsity
-        //----------------------------------------------------------------------
-
-        default :
-        case GxB_AUTO_SPARSITY :
-
-            if (GB_IS_FULL (A))
-            {
-                // A is already full; nothing to do
-                ASSERT_MATRIX_OK (A, "A conformed: already full", GB0) ;
-                ASSERT (!GB_ZOMBIES (A)) ;
-                ASSERT (!GB_JUMBLED (A)) ;
-                ASSERT (!GB_PENDING (A)) ;
-                return (GrB_SUCCESS) ;
-            }
-
-            // A is now hypersparse, sparse, or bitmap; check for conversion to
-            // full
-
-            if (GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled)
-                && !GB_PENDING (A))
-            { 
-                // A is sparse, hypersparse, or bitmap with all entries
-                // present; convert to full.  A bitmap matrix cannot have
-                // zombies, pending tuples, or be jumbled, so this step
-                // converts any dense bitmap to full.  The conversion
-                // cannot be done if A has any pending work.
-                ASSERT_MATRIX_OK (A, "A conformed: converting full", GB0) ;
-                GB_convert_any_to_full (A) ;
-                ASSERT_MATRIX_OK (A, "A conformed: converted to full", GB0) ;
-                return (GrB_SUCCESS) ;
-            }
-
-            //------------------------------------------------------------------
-            // convert to/from bitmap
-            //------------------------------------------------------------------
-
-            // A is now hypersparse, sparse, or bitmap, with some entries not
-            // present or with pending work (or both).
-
-            if (GB_IS_BITMAP (A))
-            { 
-                // A is a bitmap matrix with some entries not present.  TODO:
-                // for now, leave as bitmap.  Instead, if nnz(A) is very small,
-                // convert to sparse
-                ASSERT_MATRIX_OK (A, "A conformed: already bitmap", GB0) ;
-                return (GrB_SUCCESS) ;
-            }
-
-            // TODO: if nnz(A) is large compared to avlen*avdim, convert to
-            // bitmap and return result
-
-            //------------------------------------------------------------------
-            // convert between sparse/hypersparse
-            //------------------------------------------------------------------
-
-            // A is now sparse or hypersparse; convert between the two as
-            // desired.  All pending work is left pending.
-
-            ASSERT (!GB_IS_FULL (A)) ;
-            ASSERT (!GB_IS_BITMAP (A)) ;
-            ASSERT (GB_ZOMBIES_OK (A)) ;
-            ASSERT (GB_JUMBLED_OK (A)) ;
-            ASSERT (GB_PENDING_OK (A)) ;
-            GB_OK (GB_conform_hyper (A, Context)) ;
             break ;
     }
 

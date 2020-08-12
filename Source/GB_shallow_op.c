@@ -52,7 +52,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     GrB_Type ztype, op_intype = NULL ;
     GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;
@@ -86,14 +85,13 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // construct a shallow copy of A for the pattern of C
     //--------------------------------------------------------------------------
 
-    // allocate the struct for C, but do not allocate C->h, C->p, C->i, or C->x.
-    // C has the exact same hypersparsity as A.
+    // allocate the struct for C, but do not allocate C->{p,h,b,i,x}
+    // C has the exact same sparsity structure as A.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
-    int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    info = GB_new (&C, // sparse or hyper, new header
+    info = GB_new (&C, // full, bitmap, sparse or hyper; new header
         ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        sparsity, A->hyper_switch, 0, Context) ;
+        GB_sparsity (A), A->hyper_switch, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -105,8 +103,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     ASSERT (C->magic == GB_MAGIC2) ;   // [ be careful; C not yet initialized
-    C->p_shallow = true ;           // C->p not freed when freeing C
-    C->h_shallow = true ;           // C->h not freed when freeing C
+    C->p_shallow = (A->p != NULL) ;           // C->p not freed when freeing C
+    C->h_shallow = (A->h != NULL) ;           // C->h not freed when freeing C
     C->p = A->p ;                   // C->p is of size A->plen + 1
     C->h = A->h ;                   // C->h is of size A->plen
     C->plen = A->plen ;             // C and A have the same hyperlist sizes
@@ -114,6 +112,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
             A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
+    C->nvals = A->nvals ;           // if A bitmap 
     C->magic = GB_MAGIC ;           // C is now initialized ]
 
     //--------------------------------------------------------------------------
@@ -124,8 +123,10 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     { 
         // C->p and C->h are shallow but the rest is empty
         C->nzmax = 0 ;
+        C->b = NULL ;
         C->i = NULL ;
         C->x = NULL ;
+        C->b_shallow = false ;
         C->i_shallow = false ;
         C->x_shallow = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
@@ -138,7 +139,10 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     C->i = A->i ;               // of size A->nzmax
-    C->i_shallow = true ;       // C->i will not be freed when freeing C
+    C->i_shallow = (A->i != NULL) ; // C->i will not be freed when freeing C
+
+    C->b = A->b ;               // of size A->nzmax
+    C->b_shallow = (A->b != NULL) ;  // C->b will not be freed when freeing C
 
     //--------------------------------------------------------------------------
     // make a shallow copy of the values, if possible

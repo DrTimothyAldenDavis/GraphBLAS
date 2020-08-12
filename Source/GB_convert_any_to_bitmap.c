@@ -30,13 +30,14 @@ GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
     ASSERT_MATRIX_OK (A, "A being converted to bitmap", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // A can have zombies
     ASSERT (GB_JUMBLED_OK (A)) ;    // A can be jumbled
+    GB_MATRIX_WAIT_IF_PENDING (A) ; // A cannot have pending tuples
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A to bitmap
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (GB_IS_HYPERSPARSE (A))
     { 
         // convert from hypersparse to bitmap
         GB_OK (GB_convert_sparse_to_bitmap (A, Context)) ;

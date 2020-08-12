@@ -54,6 +54,7 @@
         if (!Ap_shallow) GB_FREE (Ap) ;                                     \
         if (!Ah_shallow) GB_FREE (Ah) ;                                     \
         if (!Ai_shallow) GB_FREE (Ai) ;                                     \
+        if (!Ab_shallow) GB_FREE (Ab) ;                                     \
         if (!Ax_shallow) GB_FREE (Ax) ;                                     \
     }                                                                       \
     else                                                                    \
@@ -176,8 +177,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;    // TODO: bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO: bitmap
+
+    // get the current sparsity structure of A
+    float A_hyper_switch = A->hyper_switch ;
+    int A_sparsity = A->sparsity ;
 
     // wait if A has pending tuples or zombies, but leave it jumbled
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
@@ -185,26 +188,32 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
 
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_dense = GB_is_dense (A) ;
+
+    #if 0
     if (in_place && A_is_dense && !GB_IS_FULL (A))
     { 
         // convert C from sparse to full, discarding prior pattern
         GBURBLE ("(C=A' to full) ") ;
         ASSERT (A == C) ;
         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
-        GB_ENSURE_FULL (C) ;
+        GB_ENSURE_FULL (C) ;    // TODO only if allowed by A->sparsity
         ASSERT_MATRIX_OK (C, "A and C for inplace transpose (full)", GB0) ;
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use here
     //--------------------------------------------------------------------------
 
-    int64_t anz   = GB_NNZ (A) ;
+    int64_t anz = GB_NNZ (A) ;
+    int64_t anz_held = GB_NNZ_HELD (A) ;
+    int64_t cnz = (A_is_bitmap) ? anz_held : anz ;
     int64_t anvec = A->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -217,14 +226,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
 
-    float A_hyper_switch = A->hyper_switch ;
-
     int64_t anzmax = A->nzmax ;
 
     // if in place, these must be freed when done, whether successful or not
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
     int64_t *GB_RESTRICT Ai = A->i ;
+    int8_t  *GB_RESTRICT Ab = A->b ;
     GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
 
     bool A_is_hyper = (Ah != NULL) ;
@@ -232,6 +240,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool Ah_shallow = A->h_shallow ;
     bool Ai_shallow = A->i_shallow ;
     bool Ax_shallow = A->x_shallow ;
+    bool Ab_shallow = A->b_shallow ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -244,7 +253,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ntasks = GB_IMAX (ntasks, 1) ;
     int64_t *GB_RESTRICT Count = NULL ;    // size ntasks+1, if allocated
 
-    if (anz > 0 && avdim != 1 && avlen == 1 && !A_is_dense)
+    if (anz > 0 && avdim != 1 && avlen == 1 && !A_is_dense && !A_is_bitmap)
     {
         // Count is only used in one case below
         Count = GB_CALLOC (ntasks+1, int64_t) ;
@@ -380,15 +389,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate space
         //----------------------------------------------------------------------
 
-        // Allocate the header of C, with no C->p, C->h, C->i, or C->x
-        // content, and initialize the type and dimension of C.   If in
-        // place, A->p, A->h, A->i, and A->x are all NULL.  The new matrix
-        // is hypersparse, but can be CSR or CSC.  This step does not
-        // allocate anything if in place.
+        // Allocate the header of C, with no C->p, C->h, C->i, C->b, or C->x
+        // content, and initialize the type and dimension of C.  The new matrix
+        // is hypersparse, bitmap, or full.  This step does not allocate
+        // anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        int sparsity = A_is_dense ? GxB_FULL : GxB_HYPERSPARSE ;
-        info = GB_new (Chandle, // full or hyper, old or new header
+        int sparsity = A_is_bitmap ? GxB_BITMAP :
+            (A_is_dense ? GxB_FULL : GxB_HYPERSPARSE) ;
+        info = GB_new (Chandle, // bitmap, full, or hyper; old or new header
             ctype, 1, avlen, GB_Ap_null, C_is_csc,
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -410,21 +419,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         // allocate new space for the values and pattern
-        GB_void *GB_RESTRICT Cx = NULL ;
         int64_t *GB_RESTRICT Cp = NULL ;
         int64_t *GB_RESTRICT Ci = NULL ;
+        GB_void *GB_RESTRICT Cx = NULL ;
         bool ok = true ;
-        if (!A_is_dense)
+        if (sparsity == GxB_HYPERSPARSE)
         {
-            Cp = GB_MALLOC (anz+1, int64_t) ;
-            Ci = GB_CALLOC (anz  , int64_t) ;
+            Cp = GB_MALLOC (cnz+1, int64_t) ;
+            Ci = GB_CALLOC (cnz  , int64_t) ;
             ok = (Cp != NULL && Ci != NULL) ;
         }
 
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            Cx = GB_MALLOC (cnz * ctype->size, GB_void) ;
             ok = ok && (Cx != NULL) ;
         }
 
@@ -440,7 +449,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         //----------------------------------------------------------------------
-        // the transpose will now succeed; fill the content of C
+        // fill the content of C
         //----------------------------------------------------------------------
 
         // numerical values: apply the operator, typecast, or make shallow copy
@@ -468,7 +477,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // copy the values from A into C and cast from atype to ctype
             C->x = Cx ;
             C->x_shallow = false ;
-            GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
+            GB_cast_array (Cx, ccode, Ax, acode, Ab, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype
@@ -479,8 +488,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             Ax = NULL ;  // do not free prior Ax
         }
 
+        if (sparsity == GxB_BITMAP)
+        {
+            // bitmap of C is always a shallow copy of A
+            C->b = Ab ;
+            C->b_shallow = (in_place) ? Ab_shallow : true ;
+            Ab = NULL ;     // do not free prior Ab
+        }
+
         // each entry in A becomes a non-empty vector in C
-        if (!A_is_dense)
+        if (sparsity == GxB_HYPERSPARSE)
         { 
             // C is a hypersparse 1-by-avlen matrix
             C->h = Ai ;
@@ -533,8 +550,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // allocate anything if in place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        int sparsity = A_is_dense ? GxB_FULL : GxB_SPARSE ; 
-        info = GB_new (Chandle, // full or sparse, old or new header
+        int sparsity = A_is_bitmap ? GxB_BITMAP :
+            (A_is_dense ? GxB_FULL : GxB_SPARSE) ; 
+
+        info = GB_new (Chandle, // full, bitmap, or sparse; old or new header
             ctype, avdim, 1, GB_Ap_null, C_is_csc,
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -560,23 +579,23 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         int64_t *GB_RESTRICT Cp = NULL ;
         int64_t *GB_RESTRICT Ci = NULL ;
         bool ok = true ;
-        if (!A_is_dense)
+        if (sparsity == GxB_SPARSE)
         { 
             Cp = GB_CALLOC (2, int64_t) ;
             ok = ok && (Cp != NULL) ;
         }
 
-        if (!(A_is_hyper || A_is_dense))
+        if (!(A_is_hyper || A_is_dense || A_is_bitmap))
         { 
             // A is sparse, so new space is needed for Ci
-            Ci = GB_MALLOC (anz, int64_t) ;
+            Ci = GB_MALLOC (cnz, int64_t) ;
             ok = ok && (Ci != NULL) ;
         }
 
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            Cx = GB_MALLOC (cnz * ctype->size, GB_void) ;
             ok = ok && (Cx != NULL) ;
         }
 
@@ -595,6 +614,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // numerical values of C: apply the op, typecast, or make shallow copy
         //----------------------------------------------------------------------
 
+        // numerical values: apply the operator, typecast, or make shallow copy
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op (A)
@@ -619,7 +639,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // copy the values from A into C and cast from atype to ctype
             C->x = Cx ;
             C->x_shallow = false ;
-            GB_cast_array (Cx, ccode, Ax, acode, asize, anz, 1) ;
+            GB_cast_array (Cx, ccode, Ax, acode, Ab, asize, anz, 1) ;
             // prior Ax will be freed
         }
         else // ctype == atype
@@ -644,6 +664,20 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ;
 
         }
+        else if (A_is_bitmap)
+        {
+
+            //------------------------------------------------------------------
+            // C and A are bitmap
+            //------------------------------------------------------------------
+
+            // bitmap of C is always a shallow copy of A
+            C->b = Ab ;
+            C->b_shallow = (in_place) ? Ab_shallow : true ;
+            Ab = NULL ;     // do not free prior Ab
+            C->nvals = A->nvals ;
+
+        }
         else if (A_is_hyper)
         { 
 
@@ -654,7 +688,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             C->i = Ah ;
             C->i_shallow = (in_place) ? Ah_shallow : true ;
             ASSERT (anvec == anz) ;
-            Ah = NULL ;  // do not free prior Ah
+            Ah = NULL ;     // do not free prior Ah
 
         }
         else
@@ -773,18 +807,19 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_FREE_IN_PLACE_A ;
 
     }
-    else if (A_is_dense)
+    else if (A_is_dense || A_is_bitmap)
     { 
 
         //======================================================================
-        // transpose a dense matrix
+        // transpose a dense or bitmap matrix
         //======================================================================
 
         // allocate T
         GrB_Matrix T = NULL ;
-        info = GB_new_bix (&T,  // full, new header
+        int sparsity = (A_is_bitmap) ? GxB_BITMAP : GxB_FULL ;
+        info = GB_new_bix (&T,  // bitmap or full, new header
             ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-            GxB_FULL, A_hyper_switch, 1, anzmax, true, Context) ;
+            sparsity, A_hyper_switch, 1, anzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -792,6 +827,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             return (GrB_OUT_OF_MEMORY) ;
         }
         T->magic = GB_MAGIC ;
+        T->nvals = A->nvals ;   // for bitmap case only
 
         //------------------------------------------------------------------
         // T = A'
@@ -812,6 +848,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 NULL, NULL, 0, nthreads) ;
         }
 
+        ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
         ASSERT (!GB_JUMBLED (T)) ;
 
         //------------------------------------------------------------------
@@ -825,7 +862,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, // full, old or new header
             ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-            GxB_FULL, A_hyper_switch, 0, Context) ;
+            sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -1206,11 +1243,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     }
 
     //--------------------------------------------------------------------------
-    // conform the result to the desired hypersparsity of A
+    // conform the result to the desired sparisty structure of A
     //--------------------------------------------------------------------------
 
-    // transplant the hyper_switch from A to C
+    // transplant the hyper_switch and sparsity structure from A to C
     C->hyper_switch = A_hyper_switch ;
+    C->sparsity = A_sparsity ;
 
     ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
 

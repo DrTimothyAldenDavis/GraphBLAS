@@ -80,13 +80,13 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     // if op1 and op2 are NULL, then no operator is applied
 
     // This method is only be used when A is sparse or hypersparse.
-    // The full case is handled in GB_transpose.
+    // The full and bitmap cases are handled in GB_transpose.
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
     // get A

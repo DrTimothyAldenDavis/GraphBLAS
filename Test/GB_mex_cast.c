@@ -74,7 +74,8 @@ void mexFunction
 //  }
 
     // cast the data from X to C
-    GB_cast_array (C, ctype->code, X, xtype->code, xtype->size, nrows*ncols, 1) ;
+    GB_cast_array (C, ctype->code, X, xtype->code, NULL,
+        xtype->size, nrows*ncols, 1) ;
 
 //  printf ("X input again:\n") ;
 //  for (int k = 0 ; k < nrows*ncols ; k++)

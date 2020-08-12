@@ -117,10 +117,10 @@ GrB_Info GB_selector
             // ithunk = (int64_t) Thunk (0)
             size_t tsize = Thunk->type->size ;
             GB_cast_array ((GB_void *GB_RESTRICT) &ithunk, GB_INT64_code,
-                xthunk, tcode, tsize, 1, 1) ;
+                xthunk, tcode, NULL, tsize, 1, 1) ;
             // athunk = (atype) Thunk (0)
             GB_cast_array (athunk, A->type->code,
-                xthunk, tcode, tsize, 1, 1) ;
+                xthunk, tcode, NULL, tsize, 1, 1) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
         }

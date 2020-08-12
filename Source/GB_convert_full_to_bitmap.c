@@ -68,7 +68,6 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converted from full to bitmap", GB0) ;
-    ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (GB_IS_BITMAP (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;

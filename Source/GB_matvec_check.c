@@ -168,27 +168,36 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             break ;
 
         // 11
-        case GxB_SPARSE + GxB_FULL :
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :
             GBPR0 (" sparse or full\n") ;
             break ;
 
         // 13
-        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL ;
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL :
             GBPR0 (" hypersparse, bitmap, or full\n") ;
             break ;
 
         // 14
-        case GxB_SPARSE + GxB_BITMAP + GxB_FULL ;
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL :
             GBPR0 (" sparse, bitmap, or full\n") ;
             break ;
 
         // 15
-        default :
         case GxB_AUTO_SPARSITY :
             GBPR0 (" auto\n") ;
             break ;
+
+        default :
+            GBPR0 (" unknown\n") ;
+            break ;
     }
     #endif
+
+    if (A->sparsity <= 0 || A->sparsity > GxB_AUTO_SPARSITY)
+    { 
+        GBPR0 (" invalid sparsity structure\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
 
     //--------------------------------------------------------------------------
     // check the dimensions
@@ -503,9 +512,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         else if (pr_short && jcount == GB_NBRIEF)
         { 
             truncated = true ;
-            #if GB_DEVELOPER
-            GBPR ("    ...\n") ;
-            #endif
         }
         jcount++ ;      // count # of vectors printed so far
 
@@ -520,10 +526,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             bool is_zombie = GB_IS_ZOMBIE (i) ;
             i = GB_UNFLIP (i) ;
             if (is_zombie) nzombies++ ;
+            bool print_value = false ;
             if (prcol)
             { 
-                if ((pr_short && p < GB_NZBRIEF) || pr_complete)
+                if ((pr_short && icount < GB_NZBRIEF) || pr_complete)
                 { 
+                    print_value = true ;
                     #if GB_DEVELOPER
                     GBPR ("    %s " GBd ": ", A->is_csc ? "row":"column", i) ;
                     #else
@@ -540,9 +548,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 else if (pr_short && (ilast == -1 || icount == GB_NZBRIEF))
                 { 
                     truncated = true ;
-                    #if GB_DEVELOPER
-                    GBPR ("        ...\n") ;
-                    #endif
                 }
             }
             int64_t row = A->is_csc ? i : j ;
@@ -554,8 +559,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             }
 
             // print the value
-            bool print_value = prcol &&
-                ((pr_short && icount < GB_NZBRIEF) || pr_complete) ;
             if (print_value)
             { 
                 if (is_zombie)
@@ -589,11 +592,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    #if GB_DEVELOPER
-    // ... already printed
-    #else
     if (pr_short && truncated) GBPR ("    ...\n") ;
-    #endif
 
     //--------------------------------------------------------------------------
     // check the entry count in the bitmap

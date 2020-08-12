@@ -45,13 +45,13 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
 
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
 
     const GB_void *Ax = (GB_void *) A->x ;  // A->x has type A->type
+    const int8_t  *Ab = A->b ;              // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_NNZ_HELD (A) ;   // size of A->x and Cx
 
@@ -106,6 +106,9 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         //----------------------------------------------------------------------
 
         int64_t offset = GB_positional_offset (opcode) ;
+
+        // GB_positional_op_ijp allocates a set of tasks, which can possibly
+        // fail if out of memory.
 
         if (is64)
         {
@@ -198,8 +201,8 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
             #define GB_WORKER(op,zname,ztype,aname,atype)               \
             {                                                           \
-                if (GB_unop_apply (op,zname,aname)                      \
-                    ((ztype *) Cx, (const atype *) Ax, anz, nthreads)   \
+                if (GB_unop_apply (op,zname,aname) ((ztype *) Cx,       \
+                    (const atype *) Ax, Ab, anz, nthreads)              \
                     == GrB_SUCCESS) return (GrB_SUCCESS) ;              \
             }                                                           \
             break ;
@@ -229,6 +232,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         { 
+            if (!GBB (Ab, p)) continue ;
             // xwork = (xtype) Ax [p]
             GB_void xwork [GB_VLA(xsize)] ;
             cast_A_to_X (xwork, Ax +(p*asize), asize) ;
@@ -314,7 +318,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \
-                        if (GB_bind1st (op, xname) (Cx, scalarx, Ax, anz,    \
+                        if (GB_bind1st (op, xname) (Cx, scalarx, Ax, Ab, anz,\
                             nthreads) == GrB_SUCCESS) return (GrB_SUCCESS) ; \
                     }                                                        \
                     break ;
@@ -349,7 +353,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                     #undef  GB_BINOP_WORKER
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \
-                        if (GB_bind2nd (op, xname) (Cx, Ax, scalarx, anz,    \
+                        if (GB_bind2nd (op, xname) (Cx, Ax, scalarx, Ab, anz,\
                             nthreads) == GrB_SUCCESS) return (GrB_SUCCESS) ; \
                     }                                                        \
                     break ;
@@ -382,6 +386,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             {
+                if (!GBB (Ab, p)) continue ;
                 // ywork = (ytype) Ax [p]
                 GB_void ywork [GB_VLA(ysize)] ;
                 cast_A_to_Y (ywork, Ax +(p*asize), asize) ;
@@ -397,6 +402,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             {
+                if (!GBB (Ab, p)) continue ;
                 // xwork = (xtype) Ax [p]
                 GB_void xwork [GB_VLA(xsize)] ;
                 cast_A_to_X (xwork, Ax +(p*asize), asize) ;

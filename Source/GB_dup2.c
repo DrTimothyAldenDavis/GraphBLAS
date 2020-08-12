@@ -41,8 +41,8 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     }
 
     // create C; allocate C->p and do not initialize it
-    // C has the exact same hypersparsity as A.
-    int64_t anz = GB_NNZ (A) ;
+    // C has the exact same sparsity structure as A.
+    int64_t anz = GB_NNZ_HELD (A) ;
 
     // allocate a new header for C if (*Chandle) is NULL, or reuse the
     // existing header if (*Chandle) is not NULL.
@@ -60,31 +60,28 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     int64_t anvec = A->nvec ;
     C->nvec = anvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
-
+    C->nvals = A->nvals ;           // for bitmap only
     C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
 
-    int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
     if (A->p != NULL)
     { 
-        GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nthreads_max) ;
     }
     if (A->h != NULL)
     { 
-        GB_memcpy (C->h, A->h, anvec * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->h, A->h, anvec * sizeof (int64_t), nthreads_max) ;
     }
-
-    nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     if (A->b != NULL)
     { 
-        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads) ;
+        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads_max) ;
     }
     if (A->i != NULL)
     {
-        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads_max) ;
     }
     if (numeric)
     { 
-        GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
+        GB_memcpy (C->x, A->x, anz * A->type->size, nthreads_max) ;
     }
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized

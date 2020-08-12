@@ -294,12 +294,10 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converted from to bitmap to sparse", GB0) ;
-    ASSERT (A->h == NULL) ;     // A is not hypersparse
-    ASSERT (!GB_IS_BITMAP (A)) ;
-    ASSERT (!GB_IS_FULL (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (GB_IS_SPARSE (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     return (GrB_SUCCESS) ;
 }
 

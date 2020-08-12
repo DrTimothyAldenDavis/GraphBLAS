@@ -13,7 +13,7 @@
 // GB_matvec_build constructs a GrB_Matrix or GrB_Vector from the tuples
 // provided by the user.  In that case, the tuples must be checked for
 // duplicates.  They might be sorted on input, so this condition is checked and
-// exploited if found.  GB_reduce_to_vector constructs a GrB_Vector froma
+// exploited if found.  GB_reduce_to_vector constructs a GrB_Vector from a
 // GrB_Matrix, by discarding the vector index.  As a result, duplicates are
 // likely to appear, and the input is likely to be unsorted.  But for
 // GB_reduce_to_vector, the validity of the tuples need not be checked.  All of
@@ -112,8 +112,6 @@ GrB_Info GB_build               // build matrix
     ASSERT (C != NULL) ;
     ASSERT (dup != NULL) ;
     ASSERT (!GB_OP_IS_POSITIONAL (dup)) ;
-    ASSERT (!GB_IS_FULL (C)) ;          // TODO
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // free all content of C
@@ -121,7 +119,7 @@ GrB_Info GB_build               // build matrix
 
     // the type, dimensions, and hyper_switch are still preserved in C.
     GB_phbix_free (C) ;
-    ASSERT (GB_EMPTY (C)) ;
+    ASSERT (GB_IS_EMPTY (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (C->magic == GB_MAGIC2) ;
 
@@ -151,7 +149,7 @@ GrB_Info GB_build               // build matrix
         &no_J_work,     // J_work_handle, not used here
         &no_S_work,     // S_work_handle, not used here
         false,          // known_sorted: not yet known
-        false,          // known_no_duplicatces: not yet known
+        false,          // known_no_duplicates: not yet known
         0,              // I_work, J_work, and S_work not used here
         is_matrix,      // true if T is a GrB_Matrix
         ijcheck,        // true if I and J are to be checked

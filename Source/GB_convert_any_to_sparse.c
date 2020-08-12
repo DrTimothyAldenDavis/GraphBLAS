@@ -33,11 +33,10 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     // convert A to sparse
     //--------------------------------------------------------------------------
 
-    if (A->h != NULL)
+    if (GB_IS_HYPERSPARSE (A))
     { 
         // convert from hypersparse to sparse
         GB_OK (GB_convert_hyper_to_sparse (A, Context)) ;
-        ;
     }
     else if (GB_IS_FULL (A))
     { 
@@ -60,7 +59,7 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A to sparse", GB0) ;
-    ASSERT (A->h == NULL && !GB_IS_FULL (A) && !GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A)) ;
     return (GrB_SUCCESS) ;
 }
 

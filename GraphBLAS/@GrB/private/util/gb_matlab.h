@@ -354,9 +354,13 @@ GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
     const GrB_Type type                 // default type if not in the string
 ) ;
 
-GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
+bool gb_mxstring_to_format      // true if a valid format is found
 (
-    const mxArray *mxformat             // MATLAB string, 'by row' or 'by col'
+    // input
+    const mxArray *mxformat,    // MATLAB string, 'by row' or 'by col'
+    // output
+    GxB_Format_Value *fmt,
+    int *sparsity
 ) ;
 
 void gb_matrix_assign_scalar
