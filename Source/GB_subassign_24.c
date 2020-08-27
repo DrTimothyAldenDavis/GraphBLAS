@@ -34,16 +34,20 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // prior content of C is discard
+    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // prior content of C is discarded
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for C_subassign_24", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for GB_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
 
-    ASSERT_MATRIX_OK (A, "A for A_subassign_24", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

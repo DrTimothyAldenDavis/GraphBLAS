@@ -20,7 +20,9 @@
 // the matrix A is left in an invalid state (A->magic == GB_MAGIC2).  Only the
 // header is left.
 
-// OK: no change for BITMAP (converts A to sparse or hypersparse, O(1) memory)
+// OK: BITMAP.  A is first converted to sparse or hypersparse, and then
+// conformed via GB_conform.  If A->sparsity disables the sparse and
+// hypersparse structures, this will convert A to bitmap.
 
 #include "GB.h"
 
@@ -104,11 +106,12 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         }
     }
 
+    A->magic = GB_MAGIC ;
+
     //--------------------------------------------------------------------------
-    // return a valid empty matrix
+    // conform A to its desired sparsity 
     //--------------------------------------------------------------------------
 
-    A->magic = GB_MAGIC ;
-    return (GrB_SUCCESS) ;
+    return (GB_conform (A, Context)) ;
 }
 

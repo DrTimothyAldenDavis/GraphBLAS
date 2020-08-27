@@ -23,8 +23,9 @@
 // kernel.  Then in that case, if C is dense it remains dense, even if A
 // is sparse.   If that change is made, this kernel can start with
 // converting C to sparse if A is sparse.
-// FULL TODO: kernel: C(I,J)<A,struct>=A
-// FULL TODO: kernel: C(I,J)<M>=A when both A and C are dense/full
+
+// C and A are not bitmap: use GB_bitmap_assign instead
+// M: could be bitmap
 
 #include "GB_subassign_methods.h"
 
@@ -48,19 +49,22 @@ GrB_Info GB_subassign_06n
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
 
     GB_EMPTY_TASKLIST ;
     GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
     GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
-    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;

@@ -49,6 +49,7 @@
 #include "GB_mask.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
+#include "GB_bitmap_assign.h"
 
 /* -----------------------------------------------------------------------------
 
@@ -155,7 +156,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
     // pending work in C may be abandoned, or it might not need to be
-    // finished if GB_subassigner is used, so it is not finished here.
+    // finished if GB_subassign is used, so it is not finished here.
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
@@ -272,13 +273,17 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // If there is no mask M, and no accum, then C=T is fast (just
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
-    // So in this case, GB_subassigner takes more work.
+    // So in this case, GB_subassign takes more work.
 
-    bool use_subassigner =
+    bool use_subassign =
         ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
             && !GB_aliased (C, M) && !GB_aliased (C, T)) ;
 
-    bool use_transplant = (!use_subassigner)
+    bool use_bitmap_assign =
+        (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (T)) ;
+    use_subassign = use_subassign || use_bitmap_assign ;
+
+    bool use_transplant = (!use_subassign)
         && (accum == NULL || (cnz + cnpending) == 0) ;
 
     if (!use_transplant)
@@ -286,23 +291,22 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         GBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),
-            ((use_subassigner) ? "assign" :
+            ((use_subassign) ? "assign" :
                 ((use_transplant) ? "transplant" : "add")),
             (M_transposed ? "(M transposed)" : ""),
             (T_transposed ? "(result transposed)" : "")) ;
     }
 
-    if (use_subassigner)
+    if (use_subassign)
     { 
 
         //----------------------------------------------------------------------
-        // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
+        // C(:,:)<M> = accum (C(:,:),T) via GB_subassign
         //----------------------------------------------------------------------
 
-        // TODO: BITMAP works in some cases
-
-        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, Mask_struct, accum,
-            T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, GB_ignore_code, Context)) ;
+        GB_OK (GB_subassign (C, C_replace, M, Mask_comp, Mask_struct,
+            false, accum, T, false, GrB_ALL, 0, GrB_ALL, 0,
+            false, NULL, GB_ignore_code, Context)) ;
 
     }
     else

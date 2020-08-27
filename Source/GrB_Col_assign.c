@@ -10,6 +10,7 @@
 // Compare with GxB_Col_subassign, which uses the M and C_replace differently
 
 #include "GB_assign.h"
+#include "GB_bitmap_assign.h"
 
 GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)
 (
@@ -57,7 +58,7 @@ GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)
         Rows, nRows,                        // row indices
         Cols, 1,                            // a single column index
         false, NULL, GB_ignore_code,        // no scalar expansion
-        true, false,                        // GrB_Col_assign
+        GB_COL_ASSIGN,
         Context) ;
 
     GB_BURBLE_END ;

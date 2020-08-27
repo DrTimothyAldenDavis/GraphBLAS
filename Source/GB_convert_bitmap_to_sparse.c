@@ -71,7 +71,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (avlen*avdim, chunk, nthreads_max) ;
     bool by_vector = (nthreads <= avdim) ;
-    // printf ("(b2s: %d) ", nthreads) ;
 
     if (by_vector)
     { 
@@ -80,7 +79,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
         // compute all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
-// double t1 = omp_get_wtime ( ) ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < avdim ; k++)
         { 
@@ -96,13 +94,10 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
             }
             Ap [k] = aknz ;
         }
-// t1 = omp_get_wtime ( ) - t1 ;
-// printf ("by vector phase1: %12.6f ", t1) ;
 
     }
     else
     { 
-// double t1 = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // compute blocks of rows in parallel
@@ -153,8 +148,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
             }
             Ap [k] = aknz ;
         }
-// t1 = omp_get_wtime ( ) - t1 ;
-// printf ("by block phase1: %12.6f ", t1) ;
     }
 
     //--------------------------------------------------------------------------
@@ -197,7 +190,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
         // construct all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
-// double t1 = omp_get_wtime ( ) ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < avdim ; k++)
         { 
@@ -218,19 +210,15 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
             }
             ASSERT (pnew == Ap [k+1]) ;
         }
-// t1 = omp_get_wtime ( ) - t1 ;
-// printf ("by vector phase2: %12.6f ", t1) ;
 
     }
     else
     { 
-// int32_t *GB_RESTRICT Axx = (int32_t *) Ax_new ;
 
         //----------------------------------------------------------------------
         // compute blocks of rows in parallel
         //----------------------------------------------------------------------
 
-// double t1 = omp_get_wtime ( ) ;
         int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (taskid = 0 ; taskid < nthreads ; taskid++)
@@ -261,8 +249,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
 
         // free workspace
         GB_FREE (W) ;
-// t1 = omp_get_wtime ( ) - t1 ;
-// printf ("by block phase2: %12.6f ", t1) ;
     }
 
     //--------------------------------------------------------------------------

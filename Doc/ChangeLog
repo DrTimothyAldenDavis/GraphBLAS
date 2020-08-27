@@ -13,6 +13,7 @@ Version 4.0.0, TODO:, 2020
     * GxB_get/set: added GxB_SPARSITY (hyper, sparse, bitmap, or full)
     * GxB_HYPER: enum renamed to GxB_HYPER_SWITCH
     * TODO: need to modify import/export
+    * (21) bug fix: A({lo,hi}=scalar in MATLAB; A(lo:hi)=scalar was OK
 
 Version 3.3.3, July 14, 2020
 

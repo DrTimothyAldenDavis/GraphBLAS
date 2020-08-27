@@ -33,8 +33,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
     GB_RETURN_IF_NULL (x) ;
 
-    ASSERT (!GB_IS_BITMAP (V)) ;        // TODO
-
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (V))
     { 
@@ -88,9 +86,19 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     }
     else
     {
-        // V is full
+        // V is bitmap or full
         pleft = i ;
-        found = true ;
+        const int8_t *GB_RESTRICT Vb = V->b ;
+        if (Vb != NULL)
+        {
+            // V is bitmap
+            found = (Vb [pleft] == 1) ;
+        }
+        else
+        {
+            // V is full
+            found = true ;
+        }
     }
 
     //--------------------------------------------------------------------------

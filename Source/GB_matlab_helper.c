@@ -94,6 +94,10 @@ bool GB_matlab_helper3              // return true if OK, false on error
 
     GB_NTHREADS (len) ;
 
+    ASSERT (List != NULL) ;
+    ASSERT (List_double != NULL) ;
+    ASSERT (List_max != NULL) ;
+
     bool ok = true ;
     int64_t listmax = -1 ;
 

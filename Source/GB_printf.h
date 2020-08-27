@@ -17,6 +17,8 @@
 GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 
+#define GB_STRING_MATCH(s,t) (strcmp (s,t) == 0)
+
 //------------------------------------------------------------------------------
 // printing control
 //------------------------------------------------------------------------------
@@ -133,6 +135,19 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 // even then, the setting is set to false by GrB_init.
 
 #if GB_BURBLE
+
+void GB_burble_assign
+(
+    const bool C_replace,       // descriptor for C
+    const int Ikind,
+    const int Jkind,
+    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present here
+    const GrB_Matrix A,         // input matrix, not transposed
+    const int assign_kind       // row assign, col assign, assign, or subassign
+) ;
 
 // define the function to use to burble
 #define GBURBLE(...)                                \

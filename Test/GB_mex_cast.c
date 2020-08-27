@@ -60,38 +60,9 @@ void mexFunction
     if (xtype == Complex) xtype = GxB_FC64 ;
     GB_void *C = mxGetData (pargout [0]) ;
 
-//  GxB_print (xtype, 3) ;
-//  GxB_print (ctype, 3) ;
-//  printf ("\nGB_mex_cast from %d to %d: size %ld\n", xtype->code,
-//      ctype->code, nrows*ncols) ;
-
-//  printf ("X input:\n") ;
-//  for (int k = 0 ; k < nrows*ncols ; k++)
-//  {
-//      printf ("X [%d] = ", k) ;
-//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL) ;
-//      printf ("\n") ;
-//  }
-
     // cast the data from X to C
     GB_cast_array (C, ctype->code, X, xtype->code, NULL,
         xtype->size, nrows*ncols, 1) ;
-
-//  printf ("X input again:\n") ;
-//  for (int k = 0 ; k < nrows*ncols ; k++)
-//  {
-//      printf ("X [%d] = ", k) ;
-//      GB_code_check (xtype->code, X + k*(xtype->size), 3, NULL) ;
-//      printf ("\n") ;
-//  }
-
-//  printf ("C output:\n") ;
-//  for (int k = 0 ; k < nrows*ncols ; k++)
-//  {
-//      printf ("C [%d] = ", k) ;
-//      GB_code_check (ctype->code, C + k*(ctype->size), 3, NULL) ;
-//      printf ("\n") ;
-//  }
 
     GB_mx_put_global (do_cover) ;
 }

@@ -6097,38 +6097,33 @@ repl & accum & ${\bf C}$ & ${\bf T}$ & mask & action taken by ${\bf C \langle M 
     -  &-   &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
     -  &-   & $c_{ij}$ &  -        & 1    &  delete $c_{ij}$ because $t_{ij}$ not present \\
     -  &-   &  -       &  -        & 1    &   \\
-\hline
-    yes&-   & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, update \\
-    yes&-   &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
-    yes&-   & $c_{ij}$ &  -        & 1    &  delete $c_{ij}$ because $t_{ij}$ not present \\
-    yes&-   &  -       &  -        & 1    &   \\
-\hline
-    -  &yes & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
-    -  &yes &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
-    -  &yes & $c_{ij}$ &  -        & 1    &   \\
-    -  &yes &  -       &  -        & 1    &   \\
-\hline
-    yes&yes & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
-    yes&yes &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
-    yes&yes & $c_{ij}$ &  -        & 1    &   \\
-    yes&yes &  -       &  -        & 1    &   \\
-\hline
-\hline
     -  &-   & $c_{ij}$ & $t_{ij}$  & 0    &   \\
     -  &-   &  -       & $t_{ij}$  & 0    &   \\
     -  &-   & $c_{ij}$ &  -        & 0    &   \\
     -  &-   &  -       &  -        & 0    &   \\
 \hline
+    yes&-   & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, update \\
+    yes&-   &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
+    yes&-   & $c_{ij}$ &  -        & 1    &  delete $c_{ij}$ because $t_{ij}$ not present \\
+    yes&-   &  -       &  -        & 1    &   \\
     yes&-   & $c_{ij}$ & $t_{ij}$  & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&-   &  -       & $t_{ij}$  & 0    &   \\
     yes&-   & $c_{ij}$ &  -        & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&-   &  -       &  -        & 0    &   \\
 \hline
+    -  &yes & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
+    -  &yes &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
+    -  &yes & $c_{ij}$ &  -        & 1    &   \\
+    -  &yes &  -       &  -        & 1    &   \\
     -  &yes & $c_{ij}$ & $t_{ij}$  & 0    &   \\
     -  &yes &  -       & $t_{ij}$  & 0    &   \\
     -  &yes & $c_{ij}$ &  -        & 0    &   \\
     -  &yes &  -       &  -        & 0    &   \\
 \hline
+    yes&yes & $c_{ij}$ & $t_{ij}$  & 1    &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
+    yes&yes &  -       & $t_{ij}$  & 1    &  $c_{ij} = t_{ij}$, insert \\
+    yes&yes & $c_{ij}$ &  -        & 1    &   \\
+    yes&yes &  -       &  -        & 1    &   \\
     yes&yes & $c_{ij}$ & $t_{ij}$  & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&yes &  -       & $t_{ij}$  & 0    &   \\
     yes&yes & $c_{ij}$ &  -        & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
@@ -8247,16 +8242,16 @@ GrB_Info GrB_assign                 // C<mask'>(i,J) = accum (C(i,J),u')
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_Row_subassign' modifies a single sub-row of a matrix \verb'C'.  It is
-the same as \verb'GxB_Matrix_subassign' where the index vector \verb'I[0]=i' is
-a single row index, and where all matrices in \verb'GxB_Matrix_subassign'
+\verb'GrB_Row_assign' modifies a single sub-row of a matrix \verb'C'.  It is
+the same as \verb'GrB_Matrix_assign' where the index vector \verb'I[0]=i' is
+a single row index, and where all matrices in \verb'GrB_Matrix_assign'
 (except \verb'C') consist of a single row.
 
 Unlike \verb'GrB_Matrix_assign', the \verb'mask' is a vector with the same size
 as a single row of \verb'C'.
 
 The input descriptor \verb'GrB_INP0' is ignored; the input vector \verb'u' is
-not transposed.  Refer to \verb'GxB_Matrix_subassign' for further details.
+not transposed.  Refer to \verb'GrB_Matrix_assign' for further details.
 
 \paragraph{\bf Performance considerations:} % C(i,J) = u'
 \verb'GrB_Col_assign' is much faster than \verb'GrB_Row_assign' if the format
@@ -8364,7 +8359,7 @@ if \verb'A' is transposed.
 
 According to the GraphBLAS C API Specification if the index vectors \verb'I' or
 \verb'J' contain duplicate indices, the results are undefined for
-\verb'GrB_Matrix_assign' \verb'GrB_Matrix_assign' \verb'GrB_Col_assign' and
+\verb'GrB_Matrix_assign', \verb'GrB_Matrix_assign', \verb'GrB_Col_assign', and
 \verb'GrB_Row_assign'.  Only the scalar assignment operations
 (\verb'GrB_Matrix_assign_TYPE' and \verb'GrB_Matrix_assign_TYPE') are
 well-defined when duplicates appear in \verb'I' and \verb'J'.  In those two
@@ -8659,38 +8654,33 @@ repl & accum & ${\bf C}$ & ${\bf A}$ & mask & action taken by \verb'GrB_assign' 
     -  &-   &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
     -  &-   & $c_{ij}$ &  -          & 1    &  delete $c_{ij}$ because $a_{i'j'}$ not present \\
     -  &-   &  -       &  -          & 1    &   \\
-\hline
-    yes&-   & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, update \\
-    yes&-   &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
-    yes&-   & $c_{ij}$ &  -          & 1    &  delete $c_{ij}$ because $a_{i'j'}$ not present \\
-    yes&-   &  -       &  -          & 1    &   \\
-\hline
-    -  &yes & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = c_{ij} \odot a_{i'j'}$, apply accumulator \\
-    -  &yes &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
-    -  &yes & $c_{ij}$ &  -          & 1    &   \\
-    -  &yes &  -       &  -          & 1    &   \\
-\hline
-    yes&yes & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = c_{ij} \odot a_{i'j'}$, apply accumulator \\
-    yes&yes &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
-    yes&yes & $c_{ij}$ &  -          & 1    &   \\
-    yes&yes &  -       &  -          & 1    &   \\
-\hline
-\hline
     -  &-   & $c_{ij}$ & $a_{i'j'}$  & 0    &   \\
     -  &-   &  -       & $a_{i'j'}$  & 0    &   \\
     -  &-   & $c_{ij}$ &  -          & 0    &   \\
     -  &-   &  -       &  -          & 0    &   \\
 \hline
+    yes&-   & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, update \\
+    yes&-   &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
+    yes&-   & $c_{ij}$ &  -          & 1    &  delete $c_{ij}$ because $a_{i'j'}$ not present \\
+    yes&-   &  -       &  -          & 1    &   \\
     yes&-   & $c_{ij}$ & $a_{i'j'}$  & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&-   &  -       & $a_{i'j'}$  & 0    &   \\
     yes&-   & $c_{ij}$ &  -          & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&-   &  -       &  -          & 0    &   \\
 \hline
+    -  &yes & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = c_{ij} \odot a_{i'j'}$, apply accumulator \\
+    -  &yes &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
+    -  &yes & $c_{ij}$ &  -          & 1    &   \\
+    -  &yes &  -       &  -          & 1    &   \\
     -  &yes & $c_{ij}$ & $a_{i'j'}$  & 0    &   \\
     -  &yes &  -       & $a_{i'j'}$  & 0    &   \\
     -  &yes & $c_{ij}$ &  -          & 0    &   \\
     -  &yes &  -       &  -          & 0    &   \\
 \hline
+    yes&yes & $c_{ij}$ & $a_{i'j'}$  & 1    &  $c_{ij} = c_{ij} \odot a_{i'j'}$, apply accumulator \\
+    yes&yes &  -       & $a_{i'j'}$  & 1    &  $c_{ij} = a_{i'j'}$, insert \\
+    yes&yes & $c_{ij}$ &  -          & 1    &   \\
+    yes&yes &  -       &  -          & 1    &   \\
     yes&yes & $c_{ij}$ & $a_{i'j'}$  & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
     yes&yes &  -       & $a_{i'j'}$  & 0    &   \\
     yes&yes & $c_{ij}$ &  -          & 0    &  delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
@@ -8734,26 +8724,21 @@ repl & accum & ${\bf C}$ & ${\bf C=Z}$ & mask & action taken by \verb'GrB_assign
 \hline
    -   &-     & $c_{ij}$ & $c_{ij}$ & 1 &  \\
    -   &-     &  -       & -        & 1 &  \\
-\hline
-   yes &  -   & $c_{ij}$ & $c_{ij}$ & 1 &  \\
-   yes &  -   &    -     &     -    & 1 &  \\
-\hline
-   -   &yes   & $c_{ij}$ & $c_{ij}$ & 1 &  \\
-   -   &yes   &    -     &  -       & 1 &  \\
-\hline
-   yes &  yes & $c_{ij}$ & $c_{ij}$ & 1 &  \\
-   yes &  yes &   -      &  -       & 1 &  \\
-\hline
-\hline
    -   &-     & $c_{ij}$ & $c_{ij}$ & 0 &  \\
    -   &-     &  -       & -        & 0 &  \\
 \hline
+   yes &  -   & $c_{ij}$ & $c_{ij}$ & 1 &  \\
+   yes &  -   &    -     &     -    & 1 &  \\
    yes &  -   & $c_{ij}$ & $c_{ij}$ & 0 & delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
    yes &  -   &    -     &  -       & 0 &  \\
 \hline
+   -   &yes   & $c_{ij}$ & $c_{ij}$ & 1 &  \\
+   -   &yes   &    -     &  -       & 1 &  \\
    -   &yes   & $c_{ij}$ & $c_{ij}$ & 0 &  \\
    -   &yes   &    -     &  -       & 0 &  \\
 \hline
+   yes &  yes & $c_{ij}$ & $c_{ij}$ & 1 &  \\
+   yes &  yes &   -      &  -       & 1 &  \\
    yes &  yes & $c_{ij}$ & $c_{ij}$ & 0 & delete $c_{ij}$  (because of \verb'GrB_REPLACE') \\
    yes &  yes &   -      &  -       & 0 &  \\
 \hline

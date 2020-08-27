@@ -19,7 +19,7 @@
 
 #include "GB_subassign.h"
 
-#define GB_ASSIGN(type,T,ampersand)                                            \
+#define GB_ASSIGN_SCALAR(type,T,ampersand)                                     \
 GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \
 (                                                                              \
     GrB_Matrix C,                   /* input/output matrix for results      */ \
@@ -44,18 +44,18 @@ GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \
     return (info) ;                                                            \
 }
 
-GB_ASSIGN (bool      , BOOL   , &)
-GB_ASSIGN (int8_t    , INT8   , &)
-GB_ASSIGN (uint8_t   , UINT8  , &)
-GB_ASSIGN (int16_t   , INT16  , &)
-GB_ASSIGN (uint16_t  , UINT16 , &)
-GB_ASSIGN (int32_t   , INT32  , &)
-GB_ASSIGN (uint32_t  , UINT32 , &)
-GB_ASSIGN (int64_t   , INT64  , &)
-GB_ASSIGN (uint64_t  , UINT64 , &)
-GB_ASSIGN (float     , FP32   , &)
-GB_ASSIGN (double    , FP64   , &)
-GB_ASSIGN (GxB_FC32_t, FC32   , &)
-GB_ASSIGN (GxB_FC64_t, FC64   , &)
-GB_ASSIGN (void *    , UDT    ,  )
+GB_ASSIGN_SCALAR (bool      , BOOL   , &)
+GB_ASSIGN_SCALAR (int8_t    , INT8   , &)
+GB_ASSIGN_SCALAR (uint8_t   , UINT8  , &)
+GB_ASSIGN_SCALAR (int16_t   , INT16  , &)
+GB_ASSIGN_SCALAR (uint16_t  , UINT16 , &)
+GB_ASSIGN_SCALAR (int32_t   , INT32  , &)
+GB_ASSIGN_SCALAR (uint32_t  , UINT32 , &)
+GB_ASSIGN_SCALAR (int64_t   , INT64  , &)
+GB_ASSIGN_SCALAR (uint64_t  , UINT64 , &)
+GB_ASSIGN_SCALAR (float     , FP32   , &)
+GB_ASSIGN_SCALAR (double    , FP64   , &)
+GB_ASSIGN_SCALAR (GxB_FC32_t, FC32   , &)
+GB_ASSIGN_SCALAR (GxB_FC64_t, FC64   , &)
+GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 

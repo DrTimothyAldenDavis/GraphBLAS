@@ -20,6 +20,10 @@
         //  M   -   -   +   -   -       07:  C(I,J)<M> += x      for M
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A       for M
 
+// C: not bitmap
+// TODO: input matrix A could be bitmap
+// TODO: this is only used for the M matrix, not A.  Rename A to M below.
+
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_WORK
@@ -54,7 +58,7 @@ GrB_Info GB_subassign_one_slice
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix A,             // matrix to slice (M or A)
+    const GrB_Matrix A,             // matrix to slice
     GB_Context Context
 )
 {
@@ -70,8 +74,8 @@ GrB_Info GB_subassign_one_slice
     ASSERT_MATRIX_OK (C, "C for 1_slice", GB0) ;
     ASSERT_MATRIX_OK (A, "A/M for 1_slice", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // this is the M matrix in the caller
 
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_JUMBLED (A)) ;

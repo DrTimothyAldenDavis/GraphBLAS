@@ -197,7 +197,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // No typecasting can be done.  The new pending tuple must either be
         // the first pending tuple, or its type must match the prior pending
-        // tuples.  See GB_subassigner for a complete description.
+        // tuples.  See GB_subassign_methods.h for a complete description.
 
         // stype is the type of this scalar
         GrB_Type stype = GB_code_type (scalar_code, ctype) ;

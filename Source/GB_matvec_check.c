@@ -496,7 +496,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             ajnz = 0 ;
             for (int64_t p2 = p ; p2 < pend ; p2++)
             {
-                ajnz += (A->b [p2] != 0)  ;
+                int8_t ab = A->b [p2] ;
+                if (ab < 0 || ab > 1)
+                {
+                    GBPR0 ("invalid bitmap\n") ;
+                    return (GrB_INVALID_OBJECT) ;
+                }
+                ajnz += (ab != 0)  ;
             }
         }
 

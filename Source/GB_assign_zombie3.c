@@ -14,7 +14,10 @@
 
 // GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
 
+// Z must be sparse or hypersparse.
+
 #include "GB_assign.h"
+#include "GB_assign_zombie.h"
 
 void GB_assign_zombie3
 (
@@ -36,15 +39,16 @@ void GB_assign_zombie3
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (Z)) ;
+    ASSERT (!GB_IS_BITMAP (Z)) ;
     ASSERT (GB_ZOMBIES_OK (Z)) ;
     ASSERT (GB_JUMBLED_OK (Z)) ;
     ASSERT (!GB_PENDING (Z)) ;
-    ASSERT (!GB_IS_FULL (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
-    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+
+    ASSERT (!GB_IS_FULL (M)) ;          // TODO: can handle this case
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO: can handle this case
 
     //--------------------------------------------------------------------------
     // get Z (:,j)

@@ -34,8 +34,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (x) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (A))
     { 
@@ -101,7 +99,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         int64_t k ;
         if (A->h != NULL)
         {
-            // look for vector j in hyperlist A->h [0 ... A->nvec-1]
+            // A is hypersparse: look for j in hyperlist A->h [0 ... A->nvec-1]
             const int64_t *GB_RESTRICT Ah = A->h ;
             int64_t pleft = 0 ;
             int64_t pright = A->nvec-1 ;
@@ -116,6 +114,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         }
         else
         { 
+            // A is sparse: j = k is the kth vector
             k = j ;
         }
 
@@ -128,9 +127,19 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     }
     else
     {
-        // A is full
+        // A is bitmap or full
         pleft = i + j * A->vlen ;
-        found = true ;
+        const int8_t *GB_RESTRICT Ab = A->b ;
+        if (Ab != NULL)
+        {
+            // A is bitmap
+            found = (Ab [pleft] == 1) ;
+        }
+        else
+        {
+            // A is full
+            found = true ;
+        }
     }
 
     //--------------------------------------------------------------------------

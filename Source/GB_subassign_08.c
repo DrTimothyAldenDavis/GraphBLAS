@@ -16,6 +16,8 @@
 // A:           matrix
 // S:           none
 
+// C, M, A: not bitmap
+
 #include "GB_subassign_methods.h"
 
 //------------------------------------------------------------------------------
@@ -99,12 +101,16 @@ GrB_Info GB_subassign_08
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
 
     GB_EMPTY_TASKLIST ;
     GB_MATRIX_WAIT_IF_JUMBLED (C) ;

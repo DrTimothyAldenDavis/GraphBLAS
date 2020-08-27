@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_assign.h"
+#include "GB_bitmap_assign.h"
 
 GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 (
@@ -52,7 +53,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
         Rows, nRows,                // row indices
         Cols, nCols,                // column indices
         false, NULL, GB_ignore_code,// no scalar expansion
-        false, false,               // not GrB_Col_assign nor GrB_row_assign
+        GB_ASSIGN,
         Context) ;
 
     GB_BURBLE_END ;

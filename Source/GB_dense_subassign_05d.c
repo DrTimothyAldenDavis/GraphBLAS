@@ -43,6 +43,13 @@ GrB_Info GB_dense_subassign_05d
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
@@ -59,9 +66,6 @@ GrB_Info GB_dense_subassign_05d
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
 
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;

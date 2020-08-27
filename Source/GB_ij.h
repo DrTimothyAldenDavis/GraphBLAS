@@ -12,12 +12,6 @@
 
 #include "GB.h"
 
-// kind of index list, Ikind and Jkind:
-#define GB_ALL 0
-#define GB_RANGE 1
-#define GB_STRIDE 2
-#define GB_LIST 4
-
 GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_ijlength            // get the length and kind of an index list I
 (

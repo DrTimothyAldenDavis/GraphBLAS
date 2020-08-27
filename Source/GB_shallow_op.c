@@ -152,8 +152,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // are used with no typecasting, C->x becomes a shallow copy of A->x, and
     // no work is done.
 
-    int64_t anz = GB_NNZ (A) ;
-    ASSERT (A->nzmax >= GB_IMAX (anz,1)) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
+    ASSERT (A->nzmax >= GB_IMAX (anz, 1)) ;
 
     if (A->type == op_intype &&
         ((opcode == GB_IDENTITY_opcode) || (opcode == GB_ANY_opcode) ||
@@ -175,7 +175,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     // allocate new space for the numerical values of C
-    C->nzmax = GB_IMAX (anz,1) ;
+    C->nzmax = GB_IMAX (anz, 1) ;
     C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)

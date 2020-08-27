@@ -20,6 +20,8 @@
         //  =====================       ==============
         //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
 
+// C, M, A: not bitmap.  C can be full.
+
 #include "GB_subassign_methods.h"
 #include "GB_emult.h"
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
@@ -56,9 +58,9 @@ GrB_Info GB_subassign_emult_slice
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
@@ -92,7 +94,6 @@ GrB_Info GB_subassign_emult_slice
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     int64_t *GB_RESTRICT Ci = C->i ;
     int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;

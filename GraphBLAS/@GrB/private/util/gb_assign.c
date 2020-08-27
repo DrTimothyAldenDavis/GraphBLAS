@@ -153,12 +153,12 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     { 
         // A is a sparse scalar.  Expand it to an ni-by-nj sparse matrix with
         // the same type as C, with no entries, and use matrix assignment.
-        int64_t ilen, jlen, Icolon [3], Jcolon [3] ;
+        int64_t nI, nJ, Icolon [3], Jcolon [3] ;
         int Ikind, Jkind ;
-        GB_ijlength (I, ni, cnrows, &ilen, &Ikind, Icolon) ;
-        GB_ijlength (J, nj, cncols, &jlen, &Jkind, Jcolon) ;
+        GB_ijlength (I, ni, cnrows, &nI, &Ikind, Icolon) ;
+        GB_ijlength (J, nj, cncols, &nJ, &Jkind, Jcolon) ;
         OK (GrB_Matrix_free (&A)) ;
-        OK (GrB_Matrix_new (&A, ctype, ilen, jlen)) ;
+        OK (GrB_Matrix_new (&A, ctype, nI, nJ)) ;
         OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
         scalar_assignment = false ;

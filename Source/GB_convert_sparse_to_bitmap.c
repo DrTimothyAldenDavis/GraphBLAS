@@ -133,6 +133,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     // A retains its CSR/CSC format.
     int64_t anz = GB_NNZ (A) ;
+    int64_t nzombies = A->nzombies ;
 
     if (in_place)
     { 
@@ -142,7 +143,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         //----------------------------------------------------------------------
 
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-        if (A->nzombies == 0)
+        if (nzombies == 0)
         { 
             // set all of Ab [0..anz-1] to 1, in parallel
             GB_memset (Ab, 1, anz, nthreads) ;
@@ -245,8 +246,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     A->x_shallow = Ax_shallow ;
 
     A->nzmax = anzmax ;
-    A->nvals = anz - A->nzombies ;
-    A->nzombies = 0 ;
+    A->nvals = anz - nzombies ;
+    ASSERT (A->nzombies == 0) ;
 
     A->plen = -1 ;
     A->nvec = avdim ;

@@ -22,9 +22,8 @@
 // code development settings
 //------------------------------------------------------------------------------
 
-// to turn on Debug for a single file of GraphBLAS, add:
-// just before the statement:
-// #include "GB.h"
+// to turn on Debug for a single file of GraphBLAS, add '#define GB_DEBUG'
+// just before the statement '#include "GB.h"'
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
 // -DGB_BURBLE=1.
@@ -33,16 +32,14 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// TODO debug is on
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
 // #define GBCOMPACT 1
 
 // for code development only
-// TODO dev is on
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 // manage compiler warnings
 #include "GB_warnings.h"
@@ -223,6 +220,20 @@ GB_PUBLIC int GB_cover_max ;
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
 #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
+
+//------------------------------------------------------------------------------
+// kind of index list, Ikind and Jkind:
+//------------------------------------------------------------------------------
+
+#define GB_ALL 0
+#define GB_RANGE 1
+#define GB_STRIDE 2
+#define GB_LIST 4
+
+#define GB_ASSIGN 0
+#define GB_SUBASSIGN 1
+#define GB_ROW_ASSIGN 2
+#define GB_COL_ASSIGN 3
 
 //------------------------------------------------------------------------------
 // GraphBLAS include files

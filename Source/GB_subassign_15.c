@@ -16,6 +16,9 @@
 // A:           scalar
 // S:           constructed
 
+// C: not bitmap, but can be full since no zombies are inserted in that case
+// M: not bitmap
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_15
@@ -23,10 +26,12 @@ GrB_Info GB_subassign_15
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -35,22 +40,28 @@ GrB_Info GB_subassign_15
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    const GrB_Matrix S,
     GB_Context Context
 )
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    GB_EMPTY_TASKLIST ;
+    GB_OK (GB_subassign_symbolic (&S, C, I, ni, J, nj, true, Context)) ;
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
-
-    GB_EMPTY_TASKLIST ;
-    ASSERT (!GB_JUMBLED (C)) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_GET_C ;
@@ -109,7 +120,7 @@ GrB_Info GB_subassign_15
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)
@@ -226,7 +237,7 @@ GrB_Info GB_subassign_15
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)

@@ -10,6 +10,7 @@
 // Compare with GxB_Row_subassign, which uses M and C_replace differently
 
 #include "GB_assign.h"
+#include "GB_bitmap_assign.h"
 
 GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
 (
@@ -57,7 +58,7 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
         Rows, 1,                            // a single row index
         Cols, nCols,                        // column indices
         false, NULL, GB_ignore_code,        // no scalar expansion
-        false, true,                        // GrB_Row_assign
+        GB_ROW_ASSIGN,
         Context) ;
 
     GB_BURBLE_END ;

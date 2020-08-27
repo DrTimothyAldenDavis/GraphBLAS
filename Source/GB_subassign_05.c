@@ -16,6 +16,9 @@
 // A:           scalar
 // S:           none
 
+// C and M are not bitmap: use GB_bitmap_assign instead
+// M: could handle bitmap
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_05
@@ -39,14 +42,18 @@ GrB_Info GB_subassign_05
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-
     GB_EMPTY_TASKLIST ;
-    ASSERT (!GB_JUMBLED (C)) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
     GB_GET_C ;

@@ -164,8 +164,8 @@ static inline bool GB_Pending_add   // add a tuple to the list
 // add (iC,jC,aij) or just (iC,aij) if Pending_j is NULL
 //------------------------------------------------------------------------------
 
-// GB_PENDING_INSERT(aij) is used by GB_subassign to insert a pending tuple, in
-// phase 2.  The list has already been reallocated after phase 1 to hold all
+// GB_PENDING_INSERT(aij) is used by GB_subassign_* to insert a pending tuple,
+// in phase 2.  The list has already been reallocated after phase 1 to hold all
 // the new pending tuples, so GB_Pending_realloc is not required.
 
 #define GB_PENDING_INSERT(aij)                                              \

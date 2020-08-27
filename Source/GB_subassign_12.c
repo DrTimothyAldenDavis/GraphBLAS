@@ -16,6 +16,9 @@
 // A:           matrix
 // S:           constructed
 
+// C, S, A: not bitmap
+// M: could be bitmap
+
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_12
@@ -23,10 +26,12 @@ GrB_Info GB_subassign_12
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -34,27 +39,32 @@ GrB_Info GB_subassign_12
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    const GrB_Matrix S,
     GB_Context Context
 )
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    GB_EMPTY_TASKLIST ;
+    GB_OK (GB_subassign_symbolic (&S, C, I, ni, J, nj, true, Context)) ;
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
-
-    GB_EMPTY_TASKLIST ;
-    ASSERT (!GB_JUMBLED (C)) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (S) ;
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
     GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
-    GB_ENSURE_SPARSE (C) ;
     GB_GET_C ;
     GB_GET_MASK ;
     const bool M_is_hyper = (Mh != NULL) ;

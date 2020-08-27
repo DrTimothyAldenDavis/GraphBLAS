@@ -16,7 +16,7 @@
 // typecast B(i,j) but not C(i,j).  The case for typecasting of C is handled by
 // Method 04.
 
-// FULL TODO: if C sparse, convert to full
+// FULL TODO: if C sparse, convert to full (or bitmap?)
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -43,8 +43,14 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (B)) ;
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=B", GB0) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -54,9 +60,6 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
 
     ASSERT_BINARYOP_OK (accum, "accum for C+=B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;

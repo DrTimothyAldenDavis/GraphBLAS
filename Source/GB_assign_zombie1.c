@@ -9,8 +9,10 @@
 
 // C(:,j)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
+// C must be sparse or hypersparse.
 
 #include "GB_assign.h"
+#include "GB_assign_zombie.h"
 
 void GB_assign_zombie1
 (
@@ -25,10 +27,10 @@ void GB_assign_zombie1
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
 
     //--------------------------------------------------------------------------
     // get C(:,j)

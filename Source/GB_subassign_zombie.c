@@ -16,40 +16,52 @@
 // A:           any (scalar or matrix; result is the same)
 // S:           constructed
 
+// C: not bitmap
+
 #include "GB_subassign_methods.h"
 
-void GB_subassign_zombie
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL GB_Matrix_free (&S) ;
+
+GrB_Info GB_subassign_zombie
 (
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix S,
     GB_Context Context
 )
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;
+    GB_OK (GB_subassign_symbolic (&S, C, I, ni, J, nj, false, Context)) ;
+    ASSERT (GB_JUMBLED_OK (S)) ;        // S can be returned as jumbled
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    // C and S can be jumbled, but when GB_subref constructs S=C(I,J), it
-    // sorts C.  S may be returned as jumbled, however, which is OK here.
-    ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (GB_JUMBLED_OK (S)) ;
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
-
-    ASSERT (!GB_IS_FULL (C)) ;
-    int64_t *GB_RESTRICT Ci = C->i ;
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
+    int64_t *GB_RESTRICT Ci = C->i ;
 
     //--------------------------------------------------------------------------
     // Method 00: C(I,J)<!,repl> = empty ; using S
@@ -91,9 +103,11 @@ void GB_subassign_zombie
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
+    GB_FREE_ALL ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -17,8 +17,6 @@
 // A:           matrix
 // S:           none
 
-// FULL: C remains sparse
-
 // M may be jumbled.  If so, C is constructed as jumbled.
 
 #include "GB_subassign_methods.h"
@@ -45,6 +43,14 @@ GrB_Info GB_dense_subassign_25
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
@@ -64,20 +70,6 @@ GrB_Info GB_dense_subassign_25
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
-
-//  printf ("method 25: %d %d %d\n",
-//  GB_IS_BITMAP (C),
-//  GB_IS_BITMAP (M),
-//  GB_IS_BITMAP (A)) ;
-
-    if (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (A))
-    { 
-        return (GrB_INVALID_VALUE) ;
-    }
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
 
     const GB_Type_code ccode = C->type->code ;
 

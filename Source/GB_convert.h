@@ -164,17 +164,18 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     GB_Context Context
 ) ;
 
+/* ensure C is sparse or hypersparse */
 #define GB_ENSURE_SPARSE(C)                                 \
 {                                                           \
-    /* TODO: handle bitmap also */ \
-    if (GB_IS_FULL (C))                                     \
+    if (GB_IS_BITMAP (C))                                   \
+    {                                                       \
+        /* convert C from bitmap to sparse */               \
+        GB_OK (GB_convert_bitmap_to_sparse (C, Context)) ;  \
+    }                                                       \
+    else if (GB_IS_FULL (C))                                \
     {                                                       \
         /* convert C from full to sparse */                 \
-        GrB_Info info = GB_convert_full_to_sparse (C, Context) ;    \
-        if (info != GrB_SUCCESS)                            \
-        {                                                   \
-            return (info) ;                                 \
-        }                                                   \
+        GB_OK (GB_convert_full_to_sparse (C, Context)) ;    \
     }                                                       \
 }
 

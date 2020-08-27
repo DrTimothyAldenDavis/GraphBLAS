@@ -26,8 +26,8 @@
 
 //      Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
 //      values.  For the symbolic case, this function is called only by
-//      GB_subassigner.  Symbolic extraction creates a matrix C with the same
-//      pattern (C->p and C->i) as numeric extraction, but with different
+//      GB_subassign_symbolic.  Symbolic extraction creates a matrix C with the
+//      same pattern (C->p and C->i) as numeric extraction, but with different
 //      values, C->x.  For numeric extracion if C(inew,jnew) = A(i,j), the
 //      value of A(i,j) is copied into C(i,j).  For symbolic extraction, its
 //      *pointer* is copied into C(i,j).  Suppose an entry A(i,j) is held in Ai
@@ -48,11 +48,12 @@
 
 //          Cx [pc] = pa ;          // for symbolic extraction
 
-//      This function is called with symbolic==true by only by GB_subassigner,
-//      which uses it to extract the pattern of C(I,J), for the submatrix
-//      assignment C(I,J)=A.  In this case, this function needs to deal with
-//      zombie entries.  GB_subassigner uses this function on its C matrix,
-//      which is called A here because it is not modified here.
+//      This function is called with symbolic==true by only by
+//      GB_subassign_symbolic, which uses it to extract the pattern of C(I,J),
+//      for the submatrix assignment C(I,J)=A.  In this case, this function
+//      needs to deal with zombie entries.  GB_subassign_symbolic uses this
+//      function on its C matrix, which is called A here because it is not
+//      modified here.
 
 //      Reading a zombie entry:  A zombie entry A(i,j) has been marked by
 //      flipping its index.  The value of a zombie is not important, just its
