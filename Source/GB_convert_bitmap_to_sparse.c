@@ -13,10 +13,9 @@
 
 #define GB_FREE_ALL     \
 {                       \
-    GB_FREE (W) ;       \
     GB_FREE (Ap) ;      \
     GB_FREE (Ai) ;      \
-    GB_FREE (Ax_new) ;  \
+    GB_FREE (Ax) ;      \
     GB_phbix_free (A) ; \
 }
 
@@ -31,6 +30,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A converting bitmap to sparse", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (GB_IS_BITMAP (A)) ;
@@ -41,133 +41,19 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     ASSERT (!GB_ZOMBIES (A)) ;      // bitmap never has zomies
     GBURBLE ("(bitmap to sparse) ") ;
 
-    int64_t *GB_RESTRICT W = NULL ;
-    int64_t *GB_RESTRICT Ap = NULL ;
-    int64_t *GB_RESTRICT Ai = NULL ;
-    GB_void *GB_RESTRICT Ax_new = NULL ;
-
     //--------------------------------------------------------------------------
-    // allocate A->p (using calloc)
+    // allocate Ap, Ai, and Ax
     //--------------------------------------------------------------------------
 
-    int64_t avdim = A->vdim ;
-    int64_t avlen = A->vlen ;
-    int64_t anvec = avdim ;
-
-    Ap = GB_MALLOC (avdim+1, int64_t) ;
-    if (Ap == NULL)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // count the entries in each vector
-    //--------------------------------------------------------------------------
-
-    const int8_t *GB_RESTRICT Ab = A->b ;
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (avlen*avdim, chunk, nthreads_max) ;
-    bool by_vector = (nthreads <= avdim) ;
-
-    if (by_vector)
-    { 
-
-        //----------------------------------------------------------------------
-        // compute all vectors in parallel (no workspace)
-        //----------------------------------------------------------------------
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k < avdim ; k++)
-        { 
-            // aknz = nnz (A (:,k))
-            int64_t aknz = 0 ;
-            int64_t pA_start = k * avlen ;
-            for (int64_t i = 0 ; i < avlen ; i++)
-            { 
-                // see if A(i,j) is present in the bitmap
-                int64_t p = i + pA_start ;
-                aknz += Ab [p] ;
-                ASSERT (Ab [p] == 0 || Ab [p] == 1) ;
-            }
-            Ap [k] = aknz ;
-        }
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // compute blocks of rows in parallel
-        //----------------------------------------------------------------------
-
-        // allocate one row of W per thread, each row of length avdim
-        W = GB_MALLOC (nthreads * avdim, int64_t) ;
-        if (W == NULL)
-        {
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        int taskid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (taskid = 0 ; taskid < nthreads ; taskid++)
-        { 
-            int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
-            int64_t istart, iend ;
-            GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
-            for (int64_t k = 0 ; k < avdim ; k++)
-            { 
-                // aknz = nnz (A (istart:iend-1,k))
-                int64_t aknz = 0 ;
-                int64_t pA_start = k * avlen ;
-                for (int64_t i = istart ; i < iend ; i++)
-                { 
-                    // see if A(i,j) is present in the bitmap
-                    int64_t p = i + pA_start ;
-                    aknz += Ab [p] ;
-                    ASSERT (Ab [p] == 0 || Ab [p] == 1) ;
-                }
-                Wtask [k] = aknz ;
-            }
-        }
-
-        // cumulative sum to compute nnz(A(:,j)) for each vector j
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k < avdim ; k++)
-        {
-            int64_t aknz = 0 ;
-            for (int taskid = 0 ; taskid < nthreads ; taskid++)
-            {
-                int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
-                int64_t c = Wtask [k] ;
-                Wtask [k] = aknz ;
-                aknz += c ;
-            }
-            Ap [k] = aknz ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // cumulative sum of Ap 
-    //--------------------------------------------------------------------------
-
-    int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
+    const int64_t anz = GB_NNZ (A) ;
+    const int64_t anzmax = GB_IMAX (anz, 1) ;
     int64_t anvec_nonempty ;
-    GB_cumsum (Ap, avdim, &anvec_nonempty, nth) ;
-    int64_t anzmax = Ap [avdim] ;
-    anzmax = GB_IMAX (anzmax, 1) ;
-
-    //--------------------------------------------------------------------------
-    // allocate the new A->x and A->i
-    //--------------------------------------------------------------------------
-
+    const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
-    Ai = GB_MALLOC (anzmax, int64_t) ;
-    Ax_new = GB_MALLOC (anzmax * asize, GB_void) ;
-    if (Ai == NULL || Ax_new == NULL)
+    int64_t *GB_RESTRICT Ap = GB_MALLOC (avdim+1, int64_t) ; 
+    int64_t *GB_RESTRICT Ai = GB_MALLOC (anzmax, int64_t) ;
+    GB_void *GB_RESTRICT Ax = GB_MALLOC (anzmax * asize, GB_void) ;
+    if (Ap == NULL || Ai == NULL || Ax == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -175,81 +61,11 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     }
 
     //--------------------------------------------------------------------------
-    // gather the pattern and values from the bitmap
+    // convert to sparse format (Ap, Ai, and Ax)
     //--------------------------------------------------------------------------
 
-    // A retains its CSR/CSC format.
-    // TODO: add type-specific versions for built-in types
-
-    const GB_void *GB_RESTRICT Ax = A->x ;
-
-    if (by_vector)
-    { 
-
-        //----------------------------------------------------------------------
-        // construct all vectors in parallel (no workspace)
-        //----------------------------------------------------------------------
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k < avdim ; k++)
-        { 
-            // gather from the bitmap into the new A (:,k)
-            int64_t pnew = Ap [k] ;
-            int64_t pA_start = k * avlen ;
-            for (int64_t i = 0 ; i < avlen ; i++)
-            { 
-                int64_t p = i + pA_start ;
-                if (Ab [p])
-                { 
-                    // A(i,j) is in the bitmap
-                    Ai [pnew] = i ;
-                    // Ax_new [pnew] = Ax [p])
-                    memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize) ;
-                    pnew++ ;
-                }
-            }
-            ASSERT (pnew == Ap [k+1]) ;
-        }
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // compute blocks of rows in parallel
-        //----------------------------------------------------------------------
-
-        int taskid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (taskid = 0 ; taskid < nthreads ; taskid++)
-        { 
-            int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
-            int64_t istart, iend ;
-            GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
-            for (int64_t k = 0 ; k < avdim ; k++)
-            { 
-                // gather from the bitmap into the new A (:,k)
-                int64_t pnew = Ap [k] + Wtask [k] ;
-                int64_t pA_start = k * avlen ;
-                for (int64_t i = istart ; i < iend ; i++)
-                { 
-                    // see if A(i,j) is present in the bitmap
-                    int64_t p = i + pA_start ;
-                    if (Ab [p])
-                    { 
-                        // A(i,j) is in the bitmap
-                        Ai [pnew] = i ;
-                        // Ax_new [pnew] = Ax [p] ;
-                        memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize) ;
-                        pnew++ ;
-                    }
-                }
-            }
-        }
-
-        // free workspace
-        GB_FREE (W) ;
-    }
+    GB_OK (GB_convert_bitmap_worker (Ap, Ai, NULL, Ax, &anvec_nonempty, A,
+        Context)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content
@@ -263,7 +79,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     A->i = Ai ;
     A->i_shallow = false ;
 
-    A->x = Ax_new ;
+    A->x = Ax ;
     A->x_shallow = false ;
 
     A->nzmax = anzmax ;

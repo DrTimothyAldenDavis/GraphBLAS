@@ -11,6 +11,9 @@
 // The operation is similar to both R=C+Z via GB_add and R=C.*Z via GB_emult,
 // depending on the value of the mask.
 
+// GB_masker is only called by GB_mask, which itself is only called by
+// GB_accum_mask.
+
 // Let R be the result of the mask.  In the caller, R is written back into the
 // final C matrix, but in GB_masker, C is a read-only matrix.  Consider the
 // following table, where "add" is the result of C+Z, an "emult" is the result
@@ -85,9 +88,10 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     ASSERT (!GB_JUMBLED (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
+    // this function is not used when any matrix is bitmap
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO it could do this however
+    ASSERT (!GB_IS_BITMAP (Z)) ;
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;

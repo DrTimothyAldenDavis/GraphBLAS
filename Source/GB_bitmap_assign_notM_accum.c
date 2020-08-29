@@ -79,6 +79,7 @@ GrB_Info GB_bitmap_assign_notM_accum
 
     // for each entry mij == 1
     //      Cb (i,j) += 2
+    #undef  GB_MASK_WORK
     #define GB_MASK_WORK(pC) Cb [pC] += 2 ;
     #include "GB_bitmap_assign_M_template.c"
 
@@ -94,7 +95,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         //----------------------------------------------------------------------
 
         // for all IxJ
-        #define GB_IXJ_WORK(pC)                 \
+        #define GB_IXJ_WORK(pC,ignore)          \
         {                                       \
             int8_t cb = Cb [pC] ;               \
             if (cb == 0)                        \
@@ -159,6 +160,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 1       keep this entry
+        #undef  GB_MASK_WORK
         #define GB_MASK_WORK(pC) Cb [pC] -= 2 ;
         #include "GB_bitmap_assign_M_template.c"
     }
@@ -167,6 +169,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 0       delete this entry
+        #undef  GB_MASK_WORK
         #define GB_MASK_WORK(pC)                \
         {                                       \
             int8_t cb = Cb [pC] ;               \

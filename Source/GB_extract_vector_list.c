@@ -35,7 +35,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     ASSERT (nthreads >= 1) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
     ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
     // get A

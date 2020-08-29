@@ -67,9 +67,9 @@ GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
     ASSERT (!GB_JUMBLED (Z)) ;
     ASSERT (!GB_PENDING (Z)) ; 
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (Z)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO could handle
+    ASSERT (!GB_IS_BITMAP (Z)) ;
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;

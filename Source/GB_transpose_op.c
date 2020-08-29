@@ -23,7 +23,7 @@
 //      This method is parallel, but not highly scalable.  It uses only
 //      nthreads = nnz(A)/(A->vlen) threads.
 
-// If A is full:
+// If A is full or packed:
 //      The pattern of C is not constructed.  C is full.
 //      Rowcounts and A_slice are NULL.
 //      This method is parallel and fully scalable.

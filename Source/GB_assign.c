@@ -40,6 +40,22 @@
     GB_Matrix_free (&SubMask) ; \
 }
 
+#define HACK /* TODO */ \
+    if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;\
+    if (C_in_is_full   ) \
+    { \
+        if (GB_is_dense (C_in) && GB_is_packed (C_in)) \
+        { \
+            GB_convert_any_to_full (C_in) ; \
+        } \
+        else \
+        { \
+            GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
+        } \
+    } \
+    if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
+    if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
+
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 (
     GrB_Matrix C_in,                // input/output matrix for results
@@ -107,6 +123,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
+        HACK ; // TODO
         ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
         return (GB_block (C, Context)) ;
     }
@@ -203,27 +220,34 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
             ASSERT (!GB_IS_BITMAP (M)) ;
+
+            const GrB_Index *I_SubMask = I ; int64_t ni_SubMask = ni ;
+            const GrB_Index *J_SubMask = J ; int64_t nj_SubMask = nj ;
+
             if (assign_kind == GB_ROW_ASSIGN)
             {
                 // SubMask = M (:,J)
                 ASSERT (M->vlen == 1 && M->vdim == C->vdim) ;
-                GB_OK (GB_subref (&SubMask, true, M, GrB_ALL, 1, J, nj, false,
-                    Context)) ;
+                I_SubMask = GrB_ALL ;
+                ni_SubMask = 1 ;
             }
             else if (assign_kind == GB_COL_ASSIGN)
             {
                 // SubMask = M (I,:)
                 ASSERT (M->vlen == C->vlen && M->vdim == 1) ;
-                GB_OK (GB_subref (&SubMask, true, M, I, ni, GrB_ALL, 1, false,
-                    Context)) ;
+                J_SubMask = GrB_ALL ;
+                nj_SubMask = 1 ;
             }
-            else
+            else // assign_kind == GB_ASSIGN
             {
                 // SubMask = M (I,J)
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
-                GB_OK (GB_subref (&SubMask, true, M, I, ni, J, nj, false,
-                    Context)) ;
             }
+
+            GB_OK (GB_subref (&SubMask, true, M,
+                I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
+                false, Context));
+
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (SubMask)) ;
             ASSERT_MATRIX_OK (SubMask, "extracted SubMask", GB0) ;
@@ -362,21 +386,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     //--------------------------------------------------------------------------
 
-    // TODO HACK: return C to non-bitmap state
-    if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;
-    if (C_in_is_full   )
-    {
-        if (GB_is_dense (C_in) && GB_is_packed (C_in))
-        {
-            GB_convert_any_to_full (C_in) ;
-        }
-        else
-        {
-            GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;
-        }
-    }
-    if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;
-    if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
+    HACK // TODO HACK: return C to non-bitmap state
 
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result

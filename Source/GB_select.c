@@ -50,10 +50,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in for GB_select", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-
     GrB_Matrix T = NULL ;
 
     // check domains and dimensions for C<M> = accum (C,T)

@@ -92,6 +92,8 @@ GrB_Info GB_bitmap_assign_M_accum
         #define GB_MASK_WORK(pC)            \
         {                                   \
             int8_t cb = Cb [pC] ;           \
+            /* keep this entry */           \
+            Cb [pC] = keep ;                \
             if (cb == 0)                    \
             {                               \
                 /* Cx [pC] = scalar */      \
@@ -103,8 +105,6 @@ GrB_Info GB_bitmap_assign_M_accum
                 /* Cx [pC] += scalar */     \
                 GB_ACCUM_SCALAR (pC) ;      \
             }                               \
-            /* keep this entry */           \
-            Cb [pC] = keep ;                \
         }
         #include "GB_bitmap_assign_M_sub_template.c"
 
@@ -112,24 +112,11 @@ GrB_Info GB_bitmap_assign_M_accum
         {
             // for all entries in IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC)             \
+            #define GB_IXJ_WORK(pC,ignore)      \
             {                                   \
                 int8_t cb = Cb [pC] ;           \
-                if (cb == 1)                    \
-                {                               \
-                    /* delete this entry */     \
-                    Cb [pC] = 0 ;               \
-                    cnvals-- ;                  \
-                }                               \
-                else                            \
-                {                               \
-                    /* clear the mask from C */ \
-                    /* 0: no change */          \
-                    /* 1: see above */          \
-                    /* 2: to zero */            \
-                    /* 3: keep, to 1 */         \
-                    Cb [pC] = (cb == 3) ;       \
-                }                               \
+                Cb [pC] = (cb == 3) ;           \
+                cnvals -= (cb == 1) ;           \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
         }
@@ -162,7 +149,7 @@ GrB_Info GB_bitmap_assign_M_accum
             ASSERT (assign_kind == GB_ASSIGN) ;
             // for all entries in IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC)             \
+            #define GB_IXJ_WORK(pC,ignore)      \
             {                                   \
                 int8_t cb = Cb [pC] ;           \
                 if (cb == 2)                    \
@@ -233,11 +220,11 @@ GrB_Info GB_bitmap_assign_M_accum
                     // 1 -> 0  delete this entry
                     // 2 -> 0
                     // 3 -> 1: keep this entry.  already counted above
-            #define GB_CIJ_WORK(mij,pC)             \
+            #define GB_CIJ_WORK(pC)                 \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
-                cnvals -= (cb == 1) ;               \
                 Cb [pC] = (cb == 3) ;               \
+                cnvals -= (cb == 1) ;               \
             }
             #include "GB_bitmap_assign_C_template.c"
         }

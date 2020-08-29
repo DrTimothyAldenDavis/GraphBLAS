@@ -297,6 +297,14 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             (T_transposed ? "(result transposed)" : "")) ;
     }
 
+    // TODO:
+    // If any matrix C, M, Z are bitmap:
+    //      use transplant for the bitmap case, if this condition is true:
+    //      (accum == NULL || (cnz + cnpending) == 0)
+    //      && (M == NULL ||
+    // Do typecasting via GB_transplant, below, and the let GB_mask
+    // to the rest.
+
     if (use_subassign)
     { 
 
@@ -352,7 +360,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // TODO: BITMAP doesn't work here yet
+            // TODO: BITMAP doesn't work here yet, and even when it does, the
+            // work could be done more efficiently by GB_subassign above. 
 
             // use the mask if present, not complemented, and very sparse
             GrB_Matrix M1 = NULL ;
@@ -376,7 +385,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // apply the mask (C<M> = Z)
         //----------------------------------------------------------------------
 
-        // TODO: BITMAP doesn't work here yet
+        // TODO: can call GB_mask with bitmap C and/or Z when M is NULL, or (in
+        // the future) if C and Z are not bitmap but M is bitmap.  Otherwise,
+        // if any matrix is bitmap, GB_subassign would be faster than GB_mask.
 
         // see GB_spec_mask.m for a description of this step.
 

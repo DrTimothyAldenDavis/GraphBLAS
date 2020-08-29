@@ -94,7 +94,7 @@ GrB_Info GB_bitmap_assign_noM_accum
             //------------------------------------------------------------------
 
             // for all entries in IxJ
-            #define GB_IXJ_WORK(pC)                 \
+            #define GB_IXJ_WORK(pC,ignore)          \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 if (cb == 0)                        \
@@ -162,11 +162,11 @@ GrB_Info GB_bitmap_assign_noM_accum
         //      M not present; so effective value of the mask is mij==0
         //      set Cb(p) = 0
 
-        #define GB_CIJ_WORK(mij,pC)     \
+        #define GB_CIJ_WORK(pC)         \
         {                               \
             int8_t cb = Cb [pC] ;       \
-            cnvals -= (cb == 1) ;       \
             Cb [pC] = 0 ;               \
+            cnvals -= (cb == 1) ;       \
         }
         #include "GB_bitmap_assign_C_template.c"
     }

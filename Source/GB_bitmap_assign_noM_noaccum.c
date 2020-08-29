@@ -84,11 +84,11 @@ GrB_Info GB_bitmap_assign_noM_noaccum
         // for col assign: set Cb(:,j) to zero
         // for assign: set all Cb(:,:) to zero
         // for subassign: set all Cb(I,J) to zero
-        #define GB_CIJ_WORK(mij,pC)             \
+        #define GB_CIJ_WORK(pC)                 \
         {                                       \
             int8_t cb = Cb [pC] ;               \
-            cnvals -= (cb == 1) ;               \
             Cb [pC] = 0 ;                       \
+            cnvals -= (cb == 1) ;               \
         }
         #include "GB_bitmap_assign_C_template.c"
     }
@@ -109,7 +109,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC)                 \
+            #define GB_IXJ_WORK(pC,ignore)          \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 /* Cx [pC] = scalar */              \
@@ -131,11 +131,11 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {
                 // delete all entries in C(I,J)
                 #undef  GB_IXJ_WORK
-                #define GB_IXJ_WORK(pC)                 \
+                #define GB_IXJ_WORK(pC,ignore)          \
                 {                                       \
                     int8_t cb = Cb [pC] ;               \
-                    cnvals -= (cb == 1) ;               \
                     Cb [pC] = 0 ;                       \
+                    cnvals -= (cb == 1) ;               \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
             }

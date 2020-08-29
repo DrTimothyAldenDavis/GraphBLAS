@@ -54,7 +54,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     const int64_t *GB_RESTRICT Cp = *p_Cp ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

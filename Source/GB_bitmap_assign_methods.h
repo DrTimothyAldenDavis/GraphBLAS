@@ -42,6 +42,7 @@
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t cvdim = C->vdim ;                                         \
     const int64_t cvlen = C->vlen ;                                         \
+    const int64_t vlen = cvlen ;    /* for GB_bitmap_assign_IxJ_template */ \
     const int64_t cnzmax = cvlen * cvdim ;                                  \
     int64_t cnvals = C->nvals ;
 

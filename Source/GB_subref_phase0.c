@@ -171,7 +171,7 @@ GrB_Info GB_subref_phase0
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
 
     ASSERT (p_Ch != NULL) ;
     ASSERT (p_Ap_start != NULL) ;

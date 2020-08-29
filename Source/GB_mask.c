@@ -16,11 +16,13 @@
 // This function can only handle the case when C, M, and Z all have the same
 // format (all CSC and CSR transposed, or all CSR or CSC transposed).  The
 // caller (GB_accum_mask) must transpose as needed, before calling this
-// function.  This function can handle any combination of hypersparsity of C,
-// M, and/or Z, as needed.  In the comments, C(i,j) is shorthand for the index
-// i in the jth vector, and likewise for M, Z, and R.  If the matrices are all
-// CSC, then this is row i and column j.  If the matrices are all CSR, then it
-// is row j and column i.
+// function.  This function can handle any combination of sparsity structure of
+// C, M, and/or Z, as needed, but is only called for bitmap matrices C and Z
+// when M is NULL.  GB_mask is only called by GB_accum_mask.
+
+// In the comments, C(i,j) is shorthand for the index i in the jth vector, and
+// likewise for M, Z, and R.  If the matrices are all CSC, then this is row i
+// and column j.  If the matrices are all CSR, then it is row j and column i.
 
 #include "GB_mask.h"
 
@@ -183,7 +185,8 @@ GrB_Info GB_mask                // C<M> = Z
         // there is no mask (implicitly M(i,j)=1 for all i and j)
         //----------------------------------------------------------------------
 
-        // Any pending work on C is abandoned (zombies and/or pending tuples)
+        // Any pending work on C is abandoned (zombies and/or pending tuples).
+        // OK: BITMAP.  C and Z can have any sparsity, including bitmap.
 
         if (!Mask_comp)
         { 
@@ -247,8 +250,6 @@ GrB_Info GB_mask                // C<M> = Z
         // the mask is present
         //----------------------------------------------------------------------
 
-        // OK: BITMAP
-
         // delete any lingering zombies and assemble any pending tuples
         GB_MATRIX_WAIT (M) ;        // also sort M if jumbled
         GB_MATRIX_WAIT (Z) ;        // also sort Z if jumbled
@@ -307,10 +308,12 @@ GrB_Info GB_mask                // C<M> = Z
         // aliased with M.
 
         //----------------------------------------------------------------------
-        // R = masker (M, C, Z):  compute C<M>=Z, placing results in R
+        // R = masker (C, M, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
 
-        // TODO: BITMAP fails in GB_masker
+        ASSERT (!GB_IS_BITMAP (C)) ;
+        ASSERT (!GB_IS_BITMAP (M)) ;    // TODO could handle bitmap M
+        ASSERT (!GB_IS_BITMAP (Z)) ;
 
         GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
             Context)) ;

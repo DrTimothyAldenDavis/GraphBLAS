@@ -78,6 +78,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
 
     // for each entry mij == 1
     //     Cb (i,j) += 2
+    #undef  GB_MASK_WORK
     #define GB_MASK_WORK(pC) Cb [pC] += 2 ;
     #include "GB_bitmap_assign_M_template.c"
 
@@ -99,7 +100,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         //----------------------------------------------------------------------
 
         // for all IxJ
-        #define GB_IXJ_WORK(pC)             \
+        #define GB_IXJ_WORK(pC,ignore)      \
         {                                   \
             int8_t cb = Cb [pC] ;           \
             if (cb <= 1)                    \
@@ -163,7 +164,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         {
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC)                 \
+            #define GB_IXJ_WORK(pC,ignore)          \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = (cb == 4) ;               \
@@ -175,7 +176,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         {
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC)                 \
+            #define GB_IXJ_WORK(pC,ignore)          \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = (cb == 4 || cb == 3) ;    \
@@ -195,10 +196,11 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     }
     else
     {
+        #define GB_NO_SUBASSIGN_CASE
         if (C_replace)
         {
             // for all entries in C.  Also clears M from C
-            #define GB_CIJ_WORK(mij,pC)             \
+            #define GB_CIJ_WORK(pC)                 \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = (cb == 1) ;               \
@@ -209,6 +211,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         else
         {
             // clear M from C
+            #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;
             #include "GB_bitmap_assign_M_template.c"
         }

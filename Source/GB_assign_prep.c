@@ -781,7 +781,6 @@ GrB_Info GB_assign_prep
 
         if (!scalar_expansion)
         { 
-            // TODO: does not yet handle bitmap; GB_subref will fail
             // A2 = A (Iinv, Jinv)
             GB_OK (GB_subref (&A2, A->is_csc, A, Iinv, ni, Jinv, nj, false,
                 Context)) ;
@@ -794,7 +793,6 @@ GrB_Info GB_assign_prep
         if (M != NULL && (*assign_kind) == GB_SUBASSIGN)
         { 
             // M2 = M (Iinv, Jinv)
-            // TODO: does not yet handle bitmap; GB_subref will fail
             GB_OK (GB_subref (&M2, M->is_csc, M, Iinv, ni, Jinv, nj, false,
                 Context)) ;
             // GB_subref can return a jumbled result

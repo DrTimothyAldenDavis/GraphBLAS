@@ -291,5 +291,20 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
     return (method) ;
 }
 
+GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
+(
+    // output
+    GrB_Matrix *Chandle,
+    // input, not modified
+    const bool C_is_csc,        // requested format of C
+    const GrB_Matrix A,
+    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t ni,           // length of I, or special
+    const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t nj,           // length of J, or special
+    const bool symbolic,        // if true, construct C as symbolic
+    GB_Context Context
+) ;
+
 #endif
 

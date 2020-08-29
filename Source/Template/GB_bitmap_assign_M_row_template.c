@@ -44,6 +44,7 @@
             // for row_assign: M is a single row, iC = I [0]
             // It has either 0 or 1 entry.
             int64_t pM = pM_start ;
+
             if (pM < pM_end)
             { 
                 bool mij = GB_mcast (Mx, pM, msize) ;

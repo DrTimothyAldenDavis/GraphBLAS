@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: write C=A(I,J) when A is full; then C is full too
-
 // C=A(I,J), either symbolic or numeric.  In a symbolic extraction, Cx [p] is
 // not the value of A(i,j), but its position in Ai,Ax.  That is, pA = Cx [p]
 // means that the entry at position p in C is the same as the entry in A at
@@ -79,6 +77,7 @@
     GB_FREE (Ap_end) ;      \
     GB_FREE (Mark) ;        \
     GB_FREE (Inext) ;       \
+    GB_Matrix_free (&A_bitmap) ; /* TODO HACK to test full/bitmap case */ \
 }
 
 #define GB_FREE_ALL         \
@@ -102,7 +101,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     const int64_t ni,           // length of I, or special
     const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,           // length of J, or special
-    const bool symbolic,        // if true, construct Cx as symbolic
+    const bool symbolic,        // if true, construct C as symbolic
     GB_Context Context
 )
 {
@@ -117,7 +116,23 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
     ASSERT (GB_PENDING_OK (A)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO
+
+    GrB_Matrix A_bitmap = NULL ; // TODO HACK: to test full/bitmap case
+
+    //--------------------------------------------------------------------------
+    // handle bitmap and full cases
+    //--------------------------------------------------------------------------
+
+    if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
+    {
+        // C is constructed with same sparsity as A
+        return (GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj,
+            symbolic, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // initializations
+    //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Cp = NULL ;
     int64_t *GB_RESTRICT Ch = NULL ;
@@ -131,6 +146,18 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort ;
     int Ikind, ntasks, max_ntasks = 0, nthreads ;
+
+    // TODO HACK to test full/bitmap case (but not the symbolic case)
+    if (A->vlen <= 100 && A->vdim <= 100 && !symbolic)
+    {
+        GB_MATRIX_WAIT (A) ;
+        GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
+        GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
+        info = GB_bitmap_subref (Chandle, C_is_csc, A_bitmap, I, ni, J, nj,
+            symbolic, Context) ;
+        GB_Matrix_free (&A_bitmap) ;
+        return (info) ;
+    }
 
     //--------------------------------------------------------------------------
     // ensure A is unjumbled

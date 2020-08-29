@@ -60,7 +60,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_IS_BITMAP (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
     int64_t anvec = A->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -273,7 +273,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
-            // TODO handle the bitmap better
+            // TODO handle the bitmap better for valgrind: do not use memcpy
             GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
             A->x = NULL ;
         }

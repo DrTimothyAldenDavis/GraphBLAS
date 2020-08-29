@@ -9,7 +9,8 @@
 
 // This template traverses over all the entries of the matrix A and operates on
 // the corresponding entry in C(i,j), using the GB_AIJ_WORK macro.  A can be
-// hypersparse, sparse, bitmap, or full.  It is not a scalar.
+// hypersparse, sparse, bitmap, or full.  It is not a scalar.  The matrix
+// C must be bitmap or full.
 
 {
 
@@ -62,13 +63,19 @@
             //------------------------------------------------------------------
 
             int64_t jC = GB_ijlist (J, jA, Jkind, Jcolon) ;
+            int64_t pC0 = jC * cvlen ;      // first entry in C(:,jC)
+
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 
                 if (!GBB (Ab, pA)) continue ;
                 int64_t iA = GBI (Ai, pA, nI) ;
                 int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                int64_t pC = iC + jC * cvlen ;
-                // operate on C(iC,jC) at pC, and A(iA,jA) at pA
+                int64_t pC = iC + pC0 ;
+                // operate on C(iC,jC) at pC, and A(iA,jA) at pA.  The mask
+                // can be accessed at pC if M is bitmap or full.  A has any
+                // sparsity format so only A(iA,jA) can be accessed at pA.
+                // To access a full matrix M for the subassign case, use
+                // the position (iA + jA*nI).
                 GB_AIJ_WORK (pC, pA) ;
             }
         }
@@ -80,6 +87,4 @@
 
     GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 }
-
-#undef GB_GET_pM
 

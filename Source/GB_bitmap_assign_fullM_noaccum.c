@@ -87,11 +87,12 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         // for col assign: set Cb(:,j) to zero
         // for assign: set all Cb to zero
         // for subassign set all Cb(I,J) to zero
-        #define GB_CIJ_WORK(mij,pC)     \
+        #undef  GB_CIJ_WORK
+        #define GB_CIJ_WORK(pC)         \
         {                               \
             int8_t cb = Cb [pC] ;       \
-            cnvals -= (cb == 1) ;       \
             Cb [pC] = 0 ;               \
+            cnvals -= (cb == 1) ;       \
         }
         #include "GB_bitmap_assign_C_template.c"
     }
@@ -100,12 +101,13 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     // to get the effective value of the mask entry mij
     //--------------------------------------------------------------------------
 
+    #undef  GB_GET_MIJ
     #define GB_GET_MIJ(mij,pM)                                  \
         bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;   \
         if (Mask_comp) mij = !mij ;
 
     //--------------------------------------------------------------------------
-    // do the assignment
+    // assignment phase
     //--------------------------------------------------------------------------
 
     if (A == NULL)
@@ -117,17 +119,17 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
 
         // for all entries in IxJ
         #undef  GB_IXJ_WORK
-        #define GB_IXJ_WORK(pC)                 \
+        #define GB_IXJ_WORK(pC,pA)              \
         {                                       \
             int64_t pM = GB_GET_pM ;            \
             GB_GET_MIJ (mij, pM) ;              \
             if (mij)                            \
             {                                   \
                 int8_t cb = Cb [pC] ;           \
-                cnvals += (cb == 0) ;           \
-                Cb [pC] = 1 ;                   \
                 /* Cx [pC] = scalar */          \
                 GB_ASSIGN_SCALAR (pC) ;         \
+                Cb [pC] = 1 ;                   \
+                cnvals += (cb == 0) ;           \
             }                                   \
         }
 
@@ -136,11 +138,15 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         switch (assign_kind)
         {
             case GB_ASSIGN :
+                // C<M>(I,J) = scalar where M has the same size as C
+                #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
             case GB_SUBASSIGN :
-                #define GB_GET_pM (iA + jA * nI)
+                // C(I,J)<M> = scalar where M has the same size as A
+                #undef  GB_GET_pM
+                #define GB_GET_pM pA
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
             default:;
@@ -178,28 +184,36 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             if (mij)                            \
             {                                   \
                 int8_t cb = Cb [pC] ;           \
-                cnvals += (cb == 0) ;           \
-                Cb [pC] = keep ;                \
                 /* Cx [pC] = Ax [pA] */         \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
+                Cb [pC] = keep ;                \
+                cnvals += (cb == 0) ;           \
             }                                   \
         }
 
         switch (assign_kind)
         {
             case GB_ROW_ASSIGN :
+                // C<m>(i,J) = A where m is a 1-by-C->vdim row vector
+                #undef  GB_GET_pM
                 #define GB_GET_pM jC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN :
+                // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
+                #undef  GB_GET_pM
                 #define GB_GET_pM iC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_ASSIGN :
+                // C<M>(I,J) = A where M has the same size as C
+                #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_SUBASSIGN :
+                // C(I,J)<M> = A where M has the same size as A
+                #undef  GB_GET_pM
                 #define GB_GET_pM (iA + jA * nI)
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
@@ -221,14 +235,14 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                     // 0 -> 0
                     // 1 -> 0           delete because aij not present
                     // keep -> 1
-
-            #define GB_CIJ_WORK(mij,pC)         \
+            #undef  GB_CIJ_WORK
+            #define GB_CIJ_WORK(pC)             \
             {                                   \
                 if (mij)                        \
                 {                               \
                     int8_t cb = Cb [pC] ;       \
-                    cnvals -= (cb == 1) ;       \
                     Cb [pC] = (cb > 1) ;        \
+                    cnvals -= (cb == 1) ;       \
                 }                               \
             }
             #include "GB_bitmap_assign_C_template.c"

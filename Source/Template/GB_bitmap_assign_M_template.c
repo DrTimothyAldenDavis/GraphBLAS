@@ -22,49 +22,24 @@ ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
 
 switch (assign_kind)
 {
-
-    //--------------------------------------------------------------------------
-    // row assignment: C<M'>(iC,:), M is a column vector
-    //--------------------------------------------------------------------------
-
     case GB_ROW_ASSIGN :
-    {
+        // row assignment: C<M>(iC,J), where M is a row vector
         #include "GB_bitmap_assign_M_row_template.c"
-    }
-    break ;
-
-    //--------------------------------------------------------------------------
-    // column assignment: C<M>(:,jC), M is a column vector
-    //--------------------------------------------------------------------------
-
+        break ;
     case GB_COL_ASSIGN :
-    {
+        // column assignment: C<M>(I,jC), where M is a column vector
         #include "GB_bitmap_assign_M_col_template.c"
-    }
-    break ;
-
-    //--------------------------------------------------------------------------
-    // GrB_assign: C<M>(I,J), M is the same size as C
-    //--------------------------------------------------------------------------
-
+        break ;
     case GB_ASSIGN :
-    {
+        // GrB_assign: C<M>(I,J), where M is the same size as C
         #include "GB_bitmap_assign_M_all_template.c"
-    }
-    break ;
-
-    //--------------------------------------------------------------------------
-    // GxB_subassign: C(I,J)<M>, M is the same size as C(I,J)
-    //--------------------------------------------------------------------------
-
+        break ;
+    #ifndef GB_NO_SUBASSIGN_CASE
     case GB_SUBASSIGN :
-    {
+        // GxB_subassign: C(I,J)<M>, where M is the same size as C(I,J) and A
         #include "GB_bitmap_assign_M_sub_template.c"
-    }
-    break ;
-
+        break ;
+    #endif
     default: ;
 }
-
-#undef GB_MASK_WORK
 

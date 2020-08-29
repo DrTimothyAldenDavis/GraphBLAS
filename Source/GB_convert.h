@@ -135,6 +135,19 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     GB_Context Context
 ) ;
 
+GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
+(
+    // outputs:
+    int64_t *GB_RESTRICT Ap,        // vector pointers for CSC/CSR form
+    int64_t *GB_RESTRICT Ai,        // indices for CSC/CSR or triplet form
+    int64_t *GB_RESTRICT Aj,        // vector indices for triplet form
+    GB_void *GB_RESTRICT Ax_new,    // values for CSC/CSR or triplet form
+    int64_t *anvec_nonempty,        // # of non-empty vectors
+    // inputs: not modified
+    const GrB_Matrix A,             // matrix to extract; not modified
+    GB_Context Context
+) ;
+
 GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
 (
     GrB_Matrix A                // matrix to convert to full

@@ -1,3 +1,17 @@
+//------------------------------------------------------------------------------
+// GB_bitmap_assign_M_all_template:  traverse M for GB_ASSIGN
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// M is sparse or hypersparse, not bitmap or full.  C<M>(I,J) = ... is being
+// computed (or !M), and all entries in M are traversed.  For a given entry
+// M (iM,jM) in the mask, the entry C(iM,jM) is accessed at location pC.
+// The matrix C is bitmap or full.
+
 {
     int tid ;
     #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
@@ -29,6 +43,7 @@
 
             // for assign: M is a matrix the same size as C
             int64_t jC = jM ;
+
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
             {
                 bool mij = GB_mcast (Mx, pM, msize) ;

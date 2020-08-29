@@ -6,8 +6,6 @@
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // C<M>(I,J) += A           assign
 // C(I,J)<M> += A           subassign
 
@@ -48,7 +46,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
@@ -114,7 +112,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //          Cx(p) += scalar // C(iC,jC) still present, updated
 
         #undef  GB_IXJ_WORK
-        #define GB_IXJ_WORK(pC)                     \
+        #define GB_IXJ_WORK(pC,pA)                  \
         {                                           \
             int64_t pM = GB_GET_pM ;                \
             GB_GET_MIJ (mij, pM) ;                  \
@@ -141,11 +139,15 @@ GrB_Info GB_bitmap_assign_fullM_accum
         switch (assign_kind)
         {
             case GB_ASSIGN :
+                // C<M>(I,J) += scalar where M has the same size as C
+                #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
             case GB_SUBASSIGN :
-                #define GB_GET_pM (iA + jA * nI)
+                // C(I,J)<M> += scalar where M has the same size as A
+                #undef  GB_GET_pM
+                #define GB_GET_pM pA
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
             default:;
@@ -199,18 +201,26 @@ GrB_Info GB_bitmap_assign_fullM_accum
         switch (assign_kind)
         {
             case GB_ROW_ASSIGN :
+                // C<m>(i,J) += A where m is a 1-by-C->vdim row vector
+                #undef  GB_GET_pM
                 #define GB_GET_pM jC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN :
+                // C<m>(I,j) += A where m is a C->vlen-by-1 column vector
+                #undef  GB_GET_pM
                 #define GB_GET_pM iC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_ASSIGN :
+                // C<M>(I,J) += A where M has the same size as C
+                #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_SUBASSIGN :
+                // C(I,J)<M> += A where M has the same size as A
+                #undef  GB_GET_pM
                 #define GB_GET_pM (iA + jA * nI)
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
@@ -230,13 +240,13 @@ GrB_Info GB_bitmap_assign_fullM_accum
         // for subassign: for all entries in C(I,J)
         //      get effective value mij of the mask via GB_GET_MIJ
         //      if mij == 0 set Cb(p) = 0
-        #define GB_CIJ_WORK(mij,pC)         \
+        #define GB_CIJ_WORK(pC)             \
         {                                   \
             if (!mij)                       \
             {                               \
                 int8_t cb = Cb [pC] ;       \
-                cnvals -= (cb == 1) ;       \
                 Cb [pC] = 0 ;               \
+                cnvals -= (cb == 1) ;       \
             }                               \
         }
         #include "GB_bitmap_assign_C_template.c"
