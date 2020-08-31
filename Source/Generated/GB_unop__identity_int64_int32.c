@@ -78,8 +78,7 @@ GrB_Info GB_unop_apply__identity_int64_int32
     int64_t p ;
     if (Ab == NULL)
     { 
-        // TODO: this case is not needed for the identity operator,
-        // when Ab is NULL
+        // FIXME: not needed for the identity operator, when Ab is NULL
         // A and C are hypersparse, sparse, or full
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)

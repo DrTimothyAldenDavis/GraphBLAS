@@ -30,7 +30,6 @@ Cout = GrB.extract (Cin, '+', A) ;
 C2 = Cin + A ;
 assert (gbtest_eq (C2, Cout)) ;
 
-save gunk Cin M A AT
 d.in0 = 'transpose' ;
 Cout = GrB.extract (Cin, M, A, d) ;
 C2 = Cin ;

@@ -59,7 +59,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_Type_code typecode = A->type->code ;
     GB_Select_Opcode opcode = op->opcode ;
 
-    // this opcodes are not availabe to the user
+    // these opcodes are not availabe to the user
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
 
@@ -70,13 +70,20 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
         opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
 
-    if (op_is_ordered_comparator && typecode == GB_UDT_code)
-    { 
+    if (op_is_ordered_comparator)
+    {
         // built-in GT, GE, LT, and LE operators cannot be used with
-        // user-defined types.  There are no built-in ordered comparators
-        // for built-in complex types.
-        GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "Operator %s not defined for user-defined types", op->name) ;
+        // user-defined or complex types.
+        if (typecode == GB_UDT_code)
+        { 
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
+                "Operator %s not defined for user-defined types", op->name) ;
+        }
+        else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
+        {
+            GB_ERROR (GrB_DOMAIN_MISMATCH,
+                "Operator %s not defined for complex types", op->name) ;
+        }
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible

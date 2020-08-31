@@ -6,7 +6,6 @@ function e = gb_nnz (G)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 try
-    % TODO: gbselect doesn't work for bitmap yet
     e = gbnvals (G) - gbnvals (gbselect (G, '==0')) ;
 catch
     e = gbnvals (G) ;

@@ -95,3 +95,27 @@ void GB_sel_phase2__eq_zero_bool
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap__eq_zero_bool
+//------------------------------------------------------------------------------
+
+
+
+void GB_sel_bitmap__eq_zero_bool
+(
+    int8_t *Cb,
+    bool *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const bool *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    ;
+    #include "GB_bitmap_select_template.c"
+}
+
+

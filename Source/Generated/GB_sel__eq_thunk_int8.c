@@ -95,3 +95,27 @@ void GB_sel_phase2__eq_thunk_int8
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap__eq_thunk_int8
+//------------------------------------------------------------------------------
+
+
+
+void GB_sel_bitmap__eq_thunk_int8
+(
+    int8_t *Cb,
+    int8_t *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const int8_t *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    int8_t thunk = (*xthunk) ;
+    #include "GB_bitmap_select_template.c"
+}
+
+

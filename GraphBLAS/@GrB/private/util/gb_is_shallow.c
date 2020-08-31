@@ -23,7 +23,7 @@ bool gb_is_shallow              // true if any component of A is shallow
     else
     { 
         // check if any component of A is shallow
-        return (A->p_shallow || A->h_shallow || A->b_shallow
+        return (A->p_shallow || A->h_shallow || A->b_shallow ||
                 A->i_shallow || A->x_shallow) ;
     }
 }

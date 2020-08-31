@@ -95,3 +95,27 @@ void GB_sel_phase2__eq_zero_uint64
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap__eq_zero_uint64
+//------------------------------------------------------------------------------
+
+
+
+void GB_sel_bitmap__eq_zero_uint64
+(
+    int8_t *Cb,
+    uint64_t *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const uint64_t *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    ;
+    #include "GB_bitmap_select_template.c"
+}
+
+

@@ -38,6 +38,18 @@ GrB_Info GB_selector
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_selector
+(
+    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GB_Select_Opcode opcode,    // selector opcode
+    const GxB_select_function user_select,      // user select function
+    const bool flipij,          // if true, flip i and j for user operator
+    GrB_Matrix A,               // input matrix
+    const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
+    const GB_void *GB_RESTRICT xthunk,
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // GB_is_nonzero
 //------------------------------------------------------------------------------

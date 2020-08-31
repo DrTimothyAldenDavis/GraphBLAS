@@ -22,6 +22,16 @@ else
 end
 fprintf (f, 'define(`GB_sel_phase2'', `GB_sel_phase2__%s'')\n', name) ;
 
+if isequal (opname, 'nonzombie') || isequal (opname, 'resize') 
+    fprintf (f, 'define(`GB_sel_bitmap'', `GB_sel_bitmap__(none)'')\n') ;
+    fprintf (f, 'define(`if_bitmap'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_bitmap'', `#endif'')\n') ;
+else
+    fprintf (f, 'define(`GB_sel_bitmap'', `GB_sel_bitmap__%s'')\n', name) ;
+    fprintf (f, 'define(`if_bitmap'', `'')\n') ;
+    fprintf (f, 'define(`endif_bitmap'', `'')\n') ;
+end
+
 % the type of A (no typecasting)
 fprintf (f, 'define(`GB_atype'', `%s'')\n', atype) ;
 
@@ -81,14 +91,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.c | m4 | tail -n +11 > Generated/GB_sel__%s.c', ...
+'cat control.m4 Generator/GB_sel.c | m4 | tail -n +14 > Generated/GB_sel__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.h | m4 | tail -n +11 >> Generated/GB_sel__include.h') ;
+'cat control.m4 Generator/GB_sel.h | m4 | tail -n +14 >> Generated/GB_sel__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

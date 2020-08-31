@@ -7,14 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// GB_selector does the work for GB_select and the GxB_*select methods.
+// It also deletes zombies for GB_Matrix_wait using the NONZOMBIE operator,
+// and deletes entries outside a smaller matrix for GxB_*resize.
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_Matrix_free (&C) ;                   \
-    GB_FREE_WORK ;                          \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_Matrix_free (&C) ;           \
+    GB_FREE_WORK ;                  \
 }
 
 #define GB_FREE_WORK                \
@@ -29,10 +33,6 @@
     GB_FREE (Ci) ;                  \
     GB_FREE (Cx) ;                  \
 }
-
-//------------------------------------------------------------------------------
-// GB_selector
-//------------------------------------------------------------------------------
 
 GrB_Info GB_selector
 (
@@ -61,34 +61,11 @@ GrB_Info GB_selector
     // entry selector: jumbled OK
     ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-
     GrB_Info info ;
     if (Chandle != NULL)
     { 
         (*Chandle) = NULL ;
     }
-
-    int64_t *GB_RESTRICT Zp = NULL ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
-
-    //--------------------------------------------------------------------------
-    // get A
-    //--------------------------------------------------------------------------
-
-    int64_t *GB_RESTRICT Ah = A->h ;
-    int64_t *GB_RESTRICT Ap = A->p ;
-    int64_t *GB_RESTRICT Ai = A->i ;
-    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-    int64_t asize = A->type->size ;
-    int64_t aplen = A->plen ;
-    int64_t avlen = A->vlen ;
-    int64_t avdim = A->vdim ;
-    int64_t anvec = A->nvec ;
-    GB_Type_code typecode = A->type->code ;
-    bool A_jumbled = A->jumbled ;
 
     //--------------------------------------------------------------------------
     // get Thunk
@@ -101,6 +78,9 @@ GrB_Info GB_selector
 
     // If Thunk is NULL, or has no entry, it is treated as a scalar value
     // of zero.
+
+    const int64_t asize = A->type->size ;
+    const GB_Type_code typecode = A->type->code ;
 
     GB_void athunk [GB_VLA(asize)] ;
     memset (athunk, 0, asize) ;
@@ -119,21 +99,10 @@ GrB_Info GB_selector
             GB_cast_array ((GB_void *GB_RESTRICT) &ithunk, GB_INT64_code,
                 xthunk, tcode, NULL, tsize, 1, 1) ;
             // athunk = (atype) Thunk (0)
-            GB_cast_array (athunk, A->type->code,
-                xthunk, tcode, NULL, tsize, 1, 1) ;
+            GB_cast_array (athunk, typecode, xthunk, tcode, NULL, tsize, 1, 1) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
         }
-    }
-
-    //--------------------------------------------------------------------------
-    // handle bitmap case
-    //--------------------------------------------------------------------------
-
-    if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
-    { 
-        // ... TODO
-        // return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -146,6 +115,82 @@ GrB_Info GB_selector
         GB_BURBLE_MATRIX (A, "(generic select: %s) ", op->name) ;
         user_select = (GxB_select_function) (op->function) ;
     }
+
+    //--------------------------------------------------------------------------
+    // handle the packed case (bitmap, full, or all entries present)
+    //--------------------------------------------------------------------------
+
+    bool use_bitmap_selector ;
+    if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
+    {
+        // GB_bitmap_selector does not support these opcodes.  For the RESIZE
+        // and NONZOMBIE operators, A will never be bitmap.  Full matrices
+        // should use another method, but for now the sparse case works fine.
+        // If A is sparse or hypersparse, but packed, then it has no zombies
+        // anyway.
+        use_bitmap_selector = false ;
+    }
+    else if (opcode == GB_DIAG_opcode)
+    {
+        // GB_bitmap_selector supports the DIAG operator, but it is currently
+        // not efficient (GB_bitmap_selector should return a sparse diagonal
+        // matrix, not bitmap).  So use the sparse case if A is not bitmap,
+        // since the sparse case below does not support the bitmap case.
+        use_bitmap_selector = GB_IS_BITMAP (A) ;
+    }
+    else
+    {
+        // For bitmap, full, or packed matrices (sparse/hypersparse with all
+        // entries present, not jumbled, no zombies, and no pending tuples),
+        // use the bitmap selector for all other operators (TRIL, TRIU,
+        // OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
+        // operators).
+        use_bitmap_selector = GB_is_packed (A) ;
+    }
+
+    if (use_bitmap_selector)
+    { 
+        GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
+        info = (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
+            ithunk, xthunk, Context)) ;
+        // TODO HACK convert bitmap to sparse
+        if (info != GrB_SUCCESS) return (info) ;
+        if (Chandle == NULL)
+        {
+            info = (GB_convert_bitmap_to_sparse (A, Context)) ;
+        }
+        else
+        {
+            info = (GB_convert_bitmap_to_sparse (*Chandle, Context)) ;
+        }
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get A: sparse, hypersparse, or full
+    //--------------------------------------------------------------------------
+
+    // the case when A is bitmap is always handled above by GB_bitmap_selector
+    ASSERT (!GB_IS_BITMAP (A)) ;
+
+    int64_t *GB_RESTRICT Ap = A->p ;
+    int64_t *GB_RESTRICT Ah = A->h ;
+    int64_t *GB_RESTRICT Ai = A->i ;
+    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    int64_t aplen = A->plen ;
+    int64_t avlen = A->vlen ;
+    int64_t avdim = A->vdim ;
+    int64_t anvec = A->nvec ;
+    bool A_jumbled = A->jumbled ;
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
+    int64_t *GB_RESTRICT Zp = NULL ;
+    int64_t *GB_RESTRICT Wfirst = NULL ;
+    int64_t *GB_RESTRICT Wlast = NULL ;
+    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
@@ -344,6 +389,7 @@ GrB_Info GB_selector
         // transplant C back into A
         //----------------------------------------------------------------------
 
+        // TODO: this is not parallel, and should be its own utility function
         if (A->h != NULL && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap

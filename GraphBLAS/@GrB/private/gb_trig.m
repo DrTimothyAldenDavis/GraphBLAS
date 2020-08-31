@@ -7,59 +7,66 @@ function C = gb_trig (op, G)
 
 type = gbtype (G) ;
 
-% determine if any entries are outside the domain for the real case
-switch (op)
+if (~contains (type, 'complex'))
 
-    case { 'asin', 'acos', 'atanh' }
+    % determine if any entries are outside the domain for the real case
+    switch (op)
 
-        % C is complex if any (abs (G) > 1)
-        switch (type)
-            case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                noutside = gbnvals (gbselect (gbapply ('abs', G), '>', 1)) ;
-            case { 'uint8', 'uint16', 'uint32', 'uint64' }
-                noutside = gbnvals (gbselect (G, '>', 1)) ;
-            otherwise
-                noutside = 0 ;
-        end
+        case { 'asin', 'acos', 'atanh' }
 
-    case { 'log', 'log10', 'sqrt', 'log2' }
+            % C is complex if any (abs (G) > 1)
+            switch (type)
+                case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
+                    noutside = gbnvals (gbselect (gbapply ('abs', G), '>', 1)) ;
+                case { 'uint8', 'uint16', 'uint32', 'uint64' }
+                    noutside = gbnvals (gbselect (G, '>', 1)) ;
+                otherwise
+                    % G is logical
+                    noutside = 0 ;
+            end
 
-        % C is complex if any (G < 0)
-        switch (type)
-            case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                noutside = gbnvals (gbselect (G, '<', 0)) ;
-            otherwise
-                noutside = 0 ;
-        end
+        case { 'log', 'log10', 'sqrt', 'log2' }
 
-    case { 'log1p' }
+            % C is complex if any (G < 0)
+            switch (type)
+                case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
+                    noutside = gbnvals (gbselect (G, '<', 0)) ;
+                otherwise
+                    % G is unsigned or logical
+                    noutside = 0 ;
+            end
 
-        % C is complex if any (G < -1)
-        switch (type)
-            case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                noutside = gbnvals (gbselect (G, '<', -1)) ;
-            otherwise
-                noutside = 0 ;
-        end
+        case { 'log1p' }
 
-    case { 'acosh' }
+            % C is complex if any (G < -1)
+            switch (type)
+                case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
+                    noutside = gbnvals (gbselect (G, '<', -1)) ;
+                otherwise
+                    % G is unsigned or logical
+                    noutside = 0 ;
+            end
 
-        % C is complex if any (G < 1)
-        noutside = gbnvals (gbselect (G, '<', 1)) ;
+        case { 'acosh' }
 
-end
-
-if (noutside > 0)
-    % G is real but C is complex
-    if (isequal (type, 'single'))
-        op = [op '.single complex'] ;
-    else
-        op = [op '.double complex'] ;
+            % C is complex if any (G < 1)
+            noutside = gbnvals (gbselect (G, '<', 1)) ;
     end
-elseif (~gb_isfloat (type))
-    % G is integer or logical; use the op.double operator
-    op = [op '.double'] ;
+
+    if (noutside > 0)
+        % G is real but C is complex
+        if (isequal (type, 'single'))
+            op = [op '.single complex'] ;
+        else
+            op = [op '.double complex'] ;
+        end
+    elseif (~gb_isfloat (type))
+        % G is integer or logical; use the op.double operator
+        op = [op '.double'] ;
+    end
 end
+
+% if G is already complex, gbapply will select a complex operator
 
 C = gbapply (op, G) ;
 

@@ -95,3 +95,27 @@ void GB_sel_phase2
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap
+//------------------------------------------------------------------------------
+
+if_bitmap
+
+void GB_sel_bitmap
+(
+    int8_t *Cb,
+    GB_atype *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_atype *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    GB_get_thunk
+    #include "GB_bitmap_select_template.c"
+}
+
+endif_bitmap

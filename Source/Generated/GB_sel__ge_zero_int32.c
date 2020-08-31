@@ -95,3 +95,27 @@ void GB_sel_phase2__ge_zero_int32
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap__ge_zero_int32
+//------------------------------------------------------------------------------
+
+
+
+void GB_sel_bitmap__ge_zero_int32
+(
+    int8_t *Cb,
+    int32_t *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const int32_t *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    ;
+    #include "GB_bitmap_select_template.c"
+}
+
+

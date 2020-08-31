@@ -95,3 +95,27 @@ void GB_sel_phase2__ne_thunk_uint16
     #include "GB_select_phase2.c"
 }
 
+//------------------------------------------------------------------------------
+// GB_sel_bitmap__ne_thunk_uint16
+//------------------------------------------------------------------------------
+
+
+
+void GB_sel_bitmap__ne_thunk_uint16
+(
+    int8_t *Cb,
+    uint16_t *GB_RESTRICT Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const uint16_t *GB_RESTRICT xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+)
+{ 
+    uint16_t thunk = (*xthunk) ;
+    #include "GB_bitmap_select_template.c"
+}
+
+
