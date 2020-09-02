@@ -29,8 +29,6 @@
 // caller_is_GxB_cuda_init as true to this function.  GxB_init and GrB_init
 // both pass this flag in as false.
 
-// OK: no change for BITMAP (TODO: set default bitmap_switch?)
-
 #include "GB.h"
 #include "GB_mkl.h"
 
@@ -148,7 +146,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // set the default hyper_switch and CSR/CSC format;  any thread
     // can do this later as well, so there is no race condition danger.
 
-    GB_Global_hyper_switch_set (GB_HYPER_DEFAULT) ;
+    GB_Global_hyper_switch_set (GB_HYPER_SWITCH_DEFAULT) ;
+    GB_Global_bitmap_switch_set (GB_BITMAP_SWITCH_DEFAULT) ;
     GB_Global_is_csc_set (GB_FORMAT_DEFAULT != GxB_BY_ROW) ;
 
     //--------------------------------------------------------------------------

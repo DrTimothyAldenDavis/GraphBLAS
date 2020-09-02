@@ -47,8 +47,8 @@ void GB_assign_zombie3
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
 
-    ASSERT (!GB_IS_FULL (M)) ;          // TODO: can handle this case
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO: can handle this case
+    ASSERT (!GB_IS_FULL (M)) ;          // TODO:FULL
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // get Z (:,j)

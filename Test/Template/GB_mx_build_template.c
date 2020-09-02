@@ -133,14 +133,14 @@ GrB_Info builder
         // was: info = GrB_Matrix_new (Chandle, ctype, nrows, ncols) ;
         info = GB_new (Chandle, // auto (sparse or hyper), new header
             ctype, nrows, ncols, GB_Ap_calloc,
-            true, sparsity, GB_HYPER_DEFAULT, 1, Context) ;
+            true, sparsity, GxB_HYPER_DEFAULT, 1, Context) ;
     }
     else
     {
         // create a hypersparse CSR matrix
         info = GB_new (Chandle, // auto (sparse or hyper), new header
             ctype, ncols, nrows, GB_Ap_calloc,
-            false, sparsity, GB_HYPER_DEFAULT, 1, Context) ;
+            false, sparsity, GxB_HYPER_DEFAULT, 1, Context) ;
     }
     #else
     info = GrB_Vector_new (Chandle, ctype, nrows) ;

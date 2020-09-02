@@ -80,7 +80,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         GB_phbix_free (C) ;
         info = GB_new_bix (&C,  // full, old header
             C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
-            GxB_FULL, GB_HYPER_DEFAULT, -1, cnzmax, true, Context) ;
+            GxB_FULL, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

@@ -132,7 +132,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         //----------------------------------------------------------------------
 
         // TODO pass xcode to GB_convert_bitmap_worker and let it do the
-        // typecasting.
+        // typecasting.  This works for now, however.
 
         GB_OK (GB_convert_bitmap_worker (Ap, I, J,
             need_typecast ? X_bitmap : X, NULL, A, Context)) ;

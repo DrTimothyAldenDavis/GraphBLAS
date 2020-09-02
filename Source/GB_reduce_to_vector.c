@@ -59,9 +59,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
 
     if (GB_OP_IS_POSITIONAL (reduce))
     { 
@@ -232,11 +232,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // since T is a GrB_Vector, it is CSC and not hypersparse
         GB_OK (GB_new_bix (&T, // sparse, new header
             ttype, n, 1, GB_Ap_calloc, true,
-            GxB_SPARSE, GB_HYPER_DEFAULT, 1, anvec, true, Context)) ;
+            GxB_SPARSE, GB_HYPER_SWITCH_DEFAULT, 1, anvec, true, Context)) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
-        // FULL TODO: construct T as a dense if A not hypersparse and all
-        // A(:,j) nonempty
+        // TODO:BITMAP construct T as a bitmap unless A hypersparse
 
         T->p [0] = 0 ;
         T->p [1] = anvec ;
@@ -451,7 +450,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // since T is a GrB_Vector, it is not hypersparse
             GB_OK (GB_new (&T, // sparse, new header
                 ttype, n, 1, GB_Ap_null, true,
-                GxB_SPARSE, GB_HYPER_DEFAULT, 1, Context)) ;
+                GxB_SPARSE, GB_HYPER_SWITCH_DEFAULT, 1, Context)) ;
 
             // GB_build treats Ai and Ax as read-only; they must not be modified
             GB_OK (GB_build

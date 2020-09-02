@@ -72,9 +72,9 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
     ASSERT (A->vdim == B->vdim) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // allocate the result

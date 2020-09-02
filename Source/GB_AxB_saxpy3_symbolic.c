@@ -52,9 +52,9 @@ void GB_AxB_saxpy3_symbolic
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_PENDING (B)) ; 
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C

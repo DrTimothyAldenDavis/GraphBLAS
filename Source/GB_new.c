@@ -97,7 +97,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool A_is_hyper ;
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
-    A->bitmap_switch = 0.125 ; // TODO: GB_BITMAP_SWITCH_DEFAULT ;
+    A->bitmap_switch = GB_BITMAP_SWITCH_DEFAULT ;
     A->sparsity = GxB_AUTO_SPARSITY ;
 
     if (sparsity == GxB_HYPERSPARSE)
@@ -180,8 +180,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     if (A_is_full_or_bitmap || Ap_option == GB_Ap_null)
     { 
         // A is not initialized yet; A->p and A->h are both NULL.
-        // sparse case: GB_NNZ(A) must check A->nzmax == 0 since A->p is not
-        // allocated.
+        // sparse case: GB_NNZ(A) must check A->nzmax == 0 since A->p might not
+        // be allocated.
         // full case: A->x not yet allocated.  A->nzmax still zero
         // bitmap case: A->b, A->x not yet allocated.  A->nzmax still zero
         A->magic = GB_MAGIC2 ;
@@ -208,7 +208,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // the matrix is allocated but not yet completely initialized.  The
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
         // before returning the matrix to the user application.  GB_NNZ(A) must
-        // check A->nzmax == 0 since A->p [A->nvec] is undefined.
+        // check A->nzmax == 0 since A->p [A->nvec] might be undefined.
         A->magic = GB_MAGIC2 ;
         A->p = GB_MALLOC (A->plen+1, int64_t) ;
         ok = (A->p != NULL) ;

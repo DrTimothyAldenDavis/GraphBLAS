@@ -46,8 +46,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO, should be easy to do
-    ASSERT (!GB_IS_BITMAP (D)) ;        // not needed, also D not full
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap: not needed, also D not full
 
     //--------------------------------------------------------------------------
     // get the semiring operators

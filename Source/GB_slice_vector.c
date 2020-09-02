@@ -66,7 +66,8 @@ void GB_slice_vector
     //--------------------------------------------------------------------------
 
     ASSERT (p_pA != NULL && p_pB != NULL) ;
-    // TODO: if M, A, B bitmap: Mi, Ai, Bi are NULL.  I think this is OK...
+    // TODO:BITMAP
+    // if M, A, B bitmap: Mi, Ai, Bi are NULL.  I think this is OK...
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task

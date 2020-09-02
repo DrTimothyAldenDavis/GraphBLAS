@@ -7,36 +7,36 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: GxB_Matrix_export_FullR
-
 #include "GB_export.h"
 
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
 (
-    GrB_Matrix *A,          // handle of matrix to export and free
-    GrB_Type *type,         // type of matrix exported
-    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *ncols,
-    void      **Ax,         // values, size nrows*ncols
-    const GrB_Descriptor desc       // descriptor for # of threads to use
+    GrB_Matrix *A,      // handle of matrix to export and free
+    GrB_Type *type,     // type of matrix exported
+    GrB_Index *nrows,   // number of rows of the matrix
+    GrB_Index *ncols,   // number of columns of the matrix
+    void **Ax,          // values, size nrows*ncols
+    const GrB_Descriptor desc
 )
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols, &Ax,"
         " desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
-    GB_EXPORT_FULL_CHECK ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
-    GB_RETURN_IF_NULL (Ax) ;
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (*A)) ;        // TODO
-
+    GB_MATRIX_WAIT (*A) ;
     if (!GB_is_dense (*A))
     { 
         // A must be dense or full
@@ -44,45 +44,28 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     }
 
     //--------------------------------------------------------------------------
-    // export the matrix
+    // ensure the matrix is full CSC
     //--------------------------------------------------------------------------
 
-    // ensure A is full
-    GB_ENSURE_FULL (*A) ;   // TODO use GB_conform, with A->sparsity=GxB_FULL
-
-    // ensure the matrix is in full CSC format
-    (*A)->hyper_switch = GB_NEVER_HYPER ;
+    // ensure the matrix is in CSC format
     if (!((*A)->is_csc))
-    { 
+    {
         // A = A', done in place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, (*A),
+        GB_OK (GB_transpose (NULL, NULL, true, *A,
             NULL, NULL, NULL, false, Context)) ;
     }
 
-    ASSERT_MATRIX_OK ((*A), "A export: full CSC", GB0) ;
-    ASSERT ((*A)->is_csc) ;
-
-    // export the content and remove it from A
-    if (nrows > 0 && ncols > 0)
-    { 
-        (*Ax) = (*A)->x ;
-        (*A)->x = NULL ;
-    }
-    else
-    { 
-        (*Ax) = NULL ;
-    }
+    GB_convert_any_to_full (*A) ;
+    ASSERT (GB_IS_FULL (*A)) ;
 
     //--------------------------------------------------------------------------
-    // export is successful
+    // export the matrix
     //--------------------------------------------------------------------------
 
-    // free the matrix header; do not free the exported content of the matrix,
-    // which has already been removed above.
-    GB_Matrix_free (A) ;
-    ASSERT (*A == NULL) ;
+    info = GB_export (A, type, nrows, ncols, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
-    return (GrB_SUCCESS) ;
+    return (info) ;
 }
 

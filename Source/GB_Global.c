@@ -13,7 +13,7 @@
 // or non-blocking), for pointers to malloc/calloc/realloc/free functions,
 // global matrix options, and other settings.
 
-// OK: no change for BITMAP (TODO: do I add bitmap_switch, like hyper_switch?)
+// OK: BITMAP
 
 #include "GB_atomics.h"
 
@@ -43,6 +43,7 @@ typedef struct
     // hypersparsity and CSR/CSC format control
     //--------------------------------------------------------------------------
 
+    float bitmap_switch ;       // default bitmap_switch for new matrices
     float hyper_switch ;        // default hyper_switch for new matrices
     bool is_csc ;               // default CSR/CSC format for new matrices
 
@@ -142,7 +143,8 @@ GB_Global_struct GB_Global =
     .chunk = GB_CHUNK_DEFAULT,
 
     // default format
-    .hyper_switch = GB_HYPER_DEFAULT,
+    .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
+    .bitmap_switch = GB_BITMAP_SWITCH_DEFAULT,
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
     // abort function for debugging only
@@ -266,6 +268,20 @@ void GB_Global_hyper_switch_set (float hyper_switch)
 float GB_Global_hyper_switch_get (void)
 { 
     return (GB_Global.hyper_switch) ;
+}
+
+//------------------------------------------------------------------------------
+// bitmap_switch
+//------------------------------------------------------------------------------
+
+void GB_Global_bitmap_switch_set (float bitmap_switch)
+{ 
+    GB_Global.bitmap_switch = bitmap_switch ;
+}
+
+float GB_Global_bitmap_switch_get (void)
+{ 
+    return (GB_Global.bitmap_switch) ;
 }
 
 //------------------------------------------------------------------------------

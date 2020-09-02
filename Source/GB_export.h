@@ -11,49 +11,47 @@
 #define GB_EXPORT_H
 #include "GB_transpose.h"
 
-//------------------------------------------------------------------------------
-// macros for import/export
-//------------------------------------------------------------------------------
+GrB_Info GB_import      // import a matrix in any format
+(
+    GrB_Matrix *A,      // handle of matrix to create
+    GrB_Type type,      // type of matrix to create
+    GrB_Index vlen,     // vector length
+    GrB_Index vdim,     // vector dimension
+    GrB_Index nzmax,    // size of Ai and Ax for sparse/hypersparse
+    GrB_Index nvals,    // # of entries for bitmap
+    bool jumbled,       // if true, sparse/hypersparse may be jumbled
+    int64_t nonempty,   // # of non-empty vectors for sparse/hypersparse
+    GrB_Index nvec,     // size of Ah for hypersparse
+    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
+    GrB_Index **Ah,     // vector indices, size nvec for hyper
+    int8_t **Ab,        // bitmap, size nzmax
+    GrB_Index **Ai,     // indices, size nzmax
+    void **Ax,          // values, size nzmax
+    int sparsity,       // hypersparse, sparse, bitmap, or full
+    bool is_csc,        // if true then matrix is by-column, else by-row
+    GB_Context Context
+) ;
 
-#define GB_IMPORT_CHECK                                         \
-    GB_IMPORT_FULL_CHECK ;                                      \
-    if (nvals > GxB_INDEX_MAX)                                  \
-    {                                                           \
-        return (GrB_INVALID_VALUE) ;                            \
-    }                                                           \
-
-#define GB_IMPORT_FULL_CHECK                                    \
-    GB_RETURN_IF_NULL (A) ;                                     \
-    (*A) = NULL ;                                               \
-    GB_RETURN_IF_NULL_OR_FAULTY (type) ;                        \
-    if (nrows > GxB_INDEX_MAX || ncols > GxB_INDEX_MAX)         \
-    {                                                           \
-        return (GrB_INVALID_VALUE) ;                            \
-    }                                                           \
-    /* get the descriptor */                                    \
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
-
-#define GB_EXPORT_CHECK                                         \
-    GB_RETURN_IF_NULL (nvals) ;                                 \
-    GB_RETURN_IF_NULL (nonempty) ;                              \
-    GB_EXPORT_FULL_CHECK ;                                      \
-    (*nvals) = GB_NNZ (*A) ;
-
-#define GB_EXPORT_FULL_CHECK                                    \
-    GB_RETURN_IF_NULL (A) ;                                     \
-    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;                          \
-    ASSERT_MATRIX_OK (*A, "A to export", GB0) ;                 \
-    GB_RETURN_IF_NULL (type) ;                                  \
-    GB_RETURN_IF_NULL (nrows) ;                                 \
-    GB_RETURN_IF_NULL (ncols) ;                                 \
-    /* get the descriptor */                                    \
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ; \
-    /* finish any pending work */                               \
-    GB_MATRIX_WAIT (*A) ;                                       \
-    /* export basic attributes */                               \
-    (*type) = (*A)->type ;                                      \
-    (*nrows) = GB_NROWS (*A) ;                                  \
-    (*ncols) = GB_NCOLS (*A) ;
+GrB_Info GB_export      // export a matrix in any format
+(
+    GrB_Matrix *A,      // handle of matrix to export and free
+    GrB_Type *type,     // type of matrix to export
+    GrB_Index *vlen,    // vector length
+    GrB_Index *vdim,    // vector dimension
+    GrB_Index *nzmax,   // size of Ab, Ai, and Ax
+    GrB_Index *nvals,   // # of entries for bitmap matrices
+    bool *jumbled,      // if true, sparse/hypersparse may be jumbled
+    int64_t *nonempty,  // # of non-empty vectors for sparse/hypersparse
+    GrB_Index *nvec,    // size of Ah for hypersparse
+    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
+    GrB_Index **Ah,     // vector indices, size nvec for hyper
+    int8_t **Ab,        // bitmap, size nzmax
+    GrB_Index **Ai,     // indices, size nzmax
+    void **Ax,          // values, size nzmax
+    int *sparsity,      // hypersparse, sparse, bitmap, or full
+    bool *is_csc,       // if true then export matrix by-column, else by-row
+    GB_Context Context
+) ;
 
 #endif
 

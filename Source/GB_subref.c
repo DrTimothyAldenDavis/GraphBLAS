@@ -77,7 +77,7 @@
     GB_FREE (Ap_end) ;      \
     GB_FREE (Mark) ;        \
     GB_FREE (Inext) ;       \
-    GB_Matrix_free (&A_bitmap) ; /* TODO HACK to test full/bitmap case */ \
+    GB_Matrix_free (&A_bitmap) ; /* HACK to test full/bitmap case */ \
 }
 
 #define GB_FREE_ALL         \
@@ -117,7 +117,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
     ASSERT (GB_PENDING_OK (A)) ;
 
-    GrB_Matrix A_bitmap = NULL ; // TODO HACK: to test full/bitmap case
+    GrB_Matrix A_bitmap = NULL ; // HACK: to test full/bitmap case
 
     //--------------------------------------------------------------------------
     // handle bitmap and full cases
@@ -147,7 +147,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     bool post_sort, need_qsort ;
     int Ikind, ntasks, max_ntasks = 0, nthreads ;
 
-    // TODO HACK to test full/bitmap case (but not the symbolic case)
+    // HACK to test full/bitmap case (but not the symbolic case)
     if (A->vlen <= 100 && A->vdim <= 100 && !symbolic)
     {
         GB_MATRIX_WAIT (A) ;

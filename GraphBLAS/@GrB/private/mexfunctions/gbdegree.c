@@ -87,8 +87,8 @@ void mexFunction
         {
             ERROR ("out of memory") ;
         }
-        OK (GxB_Vector_import (&d, GrB_INT64, X->vdim, nvec, &list, &degree,
-            NULL)) ;
+        OK (GxB_Vector_import_CSC (&d, GrB_INT64, X->vdim, nvec, nvec,
+            false, &list, &degree, NULL)) ;
 
     }
     else
@@ -119,8 +119,8 @@ void mexFunction
                 {
                     ERROR ("out of memory") ;
                 }
-                OK (GxB_Vector_import (&y, GrB_INT64, ncols, nvec,
-                    &list, &degree, NULL)) ;
+                OK (GxB_Vector_import_CSC (&y, GrB_INT64, ncols, nvec, nvec,
+                    false, &list, &degree, NULL)) ;
             }
             else
             { 
@@ -150,8 +150,8 @@ void mexFunction
                 {
                     ERROR ("out of memory") ;
                 }
-                OK (GxB_Vector_import (&y, GrB_INT64, nrows, nvec,
-                    &list, &degree, NULL)) ;
+                OK (GxB_Vector_import_CSC (&y, GrB_INT64, nrows, nvec, nvec,
+                    false, &list, &degree, NULL)) ;
             }
             else
             { 

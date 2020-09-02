@@ -113,9 +113,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
     ASSERT (Bflops != NULL) ;
     ASSERT (Mwork != NULL) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

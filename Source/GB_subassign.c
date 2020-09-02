@@ -34,7 +34,7 @@
     GB_FREE (J2) ;                  \
 }
 
-#define HACK /* TODO */ \
+#define HACK \
     if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
     if (C_in_is_full   ) \
     { \
@@ -117,7 +117,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
-        HACK ; // TODO
+HACK ;
         ASSERT_MATRIX_OK (C, "Final C for subassign", GB0) ;
         return (GB_block (C, Context)) ;
     }
@@ -148,6 +148,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         GB_MATRIX_WAIT_IF_PENDING (C) ;
         // transplants the content of C into C_in and frees C
         GB_OK (GB_transplant (C_in, C_in->type, &C, Context)) ;
+        C2 = NULL ;
     }
 
     //--------------------------------------------------------------------------
@@ -159,7 +160,13 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
-    GB_FREE_ALL ;
+{
+    GB_Matrix_free (&C2) ; 
+    GB_Matrix_free (&M2) ; 
+    GB_Matrix_free (&A2) ; 
+    GB_FREE (I2) ;
+    GB_FREE (J2) ;
+}
     return (GB_block (C_in, Context)) ;
 }
 

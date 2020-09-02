@@ -5,9 +5,9 @@ function test155
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
-mlist  = [ 1  1  10  20 ] ;
-nlist  = [ 1 10   1  10 ] ;
-nzlist = [ 5 100 100 1000 ] ;
+mlist  = [ 1  1  10  20    5  ] ;
+nlist  = [ 1 10   1  10    5  ] ;
+nzlist = [ 5 100 100 1000  100] ;
 
 for trial = 1:4
 

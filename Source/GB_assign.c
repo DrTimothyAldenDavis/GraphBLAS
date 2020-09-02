@@ -40,7 +40,7 @@
     GB_Matrix_free (&SubMask) ; \
 }
 
-#define HACK /* TODO */ \
+#define HACK \
     if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;\
     if (C_in_is_full   ) \
     { \
@@ -90,7 +90,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GrB_Index *I = NULL ;           // Rows, Cols, or I2
     GrB_Index *J = NULL ;           // Rows, Cols, or J2
 
-    // TODO HACK: return C to non-bitmap state
+    // HACK: return C to non-bitmap state
     bool C_in_is_bitmap = GB_IS_BITMAP (C_in) ;
     bool C_in_is_full   = GB_IS_FULL (C_in) ;
     bool C_in_is_sparse = GB_IS_SPARSE (C_in) ;
@@ -123,7 +123,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
-        HACK ; // TODO
+HACK ;
         ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
         return (GB_block (C, Context)) ;
     }
@@ -386,7 +386,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     //--------------------------------------------------------------------------
 
-    HACK // TODO HACK: return C to non-bitmap state
+HACK // return C to non-bitmap state
 
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result

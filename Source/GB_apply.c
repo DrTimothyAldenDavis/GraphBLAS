@@ -165,7 +165,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // delete any lingering zombies and assemble any pending tuples
     GB_MATRIX_WAIT (M) ;        // TODO: postpone until accum/mask phase
     GB_MATRIX_WAIT (A) ;        // TODO: allow A and C to be jumbled
-    GB_SCALAR_WAIT (scalar) ;
+    GB_MATRIX_WAIT (scalar) ;
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;

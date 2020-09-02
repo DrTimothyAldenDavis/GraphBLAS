@@ -186,7 +186,7 @@
     // since T is a GrB_Vector, it is CSC and not hypersparse
     info = GB_new_bix (&T, // sparse, new header
         ttype, n, 1, GB_Ap_calloc, true,
-        GxB_SPARSE, GB_HYPER_DEFAULT, 1, tnz, true, Context) ;
+        GxB_SPARSE, GB_HYPER_SWITCH_DEFAULT, 1, tnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -218,7 +218,7 @@
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (i = 0 ; i < n ; i++)
         { 
-            Ti [i] = i ;        // ok: T is sparse (TODO: make it full)
+            Ti [i] = i ;        // ok: T is sparse (TODO: make full or bitmap)
         }
         GB_FREE (T->x) ;
         T->x = Work0 ;

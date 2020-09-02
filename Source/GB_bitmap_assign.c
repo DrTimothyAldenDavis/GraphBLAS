@@ -64,7 +64,7 @@ GrB_Info GB_bitmap_assign
         GBURBLE ("Method 06d: (C full)<Z>=Z ") ;
         GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Context)) ;
 
-        // TODO check if these methods can be used too:
+        // TODO:BITMAP check if these methods can be used too:
         //  GB_dense_subassign_22:  C += scalar
         //  GB_dense_subassign_05d: C<M> = scalar
         //  GB_subassign_05e:       C<M,struct> = scalar ; C empty

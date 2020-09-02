@@ -31,7 +31,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     GB_RETURN_IF_NULL_OR_FAULTY (S) ;
     GB_RETURN_IF_NULL (x) ;
 
-    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO:BITMAP
 
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (S))

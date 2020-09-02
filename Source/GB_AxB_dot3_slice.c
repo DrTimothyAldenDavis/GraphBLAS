@@ -65,8 +65,8 @@ GrB_Info GB_AxB_dot3_slice
 
     // C is always constructed as sparse or hypersparse, not full, since it
     // must accomodate zombies
-    ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
+    ASSERT (!GB_IS_FULL (C)) ;          // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;

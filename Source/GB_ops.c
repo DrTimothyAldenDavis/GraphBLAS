@@ -465,7 +465,7 @@ GrB_Index GB_opaque_GrB_ALL = 0 ;
 const GrB_Index *GrB_ALL = & GB_opaque_GrB_ALL ;
 
 // the default hyper_switch is (1/16)
-const double GxB_HYPER_DEFAULT = GB_HYPER_DEFAULT ;
+const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
 
 // set GxB_HYPER_SWITCH to either of these to ensure matrix is always, or never,
 // stored in hypersparse format, respectively.

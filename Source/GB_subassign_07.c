@@ -16,7 +16,7 @@
 // A:           scalar
 // S:           none
 
-// C cannot be bitmap.  TODO: M could be bitmap
+// C cannot be bitmap.
 
 #include "GB_subassign_methods.h"
 
@@ -46,7 +46,7 @@ GrB_Info GB_subassign_07
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP could be done
 
     //--------------------------------------------------------------------------
     // get inputs

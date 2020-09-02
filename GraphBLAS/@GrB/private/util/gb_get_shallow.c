@@ -270,8 +270,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
             // NULL, but it does not change the MATLAB matrix they came from.
-            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
-                &Xp, &Xi, &Xx, NULL)) ;
+            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, false,
+                -1, &Xp, &Xi, &Xx, NULL)) ;
             // tell GraphBLAS the matrix is shallow
             A->p_shallow = true ;
             A->i_shallow = (A->i != NULL) ;

@@ -110,10 +110,10 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         return (info) ;
     }
 
-    ASSERT (!GB_IS_BITMAP (C_in_place)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (C_in_place)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // general case (no bitmaps yet)

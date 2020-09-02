@@ -26,38 +26,77 @@ static inline bool GB_removeElement
 {
 
     //--------------------------------------------------------------------------
-    // get the pattern of the vector
+    // check inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Vp = V->p ;
-    const int64_t *GB_RESTRICT Vi = V->i ;
-    bool found ;
-
-    // remove from a GrB_Vector
-    int64_t pleft = 0 ;
-    int64_t pright = Vp [1] - 1 ;
+    ASSERT (!GB_IS_FULL (V)) ;
 
     //--------------------------------------------------------------------------
-    // binary search in kth vector for index i
+    // remove V(i)
     //--------------------------------------------------------------------------
 
-    // Time taken for this step is at most O(log(nnz(V))).
-    bool is_zombie ;
-    int64_t nzombies = V->nzombies ;
-    GB_BINARY_SEARCH_ZOMBIE (i, Vi, pleft, pright, found, nzombies, is_zombie) ;
+    if (GB_IS_BITMAP (V))
+    {
 
-    //--------------------------------------------------------------------------
-    // remove the entry
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // V is bitmap
+        //----------------------------------------------------------------------
 
-    if (found && !is_zombie)
-    { 
-        // V(i) becomes a zombie
-        V->i [pleft] = GB_FLIP (i) ;        // ok: V is sparse
-        V->nzombies++ ;
+        int8_t *GB_RESTRICT Vb = V->b ;
+        int8_t vb = Vb [i] ;
+        if (vb != 0)
+        { 
+            // V(i) is present; remove it
+            Vb [i] = 0 ;
+            V->nvals-- ;
+        }
+        // V(i) is always found, whether present or not
+        return (true) ;
+
     }
+    else
+    {
 
-    return (found) ;
+        //----------------------------------------------------------------------
+        // V is sparse
+        //----------------------------------------------------------------------
+
+        const int64_t *GB_RESTRICT Vp = V->p ;
+        const int64_t *GB_RESTRICT Vi = V->i ;
+        bool found ;
+
+        // look in V(:)
+        int64_t pleft = 0 ;
+        int64_t pright = Vp [1] ;
+        int64_t vnz = pright ;
+
+        bool is_zombie ;
+        if (vnz == V->vlen)
+        { 
+            // V(:) is packed so no binary search is needed to find V(i)
+            pleft = i ;
+            ASSERT (GB_UNFLIP (Vi [pleft]) == i) ;
+            found = true ;
+            is_zombie = GB_IS_ZOMBIE (Vi [pleft]) ;
+        }
+        else
+        { 
+            // binary search for V(i): time is O(log(vnz))
+            int64_t nzombies = V->nzombies ;
+            pright-- ;
+            GB_BINARY_SEARCH_ZOMBIE (i, Vi, pleft, pright, found,
+                nzombies, is_zombie) ;
+        }
+
+        // remove the entry
+        if (found && !is_zombie)
+        { 
+            // V(i) becomes a zombie
+            V->i [pleft] = GB_FLIP (i) ;        // ok: V is sparse
+            V->nzombies++ ;
+        }
+        return (found) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -76,18 +115,27 @@ GrB_Info GrB_Vector_removeElement
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
-    ASSERT (!GB_IS_BITMAP (V)) ;        // TODO
 
     //--------------------------------------------------------------------------
-    // if V is jumbled, wait on the vector first
+    // if V is jumbled, wait on the vector first.  If full, convert to nonfull
     //--------------------------------------------------------------------------
 
-    if (V->jumbled)
-    { 
+    if (V->jumbled || GB_IS_FULL (V))
+    {
         GrB_Info info ;
         GB_WHERE (V, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_removeElement") ;
-        GB_OK (GB_Matrix_wait ((GrB_Vector) V, Context)) ;
+        if (GB_IS_FULL (V))
+        { 
+            // convert V from full to sparse
+            GB_OK (GB_convert_to_nonfull ((GrB_Matrix) V, Context)) ;
+        }
+        else
+        { 
+            // V is sparse and jumbled
+            GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
+        }
+        ASSERT (!GB_IS_FULL (V)) ;
         ASSERT (!GB_ZOMBIES (V)) ;
         ASSERT (!GB_JUMBLED (V)) ;
         ASSERT (!GB_PENDING (V)) ;
@@ -98,20 +146,13 @@ GrB_Info GrB_Vector_removeElement
     }
 
     //--------------------------------------------------------------------------
-    // V is not jumbled
+    // V is not jumbled and not full; it may have zombies and pending tuples
     //--------------------------------------------------------------------------
 
-    // ensure V is sparse
-    if (GB_IS_FULL (V))
-    { 
-        // convert V from full to sparse
-        GB_WHERE (V, GB_WHERE_STRING) ;
-        GrB_Info info = GB_convert_full_to_sparse ((GrB_Matrix) V, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            return (info) ;
-        }
-    }
+    ASSERT (!GB_IS_FULL (V)) ;
+    ASSERT (GB_ZOMBIES_OK (V)) ;
+    ASSERT (!GB_JUMBLED (V)) ;
+    ASSERT (GB_PENDING_OK (V)) ;
 
     // check index
     if (i >= V->vlen)
@@ -121,6 +162,7 @@ GrB_Info GrB_Vector_removeElement
             GBu " out of range; must be < " GBd, i, V->vlen) ;
     }
 
+    // if V is sparse, it may have pending tuples
     bool V_is_pending = GB_PENDING (V) ; 
     if (V->nzmax == 0 && !V_is_pending)
     { 
@@ -143,12 +185,13 @@ GrB_Info GrB_Vector_removeElement
         GB_BURBLE_START ("GrB_Vector_removeElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
         ASSERT (!GB_ZOMBIES (V)) ;
+        ASSERT (!GB_JUMBLED (V)) ;
         ASSERT (!GB_PENDING (V)) ;
+        // look again; remove the entry if it was a pending tuple
+        GB_removeElement (V, i) ;
         GB_BURBLE_END ;
     }
 
-    // look again; remove the entry if it was a pending tuple
-    GB_removeElement (V, i) ;
     return (GrB_SUCCESS) ;
 }
 

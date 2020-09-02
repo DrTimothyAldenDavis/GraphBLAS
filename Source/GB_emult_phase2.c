@@ -80,9 +80,9 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     ASSERT (A->vdim == B->vdim) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     GB_Opcode opcode = op->opcode ;

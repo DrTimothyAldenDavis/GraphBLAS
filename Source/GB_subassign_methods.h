@@ -1568,7 +1568,7 @@ GrB_Info GB_subassign_20
     }
 
 //------------------------------------------------------------------------------
-// GB_SUBASSIGN_ONE_SLICE: slice one matrix (A or M)
+// GB_SUBASSIGN_ONE_SLICE: slice one matrix (M)
 //------------------------------------------------------------------------------
 
 // Methods: 05, 06n, 07.  If C is dense, it is sliced for a fine task, so that
@@ -1576,11 +1576,11 @@ GrB_Info GB_subassign_20
 // C(:,jC) is not sliced, so the fine task must do a direct lookup via
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
 
-#define GB_SUBASSIGN_ONE_SLICE(X)                                           \
+#define GB_SUBASSIGN_ONE_SLICE(M)                                           \
     GB_OK (GB_subassign_one_slice (                                         \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
-        X, Context)) ;                                                      \
+        M, Context)) ;                                                      \
     GB_ALLOCATE_NPENDING ;
 
 //------------------------------------------------------------------------------

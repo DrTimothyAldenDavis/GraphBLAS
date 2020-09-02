@@ -372,7 +372,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // hypersparse with all entries present, no zombies, no pending tuples,
         // and not jumbled.
 
-        // TODO if A is bitmap with all entries present, let T be full
+        // TODO:BITMAP if A is bitmap with all entries present, let T be full
 
         int sparsity = (A_is_bitmap) ? GxB_BITMAP : GxB_FULL ;
         bool T_cheap =                  // T can be done quickly if:

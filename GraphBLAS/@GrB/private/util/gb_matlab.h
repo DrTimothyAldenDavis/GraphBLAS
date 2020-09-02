@@ -47,7 +47,7 @@ void gbcov_put (void) ;
 
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 
-#define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, "error") ;
+#define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, "GrB:error") ;
 
 #define OK1(C,method)                                       \
 {                                                           \

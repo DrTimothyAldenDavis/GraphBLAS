@@ -317,38 +317,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
-    // check an empty matrix
-    //--------------------------------------------------------------------------
-
-    bool A_empty = (A->nzmax == 0) ;
-
-    if (A_empty)
-    {
-        // A->x and A->i pointers must be NULL and shallow must be false
-        if (A->i != NULL || A->i_shallow || A->x_shallow)
-        { 
-            GBPR0 ("  invalid empty %s\n", kind) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-
-        // check the vector pointers
-        if (is_hyper || is_sparse)
-        {
-            for (int64_t j = 0 ; j <= A->nvec ; j++)
-            {
-                if (A->p [j] != 0)
-                { 
-                    GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j, A->p [j]) ;
-                    return (GrB_INVALID_OBJECT) ;
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
     // check a non-empty matrix
     //--------------------------------------------------------------------------
 
+    bool A_empty = (A->nzmax == 0) ;
     if (is_hyper || is_sparse)
     {
         if (!A_empty && A->i == NULL)

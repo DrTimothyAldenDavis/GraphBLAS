@@ -16,7 +16,7 @@
 // typecast B(i,j) but not C(i,j).  The case for typecasting of C is handled by
 // Method 04.
 
-// FULL TODO: if C sparse, convert to full (or bitmap?)
+// FULL TODO:BITMAP if C sparse, convert to full (or bitmap?)
 
 #include "GB_dense.h"
 #include "GB_binop.h"

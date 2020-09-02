@@ -62,11 +62,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     ASSERT_MATRIX_OK (A, "A for GB_kron", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_kron", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
-
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, accum, op->ztype, Context)) ;
 

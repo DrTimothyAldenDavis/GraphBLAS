@@ -7,9 +7,20 @@
 
 //------------------------------------------------------------------------------
 
+// OK: BITMAP
+
 #include "GB_select.h"
 
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL         \
+{                           \
+    GB_FREE (Ax_new) ;      \
+    GB_FREE (Ab_new) ;      \
+    GB_phbix_free (A) ;     \
+}
+
+//------------------------------------------------------------------------------
+// GB_resize: resize a GrB_Matrix
+//------------------------------------------------------------------------------
 
 GrB_Info GB_resize              // change the size of a matrix
 (
@@ -25,10 +36,9 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    GB_void *GB_RESTRICT Ax_new = NULL ;
+    int8_t  *GB_RESTRICT Ab_new = NULL ;
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-
-    bool ok = true ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -46,6 +56,12 @@ GrB_Info GB_resize              // change the size of a matrix
     { 
         vlen_new = ncols_new ;
         vdim_new = nrows_new ;
+    }
+
+    if (vdim_new == vdim_old && vlen_new == vlen_old)
+    { 
+        // nothing to do
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -67,83 +83,61 @@ GrB_Info GB_resize              // change the size of a matrix
     ASSERT (!GB_JUMBLED (A)) ;
 
     //--------------------------------------------------------------------------
-    // check for sparsity conversion
+    // resize the matrix
     //--------------------------------------------------------------------------
 
-    if (vdim_new <= vdim_old && vlen_new <= vlen_old)
-    { 
-        // A is shrinking
-        ASSERT (!GB_PENDING (A)) ;
-        ASSERT (!GB_ZOMBIES (A)) ;
-        if (GB_is_dense (A) && !GB_IS_FULL (A))
-        {
-            // A is dense but held in sparse format, and it is shrinking;
-            // convert A to full
-            // TODO: do this only if A->sparsity == GxB_DEFAULT
-            GB_convert_any_to_full (A) ;
-        }
-        if (vdim_new == vdim_old && vlen_new == vlen_old)
-        { 
-            // nothing more to do
-            return (GrB_SUCCESS) ;
-        }
-    }
-    else
+// HACK to test bitmap
+bool A_was_full = GB_IS_FULL (A) ;
+bool A_was_bitmap = GB_IS_BITMAP (A) ;
+bool A_was_sparse = GB_IS_SPARSE (A) ;
+bool A_was_hyper = GB_IS_HYPERSPARSE (A) ;
+if (vdim_old <= 100 && vlen_old <= 100)
+{
+    GB_convert_any_to_bitmap (A, Context) ;
+}
+
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_full = GB_IS_FULL (A) ;
+    bool A_is_shrinking = (vdim_new <= vdim_old && vlen_new <= vlen_old) ;
+
+    if ((A_is_full || A_is_bitmap) && A_is_shrinking)
     {
-        // at least one dimension of A is increasing
-        GB_ENSURE_SPARSE (A) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // determine maximum number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-
-    //--------------------------------------------------------------------------
-    // resize a full matrix
-    //--------------------------------------------------------------------------
-
-    if (GB_IS_FULL (A))
-    { 
 
         //----------------------------------------------------------------------
-        // A must be shrinking; otherwise it will already be sparse, not full
+        // A is full or bitmap
         //----------------------------------------------------------------------
 
-        ASSERT (vdim_new <= vdim_old && vlen_new <= vlen_old) ;
-
-        //----------------------------------------------------------------------
         // get the old and new dimensions
-        //----------------------------------------------------------------------
-
         int64_t anz_old = vlen_old * vdim_old ;
         int64_t anz_new = vlen_new * vdim_new ;
         size_t nzmax_new = GB_IMAX (anz_new, 1) ;
         size_t nzmax_old = A->nzmax ;
-        bool in_place = (vlen_new == vlen_old || vdim_new <= 1) ;
+        bool in_place = A_is_full && (vlen_new == vlen_old || vdim_new <= 1) ;
         size_t asize = A->type->size ;
-        GB_void *GB_RESTRICT Ax_new = NULL ;
-        GB_void *GB_RESTRICT Ax_old = A->x ;
 
         //----------------------------------------------------------------------
-        // allocate or reallocate A->x
+        // allocate or reallocate A->x and A->b
         //----------------------------------------------------------------------
 
+        bool ok = true ;
         if (in_place)
         { 
             // reallocate A->x in place; no data movement needed
             A->x = GB_REALLOC (A->x, nzmax_new*asize, nzmax_old*asize,
                 GB_void, &ok) ;
-            Ax_new = A->x ;
         }
         else
         { 
             // allocate new space for A->x
             Ax_new = GB_MALLOC (nzmax_new*asize, GB_void) ;
             ok = (Ax_new != NULL) ;
+            if (A_is_bitmap)
+            {
+                // allocate new space for A->b
+                Ab_new = GB_MALLOC (nzmax_new*asize, GB_void) ;
+                ok = ok && (Ab_new != NULL) ;
+            }
         }
-
         if (!ok)
         { 
             // out of memory
@@ -152,18 +146,29 @@ GrB_Info GB_resize              // change the size of a matrix
         }
 
         //----------------------------------------------------------------------
-        // move data if necessary
+        // move data if not in-place
         //----------------------------------------------------------------------
 
         if (!in_place)
-        { 
+        {
+
+            //------------------------------------------------------------------
             // determine number of threads to use
+            //------------------------------------------------------------------
+
+            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
             int nthreads = GB_nthreads (anz_new, chunk, nthreads_max) ;
 
-            // resize the matrix
+            //------------------------------------------------------------------
+            // resize Ax
+            //------------------------------------------------------------------
+        
+            GB_void *GB_RESTRICT Ax_old = A->x ;
+
+            // TODO if A is bitmap, this might cause valgrind to complain
             int64_t j ;
             if (vdim_new <= 4*nthreads)
-            { 
+            {
                 // use all threads for each vector
                 for (j = 0 ; j < vdim_new ; j++)
                 { 
@@ -183,54 +188,68 @@ GrB_Info GB_resize              // change the size of a matrix
                     memcpy (pdest, psrc, vlen_new * asize) ;
                 }
             }
+            A->x = Ax_new ;
+            GB_FREE (Ax_old) ;
+
+            //------------------------------------------------------------------
+            // resize Ab if A is bitmap, and count the # of entries
+            //------------------------------------------------------------------
+
+            if (A_is_bitmap)
+            { 
+                int8_t *GB_RESTRICT Ab_old = A->b ;
+                int64_t pnew ;
+                int64_t anvals = 0 ;
+                #pragma omp parallel for num_threads(nthreads) \
+                    schedule(static) reduction(+:anvals)
+                for (pnew = 0 ; pnew < anz_new ; pnew++)
+                { 
+                    int64_t i = pnew % vlen_new ;
+                    int64_t j = pnew / vlen_new ;
+                    int64_t pold = i + j * vlen_old ;
+                    int8_t ab = Ab_old [pold] ;
+                    Ab_new [pnew] = ab ;
+                    anvals += ab ;
+                }
+                A->nvals = anvals ;
+                A->b = Ab_new ;
+                GB_FREE (Ab_old) ;
+            }
         }
 
         //----------------------------------------------------------------------
         // adjust dimensions and return result
         //----------------------------------------------------------------------
 
-        A->x = Ax_new ;
         A->vdim = vdim_new ;
         A->vlen = vlen_new ;
         A->nzmax = nzmax_new ;
         A->nvec = vdim_new ;
         A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+        ASSERT_MATRIX_OK (A, "A bitmap/full shrunk", GB0) ;
+
+// HACK test bitmap
+if (A_was_full) GB_convert_any_to_full (A) ;
+if (A_was_sparse) GB_convert_any_to_sparse (A, Context) ;
+if (A_was_hyper) GB_convert_any_to_hyper (A, Context) ;
+
         return (GrB_SUCCESS) ;
+
     }
-
-    //--------------------------------------------------------------------------
-    // A is sparse or hypersparse; check for early conversion to hypersparse
-    //--------------------------------------------------------------------------
-
-    // If the # of vectors grows very large, it is costly to reallocate enough
-    // space for the non-hypersparse A->p component.  So convert the matrix to
-    // hypersparse if that happens.
-
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-    }
-
-    if (A->h == NULL && GB_convert_sparse_to_hyper_test (A->hyper_switch,
-        A->nvec_nonempty, vdim_new))
-    { 
-        GB_OK (GB_convert_sparse_to_hyper (A, Context)) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // resize the number of sparse vectors
-    //--------------------------------------------------------------------------
-
-    int64_t *GB_RESTRICT Ah = A->h ;
-    int64_t *GB_RESTRICT Ap = A->p ;
-    A->vdim = vdim_new ;
-
-    if (Ah != NULL)
+    else
     {
 
         //----------------------------------------------------------------------
-        // A is hypersparse: decrease size of A->p and A->h only if needed
+        // convert A to hypersparse and resize it
         //----------------------------------------------------------------------
+
+        // convert to hypersparse
+        GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+
+        // resize the number of sparse vectors
+        int64_t *GB_RESTRICT Ah = A->h ;
+        int64_t *GB_RESTRICT Ap = A->p ;
+        A->vdim = vdim_new ;
 
         if (vdim_new < A->plen)
         { 
@@ -240,6 +259,7 @@ GrB_Info GB_resize              // change the size of a matrix
             Ap = A->p ;
             Ah = A->h ;
         }
+
         if (vdim_new < vdim_old)
         { 
             // descrease A->nvec to delete the vectors outside the range
@@ -250,79 +270,37 @@ GrB_Info GB_resize              // change the size of a matrix
             GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;
             A->nvec = pleft ;
         }
-    }
-    else
-    {
 
-        //----------------------------------------------------------------------
-        // A is not hypersparse: change size of A->p to match the new vdim
-        //----------------------------------------------------------------------
-
-        if (vdim_new != vdim_old)
-        {
-            // change the size of A->p
-            A->p = GB_REALLOC (A->p, vdim_new+1, vdim_old+1, int64_t, &ok) ;
-            if (!ok)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
-            }
-            Ap = A->p ;
-            A->plen = vdim_new ;
+        if (vdim_new < vdim_old)
+        { 
+            // number of vectors is decreasing, need to count the new number of
+            // non-empty vectors, unless it is done during pruning, just below.
+            A->nvec_nonempty = -1 ;         // compute when needed
         }
 
-        if (vdim_new > vdim_old)
-        {
-            // number of vectors is increasing, extend the vector pointers
-            int64_t anz = GB_NNZ (A) ;
+        //----------------------------------------------------------------------
+        // resize the length of each vector
+        //----------------------------------------------------------------------
 
-            // determine number of threads to use
-            int nthreads = GB_nthreads (vdim_new - vdim_old, chunk,
-                nthreads_max) ;
-
-            int64_t j ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (j = vdim_old + 1 ; j <= vdim_new ; j++)
-            { 
-                Ap [j] = anz ;          // ok: A is sparse
-            }
-            // A->nvec_nonempty does not change
+        // if vlen is shrinking, delete entries outside the new matrix
+        if (vlen_new < vlen_old)
+        { 
+            GB_OK (GB_selector (NULL, GB_RESIZE_opcode, NULL, false, A,
+                vlen_new-1, NULL, Context)) ;
         }
-        A->nvec = vdim_new ;
+
+        //----------------------------------------------------------------------
+        // vlen has been resized
+        //----------------------------------------------------------------------
+
+        A->vlen = vlen_new ;
+        ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;
+
+        //----------------------------------------------------------------------
+        // conform the matrix to its desired sparsity structure
+        //----------------------------------------------------------------------
+
+        return (GB_conform (A, Context)) ;
     }
-
-    if (vdim_new < vdim_old)
-    { 
-        // number of vectors is decreasing, need to count the new number of
-        // non-empty vectors, unless it is done during pruning, just below.
-        A->nvec_nonempty = -1 ;         // compute when needed
-    }
-
-    //--------------------------------------------------------------------------
-    // resize the length of each vector
-    //--------------------------------------------------------------------------
-
-    // TODO allow resize selector to tolerate a jumbled matrix
-
-    // if vlen is shrinking, delete entries outside the new matrix
-    if (vlen_new < vlen_old)
-    { 
-        GB_OK (GB_selector (NULL, GB_RESIZE_opcode, NULL, false, A, vlen_new-1,
-            NULL, Context)) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // vlen has been resized
-    //--------------------------------------------------------------------------
-
-    A->vlen = vlen_new ;
-    ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // conform the matrix to its desired sparsity structure
-    //--------------------------------------------------------------------------
-
-    return (GB_conform (A, Context)) ;
 }
 

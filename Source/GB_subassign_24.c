@@ -35,7 +35,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     //--------------------------------------------------------------------------
 
     ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // prior content of C is discarded
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // check inputs

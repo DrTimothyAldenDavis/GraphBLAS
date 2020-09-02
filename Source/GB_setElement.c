@@ -48,8 +48,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     ASSERT (C != NULL) ;
     GB_RETURN_IF_NULL (scalar) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO
-
     if (row >= GB_NROWS (C))
     { 
         GB_ERROR (GrB_INVALID_INDEX,
@@ -119,9 +117,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     int64_t pleft ;
     bool found ;
     bool is_zombie ;
+    bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
-    if (GB_IS_FULL (C))
+    if (GB_IS_FULL (C) || C_is_bitmap)
     {
+
+        //----------------------------------------------------------------------
+        // C is bitmap or full
+        //----------------------------------------------------------------------
+
         pleft = i + j * C->vlen ;
         found = true ;
         is_zombie = false ;
@@ -181,6 +185,13 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // bring the zombie back to life
             C->i [pleft] = i ;      // ok: C is sparse
             C->nzombies-- ;
+        }
+        else if (C_is_bitmap)
+        {
+            // set the entry in the C bitmap
+            int8_t cb = C->b [pleft] ;
+            C->nvals += (cb == 0) ;
+            C->b [pleft] = 1 ;
         }
 
         // the check is fine but just costly even when debugging

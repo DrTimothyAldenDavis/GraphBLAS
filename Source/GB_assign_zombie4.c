@@ -46,8 +46,8 @@ void GB_assign_zombie4
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ; 
 
-    ASSERT (!GB_IS_FULL (M)) ;          // TODO: probably already OK
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO: can handle this
+    ASSERT (!GB_IS_FULL (M)) ;          // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // get Z

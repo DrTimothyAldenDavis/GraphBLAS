@@ -31,7 +31,7 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_SCALAR_WAIT (*s) ;
+    GB_MATRIX_WAIT (*s) ;
 
     //--------------------------------------------------------------------------
     // return result

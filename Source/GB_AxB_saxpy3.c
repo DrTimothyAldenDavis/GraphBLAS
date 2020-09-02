@@ -304,9 +304,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;

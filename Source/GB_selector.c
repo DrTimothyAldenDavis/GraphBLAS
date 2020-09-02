@@ -153,8 +153,8 @@ GrB_Info GB_selector
         GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
         info = (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
             ithunk, xthunk, Context)) ;
-        // TODO HACK convert bitmap to sparse
         if (info != GrB_SUCCESS) return (info) ;
+        // HACK convert bitmap to sparse
         if (Chandle == NULL)
         {
             info = (GB_convert_bitmap_to_sparse (A, Context)) ;
@@ -424,12 +424,6 @@ GrB_Info GB_selector
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;
 
-        if (A->nzmax == 0)
-        { 
-            GB_FREE (A->i) ;
-            GB_FREE (A->x) ;
-        }
-
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_Matrix_wait.
         ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
@@ -488,12 +482,6 @@ GrB_Info GB_selector
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A->jumbled ;
-
-        if (C->nzmax == 0)
-        { 
-            GB_FREE (C->i) ;
-            GB_FREE (C->x) ;
-        }
 
         (*Chandle) = C ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;

@@ -9,8 +9,8 @@
 
 #define FAIL(s)                                                             \
 {                                                                           \
-    fprintf (f,"\ntest failure: line %d\n", __LINE__) ;                     \
-    fprintf (f,"%s\n", GB_STR(s)) ;                                         \
+    fprintf (f,"\nTest failure: %s line %d\n", __FILE__, __LINE__) ;        \
+    fprintf (f, "%s\n", GB_STR(s)) ;                                        \
     fclose (f) ;                                                            \
     mexErrMsgTxt (GB_STR(s) " line: " GB_XSTR(__LINE__)) ;                  \
 }
@@ -24,7 +24,8 @@
 {                                                                           \
     info = method ;                                                         \
     fprintf (f, "line %d: info %d\n", __LINE__, info) ;                     \
-    if (info != expected) fprintf (f, "got %d expected %d\n", info, expected) ; \
+    if (info != expected) fprintf (f, "got %d expected %d\n",               \
+        info, expected) ;                                                   \
     CHECK2 (info == expected, method) ;                                     \
 }
 
@@ -36,7 +37,8 @@
     char *error_logger ;                                                    \
     GrB_Matrix_error_(&error_logger, ((GrB_Matrix) C)) ;                    \
     fprintf (f,"[%s]\n", error_logger) ;                                    \
-    if (info != expected) fprintf (f, "got %d expected %d\n", info, expected) ; \
+    if (info != expected) fprintf (f, "got %d expected %d\n",               \
+        info, expected) ;                                                   \
     CHECK2 (info == expected, method) ;                                     \
 }
 
@@ -47,7 +49,7 @@
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                    \
     {                                                                       \
         fprintf (f,"[%d] >>>>>>>>\n", info) ;                               \
-        printf ("[%d] %s\n", info) ;                                        \
+        mexPrintf ("[%d] Test failed\n", info) ;                            \
         FAIL (method) ;                                                     \
     }                                                                       \
 }

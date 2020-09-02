@@ -77,8 +77,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         ztype = op2->ztype ;
     }
 
-    ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
-
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------

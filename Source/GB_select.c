@@ -127,7 +127,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     {
 
         // finish any pending work on the Thunk
-        GB_SCALAR_WAIT (Thunk_in) ;
+        GB_MATRIX_WAIT (Thunk_in) ;
         nz_thunk = GB_NNZ (Thunk_in) ;
 
         // if present, Thunk_in must be 1-by-1

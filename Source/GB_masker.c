@@ -89,9 +89,9 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     ASSERT (!GB_ZOMBIES (Z)) ;
 
     // this function is not used when any matrix is bitmap
-    ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO it could do this however
-    ASSERT (!GB_IS_BITMAP (Z)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;        // not used if C is bitmap
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (Z)) ;        // not used if Z is bitmap
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;

@@ -39,6 +39,9 @@ double   GB_Global_chunk_get (void) ;
 void     GB_Global_hyper_switch_set (float hyper_switch) ;
 float    GB_Global_hyper_switch_get (void) ;
 
+void     GB_Global_bitmap_switch_set (float bitmap_switch) ;
+float    GB_Global_bitmap_switch_get (void) ;
+
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;
 

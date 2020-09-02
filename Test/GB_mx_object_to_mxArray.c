@@ -104,14 +104,12 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         // MATLAB doesn't want NULL pointers in its empty sparse matrices
         if (C->i == NULL)
         {
-            // printf ("C->nzmax %ld cnz %ld\n", C->nzmax, cnz) ;
             ASSERT (C->nzmax == 0 && cnz == 0) ;
             C->i = GB_CALLOC (1, int64_t) ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
-            // printf ("C->nzmax %ld cnz %ld\n", C->nzmax, cnz) ;
             ASSERT (C->nzmax == 0 && cnz == 0) ;
             C->p = GB_CALLOC (C->vdim + 1, int64_t) ;
             C->p_shallow = false ;

@@ -52,12 +52,12 @@ GrB_Info GB_AxB_dot4_mkl            // c += A*b using MKL
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
-    ASSERT (!GB_IS_FULL (c)) ;        // TODO
-    ASSERT (!GB_IS_FULL (A)) ;        // TODO
-    ASSERT (!GB_IS_FULL (B)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (c)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_FULL (c)) ;        // TODO:FULL
+    ASSERT (!GB_IS_FULL (A)) ;        // TODO:FULL
+    ASSERT (!GB_IS_FULL (B)) ;        // TODO:FULL
+    ASSERT (!GB_IS_BITMAP (c)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // declare workspace

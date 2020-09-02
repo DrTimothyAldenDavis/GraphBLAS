@@ -297,11 +297,11 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             (T_transposed ? "(result transposed)" : "")) ;
     }
 
-    // TODO:
+    // TODO:BITMAP
     // If any matrix C, M, Z are bitmap:
     //      use transplant for the bitmap case, if this condition is true:
     //      (accum == NULL || (cnz + cnpending) == 0)
-    //      && (M == NULL ||
+    //      && (M == NULL || ...)
     // Do typecasting via GB_transplant, below, and the let GB_mask
     // to the rest.
 

@@ -260,10 +260,11 @@ GB_PUBLIC int GB_cover_max ;
 // These parameters define the content of values that can be
 // used as inputs to GxB_*Option_set.
 
-// The default format is by row (CSR), with a hyper_switch of 1/16.
-// In Versions 2.1 and earlier, the default was GxB_BY_COL (CSC format).
+// The default format is by row (CSR), with a hyper_switch of 1/16,
+// and a bitmap_switch of 1/8.
 
-#define GB_HYPER_DEFAULT (0.0625)
+#define GB_HYPER_SWITCH_DEFAULT (0.0625)
+#define GB_BITMAP_SWITCH_DEFAULT (0.125)
 
 // compile SuiteSparse:GraphBLAS with "-DBYCOL" to make GxB_BY_COL the default
 // format
@@ -1544,9 +1545,6 @@ GrB_Info GB_unjumble        // unjumble a matrix
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
     }                                                                   \
 }
-
-#define GB_VECTOR_WAIT(v) GB_MATRIX_WAIT (v)
-#define GB_SCALAR_WAIT(s) GB_MATRIX_WAIT (s)
 
 // do all pending work if pending tuples; zombies and jumbled are OK
 #define GB_MATRIX_WAIT_IF_PENDING(A)                                    \

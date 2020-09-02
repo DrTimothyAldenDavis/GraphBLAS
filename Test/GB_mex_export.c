@@ -42,9 +42,11 @@ GrB_Index nrows = 0 ;
 GrB_Index ncols = 0 ;
 GrB_Index nvals = 0 ;
 GrB_Index nvec = 0 ;
+GrB_Index nzmax = 0 ;
 int64_t nonempty = -1 ;
 char *Ax = NULL ;
 int format = 0 ;
+bool jumbled = false ;
 bool is_hyper = false ;
 bool clear_nvec = false ;
 bool is_csc = true ;
@@ -69,8 +71,8 @@ GrB_Info import_export ( )
 
     if (GB_VECTOR_OK (C))
     {
-        OK (GxB_Vector_export ((GrB_Vector *) (&C), &type, &nrows, &nvals,
-            &Ai, &Ax, desc)) ;
+        OK (GxB_Vector_export_CSC ((GrB_Vector *) (&C), &type, &nrows, &nzmax,
+            &nvals, &jumbled, &Ai, &Ax, desc)) ;
         OK (GxB_Type_size (&asize, type)) ;
 
         if (dump)
@@ -88,8 +90,8 @@ GrB_Info import_export ( )
             }
         }
 
-        OK (GxB_Vector_import ((GrB_Vector *) (&C), type, nrows, nvals,
-            &Ai, &Ax, desc)) ;
+        OK (GxB_Vector_import_CSC ((GrB_Vector *) (&C), type, nrows, nzmax,
+            nvals, jumbled, &Ai, &Ax, desc)) ;
 
         return (GrB_SUCCESS) ;
     }
@@ -105,15 +107,15 @@ GrB_Info import_export ( )
         case 0 : 
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nvals,
-                    &nonempty, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nzmax,
+                    &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
             nvec = nrows ;
 
             if (dump)
             {
-                printf ("\nexport standard CSR: %llu-by-%llu, nvals %llu:\n",
-                    nrows, ncols, nvals) ;
+                printf ("\nexport standard CSR: %llu-by-%llu, nzmax %llu:\n",
+                    nrows, ncols, nzmax) ;
                 printf ("nonempty: %" PRId64"\n", nonempty) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 GB_Type_code code = type->code ;
@@ -132,8 +134,8 @@ GrB_Info import_export ( )
 
             if (clear_nvec) nonempty = -1 ;     // for testing
 
-            OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
-                nonempty, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nzmax,
+                jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -143,15 +145,15 @@ GrB_Info import_export ( )
         case 1 : 
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
-                &nonempty, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nzmax,
+                &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
             nvec = ncols ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
-                printf ("\nexport standard CSC: %llu-by-%llu, nvals %llu:\n",
-                    nrows, ncols, nvals) ;
+                printf ("\nexport standard CSC: %llu-by-%llu, nzmax %llu:\n",
+                    nrows, ncols, nzmax) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 GB_Type_code code = type->code ;
 
@@ -170,8 +172,8 @@ GrB_Info import_export ( )
 
             if (clear_nvec) nonempty = -1 ;     // for testing
 
-            OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nvals,
-                nonempty, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nzmax,
+                jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -181,14 +183,14 @@ GrB_Info import_export ( )
         case 2 : 
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nvals,
-                &nonempty, &nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nzmax,
+                &jumbled, &nonempty, &nvec, &Ap, &Ah, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
-                printf ("\nexport hyper CSR: %llu-by-%llu, nvals %llu, "
-                    "nvec %llu:\n", nrows, ncols, nvals, nvec) ;
+                printf ("\nexport hyper CSR: %llu-by-%llu, nzmax %llu, "
+                    "nvec %llu:\n", nrows, ncols, nzmax, nvec) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 GB_Type_code code = type->code ;
 
@@ -207,8 +209,8 @@ GrB_Info import_export ( )
 
             if (clear_nvec) nonempty = -1 ;     // for testing
 
-            OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
-                nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nzmax,
+                jumbled, nonempty, nvec, &Ap, &Ah, &Aj, &Ax, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout));
@@ -218,14 +220,14 @@ GrB_Info import_export ( )
         case 3 : 
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nvals,
-                &nonempty, &nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nzmax,
+                &jumbled, &nonempty, &nvec, &Ap, &Ah, &Ai, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
-                printf ("export hyper CSC: %llu-by-%llu, nvals %llu, c %llu:\n",
-                    nrows, ncols, nvals, nvec) ;
+                printf ("export hyper CSC: %llu-by-%llu, nzmax %llu, c %llu:\n",
+                    nrows, ncols, nzmax, nvec) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 GB_Type_code code = type->code ;
 
@@ -244,8 +246,8 @@ GrB_Info import_export ( )
 
             if (clear_nvec) nonempty = -1 ;     // for testing
 
-            OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
-                nonempty, nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nzmax,
+                jumbled, nonempty, nvec, &Ap, &Ah, &Ai, &Ax, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -311,14 +313,12 @@ void mexFunction
         if (!is_csc)                                                        \
         {                                                                   \
             /* convert C to CSR */                                          \
-            GB_transpose (NULL, NULL, false, C,                             \
-                NULL, NULL, NULL, false,                                    \
+            GB_transpose (NULL, NULL, false, C, NULL, NULL, NULL, false,    \
                 NULL) ;                                                     \
         }                                                                   \
         if (is_hyper && !GB_IS_FULL (C))                                    \
         {                                                                   \
             /* convert C to hypersparse */                                  \
-            /* TODO: this was backwards before ??? */ \
             GB_convert_sparse_to_hyper (C, NULL) ;                          \
         }                                                                   \
     }

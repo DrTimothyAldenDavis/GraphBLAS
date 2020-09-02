@@ -53,8 +53,8 @@ GrB_Info GB_assign_zombie5
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
 
-    ASSERT (!GB_IS_FULL (M)) ;          // TODO: can handle this
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO: can handle this
+    ASSERT (!GB_IS_FULL (M)) ;          // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // get Z

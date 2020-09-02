@@ -16,7 +16,7 @@
 //      C_replace: true
 //      accum: not present
 
-// OK: BITMAP (in progress)
+// TODO:BITMAP (in progress): extend to all semirings
 
 #include "GB_mxm.h"
 #include "GB_binop.h"

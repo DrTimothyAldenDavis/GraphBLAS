@@ -52,8 +52,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (GB_is_dense (B)) ;
 
     ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // all prior content of C is cleared
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;

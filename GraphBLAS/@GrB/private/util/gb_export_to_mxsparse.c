@@ -143,8 +143,9 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         int64_t nonempty, *Tp, *Ti ;
         void *Tx ;
 
-        OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax, &nonempty,
-            &Tp, &Ti, &Tx, NULL)) ;
+        // pass jumbled as NULL to indicate the matrix must be sorted
+        OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax,
+            NULL, &nonempty, &Tp, &Ti, &Tx, NULL)) ;
 
         CHECK_ERROR (nzmax == 0, "internal error 8") ;
         CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL,

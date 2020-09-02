@@ -177,6 +177,12 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     GB_Context Context
 ) ;
 
+GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
+(
+    GrB_Matrix A,
+    GB_Context Context
+) ;
+
 /* ensure C is sparse or hypersparse */
 #define GB_ENSURE_SPARSE(C)                                 \
 {                                                           \

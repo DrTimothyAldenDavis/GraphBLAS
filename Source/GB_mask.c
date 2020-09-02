@@ -311,9 +311,9 @@ GrB_Info GB_mask                // C<M> = Z
         // R = masker (C, M, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
 
-        ASSERT (!GB_IS_BITMAP (C)) ;
-        ASSERT (!GB_IS_BITMAP (M)) ;    // TODO could handle bitmap M
-        ASSERT (!GB_IS_BITMAP (Z)) ;
+        ASSERT (!GB_IS_BITMAP (C)) ;    // not used if C is bitmap
+        ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
+        ASSERT (!GB_IS_BITMAP (Z)) ;    // not used if Z is bitmap
 
         GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
             Context)) ;

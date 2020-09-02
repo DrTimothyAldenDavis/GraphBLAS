@@ -24,14 +24,26 @@
 
 #include "GB_kron.h"
 
+#define GB_FREE_WORK        \
+{                           \
+    GB_Matrix_free (&A2) ;  \
+    GB_Matrix_free (&B2) ;  \
+}
+
+#define GB_FREE_ALL         \
+{                           \
+    GB_FREE_WORK ;          \
+    GB_Matrix_free (Chandle) ; \
+}
+
 GrB_Info GB_kroner                  // C = kron (A,B)
 (
     GrB_Matrix *Chandle,            // output matrix
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
-    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix A_in,          // input matrix
     bool A_is_pattern,              // true if values of A are not used
-    const GrB_Matrix B,             // input matrix
+    const GrB_Matrix B_in,          // input matrix
     bool B_is_pattern,              // true if values of B are not used
     GB_Context Context
 )
@@ -41,30 +53,49 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Chandle != NULL) ;
+    (*Chandle) = NULL ;
+    GrB_Matrix A2 = NULL ;
+    GrB_Matrix B2 = NULL ;
 
-    ASSERT_MATRIX_OK (A, "A for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (A)) ; 
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_PENDING (A)) ; 
+    ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
+    ASSERT (!GB_ZOMBIES (A_in)) ; 
+    ASSERT (!GB_JUMBLED (A_in)) ;
+    ASSERT (!GB_PENDING (A_in)) ; 
 
-    ASSERT_MATRIX_OK (B, "B for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (B)) ; 
-    ASSERT (!GB_JUMBLED (B)) ;
-    ASSERT (!GB_PENDING (B)) ; 
+    ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
+    ASSERT (!GB_ZOMBIES (B_in)) ; 
+    ASSERT (!GB_JUMBLED (B_in)) ;
+    ASSERT (!GB_PENDING (B_in)) ; 
 
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
+    //--------------------------------------------------------------------------
+    // bitmap case: create sparse copies of A and B if they are bitmap
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix A = A_in ;
+    if (GB_IS_BITMAP (A))
+    {
+        GBURBLE ("A:") ;
+        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
+        GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
+        A = A2 ;
+    }
+
+    GrB_Matrix B = B_in ;
+    if (GB_IS_BITMAP (B))
+    {
+        GBURBLE ("B:") ;
+        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
+        GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
+        B = B2 ;
+    }
 
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
-
-    (*Chandle) = NULL ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -110,21 +141,17 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ok = ok & GB_Index_multiply (&cnvec, anvec, bnvec) ;
     ASSERT (ok) ;
 
-    // C is hypersparse if either A or B are hypersparse
+    // C is hypersparse if either A or B are hypersparse.  It is never bitmap.
     bool C_is_hyper = (cvdim > 1) && (Ah != NULL || Bh != NULL) ;
     bool C_is_full = GB_is_dense (A) && GB_is_dense (B) ;
     int sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
     GrB_Matrix C = NULL ;           // allocate a new header for C
-    info = GB_new_bix (&C, // full, sparse, or hyper; new header
+    GB_OK (GB_new_bix (&C, // full, sparse, or hyper; new header
         op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, B->hyper_switch, cnvec, cnzmax, true, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        sparsity, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
+    (*Chandle) = C ;
 
     //--------------------------------------------------------------------------
     // get C and the operator
@@ -317,14 +344,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    info = GB_hypermatrix_prune (C, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_Matrix_free (&C) ;
-        return (info) ;
-    }
-
+    GB_OK (GB_hypermatrix_prune (C, Context)) ;
     ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -332,7 +352,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
-    (*Chandle) = C ;
+    GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
 
