@@ -340,12 +340,12 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                 // compute C(i,j)<M(i,j) = A(:,i)'*B(:,j)
                 //--------------------------------------------------------------
 
-                // M is dense and used in-place (see M_dense_in_place in
+                // M is full and used in-place (see M_dense_in_place in
                 // GB_AxB_saxpy3)
                 // pC = the location of C(i,j) in the bitmap
                 int64_t pC = pC_start + i ;     // C is bitmap
                 bool mij ;
-                // since M is dense and used in place, it has the same
+                // since M is full and used in place, it has the same
                 // dimensions as C.
                 mij = (Mx [pC] != 0) ;          // GB_mcast (Mx, pC, msize)
                 if (!mij)

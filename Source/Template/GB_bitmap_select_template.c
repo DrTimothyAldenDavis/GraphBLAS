@@ -18,20 +18,6 @@
 #define GBI(Ai,p,avlen) i
 
 {
-    #if defined ( GB_ENTRY_SELECTOR )
-    printf ("bitmap entry selector\n") ;
-    #elif defined ( GB_TRIL_SELECTOR )
-    printf ("bitmap tril selector\n") ;
-    #elif defined ( GB_TRIU_SELECTOR )
-    printf ("bitmap triu selector\n") ;
-    #elif defined ( GB_DIAG_SELECTOR )
-    printf ("bitmap diag selector\n") ;
-    #elif defined ( GB_OFFDIAG_SELECTOR )
-    printf ("bitmap off selector\n") ;
-    #else
-    printf ("bitmap selector ???\n") ;
-    ASSERT (0) ;
-    #endif
     int8_t *Ab = A->b ;
     GB_ATYPE *GB_RESTRICT Ax = A->x ;
     const int64_t avlen = A->vlen ;
@@ -58,6 +44,8 @@
             int8_t cb = GBB (Ab, pA) && (j-i == ithunk) ;
             #elif defined ( GB_OFFDIAG_SELECTOR )
             int8_t cb = GBB (Ab, pA) && (j-i != ithunk) ;
+            #else
+            ASSERT (GB_DEAD_CODE) ;
             #endif
         #endif
         Cb [pA] = cb ;
@@ -68,7 +56,6 @@
             GB_SELECT_ENTRY (Cx, pA, Ax, pA) ;
         }
     }
-    printf ("cnvals: %ld\n", cnvals) ;
     (*cnvals_handle)= cnvals ;
 }
 

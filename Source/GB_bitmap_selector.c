@@ -33,7 +33,6 @@ GrB_Info GB_bitmap_selector
     ASSERT (GB_is_packed (A)) ;
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
-    printf ("\n====================== bitmap selector ======: %d\n", opcode) ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
 
     //--------------------------------------------------------------------------

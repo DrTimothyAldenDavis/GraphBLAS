@@ -20,7 +20,12 @@
 #include "GB_red__include.h"
 #endif
 
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE (W) ;                   \
+    GB_FREE (F) ;                   \
+    GB_Matrix_free (&A_bitmap) ; /* HACK to test full/bitmap case */ \
+}
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 (
@@ -28,7 +33,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     const GrB_Type ctype,       // the type of scalar, c
     const GrB_BinaryOp accum,   // for c = accum(c,s)
     const GrB_Monoid reduce,    // monoid to do the reduction
-    const GrB_Matrix A,         // matrix to reduce
+    const GrB_Matrix A_in,      // matrix to reduce
     GB_Context Context
 )
 {
@@ -41,13 +46,15 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (c) ;
+    GrB_Matrix A_bitmap = NULL ; // HACK: to test full/bitmap case
+    GrB_Matrix A = A_in ;
+    GB_void *GB_RESTRICT W = NULL ;
+    bool    *GB_RESTRICT F = NULL ;
 
     ASSERT_TYPE_OK (ctype, "type of scalar c", GB0) ;
     ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
-
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
@@ -59,14 +66,24 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
+    // HACK to test full/bitmap case
+    if (A->vlen <= 100 && A->vdim <= 100)
+    {
+        printf ("@") ;
+        GB_MATRIX_WAIT (A) ;
+        GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
+        GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
+        A = A_bitmap ;
+    }
+
     //--------------------------------------------------------------------------
-    // delete any lingering zombies and assemble any pending tuples
+    // assemble any pending tuples; zombies are OK
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+    GB_MATRIX_WAIT_IF_PENDING (A) ;
     GB_BURBLE_DENSE (A, "(A %s) ") ;
 
-    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
@@ -76,7 +93,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     int64_t asize = A->type->size ;
     int64_t zsize = ztype->size ;
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
 
     //--------------------------------------------------------------------------
     // determine the number of OpenMP threads and/or GPUs to use
@@ -110,10 +127,12 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_void *GB_RESTRICT W = GB_MALLOC (ntasks * zsize, GB_void) ;
-    if (W == NULL)
+    W = GB_MALLOC (ntasks * zsize, GB_void) ;
+    F = GB_MALLOC (ntasks, bool) ;
+    if (W == NULL || F == NULL)
     { 
         // out of memory
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -192,6 +211,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // no panel used
             #define GB_PANEL 1
+            #define GB_NO_PANEL_CASE
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
@@ -211,31 +231,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 freduce (s, s, W +((k)*zsize))
 
             // break if terminal value reached
-            #define GB_BREAK_IF_TERMINAL(s)                         \
-                if (terminal != NULL)                               \
-                {                                                   \
-                    if (memcmp (s, terminal, zsize) == 0) break ;   \
-                }
-
-            // skip the work for this task if early exit is reached
-            #define GB_IF_NOT_EARLY_EXIT                            \
-                bool my_exit ;                                      \
-                GB_ATOMIC_READ                                      \
-                my_exit = early_exit ;                              \
-                if (!my_exit)
-
-            // break if terminal value reached, inside parallel task
-            #define GB_PARALLEL_BREAK_IF_TERMINAL(s)                \
-                if (terminal != NULL)                               \
-                {                                                   \
-                    if (memcmp (s, terminal, zsize) == 0)           \
-                    {                                               \
-                        /* tell the other tasks to exit early */    \
-                        GB_ATOMIC_WRITE                             \
-                        early_exit = true ;                         \
-                        break ;                                     \
-                    }                                               \
-                }
+            #define GB_HAS_TERMINAL 1
+            #define GB_IS_TERMINAL(s) \
+                (terminal != NULL && memcmp (s, terminal, zsize) == 0)
 
             // ztype t ;
             #define GB_SCALAR(t)                                    \
@@ -279,7 +277,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)
 
-          #include "GB_reduce_to_scalar_template.c"
+            #include "GB_reduce_to_scalar_template.c"
     }
 
     //--------------------------------------------------------------------------
@@ -327,7 +325,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE (W) ;
+    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
 

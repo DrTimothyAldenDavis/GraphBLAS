@@ -39,16 +39,19 @@ if (is_any)
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `(any value)'')\n') ;
+    fprintf (f, 'define(`GB_is_terminal'', `true'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
 elseif (~isempty (terminal))
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `%s'')\n', terminal) ;
+    fprintf (f, 'define(`GB_is_terminal'', `(s == %s)'')\n', terminal) ;
     fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', terminal) ;
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_has_terminal'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `(none)'')\n') ;
+    fprintf (f, 'define(`GB_is_terminal'', `(none)'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
 end
 
@@ -73,14 +76,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +17 > Generated/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_red.c | m4 | tail -n +18 > Generated/GB_red__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +17 >> Generated/GB_red__include.h') ;
+'cat control.m4 Generator/GB_red.h | m4 | tail -n +18 >> Generated/GB_red__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

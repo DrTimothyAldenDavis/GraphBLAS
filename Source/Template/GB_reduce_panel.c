@@ -8,7 +8,9 @@
 //------------------------------------------------------------------------------
 
 // Reduce a matrix to a scalar using a panel-based method for built-in
-// operators.  No typecasting is performed.
+// operators.  No typecasting is performed.  A must be sparse, hypersparse,
+// or full (it cannot be bitmap).  A cannot have any zombies.  If A has zombies
+// or is bitmap, GB_reduce_to_scalar_template is used instead.
 
 {
 
@@ -19,18 +21,13 @@
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (A->nzombies == 0) ;
 
     #if GB_IS_ANY_MONOID
     // the ANY monoid can take any entry, and terminate immediately
     s = Ax [anz-1] ;
     #else
-
-    //--------------------------------------------------------------------------
-    // typecast workspace
-    //--------------------------------------------------------------------------
-
-    // ctype W [ntasks] ;
-    GB_CTYPE *GB_RESTRICT W = (GB_CTYPE *) W_space ;
 
     //--------------------------------------------------------------------------
     // reduce A to a scalar

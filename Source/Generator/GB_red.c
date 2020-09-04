@@ -41,6 +41,9 @@
     #define GB_SCALAR(s)                            \
         GB_ctype s
 
+    #define GB_SCALAR_IDENTITY(s)                   \
+        GB_ctype s = GB_identity
+
 // Array to array
 
     // W [k] = (ztype) S [i], with typecast
@@ -92,10 +95,13 @@
     #define GB_HAS_TERMINAL                         \
         GB_has_terminal
 
+    #define GB_IS_TERMINAL(s)                       \
+        GB_is_terminal
+
     #define GB_TERMINAL_VALUE                       \
         GB_terminal_value
 
-    #define GB_BREAK_IF_TERMINAL(t)                 \
+    #define GB_BREAK_IF_TERMINAL(s)                 \
         GB_terminal
 
 // panel size for built-in operators
@@ -123,6 +129,7 @@ GrB_Info GB_red_scalar
     GB_atype *result,
     const GrB_Matrix A,
     GB_void *GB_RESTRICT W_space,
+    bool *GB_RESTRICT F,
     int ntasks,
     int nthreads
 )
@@ -131,7 +138,15 @@ GrB_Info GB_red_scalar
     return (GrB_NO_VALUE) ;
     #else
     GB_ctype s = (*result) ;
-    #include "GB_reduce_panel.c"
+    GB_ctype *GB_RESTRICT W = (GB_ctype *) W_space ;
+    if (A->nzombies > 0 || GB_IS_BITMAP (A))
+    {
+        #include "GB_reduce_to_scalar_template.c"
+    }
+    else
+    {
+        #include "GB_reduce_panel.c"
+    }
     (*result) = s ;
     return (GrB_SUCCESS) ;
     #endif

@@ -69,7 +69,16 @@ for m = [1 5 10]
                     [ ], [ ], [ ], op) ;
                 c2 = GB_mex_reduce_to_scalar (cin, '', op, C3) ;
 
-                if (isfloat (c1))
+                if (isequal (op, 'any'))
+                    [i,j,x] = find (C3.matrix) ;
+                    if (length (x) == 0)
+                        assert (c1 == 0) ;
+                        assert (c2 == 0) ;
+                    else
+                        assert (any (c1 == x)) ;
+                        assert (any (c2 == x)) ;
+                    end
+                elseif (isfloat (c1))
                     assert (isequal (c1,c2) || ...
                         (abs (c1-c2) <= 8 * eps (c2)))  ;
                 else

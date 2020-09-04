@@ -41,6 +41,9 @@
     #define GB_SCALAR(s)                            \
         uint16_t s
 
+    #define GB_SCALAR_IDENTITY(s)                   \
+        uint16_t s = UINT16_MAX
+
 // Array to array
 
     // W [k] = (ztype) S [i], with typecast
@@ -92,10 +95,13 @@
     #define GB_HAS_TERMINAL                         \
         1
 
+    #define GB_IS_TERMINAL(s)                       \
+        (s == 0)
+
     #define GB_TERMINAL_VALUE                       \
         0
 
-    #define GB_BREAK_IF_TERMINAL(t)                 \
+    #define GB_BREAK_IF_TERMINAL(s)                 \
         if (s == 0) break ;
 
 // panel size for built-in operators
@@ -123,6 +129,7 @@ GrB_Info GB_red_scalar__min_uint16
     uint16_t *result,
     const GrB_Matrix A,
     GB_void *GB_RESTRICT W_space,
+    bool *GB_RESTRICT F,
     int ntasks,
     int nthreads
 )
@@ -131,7 +138,15 @@ GrB_Info GB_red_scalar__min_uint16
     return (GrB_NO_VALUE) ;
     #else
     uint16_t s = (*result) ;
-    #include "GB_reduce_panel.c"
+    uint16_t *GB_RESTRICT W = (uint16_t *) W_space ;
+    if (A->nzombies > 0 || GB_IS_BITMAP (A))
+    {
+        #include "GB_reduce_to_scalar_template.c"
+    }
+    else
+    {
+        #include "GB_reduce_panel.c"
+    }
     (*result) = s ;
     return (GrB_SUCCESS) ;
     #endif
