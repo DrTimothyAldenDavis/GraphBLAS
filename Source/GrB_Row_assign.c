@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Row_assign:    C<M'>(row,Cols) = accum (C(row,Cols),u')
+// GrB_Row_assign: C<M'>(row,Cols) = accum (C(row,Cols),u')
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

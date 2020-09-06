@@ -127,8 +127,8 @@ GrB_Info GB_build               // build matrix
     // build the matrix T
     //--------------------------------------------------------------------------
 
-    // T is always hypersparse.  Its type is the same as the z output of the
-    // z=dup(x,y) operator.
+    // T is always built as hypersparse .  Its type is the same as the z output
+    // of the z=dup(x,y) operator.
 
     // S_input must be treated as read-only, so GB_builder is not allowed to
     // transplant it into T->x.
@@ -172,7 +172,7 @@ GrB_Info GB_build               // build matrix
     // transplant and typecast T into C, conform C, and free T
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_DENSE (T, "(C %s) ") ;
+    ASSERT (GB_IS_HYPERSPARSE (T)) ;
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;

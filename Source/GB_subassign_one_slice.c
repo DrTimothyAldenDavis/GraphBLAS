@@ -12,7 +12,9 @@
 // location in their vector C(:,jC).  Currently this method is only used to
 // slice M, not A.
 
-// This method is used by GB_subassign_05, 06n, and 07
+// This method is used by GB_subassign_05, 06n, and 07.  Each of those methods
+// apply this function to M, but they use TaskList[...].pA and pA_end to
+// partition the matrix.
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
@@ -22,7 +24,6 @@
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A       for M
 
 // C: not bitmap
-// TODO:BITMAP can do M bitmap
 
 #include "GB_subassign_methods.h"
 
@@ -75,7 +76,6 @@ GrB_Info GB_subassign_one_slice
     ASSERT_MATRIX_OK (M, "M for 1_slice", GB0) ;
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
 
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_JUMBLED (M)) ;
@@ -97,8 +97,9 @@ GrB_Info GB_subassign_one_slice
 
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
+//  const int8_t  *GB_RESTRICT Mb = M->b ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const int64_t mnz = GB_NNZ (M) ;
+    const int64_t mnz = GB_NNZ_HELD (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
 
@@ -152,8 +153,8 @@ GrB_Info GB_subassign_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    // M may be full, sparse, or hypersparse
-    if (!GB_pslice (&Coarse, /* M */ M->p, M->nvec, ntasks1))
+    // M may be hypersparse, sparse, bitmap, or full
+    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1))
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -172,7 +173,7 @@ GrB_Info GB_subassign_one_slice
         //----------------------------------------------------------------------
 
         int64_t k = Coarse [t] ;
-        int64_t klast  = Coarse [t+1] - 1 ;
+        int64_t klast = Coarse [t+1] - 1 ;
 
         if (k >= mnvec)
         { 
@@ -241,8 +242,8 @@ GrB_Info GB_subassign_one_slice
             // determine the # of fine-grain tasks to create for vector k
             //------------------------------------------------------------------
 
-            int64_t aknz = (Mp == NULL) ? mvlen : (Mp [k+1] - Mp [k]) ;
-            int nfine = ((double) aknz) / target_task_size ;
+            int64_t mknz = (Mp == NULL) ? mvlen : (Mp [k+1] - Mp [k]) ;
+            int nfine = ((double) mknz) / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
 
             // make the TaskList bigger, if needed
@@ -282,12 +283,12 @@ GrB_Info GB_subassign_one_slice
 
                     // slice M(:,k) for this task
                     int64_t p1, p2 ;
-                    GB_PARTITION (p1, p2, aknz, tfine, nfine) ;
+                    GB_PARTITION (p1, p2, mknz, tfine, nfine) ;
                     int64_t pM_start = GBP (Mp, k, mvlen) ;
                     int64_t pM     = pM_start + p1 ;
                     int64_t pM_end = pM_start + p2 ;
-                    TaskList [ntasks].pM     = pM ;
-                    TaskList [ntasks].pM_end = pM_end ;
+                    TaskList [ntasks].pA     = pM ;
+                    TaskList [ntasks].pA_end = pM_end ;
 
                     if (jC_dense)
                     { 
@@ -327,7 +328,7 @@ GrB_Info GB_subassign_one_slice
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }
 
-                    ASSERT (TaskList [ntasks].pM <= TaskList [ntasks].pM_end) ;
+                    ASSERT (TaskList [ntasks].pA <= TaskList [ntasks].pA_end) ;
                     ASSERT (TaskList [ntasks].pC <= TaskList [ntasks].pC_end) ;
                     ntasks++ ;
                 }

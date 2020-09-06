@@ -10,12 +10,9 @@
 // CALLED BY: GrB_Matrix_build_* and GrB_Vector_build_*
 // CALLS:     GB_build
 
-// This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
-
-// TODO: BITMAP
-// C must be empty on input, but it could be an empty bitmap matrix.
-// In that case, build it in place.  C cannot be full on input, unless it is
-// of zero dimension with no entries.  See the GB_IS_EMPTY(C) test below.
+// This function implements GrB_Matrix_build_* and GrB_Vector_build_*.  It
+// first constructs T by GB_builder as hypersparse, and GB_build conforms the
+// result to the appropriate sparsity structure of C.
 
 #include "GB_build.h"
 

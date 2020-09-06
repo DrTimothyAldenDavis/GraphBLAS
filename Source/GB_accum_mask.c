@@ -279,6 +279,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
             && !GB_aliased (C, M) && !GB_aliased (C, T)) ;
 
+    if (GB_aliased (C, M)) GBURBLE ("(C aliased with M) ") ;
+    if (GB_aliased (C, T)) GBURBLE ("(C aliased with T) ") ;
+
     bool use_bitmap_assign =
         (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (T)) ;
     use_subassign = use_subassign || use_bitmap_assign ;

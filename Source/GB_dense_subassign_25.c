@@ -47,8 +47,10 @@ GrB_Info GB_dense_subassign_25
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // get inputs

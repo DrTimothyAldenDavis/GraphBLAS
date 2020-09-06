@@ -31,8 +31,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     GB_RETURN_IF_NULL_OR_FAULTY (S) ;
     GB_RETURN_IF_NULL (x) ;
 
-    ASSERT (!GB_IS_BITMAP (S)) ;        // TODO:BITMAP
-
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (S))
     { 
@@ -52,7 +50,9 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    if (S->nzmax == 0 || (S->p != NULL && S->p [1] == 0))
+    if ((S->nzmax == 0)                         // empty
+        || (S->p != NULL && S->p [1] == 0)      // sparse/hyper with no entry
+        || (S->b != NULL && S->b [0] == 0))     // bitmap with no entry
     { 
         // quick return
         return (GrB_NO_VALUE) ;

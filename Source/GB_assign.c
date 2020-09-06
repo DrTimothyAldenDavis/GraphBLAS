@@ -118,13 +118,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         A_in, A_transpose, Rows, nRows_in, Cols, nCols_in,
         scalar_expansion, scalar, scalar_code, Context)) ;
 
-    ASSERT_MATRIX_OK (C, "init C for assign", GB0) ;
+    ASSERT_MATRIX_OK (C, "initial C for assign", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "initial M for assign", GB0) ;
 
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
 HACK ;
-        ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
+        ASSERT_MATRIX_OK (C, "QUICK : Final C for assign", GB0) ;
         return (GB_block (C, Context)) ;
     }
 
@@ -147,16 +148,28 @@ HACK ;
         //----------------------------------------------------------------------
 
         // GB_bitmap_assign does not need to create the SubMask, and it also
-        // handles the C_replace_phase itself.
+        // handles the C_replace_phase itself.  C is bitmap, or is converted
+        // to bitmap by GB_bitmap_assign, before the assignment.
 
         GB_OK (GB_bitmap_assign (C, C_replace,
             I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
             M, Mask_comp, Mask_struct, accum, A,
             scalar, atype, assign_kind, Context)) ;
 
+        // C was bitmap on input and stays that way, or has now become bitmap
+        ASSERT (GB_IS_BITMAP (C)) ;
+
     }
     else
     {
+
+        //----------------------------------------------------------------------
+        // use GB_subassigner
+        //----------------------------------------------------------------------
+
+        // If C is bitmap on input, GB_bitmap_assign is used above.
+        // M and A can have any sparsity structure.
+        ASSERT (!GB_IS_BITMAP (C)) ;
 
         //----------------------------------------------------------------------
         // determine if the final C_replace phase is needed
@@ -219,7 +232,6 @@ HACK ;
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
-            ASSERT (!GB_IS_BITMAP (M)) ;
 
             const GrB_Index *I_SubMask = I ; int64_t ni_SubMask = ni ;
             const GrB_Index *J_SubMask = J ; int64_t nj_SubMask = nj ;
@@ -256,6 +268,11 @@ HACK ;
             // C(I,J)<SubMask> = A or accum (C(I,J),A) via GB_subassigner
             //------------------------------------------------------------------
 
+            // determine the method again since SubMask is not M
+            subassign_method = GB_subassigner_method (C, C_replace,
+                SubMask, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
+                scalar_expansion) ;
+
             GB_OK (GB_subassigner (C, subassign_method, C_replace,
                 SubMask, Mask_comp, Mask_struct, accum, A,
                 I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
@@ -286,14 +303,9 @@ HACK ;
             // whole_submatrix is true.
 
             // This code requires C and M not to be aliased to each other.
-
-            // GB_bitmap_assign has handled C_replace so this phase is not used.
-            ASSERT (!GB_IS_BITMAP (C)) ;
-            ASSERT (!GB_IS_BITMAP (M)) ;
-            ASSERT (!GB_IS_BITMAP (A)) ;
-
             ASSERT (M != NULL) ;
-            ASSERT (!GB_aliased (C, M)) ;
+            ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
+            ASSERT (!whole_submatrix) ;
 
             ASSERT_MATRIX_OK (C, "C for C-replace-phase", GB0) ;
             ASSERT_MATRIX_OK (M, "M for C-replace-phase", GB0) ;
@@ -322,16 +334,14 @@ HACK ;
                 // M is a single column so it is never hypersparse
                 ASSERT (nJ == 1) ;
                 ASSERT (M->vlen == C->vlen && M->vdim == 1 && M->h == NULL) ;
-                ASSERT (Jkind == GB_LIST) ;
-                int64_t j = J [0] ;
-                ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
-
+                int64_t j = GB_ijlist (J, 0, Jkind, Jcolon) ;
                 GBURBLE ("assign zombies outside C(I,j) ") ;
                 GB_MATRIX_WAIT (M) ;
                 GB_assign_zombie3 (C, M, Mask_comp, Mask_struct,
                     j, I, nI, Ikind, Icolon, Context) ;
+
             }
-            if (assign_kind == GB_ROW_ASSIGN)
+            else if (assign_kind == GB_ROW_ASSIGN)
             { 
 
                 //--------------------------------------------------------------
@@ -342,15 +352,13 @@ HACK ;
                 // M s a single row with vlen == 1 and the same vdim as C
                 ASSERT (nI == 1) ;
                 ASSERT (M->vlen == 1 && M->vdim == C->vdim) ;
-                ASSERT (Ikind == GB_LIST) ;
-                int64_t i = I [0] ;
-                ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
-
+                int64_t i = GB_ijlist (I, 0, Ikind, Icolon) ;
                 GBURBLE ("assign zombies outside C(i,J) ") ;
                 GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                 GB_MATRIX_WAIT (M) ;
                 GB_assign_zombie4 (C, M, Mask_comp, Mask_struct,
                     i, J, nJ, Jkind, Jcolon, Context) ;
+
             }
             else
             { 
@@ -361,25 +369,23 @@ HACK ;
 
                 // M has the same size as C
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
-
                 GBURBLE ("assign zombies outside C(I,J) ") ;
                 GB_MATRIX_WAIT (M) ;
                 GB_OK (GB_assign_zombie5 (C, M, Mask_comp, Mask_struct,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
             }
-
             ASSERT_MATRIX_OK (C, "C for C-replace-phase done", GB_FLIP (GB0)) ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // transplant C back into C_in
+    // transplant C2 back into C_in
     //--------------------------------------------------------------------------
 
     if (C == C2)
     {
         // zombies can be transplanted into C_in but pending tuples cannot
-        GB_MATRIX_WAIT_IF_PENDING (C) ;
+        GB_MATRIX_WAIT_IF_PENDING (C2) ;
         // transplants the content of C2 into C_in and frees C2
         GB_OK (GB_transplant (C_in, C_in->type, &C2, Context)) ;
     }

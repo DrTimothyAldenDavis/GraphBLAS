@@ -87,7 +87,8 @@
 // unsorted.
 
 // OK: no change for BITMAP: this method always returns T as hypersparse,
-// and has no matrix inputs. Use another method to built a bitmap T.
+// and has no matrix inputs.   If the final C should become full or bitmap,
+// that conversion is done by GB_transplant_conform.
 
 #include "GB_build.h"
 #include "GB_sort.h"
@@ -1340,6 +1341,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_FREE_WORK ;
     T->jumbled = false ;
     ASSERT_MATRIX_OK (T, "T built", GB0) ;
+    ASSERT (GB_IS_HYPERSPARSE (T)) ;
     return (GrB_SUCCESS) ;
 }
 

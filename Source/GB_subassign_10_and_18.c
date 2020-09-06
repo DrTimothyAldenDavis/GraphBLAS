@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_14: C(I,J)<!M> = A ; using S
+// GB_subassign_10_and_18: C(I,J)<M or !M,repl> = A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,21 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Method 14: C(I,J)<!M> = A ; using S
+// Method 10: C(I,J)<M,repl> = A ; using S
+// Method 18: C(I,J)<!M,repl> = A ; using S
 
 // M:           present
-// Mask_comp:   true
-// C_replace:   false
+// Mask_comp:   true or false
+// C_replace:   true
 // accum:       NULL
 // A:           matrix
 // S:           constructed
 
-// C, A: not bitmap
-// M: could be bitmap
+// C,A: not bitmap
+// M: any sparsity structure.
 
 #include "GB_subassign_methods.h"
 
-GrB_Info GB_subassign_14
+GrB_Info GB_subassign_10_and_18
 (
     GrB_Matrix C,
     // input:
@@ -37,18 +38,20 @@ GrB_Info GB_subassign_14
     const int64_t Jcolon [3],
     const GrB_Matrix M,
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool Mask_comp,           // if true, !M, else use M
     const GrB_Matrix A,
     GB_Context Context
 )
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -66,21 +69,18 @@ GrB_Info GB_subassign_14
 
     GB_GET_C ;
     GB_GET_MASK ;
-    const bool M_is_hyper = (Mh != NULL) ;
-    const int64_t Mnvec = M->nvec ;
     GB_GET_A ;
     GB_GET_S ;
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 14: C(I,J)<!M> = A ; using S
+    // Method 10: C(I,J)<M,repl> = A ; using S
+    // Method 18: C(I,J)<!M,repl> = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Close to optimal.  Omega(nnz(S)+nnz(A)) is required, and the
-    // sparsity of !M cannot be exploited.  The time taken is
-    // O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector of M.
-
-    // Method 06s and 14 are very similar.
+    // Time: Optimal.  Omega (nnz(A)+nnz(S)), since all entries in S+A must be
+    // traversed, and the corresponding entry in M (even if not present)
+    // determines the action to take.  M can add a log(m) factor if sparse.
 
     //--------------------------------------------------------------------------
     // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
@@ -141,25 +141,23 @@ GrB_Info GB_subassign_14
                 int64_t iA = GBI (Ai, pA, Avlen) ;
 
                 if (iS < iA)
-                {
+                { 
                     // S (i,j) is present but A (i,j) is not
-                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                    mij = !mij ;
-                    if (mij)
-                    { 
-                        // ----[C . 1] or [X . 1]-------------------------------
-                        // [C . 1]: action: ( delete ): becomes zombie
-                        // [X . 1]: action: ( X ): still zombie
-                        GB_C_S_LOOKUP ;
-                        GB_DELETE_ENTRY ;
-                    }
+                    // ----[C . 1] or [X . 1]-----------------------------------
+                    // [C . 1]: action: ( delete ): becomes zombie
+                    // [X . 1]: action: ( X ): still zombie
+                    // ----[C . 0] or [X . 0]-----------------------------------
+                    // [X . 0]: action: ( X ): still a zombie
+                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                    GB_C_S_LOOKUP ;
+                    GB_DELETE_ENTRY ;
                     GB_NEXT (S) ;
                 }
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    mij = !mij ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -172,14 +170,21 @@ GrB_Info GB_subassign_14
                 {
                     // both S (i,j) and A (i,j) present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    mij = !mij ;
+                    if (Mask_comp) mij = !mij ;
+                    GB_C_S_LOOKUP ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): A to C no accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_C_S_LOOKUP ;
                         GB_noaccum_C_A_1_matrix ;
+                    }
+                    else
+                    { 
+                        // ----[C A 0] or [X A 0]-------------------------------
+                        // [X A 0]: action: ( X ): still a zombie
+                        // [C A 0]: C_repl: action: ( delete ): becomes zombie
+                        GB_DELETE_ENTRY ;
                     }
                     GB_NEXT (S) ;
                     GB_NEXT (A) ;
@@ -188,19 +193,13 @@ GrB_Info GB_subassign_14
 
             // while list S (:,j) has entries.  List A (:,j) exhausted
             while (pS < pS_end)
-            {
+            { 
+                // ----[C . 1] or [X . 1]---------------------------------------
                 // S (i,j) is present but A (i,j) is not
-                int64_t iS = GBI (Si, pS, Svlen) ;
-                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                mij = !mij ;
-                if (mij)
-                { 
-                    // ----[C . 1] or [X . 1]-----------------------------------
-                    // [C . 1]: action: ( delete ): becomes zombie
-                    // [X . 1]: action: ( X ): still zombie
-                    GB_C_S_LOOKUP ;
-                    GB_DELETE_ENTRY ;
-                }
+                // [C . 1]: action: ( delete ): becomes zombie
+                // [X . 1]: action: ( X ): still a zombie
+                GB_C_S_LOOKUP ;
+                GB_DELETE_ENTRY ;
                 GB_NEXT (S) ;
             }
 
@@ -210,7 +209,7 @@ GrB_Info GB_subassign_14
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                mij = !mij ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -286,7 +285,7 @@ GrB_Info GB_subassign_14
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    mij = !mij ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -310,7 +309,7 @@ GrB_Info GB_subassign_14
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                mij = !mij ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------

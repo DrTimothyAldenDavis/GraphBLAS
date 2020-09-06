@@ -18,6 +18,9 @@
 
 // FULL TODO:BITMAP if C sparse, convert to full (or bitmap?)
 
+// The caller passes in the second matrix as A, but it is called B here to
+// match its use as the 2nd input to the binary accum operator.
+
 #include "GB_dense.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
@@ -45,6 +48,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (B)) ;
+    ASSERT (!GB_aliased (C, B)) ;   // NO ALIAS of C==A (A is called B here)
 
     //--------------------------------------------------------------------------
     // check inputs

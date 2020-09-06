@@ -14,7 +14,8 @@
 // GB_subassign_IxJ_slice
 //------------------------------------------------------------------------------
 
-// Slice IxJ for a scalar assignment method (Methods 01, 03, 13, 15, 17, 19)
+// Slice IxJ for a scalar assignment method (Methods 01, 03, 13, 15, 17, 19),
+// and for bitmap assignments (in GB_bitmap_assign_IxJ_template).
 
 GrB_Info GB_subassign_IxJ_slice
 (

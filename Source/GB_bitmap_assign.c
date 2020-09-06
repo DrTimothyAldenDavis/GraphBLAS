@@ -54,14 +54,14 @@ GrB_Info GB_bitmap_assign
 
     if ((M == A) && !C_replace && (M != NULL) && (A != NULL) && !Mask_comp &&
         (accum == NULL) && Ikind == GB_ALL && Jkind == GB_ALL &&
-        GB_is_packed (C))
+        !GB_aliased (C, A) && GB_is_packed (C))
     { 
 
         //----------------------------------------------------------------------
         // Method 06d: C<A>=A where C is a packed matrix
         //----------------------------------------------------------------------
 
-        GBURBLE ("Method 06d: (C full)<Z>=Z ") ;
+        GBURBLE ("Method 06d: (C full)<A>=A ") ;
         GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Context)) ;
 
         // TODO:BITMAP check if these methods can be used too:

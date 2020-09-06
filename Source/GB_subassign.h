@@ -156,7 +156,8 @@ GrB_Info GB_assign_prep
 #define GB_SUBASSIGN_METHOD_06n 62     // C(I,J)<M> = A ; no S
 #define GB_SUBASSIGN_METHOD_06s 63     // C(I,J)<M> = A ; using S
 #define GB_SUBASSIGN_METHOD_07   7     // C(I,J)<M> += scalar
-#define GB_SUBASSIGN_METHOD_08   8     // C(I,J)<M> += A
+#define GB_SUBASSIGN_METHOD_08n 80     // C(I,J)<M> += A, no S
+#define GB_SUBASSIGN_METHOD_08s 81     // C(I,J)<M> += A, with S
 #define GB_SUBASSIGN_METHOD_09   9     // C(I,J)<M,replace> = scalar
 #define GB_SUBASSIGN_METHOD_10  10     // C(I,J)<M,replace> = A
 #define GB_SUBASSIGN_METHOD_11  11     // C(I,J)<M,replace> += scalar
@@ -174,7 +175,7 @@ GrB_Info GB_assign_prep
 #define GB_SUBASSIGN_METHOD_23  23     // C += A ; C is dense
 #define GB_SUBASSIGN_METHOD_24  24     // C = A
 #define GB_SUBASSIGN_METHOD_25  25     // C(:,:)<M,struct> = A ; C empty
-#define GB_SUBASSIGN_METHOD_BITMAP 99  // bitmap assignment
+#define GB_SUBASSIGN_METHOD_BITMAP 999 // bitmap assignment
 
 #endif
 

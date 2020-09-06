@@ -48,7 +48,7 @@ GrB_Info GB_subassign_13
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -69,8 +69,6 @@ GrB_Info GB_subassign_13
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_MASK ;
-    const bool M_is_hyper = (Mh != NULL) ;
-    const int64_t Mnvec = M->nvec ;
     GB_GET_SCALAR ;
     GB_GET_S ;
     const int64_t *GB_RESTRICT Sh = S->h ;
@@ -157,7 +155,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GB_mcast (Mx, pM, msize) ;
+                    mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else
@@ -274,7 +272,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GB_mcast (Mx, pM, msize) ;
+                    mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else

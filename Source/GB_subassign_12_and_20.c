@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_10: C(I,J)<M,repl> = A ; using S
+// GB_subassign_12_and_20: C(I,J)<M or !M,repl> += A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,21 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Method 10: C(I,J)<M,repl> = A ; using S
+// Method 12: C(I,J)<M,repl> += A ; using S
+// Method 20: C(I,J)<!M,repl> += A ; using S
 
 // M:           present
-// Mask_comp:   false
+// Mask_comp:   true or false
 // C_replace:   true
-// accum:       NULL
+// accum:       present
 // A:           matrix
 // S:           constructed
 
 // C, A: not bitmap
-// M: could be bitmap
+// M: any sparsity
 
 #include "GB_subassign_methods.h"
 
-GrB_Info GB_subassign_10
+GrB_Info GB_subassign_12_and_20
 (
     GrB_Matrix C,
     // input:
@@ -37,6 +38,8 @@ GrB_Info GB_subassign_10
     const int64_t Jcolon [3],
     const GrB_Matrix M,
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool Mask_comp,           // if true, !M, else use M
+    const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Context Context
 )
@@ -47,8 +50,9 @@ GrB_Info GB_subassign_10
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -66,21 +70,18 @@ GrB_Info GB_subassign_10
 
     GB_GET_C ;
     GB_GET_MASK ;
-    const bool M_is_hyper = (Mh != NULL) ;
-    const int64_t Mnvec = M->nvec ;
     GB_GET_A ;
     GB_GET_S ;
-    GrB_BinaryOp accum = NULL ;
+    GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 10: C(I,J)<M,repl> = A ; using S
+    // Method 12: C(I,J)<M,repl> += A ; using S
+    // Method 20: C(I,J)<!M,repl> += A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Optimal.  Omega (nnz(A)+nnz(S)), since all entries in S+A must be
-    // traversed, and the corresponding entry in M (even if not present)
-    // determines the action to take.
-
-    // Method 10 and 18 are very similar.
+    // Time: all entries in S+A must be traversed, so Omega(nnz(S)+nnz(A)) is
+    // required.  All cases of the mask (0, 1, or not present) must be
+    // considered, because of the C_replace descriptor being true.
 
     //--------------------------------------------------------------------------
     // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
@@ -138,25 +139,28 @@ GrB_Info GB_subassign_10
             while (pS < pS_end && pA < pA_end)
             {
                 int64_t iS = GBI (Si, pS, Svlen) ;
-                int64_t iA = GBI (Ai, pA, Mvlen) ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
 
                 if (iS < iA)
-                { 
+                {
                     // S (i,j) is present but A (i,j) is not
-                    // ----[C . 1] or [X . 1]-----------------------------------
-                    // [C . 1]: action: ( delete ): becomes zombie
-                    // [X . 1]: action: ( X ): still zombie
-                    // ----[C . 0] or [X . 0]-----------------------------------
-                    // [X . 0]: action: ( X ): still a zombie
-                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
-                    GB_C_S_LOOKUP ;
-                    GB_DELETE_ENTRY ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
+                    if (Mask_comp) mij = !mij ;
+                    if (!mij)
+                    { 
+                        // ----[C . 0] or [X . 0]-------------------------------
+                        // [X . 0]: action: ( X ): still a zombie
+                        // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                        GB_C_S_LOOKUP ;
+                        GB_DELETE_ENTRY ;
+                    }
                     GB_NEXT (S) ;
                 }
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -169,13 +173,15 @@ GrB_Info GB_subassign_10
                 {
                     // both S (i,j) and A (i,j) present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
                     GB_C_S_LOOKUP ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): A to C no accum
+                        // [C A 1]: action: ( =C+A ): apply accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_noaccum_C_A_1_matrix ;
+                        GB_withaccum_C_A_1_matrix ;
                     }
                     else
                     { 
@@ -191,13 +197,18 @@ GrB_Info GB_subassign_10
 
             // while list S (:,j) has entries.  List A (:,j) exhausted
             while (pS < pS_end)
-            { 
-                // ----[C . 1] or [X . 1]---------------------------------------
-                // S (i,j) is present but A (i,j) is not
-                // [C . 1]: action: ( delete ): becomes zombie
-                // [X . 1]: action: ( X ): still a zombie
-                GB_C_S_LOOKUP ;
-                GB_DELETE_ENTRY ;
+            {
+                int64_t iS = GBI (Si, pS, Svlen) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
+                if (Mask_comp) mij = !mij ;
+                if (!mij)
+                { 
+                    // ----[C . 0] or [X . 0]-----------------------------------
+                    // [X . 0]: action: ( X ): still a zombie
+                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                    GB_C_S_LOOKUP ;
+                    GB_DELETE_ENTRY ;
+                }
                 GB_NEXT (S) ;
             }
 
@@ -207,6 +218,7 @@ GrB_Info GB_subassign_10
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -282,6 +294,7 @@ GrB_Info GB_subassign_10
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -305,6 +318,7 @@ GrB_Info GB_subassign_10
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------

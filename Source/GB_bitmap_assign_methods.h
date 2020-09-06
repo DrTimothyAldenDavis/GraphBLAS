@@ -36,29 +36,48 @@
     /* also get the max # of threads to use */                              \
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;                    \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
-    int8_t  *GB_RESTRICT Cb = C->b ;                                        \
-    GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;                            \
+    int8_t  *Cb = C->b ;                                                    \
+    GB_void *Cx = (GB_void *) C->x ;                                        \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t cvdim = C->vdim ;                                         \
     const int64_t cvlen = C->vlen ;                                         \
     const int64_t vlen = cvlen ;    /* for GB_bitmap_assign_IxJ_template */ \
     const int64_t cnzmax = cvlen * cvdim ;                                  \
-    int64_t cnvals = C->nvals ;
+    int64_t cnvals = C->nvals ;                                             \
+    /* determine if all of C(:,:) is being assigned to, with no (I,J) */    \
+    /* submatrix or permutation: */                                         \
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
 
 //------------------------------------------------------------------------------
-// GB_GET_M: get the mask matrix M
+// GB_GET_M: get the mask matrix M and check for aliasing
 //------------------------------------------------------------------------------
+
+// ALIAS of C and M for bitmap methods: For the assign methods, C==M is always
+// permitted, since with arbitrary (I,J) indexing (I,J), the mask entry M(i,j)
+// always controls C(i,j).  For row/col assign, aliasing of C and M would be
+// unusual, since M is a single row or column.  But if C was also a single
+// row/column, then C and M can be safely aliased.  For subassign, C==M can
+// only occur if (I,J) are (:,:).
 
 #define GB_GET_M                                                            \
     ASSERT_MATRIX_OK (M, "M for bitmap assign", GB0) ;                      \
-    const int64_t *GB_RESTRICT Mp = M->p ;                                  \
-    const int8_t  *GB_RESTRICT Mb = M->b ;                                  \
-    const int64_t *GB_RESTRICT Mh = M->h ;                                  \
-    const int64_t *GB_RESTRICT Mi = M->i ;                                  \
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;\
+    const int64_t *Mp = M->p ;                                              \
+    const int8_t  *Mb = M->b ;                                              \
+    const int64_t *Mh = M->h ;                                              \
+    const int64_t *Mi = M->i ;                                              \
+    const GB_void *Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;         \
     const size_t msize = M->type->size ;                                    \
-    const size_t mvlen = M->vlen ;
+    const size_t mvlen = M->vlen ;                                          \
+    if (assign_kind == GB_SUBASSIGN)                                        \
+    {                                                                       \
+        /* ALIAS OK: C==M for bitmap subassign only for C(:,:)<M>=... */    \
+        ASSERT (GB_IMPLIES (GB_aliased (C, M), whole_C_matrix)) ;           \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* ALIAS OK: C==M always OK for bitmap assign and row/col assign */ \
+    }
 
 //------------------------------------------------------------------------------
 // GB_SLICE_M: slice the mask matrix M
@@ -83,12 +102,14 @@
 // GB_GET_A: get the A matrix or the scalar
 //------------------------------------------------------------------------------
 
+// ALIAS of C and A for bitmap methods: OK only for C(:,:)=A assignment.
+
 #define GB_GET_A                                                            \
-    const int64_t *GB_RESTRICT Ap = NULL ;                                  \
-    const int64_t *GB_RESTRICT Ah = NULL ;                                  \
-    const int8_t  *GB_RESTRICT Ab = NULL ;                                  \
-    const int64_t *GB_RESTRICT Ai = NULL ;                                  \
-    const GB_void *GB_RESTRICT Ax = NULL ;                                  \
+    const int64_t *Ap = NULL ;                                              \
+    const int64_t *Ah = NULL ;                                              \
+    const int8_t  *Ab = NULL ;                                              \
+    const int64_t *Ai = NULL ;                                              \
+    const GB_void *Ax = NULL ;                                              \
     size_t asize ;                                                          \
     GB_Type_code acode ;                                                    \
     if (A == NULL)                                                          \
@@ -98,7 +119,9 @@
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        ASSERT_MATRIX_OK (A, "A for bitmap assign", GB0) ;                  \
+        ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
+        /* ALIAS OK: C==A for bitmap assign/subassign only for C(:,:)=A */  \
+        ASSERT (GB_IMPLIES (GB_aliased (C, A), whole_C_matrix)) ;           \
         ASSERT (nI == A->vlen && nJ == A->vdim) ;                           \
         asize = A->type->size ;                                             \
         acode = A->type->code ;                                             \
@@ -113,7 +136,7 @@
     if (A == NULL)                                                          \
     {                                                                       \
         cast_A_to_C (cwork, scalar, asize) ;                                \
-    }
+    }                                                                       \
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions

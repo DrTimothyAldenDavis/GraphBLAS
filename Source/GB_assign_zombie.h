@@ -27,7 +27,7 @@ void GB_assign_zombie2
 
 void GB_assign_zombie3
 (
-    GrB_Matrix Z,
+    GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_comp,
     const bool Mask_struct,         // if true, use the only structure of M
@@ -41,7 +41,7 @@ void GB_assign_zombie3
 
 void GB_assign_zombie4
 (
-    GrB_Matrix Z,
+    GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_comp,
     const bool Mask_struct,         // if true, use the only structure of M
@@ -55,7 +55,7 @@ void GB_assign_zombie4
 
 GrB_Info GB_assign_zombie5
 (
-    GrB_Matrix Z,
+    GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_comp,
     const bool Mask_struct,         // if true, use the only structure of M

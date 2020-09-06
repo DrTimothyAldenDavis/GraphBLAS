@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_emult_slice: slice the entries and vectors for GB_subassign_08
+// GB_subassign_emult_slice: slice the entries and vectors for GB_subassign_08n
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Constructs a set of tasks to compute C for GB_subassign_80, based on
+// Constructs a set of tasks to compute C for GB_subassign_08n, based on
 // slicing two input matricies (A and M).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
-// This method is used only by GB_subassign_08.  New zombies cannot be created,
+// This method is used only by GB_subassign_08n.  New zombies cannot be created,
 // since no entries are deleted.  Old zombies can be brought back to life,
 // however.
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
+        //  M   -   -   +   A   -       08n:  C(I,J)<M> += A, no S
 
 // C, M, A: not bitmap.  C can be full.
 
@@ -59,8 +59,8 @@ GrB_Info GB_subassign_emult_slice
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08n is not used for M bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
 
     GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
@@ -139,7 +139,7 @@ GrB_Info GB_subassign_emult_slice
     // at the same time another is attempting to do a binary search on that
     // entry.  This is safe as long as a 64-bit integer read/write is always
     // atomic, but there is no gaurantee that this is true for all
-    // architectures.  Note that GB_subassign_08 cannot create new zombies.
+    // architectures.  Note that GB_subassign_08n cannot create new zombies.
 
     // This work could be done in parallel, but each task does at most 2 binary
     // searches.  The total work for all the binary searches will likely be

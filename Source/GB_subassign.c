@@ -160,13 +160,7 @@ HACK ;
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
-{
-    GB_Matrix_free (&C2) ; 
-    GB_Matrix_free (&M2) ; 
-    GB_Matrix_free (&A2) ; 
-    GB_FREE (I2) ;
-    GB_FREE (J2) ;
-}
+    GB_FREE_ALL ;
     return (GB_block (C_in, Context)) ;
 }
 

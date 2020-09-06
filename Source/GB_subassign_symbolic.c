@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: if I == GrB_ALL and J == GrB_ALL (pass in Ikind and Jkind), then
+// let S be a purely shallow copy of C.  S->x is NULL, which denotes
+// S->x [p] == p.
+
 #include "GB_subassign_methods.h"
 #include "GB_subref.h"
 

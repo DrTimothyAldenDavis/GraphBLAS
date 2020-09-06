@@ -69,7 +69,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // HACK to test full/bitmap case
     if (A->vlen <= 100 && A->vdim <= 100)
     {
-        printf ("@") ;
         GB_MATRIX_WAIT (A) ;
         GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
         GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;

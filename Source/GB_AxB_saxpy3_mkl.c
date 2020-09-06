@@ -151,7 +151,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     if (M != NULL)
     {
-        // HACK: not actually supported!
+        // TODO: not actually supported by MKL
         return (GrB_NO_VALUE) ;
         GB_MKL_OK (mkl_graph_matrix_create (&M_mkl)) ;
         GB_MKL_OK (mkl_graph_matrix_set_csr (M_mkl, M->vdim, M->vlen,

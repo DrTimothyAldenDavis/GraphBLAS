@@ -17,15 +17,15 @@
 // S:           none (see also GB_subassign_06s)
 
 // FULL: if A and C are dense, then C remains dense.
-// If A is sparse and C dense, C will likely become sparse,
-// except if M(i,j)=0 wherever A(i,j) is not present.  So if M==A is
-// aliased and A is sparse, then C remains dense.  Need C(I,J)<A,struct>=A
-// kernel.  Then in that case, if C is dense it remains dense, even if A
-// is sparse.   If that change is made, this kernel can start with
-// converting C to sparse if A is sparse.
 
-// C and A are not bitmap: use GB_bitmap_assign instead
-// M: could be bitmap
+// If A is sparse and C dense, C will likely become sparse, except if M(i,j)=0
+// wherever A(i,j) is not present.  So if M==A is aliased and A is sparse, then
+// C remains dense.  Need C(I,J)<A,struct>=A kernel.  Then in that case, if C
+// is dense it remains dense, even if A is sparse.   If that change is made,
+// this kernel can start with converting C to sparse if A is sparse.
+
+// C and A are not bitmap: use GB_bitmap_assign instead.
+// M is not bitmap: 06s is used instead, if M is bitmap.
 
 #include "GB_subassign_methods.h"
 
@@ -53,8 +53,14 @@ GrB_Info GB_subassign_06n
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 06n is not used for M bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+
+    ASSERT_MATRIX_OK (C, "C input for 06n", GB0) ;
+    ASSERT_MATRIX_OK (M, "M input for 06n", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for 06n", GB0) ;
 
     //--------------------------------------------------------------------------
     // get inputs

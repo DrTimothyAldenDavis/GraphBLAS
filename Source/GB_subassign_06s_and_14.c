@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_12: C(I,J)<M,repl> += A ; using S
+// GB_subassign_06s_and_14: C(I,J)<M or !M> = A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,21 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Method 12: C(I,J)<M,repl> += A ; using S
+// Method 06s: C(I,J)<M> = A ; using S
+// Method 14:  C(I,J)<!M> = A ; using S
 
 // M:           present
-// Mask_comp:   false
-// C_replace:   true
-// accum:       present
+// Mask_comp:   true or false
+// C_replace:   false
+// accum:       NULL
 // A:           matrix
 // S:           constructed
 
-// C, S, A: not bitmap
-// M: could be bitmap
+// C,A: not bitmap
+// M: any sparsity structure.
 
 #include "GB_subassign_methods.h"
 
-GrB_Info GB_subassign_12
+GrB_Info GB_subassign_06s_and_14
 (
     GrB_Matrix C,
     // input:
@@ -37,19 +38,20 @@ GrB_Info GB_subassign_12
     const int64_t Jcolon [3],
     const GrB_Matrix M,
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_BinaryOp accum,
+    const bool Mask_comp,           // if true, !M, else use M
     const GrB_Matrix A,
     GB_Context Context
 )
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // get inputs
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -67,21 +69,27 @@ GrB_Info GB_subassign_12
 
     GB_GET_C ;
     GB_GET_MASK ;
-    const bool M_is_hyper = (Mh != NULL) ;
-    const int64_t Mnvec = M->nvec ;
     GB_GET_A ;
     GB_GET_S ;
-    GB_GET_ACCUM ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 12: C(I,J)<M,repl> += A ; using S
+    // Method 06s: C(I,J)<M> = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: all entries in S+A must be traversed, so Omega(nnz(S)+nnz(A)) is
-    // required.  All cases of the mask (0, 1, or not present) must be
-    // considered, because of the C_replace descriptor being true.
+    // Time: O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector
+    // of M, not including the time to construct S=C(I,J).  If A, S, and M
+    // are similar in sparsity, then this method can perform well.  If M is
+    // very sparse, Method 06n should be used instead.  Method 06s is selected
+    // if nnz (A) < nnz (M) or if M is bitmap.
 
-    // Method 12 and Method 20 are very similar.
+    //--------------------------------------------------------------------------
+    // Method 14: C(I,J)<!M> = A ; using S
+    //--------------------------------------------------------------------------
+
+    // Time: Close to optimal.  Omega(nnz(S)+nnz(A)) is required, and the
+    // sparsity of !M cannot be exploited.  The time taken is
+    // O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector of M.
 
     //--------------------------------------------------------------------------
     // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
@@ -139,17 +147,18 @@ GrB_Info GB_subassign_12
             while (pS < pS_end && pA < pA_end)
             {
                 int64_t iS = GBI (Si, pS, Svlen) ;
-                int64_t iA = GBI (Ai, pA, Mvlen) ;
+                int64_t iA = GBI (Ai, pA, Avlen) ;
 
                 if (iS < iA)
                 {
                     // S (i,j) is present but A (i,j) is not
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                    if (!mij)
+                    if (Mask_comp) mij = !mij ;
+                    if (mij)
                     { 
-                        // ----[C . 0] or [X . 0]-------------------------------
-                        // [X . 0]: action: ( X ): still a zombie
-                        // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // [C . 1]: action: ( delete ): becomes zombie
+                        // [X . 1]: action: ( X ): still zombie
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
                     }
@@ -159,6 +168,7 @@ GrB_Info GB_subassign_12
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -171,21 +181,14 @@ GrB_Info GB_subassign_12
                 {
                     // both S (i,j) and A (i,j) present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    GB_C_S_LOOKUP ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): A to C no accum
-                        // [C A 1]: action: ( =C+A ): apply accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_withaccum_C_A_1_matrix ;
-                    }
-                    else
-                    { 
-                        // ----[C A 0] or [X A 0]-------------------------------
-                        // [X A 0]: action: ( X ): still a zombie
-                        // [C A 0]: C_repl: action: ( delete ): becomes zombie
-                        GB_DELETE_ENTRY ;
+                        GB_C_S_LOOKUP ;
+                        GB_noaccum_C_A_1_matrix ;
                     }
                     GB_NEXT (S) ;
                     GB_NEXT (A) ;
@@ -195,13 +198,15 @@ GrB_Info GB_subassign_12
             // while list S (:,j) has entries.  List A (:,j) exhausted
             while (pS < pS_end)
             {
+                // S (i,j) is present but A (i,j) is not
                 int64_t iS = GBI (Si, pS, Svlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                if (!mij)
+                if (Mask_comp) mij = !mij ;
+                if (mij)
                 { 
-                    // ----[C . 0] or [X . 0]-----------------------------------
-                    // [X . 0]: action: ( X ): still a zombie
-                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                    // ----[C . 1] or [X . 1]-----------------------------------
+                    // [C . 1]: action: ( delete ): becomes zombie
+                    // [X . 1]: action: ( X ): still zombie
                     GB_C_S_LOOKUP ;
                     GB_DELETE_ENTRY ;
                 }
@@ -214,6 +219,7 @@ GrB_Info GB_subassign_12
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -289,6 +295,7 @@ GrB_Info GB_subassign_12
                 {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -312,6 +319,7 @@ GrB_Info GB_subassign_12
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = GBI (Ai, pA, Avlen) ;
                 GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------

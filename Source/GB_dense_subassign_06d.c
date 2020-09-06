@@ -62,6 +62,7 @@ GrB_Info GB_dense_subassign_06d
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_is_packed (C)) ;
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;

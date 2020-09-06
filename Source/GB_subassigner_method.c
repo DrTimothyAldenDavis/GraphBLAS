@@ -41,6 +41,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     // GB_assign_prep has already disabled C_replace if no mask present
     ASSERT (GB_IMPLIES (no_mask, !C_replace)) ;
 
+    bool M_is_bitmap = GB_IS_BITMAP (M) ;
+
     //--------------------------------------------------------------------------
     // check if C is empty
     //--------------------------------------------------------------------------
@@ -55,6 +57,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     //--------------------------------------------------------------------------
 
     bool A_is_dense = scalar_expansion || GB_is_dense (A) ;
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
     //--------------------------------------------------------------------------
     // determine the method to use
@@ -138,15 +141,17 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         // C(I,J)<M> = A or += A
         if (accum != NULL)
         { 
-            // Method 08: C(I,J)<M> += A
-            S_Extraction = false ;
+            // Method 08n: C(I,J)<M> += A, no S.  Cannot use M as bitmap.
+            // Method 08s: C(I,J)<M> += A, with S.  Can use M as bitmap.
+            S_Extraction = M_is_bitmap ;
+/* HACK */  S_Extraction = true ; // HACK always use 08s, to test it
         }
         else
         { 
             // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
             // method 06s (with S) is faster when nnz (A) < nnz (M).
-            // If M and A are aliased, then nnz (A) == nnz (M), so method
-            // 06n is used.
+            // If M and A are aliased and not bitmap, then nnz (A) == nnz (M),
+            // so method 06n is used.
             if ((C_is_dense || C_is_bitmap) && whole_C_matrix && M == A)
             {
                 // Method 06d: C<A> = A
@@ -162,8 +167,9 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             }
             else
             {
-                // Method 06n: or Method 06s:
-                S_Extraction = (GB_NNZ (A) < GB_NNZ (M)) ;
+                // Method 06n (no S) or Method 06s (with S):
+                // Method 06n is not used if M is bitmap.
+                S_Extraction = (GB_NNZ (A) < GB_NNZ (M)) || M_is_bitmap ;
             }
         }
     }
@@ -228,7 +234,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A, no S
         //  M   -   -   -   A   S       06s: C(I,J)<M> = A, with S
         //  M   -   -   +   -   -       07:  C(I,J)<M> += x, no S
-        //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
+        //  M   -   -   +   A   -       08n: C(I,J)<M> += A, no S
+        //  M   -   -   +   A   -       08s: C(I,J)<M> += A, with S
         //  M   -   r   -   -   S       09:  C(I,J)<M,repl> = x, with S
         //  M   -   r   -   A   S       10:  C(I,J)<M,repl> = A, with S
         //  M   -   r   +   -   S       11:  C(I,J)<M,repl> += x, with S
@@ -247,14 +254,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         // FUTURE::: 8 simpler cases when I and J are ":" (S not needed):
         //----------------------------------------------------------------------
 
-        //  M   -   -   -   A   ?       06x: C(:,:)<M> = A
-        //  M   -   -   +   A   ?       08x: C(:,:)<M> += A
-        //  M   -   r   -   A   ?       10x: C(:,:)<M,repl> = A
-        //  M   -   r   +   A   ?       12x: C(:,:)<M,repl> += A
-        //  M   c   -   -   A   ?       14x: C(:,:)<!M> = A
-        //  M   c   -   +   A   ?       16x: C(:,:)<!M> += A
-        //  M   c   r   -   A   ?       18x: C(:,:)<!M,repl> = A
-        //  M   c   r   +   A   ?       20x: C(:,:)<!M,repl> += A
+        //  M   -   -   -   A   -       06x: C(:,:)<M> = A
+        //  M   -   -   +   A   -       08x: C(:,:)<M> += A
+        //  M   -   r   -   A   -       10x: C(:,:)<M,repl> = A
+        //  M   -   r   +   A   -       12x: C(:,:)<M,repl> += A
+        //  M   c   -   -   A   -       14x: C(:,:)<!M> = A
+        //  M   c   -   +   A   -       16x: C(:,:)<!M> += A
+        //  M   c   r   -   A   -       18x: C(:,:)<!M,repl> = A
+        //  M   c   r   +   A   -       20x: C(:,:)<!M,repl> += A
 
         //----------------------------------------------------------------------
         // FUTURE::: C<C,s> = x    C == M, replace all values, C_replace ignored
@@ -412,7 +419,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
+        //  M   -   -   +   A   -       08n:  C(I,J)<M> += A, no S
+        //  M   -   -   +   A   -       08s:  C(I,J)<M> += A, with S
         //  A   -   -   -   A   -       06d: C<A> = A, no S, C dense
         //  M   -   x   -   A   -       25:  C<M,s> = A, A dense, C empty
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A, no S
@@ -424,8 +432,16 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         if (accum != NULL)
         { 
-            // Method 08: C(I,J)<M> += A ; no S
-            subassign_method = GB_SUBASSIGN_METHOD_08 ;
+            if (S_Extraction)
+            {
+                // Method 08s: C(I,J)<M> += A ; with S
+                subassign_method = GB_SUBASSIGN_METHOD_08s ;
+            }
+            else
+            {
+                // Method 08n: C(I,J)<M> += A ; no S
+                subassign_method = GB_SUBASSIGN_METHOD_08n ;
+            }
         }
         else if (method_06d)
         { 
@@ -442,6 +458,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else if (!S_Extraction)
         { 
             // Method 06n: C(I,J)<M> = A ; no S
+            // If M is bitmap, this method is not used; 06s is used instead.
             subassign_method = GB_SUBASSIGN_METHOD_06n ;
         }
         else
@@ -622,81 +639,96 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     // determine if the subassign method can handle this case for bitmaps
     //--------------------------------------------------------------------------
 
-    bool C_is_full   = GB_IS_FULL (C) ;
-    bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool C_is_full = GB_IS_FULL (C) ;
 
     #define GB_USE_BITMAP_IF(condition) \
         if (condition) subassign_method = GB_SUBASSIGN_METHOD_BITMAP ;
 
     switch (subassign_method)
     {
+
+        //----------------------------------------------------------------------
+        // scalar assignent methods
+        //----------------------------------------------------------------------
+
         case GB_SUBASSIGN_METHOD_01 :   // C(I,J) = scalar
         case GB_SUBASSIGN_METHOD_03 :   // C(I,J) += scalar
         case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
+            // M does not appear
+        case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
+        case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
+        case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
+        case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
+            // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
+        case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
+        case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
+            // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            GB_USE_BITMAP_IF (A_is_bitmap) ;
+            break ;
+
+        case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
+            GB_USE_BITMAP_IF (C_is_bitmap) ;
+            GB_USE_BITMAP_IF (M_is_bitmap) ;    // TODO:BITMAP
+            break ;
+
+        case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct> = scalar
+        case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
+        case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
+            GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
+            GB_USE_BITMAP_IF (M_is_bitmap) ;    // TODO:BITMAP
+            break ;
+
+        //----------------------------------------------------------------------
+        // matrix assignent methods
+        //----------------------------------------------------------------------
+
+        case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
+        case GB_SUBASSIGN_METHOD_06s :  // C(I,J)< M> = A ; with S
+        case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
+        case GB_SUBASSIGN_METHOD_08s :  // C(I,J)< M> += A, with S
+        case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
+        case GB_SUBASSIGN_METHOD_10 :   // C(I,J)< M,replace> = A
+        case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
+        case GB_SUBASSIGN_METHOD_12 :   // C(I,J)< M,replace> += A
+        case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
+            // M can have any sparsity structure, including bitmap
+            GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
+            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
         case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
             GB_USE_BITMAP_IF (C_is_bitmap) ;
-            GB_USE_BITMAP_IF (A_is_bitmap) ;
+            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
-        case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
-        case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
-        case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
-        case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
-            GB_USE_BITMAP_IF (C_is_bitmap) ;
-            GB_USE_BITMAP_IF (M_is_bitmap) ;
-            break ;
-
-        case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct> = scalar
-        case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
-        case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
-        case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
-            GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            GB_USE_BITMAP_IF (M_is_bitmap) ;
-            break ;
-
-        case GB_SUBASSIGN_METHOD_06d :  // C(:,:<A> = A ; C is dense
-            // C and A can have any sparsity, including bitmap
+        case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense
+        case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar ; C becomes full
+            // any sparsity structure, including bitmap
             break ;
 
         case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
-        case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; using S
-        case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
-        case GB_SUBASSIGN_METHOD_12 :   // C(I,J)<M,replace> += A
-        case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
-        case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
-        case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
+        case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
+            // If M is bitmap, Method 06s is used instead of 06n, so Method 06n
+            // does not need to consider the case when M is bitmap.  Likewise,
+            // Method 08s is used instead of 08n if M is bitmap.
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            GB_USE_BITMAP_IF (M_is_bitmap) ;
-            GB_USE_BITMAP_IF (A_is_bitmap) ;
+            ASSERT (!M_is_bitmap) ;
+            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
-        case GB_SUBASSIGN_METHOD_08 :   // C(I,J)<M> += A
-        case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A
         case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,struct> = A ; C empty
             GB_USE_BITMAP_IF (C_is_bitmap) ;
-            GB_USE_BITMAP_IF (M_is_bitmap) ;
-            GB_USE_BITMAP_IF (A_is_bitmap) ;
-            break ;
-
-        case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar ; C becomes full
-            // C can have any sparsity (even bitmap)
+            GB_USE_BITMAP_IF (M_is_bitmap) ;    // TODO:BITMAP
+            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         case GB_SUBASSIGN_METHOD_24 :   // C = A
             // C can have any sparsity (even bitmap)
-            GB_USE_BITMAP_IF (A_is_bitmap) ;
+            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         default : ;
@@ -707,12 +739,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
-
-    // HACK: force bitmap assign for small matrices
-    if (C->vlen <= 100 && C->vdim <= 100)
-    {
-        return (GB_SUBASSIGN_METHOD_BITMAP) ;
-    }
 
     return (subassign_method) ;
 }

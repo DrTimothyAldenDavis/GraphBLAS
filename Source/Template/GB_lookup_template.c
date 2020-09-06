@@ -2,9 +2,16 @@
 // GB_lookup_template: find k so that j == Ah [k]
 //------------------------------------------------------------------------------
 
-// Given a sparse or hypersparse matrix, find k so that j == Ah [k], if it
-// appears in the list.  k is not needed by the caller, just the variables
+// For a sparse, bitmap, or full matrix j == k.
+// For a hypersparse matrix, find k so that j == Ah [k], if it
+// appears in the list.
+
+// k is not needed by the caller, just the variables
 // pstart, pend, pleft, and found.
+
+// Once k is found, find pstart and pend, the start and end of the vector.
+// pstart and pend are defined for all sparsity structures: hypersparse,
+// sparse, bitmap, or full.
 
 // This fine is #included' by GB.h, so the #include'ing file does either:
 //      #include "GB.h"
@@ -55,7 +62,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
     }
     else
     { 
-        // A is sparse or full; j always appears
+        // A is sparse, bitmap, or full; j always appears
         // k = j
         (*pstart) = GBP (Ap, j, avlen) ;
         (*pend)   = GBP (Ap, j+1, avlen) ;

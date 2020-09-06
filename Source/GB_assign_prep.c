@@ -597,6 +597,12 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
 
     bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+    if (whole_C_matrix)
+    {
+        // If the assignment is C<M>(:,:) = ... then convert the assignment
+        // into a subassign.
+        (*assign_kind) = GB_SUBASSIGN ;
+    }
 
     if (whole_C_matrix && no_mask && accum == NULL)
     {
@@ -746,6 +752,7 @@ GrB_Info GB_assign_prep
     {
 
         ASSERT (Ikind == GB_LIST || Jkind == GB_LIST) ;
+        ASSERT (!whole_C_matrix) ;
 
         if (I_unsorted_or_has_dupl)
         { 
@@ -877,6 +884,8 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
     // make a copy Z = C if C is aliased to A or M
     //--------------------------------------------------------------------------
+
+    // TODO: bitmap assign can handle C==M and C==A aliasing in some cases
 
     // If C is aliased to A and/or M, a copy of C must be made.
     bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_08: C(I,J)<M> += A ; no S
+// GB_subassign_08n: C(I,J)<M> += A ; no S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 08: C(I,J)<M> += A ; no S
+// Method 08n: C(I,J)<M> += A ; no S
 
 // M:           present
 // Mask_comp:   false
@@ -16,7 +16,8 @@
 // A:           matrix
 // S:           none
 
-// C, M, A: not bitmap
+// C, A: not bitmap; C can be full since no zombies are inserted in that case
+// M: not bitmap; Method 08s is used instead if M is bitmap
 
 #include "GB_subassign_methods.h"
 
@@ -77,10 +78,10 @@
 }
 
 //------------------------------------------------------------------------------
-// GB_subassign_08: C(I,J)<M> += A ; no S
+// GB_subassign_08n: C(I,J)<M> += A ; no S
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_08
+GrB_Info GB_subassign_08n
 (
     GrB_Matrix C,
     // input:
@@ -105,8 +106,10 @@ GrB_Info GB_subassign_08
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08s is used if M is bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -129,7 +132,7 @@ GrB_Info GB_subassign_08
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 08: C(I,J)<M> += A ; no S
+    // Method 08n: C(I,J)<M> += A ; no S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal. Omega (sum_j (min (nnz (A(:,j)), nnz (M(:,j)))),
@@ -144,13 +147,13 @@ GrB_Info GB_subassign_08
     // parallel scheduling relies on GB_emult_phase0(AA and GB_ewise_slice.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice the eWiseMult of A.*M (Method 08)
+    // Parallel: slice the eWiseMult of A.*M (Method 08n)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_EMULT_SLICE (A,M) ;
 
     //--------------------------------------------------------------------------
-    // phase 1: create zombies, update entries, and count pending tuples
+    // phase 1: undelete zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
     int taskid ;

@@ -16,8 +16,8 @@
 // A:           scalar
 // S:           none
 
-// C and M are not bitmap: use GB_bitmap_assign instead
-// M: could handle bitmap
+// C: not bitmap
+// M: any sparsity
 
 #include "GB_subassign_methods.h"
 
@@ -46,7 +46,7 @@ GrB_Info GB_subassign_05
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -86,10 +86,10 @@ GrB_Info GB_subassign_05
     // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_ONE_SLICE (M) ;
+    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled 
 
     //--------------------------------------------------------------------------
-    // phase 1: create zombies, update entries, and count pending tuples
+    // phase 1: undelete zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
     int taskid ;
@@ -146,7 +146,8 @@ GrB_Info GB_subassign_05
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     { 
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
@@ -173,7 +174,8 @@ GrB_Info GB_subassign_05
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
 
@@ -259,7 +261,8 @@ GrB_Info GB_subassign_05
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
 

@@ -199,7 +199,7 @@ break ;
         GB_GETA (aik, Ax, pA) ;         /* aik = Ax [pA] ;  */      \
         GB_CIJ_DECLARE (t) ;            /* ctype t ;        */      \
         GB_MULT (t, aik, bkj, i, k, j)  /* t = aik * bkj ;  */
-    
+
 #endif
 
 //------------------------------------------------------------------------------

@@ -12,6 +12,8 @@ MOSTLY DONE (some with minor work to do):
     GrB_transpose, also apply a unary op: works, except for M bitmap
     GrB_kronecker: just convert bitmap inputs to sparse; C is then sparse
     GB_masker/GB_accum_mask: C<M>=Z and C<M>+=Z
+    GrB_Matrix_build and GrB_Vector_build: builds T as hypersparse,
+        then conforms to sparse/bitmap/full according to C->sparsity.
 
 FUTURE: can handle transpose of full or bitmap input matrices just by
 changing how they are accessed
@@ -27,12 +29,18 @@ TODO:
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
-    GrB_reduce to scalar
-    ----------------------------------------------------------------------------
-
-    ----------------------------------------------------------------------------
     GrB_reduce to vector
     ----------------------------------------------------------------------------
+
+        To reduce a CSC to a column vector: can be done with A*B where B
+        is a dense vector, B->x set to NULL, using the GxB_[monoid]_FIRST
+        semiring.  GrB_Matrix_reduce can take either a monoid or a
+        binaryop.  If it is a binaryop, translate to built-in monoid if
+        possible.  Otherwise, create a temp monoid with a NULL identity
+        value, and avoid using the identity value if NULL.
+
+        This requires modifying the AxB routines so they either do not
+        use the monoid identity value, or they don't use it if NULL.
 
     ----------------------------------------------------------------------------
     GrB_eWiseAdd
@@ -41,11 +49,4 @@ TODO:
     ----------------------------------------------------------------------------
     GrB_eWiseMult
     ----------------------------------------------------------------------------
-
-    ----------------------------------------------------------------------------
-    GrB_Matrix_build and GrB_Vector_build:
-    ----------------------------------------------------------------------------
-
-        just use build to create sparse/hypersparse matrix, and then conform to
-        bitmap or full when done
 

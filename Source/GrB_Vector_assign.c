@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Vector_assign:    w<M>(Rows) = accum (w(Rows),u)
+// GrB_Vector_assign: w<M>(Rows) = accum (w(Rows),u)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
