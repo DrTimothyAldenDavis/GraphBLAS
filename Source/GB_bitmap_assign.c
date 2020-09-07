@@ -81,6 +81,7 @@ GrB_Info GB_bitmap_assign
         //----------------------------------------------------------------------
 
         GB_OK (GB_convert_any_to_bitmap (C, Context)) ;
+        ASSERT (GB_IS_BITMAP (C)) ;
 
         if (M == NULL)
         {

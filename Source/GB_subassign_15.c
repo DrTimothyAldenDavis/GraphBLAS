@@ -64,7 +64,7 @@ GrB_Info GB_subassign_15
 
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
-    GB_GET_C ;
+    GB_GET_C ;      // C must not be bitmap
     const int64_t Cnvec = C->nvec ;
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
@@ -105,7 +105,7 @@ GrB_Info GB_subassign_15
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -124,8 +124,8 @@ GrB_Info GB_subassign_15
             // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
-            GB_GET_VECTOR_FOR_IXJ (M) ;
+            GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_GET_VECTOR_FOR_IXJ (M, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC)<!M> += scalar
@@ -222,7 +222,7 @@ GrB_Info GB_subassign_15
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -241,8 +241,8 @@ GrB_Info GB_subassign_15
             // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
-            GB_GET_VECTOR_FOR_IXJ (M) ;
+            GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_GET_VECTOR_FOR_IXJ (M, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC)<!M> += scalar

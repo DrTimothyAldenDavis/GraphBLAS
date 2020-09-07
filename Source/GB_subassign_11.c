@@ -65,7 +65,7 @@ GrB_Info GB_subassign_11
 
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
-    GB_GET_C ;
+    GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
     GB_GET_ACCUM_SCALAR ;
     GB_GET_S ;
@@ -148,7 +148,8 @@ GrB_Info GB_subassign_11
                 else if (iM < iS)
                 {
                     // S (i,j) is not present, M (i,j) is present
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
@@ -160,7 +161,8 @@ GrB_Info GB_subassign_11
                 {
                     // both S (i,j) and M (i,j) present
                     GB_C_S_LOOKUP ;
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =C+A ): apply accum
@@ -195,7 +197,8 @@ GrB_Info GB_subassign_11
             while (pM < pM_end)
             {
                 // S (i,j) is not present, M (i,j) is present
-                if (GB_mcast (Mx, pM, msize))
+                bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                if (mij)
                 { 
                     // ----[. A 1]------------------------------------------
                     // [. A 1]: action: ( insert )
@@ -261,7 +264,8 @@ GrB_Info GB_subassign_11
                 else if (iM < iS)
                 {
                     // S (i,j) is not present, M (i,j) is present
-                    if (GB_mcast (Mx, pM, msize))
+                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
@@ -282,7 +286,8 @@ GrB_Info GB_subassign_11
             while (pM < pM_end)
             {
                 // S (i,j) is not present, M (i,j) is present
-                if (GB_mcast (Mx, pM, msize))
+                bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                if (mij)
                 { 
                     // ----[. A 1]------------------------------------------
                     // [. A 1]: action: ( insert )

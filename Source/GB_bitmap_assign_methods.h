@@ -28,14 +28,17 @@
 #endif
 
 //------------------------------------------------------------------------------
-// GB_GET_C: get the C matrix
+// GB_GET_C_BITMAP: get the C matrix (must be bitmap)
 //------------------------------------------------------------------------------
 
-#define GB_GET_C                                                            \
+// C must be a bitmap matrix
+
+#define GB_GET_C_BITMAP                                                     \
     GrB_Info info ;                                                         \
     /* also get the max # of threads to use */                              \
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;                    \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
+    ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \
     GB_void *Cx = (GB_void *) C->x ;                                        \
     const size_t csize = C->type->size ;                                    \

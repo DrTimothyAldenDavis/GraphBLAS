@@ -64,7 +64,7 @@ GrB_Info GB_subassign_09
 
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
-    GB_GET_C ;
+    GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
     GB_GET_SCALAR ;
     GB_GET_S ;

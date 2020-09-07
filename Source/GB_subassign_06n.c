@@ -71,7 +71,7 @@ GrB_Info GB_subassign_06n
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
     GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
-    GB_GET_C ;
+    GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
     const int64_t *GB_RESTRICT Ch = C->h ;

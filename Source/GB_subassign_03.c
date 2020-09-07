@@ -58,7 +58,7 @@ GrB_Info GB_subassign_03
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C ;
+    GB_GET_C ;      // C must not be bitmap
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -100,7 +100,7 @@ GrB_Info GB_subassign_03
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -119,7 +119,7 @@ GrB_Info GB_subassign_03
             // get S(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
+            GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC) += scalar
@@ -166,7 +166,7 @@ GrB_Info GB_subassign_03
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -185,7 +185,7 @@ GrB_Info GB_subassign_03
             // get S(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
+            GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC) += scalar

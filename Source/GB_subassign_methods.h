@@ -56,11 +56,14 @@
     GrB_Matrix S = NULL ;
 
 //------------------------------------------------------------------------------
-// GB_GET_C: get the C matrix
+// GB_GET_C: get the C matrix (cannot be bitmap)
 //------------------------------------------------------------------------------
+
+// C cannot be aliased with M or A.
 
 #define GB_GET_C                                                            \
     ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;                   \
+    ASSERT (!GB_IS_BITMAP (C)) ;                                            \
     int64_t *GB_RESTRICT Ci = C->i ;                                        \
     GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;                            \
     const size_t csize = C->type->size ;                                    \
@@ -74,13 +77,15 @@
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
 
+// M and A can be aliased, but both are const.
+
 #define GB_GET_MASK                                                         \
     ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                             \
-    const int64_t *GB_RESTRICT Mp = M->p ;                                  \
-    const int64_t *GB_RESTRICT Mh = M->h ;                                  \
-    const int8_t  *GB_RESTRICT Mb = M->b ;                                  \
-    const int64_t *GB_RESTRICT Mi = M->i ;                                  \
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;\
+    const int64_t *Mp = M->p ;                                              \
+    const int64_t *Mh = M->h ;                                              \
+    const int8_t  *Mb = M->b ;                                              \
+    const int64_t *Mi = M->i ;                                              \
+    const GB_void *Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;         \
     const size_t msize = M->type->size ;                                    \
     const size_t Mvlen = M->vlen ;                                          \
     const int64_t Mnvec = M->nvec ;                                         \
@@ -94,13 +99,14 @@
 #define GB_GET_ACCUM                                                        \
     ASSERT_BINARYOP_OK (accum, "accum for assign", GB0) ;                   \
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;                                 \
-    GxB_binary_function faccum = accum->function ;                          \
-    GB_cast_function cast_A_to_Y = GB_cast_factory (accum->ytype->code, acode);\
-    GB_cast_function cast_C_to_X = GB_cast_factory (accum->xtype->code, ccode);\
-    GB_cast_function cast_Z_to_C = GB_cast_factory (ccode, accum->ztype->code);\
-    size_t xsize = accum->xtype->size ;                                     \
-    size_t ysize = accum->ytype->size ;                                     \
-    size_t zsize = accum->ztype->size ;
+    const GxB_binary_function faccum = accum->function ;                    \
+    const GB_cast_function                                                  \
+        cast_A_to_Y = GB_cast_factory (accum->ytype->code, acode),          \
+        cast_C_to_X = GB_cast_factory (accum->xtype->code, ccode),          \
+        cast_Z_to_C = GB_cast_factory (ccode, accum->ztype->code) ;         \
+    const size_t xsize = accum->xtype->size ;                               \
+    const size_t ysize = accum->ytype->size ;                               \
+    const size_t zsize = accum->ztype->size ;
 
 //------------------------------------------------------------------------------
 // GB_GET_A: get the A matrix
@@ -108,14 +114,14 @@
 
 #define GB_GET_A                                                            \
     ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
-    GrB_Type atype = A->type ;                                              \
-    size_t asize = atype->size ;                                            \
-    GB_Type_code acode = atype->code ;                                      \
-    const int64_t *GB_RESTRICT Ap = A->p ;                                  \
-    const int8_t  *GB_RESTRICT Ab = A->b ;                                  \
-    const int64_t *GB_RESTRICT Ai = A->i ;                                  \
-    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;                      \
-    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
+    const GrB_Type atype = A->type ;                                        \
+    const size_t asize = atype->size ;                                      \
+    const GB_Type_code acode = atype->code ;                                \
+    const int64_t *Ap = A->p ;                                              \
+    const int8_t  *Ab = A->b ;                                              \
+    const int64_t *Ai = A->i ;                                              \
+    const GB_void *Ax = (GB_void *) A->x ;                                  \
+    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     const int64_t Avlen = A->vlen ;
 
 //------------------------------------------------------------------------------
@@ -124,9 +130,9 @@
 
 #define GB_GET_SCALAR                                                       \
     ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
-    size_t asize = atype->size ;                                            \
-    GB_Type_code acode = atype->code ;                                      \
-    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
+    const size_t asize = atype->size ;                                      \
+    const GB_Type_code acode = atype->code ;                                \
+    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     GB_void cwork [GB_VLA(csize)] ;                                         \
     cast_A_to_C (cwork, scalar, asize) ;                                    \
 
@@ -143,6 +149,9 @@
 //------------------------------------------------------------------------------
 // GB_GET_S: get the S matrix
 //------------------------------------------------------------------------------
+
+// S is never aliased with any other matrix.
+// FUTURE: S->p could be C->p and S->x NULL if I and J are (:,:)
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
@@ -1529,6 +1538,10 @@ GrB_Info GB_subassign_19
 // either A or M.  No need to examine C, since it will be accessed via S, not
 // via binary search.
 
+// TODO:BITMAP for GB_SUBASSIGN_TWO_SLICE:  if X is bitmap, then do not use
+// this method.  Instead, use GB_SUBASSIGN_IXJ_SLICE and an iteration
+// like Method 01.
+
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     int64_t Znvec ;                                                         \
     GB_OK (GB_add_phase0 (                                                  \
@@ -1714,50 +1727,52 @@ GrB_Info GB_subassign_emult_slice
     }
 
 //------------------------------------------------------------------------------
-// GB_GET_I: get the range of indices in I for this task
+// GB_GET_IXJ_TASK_DESCRIPTOR*: get the task descriptor for IxJ
 //------------------------------------------------------------------------------
 
-#define GB_GET_IXJ_TASK_DESCRIPTOR                                          \
+// Q denotes the Cartesian product IXJ
+
+#define GB_GET_IXJ_TASK_DESCRIPTOR(iQ_start,iQ_end)                         \
     GB_GET_TASK_DESCRIPTOR ;                                                \
-    int64_t iA_start = 0, iA_end = nI ;                                     \
+    int64_t iQ_start = 0, iQ_end = nI ;                                     \
     if (fine_task)                                                          \
     {                                                                       \
-        iA_start = TaskList [taskid].pA ;                                   \
-        iA_end   = TaskList [taskid].pA_end ;                               \
+        iQ_start = TaskList [taskid].pA ;                                   \
+        iQ_end   = TaskList [taskid].pA_end ;                               \
     }
 
-#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1                                   \
-    GB_GET_IXJ_TASK_DESCRIPTOR ;                                            \
+#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1(iQ_start,iQ_end)                  \
+    GB_GET_IXJ_TASK_DESCRIPTOR (iQ_start, iQ_end)                           \
     int64_t task_nzombies = 0 ;                                             \
     int64_t task_pending = 0 ;
 
-#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2                                   \
-    GB_GET_IXJ_TASK_DESCRIPTOR ;                                            \
+#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2(iQ_start,iQ_end)                  \
+    GB_GET_IXJ_TASK_DESCRIPTOR (iQ_start, iQ_end)                           \
     GB_START_PENDING_INSERTION ;
 
 //------------------------------------------------------------------------------
 // GB_GET_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
 //------------------------------------------------------------------------------
 
-// Find pX and pX_end for the vector X (iA_start:end, j), for a scalar
-// assignment method.
+// Find pX and pX_end for the vector X (iQ_start:iQ_end, j), for a scalar
+// assignment method, or a method iterating over all IxJ for a bitmap M or A.
 
-#define GB_GET_VECTOR_FOR_IXJ(X)                                            \
+#define GB_GET_VECTOR_FOR_IXJ(X,iQ_start)                                   \
     int64_t p ## X, p ## X ## _end ;                                        \
     GB_VECTOR_LOOKUP (p ## X, p ## X ## _end, X, j) ;                       \
-    if (iA_start != 0)                                                      \
+    if (iQ_start != 0)                                                      \
     {                                                                       \
         if (X ## i == NULL)                                                 \
         {                                                                   \
             /* X is full or bitmap */                                       \
-            p ## X += iA_start ;                                            \
+            p ## X += iQ_start ;                                            \
         }                                                                   \
         else                                                                \
         {                                                                   \
             /* X is sparse or hypersparse */                                \
             int64_t pright = p ## X ## _end - 1 ;                           \
             bool found ;                                                    \
-            GB_SPLIT_BINARY_SEARCH (iA_start, X ## i, p ## X, pright, found) ;\
+            GB_SPLIT_BINARY_SEARCH (iQ_start, X ## i, p ## X, pright, found) ;\
         }                                                                   \
     }
 

@@ -58,7 +58,6 @@ GrB_Info GB_bitmap_assign_M_noaccum
     //--------------------------------------------------------------------------
 
     GBURBLE_BITMAP_ASSIGN ("bit4", M, false, NULL) ;
-    ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M, noaccum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, noaccum", GB0) ;
@@ -68,7 +67,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C
+    GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
     GB_GET_A
 

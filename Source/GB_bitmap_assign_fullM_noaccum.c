@@ -63,7 +63,6 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     //--------------------------------------------------------------------------
 
     GBURBLE_BITMAP_ASSIGN ("bit2", M, Mask_comp, NULL) ;
-    ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, noaccum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, noaccum", GB0) ;
@@ -73,7 +72,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C
+    GB_GET_C_BITMAP ;           // C must be bitmap
     GB_GET_M
     GB_GET_A
 

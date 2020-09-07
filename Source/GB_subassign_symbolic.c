@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 // TODO: if I == GrB_ALL and J == GrB_ALL (pass in Ikind and Jkind), then
-// let S be a purely shallow copy of C.  S->x is NULL, which denotes
-// S->x [p] == p.
+// let S be a purely shallow copy of C.  Let S->x be NULL, which denotes
+// S->x [p] == p.  But S->i needs to be a deep, zombie-less copy of C->i,
+// because C->i is changing (zombie status).  S->p and S->h can be shallow
+// copies of C->p and C->h.
 
 #include "GB_subassign_methods.h"
 #include "GB_subref.h"
