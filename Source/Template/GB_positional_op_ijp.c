@@ -14,8 +14,6 @@
 // if A and C are bitmap, not all of Cx need to be written to, but it's faster
 // just to write to all of it.  C->b is copied from A->b in the caller.
 
-// OK: BITMAP
-
 {
 
     //--------------------------------------------------------------------------

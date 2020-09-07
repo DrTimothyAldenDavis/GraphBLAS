@@ -12,8 +12,6 @@
 // always be shallow, in either A or B, or both.  NULL pointers are not
 // aliased.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 // true if pointers p1 and p2 are aliased and not NULL

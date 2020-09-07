@@ -99,10 +99,6 @@ GrB_Info GB_assign_prep
     GrB_Matrix M = M_in ;
     GrB_Matrix A = A_in ;
 
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
-    ASSERT (GB_IS_ANY_SPARSITY (M)) ;
-    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
-
     ASSERT_MATRIX_OK (C, "C input for GB_assign/subassign", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign/subassign", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign/subassign", GB0) ;

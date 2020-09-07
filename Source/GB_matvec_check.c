@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 // for additional diagnostics, use:
 // #define GB_DEVELOPER 1
 

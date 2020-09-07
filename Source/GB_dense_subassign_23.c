@@ -17,8 +17,8 @@
 // Method 04.
 
 // The caller passes in the second matrix as A, but it is called B here to
-// match its use as the 2nd input to the binary accum operator.  B can have
-// any sparsity structure.
+// match its use as the 2nd input to the binary accum operator.  C and B can
+// have any sparsity structure, but C must be dense.
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -45,7 +45,6 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_aliased (C, B)) ;   // NO ALIAS of C==A (A is called B here)
 
     //--------------------------------------------------------------------------
@@ -57,6 +56,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_is_dense (C)) ;
 
     ASSERT_MATRIX_OK (B, "B for C+=B", GB0) ;
     ASSERT (!GB_PENDING (B)) ;
@@ -67,6 +67,8 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
     ASSERT (B->vlen == C->vlen) ;
     ASSERT (B->vdim == C->vdim) ;
+
+    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
 
     //--------------------------------------------------------------------------
     // get the operator

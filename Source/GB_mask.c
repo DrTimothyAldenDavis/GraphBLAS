@@ -186,7 +186,7 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         // Any pending work on C is abandoned (zombies and/or pending tuples).
-        // OK: BITMAP.  C and Z can have any sparsity, including bitmap.
+        // C and Z can have any sparsity, including bitmap.
 
         if (!Mask_comp)
         { 
@@ -194,8 +194,6 @@ GrB_Info GB_mask                // C<M> = Z
             //------------------------------------------------------------------
             // mask is not complemented: this is the default
             //------------------------------------------------------------------
-
-            // OK: BITMAP
 
             // C_result = Z, but make sure a deep copy is made as needed.  It is
             // possible that Z is a shallow copy of another matrix.

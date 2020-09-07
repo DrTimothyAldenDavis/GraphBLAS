@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 #include "GB_sort.h"
 
 GrB_Info GB_unjumble        // unjumble a matrix

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix

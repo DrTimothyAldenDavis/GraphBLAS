@@ -1562,6 +1562,9 @@ GrB_Info GB_subassign_19
 // C(:,jC) is not sliced, so the fine task must do a direct lookup via
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
 
+// No matrix (C, M, or A) can be bitmap.  C, M, A can be sparse/hyper/full, in
+// any combination.
+
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
     int64_t Znvec ;                                                         \
     int64_t *GB_RESTRICT Zh_shallow = NULL ;                                \

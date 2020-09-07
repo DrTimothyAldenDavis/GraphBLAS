@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values

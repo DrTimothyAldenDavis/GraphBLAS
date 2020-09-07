@@ -9,8 +9,6 @@
 
 // The user-defined type has no known size, so this must be provided on input.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

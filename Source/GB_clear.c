@@ -20,9 +20,9 @@
 // the matrix A is left in an invalid state (A->magic == GB_MAGIC2).  Only the
 // header is left.
 
-// OK: BITMAP.  A is first converted to sparse or hypersparse, and then
-// conformed via GB_conform.  If A->sparsity disables the sparse and
-// hypersparse structures, this will convert A to bitmap.
+// A is first converted to sparse or hypersparse, and then conformed via
+// GB_conform.  If A->sparsity disables the sparse and hypersparse structures,
+// this will convert A to bitmap.
 
 #include "GB.h"
 

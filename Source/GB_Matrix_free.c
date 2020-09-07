@@ -10,8 +10,6 @@
 // Free all the content of a matrix.  After GB_Matrix_free (&A), A is set to
 // NULL.
 
-// OK: BITMAP
-
 #include "GB.h"
 #include "GB_mkl.h"
 

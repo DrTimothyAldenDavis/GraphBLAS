@@ -11,9 +11,9 @@
 // slicing two input matricies (A and M).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
-// This method is used only by GB_subassign_08n.  New zombies cannot be created,
-// since no entries are deleted.  Old zombies can be brought back to life,
-// however.
+// This method is used only by GB_subassign_08n.  New zombies cannot be
+// created, since no entries are deleted.  Old zombies can be brought back to
+// life, however.
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
@@ -21,6 +21,11 @@
         //  M   -   -   +   A   -       08n:  C(I,J)<M> += A, no S
 
 // C, M, A: not bitmap.  C can be full.
+
+// If C is bitmap, then GB_bitmap_assign_M_accum is used instead.
+// If M or A are bitmap, but C is sparse or hyper, then Method 08s is used
+// instead (which handles both M and A as bitmap).  As a result, this method
+// does not need to consider the bitmap case for C, M, or A.
 
 #include "GB_subassign_methods.h"
 #include "GB_emult.h"
@@ -60,7 +65,7 @@ GrB_Info GB_subassign_emult_slice
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08n is not used for M bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 08n is not used for A bitmap
 
     GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;

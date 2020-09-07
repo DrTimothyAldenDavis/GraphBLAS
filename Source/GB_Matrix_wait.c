@@ -29,8 +29,6 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// OK: BITMAP
-
 #include "GB_select.h"
 #include "GB_add.h"
 #include "GB_Pending.h"

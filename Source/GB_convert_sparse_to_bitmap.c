@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 #include "GB_ek_slice.h"
 #ifndef GBCOMPACT
 #include "GB_type__include.h"

@@ -20,8 +20,6 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
-// OK: BITMAP (in progress)
-
 #include "GB_subassign.h"
 #include "GB_bitmap_assign.h"
 
@@ -35,20 +33,20 @@
 }
 
 #define HACK \
-    if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-    if (C_in_is_full   ) \
-    { \
-        if (GB_is_dense (C_in) && GB_is_packed (C_in)) \
-        { \
-            GB_convert_any_to_full (C_in) ; \
-        } \
-        else \
-        { \
-            GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-        } \
-    } \
-    if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-    if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
+if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
+if (C_in_is_full   ) \
+{ \
+if (GB_is_dense (C_in) && GB_is_packed (C_in)) \
+{ \
+GB_convert_any_to_full (C_in) ; \
+} \
+else \
+{ \
+GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
+} \
+} \
+if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
+if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 (

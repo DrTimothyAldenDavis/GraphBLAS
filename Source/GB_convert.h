@@ -33,12 +33,6 @@
 // treat A as if it were non-hypersparse
 #define GB_IS_HYPER(A) (GB_IS_HYPERSPARSE (A) && ((A)->nvec < (A)->vdim))
 
-// true if A has any sparsity structure (only useful for commenting via
-// assertions, since this is always true).
-#define GB_IS_ANY_SPARSITY(A) \
-    ((A) == NULL || GB_IS_FULL (A) || GB_IS_BITMAP (A) || \
-     GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
-
 // GB_sparsity: determine the current sparsity structure of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {
@@ -201,8 +195,12 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
 #define GB_ENSURE_FULL(C)                                   \
 {                                                           \
     ASSERT (GB_is_dense (C)) ;                              \
-    /* convert C from any structure to full */              \
-    GB_convert_any_to_full (C) ;                            \
+    if (C->sparsity & GxB_FULL)                             \
+    {                                                       \
+        /* convert C from any structure to full, */         \
+        /* if permitted by C->sparsity */                   \
+        GB_convert_any_to_full (C) ;                        \
+    }                                                       \
 }
 
 static inline bool GB_is_dense

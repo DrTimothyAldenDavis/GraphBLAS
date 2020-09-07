@@ -8,6 +8,8 @@
 //------------------------------------------------------------------------------
 
 // C += b where C is a dense or full matrix and b is a scalar
+// C can have any sparsity format, as long as all entries are present;
+// GB_is_dense (C)) must hold.
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -32,26 +34,19 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=b", GB0) ;
+    ASSERT (GB_is_dense (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (GB_is_dense (C)) ;
 
     ASSERT (scalar != NULL) ;
     ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
-    // ensure C is full
-    GB_ENSURE_FULL (C) ;    // TODO only if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
 
     //--------------------------------------------------------------------------
     // get the operator

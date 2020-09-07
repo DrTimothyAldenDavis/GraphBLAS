@@ -16,8 +16,9 @@
 // A:           matrix
 // S:           none
 
-// C, A: not bitmap; C can be full since no zombies are inserted in that case
-// M: not bitmap; Method 08s is used instead if M is bitmap
+// C not bitmap; C can be full since no zombies are inserted in that case.
+// If C is bitmap: GB_bitmap_assign_M_accum is used instead.
+// M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
 
@@ -107,7 +108,7 @@ GrB_Info GB_subassign_08n
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08s is used if M is bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 08s is used if A is bitmap
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
@@ -150,7 +151,7 @@ GrB_Info GB_subassign_08n
     // Parallel: slice the eWiseMult of A.*M (Method 08n)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_EMULT_SLICE (A,M) ;
+    GB_SUBASSIGN_EMULT_SLICE (A, M) ;
 
     //--------------------------------------------------------------------------
     // phase 1: undelete zombies, update entries, and count pending tuples

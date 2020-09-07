@@ -13,8 +13,6 @@
 // or non-blocking), for pointers to malloc/calloc/realloc/free functions,
 // global matrix options, and other settings.
 
-// OK: BITMAP
-
 #include "GB_atomics.h"
 
 //------------------------------------------------------------------------------

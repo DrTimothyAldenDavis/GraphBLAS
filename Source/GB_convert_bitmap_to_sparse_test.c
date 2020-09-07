@@ -28,8 +28,6 @@
 // If this test returns true and the matrix changes to sparse, then the rule
 // for A->hyper_switch may then convert it from sparse to hypersparse.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap

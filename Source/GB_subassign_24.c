@@ -14,9 +14,11 @@
 // the function is a bit of a misnomer since it implies that only the dense
 // case is handled.
 
-// FULL: if C sparse and A dense/full, convert C to full
+// FULL: if C sparse and A dense/full, convert C to full, ignoring C->sparsity.
+// C is conformed to its desired sparsity structure later.
 
 // A can be jumbled, in which case C is also jumbled.
+// A can have any sparsity structure (sparse, hyper, bitmap, or full)
 
 #include "GB_dense.h"
 #include "GB_Pending.h"
@@ -34,8 +36,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // prior content of C is discarded
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
@@ -103,8 +103,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBURBLE ("(dense copy) ") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
-        // ensure C is full
-        GB_ENSURE_FULL (C) ;    // TODO: only if C->sparsity allows it
+        GB_convert_any_to_full (C) ;        // ensure C is full
 
     }
     else
@@ -132,7 +131,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBURBLE ("(typecast) ") ;
     }
 
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     GB_cast_array (C->x, C->type->code, A->x, A->type->code,
         A->b, A->type->size, anz, nthreads) ;

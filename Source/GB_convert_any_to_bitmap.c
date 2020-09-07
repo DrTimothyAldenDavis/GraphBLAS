@@ -10,8 +10,6 @@
 // The input matrix may be jumbled and have zombies, and can still be converted
 // to a bitmap.
 
-// OK: BITMAP
-
 #include "GB.h"
 #define GB_FREE_ALL GB_phbix_free (A) ;
 

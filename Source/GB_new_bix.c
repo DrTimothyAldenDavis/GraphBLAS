@@ -27,8 +27,6 @@
 //      the preexisting header is not freed and *Ahandle is unmodified on
 //      output.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x

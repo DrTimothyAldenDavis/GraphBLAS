@@ -11,8 +11,6 @@
 
 // if numeric is false, C->x is allocated but not initialized.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_dup2            // make an exact copy of a matrix

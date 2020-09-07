@@ -14,8 +14,6 @@
 // converted to bitmap or full.  If this method fails, the matrix is cleared
 // of all entries.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 #define GB_FREE_ALL GB_phbix_free (A) ;

@@ -1,13 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_nvals: number of entries in a sparse matrix
+// GB_nvals: number of entries in a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-
-// OK: BITMAP
 
 #include "GB.h"
 
@@ -26,8 +24,6 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
-
     GB_RETURN_IF_NULL (nvals) ;
 
     // leave zombies alone, but assemble any pending tuples

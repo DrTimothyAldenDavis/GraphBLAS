@@ -88,11 +88,11 @@ void GB_cast_array              // typecast an array
     #endif
 
     //--------------------------------------------------------------------------
-    // generic worker: typecasting for compact case only
+    // generic worker
     //--------------------------------------------------------------------------
 
-    int64_t csize = GB_code_size (code1, 1) ;
-    int64_t asize = GB_code_size (code2, 1) ;
+    int64_t csize = GB_code_size (code1, user_size) ;
+    int64_t asize = GB_code_size (code2, user_size) ;
     GB_cast_function cast_A_to_C = GB_cast_factory (code1, code2) ;
 
     int64_t p ;

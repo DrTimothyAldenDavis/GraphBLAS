@@ -22,8 +22,6 @@
 
 // FUTURE:: an outer-product method for C=A*B'
 
-// OK: BITMAP
-
 #define GB_FREE_ALL             \
 {                               \
     GB_Matrix_free (Chandle) ;  \

@@ -22,10 +22,9 @@
 // sparsity structure does not change.  If C is hypersparse, sparse, or full,
 // then the pattern does not change (all entries are present, and this does not
 // change), and these cases can all be treated the same (as if full).  If C is
-// bitmap, new entries can be inserted into the bitmap C->b.  The matrix A can
-// have any sparsity structure.
+// bitmap, new entries can be inserted into the bitmap C->b.
 
-// OK: BITMAP
+// C and A can have any sparsity structure.
 
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
@@ -68,9 +67,6 @@ GrB_Info GB_dense_subassign_06d
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
-
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;       // C can have any sparsity
-    ASSERT (GB_IS_ANY_SPARSITY (A)) ;       // A can have any sparsity
 
     const GB_Type_code ccode = C->type->code ;
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;

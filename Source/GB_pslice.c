@@ -16,8 +16,6 @@
 // If Ap is NULL then the matrix A (not provided here) is full or bitmap,
 // which this function handles (Ap is implicit).
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

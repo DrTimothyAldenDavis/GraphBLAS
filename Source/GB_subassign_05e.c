@@ -18,6 +18,11 @@
 // A:           scalar
 // S:           none
 
+// C and M can have any sparsity on input.  The content of C is replace with
+// the structure of M, and the values of C are all set to the scalar.  If M is
+// bitmap, only assignments where (Mb [pC] == 1) are needed, but it's faster to
+// just assign all entries.
+
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
@@ -38,8 +43,6 @@ GrB_Info GB_subassign_05e
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
@@ -60,7 +63,7 @@ GrB_Info GB_subassign_05e
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
-    int64_t mnz = GB_NNZ (M) ;
+    int64_t mnz = GB_NNZ_HELD (M) ;
 
     //--------------------------------------------------------------------------
     // Method 05e: C(:,:)<M> = x ; C is empty, x is a scalar, M is structural

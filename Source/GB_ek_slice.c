@@ -16,7 +16,7 @@
 // On input, ntasks is the # of tasks requested.  On output, it may be
 // modified if too large or too small.
 
-// OK: BITMAP
+// A can have any sparsit structure (sparse, hyper, bitmap, or full)
 
 #include "GB_ek_slice.h"
 

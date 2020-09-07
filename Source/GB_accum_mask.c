@@ -336,8 +336,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             //------------------------------------------------------------------
             // Z = (ctype) T ;
             //------------------------------------------------------------------
-        
-            // OK: BITMAP
 
             // [ Z is just the header; the rest can be allocated by the
             // transplant if needed.  Z has the same hypersparsity as T.
@@ -363,7 +361,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // TODO: BITMAP doesn't work here yet, and even when it does, the
+            // TODO:BITMAP doesn't work here yet, and even when it does, the
             // work could be done more efficiently by GB_subassign above. 
 
             // use the mask if present, not complemented, and very sparse
@@ -388,9 +386,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // apply the mask (C<M> = Z)
         //----------------------------------------------------------------------
 
-        // TODO: can call GB_mask with bitmap C and/or Z when M is NULL, or (in
-        // the future) if C and Z are not bitmap but M is bitmap.  Otherwise,
-        // if any matrix is bitmap, GB_subassign would be faster than GB_mask.
+        // TODO:BITMAP can call GB_mask with bitmap C and/or Z when M is NULL,
+        // or (in the future) if C and Z are not bitmap but M is bitmap.
+        // Otherwise, if any matrix is bitmap, GB_subassign would be faster
+        // than GB_mask.
 
         // see GB_spec_mask.m for a description of this step.
 

@@ -29,8 +29,6 @@
 // This rule is not used if all entries are present.  In that case, the matrix
 // becomes full, not bitmap.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap

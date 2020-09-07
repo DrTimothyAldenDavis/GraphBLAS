@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GxB_Vector_Option_get      // gets the current option of a vector

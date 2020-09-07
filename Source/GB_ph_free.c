@@ -11,8 +11,6 @@
 // would generate a GrB_INVALID_OBJECT error if passed to a user-callable
 // GraphBLAS function.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

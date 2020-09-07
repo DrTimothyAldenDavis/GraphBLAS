@@ -33,8 +33,6 @@
 // returned as NULL, and the existing header is freed as well, if non-NULL on
 // input.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C becomes a full matrix.
+// C can have any sparsity on input; it becomes a full matrix on output.
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -51,7 +51,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;   // all prior content of C is cleared
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
     ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
@@ -78,6 +77,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
     // TODO: construct C according to C->sparsity, or conform it when done.
+    // Allow C to be constructed as a dense bitmap, if C->sparsity does not
+    // allow for GxB_FULL.
 
     if (!C_is_dense)
     { 

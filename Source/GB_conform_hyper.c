@@ -14,8 +14,6 @@
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 #define GB_FREE_ALL GB_phbix_free (A) ;
@@ -33,8 +31,8 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 
     GrB_Info info = GrB_SUCCESS ;
     ASSERT_MATRIX_OK (A, "A to conform_hyper", GB0) ;
-    ASSERT (!GB_IS_FULL (A)) ;      // OK: method not called for A full
-    ASSERT (!GB_IS_BITMAP (A)) ;    // OK: method not called for A bitmap
+    ASSERT (!GB_IS_FULL (A)) ;      // ok: method not called for A full
+    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: method not called for A bitmap
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

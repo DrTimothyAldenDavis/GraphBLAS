@@ -16,7 +16,8 @@
 // A:           scalar
 // S:           none
 
-// C can have any sparsity structure, but it must be
+// C can have any sparsity structure, but it must be entirely dense with
+// all entries present.
 
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
@@ -48,7 +49,6 @@ GrB_Info GB_dense_subassign_05d
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_is_dense (C)) ;
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
@@ -73,8 +73,7 @@ GrB_Info GB_dense_subassign_05d
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
-    // ensure C is full
-    GB_ENSURE_FULL (C) ;    // TODO only if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

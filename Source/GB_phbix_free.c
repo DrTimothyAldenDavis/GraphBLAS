@@ -11,10 +11,6 @@
 // A->magic becomes GB_MAGIC2.  If this matrix is given to a user-callable
 // GraphBLAS function, it will generate a GrB_INVALID_OBJECT error.
 
-// This function normally returns GrB_SUCCESS. 
-
-// OK: BITMAP
-
 #include "GB.h"
 
 void GB_phbix_free              // free all content of a matrix

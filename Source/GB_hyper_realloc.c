@@ -10,8 +10,6 @@
 // Change the size of the A->h and A->p hyperlist.
 // No change is made if A is not hypersparse.
 
-// OK: BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_hyper_realloc
@@ -27,7 +25,6 @@ GrB_Info GB_hyper_realloc
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-    ASSERT (GB_IS_ANY_SPARSITY (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;        // pattern not accessed
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

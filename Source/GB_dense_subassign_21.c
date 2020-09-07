@@ -8,9 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C(:,:) = x where C is a matrix and x is a scalar
-// FULL: C is created as a full matrix.
-
-// OK: BITMAP
+// C can have any sparsity on input; it is recreated as a full matrix.
 
 #include "GB_dense.h"
 #include "GB_select.h"
@@ -37,7 +35,6 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
-    ASSERT (GB_IS_ANY_SPARSITY (C)) ;
     ASSERT_TYPE_OK (atype, "atype for C(:,:)=x", GB0) ;
 
     //--------------------------------------------------------------------------
