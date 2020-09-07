@@ -16,10 +16,9 @@
 // typecast B(i,j) but not C(i,j).  The case for typecasting of C is handled by
 // Method 04.
 
-// FULL TODO:BITMAP if C sparse, convert to full (or bitmap?)
-
 // The caller passes in the second matrix as A, but it is called B here to
-// match its use as the 2nd input to the binary accum operator.
+// match its use as the 2nd input to the binary accum operator.  B can have
+// any sparsity structure.
 
 #include "GB_dense.h"
 #include "GB_binop.h"
@@ -47,7 +46,6 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (B)) ;
     ASSERT (!GB_aliased (C, B)) ;   // NO ALIAS of C==A (A is called B here)
 
     //--------------------------------------------------------------------------
@@ -104,11 +102,10 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (GB_is_dense (B))
+    if (GB_is_packed (B))
     { 
-        // both C and B are dense; no need to construct tasks
-        // TODO: bitmap can use this too
-        GBURBLE ("(Z dense) ") ;
+        // C is dense and B is either dense or bitmap
+        GBURBLE ("(Z packed) ") ;
         ntasks = 0 ;   // unused
     }
     else

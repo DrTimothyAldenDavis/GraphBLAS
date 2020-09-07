@@ -77,9 +77,6 @@ GrB_Info GB_dense_subassign_06d
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_dense = GB_is_dense (A) && !(A->jumbled) ;
 
-    if (C_is_bitmap) GBURBLE ("(C bitmap) ") ;
-    if (A_is_bitmap) GBURBLE ("(Z bitmap) ") ;
-
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
     //--------------------------------------------------------------------------

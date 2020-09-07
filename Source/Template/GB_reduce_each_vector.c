@@ -74,8 +74,8 @@
 
             GB_GET_J ;
             int64_t pA_start, pA_end ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, NULL, tid, k,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
+            GB_get_pA (&pA_start, &pA_end, tid, k,
+                kfirst, klast, pstart_slice, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // reduce Ax [pA_start ... pA_end-1] to a scalar, if non-empty

@@ -62,8 +62,8 @@
 
             int64_t j = GBH (Ah, k) ;
             int64_t pA_start, pA_end ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, NULL, tid, k,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
+            GB_get_pA (&pA_start, &pA_end, tid, k,
+                kfirst, klast, pstart_slice, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // C(:,j) = A(:,j)*D(j,j)

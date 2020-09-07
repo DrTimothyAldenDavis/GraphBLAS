@@ -226,8 +226,8 @@
 
                 int64_t j = GBH (Ah, k) ;
                 int64_t pA_start, pA_end ;
-                GB_get_pA_and_pC (&pA_start, &pA_end, NULL, taskid, k,
-                    kfirst, klast, pstart_slice, NULL, NULL, 0, Ap, avlen) ;
+                GB_get_pA (&pA_start, &pA_end, taskid, k,
+                    kfirst, klast, pstart_slice, Ap, avlen) ;
 
                 // pC points to the start of C(:,j) if C is dense
                 int64_t pC = j * cvlen ;

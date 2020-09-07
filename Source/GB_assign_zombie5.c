@@ -141,8 +141,8 @@ GrB_Info GB_assign_zombie5
             // j_outside is true if column j is outside the C(I,J) submatrix
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
             int64_t pC_start, pC_end ;
-            GB_get_pA_and_pC (&pC_start, &pC_end, NULL, tid, k,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Cp, zvlen) ;
+            GB_get_pA (&pC_start, &pC_end, tid, k,
+                kfirst, klast, pstart_slice, Cp, zvlen) ;
 
             //------------------------------------------------------------------
             // get M(:,j)

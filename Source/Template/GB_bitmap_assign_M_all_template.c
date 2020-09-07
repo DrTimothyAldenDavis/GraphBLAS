@@ -34,8 +34,8 @@
 
             int64_t jM = GBH (Mh, k) ;
             int64_t pM_start, pM_end ;
-            GB_get_pA_and_pC (&pM_start, &pM_end, NULL, tid, k, kfirst,
-                klast, pstart_Mslice, NULL, NULL, 0, Mp, mvlen) ;
+            GB_get_pA (&pM_start, &pM_end, tid, k, kfirst,
+                klast, pstart_Mslice, Mp, mvlen) ;
 
             //------------------------------------------------------------------
             // traverse over M(:,jM), the kth vector of M

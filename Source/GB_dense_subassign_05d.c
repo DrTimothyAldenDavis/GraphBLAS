@@ -16,6 +16,8 @@
 // A:           scalar
 // S:           none
 
+// C can have any sparsity structure, but it must be
+
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
 #include "GB_unused.h"
@@ -46,8 +48,7 @@ GrB_Info GB_dense_subassign_05d
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
+    ASSERT (GB_is_dense (C)) ;
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------

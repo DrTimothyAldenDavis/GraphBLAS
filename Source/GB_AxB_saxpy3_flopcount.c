@@ -247,8 +247,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
             //------------------------------------------------------------------
 
             int64_t pB, pB_end ;
-            GB_get_pA_and_pC (&pB, &pB_end, NULL, taskid, kk,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Bp, bvlen) ;
+            GB_get_pA (&pB, &pB_end, taskid, kk,
+                kfirst, klast, pstart_slice, Bp, bvlen) ;
             int64_t my_bjnz = pB_end - pB ;
             int64_t j = GBH (Bh, kk) ;
 

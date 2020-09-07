@@ -213,6 +213,7 @@ static inline bool GB_is_dense
     // check if A is competely dense:  all entries present.
     // zombies, pending tuples, and jumbled status are not considered.
     // A can have any sparsity structure: hyper, sparse, bitmap, or full.
+    // It can be converted to full.
     if (A == NULL)
     {
         return (false) ;

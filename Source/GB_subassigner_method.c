@@ -394,6 +394,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             { 
                 // Method 05d: C(:,:)<M> = scalar ; no S; C is dense or full;
                 // C becomes full.
+                // TODO:BITMAP allow C to be bitmap (GB_is_dense (C) must hold)
                 subassign_method = GB_SUBASSIGN_METHOD_05d ;
             }
             else
@@ -656,6 +657,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
             // M does not appear
         case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
+        case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
         case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
         case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
         case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
@@ -667,11 +669,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            break ;
-
-        case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
-            GB_USE_BITMAP_IF (C_is_bitmap) ;
-            GB_USE_BITMAP_IF (M_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct> = scalar
@@ -700,9 +697,12 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             break ;
 
         case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
-        case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
+            break ;
+
+        case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
+            GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense

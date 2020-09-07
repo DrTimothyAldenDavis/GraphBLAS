@@ -16,6 +16,7 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
 
     const int64_t *GB_RESTRICT Mp = M->p ;
+    const int8_t  *GB_RESTRICT Mb = M->b ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
@@ -51,8 +52,8 @@
 
             int64_t j = GBH (Mh, k) ;
             int64_t pM_start, pM_end ;
-            GB_get_pA_and_pC (&pM_start, &pM_end, NULL, taskid, k,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Mp, mvlen) ;
+            GB_get_pA (&pM_start, &pM_end, taskid, k,
+                kfirst, klast, pstart_slice, Mp, mvlen) ;
 
             // pC points to the start of C(:,j) if C is dense
             int64_t pC = j * cvlen ;
@@ -61,7 +62,7 @@
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-            if (Mx == NULL)
+            if (Mx == NULL && Mb == NULL)
             {
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -75,7 +76,7 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GBB (Mb, pM) && GB_mcast (Mx, pM, msize))
                     { 
                         int64_t p = pC + GBI (Mi, pM, mvlen) ;
                         GB_COPY_SCALAR_TO_C (p, cwork) ;    // Cx [p] = scalar

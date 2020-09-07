@@ -52,8 +52,8 @@
 
             int64_t j = GBH (Mh, k) ;
             int64_t pM_start, pM_end ;
-            GB_get_pA_and_pC (&pM_start, &pM_end, NULL, taskid, k,
-                kfirst, klast, pstart_slice, NULL, NULL, 0, Mp, mvlen) ;
+            GB_get_pA (&pM_start, &pM_end, taskid, k,
+                kfirst, klast, pstart_slice, Mp, mvlen) ;
 
             // pA points to the start of A(:,j) since A is dense
             int64_t pA = j * avlen ;

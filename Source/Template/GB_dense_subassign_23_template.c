@@ -21,8 +21,27 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
+    const int64_t cnz = GB_NNZ_HELD (C) ;
 
-    if (kfirst_slice == NULL)
+    if (GB_IS_BITMAP (B))
+    {
+
+        //----------------------------------------------------------------------
+        // C += B when C is dense and B is bitmap
+        //----------------------------------------------------------------------
+
+        const int8_t *GB_RESTRICT Bb = B->b ;
+        int64_t p ;
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < cnz ; p++)
+        { 
+            if (!Bb [p]) continue ;
+            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
+        }
+
+    }
+    else if (kfirst_slice == NULL)
     {
 
         //----------------------------------------------------------------------
@@ -30,7 +49,6 @@
         //----------------------------------------------------------------------
 
         ASSERT (GB_is_dense (B)) ;
-        const int64_t cnz = GB_NNZ (C) ;
 
         #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
@@ -106,8 +124,8 @@
 
                 int64_t j = GBH (Bh, k) ;
                 int64_t my_pB_start, my_pB_end ;
-                GB_get_pA_and_pC (&my_pB_start, &my_pB_end, NULL, taskid, k,
-                    kfirst, klast, pstart_slice, NULL, NULL, 0, Bp, bvlen) ;
+                GB_get_pA (&my_pB_start, &my_pB_end, taskid, k,
+                    kfirst, klast, pstart_slice, Bp, bvlen) ;
 
                 int64_t pB_start = GBP (Bp, k, bvlen) ;
                 int64_t pB_end   = GBP (Bp, k+1, bvlen) ;
