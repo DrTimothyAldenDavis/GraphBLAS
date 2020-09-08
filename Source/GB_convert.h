@@ -211,6 +211,30 @@ static inline bool GB_is_dense
     // check if A is competely dense:  all entries present.
     // zombies, pending tuples, and jumbled status are not considered.
     // A can have any sparsity structure: hyper, sparse, bitmap, or full.
+    // It can be converted to full, if zombies/tuples/jumbled are discarded.
+    if (A == NULL)
+    {
+        return (false) ;
+    }
+    if (GB_IS_FULL (A))
+    { 
+        // A is full; the pattern is not present
+        return (true) ;
+    }
+    // A is sparse, hyper, or bitmap: check if all entries present
+    GrB_Index anzmax ;
+    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
+    return (ok && (anzmax == GB_NNZ (A))) ;
+}
+
+static inline bool GB_as_if_full
+(
+    const GrB_Matrix A
+)
+{
+    // check if A is competely dense:  all entries present.
+    // zombies, pending tuples, and jumbled status are checked.
+    // A can have any sparsity structure: hyper, sparse, bitmap, or full.
     // It can be converted to full.
     if (A == NULL)
     {
@@ -221,7 +245,12 @@ static inline bool GB_is_dense
         // A is full; the pattern is not present
         return (true) ;
     }
-    // A is sparse: check if all entries present
+    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
+    {
+        // A has pending work and so cannot be treated as if full.
+        return (false) ;
+    }
+    // A is sparse, hyper, or bitmap: check if all entries present
     GrB_Index anzmax ;
     bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
     return (ok && (anzmax == GB_NNZ (A))) ;

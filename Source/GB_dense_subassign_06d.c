@@ -24,6 +24,9 @@
 // change), and these cases can all be treated the same (as if full).  If C is
 // bitmap, new entries can be inserted into the bitmap C->b.
 
+// TODO:BITMAP the caller checks GB_as_if_full (C), which is more restrictive
+// than what this function tolerates (GB_is_packed (C)).
+
 // C and A can have any sparsity structure.
 
 #include "GB_subassign_methods.h"
@@ -71,7 +74,7 @@ GrB_Info GB_dense_subassign_06d
     const GB_Type_code ccode = C->type->code ;
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_dense = GB_is_dense (A) && !(A->jumbled) ;
+    const bool A_is_dense = GB_as_if_full (A) ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased

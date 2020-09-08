@@ -17,7 +17,11 @@
 // A:           matrix
 // S:           none
 
-// M may be jumbled.  If so, C is constructed as jumbled.
+// C, M, and A can have any sparsity structure, even bitmap.  M may be jumbled.
+// If so, C is constructed as jumbled.  C is reconstructed with the same
+// structure as M and can have any sparsity structure on input.  The only
+// constraint is nnz(C) is zero on input.  A must be dense with no pending
+// work.
 
 #include "GB_subassign_methods.h"
 #include "GB_dense.h"
@@ -46,9 +50,6 @@ GrB_Info GB_dense_subassign_25
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
@@ -69,9 +70,7 @@ GrB_Info GB_dense_subassign_25
     ASSERT (!GB_PENDING (M)) ;
 
     ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (GB_as_if_full (A)) ;
 
     const GB_Type_code ccode = C->type->code ;
 

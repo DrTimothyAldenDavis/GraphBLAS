@@ -24,7 +24,7 @@
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     const int64_t avlen = A->vlen ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_dense = GB_is_dense (A) && !(A->jumbled) ;
+    const bool A_is_dense = GB_as_if_full (A) ;
     const int64_t anz = GB_NNZ_HELD (A) ;
 
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
