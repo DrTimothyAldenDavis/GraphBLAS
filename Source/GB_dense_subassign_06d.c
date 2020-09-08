@@ -24,8 +24,8 @@
 // change), and these cases can all be treated the same (as if full).  If C is
 // bitmap, new entries can be inserted into the bitmap C->b.
 
-// TODO:BITMAP the caller checks GB_as_if_full (C), which is more restrictive
-// than what this function tolerates (GB_is_packed (C)).
+// TODO the caller checks GB_as_if_full (C), which is more restrictive than
+// what this function tolerates (GB_is_packed (C)).
 
 // C and A can have any sparsity structure.
 

@@ -66,8 +66,6 @@ void GB_slice_vector
     //--------------------------------------------------------------------------
 
     ASSERT (p_pA != NULL && p_pB != NULL) ;
-    // TODO:BITMAP
-    // if M, A, B bitmap: Mi, Ai, Bi are NULL.  I think this is OK...
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task
@@ -110,7 +108,8 @@ void GB_slice_vector
         }
         else if (aknz == vlen)
         { 
-            // A(:,kA) is dense; no need for a binary search
+            // A(:,kA) is dense (bitmap, full, or all entries present)
+            // no need for a binary search
             pA = pA_start + i ;
             ASSERT (GBI (Ai, pA, vlen) == i) ;
         }
@@ -154,7 +153,8 @@ void GB_slice_vector
         }
         else if (bknz == vlen)
         { 
-            // B(:,kB) is dense; no need for a binary search
+            // B(:,kB) is dense (bitmap, full, or all entries present)
+            // no need for a binary search
             pB = pB_start + i ;
             ASSERT (GBI (Bi, pB, vlen) == i) ;
         }
@@ -244,7 +244,8 @@ void GB_slice_vector
     }
     else if (mknz == vlen)
     { 
-        // M(:,kM) is dense; no need for a binary search
+        // M(:,kM) is dense (bitmap, full, or all entries present)
+        // no need for a binary search
         pM = pM_start + i ;
         ASSERT (GBI (Mi, pM, vlen) == i) ;
     }

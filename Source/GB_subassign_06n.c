@@ -24,8 +24,8 @@
 // is dense it remains dense, even if A is sparse.   If that change is made,
 // this kernel can start with converting C to sparse if A is sparse.
 
-// C and A are not bitmap: use GB_bitmap_assign instead.
-// M is not bitmap: 06s is used instead, if M is bitmap.
+// C is not bitmap: GB_bitmap_assign is used if C is bitmap.
+// M and A are not bitmap: 06s is used instead, if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
 
@@ -54,7 +54,7 @@ GrB_Info GB_subassign_06n
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 06n is not used for M bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 06n is not used for A bitmap
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 

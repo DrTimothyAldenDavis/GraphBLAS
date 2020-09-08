@@ -17,9 +17,11 @@
 // not user-callable.  Shallow matrices are never passed back to the user.
 
 // Compare this function with GB_shallow_op.c
+// A has any sparsity structure (hypersparse, sparse, bitmap, or full)
 
 #include "GB_transpose.h"
 
+GB_PUBLIC                   // used by GraphBLAS MATLAB interface
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
     GrB_Matrix *Chandle,    // output matrix C
@@ -39,19 +41,17 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // construct a shallow copy of A for the pattern of C
     //--------------------------------------------------------------------------
 
-    // allocate the struct for C, but do not allocate C->h, C->p, C->i, or C->x.
-    // C has the exact same hypersparsity as A.
+    // allocate the struct for C, but do not allocate C->[p,h,b,i,x].
+    // C has the exact same sparsity structure as A.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
-    int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int sparsity = GB_sparsity (C) ;
     info = GB_new (&C, // sparse or hyper, new header
         A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         sparsity, A->hyper_switch, 0, Context) ;
@@ -65,17 +65,18 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // make a shallow copy of the vector pointers
     //--------------------------------------------------------------------------
 
-    ASSERT (C->magic == GB_MAGIC2) ;   // [ be careful; C not yet initialized
-    C->p_shallow = true ;           // C->p not freed when freeing C
-    C->h_shallow = true ;           // C->h not freed when freeing C
-    C->p = A->p ;                   // C->p is of size A->plen + 1
-    C->h = A->h ;                   // C->h is of size A->plen
-    C->plen = A->plen ;             // C and A have the same hyperlist sizes
+    ASSERT (C->magic == GB_MAGIC2) ;    // C not yet initialized
+    C->p_shallow = (A->p != NULL) ;     // C->p not freed when freeing C
+    C->h_shallow = (A->h != NULL) ;     // C->h not freed when freeing C
+    C->p = A->p ;                       // C->p is of size A->plen + 1
+    C->h = A->h ;                       // C->h is of size A->plen
+    C->plen = A->plen ;                 // C and A have the same hyperlist size
     C->nvec = A->nvec ;
+    C->jumbled = A->jumbled ;
     ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
             A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    C->magic = GB_MAGIC ;           // C is now initialized ]
+    C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // check for empty matrix
@@ -85,8 +86,10 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     { 
         // C->p and C->h are shallow but the rest is empty
         C->nzmax = 0 ;
+        C->b = NULL ;
         C->i = NULL ;
         C->x = NULL ;
+        C->b_shallow = false ;
         C->i_shallow = false ;
         C->x_shallow = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
@@ -98,8 +101,12 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // make a shallow copy of the pattern
     //--------------------------------------------------------------------------
 
-    C->i = A->i ;               // of size A->nzmax
-    C->i_shallow = true ;       // C->i will not be freed when freeing C
+    C->b = A->b ;                   // of size A->nzmax
+    C->b_shallow = (A->b != NULL) ; // C->b will not be freed when freeing C
+    C->nvals = A->nvals ;
+
+    C->i = A->i ;                   // of size A->nzmax
+    C->i_shallow = (A->i != NULL) ; // C->i will not be freed when freeing C
 
     //--------------------------------------------------------------------------
     // make a shallow copy of the values
@@ -107,7 +114,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 
     C->nzmax = A->nzmax ;
     C->x = A->x ;
-    C->x_shallow = true ;       // C->x will not be freed when freeing C
+    C->x_shallow = (A->x != NULL) ; // C->x will not be freed when freeing C
     ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;

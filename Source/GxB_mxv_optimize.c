@@ -38,7 +38,6 @@ GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
     GB_WHERE (C, "GxB_mxv_optimize (C, ncols, desc)") ;
     GB_BURBLE_START ("GxB_mxv_optimize") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
 
     // get the use_mkl flag from the descriptor
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
@@ -50,7 +49,7 @@ GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
     // optimize the matrix for mkl_graph_mxv in MKL
     //--------------------------------------------------------------------------
 
-    if (use_mkl)
+    if (use_mkl && !GB_IS_BITMAP (C))
     {
 
         //----------------------------------------------------------------------

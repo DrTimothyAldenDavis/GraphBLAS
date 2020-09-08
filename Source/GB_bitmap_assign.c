@@ -10,6 +10,9 @@
 // Implements GrB_Row_assign, GrB_Col_assign, GrB_assign, GxB_subassign when C
 // is in bitmap form, or when C is converted into bitmap form.
 
+// TODO: add special cases when Ikind and Jkind are both GB_ALL,
+// for assign and subassign (not row/col assign).
+
 #include "GB_bitmap_assign_methods.h"
 #include "GB_dense.h"
 

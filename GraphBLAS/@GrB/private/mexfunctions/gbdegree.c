@@ -19,8 +19,6 @@
 //                          col degree if X is held by row,
 //                          row degree if X is held by col.
 
-// TODO: X bitmap or full
-
 #include "gb_matlab.h"
 
 #define USAGE "usage: degree = gbdegree (X, dim)"
@@ -45,6 +43,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix Z = NULL ;
     GxB_Format_Value fmt ;
     OK (GxB_Matrix_Option_get (X, GxB_FORMAT, &fmt)) ;
 
@@ -66,6 +65,23 @@ void mexFunction
     else
     { 
         native = (mxGetScalar (pargin [1]) != 0) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // if X is bitmap: create a copy of X and convert it to sparse
+    //--------------------------------------------------------------------------
+
+    int sparsity ;
+    OK (GxB_Matrix_Option_get (X, GxB_SPARSITY, &sparsity)) ;
+    if (sparsity == GxB_BITMAP)
+    { 
+        // Z = deep copy of the shallow matrix X
+        OK (GrB_Matrix_dup (&Z, X)) ;
+        // convert Z to sparse
+        OK (GxB_Matrix_Option_set (Z, GxB_SPARSITY, GxB_SPARSE)) ;
+        // free the shallow X and replace it with Z
+        OK (GrB_Matrix_free (&X)) ;
+        X = Z ;
     }
 
     //--------------------------------------------------------------------------

@@ -339,7 +339,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 )
 {
     ASSERT_MATRIX_OK (A, "A for matlab helper9", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: method not used for A bitmap
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
 
     int64_t anvec = A->nvec ;

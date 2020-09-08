@@ -170,8 +170,9 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             else
             {
                 // Method 06n (no S) or Method 06s (with S):
-                // Method 06n is not used if M is bitmap.
-                S_Extraction = (GB_NNZ (A) < GB_NNZ (M)) || M_is_bitmap ;
+                // Method 06n is not used if M or A are bitmap.
+                S_Extraction = (GB_NNZ (A) < GB_NNZ (M))
+                    || M_is_bitmap || A_is_bitmap ;
             }
         }
     }
@@ -451,7 +452,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else if (!S_Extraction)
         { 
             // Method 06n: C(I,J)<M> = A ; no S
-            // If M is bitmap, this method is not used; 06s is used instead.
+            // If M or A are bitmap, this method is not used;
+            // 06s is used instead.
             subassign_method = GB_SUBASSIGN_METHOD_06n ;
         }
         else
@@ -708,11 +710,10 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             break ;
 
         case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
-            // If M is bitmap, Method 06s is used instead of 06n, so Method 06n
-            // does not need to consider the case when M is bitmap.
+            // If M or A are bitmap, Method 06s is used instead of 06n.
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             ASSERT (!M_is_bitmap) ;
-            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
+            ASSERT (!A_is_bitmap) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
