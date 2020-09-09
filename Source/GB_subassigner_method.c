@@ -689,8 +689,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            // these methods all use GB_SUBASSIGN_TWO_SLICE (A, S):
-            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
@@ -698,8 +696,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
-            // these methods all use GB_SUBASSIGN_TWO_SLICE (A, S):
-            GB_USE_BITMAP_IF (A_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense

@@ -64,9 +64,6 @@ GrB_Info GB_subassign_03
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
     GB_GET_S ;
-    const int64_t *GB_RESTRICT Sh = S->h ;
-    const int64_t Snvec = S->nvec ;
-    const bool S_is_hyper = (Sh != NULL) ;
     GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
@@ -90,7 +87,6 @@ GrB_Info GB_subassign_03
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
     for (taskid = 0 ; taskid < ntasks ; taskid++)

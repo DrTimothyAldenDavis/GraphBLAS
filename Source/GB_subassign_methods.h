@@ -45,7 +45,7 @@
 
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
-    int ntasks = 0, max_ntasks = 0, nthreads ;                              \
+    int taskid, ntasks = 0, max_ntasks = 0, nthreads ;                      \
     GB_task_struct *TaskList = NULL ;                                       \
     int64_t *GB_RESTRICT Npending = NULL ;                                  \
     int64_t *GB_RESTRICT Zh = NULL ;                                        \
@@ -122,7 +122,8 @@
     const int64_t *Ai = A->i ;                                              \
     const GB_void *Ax = (GB_void *) A->x ;                                  \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
-    const int64_t Avlen = A->vlen ;
+    const int64_t Avlen = A->vlen ;                                         \
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -156,9 +157,12 @@
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
     const int64_t *GB_RESTRICT Sp = S->p ;                                  \
+    const int64_t *GB_RESTRICT Sh = S->h ;                                  \
     const int64_t *GB_RESTRICT Si = S->i ;                                  \
     const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;                      \
-    const int64_t Svlen = S->vlen ;
+    const int64_t Svlen = S->vlen ;                                         \
+    const int64_t Snvec = S->nvec ;                                         \
+    const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;
 
 //------------------------------------------------------------------------------
 // basic actions
@@ -1538,9 +1542,8 @@ GrB_Info GB_subassign_19
 // either A or M.  No need to examine C, since it will be accessed via S, not
 // via binary search.
 
-// TODO:BITMAP for GB_SUBASSIGN_TWO_SLICE:  if X is bitmap, then do not use
-// this method.  Instead, use GB_SUBASSIGN_IXJ_SLICE and an iteration
-// like Method 01.
+// If X is bitmap, this method is not used.  Instead, GB_SUBASSIGN_IXJ_SLICE is
+// used to iterate over the matrix X.
 
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     int64_t Znvec ;                                                         \

@@ -95,7 +95,6 @@ GrB_Info GB_subassign_09
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
@@ -179,7 +178,7 @@ GrB_Info GB_subassign_09
                 }
             }
 
-            // while list S (:,j) has entries.  List M (:,j) exhausted
+            // while list S (:,j) has entries.  List M (:,j) exhausted.
             while (pS < pS_end)
             { 
                 // S (i,j) is present but M (i,j) is not
@@ -191,7 +190,7 @@ GrB_Info GB_subassign_09
                 GB_NEXT (S) ;
             }
 
-            // while list M (:,j) has entries.  List S (:,j) exhausted
+            // while list M (:,j) has entries.  List S (:,j) exhausted.
             while (pM < pM_end)
             {
                 // S (i,j) is not present, M (i,j) is present
@@ -278,7 +277,7 @@ GrB_Info GB_subassign_09
                 }
             }
 
-            // while list M (:,j) has entries.  List S (:,j) exhausted
+            // while list M (:,j) has entries.  List S (:,j) exhausted.
             while (pM < pM_end)
             {
                 // S (i,j) is not present, M (i,j) is present

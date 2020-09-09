@@ -150,7 +150,7 @@ GrB_Info GB_subassign_emult_slice
     // searches.  The total work for all the binary searches will likely be
     // small.  So do the work with a single thread.
 
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
