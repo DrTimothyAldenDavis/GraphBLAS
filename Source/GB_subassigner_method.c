@@ -663,17 +663,12 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             // C and M can have any sparsity pattern, including bitmap
             break ;
 
+        case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
+        case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
         case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
         case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            break ;
-
-        case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
-            GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
-            // these methods all use GB_SUBASSIGN_TWO_SLICE (M, S):
-            GB_USE_BITMAP_IF (M_is_bitmap) ;    // TODO:BITMAP
             break ;
 
         //----------------------------------------------------------------------
