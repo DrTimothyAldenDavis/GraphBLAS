@@ -361,18 +361,28 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // TODO:BITMAP doesn't work here yet, and even when it does, the
-            // work could be done more efficiently by GB_subassign above. 
+            bool apply_mask ;
+            int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, C, T) ;
 
-            // use the mask if present, not complemented, and very sparse
             GrB_Matrix M1 = NULL ;
-            if (M != NULL && !Mask_comp && GB_MASK_VERY_SPARSE (M, C, T))
+            if (apply_mask)
             {
-                M1 = M ;
+                if (C_sparsity == GxB_BITMAP || C_sparsity == GxB_FULL)
+                {
+                    // always apply the mask in GB_add if C is bitmap or full
+                    M1 = M ;
+                }
+                else if (!Mask_comp /* && GB_MASK_VERY_SPARSE (M, C, T) */ )
+                {
+                    // if C is sparse or hypersparse, apply the mask
+                    // not complemented and very sparse
+                    M1 = M ;
+                }
             }
 
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, C, T,
-                accum, Context)) ;
+            bool mask_applied ;
+            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, Mask_comp,
+                &mask_applied, C, T, accum, Context)) ;
             GB_Matrix_free (Thandle) ;
         }
 
@@ -385,11 +395,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         //----------------------------------------------------------------------
         // apply the mask (C<M> = Z)
         //----------------------------------------------------------------------
-
-        // TODO:BITMAP can call GB_mask with bitmap C and/or Z when M is NULL,
-        // or (in the future) if C and Z are not bitmap but M is bitmap.
-        // Otherwise, if any matrix is bitmap, GB_subassign would be faster
-        // than GB_mask.
 
         // see GB_spec_mask.m for a description of this step.
 

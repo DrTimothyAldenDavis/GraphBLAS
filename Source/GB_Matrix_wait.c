@@ -296,6 +296,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // anz1 = nnz (A1) = nnz (A (:, kA:end)), the region modified by T
     anz0 = A->p [kA] ;                  // ok: A is sparse
     int64_t anz1 = anz - anz0 ;
+    bool ignore ;
 
     // A + T will have anz_new entries
     int64_t anz_new = anz + GB_NNZ (T) ;  // must have at least this space
@@ -380,11 +381,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             ASSERT_MATRIX_OK (A1, "A1 slice for GB_Matrix_wait", GB0) ;
 
             //------------------------------------------------------------------
-            // S = A1 + T, with no operator
+            // S = A1 + T, with no operator or mask
             //------------------------------------------------------------------
 
-            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, A1, T, NULL,
-                Context)) ;
+            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore,
+                A1, T, NULL, Context)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
@@ -467,7 +468,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, A, T, NULL, Context)) ;
+        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
+            Context)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;

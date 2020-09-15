@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add_phase2 computes C=A+B or C<M>=A+B.  It is preceded first
+// GB_add_phase2 computes C=A+B, C<M>=A+B, or C<!M>A+B.  It is preceded first
 // by GB_add_phase0, which computes the list of vectors of C to compute (Ch)
 // and their location in A and B (C_to_[AB]).  Next, GB_add_phase1 counts the
 // entries in each vector C(:,j) and computes Cp.
@@ -17,21 +17,39 @@
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
 // GB_add_phase0.  The mask can be either: not present, or present and
-// not complemented.  The complemented mask is not handled here.
+// not complemented.  The complemented mask is handled in most cases,
+// except when C, M, A, and B are all sparse or hypersparse.
 
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
 // op may be NULL.  In this case, the intersection of A and B must be empty.
 // This is used by GB_Matrix_wait only, for merging the pending tuple matrix T
-// into A.
+// into A.  In this case, C is always sparse or hypersparse, not bitmap or
+// full.
 
 #include "GB_add.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
+#include "GB_ek_slice.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif
+
+#undef  GB_FREE_WORK
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
+    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
+}
+
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL         \
+{                           \
+    GB_FREE_WORK ;          \
+    GB_Matrix_free (&C) ;   \
+}
 
 GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 (
@@ -43,9 +61,9 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int64_t *GB_RESTRICT Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase0b:
-    const GB_task_struct *GB_RESTRICT TaskList,  // array of structs
-    const int ntasks,                         // # of tasks
-    const int nthreads,                       // # of threads to use
+    const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
+    const int ntasks,                           // # of tasks
+    const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
@@ -53,9 +71,11 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
+    const int C_sparsity,
     // original input:
-    const GrB_Matrix M,             // optional mask, may be NULL
-    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_struct,     // if true, use the only structure of M
+    const bool Mask_comp,       // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -66,7 +86,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Cp != NULL) ;
     ASSERT_BINARYOP_OK_OR_NULL (op, "op for add phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
     ASSERT_MATRIX_OK (B, "B for add phase2", GB0) ;
@@ -77,13 +96,25 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+    int A_nthreads, A_ntasks, B_nthreads, B_ntasks, M_nthreads, M_ntasks ;
+    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
+    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
+    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
     //--------------------------------------------------------------------------
+
+    bool C_is_hyper = (C_sparsity == GxB_HYPERSPARSE) ;
+    bool C_is_sparse_or_hyper = (C_sparsity == GxB_SPARSE) || C_is_hyper ;
+    ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
+    ASSERT (C_is_hyper == (Ch != NULL)) ;
 
     GB_Opcode opcode = (op == NULL) ? GB_ignore_code : op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
@@ -99,6 +130,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
         ASSERT (ctype == A->type) ;
         ASSERT (ctype == B->type) ;
         ASSERT (M == NULL) ;
+        ASSERT (C_is_sparse_or_hyper) ;
     }
     else
     { 
@@ -112,24 +144,21 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     }
 
     //--------------------------------------------------------------------------
-    // allocate the output matrix C
+    // allocate the output matrix C: hypersparse, sparse, bitmap, or full
     //--------------------------------------------------------------------------
-
-    int64_t cnz = Cp [Cnvec] ;      // ok: C is sparse
-    (*Chandle) = NULL ;
 
     // C is hypersparse if both A and B are (contrast with GrB_Matrix_emult),
     // or if M is present, not complemented, and hypersparse.
     // C acquires the same hyperatio as A.
 
-    bool C_is_hyper = (Ch != NULL) ;
+    int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : (A->vlen*A->vdim) ;
+    (*Chandle) = NULL ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Matrix C = NULL ;
-    int sparsity = (C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        C_sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -139,7 +168,11 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     }
 
     // add Cp as the vector pointers for C, from GB_add_phase1
-    C->p = (int64_t *) Cp ;
+    if (C_is_sparse_or_hyper)
+    {
+        C->nvec_nonempty = Cnvec_nonempty ;
+        C->p = (int64_t *) Cp ;
+    }
 
     // add Ch as the hypersparse list for C, from GB_add_phase0
     if (C_is_hyper)
@@ -149,8 +182,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     }
 
     // now Cp and Ch have been transplanted into C, so they must not be freed.
-
-    C->nvec_nonempty = Cnvec_nonempty ;
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;
 
@@ -181,12 +212,13 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
         #define GB_AaddB(mult,xname) GB_AaddB_ ## mult ## xname
 
-        #define GB_BINOP_WORKER(mult,xname)                                  \
-        {                                                                    \
-            info = GB_AaddB(mult,xname) (C, M, Mask_struct, A, B, Ch_is_Mh,  \
-                C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;        \
-            done = (info != GrB_NO_VALUE) ;                                  \
-        }                                                                    \
+        #define GB_BINOP_WORKER(mult,xname)                                 \
+        {                                                                   \
+            info = GB_AaddB(mult,xname) (C, M, Mask_struct, Mask_comp,      \
+                A, B, Ch_is_Mh, C_to_M, C_to_A, C_to_B,                     \
+                TaskList, ntasks, nthreads) ;                               \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
         break ;
 
         //----------------------------------------------------------------------
@@ -205,7 +237,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     #endif
 
     //--------------------------------------------------------------------------
-    // generic worker
+    // generic worker for positional ops, user-defined ops, and typecasting
     //--------------------------------------------------------------------------
 
     if (!done)
@@ -396,19 +428,14 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    info = GB_hypermatrix_prune (C, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_Matrix_free (&C) ;
-        return (info) ;
-    }
+    GB_OK (GB_hypermatrix_prune (C, Context)) ;
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
+    GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for add phase2", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;

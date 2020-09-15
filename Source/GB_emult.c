@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult: C = A.*B or C<M>=A.*B
+// GB_emult: C = A.*B,or C<M>=A.*B, or C<!M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,11 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult, does C=A.*B or C<M>=A.*B, using the given operator element-wise on
-// the matrices A and B.  The result is typecasted as needed.  The pattern of C
-// is the intersection of the pattern of A and B, intersection with the mask M,
-// if present and not complemented.  The complemented mask is not handled here,
-// but in GB_mask.
+// GB_emult, does C=A.*B, C<M>=A.*B, C<!M>=A.*B, using the given operator
+// element-wise on the matrices A and B.  The result is typecasted as needed.
+// The pattern of C is the intersection of the pattern of A and B, intersection
+// with the mask M or !M, if present.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
@@ -28,13 +27,15 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
+GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
+    const GrB_Matrix M,     // optional mask, unused if NULL
     const bool Mask_struct, // if true, use the only structure of M
+    const bool Mask_comp,   // if true, use the !M
+    bool *mask_applied,
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -49,6 +50,8 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     GBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
 
     ASSERT (Chandle != NULL) ;
+    GrB_Matrix C = NULL ;
+    (*Chandle) = NULL ;
 
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
@@ -77,8 +80,6 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     // initializations
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL ;
-    (*Chandle) = NULL ;
     int64_t Cnvec, Cnvec_nonempty ;
     int64_t *GB_RESTRICT Cp = NULL ;
     const int64_t *GB_RESTRICT Ch = NULL ;  // shallow; must not be freed

@@ -74,7 +74,9 @@ void mexFunction
     // simple_tic (tic2) ;
 
     // C = A+B using the op.  No mask
-    METHOD (GB_add (&C, A->type, true, NULL, false, A, B, op, Context)) ;
+    bool ignore ;
+    METHOD (GB_add (&C, A->type, true, NULL, false, false, &ignore, A, B, op,
+        Context)) ;
 
     // return C to MATLAB as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AplusB result", false) ;

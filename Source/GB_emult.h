@@ -18,6 +18,8 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
     const bool Mask_struct, // if true, use the only structure of M
+    const bool Mask_comp,   // if true, use the !M
+    bool *mask_applied,
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -85,6 +87,18 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
+) ;
+
+int GB_emult_sparsity       // return the sparsity structure for C
+(
+    // output:
+    bool *apply_mask,       // if true then mask will be applied by GB_emult
+    bool *use_add_instead,  // if true then use GB_add instead of GB_emult
+    // input:
+    const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_comp,   // if true, use !M
+    const GrB_Matrix A,     // input A matrix
+    const GrB_Matrix B      // input B matrix
 ) ;
 
 #endif

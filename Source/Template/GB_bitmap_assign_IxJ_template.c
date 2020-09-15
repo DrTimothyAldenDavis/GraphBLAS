@@ -24,7 +24,7 @@
     int ntasks = 0, max_ntasks = 0, nthreads ;
     GB_task_struct *TaskList = NULL ;
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
-        I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
+        /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */ Context));
 
     //--------------------------------------------------------------------------
     // iterate over all IxJ

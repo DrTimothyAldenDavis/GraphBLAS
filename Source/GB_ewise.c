@@ -63,11 +63,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     ASSERT_MATRIX_OK (A, "A for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_ewise", GB0) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     // T has the same type as the output z for z=op(a,b)
     GrB_BinaryOp op = op_in ;
     GrB_Type T_type = op->ztype ;
@@ -194,43 +189,18 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     // check the CSR/CSC format of M
     bool M_is_csc = (M == NULL) ? T_is_csc : M->is_csc ;
-    bool mask_applied = false ;
-    GrB_Matrix M1 = NULL ;
 
-    if (M != NULL && !Mask_comp)
-    {
-        // mask is present, not complemented; see if it is quick or easy to use.
-        // it may be a structural or valued mask.
-        bool mask_is_easy = (A_is_dense || (A == M))    // A is easy
-                         && (B_is_dense || (B == M)) ;  // and B is easy
-        bool mask_is_very_sparse = GB_MASK_VERY_SPARSE (M, A, B) ;
-        if (mask_is_easy || mask_is_very_sparse)
-        {
-            // the mask is present, not complemented, and very sparse or easy
-            // to exploit ; use it during GB_add and GB_emult to reduce memory
-            // and work.
-            M1 = M ;
-            if (T_is_csc != M_is_csc)
-            { 
-                GBURBLE ("(M transpose) ") ;
-                GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
-                    NULL, NULL, NULL, false, Context)) ;
-                M1 = MT ;
-            }
-            mask_applied = true ;
-            if (mask_is_easy)
-            { 
-                GBURBLE ("(mask is easy) ") ;
-            }
-            else // mask_is_very_sparse
-            { 
-                GBURBLE ("(mask applied) ") ;
-            }
-        }
-        else
-        { 
-            GBURBLE ("(mask later) ") ;
-        }
+    //--------------------------------------------------------------------------
+    // transpose M if needed
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix M1 = M ;
+    if (T_is_csc != M_is_csc)
+    { 
+        GBURBLE ("(M transpose) ") ;
+        GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
+            NULL, NULL, NULL, false, Context)) ;
+        M1 = MT ;
     }
 
     //--------------------------------------------------------------------------
@@ -289,6 +259,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && (op->xtype == A1->type)          // no typecasting of A
         && (op->ytype == B1->type) ;        // no typecasting of B
 
+    bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    bool any_bitmap = C_is_bitmap || M_is_bitmap || A_is_bitmap || B_is_bitmap ;
+
     #ifndef GBCOMPACT
 
         // FUTURE: for sssp12:
@@ -304,6 +280,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && no_typecast                      // no typecasting
         && (opcode < GB_USER_opcode)        // not a user-defined operator
         && (!op_is_positional)              // op is not positional
+        && !any_bitmap                      // TODO:BITMAP
         )
     {
 
@@ -347,18 +324,68 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     #endif
 
     //--------------------------------------------------------------------------
-    // T = A+B or A.*B, or with any mask M (does not handle complmented mask)
+    // T = A+B or A.*B, or with any mask M
     //--------------------------------------------------------------------------
+
+    bool mask_applied = false ;
 
     if (eWiseAdd)
     { 
-        GB_OK (GB_add (&T, T_type, T_is_csc, M1, Mask_struct, A1, B1, op,
-            Context)) ;
+
+        // TODO: do not have to exploit the mask here.  Only do so in
+        // GB_add if it's more efficient than exploiting it later.
+        // Could also pass in this condition:
+
+            // (accum == NULL) && (C->is_csc == T->is_csc)
+            // && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
+
+        // If that is true and the mask is applied, then T is transplanted as
+        // the final C and the mask is no longer needed.  In this case, it
+        // could be faster to exploit the mask duing GB_add.
+
+        GB_OK (GB_add (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+            &mask_applied, A1, B1, op, Context)) ;
     }
     else
     { 
-        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, A1, B1, op,
-            Context)) ;
+
+        ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
+        ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
+        ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+        ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+
+        // TODO: put this test in GB_emult, not here.
+
+        if (M != NULL && !Mask_comp)
+        {
+            // mask is present, not complemented; see if it is quick or easy to
+            // use.  it may be a structural or valued mask.
+            bool mask_is_easy = (A_is_dense || (A == M))    // A is easy
+                             && (B_is_dense || (B == M)) ;  // and B is easy
+            bool mask_is_very_sparse = GB_MASK_VERY_SPARSE (M, A, B) ;
+            if (mask_is_easy || mask_is_very_sparse)
+            {
+                // the mask is present, not complemented, and very sparse or
+                // easy to exploit ; use it during GB_add and GB_emult to
+                // reduce memory and work.
+                mask_applied = true ;
+            }
+            else
+            {
+                // do not apply the mask now
+                M1 = NULL ;
+                mask_applied = false ;
+            }
+        }
+        else
+        {
+            // do not apply the mask now
+            M1 = NULL ;
+            mask_applied = false ;
+        }
+
+        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct,
+            Mask_comp, &mask_applied, A1, B1, op, Context)) ;
     }
 
     //--------------------------------------------------------------------------

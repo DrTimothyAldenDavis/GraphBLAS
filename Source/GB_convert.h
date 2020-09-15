@@ -295,5 +295,27 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     GB_Context Context
 ) ;
 
+static inline char *GB_sparsity_char (int sparsity)
+{
+    switch (sparsity)
+    {
+        case GxB_HYPERSPARSE: return ("H") ;
+        case GxB_SPARSE:      return ("S") ;
+        case GxB_BITMAP:      return ("B") ;
+        case GxB_FULL:        return ("F") ;
+        default: ASSERT (0) ; return ("?") ;
+    }
+}
+
+static inline char *GB_sparsity_char_matrix (GrB_Matrix A)
+{
+    if (A == NULL)             return (".") ;
+    if (GB_IS_HYPERSPARSE (A)) return ("H") ;
+    if (GB_IS_SPARSE (A))      return ("S") ;
+    if (GB_IS_BITMAP (A))      return ("B") ;
+    if (GB_IS_FULL (A))        return ("F") ;
+    ASSERT (0) ;               return ("?") ;
+}
+
 #endif
 

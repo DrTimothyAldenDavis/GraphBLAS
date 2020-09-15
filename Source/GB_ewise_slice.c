@@ -12,6 +12,10 @@
 // C=op(A,B).  The mask is ignored for computing where to slice the work, but
 // it is sliced once the location has been found.
 
+// M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full) This
+// function should work if A or B are bitmap, but it is not needed in that
+// case.  C: constructed as sparse or hypersparse in the caller.
+
 #define GB_FREE_WORK    \
 {                       \
     GB_FREE (Coarse) ;  \
@@ -75,10 +79,6 @@ GrB_Info GB_ewise_slice
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ; 
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO
-
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;
@@ -141,13 +141,14 @@ GrB_Info GB_ewise_slice
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
+    bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     if (M != NULL)
     { 
         Mp = M->p ;
         Mi = M->i ;
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes
         // that Ch is a deep copy of M->h), or if Ch is a shallow copy of M->h.
-        Ch_is_Mh = Ch_is_Mh || (Ch != NULL && M->h != NULL && Ch == M->h) ;
+        Ch_is_Mh = Ch_is_Mh || (Ch != NULL && M_is_hyper && Ch == M->h) ;
     }
 
     //--------------------------------------------------------------------------
@@ -187,7 +188,7 @@ GrB_Info GB_ewise_slice
         if (C_to_A != NULL)
         { 
             // A is hypersparse and the C_to_A mapping has been created
-            ASSERT (A->h != NULL) ;
+            ASSERT (GB_IS_HYPERSPARSE (A)) ;
             kA = C_to_A [k] ;
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
@@ -198,13 +199,14 @@ GrB_Info GB_ewise_slice
         else if (Ch_is_Ah)
         { 
             // A is hypersparse, but Ch is a shallow copy of A->h
+            ASSERT (GB_IS_HYPERSPARSE (A)) ;
             kA = k ;
             ASSERT (j == A->h [kA]) ;
         }
         else
         { 
-            // A is sparse or full
-            ASSERT (A->h == NULL) ;
+            // A is sparse, bitmap, or full
+            ASSERT (!GB_IS_HYPERSPARSE (A)) ;
             kA = j ;
         }
 
@@ -216,7 +218,7 @@ GrB_Info GB_ewise_slice
         if (C_to_B != NULL)
         { 
             // B is hypersparse and the C_to_B mapping has been created
-            ASSERT (B->h != NULL) ;
+            ASSERT (GB_IS_HYPERSPARSE (B)) ;
             kB = C_to_B [k] ;
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
@@ -227,13 +229,14 @@ GrB_Info GB_ewise_slice
         else if (Ch_is_Bh)
         { 
             // B is hypersparse, but Ch is a shallow copy of B->h
+            ASSERT (GB_IS_HYPERSPARSE (B)) ;
             kB = k ;
             ASSERT (j == B->h [kB]) ;
         }
         else
         { 
-            // B is sparse or full
-            ASSERT (B->h == NULL) ;
+            // B is sparse, bitmap, or full
+            ASSERT (!GB_IS_HYPERSPARSE (B)) ;
             kB = j ;
         }
 
@@ -363,16 +366,19 @@ GrB_Info GB_ewise_slice
             if (C_to_A != NULL)
             { 
                 // A is hypersparse and the C_to_A mapping has been created
+                ASSERT (GB_IS_HYPERSPARSE (A)) ;
                 kA = C_to_A [k] ;
             }
             else if (Ch_is_Ah)
             { 
                 // A is hypersparse, but Ch is a shallow copy of A->h
+                ASSERT (GB_IS_HYPERSPARSE (A)) ;
                 kA = k ;
             }
             else
             { 
-                // A is sparse or full
+                // A is sparse, bitmap, or full
+                ASSERT (!GB_IS_HYPERSPARSE (A)) ;
                 kA = j ;
             }
             int64_t pA_start = (kA < 0) ? (-1) : GBP (Ap, kA, vlen) ;
@@ -387,16 +393,19 @@ GrB_Info GB_ewise_slice
             if (C_to_B != NULL)
             { 
                 // B is hypersparse and the C_to_B mapping has been created
+                ASSERT (GB_IS_HYPERSPARSE (B)) ;
                 kB = C_to_B [k] ;
             }
             else if (Ch_is_Bh)
             { 
                 // B is hypersparse, but Ch is a shallow copy of B->h
+                ASSERT (GB_IS_HYPERSPARSE (B)) ;
                 kB = k ;
             }
             else
             { 
-                // B is sparse or full
+                // B is sparse, bitmap, or full
+                ASSERT (!GB_IS_HYPERSPARSE (B)) ;
                 kB = j ;
             }
             int64_t pB_start = (kB < 0) ? (-1) : GBP (Bp, kB, vlen) ;
@@ -407,6 +416,8 @@ GrB_Info GB_ewise_slice
             // get the corresponding vector of M, if present
             //------------------------------------------------------------------
 
+            // M can have any sparsity structure (hyper, sparse, bitmap, full)
+
             int64_t pM_start = -1 ;
             int64_t pM_end   = -1 ;
             if (M != NULL)
@@ -415,16 +426,20 @@ GrB_Info GB_ewise_slice
                 if (C_to_M != NULL)
                 { 
                     // M is hypersparse and the C_to_M mapping has been created
+                    ASSERT (GB_IS_HYPERSPARSE (M)) ;
                     kM = C_to_M [k] ;
                 }
                 else if (Ch_is_Mh)
                 {
+                    // M is hypersparse, but Ch is a copy of Mh
+                    ASSERT (GB_IS_HYPERSPARSE (M)) ;
                     // Ch is a deep or shallow copy of Mh
                     kM = k ;
                 }
                 else
                 { 
-                    // M is sparse or full
+                    // M is sparse, bitmap, or full
+                    ASSERT (!GB_IS_HYPERSPARSE (M)) ;
                     kM = j ;
                 }
                 pM_start = (kM < 0) ? -1 : GBP (Mp, kM, vlen) ;
@@ -482,9 +497,9 @@ GrB_Info GB_ewise_slice
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
                     int64_t pM, pA, pB ;
                     GB_slice_vector (&i, &pM, &pA, &pB,
-                        pM_start, pM_end, Mi,       // Mi NULL if M not present
-                        pA_start, pA_end, Ai,       // Ai always explicit list
-                        pB_start, pB_end, Bi,       // Bi always explicit list
+                        pM_start, pM_end, Mi,
+                        pA_start, pA_end, Ai,
+                        pB_start, pB_end, Bi,
                         vlen, target_work) ;
 
                     // prior task ends at pM-1, pA-1, and pB-1

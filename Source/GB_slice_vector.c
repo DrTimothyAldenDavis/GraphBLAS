@@ -35,7 +35,10 @@
 // then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
 // or at most O((log(n)^2)).
 
-// The input matrices M, A, and B cannot be jumbled.
+// The input matrices M, A, and B are not present here, except for M->i,
+// A->i, and B->i if they are sparse or hypersparse.  They cannot be jumbled.
+// M, A, and B can have any sparsity structure.  If bitmap or full, their
+// corresponding [A,B,M]->i arrays are NULL.
 
 #include "GB.h"
 
@@ -52,10 +55,10 @@ void GB_slice_vector
     const int64_t *GB_RESTRICT Mi,  // indices of M (or NULL)
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *GB_RESTRICT Ai,  // indices of A
+    const int64_t *GB_RESTRICT Ai,  // indices of A (or NULL)
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *GB_RESTRICT Bi,  // indices of B
+    const int64_t *GB_RESTRICT Bi,  // indices of B (or NULL)
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 )

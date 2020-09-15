@@ -1546,9 +1546,10 @@ GrB_Info GB_subassign_19
 // used to iterate over the matrix X.
 
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
+    int Z_sparsity = GxB_SPARSE ; /* TODO */ \
     int64_t Znvec ;                                                         \
     GB_OK (GB_add_phase0 (                                                  \
-        &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL,                          \
+        &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL, &Z_sparsity,             \
         NULL, X, S, Context)) ;                                             \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
@@ -1588,7 +1589,7 @@ GrB_Info GB_subassign_19
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
     GB_OK (GB_subassign_IxJ_slice (                                         \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
-        I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                         \
+        /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
         Context)) ;                                                         \
     GB_ALLOCATE_NPENDING ;
 

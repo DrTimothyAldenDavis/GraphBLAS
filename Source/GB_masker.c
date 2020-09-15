@@ -114,9 +114,10 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     // This phase is identical to phase0 of GB_add, except that Ch is never a
     // deep or shallow copy of Mh.
 
+    int R_sparsity = GxB_SPARSE ;   // TODO
     GrB_Info info = GB_add_phase0 (
         // computed by by phase0:
-        &Rnvec, &Rh, &R_to_M, &R_to_C, &R_to_Z, NULL,
+        &Rnvec, &Rh, &R_to_M, &R_to_C, &R_to_Z, NULL, &R_sparsity,
         // original input:
         M, C, Z, Context) ;
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_phase1: find # of entries in C=A+B or C<M>=A+B
+// GB_add_phase1: # entries in C=A+B, C<M or !M>=A+B (C is sparse/hyper)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,19 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add_phase1 counts the number of entries in each vector of C, for C=A+B or
-// C<M>=A+B  and then does a cumulative sum to find Cp.  GB_add_phase1 is
-// preceded by GB_add_phase0, which finds the non-empty vectors of C.  This
-// phase is done entirely in parallel.
+// GB_add_phase1 counts the number of entries in each vector of C, for C=A+B,
+// C<M>=A+B, or C<!M>=A+B and then does a cumulative sum to find Cp.
+// GB_add_phase1 is preceded by GB_add_phase0, which finds the non-empty
+// vectors of C.  If the mask M is sparse, it is not complemented; only
+// a bitmap or full M is complemented.
 
-// C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_add_phase0.  The mask M may be present, but it is not complemented.
+// C is sparse or hypersparse, as determined by GB_add_sparsity.  M, A, and B
+// can have any sparsity structure, but only a specific set of cases will be
+// used (see the list in Template/GB_add_C_sparse_template.c).
 
-// GB_Matrix_wait computes A=A+T where T is the matrix of the assembled pending
-// tuples.  A and T are disjoint, so this function does not need to examine
-// the pattern of A and T at all.  No mask is used in this case.
-
-// Cp is either freed by phase2, or transplanted into C.
+// Cp is constructed here, and either freed by phase2, or transplanted into C.
 
 #include "GB_add.h"
 
@@ -42,6 +40,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -71,10 +70,6 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     ASSERT (!GB_PENDING (B)) ;
 
     ASSERT (A->vdim == B->vdim) ;
-
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // allocate the result

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: no change for BITMAP
-
 // Construct a set of tasks to compute C(I,J)<...> = x or += x, for a subassign
 // method that performs scalar assignment, based on slicing the Cartesian
 // product IxJ.  If enough tasks can be constructed by just slicing J, then all
@@ -57,7 +55,7 @@
 // GB_subassign_IxJ_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_IxJ_slice
+GrB_Info GB_subassign_IxJ_slice     // TODO: rename
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
@@ -65,14 +63,14 @@ GrB_Info GB_subassign_IxJ_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
-    const GrB_Index *I,
+//  const GrB_Index *I,
     const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
+//  const int Ikind,
+//  const int64_t Icolon [3],
+//  const GrB_Index *J,
     const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
+//  const int Jkind,
+//  const int64_t Jcolon [3],
     GB_Context Context
 )
 {
