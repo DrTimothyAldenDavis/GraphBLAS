@@ -156,7 +156,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Matrix C = NULL ;
-    GrB_Info info = GB_new_bix (&C, // sparse or hyper, new header
+    GrB_Info info = GB_new_bix (&C, // any sparsity, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         C_sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
@@ -420,6 +420,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
                 GB_void z [GB_VLA(zsize)] ;         \
                 fadd (z, aij, bij) ;                \
                 cast_Z_to_C (cij, z, csize) ;
+
             #include "GB_add_template.c"
         }
     }

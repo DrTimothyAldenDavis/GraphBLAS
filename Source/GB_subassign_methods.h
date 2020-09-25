@@ -1558,28 +1558,6 @@ GrB_Info GB_subassign_19
     GB_ALLOCATE_NPENDING ;
 
 //------------------------------------------------------------------------------
-// GB_SUBASSIGN_EMULT_SLICE: slice A.*M (just Method 08n)
-//------------------------------------------------------------------------------
-
-// Method 08n only.  If C is sparse, it is sliced for a fine task, so that
-// it can do a binary search via GB_iC_BINARY_SEARCH.  But if C(:,jC) is dense,
-// C(:,jC) is not sliced, so the fine task must do a direct lookup via
-// GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
-
-// No matrix (C, M, or A) can be bitmap.  C, M, A can be sparse/hyper/full, in
-// any combination.
-
-#define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
-    int64_t Znvec ;                                                         \
-    int64_t *GB_RESTRICT Zh_shallow = NULL ;                                \
-    GB_OK (GB_subassign_emult_slice (                                       \
-        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
-        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,                              \
-        C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
-        A, M, Context)) ;                                                   \
-    GB_ALLOCATE_NPENDING ;
-
-//------------------------------------------------------------------------------
 // GB_SUBASSIGN_IXJ_SLICE: slice IxJ for a scalar assignement method
 //------------------------------------------------------------------------------
 
@@ -1693,7 +1671,7 @@ GrB_Info GB_subassign_emult_slice
     }
 
 //------------------------------------------------------------------------------
-// GB_GET_EVEC: get the content of a vector for EMULT_SLICE method
+// GB_GET_EVEC: get the content of a vector for Method08n
 //------------------------------------------------------------------------------
 
 #define GB_GET_EVEC(pX_start, pX_fini, pX, pX_end, Xp, Xh, j,k,Z_to_X,Xvlen)\

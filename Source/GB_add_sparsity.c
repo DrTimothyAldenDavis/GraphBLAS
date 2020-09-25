@@ -208,7 +208,7 @@ int GB_add_sparsity         // return the sparsity structure for C
             // handle this case.  See the "(mask later)" above.  The method can
             // construct a sparse/hyper C with !M as bitmap or full. 
             C_sparsity = GxB_SPARSE ;
-            if (!M_is_sparse_or_hyper) printf ("@") ;
+            // if (!M_is_sparse_or_hyper) GBURBLE ("@") ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase1: find # of entries in C=A.*B or C<M>=A.*B
+// GB_emult_phase1: # of entries in C=A.*B or C<M or !M>=A.*B (C sparse/hyper)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,12 +8,14 @@
 //------------------------------------------------------------------------------
 
 // GB_emult_phase1 counts the number of entries in each vector of C, for
-// C=A.*B or C<M>=A.*B and then does a cumulative sum to find Cp.
+// C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
 // GB_emult_phase1 is preceded by GB_emult_phase0, which finds the non-empty
-// vectors of C.  This phase is done entirely in parallel.
+// vectors of C.  If the mask M is saprse, it is not complemented; only a
+// bitmap or full M is complemented.
 
-// C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_emult_phase0.  If present, the mask M is not complemented.
+// C is sparse or hypersparse, as determined by GB_add_sparsity.  
+// M, A, and B can have any sparsity structure, but only a specific set of
+// cases will be used (see the list if Template/GB_emult_C_sparse_template.c).
 
 // Cp is either freed by GB_emult_phase2, or transplanted into C.
 
@@ -23,7 +25,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
     int64_t *GB_RESTRICT *Cp_handle,        // output of size Cnvec+1
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
-    // tasks from phase0b:
+    // tasks from phase1a:
     GB_task_struct *GB_RESTRICT TaskList,   // array of structs
     const int ntasks,                       // # of tasks
     const int nthreads,                     // # of threads to use
@@ -36,6 +38,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -65,10 +68,6 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     ASSERT (!GB_PENDING (B)) ;
 
     ASSERT (A->vdim == B->vdim) ;
-
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
     //--------------------------------------------------------------------------
     // allocate the result

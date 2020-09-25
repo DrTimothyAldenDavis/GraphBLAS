@@ -33,7 +33,6 @@
         //      ------------------------------------------
         //      C     <!M> =        A       +       B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse      (mask later)
         //      sparse  bitmap      sparse          sparse
         //      sparse  full        sparse          sparse
 
@@ -43,6 +42,13 @@
 // C is sparse, M is sparse, and !M is used.  All other uses of !M when M
 // is sparse result in a bitmap structure for C, and this is handled by
 // GB_add_C_bitmap_template.
+
+        // For this case: the mask is done later, so C=A+B is computed here:
+
+        //      ------------------------------------------
+        //      C     <!M> =        A       +       B
+        //      ------------------------------------------
+        //      sparse  sparse      sparse          sparse      (mask later)
 
 {
 
@@ -105,7 +111,7 @@
                 // A fine task computes a slice of C(:,j)
                 pC     = TaskList [taskid  ].pC ;
                 pC_end = TaskList [taskid+1].pC ;
-                ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]);
+                ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;
             }
             else
             { 
@@ -143,10 +149,11 @@
             int64_t ajnz = pA_end - pA ;    // nnz in A(:,j) for this slice
             int64_t pA_start = pA ;
             bool adense = (ajnz == len) ;
+
+            // get the first and last indices in A(:,j) for this vector
             int64_t iA_first = -1, iA_last = -1 ;
             if (ajnz > 0)
             { 
-                // get the first and last indices in A(:,j) for this vector
                 iA_first = GBI (Ai, pA, vlen) ;
                 iA_last  = GBI (Ai, pA_end-1, vlen) ;
             }
@@ -177,10 +184,11 @@
             int64_t bjnz = pB_end - pB ;    // nnz in B(:,j) for this slice
             int64_t pB_start = pB ;
             bool bdense = (bjnz == len) ;
+
+            // get the first and last indices in B(:,j) for this vector
             int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
             {
-                // get the first and last indices in B(:,j) for this vector
                 iB_first = GBI (Bi, pB, vlen) ;
                 iB_last  = GBI (Bi, pB_end-1, vlen) ;
             }
@@ -309,6 +317,7 @@
                     cjnz = ajnz ;
                     #else
                     ASSERT (cjnz == ajnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
@@ -334,6 +343,7 @@
                     cjnz = ajnz ;
                     #else
                     ASSERT (cjnz == ajnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
@@ -342,6 +352,7 @@
                         ASSERT (Ai [pA + p] == i) ;
                         GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                     }
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
@@ -366,6 +377,7 @@
                     cjnz = bjnz ;
                     #else
                     ASSERT (cjnz == bjnz) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
@@ -374,6 +386,7 @@
                         ASSERT (Bi [pB + p] == i) ;
                         GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                     }
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
@@ -399,6 +412,7 @@
                     #else
                     ASSERT (cjnz == bjnz) ;
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
@@ -419,6 +433,7 @@
                     #else
                     ASSERT (cjnz == ajnz) ;
                     memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
@@ -439,6 +454,7 @@
                     #else
                     ASSERT (cjnz == ajnz + bjnz) ;
                     memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
@@ -446,6 +462,7 @@
                     }
                     pC += ajnz ;
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
@@ -466,6 +483,7 @@
                     #else
                     ASSERT (cjnz == ajnz + bjnz) ;
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
@@ -473,6 +491,7 @@
                     }
                     pC += bjnz ;
                     memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
+                    GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)

@@ -1320,6 +1320,8 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 // SPEC: GxB_SelectOp and all related functions are an extenstion to the spec.
 
+// TODO: delete nrows, ncols from my GxB_select
+
 // GxB_SelectOp is an operator used by GxB_select to select entries from an
 // input matrix A that are kept in the output C.  If an entry A(i,j) in the
 // matrix A, of size nrows-by-ncols, has the value aij, then it calls the

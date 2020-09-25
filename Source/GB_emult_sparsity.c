@@ -13,7 +13,7 @@
 // by GB_emult, or if C=A.*B should be computed without the mask, and the mask
 // applied later.
 
-// If C should be hypersparse or sparse, on output, this function simply
+// If C should be constructed as hypersparse or sparse, this function simply
 // returns GxB_SPARSE.  The final determination is made by GB_emult_phase0.
 
 // If both A and B are full, then GB_ewise calls GB_add instead of GB_emult.

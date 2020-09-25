@@ -126,8 +126,9 @@ GrB_Info GB_subassign_emult_slice
 
     int64_t Znvec ;
     int64_t *GB_RESTRICT Zh_shallow = NULL ;
+    int Z_sparsity = GxB_SPARSE ;
     GB_OK (GB_emult_phase0 (
-        &Znvec, &Zh_shallow, NULL, &Z_to_A, &Z_to_M,
+        &Znvec, &Zh_shallow, NULL, &Z_to_A, &Z_to_M, &Z_sparsity,
         NULL, A, M, Context)) ;
 
     GB_OK (GB_ewise_slice (

@@ -7,6 +7,32 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_EK_SLICE_H
+#define GB_EK_SLICE_H
+#include "GB.h"
+
+//------------------------------------------------------------------------------
+// GB_SLICE_MATRIX: slice a single single sparse or hypersparse matrix
+//------------------------------------------------------------------------------
+
+#define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                   \
+{                                                                              \
+    X ## _nthreads = GB_nthreads (GB_NNZ (X) + X->nvec, chunk, nthreads_max) ; \
+    X ## _ntasks = (X ## _nthreads == 1) ? 1 :                                 \
+        ((NTASKS_PER_THREAD) * (X ## _nthreads)) ;                             \
+    if (!GB_ek_slice (&(pstart_ ## X ## slice), &(kfirst_ ## X ## slice),      \
+        &(klast_ ## X ## slice), X, &(X ## _ntasks)))                          \
+    {                                                                          \
+        /* out of memory */                                                    \
+        GB_FREE_ALL ;                                                          \
+        return (GrB_OUT_OF_MEMORY) ;                                           \
+    }                                                                          \
+}
+
+//------------------------------------------------------------------------------
+// GB_ek_slice prototypes
+//------------------------------------------------------------------------------
+
 // Slice the entries of a matrix or vector into ntasks slices.
 
 // Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
@@ -15,10 +41,6 @@
 
 // On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
 // case, ntasks must be 1.
-
-#ifndef GB_EK_SLICE_H
-#define GB_EK_SLICE_H
-#include "GB.h"
 
 bool GB_ek_slice        // true if successful, false if out of memory
 (
@@ -39,7 +61,7 @@ void GB_ek_slice_free
     int64_t *GB_RESTRICT *klast_slice_handle
 ) ;
 
-// define the static inline function GB_search_for_vector:
+// define the static inline function GB_search_for_vector
 #include "GB_search_for_vector_template.c"
 
 //------------------------------------------------------------------------------

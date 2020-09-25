@@ -145,13 +145,30 @@ GrB_Info GB_subassign_08n
     // same index i, the entry A(i,j) is accumulated or inserted into C.
 
     // The algorithm is very much like the eWise multiplication of A.*M, so the
-    // parallel scheduling relies on GB_emult_phase0(AA and GB_ewise_slice.
+    // parallel scheduling relies on GB_emult_phase0 and GB_ewise_slice.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice the eWiseMult of A.*M (Method 08n)
+    // Parallel: slice the eWiseMult of Z=A.*M (Method 08n only)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_EMULT_SLICE (A, M) ;
+    // Method 08n only.  If C is sparse, it is sliced for a fine task, so that
+    // it can do a binary search via GB_iC_BINARY_SEARCH.  But if C(:,jC) is
+    // dense, C(:,jC) is not sliced, so the fine task must do a direct lookup
+    // via GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
+    // The Z matrix is not constructed, except for its hyperlist (Zh_shallow)
+    // and mapping to A and M.
+
+    // No matrix (C, M, or A) can be bitmap.  C, M, A can be sparse/hyper/full,
+    // in any combination.
+
+    int64_t Znvec ;
+    int64_t *GB_RESTRICT Zh_shallow = NULL ;
+    GB_OK (GB_subassign_emult_slice (
+        &TaskList, &max_ntasks, &ntasks, &nthreads,
+        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,
+        C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        A, M, Context)) ;
+    GB_ALLOCATE_NPENDING ;
 
     //--------------------------------------------------------------------------
     // phase 1: undelete zombies, update entries, and count pending tuples

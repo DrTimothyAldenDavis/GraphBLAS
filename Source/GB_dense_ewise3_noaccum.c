@@ -51,8 +51,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: method not used if A bitmap
+    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: method not used if B bitmap
 
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
@@ -77,8 +77,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
     // TODO: construct C according to C->sparsity, or conform it when done.
-    // Allow C to be constructed as a dense bitmap, if C->sparsity does not
-    // allow for GxB_FULL.
 
     if (!C_is_dense)
     { 

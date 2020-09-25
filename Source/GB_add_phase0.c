@@ -193,6 +193,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     if ((*C_sparsity) == GxB_BITMAP || (*C_sparsity) == GxB_FULL)
     {
         // nothing to do in phase0 for C bitmap or full
+        (*p_Cnvec) = A->vdim ;  // not needed; to be consistent with GB_emult
         return (GrB_SUCCESS) ;
     }
 

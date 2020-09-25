@@ -93,7 +93,6 @@ GrB_Matrix B = B_in ;
     GB_MATRIX_WAIT (A) ;        // cannot be jumbled
     GB_MATRIX_WAIT (B) ;        // cannot be jumbled
 
-
 // HACK to test bitmap
 GrB_Matrix M_bitmap = NULL ;
 GrB_Matrix A_bitmap = NULL ;
@@ -114,29 +113,32 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
 {
     int64_t n = A->vlen ;
     bool hack = (n % 5 == 1) || (n % 4 == 1) || (n % 3 == 1 && M != NULL) ;
-    // if (hack) printf ("@(") ;
+    if (hack) GBURBLE ("@(") ;
     if (n % 3 == 1 && M != NULL)
     {
-        // printf ("M") ;
+        if (hack) GBURBLE ("M") ;
         GB_OK (GB_dup2 (&M_bitmap, M, true, M->type, Context)) ;
         GB_OK (GB_convert_any_to_bitmap (M_bitmap, Context)) ;
         M = M_bitmap ;
+        ASSERT_MATRIX_OK (M, "M bitmap hacked for add", GB0) ;
     }
     if (n % 5 == 1)
     {
-        // printf ("A") ;
+        if (hack) GBURBLE ("A") ;
         GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
         GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
         A = A_bitmap ;
+        ASSERT_MATRIX_OK (A, "A bitmap hacked for add", GB0) ;
     }
     if (n % 4 == 1)
     {
-        // printf ("B") ;
+        if (hack) GBURBLE ("B") ;
         GB_OK (GB_dup2 (&B_bitmap, B, true, B->type, Context)) ;
         GB_OK (GB_convert_any_to_bitmap (B_bitmap, Context)) ;
         B = B_bitmap ;
+        ASSERT_MATRIX_OK (B, "B bitmap hacked for add", GB0) ;
     }
-    // if (hack) printf (")") ;
+    if (hack) GBURBLE (")") ;
 }
 
     //--------------------------------------------------------------------------
@@ -174,7 +176,6 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
         return (info) ;
     }
 
-    // printf
     GBURBLE ("add:(%s<%s>=%s+%s)",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),

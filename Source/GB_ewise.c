@@ -248,11 +248,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // In all cases above, C remains dense and can be updated in place
     // C_replace must be false.  M can be valued or structural.
 
-    if (A_is_dense && B_is_dense)
-    { 
-        // no need to use eWiseAdd if both A and B are dense
-        eWiseAdd = false ;
-    }
+//  if (A_is_dense && B_is_dense)
+//  { 
+//      // no need to use eWiseAdd if both A and B are dense
+//      eWiseAdd = false ;
+//  }
 
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
@@ -280,8 +280,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && no_typecast                      // no typecasting
         && (opcode < GB_USER_opcode)        // not a user-defined operator
         && (!op_is_positional)              // op is not positional
-        && !any_bitmap                      // TODO:BITMAP
-        )
+        && !any_bitmap)
     {
 
         if (C_is_dense                      // C is dense
@@ -349,13 +348,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     else
     { 
 
-        ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
-        ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-        ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-        ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
-        // TODO: put this test in GB_emult, not here.
-
+#if 0
         if (M != NULL && !Mask_comp)
         {
             // mask is present, not complemented; see if it is quick or easy to
@@ -383,9 +376,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             M1 = NULL ;
             mask_applied = false ;
         }
+#endif
 
-        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct,
-            Mask_comp, &mask_applied, A1, B1, op, Context)) ;
+        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+            &mask_applied, A1, B1, op, Context)) ;
     }
 
     //--------------------------------------------------------------------------

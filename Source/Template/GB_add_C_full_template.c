@@ -33,7 +33,7 @@
         // Method30: C, A, B are all full
         //----------------------------------------------------------------------
 
-        #pragma omp parallel for num_threads(C_nth) schedule(static)
+        #pragma omp parallel for num_threads(C_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         {
             // C (i,j) = A (i,j) + B (i,j)
@@ -57,7 +57,7 @@
             // Method31: C and A are full; B is bitmap
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Bb [p])
@@ -82,16 +82,16 @@
             // Method32: C and A full; B is sparse or hypersparse
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = A (i,j)
                 GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
             }
 
-            GB_SLICE_MATRIX (B) ;
+            GB_SLICE_MATRIX (B, 8) ;
 
-            #pragma omp parallel for num_threads(B_nth) schedule(dynamic,1)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
             for (taskid = 0 ; taskid < B_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
@@ -133,7 +133,7 @@
             // Method33: C and B are full; A is bitmap
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Ab [p])
@@ -158,16 +158,16 @@
             // Method34: C and B are full; A is hypersparse or sparse
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = B (i,j)
                 GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
             }
 
-            GB_SLICE_MATRIX (A) ;
+            GB_SLICE_MATRIX (A, 8) ;
 
-            #pragma omp parallel for num_threads(A_nth) schedule(dynamic,1)
+            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;

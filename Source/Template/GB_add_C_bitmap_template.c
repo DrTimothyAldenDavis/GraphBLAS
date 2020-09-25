@@ -9,8 +9,7 @@
 
 // C is bitmap.  The mask M can have any sparsity structure, and is efficient
 // to apply (all methods are asymptotically optimal).  All cases (no M, M, !M)
-// are handled.   TODO: when M is sparse and complemented, and C is bitmap,
-// it might be faster in some cases to postpone applying the mask.
+// are handled.
 
 {
 
@@ -41,7 +40,7 @@
             // Method21: C, A, and B are all bitmap
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -78,7 +77,7 @@
             // Method22: C and A are bitmap; B is sparse or hypersparse
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = A (i,j)
@@ -88,10 +87,10 @@
             }
             cnvals = A->nvals ;
 
-            GB_SLICE_MATRIX (B) ;
+            GB_SLICE_MATRIX (B, 8) ;
 
-            #pragma omp parallel for num_threads(B_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(B_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < B_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
@@ -135,7 +134,7 @@
             // Method23: C and B are bitmap; A is sparse or hypersparse
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = B (i,j)
@@ -145,10 +144,10 @@
             }
             cnvals = B->nvals ;
 
-            GB_SLICE_MATRIX (A) ;
+            GB_SLICE_MATRIX (A, 8) ;
 
-            #pragma omp parallel for num_threads(C_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(C_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
@@ -222,9 +221,9 @@
         // scatter M into the C bitmap
         //----------------------------------------------------------------------
 
-        GB_SLICE_MATRIX (M) ;
+        GB_SLICE_MATRIX (M, 8) ;
 
-        #pragma omp parallel for num_threads(M_nth) schedule(dynamic,1)
+        #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
             int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -269,7 +268,7 @@
             // Method24(!M,sparse): C is bitmap, both A and B are bitmap or full
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -318,7 +317,7 @@
             // Method25(!M,sparse): C bitmap, A bitmap or full, B sparse/hyper
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -332,10 +331,10 @@
                 }
             }
 
-            GB_SLICE_MATRIX (B) ;
+            GB_SLICE_MATRIX (B, 8) ;
 
-            #pragma omp parallel for num_threads(B_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(B_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < B_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
@@ -380,7 +379,7 @@
             // Method26: C bitmap, A sparse or hypersparse, B bitmap or full
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -394,10 +393,10 @@
                 }
             }
 
-            GB_SLICE_MATRIX (A) ;
+            GB_SLICE_MATRIX (A, 8) ;
 
-            #pragma omp parallel for num_threads(A_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(A_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
@@ -446,7 +445,7 @@
             // extra pass over the mask M, so this might be slower than
             // postponing the application of the mask, and doing it later.
 
-            #pragma omp parallel for num_threads(M_nth) schedule(dynamic,1)
+            #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
             for (taskid = 0 ; taskid < M_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -539,8 +538,8 @@
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
-            int8_t mij = GBB (Mb, p) && GB_mcast (Mx, p, vlen) ;        \
-            if (Mask_comp) mij = !mij ;                                 \
+            bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;         \
+            if (Mask_comp) mij = !mij ;
 
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         {
@@ -549,7 +548,7 @@
             // Method27: C is bitmap; M, A, and B are bitmap or full
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -598,7 +597,7 @@
             // Method28: C bitmap; M and A bitmap or full; B sparse or hyper
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -617,10 +616,10 @@
                 }
             }
 
-            GB_SLICE_MATRIX (B) ;
+            GB_SLICE_MATRIX (B, 8) ;
 
-            #pragma omp parallel for num_threads(B_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(B_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < B_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
@@ -669,7 +668,7 @@
             // Method29: C bitmap; M and B bitmap or full; A sparse or hyper
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(C_nth) schedule(static) \
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -688,10 +687,10 @@
                 }
             }
 
-            GB_SLICE_MATRIX (A) ;
+            GB_SLICE_MATRIX (A, 8) ;
 
-            #pragma omp parallel for num_threads(A_nth) schedule(dynamic,1) \
-                reduction(+:cnvals)
+            #pragma omp parallel for num_threads(A_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
