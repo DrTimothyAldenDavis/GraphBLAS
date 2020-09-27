@@ -1,0 +1,655 @@
+gunk
+ans =
+     1
+ [ GxB_Vector_import_CSC 7.15e-06 sec ]
+ [ GrB_Matrix_wait 9.54e-07 sec ]
+ [ GxB_Matrix_import_FullC 8.11e-06 sec ]
+ [ GxB_set 1.1e-05 sec ]
+ [ GxB_select (A dense) (bitmap to sparse) 
+  1x1 GraphBLAS int64_t matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1580da0 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65521e87c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C input for C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  0x0 GraphBLAS  matrix NULL
+
+    GraphBLAS BinaryOp: accum for GB_accum_mask NULL
+
+  1x1 GraphBLAS int64_t matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1586380 number of memory blocks: 4
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65521e1d80 shallow: 0
+  ->i: 0x7f65531eb780 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 0
+  [T = results of computation], 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15ba360 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 0
+  Z in accum_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1580da0 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65521e87c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=Z input, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1580da0 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65521e87c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C_result for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15ba360 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 0
+  Z for GB_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1580da0 number of memory blocks: 2
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 0
+  C<M>=accum(C,T), 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+0.00692 sec ]
+ [ GrB_Matrix_wait 0 sec ]
+ [ GxB_set 4.05e-06 sec ]
+ [ GrB_Matrix_wait 0 sec ]
+ [ GrB_Matrix_dup 1.72e-05 sec ]
+ [ GxB_set 4.05e-06 sec ]
+ [ GrB_reduce 
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531ec640 shallow: 0
+  ->i: 0x7f6552208a40 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65530ec7a0 shallow: 0
+  C input for C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1596c20 number of memory blocks: 1
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 1
+  M for GB_accum_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+    GraphBLAS BinaryOp: accum for GB_accum_mask NULL
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d154ed00 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531e7c20 shallow: 0
+  ->i: 0x7f65531e03a0 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65531e3020 shallow: 0
+  [T = results of computation], 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: bool 1
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1840000 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65531e3020 shallow: 0
+  Z in accum_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: bool 1
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531ec640 shallow: 0
+  ->i: 0x7f6552208a40 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65530ec7a0 shallow: 0
+  C<M>=Z input, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531ec640 shallow: 0
+  ->i: 0x7f6552208a40 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65530ec7a0 shallow: 0
+  C_result for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1596c20 number of memory blocks: 1
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 1
+  M for GB_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1840000 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65531e3020 shallow: 0
+  Z for GB_mask, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: bool 1
+  Pending (nil)
+
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1596c20 number of memory blocks: 1
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 1
+  M for masker, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531ec640 shallow: 0
+  ->i: 0x7f6552208a40 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65530ec7a0 shallow: 0
+  C for masker, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1840000 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65531e3020 shallow: 0
+  Z for masker, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: bool 1
+  Pending (nil)
+Mask_struct:0 Mask_comp:0 masker:(B:S<F>=F) 
+  1x1 GraphBLAS int64_t matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1596c20 number of memory blocks: 1
+    GraphBLAS type:  int64_t size: 8
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65520a6300 shallow: 1
+  M for mask phase2, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: int64 1
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531ec640 shallow: 0
+  ->i: 0x7f6552208a40 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65530ec7a0 shallow: 0
+  C for mask phase2, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, full by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1840000 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65531e3020 shallow: 0
+  Z for mask phase2, 1 entry
+
+  column: 0 : 1 entries [0:0]
+    row 0: bool 1
+  Pending (nil)
+210: Here: /home/davis/sparse/GraphBLAS/Source/Template/GB_masker_R_bitmap_template.c
+
+  1x1 GraphBLAS bool matrix, bitmap by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1831840 number of memory blocks: 3
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: 0x7f65531e03a0 shallow: 0
+  ->x: 0x7f65531e7c20 shallow: 0
+  R output for mask phase2, no entries
+  column: 0 : 0 entries [0:0]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, bitmap by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 1 nvec: 1 plen: -1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1831840 number of memory blocks: 3
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: (nil) shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: 0x7f65531e03a0 shallow: 0
+  ->x: 0x7f65531e7c20 shallow: 0
+  R output for masker, no entries
+  column: 0 : 0 entries [0:0]
+  Pending (nil)
+(bitmap to sparse) 
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15898a0 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531d2a60 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+0.0172 sec ]
+ [ GrB_Matrix_wait 0 sec ]
+ [ GxB_set 4.05e-06 sec ]
+ [ GrB_transpose (transpose) (hyper to sparse) 
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1606560 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65518e2080 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C input for C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  0x0 GraphBLAS  matrix NULL
+
+    GraphBLAS BinaryOp: accum for GB_accum_mask NULL
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 1
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15f4740 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f6553438660 shallow: 0
+  ->i: 0x7f65531d14c0 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65533ecac0 shallow: 0
+  [T = results of computation], no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15d98c0 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f6553438660 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  Z in accum_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1606560 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65518e2080 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=Z input, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1606560 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65518e2080 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C_result for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d15d98c0 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f6553438660 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  Z for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1606560 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f6553438660 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+0.00602 sec ]
+ [ GrB_Matrix_wait 9.54e-07 sec ]
+ [ GxB_Matrix_import_CSC 1.69e-05 sec ]
+ [ GrB_Matrix_dup (A dense) 4.79e-05 sec ]
+ [ GxB_set (sparse to full) 4.29e-05 sec ]
+ [ GrB_Matrix_wait 0 sec ]
+ [ GxB_set 4.05e-06 sec ]
+ [ GxB_select 
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1a5b040 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65530cb4c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C input for C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  0x0 GraphBLAS  matrix NULL
+
+    GraphBLAS BinaryOp: accum for GB_accum_mask NULL
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d0df7c20 number of memory blocks: 4
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531e3f80 shallow: 0
+  ->i: 0x7f655330d9e0 shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: 0x7f65521e1d80 shallow: 0
+  [T = results of computation], no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d0dc8780 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531e3f80 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  Z in accum_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1a5b040 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65530cb4c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=Z input, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1a5b040 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65530cb4c0 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C_result for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  0x0 GraphBLAS  matrix NULL
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d0dc8780 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531e3f80 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  Z for GB_mask, no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+
+  1x1 GraphBLAS bool matrix, sparse by col:
+  max # entries: 0
+  vlen: 1 nvec_nonempty: 0 nvec: 1 plen: 1 vdim: 1 hyper_switch 0.0625
+  sparsity control:  auto
+  A 0x7f64d1a5b040 number of memory blocks: 2
+    GraphBLAS type:  bool size: 1
+  ->h: (nil) shallow: 0
+  ->p: 0x7f65531e3f80 shallow: 0
+  ->i: (nil) shallow: 0
+  ->b: (nil) shallow: 0
+  ->x: (nil) shallow: 0
+  C<M>=accum(C,T), no entries
+  column: 0 : 0 entries [0:-1]
+  Pending (nil)
+0.00554 sec ]
+ [ GrB_Matrix_wait 0 sec ]
+ [ GrB_Matrix_nvals 1.19e-06 sec ]
+ [ GrB_Matrix_nvals 0 sec ]
+{Error using gunk (line 9)
+Assertion failed.} 
+diary off

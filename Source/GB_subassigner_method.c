@@ -675,6 +675,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         // matrix assignent methods
         //----------------------------------------------------------------------
 
+        // GB_accum_mask may use any of these methods, with I and J as GB_ALL.
+
         case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
         case GB_SUBASSIGN_METHOD_06s :  // C(I,J)< M> = A ; with S
         case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A

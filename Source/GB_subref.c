@@ -126,8 +126,17 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     {
         // C is constructed with same sparsity as A
-        return (GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj,
-            symbolic, Context)) ;
+        info = GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj,
+            symbolic, Context) ;
+
+// HACK
+GrB_Matrix C = (*Chandle) ;
+if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
+{
+    info = GB_convert_any_to_sparse (C, Context) ;
+}
+
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -156,6 +165,14 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         info = GB_bitmap_subref (Chandle, C_is_csc, A_bitmap, I, ni, J, nj,
             symbolic, Context) ;
         GB_Matrix_free (&A_bitmap) ;
+
+// HACK
+GrB_Matrix C = (*Chandle) ;
+if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
+{
+    info = GB_convert_any_to_sparse (C, Context) ;
+}
+
         return (info) ;
     }
 
@@ -231,6 +248,12 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
+
+// HACK
+if (GB_IS_BITMAP (C))
+{
+    GB_OK (GB_convert_any_to_sparse (C, Context)) ;
+}
 
     // C can be returned jumbled, even if A is not jumbled
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;

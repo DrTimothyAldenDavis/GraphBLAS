@@ -275,16 +275,30 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
     // So in this case, GB_subassign takes more work.
 
-    bool use_subassign =
-        ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
-            && !GB_aliased (C, M) && !GB_aliased (C, T)) ;
-
     if (GB_aliased (C, M)) GBURBLE ("(C aliased with M) ") ;
     if (GB_aliased (C, T)) GBURBLE ("(C aliased with T) ") ;
 
-    bool use_bitmap_assign =
-        (GB_IS_BITMAP (C) || GB_IS_BITMAP (M) || GB_IS_BITMAP (T)) ;
-    use_subassign = use_subassign || use_bitmap_assign ;
+    bool use_subassign = false ;
+
+    if (M != NULL || accum != NULL)
+    {
+        if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+        {
+            // always use GB_subassign if C is bitmap or full and M and/or
+            // accum is present.  No zombies or pending tuples are introduced
+            // into C, and C is modified in place, so GB_subassign is very
+            // efficient in this case.
+            use_subassign = true ;
+        }
+        else
+        {
+            // C is sparse or hypersparse: use GB_subassign if the update
+            // is small (resuling in a small number of pending tuples),
+            // and if C is not aliased with M or T.
+            use_subassign = (tnz + cnpending <= cnz)
+                && !GB_aliased (C, M) && !GB_aliased (C, T) ;
+        }
+    }
 
     bool use_transplant = (!use_subassign)
         && (accum == NULL || (cnz + cnpending) == 0) ;
@@ -299,14 +313,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             (M_transposed ? "(M transposed)" : ""),
             (T_transposed ? "(result transposed)" : "")) ;
     }
-
-    // TODO:BITMAP
-    // If any matrix C, M, Z are bitmap:
-    //      use transplant for the bitmap case, if this condition is true:
-    //      (accum == NULL || (cnz + cnpending) == 0)
-    //      && (M == NULL || ...)
-    // Do typecasting via GB_transplant, below, and the let GB_mask
-    // to the rest.
 
     if (use_subassign)
     { 

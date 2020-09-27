@@ -54,7 +54,6 @@ GrB_Matrix A = A_in ;
 GrB_Matrix B = B_in ;
 
     GrB_Info info ;
-    GBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
 
     ASSERT (Chandle != NULL) ;
     GrB_Matrix C = NULL ;
@@ -141,7 +140,6 @@ if (A->vlen <= 100 && A->vdim <= 100)
         // A and B are both full.  The mask M may be present or not, and may be
         // complemented or not.  GB_add computes the same thing in this case,
         // so use it instead, to reduce the code needed for GB_emult.
-        GBURBLE ("via:") ;
         info = GB_add (Chandle, ctype, C_is_csc, M, Mask_struct, Mask_comp,
             mask_applied, A, B, op, Context) ;
 // HACK
@@ -165,7 +163,7 @@ GB_Matrix_free (&B_bitmap) ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
-    // phase0: determine the vectors in C(:,j)
+    // phase0: finalize the sparsity C and find the vectors in C
     //--------------------------------------------------------------------------
 
     info = GB_emult_phase0 (
@@ -181,7 +179,7 @@ GB_Matrix_free (&B_bitmap) ;
         return (info) ;
     }
 
-    GBURBLE ("emult:(%s<%s>=%s+%s)",
+    GBURBLE ("emult:(%s<%s>=%s+%s) ",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),
         GB_sparsity_char_matrix (A),
@@ -257,10 +255,6 @@ GB_Matrix_free (&B_bitmap) ;
     GB_FREE (C_to_A) ;
     GB_FREE (C_to_B) ;
 
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
 GB_Matrix_free (&M_bitmap) ;
 GB_Matrix_free (&A_bitmap) ;
 GB_Matrix_free (&B_bitmap) ;
@@ -270,6 +264,10 @@ GB_Matrix_free (&B_bitmap) ;
         // out of memory; note that Cp is already freed, and Ch is shallow
         return (info) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C output for emult phased", GB0) ;
 

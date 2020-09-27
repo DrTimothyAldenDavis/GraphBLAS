@@ -69,7 +69,6 @@ GrB_Matrix A = A_in ;
 GrB_Matrix B = B_in ;
 
     GrB_Info info ;
-    GBURBLE ((M == NULL) ? "add " : "masked_add ") ;
 
     ASSERT (Chandle != NULL) ;
     (*Chandle) = NULL ;
@@ -149,7 +148,7 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
     int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, A, B) ;
 
     //--------------------------------------------------------------------------
-    // C=A+B, C<M>=A+B, or C<!M>=A+B for each sparsity structure of C
+    // initializations
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
@@ -160,7 +159,7 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
-    // phase0: determine the sparsity structure of C and the vectors in C
+    // phase0: finalize the sparsity C and find the vectors in C
     //--------------------------------------------------------------------------
 
     info = GB_add_phase0 (
@@ -176,7 +175,7 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
         return (info) ;
     }
 
-    GBURBLE ("add:(%s<%s>=%s+%s)",
+    GBURBLE ("add:(%s<%s>=%s+%s) ",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),
         GB_sparsity_char_matrix (A),
@@ -246,18 +245,14 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context) ;
 
+    // Ch and Cp must not be freed; they are now C->h and C->p.
+    // If the method failed, Cp and Ch have already been freed.
+
     // free workspace
     GB_FREE (TaskList) ;
     GB_FREE (C_to_M) ;
     GB_FREE (C_to_A) ;
     GB_FREE (C_to_B) ;
-
-    // Ch and Cp must not be freed; they are now C->h and C->p.
-    // If the method failed, Cp and Ch have already been freed.
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
 
 GB_Matrix_free (&M_bitmap) ;
 GB_Matrix_free (&A_bitmap) ;
@@ -268,6 +263,10 @@ GB_Matrix_free (&B_bitmap) ;
         // out of memory
         return (info) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
 

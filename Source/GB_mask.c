@@ -9,18 +9,15 @@
 
 // C<M> = Z
 
+// GB_mask is only called by GB_accum_mask.
+
+// If M is NULL, C can have any sparsity.  Otherwise, if M is present then
+// C is sparse or hypersparse; if bitmap or full, GB_subassign is used instead.
+
 // Nearly all GraphBLAS operations take a mask, which controls how the result
 // of the computations, Z, are copied into the result matrix C.  The following
-// working MATLAB script, GB_spec_mask, defines how this is done.
-
-// This function can only handle the case when C, M, and Z all have the same
-// format (all CSC and CSR transposed, or all CSR or CSC transposed).  The
-// caller (GB_accum_mask) must transpose as needed, before calling this
-// function.  This function can handle any combination of sparsity structure of
-// C, M, and/or Z, as needed, but is only called for bitmap matrices C and Z
-// when M is NULL.  GB_mask is only called by GB_accum_mask.
-
-// In the comments, C(i,j) is shorthand for the index i in the jth vector, and
+// working MATLAB script, GB_spec_mask, defines how this is done.  In the
+// comments, C(i,j) is shorthand for the index i in the jth vector, and
 // likewise for M, Z, and R.  If the matrices are all CSC, then this is row i
 // and column j.  If the matrices are all CSR, then it is row j and column i.
 
@@ -186,7 +183,7 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         // Any pending work on C is abandoned (zombies and/or pending tuples).
-        // C and Z can have any sparsity, including bitmap.
+        // C and Z can have any sparsity, including bitmap or full.
 
         if (!Mask_comp)
         { 
@@ -248,6 +245,10 @@ GrB_Info GB_mask                // C<M> = Z
         // the mask is present
         //----------------------------------------------------------------------
 
+        // C must be sparse or hypersparse.  Z and M can have any sparsity.
+        ASSERT (!GB_IS_BITMAP (C)) ;    // ok: not used if C is bitmap
+        ASSERT (!GB_IS_FULL (C)) ;      // ok: not used if C is full
+
         // delete any lingering zombies and assemble any pending tuples
         GB_MATRIX_WAIT (M) ;        // also sort M if jumbled
         GB_MATRIX_WAIT (Z) ;        // also sort Z if jumbled
@@ -308,10 +309,6 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
         // R = masker (C, M, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
-
-        ASSERT (!GB_IS_BITMAP (C)) ;    // not used if C is bitmap
-        ASSERT (!GB_IS_BITMAP (M)) ;    // TODO:BITMAP
-        ASSERT (!GB_IS_BITMAP (Z)) ;    // not used if Z is bitmap
 
         GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
             Context)) ;

@@ -53,7 +53,8 @@
 //      then C_to_M is returned as NULL.
 
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full)
-// C: not present here, but its sparsity structure is finalized.
+// C: not present here, but its sparsity structure is finalized, via the
+// input/output parameter C_sparsity.
 
 #include "GB_add.h"
 

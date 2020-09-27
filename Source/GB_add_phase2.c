@@ -96,7 +96,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    int A_nthreads, A_ntasks, B_nthreads, B_ntasks, M_nthreads, M_ntasks ;
     int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
     int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
     int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;

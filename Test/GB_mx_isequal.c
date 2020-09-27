@@ -9,6 +9,9 @@
 
 #include "GB_mex.h"
 
+// TODO: change A and B to the same sparsity structure first
+// TODO:BITMAP
+
 bool GB_mx_isequal     // true if A and B are exactly the same
 (
     GrB_Matrix A,

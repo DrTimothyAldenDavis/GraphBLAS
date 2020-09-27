@@ -1146,7 +1146,7 @@
                     // A (:,j) or B (:,j) have entries left; not both
                     //----------------------------------------------------------
 
-                    while (pA < pA_end)
+                    for ( ; pA < pA_end ; pA++)
                     {
                         int64_t iA = Ai [pA] ;
                         GB_GET_MIJ (iA) ;
@@ -1161,10 +1161,9 @@
                             pC++ ;
                             #endif
                         }
-                        pA++ ;
                     }
 
-                    while (pB < pB_end)
+                    for ( ; pB < pB_end ; pB++)
                     {
                         int64_t iB = Bi [pB] ;
                         GB_GET_MIJ (iB) ;
@@ -1179,7 +1178,6 @@
                             pC++ ;
                             #endif
                         }
-                        pB++ ;
                     }
                 }
             }
