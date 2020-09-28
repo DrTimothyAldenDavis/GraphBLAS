@@ -300,6 +300,9 @@ function gbtest76b (A, B, G, H, tol)
 
     C1 = gamma (real (full (A))) ;
     C2 = gamma (real (G)) ;
+    assert (isinf (C1 (1,1)) == isinf (C2 (1,1)))
+    C1 (1,1) = 0 ;
+    C2 (1,1) = 0 ;
     err = norm (C1-C2, 1) / norm (C1, 1) ;
     assert (err < tol) ;
 

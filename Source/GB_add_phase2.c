@@ -51,19 +51,19 @@
     GB_Matrix_free (&C) ;   \
 }
 
-GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
+GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,         // vector pointers for C
-    const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-    // tasks from phase0b:
+    const int64_t *GB_RESTRICT Cp,  // vector pointers for C
+    const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
+    // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
-    const int ntasks,                           // # of tasks
-    const int nthreads,                         // # of threads to use
+    const int C_ntasks,         // # of tasks
+    const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
@@ -99,12 +99,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
     int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
     int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -213,9 +207,10 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
-            info = GB_AaddB(mult,xname) (C, M, Mask_struct, Mask_comp,      \
+            info = GB_AaddB(mult,xname) (C, C_sparsity,                     \
+                M, Mask_struct, Mask_comp,                                  \
                 A, B, Ch_is_Mh, C_to_M, C_to_A, C_to_B,                     \
-                TaskList, ntasks, nthreads) ;                               \
+                TaskList, C_ntasks, C_nthreads, Context) ;                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -230,7 +225,13 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
             op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
         { 
             #include "GB_binop_factory.c"
-            ASSERT (done) ;
+        }
+
+        if (info == GrB_OUT_OF_MEMORY)
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (info) ;
         }
 
     #endif

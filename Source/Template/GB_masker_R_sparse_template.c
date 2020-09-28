@@ -112,8 +112,8 @@
 
     ASSERT (C_is_sparse || C_is_hyper) ;
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
+    for (taskid = 0 ; taskid < R_ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------

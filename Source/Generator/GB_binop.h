@@ -62,8 +62,10 @@ endif_binop_is_semiring_multiplier
 GrB_Info GB_AaddB
 (
     GrB_Matrix C,
+    const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -71,23 +73,27 @@ GrB_Info GB_AaddB
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nthreads
+    const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
 ) ;
 
 GrB_Info GB_AemultB
 (
     GrB_Matrix C,
+    const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nthreads
+    const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
 ) ;
 
 if_binop_bind1st_is_enabled

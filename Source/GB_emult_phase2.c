@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase2: C=A.*B or C<M>=A.*+B
+// GB_emult_phase2: C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,16 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult_phase2 computes C=A.*B or C<M>=A.*B.  It is preceded first by
-// GB_emult_phase0, which computes the list of vectors of C to compute (Ch) and
-// their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_phase1 counts
-// the entries in each vector C(:,j) and computes Cp.
+// GB_emult_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is preceded
+// first by GB_emult_phase0, which computes the list of vectors of C to compute
+// (Ch) and their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_phase1
+// counts the entries in each vector C(:,j) and computes Cp.
 
 // GB_emult_phase2 computes the pattern and values of each vector of C(:,j),
 // entirely in parallel.
 
-// C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_emult_phase0.  If present, the mask M is not complemented.
+// C, M, A, and B can be have any sparsity structure.  If M is sparse or
+// hypersparse, and complemented, however, then it is not applied and not
+// passed to this function.  It is applied later, as determined by
+// GB_emult_sparsity.
 
 // This function either frees Cp or transplants it into C, as C->p.  Either
 // way, the caller must not free it.
@@ -55,8 +57,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,  // array of structs
-    const int ntasks,                         // # of tasks
-    const int nthreads,                       // # of threads to use
+    const int C_ntasks,                         // # of tasks
+    const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
@@ -99,12 +101,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
     int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
     int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -194,12 +190,14 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         #define GB_AemultB(mult,xname) GB_AemultB_ ## mult ## xname
 
-        #define GB_BINOP_WORKER(mult,xname)                             \
-        {                                                               \
-            info = GB_AemultB(mult,xname) (C, M, Mask_struct, A, B,     \
-                C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
-            done = (info != GrB_NO_VALUE) ;                             \
-        }                                                               \
+        #define GB_BINOP_WORKER(mult,xname)                                 \
+        {                                                                   \
+            info = GB_AemultB(mult,xname) (C, C_sparsity,                   \
+                M, Mask_struct, Mask_comp,                                  \
+                A, B, C_to_M, C_to_A, C_to_B,                               \
+                TaskList, C_ntasks, C_nthreads, Context) ;                  \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
         break ;
 
         //----------------------------------------------------------------------
@@ -212,7 +210,13 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
         { 
             #include "GB_binop_factory.c"
-            ASSERT (done) ;
+        }
+
+        if (info == GrB_OUT_OF_MEMORY)
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (info) ;
         }
 
     #endif

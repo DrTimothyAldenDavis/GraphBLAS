@@ -49,15 +49,15 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // tasks from phase0b:
     GB_task_struct *GB_RESTRICT TaskList,   // array of structs
-    const int ntasks,                       // # of tasks
-    const int nthreads,                     // # of threads to use
+    const int C_ntasks,                 // # of tasks
+    const int C_nthreads,               // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
-    const bool Ch_is_Mh,                    // if true, then Ch == M->h
+    const bool Ch_is_Mh,                // if true, then Ch == M->h
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -67,19 +67,19 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     GB_Context Context
 ) ;
 
-GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
+GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,         // vector pointers for C
-    const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-    // tasks from phase0b:
+    const int64_t *GB_RESTRICT Cp,  // vector pointers for C
+    const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
+    // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
-    const int ntasks,                           // # of tasks
-    const int nthreads,                         // # of threads to use
+    const int C_ntasks,         // # of tasks
+    const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,

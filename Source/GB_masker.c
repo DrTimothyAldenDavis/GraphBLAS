@@ -107,7 +107,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     int64_t Rnvec, Rnvec_nonempty ;
     int64_t *Rp = NULL, *Rh = NULL ;
     int64_t *R_to_M = NULL, *R_to_C = NULL, *R_to_Z = NULL ;
-    int ntasks, max_ntasks, nthreads ;
+    int R_ntasks = 0, TaskList_size = 0, R_nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -128,9 +128,6 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         return (info) ;
     }
 
-    GBURBLE("Mask_struct:%d ", Mask_struct) ;
-    GBURBLE("Mask_comp:%d ", Mask_comp) ;
-
     GBURBLE ("masker:(%s:%s%s%s%s%s=%s) ",
         GB_sparsity_char (R_sparsity),
         GB_sparsity_char_matrix (C),
@@ -147,10 +144,14 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     if (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE)
     {
 
+        //----------------------------------------------------------------------
+        // R is sparse or hypersparse: slice and analyze the R matrix
+        //----------------------------------------------------------------------
+
         // phase1a: split R into tasks
         info = GB_ewise_slice (
             // computed by phase1a
-            &TaskList, &max_ntasks, &ntasks, &nthreads,
+            &TaskList, &TaskList_size, &R_ntasks, &R_nthreads,
             // computed by phase0:
             Rnvec, Rh, R_to_M, R_to_C, R_to_Z, false,
             // original input:
@@ -170,7 +171,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed or used by phase1:
             &Rp, &Rnvec_nonempty,
             // from phase1a:
-            TaskList, ntasks, nthreads,
+            TaskList, R_ntasks, R_nthreads,
             // from phase0:
             Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
             // original input:
@@ -185,6 +186,17 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             GB_FREE (R_to_Z) ;
             return (info) ;
         }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // R is bitmap or full: only determine how many threads to use
+        //----------------------------------------------------------------------
+
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        R_nthreads = GB_nthreads (M->vlen * M->vdim, chunk, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -200,7 +212,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // from phase1:
         Rp, Rnvec_nonempty,
         // from phase1a:
-        TaskList, ntasks, nthreads,
+        TaskList, R_ntasks, R_nthreads,
         // from phase0:
         Rnvec, Rh, R_to_M, R_to_C, R_to_Z, R_sparsity,
         // original input:

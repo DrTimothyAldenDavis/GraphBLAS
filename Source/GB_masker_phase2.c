@@ -48,8 +48,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     const int64_t Rnvec_nonempty,   // # of non-empty vectors in R
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,     // array of structs
-    const int ntasks,               // # of tasks
-    const int nthreads,             // # of threads to use
+    const int R_ntasks,               // # of tasks
+    const int R_nthreads,             // # of threads to use
     // analysis from phase0:
     const int64_t Rnvec,
     const int64_t *GB_RESTRICT Rh,
@@ -94,12 +94,6 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     int64_t *pstart_Cslice = NULL, *kfirst_Cslice = NULL, *klast_Cslice = NULL ;
     int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix R

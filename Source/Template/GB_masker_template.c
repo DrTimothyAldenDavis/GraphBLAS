@@ -80,9 +80,9 @@
           int64_t *GB_RESTRICT Ri = R->i ;
           GB_void *GB_RESTRICT Rx = (GB_void *) R->x ;
     size_t rsize = R->type->size ;
-    // when C is bitmap or full:
+    // when R is bitmap or full:
     const int64_t rnz = GB_NNZ_HELD (R) ;
-    int R_nthreads = GB_nthreads (rnz, chunk, nthreads_max) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #endif
 
     //--------------------------------------------------------------------------

@@ -70,7 +70,7 @@ codegen_red_method ('max',    op, 'uint64_t', '0'         , 'UINT64_MAX', 16) ;
 op = 'if ((yarg > zarg) || (zarg != zarg)) zarg = yarg' ;
 codegen_red_method ('max',    op, 'float'   , '(-INFINITY)', 'INFINITY' , 16) ;
 codegen_red_method ('max',    op, 'double'  , ...
-    '((double) INFINITY)'  , '((double) -INFINITY)' , 16) ;
+    '((double) -INFINITY)'  , '((double) INFINITY)' , 16) ;
 
 % ANY: 13 monoids (including bool and complex)
 fprintf ('\nany    ') ;

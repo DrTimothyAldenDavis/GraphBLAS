@@ -27,8 +27,8 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *GB_RESTRICT TaskList,   // array of structs
-    const int ntasks,                       // # of tasks
-    const int nthreads,                     // # of threads to use
+    const int C_ntasks,                       // # of tasks
+    const int C_nthreads,                     // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,          // Ch is NULL, or shallow pointer
@@ -92,7 +92,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
+    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads) ;
 
     //--------------------------------------------------------------------------
     // return the result

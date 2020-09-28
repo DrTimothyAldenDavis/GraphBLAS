@@ -27,8 +27,8 @@
 // C type:   double
 
 // Reduce:   if ((aij > s) || (s != s)) s = aij
-// Identity: ((double) INFINITY)
-// Terminal: if (s == ((double) -INFINITY)) break ;
+// Identity: ((double) -INFINITY)
+// Terminal: if (s == ((double) INFINITY)) break ;
 
 #define GB_ATYPE \
     double
@@ -42,7 +42,7 @@
         double s
 
     #define GB_SCALAR_IDENTITY(s)                   \
-        double s = ((double) INFINITY)
+        double s = ((double) -INFINITY)
 
 // Array to array
 
@@ -96,13 +96,13 @@
         1
 
     #define GB_IS_TERMINAL(s)                       \
-        (s == ((double) -INFINITY))
+        (s == ((double) INFINITY))
 
     #define GB_TERMINAL_VALUE                       \
-        ((double) -INFINITY)
+        ((double) INFINITY)
 
     #define GB_BREAK_IF_TERMINAL(s)                 \
-        if (s == ((double) -INFINITY)) break ;
+        if (s == ((double) INFINITY)) break ;
 
 // panel size for built-in operators
 

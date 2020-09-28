@@ -262,11 +262,21 @@ GrB_Info GB_DxB__minus_fp32
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                                                     \
+{                                                                       \
+    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
+    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
+}
+
 GrB_Info GB_AaddB__minus_fp32
 (
     GrB_Matrix C,
+    const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -274,14 +284,19 @@ GrB_Info GB_AaddB__minus_fp32
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nthreads
+    const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
+    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
+    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
     #include "GB_add_template.c"
+    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -293,22 +308,29 @@ GrB_Info GB_AaddB__minus_fp32
 GrB_Info GB_AemultB__minus_fp32
 (
     GrB_Matrix C,
+    const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nthreads
+    const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
+    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
+    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
     #include "GB_emult_template.c"
+    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }

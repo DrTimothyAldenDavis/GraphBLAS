@@ -37,8 +37,7 @@
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// TODO compact is on
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 // for code development only
 // TODO developer is on
@@ -985,9 +984,9 @@ GrB_Info GB_ewise_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    int *p_TaskList_size,           // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
+    int *p_nthreads,                // # of threads for eWise operation
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *GB_RESTRICT Ch,     // vectors of C, if hypersparse

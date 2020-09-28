@@ -123,6 +123,7 @@ for k1 = 1:length(types)
         % c1 and c2 can only be compared to within round-off error.
 
         % to scalar
+save gunk cin op A A_flip tol is_float
         c2 = GB_mex_reduce_to_scalar  (cin, [ ], op, A) ;
         if (isequal (op, 'any'))
             X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;

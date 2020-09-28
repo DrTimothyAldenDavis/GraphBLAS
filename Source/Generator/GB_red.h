@@ -5,6 +5,7 @@ GrB_Info GB_red_scalar
     GB_atype *result,
     const GrB_Matrix A,
     GB_void *GB_RESTRICT W_space,
+    bool *GB_RESTRICT F,
     int ntasks,
     int nthreads
 ) ;

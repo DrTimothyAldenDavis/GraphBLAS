@@ -38,7 +38,7 @@ GrB_Info GB_ewise_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    int *p_TaskList_size,           // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for eWise operation
     // input:
@@ -60,7 +60,7 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     ASSERT (p_TaskList != NULL) ;
-    ASSERT (p_max_ntasks != NULL) ;
+    ASSERT (p_TaskList_size != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
 
@@ -80,7 +80,7 @@ GrB_Info GB_ewise_slice
     ASSERT (!GB_PENDING (M)) ; 
 
     (*p_TaskList  ) = NULL ;
-    (*p_max_ntasks) = 0 ;
+    (*p_TaskList_size) = 0 ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
@@ -121,7 +121,7 @@ GrB_Info GB_ewise_slice
         TaskList [0].kfirst = 0 ;
         TaskList [0].klast  = Cnvec-1 ;
         (*p_TaskList  ) = TaskList ;
-        (*p_max_ntasks) = max_ntasks ;
+        (*p_TaskList_size) = max_ntasks ;
         (*p_ntasks    ) = (Cnvec == 0) ? 0 : 1 ;
         (*p_nthreads  ) = 1 ;
         return (GrB_SUCCESS) ;
@@ -540,10 +540,10 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    (*p_TaskList  ) = TaskList ;
-    (*p_max_ntasks) = max_ntasks ;
-    (*p_ntasks    ) = ntasks ;
-    (*p_nthreads  ) = nthreads ;
+    (*p_TaskList     ) = TaskList ;
+    (*p_TaskList_size) = max_ntasks ;
+    (*p_ntasks       ) = ntasks ;
+    (*p_nthreads     ) = nthreads ;
     return (GrB_SUCCESS) ;
 }
 

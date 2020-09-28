@@ -155,7 +155,7 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
     bool Ch_is_Mh ;
-    int ntasks, max_ntasks, nthreads ;
+    int C_ntasks = 0, TaskList_size = 0, C_nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -188,10 +188,14 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
     if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
     {
 
+        //----------------------------------------------------------------------
+        // C is sparse or hypersparse: slice and analyze the C matrix
+        //----------------------------------------------------------------------
+
         // phase1a: split C into tasks
         info = GB_ewise_slice (
             // computed by phase1a
-            &TaskList, &max_ntasks, &ntasks, &nthreads,
+            &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
             // computed by phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
@@ -211,7 +215,7 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
             // computed or used by phase1:
             &Cp, &Cnvec_nonempty, op == NULL,
             // from phase1a:
-            TaskList, ntasks, nthreads,
+            TaskList, C_ntasks, C_nthreads,
             // from phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
@@ -226,6 +230,17 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
             GB_FREE (C_to_B) ;
             return (info) ;
         }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C is bitmap or full: only determine how many threads to use
+        //----------------------------------------------------------------------
+
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -238,8 +253,8 @@ if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
     info = GB_add_phase2 (
         // computed or used by phase2:
         &C, ctype, C_is_csc, op,
-        // from phase1 and phase1a: (C sparse/hypersparse only):
-        Cp, Cnvec_nonempty, TaskList, ntasks, nthreads,
+        // from phase1 and phase1a:
+        Cp, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads,
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
         // original input:

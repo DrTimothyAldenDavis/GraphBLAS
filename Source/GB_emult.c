@@ -159,7 +159,7 @@ GB_Matrix_free (&B_bitmap) ;
     int64_t *GB_RESTRICT C_to_M = NULL ;
     int64_t *GB_RESTRICT C_to_A = NULL ;
     int64_t *GB_RESTRICT C_to_B = NULL ;
-    int ntasks, max_ntasks, nthreads ;
+    int C_ntasks = 0, TaskList_size = 0, C_nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -192,10 +192,14 @@ GB_Matrix_free (&B_bitmap) ;
     if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
     {
 
+        //----------------------------------------------------------------------
+        // C is sparse or hypersparse: slice and analyze the C matrix
+        //----------------------------------------------------------------------
+
         // phase1a: split C into tasks
         info = GB_ewise_slice (
             // computed by phase1a:
-            &TaskList, &max_ntasks, &ntasks, &nthreads,
+            &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
             // computed by phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
             // original input:
@@ -214,7 +218,7 @@ GB_Matrix_free (&B_bitmap) ;
             // computed by phase1:
             &Cp, &Cnvec_nonempty,
             // from phase1a:
-            TaskList, ntasks, nthreads,
+            TaskList, C_ntasks, C_nthreads,
             // from phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B,
             // original input:
@@ -228,6 +232,17 @@ GB_Matrix_free (&B_bitmap) ;
             GB_FREE (C_to_B) ;
             return (info) ;
         }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C is bitmap or full: only determine how many threads to use
+        //----------------------------------------------------------------------
+
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -243,7 +258,7 @@ GB_Matrix_free (&B_bitmap) ;
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase1a:
-        TaskList, ntasks, nthreads,
+        TaskList, C_ntasks, C_nthreads,
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, C_sparsity,
         // original input:

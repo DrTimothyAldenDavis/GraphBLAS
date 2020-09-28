@@ -175,7 +175,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                info = GB_red (opname, aname) ((atype *) s, A, W,           \
+                info = GB_red (opname, aname) ((atype *) s, A, W, F,        \
                     ntasks, nthreads) ;                                     \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \

@@ -85,7 +85,7 @@
           GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     // when C is bitmap or full:
     const int64_t cnz = GB_NNZ_HELD (C) ;
-    int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #endif
 
     //--------------------------------------------------------------------------

@@ -91,8 +91,8 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+    for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
