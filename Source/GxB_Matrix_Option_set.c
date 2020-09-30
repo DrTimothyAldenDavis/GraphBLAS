@@ -83,8 +83,8 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 // conform the matrix to the new CSR/CSC format
                 if (A->is_csc != new_csc)
                 { 
-                    // A = A', done in place, and change to the new format.
-                    // transpose: no typecast, no op, in place of A
+                    // A = A', done in-place, and change to the new format.
+                    // transpose: no typecast, no op, in-place of A
                     GB_BURBLE_N (GB_NNZ (A), "(transpose) ") ;
                     int old_sparsity = A->sparsity ;
                     info = GB_transpose (NULL, NULL, new_csc, A,

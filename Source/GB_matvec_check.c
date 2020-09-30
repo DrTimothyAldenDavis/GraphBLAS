@@ -29,6 +29,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
+    bool is_hyper = GB_IS_HYPERSPARSE (A) ;
+    bool is_full = GB_IS_FULL (A) ;
+    bool is_bitmap = GB_IS_BITMAP (A) ;
+    bool is_sparse = GB_IS_SPARSE (A) ;
+
     bool ignore_zombies = false ;
     if (pr < 0)
     { 
@@ -36,6 +41,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         ignore_zombies = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
+    bool phantom = (is_full && A->x == NULL) ;
+    if (phantom)
+    { 
+        // convert GxB_COMPLETE* to GxB_SHORT*
+        if (pr == GxB_COMPLETE_VERBOSE) pr = GxB_SHORT_VERBOSE ;
+        if (pr == GxB_COMPLETE        ) pr = GxB_SHORT ;
+    }
     bool pr_silent   = (pr == GxB_SILENT) ;
     bool pr_complete = (pr == GxB_COMPLETE || pr == GxB_COMPLETE_VERBOSE) ;
     bool pr_short    = (pr == GxB_SHORT    || pr == GxB_SHORT_VERBOSE   ) ;
@@ -68,11 +80,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
     // print the header
     //--------------------------------------------------------------------------
-
-    bool is_hyper = (A->h != NULL) ;
-    bool is_full = GB_IS_FULL (A) ;
-    bool is_bitmap = GB_IS_BITMAP (A) ;
-    bool is_sparse = !(is_full || is_bitmap || is_hyper) ;
 
     if (is_full)
     { 
@@ -380,7 +387,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     // # of entries cannot be computed until all the tests above are OK
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = is_full ? GB_NNZ_FULL (A) : GB_NNZ (A) ;   // TODO
     if (anz == 0)
     { 
         GBPR0 ("no entries\n") ;
@@ -440,13 +447,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check and print the row indices and numerical values
     //--------------------------------------------------------------------------
 
-    if (anz > 0) GBPR0 ("\n") ;
+    if (anz > 0 && !phantom) GBPR0 ("\n") ;
 
     #define GB_NBRIEF 10
     #define GB_NZBRIEF 30
 
     int64_t nzombies = 0 ;
-    int64_t jcount = 0 ;
     int64_t icount = 0 ;
     bool truncated = false ;
     int64_t anz_actual = 0 ;
@@ -454,6 +460,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // for each vector of A
     for (int64_t k = 0 ; k < A->nvec ; k++)
     {
+        if (phantom) break ;
         int64_t ilast = -1 ;
         int64_t j = GBH (A->h, k) ;
         int64_t p = GBP (A->p, k, A->vlen) ;
@@ -476,7 +483,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             }
         }
 
-        bool prcol = ((pr_short && jcount < GB_NBRIEF) || pr_complete) ;
+        bool prcol = ((pr_short && k < GB_NBRIEF) || pr_complete) ;
         // print the header for vector j
         if (prcol)
         { 
@@ -485,11 +492,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 A->is_csc ? "column" : "row", j, ajnz, p, pend-1) ;
             #endif
         }
-        else if (pr_short && jcount == GB_NBRIEF)
+        else if (pr_short && k == GB_NBRIEF)
         { 
             truncated = true ;
         }
-        jcount++ ;      // count # of vectors printed so far
 
         // for each entry in A(:,j), the kth vector of A
         for ( ; p < pend ; p++)
@@ -598,7 +604,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     #if GB_DEVELOPER
-    if (pr_short || pr_complete)
+    if ((pr_short || pr_complete) && (is_sparse || is_hyper))
     {
         GBPR ("  Pending %p\n", Pending) ;
     }

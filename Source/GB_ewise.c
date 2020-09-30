@@ -211,7 +211,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (A_transpose)
     { 
         // AT = A'
-        // transpose: no typecast, no op, not in place
+        // transpose: no typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
@@ -226,7 +226,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (B_transpose)
     { 
         // BT = B'
-        // transpose: no typecast, no op, not in place
+        // transpose: no typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;
         GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,
             NULL, NULL, NULL, false, Context)) ;
@@ -245,7 +245,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // C<M>+=A+B when C and A are dense, B is sparse.  M can be sparse.
     // C<M>+=A+B when C and B are dense, A is sparse.  M can be sparse.
     // C<M>+=A+B when C, A, and B are dense.  M can be sparse.
-    // In all cases above, C remains dense and can be updated in place
+    // In all cases above, C remains dense and can be updated in-place
     // C_replace must be false.  M can be valued or structural.
 
 //  if (A_is_dense && B_is_dense)

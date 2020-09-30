@@ -28,7 +28,7 @@
 // The output matrix C = *Chandle has not been allocated, so C is NULL on
 // input.  The mask M is optional.
 
-// If C is computed in place, Chandle is ignored, and the result is computed
+// If C is computed in-place, Chandle is ignored, and the result is computed
 // in C_in_place instead.  This case requires the accum operator to match
 // the monoid of the semiring.
 
@@ -46,7 +46,7 @@
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -55,7 +55,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    bool *done_in_place,            // if true, C_in_place was computed in place
+    bool *done_in_place,            // if true, C_in_place was computed in-place
     GB_Context Context
 )
 {
@@ -133,9 +133,13 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         #if defined ( GBCUDA )
 
         // very rough estimate of the work to do
-        double adeg = ((double) GB_NNZ (A)) / ((double) GB_IMAX (1, A->nvec)) ;
-        double bdeg = ((double) GB_NNZ (B)) / ((double) GB_IMAX (1, B->nvec)) ;
-        double work = GB_NNZ (M) * GB_IMIN (adeg, bdeg) ;
+        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
+        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
+        int64_t mnz = GB_IS_FULL (M) ? GB_NNZ_FULL (M) : GB_NNZ (M) ; // TODO
+
+        double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;
+        double bdeg = ((double) bnz) / ((double) GB_IMAX (1, B->nvec)) ;
+        double work = mnz * GB_IMIN (adeg, bdeg) ;
 
         // TODO for GPU: if A or B are not accessed (first, 2nd, or pair
         // ops) then the type of A can be user-defined here, for CUDA.
@@ -167,8 +171,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         if (C_in_place != NULL && M == NULL && !Mask_comp)
         { 
-            // in place C+=A'*B.  mask is not present (and not applied)
-            GBURBLE ("dense, C+=A'*B in place ") ;
+            // in-place C+=A'*B.  mask is not present (and not applied)
+            GBURBLE ("dense, C+=A'*B in-place ") ;
             (*done_in_place) = true ;
             (*mask_applied) = false ;    // no mask to apply
             return (GB_AxB_dot4 (C_in_place, A, B, semiring, flipxy, Context)) ;

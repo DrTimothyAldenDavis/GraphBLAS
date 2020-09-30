@@ -50,7 +50,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     // ensure the matrix is in CSR format
     if ((*A)->is_csc)
     {
-        // A = A', done in place, to put A in CSR format
+        // A = A', done in-place, to put A in CSR format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, false, *A,
             NULL, NULL, NULL, false, Context)) ;

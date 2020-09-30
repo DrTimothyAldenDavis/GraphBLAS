@@ -39,7 +39,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 )
 {
-// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -98,6 +97,10 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
@@ -112,13 +115,13 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // If C is dense (with no pending work), and the accum is present, then
-    // C+=A*B can be done in place (C_replace is effectively false).  If C is
+    // C+=A*B can be done in-place (C_replace is effectively false).  If C is
     // dense, M is present, and C_replace is false, then C<M>+=A*B or
-    // C<!M>+=A*B can also be done in place.  In all of these cases, C remains
+    // C<!M>+=A*B can also be done in-place.  In all of these cases, C remains
     // dense with all entries present.  C can have any sparsity structure;
     // its pattern is ignored.
 
-    // If C is bitmap, then it can always be be done in place (assuming the
+    // If C is bitmap, then it can always be be done in-place (assuming the
     // type of C is OK).  The accum operator need not be present.  GB_AxB_meta
     // can easily insert non-entries into C and check for non-entries, via the
     // bitmap.
@@ -135,9 +138,9 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     if (done_in_place)
     { 
-        // C has been computed in place; no more work to do
+        // C has been computed in-place; no more work to do
         GB_Matrix_free (&MT) ;
-        ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
+        ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place)", GB0) ;
         return (info) ;
     }
 

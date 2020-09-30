@@ -20,8 +20,6 @@
 
 // Assemble tuples:    GB_red_build__any_uint32
 // Reduce to scalar:   GB_red_scalar__any_uint32
-// Reduce each vector: GB_red_eachvec__any_uint32
-// Reduce each index:  GB_red_eachindex__any_uint32
 
 // A type:   uint32_t
 // C type:   uint32_t
@@ -36,13 +34,15 @@
 #define GB_CTYPE \
     uint32_t
 
-// declare scalar
+// monoid identity value
 
-    #define GB_SCALAR(s)                            \
-        uint32_t s
+    #define GB_IDENTITY \
+        0
+
+// declare a scalar and set it equal to the monoid identity value
 
     #define GB_SCALAR_IDENTITY(s)                   \
-        uint32_t s = 0
+        uint32_t s = GB_IDENTITY
 
 // Array to array
 
@@ -149,67 +149,6 @@ GrB_Info GB_red_scalar__any_uint32
     }
     (*result) = s ;
     return (GrB_SUCCESS) ;
-    #endif
-}
-
-
-
-//------------------------------------------------------------------------------
-// reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
-//------------------------------------------------------------------------------
-
-
-
-GrB_Info GB_red_eachvec__any_uint32
-(
-    uint32_t *GB_RESTRICT Tx,
-    GrB_Matrix A,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    GB_void *Wfirst_space,
-    GB_void *Wlast_space,
-    int ntasks,
-    int nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    #include "GB_reduce_each_vector.c"
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-
-
-//------------------------------------------------------------------------------
-// reduce to each index: each A(i,:) reduces to a scalar T (i)
-//------------------------------------------------------------------------------
-
-
-
-GrB_Info GB_red_eachindex__any_uint32
-(
-    GrB_Matrix *Thandle,
-    GrB_Type ttype,
-    GrB_Matrix A,
-    const int64_t *GB_RESTRICT pstart_slice,
-    int nth,
-    int nthreads,
-    GB_Context Context
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    GrB_Info info = GrB_SUCCESS ;
-    GrB_Matrix T = NULL ;
-    (*Thandle) = NULL ;
-    #define GB_FREE_ALL ;
-    #include "GB_reduce_each_index.c"
-    (*Thandle) = T ;
-    return (info) ;
     #endif
 }
 

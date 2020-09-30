@@ -204,11 +204,6 @@
         //      bitmap  sparse      full            bitmap
         //      bitmap  sparse      full            full  
 
-        // TODO: is this method fast?  It requires a traversal of the sparse M.
-        // The mask M may need to be traversed yet again in GB_mask.  The
-        // asymptotic time complexity is good, however; only the constant is
-        // affected by this choice.  For now, always apply the mask now.
-
         // M is sparse and complemented.  If M is sparse and not
         // complemented, then C is constructed as sparse, not bitmap.
         ASSERT (Mask_comp) ;

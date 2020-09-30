@@ -415,7 +415,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_NNZ (B) ;
+    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
     const int64_t bnvec = B->nvec ;
     const int64_t bvlen = B->vlen ;
     const bool B_is_hyper = (Bh != NULL) ;
@@ -513,7 +513,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // for in Bflops, so the hash tables can be small.
             M_dense_in_place = true ;
             AxB_method = GxB_AxB_HASH ;
-            GBURBLE ("(use dense mask in place) ") ;
+            GBURBLE ("(use dense mask in-place) ") ;
         }
         else
         { 

@@ -19,16 +19,12 @@ fprintf (f, 'define(`GB_ctype'', `%s'')\n', atype) ;
 
 if (~isempty (identity))
     fprintf (f, 'define(`GB_red_scalar'',    `GB_red_scalar__%s'')\n',    name);
-    fprintf (f, 'define(`GB_red_eachvec'',   `GB_red_eachvec__%s'')\n',   name);
-    fprintf (f, 'define(`GB_red_eachindex'', `GB_red_eachindex__%s'')\n', name);
     % identity and terminal values for the monoid
     fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
     fprintf (f, 'define(`if_is_monoid'', `'')\n') ;
     fprintf (f, 'define(`endif_is_monoid'', `'')\n') ;
 else
     fprintf (f, 'define(`GB_red_scalar'',    `GB_red_scalar__(none)'')\n') ;
-    fprintf (f, 'define(`GB_red_eachvec'',   `GB_red_eachvec__(none)'')\n') ;
-    fprintf (f, 'define(`GB_red_eachindex'', `GB_red_eachindex__(none)'')\n') ;
     % first and second operators are not monoids (GB_red_build only)
     fprintf (f, 'define(`GB_identity'', `(none)'')\n') ;
     fprintf (f, 'define(`if_is_monoid'', `#if 0'')\n') ;
@@ -76,14 +72,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +18 > Generated/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_red.c | m4 | tail -n +16 > Generated/GB_red__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +18 >> Generated/GB_red__include.h') ;
+'cat control.m4 Generator/GB_red.h | m4 | tail -n +16 >> Generated/GB_red__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

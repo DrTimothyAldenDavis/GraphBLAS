@@ -186,7 +186,7 @@ void GB_AxB_saxpy3_symbolic
                 //--------------------------------------------------------------
 
                 // If M_dense_in_place is true, this is skipped.  The mask M
-                // is dense, and is used in place.
+                // is dense, and is used in-place.
 
                 // The least significant 2 bits of Hf [hash] is the flag f, and
                 // the upper bits contain h, as (h,f).  After this phase1, if
@@ -432,7 +432,7 @@ void GB_AxB_saxpy3_symbolic
                     if (M_dense_in_place)
                     { 
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        // If the mask is M, dense and done in place, and
+                        // If the mask is M, dense and done in-place, and
                         // structural, then it can be ignored (see above).
                         ASSERT (Mx != NULL)
                         #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;

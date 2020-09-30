@@ -87,7 +87,7 @@ GrB_Info GB_AxB_dot3_slice
     int64_t *GB_RESTRICT Cwork = C->i ;     // ok: C is sparse
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
-    const int64_t cnz = GB_NNZ (C) ;
+    const int64_t cnz = GB_NNZ_HELD (C) ;
 
     //--------------------------------------------------------------------------
     // compute the cumulative sum of the work

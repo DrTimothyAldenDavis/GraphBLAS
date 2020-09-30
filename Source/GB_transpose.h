@@ -14,7 +14,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (
-    GrB_Matrix *Chandle,        // output matrix C, possibly modified in place
+    GrB_Matrix *Chandle,        // output matrix C, possibly modified in-place
     GrB_Type ctype,             // desired type of C; if NULL use A->type.
                                 // ignored if op is present (cast to op->ztype)
     const bool C_is_csc,        // desired CSR/CSC format of C

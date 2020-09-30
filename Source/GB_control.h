@@ -17,10 +17,10 @@
 // same thing.
 
 // GraphBLAS will still work as expected.  It will simply use a generic method
-// in place of the type- or operator-specific code.  It will be slower, by
-// about 2x or 3x, depending on the operation. but its results will be the
-// same.  A few operations will be 10x slower, such as GrB_reduce to scalar
-// using the GrB_MAX_FP64 operator.
+// instead of the type- or operator-specific code.  It will be slower, by about
+// 2x or 3x, depending on the operation. but its results will be the same.  A
+// few operations will be 10x slower, such as GrB_reduce to scalar using the
+// GrB_MAX_FP64 operator.
 
 // Enabling the "#define GBCOMPACT" option is the same as uncommenting this
 // entire file.  This file provides a more concise control over which

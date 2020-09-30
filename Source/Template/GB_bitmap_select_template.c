@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Ab and Cb can be aliased, if A is bitmap and the selection is done in place.
+// Ab and Cb can be aliased, if A is bitmap and the selection is done in-place.
 // Ax and Cx are not aliased.
 
 // TODO: If done in-place, Cx can be passed as NULL.  Then if A is not bitmap,

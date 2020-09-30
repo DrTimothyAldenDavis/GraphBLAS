@@ -377,8 +377,7 @@ void *mkl ;
 // To force a matrix to always stay non-hypersparse, use hyper_switch = -1 (or
 // any negative number).  To force a matrix to always stay hypersparse, use
 // hyper_switch = 1 or more.  For code readability, these values are also
-// predefined for the user application as the constants GxB_ALWAYS_HYPER and
-// GxB_NEVER_HYPER.
+// predefined for the user application as GxB_ALWAYS_HYPER and GxB_NEVER_HYPER.
 
 // Summary for switching between formats:
 

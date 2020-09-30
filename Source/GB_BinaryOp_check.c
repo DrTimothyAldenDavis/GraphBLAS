@@ -57,7 +57,8 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     bool op_is_second = (opcode == GB_SECOND_opcode) ;
     bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
 
-    if (!op_is_positional && op->function == NULL)
+    if (!(op_is_positional || op_is_first || op_is_second)
+       && op->function == NULL)
     { 
         GBPR0 ("    BinaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;

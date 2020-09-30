@@ -11,7 +11,7 @@
 
 // LAGraph_bfs_parent:
 //      M present, complemented, valued, and dense
-//      C: a vector, not in place
+//      C: a vector, not in-place
 //      semiring: ANY_SECONDI1_INT32
 //      C_replace: true
 //      accum: not present
@@ -26,8 +26,8 @@
 
 GrB_Info GB_AxB_dot5                // A'*B, dot product method
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in place)
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -56,7 +56,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // semiring for BFS
     if (semiring != GxB_ANY_SECONDI1_INT32) return (GrB_NO_VALUE) ;
 
-    // mask present, complemented, valued, dense, and GrB_INT32
+    // mask present, complemented, valued, full, and GrB_INT32
     if (M == NULL) return (GrB_NO_VALUE) ;
     if (!GB_IS_FULL (M)) return (GrB_NO_VALUE) ;
     if (!Mask_comp) return (GrB_NO_VALUE) ;
@@ -69,7 +69,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // no flipxy
     if (flipxy) return (GrB_NO_VALUE) ;
 
-    // not in place (for now)
+    // not in-place (for now)
     if (C_in_place) return (GrB_NO_VALUE) ;
 
     //--------------------------------------------------------------------------
@@ -108,8 +108,8 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ (A) ;
-    int64_t bnz = GB_NNZ (B) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
+    int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
     { 
@@ -238,7 +238,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     const int64_t mvlen = M->vlen ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
 
-    // TODO: if M is present and sparse and thus not used in place, scatter it
+    // TODO: if M is present and sparse and thus not used in-place, scatter it
     // into the Cb bitmap with -1's and the rest 0's.  Then when done, walk
     // through the mask M again and set any -1's to 0.  This works for both
     // M and !M.  If M, then C(i,j) can be computed only if Cb [p] == -1,
@@ -270,8 +270,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
             z = (k+1)
         #define GB_MULTADD(z,x,y,i,k,j) \
             z = (k+1)
-        #define GB_IDENTITY \
-            0
+        #define GB_IDENTITY 0
 
         #define GB_PUTC(cij,p) Cx [p] = cij
 
@@ -281,7 +280,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // C = A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
 
-    // A is sparse or hypersparse, M is dense and used in place, B is bitmap,
+    // A is sparse or hypersparse, M is dense and used in-place, B is bitmap,
     // no accum, M is complemented and not structural.  Semiring is
     // GxB_ANY_FIRSTJ1_INT32.
 
@@ -345,7 +344,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                 // pC = the location of C(i,j) in the bitmap
                 int64_t pC = pC_start + i ;     // C is bitmap
                 bool mij ;
-                // since M is full and used in place, it has the same
+                // since M is full and used in-place, it has the same
                 // dimensions as C.
                 mij = (Mx [pC] != 0) ;          // GB_mcast (Mx, pC, msize)
                 if (!mij)

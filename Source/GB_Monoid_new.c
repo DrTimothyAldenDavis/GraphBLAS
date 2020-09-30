@@ -7,15 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-// OK: no change for BITMAP
-
-// Create a user-defined monoid with an operator, identity value, and
+// Create a monoid with an operator, (optionally) an identity value, and
 // (optionally) a terminal value.  If using a built-in operator, a duplicate
-// boolean operators is first replaced with its unique equivalent.  If the
+// boolean operator is first replaced with its unique equivalent.  If the
 // operator is built-in and corresponds to a known monoid, then the identity
-// value and terminal value provided on input are ignored, and the known values
-// are used instead.  This is to allow the use of the hard-coded functions for
-// built-in monoids.
+// value and terminal value provided on input are silently ignored, and the
+// known values are used instead.  This is to allow the use of the hard-coded
+// functions for built-in monoids.
+
+// User-defined monoids are required to have a non-NULL identity value.  The
+// identity value is required by GraphBLAS only when reducing a matrix or
+// vector to a scalar (in GB_reduce_to_scalar), and even there, it is only
+// required when nvals(A) is zero.
+
+// The identity value of built-in monoids is exploited in one special case in
+// Template/GB_AxB_saxpy3_template.c, but it is used via the #define
+// GB_IDENTITY value, not monoid->identity.  This #define is also used for
+// built-in monoids in Template/GB_reduce_to_scalar_template.c.
+
+// User-defined monoids may have a NULL terminal value, which denotes that the
+// monoid does not have a terminal value.
+
+// Internally-defined monoids may have a NULL identity value; these monoids are
+// not exposed to the user API, however, and cannot be created or directly
+// accessed by the user.
 
 #include "GB.h"
 
@@ -23,7 +38,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 (
     GrB_Monoid *monoid,         // handle of monoid to create
     GrB_BinaryOp op,            // binary operator of the monoid
-    const void *identity,       // identity value
+    const void *identity,       // identity value, if any (may be NULL)
     const void *terminal,       // terminal value, if any (may be NULL)
     GB_Type_code idcode,        // identity and terminal type code
     GB_Context Context
@@ -37,7 +52,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_RETURN_IF_NULL (monoid) ;
     (*monoid) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    ASSERT (identity != NULL) ;
 
     ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
     ASSERT (idcode <= GB_UDT_code) ;
@@ -148,33 +162,30 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->op = op ;
     mon->monoid_is_builtin = false ;
     size_t zsize = op->ztype->size ;
-    mon->identity = NULL ;                  // defined below
+    mon->identity = NULL ;                  // defined below (if present)
     mon->terminal = NULL ;                  // defined below (if present)
 
     //--------------------------------------------------------------------------
-    // allocation of idenity and terminal values
+    // allocation of identity and terminal values
     //--------------------------------------------------------------------------
 
-    // allocate both the identity and terminal value
-    #define GB_ALLOC_IDENTITY_AND_TERMINAL                                  \
+    // allocate the identity value
+    #define GB_ALLOC_IDENTITY                                               \
     {                                                                       \
         mon->identity = GB_CALLOC (zsize, GB_void) ;                        \
-        mon->terminal = GB_CALLOC (zsize, GB_void) ;                        \
-        if (mon->identity == NULL || mon->terminal == NULL)                 \
+        if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
-            GB_FREE (mon->identity) ;                                       \
-            GB_FREE (mon->terminal) ;                                       \
             GB_FREE (*monoid) ;                                             \
             return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
     }
 
-    // allocate just the identity, not the terminal
-    #define GB_ALLOC_JUST_IDENTITY                                          \
+    // allocate the terminal value
+    #define GB_ALLOC_TERMINAL                                               \
     {                                                                       \
-        mon->identity = GB_CALLOC (zsize, GB_void) ;                        \
-        if (mon->identity == NULL)                                          \
+        mon->terminal = GB_CALLOC (zsize, GB_void) ;                        \
+        if (mon->terminal == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
             GB_FREE (*monoid) ;                                             \
@@ -189,16 +200,20 @@ GrB_Info GB_Monoid_new          // create a monoid
     bool done = false ;
 
     // If the user requests the creation of a monoid based on a built-in
-    // operator that corresponds to known monoid, the identity and terminal
-    // values provided by the user to GrB_Monoid_new are ignored, since these
-    // are all handled by the same hard-coded functions as the built-in monoids
-    // based on the same operator.
+    // operator that corresponds to known built-in monoid, the identity and
+    // terminal values provided by the user to GrB_Monoid_new are ignored,
+    // since these are all handled by the same hard-coded functions as the
+    // built-in monoids based on the same operator.
+
+    // All of the monoids created in the switch statement below have non-NULL
+    // identity values; some have terminal values and some do not.
 
     // create a monoid with both an identity and a terminal value,
     // based on a built-in operator that is a known monoid
     #define GB_IT(ztype,identity_value,terminal_value)                      \
     {                                                                       \
-        GB_ALLOC_IDENTITY_AND_TERMINAL ;                                    \
+        GB_ALLOC_TERMINAL ;                                                 \
+        GB_ALLOC_IDENTITY ;                                                 \
         ztype *identity = (ztype *) mon->identity ;                         \
         ztype *terminal = (ztype *) mon->terminal ;                         \
         (*identity) = identity_value ;                                      \
@@ -211,7 +226,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // based on a built-in operator that is a known monoid
     #define GB_IN(ztype,identity_value)                                     \
     {                                                                       \
-        GB_ALLOC_JUST_IDENTITY ;                                            \
+        GB_ALLOC_IDENTITY ;                                                 \
         ztype *identity = (ztype *) mon->identity ;                         \
         (*identity) = identity_value ;                                      \
         done = true ;                                                       \
@@ -223,6 +238,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         case GB_MIN_opcode :
 
             // MIN monoid:  identity is +inf, terminal is -inf
+            // note there is no MIN monoid for complex types
             switch (zcode)
             {
                 case GB_INT8_code   : GB_IT (int8_t  , INT8_MAX  , INT8_MIN  )
@@ -243,6 +259,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         case GB_MAX_opcode :
 
             // MAX monoid:  identity is -inf, terminal is +inf
+            // note there is no MAX monoid for complex types
             switch (zcode)
             {
                 case GB_INT8_code   : GB_IT (int8_t  , INT8_MIN  , INT8_MAX  )
@@ -326,22 +343,22 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_LOR_opcode : 
+        case GB_LOR_opcode :
 
             // boolean OR monoid:  identity is false, terminal is true
             if (zcode == GB_BOOL_code) GB_IT (bool, false, true)
 
-        case GB_LAND_opcode : 
+        case GB_LAND_opcode :
 
             // boolean AND monoid:  identity is true, terminal is false
             if (zcode == GB_BOOL_code) GB_IT (bool, true, false)
 
-        case GB_LXOR_opcode : 
+        case GB_LXOR_opcode :
 
             // boolean XOR monoid:  identity is false, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, false)
 
-        case GB_EQ_opcode : 
+        case GB_EQ_opcode :
 
             // boolean EQ monoid:  identity is true, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, true)
@@ -361,17 +378,16 @@ GrB_Info GB_Monoid_new          // create a monoid
 
     if (!done)
     {
-        if (terminal == NULL)
+        if (identity != NULL)
         { 
-            // create a monoid with just an identity but no terminal value
-            GB_ALLOC_JUST_IDENTITY ;
+            // create the monoid identity value
+            GB_ALLOC_IDENTITY ;
             memcpy (mon->identity, identity, zsize) ;
         }
-        else
+        if (terminal != NULL)
         { 
-            // create a monoid with both an identity and a terminal value
-            GB_ALLOC_IDENTITY_AND_TERMINAL ;
-            memcpy (mon->identity, identity, zsize) ;
+            // create the monoid terminal value
+            GB_ALLOC_TERMINAL ;
             memcpy (mon->terminal, terminal, zsize) ;
         }
     }

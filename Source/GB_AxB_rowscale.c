@@ -48,6 +48,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
     ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_FULL (D)) ;          // ok: D is not full
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -134,7 +135,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (GB_NNZ (B) + B->nvec, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (GB_NNZ_HELD (B) + B->nvec, chunk, nthreads_max);
 
     //--------------------------------------------------------------------------
     // determine if the values are accessed

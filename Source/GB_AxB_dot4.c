@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot4: compute C+=A'*B in place
+// GB_AxB_dot4: compute C+=A'*B in-place
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -41,9 +41,9 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for dot in place += A'*B", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for dot in place += A'*B", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for dot in place += A'*B", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for dot in-place += A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for dot in-place += A'*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for dot in-place += A'*B", GB0) ;
     ASSERT (GB_is_dense (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -58,7 +58,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
     ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
 
-    ASSERT_SEMIRING_OK (semiring, "semiring for in place += A'*B", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
 
     int64_t *GB_RESTRICT A_slice = NULL ;
@@ -68,8 +68,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // determine the number of threads to use, and the use_mkl flag
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ (A) ;
-    int64_t bnz = GB_NNZ (B) ;
+    int64_t anz = GB_NNZ_HELD (A) ;
+    int64_t bnz = GB_NNZ_HELD (B) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
     bool use_mkl = (Context == NULL) ? false : Context->use_mkl ;

@@ -59,7 +59,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     // ensure the matrix is in CSR format
     if ((*A)->is_csc)
     {
-        // A = A', done in place, to put A in CSR format
+        // A = A', done in-place, to put A in CSR format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, false, *A,
             NULL, NULL, NULL, false, Context)) ;

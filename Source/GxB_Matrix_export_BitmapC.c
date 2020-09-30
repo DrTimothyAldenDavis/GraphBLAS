@@ -47,7 +47,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     // ensure the matrix is in CSC format
     if (!((*A)->is_csc))
     {
-        // A = A', done in place, to put A in CSC format
+        // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, true, *A,
             NULL, NULL, NULL, false, Context)) ;

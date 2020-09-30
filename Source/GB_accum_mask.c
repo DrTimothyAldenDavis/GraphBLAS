@@ -192,7 +192,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     if (C->is_csc != T->is_csc)
     { 
-        // transpose: no typecast, no op, in place of T, but T
+        // transpose: no typecast, no op, in-place of T, but T
         // cannot have any zombies or pending tuples.
         // T can be jumbled.
         ASSERT (GB_JUMBLED_OK (T)) ;
@@ -212,7 +212,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // that C and M are not aliased.
 
         // MT = M' to conform M to the same CSR/CSC format as C.
-        // transpose: typecast, no op, not in place
+        // transpose: typecast, no op, not in-place
         if (MT_in == NULL)
         { 
             if (GB_PENDING_OR_ZOMBIES (M))
@@ -286,7 +286,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         {
             // always use GB_subassign if C is bitmap or full and M and/or
             // accum is present.  No zombies or pending tuples are introduced
-            // into C, and C is modified in place, so GB_subassign is very
+            // into C, and C is modified in-place, so GB_subassign is very
             // efficient in this case.
             use_subassign = true ;
         }

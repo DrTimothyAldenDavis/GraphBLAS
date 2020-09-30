@@ -52,6 +52,7 @@ GrB_Info GB_AxB_saxpy3_generic
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
+    ASSERT (mult->ztype == C->type) ;
 
     GxB_binary_function fmult = mult->function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->function ;
@@ -72,9 +73,6 @@ GrB_Info GB_AxB_saxpy3_generic
     size_t aik_size = flipxy ? ysize : xsize ;
     size_t bkj_size = flipxy ? xsize : ysize ;
 
-    GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
-    GB_void *GB_RESTRICT identity = (GB_void *) add->identity ;
-
     GB_cast_function cast_A, cast_B ;
     if (flipxy)
     { 
@@ -83,11 +81,6 @@ GrB_Info GB_AxB_saxpy3_generic
                  GB_cast_factory (mult->ytype->code, A->type->code) ;
         cast_B = B_is_pattern ? NULL : 
                  GB_cast_factory (mult->xtype->code, B->type->code) ;
-        if (op_is_positional)
-        {
-            // flip a positional multiplicative operator
-            opcode = GB_binop_flip (opcode) ;
-        }
     }
     else
     { 
@@ -127,6 +120,12 @@ GrB_Info GB_AxB_saxpy3_generic
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
 
+    // The monoid identity value is not used, to support the creation of
+    // arbitrary monoids from any operator that have no identity value.
+    // This can be used by GB_reduce_to_vector, which can be given either
+    // a monoid or binary operator from GrB_Matrix_reduce.
+    #undef GB_IDENTITY
+
     // definitions for GB_AxB_saxpy3_template.c
     #include "GB_AxB_saxpy3_template.h"
 
@@ -138,6 +137,12 @@ GrB_Info GB_AxB_saxpy3_generic
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
+
+        if (flipxy)
+        {
+            // flip a positional multiplicative operator
+            opcode = GB_binop_flip (opcode) ;
+        }
 
         // C always has type int64_t.  The monoid must be used via its function
         // pointer.  The positional multiply operator must be hard-coded since
@@ -173,15 +178,10 @@ GrB_Info GB_AxB_saxpy3_generic
         // Hx [i] += t
         #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), &t)
 
-        #define GB_IDENTITY add_identity
-
         int64_t offset = GB_positional_offset (opcode) ;
 
         if (mult->ztype == GrB_INT64)
         {
-            // monoid identity value
-            int64_t add_identity ;
-            memcpy (&add_identity, identity, sizeof (int64_t)) ;
             #undef  GB_CTYPE
             #define GB_CTYPE int64_t
             ASSERT (C->type == GrB_INT64) ;
@@ -213,9 +213,6 @@ GrB_Info GB_AxB_saxpy3_generic
         }
         else
         {
-            // monoid identity value
-            int32_t add_identity ;
-            memcpy (&add_identity, identity, sizeof (int32_t)) ;
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
             ASSERT (C->type == GrB_INT32) ;
@@ -255,10 +252,6 @@ GrB_Info GB_AxB_saxpy3_generic
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
-
-        // monoid identity value
-        #undef  GB_IDENTITY
-        #define GB_IDENTITY identity
 
         // aik = A(i,k), located in Ax [pA]
         #undef  GB_GETA
@@ -307,19 +300,48 @@ GrB_Info GB_AxB_saxpy3_generic
         #undef  GB_CTYPE
         #define GB_CTYPE GB_void
 
-        if (flipxy)
-        { 
-            // t = B(k,j) * A(i,k)
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
-            #include "GB_AxB_saxpy3_template.c"
+        if (opcode == GB_FIRST_opcode || opcode == GB_SECOND_opcode)
+        {
+            // fmult is not used and can be NULL (for user-defined types)
+            if (flipxy)
+            { 
+                // flip first and second
+                opcode = GB_binop_flip (opcode) ;
+            }
+            if (opcode == GB_FIRST_opcode)
+            { 
+                // t = A(i,k)
+                ASSERT (B_is_pattern) ;
+                #undef  GB_MULT
+                #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
+                #include "GB_AxB_saxpy3_template.c"
+            }
+            else // opcode == GB_SECOND_opcode
+            { 
+                // t = B(i,k)
+                ASSERT (A_is_pattern) ;
+                #undef  GB_MULT
+                #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
+                #include "GB_AxB_saxpy3_template.c"
+            }
         }
         else
-        { 
-            // t = A(i,k) * B(k,j)
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
-            #include "GB_AxB_saxpy3_template.c"
+        {
+            ASSERT (fmult != NULL) ;
+            if (flipxy)
+            { 
+                // t = B(k,j) * A(i,k)
+                #undef  GB_MULT
+                #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
+                #include "GB_AxB_saxpy3_template.c"
+            }
+            else
+            { 
+                // t = A(i,k) * B(k,j)
+                #undef  GB_MULT
+                #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
+                #include "GB_AxB_saxpy3_template.c"
+            }
         }
     }
 

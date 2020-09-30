@@ -36,8 +36,8 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in place)
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
@@ -52,7 +52,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    bool *done_in_place,            // if true, C was computed in place
+    bool *done_in_place,            // if true, C was computed in-place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GB_Context Context
 )
@@ -109,12 +109,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     //--------------------------------------------------------------------------
-    // see if the work can be done in place
+    // see if the work can be done in-place
     //--------------------------------------------------------------------------
 
     // If C is hypersparse, sparse, or full:
     //
-    //      C can be computed in place if it is already dense, and if it is
+    //      C can be computed in-place if it is already dense, and if it is
     //      guaranteed to remain dense after the computation is done.  This
     //      case requires the accum operator to be present and it must match
     //      the monoid of the semiring.  C_replace must be false, or
@@ -122,7 +122,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //
     // If C is bitmap:
     //
-    //      C can be computed in place if its type is the same as the semiring
+    //      C can be computed in-place if its type is the same as the semiring
     //      monoid.  The accum must not be present, or if present it must match
     //      the semiring monoid.  C_replace can be true or false.
     //
@@ -286,7 +286,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     // all uses of GB_transpose below:
-    // transpose: typecast, no op, not in place
+    // transpose: typecast, no op, not in-place
 
     GrB_Matrix M ;
     bool M_transposed ;
@@ -318,8 +318,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     if (can_do_in_place)
     {
-        // C cannot be done in place if it is aliased with any input matrix.
-        // Also cannot compute C in place if it is to be transposed.
+        // C cannot be done in-place if it is aliased with any input matrix.
+        // Also cannot compute C in-place if it is to be transposed.
         bool C_aliased =
             GB_aliased (C_in_place, M) ||
             GB_aliased (C_in_place, A) ||
@@ -344,10 +344,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     char B_str [GB_PROP_LEN+1] ;
     if (GB_Global_burble_get ( ))
     {
+        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
+        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
         snprintf (A_str, GB_PROP_LEN, "A: " GBd "-by-" GBd ", %s, " GBd 
-            " entries", GB_NROWS (A), GB_NCOLS (A), A->type->name, GB_NNZ (A)) ;
+            " entries", GB_NROWS (A), GB_NCOLS (A), A->type->name, anz) ;
         snprintf (B_str, GB_PROP_LEN, "B: " GBd "-by-" GBd ", %s, " GBd
-            " entries", GB_NROWS (B), GB_NCOLS (B), B->type->name, GB_NNZ (B)) ;
+            " entries", GB_NROWS (B), GB_NCOLS (B), B->type->name, bnz) ;
     }
     #endif
 
@@ -383,6 +385,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         B_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
         atype_required = A_is_pattern ? A->type : semiring->multiply->xtype ;
         btype_required = B_is_pattern ? B->type : semiring->multiply->ytype ;
+    }
+
+    bool allow_scale = true ;
+    if (semiring->multiply->function == NULL || op_is_positional)
+    {
+        // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
+        // operator for GB_reduce_to_vector, nor do they handle positional ops.
+        allow_scale = false ;
     }
 
     //--------------------------------------------------------------------------
@@ -437,12 +447,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         bool do_colscale = false ;
         bool do_adotb = false ;
 
-        if (M == NULL && B_is_diagonal)
+        if (allow_scale && M == NULL && B_is_diagonal)
         { 
             // C = A'*D
             do_colscale = true ;
         }
-        else if (M == NULL && GB_is_diagonal (A, Context))
+        else if (allow_scale && M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B
             do_rowscale = true ;
@@ -495,7 +505,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (do_adotb)
         { 
-            // C<M>=A'*B via dot product, or C_in_place<M>+=A'*B if in place
+            // C<M>=A'*B via dot product, or C_in_place<M>+=A'*B if in-place
             GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                 (M != NULL && !Mask_comp) ? "masked_" : "") ;
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
@@ -520,13 +530,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // C<M> = A*B'
         //----------------------------------------------------------------------
 
-        if (M == NULL && GB_is_diagonal (B, Context))
+        if (allow_scale && M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D
             GBURBLE ("C%s=A*B', colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
-        else if (M == NULL && GB_is_diagonal (A, Context))
+        else if (allow_scale && M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B'
             GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
@@ -536,7 +546,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M>=A*B' via dot product, or C_in_place<M>+=A*B' if in place
+            // C<M>=A*B' via dot product, or C_in_place<M>+=A*B' if in-place
             GBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
                 M_str, A_str, B_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
@@ -565,13 +575,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // C<M> = A*B
         //----------------------------------------------------------------------
 
-        if (M == NULL && GB_is_diagonal (B, Context))
+        if (allow_scale && M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D, column scale
             GBURBLE ("C%s=A*B, colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
-        else if (M == NULL && GB_is_diagonal (A, Context))
+        else if (allow_scale && M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B, row scale
             GBURBLE ("C%s=A*B, rowscale ", M_str) ;
@@ -579,7 +589,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M>=A*B via dot product, or C_in_place<M>+=A*B if in place
+            // C<M>=A*B via dot product, or C_in_place<M>+=A*B if in-place
             GBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
@@ -610,7 +620,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     if (*done_in_place)
     { 
-        // C can be done in place only if C is not transposed on output
+        // C can be done in-place only if C is not transposed on output
         ASSERT_MATRIX_OK (C_in_place, "C_in_place output for all C=A*B", GB0) ;
         ASSERT (C_in_place->is_csc == C_is_csc) ;
     }

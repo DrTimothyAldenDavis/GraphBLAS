@@ -139,7 +139,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     if (A_transpose)
     {
         // AT = A' and typecast to op->xtype
-        // transpose: typecast, no op, not in place
+        // transpose: typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, A_is_pattern ? A->type : op->xtype, T_is_csc,
             A, NULL, NULL, NULL, false, Context)) ;
@@ -150,7 +150,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     if (B_transpose)
     {
         // BT = B' and typecast to op->ytype
-        // transpose: typecast, no op, not in place
+        // transpose: typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;
         GB_OK (GB_transpose (&BT, B_is_pattern ? B->type : op->ytype, T_is_csc,
             B, NULL, NULL, NULL, false, Context)) ;

@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_selector
         A->nzmax = C->nzmax ;
         A->magic = GB_MAGIC ;
         GB_Matrix_free (&C) ;
-        ASSERT_MATRIX_OK (A, "A in place from bitmap selector", GB0) ;
+        ASSERT_MATRIX_OK (A, "A in-place from bitmap selector", GB0) ;
 
     }
     else

@@ -49,33 +49,10 @@ GrB_Info GrB_Semiring_new           // create a semiring
     ASSERT_MONOID_OK (add, "semiring->add", GB0) ;
     ASSERT_BINARYOP_OK (multiply, "semiring->multiply", GB0) ;
 
-    // z = multiply(x,y); type of z must match monoid z = add(z,z)
-    if (multiply->ztype != add->op->ztype)
-    { 
-        (*semiring) = NULL ;
-        return (GrB_DOMAIN_MISMATCH) ;
-    }
-
     //--------------------------------------------------------------------------
     // create the semiring
     //--------------------------------------------------------------------------
 
-    // allocate the semiring
-    (*semiring) = GB_CALLOC (1, struct GB_Semiring_opaque) ;
-    if (*semiring == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    // initialize the semiring
-    GrB_Semiring s = *semiring ;
-    s->magic = GB_MAGIC ;
-    s->add = add ;
-    s->multiply = multiply ;
-    s->semiring_is_builtin = false ;
-
-    ASSERT_SEMIRING_OK (s, "new semiring", GB0) ;
-    return (GrB_SUCCESS) ;
+    return (GB_Semiring_new (semiring, add, multiply)) ;
 }
 

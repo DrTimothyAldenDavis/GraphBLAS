@@ -34,7 +34,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -43,15 +43,15 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    bool *done_in_place,            // if true, C_in_place was computed in place
+    bool *done_in_place,            // if true, C_in_place was computed in-place
     GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in place)
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
@@ -66,7 +66,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    bool *done_in_place,            // if true, C was computed in place
+    bool *done_in_place,            // if true, C was computed in-place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GB_Context Context
 ) ;
@@ -205,8 +205,8 @@ void GB_AxB_pattern
 // C and B are bitmap:
 GrB_Info GB_AxB_dot5                // A'*B, dot product method
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in place)
-    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
     const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M

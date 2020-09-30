@@ -37,5 +37,16 @@ GB_Opcode GB_boolean_rename     // renamed opcode
     const GB_Opcode opcode      // opcode to rename
 ) ;
 
+GrB_Info GB_binop_new
+(
+    GrB_BinaryOp *binaryop,         // handle for the new binary operator
+    GxB_binary_function function,   // binary function (may be NULL)
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype,                 // type of input y
+    const char *name,               // name of the function
+    const GB_Opcode opcode          // opcode for the function
+) ;
+
 #endif
 

@@ -13,6 +13,15 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
+// This function is the only place in all of GraphBLAS where the identity value
+// of a monoid is required, but only in one special case: it is required to be
+// the return value of c when A has no entries.  The identity value is also
+// used internally, in the parallel methods below, to initialize a scalar value
+// in each task.  The methods could be rewritten to avoid the use of the
+// identity value.  Since this function requires it anyway, for the special
+// case when nvals(A) is zero, the existence of the identity value makes the
+// code a little simpler.
+
 #include "GB_reduce.h"
 #include "GB_binop.h"
 #include "GB_atomics.h"
@@ -55,6 +64,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
+    ASSERT (reduce->identity != NULL) ;
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
@@ -141,7 +151,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // s = identity
     GB_void s [GB_VLA(zsize)] ;
-    memcpy (s, reduce->identity, zsize) ;
+    memcpy (s, reduce->identity, zsize) ;   // required, if nnz(A) is zero
 
     // get terminal value, if any
     GB_void *GB_RESTRICT terminal = (GB_void *) reduce->terminal ;
@@ -233,10 +243,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_HAS_TERMINAL 1
             #define GB_IS_TERMINAL(s) \
                 (terminal != NULL && memcmp (s, terminal, zsize) == 0)
-
-            // ztype t ;
-            #define GB_SCALAR(t)                                    \
-                GB_void t [GB_VLA(zsize)]
 
             // t = (ztype) Ax [p], but no typecasting needed
             #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \

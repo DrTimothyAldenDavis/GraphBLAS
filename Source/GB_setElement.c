@@ -134,7 +134,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     {
 
         //----------------------------------------------------------------------
-        // binary search in C->h for vector j, or constant time lookup if sparse
+        // binary search in C->h for vector j, or O(1)-time lookup if sparse
         //----------------------------------------------------------------------
 
         int64_t pC_start, pC_end, pright = C->nvec - 1 ;

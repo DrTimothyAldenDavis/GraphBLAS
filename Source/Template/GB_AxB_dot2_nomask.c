@@ -11,7 +11,7 @@
     int ntasks = naslice * nbslice ;
 
     int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    // #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         int a_tid = tid / nbslice ;

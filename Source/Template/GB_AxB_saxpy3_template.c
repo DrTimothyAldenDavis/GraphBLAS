@@ -895,13 +895,15 @@ OLD:
                         int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
+                        #ifdef GB_IDENTITY
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-                            // TODO requires monoid identity.  If NULL, for
-                            // generic saxpy3, skip this.
+                            // this requires the monoid identity.  It is not
+                            // defined for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
                             continue ;
                         }
+                        #endif
                         mark++ ;
                         if (bjnz == 1)         // C(:,j) = A(:,k)*B(k,j)
                         { 
@@ -988,13 +990,15 @@ OLD:
                         int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
+                        #ifdef GB_IDENTITY
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-                            // TODO requires monoid identity.  If NULL, for
-                            // generic saxpy3, skip this.
+                            // this requires the monoid identity.  It is not
+                            // defined for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
-                            continue ;              // no need to examine M(:,j)
+                            continue ;
                         }
+                        #endif
                         GB_GET_M_j ;            // get M(:,j)
                         GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
                         mark += 2 ;
@@ -1083,13 +1087,15 @@ OLD:
                         int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
+                        #ifdef GB_IDENTITY
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-                            // TODO requires monoid identity.  If NULL, for
-                            // generic saxpy3, skip this.
+                            // this requires the monoid identity.  It is not
+                            // defined for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
-                            continue ;              // no need to examine M(:,j)
+                            continue ;
                         }
+                        #endif
                         GB_GET_M_j ;            // get M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;

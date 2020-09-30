@@ -20,7 +20,7 @@
 // GB_partition: use a pivot to partition an array
 //------------------------------------------------------------------------------
 
-// C.A.R Hoare partition method, partitions an array in place via a pivot.
+// C.A.R Hoare partition method, partitions an array in-place via a pivot.
 // k = partition (A, n) partitions A [0:n-1] such that all entries in
 // A [0:k] are <= all entries in A [k+1:n-1].
 

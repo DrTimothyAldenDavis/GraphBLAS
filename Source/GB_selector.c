@@ -171,7 +171,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     // the case when A is bitmap is always handled above by GB_bitmap_selector
-    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: bitmap case handled above
 
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
@@ -242,8 +242,8 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    Wfirst         = GB_CALLOC (ntasks, int64_t) ;
-    Wlast          = GB_CALLOC (ntasks, int64_t) ;
+    Wfirst = GB_CALLOC (ntasks, int64_t) ;
+    Wlast  = GB_CALLOC (ntasks, int64_t) ;
     C_pstart_slice = GB_CALLOC (ntasks, int64_t) ;
     if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
     { 
@@ -256,9 +256,9 @@ GrB_Info GB_selector
     // count the live entries in each vector
     //--------------------------------------------------------------------------
 
-    // Use the GB_reduce_each_vector template to count the number of live
-    // entries in each vector of A.  The result is computed in Cp, where Cp [k]
-    // is the number of live entries in the kth vector of A.
+    // Count the number of live entries in each vector of A.  The result is
+    // computed in Cp, where Cp [k] is the number of live entries in the kth
+    // vector of A.
 
     if (opcode <= GB_RESIZE_opcode)
     {
@@ -280,8 +280,7 @@ GrB_Info GB_selector
     #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
-        GB_sel1 (opname, aname) (Zp, Cp,                                \
-            (GB_void *) Wfirst, (GB_void *) Wlast,                      \
+        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,                 \
             A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
             (atype *) xthunk, user_select, ntasks, nthreads) ;          \
     }                                                                   \

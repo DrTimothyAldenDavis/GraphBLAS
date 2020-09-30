@@ -47,8 +47,8 @@ void GB_sel_phase1__(none)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
-    GB_void *GB_RESTRICT Wfirst_space,
-    GB_void *GB_RESTRICT Wlast_space,
+    int64_t *GB_RESTRICT Wfirst,
+    int64_t *GB_RESTRICT Wlast,
     const GrB_Matrix A,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
@@ -61,7 +61,6 @@ void GB_sel_phase1__(none)
     const int nthreads
 )
 { 
-    int64_t *GB_RESTRICT Tx = Cp ;
     ;
     #include "GB_select_phase1.c"
 }

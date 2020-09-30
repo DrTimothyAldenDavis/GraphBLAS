@@ -627,7 +627,7 @@ GrB_Info GB_assign_prep
     if (!scalar_expansion && A_transpose)
     { 
         // AT = A', with no typecasting
-        // transpose: no typecast, no op, not in place
+        // transpose: no typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
@@ -656,7 +656,7 @@ GrB_Info GB_assign_prep
         { 
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
-            // transpose: typecast, no op, not in place
+            // transpose: typecast, no op, not in-place
             GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
@@ -931,7 +931,7 @@ GrB_Info GB_assign_prep
             GBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
             (*C_replace) = false ;
         }
-        // the assignment operates on C in place
+        // the assignment operates on C in-place
     }
 
     //--------------------------------------------------------------------------

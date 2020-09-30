@@ -385,7 +385,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // reduce the first and last vector of each slice
     //--------------------------------------------------------------------------
 
-    // See also Template/GB_reduce_each_vector.c
+    // See also Template/GB_select_phase1.c
 
     int64_t kprior = -1 ;
 

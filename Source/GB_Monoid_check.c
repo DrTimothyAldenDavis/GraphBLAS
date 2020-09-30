@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -57,10 +55,14 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     // print the identity and terminal values
     if (pr != GxB_SILENT)
     { 
-        GBPR ("    identity: [ ") ;
-        info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f) ;
-        if (info != GrB_SUCCESS) return (info) ;
-        GBPR (" ] ") ;
+        // print the identity value, if present
+        if (monoid->identity != NULL)
+        {
+            GBPR ("    identity: [ ") ;
+            info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f) ;
+            if (info != GrB_SUCCESS) return (info) ;
+            GBPR (" ] ") ;
+        }
         // print the terminal value, if present
         if (monoid->terminal != NULL)
         { 

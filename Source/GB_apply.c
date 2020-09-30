@@ -294,7 +294,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (A_transpose)
     { 
         // T = op (A'), typecasting to op*->ztype
-        // transpose: typecast, apply an op, not in place.
+        // transpose: typecast, apply an op, not in-place.
         GBURBLE ("(transpose-op) ") ;
         info = GB_transpose (&T, T_type, T_is_csc, A,
             op1, op2, scalar, binop_bind1st, Context) ;
@@ -305,7 +305,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
     { 
         GBURBLE ("(inplace-op) ") ;
-        // C = op (C), operating on the values in place, with no typecasting
+        // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
         // FUTURE::: also handle C += op(C), with accum.

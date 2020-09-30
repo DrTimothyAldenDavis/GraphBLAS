@@ -10,28 +10,27 @@
 // CALLS:     GB_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
-// typecast the values.  The transpose may be done in place, in which case C or
-// A are modified in place.
+// typecast the values.  The transpose may be done in-place, in which case C or
+// A are modified in-place.
 
 // If the input matrix has a single vector, it must be already sorted on input.
-// The input matrix may have shallow components (even if in place), and the
+// The input matrix may have shallow components (even if in-place), and the
 // output may also have shallow components (even in the input matrix is not
 // shallow).
 
 // This function is CSR/CSC agnostic; it sets the output matrix format from
 // C_is_csc but otherwise ignores the CSR/CSC type of A and C.
 
-// If A_in is NULL, then C = (*Chandle) is transposed in place.  If out of
+// If A_in is NULL, then C = (*Chandle) is transposed in-place.  If out of
 // memory, (*Chandle) is always returned as NULL, which frees the input matrix
-// C if the transpose is done in place.
+// C if the transpose is done in-place.
 
-// If A_in is not NULL and Chandle is NULL, then A is modified in place, and
+// If A_in is not NULL and Chandle is NULL, then A is modified in-place, and
 // the A_in matrix is not freed when done.
 
 // The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
-// m-by-n, then at most O(e/n) threads are used.  For many matrices, e is O(n),
-// although the constant can be high.  The qsort method is more scalable, but
-// not as fast with a modest number of threads.
+// m-by-n, then at most O(e/n) threads are used.  The qsort method is more
+// scalable, but not as fast with a modest number of threads.
 
 #include "GB_transpose.h"
 #include "GB_build.h"
@@ -44,12 +43,12 @@
 
 #define GB_FREE_ALL ;
 
-// free prior content of A, if transpose is done in place
+// free prior content of A, if transpose is done in-place
 #define GB_FREE_IN_PLACE_A                                                  \
 {                                                                           \
     if (in_place)                                                           \
     {                                                                       \
-        /* A is being transposed in placed */                               \
+        /* A is being transposed in-place */                                \
         /* free prior content of A but not &A itself */                     \
         if (!Ap_shallow) GB_FREE (Ap) ;                                     \
         if (!Ah_shallow) GB_FREE (Ah) ;                                     \
@@ -64,7 +63,7 @@
     }                                                                       \
 }
 
-// free the new C matrix, unless C=A' is being done in place of A
+// free the new C matrix, unless C=A' is being done in-place of A
 #define GB_FREE_C                                                           \
 {                                                                           \
     if (!in_place_A)                                                        \
@@ -74,7 +73,7 @@
     }                                                                       \
 }
 
-// free both A (if in place) and C (if not in place of A)
+// free both A (if in-place) and C (if not in-place of A)
 #define GB_FREE_A_AND_C                                                     \
 {                                                                           \
     GB_FREE_IN_PLACE_A ;                                                    \
@@ -88,7 +87,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (
-    GrB_Matrix *Chandle,        // output matrix C, possibly modified in place
+    GrB_Matrix *Chandle,        // output matrix C, possibly modified in-place
     GrB_Type ctype,             // desired type of C; if NULL use A->type.
                                 // ignored if op is present (cast to op->ztype)
     const bool C_is_csc,        // desired CSR/CSC format of C
@@ -103,7 +102,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 {
 
     //--------------------------------------------------------------------------
-    // check inputs and determine if transpose is done in place
+    // check inputs and determine if transpose is done in-place
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
@@ -115,17 +114,17 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // C = C' ; &C is transposed in place
+        // C = C' ; &C is transposed in-place
         //----------------------------------------------------------------------
 
         // GB_transpose (&C, ctype, csc, NULL, op) ;
-        // C=A' is transposed in place, in the matrix C.
+        // C=A' is transposed in-place, in the matrix C.
         // The matrix C is freed if an error occurs and C is set to NULL.
 
         ASSERT (Chandle != NULL) ;  // at least &C or A must be non-NULL
         A = (*Chandle) ;
         C = A ;                     // C must be freed if an error occurs
-        in_place_C = true ;         // C is modified in place
+        in_place_C = true ;         // C is modified in-place
         in_place_A = false ;
         ASSERT (A == C && A == (*Chandle)) ;
 
@@ -134,19 +133,19 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // A = A' ; A is transposed in place; reuse the header of A
+        // A = A' ; A is transposed in-place; reuse the header of A
         //----------------------------------------------------------------------
 
         // GB_transpose (NULL, ctype, csc, A, op) ;
         // GB_transpose (&A, ctype, csc, A, op) ;
-        // C=A' is transposed in place, in the matrix A.
+        // C=A' is transposed in-place, in the matrix A.
         // The matrix A_in is not freed if an error occurs.
 
         A = A_in ;
         Chandle = &A ;              // C must not be freed if an error occurs
         C = A ;
         in_place_C = false ;
-        in_place_A = true ;         // A is modified in place
+        in_place_A = true ;         // A is modified in-place
         ASSERT (A == C && A == (*Chandle)) ;
 
     }
@@ -200,7 +199,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t avdim = A->vdim ;
     int64_t anzmax = A->nzmax ;
 
-    // if in place, these must be freed when done, whether successful or not
+    // if in-place, these must be freed when done, whether successful or not
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
     int64_t *GB_RESTRICT Ai = A->i ;
@@ -455,7 +454,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // free prior space and transplant T into C
         //----------------------------------------------------------------------
 
-        // Free the prior content of the input matrix, if done in place.
+        // Free the prior content of the input matrix, if done in-place.
         GB_FREE_IN_PLACE_A ;
 
         // allocate the output matrix C as a full or bitmap matrix
@@ -466,7 +465,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            ASSERT (!in_place) ;    // cannot fail if in place
+            ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
             GB_Matrix_free (&T) ;
             return (info) ;
@@ -501,7 +500,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // Allocate the header of C, with no C->p, C->h, C->i, C->b, or C->x
         // content, and initialize the type and dimension of C.  The new matrix
-        // is hypersparse.  This step does not allocate anything if in place.
+        // is hypersparse.  This step does not allocate anything if in-place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
         info = GB_new (Chandle, // bitmap, full, or hyper; old or new header
@@ -510,7 +509,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            ASSERT (!in_place) ;    // cannot fail if in place
+            ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
             GB_FREE_WORK ;
             return (info) ;
@@ -637,7 +636,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         //----------------------------------------------------------------------
 
         // Allocate the header of C, with no C->p, C->h, C->i, or C->x content,
-        // and initialize the type and dimension of C.   If in place, A->p,
+        // and initialize the type and dimension of C.   If in-place, A->p,
         // A->h, A->i, and A->x are all NULL.  The new matrix is sparse, but
         // can be CSR or CSC.  This step does not allocate anything if in
         // place.
@@ -649,7 +648,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            ASSERT (!in_place) ;        // cannot fail if in place
+            ASSERT (!in_place) ;        // cannot fail if in-place
             GB_FREE_C ;
             GB_FREE_WORK ;
             return (info) ;
@@ -878,7 +877,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // select the method
         //----------------------------------------------------------------------
 
-        // for the qsort method, if the transpose is done in place and A->i is
+        // for the qsort method, if the transpose is done in-place and A->i is
         // not shallow, A->i can be used and then freed.  Otherwise, A->i is
         // not modified at all.
         bool recycle_Ai = (in_place && !Ai_shallow) ;
@@ -945,7 +944,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // content, and initialize the type and dimension of C.   If in
             // place, A->p, A->h, A->i, and A->x are all NULL.  The new matrix
             // is hypersparse, but can be CSR or CSC.  This step does not
-            // allocate anything if in place.
+            // allocate anything if in-place.
 
             // if *Chandle == NULL, allocate a new header; otherwise reuse
             info = GB_new (Chandle, // hyper, old or new header
@@ -954,7 +953,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
-                ASSERT (!in_place) ;        // cannot fail if in place
+                ASSERT (!in_place) ;        // cannot fail if in-place
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
                 GB_FREE_WORK ;
@@ -1051,12 +1050,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 #if 0
                 if (in_place && !Ax_shallow)
                 {
-                    // A is being transposed in place so A->x is no longer
+                    // A is being transposed in-place so A->x is no longer
                     // needed.  If A->x is shallow this can be skipped.  T->x
                     // will not be shallow if the op is present.  A->x should
                     // be freed early to free up space for GB_builder.
                     // However, in the current usage, when op is used, A is not
-                    // transposed in place, so this step is not needed.
+                    // transposed in-place, so this step is not needed.
                     ASSERT (GB_DEAD_CODE) ;
                     GB_FREE (Ax) ;
                 }
@@ -1115,7 +1114,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // free prior space and transplant T into C
             //------------------------------------------------------------------
 
-            // Free the prior content of the input matrix, if done in place.
+            // Free the prior content of the input matrix, if done in-place.
             // Ap, Ah, and Ai have already been freed, but Ax has not.
             GB_FREE_IN_PLACE_A ;
 
@@ -1141,7 +1140,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // transpose via bucket sort
             //==================================================================
 
-            // This method does not operate on the matrix in place, so it must
+            // This method does not operate on the matrix in-place, so it must
             // create a temporary matrix T.  Then the input matrix is freed and
             // replaced with the new matrix T.
 
@@ -1153,15 +1152,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 op1, op2, scalar, binop_bind1st,
                 Context) ;
 
-            // free prior content, if C=A' is being done in place
+            // free prior content, if C=A' is being done in-place
             if (in_place_A)
             { 
-                // free all content of A, but not the header, if in place of A
+                // free all content of A, but not the header, if in-place of A
                 GB_phbix_free (A) ;   // transpose in-place
             }
             else if (in_place_C)
             { 
-                // free all of C, including the header, if done in place of C
+                // free all of C, including the header, if done in-place of C
                 GB_Matrix_free (Chandle) ;
             }
 
@@ -1186,7 +1185,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
             else
             { 
-                // If C=A' is done in place of C, then the header and content
+                // If C=A' is done in-place of C, then the header and content
                 // of the input C has been freed.  The output T can now be
                 // moved to the Chandle.
                 ASSERT (*Chandle == NULL) ;
@@ -1214,7 +1213,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     if (op_is_positional)
     { 
-        // the positional operator is applied in place to the values of C
+        // the positional operator is applied in-place to the values of C
         op1 = save_op1 ;
         op2 = save_op2 ;
         // Cx = op (C)

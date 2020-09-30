@@ -223,7 +223,7 @@
     // C(:,jC) is dense: iC = I [iA], and then look up C(iC,jC)
     //--------------------------------------------------------------------------
 
-    // C(:,jC) is dense, and thus can be accessed with a constant-time lookup
+    // C(:,jC) is dense, and thus can be accessed with a O(1)-time lookup
     // with the index iC, where the index iC comes from I [iA] or via a
     // colon notation for I.
 

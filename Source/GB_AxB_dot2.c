@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2: compute C=A'*B or C<!M>=A'*B in parallel, in place
+// GB_AxB_dot2: compute C=A'*B or C<!M>=A'*B in parallel, in-place
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // GB_AxB_dot2 does its computation in two phases.  The first phase counts the
 // number of entries in each column of C.  The second phase can then construct
-// the result C in place, and thus this method can be done in parallel, for the
+// the result C in-place, and thus this method can be done in parallel, for the
 // single matrix computation C=A'*B.
 
 // Two variants are handled: C=A'*B and C<!M>=A'*B.
@@ -71,6 +71,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
+
     ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
     ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
@@ -91,10 +92,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t nbslice = 0 ;
 
     int64_t anvec = A->nvec ;
-    int64_t anz   = GB_NNZ (A) ;
+    int64_t anz   = GB_NNZ_HELD (A) ;
 
     int64_t bnvec = B->nvec ;
-    int64_t bnz   = GB_NNZ (B) ;
+    int64_t bnz   = GB_NNZ_HELD (B) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;

@@ -32,16 +32,14 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// TODO debug is on
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
 // #define GBCOMPACT 1
 
 // for code development only
-// TODO developer is on
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 // manage compiler warnings
 #include "GB_warnings.h"
@@ -305,7 +303,7 @@ GB_PUBLIC int GB_cover_max ;
 
 // nnz_held(A) is the number of entries held in the data structure, including
 // zombies and all entries in a bitmap.  For hypersparse, sparse, and full,
-// nnz(A) and nzspace(A) are the same.  For bitmap, nzspace(A) is the
+// nnz(A) and nnz_held(A) are the same.  For bitmap, nnz_held(A) is the
 // same as the # of entries in a full matrix (# rows times # columns).
 #define GB_NNZ_HELD(A) (((A)->nzmax <= 0) ? 0 : GB_NNZ_HELD_NONEMPTY (A))
 
@@ -1254,6 +1252,13 @@ GrB_Info GB_Monoid_new          // create a monoid
     const void *terminal,       // terminal value, if any (may be NULL)
     const GB_Type_code idcode,  // identity and terminal type code
     GB_Context Context
+) ;
+
+GrB_Info GB_Semiring_new            // create a semiring
+(
+    GrB_Semiring *semiring,         // handle of semiring to create
+    GrB_Monoid add,                 // additive monoid of the semiring
+    GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
 
 //------------------------------------------------------------------------------

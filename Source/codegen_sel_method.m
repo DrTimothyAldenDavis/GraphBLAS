@@ -60,7 +60,7 @@ end
 
 % enable phase1
 if (is_nonzombie)
-    % nonzombie: phase1 uses a single worker
+    % nonzombie: phase1 uses a single worker: GB_sel_phase1__nonzombie_any
     fprintf (f, 'define(`if_phase1'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_phase1'', `#endif'')\n') ;
 else

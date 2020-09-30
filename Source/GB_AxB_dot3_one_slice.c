@@ -74,7 +74,7 @@ GrB_Info GB_AxB_dot3_one_slice
     //--------------------------------------------------------------------------
 
     const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t mnz = GB_NNZ (M) ;
+    const int64_t mnz = GB_NNZ_HELD (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
 

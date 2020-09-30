@@ -45,11 +45,12 @@
 // C is operated on in-place and thus cannot be aliased with the inputs A or M.
 
 // Since the pattern of C isn't reallocated here, and entries do not move in
-// position, C->p, C->h, C->nvec, and C->nvec_nonempty are constant.  C->x and
-// C->i can be modified, but only one entry at a time.  No entries are shifted.
-// C->x can be modified, and C->i can be changed by turning an entry into a
-// zombie, or by bringing a zombie back to life, but no entry in C->i moves in
-// position.  C->b can be modified for a C bitmap.
+// position, C->p, C->h, C->nvec, and C->nvec_nonempty are not modified.  C->x
+// and C->i can be modified, but only one entry at a time.  No entries are
+// shifted.  C->i can be changed by turning an entry into a zombie, or by
+// bringing a zombie back to life, but no entry in C->i moves in position, and
+// the underlying indices in C->i do not change otherwise.  C->b can be
+// modified for a C bitmap.
 
 #include "GB_subassign.h"
 #include "GB_subassign_methods.h"

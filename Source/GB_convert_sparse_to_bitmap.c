@@ -53,7 +53,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
-    // determine if the conversion can be done in place
+    // determine if the conversion can be done in-place
     //--------------------------------------------------------------------------
 
     // if in_place is true, then A->x does not change if A is dense and not
@@ -234,7 +234,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // free prior content of A and transplant the new content
     //--------------------------------------------------------------------------
 
-    // if done in place, A->x has been removed from A and is thus not freed
+    // if done in-place, A->x has been removed from A and is thus not freed
     GB_phbix_free (A) ;
 
     A->b = Ab ;

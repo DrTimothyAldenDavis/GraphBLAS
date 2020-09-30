@@ -151,6 +151,25 @@ GrB_Info GB_AxB_saxpy3_generic
 ) ;
 
 //------------------------------------------------------------------------------
+// GB_AxB_saxpy3_sparsity: determine the sparsity structure of C
+//------------------------------------------------------------------------------
+
+int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
+(
+    // output:
+    bool *in_place,                 // if true, compute C in-place
+    // input:
+    const GrB_Matrix C_in,          // input matrix C
+    const bool C_replace,           // C_replace option
+    const GrB_BinaryOp accum,       // optional accum operator
+    const GrB_Semiring semiring,    // semiring
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input A matrix
+    const GrB_Matrix B              // input B matrix
+) ;
+
+//------------------------------------------------------------------------------
 // AVX2 instructions
 //------------------------------------------------------------------------------
 
