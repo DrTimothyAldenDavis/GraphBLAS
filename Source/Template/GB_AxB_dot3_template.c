@@ -22,26 +22,31 @@
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
+    ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
-    const int64_t bvlen = B->vlen ;
+    ASSERT (A->vlen == B->vlen) ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = (Bh != NULL) ;
+    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const size_t mvlen = M->vlen ;
 
-    const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int8_t  *GB_RESTRICT Ab = A->b ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
-    const int64_t avlen = A->vlen ;
+    const int64_t vlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
 
     //--------------------------------------------------------------------------
@@ -104,7 +109,7 @@
             //------------------------------------------------------------------
 
             int64_t pB_start, pB_end ;
-            GB_lookup (B_is_hyper, Bh, Bp, bvlen, &bpleft, bnvec-1, j,
+            GB_lookup (B_is_hyper, Bh, Bp, vlen, &bpleft, bnvec-1, j,
                 &pB_start, &pB_end) ;
             int64_t bjnz = pB_end - pB_start ;
 
@@ -134,8 +139,8 @@
                 // B(:,j) not empty
                 //--------------------------------------------------------------
 
-                int64_t ib_first = GBI (Bi, pB_start, bvlen) ;
-                int64_t ib_last  = GBI (Bi, pB_end-1, bvlen) ;
+                int64_t ib_first = GBI (Bi, pB_start, vlen) ;
+                int64_t ib_last  = GBI (Bi, pB_end-1, vlen) ;
                 int64_t apleft = 0 ;
 
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
@@ -156,7 +161,7 @@
 
                         // get A(:,i), if it exists
                         int64_t pA, pA_end ;
-                        GB_lookup (A_is_hyper, Ah, Ap, avlen, &apleft,
+                        GB_lookup (A_is_hyper, Ah, Ap, vlen, &apleft,
                             anvec-1, i, &pA, &pA_end) ;
 
                         // C(i,j) = A(:,i)'*B(:,j)

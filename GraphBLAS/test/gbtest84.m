@@ -173,6 +173,7 @@ V2 (W) = Z (W) ;
 % with no mask:
 % V2 = Z ;
 
+save gunk V W Ui I desc v w ui i
 % s = v (i) ;
 s = ui ;
 z = v ;

@@ -1,4 +1,4 @@
-function gbtest65
+% function gbtest65
 %GBTEST65 test GrB.mis
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
@@ -14,6 +14,8 @@ maxisize = 0 ;
 n = size (A, 1) ;
 
 for trial = 1:100
+
+save gunk A trial
 
     if (mod (trial, 4) == 1)
         iset  = GrB.mis (A, 'check') ;

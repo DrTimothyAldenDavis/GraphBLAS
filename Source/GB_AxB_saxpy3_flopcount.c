@@ -69,6 +69,7 @@
 #include "GB_mxm.h"
 #include "GB_ek_slice.h"
 #include "GB_bracket.h"
+#include "GB_AxB_saxpy3.h"
 
 #define GB_FREE_WORK                                                    \
 {                                                                       \
@@ -113,10 +114,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
     ASSERT (Bflops != NULL) ;
     ASSERT (Mwork != NULL) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -136,42 +133,42 @@ GrB_Info GB_AxB_saxpy3_flopcount
     #endif
 
     //--------------------------------------------------------------------------
-    // get the mask, if present
+    // get the mask, if present: any sparsity structure
     //--------------------------------------------------------------------------
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
     const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
+    const int64_t *GB_RESTRICT Mh = NULL ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
-    bool M_is_hyper = GB_IS_HYPER (M) ;
+    bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     bool M_is_dense = false ;
     if (M != NULL)
     { 
         Mh = M->h ;
         Mp = M->p ;
-        Mi = M->i ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        M_is_dense = GB_is_dense (M) ;
+        M_is_dense = GB_is_packed (M) ;
     }
 
     //--------------------------------------------------------------------------
-    // get A and B
+    // get A and B: any sparsity structure
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
-    int64_t anvec = A->nvec ;
-    int64_t avlen = A->vlen ;
-    bool A_is_hyper = GB_IS_HYPER (A) ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t anvec = A->nvec ;
+    const int64_t avlen = A->vlen ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    const bool B_is_hyper = GB_IS_HYPER (B) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const bool B_is_sparse_or_hyper = B_is_hyper || GB_IS_SPARSE (B) ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
 
@@ -256,7 +253,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // see if M(:,j) is present and non-empty
             //------------------------------------------------------------------
 
-            // if M(:,j) is dense, do not add mjnz to bjflops or task_MWork.
+            // if M(:,j) is full, bitmap, or dense, do not add mjnz to bjflops
+            // or task_MWork.
 
             int64_t bjflops = 0 ;
             int64_t mjnz = 0 ;
@@ -302,10 +300,10 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
             int64_t pleft = 0 ;
             int64_t pright = anvec-1 ;
-            if (A_is_hyper && my_bjnz > 2 && !B_jumbled)
+            if (A_is_hyper && B_is_sparse_or_hyper && my_bjnz > 2 && !B_jumbled)
             { 
                 // trim Ah [0..pright] to remove any entries past last B(:,j)
-                int64_t ilast = GBI (Bi, pB_end-1, bvlen) ;
+                int64_t ilast = Bi [pB_end-1] ;     // ok: B is sparse
                 GB_bracket_right (ilast, Ah, 0, &pright) ;
             }
 
@@ -317,8 +315,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
             for ( ; pB < pB_end ; pB++)
             {
-                // B(k,j) is nonzero
+                // get B(k,j)
                 int64_t k = GBI (Bi, pB, bvlen) ;
+                if (!GBB (Bb, pB)) continue ;
+
+                // B(k,j) is nonzero
 
                 // find A(:,k), reusing pleft since Bi [...] is sorted
                 int64_t pA, pA_end ;

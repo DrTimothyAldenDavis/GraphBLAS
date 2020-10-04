@@ -13,6 +13,9 @@
 // the semiring, nor does it depend on the type of C, A, or B.  It does access
 // the values of M, if the mask matrix M is present and not structural.
 
+// If B is hypersparse, C must also be hypersparse.
+// Otherwise, C must be sparse.
+
 #include "GB_AxB_saxpy3.h"
 #include "GB_AxB_saxpy3_template.h"
 #include "GB_atomics.h"
@@ -24,9 +27,9 @@ void GB_AxB_saxpy3_symbolic
 (
     GrB_Matrix C,               // Cp is computed for coarse tasks
     const GrB_Matrix M,         // mask matrix M
-    bool Mask_comp,             // M complemented, or not
-    bool Mask_struct,           // M structural, or not
-    bool M_dense_in_place,
+    const bool Mask_comp,       // M complemented, or not
+    const bool Mask_struct,     // M structural, or not
+    const bool M_dense_in_place,
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
     GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
@@ -52,10 +55,6 @@ void GB_AxB_saxpy3_symbolic
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_PENDING (B)) ; 
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
@@ -65,36 +64,43 @@ void GB_AxB_saxpy3_symbolic
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
+    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
+    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
+    const int8_t  *GB_RESTRICT Ab = A->b ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
+    const int8_t  *GB_RESTRICT Mb = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     const GB_void *GB_RESTRICT Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
-    bool M_is_hyper = false ;
+    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
+    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     if (M != NULL)
     { 
         Mp = M->p ;
         Mh = M->h ;
+        Mb = M->b ;
         Mi = M->i ;
         Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        M_is_hyper = (Mh != NULL) ;
     }
 
     // 3 cases:
@@ -103,7 +109,13 @@ void GB_AxB_saxpy3_symbolic
     //      M present     and Mask_comp true : compute C<!M>=A*B
     // If M is NULL on input, then Mask_comp is also false on input.
 
-    bool mask_is_M = (M != NULL && !Mask_comp) ;
+    const bool mask_is_M = (M != NULL && !Mask_comp) ;
+
+    // ignore the mask if present, not complemented, dense and
+    // used in place, structural, and not bitmap.  In this case,
+    // all entries in M are true, so M can be ignored.
+    const bool ignore_mask = mask_is_M && M_dense_in_place &&
+        Mask_struct && !M_is_bitmap ;
 
     //==========================================================================
     // phase1: count nnz(C(:,j)) for coarse tasks, scatter M for fine tasks
@@ -167,7 +179,6 @@ void GB_AxB_saxpy3_symbolic
 
                 // M_dense_in_place is true only if M is dense, and all tasks
                 // are fine or coarse hash tasks (no Gustvason tasks).
-                // The mask M may be dense or full, sparse, or hypersparse.
                 ASSERT (!M_dense_in_place) ;
 
                 if (mjnz > 0)
@@ -261,13 +272,11 @@ void GB_AxB_saxpy3_symbolic
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
                         GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
+                        Cp [kk] = 0 ;           // ok: C is sparse
+                        if (bjnz == 0) continue ;
+                        if (bjnz == 1 && !A_is_bitmap)
                         { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
-                        if (bjnz == 1)
-                        { 
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;            // get A(:,k)
                             Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
@@ -277,9 +286,10 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == cvlen)
+                            if (aknz == cvlen && !A_is_bitmap)
                             { 
                                 cjnz = cvlen ;  // A(:,k) is dense
                                 break ;         // so nnz(C(:,j)) = cvlen
@@ -287,6 +297,7 @@ void GB_AxB_saxpy3_symbolic
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
+                                if (!GBB (Ab, pA)) continue ;
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 if (Hf [i] != mark)     // if true, i is new
                                 { 
@@ -316,17 +327,10 @@ void GB_AxB_saxpy3_symbolic
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
                         GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        Cp [kk] = 0 ;           // ok: C is sparse
+                        if (bjnz == 0) continue ;
                         GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        if (mjnz == 0) continue ;
                         GB_GET_M_j_RANGE (64) ;
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
@@ -334,6 +338,7 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
@@ -369,11 +374,8 @@ void GB_AxB_saxpy3_symbolic
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
                         GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        Cp [kk] = 0 ;           // ok: C is sparse
+                        if (bjnz == 0) continue ;
                         GB_GET_M_j ;            // get M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
@@ -381,11 +383,13 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
+                                if (!GBB (Ab, pA)) continue ;
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 if (Hf [i] < mark)      // if true, M(i,j) is 0
                                 { 
@@ -410,7 +414,7 @@ void GB_AxB_saxpy3_symbolic
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
+                if (M == NULL || ignore_mask)
                 {
 
                     //----------------------------------------------------------
@@ -431,11 +435,16 @@ void GB_AxB_saxpy3_symbolic
 
                     if (M_dense_in_place)
                     { 
+
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        // If the mask is M, dense and done in-place, and
-                        // structural, then it can be ignored (see above).
-                        ASSERT (Mx != NULL)
-                        #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+
+                        ASSERT (!Mask_struct || M_is_bitmap) ;
+                        #define GB_CHECK_MASK_ij                        \
+                            bool mij =                                  \
+                                (M_is_bitmap ? Mjb [i] : 1) &&          \
+                                (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                            if (!mij) continue ;
+
                         switch (msize)
                         {
                             default:
@@ -464,9 +473,14 @@ void GB_AxB_saxpy3_symbolic
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] == 0 && Mask [2*i+1] == 0) \
-                                        continue ;
+                                #define GB_CHECK_MASK_ij                    \
+                                    bool mij =                              \
+                                        (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                        (Mask_struct ? 1 :                  \
+                                            (Mjx [2*i] != 0) ||             \
+                                            (Mjx [2*i+1] != 0)) ;           \
+                                    if (!mij) continue ;
+
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                         }
@@ -483,17 +497,10 @@ void GB_AxB_saxpy3_symbolic
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
                         GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        Cp [kk] = 0 ;           // ok: C is sparse
+                        if (bjnz == 0) continue ;
                         GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        if (mjnz == 0) continue ;
                         GB_GET_M_j_RANGE (64) ;
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
@@ -501,6 +508,7 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
@@ -538,10 +546,13 @@ void GB_AxB_saxpy3_symbolic
 
                     if (M_dense_in_place)
                     { 
+
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
+
+                        if (Mask_struct && !M_is_bitmap)
                         {
-                            // structural mask, complemented.  No work to do.
+                            // structural mask, complemented, not bitmap.
+                            // No work to do.
                             #ifdef GB_DEBUG
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)
                             { 
@@ -550,8 +561,14 @@ void GB_AxB_saxpy3_symbolic
                             #endif
                             continue ;
                         }
+
                         #undef  GB_CHECK_MASK_ij
-                        #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                        #define GB_CHECK_MASK_ij                        \
+                            bool mij =                                  \
+                                (M_is_bitmap ? Mjb [i] : 1) &&          \
+                                (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                            if (mij) continue ;
+
                         switch (msize)
                         {
                             default:
@@ -580,9 +597,14 @@ void GB_AxB_saxpy3_symbolic
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] != 0 || Mask [2*i+1] != 0) \
-                                        continue ;
+                                #define GB_CHECK_MASK_ij                    \
+                                    bool mij =                              \
+                                        (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                        (Mask_struct ? 1 :                  \
+                                            (Mjx [2*i] != 0) ||             \
+                                            (Mjx [2*i+1] != 0)) ;           \
+                                    if (mij) continue ;
+
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
                         }
@@ -598,11 +620,8 @@ void GB_AxB_saxpy3_symbolic
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
                         GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0)
-                        { 
-                            Cp [kk] = 0 ;       // ok: C is sparse
-                            continue ;
-                        }
+                        Cp [kk] = 0 ;           // ok: C is sparse
+                        if (bjnz == 0) continue ;
                         GB_GET_M_j ;            // get M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
@@ -610,11 +629,13 @@ void GB_AxB_saxpy3_symbolic
                         int64_t cjnz = 0 ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
+                                if (!GBB (Ab, pA)) continue ;
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
@@ -672,7 +693,8 @@ void GB_AxB_saxpy3_symbolic
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij ;                    // get M(i,j)
-                    ASSERT (Hf [GBI (Mi, pM, mvlen)] == mij) ;
+                    int64_t i = GBI (Mi, pM, mvlen) ;
+                    ASSERT (Hf [i] == mij) ;
                 }
                 for (int64_t i = 0 ; i < cvlen ; i++)
                 {

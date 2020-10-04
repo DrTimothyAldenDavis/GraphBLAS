@@ -77,7 +77,6 @@
     GB_FREE (Ap_end) ;      \
     GB_FREE (Mark) ;        \
     GB_FREE (Inext) ;       \
-    GB_Matrix_free (&A_bitmap) ; /* HACK to test full/bitmap case */ \
 }
 
 #define GB_FREE_ALL         \
@@ -117,26 +116,15 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
     ASSERT (GB_PENDING_OK (A)) ;
 
-    GrB_Matrix A_bitmap = NULL ; // HACK: to test full/bitmap case
-
     //--------------------------------------------------------------------------
     // handle bitmap and full cases
     //--------------------------------------------------------------------------
 
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     {
-        // C is constructed with same sparsity as A
-        info = GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj,
-            symbolic, Context) ;
-
-// HACK
-GrB_Matrix C = (*Chandle) ;
-if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
-{
-    info = GB_convert_any_to_sparse (C, Context) ;
-}
-
-        return (info) ;
+        // C is constructed with same sparsity as A (bitmap or full)
+        return (GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj, symbolic,
+            Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -155,26 +143,6 @@ if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort ;
     int Ikind, ntasks, max_ntasks = 0, nthreads ;
-
-    // HACK to test full/bitmap case (but not the symbolic case)
-    if (A->vlen <= 100 && A->vdim <= 100 && !symbolic)
-    {
-        GB_MATRIX_WAIT (A) ;
-        GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
-        GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
-        info = GB_bitmap_subref (Chandle, C_is_csc, A_bitmap, I, ni, J, nj,
-            symbolic, Context) ;
-        GB_Matrix_free (&A_bitmap) ;
-
-// HACK
-GrB_Matrix C = (*Chandle) ;
-if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
-{
-    info = GB_convert_any_to_sparse (C, Context) ;
-}
-
-        return (info) ;
-    }
 
     //--------------------------------------------------------------------------
     // ensure A is unjumbled
@@ -249,16 +217,11 @@ if (info == GrB_SUCCESS && GB_IS_BITMAP (C))
     // return result
     //--------------------------------------------------------------------------
 
-// HACK
-if (GB_IS_BITMAP (C))
-{
-    GB_OK (GB_convert_any_to_sparse (C, Context)) ;
-}
-
     // C can be returned jumbled, even if A is not jumbled
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

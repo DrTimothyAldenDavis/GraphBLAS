@@ -27,22 +27,39 @@
         GB_GET_B_j ;                // get B(:,j)
 
         #ifdef GB_CHECK_MASK_ij
-        GB_GET_M_j                  // get M(:,j)
-        #ifndef M_SIZE
-        #define M_SIZE 1
-        #endif
-        const M_TYPE *GB_RESTRICT Mask = ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+
+            // The mask M is dense (full, bitmap, or sparse/hyper with all
+            // entries present in the entire matrix).  Get pointers Mjb and
+            // Mjx into the M(:,j) vector.
+            GB_GET_M_j                  // get M(:,j)
+            #ifndef M_SIZE
+            #define M_SIZE 1
+            #endif
+            const M_TYPE *GB_RESTRICT Mjx = Mask_struct ? NULL :
+                ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+            const int8_t *GB_RESTRICT Mjb = M_is_bitmap ? (Mb+pM_start) : NULL ;
+
         #else
-        if (bjnz == 1)              // C(:,j) = A(:,k)*B(k,j), no mask
-        { 
-            GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
-            continue ;
-        }
+
+            // M is not present
+            if (bjnz == 1
+                #if GB_IS_ANY_PAIR_SEMIRING
+                && !A_is_bitmap
+                #endif
+                )
+            { 
+                // C(:,j) = A(:,k)*B(k,j), no mask
+                if (!GBB (Bb, pB)) continue ;
+                GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
+                continue ;
+            }
+
         #endif
 
         mark++ ;
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
+            if (!GBB (Bb, pB)) continue ;
             int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
@@ -50,6 +67,7 @@
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
+                if (!GBB (Ab, pA)) continue ;
                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j) is protected by

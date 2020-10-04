@@ -32,22 +32,6 @@
     GB_FREE (J2) ;                  \
 }
 
-#define HACK \
-if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-if (C_in_is_full   ) \
-{ \
-if (GB_is_dense (C_in) && GB_is_packed (C_in)) \
-{ \
-GB_convert_any_to_full (C_in) ; \
-} \
-else \
-{ \
-GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-} \
-} \
-if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
-
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 (
     GrB_Matrix C_in,                // input/output matrix for results
@@ -81,12 +65,6 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GrB_Index *I = NULL ;           // Rows, Cols, or I2
     GrB_Index *J = NULL ;           // Rows, Cols, or J2
 
-    // HACK: return C to non-bitmap state
-    bool C_in_is_bitmap = GB_IS_BITMAP (C_in) ;
-    bool C_in_is_full   = GB_IS_FULL (C_in) ;
-    bool C_in_is_sparse = GB_IS_SPARSE (C_in) ;
-    bool C_in_is_hyper  = GB_IS_HYPER (C_in) ;
-
     // temporary matrices and arrays
     GrB_Matrix C2 = NULL ;
     GrB_Matrix M2 = NULL ;
@@ -115,7 +93,6 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
-HACK ;
         ASSERT_MATRIX_OK (C, "Final C for subassign", GB0) ;
         return (GB_block (C, Context)) ;
     }
@@ -150,13 +127,10 @@ HACK ;
     }
 
     //--------------------------------------------------------------------------
-
-    HACK // HACK: return C to non-bitmap state
-
-    //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
+    GB_OK (GB_conform (C_in, Context)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
     GB_FREE_ALL ;
     return (GB_block (C_in, Context)) ;

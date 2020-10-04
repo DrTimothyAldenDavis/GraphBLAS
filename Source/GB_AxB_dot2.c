@@ -40,7 +40,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
-                                    // if present, the mask is complemented
+    const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
@@ -72,10 +72,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
 
@@ -87,6 +83,16 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
+
+    if (B->nvec_nonempty < 0)
+    { 
+        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+    }
+
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    }
 
     int64_t naslice = 0 ;
     int64_t nbslice = 0 ;
@@ -145,7 +151,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // allocate workspace and slice A and B
     //--------------------------------------------------------------------------
 
-    // A and B can have any sparsity: full, sparse, or hypersparse.
+    // A and B can have any sparsity: full, bitmap, sparse, or hypersparse.
     // C is always created as sparse or hypersparse.
 
     if (!GB_pslice (&A_slice, A->p, A->nvec, naslice))
@@ -163,53 +169,77 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     }
 
     //--------------------------------------------------------------------------
+    // determine the sparsity structure of C
+    //--------------------------------------------------------------------------
+
+    int64_t cvlen = A->vdim ;
+    int64_t cvdim = B->vdim ;
+    GrB_Type ctype = add->op->ztype ;
+
+    double C_bitmap_size = ((double) cvlen) * ((double) cvdim) ;
+    double A_size = (double) GB_NNZ_HELD (A) ;
+    double B_size = (double) GB_NNZ_HELD (B) ;
+    int C_sparsity ;
+    bool C_is_bitmap ;
+    if (C_bitmap_size < 8 * (A_size + B_size))
+    {
+        // C is not too large: use a bitmap
+        C_sparsity = GxB_BITMAP ;
+        C_is_bitmap = true ;
+    }
+    else
+    {
+        // C is very large: construct it as sparse or hypersparse
+        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        C_is_bitmap = false ;
+    }
+
+    //--------------------------------------------------------------------------
     // compute # of entries in each vector of C
     //--------------------------------------------------------------------------
 
-    GrB_Type ctype = add->op->ztype ;
-    int64_t cvlen = A->vdim ;
-    int64_t cvdim = B->vdim ;
+    int64_t cnz ;
 
-    if (B->nvec_nonempty < 0)
-    { 
-        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-    }
-
-    C_counts = GB_CALLOC (naslice, int64_t *) ;
-    if (C_counts == NULL)
-    { 
-        // out of memory
-        GB_FREE_WORK ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    for (int a_tid = 0 ; a_tid < naslice ; a_tid++)
+    if (C_is_bitmap)
     {
-        int64_t *GB_RESTRICT C_count = GB_CALLOC (B->nvec, int64_t) ;
-        if (C_count == NULL)
+        cnz = cvlen * cvdim ;
+    }
+    else
+    {
+        C_counts = GB_CALLOC (naslice, int64_t *) ;
+        if (C_counts == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        C_counts [a_tid] = C_count ;
+
+        for (int a_tid = 0 ; a_tid < naslice ; a_tid++)
+        {
+            int64_t *GB_RESTRICT C_count = GB_CALLOC (B->nvec, int64_t) ;
+            if (C_count == NULL)
+            { 
+                // out of memory
+                GB_FREE_WORK ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+            C_counts [a_tid] = C_count ;
+        }
+
+        // phase1 parallel region: each thread computes C_counts [tid]
+        // for its slice.
+        #define GB_PHASE_1_OF_2
+        #include "GB_AxB_dot2_meta.c"
+        #undef  GB_PHASE_1_OF_2
     }
 
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-    }
+    //--------------------------------------------------------------------------
+    // allocate C
+    //--------------------------------------------------------------------------
 
-    // phase1 parallel region: each thread computes C_counts [tid]
-    // for its slice.
-    #define GB_PHASE_1_OF_2
-    #include "GB_AxB_dot2_meta.c"
-    #undef  GB_PHASE_1_OF_2
-
-    int sparsity = (B->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    info = GB_new (Chandle, // sparse or hyper, new header
+    info = GB_new (Chandle, // sparse, hyper or bitmap; new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        sparsity, B->hyper_switch, cnvec, Context) ;
+        C_sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -218,45 +248,51 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     }
 
     GrB_Matrix C = (*Chandle) ;
-    int64_t *GB_RESTRICT Cp = C->p ;
 
-    // cumulative sum of counts in each column
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < cnvec ; k++)
+    //--------------------------------------------------------------------------
+    // cumulative sum of counts in each vector of C
+    //--------------------------------------------------------------------------
+
+    if (!C_is_bitmap)
     {
-        int64_t s = 0 ;
-        for (int tid = 0 ; tid < naslice ; tid++)
-        { 
-            int64_t *GB_RESTRICT C_count = C_counts [tid] ;
-            int64_t c = C_count [k] ;
-            C_count [k] = s ;
-            s += c ;
+        int64_t *GB_RESTRICT Cp = C->p ;
+        int64_t k ;
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (k = 0 ; k < cnvec ; k++)
+        {
+            int64_t s = 0 ;
+            for (int tid = 0 ; tid < naslice ; tid++)
+            { 
+                int64_t *GB_RESTRICT C_count = C_counts [tid] ;
+                int64_t c = C_count [k] ;
+                C_count [k] = s ;
+                s += c ;
+            }
+            Cp [k] = s ;    // ok: C is sparse
         }
-        Cp [k] = s ;    // ok: C is sparse
+        Cp [cnvec] = 0 ;    // ok: C is sparse
+        C->nvec = cnvec ;
+        // Cp = cumulative sum of Cp
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
+        cnz = Cp [cnvec] ;  // ok: C is sparse
+
+        // C->h = B->h
+        if (B->h != NULL)
+        { 
+            GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nthreads) ;
+        }
+
+        // free C_count for the first thread; it is no longer needed
+        GB_FREE (C_counts [0]) ;
     }
-    Cp [cnvec] = 0 ;    // ok: C is sparse
-    C->nvec = cnvec ;
 
-    // Cp = cumulative sum of Cp
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
-    int64_t cnz = Cp [cnvec] ;  // ok: C is sparse
-
-    // C->h = B->h
-    if (B->h != NULL)
-    { 
-        GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nthreads) ;
-    }
-
-    // free C_count for the first thread; it is no longer needed
-    GB_FREE (C_counts [0]) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
-    // allocate C->x and C->i
+    // allocate C->b, C->i, and C->x
     //--------------------------------------------------------------------------
 
-    info = GB_bix_alloc (C, cnz, false, true, true, Context) ; // ok: C sparse
+    info = GB_bix_alloc (C, cnz, C_is_bitmap, !C_is_bitmap, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -279,13 +315,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         #define GB_Adot2B(add,mult,xname) GB_Adot2B_ ## add ## mult ## xname
 
-        #define GB_AxB_WORKER(add,mult,xname)                               \
-        {                                                                   \
-            info = GB_Adot2B (add,mult,xname) (C, M, Mask_struct,           \
-                A, A_is_pattern, A_slice, B, B_is_pattern, B_slice,         \
-                C_counts, nthreads, naslice, nbslice) ;                     \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
+        #define GB_AxB_WORKER(add,mult,xname)                                \
+        {                                                                    \
+            info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
+                A, A_is_pattern, A_slice, B, B_is_pattern, B_slice,          \
+                C_counts, nthreads, naslice, nbslice) ;                      \
+            done = (info != GrB_NO_VALUE) ;                                  \
+        }                                                                    \
         break ;
 
         //----------------------------------------------------------------------

@@ -40,10 +40,8 @@ GrB_Info GB_AxB_saxpy3_generic
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_FULL (C)) ;          // ok: C is sparse or hypersparse
 
     //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C

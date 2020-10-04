@@ -451,6 +451,12 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
+// for reference:
+#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
+#define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
+#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
+#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
+
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
     //          these are the number of column indices in Ah [0..nvec-1], since
@@ -484,7 +490,7 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             int64_t pA_end   = (k+1) * vlen ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                if (Ab [p] > 0)
+                if (Ab [p] != 0)
                 {
                     // A(i,j) has row i = (p % vlen), value aij = Ax [p]
                 }

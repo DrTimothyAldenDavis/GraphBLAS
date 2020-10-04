@@ -47,7 +47,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;        // ok: D is not bitmap
     ASSERT (!GB_IS_FULL (D)) ;          // ok: D is not full
 

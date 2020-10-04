@@ -174,7 +174,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         // 11
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :
-            GBPR0 (" sparse or full\n") ;
+            GBPR0 (" hypersparse, sparse, or full\n") ;
             break ;
 
         // 13

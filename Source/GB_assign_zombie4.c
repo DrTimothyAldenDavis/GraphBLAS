@@ -39,7 +39,7 @@ void GB_assign_zombie4
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;      // binary search on C
     ASSERT (!GB_PENDING (C)) ;

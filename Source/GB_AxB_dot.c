@@ -28,9 +28,9 @@
 // The output matrix C = *Chandle has not been allocated, so C is NULL on
 // input.  The mask M is optional.
 
-// If C is computed in-place, Chandle is ignored, and the result is computed
-// in C_in_place instead.  This case requires the accum operator to match
-// the monoid of the semiring.
+// If C is computed in-place, Chandle is ignored, and the result is computed in
+// C_in instead.  This case requires the accum operator to match the monoid of
+// the semiring.
 
 // The semiring defines C=A*B.  flipxy modifies how the semiring multiply
 // operator is applied.  If false, then fmult(aik,bkj) is computed.  If true,
@@ -46,7 +46,7 @@
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
-    GrB_Matrix C_in_place,          // input/output matrix, if done in-place
+    GrB_Matrix C_in,                // input/output matrix, if done in-place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -55,7 +55,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    bool *done_in_place,            // if true, C_in_place was computed in-place
+    bool *done_in_place,            // if true, C_in was computed in-place
     GB_Context Context
 )
 {
@@ -101,7 +101,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // prototype bitmap case:
     //--------------------------------------------------------------------------
 
-    info = GB_AxB_dot5 (Chandle, C_in_place, M, Mask_comp, Mask_struct, NULL,
+    info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
         A, B, semiring, flipxy, Context) ;
     if (info != GrB_NO_VALUE)
     {
@@ -110,23 +110,28 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         return (info) ;
     }
 
-    ASSERT (!GB_IS_BITMAP (C_in_place)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     //--------------------------------------------------------------------------
-    // general case (no bitmaps yet)
+    // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (M != NULL && !Mask_comp)
+    if (C_in != NULL && M == NULL && !Mask_comp
+        && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+    { 
+        GBURBLE ("dense, C+=A'*B in-place ") ;
+        (*done_in_place) = true ;
+        (*mask_applied) = false ;    // no mask to apply
+        return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C<M>=A'*B where C and M are sparse or hypersparse
+    //--------------------------------------------------------------------------
+
+    if (M != NULL && !Mask_comp && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
     { 
 
-        //======================================================================
-        // C<M>=A'*B
-        //======================================================================
-
-        // use dot3 if M is present and not complemented
+        // use dot3 if M is present and not complemented, and either sparse or
+        // hypersparse
         GBURBLE ("dot3 ") ;
         (*mask_applied) = true ;    // mask is always applied
 
@@ -135,7 +140,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // very rough estimate of the work to do
         int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
         int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
-        int64_t mnz = GB_IS_FULL (M) ? GB_NNZ_FULL (M) : GB_NNZ (M) ; // TODO
+        int64_t mnz = GB_NNZ (M) ;
 
         double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;
         double bdeg = ((double) bnz) / ((double) GB_IMAX (1, B->nvec)) ;
@@ -147,7 +152,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         int ngpus_to_use = GB_ngpus_to_use (work) ;
         if (ngpus_to_use > 0 && semiring->semiring_is_builtin &&
             && (A->type->code != GB_UDT_code)
-            && (B->type->code != GB_UDT_code))
+            && (B->type->code != GB_UDT_code)
+            && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
         {
             // use "the" GPU (TODO for GPU: could use multiple GPUs too)
             return (GB_AxB_dot3_cuda (Chandle, M, Mask_struct, A, B, semiring,
@@ -160,30 +166,14 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring,
                 flipxy, Context)) ;
         }
-
     }
-    else
-    {
 
-        //======================================================================
-        // C<!M>=A'*B or C=A'*B
-        //======================================================================
+    //--------------------------------------------------------------------------
+    // general case: C<M>=A'*B, C<!M>=A'B*, or C=A'*B, not in-place
+    //--------------------------------------------------------------------------
 
-        if (C_in_place != NULL && M == NULL && !Mask_comp)
-        { 
-            // in-place C+=A'*B.  mask is not present (and not applied)
-            GBURBLE ("dense, C+=A'*B in-place ") ;
-            (*done_in_place) = true ;
-            (*mask_applied) = false ;    // no mask to apply
-            return (GB_AxB_dot4 (C_in_place, A, B, semiring, flipxy, Context)) ;
-        }
-        else
-        {
-            // C<!M>=A'*B or C=A'*B, not in-place
-            (*mask_applied) = (M != NULL) ; // mask applied if present
-            return (GB_AxB_dot2 (Chandle, M, Mask_struct, A, B, semiring,
-                flipxy, Context)) ;
-        }
-    }
+    (*mask_applied) = (M != NULL) ; // mask applied if present
+    return (GB_AxB_dot2 (Chandle, M, Mask_comp, Mask_struct, A, B, semiring,
+        flipxy, Context)) ;
 }
 

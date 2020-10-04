@@ -43,8 +43,6 @@
 
 #include "GB_unused.h"
 
-{
-
 //------------------------------------------------------------------------------
 // GB_DOT: cij += A(k,i) * B(k,j), then break if terminal
 //------------------------------------------------------------------------------
@@ -52,14 +50,16 @@
 // Ai [pA+adelta] and Bi [pB+bdelta] are both equal to the index k.
 
 // use the boolean flag cij_exists to set/check if C(i,j) exists
+#undef  GB_CIJ_CHECK
 #define GB_CIJ_CHECK true
+#undef  GB_CIJ_EXIST
 #define GB_CIJ_EXISTS (cij_exists)
+#undef  GB_DOT
 
 #if defined ( GB_PHASE_1_OF_2 )
 
     // symbolic phase (phase 1 of 2 for dot2):
-    bool cij_exists = false ;
-    #define GB_DOT                                                          \
+    #define GB_DOT(k,pA,pB)                                                 \
         cij_exists = true ;                                                 \
         break ;
 
@@ -73,21 +73,16 @@
             // PLUS_PAIR for 64-bit integers, float, and double (not complex):
             // To check if C(i,j) exists, test (cij != 0) when done.  The
             // boolean flag cij_exists is not defined.
-            #if defined ( __AVX2__ )
-            #define GB_USE_AVX2
-            #endif
             #undef  GB_CIJ_CHECK
             #define GB_CIJ_CHECK false
             #undef  GB_CIJ_EXISTS
             #define GB_CIJ_EXISTS (cij != 0)
-            #define GB_DOT                                                  \
-                cij++ ;
+            #define GB_DOT(k,pA,pB) cij++ ;
 
         #else
 
             // PLUS_PAIR semiring for small integers
-            bool cij_exists = false ;
-            #define GB_DOT                                                  \
+            #define GB_DOT(k,pA,pB)                                         \
                 cij_exists = true ;                                         \
                 cij++ ;
 
@@ -96,8 +91,7 @@
     #elif GB_IS_ANY_MONOID
 
         // ANY monoid
-        bool cij_exists = false ;
-        #define GB_DOT                                                      \
+        #define GB_DOT(k,pA,pB)                                             \
         {                                                                   \
             GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
             GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
@@ -110,8 +104,7 @@
     #else
 
         // all other semirings
-        bool cij_exists = false ;
-        #define GB_DOT                                                      \
+        #define GB_DOT(k,pA,pB)                                             \
         {                                                                   \
             GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
             GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
@@ -135,8 +128,10 @@
 #endif
 
 //------------------------------------------------------------------------------
-// C(i,j) = A(:,i)'*B(:,j)
+// C(i,j) = A(:,i)'*B(:,j): a single dot product
 //------------------------------------------------------------------------------
+
+{
 
     //--------------------------------------------------------------------------
     // get the start of A(:,i) and B(:,j)
@@ -145,6 +140,7 @@
     int64_t pB = pB_start ;
     int64_t ainz = pA_end - pA ;
     ASSERT (ainz >= 0) ;
+    bool cij_exists = false ;
 
     //--------------------------------------------------------------------------
     // declare the cij scalar
@@ -155,10 +151,55 @@
     #endif
 
     //--------------------------------------------------------------------------
-    // 8 cases for computing C(i,j) = A(:,i)' * B(j,:)
+    // 11 cases for computing C(i,j) = A(:,i)' * B(j,:)
     //--------------------------------------------------------------------------
 
-    if (ainz == 0)
+    if (A_is_bitmap && B_is_bitmap)
+    {
+
+        //----------------------------------------------------------------------
+        // both A and B are bitmap
+        //----------------------------------------------------------------------
+
+        for (int64_t k = 0 ; k < vlen ; k++)
+        { 
+            if (!Ab [pA+k]) continue ;
+            if (!Bb [pB+k]) continue ;
+            GB_DOT (k, pA+k, pB+k) ;
+        }
+
+    }
+    else if (A_is_bitmap)
+    {
+
+        //----------------------------------------------------------------------
+        // A is bitmap; B is sparse, hypersparse, or full
+        //----------------------------------------------------------------------
+
+        for (int64_t p = pB ; p < pB_end ; p++)
+        { 
+            int64_t k = GBI (Bi, p, vlen) ;
+            if (!Ab [pA+k]) continue ;
+            GB_DOT (k, pA+k, p) ;
+        }
+
+    }
+    else if (B_is_bitmap)
+    {
+
+        //----------------------------------------------------------------------
+        // B is bitmap; A is sparse, hypersparse, or full
+        //----------------------------------------------------------------------
+
+        for (int64_t p = pA ; p < pA_end ; p++)
+        { 
+            int64_t k = GBI (Ai, p, vlen) ;
+            if (!Bb [pB+k]) continue ;
+            GB_DOT (k, p, pB+k) ;
+        }
+
+    }
+    else if (ainz == 0)
     { 
 
         //----------------------------------------------------------------------
@@ -168,8 +209,8 @@
         ;
 
     }
-    else if (GBI (Ai, pA_end-1, avlen) < ib_first
-        || ib_last < GBI (Ai, pA, avlen))
+    else if (GBI (Ai, pA_end-1, vlen) < ib_first
+        || ib_last < GBI (Ai, pA, vlen))
     { 
 
         //----------------------------------------------------------------------
@@ -179,7 +220,7 @@
         ;
 
     }
-    else if (bjnz == bvlen && ainz == bvlen)
+    else if (bjnz == vlen && ainz == vlen)
     {
 
         //----------------------------------------------------------------------
@@ -199,10 +240,10 @@
                 #elif (GB_CTYPE_BITS > 0)
                 // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
                 // for bool, 8-bit, 16-bit, or 32-bit integer
-                cij = (GB_CTYPE) (((uint64_t) bvlen) & GB_CTYPE_BITS) ;
+                cij = (GB_CTYPE) (((uint64_t) vlen) & GB_CTYPE_BITS) ;
                 #else
                 // PLUS monoid for float, double, or 64-bit integers 
-                cij = GB_CTYPE_CAST (bvlen, 0) ;
+                cij = GB_CTYPE_CAST (vlen, 0) ;
                 #endif
 
             #else
@@ -212,7 +253,7 @@
                 GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
                 GB_MULT (cij, aki, bkj, i, 0, j) ;  // cij = aki * bkj
                 GB_PRAGMA_SIMD_DOT (cij)
-                for (int64_t k = 1 ; k < bvlen ; k++)
+                for (int64_t k = 1 ; k < vlen ; k++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal
                     // cij += A(k,i) * B(k,j)
@@ -230,7 +271,7 @@
         #endif
 
     }
-    else if (ainz == bvlen)
+    else if (ainz == vlen)
     {
 
         //----------------------------------------------------------------------
@@ -284,7 +325,7 @@
         #endif
 
     }
-    else if (bjnz == bvlen)
+    else if (bjnz == vlen)
     {
 
         //----------------------------------------------------------------------
@@ -368,8 +409,7 @@
             else // ia == ib == k
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
-                int64_t k = ia ;
-                GB_DOT ;
+                GB_DOT (ia, pA, pB) ;
                 pA++ ;
                 pB++ ;
             }
@@ -405,8 +445,7 @@
             else // ia == ib == k
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
-                int64_t k = ia ;
-                GB_DOT ;
+                GB_DOT (ia, pA, pB) ;
                 pA++ ;
                 pB++ ;
             }
@@ -426,8 +465,7 @@
             int64_t ib = Bi [pB] ;              // ok: B is sparse
             if (ia == ib)
             {
-                int64_t k = ia ;
-                GB_DOT ;
+                GB_DOT (ia, pA, pB) ;
                 pA++ ;
                 pB++ ;
             }
@@ -445,7 +483,7 @@
 
     #if defined ( GB_DOT3 )
 
-        // GB_AxB_dot3: computing C<M>=A'*B
+        // GB_AxB_dot3: computing C<M>=A'*B; C and M are sparse/hypersparse
         if (GB_CIJ_EXISTS)
         { 
             // C(i,j) = cij
@@ -461,36 +499,39 @@
 
     #else
 
-        // GB_AxB_dot2: computing C=A'*B or C<!M>=A'*B
-        if (GB_CIJ_EXISTS)
-        { 
-            // C(i,j) = cij
-            #if defined ( GB_PHASE_1_OF_2 )
-                C_count [kB] ++ ;
-            #else
+        // GB_AxB_dot2: computing C=A'*B, C<M>=A'*B, or C<!M>=A'*B,
+        // where M, A, B, and C can have any sparsity pattern
+
+        #if defined ( GB_PHASE_1_OF_2 )
+
+            if (GB_CIJ_EXISTS)
+            { 
+                // C(i,j) = cij
+                C_count [kB]++ ;
+            }
+
+        #else
+
+            if (C_is_bitmap)
+            {
+                int8_t c = GB_CIJ_EXISTS ;
+                if (c) GB_PUTC (cij, cnz) ;
+                Cb [cnz] = c ;
+                cnvals += c ;
+            }
+            else if (GB_CIJ_EXISTS)
+            { 
+                // C(i,j) = cij
                 GB_PUTC (cij, cnz) ;    // Cx [cnz] = cij
                 Ci [cnz++] = i ;        // ok: C is sparse
                 if (cnz > cnz_last) break ;
-            #endif
-        }
+            }
 
+        #endif
     #endif
 }
 
 #undef GB_DOT
-#undef GB_LOAD_A
-#undef GB_LOAD_B
-#undef GB_MUNCH_A
-#undef GB_MUNCH_B
-#undef GB_MUNCH_AB
 #undef GB_CIJ_EXISTS
 #undef GB_CIJ_CHECK
-#undef GB_USE_AVX2
-
-#undef GB_BROADCAST
-#undef GB_BROADCAST1
-#undef GB_LOAD
-#undef GB_MUNCH_BROADCAST
-#undef GB_MUNCH_BROADCAST1
-#undef GB_MUNCH_LOAD
 

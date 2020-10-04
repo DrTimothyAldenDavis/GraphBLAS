@@ -10,10 +10,7 @@
 // These defintions are not visible to the user.  They are used only inside
 // GraphBLAS itself.
 
-// Future plans: (see also 'grep -r FUTURE')
-// FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
 // FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
-// FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
 
 #ifndef GB_H
 #define GB_H

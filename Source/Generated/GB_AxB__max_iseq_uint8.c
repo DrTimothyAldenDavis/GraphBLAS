@@ -216,7 +216,7 @@
 GrB_Info GB_Adot2B__max_iseq_uint8
 (
     GrB_Matrix C,
-    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A, bool A_is_pattern, int64_t *GB_RESTRICT A_slice,
     const GrB_Matrix B, bool B_is_pattern, int64_t *GB_RESTRICT B_slice,
     int64_t *GB_RESTRICT *C_counts,
@@ -288,7 +288,7 @@ GrB_Info GB_Adot4B__max_iseq_uint8
 GrB_Info GB_Asaxpy3B__max_iseq_uint8
 (
     GrB_Matrix C,
-    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
+    const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const bool M_dense_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,

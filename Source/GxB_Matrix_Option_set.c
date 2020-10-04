@@ -60,6 +60,14 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
+                // a GrB_Matrix with vdim <= 1 cannot be hypersparse
+                if (A->vdim <= 1 && (sparsity & GxB_HYPERSPARSE))
+                {
+                    // disable the hypersparsity flag
+                    sparsity &= (GxB_FULL + GxB_BITMAP + GxB_SPARSE) ;
+                    // enable the sparse flag instead
+                    sparsity |= (GxB_SPARSE) ;
+                }
                 A->sparsity = sparsity ;
             }
             break ;

@@ -148,22 +148,15 @@ GrB_Info GB_selector
         use_bitmap_selector = GB_is_packed (A) ;
     }
 
+    //--------------------------------------------------------------------------
+    // bitmap/full case
+    //--------------------------------------------------------------------------
+
     if (use_bitmap_selector)
     { 
         GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
-        info = (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
+        return (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
             ithunk, xthunk, Context)) ;
-        if (info != GrB_SUCCESS) return (info) ;
-        // HACK convert bitmap to sparse
-        if (Chandle == NULL)
-        {
-            info = (GB_convert_bitmap_to_sparse (A, Context)) ;
-        }
-        else
-        {
-            info = (GB_convert_bitmap_to_sparse (*Chandle, Context)) ;
-        }
-        return (info) ;
     }
 
     //--------------------------------------------------------------------------

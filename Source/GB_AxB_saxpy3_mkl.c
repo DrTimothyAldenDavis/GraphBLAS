@@ -65,10 +65,6 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ; 
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     GrB_Info info ;
 
     mkl_graph_matrix_t C_mkl = NULL ;
@@ -81,9 +77,10 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     int64_t *GB_RESTRICT Ci = NULL ;
     GB_void *GB_RESTRICT Cx = NULL ;
 
-    if (GB_IS_HYPER (M) || GB_IS_HYPER( A) || GB_IS_HYPER (B))
+    if (!GB_IS_SPARSE (A) || !GB_IS_SPARSE (B)
+        || (M != NULL && !GB_IS_SPARSE (M)))
     {
-        // MKL does not handle hypersparsity
+        // MKL does not handle hypersparsity, bitmap, or full
         return (GrB_NO_VALUE) ;
     }
 

@@ -66,6 +66,11 @@ GrB_Info GB_subassign_06s_and_14
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
     GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
+    ASSERT_MATRIX_OK (C, "C input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (M, "M input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (S, "S constructed for Method 06s/14", GB0) ;
+
     GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
     GB_GET_A ;

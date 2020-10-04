@@ -39,40 +39,44 @@
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
-    // const int64_t bnvec = B->nvec ;
-    // const bool B_is_hyper = (Bh != NULL) ;
     const bool B_jumbled = B->jumbled ;
+    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
+    const int8_t  *GB_RESTRICT Ab = A->b ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
+    const int8_t  *GB_RESTRICT Mb = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     const GB_void *GB_RESTRICT Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
-    bool M_is_hyper = false ;
+    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
+    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     if (M != NULL)
     { 
         Mp = M->p ;
         Mh = M->h ;
+        Mb = M->b ;
         Mi = M->i ;
         Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        M_is_hyper = (Mh != NULL) ;
     }
 
     // 3 cases:
@@ -81,7 +85,13 @@
     //      M present     and Mask_comp true : compute C<!M>=A*B
     // If M is NULL on input, then Mask_comp is also false on input.
 
-    bool mask_is_M = (M != NULL && !Mask_comp) ;
+    const bool mask_is_M = (M != NULL && !Mask_comp) ;
+
+    // ignore the mask if present, not complemented, dense and
+    // used in place, structural, and not bitmap.  In this case,
+    // all entries in M are true, so M can be ignored.
+    const bool ignore_mask = mask_is_M && M_dense_in_place &&
+        Mask_struct && !M_is_bitmap ;
 
     //==========================================================================
     // phase2: numeric work for fine tasks
@@ -167,6 +177,7 @@
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
+                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -174,6 +185,7 @@
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
+                        if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
 
                         GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
@@ -240,6 +252,7 @@
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
+                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -316,6 +329,7 @@
                 GB_GET_M_j ;                // get M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
+                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -323,6 +337,7 @@
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
+                        if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
 
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
@@ -425,7 +440,7 @@ OLD:
                 Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
             int64_t hash_bits = (hash_size-1) ;
 
-            if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
+            if (M == NULL || ignore_mask)
             {
 
                 //--------------------------------------------------------------
@@ -447,11 +462,17 @@ OLD:
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
+
                     // M(:,j) is dense.  M is not scattered into Hf.
-                    // If the mask is structural, it is ignored (see above).
-                    ASSERT (Mx != NULL) ;
+
+                    ASSERT (!Mask_struct || M_is_bitmap) ;
                     #undef  GB_CHECK_MASK_ij
-                    #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+                    #define GB_CHECK_MASK_ij                        \
+                        bool mij =                                  \
+                            (M_is_bitmap ? Mjb [i] : 1) &&          \
+                            (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                        if (!mij) continue ;
+
                     switch (msize)
                     {
                         default:
@@ -480,9 +501,14 @@ OLD:
                             #define M_TYPE uint64_t
                             #define M_SIZE 2
                             #undef  GB_CHECK_MASK_ij
-                            #define GB_CHECK_MASK_ij                        \
-                                if (Mask [2*i] == 0 && Mask [2*i+1] == 0)   \
-                                    continue ;
+                            #define GB_CHECK_MASK_ij                    \
+                                bool mij =                              \
+                                    (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                    (Mask_struct ? 1 :                  \
+                                        (Mjx [2*i] != 0) ||             \
+                                        (Mjx [2*i+1] != 0)) ;           \
+                                if (!mij) continue ;
+
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
                     }
@@ -506,6 +532,7 @@ OLD:
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
+                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -568,14 +595,23 @@ OLD:
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
+
                     // M(:,j) is dense.  M is not scattered into Hf.
-                    if (Mx == NULL)
+
+                    if (Mask_struct && !M_is_bitmap)
                     {
-                        // structural mask, complemented.  No work to do.
+                        // structural mask, complemented, and not bitmap.
+                        // No work to do.
                         continue ;
                     }
+
                     #undef  GB_CHECK_MASK_ij
-                    #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                    #define GB_CHECK_MASK_ij                        \
+                        bool mij =                                  \
+                            (M_is_bitmap ? Mjb [i] : 1) &&          \
+                            (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                        if (mij) continue ;
+
                     switch (msize)
                     {
                         default:
@@ -604,9 +640,14 @@ OLD:
                             #define M_TYPE uint64_t
                             #define M_SIZE 2
                             #undef  GB_CHECK_MASK_ij
-                            #define GB_CHECK_MASK_ij                        \
-                                if (Mask [2*i] != 0 || Mask [2*i+1] != 0)   \
-                                    continue ;
+                            #define GB_CHECK_MASK_ij                    \
+                                bool mij =                              \
+                                    (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                    (Mask_struct ? 1 :                  \
+                                        (Mjx [2*i] != 0) ||             \
+                                        (Mjx [2*i+1] != 0)) ;           \
+                                if (mij) continue ;
+
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
                     }
@@ -629,6 +670,7 @@ OLD:
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
+                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -636,6 +678,7 @@ OLD:
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
+                        if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
                         GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                         int64_t i1 = i + 1 ;        // i1 = one-based index
@@ -905,14 +948,21 @@ OLD:
                         }
                         #endif
                         mark++ ;
-                        if (bjnz == 1)         // C(:,j) = A(:,k)*B(k,j)
+                        if (bjnz == 1
+                            #if GB_IS_ANY_PAIR_SEMIRING
+                            && !A_is_bitmap
+                            #endif
+                            )
                         { 
+                            // C(:,j) = A(:,k)*B(k,j)
+                            if (!GBB (Bb, pB)) continue ;
                             GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
                         }
                         else if (16 * cjnz > cvlen) // C(:,j) is not very sparse
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -921,6 +971,7 @@ OLD:
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
                                     // get A(i,k)
+                                    if (!GBB (Ab, pA)) continue ;
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
                                     if (Hf [i] != mark)
@@ -942,6 +993,7 @@ OLD:
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -950,6 +1002,7 @@ OLD:
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
                                     // get A(i,k)
+                                    if (!GBB (Ab, pA)) continue ;
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
                                     if (Hf [i] != mark)
@@ -1009,6 +1062,7 @@ OLD:
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             { 
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -1039,6 +1093,7 @@ OLD:
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             { 
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -1105,6 +1160,7 @@ OLD:
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -1113,6 +1169,7 @@ OLD:
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
                                     // get A(i,k)
+                                    if (!GBB (Ab, pA)) continue ;
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
@@ -1136,6 +1193,7 @@ OLD:
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
+                                if (!GBB (Bb, pB)) continue ;
                                 int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
@@ -1144,6 +1202,7 @@ OLD:
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
                                     // get A(i,k)
+                                    if (!GBB (Ab, pA)) continue ;
                                     int64_t i = GBI (Ai, pA, avlen) ;
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
@@ -1178,7 +1237,7 @@ OLD:
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL || (mask_is_M && M_dense_in_place && Mx == NULL))
+                if (M == NULL || ignore_mask)
                 {
 
                     //----------------------------------------------------------
@@ -1199,10 +1258,14 @@ OLD:
 
                     if (M_dense_in_place)
                     { 
-                        // M(:,j) is dense.  M is not scattered into Hf.
-                        // If the mask is structural, it is ignored (see above).
-                        ASSERT (Mx != NULL) ;
-                        #define GB_CHECK_MASK_ij if (Mask [i] == 0) continue ;
+
+                        ASSERT (!Mask_struct || M_is_bitmap) ;
+                        #define GB_CHECK_MASK_ij                        \
+                            bool mij =                                  \
+                                (M_is_bitmap ? Mjb [i] : 1) &&          \
+                                (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                            if (!mij) continue ;
+
                         switch (msize)
                         {
                             default:
@@ -1231,9 +1294,14 @@ OLD:
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] == 0 && Mask [2*i+1] == 0) \
-                                        continue ;
+                                #define GB_CHECK_MASK_ij                    \
+                                    bool mij =                              \
+                                        (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                        (Mask_struct ? 1 :                  \
+                                            (Mjx [2*i] != 0) ||             \
+                                            (Mjx [2*i+1] != 0)) ;           \
+                                    if (!mij) continue ;
+
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                         }
@@ -1259,6 +1327,7 @@ OLD:
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
@@ -1306,13 +1375,21 @@ OLD:
                     if (M_dense_in_place)
                     { 
                         // M(:,j) is dense.  M is not scattered into Hf.
-                        if (Mx == NULL)
+
+                        if (Mask_struct && !M_is_bitmap)
                         {
-                            // structural mask, complemented.  No work to do.
+                            // structural mask, complemented, not bitmap.
+                            // No work to do.
                             continue ;
                         }
+
                         #undef  GB_CHECK_MASK_ij
-                        #define GB_CHECK_MASK_ij if (Mask [i] != 0) continue ;
+                        #define GB_CHECK_MASK_ij                        \
+                            bool mij =                                  \
+                                (M_is_bitmap ? Mjb [i] : 1) &&          \
+                                (Mask_struct ? 1 : (Mjx [i] != 0)) ;    \
+                            if (mij) continue ;
+
                         switch (msize)
                         {
                             default:
@@ -1341,9 +1418,14 @@ OLD:
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
-                                #define GB_CHECK_MASK_ij                      \
-                                    if (Mask [2*i] != 0 || Mask [2*i+1] != 0) \
-                                        continue ;
+                                #define GB_CHECK_MASK_ij                    \
+                                    bool mij =                              \
+                                        (M_is_bitmap ? Mjb [i] : 1) &&      \
+                                        (Mask_struct ? 1 :                  \
+                                            (Mjx [2*i] != 0) ||             \
+                                            (Mjx [2*i+1] != 0)) ;           \
+                                    if (mij) continue ;
+
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
                         }
@@ -1368,6 +1450,7 @@ OLD:
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
+                            if (!GBB (Bb, pB)) continue ;
                             int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
@@ -1375,6 +1458,7 @@ OLD:
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
+                                if (!GBB (Ab, pA)) continue ;
                                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {

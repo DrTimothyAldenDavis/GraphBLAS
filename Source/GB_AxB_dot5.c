@@ -16,7 +16,7 @@
 //      C_replace: true
 //      accum: not present
 
-// TODO:BITMAP (in progress): extend to all semirings
+// TODO: extend to all semirings
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
@@ -70,7 +70,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     if (flipxy) return (GrB_NO_VALUE) ;
 
     // not in-place (for now)
-    if (C_in_place) return (GrB_NO_VALUE) ;
+    if (C_in_place != NULL) return (GrB_NO_VALUE) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -218,13 +218,13 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int8_t  *GB_RESTRICT Bb = B->b ;
     // int64_t bnvec = B->nvec ;
-    int64_t bvlen = B->vlen ;
+    ASSERT (A->vlen == B->vlen) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     int64_t anvec = A->nvec ;
-    int64_t avlen = A->vlen ;
+    int64_t vlen = A->vlen ;
 
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
@@ -314,10 +314,10 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
             // int64_t j = GBH (Bh, kB) ;
 
             // since B is bitmap (also works for full):
-            int64_t pB_start = kB * bvlen ;
+            int64_t pB_start = kB * vlen ;
             // this also works for all matrices, including bitmap:
-            // int64_t pB_start = GBP (Bp, kB, bvlen) ;
-            // int64_t pB_end   = GBP (Bp, kB+1, bvlen) ;
+            // int64_t pB_start = GBP (Bp, kB, vlen) ;
+            // int64_t pB_end   = GBP (Bp, kB+1, vlen) ;
 
             // if A and/or B are hypersparse, then some rows and columns of
             // C will not be computed at all.  They must be set to Cb[p]=0,
@@ -355,8 +355,8 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                     //----------------------------------------------------------
 
                     // assumes A is sparse or hypersparse:
-                    int64_t pA = Ap [kA] ; // GBP (Ap, kA, avlen) ;
-                    int64_t pA_end = Ap [kA+1] ; // GBP (Ap, kA+1, avlen) ;
+                    int64_t pA = Ap [kA] ; // GBP (Ap, kA, vlen) ;
+                    int64_t pA_end = Ap [kA+1] ; // GBP (Ap, kA+1, vlen) ;
 
                     // GB_AxB_dot_cij starts here, if it did bitmaps:
 
@@ -372,7 +372,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                         // next index of A(:,k)
                         int64_t k = Ai [p] ;                // ok: A is sparse
                         // for any matrix A, do this instead:
-                        // int64_t k = GBI (Ai, p, avlen) ;
+                        // int64_t k = GBI (Ai, p, vlen) ;
 
                         // to handle A bitmap, do this:
                         // if (!GBB (Ab, p)) continue ;

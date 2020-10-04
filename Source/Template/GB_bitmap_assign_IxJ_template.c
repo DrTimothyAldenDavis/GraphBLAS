@@ -11,7 +11,7 @@
 // entries C(i,j) where i is in the list I and j is in the list J.  This
 // traversal occurs whether or not C(i,j) is an entry present in C.
 
-// The C matrix is accessed C(I,J).  The A matrix is size |I|-by-|J|.
+// The C matrix is accessed at C(I,J).  The A matrix is size |I|-by-|J|.
 // For bitmap assignent, C(I,J)=A is being computed.  For bitmap extraction,
 // C=A(I,J) so the roles of A and C are swapped (see GB_bitmap_subref.c).
 

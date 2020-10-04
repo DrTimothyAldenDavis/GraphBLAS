@@ -33,7 +33,6 @@
 {                                   \
     GB_FREE (W) ;                   \
     GB_FREE (F) ;                   \
-    GB_Matrix_free (&A_bitmap) ; /* HACK to test full/bitmap case */ \
 }
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
@@ -42,7 +41,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     const GrB_Type ctype,       // the type of scalar, c
     const GrB_BinaryOp accum,   // for c = accum(c,s)
     const GrB_Monoid reduce,    // monoid to do the reduction
-    const GrB_Matrix A_in,      // matrix to reduce
+    const GrB_Matrix A,         // matrix to reduce
     GB_Context Context
 )
 {
@@ -55,8 +54,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (c) ;
-    GrB_Matrix A_bitmap = NULL ; // HACK: to test full/bitmap case
-    GrB_Matrix A = A_in ;
     GB_void *GB_RESTRICT W = NULL ;
     bool    *GB_RESTRICT F = NULL ;
 
@@ -74,15 +71,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     if (!GB_Type_compatible (A->type, ztype))
     { 
         return (GrB_DOMAIN_MISMATCH) ;
-    }
-
-    // HACK to test full/bitmap case
-    if (A->vlen <= 100 && A->vdim <= 100)
-    {
-        GB_MATRIX_WAIT (A) ;
-        GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
-        GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
-        A = A_bitmap ;
     }
 
     //--------------------------------------------------------------------------

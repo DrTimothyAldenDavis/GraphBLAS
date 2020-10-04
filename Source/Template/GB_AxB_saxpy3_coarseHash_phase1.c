@@ -19,43 +19,54 @@
     // f < mark          : unoccupied.
     // h == i, f == mark : occupied with C(i,j)
 
-    // The mask M can be optionally checked, if it is dense and checked in
-    // place.  This method is not used if M is present and sparse.
+    // The mask M can be optionally checked, if it is dense (full, bitmpa, or
+    // sparse/hyper with all entries present) and checked in place.  This
+    // method is not used if M is present and sparse.
 
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
         GB_GET_B_j ;            // get B(:,j)
-        if (bjnz == 0)
-        { 
-            Cp [kk] = 0 ;       // ok: C is sparse
-            continue ;
-        }
+        Cp [kk] = 0 ;           // ok: C is sparse
+        if (bjnz == 0) continue ;
 
         #ifdef GB_CHECK_MASK_ij
-        GB_GET_M_j
-        #ifndef M_SIZE
-        #define M_SIZE 1
-        #endif
-        const M_TYPE *GB_RESTRICT Mask = ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+
+            // The mask M is dense (full, bitmap, or sparse/hyper with all
+            // entries present in the entire matrix).  Get pointers Mjb and
+            // Mjx into the M(:,j) vector.
+            GB_GET_M_j
+            #ifndef M_SIZE
+            #define M_SIZE 1
+            #endif
+            const M_TYPE *GB_RESTRICT Mjx = Mask_struct ? NULL :
+                ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+            const int8_t *GB_RESTRICT Mjb = M_is_bitmap ? (Mb+pM_start) : NULL ;
+
         #else
-        if (bjnz == 1)
-        { 
-            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-            GB_GET_A_k ;            // get A(:,k)
-            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-            continue ;
-        }
+
+            // M is not present
+            if (bjnz == 1)
+            { 
+                if (!GBB (Bb, pB)) continue ;
+                int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
+                GB_GET_A_k ;            // get A(:,k)
+                Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
+                continue ;
+            }
+
         #endif
 
         mark++ ;
         int64_t cjnz = 0 ;
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
+            if (!GBB (Bb, pB)) continue ;
             int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
+                if (!GBB (Ab, pA)) continue ;
                 int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j) is protected by

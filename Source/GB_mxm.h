@@ -9,6 +9,7 @@
 
 #ifndef GB_MXM_H
 #define GB_MXM_H
+#include "GB_AxB_saxpy.h"
 #include "GB_AxB_saxpy3.h"
 
 //------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
-                                    // if present, the mask is complemented
+    const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
@@ -163,21 +164,6 @@ GrB_Info GB_AxB_dot3_one_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
-    GB_Context Context
-) ;
-
-GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
-(
-    GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M_input,       // optional mask matrix
-    const bool Mask_comp_input,     // if true, use !M
-    const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix A,             // input matrix A
-    const GrB_Matrix B,             // input matrix B
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied,             // if true, then mask was applied
-    const GrB_Desc_Value AxB_method,    // Default, Gustavson, or Hash
     GB_Context Context
 ) ;
 

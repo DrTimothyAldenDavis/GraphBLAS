@@ -54,9 +54,11 @@
     // scatter C into the R bitmap
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C input to R_bitmap_masker", GB0) ;
     GB_SLICE_MATRIX (C, 8) ;
 
-    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1) \
+        reduction(+:rnvals)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
         int64_t kfirst = kfirst_Cslice [taskid] ;

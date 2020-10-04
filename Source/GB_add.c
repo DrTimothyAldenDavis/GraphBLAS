@@ -96,18 +96,6 @@ GrB_Matrix B = B_in ;
 GrB_Matrix M_bitmap = NULL ;
 GrB_Matrix A_bitmap = NULL ;
 GrB_Matrix B_bitmap = NULL ;
-bool A_was_full = GB_IS_FULL (A) ;
-bool A_was_bitmap = GB_IS_BITMAP (A) ;
-bool A_was_sparse = GB_IS_SPARSE (A) ;
-bool A_was_hyper = GB_IS_HYPERSPARSE (A) ;
-bool B_was_full = GB_IS_FULL (B) ;
-bool B_was_bitmap = GB_IS_BITMAP (B) ;
-bool B_was_sparse = GB_IS_SPARSE (B) ;
-bool B_was_hyper = GB_IS_HYPERSPARSE (B) ;
-bool M_was_full = GB_IS_FULL (M) ;
-bool M_was_bitmap = GB_IS_BITMAP (M) ;
-bool M_was_sparse = GB_IS_SPARSE (M) ;
-bool M_was_hyper = GB_IS_HYPERSPARSE (M) ;
 if (A->vlen <= 100 && A->vdim <= 100 && op != NULL)
 {
     int64_t n = A->vlen ;
@@ -284,13 +272,6 @@ GB_Matrix_free (&B_bitmap) ;
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
-
-// HACK
-if (GB_IS_BITMAP (C))
-{
-    GB_OK (GB_convert_any_to_sparse (C, Context)) ;
-}
-
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

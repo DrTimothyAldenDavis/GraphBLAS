@@ -90,11 +90,9 @@ end
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 
 % function names
-fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot3B'', `GB_Adot3B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot4B'', `GB_Adot4B__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AheapB'', `GB_AheapB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Asaxpy3B'', `GB_Asaxpy3B__%s'')\n', name) ;
 
 % type of C, A, and B
@@ -320,24 +318,16 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
-% To create GB_control.h
-% ff = fopen ('temp.h', 'a') ;
-% fprintf (ff, '// #define GxB_NO_%s\n', upper (addop)) ;
-% fprintf (ff, '// #define GxB_NO_%s\n', upper (multop)) ;
-% fprintf (ff, '//  #define GxB_NO_%s\n', upper (fname)) ;
-% fprintf (ff, '//   #define GxB_NO_%s_%s_%s\n', upper (addop), upper (multop), upper (fname)) ;
-% fclose (ff) ;
-
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +37 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +37 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

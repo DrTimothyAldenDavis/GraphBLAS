@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_sparsity: determine the sparsity structure for C<M or !M>=A*B
+// GB_AxB_saxpy_sparsity: determine the sparsity structure for C<M or !M>=A*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,21 +9,13 @@
 
 // Determines the sparsity structure for C, for computing C=A*B, C<M>=A*B, or
 // C<!M>=A*B, based on the sparsity structures of C (on input), M, A, and B,
-// and whether or not M is complemented.  Whether or not the computation can be
-// done in-place depends on the the C_replace option, the accum operator, and
-// the semiring.
+// and whether or not M is complemented.
 
-#include "GB_AxB_saxpy3.h"
+#include "GB_AxB_saxpy.h"
 
-int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
+int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 (
-    // output:
-    bool *in_place,                 // if true, compute C in-place
     // input:
-    const GrB_Matrix C_in,          // input matrix C
-    const bool C_replace,           // C_replace option
-    const GrB_BinaryOp accum,       // optional accum operator
-    const GrB_Semiring semiring,    // semiring
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input A matrix
@@ -36,7 +28,6 @@ int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
     //--------------------------------------------------------------------------
 
     int C_sparsity ;
-    int C_in_sparsity = GB_sparsity (C_in) ;
 
     double m = (double) A->vlen ;
     double k = (double) A->vdim ;
@@ -49,53 +40,7 @@ int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
     bool M_is_hyper  = (M_sparsity == GxB_HYPERSPARSE) ;
     bool M_is_sparse = (M_sparsity == GxB_SPARSE) ;
 
-    // If no mask is present, C_replace can be ignored and is effectively
-    // false.
-    bool C_replace_effective = (M == NULL) ? false : C_replace ;
-
-    (*in_place) = (C_in_sparsity == GxB_BITMAP || C_in_sparsity == GxB_FULL)
-        && !C_replace_effective && (accum != NULL && accum == semiring->add)
-        && !GB_aliased (C, M) && !GB_aliased (C, A) && !GB_aliased (C, B) ;
-
-    if (*in_place)
-    {
-
-        //-----------------------------------------------------
-        // C_in            +=               A     *     B
-        //-----------------------------------------------------
-
-        // bitmap                           any         any
-        // full                             any         any
-
-        //-----------------------------------------------------
-        // C               <M>+=            A     *     B
-        // C               <!M>+=           A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           any             any         any  
-        // full -> bitmap   any             any         any  
-
-        // C_in can be modified in-place if it is bitmap or full, the C_replace
-        // option is not in effect (either false, or true but is effectively
-        // false because M is not present), the accum operator is present and
-        // matches the semiring monoid, and C is not aliased with M, A, or B.
-
-        // If C_in is modified in-place: If C_in is full and a mask is present,
-        // C_in must be converted to bitmap first, however, and then it can be
-        // modified in-place.
-
-        // BFS: will not come here since it uses no accum operator, it uses
-        // C_replace == true (with a mask), and aliases C with B.
-
-        C_sparsity = C_in_sparsity ;
-        if (M != NULL)
-        {
-            // if C is full, it is converted to bitmap if M is present
-            C_sparsity = GxB_BITMAP ;
-        }
-
-    }
-    else if (M != NULL && !Mask_comp && (M_is_hyper || M_is_sparse))
+    if (M != NULL && !Mask_comp && (M_is_hyper || M_is_sparse))
     {
 
         //-----------------------------------------------------
@@ -211,8 +156,8 @@ int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
         // larger than (m*k + k*n), then always construct C as sparse/hyper,
         // not bitmap.
 
-        // BFS: C<!M>=A*B, no accum, M is complemented, not structural,
-        // full (or bitmap in the future).  So C is not computed in-place.
+        // BFS: C<!M>=A*B, no accum, M is complemented, not structural, full
+        // (or bitmap in the future).  So C cannotb e not computed in-place.
         // Also, C is aliased with B.
 
         switch (B_sparsity)

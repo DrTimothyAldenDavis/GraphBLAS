@@ -50,6 +50,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
+
                 // a GrB_Vector cannot be hypersparse
                 if (sparsity & GxB_HYPERSPARSE)
                 {
@@ -58,6 +59,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                     // enable the sparse flag instead
                     sparsity |= (GxB_SPARSE) ;
                 }
+
                 v->sparsity = sparsity ;
             }
             break ;

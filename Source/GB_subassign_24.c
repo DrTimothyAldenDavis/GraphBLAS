@@ -10,12 +10,10 @@
 // C = A, making a deep copy into an existing non-shallow matrix C, but
 // possibly reusing parts of C if C is dense.  See also GB_dup.
 
-// Handles arbitrary typecasting.  A is either sparse or dense; the name of
-// the function is a bit of a misnomer since it implies that only the dense
-// case is handled.
+// Handles arbitrary typecasting.
 
-// FULL: if C sparse and A dense/full, convert C to full, ignoring C->sparsity.
-// C is conformed to its desired sparsity structure later.
+// FULL: if C sparse and A dense/full, C is converted to full, ignoring
+// C->sparsity.  C is conformed to its desired sparsity structure later.
 
 // A can be jumbled, in which case C is also jumbled.
 // A can have any sparsity structure (sparse, hyper, bitmap, or full)

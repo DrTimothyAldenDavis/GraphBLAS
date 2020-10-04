@@ -47,7 +47,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (GB_is_diagonal (D, Context)) ;
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: for now
     ASSERT (!GB_IS_FULL (D)) ;          // ok: D is not full
 
     //--------------------------------------------------------------------------

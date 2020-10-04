@@ -86,11 +86,10 @@ void mexFunction
     gb_usage (nargin == 3 && nargout <= 1, "usage: C = gblogassign (C, M, A)") ;
 
     //--------------------------------------------------------------------------
-    // get a deep copy of C
+    // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = gb_get_deep (pargin [0]) ;
-
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
@@ -99,14 +98,16 @@ void mexFunction
     // get M
     //--------------------------------------------------------------------------
 
-    // make M boolean, stored by column, and drop explicit zeros
+    // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
     OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input, NULL, NULL)) ;
+    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY,
+        GxB_SPARSE + GxB_HYPERSPARSE)) ;
+    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
+        NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
-
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
 
@@ -115,24 +116,36 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A_input = gb_get_shallow (pargin [2]) ;
+    GrB_Matrix A = A_input ;
     GrB_Type atype ;
     GrB_Index anrows, ancols, anz ;
     GxB_Format_Value fmt ;
-    OK (GrB_Matrix_nrows (&anrows, A_input)) ;
-    OK (GrB_Matrix_ncols (&ancols, A_input)) ;
-    OK (GxB_Matrix_type (&atype, A_input)) ;
-    OK (GrB_Matrix_nvals (&anz, A_input)) ;
-    OK (GxB_Matrix_Option_get (A_input, GxB_FORMAT, &fmt)) ;
+    int A_sparsity ;
+    OK (GrB_Matrix_nrows (&anrows, A)) ;
+    OK (GrB_Matrix_ncols (&ancols, A)) ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    OK (GrB_Matrix_nvals (&anz, A)) ;
+    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
+    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY, &A_sparsity)) ;
+
+    GrB_Matrix A_copy = NULL ;
+    GrB_Matrix A_copy2 = NULL ;
+
+    // make sure A is not bitmap; it can be sparse, hypersparse, or full
+    if (A_sparsity == GxB_BITMAP)
+    {
+        OK (GrB_Matrix_dup (&A_copy2, A)) ;
+        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY,
+            GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+        A = A_copy2 ;
+    }
 
     // make sure A is a vector of the right size
-    GrB_Matrix A, A_copy = NULL ;
-
     if (mnz == 0)
     { 
         // M is empty, so A must have no entries.  The dimensions and format of
         // A are not relevant, since the content of A will not be accessed.
         CHECK_ERROR (anz != 0, ERR) ;
-        A = A_input ;
     }
     else if (anrows == 1)
     {
@@ -143,14 +156,13 @@ void mexFunction
         { 
             // A is 1-by-ancols and held by column: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_COL)) ;
-            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
+                GxB_BY_COL)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
-        }
-        else
-        { 
-            A = A_input ;
         }
     }
     else if (ancols == 1)
@@ -162,14 +174,13 @@ void mexFunction
         { 
             // A is anrows-by-1 and held by row: transpose it
             OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT, GxB_BY_ROW)) ;
-            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A_input, NULL)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
+                GxB_BY_ROW)) ;
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
-        }
-        else
-        { 
-            A = A_input ;
         }
     }
     else
@@ -261,12 +272,13 @@ void mexFunction
     }
 
     OK (GrB_Matrix_free (&A_copy)) ;
+    OK (GrB_Matrix_free (&A_copy2)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = S
     //--------------------------------------------------------------------------
 
-    OK1 (S, GxB_Matrix_subassign (C, M, NULL,
+    OK1 (C, GxB_Matrix_subassign (C, M, NULL,
         S, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
     //--------------------------------------------------------------------------

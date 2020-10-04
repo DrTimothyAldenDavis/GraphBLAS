@@ -9,6 +9,7 @@
 
 // This function only computes C<M>=A'*B.  The mask must be present, and not
 // complemented, either valued or structural.  The mask is always applied.
+// C and M are both sparse or hypersparse.
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
@@ -61,9 +62,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+
+    ASSERT (!GB_IS_BITMAP (M)) ;        // ok: dot2 used instead
+    ASSERT (!GB_IS_FULL (M)) ;          // ok: dot2 used instead
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
@@ -119,21 +120,21 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
-    const int64_t mnz = GB_IS_FULL (M) ? GB_NNZ_FULL (M) : GB_NNZ (M) ; // TODO
+    const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = (Mh != NULL) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t avlen = A->vlen ;
+    const int64_t vlen = A->vlen ;
     const int64_t anvec = A->nvec ;
-    const bool A_is_hyper = (Ah != NULL) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
-    const int64_t bvlen = B->vlen ;
     const int64_t bnvec = B->nvec ;
-    const bool B_is_hyper = (Bh != NULL) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    ASSERT (A->vlen == B->vlen) ;
 
     //--------------------------------------------------------------------------
     // allocate C, the same size and # of entries as M
@@ -175,34 +176,16 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
-    // FUTURE:: C->p and C->h could be shallow copies of M->p and M->h, which
-    // could same some time and memory if C is then, say, transposed by
-    // GB_accum_mask later on.
-
     nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
-    if (GB_IS_FULL (M))
+
+    // M is sparse or hypersparse; C is the same as M
+    GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
+    if (M_is_hyper)
     { 
-        // M is full, but C is sparse
-        int64_t k ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (k = 0 ; k <= cnvec ; k++)
-        {
-            Cp [k] = k * cvlen ;
-        }
-        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
-        C->nvec = cvdim ;
+        GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
     }
-    else
-    {
-        // M is sparse or hypersparse; C is the same as M
-        GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
-        if (M_is_hyper)
-        { 
-            GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
-        }
-        C->nvec_nonempty = M->nvec_nonempty ;
-        C->nvec = M->nvec ;
-    }
+    C->nvec_nonempty = M->nvec_nonempty ;
+    C->nvec = M->nvec ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -260,7 +243,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             //------------------------------------------------------------------
 
             int64_t pB, pB_end ;
-            GB_lookup (B_is_hyper, Bh, Bp, bvlen, &bpleft, bnvec-1, j,
+            GB_lookup (B_is_hyper, Bh, Bp, vlen, &bpleft, bnvec-1, j,
                 &pB, &pB_end) ;
             int64_t bjnz = pB_end - pB ;
 
@@ -298,7 +281,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                     { 
                         int64_t pA, pA_end ;
                         int64_t i = GBI (Mi, pM, mvlen) ;
-                        GB_lookup (A_is_hyper, Ah, Ap, avlen, &apleft,
+                        GB_lookup (A_is_hyper, Ah, Ap, vlen, &apleft,
                             anvec-1, i, &pA, &pA_end) ;
                         int64_t ajnz = pA_end - pA ;
                         work += GB_IMIN (ajnz, bjnz) ;

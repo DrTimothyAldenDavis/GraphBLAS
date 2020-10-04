@@ -84,16 +84,6 @@ GrB_Info GB_resize              // change the size of a matrix
     // resize the matrix
     //--------------------------------------------------------------------------
 
-// HACK to test bitmap
-bool A_was_full = GB_IS_FULL (A) ;
-bool A_was_bitmap = GB_IS_BITMAP (A) ;
-bool A_was_sparse = GB_IS_SPARSE (A) ;
-bool A_was_hyper = GB_IS_HYPERSPARSE (A) ;
-if (vdim_old <= 100 && vlen_old <= 100)
-{
-    GB_convert_any_to_bitmap (A, Context) ;
-}
-
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_full = GB_IS_FULL (A) ;
     bool A_is_shrinking = (vdim_new <= vdim_old && vlen_new <= vlen_old) ;
@@ -225,12 +215,6 @@ if (vdim_old <= 100 && vlen_old <= 100)
         A->nvec = vdim_new ;
         A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
         ASSERT_MATRIX_OK (A, "A bitmap/full shrunk", GB0) ;
-
-// HACK test bitmap
-if (A_was_full) GB_convert_any_to_full (A) ;
-if (A_was_sparse) GB_convert_any_to_sparse (A, Context) ;
-if (A_was_hyper) GB_convert_any_to_hyper (A, Context) ;
-
         return (GrB_SUCCESS) ;
 
     }

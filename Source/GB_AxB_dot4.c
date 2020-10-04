@@ -54,9 +54,10 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
+
+    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: not used if C is bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: not used if A is bitmap
+    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: not used if B is bitmap
 
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
@@ -89,7 +90,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         (semiring == GrB_PLUS_TIMES_SEMIRING_FP32 ||
          semiring == GxB_PLUS_SECOND_FP32) && GB_VECTOR_OK (C)
         && GB_is_dense (C) && GB_is_dense (B) && GB_VECTOR_OK (B) && !flipxy
-        && !GB_IS_HYPER (A))
+        && !GB_IS_HYPERSPARSE (A)
+        && !GB_IS_BITMAP (C) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
     {
 
         info = // GrB_NO_VALUE ;

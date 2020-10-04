@@ -118,27 +118,33 @@ void mexFunction
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
     OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
+    // M can be hypersparse, sparse, or full, but not bitmap
+    int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
+    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY, not_bitmap)) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
 
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
+    int sparsity ;
+    OK (GxB_Matrix_Option_get (M, GxB_SPARSITY, &sparsity)) ;
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 5") ;
 
     //--------------------------------------------------------------------------
     // G<M> = A
     //--------------------------------------------------------------------------
 
-    // G has the same type and size as A, but it is always stored by column
+    // G has the same type and size as A, but it is always stored by column.
+    // Also ensure the G is not bitmap.
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
     GrB_Matrix G ;
     OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
     OK1 (G, GxB_Matrix_Option_set (G, GxB_FORMAT, GxB_BY_COL)) ;
-
+    OK1 (G, GxB_Matrix_Option_set (G, GxB_SPARSITY, not_bitmap)) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
-
     OK (GrB_Matrix_free (&A_copy)) ;
     OK (GrB_Matrix_free (&A_input)) ;
 
@@ -149,6 +155,8 @@ void mexFunction
     GrB_Index gnvals ;
     OK1 (G, GrB_Matrix_wait (&G)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
+    OK (GxB_Matrix_Option_get (G, GxB_SPARSITY, &sparsity)) ;
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
     void *Gx = G->x ;
 
     //--------------------------------------------------------------------------
@@ -171,6 +179,8 @@ void mexFunction
     // K is a shallow copy of M, except for its numerical values
     GrB_Matrix K ;
     OK (GB_shallow_copy (&K, GxB_BY_COL, M, Context)) ;
+    OK (GxB_Matrix_Option_get (K, GxB_SPARSITY, &sparsity)) ;
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 
     // Kx = uint64 (0:mnz-1)
     uint64_t *Kx = mxMalloc (MAX (mnz, 1) * sizeof (uint64_t)) ;
@@ -187,6 +197,7 @@ void mexFunction
     GrB_Matrix T ;
     OK (GrB_Matrix_new (&T, GrB_UINT64, nrows, ncols)) ;
     OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
+    OK1 (T, GxB_Matrix_Option_set (T, GxB_SPARSITY, not_bitmap)) ;
     OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
@@ -212,6 +223,7 @@ void mexFunction
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
+    OK1 (V, GxB_Vector_Option_set (V, GxB_SPARSITY, GxB_SPARSE)) ;
     gb_mxfree (&V->i) ;
     gb_mxfree (&V->x) ;
     V->i = (int64_t *) Tx ; // transplant values of T as the row indices of V

@@ -40,22 +40,6 @@
     GB_Matrix_free (&SubMask) ; \
 }
 
-#define HACK \
-if (C_in_is_bitmap ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ;\
-if (C_in_is_full   ) \
-{ \
-if (GB_is_dense (C_in) && GB_is_packed (C_in)) \
-{ \
-GB_convert_any_to_full (C_in) ; \
-} \
-else \
-{ \
-GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-} \
-} \
-if (C_in_is_sparse ) GB_OK (GB_convert_any_to_sparse (C_in, Context)) ; \
-if (C_in_is_hyper  ) GB_OK (GB_convert_any_to_hyper (C_in, Context)) ;
-
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 (
     GrB_Matrix C_in,                // input/output matrix for results
@@ -90,12 +74,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GrB_Index *I = NULL ;           // Rows, Cols, or I2
     GrB_Index *J = NULL ;           // Rows, Cols, or J2
 
-    // HACK: return C to non-bitmap state
-    bool C_in_is_bitmap = GB_IS_BITMAP (C_in) ;
-    bool C_in_is_full   = GB_IS_FULL (C_in) ;
-    bool C_in_is_sparse = GB_IS_SPARSE (C_in) ;
-    bool C_in_is_hyper  = GB_IS_HYPER (C_in) ;
-
     // temporary matrices and arrays
     GrB_Matrix C2 = NULL ;
     GrB_Matrix M2 = NULL ;
@@ -123,8 +101,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     if (done)
     { 
-        // GB_assign_prep has handle the entire assignment itself
-HACK ;
+        // GB_assign_prep has handled the entire assignment itself
         ASSERT_MATRIX_OK (C, "QUICK : Final C for assign", GB0) ;
         return (GB_block (C, Context)) ;
     }
@@ -135,6 +112,44 @@ HACK ;
 
     int subassign_method = GB_subassigner_method (C, C_replace,
         M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind, scalar_expansion) ;
+
+    //--------------------------------------------------------------------------
+    // determine if the final C_replace phase is needed
+    //--------------------------------------------------------------------------
+
+    // whole_submatrix is true if C(:,:)=A is being computed (the submatrix is
+    // all of C), or all that the operation can modify for row/col assign.
+
+    bool whole_submatrix ;
+    if (assign_kind == GB_ROW_ASSIGN)
+    { 
+        // row assignment to the entire row
+        whole_submatrix = (Jkind == GB_ALL) ;
+    }
+    else if (assign_kind == GB_COL_ASSIGN)
+    { 
+        // col assignment to the entire column
+        whole_submatrix = (Ikind == GB_ALL) ;
+    }
+    else
+    { 
+        // matrix assignment to the entire matrix
+        whole_submatrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+    }
+
+    // Mask_is_same is true if SubMask == M (:,:)
+    bool Mask_is_same = (M == NULL || whole_submatrix) ;
+
+    // C_replace_phase is true if a final pass over all of C is required
+    // to delete entries outside the C(I,J) submatrix.
+    bool C_replace_phase = (C_replace && !Mask_is_same) ;
+    ASSERT (!Mask_is_same == (M != NULL && !whole_submatrix)) ;
+
+    if ((GB_IS_BITMAP (C) || GB_IS_FULL (C)) && C_replace_phase)
+    { 
+        // GB_subassigner_method might not select the bitmap assignment
+        subassign_method == GB_SUBASSIGN_METHOD_BITMAP ;
+    }
 
     //--------------------------------------------------------------------------
     // do the assignment
@@ -167,42 +182,8 @@ HACK ;
         // use GB_subassigner
         //----------------------------------------------------------------------
 
-        // If C is bitmap on input, GB_bitmap_assign is used above.
-        // M and A can have any sparsity structure.
-        ASSERT (!GB_IS_BITMAP (C)) ;
-
-        //----------------------------------------------------------------------
-        // determine if the final C_replace phase is needed
-        //----------------------------------------------------------------------
-
-        // whole_submatrix is true if C(:,:)=A is being computed (the submatrix
-        // is all of C), or all that the operation can modify for row/col
-        // assign.
-
-        bool whole_submatrix ;
-        if (assign_kind == GB_ROW_ASSIGN)
-        { 
-            // row assignment to the entire row
-            whole_submatrix = (Jkind == GB_ALL) ;
-        }
-        else if (assign_kind == GB_COL_ASSIGN)
-        { 
-            // col assignment to the entire column
-            whole_submatrix = (Ikind == GB_ALL) ;
-        }
-        else
-        { 
-            // matrix assignment to the entire matrix
-            whole_submatrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
-        }
-
-        // Mask_is_same is true if SubMask == M (:,:)
-        bool Mask_is_same = (M == NULL || whole_submatrix) ;
-
-        // C_replace_phase is true if a final pass over all of C is required
-        // to delete entries outside the C(I,J) submatrix.
-        bool C_replace_phase = (C_replace && !Mask_is_same) ;
-        ASSERT (!Mask_is_same == (M != NULL && !whole_submatrix)) ;
+        // M and A can have any sparsity structure.  C is typically not
+        // bitmap, except
 
         //----------------------------------------------------------------------
         // extract the SubMask = M (I,J) if needed
@@ -306,6 +287,8 @@ HACK ;
             ASSERT (M != NULL) ;
             ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
             ASSERT (!whole_submatrix) ;
+            ASSERT (!GB_IS_BITMAP (C)) ;     // ok: C is not bitmap here
+            ASSERT (!GB_IS_FULL (C)) ;       // ok: C is not bitmap here
 
             ASSERT_MATRIX_OK (C, "C for C-replace-phase", GB0) ;
             ASSERT_MATRIX_OK (M, "M for C-replace-phase", GB0) ;
@@ -391,13 +374,10 @@ HACK ;
     }
 
     //--------------------------------------------------------------------------
-
-HACK // return C to non-bitmap state
-
-    //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
+    GB_OK (GB_conform (C_in, Context)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for assign", GB0) ;
     GB_FREE_ALL ;
     return (GB_block (C_in, Context)) ;

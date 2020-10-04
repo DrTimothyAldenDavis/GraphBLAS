@@ -27,10 +27,18 @@
     // place.  This method is not used if M is present and sparse.
 
     #ifdef GB_CHECK_MASK_ij
-    #ifndef M_SIZE
-    #define M_SIZE 1
-    #endif
-    const M_TYPE *GB_RESTRICT Mask = ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+
+        // The mask M is dense (full, bitmap, or sparse/hyper with all
+        // entries present in the entire matrix).  Get pointers Mjb and
+        // Mjx into the M(:,j) vector.
+        GB_GET_M_j
+        #ifndef M_SIZE
+        #define M_SIZE 1
+        #endif
+        const M_TYPE *GB_RESTRICT Mjx = Mask_struct ? NULL :
+            ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
+        const int8_t *GB_RESTRICT Mjb = M_is_bitmap ? (Mb + pM_start) : NULL ;
+
     #endif
 
     if (team_size == 1)
@@ -48,6 +56,7 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
+            if (!GBB (Bb, pB)) continue ;
             int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
@@ -55,6 +64,7 @@
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
+                if (!GBB (Ab, pA)) continue ;
                 int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)
@@ -99,6 +109,7 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
+            if (!GBB (Bb, pB)) continue ;
             int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
@@ -106,6 +117,7 @@
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
+                if (!GBB (Ab, pA)) continue ;
                 int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)

@@ -14,6 +14,22 @@
 #define GB_AXB_SAXPY3_H
 #include "GB.h"
 
+GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
+(
+    GrB_Matrix *Chandle,            // output matrix (not done in-place)
+    int C_sparsity,                 // construct C as sparse or hypersparse
+    const GrB_Matrix M_input,       // optional mask matrix
+    const bool Mask_comp_input,     // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *mask_applied,             // if true, then mask was applied
+    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // functions for the Hash method for C=A*B
 //------------------------------------------------------------------------------
@@ -104,11 +120,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
 void GB_AxB_saxpy3_symbolic
 (
-    GrB_Matrix C,               // Cp [k] is computed for coarse tasks
+    GrB_Matrix C,               // Cp is computed for coarse tasks
     const GrB_Matrix M,         // mask matrix M
-    bool Mask_comp,             // M complemented, or not
-    bool Mask_struct,           // M structural, or not
-    bool M_dense_in_place,
+    const bool Mask_comp,       // M complemented, or not
+    const bool Mask_struct,     // M structural, or not
+    const bool M_dense_in_place,
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
     GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
@@ -148,25 +164,6 @@ GrB_Info GB_AxB_saxpy3_generic
     const int nfine,
     const int nthreads,
     GB_Context Context
-) ;
-
-//------------------------------------------------------------------------------
-// GB_AxB_saxpy3_sparsity: determine the sparsity structure of C
-//------------------------------------------------------------------------------
-
-int GB_AxB_saxpy3_sparsity          // return the sparsity structure for C
-(
-    // output:
-    bool *in_place,                 // if true, compute C in-place
-    // input:
-    const GrB_Matrix C_in,          // input matrix C
-    const bool C_replace,           // C_replace option
-    const GrB_BinaryOp accum,       // optional accum operator
-    const GrB_Semiring semiring,    // semiring
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const bool Mask_comp,           // if true, use !M
-    const GrB_Matrix A,             // input A matrix
-    const GrB_Matrix B              // input B matrix
 ) ;
 
 //------------------------------------------------------------------------------

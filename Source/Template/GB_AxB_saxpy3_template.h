@@ -43,7 +43,9 @@
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \
     for (int64_t pM = pMstart ; pM < pMend ; pM++) /* scan M(:,j) */    \
     {                                                                   \
-        if (Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ; /* Hf [i] = M(i,j) */ \
+        if (!GBB (Mb, pM)) continue ;                                   \
+        int64_t i = GBI (Mi, pM, mvlen) ;                               \
+        if (Mxx [pM]) Hf [i] = mark ; /* Hf [i] = M(i,j) */             \
     }                                                                   \
 }                                                                       \
 break ;
@@ -55,7 +57,9 @@ break ;
         /* mask is structural, not valued */                                \
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                      \
         {                                                                   \
-            Hf [GBI (Mi, pM, mvlen)] = mark ;   /* Hf [i] = M(i,j) */       \
+            if (!GBB (Mb, pM)) continue ;                                   \
+            int64_t i = GBI (Mi, pM, mvlen) ;                               \
+            Hf [i] = mark ;   /* Hf [i] = M(i,j) */                         \
         }                                                                   \
     }                                                                       \
     else                                                                    \
@@ -74,10 +78,12 @@ break ;
                 /* scan M(:,j) */                                           \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
+                    if (!GBB (Mb, pM)) continue ;                           \
                     if (Mxx [2*pM] || Mxx [2*pM+1])                         \
                     {                                                       \
                         /* Hf [i] = M(i,j) */                               \
-                        Hf [GBI (Mi, pM, mvlen)] = mark ;                   \
+                        int64_t i = GBI (Mi, pM, mvlen) ;                   \
+                        Hf [i] = mark ;                                     \
                     }                                                       \
                 }                                                           \
             }                                                               \
@@ -130,7 +136,7 @@ break ;
     int64_t pB_end = GBP (Bp, kk+1, bvlen) ;                                \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
     /* FUTURE::: can skip if mjnz == 0 for C<M>=A*B tasks */                \
-    if (A_is_hyper && bjnz > 2 && !B_jumbled)                               \
+    if (A_is_hyper && B_is_sparse_or_hyper && bjnz > 2 && !B_jumbled)       \
     {                                                                       \
         /* trim Ah [0..pright] to remove any entries past last B(:,j), */   \
         /* to speed up GB_lookup in GB_GET_A_k. */                          \
@@ -173,7 +179,7 @@ break ;
 
 #define GB_GET_M_ij                                 \
     /* get M(i,j), at Mi [pM] and Mx [pM] */        \
-    bool mij = GB_mcast (Mx, pM, msize)
+    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize)
 
 //------------------------------------------------------------------------------
 // GB_MULT_A_ik_B_kj: declare t and compute t = A(i,k) * B(k,j)
@@ -226,14 +232,15 @@ break ;
         }                                                           \
         for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */           \
         {                                                           \
+            if (!GBB (Bb, pB)) continue ;                           \
             int64_t k = GBI (Bi, pB, bvlen) ;   /* get B(k,j) */    \
             GB_GET_A_k ;                /* get A(:,k) */            \
             if (aknz == 0) continue ;                               \
             GB_GET_B_kj ;               /* bkj = B(k,j) */          \
-            /* FUTURE::: handle the case when A(:,k) is dense */    \
             /* scan A(:,k) */                                       \
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)        \
             {                                                       \
+                if (!GBB (Ab, pA)) continue ;                       \
                 int64_t i = GBI (Ai, pA, avlen) ;   /* get A(i,k) */\
                 GB_MULT_A_ik_B_kj ;      /* t = A(i,k)*B(k,j) */    \
                 GB_CIJ_UPDATE (pC + i, t) ; /* Cx [pC+i]+=t */      \
@@ -250,8 +257,10 @@ break ;
 // The mask must not be present.
 #if GB_IS_ANY_PAIR_SEMIRING
 
-    // ANY_PAIR: result is purely symbolic; no numeric work to do
+    // ANY_PAIR: result is purely symbolic; no numeric work to do,
+    // except that this method cannot be used if A is bitmap.
     #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
+        ASSERT (!A_is_bitmap) ;                                     \
         int64_t k = GBI (Bi, pB, bvlen) ;       /* get B(k,j) */    \
         GB_GET_A_k ;                /* get A(:,k) */                \
         memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ;  \
@@ -268,6 +277,7 @@ break ;
         /* scan A(:,k) */                                           \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)            \
         {                                                           \
+            if (!GBB (Ab, pA)) continue ;                           \
             int64_t i = GBI (Ai, pA, avlen) ;  /* get A(i,k) */     \
             GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
             GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
@@ -419,6 +429,7 @@ break ;
         /* scan A(:,k), and lookup M(i,j) */                            \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
         {                                                               \
+            if (!GBB (Ab, pA)) continue ;                               \
             int64_t i = GBI (Ai, pA, avlen) ;    /* get A(i,k) */       \
             /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */  \
             /* M(i,j) may be 0 or 1, as given in the hash table */      \

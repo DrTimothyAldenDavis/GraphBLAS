@@ -92,7 +92,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     bool ok = GB_Index_multiply ((GrB_Index *) (&cnzmax), nI, nJ) ;
     if (!ok)
     {
-        // proboem too large
+        // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
     GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;

@@ -77,26 +77,6 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     GB_GET_A
 
     //--------------------------------------------------------------------------
-    // C_replace phase
-    //--------------------------------------------------------------------------
-
-    if (C_replace)
-    {
-        // for row assign: set Cb(i,:) to zero
-        // for col assign: set Cb(:,j) to zero
-        // for assign: set all Cb to zero
-        // for subassign set all Cb(I,J) to zero
-        #undef  GB_CIJ_WORK
-        #define GB_CIJ_WORK(pC)         \
-        {                               \
-            int8_t cb = Cb [pC] ;       \
-            Cb [pC] = 0 ;               \
-            cnvals -= (cb == 1) ;       \
-        }
-        #include "GB_bitmap_assign_C_template.c"
-    }
-
-    //--------------------------------------------------------------------------
     // to get the effective value of the mask entry mij
     //--------------------------------------------------------------------------
 
@@ -104,6 +84,29 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     #define GB_GET_MIJ(mij,pM)                                  \
         bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;   \
         if (Mask_comp) mij = !mij ;
+
+    //--------------------------------------------------------------------------
+    // C_replace phase
+    //--------------------------------------------------------------------------
+
+    if (C_replace)
+    {
+        // for row assign: set Cb(i,:) to zero if mij == 0
+        // for col assign: set Cb(:,j) to zero if mij == 0
+        // for assign: set Cb(:,:) to zero if mij == 0
+        // for subassign set Cb(I,J) to zero if mij == 0
+        #undef  GB_CIJ_WORK
+        #define GB_CIJ_WORK(pC)             \
+        {                                   \
+            if (!mij)                       \
+            {                               \
+                int8_t cb = Cb [pC] ;       \
+                Cb [pC] = 0 ;               \
+                cnvals -= (cb == 1) ;       \
+            }                               \
+        }
+        #include "GB_bitmap_assign_C_template.c"
+    }
 
     //--------------------------------------------------------------------------
     // assignment phase
@@ -163,7 +166,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         // assign A into C
         //----------------------------------------------------------------------
 
-        int8_t keep = C_replace ? 1 : 4 ;
+        // TODO: if A is bitmap or full, use a single pass
 
         //  for all entries aij in A (A can be hyper, sparse, bitmap, or full)
         //      get the effective value of the mask:
@@ -174,7 +177,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         //          if complemented: mij = !mij
         //      if mij == 1:
         //          Cx(p) = aij     // C(iC,jC) inserted or updated
-        //          Cb(p) = keep
+        //          Cb(p) = 4    
 
         #define GB_AIJ_WORK(pC,pA)              \
         {                                       \
@@ -185,7 +188,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 int8_t cb = Cb [pC] ;           \
                 /* Cx [pC] = Ax [pA] */         \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
-                Cb [pC] = keep ;                \
+                Cb [pC] = 4 ;                   \
                 cnvals += (cb == 0) ;           \
             }                                   \
         }
@@ -223,20 +226,19 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         // clear entries from C that were not in A
         //----------------------------------------------------------------------
 
-        if (!C_replace)
+        // if (!C_replace)
         {
-            // for row assign: for all entries in C(i,:)
-            // for col assign: for all entries in C(:,j)
-            // for assign: for all entries in C(:,:)
-            // for subassign: for all entries in C(I,J)
+            // for all entries in IxJ
                 // get the effective value of the mask
                 // if mij == 1
                     // 0 -> 0
                     // 1 -> 0           delete because aij not present
                     // keep -> 1
-            #undef  GB_CIJ_WORK
-            #define GB_CIJ_WORK(pC)             \
+            #undef  GB_IXJ_WORK
+            #define GB_IXJ_WORK(pC,pA)          \
             {                                   \
+                int64_t pM = GB_GET_pM ;        \
+                GB_GET_MIJ (mij, pM) ;          \
                 if (mij)                        \
                 {                               \
                     int8_t cb = Cb [pC] ;       \
@@ -244,7 +246,35 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                     cnvals -= (cb == 1) ;       \
                 }                               \
             }
-            #include "GB_bitmap_assign_C_template.c"
+
+            switch (assign_kind)
+            {
+                case GB_ROW_ASSIGN :
+                    // C<m>(i,J) = A where m is a 1-by-C->vdim row vector
+                    #undef  GB_GET_pM
+                    #define GB_GET_pM jC
+                    #include "GB_bitmap_assign_IxJ_template.c"
+                    break ;
+                case GB_COL_ASSIGN :
+                    // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
+                    #undef  GB_GET_pM
+                    #define GB_GET_pM iC
+                    #include "GB_bitmap_assign_IxJ_template.c"
+                    break ;
+                case GB_ASSIGN :
+                    // C<M>(I,J) = A where M has the same size as C
+                    #undef  GB_GET_pM
+                    #define GB_GET_pM pC
+                    #include "GB_bitmap_assign_IxJ_template.c"
+                    break ;
+                case GB_SUBASSIGN :
+                    // C(I,J)<M> = A where M has the same size as A
+                    #undef  GB_GET_pM
+                    #define GB_GET_pM (iA + jA * nI)
+                    #include "GB_bitmap_assign_IxJ_template.c"
+                    break ;
+                default:;
+            }
         }
     }
 

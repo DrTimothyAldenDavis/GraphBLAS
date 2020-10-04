@@ -12,6 +12,10 @@
 // it is not applied.  Instead, M is ignored and C=A*B is computed.  The mask
 // is applied later, in GB_mxm.
 
+// C is sparse or hypersparse.  M, A, and B can have any format.
+// The accum operator is not handled, and C is not modified in-place.  Instead,
+// C is constructed and returned in Chandle.
+
 // For simplicity, this discussion and all comments in this code assume that
 // all matrices are in CSC format, but the algorithm is CSR/CSC agnostic.
 
@@ -84,7 +88,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_AxB_saxpy3.h"
 #include "GB_mkl.h"
 #include "GB_Global.h"
 #ifndef GBCOMPACT
@@ -261,7 +264,8 @@ static inline void GB_create_coarse_task
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix *Chandle,            // output matrix (not done in-place)
+    int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -304,14 +308,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (A)) ;        // TODO:BITMAP
-    ASSERT (!GB_IS_BITMAP (B)) ;        // TODO:BITMAP
-
     ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
     (*Chandle) = NULL ;
+
+    ASSERT (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use, and the use_mkl flag
@@ -406,19 +408,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
-    const bool A_is_hyper = (Ah != NULL) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
+    const int64_t bnz = GB_NNZ_HELD (B) ;
     const int64_t bnvec = B->nvec ;
     const int64_t bvlen = B->vlen ;
-    const bool B_is_hyper = (Bh != NULL) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
 
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
@@ -431,10 +433,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
 
     // calloc Cp so it can be used as the Bflops workspace
-    int sparsity = B_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
     info = GB_new (Chandle, // sparse or hyper, new header
         ctype, cvlen, cvdim, GB_Ap_calloc, true,
-        sparsity, B->hyper_switch, cnvec, Context) ;
+        C_sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -448,14 +449,17 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t *GB_RESTRICT Ch = C->h ;
     if (B_is_hyper)
     { 
-        // C has the same set of vectors as B
+        // B and C are both hypersparse
+        ASSERT (C_sparsity == GxB_HYPERSPARSE) ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
         GB_memcpy (Ch, Bh, cnvec * sizeof (int64_t), nth) ;
         C->nvec = bnvec ;
     }
-
-    // C is constructed as sparse, not full.
-    // TODO: create methods for mxm for sparse-times-full and full-times-full
+    else
+    {
+        // B is sparse, bitmap, or full; C is sparse
+        ASSERT (C_sparsity == GxB_SPARSE) ;
+    }
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (3, ttt) ;
@@ -471,6 +475,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     int64_t Mwork = 0 ;
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
+
     GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
         Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
@@ -492,7 +497,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
     int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
-    bool M_is_dense = GB_is_dense (M) ;
+    bool M_is_dense = GB_is_packed (M) ;
     bool M_dense_in_place = false ;
 
     if (M_is_dense
@@ -561,6 +566,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         GBURBLE ("(use mask) ") ;
     }
+
+    bool apply_mask = (M != NULL) ;
 
     //--------------------------------------------------------------------------
     // determine # of threads and # of initial coarse tasks
@@ -781,7 +788,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         for (s = 0 ; s < bjnz ; s++)
                         {
                             // get B(k,j)
-                            int64_t k = GBI (Bi, pB_start + s, bvlen) ;
+                            int64_t pB = pB_start + s ;
+                            int64_t k = GBI (Bi, pB, bvlen) ;
+                            if (!GBB (Bb, pB)) continue ;
                             // fl = flop count for just A(:,k)*B(k,j)
                             int64_t pA, pA_end ;
                             int64_t pleft = 0 ;
@@ -860,8 +869,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (bnvec == 1)
         { 
             // convert the single coarse task into a single fine task
-            TaskList [0].start  = 0 ;           // first entry in B(:,0)
-            TaskList [0].end    = bnz - 1 ;     // last entry in B(:,0)
+            TaskList [0].start  = 0 ;                   // first entry in B(:,0)
+            TaskList [0].end = GBP (Bp, 1, bvlen) - 1 ; // last entry in B(:,0)
             TaskList [0].vector = 0 ;
         }
     }
@@ -1181,12 +1190,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // ttt = omp_get_wtime ( ) ;
 
     GB_FREE_WORK ;
-    info = GB_hypermatrix_prune (C, Context) ;
-    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }
+    GB_OK (GB_hypermatrix_prune (C, Context)) ;
+    ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    (*mask_applied) = (M != NULL) ;
+    (*mask_applied) = apply_mask ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (8, ttt) ;

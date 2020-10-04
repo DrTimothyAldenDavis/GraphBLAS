@@ -59,7 +59,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     else if (is_bitmap)
     { 
         // TODO: provide control to the caller to select calloc or malloc:
-        A->b = GB_CALLOC (A->nzmax, int8_t) ;   // BIG
+        A->b = GB_CALLOC (A->nzmax, int8_t) ;
         A->magic = GB_MAGIC ;
         ok = (A->b != NULL) ;
     }

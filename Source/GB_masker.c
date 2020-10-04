@@ -237,13 +237,6 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (R, "R output for masker", GB0) ;
-
-// HACK
-if (GB_IS_BITMAP (R))
-{
-    GB_OK (GB_convert_any_to_sparse (R, Context)) ;
-}
-
     (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }
