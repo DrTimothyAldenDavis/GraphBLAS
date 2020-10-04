@@ -9,9 +9,6 @@
 
 #include "GB_mex.h"
 
-// TODO: change A and B to the same sparsity structure first
-// TODO:BITMAP
-
 bool GB_mx_isequal     // true if A and B are exactly the same
 (
     GrB_Matrix A,
@@ -25,6 +22,13 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     if (A == B) return (true) ;
     if (A == NULL) return (false) ;
     if (B == NULL) return (false) ;
+
+    int A_sparsity = GB_sparsity (A) ;
+    if (A_sparsity != GB_sparsity (B))
+    {
+        // TODO: allow A and B to differ in sparsity structure
+        return (false) ;
+    }
 
     GB_Pending AP = A->Pending ;
     GB_Pending BP = B->Pending ;
@@ -87,6 +91,14 @@ bool GB_mx_isequal     // true if A and B are exactly the same
         }
     }
 
+    if (A_sparsity == GxB_BITMAP)
+    {
+        if (!GB_mx_same ((char *) A->b, (char *) B->b, nnz))
+        {
+            return (false) ;
+        }
+    }
+
     if (A->nzmax > 0 && B->nzmax > 0)
     {
         if (!A_is_dense)
@@ -99,17 +111,17 @@ bool GB_mx_isequal     // true if A and B are exactly the same
 
         if (A->type == GrB_FP32 && eps > 0)
         {
-            if (!GB_mx_xsame32 (A->x, B->x, nnz, A->i, eps))
+            if (!GB_mx_xsame32 (A->x, B->x, A->b, nnz, A->i, eps))
                 return (false) ;
         }
         else if (A->type == GrB_FP64 && eps > 0)
         {
-            if (!GB_mx_xsame64 (A->x, B->x, nnz, A->i, eps))
+            if (!GB_mx_xsame64 (A->x, B->x, A->b, nnz, A->i, eps))
                 return (false) ;
         }
         else
         {
-            if (!GB_mx_xsame (A->x, B->x, nnz, asize, A->i))
+            if (!GB_mx_xsame (A->x, B->x, A->b, nnz, asize, A->i))
                 return (false) ;
         }
     }

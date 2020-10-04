@@ -428,17 +428,9 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // this forces the matrix to be always hypersparse, but
         // if A is dense, it is converted to full
         ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
+//      GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
+        GxB_Matrix_Option_set_(A, GxB_SPARSITY, GxB_HYPERSPARSE) ;
         ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
-        if (A->vdim > 1 && !GB_IS_FULL (A))
-        {
-            ASSERT (A->h != NULL) ;
-        }
-        else
-        {
-            // column vectors are never hypersparse
-            ASSERT (A->h == NULL) ;
-        }
     }
 
     ASSERT (A->is_csc == is_csc) ;

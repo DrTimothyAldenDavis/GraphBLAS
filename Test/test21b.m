@@ -210,14 +210,14 @@ for k1 = k1test
     C1 = GB_mex_assign  (C, [ ], accum, A, I0, J0, dn);
     GB_spec_compare (C0, C1) ;
 
-    % C(I,J)<Mask> = accum (C (I,J),A)
+    % C<Mask>(I,J) = accum (C (I,J),A)
     C0 = GB_spec_assign (C, Mask, accum, A, I, J, dn, scalar);
     C1 = GB_mex_assign  (C, Mask, accum, A, I0, J0, dn);
     GB_spec_compare (C0, C1) ;
 
     %---------------------------------------
 
-    % C(I,J)<Mask> = accum (C(I,J), A');
+    % C<Mask>(I,J) = accum (C(I,J), A');
     % note transposing twice
     clear AT
     AT.matrix  = A.matrix' ;

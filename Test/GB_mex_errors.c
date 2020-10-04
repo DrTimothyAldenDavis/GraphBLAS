@@ -968,7 +968,7 @@ void mexFunction
     GrB_Vector zz ;
     OK (GrB_Vector_dup (&zz, v)) ;
     OK (GB_Vector_check (zz, "zz ok vector", GB3, NULL)) ;
-    GB_convert_sparse_to_hyper ((GrB_Matrix) zz, Context) ;
+    GB_convert_any_to_hyper ((GrB_Matrix) zz, Context) ;
     ERR (GB_Vector_check (zz, "zz mangled: vectors cannot be hyper", GB3, ff)) ;
     OK (GrB_Vector_free_(&zz)) ;
 
@@ -2042,7 +2042,7 @@ void mexFunction
     GB_Matrix_check (HugeRow, "huge row", GB3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", GB3, ff) ;
 
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, HugeRow, HugeRow,
+    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
         GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", GB3, ff) ;
@@ -4045,7 +4045,9 @@ void mexFunction
     OK (GrB_Vector_nvals (&nvals, v)) ;
     OK (GrB_Vector_wait_(&v)) ;
     CHECK (nvals == 2) ;
-    OK (GxB_Vector_fprint (v, "v ok", GB3, ff)) ;
+    OK (GxB_Vector_fprint (v, "v ok (might be bitmap)", GB3, ff)) ;
+    OK (GxB_Vector_Option_set (v, GxB_SPARSITY, GxB_SPARSE)) ;
+    OK (GxB_Vector_fprint (v, "v ok (sparse)", GB3, ff)) ;
 
     expected = GrB_INVALID_OBJECT ;
     CHECK (!GB_IS_FULL (v)) ;
@@ -4830,7 +4832,7 @@ void mexFunction
             OK (random_matrix (&Amask, false, false, n, n, nvals, 0, false)) ;
             OK (random_matrix (&F,     false, false, n, 1, uvals, 0, false)) ;
             // vectors cannot be hypersparse
-            GB_convert_hyper_to_sparse (F, Context) ;
+            OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY, GxB_SPARSE)) ;
             // vectors cannot be CSC: this is a hack just for brutal testing
             OK (GxB_Matrix_Option_set_(F, GxB_FORMAT, GxB_BY_COL)) ;
             umask = (GrB_Vector) F ;
@@ -4848,6 +4850,13 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_mxm (B, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
         OK (GrB_mxm (A, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
+        OK (GxB_Matrix_fprint (A, "A ok", GB3, ff)) ;
+        OK (GxB_Matrix_fprint (B, "B ok", GB3, ff)) ;
+        if (Amask != NULL)
+        {
+            OK (GxB_Matrix_fprint (Amask, "Amask ok", GB3, ff)) ;
+        }
+
         CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_Matrix_free_(&B) ;
 
@@ -4855,6 +4864,13 @@ void mexFunction
         OK (GrB_vxm (v, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
 
         OK (GrB_vxm (u, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
+        OK (GxB_Vector_fprint (u, "u ok", GB3, ff)) ;
+        OK (GxB_Vector_fprint (v, "v ok", GB3, ff)) ;
+        if (umask != NULL)
+        {
+            OK (GxB_Vector_fprint (umask, "umask ok", GB3, ff)) ;
+        }
+
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_Vector_free_(&v) ;
 
