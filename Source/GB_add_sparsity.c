@@ -105,7 +105,7 @@ int GB_add_sparsity         // return the sparsity structure for C
             // 8*nnz(M) <= ( (A sparse or hyper) ? nnz(A) : 0 ) +
             //             ( (B sparse or hyper) ? nnz(B) : 0 )
             // if A and B are both bitmap or full, then always use the mask.
-            // GB_add_C_sparse_template handles this case, but exploiting the
+            // GB_sparse_add_template handles this case, but exploiting the
             // mask can be asympotically slow, when C and M are sparse, and A
             // and/or B are sparse.
 
@@ -204,7 +204,7 @@ int GB_add_sparsity         // return the sparsity structure for C
         if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
         {
             // !M must be applied later if all 4 matrices are sparse or
-            // hypersparse, since the GB_add_C_sparse_template method does not
+            // hypersparse, since the GB_sparse_add_template method does not
             // handle this case.  See the "(mask later)" above.  The method can
             // construct a sparse/hyper C with !M as bitmap or full. 
             C_sparsity = GxB_SPARSE ;

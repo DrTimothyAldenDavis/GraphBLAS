@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_C_full_template:  phase2 for C=A+B, C<M>=A+B, C<!M>=A+B, C is full
+// GB_full_add_template:  phase2 for C=A+B, C<M>=A+B, C<!M>=A+B, C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

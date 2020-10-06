@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_C_sparse_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
+// GB_sparse_emult_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

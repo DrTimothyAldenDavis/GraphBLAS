@@ -10,7 +10,7 @@
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy.h"
 #include "GB_AxB_saxpy3.h"
-#include "GB_AxB_bitmap_saxpy.h"
+#include "GB_bitmap_AxB_saxpy.h"
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
@@ -97,7 +97,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 
         //----------------------------------------------------------------------
 
-        return (GB_AxB_bitmap_saxpy (Chandle, C_sparsity, M, Mask_comp,
+        return (GB_bitmap_AxB_saxpy (Chandle, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }
     #endif

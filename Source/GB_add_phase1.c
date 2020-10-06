@@ -15,7 +15,7 @@
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  M, A, and B
 // can have any sparsity structure, but only a specific set of cases will be
-// used (see the list in Template/GB_add_C_sparse_template.c).
+// used (see the list in Template/GB_sparse_add_template.c).
 
 // Cp is constructed here, and either freed by phase2, or transplanted into C.
 

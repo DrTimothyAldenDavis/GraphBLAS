@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_masker_R_bitmap_template:  phase2 for R = masker (C, M, Z), R is bitmap
+// GB_bitmap_masker_template:  phase2 for R = masker (C, M, Z), R is bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

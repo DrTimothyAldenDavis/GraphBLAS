@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_masker_R_sparse_template:  phase1 and phase2 for R = masker (C, M, Z)
+// GB_sparse_masker_template:  R = masker (C, M, Z) where R is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -295,7 +295,7 @@
 
                 // M is sparse or hypersparse, and not complemented.
                 // Otherwise, R is bitmap and not computed here, but in
-                // GB_masker_R_bitmap_template instead.
+                // GB_bitmap_masker_template instead.
 
                 ASSERT (M_is_sparse || M_is_hyper) ;
                 ASSERT (!Mask_comp) ;

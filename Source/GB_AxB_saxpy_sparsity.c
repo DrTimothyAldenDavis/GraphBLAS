@@ -11,6 +11,96 @@
 // C<!M>=A*B, based on the sparsity structures of C (on input), M, A, and B,
 // and whether or not M is complemented.
 
+// TODO: write the following AxB_saxpy kernels:  the bitmap/full cases are
+// treated the same, for now, and the sparse/hypersparse cases are also handled
+// the same.
+
+// TODO: When A or B are bitmapped or full, they can be transposed in-place.
+
+//------------------------------------------------------------------------------
+// C       <no mask, M, !M>       +=       A   *   B
+//------------------------------------------------------------------------------
+
+// sparse  any                             any     any:
+
+//      GB_AxB_saxpy3 (rename to GB_sparse_AxB_saxpy):
+//      takes inputs of any type but always produces a sparse or hypersparse
+//      matrix C.  It cannot modify C in place.
+
+//------------------------------------------------------------------------------
+
+// bitmap  sparse M or !M                   bitmap   sparse
+
+//      GB_bitmap_AxB_saxpy_M_sparse_A_bitmap_B_sparse:
+//      A is bitmap or full.  B is sparse or hypersparse.
+//      scatter M or !M into the C bitmap.  A and B can be sliced the same way
+//      as dot2.  No atomics.  C can be modified in-place if the accum operator
+//      matches the semiring monoid, with no change to the code, except that
+//      when not in-place, C must be calloc'd first.
+
+// bitmap  none                             bitmap   sparse
+
+//      GB_bitmap_AxB_saxpy_M_none_A_bitmap_B_sparse:
+//      same as GB_bitmap_AxB_saxpy_M_sparse_A_bitmap_B_sparse, just no mask.
+
+// bitmap  bitmap or full, M or !M          bitmap   sparse
+
+//      GB_bitmap_AxB_saxpy_M_bitmap_A_bitmap_B_sparse:
+//      A is bitmap or full.  B is sparse or hypersparse.
+//      same as GB_bitmap_AxB_saxpy_M_sparse_A_bitmap_B_sparse, except that
+//      M can be used in-place, instead of being copied into the C bitmap.
+
+//------------------------------------------------------------------------------
+
+// bitmap  none                             sparse  bitmap
+
+//      GB_bitmap_AxB_saxpy_M_none_A_sparse_B_bitmap:
+//      Like GB_AxB_saxpy_C_sparse, except that all tasks are coarse/fine
+//      Gustavson (fine Gustavson with atomics).  No symbolic pre-analysis,
+//      and no Gustavson workspace.
+
+// bitmap  sparse M or !M                   sparse  bitmap
+
+//      GB_bitmap_AxB_saxpy_M_sparse_A_sparse_B_bitmap:
+//      Like GB_bitmap_AxB_saxpy_M_none_A_sparse_B_bitmap.  Scatter M into
+//      the C bitmap.
+
+// bitmap  bitmap or full, M or !M          sparse   bitmap
+
+//      GB_bitmap_AxB_saxpy_M_bitmap_A_sparse_B_bitmap:
+//      Like GB_bitmap_AxB_saxpy_M_sparse_A_sparse_B_bitmap, except use M
+//      in-place; do not scatter into the C bitmap.
+
+//------------------------------------------------------------------------------
+
+// bitmap  none                             bitmap  bitmap
+
+//      GB_bitmap_AxB_saxpy_M_none_A_bitmap_B_bitmap:
+//      This method can used arbitrary tiling methods.  Divide up the C matrix
+//      into K-by-K tiles for some chosen constant K, and compute each C(i,j)
+//      tile independently.  Pick the tilesize based on L1 cache-size: probably
+//      K=32 or K=64.  If # tiles < # threads, could use more than one thread
+//      per C(i,j) tile, and accumulate when done.
+
+// bitmap  sparse M or !M                   bitmap  bitmap
+
+//      GB_bitmap_AxB_saxpy_M_sparse_A_bitmap_B_bitmap:
+//      Like GB_bitmap_AxB_saxpy_M_none_A_bitmap_B_bitmap, except scatter
+//      M and !M into the C bitmap.  Before computing the C(i,j) tile, check
+//      the mask to see if any entry is allowed to be modified by the mask,
+//      and skip the work.  Then clear the mask from the C(i,j) tile.
+//      If there are very few entries to compute in the C(i,j) tile, could
+//      use a dot-product method instead, to compute each tile multiply,
+//      C(i,j)+=A(i,k)*B(k,j).
+
+// bitmap  bitmap or full, M or !M          bitmap   bitmap
+
+//      GB_bitmap_AxB_saxpy_M_bitmap_A_bitmap_B_bitmap:
+//      Like GB_bitmap_AxB_saxpy_M_sparse_A_bitmap_B_bitmap, except use M or
+//      !M in-place.
+
+//------------------------------------------------------------------------------
+
 #include "GB_AxB_saxpy.h"
 
 int GB_AxB_saxpy_sparsity           // return the sparsity structure for C

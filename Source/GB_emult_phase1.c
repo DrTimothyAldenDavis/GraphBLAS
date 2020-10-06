@@ -15,7 +15,7 @@
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  
 // M, A, and B can have any sparsity structure, but only a specific set of
-// cases will be used (see the list if Template/GB_emult_C_sparse_template.c).
+// cases will be used (see the list if Template/GB_sparse_emult_template.c).
 
 // Cp is either freed by GB_emult_phase2, or transplanted into C.
 

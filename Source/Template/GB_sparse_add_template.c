@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_C_sparse_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
+// GB_sparse_add_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -41,7 +41,7 @@
 // returns apply_mask as false.  The methods below do not handle the case when
 // C is sparse, M is sparse, and !M is used.  All other uses of !M when M
 // is sparse result in a bitmap structure for C, and this is handled by
-// GB_add_C_bitmap_template.
+// GB_bitmap_add_template.
 
         // For this case: the mask is done later, so C=A+B is computed here:
 
