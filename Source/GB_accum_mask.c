@@ -214,9 +214,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // MT = M' to conform M to the same CSR/CSC format as C.
         // transpose: typecast, no op, not in-place
         if (MT_in == NULL)
-        { 
+        {
             if (GB_PENDING_OR_ZOMBIES (M))
-            {
+            { 
                 // remove zombies and pending tuples from M.
                 // M can be jumbled.
                 GB_OK (GB_Matrix_wait (M, Context)) ;
@@ -283,7 +283,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     if (M != NULL || accum != NULL)
     {
         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
-        {
+        { 
             // always use GB_subassign if C is bitmap or full and M and/or
             // accum is present.  No zombies or pending tuples are introduced
             // into C, and C is modified in-place, so GB_subassign is very
@@ -291,7 +291,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             use_subassign = true ;
         }
         else
-        {
+        { 
             // C is sparse or hypersparse: use GB_subassign if the update
             // is small (resuling in a small number of pending tuples),
             // and if C is not aliased with M or T.
@@ -338,7 +338,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         if (use_transplant)
         { 
-
+ 
             //------------------------------------------------------------------
             // Z = (ctype) T ;
             //------------------------------------------------------------------
