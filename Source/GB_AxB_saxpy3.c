@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: rename to GB_sparse_AxB_saxpy or something
-
 // GB_AxB_saxpy3 computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel.  If the
 // mask matrix M has too many entries compared to the work to compute A*B, then
 // it is not applied.  Instead, M is ignored and C=A*B is computed.  The mask

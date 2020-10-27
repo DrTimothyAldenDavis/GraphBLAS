@@ -1469,8 +1469,6 @@ void GB_cast_array              // typecast an array
 // Pending upddate and zombies
 //------------------------------------------------------------------------------
 
-// TODO: move this to GB_wait.h
-
 // GB_FLIP is a kind of "negation" about (-1) of a zero-based index.
 // If i >= 0 then it is not flipped.
 // If i < 0 then it has been flipped.

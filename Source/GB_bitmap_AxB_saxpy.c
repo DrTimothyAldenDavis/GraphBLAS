@@ -73,9 +73,8 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     // construct C
     //--------------------------------------------------------------------------
 
-    // TODO make sure C is initialized with an empty C->b bitmap.
-    // If C is the right type on input, and accum is the same as the monoid,
-    // then do not create C, but compute in-place instead.
+    // TODO: If C is the right type on input, and accum is the same as the
+    // monoid, then do not create C, but compute in-place instead.
 
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cnzmax ;

@@ -331,9 +331,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (eWiseAdd)
     { 
 
-        // TODO: do not have to exploit the mask here.  Only do so in
-        // GB_add if it's more efficient than exploiting it later.
-        // Could also pass in this condition:
+        // TODO: check the mask condition in GB_add_sparsity.
+        // Only exploit the mask in GB_add if it's more efficient than
+        // exploiting it later, probably this condition:
 
             // (accum == NULL) && (C->is_csc == T->is_csc)
             // && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
@@ -349,6 +349,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
 
 #if 0
+        // TODO: check whether or not to exploit the mask in GB_emult_sparsity.
+
         if (M != NULL && !Mask_comp)
         {
             // mask is present, not complemented; see if it is quick or easy to

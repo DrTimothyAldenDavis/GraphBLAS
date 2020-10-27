@@ -210,7 +210,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT (M) ;        // TODO: delay until accum/mask phase
-    GB_MATRIX_WAIT (A) ;        // TODO: could tolerate jumbled
+    GB_MATRIX_WAIT (A) ;        // TODO: could tolerate jumbled in some cases
 
     GB_BURBLE_DENSE (C, "(C %s) ") ;
     GB_BURBLE_DENSE (M, "(M %s) ") ;

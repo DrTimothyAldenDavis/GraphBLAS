@@ -226,7 +226,6 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         // clear entries from C that were not in A
         //----------------------------------------------------------------------
 
-        // if (!C_replace)
         {
             // for all entries in IxJ
                 // get the effective value of the mask

@@ -292,7 +292,9 @@ break ;
 // GB_GATHER_ALL_C_j: gather the values and pattern of C(:,j)
 //------------------------------------------------------------------------------
 
-// gather the pattern and values of C(:,j) for a coarse Gustavson task (no sort)
+// gather the pattern and values of C(:,j) for a coarse Gustavson task;
+// the pattern is not flagged as jumbled.
+
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
@@ -321,26 +323,24 @@ break ;
 #endif
 
 //------------------------------------------------------------------------------
-// GB_SORT_AND_GATHER_C_j: sort the pattern of C(:,j) and gather values
+// GB_SORT_AND_GATHER_C_j: gather the values pattern of C(:,j)
 //------------------------------------------------------------------------------
 
-// sort the pattern of C(:,j) then gather the values for a coarse Gustavson task
+// gather the values of C(:,j) for a coarse Gustavson task
 #if GB_IS_ANY_PAIR_SEMIRING
 
-    // ANY_PAIR: result is purely symbolic; just sort the pattern
+    // ANY_PAIR: result is purely symbolic; just flag the pattern as jumbled
     #define GB_SORT_AND_GATHER_C_j                              \
-        /* sort the pattern of C(:,j) */                        \
-        /* GB_qsort_1a (Ci + Cp [kk], cjnz) ; */                \
+        /* the pattern of C(:,j) is now jumbled */              \
         C_jumbled = true ;
 
 #else
 
     // typical semiring
     #define GB_SORT_AND_GATHER_C_j                              \
-        /* sort the pattern of C(:,j) */                        \
-        /* GB_qsort_1a (Ci + Cp [kk], cjnz) ; */                \
-        /* gather the values into C(:,j) */                     \
+        /* the pattern of C(:,j) is now jumbled */              \
         C_jumbled = true ;                                      \
+        /* gather the values into C(:,j) */                     \
         for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)      \
         {                                                       \
             int64_t i = Ci [pC] ;       /* ok: C is sparse */   \
@@ -350,23 +350,21 @@ break ;
 #endif
 
 //------------------------------------------------------------------------------
-// GB_SORT_AND_GATHER_HASHED_C_j: sort pattern, gather values, for coarse hash 
+// GB_SORT_AND_GATHER_HASHED_C_j: gather values for coarse hash 
 //------------------------------------------------------------------------------
 
 #if GB_IS_ANY_PAIR_SEMIRING
 
-    // ANY_PAIR: result is purely symbolic; just sort the pattern
+    // ANY_PAIR: result is purely symbolic; just flag the pattern as jumbled
     #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)       \
-        /* sort the pattern of C(:,j) */                                    \
-        /* GB_qsort_1a (Ci + Cp [kk], cjnz) ; */                            \
+        /* the pattern of C(:,j) is now jumbled */                          \
         C_jumbled = true ;
 
 #else
 
-    // sort the pattern of C(:,j) then gather the values for a coarse hash task
+    // gather the values of C(:,j) for a coarse hash task
     #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)       \
-        /* sort the pattern of C(:,j) */                                    \
-        /* GB_qsort_1a (Ci + Cp [kk], cjnz) ; */                            \
+        /* the pattern of C(:,j) is now jumbled */                          \
         C_jumbled = true ;                                                  \
         for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                  \
         {                                                                   \

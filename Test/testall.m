@@ -237,7 +237,6 @@ logstat ('test33',t) ;     %      % create a semiring
 logstat ('test34',t) ;     %      % quick GB_mex_Matrix_eWiseAdd test
 logstat ('test35') ;       %      % performance test for GrB_extractTuples
 logstat ('test36') ;       %      % performance test for GB_mex_Matrix_subref
-logstat ('test37') ;       %      % performance test for GrB_qsort1
 logstat ('test38',t) ;     %      % GB_mex_transpose with matrix collection
 logstat ('test39') ;       %      % GrB_transpose, GB_*_add and eWiseAdd
 logstat ('test39(0)') ;    %   55 % GrB_transpose, GB_*_add and eWiseAdd

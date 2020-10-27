@@ -100,7 +100,6 @@
 %   test34   - test GrB_eWiseAdd
 %   test35   - test GrB_*_extractTuples
 %   test36   - performance test of matrix subref
-%   test37   - performance test of qsort
 %   test38   - test GrB_transpose
 %   test39   - performance test for GrB_transpose
 %   test40   - test GrB_Matrix_extractElement

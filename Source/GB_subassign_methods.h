@@ -1546,7 +1546,7 @@ GrB_Info GB_subassign_19
 // used to iterate over the matrix X.
 
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
-    int Z_sparsity = GxB_SPARSE ; /* TODO */ \
+    int Z_sparsity = GxB_SPARSE ;                                           \
     int64_t Znvec ;                                                         \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL, &Z_sparsity,             \

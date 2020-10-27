@@ -55,7 +55,7 @@
 // GB_subassign_IxJ_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_IxJ_slice     // TODO: rename
+GrB_Info GB_subassign_IxJ_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks

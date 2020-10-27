@@ -55,7 +55,6 @@
 
             if (Mask_struct)
             {
-                // TODO: could use memcpy and memset
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -91,7 +90,6 @@
 
             if (Mask_struct)
             {
-                // TODO: could use memcpy
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 

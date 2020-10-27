@@ -25,22 +25,6 @@ for n = nlist
 
 fprintf ('\n========================== n %g million\n', n / 1e6) ;
 
-fprintf ('\n----------------------- qsort 1a\n') ;
-
-I = int64 ((n/10)* rand (n,1)) ;
-
-tic
-Iout1 = sort (I) ;
-t = toc ;
-
-tic
-Iout = GB_mex_qsort_1a (I) ;
-t2 = toc ;
-
-fprintf ('MATLAB: sort %g sec  qsort1a: %g  speedup: %g\n', t, t2, t/t2) ;
-
-assert (isequal (Iout, Iout1))
-
 fprintf ('\n----------------------- qsort 1b\n') ;
 
 % qsort1b is not stable; it used only when I has unique values

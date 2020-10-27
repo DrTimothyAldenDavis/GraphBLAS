@@ -16,7 +16,8 @@
 //      C_replace: true
 //      accum: not present
 
-// TODO: extend to all semirings
+// TODO: extend to all semirings, then remove this function once the
+// performance is matched by the general method.
 
 #include "GB_mxm.h"
 #include "GB_binop.h"

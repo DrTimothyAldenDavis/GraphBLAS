@@ -150,11 +150,13 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     {
         // TODO: not actually supported by MKL
         return (GrB_NO_VALUE) ;
+        /*
         GB_MKL_OK (mkl_graph_matrix_create (&M_mkl)) ;
         GB_MKL_OK (mkl_graph_matrix_set_csr (M_mkl, M->vdim, M->vlen,
             M->p, MKL_GRAPH_TYPE_INT64,
             M->i, MKL_GRAPH_TYPE_INT64,
             M->x, GB_type_mkl (M->type->code))) ;
+        */
     }
 
     GB_MKL_OK (mkl_graph_matrix_create (&B_mkl)) ;

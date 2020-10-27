@@ -11,6 +11,8 @@
 // It also deletes zombies for GB_Matrix_wait using the NONZOMBIE operator,
 // and deletes entries outside a smaller matrix for GxB_*resize.
 
+// TODO: GB_selector does not exploit the mask.
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
