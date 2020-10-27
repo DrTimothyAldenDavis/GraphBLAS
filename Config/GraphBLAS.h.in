@@ -8725,13 +8725,13 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index nzmax,    // size of Ai and Ax
+    GrB_Index nzmax,    // size of Aj and Ax
     bool jumbled,       // if true, indices in each row may be unsorted
     int64_t nonempty,   // number of rows with at least one entry:
                         // either < 0 if not known, or >= 0 if exact
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8772,7 +8772,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
                         // either < 0 if not known, or >= 0 if exact
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8815,7 +8815,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index **Ap,     // row "pointers", size nvec+1
     GrB_Index **Ah,     // rows that appear in A, size nvec
     GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8866,7 +8866,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // columns that appear in A, size nvec
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8912,7 +8912,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nvals,    // # of entries in bitmap
     int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8931,7 +8931,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nvals,    // # of entries in bitmap
     int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8948,7 +8948,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8970,7 +8970,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8994,8 +8994,8 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Index nzmax,    // size of vi and vx
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
-    GrB_Index **vi,     // indices, size nvals
-    void **vx,          // values, size nvals
+    GrB_Index **vi,     // indices, size nzmax
+    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9016,7 +9016,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Index n,        // vector length
     GrB_Index nvals,    // # of entries in bitmap
     int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9030,7 +9030,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9051,6 +9051,11 @@ GrB_Info GxB_Vector_import_Full // import a full vector
 //      arrays Ah, Ap, Ai, Aj, and/or Ax are returned to the user application
 //      as arrays allocated by the ANSI C malloc function.  The four formats
 //      are the same as the import formats for GrB_Matrix_import_*.
+//
+//      If jumbled is NULL on input, this indicates to GxB_*export* that the
+//      exported matrix cannot be returned in a jumbled format.  In this case,
+//      if the matrix is jumbled, it is sorted before exporting it to the
+//      caller.
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
@@ -9059,12 +9064,12 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nzmax,   // number of entries in the matrix
+    GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
     int64_t *nonempty,  // number of rows with at least one entry
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9075,12 +9080,12 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nzmax,   // number of entries in the matrix
+    GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
     int64_t *nonempty,  // number of columns with at least one entry
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9091,14 +9096,14 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nzmax,   // number of entries in the matrix
+    GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
     int64_t *nonempty,  // number of rows with at least one entry
     GrB_Index *nvec,    // size of Ah
     GrB_Index **Ap,     // row "pointers", size nvec+1
     GrB_Index **Ah,     // row indices, size nvec
     GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9109,14 +9114,14 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nzmax,   // number of entries in the matrix
+    GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
     int64_t *nonempty,  // number of columns with at least one entry
     GrB_Index *nvec,    // size of Ah
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // column indices, size nvec
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9129,7 +9134,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nvals,   // # of entries
     int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9142,7 +9147,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nvals,   // # of entries
     int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9153,7 +9158,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9164,7 +9169,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9187,7 +9192,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Index *nvals,   // number of entries in the vector
     bool *jumbled,      // if true, indices may be unsorted
     GrB_Index **vi,     // indices, size nzmax
-    void **vx,          // values, size nzmax
+    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9199,7 +9204,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Index *n,       // length of the vector
     GrB_Index *nvals,   // # of entries
     int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9209,7 +9214,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9224,9 +9229,9 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 // desired.  If the formats do not match, SuiteSparse:GraphBLAS first reformats
 // the GrB_Matrix A into the desired format, and then exports the result.
 
-//------------------------------------------------------------------------------
+//==============================================================================
 // CUDA memory management (DRAFT: in progress, do not use)
-//------------------------------------------------------------------------------
+//==============================================================================
 
 // These functions are made available to the user application, since the
 // GxB_import/export functions require the user application and the GraphBLAS
@@ -9248,9 +9253,9 @@ void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
 void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
 void  GxB_cuda_free (void *p) ;                 // standard free signature
 
-//------------------------------------------------------------------------------
+//==============================================================================
 // MKL optimization (DRAFT: in progress, do not use)
-//------------------------------------------------------------------------------
+//==============================================================================
 
 GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
 (

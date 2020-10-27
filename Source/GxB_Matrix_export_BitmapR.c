@@ -19,7 +19,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nvals,   // # of entries
     int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
 {

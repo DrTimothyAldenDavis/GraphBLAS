@@ -21,7 +21,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
                         // either < 0 if not known, or >= 0 if exact
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {

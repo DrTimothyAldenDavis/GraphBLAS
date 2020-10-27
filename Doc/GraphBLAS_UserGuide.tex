@@ -4536,9 +4536,10 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 \verb'[I,J,X]=find(A)' in MATLAB.  Entries in the tuples \verb'[I,J,X]' are
 unique.  No pair of row and column indices \verb'(i,j)' appears more than once.
 
-The GraphBLAS API states the tuples can be returned in any order.
-SuiteSparse:GraphBLAS chooses to always return them in sorted order, depending
-on whether the matrix is stored by row or by column.
+The GraphBLAS API states the tuples can be returned in any order.  If
+\verb'GrB_wait(&A)' is called first, then SuiteSparse:GraphBLAS chooses to
+always return them in sorted order, depending on whether the matrix is stored
+by row or by column.  Otherwise, the indices can be returned in any order.
 
 The number of tuples in the matrix \verb'A' is given by
 \verb'GrB_Matrix_nvals(&anvals,A)'.  If \verb'anvals' is larger than the size

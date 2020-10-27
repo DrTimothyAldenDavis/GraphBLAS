@@ -28,31 +28,4 @@ IJ1 = sortrows ([J0 I0]) ;
 [a b] = GB_mex_msort_2 (J0, I0, 2) ;
 assert (isequal (IJ1, [a b])) ;
 
-a = GB_mex_msort_1 (I0, 1) ;
-c = sort (I0) ;
-assert (isequal (c, a)) ;
-
-a = GB_mex_msort_1 (J0, 1) ;
-c = sort (J0) ;
-assert (isequal (c, a)) ;
-
-I0 = int64 (randperm (10000, 5000)) ;
-a = GB_mex_msort_1 (I0, 8) ;
-c = sort (I0) ;
-assert (isequal (c, a')) ;
-
-for n = [10 100 1000 1e5 1e6]
-    I0 = int64 (1000 * rand (n,1)) ;
-    a = GB_mex_msort_1 (I0, 8) ;
-    c = sort (I0) ;
-    assert (isequal (c, a)) ;
-end
-
-for n = [10 100 1000 1e5 1e6]
-    I0 = int64 (4 * ones (n,1)) ;
-    a = GB_mex_msort_1 (I0, 8) ;
-    c = sort (I0) ;
-    assert (isequal (c, a)) ;
-end
-
 fprintf ('test139 --------------- all tests passed\n') ;

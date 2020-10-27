@@ -18,7 +18,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Index *n,       // length of the vector
     GrB_Index *nvals,   // # of entries
     int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
 {

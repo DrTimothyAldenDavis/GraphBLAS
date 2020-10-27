@@ -1,9 +1,0 @@
-FUTURE: can handle transpose of full or bitmap input matrices just by
-changing how they are accessed
-
-FUTURE: could combine GB_bitmap_assign_* with the apply of unary/binary op. 
-
-TODO: GB_bitmap_AxB_saxpy*
-
-TODO: GB_bitmap_AxB_dot*
-

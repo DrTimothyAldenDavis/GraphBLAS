@@ -16,6 +16,8 @@
 // GB_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
+// TODO: pass in user's C and accum, and allow bitmap multiply to work in-place
+
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
     GrB_Matrix *Chandle,            // output matrix (if not done in-place)
@@ -66,17 +68,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B) ;
 
-// HACK: saxpy does not yet construct C as bitmap (FIXME)
-    if (C_sparsity == GxB_BITMAP || C_sparsity == GxB_FULL)
-    {
-        C_sparsity = GxB_SPARSE ;
-    }
-
     //--------------------------------------------------------------------------
     // select the method to use
     //--------------------------------------------------------------------------
 
-    // if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
+    if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
     {
 
         //----------------------------------------------------------------------
@@ -89,7 +85,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
 
     }
-    #if 0
     else
     {
 
@@ -100,6 +95,5 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         return (GB_bitmap_AxB_saxpy (Chandle, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }
-    #endif
 }
 

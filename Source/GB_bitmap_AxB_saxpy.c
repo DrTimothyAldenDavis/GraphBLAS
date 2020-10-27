@@ -8,11 +8,20 @@
 //------------------------------------------------------------------------------
 
 #include "GB_bitmap_AxB_saxpy.h"
-#define GB_FREE_ALL ;
+#ifndef GBCOMPACT
+#include "GB_AxB__include.h"
+#endif
+
+#define GB_FREE_ALL             \
+{                               \
+    GB_Matrix_free (Chandle) ;  \
+}
 
 //------------------------------------------------------------------------------
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
+
+// TODO: also pass in the user's C and the accum operator
 
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
@@ -64,6 +73,10 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     // construct C
     //--------------------------------------------------------------------------
 
+    // TODO make sure C is initialized with an empty C->b bitmap.
+    // If C is the right type on input, and accum is the same as the monoid,
+    // then do not create C, but compute in-place instead.
+
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cnzmax ;
     bool ok = GB_Index_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
@@ -74,117 +87,73 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     }
     GB_OK (GB_new_bix (Chandle, ctype, A->vlen, B->vdim, GB_Ap_null, true,
         C_sparsity, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context)) ;
+    GrB_Matrix C = *Chandle ;
 
     //--------------------------------------------------------------------------
-    // scatter M into C
+    // get the semiring operators
     //--------------------------------------------------------------------------
 
+    GrB_BinaryOp mult = semiring->multiply ;
+    GrB_Monoid add = semiring->add ;
+    ASSERT (mult->ztype == add->op->ztype) ;
+    bool A_is_pattern, B_is_pattern ;
+    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
+
+    //--------------------------------------------------------------------------
+    // C<#M>+=A*B
     //--------------------------------------------------------------------------
 
-    if (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B))
-    {
+    bool done = false ;
 
-        //-----------------------------------------------------
-        // C                =               A     *     B
-        //-----------------------------------------------------
+    #ifndef GBCOMPACT
 
-        // bitmap           .               bitmap      hyper
-        // bitmap           .               full        hyper
-        // bitmap           .               bitmap      sparse
-        // bitmap           .               full        sparse
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-        //-----------------------------------------------------
-        // C               <M>=             A     *     B
-        //-----------------------------------------------------
+        #define GB_Asaxpy3B(add,mult,xname) \
+            GB_Asaxpy3B_ ## add ## mult ## xname
 
-        // bitmap           any             bitmap      hyper
-        // bitmap           any             full        hyper
-        // bitmap           any             bitmap      sparse
-        // bitmap           any             full        sparse
+        #define GB_AxB_WORKER(add,mult,xname)                               \
+        {                                                                   \
+            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
+                Mask_struct, true, A, A_is_pattern,  B,                     \
+                B_is_pattern, NULL, 0, 0, 0, Context) ;                     \
+            done = (info != GrB_NO_VALUE) ;                                 \
+        }                                                                   \
+        break ;
 
-        //-----------------------------------------------------
-        // C               <!M>=            A     *     B
-        //-----------------------------------------------------
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
 
-        // bitmap           any             bitmap      hyper
-        // bitmap           any             full        hyper
-        // bitmap           any             bitmap      sparse
-        // bitmap           any             full        sparse
+        GB_Opcode mult_opcode, add_opcode ;
+        GB_Type_code xcode, ycode, zcode ;
+        if (GB_AxB_semiring_builtin (A, A_is_pattern, B,
+            B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
+            &ycode, &zcode))
+        { 
+            #include "GB_AxB_factory.c"
+        }
 
-        ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    #endif
 
-        // TODO
-        ASSERT (0) ;
+    //--------------------------------------------------------------------------
+    // generic method
+    //--------------------------------------------------------------------------
 
+    if (!done)
+    { 
+        info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
+            true, A, A_is_pattern, B, B_is_pattern, semiring,
+            flipxy, NULL, 0, 0, 0, Context) ;
     }
-    else if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
-    {
 
-        //-----------------------------------------------------
-        // C                =               A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           .               hyper       bitmap
-        // bitmap           .               sparse      bitmap
-        // bitmap           .               hyper       full 
-        // bitmap           .               sparse      full
-
-        //-----------------------------------------------------
-        // C               <M>=             A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           any             hyper       bitmap
-        // bitmap           any             sparse      bitmap
-        // bitmap           bitmap/full     hyper       full
-        // bitmap           bitmap/full     sparse      full
-
-        //-----------------------------------------------------
-        // C               <!M>=            A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           any             hyper       bitmap
-        // bitmap           any             sparse      bitmap
-        // bitmap           any             hyper       full 
-        // bitmap           any             sparse      full
-
-        ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
-
-        // TODO
-        ASSERT (0) ;
-
-    }
-    else
-    {
-
-        //-----------------------------------------------------
-        // C                =               A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           .               bitmap      bitmap
-        // bitmap           .               full        bitmap
-        // bitmap           .               bitmap      full
-        // full             .               full        full
-
-        //-----------------------------------------------------
-        // C               <M>=             A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           any             bitmap      bitmap
-        // bitmap           any             full        bitmap
-        // bitmap           bitmap/full     bitmap      full
-        // bitmap           bitmap/full     full        full
-
-        //-----------------------------------------------------
-        // C               <!M>=            A     *     B
-        //-----------------------------------------------------
-
-        // bitmap           any             bitmap      bitmap
-        // bitmap           any             full        bitmap
-        // bitmap           any             bitmap      full
-        // bitmap           any             full        full
-
-        // TODO
-        ASSERT (0) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -192,6 +161,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     //--------------------------------------------------------------------------
 
     (*mask_applied) = (M != NULL) ;
+    ASSERT_MATRIX_OK (C, "C bitmap saxpy output", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

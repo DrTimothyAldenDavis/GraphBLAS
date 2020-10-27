@@ -33,12 +33,12 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_Matrix M_in,  // optional mask, unused if NULL
+    const GrB_Matrix M,     // optional mask, unused if NULL
     const bool Mask_struct, // if true, use the only structure of M
     const bool Mask_comp,   // if true, use !M
     bool *mask_applied,     // if true, the mask was applied
-    const GrB_Matrix A_in,  // input A matrix
-    const GrB_Matrix B_in,  // input B matrix
+    const GrB_Matrix A,     // input A matrix
+    const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 )
@@ -47,11 +47,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-// HACK to test bitmap
-GrB_Matrix M = M_in ;
-GrB_Matrix A = A_in ;
-GrB_Matrix B = B_in ;
 
     GrB_Info info ;
 
@@ -78,39 +73,6 @@ GrB_Matrix B = B_in ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
 
-// HACK to test bitmap
-GrB_Matrix M_bitmap = NULL ;
-GrB_Matrix A_bitmap = NULL ;
-GrB_Matrix B_bitmap = NULL ;
-if (A->vlen <= 100 && A->vdim <= 100)
-{
-    int64_t n = A->vlen ;
-    bool hack = (n % 5 == 1) || (n % 4 == 1) || (n % 3 == 1 && M != NULL) ;
-    if (hack) GBURBLE ("@(") ;
-    if (n % 3 == 1 && M != NULL)
-    {
-        if (hack) GBURBLE ("M") ;
-        GB_OK (GB_dup2 (&M_bitmap, M, true, M->type, Context)) ;
-        GB_OK (GB_convert_any_to_bitmap (M_bitmap, Context)) ;
-        M = M_bitmap ;
-    }
-    if (n % 5 == 1)
-    {
-        if (hack) GBURBLE ("A") ;
-        GB_OK (GB_dup2 (&A_bitmap, A, true, A->type, Context)) ;
-        GB_OK (GB_convert_any_to_bitmap (A_bitmap, Context)) ;
-        A = A_bitmap ;
-    }
-    if (n % 4 == 1)
-    {
-        if (hack) GBURBLE ("B") ;
-        GB_OK (GB_dup2 (&B_bitmap, B, true, B->type, Context)) ;
-        GB_OK (GB_convert_any_to_bitmap (B_bitmap, Context)) ;
-        B = B_bitmap ;
-    }
-    if (hack) GBURBLE (")") ;
-}
-
     //--------------------------------------------------------------------------
     // determine the sparsity of C
     //--------------------------------------------------------------------------
@@ -130,10 +92,6 @@ if (A->vlen <= 100 && A->vdim <= 100)
         // so use it instead, to reduce the code needed for GB_emult.
         info = GB_add (Chandle, ctype, C_is_csc, M, Mask_struct, Mask_comp,
             mask_applied, A, B, op, Context) ;
-// HACK
-GB_Matrix_free (&M_bitmap) ;
-GB_Matrix_free (&A_bitmap) ;
-GB_Matrix_free (&B_bitmap) ;
         return (info) ;
     }
 
@@ -257,10 +215,6 @@ GB_Matrix_free (&B_bitmap) ;
     GB_FREE (C_to_M) ;
     GB_FREE (C_to_A) ;
     GB_FREE (C_to_B) ;
-
-GB_Matrix_free (&M_bitmap) ;
-GB_Matrix_free (&A_bitmap) ;
-GB_Matrix_free (&B_bitmap) ;
 
     if (info != GrB_SUCCESS)
     { 

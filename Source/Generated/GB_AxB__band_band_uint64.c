@@ -49,6 +49,8 @@
 #define GB_CTYPE \
     uint64_t
 
+#define GB_CSIZE (sizeof (GB_CTYPE))
+
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_CTYPE_IGNORE_OVERFLOW \
     1
@@ -293,16 +295,16 @@ GrB_Info GB_Asaxpy3B__band_band_uint64
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nfine,
-    const int nthreads,
+    int ntasks,
+    int nfine,
+    int nthreads,
     GB_Context Context
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_saxpy3_template.c"
+    #include "GB_AxB_saxpy_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

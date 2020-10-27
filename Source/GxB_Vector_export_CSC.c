@@ -20,7 +20,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Index *nvals,   // number of entries in the vector
     bool *jumbled,      // if true, indices may be unsorted
     GrB_Index **vi,     // indices, size nzmax
-    void **vx,          // values, size nzmax
+    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {
@@ -43,13 +43,13 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 
     if (jumbled == NULL)
     { 
-        // the exported vector is allowed to be jumbled
-        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*v) ;
+        // the exported vector cannot be jumbled
+        GB_MATRIX_WAIT (*v) ;
     }
     else
     {
-        // the exported vector cannot be jumbled
-        GB_MATRIX_WAIT (*v) ;
+        // the exported vector is allowed to be jumbled
+        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*v) ;
     }
 
     //--------------------------------------------------------------------------

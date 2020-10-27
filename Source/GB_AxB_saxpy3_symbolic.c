@@ -216,7 +216,7 @@ void GB_AxB_saxpy3_symbolic
                 // scan my M(:,j)
                 for (int64_t pM = mystart ; pM < myend ; pM++)
                 {
-                    GB_GET_M_ij ;                   // get M(i,j)
+                    GB_GET_M_ij (pM) ;              // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
                     int64_t i = GBI (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
@@ -682,7 +682,7 @@ void GB_AxB_saxpy3_symbolic
             int64_t mjcount = 0 ;
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
             {
-                GB_GET_M_ij ;           // get M(i,j)
+                GB_GET_M_ij (pM) ;                  // get M(i,j)
                 if (mij) mjcount++ ;
             }
             if (use_Gustavson)
@@ -692,7 +692,7 @@ void GB_AxB_saxpy3_symbolic
                     Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    GB_GET_M_ij ;                    // get M(i,j)
+                    GB_GET_M_ij (pM) ;               // get M(i,j)
                     int64_t i = GBI (Mi, pM, mvlen) ;
                     ASSERT (Hf [i] == mij) ;
                 }
@@ -713,7 +713,7 @@ void GB_AxB_saxpy3_symbolic
                 int64_t hash_bits = (hash_size-1) ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    GB_GET_M_ij ;                   // get M(i,j)
+                    GB_GET_M_ij (pM) ;              // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
                     int64_t i = GBI (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)

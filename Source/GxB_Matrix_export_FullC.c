@@ -17,7 +17,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
 {

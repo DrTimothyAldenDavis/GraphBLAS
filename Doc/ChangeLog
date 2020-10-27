@@ -5,11 +5,11 @@ Version 4.0.0, TODO:, 2020
     * GrB_*_nvals: no longer guarantees completion; use GrB_wait(&object)
         or non-polymorphic GrB_*_wait (&object) instead
     * GrB_error: now has two parameters: a string (char **) and an object
+    * GrB_*_extractTuples: may return indices out of order
     * removed internal features: GBI iterator, slice and hyperslice matrices
-    * full matrices and vectors added
+    * bitmap/full matrices and vectors added
     * positional operators and semirings: GxB_FIRSTI_INT32 and related ops
     * jumbled matrices: sort left pending, like zombies and pending tuples
-    * bitmap matrices added
     * GxB_get/set: added GxB_SPARSITY (hyper, sparse, bitmap, or full)
     * GxB_HYPER: enum renamed to GxB_HYPER_SWITCH
     * import/export: API modified

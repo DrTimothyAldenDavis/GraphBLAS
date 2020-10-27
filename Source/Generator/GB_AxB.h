@@ -28,9 +28,9 @@ GrB_Info GB_Asaxpy3B
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nfine,
-    const int nthreads,
+    int ntasks,
+    int nfine,
+    int nthreads,
     GB_Context Context
 ) ;
 

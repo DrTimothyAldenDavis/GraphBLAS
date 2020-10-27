@@ -17,12 +17,12 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nzmax,   // number of entries in the matrix
+    GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
     int64_t *nonempty,  // number of rows with at least one entry
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {
@@ -43,13 +43,13 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
     if (jumbled == NULL)
     { 
-        // the exported matrix is allowed to be jumbled
-        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
+        // the exported matrix cannot be jumbled
+        GB_MATRIX_WAIT (*A) ;
     }
     else
     {
-        // the exported matrix cannot be jumbled
-        GB_MATRIX_WAIT (*A) ;
+        // the exported matrix is allowed to be jumbled
+        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
     }
 
     //--------------------------------------------------------------------------

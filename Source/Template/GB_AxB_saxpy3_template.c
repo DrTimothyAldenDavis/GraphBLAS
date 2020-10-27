@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types.
-// It is #include'd in GB_AxB_saxpy3 to construct the generic method (for
-// arbitary user-defined operators and/or typecasting), and in the hard-coded
-// GB_Asaxpy3B* workers in the Generated/ folder.
+// GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types,
+// where C is sparse or hypersparse.
+
+// TODO rename GB_AxB_saxpy_C_sparse_template.c or
+// GB_sparse_AxB_saxpy_template.c
 
 #include "GB_unused.h"
 
@@ -118,12 +119,7 @@
         int64_t pleft = 0, pright = anvec-1 ;
         int64_t j = GBH (Bh, kk) ;
 
-        #if GB_IS_SECONDJ_MULTIPLIER
-        // SECONDJ or SECONDJ1 multiplier
-        // t = aik*bkj = j or j+1
-        GB_CIJ_DECLARE (t) ;
-        GB_MULT (t, ignore, ignore, i, k, j) ;
-        #endif
+        GB_GET_T_FOR_SECONDJ ;
 
         #if !GB_IS_ANY_PAIR_SEMIRING
         GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
@@ -187,46 +183,61 @@
                     {
                         if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-
                         GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
                         int8_t f ;
+
                         #if GB_IS_ANY_MONOID
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        if (f == 2) continue ;  // check if already updated
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // flag the entry
-                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+
+                            //--------------------------------------------------
+                            // C(i,j) += t ; with the ANY monoid
+                            //--------------------------------------------------
+
+                            GB_ATOMIC_READ
+                            f = Hf [i] ;            // grab the entry
+                            if (f == 2) continue ;  // check if already updated
+                            GB_ATOMIC_WRITE
+                            Hf [i] = 2 ;                // flag the entry
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
 
                         #else
 
-                        #if GB_HAS_ATOMIC
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        if (f == 2)             // if true, update C(i,j)
-                        {
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                            continue ;          // C(i,j) has been updated
-                        }
-                        #endif
-                        do  // lock the entry
-                        {
-                            // do this atomically:
-                            // { f = Hf [i] ; Hf [i] = 3 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
-                        } while (f == 3) ; // lock owner gets f=0 or 2
-                        if (f == 0)
-                        { 
-                            // C(i,j) is a new entry
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-                        }
-                        else // f == 2
-                        { 
-                            // C(i,j) already appears in C(:,j)
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                        }
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
+                            //--------------------------------------------------
+                            // C(i,j) += t ; with all other monoids
+                            //--------------------------------------------------
+
+                            #if GB_HAS_ATOMIC
+
+                                // if C(i,j) is already present (f==2), and the
+                                // monoid can be done atomically, then do the
+                                // atomic update.  No need to modify Hf [i].
+                                GB_ATOMIC_READ
+                                f = Hf [i] ;        // grab the entry
+                                if (f == 2)         // if true, update C(i,j)
+                                {
+                                    GB_ATOMIC_UPDATE_HX (i, t) ; // Hx [i] += t
+                                    continue ;      // C(i,j) has been updated
+                                }
+
+                            #endif
+
+                            do  // lock the entry
+                            {
+                                // do this atomically:
+                                // { f = Hf [i] ; Hf [i] = 3 ; }
+                                GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
+                            } while (f == 3) ; // lock owner gets f=0 or 2
+                            if (f == 0)
+                            { 
+                                // C(i,j) is a new entry
+                                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                            }
+                            else // f == 2
+                            { 
+                                // C(i,j) already appears in C(:,j)
+                                GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                            }
+                            GB_ATOMIC_WRITE
+                            Hf [i] = 2 ;                // unlock the entry
 
                         #endif
                     }
@@ -260,50 +271,59 @@
 
                     #if GB_IS_ANY_MONOID
 
-                    #define GB_IKJ                                             \
-                        int8_t f ;                                             \
-                        GB_ATOMIC_READ                                         \
-                        f = Hf [i] ;            /* grab the entry */           \
-                        if (f == 0 || f == 2) continue ;                       \
-                        GB_ATOMIC_WRITE                                        \
-                        Hf [i] = 2 ;            /* unlock the entry */         \
-                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
-                        GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */
+                        //------------------------------------------------------
+                        // C(i,j) += A(i,k)*B(k,j) ; with the ANY monoid
+                        //------------------------------------------------------
+
+                        #define GB_IKJ                                         \
+                            int8_t f ;                                         \
+                            GB_ATOMIC_READ                                     \
+                            f = Hf [i] ;            /* grab the entry */       \
+                            if (f == 0 || f == 2) continue ;                   \
+                            GB_ATOMIC_WRITE                                    \
+                            Hf [i] = 2 ;            /* unlock the entry */     \
+                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
+                            GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */
 
                     #else
 
-                    #define GB_IKJ                                             \
-                    {                                                          \
-                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
-                        int8_t f ;                                             \
-                        GB_ATOMIC_READ                                         \
-                        f = Hf [i] ;            /* grab the entry */           \
-                        if (GB_HAS_ATOMIC && (f == 2))                         \
+                        //------------------------------------------------------
+                        // C(i,j) += A(i,k)*B(k,j) ; with all other monoids
+                        //------------------------------------------------------
+
+                        #define GB_IKJ                                         \
                         {                                                      \
-                            /* C(i,j) already seen; update it */               \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
-                            continue ;       /* C(i,j) has been updated */     \
-                        }                                                      \
-                        if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/    \
-                        do  /* lock the entry */                               \
-                        {                                                      \
-                            /* do this atomically: */                          \
-                            /* { f = Hf [i] ; Hf [i] = 3 ; } */                \
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;            \
-                        } while (f == 3) ; /* lock owner gets f=1 or 2 */      \
-                        if (f == 1)                                            \
-                        {                                                      \
-                            /* C(i,j) is a new entry */                        \
-                            GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */       \
-                        }                                                      \
-                        else /* f == 2 */                                      \
-                        {                                                      \
-                            /* C(i,j) already appears in C(:,j) */             \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
-                        }                                                      \
-                        GB_ATOMIC_WRITE                                        \
-                        Hf [i] = 2 ;                /* unlock the entry */     \
-                    }
+                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
+                            int8_t f ;                                         \
+                            GB_ATOMIC_READ                                     \
+                            f = Hf [i] ;            /* grab the entry */       \
+                            if (GB_HAS_ATOMIC && (f == 2))                     \
+                            {                                                  \
+                                /* C(i,j) already seen; update it */           \
+                                GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */ \
+                                continue ;       /* C(i,j) has been updated */ \
+                            }                                                  \
+                            if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/\
+                            do  /* lock the entry */                           \
+                            {                                                  \
+                                /* do this atomically: */                      \
+                                /* { f = Hf [i] ; Hf [i] = 3 ; } */            \
+                                GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;        \
+                            } while (f == 3) ; /* lock owner gets f=1 or 2 */  \
+                            if (f == 1)                                        \
+                            {                                                  \
+                                /* C(i,j) is a new entry */                    \
+                                GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */   \
+                            }                                                  \
+                            else /* f == 2 */                                  \
+                            {                                                  \
+                                /* C(i,j) already appears in C(:,j) */         \
+                                GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */ \
+                            }                                                  \
+                            GB_ATOMIC_WRITE                                    \
+                            Hf [i] = 2 ;                /* unlock the entry */ \
+                        }
+
                     #endif
 
                     GB_SCAN_M_j_OR_A_k ;
@@ -345,29 +365,20 @@
 
                         #if GB_IS_ANY_MONOID
 
-                        // lock state (3) not needed
-                        // 0: not seen: update with new value, f becomes 2
-                        // 1: masked, do nothing, f stays 1
-                        // 2: already updated, do nothing, f stays 2
-                        // 3: state not used, f can be 2
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;
-                        if (!f)
-                        {
-                            GB_ATOMIC_WRITE
-                            Hf [i] = 2 ;
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-                        }
+                            // lock state (3) not needed
+                            // 0: not seen: update with new value, f becomes 2
+                            // 1: masked, do nothing, f stays 1
+                            // 2: already updated, do nothing, f stays 2
+                            // 3: state not used, f can be 2
+                            GB_ATOMIC_READ
+                            f = Hf [i] ;
+                            if (!f)
+                            {
+                                GB_ATOMIC_WRITE
+                                Hf [i] = 2 ;
+                                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                            }
 
-#if 0
-OLD:
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        if (f == 1 || f == 2) continue ;
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
-                        GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-#endif
 
                         #else
 

@@ -98,7 +98,7 @@ break ;
 #define GB_HASH_M_j                                                     \
     for (int64_t pM = pM_start ; pM < pM_end ; pM++) /* scan M(:,j) */  \
     {                                                                   \
-        GB_GET_M_ij ;           /* get M(i,j) */                        \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
         if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
         int64_t i = GBI (Mi, pM, mvlen) ;                               \
         for (GB_HASH (i))       /* find i in hash */                    \
@@ -177,7 +177,7 @@ break ;
 // GB_GET_M_ij: get the numeric value of M(i,j)
 //------------------------------------------------------------------------------
 
-#define GB_GET_M_ij                                 \
+#define GB_GET_M_ij(pM)                             \
     /* get M(i,j), at Mi [pM] and Mx [pM] */        \
     bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize)
 
@@ -401,7 +401,7 @@ break ;
         int64_t pA = pA_start ;                                         \
         for (int64_t pM = pM_start ; pM < pM_end ; pM++)                \
         {                                                               \
-            GB_GET_M_ij ;           /* get M(i,j) */                    \
+            GB_GET_M_ij (pM) ;      /* get M(i,j) */                    \
             if (!mij) continue ;    /* skip if M(i,j)=0 */              \
             int64_t i = Mi [pM] ;   /* ok: M and A are sparse */        \
             bool found ;            /* search for A(i,k) */             \
@@ -594,34 +594,4 @@ break ;
     int64_t hash = GB_HASHF (i) ; ; GB_REHASH (hash,i)
 
 #endif
-
-//------------------------------------------------------------------------------
-// free workspace
-//------------------------------------------------------------------------------
-
-#undef  GB_FREE_INITIAL_WORK
-#define GB_FREE_INITIAL_WORK ;
-
-#undef  GB_FREE_TASKLIST_AND_HASH_TABLES
-#define GB_FREE_TASKLIST_AND_HASH_TABLES                                    \
-{                                                                           \
-    GB_FREE (*(TaskList_handle)) ;                                          \
-    GB_FREE (Hi_all) ;                                                      \
-    GB_FREE (Hf_all) ;                                                      \
-    GB_FREE (Hx_all) ;                                                      \
-}
-
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE_INITIAL_WORK ;                                                  \
-    GB_FREE_TASKLIST_AND_HASH_TABLES ;                                      \
-}
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                                                         \
-{                                                                           \
-    GB_FREE_WORK ;                                                          \
-    GB_Matrix_free (Chandle) ;                                              \
-}
 

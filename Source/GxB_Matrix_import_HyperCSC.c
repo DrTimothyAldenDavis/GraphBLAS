@@ -23,7 +23,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // columns that appear in A, size nvec
     GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {

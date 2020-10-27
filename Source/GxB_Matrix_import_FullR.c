@@ -15,7 +15,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols
+    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
 {

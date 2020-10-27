@@ -16,7 +16,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
 {

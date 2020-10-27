@@ -47,8 +47,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT (p_nvals != NULL) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (A) ;        // TODO: allow A to be jumbled
+    // delete any lingering zombies and assemble any pending tuples;
+    // allow A to remain jumbled
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
 
     GB_BURBLE_DENSE (A, "(A %s) ") ;
     ASSERT (xcode <= GB_UDT_code) ;
@@ -131,7 +132,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // extract the tuples
         //----------------------------------------------------------------------
 
-        // TODO pass xcode to GB_convert_bitmap_worker and let it do the
+        // TODO: pass xcode to GB_convert_bitmap_worker and let it do the
         // typecasting.  This works for now, however.
 
         GB_OK (GB_convert_bitmap_worker (Ap, I, J,

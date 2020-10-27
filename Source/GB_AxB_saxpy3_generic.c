@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // GB_AxB_saxpy3_generic computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel,
-// with arbitrary types and operators.
+// with arbitrary types and operators.  C can have any sparsity pattern:
+// hyper, sparse, bitmap, or full.
 
 //------------------------------------------------------------------------------
 
@@ -18,30 +19,24 @@
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
+#include "GB_ek_slice.h"
 
-GrB_Info GB_AxB_saxpy3_generic
+GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
 (
     GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
-    const bool M_dense_in_place,
+    const bool M_dense_in_place,    // ignored if C is bitmap
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_saxpy3task_struct *GB_RESTRICT TaskList,
-    const int ntasks,
-    const int nfine,
-    const int nthreads,
+    GB_saxpy3task_struct *GB_RESTRICT TaskList, // NULL if C is bitmap
+    int ntasks,                     // 0 if C is bitmap (computed below)
+    int nfine,                      // 0 if C is bitmap (not used)
+    int nthreads,                   // 0 if C is bitmap (computed below)
     GB_Context Context
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: C is sparse or hypersparse
-    ASSERT (!GB_IS_FULL (C)) ;          // ok: C is sparse or hypersparse
 
     //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C
@@ -93,6 +88,8 @@ GrB_Info GB_AxB_saxpy3_generic
     // C = A*B via saxpy3 method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
+    #define GB_GENERIC
+
     // memcpy (&(Cx [pC]), &(Hx [i]), len*csize)
     #define GB_CIJ_MEMCPY(pC,i,len) \
         memcpy (GB_CX (pC), GB_HX (i), (len)*csize)
@@ -124,7 +121,7 @@ GrB_Info GB_AxB_saxpy3_generic
     // a monoid or binary operator from GrB_Matrix_reduce.
     #undef GB_IDENTITY
 
-    // definitions for GB_AxB_saxpy3_template.c
+    // definitions for GB_AxB_saxpy_template.c
     #include "GB_AxB_saxpy3_template.h"
 
     if (op_is_positional)
@@ -182,6 +179,8 @@ GrB_Info GB_AxB_saxpy3_generic
         {
             #undef  GB_CTYPE
             #define GB_CTYPE int64_t
+            #undef  GB_CSIZE
+            #define GB_CSIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;
             ASSERT (csize == sizeof (int64_t)) ;
             switch (opcode)
@@ -190,7 +189,7 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
@@ -198,13 +197,13 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 default: ;
             }
@@ -213,6 +212,8 @@ GrB_Info GB_AxB_saxpy3_generic
         {
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
+            #undef  GB_CSIZE
+            #define GB_CSIZE (sizeof (int32_t))
             ASSERT (C->type == GrB_INT32) ;
             ASSERT (csize == sizeof (int32_t)) ;
             switch (opcode)
@@ -221,7 +222,7 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
@@ -229,13 +230,13 @@ GrB_Info GB_AxB_saxpy3_generic
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
-                    #include "GB_AxB_saxpy3_template.c"
+                    #include "GB_AxB_saxpy_template.c"
                     break ;
                 default: ;
             }
@@ -298,6 +299,9 @@ GrB_Info GB_AxB_saxpy3_generic
         #undef  GB_CTYPE
         #define GB_CTYPE GB_void
 
+        #undef  GB_CSIZE
+        #define GB_CSIZE csize
+
         if (opcode == GB_FIRST_opcode || opcode == GB_SECOND_opcode)
         {
             // fmult is not used and can be NULL (for user-defined types)
@@ -312,7 +316,7 @@ GrB_Info GB_AxB_saxpy3_generic
                 ASSERT (B_is_pattern) ;
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
-                #include "GB_AxB_saxpy3_template.c"
+                #include "GB_AxB_saxpy_template.c"
             }
             else // opcode == GB_SECOND_opcode
             { 
@@ -320,7 +324,7 @@ GrB_Info GB_AxB_saxpy3_generic
                 ASSERT (A_is_pattern) ;
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
-                #include "GB_AxB_saxpy3_template.c"
+                #include "GB_AxB_saxpy_template.c"
             }
         }
         else
@@ -331,14 +335,14 @@ GrB_Info GB_AxB_saxpy3_generic
                 // t = B(k,j) * A(i,k)
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
-                #include "GB_AxB_saxpy3_template.c"
+                #include "GB_AxB_saxpy_template.c"
             }
             else
             { 
                 // t = A(i,k) * B(k,j)
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
-                #include "GB_AxB_saxpy3_template.c"
+                #include "GB_AxB_saxpy_template.c"
             }
         }
     }

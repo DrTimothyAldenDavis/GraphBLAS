@@ -17,8 +17,8 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Index nzmax,    // size of vi and vx
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
-    GrB_Index **vi,     // indices, size nvals
-    void **vx,          // values, size nvals
+    GrB_Index **vi,     // indices, size nzmax
+    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {

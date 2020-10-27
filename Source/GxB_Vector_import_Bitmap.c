@@ -16,7 +16,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Index n,        // vector length
     GrB_Index nvals,    // # of entries in bitmap
     int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n
+    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
 {

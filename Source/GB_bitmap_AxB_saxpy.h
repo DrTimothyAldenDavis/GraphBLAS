@@ -10,7 +10,6 @@
 #ifndef GB_AXB_BITMAP_SAXPY_H
 #define GB_AXB_BITMAP_SAXPY_H
 #include "GB_mxm.h"
-#include "GB_bitmap_AxB_saxpy.h"
 
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
