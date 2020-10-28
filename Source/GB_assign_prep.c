@@ -897,7 +897,6 @@ GrB_Info GB_assign_prep
     if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
-        GBURBLE ("(C aliased) ") ;
         if (C_replace_may_be_done_early)
         { 
             // Instead of duplicating C, create a new empty matrix C2.
@@ -911,6 +910,7 @@ GrB_Info GB_assign_prep
         else
         { 
             // finish any computations in C, but leave it jumbled
+            GBURBLE ("(C alias: make duplicate) ") ;
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (C) ;
             ASSERT (!GB_ZOMBIES (C)) ;
             ASSERT (GB_JUMBLED_OK (C)) ;
@@ -1094,7 +1094,6 @@ GrB_Info GB_assign_prep
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
     {
-        //
         // C is completely empty.  C_replace is irrelevant so set it to false.
         GBURBLE ("(C empty) ") ;
         (*C_replace) = false ;

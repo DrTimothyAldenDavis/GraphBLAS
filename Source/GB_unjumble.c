@@ -70,7 +70,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     if (!GB_pslice (&A_slice, Ap, anvec, ntasks))
     {
         // out of memory
-        return (false) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

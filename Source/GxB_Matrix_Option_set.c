@@ -23,7 +23,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
+    GrB_Info info ;
     GB_WHERE (A, "GxB_Matrix_Option_set (A, field, value)") ;
     GB_BURBLE_START ("GxB_set") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -95,10 +95,9 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     // transpose: no typecast, no op, in-place of A
                     GB_BURBLE_N (GB_NNZ (A), "(transpose) ") ;
                     int old_sparsity = A->sparsity ;
-                    info = GB_transpose (NULL, NULL, new_csc, A,
-                        NULL, NULL, NULL, false, Context);
-                    ASSERT (GB_IMPLIES (info == GrB_SUCCESS,
-                        A->is_csc == new_csc)) ;
+                    GB_OK (GB_transpose (NULL, NULL, new_csc, A,
+                        NULL, NULL, NULL, false, Context)) ;
+                    ASSERT (A->is_csc == new_csc) ;
                     int new_sparsity = A->sparsity ;
                     ASSERT (old_sparsity == new_sparsity) ;
                 }
@@ -119,9 +118,9 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     // conform the matrix to its new desired sparsity structure
     //--------------------------------------------------------------------------
 
-    info = GB_conform (A, Context) ;
+    GB_OK (GB_conform (A, Context)) ;
     GB_BURBLE_END ;
-    if (info == GrB_SUCCESS) ASSERT_MATRIX_OK (A, "A set", GB0) ;
-    return (info) ;
+    ASSERT_MATRIX_OK (A, "A set", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

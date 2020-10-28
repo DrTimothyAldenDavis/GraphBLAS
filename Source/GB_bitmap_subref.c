@@ -13,7 +13,10 @@
 #include "GB_subref.h"
 #include "GB_subassign_IxJ_slice.h"
 
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL             \
+{                               \
+    GB_Matrix_free (Chandle) ;  \
+}
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
@@ -97,14 +100,15 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     }
     GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
-    GB_OK (GB_new_bix (&C, ctype, nI, nJ, GB_Ap_null, C_is_csc, sparsity,
+    GB_OK (GB_new_bix (Chandle, ctype, nI, nJ, GB_Ap_null, C_is_csc, sparsity,
         A->hyper_switch, -1, cnzmax, true, Context)) ;
+    C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
     // get C
     //--------------------------------------------------------------------------
 
-    int8_t  *GB_RESTRICT Cb = C->b ;
+    int8_t *GB_RESTRICT Cb = C->b ;
 
     // In GB_bitmap_assign_IxJ_template, vlen is the vector length of the
     // submatrix C(I,J), but here the template is used to access A(I,J), and so
@@ -196,7 +200,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "C output for bitmap subref C=A(I,J)", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 
