@@ -9,8 +9,6 @@
 
 // Note that this function uses its own hard-coded chunk size.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 #define GB_MEM_CHUNK (1024*1024)

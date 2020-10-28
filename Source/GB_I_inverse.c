@@ -17,8 +17,6 @@
 // duplicates in I, and then construct the buckets in parallel after the qsort.
 // But the time complexity would be higher.
 
-// OK: no change for BITMAP
-
 #include "GB_subref.h"
 
 GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)

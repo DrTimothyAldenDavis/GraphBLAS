@@ -10,8 +10,6 @@
 // Determine the length of I, and process the colon notation I = begin:inc:end.
 // No error checking is done.
 
-// OK: no change for BITMAP
-
 #include "GB_ij.h"
 
 // ensure an unsigned integer does not cause signed integer overflow

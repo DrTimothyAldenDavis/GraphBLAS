@@ -342,7 +342,6 @@ GrB_Info many_subassign
 
     for (int64_t k = 0 ; k < nwork ; k++)
     {
-        // printf ("work %g of %g\n", (double) k, (double) nwork-1) ;
 
         //----------------------------------------------------------------------
         // get the kth work to do
@@ -531,6 +530,7 @@ void mexFunction
         // C(I,J)<M> = A, with a single assignment
         //----------------------------------------------------------------------
 
+
         // get M (shallow copy)
         if (!mxIsChar (pargin [1]))
         {
@@ -633,14 +633,11 @@ void mexFunction
         }
 
         // C(I,J)<M> = A
-
         METHOD (assign (Context)) ;
 
         // apply the reduce monoid
         if (nargin == 8 && (nargout == 2 || nargout == 3))
         {
-            // if (C->nzombies > 0)
-            //  printf ("do the reduce thing, zombies %lld\n", C->nzombies) ;
 
             pargout [1] = GB_mx_create_full (1, 1, C->type) ;
             GB_void *p = mxGetData (pargout [1]) ;

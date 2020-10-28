@@ -397,7 +397,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (info != GrB_SUCCESS)
         { 
             // out of memory
-            GB_FREE_A_AND_C ;
+            GB_FREE_C ;
+            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -427,6 +428,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 T->x_shallow = Ax_shallow ;
                 Ab = NULL ;     // do not free prior Ab
                 Ax = NULL ;     // do not free prior Ax
+                A->b = NULL ;
+                A->x = NULL ;
             }
             else
             { 
@@ -468,6 +471,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
             GB_Matrix_free (&T) ;
+            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -477,6 +481,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_A_AND_C ;
+            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
@@ -511,6 +516,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
+            GB_FREE_WORK ;
             GB_FREE_WORK ;
             return (info) ;
         }

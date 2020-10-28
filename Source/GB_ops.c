@@ -10,8 +10,6 @@
 // This file defines the predefined built-in types, descriptors, unary
 // operators, binary operators, monoids, and semirings.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 //------------------------------------------------------------------------------

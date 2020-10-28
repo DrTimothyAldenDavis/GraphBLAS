@@ -19,8 +19,6 @@
 // pair of built-in types (ZTYPE, XTYPE).  The last pointer is the function
 // GB_copy_user_user.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

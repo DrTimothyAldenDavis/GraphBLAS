@@ -14,8 +14,6 @@
 // undefined if the user passes in a void * pointer to a different user-defined
 // type.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

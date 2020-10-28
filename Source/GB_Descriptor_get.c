@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: no change for BITMAP
-
 // A descriptor modifies the behavoir of a GraphBLAS operation.
 
 // This function is called via the GB_GET_DESCRIPTOR(...) macro.

@@ -12,14 +12,15 @@
 #include "GB_type__include.h"
 #endif
 
-#define GB_FREE_WORK    \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ; \
+#define GB_FREE_WORK                    \
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 
-#define GB_FREE_ALL     \
-{                       \
-    GB_FREE_WORK ;      \
-    GB_FREE (Ab) ;      \
-    GB_phbix_free (A) ; \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORK ;                      \
+    if (!in_place) GB_FREE (Ax_new) ;   \
+    GB_FREE (Ab) ;                      \
+    GB_phbix_free (A) ;                 \
 }
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -36,6 +37,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     GrB_Info info ;
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     int8_t *GB_RESTRICT Ab = NULL ;
+    GB_void *GB_RESTRICT Ax_new = NULL ;
 
     ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
@@ -100,7 +102,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     const size_t asize = A->type->size ;
-    GB_void *GB_RESTRICT Ax_new = NULL ;
     bool Ax_shallow ;
 
     if (in_place)
@@ -172,6 +173,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             &ntasks))
         { 
             // out of memory
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -239,9 +241,11 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     A->b = Ab ;
     A->b_shallow = false ;
+    Ab = NULL ;
 
     A->x = Ax_new ;
     A->x_shallow = Ax_shallow ;
+    Ax_new = NULL ;
 
     A->nzmax = anzmax ;
     A->nvals = anz - nzombies ;

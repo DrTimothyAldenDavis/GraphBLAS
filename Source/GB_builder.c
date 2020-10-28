@@ -86,9 +86,9 @@
 // able to transplant S_work into T->x since the input will almost always be
 // unsorted.
 
-// OK: no change for BITMAP: this method always returns T as hypersparse,
-// and has no matrix inputs.   If the final C should become full or bitmap,
-// that conversion is done by GB_transplant_conform.
+// For BITMAP case: this method always returns T as hypersparse, and has no
+// matrix inputs.   If the final C should become full or bitmap, that
+// conversion is done by GB_transplant_conform.
 
 #include "GB_build.h"
 #include "GB_sort.h"

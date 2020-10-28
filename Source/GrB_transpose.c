@@ -142,7 +142,10 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     info = GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp, 
         Mask_struct, Context) ;
     ASSERT (T == NULL) ;
-    ASSERT_MATRIX_OK (C, "final C for GrB_transpose", GB0) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "final C for GrB_transpose", GB0) ;
+    }
 
     GB_BURBLE_END ;
     return (info) ;

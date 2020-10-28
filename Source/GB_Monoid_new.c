@@ -176,6 +176,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
+            GB_FREE (mon->terminal) ;                                       \
             GB_FREE (*monoid) ;                                             \
             return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
@@ -188,6 +189,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         if (mon->terminal == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
+            GB_FREE (mon->identity) ;                                       \
             GB_FREE (*monoid) ;                                             \
             return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \

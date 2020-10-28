@@ -9,8 +9,6 @@
 
 // check the type and dimensions of the mask
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_Mask_compatible     // check type and dimensions of mask

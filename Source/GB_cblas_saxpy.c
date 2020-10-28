@@ -11,8 +11,6 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
-// OK: no change for BITMAP
-
 #include "GB_mkl.h"
 
 #if defined ( GB_HAS_CBLAS )

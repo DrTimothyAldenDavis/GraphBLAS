@@ -9,8 +9,6 @@
 
 // GrB_Vector: same as GrB_Matrix, except it has exactly one column
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

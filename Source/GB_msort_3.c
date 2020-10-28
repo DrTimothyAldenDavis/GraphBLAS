@@ -10,8 +10,6 @@
 // A parallel mergesort of an array of 3-by-n integers.  Each key consists
 // of three integers.
 
-// OK: no change for BITMAP
-
 #include "GB_msort_3.h"
 
 //------------------------------------------------------------------------------

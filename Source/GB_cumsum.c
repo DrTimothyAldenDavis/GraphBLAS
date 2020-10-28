@@ -18,8 +18,6 @@
 // sum (count [0..j-1]).  count [n] is implicitly zero on input.
 // On output, count [n] is the total sum.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 // TODO for GPU: add error handling and GrB_Info return value

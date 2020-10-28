@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator

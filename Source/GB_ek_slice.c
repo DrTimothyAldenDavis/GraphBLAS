@@ -9,6 +9,10 @@
 
 // Slice the entries of a matrix or vector into ntasks slices.
 
+// The function is called GB_ek_slice because it first partitions the e entries
+// into chunks of identical sizes, and then finds the first and last vector
+// (k) for each chunk.
+
 // Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
 // vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
 // may be shared with prior slices and subsequent slices.
@@ -16,7 +20,7 @@
 // On input, ntasks is the # of tasks requested.  On output, it may be
 // modified if too large or too small.
 
-// A can have any sparsit structure (sparse, hyper, bitmap, or full)
+// A can have any sparsity structure (sparse, hyper, bitmap, or full)
 
 #include "GB_ek_slice.h"
 
@@ -107,6 +111,7 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // find the first and last entries in each slice
     //--------------------------------------------------------------------------
 
+    // FUTURE: this can be done in parallel if there are many tasks
     GB_eslice (pstart_slice, anz, ntasks) ;
 
     //--------------------------------------------------------------------------
@@ -121,6 +126,7 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // pstart_slice [taskid+1]-1 is in the range Ap [k]...A[k+1]-1, and this
     // is vector is k = klast_slice [taskid].
 
+    // FUTURE: this can be done in parallel if there are many tasks
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     { 
 

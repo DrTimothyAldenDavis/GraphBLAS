@@ -13,8 +13,6 @@
 // A matrix with vdim <= 1 must always be sparse, not hypersparse;
 // that is, a GrB_Vector is never hypersparse.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 bool GB_convert_sparse_to_hyper_test  // test sparse to hypersparse conversion

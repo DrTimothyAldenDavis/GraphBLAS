@@ -12,8 +12,6 @@
 //      bool f (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
 //              const void *x, const void *thunk) ;
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 #include <ctype.h>
 

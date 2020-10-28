@@ -9,8 +9,6 @@
 
 // check a list of indices I and determine its properties
 
-// OK: no change for BITMAP
-
 #include "GB_ij.h"
 
 // FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.

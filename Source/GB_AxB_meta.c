@@ -104,7 +104,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     if (AxB_method == GxB_AxB_HEAP)
     { 
-        // FUTURE::: Heap method not yet reinstalled; using Hash instead
+        // Heap method no longer exists; using Hash instead
         AxB_method = GxB_AxB_HASH ;
     }
 

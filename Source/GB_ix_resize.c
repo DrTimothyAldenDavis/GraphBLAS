@@ -11,8 +11,6 @@
 // in which case the extra space is trimmed.  If the existing space is not
 // sufficient, the matrix is doubled in size to accomodate the new entries.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GrB_Info GB_ix_resize           // resize a matrix

@@ -10,8 +10,6 @@
 // There are e items to split between ntasks.  Task tid will own items
 // Slice [tid] to Slice [tid+1]-1.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 void GB_eslice

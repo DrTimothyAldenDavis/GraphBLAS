@@ -10,8 +10,6 @@
 // Two domains are compatible for typecasting between them if both are built-in
 // types (of any kind) or if both are the same user-defined type.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
  
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

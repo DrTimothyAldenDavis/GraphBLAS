@@ -17,8 +17,6 @@
 
 // Compare with GB_subassign_scalar, which uses M and C_replace differently
 
-// OK: no change for BITMAP
-
 #include "GB_assign.h"
 #include "GB_bitmap_assign.h"
 

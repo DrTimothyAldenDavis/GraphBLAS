@@ -10,8 +10,6 @@
 // Given the opcode of a multiplicative operator z = mult (x,y), and a flipxy
 // flag, determine if C=A*B will use just the pattern of A and/or B.
 
-// OK: no change for BITMAP
-
 #include "GB_mxm.h"
 
 void GB_AxB_pattern

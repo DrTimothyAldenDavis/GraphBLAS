@@ -11,8 +11,6 @@
 // preserving the existing content of A->x and A->i.  Preserves pending tuples
 // and zombies, if any.  If numeric is false, then A->x is freed instead.
 
-// OK: no change for BITMAP
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

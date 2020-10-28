@@ -9,8 +9,6 @@
 
 // Reallocate a list of pending tuples.  If it fails, the list is freed.
 
-// OK: no change for BITMAP
-
 #include "GB_Pending.h"
 
 bool GB_Pending_realloc         // reallocate a list of pending tuples

@@ -78,29 +78,29 @@ GrB_Info GB_unjumble        // unjumble a matrix
     //--------------------------------------------------------------------------
 
     switch (asize)
-    { 
-        case 1:
+    {
+        case 1 :
             // GrB_BOOL, GrB_UINT8, GrB_INT8, and user defined types of size 1
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size1 (Ai+pA_start, Ax1+pA_start, aknz) ;
             #include "GB_unjumbled_template.c"
             break ;
 
-        case 2:
+        case 2 :
             // GrB_UINT16, GrB_INT16, and user-defined types of size 2
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size2 (Ai+pA_start, Ax2+pA_start, aknz) ;
             #include "GB_unjumbled_template.c"
             break ;
 
-        case 4:
+        case 4 :
             // GrB_UINT32, GrB_INT32, GrB_FP32, and user-defined types of size 4
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size4 (Ai+pA_start, Ax4+pA_start, aknz) ;
             #include "GB_unjumbled_template.c"
             break ;
 
-        case 8:
+        case 8 :
             // GrB_UINT64, GrB_INT64, GrB_FP64, GxB_FC32, and user-defined
             // types of size 8
             #define GB_QSORT_WORKER \
@@ -108,14 +108,14 @@ GrB_Info GB_unjumble        // unjumble a matrix
             #include "GB_unjumbled_template.c"
             break ;
 
-        case 16:
+        case 16 :
             // GxB_FC64, and user-defined types of size 16
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size16 (Ai+pA_start, Ax16+pA_start, aknz) ;
             #include "GB_unjumbled_template.c"
             break ;
 
-        default:
+        default :
             // user-defined types of arbitrary size
             #define GB_QSORT_WORKER \
                 GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;

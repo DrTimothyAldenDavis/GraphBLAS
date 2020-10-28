@@ -10,8 +10,6 @@
 // Determine if A*B uses a built-in semiring, and if so, determine the
 // opcodes and type codes of the semiring.
 
-// OK: no change for BITMAP
-
 #include "GB_mxm.h"
 #include "GB_binop.h"
 

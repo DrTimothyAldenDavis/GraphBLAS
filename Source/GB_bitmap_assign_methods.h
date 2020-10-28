@@ -24,7 +24,7 @@
         GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,            \
             Mask_struct, accum, A, assign_kind) ;
 #else
-    #define GBURBLE_BITMAP ;
+    #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum) ;
 #endif
 
 //------------------------------------------------------------------------------
