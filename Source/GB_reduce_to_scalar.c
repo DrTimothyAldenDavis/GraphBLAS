@@ -92,33 +92,41 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     int64_t zsize = ztype->size ;
     int64_t anz = GB_NNZ_HELD (A) ;
 
+    // s = identity
+    GB_void s [GB_VLA(zsize)] ;
+    memcpy (s, reduce->identity, zsize) ;   // required, if nnz(A) is zero
+
     //--------------------------------------------------------------------------
-    // determine the number of OpenMP threads and/or GPUs to use
+    // s = reduce_to_scalar (A) on the GPU(s) or CPU
     //--------------------------------------------------------------------------
 
-    int nthreads = 0, ntasks = 0 ;
-    int ngpus_to_use = GB_ngpus_to_use ((double) anz) ;
-    int blocksize = 0 ;
-
-    if (ngpus_to_use > 0)
+    #if defined ( GBCUDA )
+    if (GB_reduce_to_scalar_cuda_branch (reduce, A, Context))
     {
-        // use the GPU
-        blocksize = 512 ;                                   // blockDim.x
-        // TODO for GPU: grid.x is too large
-        ntasks = GB_ICEIL (anz, 8*blocksize) ;              // grid.x
-        // ntasks = (anz + 8*blocksize - 1) / (8*blocksize) ;
-        ngpus_to_use = 1 ;              // assume one GPU (TODO for GPU)
-        nthreads = ngpus_to_use ;       // use one CPU thread per GPU
+
+        //----------------------------------------------------------------------
+        // use the GPU(s)
+        //----------------------------------------------------------------------
+
+        GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A, Context)) ;
+
     }
     else
+    #endif
     {
-        // use the CPU
+
+        //----------------------------------------------------------------------
+        // use OpenMP on the CPU threads
+        //----------------------------------------------------------------------
+
+        int nthreads = 0, ntasks = 0 ;
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
         nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
         ntasks = GB_IMIN (ntasks, anz) ;
         ntasks = GB_IMAX (ntasks, 1) ;
-    }
+
+// TODO fix indent:
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -136,10 +144,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
     // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
-
-    // s = identity
-    GB_void s [GB_VLA(zsize)] ;
-    memcpy (s, reduce->identity, zsize) ;   // required, if nnz(A) is zero
 
     // get terminal value, if any
     GB_void *GB_RESTRICT terminal = (GB_void *) reduce->terminal ;
@@ -272,6 +276,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             #include "GB_reduce_to_scalar_template.c"
     }
+}
 
     //--------------------------------------------------------------------------
     // c = s or c = accum (c,s)

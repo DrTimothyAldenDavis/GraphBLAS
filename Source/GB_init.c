@@ -183,7 +183,7 @@ GrB_Info GB_init            // start up GraphBLAS
         if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
         fprintf (stderr, "gpu_count: %d\n", gpu_count) ;
-        for (int device = 0 ; device < gpu_count ; device++)
+        for (int device = 0 ; device < 1 /* HACK: gpu_count */ ; device++)
         {
             // query the GPU and then warm it up
             if (!GB_Global_gpu_device_properties_get (device))
@@ -198,7 +198,10 @@ GrB_Info GB_init            // start up GraphBLAS
                 ((double) GB_Global_gpu_memorysize_get (device)) / 1e9,
                 GB_Global_gpu_sm_get (device)) ;
         }
-        // TODO for GPU: check for jit cache
+        // make GPU 0 the default device
+        GB_cuda_set_device( 0 );
+
+        // TODO for GPU: check for jit cache, pre-load library of common kernels
     }
     else
     #endif

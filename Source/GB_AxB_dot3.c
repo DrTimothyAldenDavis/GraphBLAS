@@ -68,6 +68,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
+    GBURBLE ("(CPU dot3) ") ;
 
     int ntasks, max_ntasks = 0, nthreads ;
     GB_task_struct *TaskList = NULL ;

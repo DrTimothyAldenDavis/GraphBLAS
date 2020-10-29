@@ -137,6 +137,9 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         #if defined ( GBCUDA )
 
+// [ replace this with:
+// if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
+
         // very rough estimate of the work to do
         int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
         int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
@@ -150,10 +153,12 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // ops) then the type of A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
-        if (ngpus_to_use > 0 && semiring->semiring_is_builtin &&
+        GBBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
+        if (ngpus_to_use > 0 && semiring->semiring_is_builtin
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+// to here ... ]
         {
             // use "the" GPU (TODO for GPU: could use multiple GPUs too)
             return (GB_AxB_dot3_cuda (Chandle, M, Mask_struct, A, B, semiring,

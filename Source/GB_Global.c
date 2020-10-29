@@ -680,6 +680,34 @@ int GB_Global_gpu_sm_get (int device)
     return (GB_Global.gpu_properties [device].number_of_sms)  ;
 }
 
+bool GB_Global_gpu_device_pool_size_set( int device, size_t size)
+{
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    GB_Global.gpu_properties[device].pool_size = size;
+    return( true); 
+}
+
+bool GB_Global_gpu_device_max_pool_size_set( int device, size_t size)
+{
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    GB_Global.gpu_properties[device].max_pool_size = size;
+    return( true); 
+}
+
+bool GB_Global_gpu_device_memory_resource_set( int device, void *resource)
+{
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    GB_Global.gpu_properties[device].memory_resource = resource;
+    return( true); 
+}
+
+void* GB_Global_gpu_device_memory_resource_get( int device )
+{
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    return ( GB_Global.gpu_properties [device].memory_resource ) ;
+    //NOTE: this returns a void*, needs to be cast to be used
+}
+
 bool GB_Global_gpu_device_properties_get (int device)
 {
     // get all properties of a specific GPU;

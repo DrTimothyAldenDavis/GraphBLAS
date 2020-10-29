@@ -127,6 +127,10 @@ bool     GB_Global_gpu_count_set (bool enable_cuda) ;
 int      GB_Global_gpu_count_get (void) ;
 size_t   GB_Global_gpu_memorysize_get (int device) ;
 int      GB_Global_gpu_sm_get (int device) ;
+bool     GB_Global_gpu_device_pool_size_set( int device, size_t size) ;
+bool     GB_Global_gpu_device_max_pool_size_set( int device, size_t size) ;
+bool     GB_Global_gpu_device_memory_resource_set( int device, void *resource) ;
+void*    GB_Global_gpu_device_memory_resource_get( int device ) ;
 bool     GB_Global_gpu_device_properties_get (int device) ;
 
 // timing: for code development only
