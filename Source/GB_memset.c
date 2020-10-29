@@ -32,7 +32,8 @@ void GB_memset                  // parallel memset
         memset (dest, c, n) ;
     }
     else
-    {
+    { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // memset using multiple threads
@@ -41,6 +42,7 @@ void GB_memset                  // parallel memset
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;
         if (((size_t) nthreads) > nchunks)
         { 
+GB_GOTCHA ;
             nthreads = (int) nchunks ;
         }
         GB_void *pdest = (GB_void *) dest ;
@@ -52,6 +54,7 @@ void GB_memset                  // parallel memset
             size_t start = k * GB_MEM_CHUNK ;
             if (start < n)
             { 
+// GB_GOTCHA ;
                 size_t chunk = GB_IMIN (n - start, GB_MEM_CHUNK) ;
                 memset (pdest + start, c, chunk) ;
             }

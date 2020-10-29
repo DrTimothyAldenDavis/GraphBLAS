@@ -449,6 +449,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             && !GB_IS_BITMAP (A)     // TODO
             && B_is_diagonal)
         { 
+GB_GOTCHA ;
             // C = A'*D
             do_colscale = true ;
         }
@@ -456,6 +457,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             && !GB_IS_BITMAP (B)     // TODO
             && GB_is_diagonal (A, Context))
         { 
+GB_GOTCHA ;
             // C = D*B
             do_rowscale = true ;
         }
@@ -493,12 +495,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (do_rowscale)
         { 
+GB_GOTCHA ;
             // C = D*B
             GBURBLE ("C%s=A'*B, rowscale ", M_str) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (do_colscale)
         { 
+GB_GOTCHA ;
             // C = A'*D
             GBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
@@ -536,6 +540,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             && !GB_IS_BITMAP (A)     // TODO
             && GB_is_diagonal (B, Context))
         { 
+GB_GOTCHA ;
             // C = A*D
             GBURBLE ("C%s=A*B', colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
@@ -544,6 +549,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             && !GB_IS_BITMAP (B)     // TODO
             && GB_is_diagonal (A, Context))
         { 
+GB_GOTCHA ;
             // C = D*B'
             GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B,

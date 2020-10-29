@@ -113,7 +113,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
-    { 
+    {
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -125,7 +125,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
 
     int naslice, nbslice ;
     if (nthreads == 1)
-    { 
+    {
         naslice = 1 ;
         nbslice = 1 ;
     }
@@ -136,7 +136,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
         nbslice = 1 ;
     }
     else
-    { 
+    {
         // TODO: this case is not handled yet
         return (GrB_NO_VALUE) ;
     }
@@ -158,30 +158,6 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
-    // allocate workspace and slice A and B
-    //--------------------------------------------------------------------------
-
-
-#if 0
-    // A and B can have any sparsity: full, sparse, or hypersparse.
-    // C is always created as sparse or hypersparse.
-
-    if (!GB_pslice (&A_slice, A->p, A->nvec, naslice))
-    { 
-        // out of memory
-        GB_FREE_WORK ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    if (!GB_pslice (&B_slice, B->p, B->nvec, nbslice))
-    { 
-        // out of memory
-        GB_FREE_WORK ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-#endif
-
-    //--------------------------------------------------------------------------
     // allocate C
     //--------------------------------------------------------------------------
 
@@ -192,7 +168,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
         ctype, cvlen, cvdim, GB_Ap_calloc, true,
         GxB_BITMAP, B->hyper_switch, cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
-    { 
+    {
         // out of memory
         return (info) ;
     }
@@ -291,7 +267,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
     for (int tid = 0 ; tid < ntasks ; tid++)
-    { 
+    {
         // assume B is a single vector:
         int a_tid = tid ;
         int b_tid = 0 ;
@@ -329,7 +305,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
             int64_t pC_start = j * cvlen ;
 
             for (int64_t kA = kA_start ; kA < kA_end ; kA++)
-            { 
+            {
 
                 // if A is hypersparse, or for all matrices, do:
                 // int64_t i = GBH (Ah, kA) ;
@@ -349,7 +325,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                 // dimensions as C.
                 mij = (Mx [pC] != 0) ;          // GB_mcast (Mx, pC, msize)
                 if (!mij)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // C(i,j) = A(:,i)'*B(:,j)
@@ -369,7 +345,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
                     cij = GB_IDENTITY ;
                     #endif
                     for (int64_t p = pA ; p < pA_end ; p++)
-                    { 
+                    {
                         // next index of A(:,k)
                         int64_t k = Ai [p] ;                // ok: A is sparse
                         // for any matrix A, do this instead:
@@ -402,7 +378,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
 
                     #if !GB_IS_ANY_MONOID
                     if (cij_exists)
-                    { 
+                    {
                         cnvals++ ;              // one more entry in the bitmap
                         Cb [pC] = 1 ;           // assumes Cb is calloc'ed
                         GB_PUTC (cij, pC) ;     // Cx [pC] = cij
@@ -412,7 +388,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
 
                 }
                 else
-                { 
+                {
 
                     //----------------------------------------------------------
                     // the mask prevents C(i,j) from existing

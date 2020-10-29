@@ -52,6 +52,7 @@ GrB_Info GB_import      // import a matrix in any format
         bool ok = GB_Index_multiply ((GrB_Index *) &nzmax, vlen, vdim) ;
         if (!ok)
         { 
+GB_GOTCHA ;
             // problem too large
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -65,11 +66,11 @@ GrB_Info GB_import      // import a matrix in any format
 
     switch (sparsity)
     {
-        case GxB_HYPERSPARSE :
+        case GxB_HYPERSPARSE : 
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
 
-        case GxB_SPARSE :
+        case GxB_SPARSE : 
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (*Ap) ;
             if (nzmax > 0)
@@ -79,15 +80,15 @@ GrB_Info GB_import      // import a matrix in any format
             }
             break ;
             
-        case GxB_BITMAP :
+        case GxB_BITMAP : 
             if (nzmax > 0)
             {
                 GB_RETURN_IF_NULL (Ab) ;
                 GB_RETURN_IF_NULL (*Ab) ;
             }
 
-        case GxB_FULL :
-        default:;
+        case GxB_FULL : 
+        default: ;
     }
 
     //--------------------------------------------------------------------------
@@ -114,23 +115,23 @@ GrB_Info GB_import      // import a matrix in any format
 
     switch (sparsity)
     {
-        case GxB_HYPERSPARSE :
+        case GxB_HYPERSPARSE : 
             (*A)->nvec = nvec ;
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
 
-        case GxB_SPARSE :
+        case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;
             (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             break ;
 
-        case GxB_BITMAP :
+        case GxB_BITMAP : 
             (*A)->nvals = nvals ;
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
 
-        case GxB_FULL :
-        default:;
+        case GxB_FULL : 
+        default: ;
     }
 
     (*A)->x = (*Ax) ; (*Ax) = NULL ;

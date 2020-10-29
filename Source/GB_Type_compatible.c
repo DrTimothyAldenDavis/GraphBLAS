@@ -22,6 +22,7 @@ bool GB_Type_compatible             // check if two types can be typecast
 
     if (atype == NULL || btype == NULL)
     { 
+GB_GOTCHA ;
         // built-in positional ops have null op->[xy]type, and are compatible
         // with anything.  TODO: FIXME.
         return (true) ;

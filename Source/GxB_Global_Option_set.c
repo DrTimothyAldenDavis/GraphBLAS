@@ -89,7 +89,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         // diagnostics
         //----------------------------------------------------------------------
 
-        case GxB_BURBLE :
+        case GxB_BURBLE : 
 
             { 
                 va_start (ap, field) ;

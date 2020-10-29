@@ -550,12 +550,13 @@ void GB_AxB_saxpy3_symbolic
                         // M(:,j) is dense.  M is not scattered into Hf.
 
                         if (Mask_struct && !M_is_bitmap)
-                        {
+                        { 
+GB_GOTCHA ;
                             // structural mask, complemented, not bitmap.
                             // No work to do.
                             #ifdef GB_DEBUG
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                            { 
+                            {
                                 ASSERT (Cp [kk] == 0) ;
                             }
                             #endif

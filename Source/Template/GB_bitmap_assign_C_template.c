@@ -27,7 +27,7 @@
         // row assignment: C<M'>(iC,:), M is a column vector
         //----------------------------------------------------------------------
 
-        case GB_ROW_ASSIGN :
+        case GB_ROW_ASSIGN : 
         {
             // iterate over all of C(iC,:)
             int64_t iC = I [0] ;
@@ -48,7 +48,8 @@
         // column assignment: C<M>(:,jC), M is a column vector
         //----------------------------------------------------------------------
 
-        case GB_COL_ASSIGN :
+        case GB_COL_ASSIGN : 
+GB_GOTCHA ;
         {
             // iterate over all of C(:,jC)
             int64_t iC ;
@@ -70,7 +71,7 @@
         // GrB_assign: C<M>(I,J), M is a matrix the same size as C
         //----------------------------------------------------------------------
 
-        case GB_ASSIGN :
+        case GB_ASSIGN : 
         {
             // iterate over all of C(:,:).
             int64_t pC ;
@@ -92,7 +93,7 @@
         //----------------------------------------------------------------------
 
         #ifndef GB_NO_SUBASSIGN_CASE
-        case GB_SUBASSIGN :
+        case GB_SUBASSIGN : 
         {
             // iterate over all of C(I,J)
             #undef  GB_IXJ_WORK
@@ -106,7 +107,7 @@
         break ;
         #endif
 
-        default:;
+        default: ;
     }
 }
 

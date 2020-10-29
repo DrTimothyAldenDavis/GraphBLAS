@@ -28,7 +28,7 @@ int64_t GB_positional_offset        // return 0 or 1
             return (1) ;
 
         // all other operators have no offset
-        default :
+        default:
             return (0) ;
     }
 }

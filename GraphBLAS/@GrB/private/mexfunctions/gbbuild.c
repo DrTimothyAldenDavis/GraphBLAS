@@ -50,6 +50,7 @@ void mexFunction
     // get the descriptor
     //--------------------------------------------------------------------------
 
+    // TODO add sparsity to descriptor
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
@@ -208,6 +209,8 @@ void mexFunction
     OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
     OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+    int sparsity = gb_get_sparsity (NULL, NULL, 0) ;
+    OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity)) ;
 
     // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;

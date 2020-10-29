@@ -22,20 +22,21 @@ ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
 
 switch (assign_kind)
 {
-    case GB_ROW_ASSIGN :
+    case GB_ROW_ASSIGN : 
+GB_GOTCHA ;
         // row assignment: C<M>(iC,J), where M is a row vector
         #include "GB_bitmap_assign_M_row_template.c"
         break ;
-    case GB_COL_ASSIGN :
+    case GB_COL_ASSIGN : 
         // column assignment: C<M>(I,jC), where M is a column vector
         #include "GB_bitmap_assign_M_col_template.c"
         break ;
-    case GB_ASSIGN :
+    case GB_ASSIGN : 
         // GrB_assign: C<M>(I,J), where M is the same size as C
         #include "GB_bitmap_assign_M_all_template.c"
         break ;
     #ifndef GB_NO_SUBASSIGN_CASE
-    case GB_SUBASSIGN :
+    case GB_SUBASSIGN : 
         // GxB_subassign: C(I,J)<M>, where M is the same size as C(I,J) and A
         #include "GB_bitmap_assign_M_sub_template.c"
         break ;

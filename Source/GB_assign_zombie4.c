@@ -156,6 +156,7 @@ void GB_assign_zombie4
                             j, &pM, &pM_end) ;
                         if (pM < pM_end)
                         { 
+GB_GOTCHA ;
                             // found it
                             mij = GB_mcast (Mx, pM, msize) ;
                         }

@@ -33,7 +33,7 @@ void GB_burble_assign
     //--------------------------------------------------------------------------
 
     if (!GB_Global_burble_get ( ))
-    { 
+    {
         return ;
     }
 
@@ -43,12 +43,12 @@ void GB_burble_assign
 
     char *Op ;
     if (accum == NULL)
-    { 
+    {
         // no accum operator is present
         Op = "" ;
     }
     else
-    { 
+    {
         // use a simpler version of accum->name
         if (accum->opcode == GB_USER_opcode) Op = "op" ;
         else if (GB_STRING_MATCH (accum->name, "plus")) Op = "+" ;
@@ -71,11 +71,11 @@ void GB_burble_assign
     {
         // M is not present
         if (Mask_comp)
-        { 
+        {
             Mask = C_replace ? "<!,replace>" : "<!>" ;
         }
         else
-        { 
+        {
             Mask = C_replace ? "<replace>" : "" ;
         }
     }
@@ -105,7 +105,7 @@ void GB_burble_assign
     char IJ [GB_LEN+1] ;
     snprintf (IJ, GB_LEN, "(%s,%s)", Istr, Jstr) ;
     if (Ikind == GB_ALL && Jkind == GB_ALL)
-    { 
+    {
         // do not print the (I,J) indices
         IJ [0] = '\0' ;
     }
@@ -116,29 +116,29 @@ void GB_burble_assign
 
     switch (assign_kind)
     {
-        case GB_ROW_ASSIGN :
+        case GB_ROW_ASSIGN:
             // C(i,J) = A
             snprintf (IJ, GB_LEN, "(i,%s)", Jstr) ;
             GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
-        case GB_COL_ASSIGN :
+        case GB_COL_ASSIGN:
             // C(I,j) = A
             snprintf (IJ, GB_LEN, "(%s,j)", Istr) ;
             GBURBLE ("C%s(%s,j) %s= A ", Mask, IJ, Op) ;
             break ;
 
-        case GB_ASSIGN :
+        case GB_ASSIGN:
             // C(I,J) = A
             GBURBLE ("C%s%s %s= %s ", Mask, IJ, Op, S) ;
             break ;
 
-        case GB_SUBASSIGN :
+        case GB_SUBASSIGN:
             // C(i,J) = A
             GBURBLE ("C%s%s %s= %s ", IJ, Mask, Op, S) ;
             break ;
 
-        default:;
+        default: ;
     }
 }
 

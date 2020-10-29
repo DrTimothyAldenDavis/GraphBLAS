@@ -40,7 +40,7 @@
             for (int64_t j = jstart ; j < jend && !any_update_allowed ; j++)
             {
                 for (int64_t i = istart ; i < iend && !any_update_allowed ; i++)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // get pointer to C(i,j) and M(i,j)
@@ -73,6 +73,7 @@
 
             if (!any_update_allowed)
             { 
+// GB_GOTCHA ;
                 // C(I,J) cannot be modified at all; skip it
                 continue ;
             }
@@ -131,13 +132,13 @@
             if (A_is_bitmap)
             {
                 for (int i = 0 ; i < GB_TILE_SIZE ; i++)
-                {
+                { 
                     Ab_any_in_row [i] = false ;
                 }
                 for (int64_t k = kstart ; k < kend ; k++)
                 {
                     for (int64_t i = istart ; i < iend ; i++)
-                    {
+                    { 
                         int64_t pA = i + k * avlen ;    // get pointer to A(i,k)
                         int8_t  ab = Ab [pA] ;          // ok: A is bitmap
                         // Ab_cache [(i-istart) * GB_KTILE_SIZE + (k-kstart)]
@@ -162,12 +163,12 @@
                 {
                     int b = 0 ;
                     for (int64_t k = kstart ; k < kend ; k++)
-                    {
+                    { 
                         int64_t pB = k + j * bvlen ;    // pointer to B(k,j)
                         b += Bb [pB] ;
                     }
                     if (b == 0)
-                    {
+                    { 
                         // no entry exists in B(K,j)
                         continue ;
                     }
@@ -187,7 +188,7 @@
                     //----------------------------------------------------------
 
                     if (A_is_bitmap && !Ab_any_in_row [i - istart])
-                    {
+                    { 
                         continue ;
                     }
 
@@ -245,7 +246,7 @@
                             GB_GET_B_kj ;                   // get B(k,j)
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             if (cb == 0)
-                            {
+                            { 
                                 // C(i,j) = A(i,k) * B(k,j)
                                 GB_CIJ_WRITE (pC, t) ;
                                 Cb [pC] = keep ;
@@ -253,7 +254,7 @@
                                 cnvals++ ;
                             }
                             else
-                            {
+                            { 
                                 // C(i,j) += A(i,k) * B(k,j)
                                 GB_CIJ_UPDATE (pC, t) ;
                             }
@@ -268,7 +269,7 @@
                         //------------------------------------------------------
 
                         for (int64_t k = kstart ; k < kend ; k++)
-                        {
+                        { 
                             int64_t pA = i + k * avlen ;    // pointer to A(i,k)
                             int64_t pB = k + j * bvlen ;    // pointer to B(k,j)
                             if (!GBB (Ab, pA)) continue ;

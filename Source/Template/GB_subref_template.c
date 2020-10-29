@@ -323,6 +323,7 @@
                         // with zombies
                         for (int64_t k = 0 ; k < alen ; k++)
                         { 
+// GB_GOTCHA ;
                             int64_t i = GB_Ai (pA + k) ;
                             ASSERT (i == GB_ijlist (I, i, Ikind, Icolon)) ;
                             Ci [pC + k] = i ;           // ok: C is sparse
@@ -629,7 +630,7 @@
                     break ;
 
                 //--------------------------------------------------------------
-                default:;
+                default: ;
                 //--------------------------------------------------------------
             }
 

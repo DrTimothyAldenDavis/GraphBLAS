@@ -58,6 +58,7 @@
 
 // for finding tests that trigger statement coverage.  If running a test
 // in GraphBLAS/Tcov, the test does not terminate.
+#if 0
 #ifdef GBTESTCOV
 #define GB_GOTCHA                                                   \
 {                                                                   \
@@ -72,6 +73,10 @@
     GB_Global_abort_function ( ) ;                                  \
 }
 #endif
+#endif
+
+// TODO GOTCHA disabled
+#define GB_GOTCHA
 
 #define GB_HERE GBDUMP ("%2d: Here: " __FILE__ "\n", __LINE__) ;
 

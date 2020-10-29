@@ -360,7 +360,6 @@ for k1 = k1_list % 1:length(mult_ops)
     % Mask = sprandn (m,n,0.2) ~= 0 ;
     Mask = GB_random_mask (m,n,0.2, M_is_csc, M_is_hyper) ;
 
-save gunk C Mask accum semiring A B dtt identity
     C0 = GB_spec_mxm (C, Mask, accum, semiring, A, B, dtt);
     C1 = GB_mex_mxm  (C, Mask, accum, semiring, A, B, dtt);
     GB_spec_compare (C0, C1, identity) ;

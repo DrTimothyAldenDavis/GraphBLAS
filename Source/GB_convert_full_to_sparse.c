@@ -41,6 +41,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 
     if (A->x == NULL)
     { 
+GB_GOTCHA ;
         ASSERT (A->nzmax == 0 && anz == 0) ;
         A->nzmax = 1 ;
         A->x = GB_CALLOC (A->type->size, GB_void) ;

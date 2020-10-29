@@ -241,7 +241,7 @@ GrB_Info GB_assign_prep
 
         switch (*assign_kind)
         {
-            case GB_ROW_ASSIGN :
+            case GB_ROW_ASSIGN : 
             {
                 // GrB_Row_assign:
                 // M is a column vector the same size as one row of C
@@ -257,7 +257,7 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_COL_ASSIGN :
+            case GB_COL_ASSIGN : 
             {
                 // GrB_Col_assign:
                 // M is a column vector the same size as one column of C
@@ -273,7 +273,7 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_ASSIGN :
+            case GB_ASSIGN : 
             {
                 // GrB_Matrix_assign, GrB_Vector_assign, and scalar variants: M
                 // is a matrix the same size as C for entire matrix (or vector)
@@ -289,7 +289,7 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_SUBASSIGN :
+            case GB_SUBASSIGN : 
             {
                 // GxB_subassign: M is a matrix the same size as C(Rows,Cols)
                 int64_t mnrows = M_transpose ? GB_NCOLS (M) : GB_NROWS (M) ;
@@ -444,7 +444,7 @@ GrB_Info GB_assign_prep
                 // row assign: delete all entries in C(i,:)
                 //--------------------------------------------------------------
 
-                case GB_ROW_ASSIGN :
+                case GB_ROW_ASSIGN : 
                 {
                     // delete all entries in each vector with index i
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
@@ -478,7 +478,7 @@ GrB_Info GB_assign_prep
                 // col assign: delete all entries in C(:,j)
                 //--------------------------------------------------------------
 
-                case GB_COL_ASSIGN :
+                case GB_COL_ASSIGN : 
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
@@ -510,7 +510,7 @@ GrB_Info GB_assign_prep
                 // assign: delete all entries in C
                 //--------------------------------------------------------------
 
-                case GB_ASSIGN :
+                case GB_ASSIGN : 
                 {
                     // C<!NULL>=NULL since result does not depend on computing
                     // Z.  Since C_replace is true, all of C is cleared.  This
@@ -524,7 +524,7 @@ GrB_Info GB_assign_prep
                 // subassign: delete all entries in C(I,J)
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN :
+                case GB_SUBASSIGN : 
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
@@ -1021,11 +1021,13 @@ GrB_Info GB_assign_prep
 
             if (M == NULL && GB_is_dense (A))
             { 
+GB_GOTCHA ;
                 // A is a dense matrix, so entries cannot be deleted
                 wait = false ;
             }
             else
             { 
+GB_GOTCHA ;
                 // A is sparse or M is present.
                 // In this case, action: ( delete ) might occur
                 wait = true ;
@@ -1049,6 +1051,7 @@ GrB_Info GB_assign_prep
 
             if (atype != C->Pending->type)
             { 
+GB_GOTCHA ;
                 // entries in A are copied directly into the list of pending
                 // tuples for C, with no typecasting.  The type of the prior
                 // pending tuples must match the type of A.  Since the types
@@ -1067,6 +1070,7 @@ GrB_Info GB_assign_prep
                   )
             )
             { 
+GB_GOTCHA ;
                 wait = true ;
             }
         }

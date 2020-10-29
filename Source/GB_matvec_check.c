@@ -106,7 +106,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         GBPR0 (" (jumbled)") ;
     }
-    GBPR0 (" %s:\n", A->is_csc ? "by col" : "by row") ;
+    GBPR0 (" %s\n", A->is_csc ? "by col" : "by row") ;
 
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", A->nzmax) ;
@@ -117,89 +117,92 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd " hyper_switch %g\n",
         A->nvec, A->plen, A->vdim, A->hyper_switch) ;
-    GBPR0 ("  sparsity control: ") ;
+    #endif
+
     switch (A->sparsity)
     {
 
         // 1
-        case GxB_HYPERSPARSE :
-            GBPR0 (" hypersparse only\n") ;
+        case GxB_HYPERSPARSE : 
+            GBPR0 ("  sparsity: hypersparse only\n") ;
             break ;
 
         // 2
-        case GxB_SPARSE :
-            GBPR0 (" sparse only\n") ;
+        case GxB_SPARSE : 
+            GBPR0 ("  sparsity: sparse only\n") ;
             break ;
 
         // 3
-        case GxB_HYPERSPARSE + GxB_SPARSE :
-            GBPR0 (" sparse or hypersparse\n") ;
+        case GxB_HYPERSPARSE + GxB_SPARSE : 
+            GBPR0 ("  sparsity: sparse/hypersparse\n") ;
             break ;
 
         // 4
-        case GxB_BITMAP :
-            GBPR0 (" bitmap only\n") ;
+        case GxB_BITMAP : 
+            GBPR0 ("  sparsity: bitmap only\n") ;
             break ;
 
         // 5
-        case GxB_HYPERSPARSE + GxB_BITMAP :
-            GBPR0 (" hypersparse or bitmap\n") ;
+        case GxB_HYPERSPARSE + GxB_BITMAP : 
+            GBPR0 ("  sparsity: hypersparse/bitmap\n") ;
             break ;
 
         // 6
-        case GxB_SPARSE + GxB_BITMAP :
-            GBPR0 (" sparse or bitmap\n") ;
+        case GxB_SPARSE + GxB_BITMAP : 
+            GBPR0 ("  sparsity: sparse/bitmap\n") ;
             break ;
 
         // 7
-        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP :
-            GBPR0 (" hypersparse, sparse, or bitmap\n") ;
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP : 
+            GBPR0 ("  sparsity: hypersparse/sparse/bitmap\n") ;
             break ;
 
         // 8 and 12: these options are treated the same
-        case GxB_FULL :
-        case GxB_FULL + GxB_BITMAP :
-            GBPR0 (" bitmap or full\n") ;
+        case GxB_FULL : 
+        case GxB_FULL + GxB_BITMAP : 
+            GBPR0 ("  sparsity: bitmap/full\n") ;
             break ;
 
         // 9
-        case GxB_HYPERSPARSE + GxB_FULL :
-            GBPR0 (" hypersparse or full\n") ;
+        case GxB_HYPERSPARSE + GxB_FULL : 
+            GBPR0 ("  sparsity: hypersparse/full\n") ;
             break ;
 
         // 10
-        case GxB_SPARSE + GxB_FULL :
-            GBPR0 (" sparse or full\n") ;
+        case GxB_SPARSE + GxB_FULL : 
+            GBPR0 ("  sparsity: sparse/full\n") ;
             break ;
 
         // 11
-        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :
-            GBPR0 (" hypersparse, sparse, or full\n") ;
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
+            GBPR0 ("  sparsity: hypersparse/sparse/full\n") ;
             break ;
 
         // 13
-        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL :
-            GBPR0 (" hypersparse, bitmap, or full\n") ;
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
+            GBPR0 ("  sparsity: hypersparse/bitmap/full\n") ;
             break ;
 
         // 14
-        case GxB_SPARSE + GxB_BITMAP + GxB_FULL :
-            GBPR0 (" sparse, bitmap, or full\n") ;
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
+            GBPR0 ("  sparsity: sparse/bitmap/full\n") ;
             break ;
 
         // 15
-        case GxB_AUTO_SPARSITY :
-            GBPR0 (" auto\n") ;
+        case GxB_AUTO_SPARSITY : 
+            #if GB_DEVELOPER
+            GBPR0 ("  sparsity: auto\n") ;
+            #endif
             break ;
 
-        default :
+        default : 
             GBPR0 (" unknown\n") ;
             break ;
     }
-    #endif
 
     if (A->sparsity <= 0 || A->sparsity > GxB_AUTO_SPARSITY)
     { 
+GB_GOTCHA ;
         GBPR0 (" invalid sparsity structure\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -225,6 +228,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A is full
         if (! (A->nvec == A->vdim && A->plen == -1))
         { 
+GB_GOTCHA ;
             GBPR0 ("  invalid full %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -235,6 +239,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         if (! (A->nvec == A->vdim && A->plen == -1 &&
                A->h == NULL && A->p == NULL && A->i == NULL))
         { 
+GB_GOTCHA ;
             GBPR0 ("  invalid bitmap %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -424,23 +429,25 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         if (A->nzombies != 0)
         { 
+GB_GOTCHA ;
             GBPR0 ("  %s %s cannot have zombies\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (Pending != NULL)
         { 
+GB_GOTCHA ;
             GBPR0 ("  %s %s cannot have pending tuples\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (A->jumbled)
         { 
+GB_GOTCHA ;
             GBPR0 ("  %s %s cannot be jumbled\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
-
     }
 
     //--------------------------------------------------------------------------
@@ -483,18 +490,15 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             }
         }
 
-        bool prcol = ((pr_short && k < GB_NBRIEF) || pr_complete) ;
+        bool prcol = ((pr_short && !truncated) || pr_complete) ;
         // print the header for vector j
         if (prcol)
         { 
             #if GB_DEVELOPER
             GBPR ("  %s: " GBd " : " GBd " entries [" GBd ":" GBd "]\n",
                 A->is_csc ? "column" : "row", j, ajnz, p, pend-1) ;
+            if (pr_short && k == GB_NBRIEF) truncated = true ;
             #endif
-        }
-        else if (pr_short && k == GB_NBRIEF)
-        { 
-            truncated = true ;
         }
 
         // for each entry in A(:,j), the kth vector of A
@@ -582,6 +586,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (is_bitmap && anz != anz_actual)
     { 
+GB_GOTCHA ;
         // this case can only occur for bitmapped matrices
         GBPR0 ("  invalid bitmap count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;
@@ -646,6 +651,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         info = GB_Type_check (Pending->type, "", pr, f) ;
         if (info != GrB_SUCCESS || (Pending->type->size != Pending->size))
         { 
+GB_GOTCHA ;
             GBPR0 ("  %s has an invalid Pending->type\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -722,6 +728,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||
            (A->nvec_nonempty == -1)))
     { 
+GB_GOTCHA ;
         GBPR0 ("  invalid count of non-empty vectors\n"
             "A->nvec_nonempty = " GBd " actual " GBd "\n",
             A->nvec_nonempty, actual_nvec_nonempty) ;

@@ -279,6 +279,7 @@ void GB_Global_bitmap_switch_set (float bitmap_switch)
 
 float GB_Global_bitmap_switch_get (void)
 { 
+GB_GOTCHA ;
     return (GB_Global.bitmap_switch) ;
 }
 

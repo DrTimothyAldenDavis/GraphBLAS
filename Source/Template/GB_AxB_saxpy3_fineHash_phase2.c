@@ -86,6 +86,7 @@
                 }
                 if (hf_unlocked)    // if true, update C(i,j)
                 { 
+// TODO: GB_GOTCHA
                     // hash entry occuppied by C(i,j): update it
                     GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                 }

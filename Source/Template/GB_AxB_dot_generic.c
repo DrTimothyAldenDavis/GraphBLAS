@@ -115,11 +115,13 @@
 
         if (mult->ztype == GrB_INT64)
         {
+GB_GOTCHA ;
             #define GB_CTYPE int64_t
             int64_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
+GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int64_t)) ;
             }
             switch (opcode)
@@ -135,6 +137,7 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
@@ -149,6 +152,7 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
@@ -161,18 +165,21 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 default: ;
             }
         }
         else
         {
+GB_GOTCHA ;
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
             int32_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
+GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int32_t)) ;
             }
             switch (opcode)
@@ -188,6 +195,7 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
@@ -202,6 +210,7 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
@@ -214,6 +223,7 @@
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
+GB_GOTCHA ;
                     break ;
                 default: ;
             }
@@ -278,6 +288,7 @@
             // fmult is not used and can be NULL (for user-defined types)
             if (flipxy)
             { 
+GB_GOTCHA ;
                 // flip first and second
                 opcode = GB_binop_flip (opcode) ;
             }
@@ -297,6 +308,7 @@
             }
             else // opcode == GB_SECOND_opcode
             { 
+GB_GOTCHA ;
                 // t = B(i,k)
                 ASSERT (A_is_pattern) ;
                 #undef  GB_MULT

@@ -55,6 +55,7 @@
 
             if (Mask_struct)
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -66,6 +67,7 @@
             }
             else
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
@@ -90,6 +92,7 @@
 
             if (Mask_struct)
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -128,6 +131,7 @@
 
             if (Mask_struct)
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
@@ -143,6 +147,7 @@
             }
             else
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
@@ -167,6 +172,7 @@
 
             if (Mask_struct)
             {
+GB_GOTCHA ;
                 // this method is used by LAGraph_bfs_parent when q is
                 // a bitmap and pi is full.
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -181,6 +187,7 @@
             }
             else
             {
+GB_GOTCHA ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -268,6 +275,7 @@
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
+GB_GOTCHA ;
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -283,6 +291,7 @@
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
+GB_GOTCHA ;
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -300,6 +309,7 @@
 
     if (C_is_bitmap)
     { 
+GB_GOTCHA ;
         C->nvals = cnvals ;
     }
 }

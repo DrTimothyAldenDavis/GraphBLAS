@@ -34,7 +34,7 @@ GrB_Info GB_hyper_realloc
     //--------------------------------------------------------------------------
 
     if (GB_IS_HYPERSPARSE (A))
-    {
+    { 
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;
 
@@ -52,6 +52,7 @@ GrB_Info GB_hyper_realloc
 
         if (!ok)
         { 
+GB_GOTCHA ;
             // out of memory
             GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;

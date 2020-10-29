@@ -44,11 +44,12 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 
     if (jumbled == NULL)
     { 
+GB_GOTCHA ;
         // the exported matrix cannot be jumbled
         GB_MATRIX_WAIT (*A) ;
     }
     else
-    {
+    { 
         // the exported matrix is allowed to be jumbled
         GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
     }
@@ -59,7 +60,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 
     // ensure the matrix is in CSC format
     if (!((*A)->is_csc))
-    {
+    { 
         // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, true, *A,

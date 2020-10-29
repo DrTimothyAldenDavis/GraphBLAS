@@ -340,6 +340,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
                     if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen &&
                         aknz < avlen && !(A->jumbled))
                     { 
+GB_GOTCHA ;
                         // scan M(:j), and do binary search for A(i,j)
                         bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;
                     }

@@ -35,9 +35,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // hyper_switch
         //----------------------------------------------------------------------
 
-        case GxB_HYPER_SWITCH :
+        case GxB_HYPER_SWITCH : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 double *hyper_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
@@ -52,7 +52,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_FORMAT : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 GxB_Format_Value *format = va_arg (ap, GxB_Format_Value *) ;
                 va_end (ap) ;
@@ -68,7 +68,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_MODE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 GrB_Mode *mode = va_arg (ap, GrB_Mode *) ;
                 va_end (ap) ;
@@ -83,7 +83,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
-            { 
+            {
                 va_start (ap, field) ;
                 int *nthreads_max = va_arg (ap, int *) ;
                 va_end (ap) ;
@@ -98,7 +98,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
-            { 
+            {
                 va_start (ap, field) ;
                 double *chunk = va_arg (ap, double *) ;
                 va_end (ap) ;
@@ -111,9 +111,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // SuiteSparse:GraphBLAS version, etc
         //----------------------------------------------------------------------
 
-        case GxB_LIBRARY_NAME :
+        case GxB_LIBRARY_NAME : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **name = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -122,9 +122,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_VERSION :
+        case GxB_LIBRARY_VERSION : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 int *version = va_arg (ap, int *) ;
                 va_end (ap) ;
@@ -135,9 +135,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_DATE :
+        case GxB_LIBRARY_DATE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **date = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -146,9 +146,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_ABOUT :
+        case GxB_LIBRARY_ABOUT : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **about = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -157,9 +157,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_LICENSE :
+        case GxB_LIBRARY_LICENSE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **license = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -168,9 +168,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_COMPILE_DATE :
+        case GxB_LIBRARY_COMPILE_DATE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **compile_date = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -179,9 +179,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_COMPILE_TIME :
+        case GxB_LIBRARY_COMPILE_TIME : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **compile_time = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -190,9 +190,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_LIBRARY_URL :
+        case GxB_LIBRARY_URL : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **url = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -205,9 +205,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // GraphBLAS API version, tec
         //----------------------------------------------------------------------
 
-        case GxB_API_VERSION :
+        case GxB_API_VERSION : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 int *api_version = va_arg (ap, int *) ;
                 va_end (ap) ;
@@ -218,9 +218,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_API_DATE :
+        case GxB_API_DATE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **api_date = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -229,9 +229,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_API_ABOUT :
+        case GxB_API_ABOUT : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **api_about = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -240,9 +240,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_API_URL :
+        case GxB_API_URL : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 char **api_url = va_arg (ap, char **) ;
                 va_end (ap) ;
@@ -257,7 +257,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_BURBLE : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 bool *burble = va_arg (ap, bool *) ;
                 va_end (ap) ;
@@ -272,7 +272,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
 
-            { 
+            {
                 va_start (ap, field) ;
                 GrB_Desc_Value *gpu_control = va_arg (ap, GrB_Desc_Value *) ;
                 va_end (ap) ;
@@ -283,7 +283,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
 
-            { 
+            {
                 va_start (ap, field) ;
                 double *gpu_chunk = va_arg (ap, double *) ;
                 va_end (ap) ;
@@ -294,7 +294,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GPU_COUNT : 
 
-            { 
+            {
                 va_start (ap, field) ;
                 int *gpu_count = va_arg (ap, int *) ;
                 va_end (ap) ;
@@ -310,7 +310,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_GLOBAL_MKL :           // same as GxB_MKL
 
-            { 
+            {
                 va_start (ap, field) ;
                 int *use_mkl = va_arg (ap, int *) ;
                 va_end (ap) ;

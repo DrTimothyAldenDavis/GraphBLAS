@@ -107,6 +107,7 @@ static inline GrB_Info GB_jappend
                 Context) ;
             if (info != GrB_SUCCESS)
             { 
+GB_GOTCHA ;
                 // out of memory
                 return (info) ;
             }

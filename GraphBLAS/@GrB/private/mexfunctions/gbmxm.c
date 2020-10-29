@@ -140,9 +140,14 @@ void mexFunction
         OK (GxB_Monoid_operator (&add, add_monoid)) ;
         OK (GxB_BinaryOp_ztype (&ctype, add)) ;
 
+        // create the matrix C and set its format and sparsity
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
         OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        int sparsity = gb_get_sparsity (A, B, 0) ;
+printf ("sparsity: %d\n", sparsity) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+    GxB_print (C, 3) ;
     }
 
     //--------------------------------------------------------------------------
@@ -164,6 +169,7 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
+    GxB_print (C, 3) ;
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;

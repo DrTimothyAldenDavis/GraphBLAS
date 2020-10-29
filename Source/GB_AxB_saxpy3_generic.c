@@ -177,6 +177,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
 
         if (mult->ztype == GrB_INT64)
         {
+GB_GOTCHA ;
             #undef  GB_CTYPE
             #define GB_CTYPE int64_t
             #undef  GB_CSIZE
@@ -190,6 +191,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
                     #include "GB_AxB_saxpy_template.c"
+GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
@@ -198,12 +200,14 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
                     #include "GB_AxB_saxpy_template.c"
+GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
                     #include "GB_AxB_saxpy_template.c"
+GB_GOTCHA ;
                     break ;
                 default: ;
             }
@@ -223,6 +227,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
                     #include "GB_AxB_saxpy_template.c"
+GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
@@ -231,6 +236,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy_template.c"
+GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
@@ -238,6 +244,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy_template.c"
                     break ;
+GB_GOTCHA ;
                 default: ;
             }
         }
@@ -307,6 +314,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
             // fmult is not used and can be NULL (for user-defined types)
             if (flipxy)
             { 
+GB_GOTCHA ;
                 // flip first and second
                 opcode = GB_binop_flip (opcode) ;
             }
@@ -320,6 +328,7 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
             }
             else // opcode == GB_SECOND_opcode
             { 
+GB_GOTCHA ;
                 // t = B(i,k)
                 ASSERT (A_is_pattern) ;
                 #undef  GB_MULT

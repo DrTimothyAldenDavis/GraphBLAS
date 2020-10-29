@@ -70,8 +70,7 @@
                 cnz = Cp [kB] +
                     ((C_count_start == NULL) ? 0 : C_count_start [kB]) ;
                 cnz_last = (C_count_end == NULL) ?
-                    (Cp [kB+1] - 1) :
-                    (Cp [kB] + C_count_end [kB] - 1) ;
+                    (Cp [kB+1] - 1) : (Cp [kB] + C_count_end [kB] - 1) ;
                 if (cnz > cnz_last) continue ;
             }
             #endif

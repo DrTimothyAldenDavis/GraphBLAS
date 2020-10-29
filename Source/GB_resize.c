@@ -167,10 +167,12 @@ GrB_Info GB_resize              // change the size of a matrix
             }
             else
             { 
+GB_GOTCHA ;
                 // use a single thread for each vector
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (j = 0 ; j < vdim_new ; j++)
-                {
+                { 
+// GB_GOTCHA ;
                     GB_void *pdest = Ax_new + j * vlen_new * asize ;
                     GB_void *psrc  = Ax_old + j * vlen_old * asize ;
                     memcpy (pdest, psrc, vlen_new * asize) ;

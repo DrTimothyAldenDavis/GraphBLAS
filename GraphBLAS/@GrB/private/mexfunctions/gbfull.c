@@ -116,7 +116,8 @@ void mexFunction
         // T = (type) round (A)
         OK (GrB_Matrix_new (&T, type, nrows, ncols)) ;
         OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, fmt)) ;
-        OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A, NULL)) ;
+        OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A,
+            NULL)) ;
         S = T ;
     }
     else

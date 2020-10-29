@@ -43,11 +43,12 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 
     if (jumbled == NULL)
     { 
+GB_GOTCHA ;
         // the exported vector cannot be jumbled
         GB_MATRIX_WAIT (*v) ;
     }
     else
-    {
+    { 
         // the exported vector is allowed to be jumbled
         GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*v) ;
     }
@@ -70,7 +71,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
         nzmax, NULL, jumbled, &nonempty, NULL,
         &vp, NULL, NULL, vi, vx, NULL, NULL, Context) ;
     if (info == GrB_SUCCESS)
-    {
+    { 
         (*nvals) = vp [1] ;
     }
     GB_FREE (vp) ;

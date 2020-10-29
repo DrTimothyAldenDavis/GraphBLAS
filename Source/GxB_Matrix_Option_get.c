@@ -45,7 +45,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
             }
             break ;
 
-        case GxB_SPARSITY :
+        case GxB_SPARSITY : 
 
             {
                 va_start (ap, field) ;

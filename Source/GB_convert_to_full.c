@@ -43,6 +43,7 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     bool ok = GB_Index_multiply (&anzmax, avlen, avdim) ;
     if (!ok)
     { 
+GB_GOTCHA ;
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }

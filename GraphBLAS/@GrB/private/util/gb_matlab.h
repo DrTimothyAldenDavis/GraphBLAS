@@ -413,6 +413,13 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     GxB_Format_Value fmt_descriptor     // may be GxB_NO_FORMAT
 ) ;
 
+GxB_Format_Value gb_get_sparsity        // 1 to 15
+(
+    GrB_Matrix A,                       // may be NULL
+    GrB_Matrix B,                       // may be NULL
+    int sparsity_default                // may be 0
+) ;
+
 bool gb_is_equal            // true if A == B, false if A ~= B
 (
     GrB_Matrix A,

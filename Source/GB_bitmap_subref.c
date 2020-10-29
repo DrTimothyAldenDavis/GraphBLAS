@@ -133,6 +133,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
         if (symbolic)
         { 
+GB_GOTCHA ;
             int64_t *GB_RESTRICT Cx = (int64_t *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \

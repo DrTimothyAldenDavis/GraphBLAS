@@ -812,6 +812,7 @@
                     }
                     else if (B == M)
                     { 
+// GB_GOTCHA ;
                         // B is aliased to M
                         pB = pM ;
                         bfound = true ;

@@ -47,6 +47,7 @@
 
             if (pM < pM_end)
             { 
+// GB_GOTCHA ;
                 bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
                 {

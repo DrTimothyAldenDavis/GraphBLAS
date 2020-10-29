@@ -92,6 +92,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
     if (C->jumbled)
     { 
+GB_GOTCHA ;
         // C must not be jumbled
         GB_MATRIX_WAIT (C) ;
     }
@@ -290,6 +291,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
             stype, NULL, i, j, C->vdim > 1))
         { 
+GB_GOTCHA ;
             // out of memory
             GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;

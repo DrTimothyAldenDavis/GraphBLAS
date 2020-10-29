@@ -15,6 +15,8 @@
 // it is in CSC format.  The caller has already modified the op if A is in CSR
 // format.
 
+// TODO can this function return anything but GrB_SUCCESS?
+
 #include "GB_apply.h"
 #include "GB_binop.h"
 #include "GB_ek_slice.h"

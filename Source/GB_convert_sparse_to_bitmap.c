@@ -72,6 +72,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     int64_t anzmax ;
     if (!GB_Index_multiply (&anzmax, avdim, avlen))
     { 
+GB_GOTCHA ;
         // problem too large
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;

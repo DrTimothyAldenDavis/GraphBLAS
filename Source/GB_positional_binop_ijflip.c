@@ -29,8 +29,7 @@ GrB_BinaryOp GB_positional_binop_ijflip // return flipped operator
             case GB_SECONDI1_opcode : return (GxB_SECONDJ1_INT64) ;
             case GB_SECONDJ_opcode  : return (GxB_SECONDI_INT64 ) ;
             case GB_SECONDJ1_opcode : return (GxB_SECONDI1_INT64) ;
-            // non-positional op is returned unmodified
-            default                 : return (op) ;
+            default: ;
         }
     }
     else
@@ -45,9 +44,11 @@ GrB_BinaryOp GB_positional_binop_ijflip // return flipped operator
             case GB_SECONDI1_opcode : return (GxB_SECONDJ1_INT32) ;
             case GB_SECONDJ_opcode  : return (GxB_SECONDI_INT32 ) ;
             case GB_SECONDJ1_opcode : return (GxB_SECONDI1_INT32) ;
-            // non-positional op is returned unmodified
-            default                 : return (op) ;
+            default: ;
         }
     }
+
+    // non-positional op is returned unmodified
+    return (op) ;
 }
 

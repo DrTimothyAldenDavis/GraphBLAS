@@ -636,6 +636,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         if (!GB_allocate_result (Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
         { 
+GB_GOTCHA ;
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;

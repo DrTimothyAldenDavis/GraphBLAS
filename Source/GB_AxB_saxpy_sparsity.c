@@ -166,33 +166,33 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
         switch (B_sparsity)
         {
-            case GxB_HYPERSPARSE :
-            case GxB_SPARSE :
+            case GxB_HYPERSPARSE : 
+            case GxB_SPARSE : 
                 switch (A_sparsity)
                 {
-                    case GxB_HYPERSPARSE :
-                    case GxB_SPARSE :
+                    case GxB_HYPERSPARSE : 
+                    case GxB_SPARSE : 
                         C_sparsity = B_sparsity ;
                         break ;
-                    case GxB_BITMAP :
-                    case GxB_FULL :
+                    case GxB_BITMAP : 
+                    case GxB_FULL : 
                         C_sparsity = C_is_large ? B_sparsity : GxB_BITMAP ;
                         break ;
                     default: ;
                 }
                 break ;
-            case GxB_BITMAP :
+            case GxB_BITMAP : 
                 // BFS comes here: B is bitmap
-            case GxB_FULL :
+            case GxB_FULL : 
                 switch (A_sparsity)
                 {
-                    case GxB_HYPERSPARSE :
-                    case GxB_SPARSE :
+                    case GxB_HYPERSPARSE : 
+                    case GxB_SPARSE : 
                         // BFS comes here: A is sparse, and C is not huge
                         C_sparsity = C_is_large ? GxB_SPARSE : GxB_BITMAP ;
                         break ;
-                    case GxB_BITMAP :
-                    case GxB_FULL :
+                    case GxB_BITMAP : 
+                    case GxB_FULL : 
                         C_sparsity = GxB_BITMAP ;
                         break ;
                     default: ;

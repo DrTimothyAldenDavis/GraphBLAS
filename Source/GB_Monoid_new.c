@@ -237,7 +237,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 
     switch (op->opcode)
     {
-        case GB_MIN_opcode :
+        case GB_MIN_opcode : 
 
             // MIN monoid:  identity is +inf, terminal is -inf
             // note there is no MIN monoid for complex types
@@ -258,7 +258,7 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_MAX_opcode :
+        case GB_MAX_opcode : 
 
             // MAX monoid:  identity is -inf, terminal is +inf
             // note there is no MAX monoid for complex types
@@ -279,7 +279,7 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_PLUS_opcode :
+        case GB_PLUS_opcode : 
 
             // PLUS monoid:  identity is zero, no terminal value
             switch (zcode)
@@ -300,7 +300,7 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_TIMES_opcode :
+        case GB_TIMES_opcode : 
 
             // TIMES monoid:  identity is 1, no terminal value
             switch (zcode)
@@ -321,7 +321,7 @@ GrB_Info GB_Monoid_new          // create a monoid
             }
             break ;
 
-        case GB_ANY_opcode :
+        case GB_ANY_opcode : 
 
             // ANY monoid:  identity is anything, terminal value is anything
             switch (zcode)
@@ -337,30 +337,30 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IT (uint64_t, 0, 0 )
                 case GB_FP32_code   : GB_IT (float   , 0, 0 )
                 case GB_FP64_code   : GB_IT (double  , 0, 0 )
-                case GB_FC32_code   :
+                case GB_FC32_code   : 
                     GB_IT (GxB_FC32_t, GxB_CMPLXF(0,0), GxB_CMPLXF(0,0))
-                case GB_FC64_code   :
+                case GB_FC64_code   : 
                     GB_IT (GxB_FC64_t, GxB_CMPLX(0,0), GxB_CMPLX(0,0))
                 default: ;
             }
             break ;
 
-        case GB_LOR_opcode :
+        case GB_LOR_opcode : 
 
             // boolean OR monoid:  identity is false, terminal is true
             if (zcode == GB_BOOL_code) GB_IT (bool, false, true)
 
-        case GB_LAND_opcode :
+        case GB_LAND_opcode : 
 
             // boolean AND monoid:  identity is true, terminal is false
             if (zcode == GB_BOOL_code) GB_IT (bool, true, false)
 
-        case GB_LXOR_opcode :
+        case GB_LXOR_opcode : 
 
             // boolean XOR monoid:  identity is false, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, false)
 
-        case GB_EQ_opcode :
+        case GB_EQ_opcode : 
 
             // boolean EQ monoid:  identity is true, no terminal value
             if (zcode == GB_BOOL_code) GB_IN (bool, true)

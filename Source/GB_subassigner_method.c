@@ -716,9 +716,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             ASSERT (!A_is_bitmap) ;
             break ;
 
-        default : ;
-        case GB_SUBASSIGN_METHOD_BITMAP :
-            break ;
+        // case GB_SUBASSIGN_METHOD_BITMAP:
+        default :;
     }
 
     //--------------------------------------------------------------------------

@@ -160,9 +160,12 @@ void mexFunction
         GB_ijlength (J, nj, ancols, (int64_t *) &cncols, &J_kind, J_colon) ;
         ctype = atype ;
 
+        // create the matrix C and set its format and sparsity
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
         OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        int sparsity = gb_get_sparsity (A, NULL, 0) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
     }
 
     //--------------------------------------------------------------------------

@@ -275,9 +275,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     // positional binary operator
                     switch (opcode)
                     {
-                        case GB_FIRSTI_opcode   :
+                        case GB_FIRSTI_opcode   : 
                             // z = first_i(A(iA,jA),y) == iA
-                        case GB_FIRSTI1_opcode  :
+                        case GB_FIRSTI1_opcode  : 
                             // z = first_i1(A(iA,jA),y) == iA+1
                             if (is64)
                             { 
@@ -288,9 +288,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                                 Cx_int32 [pC] = (int32_t) (iA + offset) ;
                             }
                             break ;
-                        case GB_FIRSTJ_opcode   :
+                        case GB_FIRSTJ_opcode   : 
                             // z = first_j(A(iA,jA),y) == jA
-                        case GB_FIRSTJ1_opcode  :
+                        case GB_FIRSTJ1_opcode  : 
                             // z = first_j1(A(iA,jA),y) == jA+1
                             if (is64)
                             { 
@@ -301,9 +301,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                                 Cx_int32 [pC] = (int32_t) (jA + offset) ;
                             }
                             break ;
-                        case GB_SECONDI_opcode  :
+                        case GB_SECONDI_opcode  : 
+GB_GOTCHA ;
                             // z = second_i(x,B(iB,jB)) == iB
-                        case GB_SECONDI1_opcode :
+                        case GB_SECONDI1_opcode : 
                             // z = second_i1(x,B(iB,jB)) == iB+1
                             if (is64)
                             { 
@@ -314,9 +315,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                                 Cx_int32 [pC] = (int32_t) (iB + offset) ;
                             }
                             break ;
-                        case GB_SECONDJ_opcode  :
+                        case GB_SECONDJ_opcode  : 
+GB_GOTCHA ;
                             // z = second_j(x,B(iB,jB)) == jB
-                        case GB_SECONDJ1_opcode :
+                        case GB_SECONDJ1_opcode : 
                             // z = second_j1(x,B(iB,jB)) == jB+1
                             if (is64)
                             { 

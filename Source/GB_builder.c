@@ -312,12 +312,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-
-            //------------------------------------------------------------------
+GB_GOTCHA ;
             // nothing to do
-            //------------------------------------------------------------------
-
-            ;
 
         }
         else if (is_matrix)
@@ -505,6 +501,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
         else
         { 
+            ASSERT (0) ;    // TODO: dead code
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // GB_reduce_to_vector: do not check I_input, assume not sorted
@@ -1131,7 +1129,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-
+GB_GOTCHA ;
             // nothing to do
 
         }

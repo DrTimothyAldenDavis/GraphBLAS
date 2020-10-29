@@ -38,7 +38,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     switch (field)
     {
 
-        case GxB_SPARSITY :
+        case GxB_SPARSITY : 
 
             {
                 va_start (ap, field) ;
@@ -46,6 +46,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                 va_end (ap) ;
                 if (sparsity <= 0 || sparsity > GxB_AUTO_SPARSITY)
                 { 
+GB_GOTCHA ;
                     // GxB_DEFAULT is zero, so this is changed to
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
@@ -66,6 +67,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
 
         default : 
 
+GB_GOTCHA ;
             GB_ERROR (GrB_INVALID_VALUE,
                 "invalid option field [%d], can only be GxB_SPARSITY [%d]",
                 (int) field, (int) GxB_SPARSITY) ;

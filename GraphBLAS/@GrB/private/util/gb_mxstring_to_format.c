@@ -39,69 +39,88 @@ bool gb_mxstring_to_format      // true if a valid format is found
 )
 {
 
+    bool valid = false ;
     (*fmt) = GxB_BY_COL ;
     (*sparsity) = GxB_AUTO_SPARSITY ;
     #define LEN 256
     char format_string [LEN+2] ;
     gb_mxstring_to_string (format_string, LEN, mxformat, "format") ;
+    // printf ("format: [%s]: ", format_string) ;
 
-    if (MATCH (format_string, "by row"))
-    { 
-        (*fmt) = GxB_BY_ROW ;
-    }
-    else if (MATCH (format_string, "by col"))
-    { 
-        ;
-    }
-    else if (MATCH (format_string, "sparse") ||
-             MATCH (format_string, "sparse by col"))
-    { 
-        (*sparsity) = GxB_SPARSE ;
-    }
-    else if (MATCH (format_string, "hypersparse") ||
-             MATCH (format_string, "hypersparse by col"))
-    { 
-        (*sparsity) = GxB_HYPERSPARSE ;
-    }
-    else if (MATCH (format_string, "bitmap") ||
-             MATCH (format_string, "bitmap by col"))
-    { 
-        (*sparsity) = GxB_BITMAP ;
-    }
-    else if (MATCH (format_string, "full") ||
-             MATCH (format_string, "full by col"))
-    { 
-        (*sparsity) = GxB_FULL + GxB_BITMAP ;
-    }
-    else if (MATCH (format_string, "sparse by row"))
-    { 
-        (*sparsity) = GxB_SPARSE ;
-        (*fmt) = GxB_BY_ROW ;
-    }
-    else if (MATCH (format_string, "hypersparse by row"))
-    { 
-        (*sparsity) = GxB_HYPERSPARSE ;
-        (*fmt) = GxB_BY_ROW ;
-    }
-    else if (MATCH (format_string, "bitmap by row"))
-    { 
-        (*sparsity) = GxB_BITMAP ;
-        (*fmt) = GxB_BY_ROW ;
-    }
-    else if (MATCH (format_string, "full by row"))
-    { 
-        (*sparsity) = GxB_FULL + GxB_BITMAP ;
-        (*fmt) = GxB_BY_ROW ;
-    }
-    else
-    { 
-        // The string is not a format string, but this is not an error here.
-        // For example, G = GrB (m,n,'double','by row') queries both its string
-        // input arguments with this function and gb_mxstring_to_type, to parse
-        // its inputs.
-        return (false) ;
+    //--------------------------------------------------------------------------
+    // look for trailing "by row" or "by col", and set format if found
+    //--------------------------------------------------------------------------
+
+    int len = strlen (format_string) ;
+    if (len >= 6)
+    {
+        if (MATCH (format_string + len - 6, "by row"))
+        { 
+            // printf ("(by row) ") ;
+            valid = true ;
+            (*fmt) = GxB_BY_ROW ;
+            len = len - 6 ;
+            format_string [GB_IMAX (0, len-1)] = '\0' ;
+        }
+        else if (MATCH (format_string + len - 6, "by col"))
+        { 
+            // printf ("(by col) ") ;
+            valid = true ;
+            (*fmt) = GxB_BY_COL ;
+            len = len - 6 ;
+            format_string [GB_IMAX (0, len-1)] = '\0' ;
+        }
     }
 
-    return (true) ;
+    //--------------------------------------------------------------------------
+    // parse the format for hypersparse/sparse/bitmap/full sparsity tokens
+    //--------------------------------------------------------------------------
+
+    int s = 0 ;
+    int kstart = 0 ;
+    // printf ("len %d\n", len) ;
+    for (int k = 0 ; k <= len ; k++)
+    {
+        if (format_string [k] == '/' || format_string [k] == '\0')
+        {
+            // mark the end of prior token
+            format_string [k] = '\0' ;
+            // printf ("next %d:[%s]\n", kstart, format_string + kstart) ;
+
+            // null-terminated token is contained in format_string [kstart:k]
+            if (MATCH (format_string + kstart, "sparse"))
+            { 
+                // printf ("(sparse) ") ;
+                s += GxB_SPARSE ;
+            }
+            else if (MATCH (format_string + kstart, "hypersparse"))
+            { 
+                // printf ("(hypersparse) ") ;
+                s += GxB_HYPERSPARSE ;
+            }
+            else if (MATCH (format_string + kstart, "bitmap"))
+            { 
+                // printf ("(bitmap) ") ;
+                s += GxB_BITMAP ;
+            }
+            else if (MATCH (format_string + kstart, "full"))
+            { 
+                // printf ("(full) ") ;
+                s += GxB_FULL ;
+            }
+
+            // advance to the next token
+            kstart = k+1 ;
+        }
+    }
+    // printf ("\n") ;
+
+    if (s > 0)
+    {
+        valid = true ;
+        (*sparsity) = s ;
+    }
+
+    return (valid) ;
 }
 

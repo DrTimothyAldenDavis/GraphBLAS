@@ -78,8 +78,10 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     if (GB_OPCODE_IS_POSITIONAL (opcode))
     { 
+GB_GOTCHA ;
         if (flipxy)
         { 
+GB_GOTCHA ;
             // the multiplicatve operator is fmult(y,x), so flip the opcode
             opcode = GB_binop_flip (opcode) ;
         }
@@ -88,40 +90,53 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         if (mult->ztype == GrB_INT64)
         {
             switch (opcode)
-            { 
+            {
                 // first_op(D,B) becomes position_i(B)
-                case GB_FIRSTI_opcode   :
-                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT64  ; break ;
-                case GB_FIRSTI1_opcode  :
-                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT64 ; break ;
+                case GB_FIRSTI_opcode   : 
+                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT64  ; 
+                    GB_GOTCHA ; break ;
+                case GB_FIRSTI1_opcode  : 
+                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT64 ; 
+                    GB_GOTCHA ; break ;
                 // second_op(D,B) becomes position_op(B)
-                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT64  ; break ;
-                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT64  ; break ;
-                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT64 ; break ;
-                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT64 ; break ;
+                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT64  ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT64  ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT64 ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT64 ; 
+                    GB_GOTCHA ; break ;
                 default:  ;
             }
         }
         else
         {
             switch (opcode)
-            { 
+            {
                 // first_op(D,B) becomes position_i(B)
-                case GB_FIRSTI_opcode   :
-                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT32  ; break ;
-                case GB_FIRSTI1_opcode  :
-                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT32 ; break ;
+                case GB_FIRSTI_opcode   : 
+                case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT32  ; 
+                    GB_GOTCHA ; break ;
+                case GB_FIRSTI1_opcode  : 
+                case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT32 ; 
+                    GB_GOTCHA ; break ;
                 // second_op(D,B) becomes position_op(B)
-                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT32  ; break ;
-                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT32  ; break ;
-                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT32 ; break ;
-                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT32 ; break ;
+                case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT32  ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT32  ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT32 ; 
+                    GB_GOTCHA ; break ;
+                case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT32 ; 
+                    GB_GOTCHA ; break ;
                 default:  ;
             }
         }
         info = GB_apply_op (C->x, op1, NULL, NULL, NULL, B, Context) ;
         if (info != GrB_SUCCESS)
-        {
+        { 
+GB_GOTCHA ;
             // out of memory
             GB_Matrix_free (Chandle) ;
             return (info) ;
@@ -149,6 +164,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     if (flipxy)
     { 
+GB_GOTCHA ;
         // z = fmult (b,a) will be computed
         D_is_pattern = op_is_first  || op_is_pair ;
         B_is_pattern = op_is_second || op_is_pair ;
@@ -240,6 +256,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         GB_cast_function cast_D, cast_B ;
         if (flipxy)
         { 
+GB_GOTCHA ;
             // D is typecasted to y, and B is typecasted to x
             cast_D = D_is_pattern ? NULL :
                      GB_cast_factory (mult->ytype->code, D->type->code) ;
@@ -281,6 +298,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         if (flipxy)
         { 
+GB_GOTCHA ;
             #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
             #include "GB_AxB_rowscale_meta.c"
             #undef GB_BINOP

@@ -137,19 +137,19 @@ GrB_Info GB_bitmap_assign_fullM_accum
 
         switch (assign_kind)
         {
-            case GB_ASSIGN :
+            case GB_ASSIGN : 
                 // C<M>(I,J) += scalar where M has the same size as C
                 #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
-            case GB_SUBASSIGN :
+            case GB_SUBASSIGN : 
                 // C(I,J)<M> += scalar where M has the same size as A
                 #undef  GB_GET_pM
                 #define GB_GET_pM pA
                 #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
-            default:;
+            default: ;
         }
 
     }
@@ -199,31 +199,32 @@ GrB_Info GB_bitmap_assign_fullM_accum
 
         switch (assign_kind)
         {
-            case GB_ROW_ASSIGN :
+            case GB_ROW_ASSIGN : 
                 // C<m>(i,J) += A where m is a 1-by-C->vdim row vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM jC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
-            case GB_COL_ASSIGN :
+            case GB_COL_ASSIGN : 
+GB_GOTCHA ;
                 // C<m>(I,j) += A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
-            case GB_ASSIGN :
+            case GB_ASSIGN : 
                 // C<M>(I,J) += A where M has the same size as C
                 #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
-            case GB_SUBASSIGN :
+            case GB_SUBASSIGN : 
                 // C(I,J)<M> += A where M has the same size as A
                 #undef  GB_GET_pM
                 #define GB_GET_pM (iA + jA * nI)
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
-            default:;
+            default: ;
         }
     }
 

@@ -473,6 +473,7 @@
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
+// GB_GOTCHA
 
                     // M(:,j) is dense.  M is not scattered into Hf.
 
@@ -606,7 +607,7 @@
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
                 { 
-
+// GB_GOTCHA
                     // M(:,j) is dense.  M is not scattered into Hf.
 
                     if (Mask_struct && !M_is_bitmap)
@@ -1156,6 +1157,7 @@
                         #ifdef GB_IDENTITY
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
+// GB_GOTCHA
                             // this requires the monoid identity.  It is not
                             // defined for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)

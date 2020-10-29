@@ -34,6 +34,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     // delete any lingering zombies and assemble any pending tuples
     if (GB_PENDING_OR_ZOMBIES (S))
     { 
+GB_GOTCHA ;
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GxB_Scalar_extractElement") ;

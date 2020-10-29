@@ -191,9 +191,12 @@ void mexFunction
         // use the ztype of the op as the type of C
         OK (GxB_BinaryOp_ztype (&ctype, op)) ;
 
+        // create the matrix C and set its format and sparsity
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
         OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        int sparsity = gb_get_sparsity (A, B, 0) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -202,13 +205,13 @@ void mexFunction
 
     if (binop_bind1st)
     {
-        // printf ("bind 1st:\n") ;
-        OK1 (C, GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, scalar, B, desc)) ;
+        OK1 (C, GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, scalar, B,
+            desc)) ;
     }
     else
     {
-        // printf ("bind 2nd:\n") ;
-        OK1 (C, GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, scalar, desc)) ;
+        OK1 (C, GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, scalar,
+            desc)) ;
     }
 
     //--------------------------------------------------------------------------

@@ -34,7 +34,8 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     switch (field)
     {
 
-        case GxB_SPARSITY :
+        case GxB_SPARSITY : 
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -43,24 +44,29 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
                 GB_RETURN_IF_NULL (sparsity) ;
                 if (GB_IS_HYPERSPARSE (v))
                 { 
+GB_GOTCHA ;
                     (*sparsity) = GxB_HYPERSPARSE ;
                 }
                 else if (GB_IS_FULL (v))
                 { 
+GB_GOTCHA ;
                     (*sparsity) = GxB_FULL ;
                 }
                 else if (GB_IS_BITMAP (v))
                 { 
+GB_GOTCHA ;
                     (*sparsity) = GxB_BITMAP ;
                 }
                 else
                 { 
+GB_GOTCHA ;
                     (*sparsity) = GxB_SPARSE ;
                 }
             }
             break ;
 
         case GxB_FORMAT : 
+GB_GOTCHA ;
 
             {
                 // a GrB_Vector is always stored by-column
@@ -73,8 +79,10 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
             break ;
 
         case GxB_IS_HYPER : 
+GB_GOTCHA ;
 
             {
+                // a GrB_Vector is never hypersparse
                 va_start (ap, field) ;
                 bool *v_is_hyper = va_arg (ap, bool *) ;
                 va_end (ap) ;
@@ -84,6 +92,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
             break ;
 
         default : 
+GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
 

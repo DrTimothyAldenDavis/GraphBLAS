@@ -73,7 +73,7 @@ GB_Opcode GB_binop_flip     // flipped opcode
         // these operators are commutative; they are their own flipped ops:
         // PLUS, TIMES, PAIR, ANY, ISEQ, ISNE, EQ, NE, MIN, MAX, LOR, LAND,
         // LXOR, LXNOR, HYPOT, BOR, BAND, BXOR, BXNOR.
-        default :
+        default:
             return (opcode) ;
     }
 }

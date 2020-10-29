@@ -217,6 +217,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         {
             if (GB_PENDING_OR_ZOMBIES (M))
             { 
+GB_GOTCHA ;
                 // remove zombies and pending tuples from M.
                 // M can be jumbled.
                 GB_OK (GB_Matrix_wait (M, Context)) ;

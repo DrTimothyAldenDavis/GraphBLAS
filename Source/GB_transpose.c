@@ -569,6 +569,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 op1, op2, scalar, binop_bind1st, A, Context) ;
             if (info != GrB_SUCCESS)
             { 
+GB_GOTCHA ;
                 // out of memory
                 GB_FREE (Cp) ;
                 GB_FREE (Ci) ;
@@ -713,6 +714,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 op1, op2, scalar, binop_bind1st, A, Context) ;
             if (info != GrB_SUCCESS)
             { 
+GB_GOTCHA ;
                 // out of memory
                 GB_FREE (Cp) ;
                 GB_FREE (Ci) ;
@@ -1042,6 +1044,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                     op1, op2, scalar, binop_bind1st, A, Context) ;
                 if (info != GrB_SUCCESS)
                 { 
+GB_GOTCHA ;
                     // out of memory
                     GB_FREE (iwork) ;
                     GB_FREE (jwork) ;

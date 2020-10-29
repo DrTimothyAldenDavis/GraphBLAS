@@ -21,7 +21,8 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
-{
+{ 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

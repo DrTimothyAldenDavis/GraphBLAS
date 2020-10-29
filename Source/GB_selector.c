@@ -447,6 +447,7 @@ GrB_Info GB_selector
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)
             { 
+GB_GOTCHA ;
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
@@ -458,6 +459,7 @@ GrB_Info GB_selector
             {
                 if (Cp [k] < Cp [k+1])      // ok: C is hypersparse
                 { 
+GB_GOTCHA ;
                     Ch [cnvec] = Ah [k] ;       // ok: C is hypersparse
                     Cp [cnvec] = Cp [k] ;       // ok: C is hypersparse
                     cnvec++ ;

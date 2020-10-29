@@ -53,23 +53,23 @@ GrB_Info GB_export      // export a matrix in any format
     int s = GB_sparsity (*A) ;
     switch (s)
     {
-        case GxB_HYPERSPARSE :
+        case GxB_HYPERSPARSE : 
             GB_RETURN_IF_NULL (nvec) ;
             GB_RETURN_IF_NULL (Ah) ;
 
-        case GxB_SPARSE :
+        case GxB_SPARSE : 
             GB_RETURN_IF_NULL (nzmax) ;
             GB_RETURN_IF_NULL (nonempty) ;
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (Ai) ;
             break ;
 
-        case GxB_BITMAP :
+        case GxB_BITMAP : 
             GB_RETURN_IF_NULL (nvals) ;
             GB_RETURN_IF_NULL (Ab) ;
 
-        case GxB_FULL :
-        default:;
+        case GxB_FULL : 
+        default: ;
     }
 
     //--------------------------------------------------------------------------
@@ -82,11 +82,11 @@ GrB_Info GB_export      // export a matrix in any format
 
     switch (s)
     {
-        case GxB_HYPERSPARSE :
+        case GxB_HYPERSPARSE : 
             (*nvec) = (*A)->nvec ;
             (*Ah) = (*A)->h ; (*A)->h = NULL ;
 
-        case GxB_SPARSE :
+        case GxB_SPARSE : 
             (*nzmax) = (*A)->nzmax ;
             if (jumbled != NULL)
             { 
@@ -102,22 +102,24 @@ GrB_Info GB_export      // export a matrix in any format
             (*Ai) = (*A)->i ; (*A)->i = NULL ;
             break ;
 
-        case GxB_BITMAP :
+        case GxB_BITMAP : 
             (*nvals) = (*A)->nvals ;
             (*Ab) = (*A)->b ; (*A)->b = NULL ;
 
-        case GxB_FULL :
-        default:;
+        case GxB_FULL : 
+        default: ;
     }
 
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
 
     if (sparsity != NULL)
     { 
+GB_GOTCHA ;
         (*sparsity) = s ;
     }
     if (is_csc != NULL)
     { 
+GB_GOTCHA ;
         (*is_csc) = (*A)->is_csc ;
     }
 

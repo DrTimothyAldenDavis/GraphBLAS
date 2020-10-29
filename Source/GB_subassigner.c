@@ -220,7 +220,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // matrix or scalar subassign via GB_bitmap_assign
         //----------------------------------------------------------------------
 
-        case GB_SUBASSIGN_METHOD_BITMAP :
+        case GB_SUBASSIGN_METHOD_BITMAP : 
         {
             // C is bitmap, or is converted to bitmap.  M and A can have any
             // sparsity (if present).
@@ -236,7 +236,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // C = x where x is a scalar; C becomes full
         //----------------------------------------------------------------------
 
-        case GB_SUBASSIGN_METHOD_21 :
+        case GB_SUBASSIGN_METHOD_21 : 
         {
 
             //  =====================       ==============
@@ -255,7 +255,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // C = A
         //----------------------------------------------------------------------
 
-        case GB_SUBASSIGN_METHOD_24 :
+        case GB_SUBASSIGN_METHOD_24 : 
         {
 
             //  =====================       ==============
@@ -280,7 +280,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  -   -   -   +   -   -       22:  C += x, no S, C dense
         //  -   -   -   +   A   -       23:  C += A, no S, C dense
 
-        case GB_SUBASSIGN_METHOD_22 :
+        case GB_SUBASSIGN_METHOD_22 : 
         {
             // Method 22: C(:,:) += x where C is dense or full
             GBURBLE ("Method 22: (C full) += scalar ") ;
@@ -288,7 +288,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_23 :
+        case GB_SUBASSIGN_METHOD_23 : 
         {
             // Method 23: C(:,:) += A where C is dense or full
             GBURBLE ("Method 23: (C full) += Z ") ;
@@ -308,7 +308,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   -   -   -   -   -       05:  C(I,J)<M> = x, no S
         //  M   -   -   +   -   -       07:  C(I,J)<M> += x, no S
 
-        case GB_SUBASSIGN_METHOD_05e :
+        case GB_SUBASSIGN_METHOD_05e : 
         {
             // Method 05e: C(:,:)<M> = scalar ; no S; C empty, M structural
             GBURBLE ("Method 05e: (C empty)<M> = scalar ") ;
@@ -316,7 +316,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_05d :
+        case GB_SUBASSIGN_METHOD_05d : 
         {
             // Method 05d: C(:,:)<M> = scalar ; no S; C is dense or full;
             // C becomes full.
@@ -326,7 +326,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_05 :
+        case GB_SUBASSIGN_METHOD_05 : 
         {
             // Method 05: C(I,J)<M> = scalar ; no S
             GBURBLE ("Method 05: C(%s,%s)<M> = scalar ; no S ",
@@ -337,7 +337,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_07 :
+        case GB_SUBASSIGN_METHOD_07 : 
         {
             // Method 07: C(I,J)<M> += scalar ; no S
             GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S",
@@ -362,7 +362,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A, no S
         //  M   -   -   -   A   S       06s: C(I,J)<M> = A, with S
 
-        case GB_SUBASSIGN_METHOD_08n :
+        case GB_SUBASSIGN_METHOD_08n : 
         {
             // Method 08n: C(I,J)<M> += A ; no S
             GBURBLE ("Method 08n: C(%s,%s)<M> += Z ; no S ", Istring, Jstring) ;
@@ -372,7 +372,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_08s :
+        case GB_SUBASSIGN_METHOD_08s : 
         {
             // Method 08s: C(I,J)<M> += A ; with S
             GBURBLE ("Method 08s: C(%s,%s)<M> += Z ; with S ",
@@ -383,7 +383,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_06d :
+        case GB_SUBASSIGN_METHOD_06d : 
         {
             // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
             GBURBLE ("Method 06d: (C full)<Z> = Z ") ;
@@ -391,7 +391,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_25 :
+        case GB_SUBASSIGN_METHOD_25 : 
         {
             // Method 25:  C<M,struct> = A, A dense, C empty
             // A is dense or full; remains unchanged
@@ -400,7 +400,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_06n :
+        case GB_SUBASSIGN_METHOD_06n : 
         {
             // Method 06n: C(I,J)<M> = A ; no S
             GBURBLE ("Method 06n: C(%s,%s)<M> = Z ; no S ", Istring, Jstring) ;
@@ -410,7 +410,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_06s :
+        case GB_SUBASSIGN_METHOD_06s : 
         {
             // Method 06s: C(I,J)<M> = A ; using S
             GBURBLE ("Method 06s: C(%s,%s)<M> = Z ; using S ",
@@ -433,7 +433,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  -   -   -   +   -   S       03:  C(I,J) += x, with S
         //  -   -   -   +   A   S       04:  C(I,J) += A, with S
 
-        case GB_SUBASSIGN_METHOD_01 :
+        case GB_SUBASSIGN_METHOD_01 : 
         {
             // Method 01: C(I,J) = scalar ; using S
             GBURBLE ("Method 01: C(%s,%s) = scalar ; using S ",
@@ -444,7 +444,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_03 :
+        case GB_SUBASSIGN_METHOD_03 : 
         {
             // Method 03: C(I,J) += scalar ; using S
             GBURBLE ("Method 03: C(%s,%s) += scalar ; using S ",
@@ -455,7 +455,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_02 :
+        case GB_SUBASSIGN_METHOD_02 : 
         {
             // Method 02: C(I,J) = A ; using S
             GBURBLE ("Method 02: C(%s,%s) = Z ; using S ",
@@ -466,7 +466,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_04 :
+        case GB_SUBASSIGN_METHOD_04 : 
         {
             // Method 04: C(I,J) += A ; using S
             GBURBLE ("Method 04: C(%s,%s) += Z ; using S ", Istring, Jstring) ;
@@ -490,7 +490,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   -   -   S       17:  C(I,J)<!M,repl> = x, with S
         //  M   c   r   +   -   S       19:  C(I,J)<!M,repl> += x, with S
 
-        case GB_SUBASSIGN_METHOD_17 :
+        case GB_SUBASSIGN_METHOD_17 : 
         {
             // Method 17: C(I,J)<!M,repl> = scalar ; using S
             GBURBLE ("Method 17: C(%s,%s)<!M,repl> = scalar ; using S ",
@@ -501,7 +501,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_13 :
+        case GB_SUBASSIGN_METHOD_13 : 
         {
             // Method 13: C(I,J)<!M> = scalar ; using S
             GBURBLE ("Method 13: C(%s,%s)<!M> = scalar ; using S ",
@@ -512,7 +512,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_09 :
+        case GB_SUBASSIGN_METHOD_09 : 
         {
             // Method 09: C(I,J)<M,repl> = scalar ; using S
             GBURBLE ("Method 09: C(%s,%s)<M,repl> = scalar ; using S ",
@@ -523,7 +523,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_19 :
+        case GB_SUBASSIGN_METHOD_19 : 
         {
             // Method 19: C(I,J)<!M,repl> += scalar ; using S
             GBURBLE ("Method 19: C(%s,%s)<!M,repl> += scalar ; using S ",
@@ -534,7 +534,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_15 :
+        case GB_SUBASSIGN_METHOD_15 : 
         {
             // Method 15: C(I,J)<!M> += scalar ; using S
             GBURBLE ("Method 15: C(%s,%s)<!M> += scalar ; using S ",
@@ -545,7 +545,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_11 :
+        case GB_SUBASSIGN_METHOD_11 : 
         {
             // Method 11: C(I,J)<M,repl> += scalar ; using S
             GBURBLE ("Method 11: C(%s,%s)<M,repl> += scalar ; using S ",
@@ -570,7 +570,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   -   A   S       18:  C(I,J)<!M,repl> = A, with S
         //  M   c   r   +   A   S       20:  C(I,J)<!M,repl> += A, with S
 
-        case GB_SUBASSIGN_METHOD_18 :
+        case GB_SUBASSIGN_METHOD_18 : 
         {
             // Method 18: C(I,J)<!M,repl> = A ; using S
             GBURBLE ("Method 18: C(%s,%s)<!M,repl> = Z ; using S ",
@@ -581,7 +581,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_14 :
+        case GB_SUBASSIGN_METHOD_14 : 
         {
             // Method 14: C(I,J)<!M> = A ; using S
             GBURBLE ("Method 14: C(%s,%s)<!M> = Z ; using S ",
@@ -592,7 +592,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_10 :
+        case GB_SUBASSIGN_METHOD_10 : 
         {
             // Method 10: C(I,J)<M,repl> = A ; using S
             GBURBLE ("Method 10: C(%s,%s)<M,repl> = Z ; using S ",
@@ -603,7 +603,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_20 :
+        case GB_SUBASSIGN_METHOD_20 : 
         {
             // Method 20: C(I,J)<!M,repl> += A ; using S
             GBURBLE ("Method 20: C(%s,%s)<!M,repl> += Z ; using S ",
@@ -614,7 +614,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_16 :
+        case GB_SUBASSIGN_METHOD_16 : 
         {
             // Method 16: C(I,J)<!M> += A ; using S
             GBURBLE ("Method 16: C(%s,%s)<!M> += Z ; using S ",
@@ -625,7 +625,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
-        case GB_SUBASSIGN_METHOD_12 :
+        case GB_SUBASSIGN_METHOD_12 : 
         {
             // Method 12: C(I,J)<M,repl> += A ; using S
             GBURBLE ("Method 12: C(%s,%s)<M,repl> += Z ; using S ",

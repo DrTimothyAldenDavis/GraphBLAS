@@ -883,6 +883,7 @@
                             GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                             if (found)
                             { 
+// GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -923,6 +924,7 @@
                             GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                             if (found)
                             { 
+// GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -958,21 +960,24 @@
                         int64_t iB = Bi [pB] ;              // ok: B is sparse
                         if (iA < iB)
                         { 
+// GB_GOTCHA ;
                             // A(i,j) exists but not B(i,j)
                             pA++ ;
                         }
                         else if (iB < iA)
                         { 
+// GB_GOTCHA ;
                             // B(i,j) exists but not A(i,j)
                             pB++ ;
                         }
                         else
-                        { 
+                        {
                             // both A(i,j) and B(i,j) exist
                             int64_t i = iA ;
                             GB_GET_MIJ (i) ;
                             if (mij)
-                            {
+                            { 
+// GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;

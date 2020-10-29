@@ -39,6 +39,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GB_MATRIX_WAIT (*A) ;
     if (!GB_is_dense (*A))
     { 
+GB_GOTCHA ;
         // A must be dense or full
         return (GrB_INVALID_VALUE) ;
     }
@@ -49,7 +50,8 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
 
     // ensure the matrix is in CSR format
     if ((*A)->is_csc)
-    {
+    { 
+GB_GOTCHA ;
         // A = A', done in-place, to put A in CSR format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, false, *A,

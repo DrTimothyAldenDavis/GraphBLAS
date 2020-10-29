@@ -88,6 +88,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
+    GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -151,8 +152,9 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     if (scalar_assignment && anvals == 0)
     { 
-        // A is a sparse scalar.  Expand it to an ni-by-nj sparse matrix with
-        // the same type as C, with no entries, and use matrix assignment.
+        // A is a sparse scalar with no entry.  Expand it to an empty ni-by-nj
+        // sparse matrix with the same type as C, with no entries, and use
+        // matrix assignment.
         int64_t nI, nJ, Icolon [3], Jcolon [3] ;
         int Ikind, Jkind ;
         GB_ijlength (I, ni, cnrows, &nI, &Ikind, Icolon) ;
@@ -163,6 +165,8 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
         scalar_assignment = false ;
     }
+
+    GxB_print (A, 3) ;
 
     //--------------------------------------------------------------------------
     // compute C(I,J)<M> += A or C<M>(I,J) += A

@@ -130,14 +130,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_MATRIX_WAIT (Thunk_in) ;
         nz_thunk = GB_NNZ (Thunk_in) ;
 
-        // if present, Thunk_in must be 1-by-1
-        if (GB_NROWS (Thunk_in) != 1 || GB_NCOLS (Thunk_in) != 1)
-        { 
-            // Thunk present, but empty, or wrong dimensions
-            GB_ERROR (GrB_DIMENSION_MISMATCH,
-                "Thunk must be a %s", "GxB_Scalar") ;
-        }
-
         // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be
         // compatible with GrB_INT64
         if (op_is_positional && !GB_Type_compatible (GrB_INT64, Thunk_in->type))

@@ -130,19 +130,19 @@ GrB_Info GB_code_check          // print an entry using a type code
         case GB_UINT64_code : u = *((uint64_t *) x) ; GBPR ("  " GBu, u) ;
             break ;
 
-        case GB_FP32_code   :
+        case GB_FP32_code   : 
             s = *((float *) x) ;
             GBPR ("   ") ;
             GB_PRINT_FLOAT (s) ;
             break ;
 
-        case GB_FP64_code   :
+        case GB_FP64_code   : 
             d = *((double *) x) ;
             GBPR ("   ") ;
             GB_PRINT_DOUBLE (d, pr_verbose) ;
             break ;
 
-        case GB_FC32_code   :
+        case GB_FC32_code   : 
             c = *((GxB_FC32_t *) x) ;
             GBPR ("   ") ;
             GB_PRINT_FLOAT (crealf (c)) ;
@@ -160,7 +160,7 @@ GrB_Info GB_code_check          // print an entry using a type code
             GBPR ("i") ;
             break ;
 
-        case GB_FC64_code   :
+        case GB_FC64_code   : 
             z = *((GxB_FC64_t *) x) ;
             GBPR ("   ") ;
             GB_PRINT_DOUBLE (creal (z), pr_verbose) ;
@@ -180,7 +180,7 @@ GrB_Info GB_code_check          // print an entry using a type code
 
         #endif
 
-        case GB_UDT_code    :
+        case GB_UDT_code    : 
             { 
                 GBPR ("[user-defined value]") ;
                 // FUTURE: GraphBLAS does not have a method for the user to

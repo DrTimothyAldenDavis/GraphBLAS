@@ -42,6 +42,9 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         OK (GrB_Matrix_ncols (&ncols, S)) ;
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        int sparsity = gb_get_sparsity (S, NULL, 0) ;
+        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity)) ;
+
         GrB_Type stype ;
         OK (GxB_Matrix_type (&stype, S)) ;
 
