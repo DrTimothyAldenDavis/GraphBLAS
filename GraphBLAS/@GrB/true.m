@@ -17,5 +17,5 @@ function C = true (varargin)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n, ~] = gb_parse_args ('true', varargin {:}) ;
-C = GrB (gb_scalar_to_full (m, n, 'logical', true)) ;
+C = GrB (gb_scalar_to_full (m, n, 'logical', gbformat, true)) ;
 

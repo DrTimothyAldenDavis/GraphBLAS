@@ -72,7 +72,7 @@ void mexFunction
     bool is_hyper ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
     OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
-    OK (GxB_Matrix_Option_get (C, GxB_IS_HYPER, &is_hyper)) ;
+    OK (GxB_Matrix_Option_get (C, GxB_IS_HYPER, &is_hyper)) ;   // deprecated
     // printf ("init: \n"); GxB_print (C, 3) ;
     bool is_vector = (fmt == GxB_BY_COL && !is_hyper && ncols == 1) ;
     // printf ("fmt %d is_hyper %d ncols %ld is_vector: %d\n", 

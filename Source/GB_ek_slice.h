@@ -12,7 +12,7 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GB_SLICE_MATRIX: slice a single single sparse or hypersparse matrix
+// GB_SLICE_MATRIX: slice a single matrix using GB_ek_slice
 //------------------------------------------------------------------------------
 
 #define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                   \

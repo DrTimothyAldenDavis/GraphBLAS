@@ -71,7 +71,7 @@ else
         b = gb_scalar (B) ;
         if (b == 0)
             % special case:  C = A.^0 = ones (am, an, ctype)
-            C = gb_scalar_to_full (am, an, ctype, 1) ;
+            C = gb_scalar_to_full (am, an, ctype, gb_fmt (A), 1) ;
             return ;
         elseif (b == 1)
             % special case: C = A.^1 = A

@@ -30,7 +30,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 1 && nargout <= 2,
-        "usage: f = GrB.format, GrB.format (f), GrB.format (G)") ;
+        "usage: [f,s] = GrB.format, GrB.format (f), GrB.format (G)") ;
 
     //--------------------------------------------------------------------------
     // get/set the format
@@ -61,7 +61,8 @@ void mexFunction
             //------------------------------------------------------------------
 
             // parse the format string
-            bool ok = gb_mxstring_to_format (pargin [0], &fmt, &sparsity) ;
+            int ignore ;
+            bool ok = gb_mxstring_to_format (pargin [0], &fmt, &ignore) ;
             CHECK_ERROR (!ok, "invalid format") ;
             // set the global format
             OK (GxB_Global_Option_set (GxB_FORMAT, fmt)) ;
@@ -85,7 +86,7 @@ void mexFunction
             bool is_csc = (bool) (s [6]) ;
             fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
 
-            // get the current sparsity structure of the input matrix G
+            // get the current sparsity status of the input matrix G
             switch (mxGetNumberOfFields (pargin [0]))
             { 
                 case 3: sparsity = GxB_FULL ;        break ;
@@ -120,11 +121,11 @@ void mexFunction
         char *s ;
         switch (sparsity)
         {
-            case GxB_FULL :        s = "full"        ; break ;
-            case GxB_BITMAP :      s = "bitmap"      ; break ;
-            case GxB_SPARSE :      s = "sparse"      ; break ;
             case GxB_HYPERSPARSE : s = "hypersparse" ; break ;
-            default :              s = "auto"        ; break ;
+            case GxB_SPARSE :      s = "sparse"      ; break ;
+            case GxB_BITMAP :      s = "bitmap"      ; break ;
+            case GxB_FULL :        s = "full"        ; break ;
+            default :              s = ""            ; break ;
         }
         pargout [1] = mxCreateString (s) ;
     }

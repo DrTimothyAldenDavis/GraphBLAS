@@ -156,11 +156,11 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A = gb_scalar_to_full (m, n, atype, A) ;
+        A = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B = gb_scalar_to_full (m, n, atype, B) ;
+        B = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be

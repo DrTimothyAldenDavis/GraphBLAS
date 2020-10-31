@@ -9,7 +9,7 @@
 
 #include "gb_matlab.h"
 
-GrB_Matrix gb_typecast      // A = (type) S, where A is deep
+GrB_Matrix gb_typecast          // A = (type) S, where A is deep
 (
     GrB_Type type,              // if NULL, copy but do not typecast
     GxB_Format_Value fmt,       // also convert to the requested format
@@ -18,6 +18,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 {
 
     GrB_Matrix A ;
+    int sparsity = gb_get_sparsity (S, NULL, 0) ;
 
     if (type == NULL)
     { 
@@ -28,6 +29,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 
         OK (GrB_Matrix_dup (&A, S)) ;
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
 
     }
     else
@@ -42,8 +44,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         OK (GrB_Matrix_ncols (&ncols, S)) ;
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
-        int sparsity = gb_get_sparsity (S, NULL, 0) ;
-        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity)) ;
+        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
 
         GrB_Type stype ;
         OK (GxB_Matrix_type (&stype, S)) ;

@@ -33,7 +33,9 @@ void gb_get_mxargs
     GrB_Descriptor *desc,       // last argument is always the descriptor
     base_enum_t *base,          // desc.base
     kind_enum_t *kind,          // desc.kind
-    GxB_Format_Value *fmt       // desc.format
+    GxB_Format_Value *fmt,      // desc.format : by row or by col
+    int *sparsity               // desc.format : hypersparse/sparse/bitmap/full
+                                // or 0 if not in the descriptor
 )
 {
 
@@ -44,10 +46,12 @@ void gb_get_mxargs
     (*desc) = NULL ;
     (*kind) = KIND_GRB ;
     (*fmt) = GxB_NO_FORMAT ;
+    (*sparsity) = 0 ;
     (*base) = BASE_DEFAULT ;
     if (nargin > 0)
     { 
-        (*desc) = gb_mxarray_to_descriptor (pargin [nargin-1], kind, fmt, base);
+        (*desc) = gb_mxarray_to_descriptor (pargin [nargin-1], kind, fmt,
+            sparsity, base) ;
     }
     if ((*desc) != NULL)
     { 

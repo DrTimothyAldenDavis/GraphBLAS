@@ -6431,8 +6431,6 @@ typedef enum
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
-    GxB_IS_HYPER = 6     // query a matrix to see if it hypersparse or not
-                         // (GxB_Matrix_Option_get only)
 
     TODO: add new options here
 }
@@ -6521,13 +6519,14 @@ future.  Any prior options no longer needed in future versions of
 SuiteSparse:GraphBLAS will be silently ignored, so the use these options is
 safe for future updates.
 
-The hypersparse status of a matrix can be queried with the following:
+The sparsity status of a matrix can be queried with the following, wihch
+returns a value of \verb'GxB_HYPERSPARSE' \verb'GxB_SPARSE' \verb'GxB_BITMAP'
+or \verb'GxB_FULL'.
 
 {\footnotesize
 \begin{verbatim}
-    bool is_hyper ;
-    GxB_get (A, GxB_IS_HYPER, &is_hyper) ;
-    printf (is_hyper ? "A is hypersparse" : "A is standard sparse") ; \end{verbatim}}
+    int sparsity ;
+    GxB_get (A, GxB_SPARSITY_STATUS, &sparsity) ; \end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \subsection{Other global options}
@@ -6698,20 +6697,25 @@ GrB_Info GxB_get                    // gets the current option of a matrix
 ) ;
 \end{verbatim} } \end{mdframed}
 
-This usage of \verb'GxB_get' retrieves the value of a matrix option.
-The \verb'field' parameter can be \verb'GxB_HYPER_SWITCH', \verb'GxB_IS_HYPER',
-or \verb'GxB_FORMAT'.
-For example:
+This usage of \verb'GxB_get' retrieves the value of a matrix option.  The
+\verb'field' parameter can be \verb'GxB_HYPER_SWITCH',
+\verb'GxB_SPARSITY_STATUS', or \verb'GxB_FORMAT'.  For example:
 
 \vspace{-0.1in}
 {\footnotesize
 \begin{verbatim}
     double h ;
-    bool is_hyper ;
-    GxB_get (A, GxB_IS_HYPER, &is_hyper) ;
+    int sparsity ;
+    GxB_get (A, GxB_SPARSITY_STATUS, &sparsity) ;
     GxB_get (A, GxB_HYPER_SWITCH, &h) ;
     printf ("matrix A has hyper_switch = %g\n", h) ;
-    printf ("matrix A is currently %shypersparse\n", is_hyper ? "not " : " ") ; 
+    switch (sparsity)
+    {
+        case GxB_HYPERSPARSE: printf ("matrix A is hypersparse\n") ; break ;
+        case GxB_SPARSE:      printf ("matrix A is sparse\n"     ) ; break ;
+        case GxB_BITMAP:      printf ("matrix A is bitmap\n"     ) ; break ;
+        case GxB_FULL:        printf ("matrix A is full\n"       ) ; break ;
+    }
     GxB_Format_Value s ;
     GxB_get (A, GxB_FORMAT, &s) ;
     printf ("matrix A is stored by %s\n", (s == GxB_BY_COL) ? "col" : "row") ; \end{verbatim} }
@@ -6791,11 +6795,11 @@ To set/get a matrix option:
     TODO: add SPARSITY here
 
 \noindent
-To get the hypersparse status of a matrix:
+To get the sparsity status of a matrix:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ; \end{verbatim} }
+    GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ; \end{verbatim} }
 
 \newpage
 \noindent

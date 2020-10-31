@@ -53,7 +53,14 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     bool ok = true ;
     if (is_sparse)
     { 
-        A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        if (A->nzmax <= 1)
+        {
+            A->i = GB_CALLOC (A->nzmax, int64_t) ;
+        }
+        else
+        { 
+            A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        }
         ok = (A->i != NULL) ;
     }
     else if (is_bitmap)

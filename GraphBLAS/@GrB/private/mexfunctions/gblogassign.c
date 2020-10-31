@@ -103,7 +103,7 @@ void mexFunction
     GrB_Matrix M ;
     OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
     OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY,
+    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY_CONTROL,
         GxB_SPARSE + GxB_HYPERSPARSE)) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
@@ -126,7 +126,7 @@ void mexFunction
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GrB_Matrix_nvals (&anz, A)) ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY, &A_sparsity)) ;
+    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &A_sparsity)) ;
 
     GrB_Matrix A_copy = NULL ;
     GrB_Matrix A_copy2 = NULL ;
@@ -135,7 +135,7 @@ void mexFunction
     if (A_sparsity == GxB_BITMAP)
     {
         OK (GrB_Matrix_dup (&A_copy2, A)) ;
-        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY,
+        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY_CONTROL,
             GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
         A = A_copy2 ;
     }
@@ -158,7 +158,7 @@ void mexFunction
             OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
             OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
                 GxB_BY_COL)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY_CONTROL,
                 GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
@@ -176,7 +176,7 @@ void mexFunction
             OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
             OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
                 GxB_BY_ROW)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
+            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY_CONTROL,
                 GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;

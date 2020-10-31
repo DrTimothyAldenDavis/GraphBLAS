@@ -72,13 +72,13 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int sparsity ;
-    OK (GxB_Matrix_Option_get (X, GxB_SPARSITY, &sparsity)) ;
+    OK (GxB_Matrix_Option_get (X, GxB_SPARSITY_STATUS, &sparsity)) ;
     if (sparsity == GxB_BITMAP)
     { 
         // Z = deep copy of the shallow matrix X
         OK (GrB_Matrix_dup (&Z, X)) ;
         // convert Z to sparse
-        OK (GxB_Matrix_Option_set (Z, GxB_SPARSITY, GxB_SPARSE)) ;
+        OK (GxB_Matrix_Option_set (Z, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
         // free the shallow X and replace it with Z
         OK (GrB_Matrix_free (&X)) ;
         X = Z ;

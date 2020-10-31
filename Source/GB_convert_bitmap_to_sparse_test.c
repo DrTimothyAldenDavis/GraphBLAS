@@ -22,9 +22,6 @@
 
 // These default rules may change in future releases of SuiteSparse:GraphBLAS.
 
-// If A->sparsity is GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP, or GxB_FULL,
-// then this automatic test is not used.
-
 // If this test returns true and the matrix changes to sparse, then the rule
 // for A->hyper_switch may then convert it from sparse to hypersparse.
 

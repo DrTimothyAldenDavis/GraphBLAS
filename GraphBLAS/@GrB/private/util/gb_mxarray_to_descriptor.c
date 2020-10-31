@@ -120,6 +120,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     const mxArray *desc_matlab, // MATLAB struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
     GxB_Format_Value *fmt,      // by row or by col
+    int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 )
 {
@@ -132,6 +133,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     (*kind) = KIND_GRB ;
     (*fmt) = GxB_NO_FORMAT ;
     (*base) = BASE_DEFAULT ;
+    (*sparsity) = 0 ;
 
     if (desc_matlab == NULL || !mxIsStruct (desc_matlab)
         || mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
@@ -194,9 +196,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     mxArray *mxfmt = mxGetField (desc_matlab, 0, "format") ;
     if (mxfmt != NULL)
     {
-        // TODO: add sparsity to the descriptor
-        int sparsity ;
-        bool ok = gb_mxstring_to_format (mxfmt, &fmt, &sparsity) ;
+        bool ok = gb_mxstring_to_format (mxfmt, fmt, sparsity) ;
         if (!ok)
         { 
             ERROR ("unknown format") ;

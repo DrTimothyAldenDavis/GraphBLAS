@@ -22,6 +22,5 @@ if (isobject (B))
 end
 
 type = gboptype (gbtype (A), gbtype (B)) ;
-
 C = GrB (gb_eadd (A, '+', gbapply (['-.' type], B))) ;
 

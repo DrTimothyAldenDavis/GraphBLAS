@@ -12,7 +12,7 @@
 
 // Handles arbitrary typecasting.
 
-// FULL: if C sparse and A dense/full, C is converted to full, ignoring
+// if C sparse and A dense/full, C is converted to full, ignoring
 // C->sparsity.  C is conformed to its desired sparsity structure later.
 
 // A can be jumbled, in which case C is also jumbled.

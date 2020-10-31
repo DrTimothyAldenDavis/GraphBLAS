@@ -142,7 +142,21 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     // select the sparsity structure
     //--------------------------------------------------------------------------
 
-    switch (A->sparsity)
+    int sparsity = A->sparsity ;
+    if (A->vdim <= 1)
+    {
+        if (sparsity & GxB_HYPERSPARSE)
+        {
+            // a GxB_Scalar, GrB_Vector, or a GrB_Matrix with a single vector,
+            // cannot be converted to hypersparse.  If the sparsity control
+            // allows for the hypersparse case, disable it and enable the
+            // sparse case instead.
+            sparsity = sparsity & (GxB_FULL + GxB_BITMAP + GxB_SPARSE) ;
+            sparsity = sparsity | GxB_SPARSE ;
+        }
+    }
+
+    switch (sparsity)
     {
 
         //----------------------------------------------------------------------
@@ -324,6 +338,9 @@ GB_GOTCHA ;
         // (14) sparse, bitmap, or full
         //----------------------------------------------------------------------
 
+        // This is the default case for a GrB_Matrix with one vector,
+        // a GrB_Vector, or GxB_scalar.
+
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
             if (is_full_or_dense_with_no_pending_work)
@@ -342,6 +359,8 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
         // (15) default: hypersparse, sparse, bitmap, or full
         //----------------------------------------------------------------------
+
+        // This is the default case for a GrB_Matrix with more than one vector.
 
         case GxB_AUTO_SPARSITY : 
         default:

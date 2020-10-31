@@ -60,10 +60,10 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    int nmatrices, nstrings, ncells ;
+    int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, usage, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
     CHECK_ERROR (nmatrices < 2 || nmatrices > 3 || nstrings > 1, usage) ;
 
@@ -88,7 +88,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
-    GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -162,11 +161,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         OK (GrB_Matrix_free (&A)) ;
         OK (GrB_Matrix_new (&A, ctype, nI, nJ)) ;
         OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
+        OK (GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &sparsity)) ;
         OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
         scalar_assignment = false ;
     }
-
-    GxB_print (A, 3) ;
 
     //--------------------------------------------------------------------------
     // compute C(I,J)<M> += A or C<M>(I,J) += A

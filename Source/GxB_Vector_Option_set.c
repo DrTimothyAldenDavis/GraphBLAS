@@ -38,7 +38,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     switch (field)
     {
 
-        case GxB_SPARSITY : 
+        case GxB_SPARSITY_CONTROL : 
 
             {
                 va_start (ap, field) ;
@@ -51,27 +51,16 @@ GB_GOTCHA ;
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
-
-                // a GrB_Vector cannot be hypersparse
-                if (sparsity & GxB_HYPERSPARSE)
-                {
-                    // disable the hypersparsity flag
-                    sparsity &= (GxB_FULL + GxB_BITMAP + GxB_SPARSE) ;
-                    // enable the sparse flag instead
-                    sparsity |= (GxB_SPARSE) ;
-                }
-
+                // a GrB_Vector cannot be hypersparse, but v->sparsity can be
+                // set to anything.  This is handled by GB_conform.
                 v->sparsity = sparsity ;
             }
             break ;
 
         default : 
-
 GB_GOTCHA ;
-            GB_ERROR (GrB_INVALID_VALUE,
-                "invalid option field [%d], can only be GxB_SPARSITY [%d]",
-                (int) field, (int) GxB_SPARSITY) ;
 
+            return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

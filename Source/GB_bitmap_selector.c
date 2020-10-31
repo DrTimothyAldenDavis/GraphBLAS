@@ -50,7 +50,7 @@ GrB_Info GB_bitmap_selector
     // TODO: must calloc C->x for GB_EQ_ZERO_opcode
 
     GrB_Matrix C = NULL ;
-    GB_OK (GB_new_bix (&C, // always bitmap
+    GB_OK (GB_new_bix (&C, // always bitmap, new header
         A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
         GxB_BITMAP, A->hyper_switch, -1, anz, true, Context)) ;
     int64_t cnvals ;

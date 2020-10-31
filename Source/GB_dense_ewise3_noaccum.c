@@ -76,8 +76,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    // TODO: construct C according to C->sparsity, or conform it when done.
-
     if (!C_is_dense)
     { 
         // convert C to full; just allocate C->x.  Keep the dimensions of C.

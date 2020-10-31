@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
             }
             break ;
 
-        case GxB_SPARSITY : 
+        case GxB_SPARSITY_CONTROL : 
 
             {
                 va_start (ap, field) ;
@@ -60,16 +60,9 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
-                // TODO FIXME: let vectors have A->sparsity of hypersparse;
-                // just treat it as sparse in GB_conform
-                // a GrB_Matrix with vdim <= 1 cannot be hypersparse
-                if (A->vdim <= 1 && (sparsity & GxB_HYPERSPARSE))
-                {
-                    // disable the hypersparsity flag
-                    sparsity &= (GxB_FULL + GxB_BITMAP + GxB_SPARSE) ;
-                    // enable the sparse flag instead
-                    sparsity |= (GxB_SPARSE) ;
-                }
+                // If A->vdim is <= 1, it cannot be hypersparse, but
+                // A->sparsity is allowed to include the hypersparse case.
+                // This is controlled by GB_conform.
                 A->sparsity = sparsity ;
             }
             break ;
@@ -82,10 +75,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_end (ap) ;
                 if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
                 { 
-                    GB_ERROR (GrB_INVALID_VALUE,
-                        "unsupported format [%d], must be one of:\n"
-                        "GxB_BY_ROW [%d] or GxB_BY_COL [%d]", format,
-                        (int) GxB_BY_ROW, (int) GxB_BY_COL) ;
+                    return (GrB_INVALID_VALUE) ;
                 }
                 // the value is normally GxB_BY_ROW (0) or GxB_BY_COL (1), but
                 // any nonzero value results in GxB_BY_COL.
@@ -96,24 +86,16 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     // A = A', done in-place, and change to the new format.
                     // transpose: no typecast, no op, in-place of A
                     GB_BURBLE_N (GB_NNZ (A), "(transpose) ") ;
-                    int old_sparsity = A->sparsity ;
                     GB_OK (GB_transpose (NULL, NULL, new_csc, A,
                         NULL, NULL, NULL, false, Context)) ;
                     ASSERT (A->is_csc == new_csc) ;
-                    int new_sparsity = A->sparsity ;
-                    ASSERT (old_sparsity == new_sparsity) ;
                 }
             }
             break ;
 
         default : 
 
-            GB_ERROR (GrB_INVALID_VALUE,
-                "invalid option field [%d], must be one of:\n"
-                "GxB_HYPER_SWITCH [%d], GxB_SPARSITY [%d], or GxB_FORMAT [%d]",
-                (int) field, (int) GxB_HYPER_SWITCH, (int) GxB_SPARSITY,
-                (int) GxB_FORMAT) ;
-
+            return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

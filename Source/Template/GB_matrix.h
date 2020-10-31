@@ -385,8 +385,8 @@ void *mkl ;
 //      By default, all GrB_Matrices are held in CSR form, unless they are
 //      n-by-1 (then they are CSC).  The GrB_vector is always CSC.
 
-// (2) If A->sparsity is GxB_DEFAULT, then the following rules are used to
-//      control the sparsity structure:
+// (2) If A->sparsity is GxB_AUTO_SPARSITY, then the following rules are used
+//      to control the sparsity structure:
 //
 //      (a) When a matrix is created, it is empty and starts as hypersparse,
 //          except that a GrB_Vector is never hypersparse.
@@ -407,11 +407,10 @@ void *mkl ;
 //          is, (1/512)*anz_dense, then it switches to sparse.  In between
 //          those two regions, the sparsity structure is unchanged.
 
-
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
-int sparsity ;          // controls sparsity structure: default, hypersparse,
-                        // sparse, bitmap, or full.
+int sparsity ;          // controls sparsity structure: hypersparse,
+                        // sparse, bitmap, or full, or any combination.
 
 //------------------------------------------------------------------------------
 // shallow matrices

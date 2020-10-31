@@ -17,5 +17,5 @@ function C = ones (varargin)
 % Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 [m, n, type] = gb_parse_args ('ones', varargin {:}) ;
-C = GrB (gb_scalar_to_full (m, n, type, 1)) ;
+C = GrB (gb_scalar_to_full (m, n, type, gbformat, 1)) ;
 

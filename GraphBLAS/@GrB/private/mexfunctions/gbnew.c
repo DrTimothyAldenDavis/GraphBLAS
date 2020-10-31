@@ -47,7 +47,7 @@ void mexFunction
 
     GrB_Matrix C ;
     GxB_Format_Value fmt ;
-    int sparsity ;
+    int sparsity = 0 ;
 
     if (nargin == 1)
     { 
@@ -118,7 +118,11 @@ void mexFunction
                 // get a deep copy of A and convert it to the requested format
                 C = gb_get_deep (pargin [0]) ;
                 OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+                if (sparsity > 0)
+                {
+                    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
+                        sparsity)) ;
+                }
 
             }
             else
@@ -194,7 +198,11 @@ void mexFunction
                 // create an m-by-n double matrix of the desired format
                 OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
                 OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+                if (sparsity > 0)
+                {
+                    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
+                        sparsity)) ;
+                }
             }
             else
             { 
@@ -241,7 +249,11 @@ void mexFunction
                 C = gb_typecast (type, fmt, A) ;
                 OK (GrB_Matrix_free (&A)) ;
             }
-            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+            if (sparsity > 0)
+            {
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
+                    sparsity)) ;
+            }
         }
         else
         { 
@@ -288,8 +300,11 @@ void mexFunction
 
             OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
             OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
-
+            if (sparsity > 0)
+            {
+                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
+                    sparsity)) ;
+            }
         }
         else
         { 

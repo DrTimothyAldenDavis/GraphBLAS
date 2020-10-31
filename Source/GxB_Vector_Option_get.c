@@ -34,7 +34,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     switch (field)
     {
 
-        case GxB_SPARSITY : 
+        case GxB_SPARSITY_CONTROL : 
 GB_GOTCHA ;
 
             {
@@ -42,26 +42,19 @@ GB_GOTCHA ;
                 int *sparsity = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (sparsity) ;
-                if (GB_IS_HYPERSPARSE (v))
-                { 
+                (*sparsity) = v->sparsity ;
+            }
+            break ;
+
+        case GxB_SPARSITY_STATUS : 
+
+            {
 GB_GOTCHA ;
-                    (*sparsity) = GxB_HYPERSPARSE ;
-                }
-                else if (GB_IS_FULL (v))
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_FULL ;
-                }
-                else if (GB_IS_BITMAP (v))
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_BITMAP ;
-                }
-                else
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_SPARSE ;
-                }
+                va_start (ap, field) ;
+                int *sparsity = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (sparsity) ;
+                (*sparsity) = GB_sparsity ((GrB_Matrix) v) ;
             }
             break ;
 
@@ -78,9 +71,8 @@ GB_GOTCHA ;
             }
             break ;
 
-        case GxB_IS_HYPER : 
+        case GxB_IS_HYPER : // deprecated; use GxB_SPARSITY_STATUS instead
 GB_GOTCHA ;
-
             {
                 // a GrB_Vector is never hypersparse
                 va_start (ap, field) ;

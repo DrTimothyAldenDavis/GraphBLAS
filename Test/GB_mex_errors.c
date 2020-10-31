@@ -4046,7 +4046,7 @@ void mexFunction
     OK (GrB_Vector_wait_(&v)) ;
     CHECK (nvals == 2) ;
     OK (GxB_Vector_fprint (v, "v ok (might be bitmap)", GB3, ff)) ;
-    OK (GxB_Vector_Option_set (v, GxB_SPARSITY, GxB_SPARSE)) ;
+    OK (GxB_Vector_Option_set (v, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GxB_Vector_fprint (v, "v ok (sparse)", GB3, ff)) ;
 
     expected = GrB_INVALID_OBJECT ;
@@ -4370,12 +4370,12 @@ void mexFunction
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
     CHECK (A->h == NULL) ;
     bool A_is_hyper ;
-    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (!A_is_hyper) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
     CHECK (A->h != NULL) ;
-    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (A_is_hyper) ;
 
     // make sure A->nvec_nonempty is valid
@@ -4832,7 +4832,7 @@ void mexFunction
             OK (random_matrix (&Amask, false, false, n, n, nvals, 0, false)) ;
             OK (random_matrix (&F,     false, false, n, 1, uvals, 0, false)) ;
             // vectors cannot be hypersparse
-            OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY, GxB_SPARSE)) ;
+            OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
             // vectors cannot be CSC: this is a hack just for brutal testing
             OK (GxB_Matrix_Option_set_(F, GxB_FORMAT, GxB_BY_COL)) ;
             umask = (GrB_Vector) F ;

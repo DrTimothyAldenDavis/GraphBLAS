@@ -138,8 +138,8 @@ GB_GOTCHA ;
 
     // B is constructed in O(1) time and space, even though it is m-by-1
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    GB_OK (GB_new (&B, ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER,
-        1, Context)) ;
+    GB_OK (GB_new (&B,  // full, new header
+        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Context)) ;
     B->nzmax = m ;
     B->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (B, "temp vector for reduce-to-vector", GB0) ;

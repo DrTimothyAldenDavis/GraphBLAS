@@ -32,12 +32,13 @@ GB_GOTCHA ;
         // C can become bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
     }
-    else if (A->sparsity & GxB_SPARSE)
+    else if (A->sparsity & GxB_SPARSE
+        || (A->vdim <= 1 & (A->sparsity & GxB_HYPERSPARSE)))
     {
         // C can become sparse
         return (GB_convert_full_to_sparse (A, Context)) ;
     }
-    else if (A->sparsity & GxB_HYPERSPARSE)
+    else if (A->vdim > 1 && A->sparsity & GxB_HYPERSPARSE)
     { 
 GB_GOTCHA ;
         // C can become hypersparse

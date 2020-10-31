@@ -49,10 +49,10 @@ void mexFunction
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    int nmatrices, nstrings, ncells ;
+    int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
     CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings > 1 || ncells > 0,
         USAGE) ;
@@ -129,8 +129,8 @@ void mexFunction
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
         OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-        int sparsity = gb_get_sparsity (A, NULL, 0) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+        sparsity = gb_get_sparsity (A, NULL, sparsity) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
     }
 
     //--------------------------------------------------------------------------

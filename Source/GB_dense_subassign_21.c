@@ -75,9 +75,10 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     {
         // clear prior content and recreate it; use exising header for C.
         GB_phbix_free (C) ;
+        int C_sparsity = C->sparsity ;  // save the sparsity control of C
         info = GB_new_bix (&C,  // full, old header
             C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
-            GxB_FULL, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context) ;
+            GxB_FULL, C->hyper_switch, -1, cnzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -85,6 +86,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         }
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+        C->sparsity = C_sparsity ;      // restore the sparsity control of C
     }
 
     //--------------------------------------------------------------------------

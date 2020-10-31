@@ -245,10 +245,6 @@ GrB_Info GB_mask                // C<M> = Z
         // the mask is present
         //----------------------------------------------------------------------
 
-        // C must be sparse or hypersparse.  Z and M can have any sparsity.
-        ASSERT (!GB_IS_BITMAP (C)) ;    // ok: not used if C is bitmap
-        ASSERT (!GB_IS_FULL (C)) ;      // ok: not used if C is full
-
         // delete any lingering zombies and assemble any pending tuples
         GB_MATRIX_WAIT (M) ;        // also sort M if jumbled
         GB_MATRIX_WAIT (Z) ;        // also sort Z if jumbled
@@ -269,10 +265,9 @@ GrB_Info GB_mask                // C<M> = Z
                 // must be cleared.  To resolve this, a new matrix C_cleared is
                 // created, which is what C_result would look like if cleared.
                 // C_result is left unchanged since changing it would change M.
-                // The C_cleared matrix has the same hypersparsity and CSC/CSR
-                // format as the original C matrix.
+                // The C_cleared matrix is created as hypersparse.
                 C_cleared = NULL ;
-                int sparsity = GxB_SPARSE + GxB_HYPERSPARSE ;  
+                int sparsity = GxB_HYPERSPARSE ;  
                 GB_OK (
                 GB_new_bix (&C_cleared, // auto (sparse or hyper), new header
                     C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
@@ -281,19 +276,26 @@ GrB_Info GB_mask                // C<M> = Z
             }
             else
             { 
-                // Clear all entries from C_result
+                // Clear all entries from C_result, and ensure C is hypersparse
+                // by temporarily changing the sparsity control
+                int save = C_result->sparsity ;         // save control
+                C_result->sparsity = GxB_HYPERSPARSE ;
                 GB_OK (GB_clear (C_result, Context)) ;
+                C_result->sparsity = save ;             // restore control
                 C = C_result ;
             }
             // C has been cleared, so it has no zombies or pending tuples
         }
         else
         { 
+            // C has already been finished if C_replace is false, via the
+            // GB_MATRIX_WAIT (C) in GB_accum_mask.
             C = C_result ;
-
-            // delete any lingering zombies and assemble any pending tuples
-            GB_MATRIX_WAIT (C) ;        // also sort C if jumbled
         }
+
+        // C cannot be bitmap or full for GB_masker
+        ASSERT (!GB_IS_BITMAP (C)) ;
+        ASSERT (!GB_IS_FULL (C)) ;
 
         // no more zombies or pending tuples in M or C
         ASSERT (!GB_PENDING (M)) ;

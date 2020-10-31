@@ -41,11 +41,10 @@ bool gb_mxstring_to_format      // true if a valid format is found
 
     bool valid = false ;
     (*fmt) = GxB_BY_COL ;
-    (*sparsity) = GxB_AUTO_SPARSITY ;
+    (*sparsity) = 0 ;
     #define LEN 256
     char format_string [LEN+2] ;
     gb_mxstring_to_string (format_string, LEN, mxformat, "format") ;
-    // printf ("format: [%s]: ", format_string) ;
 
     //--------------------------------------------------------------------------
     // look for trailing "by row" or "by col", and set format if found
@@ -56,7 +55,6 @@ bool gb_mxstring_to_format      // true if a valid format is found
     {
         if (MATCH (format_string + len - 6, "by row"))
         { 
-            // printf ("(by row) ") ;
             valid = true ;
             (*fmt) = GxB_BY_ROW ;
             len = len - 6 ;
@@ -64,7 +62,6 @@ bool gb_mxstring_to_format      // true if a valid format is found
         }
         else if (MATCH (format_string + len - 6, "by col"))
         { 
-            // printf ("(by col) ") ;
             valid = true ;
             (*fmt) = GxB_BY_COL ;
             len = len - 6 ;
@@ -78,34 +75,28 @@ bool gb_mxstring_to_format      // true if a valid format is found
 
     int s = 0 ;
     int kstart = 0 ;
-    // printf ("len %d\n", len) ;
     for (int k = 0 ; k <= len ; k++)
     {
         if (format_string [k] == '/' || format_string [k] == '\0')
         {
             // mark the end of prior token
             format_string [k] = '\0' ;
-            // printf ("next %d:[%s]\n", kstart, format_string + kstart) ;
 
             // null-terminated token is contained in format_string [kstart:k]
             if (MATCH (format_string + kstart, "sparse"))
             { 
-                // printf ("(sparse) ") ;
                 s += GxB_SPARSE ;
             }
             else if (MATCH (format_string + kstart, "hypersparse"))
             { 
-                // printf ("(hypersparse) ") ;
                 s += GxB_HYPERSPARSE ;
             }
             else if (MATCH (format_string + kstart, "bitmap"))
             { 
-                // printf ("(bitmap) ") ;
                 s += GxB_BITMAP ;
             }
             else if (MATCH (format_string + kstart, "full"))
             { 
-                // printf ("(full) ") ;
                 s += GxB_FULL ;
             }
 
@@ -113,7 +104,6 @@ bool gb_mxstring_to_format      // true if a valid format is found
             kstart = k+1 ;
         }
     }
-    // printf ("\n") ;
 
     if (s > 0)
     {

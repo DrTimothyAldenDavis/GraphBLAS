@@ -85,7 +85,7 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_SPARSE)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_ROW)) ;
             break ;
 
@@ -94,7 +94,7 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_SPARSE)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 
@@ -103,7 +103,8 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_HYPERSPARSE)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL,
+                GxB_HYPERSPARSE)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_ROW)) ;
             break ;
 
@@ -112,7 +113,8 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_Option_set_(C, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_HYPERSPARSE)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL,
+                GxB_HYPERSPARSE)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 
@@ -120,7 +122,7 @@ GrB_Info export_import
         case 4 :    // bitmapR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_BITMAP)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_ROW)) ;
             break ;
 
@@ -128,7 +130,7 @@ GrB_Info export_import
         case 5 :    // bitmapC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_BITMAP)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 

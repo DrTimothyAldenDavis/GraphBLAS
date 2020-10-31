@@ -51,10 +51,10 @@ void mexFunction
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    int nmatrices, nstrings, ncells ;
+    int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
     CHECK_ERROR (nmatrices < 2 || nstrings < 1 || ncells > 0, USAGE) ;
 
@@ -103,7 +103,7 @@ void mexFunction
     OK (GrB_Matrix_nrows (&bnrows, B)) ;
     OK (GrB_Matrix_ncols (&bncols, B)) ;
 
-    GxB_Scalar scalar, scalar0 = NULL ;
+    GxB_Scalar scalar = NULL, scalar0 = NULL ;
     bool binop_bind1st ;
     if (anrows == 1 && ancols == 1)
     {
@@ -195,8 +195,8 @@ void mexFunction
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
         OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-        int sparsity = gb_get_sparsity (A, B, 0) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
+        sparsity = gb_get_sparsity (A, B, sparsity) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
     }
 
     //--------------------------------------------------------------------------

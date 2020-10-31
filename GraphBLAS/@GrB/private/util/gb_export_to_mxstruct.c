@@ -63,7 +63,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     int sparsity ;
-    GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) ;
+    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity)) ;
     mxArray *G ;
 
     switch (sparsity)

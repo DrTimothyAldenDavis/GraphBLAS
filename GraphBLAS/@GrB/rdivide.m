@@ -39,7 +39,7 @@ else
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
             % expand B t a full matrix and cast to the type of A
-            B = gb_scalar_to_full (am, an, atype, B) ;
+            B = gb_scalar_to_full (am, an, atype, gb_fmt (A), B) ;
             C = GrB (gbemult (A, '/', B)) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern

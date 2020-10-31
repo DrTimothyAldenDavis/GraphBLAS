@@ -23,9 +23,6 @@
 
 // These default rules may change in future releases of SuiteSparse:GraphBLAS.
 
-// If A->sparsity is GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP, or GxB_FULL,
-// then this automatic test is not used.
-
 // This rule is not used if all entries are present.  In that case, the matrix
 // becomes full, not bitmap.
 

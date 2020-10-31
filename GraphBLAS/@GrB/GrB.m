@@ -979,7 +979,7 @@ methods (Static)
     [I, J, X] = extracttuples (A, desc) ;
     C = eye (m, n, type) ;
     finalize ;
-    f = format (arg) ;
+    [f, s] = format (arg) ;
     C = incidence (A, varargin) ;
     init ;
     s = isbyrow (A) ;

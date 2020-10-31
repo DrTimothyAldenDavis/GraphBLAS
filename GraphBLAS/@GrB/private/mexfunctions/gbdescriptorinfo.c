@@ -37,10 +37,12 @@ void mexFunction
     base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_GRB ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
+    int sparsity = 0 ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 0)
     {
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base);
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
+            &sparsity, &base) ;
     }
 
     if (desc == NULL)
@@ -79,12 +81,61 @@ void mexFunction
     }
 
     printf ("    d.format   = ") ;
+
+    switch (sparsity)
+    {
+        case GxB_HYPERSPARSE : 
+            printf ("hypersparse ") ;
+            break ;
+        case GxB_SPARSE : 
+            printf ("sparse ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_SPARSE : 
+            printf ("hypersparse/sparse ") ;
+            break ;
+        case GxB_BITMAP : 
+            printf ("bitmap ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_BITMAP : 
+            printf ("hypersparse/bitmap ") ;
+            break ;
+        case GxB_SPARSE + GxB_BITMAP : 
+            printf ("sparse/bitmap ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP : 
+            printf ("hypersparse/sparse/bitmap ") ;
+            break ;
+        case GxB_FULL:
+            printf ("full ") ;
+            break ;
+        case GxB_BITMAP + GxB_FULL :
+            printf ("bitmap/full ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_FULL : 
+            printf ("hypersparse/full ") ;
+            break ;
+        case GxB_SPARSE + GxB_FULL :  
+            printf ("sparse/full ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
+            printf ("hypersparse/sparse/full ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
+            printf ("hypersparse/bitmap/full ") ;
+            break ;
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
+            printf ("sparse/gitmap/full ") ;
+            break ;
+        default :
+            break ;
+    }
+
     switch (fmt)
     {
-        case GxB_BY_ROW    : printf ("by row\n")    ; break ;
-        case GxB_BY_COL    : printf ("by col\n")    ; break ;
+        case GxB_BY_ROW    : printf ("by row\n")     ; break ;
+        case GxB_BY_COL    : printf ("by col\n")     ; break ;
         case GxB_NO_FORMAT :
-        default            : printf ("default\n")   ; break ;
+        default            : printf ("by default\n") ; break ;
     }
 
     //--------------------------------------------------------------------------

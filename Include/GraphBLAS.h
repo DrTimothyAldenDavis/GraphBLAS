@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 29, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "Oct 30, 2020 (DRAFT: DO NOT BENCHMARK; debug/etc on)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4004,8 +4004,7 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems.
                         // If <= GxB_DEFAULT, then the default is used.
 
-    // GxB_Matrix_Option_get only:
-    GxB_IS_HYPER = 6,   // query a matrix to see if it hypersparse or not
+    GxB_IS_HYPER = 6,   // deprecated; use GxB_SPARSITY_STATUS instead
 
     // GxB_Global_Option_get only:
     GxB_LIBRARY_NAME = 8,           // name of the library (char *)
@@ -4030,8 +4029,9 @@ typedef enum            // for global options or matrix options
     // MKL control (DRAFT: in progress, do not use)
     GxB_GLOBAL_MKL = GxB_MKL,       // control usage of Intel MKL
 
-    // sparsity option (GxB_Matrix_Option_get/set only):
-    GxB_SPARSITY = 32,              // default, hyper, sparse, bitmap or full
+    // sparsity option:
+    GxB_SPARSITY_CONTROL = 32,      // 0 to 15; see below
+    GxB_SPARSITY_STATUS = 33,       // hyper, sparse, bitmap or full (1,2,4,8)
 
     GxB_BURBLE = 99                 // development only (bool *)
 
@@ -4055,17 +4055,17 @@ GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 // the default hyper_switch parameter
 GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 
-// for GxB_SPARSITY can be any sum or bitwise OR of these 4 values:
+// GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 #define GxB_HYPERSPARSE 1   // store matrix in hypersparse form
 #define GxB_SPARSE      2   // store matrix as sparse form (compressed vector)
 #define GxB_BITMAP      4   // store matrix as a bitmap
 #define GxB_FULL        8   // store matrix as full; all entries must be present
 
-// the default is to store the matrix in any form:
+// the default sparsity control is to store the matrix in any form:
 #define GxB_AUTO_SPARSITY 15
 
-// GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity) provides hints about
-// which data structure GraphBLAS should use for the matrix A:
+// GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity) provides hints
+// about which data structure GraphBLAS should use for the matrix A:
 //
 //      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between all
 //          four sparsity structures.
@@ -4083,12 +4083,13 @@ GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 // Since GxB_FULL can only be used when all entries are present, it has the
 // same effect as GxB_FULL + GxB_BITMAP.
 //
-// A GrB_Vector cannot be hypersparse; if this option is requested, the vector
-// may be stored in a sparse structure instead.
+// GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity) returns the
+// current data structure currently used for the matrix A (either hypersparse,
+// sparse, bitmap, or full).
 //
-// GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) returns the current data
-// structure currently used for the matrix A (either hypersparse, sparse,
-// bitmap, or full).
+// GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &sparsity) returns the hint
+// for how A should be stored (hypersparse, sparse, bitmap, or full, or any
+// combination).
 
 // If the matrix or vector structure can be sparse or hypersparse, the
 // GxB_HYPER_SWITCH parameter controls when each of these structures are used.
@@ -4233,12 +4234,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
 //      GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
 //
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_AUTO_SPARSITY) ;
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_HYPERSPARSE) ;
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_SPARSE) ;
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_BITMAP) ;
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY, GxB_FULL) ;
-//      GxB_get (GrB_Matrix A, GxB_SPARSITY, GxB_Desc_Value *sparsity) ;
+//      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
+//      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, sparsity) ; // 0 to 15
+//      GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *sparsity) ;
 
 // To set/get the matrix GPU options: (DRAFT: in progress, do not use)
 //
@@ -4250,9 +4248,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_GPU_CHUNK, double chunk) ;
 //      GxB_get (GrB_Matrix A, GxB_GPU_CHUNK, double *chunk) ;
 
-// To get a matrix status:
+// To get a matrix sparsity status (hypersparse/sparse/bitmap/full):
 //
-//      GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ;
+//      GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ;
 
 // To set/get a descriptor field:
 //

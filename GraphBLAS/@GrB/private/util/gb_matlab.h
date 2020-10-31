@@ -166,7 +166,7 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
     const GrB_Type type
 ) ;
 
-GrB_Matrix gb_typecast      // A = (type) S, where A is deep
+GrB_Matrix gb_typecast          // A = (type) S, where A is deep
 (
     GrB_Type type,              // if NULL, copy but do not typecast
     GxB_Format_Value fmt,       // also convert to the requested format
@@ -257,6 +257,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     const mxArray *desc_matlab, // MATLAB struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
     GxB_Format_Value *fmt,      // by row or by col
+    int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 ) ;
 
@@ -473,7 +474,8 @@ void gb_get_mxargs
     GrB_Descriptor *desc,       // last argument is always the descriptor
     base_enum_t *base,          // desc.base
     kind_enum_t *kind,          // desc.kind
-    GxB_Format_Value *fmt       // desc.format
+    GxB_Format_Value *fmt,      // desc.format : by row or by col
+    int *sparsity               // desc.format : hypersparse/sparse/bitmap/full
 ) ;
 
 int64_t gb_norm_kind (const mxArray *arg) ;

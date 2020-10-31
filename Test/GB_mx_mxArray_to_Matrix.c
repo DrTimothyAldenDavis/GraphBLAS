@@ -34,10 +34,10 @@
 // Like GB_mx_Matrix_to_mxArray, this could be done using only user-callable
 // GraphBLAS functions, but the method used here is faster.
 
-// A.sparsity sets the GxB_SPARSITY option: 0 to 15 (see GB_conform.c),
+// A.sparsity sets the GxB_SPARSITY_CONTROL option: 0 to 15 (see GB_conform.c),
 // which is any sum of these 4 flags:
 //
-//    // for GxB_SPARSITY can be any sum or bitwise OR of these 4 values:
+//    // GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 //    #define GxB_HYPERSPARSE 1   // hypersparse form
 //    #define GxB_SPARSE      2   // sparse form
 //    #define GxB_BITMAP      4   // a bitmap
@@ -230,7 +230,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (deep_copy)
     {
-        // TODO use GB_new_bix here instead
+        // TODO use GrB_Matrix_new here instead
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
@@ -449,7 +449,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
         // this forces the matrix to be always hypersparse
         ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_SPARSITY, GxB_HYPERSPARSE) ;
+        GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE) ;
         ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
     }
 
@@ -460,7 +460,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     if (has_sparsity_control)
     {
         ASSERT_MATRIX_OK (A, "setting sparsity", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_SPARSITY, sparsity_control) ;
+        GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, sparsity_control) ;
         ASSERT_MATRIX_OK (A, "set sparsity", GB0) ;
     }
 

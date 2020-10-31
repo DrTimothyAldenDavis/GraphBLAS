@@ -19,9 +19,6 @@ GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
     GxB_Format_Value fmt ;
     OK (GxB_Matrix_Option_get (S, GxB_FORMAT, &fmt)) ;
     GrB_Matrix A = gb_typecast (NULL, fmt, S) ;
-    int sparsity ;
-    OK (GxB_Matrix_Option_get (S, GxB_SPARSITY, &sparsity)) ;
-    OK (GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity)) ;
     OK (GrB_Matrix_free (&S)) ;
     return (A) ;
 }

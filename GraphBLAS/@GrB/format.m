@@ -1,4 +1,4 @@
-function f = format (arg)
+function [f,s] = format (arg)
 %GRB.FORMAT get/set the default GraphBLAS matrix format.
 %
 % In its ANSI C interface, SuiteSparse:GraphBLAS stores its matrices by
@@ -62,9 +62,11 @@ function f = format (arg)
 % The GrB.format setting is reset to its default ('by col'), via GrB.clear.
 %
 % To query the format for a given GraphBLAS matrix G, use the following
-% (which does not affect the global format setting):
+% (which does not affect the global format setting).  The return value f
+% is 'by row' or 'by col', and s is 'hypersparse', 'sparse', 'bitmap',
+% or 'full'.
 %
-%   f = GrB.format (G)
+%   [f,s] = GrB.format (G)
 %
 % Use G = GrB (G, 'by row') or G = GrB (G, 'by col') to change the format
 % of G after it is constructed.
@@ -77,7 +79,7 @@ function f = format (arg)
 %   GrB.format (G)
 %   GrB.format ('by row') ;      % set the default format to 'by row'
 %   G = GrB.build (1:3, 1:3, 1:3)
-%   GrB.format (G)               % query the format of G, which is 'by row'
+%   [f,s] = GrB.format (G)       % query the format of G
 %
 % See also GrB.
 
@@ -94,6 +96,6 @@ else
     end
     % f = GrB.format (A) ; get the format of the matrix A (MATLAB or GraphBLAS)
     % f = GrB.format (f) ; set the global format for all matrices.
-    f = gbformat (arg) ;
+    [f,s] = gbformat (arg) ;
 end
 

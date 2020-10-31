@@ -124,87 +124,81 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         // 1
         case GxB_HYPERSPARSE : 
-            GBPR0 ("  sparsity: hypersparse only\n") ;
+            GBPR0 ("  sparsity control: hypersparse only\n") ;
             break ;
 
         // 2
         case GxB_SPARSE : 
-            GBPR0 ("  sparsity: sparse only\n") ;
+            GBPR0 ("  sparsity control: sparse only\n") ;
             break ;
 
         // 3
         case GxB_HYPERSPARSE + GxB_SPARSE : 
-            GBPR0 ("  sparsity: sparse/hypersparse\n") ;
+            GBPR0 ("  sparsity control: sparse/hypersparse\n") ;
             break ;
 
         // 4
         case GxB_BITMAP : 
-            GBPR0 ("  sparsity: bitmap only\n") ;
+            GBPR0 ("  sparsity control: bitmap only\n") ;
             break ;
 
         // 5
         case GxB_HYPERSPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: hypersparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: hypersparse/bitmap\n") ;
             break ;
 
         // 6
         case GxB_SPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: sparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: sparse/bitmap\n") ;
             break ;
 
         // 7
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: hypersparse/sparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: hypersparse/sparse/bitmap\n") ;
             break ;
 
         // 8 and 12: these options are treated the same
         case GxB_FULL : 
         case GxB_FULL + GxB_BITMAP : 
-            GBPR0 ("  sparsity: bitmap/full\n") ;
+            GBPR0 ("  sparsity control: bitmap/full\n") ;
             break ;
 
         // 9
         case GxB_HYPERSPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/full\n") ;
             break ;
 
         // 10
         case GxB_SPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: sparse/full\n") ;
+            GBPR0 ("  sparsity control: sparse/full\n") ;
             break ;
 
         // 11
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/sparse/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/sparse/full\n") ;
             break ;
 
         // 13
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/bitmap/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/bitmap/full\n") ;
             break ;
 
         // 14
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
-            GBPR0 ("  sparsity: sparse/bitmap/full\n") ;
+            GBPR0 ("  sparsity control: sparse/bitmap/full\n") ;
             break ;
 
         // 15
         case GxB_AUTO_SPARSITY : 
             #if GB_DEVELOPER
-            GBPR0 ("  sparsity: auto\n") ;
+            GBPR0 ("  sparsity control: auto\n") ;
             #endif
             break ;
 
         default : 
-            GBPR0 (" unknown\n") ;
+            GBPR0 ("  sparsity control: invalid\n") ;
+            return (GrB_INVALID_OBJECT) ;
             break ;
-    }
-
-    if (A->sparsity <= 0 || A->sparsity > GxB_AUTO_SPARSITY)
-    { 
-GB_GOTCHA ;
-        GBPR0 (" invalid sparsity structure\n") ;
-        return (GrB_INVALID_OBJECT) ;
     }
 
     //--------------------------------------------------------------------------

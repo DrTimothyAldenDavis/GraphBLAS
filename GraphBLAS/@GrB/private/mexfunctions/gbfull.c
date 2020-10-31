@@ -84,15 +84,18 @@ void mexFunction
     base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_GRB ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
+    int sparsity = 0 ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 3)
     { 
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base);
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
+            &sparsity, &base) ;
     }
     OK (GrB_Descriptor_free (&desc)) ;
 
     // A determines the format of C, unless defined by the descriptor
     fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
+    sparsity = gb_get_sparsity (A, NULL, sparsity) ;
 
     //--------------------------------------------------------------------------
     // expand the identity into a dense matrix B the same size as C
@@ -133,6 +136,7 @@ void mexFunction
     GrB_Matrix C ;
     OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
     OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
     OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
         gb_first_binop (type), S, B, NULL)) ;
 

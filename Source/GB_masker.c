@@ -86,9 +86,8 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     ASSERT (!GB_JUMBLED (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
 
-    // this function is not used if C matrix is bitmap or full
-    ASSERT (!GB_IS_BITMAP (C)) ;        // GB_masker used if C is bitmap or full
-    ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;    // GB_masker not used if C is bitmap
+    ASSERT (!GB_IS_FULL (C)) ;      // GB_masker not used if C is full
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;

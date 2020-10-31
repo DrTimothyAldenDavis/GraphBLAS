@@ -100,8 +100,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     }
     GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
-    GB_OK (GB_new_bix (Chandle, ctype, nI, nJ, GB_Ap_null, C_is_csc, sparsity,
-        A->hyper_switch, -1, cnzmax, true, Context)) ;
+    GB_OK (GB_new_bix (Chandle, // bitmap or full, new header
+        ctype, nI, nJ, GB_Ap_null, C_is_csc,
+        sparsity, A->hyper_switch, -1, cnzmax, true, Context)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------

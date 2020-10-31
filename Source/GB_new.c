@@ -44,8 +44,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const float hyper_switch,   // A->hyper_switch
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
@@ -116,7 +115,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // auto selection:  sparse if one vector or less or
         // if the global hyper_switch is negative; hypersparse otherwise.
         // Never select A to be full or bitmap for this case.
-        ASSERT (sparsity == GxB_SPARSE + GxB_HYPERSPARSE) ;
         A_is_hyper = !(vdim <= 1 || 0 > hyper_switch) ;
     }
 

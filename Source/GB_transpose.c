@@ -177,7 +177,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
 
-    // get the current sparsity structure of A
+    // get the current sparsity control of A
     float A_hyper_switch = A->hyper_switch ;
     int A_sparsity = A->sparsity ;
 
@@ -1241,7 +1241,7 @@ GB_GOTCHA ;
 
     // transplant the hyper_switch and sparsity structure from A to C
     C->hyper_switch = A_hyper_switch ;
-    C->sparsity = A_sparsity ;
+    C->sparsity = A_sparsity ;  // transplant sparsity control into C
 
     ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
 

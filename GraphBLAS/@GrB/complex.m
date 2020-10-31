@@ -72,7 +72,7 @@ else
                 C = gbapply2 ('cmplx.double', 0, B, desc) ;
             else
                 % expand A and B to full double matrices; C is full
-                A = gb_scalar_to_full (bm, bn, 'double', A) ;
+                A = gb_scalar_to_full (bm, bn, 'double', gb_fmt (B), A) ;
                 B = gbfull (B, 'double') ;
                 desc.kind = 'full' ;
                 C = gbemult ('cmplx.double', A, B, desc) ;
@@ -87,7 +87,7 @@ else
             else
                 % expand A and B to full double matrices; C is full
                 A = gbfull (A, 'double') ;
-                B = gb_scalar_to_full (am, an, 'double', B) ;
+                B = gb_scalar_to_full (am, an, 'double', gb_fmt (A), B) ;
                 desc.kind = 'full' ;
                 C = gbemult ('cmplx.double', A, B, desc) ;
             end
