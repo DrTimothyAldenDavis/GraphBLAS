@@ -5,7 +5,7 @@ http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 VERSION 4.0.0, Oct 30, 2020 (DRAFT: DO NOT BENCHMARK; debug/etc on)
 
-SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
+SuiteSparse:GraphBLAS is complete full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
 semirings using an almost unlimited variety of operators and types.  When
 applied to sparse adjacency matrices, these algebraic operations are equivalent

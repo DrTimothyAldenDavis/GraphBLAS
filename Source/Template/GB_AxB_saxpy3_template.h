@@ -168,6 +168,7 @@ break ;
 //------------------------------------------------------------------------------
 
 #define GB_GET_A_k                                                          \
+    if (B_jumbled) pleft = 0 ;                                              \
     int64_t pA_start, pA_end ;                                              \
     GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,                \
         &pA_start, &pA_end) ;                                               \
@@ -395,7 +396,8 @@ break ;
         && !A_jumbled)                                                  \
     {                                                                   \
         /* M and A are both sparse, and nnz(M(:,j)) much less than */   \
-        /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k) */ \
+        /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k).*/ \
+        /* This requires that A is not jumbled. */                      \
         int64_t pA = pA_start ;                                         \
         for (int64_t pM = pM_start ; pM < pM_end ; pM++)                \
         {                                                               \
@@ -423,8 +425,8 @@ break ;
     else                                                                \
     {                                                                   \
         /* A(:,j) is sparse enough relative to M(:,j) */                \
-        /* M and/or A can dense */                                      \
-        /* scan A(:,k), and lookup M(i,j) */                            \
+        /* M and/or A can dense, and either can be jumbled. */          \
+        /* scan A(:,k), and lookup M(i,j) (in the hash table) */        \
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
         {                                                               \
             if (!GBB (Ab, pA)) continue ;                               \

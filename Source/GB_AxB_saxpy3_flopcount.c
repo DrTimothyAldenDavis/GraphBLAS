@@ -321,7 +321,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
                 // B(k,j) is nonzero
 
-                // find A(:,k), reusing pleft since Bi [...] is sorted
+                // find A(:,k), reusing pleft if B is not jumbled
+                if (B_jumbled)
+                { 
+                    pleft = 0 ;
+                }
                 int64_t pA, pA_end ;
                 GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,
                     &pA, &pA_end) ;
