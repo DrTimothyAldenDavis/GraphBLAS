@@ -472,7 +472,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // return the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "got A from MATLAB", GB3) ;
+    ASSERT_MATRIX_OK (A, "got A from MATLAB", GB0) ;
     return (A) ;
 }
 

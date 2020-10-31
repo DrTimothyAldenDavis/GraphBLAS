@@ -28,9 +28,9 @@
 
         #ifdef GB_CHECK_MASK_ij
 
-            // The mask M is dense (full, bitmap, or sparse/hyper with all
-            // entries present in the entire matrix).  Get pointers Mjb and
-            // Mjx into the M(:,j) vector.
+            // The mask M is packed (full, bitmap, or sparse/hyper and not
+            // jumbled with all entries present in the entire matrix).  Get
+            // pointers Mjb and Mjx into the M(:,j) vector.
             GB_GET_M_j                  // get M(:,j)
             #ifndef M_SIZE
             #define M_SIZE 1

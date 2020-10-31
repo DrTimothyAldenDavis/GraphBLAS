@@ -168,7 +168,7 @@ break ;
 //------------------------------------------------------------------------------
 
 #define GB_GET_A_k                                                          \
-    if (B_jumbled) pleft = 0 ;                                              \
+    if (B_jumbled) pleft = 0 ;  /* reuse pleft if B is not jumbled */       \
     int64_t pA_start, pA_end ;                                              \
     GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,                \
         &pA_start, &pA_end) ;                                               \

@@ -15,7 +15,6 @@ for k1 = 1:length(types)
 
     for sparsity_control = 0:15
         A.sparsity = sparsity_control ;
-        A
         C = GB_mex_dump (A, 2) ;
         GB_spec_compare (C, A) ;
     end
@@ -26,7 +25,6 @@ for k1 = 1:length(types)
 
     for sparsity_control = 0:15
         A.sparsity = sparsity_control ;
-        A
         C = GB_mex_dump (A, 2) ;
         GB_spec_compare (C, A) ;
     end
@@ -37,7 +35,6 @@ for k1 = 1:length(types)
         A.is_hyper = is_hyper ;
         for sparsity_control = 0:15
             A.sparsity = sparsity_control ;
-            A
             C = GB_mex_dump (A, 2) ;
             GB_spec_compare (C, A) ;
         end
