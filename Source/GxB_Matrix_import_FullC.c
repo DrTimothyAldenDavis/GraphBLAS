@@ -18,7 +18,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, nrows, ncols, 0, 0, false, 0, 0,
+    info = GB_import (A, type, nrows, ncols, 0, 0, false, 0,
         NULL, NULL, NULL, NULL, Ax, GxB_FULL, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;

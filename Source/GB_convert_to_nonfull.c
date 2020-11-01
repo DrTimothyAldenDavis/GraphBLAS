@@ -34,7 +34,8 @@ GB_GOTCHA ;
     }
     else if (A->sparsity & GxB_SPARSE
         || (A->vdim <= 1 & (A->sparsity & GxB_HYPERSPARSE)))
-    {
+    { 
+GB_GOTCHA ;
         // C can become sparse
         return (GB_convert_full_to_sparse (A, Context)) ;
     }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot4:  C+=A'*B via dot products, where C is dense
+// GB_AxB_dot4_template:  C+=A'*B via dot products, where C is dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -25,7 +25,7 @@
     }                                                               \
     GB_GETA (aki, Ax, pA) ;                 /* aki = A(k,i) */      \
     GB_GETB (bkj, Bx, pB) ;                 /* bkj = B(k,j) */      \
-    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */   \
+    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */  \
     GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
     pA++ ;                                                          \
     pB++ ;                                                          \

@@ -99,12 +99,12 @@
 
         // phase2
         if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        {
+        { 
             // C is sparse or hypersparse (phase1 and phase2)
             #include "GB_sparse_emult_template.c"
         }
         else // C_sparsity == GxB_BITMAP
-        {
+        { 
             // C is bitmap (phase2 only)
             ASSERT (C_sparsity == GxB_BITMAP) ;
             #include "GB_bitmap_emult_template.c"

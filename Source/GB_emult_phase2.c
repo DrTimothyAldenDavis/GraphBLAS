@@ -145,8 +145,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     // transplant Cp into C as the vector pointers, from GB_emult_phase1.
     if (C_is_sparse_or_hyper)
-    {
-        C->nvec_nonempty = Cnvec_nonempty ;
+    { 
+        C->nvec_nonempty = Cnvec_nonempty ;     // TODO::OK
         C->p = (int64_t *) Cp ;
     }
 
@@ -213,7 +213,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         }
 
         if (info == GrB_OUT_OF_MEMORY)
-        {
+        { 
+GB_GOTCHA ;
             // out of memory
             GB_FREE_ALL ;
             return (info) ;
@@ -241,7 +242,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             bsize = B->type->size ;
 
             if (op_is_second || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of A(i,j)
                 xsize = 1 ;
                 cast_A_to_X = NULL ;
@@ -253,7 +254,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             }
 
             if (op_is_first || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of B(i,j)
                 ysize = 1 ;
                 cast_B_to_Y = NULL ;
@@ -362,7 +363,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // standard binary operator
@@ -385,8 +386,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     if (C_is_hyper)
-    {
-        C->nvec_nonempty = -1 ;
+    { 
+        C->nvec_nonempty = -1 ;     // TODO::OK, recomputed below
         GB_OK (GB_hypermatrix_prune (C, Context)) ;
     }
 

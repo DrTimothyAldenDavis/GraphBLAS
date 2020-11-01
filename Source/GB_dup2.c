@@ -33,11 +33,6 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // get A
     //--------------------------------------------------------------------------
 
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-    }
-
     int64_t anz = GB_NNZ_HELD (A) ;
     int64_t *Ap = A->p ;
     int64_t *Ah = A->h ;
@@ -46,7 +41,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     GB_void *Ax = A->x ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
-    int64_t anvec_nonempty = A->nvec_nonempty ;
+    int64_t anvec_nonempty = A->nvec_nonempty ;     // TODO::OK
     bool jumbled = A->jumbled ;
     int sparsity = A->sparsity ;
     GrB_Type atype = A->type ;
@@ -75,7 +70,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     C->nvec = anvec ;
-    C->nvec_nonempty = anvec_nonempty ;
+    C->nvec_nonempty = anvec_nonempty ;             // TODO::OK
     C->nvals = anvals ;             // for bitmap only
     C->jumbled = jumbled ;          // C is jumbled if A is jumbled
     C->sparsity = sparsity ;        // copy in the sparsity control

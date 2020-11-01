@@ -317,7 +317,7 @@ GrB_Info GB_subref_phase0
 
     Count = GB_CALLOC (max_ntasks+1, int64_t) ;
     if (Count == NULL)
-    {
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }

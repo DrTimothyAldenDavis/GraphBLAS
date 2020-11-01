@@ -7,8 +7,8 @@ function testc1
 rng 'default'
 
 A = sparse (rand (2) + 1i * rand (2))  ;
-
 C = GB_mex_dump (A,0) ;
+GB_spec_compare (C, A) ;
 
 B = sparse (rand (2) + 1i * rand (2))  ;
 

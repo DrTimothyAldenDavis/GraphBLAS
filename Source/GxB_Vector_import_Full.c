@@ -17,7 +17,8 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
-{
+{ 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
@@ -31,7 +32,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     // import the vector
     //--------------------------------------------------------------------------
 
-    info = GB_import ((GrB_Matrix *) v, type, n, 1, 0, 0, false, 0, 0,
+    info = GB_import ((GrB_Matrix *) v, type, n, 1, 0, 0, false, 0,
         NULL, NULL, NULL, NULL, vx, GxB_FULL, true, desc) ;
     GB_BURBLE_END ;
     return (info) ;

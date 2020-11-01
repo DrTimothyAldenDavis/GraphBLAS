@@ -121,7 +121,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
 
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
-    {
+    { 
         // C is constructed with same sparsity as A (bitmap or full)
         return (GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj, symbolic,
             Context)) ;

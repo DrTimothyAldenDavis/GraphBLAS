@@ -19,7 +19,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
-    int64_t *nonempty,  // number of columns with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, &nzmax,"
-        " &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)") ;
+        " &jumbled, &Ap, &Ai, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_CSC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
@@ -44,7 +44,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 
     if (jumbled == NULL)
     { 
-GB_GOTCHA ;
+// GB_GOTCHA ; by gbtest1
         // the exported matrix cannot be jumbled
         GB_MATRIX_WAIT (*A) ;
     }
@@ -74,8 +74,7 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_export (A, type, nrows, ncols,
-        nzmax, NULL, jumbled, nonempty, NULL,
+    info = GB_export (A, type, nrows, ncols, nzmax, NULL, jumbled, NULL,
         Ap, NULL, NULL, Ai, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

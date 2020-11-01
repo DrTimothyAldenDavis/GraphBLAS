@@ -324,6 +324,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 // find A(:,k), reusing pleft if B is not jumbled
                 if (B_jumbled)
                 { 
+GB_GOTCHA ;
                     pleft = 0 ;
                 }
                 int64_t pA, pA_end ;

@@ -18,6 +18,8 @@
     ASSERT (A_is_bitmap || A_is_full) ;
     ASSERT (B_is_bitmap || B_is_full) ;
 
+    // TODO modify this method so it can modify C in-place, and also use the
+    // accum operator.
     int64_t p, cnvals = 0 ;
 
     if (M == NULL)
@@ -43,7 +45,7 @@
         for (p = 0 ; p < cnz ; p++)
         {
             if (GBB (Ab, p) && GBB (Bb,p))
-            {
+            { 
                 // C (i,j) = A (i,j) + B (i,j)
                 GB_GETA (aij, Ax, p) ;
                 GB_GETB (bij, Bx, p) ;
@@ -82,7 +84,7 @@
 
         GB_SLICE_MATRIX (M, 8) ;
 
-        #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
+// TODO #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
             int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -101,7 +103,8 @@
                     // mark C(i,j) if M(i,j) is true
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
+GB_GOTCHA ;
                         int64_t i = Mi [pM] ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 2 ;
@@ -118,15 +121,16 @@
         // Method19(!M,sparse): C is bitmap, both A and B are bitmap or full
         //----------------------------------------------------------------------
 
-        #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
-            reduction(+:cnvals)
+// TODO #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
+// TODO     reduction(+:cnvals)
         for (p = 0 ; p < cnz ; p++)
         {
             if (Cb [p] == 0)
             {
                 // M(i,j) is zero, so C(i,j) can be computed
                 if (GBB (Ab, p) && GBB (Bb, p))
-                {
+                { 
+GB_GOTCHA ;
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_GETA (aij, Ax, p) ;
                     GB_GETB (bij, Bx, p) ;
@@ -136,7 +140,8 @@
                 }
             }
             else
-            {
+            { 
+GB_GOTCHA ;
                 // M(i,j) == 1, so C(i,j) is not computed
                 Cb [p] = 0 ;
             }

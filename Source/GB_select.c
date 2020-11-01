@@ -80,7 +80,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 "Operator %s not defined for user-defined types", op->name) ;
         }
         else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
-        {
+        { 
+GB_GOTCHA ;
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for complex types", op->name) ;
         }

@@ -114,7 +114,7 @@ GrB_Info GB_bitmap_assign_notM_accum
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // matrix assignment: C<!M>(I,J) += A
@@ -155,7 +155,7 @@ GrB_Info GB_bitmap_assign_notM_accum
     //--------------------------------------------------------------------------
 
     if (!C_replace)
-    {
+    { 
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 1       keep this entry
@@ -164,7 +164,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         #include "GB_bitmap_assign_M_template.c"
     }
     else
-    {
+    { 
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 0       delete this entry

@@ -33,7 +33,7 @@
     //--------------------------------------------------------------------------
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -66,7 +66,7 @@
                 // M is bitmap
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-// GB_GOTCHA ;
+GB_GOTCHA ;
                     if (!GBB (Mb, pM)) continue ;
                     GB_COPY_A_TO_C (Cx, pM, Ax, pM) ;    // Cx [pM] = Ax [pM]
                 }

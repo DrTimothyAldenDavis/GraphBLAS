@@ -125,7 +125,7 @@ void GB_AxB_saxpy3_symbolic
     // Hi and Hx are not initialized.
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+// TODO #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -182,7 +182,7 @@ void GB_AxB_saxpy3_symbolic
                 ASSERT (!M_dense_in_place) ;
 
                 if (mjnz > 0)
-                {
+                { 
                     int8_t *GB_RESTRICT
                         Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                     GB_SCATTER_M_j (mystart, myend, 1) ;
@@ -415,7 +415,7 @@ void GB_AxB_saxpy3_symbolic
                 int64_t hash_bits = (hash_size-1) ;
 
                 if (M == NULL || ignore_mask)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // phase1: coarse hash task, C=A*B
@@ -448,27 +448,31 @@ void GB_AxB_saxpy3_symbolic
                         switch (msize)
                         {
                             default:
-                            case 1:
+                            case 1 : 
                             {
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 2:
+                            case 2 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 4:
+                            case 4 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 8:
+                            case 8 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 16:
+                            case 16 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
@@ -545,7 +549,7 @@ void GB_AxB_saxpy3_symbolic
                     //----------------------------------------------------------
 
                     if (M_dense_in_place)
-                    { 
+                    {
 
                         // M(:,j) is dense.  M is not scattered into Hf.
 
@@ -573,27 +577,31 @@ GB_GOTCHA ;
                         switch (msize)
                         {
                             default:
-                            case 1:
+                            case 1 : 
                             {
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 2:
+                            case 2 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 4:
+                            case 4 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 8:
+                            case 8 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                             }
-                            case 16:
+                            case 16 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2

@@ -1,0 +1,517 @@
+//------------------------------------------------------------------------------
+// GB_selector:  select entries from a matrix
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// GB_selector does the work for GB_select and the GxB_*select methods.
+// It also deletes zombies for GB_Matrix_wait using the NONZOMBIE operator,
+// and deletes entries outside a smaller matrix for GxB_*resize.
+
+// TODO: GB_selector does not exploit the mask.
+
+#include "GB_select.h"
+#include "GB_ek_slice.h"
+#include "GB_sel__include.h"
+
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_Matrix_free (&C) ;           \
+    GB_FREE_WORK ;                  \
+}
+
+#define GB_FREE_WORK                \
+{                                   \
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ; \
+    GB_FREE (Wfirst) ;              \
+    GB_FREE (Wlast) ;               \
+    GB_FREE (C_pstart_slice) ;      \
+    GB_FREE (Zp) ;                  \
+    GB_FREE (Cp) ;                  \
+    GB_FREE (Ch) ;                  \
+    GB_FREE (Ci) ;                  \
+    GB_FREE (Cx) ;                  \
+}
+
+GrB_Info GB_selector
+(
+    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GB_Select_Opcode opcode,    // selector opcode
+    const GxB_SelectOp op,      // user operator
+    const bool flipij,          // if true, flip i and j for user operator
+    GrB_Matrix A,               // input matrix
+    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
+    const GxB_Scalar Thunk,     // optional input for select operator
+    GB_Context Context
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
+    ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_opcode) ;
+
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
+    // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
+    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
+    // entry selector: jumbled OK
+    ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
+
+    GrB_Info info ;
+    if (Chandle != NULL)
+    {   GB_cov[3765]++ ;
+// covered (3765): 234517
+        (*Chandle) = NULL ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get Thunk
+    //--------------------------------------------------------------------------
+
+    // The scalar value of Thunk(0) is typecasted to an integer (int64_t
+    // ithunk) for built-in operators (tril, triu, diag, offdiag, and resize).
+    // It is also typecast to the same type as A (to the scalar athunk).  This
+    // is used for gt, ge, lt, le, ne, eq to Thunk, for built-in types.
+
+    // If Thunk is NULL, or has no entry, it is treated as a scalar value
+    // of zero.
+
+    const int64_t asize = A->type->size ;
+    const GB_Type_code typecode = A->type->code ;
+
+    GB_void athunk [GB_VLA(asize)] ;
+    memset (athunk, 0, asize) ;
+    GB_void *GB_RESTRICT xthunk = athunk ;
+
+    if (Thunk != NULL && GB_NNZ (Thunk) > 0)
+    {
+        // xthunk points to Thunk->x for user-defined select operators
+        xthunk = (GB_void *) Thunk->x ;
+        GB_Type_code tcode = Thunk->type->code ;
+        ithunk = 0 ;
+        if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_opcode)
+        {   GB_cov[3766]++ ;
+// covered (3766): 28608
+            // ithunk = (int64_t) Thunk (0)
+            size_t tsize = Thunk->type->size ;
+            GB_cast_array ((GB_void *GB_RESTRICT) &ithunk, GB_INT64_code,
+                xthunk, tcode, NULL, tsize, 1, 1) ;
+            // athunk = (atype) Thunk (0)
+            GB_cast_array (athunk, typecode, xthunk, tcode, NULL, tsize, 1, 1) ;
+            // xthunk now points to the typecasted (atype) Thunk (0)
+            xthunk = athunk ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // get the user-defined operator
+    //--------------------------------------------------------------------------
+
+    GxB_select_function user_select = NULL ;
+    if (op != NULL && opcode >= GB_USER_SELECT_opcode)
+    {   GB_cov[3767]++ ;
+// covered (3767): 125002
+        GB_BURBLE_MATRIX (A, "(generic select: %s) ", op->name) ;
+        user_select = (GxB_select_function) (op->function) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // handle the packed case (bitmap, full, or all entries present)
+    //--------------------------------------------------------------------------
+
+    bool use_bitmap_selector ;
+    if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
+    {   GB_cov[3768]++ ;
+// covered (3768): 731450
+        // GB_bitmap_selector does not support these opcodes.  For the RESIZE
+        // and NONZOMBIE operators, A will never be bitmap.  Full matrices
+        // should use another method, but for now the sparse case works fine.
+        // If A is sparse or hypersparse, but packed, then it has no zombies
+        // anyway.
+        use_bitmap_selector = false ;
+    }
+    else if (opcode == GB_DIAG_opcode)
+    {   GB_cov[3769]++ ;
+// covered (3769): 8322
+        // GB_bitmap_selector supports the DIAG operator, but it is currently
+        // not efficient (GB_bitmap_selector should return a sparse diagonal
+        // matrix, not bitmap).  So use the sparse case if A is not bitmap,
+        // since the sparse case below does not support the bitmap case.
+        use_bitmap_selector = GB_IS_BITMAP (A) ;
+    }
+    else
+    {   GB_cov[3770]++ ;
+// covered (3770): 226195
+        // For bitmap, full, or packed matrices (sparse/hypersparse with all
+        // entries present, not jumbled, no zombies, and no pending tuples),
+        // use the bitmap selector for all other operators (TRIL, TRIU,
+        // OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
+        // operators).
+        use_bitmap_selector = GB_is_packed (A) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // bitmap/full case
+    //--------------------------------------------------------------------------
+
+    if (use_bitmap_selector)
+    {   GB_cov[3771]++ ;
+// covered (3771): 40536
+        GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
+        return (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
+            ithunk, xthunk, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get A: sparse, hypersparse, or full
+    //--------------------------------------------------------------------------
+
+    // the case when A is bitmap is always handled above by GB_bitmap_selector
+    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: bitmap case handled above
+
+    int64_t *GB_RESTRICT Ap = A->p ;
+    int64_t *GB_RESTRICT Ah = A->h ;
+    int64_t *GB_RESTRICT Ai = A->i ;
+    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    int64_t aplen = A->plen ;
+    int64_t avlen = A->vlen ;
+    int64_t avdim = A->vdim ;
+    int64_t anvec = A->nvec ;
+    bool A_jumbled = A->jumbled ;
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
+    int64_t *GB_RESTRICT Zp = NULL ;
+    int64_t *GB_RESTRICT Wfirst = NULL ;
+    int64_t *GB_RESTRICT Wlast = NULL ;
+    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
+
+    //--------------------------------------------------------------------------
+    // allocate the new vector pointers of C
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix C = NULL ;
+    int64_t cplen = (GB_IS_FULL (A)) ? avdim : aplen ;
+    int64_t *GB_RESTRICT Cp = GB_CALLOC (cplen+1, int64_t) ;
+    int64_t *GB_RESTRICT Ch = NULL ;
+    int64_t *GB_RESTRICT Ci = NULL ;
+    GB_void *GB_RESTRICT Cx = NULL ;
+    int64_t cnz = 0 ;
+    if (Cp == NULL)
+    {   GB_cov[3772]++ ;
+// covered (3772): 24928
+        // out of memory
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+    ASSERT (anvec <= cplen) ;
+    Cp [anvec] = 0 ;        // ok: C is sparse
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads and tasks to use
+    //--------------------------------------------------------------------------
+
+    int64_t anz = GB_NNZ_HELD (A) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : anz) ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+    int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
+
+    //--------------------------------------------------------------------------
+    // slice the entries for each task
+    //--------------------------------------------------------------------------
+
+    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
+    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
+    // vectors may be shared with prior slices and subsequent slices.
+
+    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
+    {   GB_cov[3773]++ ;
+// covered (3773): 59187
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace for each task
+    //--------------------------------------------------------------------------
+
+    Wfirst = GB_CALLOC (ntasks, int64_t) ;
+    Wlast  = GB_CALLOC (ntasks, int64_t) ;
+    C_pstart_slice = GB_CALLOC (ntasks, int64_t) ;
+    if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
+    {   GB_cov[3774]++ ;
+// covered (3774): 59187
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // count the live entries in each vector
+    //--------------------------------------------------------------------------
+
+    // Count the number of live entries in each vector of A.  The result is
+    // computed in Cp, where Cp [k] is the number of live entries in the kth
+    // vector of A.
+
+    if (opcode <= GB_RESIZE_opcode)
+    {
+        // allocate Zp
+        Zp = GB_MALLOC (cplen, int64_t) ;
+        if (Zp == NULL)
+        {   GB_cov[3775]++ ;
+// covered (3775): 4428
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // phase1: launch the switch factory to count the entries
+    //--------------------------------------------------------------------------
+
+    #define GB_SELECT_PHASE1
+    #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
+    #define GB_SEL_WORKER(opname,aname,atype)                           \
+    {                                                                   \
+        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,                 \
+            A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
+            (atype *) xthunk, user_select, ntasks, nthreads) ;          \
+    }                                                                   \
+    break ;
+
+    #include "GB_select_factory.c"
+
+    #undef  GB_SELECT_PHASE1
+    #undef  GB_SEL_WORKER
+
+    //--------------------------------------------------------------------------
+    // compute the new vector pointers
+    //--------------------------------------------------------------------------
+
+    // Cp = cumsum (Cp)
+    int64_t C_nvec_nonempty ;
+    GB_cumsum (Cp, anvec, &C_nvec_nonempty, nthreads) ;
+    cnz = Cp [anvec] ;      // ok: C is sparse
+
+    //--------------------------------------------------------------------------
+    // determine the slice boundaries in the new C matrix
+    //--------------------------------------------------------------------------
+
+    int64_t kprior = -1 ;
+    int64_t pC = 0 ;
+
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+        int64_t k = kfirst_slice [taskid] ;
+
+        if (kprior < k)
+        {   GB_cov[3776]++ ;
+// covered (3776): 4314632
+            // Task taskid is the first one to do work on C(:,k), so it starts
+            // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
+            pC = Cp [k] ;       // ok: C is sparse
+            kprior = k ;
+        }
+
+        // Task taskid contributes Wfirst [taskid] entries to C(:,k)
+        C_pstart_slice [taskid] = pC ;
+        pC += Wfirst [taskid] ;
+
+        int64_t klast = klast_slice [taskid] ;
+        if (k < klast)
+        {   GB_cov[3777]++ ;
+// covered (3777): 532205
+            // Task taskid is the last to contribute to C(:,k).
+            ASSERT (pC == Cp [k+1]) ;       // ok: C is sparse
+            // Task taskid contributes the first Wlast [taskid] entries
+            // to C(:,klast), so the next task taskid+1 starts at this
+            // location, if its first vector is klast of this task.
+            pC = Cp [klast] + Wlast [taskid] ;      // ok: C is sparse
+            kprior = klast ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate new space for the compacted Ci and Cx
+    //--------------------------------------------------------------------------
+
+    Ci = GB_MALLOC (cnz, int64_t) ;
+
+    if (opcode == GB_EQ_ZERO_opcode)
+    {   GB_cov[3778]++ ;
+// covered (3778): 3027
+        // since Cx [0..cnz-1] is all zero, phase2 only needs to construct
+        // the pattern in Ci
+        Cx = GB_CALLOC (cnz * asize, GB_void) ;
+    }
+    else
+    {   GB_cov[3779]++ ;
+// covered (3779): 774674
+        Cx = GB_MALLOC (cnz * asize, GB_void) ;
+    }
+
+    if (Ci == NULL || Cx == NULL)
+    {   GB_cov[3780]++ ;
+// covered (3780): 39458
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase2: launch the switch factory to select the entries
+    //--------------------------------------------------------------------------
+
+    #define GB_SELECT_PHASE2
+    #define GB_sel2(opname,aname) GB_sel_phase2_ ## opname ## aname
+    #define GB_SEL_WORKER(opname,aname,atype)                           \
+    {                                                                   \
+        GB_sel2 (opname, aname) (Ci, (atype *) Cx,                      \
+            Zp, Cp, C_pstart_slice,                                     \
+            A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
+            (atype *) xthunk, user_select, ntasks, nthreads) ;          \
+    }                                                                   \
+    break ;
+
+    #include "GB_select_factory.c"
+
+    //--------------------------------------------------------------------------
+    // create the result
+    //--------------------------------------------------------------------------
+
+    if (Chandle == NULL)
+    {
+
+        //----------------------------------------------------------------------
+        // transplant C back into A
+        //----------------------------------------------------------------------
+
+        // TODO: this is not parallel, and should be its own utility function
+        if (A->h != NULL && C_nvec_nonempty < anvec)
+        {
+            // prune empty vectors from Ah and Ap
+            int64_t cnvec = 0 ;
+            for (int64_t k = 0 ; k < anvec ; k++)
+            {
+                if (Cp [k] < Cp [k+1])      // ok: C is sparse
+                {   GB_cov[3781]++ ;
+// covered (3781): 166640
+                    Ah [cnvec] = Ah [k] ;       // ok: A is sparse
+                    Ap [cnvec] = Cp [k] ;       // ok: C is sparse
+                    cnvec++ ;
+                }
+            }
+            Ap [cnvec] = Cp [anvec] ;       // ok: A and C are sparse
+            A->nvec = cnvec ;
+            ASSERT (A->nvec == C_nvec_nonempty) ;
+            GB_FREE (Cp) ;
+        }
+        else
+        {   GB_cov[3782]++ ;
+// covered (3782): 512976
+            GB_FREE (Ap) ;
+            A->p = Cp ; Cp = NULL ;
+        }
+
+        ASSERT (Cp == NULL) ;
+
+        GB_FREE (Ai) ;
+        GB_FREE (Ax) ;
+        A->i = Ci ; Ci = NULL ;
+        A->x = Cx ; Cx = NULL ;
+        A->nzmax = cnz ;
+        A->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
+        A->jumbled = A_jumbled ;
+
+        // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
+        // is still nonzero.  It set to zero in GB_Matrix_wait.
+        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
+
+        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
+        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
+        // entry selector: C can be returned as jumbled
+        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // create C and transplant Cp, Ch, Ci, Cx into C
+        //----------------------------------------------------------------------
+
+        ASSERT (C == NULL) ;
+        int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        info = GB_new (&C, // sparse or hyper (from A), new header
+            A->type, avlen, avdim, GB_Ap_null, true,
+            sparsity, A->hyper_switch, aplen, Context) ;
+        GB_OK (info) ;
+
+        if (A->h != NULL)
+        {
+            Ch = GB_MALLOC (aplen, int64_t) ;
+            if (Ch == NULL)
+            {   GB_cov[3783]++ ;
+// NOT COVERED (3783):
+GB_GOTCHA ;
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            // copy non-empty vectors from Ah to Ch
+            int64_t cnvec = 0 ;
+            for (int64_t k = 0 ; k < anvec ; k++)
+            {
+                if (Cp [k] < Cp [k+1])      // ok: C is hypersparse
+                {   GB_cov[3784]++ ;
+// covered (3784): 158331
+                    Ch [cnvec] = Ah [k] ;       // ok: C is hypersparse
+                    Cp [cnvec] = Cp [k] ;       // ok: C is hypersparse
+                    cnvec++ ;
+                }
+            }
+            Cp [cnvec] = Cp [anvec] ;       // ok: C is hypersparse
+            C->nvec = cnvec ;
+            ASSERT (C->nvec == C_nvec_nonempty) ;
+        }
+
+        C->p = Cp ; Cp = NULL ;
+        C->h = Ch ; Ch = NULL ;
+        C->i = Ci ; Ci = NULL ;
+        C->x = Cx ; Cx = NULL ;
+        C->nzmax = cnz ;
+        C->magic = GB_MAGIC ;
+        C->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
+        C->jumbled = A->jumbled ;
+
+        (*Chandle) = C ;
+        ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
+
+        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
+        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (C))) ;
+        // entry selector: C can be returned as jumbled
+        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (C))) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK ;
+    return (GrB_SUCCESS) ;
+}
+

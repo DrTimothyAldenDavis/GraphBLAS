@@ -249,7 +249,7 @@ GrB_Info GB_subref_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;

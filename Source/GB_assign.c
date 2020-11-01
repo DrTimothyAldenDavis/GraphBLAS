@@ -102,8 +102,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (done)
     { 
         // GB_assign_prep has handled the entire assignment itself
-        ASSERT_MATRIX_OK (C, "QUICK : Final C for assign", GB0) ;
-        return (GB_block (C, Context)) ;
+        ASSERT_MATRIX_OK (C_in, "QUICK : Final C for assign", GB0) ;
+        return (GB_block (C_in, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -156,7 +156,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     if (subassign_method == GB_SUBASSIGN_METHOD_BITMAP)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // use GB_bitmap_assign directly
@@ -218,21 +218,21 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             const GrB_Index *J_SubMask = J ; int64_t nj_SubMask = nj ;
 
             if (assign_kind == GB_ROW_ASSIGN)
-            {
+            { 
                 // SubMask = M (:,J)
                 ASSERT (M->vlen == 1 && M->vdim == C->vdim) ;
                 I_SubMask = GrB_ALL ;
                 ni_SubMask = 1 ;
             }
             else if (assign_kind == GB_COL_ASSIGN)
-            {
+            { 
                 // SubMask = M (I,:)
                 ASSERT (M->vlen == C->vlen && M->vdim == 1) ;
                 J_SubMask = GrB_ALL ;
                 nj_SubMask = 1 ;
             }
             else // assign_kind == GB_ASSIGN
-            {
+            { 
                 // SubMask = M (I,J)
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
             }
@@ -366,7 +366,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     if (C == C2)
-    {
+    { 
         // zombies can be transplanted into C_in but pending tuples cannot
         GB_MATRIX_WAIT_IF_PENDING (C2) ;
         // transplants the content of C2 into C_in and frees C2

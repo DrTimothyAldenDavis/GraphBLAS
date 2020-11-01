@@ -107,7 +107,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     if (GB_IS_BITMAP (A))
-    { 
+    {
 
         //----------------------------------------------------------------------
         // allocate workspace
@@ -115,7 +115,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         bool need_typecast = (X != NULL) && (xcode != acode) ;
         if (need_typecast)
-        {
+        { 
             // X must be typecasted
             int64_t anzmax = GB_IMAX (anz, 1) ;
             X_bitmap = GB_MALLOC (anzmax * asize, GB_void) ;
@@ -143,7 +143,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         //----------------------------------------------------------------------
 
         if (need_typecast)
-        {
+        { 
             // typecast the values from X_bitmap into X
             GB_cast_array ((GB_void *) X, xcode, X_bitmap,
                 acode, NULL, asize, anz, nthreads) ;
@@ -162,15 +162,15 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         //----------------------------------------------------------------------
 
         if (I != NULL)
-        { 
+        {
             if (A->i == NULL)
-            { 
+            {
                 // A is full; construct the row indices
                 int64_t avlen = A->vlen ;
                 int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
-                {
+                { 
                     I [p] = (p % avlen) ;
                 }
             }

@@ -209,8 +209,8 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         int taskid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
+//TODO  #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+//TODO      reduction(+:cnvals)
         for (taskid = 0 ; taskid < ntasks ; taskid++)
         {
 
@@ -247,7 +247,8 @@ GB_GOTCHA ;
                     {
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        {
+                        { 
+GB_GOTCHA ;
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -259,7 +260,7 @@ GB_GOTCHA ;
                     {
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        {
+                        { 
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;

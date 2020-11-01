@@ -193,9 +193,13 @@ static inline bool GB_shall_block
 (
     GrB_Matrix A
 )
-{
+{ 
 
-    if (!GB_PENDING_OR_ZOMBIES (A)) return (false) ;
+    if (!(GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A)))
+    { 
+        // no pending work, so no need to block
+        return (false) ;
+    }
     double npending = (double) GB_Pending_n (A) ;
     double anzmax = ((double) A->vlen) * ((double) A->vdim) ;
     bool many_pending = (npending >= anzmax) ;

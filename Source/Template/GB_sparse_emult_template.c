@@ -91,7 +91,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+// TODO    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
@@ -337,7 +337,7 @@
 
                     ASSERT (B_is_sparse || B_is_hyper) ;
                     for ( ; pB < pB_end ; pB++)
-                    {
+                    { 
                         int64_t i = Bi [pB] ;               // ok: B is sparse
                         int64_t pA = pA_start + i - iA_first ;
                         if (!Ab [pA]) continue ;            // ok: A is bitmap
@@ -363,7 +363,7 @@
 
                     ASSERT (A_is_sparse || A_is_hyper) ;
                     for ( ; pA < pA_end ; pA++)
-                    {
+                    { 
                         int64_t i = Ai [pA] ;               // ok: A is sparse
                         int64_t pB = pB_start + i - iB_first ;
                         if (!Bb [pB]) continue ;            // ok: A is bitmap
@@ -732,7 +732,7 @@
                         int64_t i = Bi [pB] ;               // ok: B is sparse
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) .* B (i,j)
                             int64_t pA = pA_start + i - iA_first ;
                             if (!Ab [pA]) continue ;        // ok: A is bitmap
@@ -762,7 +762,7 @@
                         int64_t i = Ai [pA] ;               // ok: A is sparse
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) .* B (i,j)
                             int64_t pB = pB_start + i - iB_first ;
                             if (!Bb [pB]) continue ;        // ok: A is bitmap
@@ -791,11 +791,11 @@
                     ASSERT (iA_last  == iB_last ) ;
 
                     for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
+                    {
                         int64_t i = p + iA_first ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) .* B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -818,11 +818,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;               // ok: B is sparse
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) .* B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -845,11 +845,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;               // ok: A is sparse
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) .* B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -883,7 +883,7 @@
                             GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                             if (found)
                             { 
-// GB_GOTCHA ;
+GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -924,7 +924,7 @@
                             GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                             if (found)
                             { 
-// GB_GOTCHA ;
+GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -960,13 +960,13 @@
                         int64_t iB = Bi [pB] ;              // ok: B is sparse
                         if (iA < iB)
                         { 
-// GB_GOTCHA ;
+GB_GOTCHA ;
                             // A(i,j) exists but not B(i,j)
                             pA++ ;
                         }
                         else if (iB < iA)
                         { 
-// GB_GOTCHA ;
+GB_GOTCHA ;
                             // B(i,j) exists but not A(i,j)
                             pB++ ;
                         }
@@ -977,7 +977,6 @@
                             GB_GET_MIJ (i) ;
                             if (mij)
                             { 
-// GB_GOTCHA ;
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;

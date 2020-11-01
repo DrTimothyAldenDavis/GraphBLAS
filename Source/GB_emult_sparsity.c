@@ -78,15 +78,15 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      full    .           full            full    (use GB_add)
 
         if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        {
+        { 
             C_sparsity = GxB_SPARSE ;
         }
         else if (A_is_full && B_is_full)
-        {
+        { 
             C_sparsity = GxB_FULL ;
         }
         else
-        {
+        { 
             C_sparsity = GxB_BITMAP ;
         }
 
@@ -95,7 +95,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
     {
 
         if (M_is_sparse_or_hyper)
-        {
+        { 
 
             //      ------------------------------------------
             //      C       <M>=        A       .*      B
@@ -146,11 +146,11 @@ int GB_emult_sparsity       // return the sparsity structure for C
             // The mask is very efficient to use in the case, when C is sparse.
 
             if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-            {
+            { 
                 C_sparsity = GxB_SPARSE ;
             }
             else
-            {
+            { 
                 C_sparsity = GxB_BITMAP ;
             }
         }
@@ -202,12 +202,14 @@ int GB_emult_sparsity       // return the sparsity structure for C
         // Do not use a complemented mask in this case.  Do it later.
 
         if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        {
+        { 
+GB_GOTCHA ;
             C_sparsity = GxB_SPARSE ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else
-        {
+        { 
+GB_GOTCHA ;
             C_sparsity = GxB_BITMAP ;
         }
     }

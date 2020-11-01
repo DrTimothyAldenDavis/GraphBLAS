@@ -146,7 +146,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     if (A->vdim <= 1)
     {
         if (sparsity & GxB_HYPERSPARSE)
-        {
+        { 
             // a GxB_Scalar, GrB_Vector, or a GrB_Matrix with a single vector,
             // cannot be converted to hypersparse.  If the sparsity control
             // allows for the hypersparse case, disable it and enable the
@@ -238,7 +238,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         // (8), (12): bitmap or full
         //----------------------------------------------------------------------
 
-        case GxB_FULL:
+        case GxB_FULL : 
         case GxB_FULL + GxB_BITMAP : 
 
             if (is_full_or_dense_with_no_pending_work)
@@ -302,7 +302,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             }
             else if (is_bitmap)
             { 
-GB_GOTCHA ;
+// GB_GOTCHA ; by gbtest10
                 // if bitmap: to sparse
                 GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
                 // conform between sparse and hypersparse

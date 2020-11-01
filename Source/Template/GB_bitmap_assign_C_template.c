@@ -36,7 +36,7 @@
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(+:cnvals)
             for (jC = 0 ; jC < cvdim ; jC++)
-            {
+            { 
                 int64_t pC = iC + jC * cvlen ;
                 GB_GET_MIJ (mij, jC) ;          // mij = Mask (jC)
                 GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
@@ -56,10 +56,11 @@ GB_GOTCHA ;
             int64_t jC = J [0] ;
             int64_t pC0 = jC * cvlen ;
             int nthreads = GB_nthreads (cvlen, chunk, nthreads_max) ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static) \
-                reduction(+:cnvals)
+// TODO     #pragma omp parallel for num_threads(nthreads) schedule(static) \
+// TODO         reduction(+:cnvals)
             for (iC = 0 ; iC < cvlen ; iC++)
-            {
+            { 
+GB_GOTCHA ;
                 int64_t pC = iC + pC0 ;
                 GB_GET_MIJ (mij, iC) ;          // mij = Mask (iC)
                 GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)

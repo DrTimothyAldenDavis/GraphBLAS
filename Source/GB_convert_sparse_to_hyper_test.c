@@ -18,11 +18,10 @@
 bool GB_convert_sparse_to_hyper_test  // test sparse to hypersparse conversion
 (
     float hyper_switch,     // A->hyper_switch
-    int64_t k,              // # of non-empty vectors of A, an estimate is OK,
-                            // but normally A->nvec_nonempty
+    int64_t k,              // # of non-empty vectors of A (an estimate is OK)
     int64_t vdim            // A->vdim
 )
-{
+{ 
 
     // get the vector dimension of this matrix
     float n = (float) vdim ;

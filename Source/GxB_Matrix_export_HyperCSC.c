@@ -19,7 +19,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
-    int64_t *nonempty,  // number of columns with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index *nvec,    // size of Ah
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // column indices, size nvec
@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nzmax,"
-        " &jumbled, &nonempty, &nvec, &Ap, &Ah, &Ai, &Ax, desc)") ;
+        " &jumbled, &nvec, &Ap, &Ah, &Ai, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_HyperCSC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
@@ -75,8 +75,7 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_export (A, type, nrows, ncols,
-        nzmax, NULL, jumbled, nonempty, nvec,
+    info = GB_export (A, type, nrows, ncols, nzmax, NULL, jumbled, nvec,
         Ap, Ah, NULL, Ai, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

@@ -93,7 +93,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         GB_cumsum (Count, ntasks, NULL, 1) ;
         int64_t nvec_nonempty = Count [ntasks] ;
-        A->nvec_nonempty = nvec_nonempty ;
+        A->nvec_nonempty = nvec_nonempty ;      // TODO::OK
 
         //----------------------------------------------------------------------
         // allocate the new A->p and A->h
@@ -146,7 +146,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         Ap_new [nvec_nonempty] = anz ;
         A->magic = GB_MAGIC ;
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
+        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ; // TODO::OK
 
         //----------------------------------------------------------------------
         // free workspace, and free the old A->p unless it's shallow

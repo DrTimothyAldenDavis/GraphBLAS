@@ -96,7 +96,7 @@ void GB_cast_array              // typecast an array
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
-    {
+    { 
         if (!GBB (Ab, p)) continue ;
         // Cx [p] = Ax [p]
         cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize) ;

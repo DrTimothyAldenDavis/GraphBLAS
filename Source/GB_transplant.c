@@ -78,9 +78,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
-    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
-    C->nvec_nonempty = A->nvec_nonempty ;
+    ASSERT (A->nvec_nonempty == -1 ||                               // TODO::OK
+            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;    // TODO::OK
+    C->nvec_nonempty = A->nvec_nonempty ;                           // TODO::OK
 
     // C->hyper_switch is not modified by the transplant
 
@@ -315,7 +315,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     }
     else if (A->i_shallow)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // A->i is a shallow copy of another matrix, so we need a deep copy

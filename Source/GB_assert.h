@@ -62,8 +62,8 @@
 #ifdef GBTESTCOV
 #define GB_GOTCHA                                                   \
 {                                                                   \
-    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+    fprintf (stderr, "Gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
+    GBDUMP ("Gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
 }
 #else
 #define GB_GOTCHA                                                   \
@@ -75,8 +75,9 @@
 #endif
 #endif
 
-// TODO GOTCHA disabled
+#ifndef GB_GOTCHA
 #define GB_GOTCHA
+#endif
 
 #define GB_HERE GBDUMP ("%2d: Here: " __FILE__ "\n", __LINE__) ;
 

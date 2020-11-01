@@ -134,7 +134,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         }
     }
     else
-    {
+    { 
         GB_ERROR (GrB_NULL_POINTER,
             "Required argument is null: [%s]", "op") ;
     }
@@ -172,10 +172,10 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_BURBLE_DENSE (A, "(A %s) ") ;
 
     if (op2 != NULL && GB_NNZ (scalar) != 1)
-    {
+    { 
+GB_GOTCHA ;
         // the scalar entry must be present
-        GB_ERROR (GrB_INVALID_VALUE,
-            "Scalar is missing; it must contain %d entry", 1) ;
+        GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
     }
 
     //--------------------------------------------------------------------------
@@ -278,12 +278,12 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     {
         // positional ops must be flipped, with i and j swapped
         if (op1 != NULL)
-        {
+        { 
             op1 = GB_positional_unop_ijflip (op1) ;
             opcode = op1->opcode ;
         }
         else if (op2 != NULL)
-        {
+        { 
             op2 = GB_positional_binop_ijflip (op2) ;
             opcode = op2->opcode ;
         }
@@ -303,7 +303,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // above.
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
-    { 
+    {
         GBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.

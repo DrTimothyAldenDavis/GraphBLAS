@@ -366,7 +366,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t Cnvec ;
 
     if (Ch == NULL)
-    {
+    { 
         // C is sparse
         (*C_sparsity) = GxB_SPARSE ;
         Cnvec = n ;

@@ -1,5 +1,6 @@
 //------------------------------------------------------------------------------
 // GB_Matrix_extractElement: x = A(row,col)
+// TODO: rename GB_Matrix_extractElement_template.c
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -131,12 +132,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         pleft = i + j * A->vlen ;
         const int8_t *GB_RESTRICT Ab = A->b ;
         if (Ab != NULL)
-        {
+        { 
             // A is bitmap
             found = (Ab [pleft] == 1) ;
         }
         else
-        {
+        { 
             // A is full
             found = true ;
         }

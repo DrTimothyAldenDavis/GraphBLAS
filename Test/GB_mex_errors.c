@@ -5257,8 +5257,6 @@ void mexFunction
     ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, NULL,
         &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, NULL, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &Ap, NULL, &Ax, desc)) ;
@@ -5276,8 +5274,6 @@ void mexFunction
     ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, NULL,
         &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, NULL, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &Ap, NULL, &Ax, desc)) ;
@@ -5294,8 +5290,6 @@ void mexFunction
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, NULL,
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, NULL, &Ah, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
@@ -5317,8 +5311,6 @@ void mexFunction
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, NULL,
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, NULL, &Ah, &Ah, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,

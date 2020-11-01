@@ -218,7 +218,7 @@ static inline void GB_create_coarse_task
         int64_t my_flmax = 1, istart, iend ;
         GB_PARTITION (istart, iend, nk, tid, nth) ;
         for (int64_t i = istart ; i < iend ; i++)
-        {
+        { 
             int64_t kk = kfirst + i ;
             int64_t fl = Bflops [kk+1] - Bflops [kk] ;
             my_flmax = GB_IMAX (my_flmax, fl) ;
@@ -229,7 +229,7 @@ static inline void GB_create_coarse_task
     // combine results from each thread
     int64_t flmax = 1 ;
     for (tid = 0 ; tid < nth ; tid++)
-    {
+    { 
         flmax = GB_IMAX (flmax, Coarse_Work [tid]) ;
     }
 
@@ -456,7 +456,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         C->nvec = bnvec ;
     }
     else
-    {
+    { 
         // B is sparse, bitmap, or full; C is sparse
         ASSERT (C_sparsity == GxB_SPARSE) ;
     }
@@ -786,7 +786,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         #pragma omp parallel for num_threads(nth) \
                             schedule(static)
                         for (s = 0 ; s < bjnz ; s++)
-                        {
+                        { 
                             // get B(k,j)
                             int64_t pB = pB_start + s ;
                             int64_t k = GBI (Bi, pB, bvlen) ;

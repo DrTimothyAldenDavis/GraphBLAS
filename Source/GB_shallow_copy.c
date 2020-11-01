@@ -75,7 +75,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->jumbled = A->jumbled ;
     ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
             A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
-    C->nvec_nonempty = A->nvec_nonempty ;
+    C->nvec_nonempty = A->nvec_nonempty ;   // TODO::OK
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

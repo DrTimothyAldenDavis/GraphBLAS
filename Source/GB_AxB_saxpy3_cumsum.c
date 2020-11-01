@@ -133,7 +133,7 @@ void GB_AxB_saxpy3_cumsum
     // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
+    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;   // TODO::OK
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks

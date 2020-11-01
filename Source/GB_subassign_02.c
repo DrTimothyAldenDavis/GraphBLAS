@@ -328,7 +328,7 @@ GrB_Info GB_subassign_02
                         GB_NEXT (A) ;
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

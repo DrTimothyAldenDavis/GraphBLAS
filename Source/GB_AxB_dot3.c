@@ -185,7 +185,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     { 
         GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
     }
-    C->nvec_nonempty = M->nvec_nonempty ;
+    C->nvec_nonempty = M->nvec_nonempty ;       // TODO::OK
     C->nvec = M->nvec ;
     C->magic = GB_MAGIC ;
 
@@ -345,7 +345,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
         #define GB_DOT3_GENERIC
         GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
         #include "GB_AxB_dot_generic.c"

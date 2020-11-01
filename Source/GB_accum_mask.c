@@ -210,7 +210,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // MT = M' to conform M to the same CSR/CSC format as C.
         // transpose: typecast, no op, not in-place
         if (MT_in == NULL)
-        {
+        { 
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
@@ -303,7 +303,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // condition on C.
         GB_MATRIX_WAIT (C) ;
         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
-        {
+        { 
+GB_GOTCHA ;
             // GB_mask does not handle the case where M is present, C_replace
             // is false, and C is bitmap/full, so switch to GB_subassign.
             use_subassign = true ;
@@ -397,12 +398,13 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             if (apply_mask)
             {
                 if (Z_sparsity == GxB_BITMAP || Z_sparsity == GxB_FULL)
-                {
+                { 
+GB_GOTCHA ;
                     // always apply the mask in GB_add if C is bitmap or full
                     M1 = M ;
                 }
                 else if (!Mask_comp /* && GB_MASK_VERY_SPARSE (M, C, T) */ )
-                {
+                { 
                     // if C is sparse or hypersparse, apply the mask
                     // not complemented and very sparse
                     M1 = M ;
@@ -440,6 +442,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
-    return (GrB_SUCCESS) ;
+    return (GB_block (C, Context)) ;
 }
 

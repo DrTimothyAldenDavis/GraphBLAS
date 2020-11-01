@@ -102,7 +102,7 @@
     // Fine tasks: compute nnz (C(:,j)), and values in Hx via atomics.
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+//  TODO disabled:  #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < nfine ; taskid++)
     {
 
@@ -221,7 +221,7 @@
                             #endif
 
                             do  // lock the entry
-                            {
+                            { 
                                 // do this atomically:
                                 // { f = Hf [i] ; Hf [i] = 3 ; }
                                 GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
@@ -288,7 +288,7 @@
                     #else
 
                         //------------------------------------------------------
-                        // C(i,j) += A(i,k)*B(k,j) ; with all other monoids
+                        // C(i,j) += A(i,k)*B(k,j) ; all other monoids
                         //------------------------------------------------------
 
                         #define GB_IKJ                                         \
@@ -365,6 +365,10 @@
 
                         #if GB_IS_ANY_MONOID
 
+                            //--------------------------------------------------
+                            // ANY monoid
+                            //--------------------------------------------------
+
                             // lock state (3) not needed
                             // 0: not seen: update with new value, f becomes 2
                             // 1: masked, do nothing, f stays 1
@@ -386,14 +390,15 @@
                         f = Hf [i] ;            // grab the entry
                         #if GB_HAS_ATOMIC
                         if (f == 2)             // if true, update C(i,j)
-                        {
+                        { 
+GB_GOTCHA ;
                             GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                             continue ;          // C(i,j) has been updated
                         }
                         #endif
                         if (f == 1) continue ; // M(i,j)=1; ignore C(i,j)
                         do  // lock the entry
-                        {
+                        { 
                             // do this atomically:
                             // { f = Hf [i] ; Hf [i] = 3 ; }
                             GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
@@ -452,7 +457,7 @@
             int64_t hash_bits = (hash_size-1) ;
 
             if (M == NULL || ignore_mask)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)=A*B(:,j)
@@ -472,8 +477,8 @@
 
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
-                { 
-// GB_GOTCHA
+                {
+GB_GOTCHA ; // ok
 
                     // M(:,j) is dense.  M is not scattered into Hf.
 
@@ -488,27 +493,32 @@
                     switch (msize)
                     {
                         default:
-                        case 1:
+                        case 1 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint8_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 2:
+                        case 2 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint16_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 4:
+                        case 4 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint32_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 8:
+                        case 8 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint64_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 16:
+                        case 16 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint64_t
                             #define M_SIZE 2
@@ -606,12 +616,13 @@
 
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_dense_in_place)
-                { 
-// GB_GOTCHA
+                {
+GB_GOTCHA ;
                     // M(:,j) is dense.  M is not scattered into Hf.
 
                     if (Mask_struct && !M_is_bitmap)
-                    {
+                    { 
+GB_GOTCHA ;
                         // structural mask, complemented, and not bitmap.
                         // No work to do.
                         continue ;
@@ -627,27 +638,32 @@
                     switch (msize)
                     {
                         default:
-                        case 1:
+                        case 1 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint8_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 2:
+                        case 2 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint16_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 4:
+                        case 4 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint32_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 8:
+                        case 8 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint64_t
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
                         }
-                        case 16:
+                        case 16 : 
+GB_GOTCHA ;
                         {
                             #define M_TYPE uint64_t
                             #define M_SIZE 2
@@ -703,7 +719,7 @@
                             hf = Hf [hash] ;        // grab the entry
                             #if GB_HAS_ATOMIC
                             if (hf == i_unlocked)  // if true, update C(i,j)
-                            {
+                            { 
                                 GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                                 break ;         // C(i,j) has been updated
                             }
@@ -714,7 +730,7 @@
                             {
                                 // h=0: unoccupied, h=i1: occupied by i
                                 do // lock the entry
-                                {
+                                { 
                                     // do this atomically:
                                     // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
                                     GB_ATOMIC_CAPTURE_INT64_OR (hf,Hf[hash],3) ;
@@ -730,6 +746,7 @@
                                 }
                                 if (hf == i_unlocked)   // f == 2
                                 { 
+GB_GOTCHA ;
                                     // C(i,j) already appears in C(:,j)
                                     // Hx [hash] += t
                                     GB_ATOMIC_UPDATE_HX (hash, t) ;
@@ -812,8 +829,7 @@
 // ttt = omp_get_wtime ( ) ;
 
     bool C_jumbled = false ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(||:C_jumbled)
+// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) reduction(||:C_jumbled)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -1157,7 +1173,7 @@
                         #ifdef GB_IDENTITY
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-// GB_GOTCHA
+GB_GOTCHA ;
                             // this requires the monoid identity.  It is not
                             // defined for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
@@ -1251,7 +1267,7 @@
                 int64_t hash_bits = (hash_size-1) ;
 
                 if (M == NULL || ignore_mask)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C=A*B
@@ -1282,27 +1298,31 @@
                         switch (msize)
                         {
                             default:
-                            case 1:
+                            case 1 : 
                             {
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 2:
+                            case 2 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 4:
+                            case 4 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 8:
+                            case 8 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 16:
+                            case 16 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2
@@ -1386,11 +1406,12 @@
                     //----------------------------------------------------------
 
                     if (M_dense_in_place)
-                    { 
+                    {
                         // M(:,j) is dense.  M is not scattered into Hf.
 
                         if (Mask_struct && !M_is_bitmap)
-                        {
+                        { 
+GB_GOTCHA ;
                             // structural mask, complemented, not bitmap.
                             // No work to do.
                             continue ;
@@ -1406,27 +1427,31 @@
                         switch (msize)
                         {
                             default:
-                            case 1:
+                            case 1 : 
                             {
                                 #define M_TYPE uint8_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 2:
+                            case 2 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 4:
+                            case 4 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 8:
+                            case 8 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                             }
-                            case 16:
+                            case 16 : 
+GB_GOTCHA ;
                             {
                                 #define M_TYPE uint64_t
                                 #define M_SIZE 2

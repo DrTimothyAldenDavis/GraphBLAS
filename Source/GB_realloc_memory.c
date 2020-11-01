@@ -74,7 +74,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         (*ok) = true ;
     }
     else
-    { 
+    {
         // change the size of the object from nitems_old to nitems_new
         void *pnew ;
         
@@ -97,7 +97,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         //----------------------------------------------------------------------
 
         if (pretend_to_fail)
-        { 
+        {
             pnew = NULL ;
         }
         else
@@ -159,7 +159,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             }
         }
         else
-        {
+        { 
             // success
             p = pnew ;
             (*ok) = true ;

@@ -82,7 +82,7 @@
                     panel_count = 256 ;
                     int count = 0 ;
                     for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                    {
+                    { 
                         count += (Panel [k] == GB_TERMINAL_VALUE) ;
                     }
                     if (count > 0)
@@ -205,7 +205,7 @@
                             panel_count = 256 ;
                             int count = 0 ;
                             for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                            {
+                            { 
                                 count += (Panel [k] == GB_TERMINAL_VALUE) ;
                             }
                             if (count > 0)

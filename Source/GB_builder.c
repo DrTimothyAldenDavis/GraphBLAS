@@ -312,7 +312,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-GB_GOTCHA ;
+// GB_GOTCHA ; by gbtest9
             // nothing to do
 
         }
@@ -500,9 +500,8 @@ GB_GOTCHA ;
 
         }
         else
-        { 
+        {
             ASSERT (0) ;    // TODO: dead code
-GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // GB_reduce_to_vector: do not check I_input, assume not sorted
@@ -601,7 +600,7 @@ GB_GOTCHA ;
             //------------------------------------------------------------------
 
             if (nth > 1)
-            { 
+            {
                 W0 = GB_MALLOC (nvals, int64_t) ;
                 W1 = GB_MALLOC (nvals, int64_t) ;
                 if (W0 == NULL || W1 == NULL)
@@ -789,7 +788,7 @@ GB_GOTCHA ;
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
 
-    // [ allocate T; allocate T->p and T->h but do not initialize them.
+    // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
     info = GB_new (&T, // always hyper (even vectors), new header
         ttype, vlen, vdim, GB_Ap_malloc, is_csc,
@@ -906,11 +905,11 @@ GB_GOTCHA ;
     }
 
     // log the end of the last vector
-    T->nvec_nonempty = tnvec ;
+    T->nvec_nonempty = tnvec ;                  // TODO::OK
     T->nvec = tnvec ;
     Tp [tnvec] = tnz ;  // ok: T is hypersparse
     ASSERT (T->nvec == T->plen) ;
-    T->magic = GB_MAGIC ;                      // T->p and T->h are now valid ]
+    T->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // free J_work if it exists
@@ -1129,7 +1128,7 @@ GB_GOTCHA ;
 
         if (nvals == 0)
         { 
-GB_GOTCHA ;
+// GB_GOTCHA ; by gbtest9
             // nothing to do
 
         }

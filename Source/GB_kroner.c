@@ -77,7 +77,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix A = A_in ;
     if (GB_IS_BITMAP (A))
-    {
+    { 
         GBURBLE ("A:") ;
         GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
@@ -86,7 +86,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix B = B_in ;
     if (GB_IS_BITMAP (B))
-    {
+    { 
         GBURBLE ("B:") ;
         GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
@@ -219,7 +219,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;  // TODO::OK
         if (C_is_hyper) C->nvec = cnvec ;
     }
 
@@ -260,7 +260,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             int64_t iAblock = iA * bvlen ;
             if (!A_is_pattern) cast_A (awork, Ax +(pA*asize), asize) ;
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
-            { 
+            {
                 // bwork = B(iB,jB), typecasted to op->ytype
                 int64_t iB = GBI (Bi, pB, bvlen) ;
                 if (!B_is_pattern) cast_B (bwork, Bx +(pB*bsize), bsize) ;
@@ -271,7 +271,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     Ci [pC] = iC ;                  // ok: C is sparse
                 }
                 if (op_is_positional)
-                { 
+                {
                     // positional binary operator
                     switch (opcode)
                     {
@@ -347,7 +347,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;
+    ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;    // TODO::OK
 
     //--------------------------------------------------------------------------
     // return result

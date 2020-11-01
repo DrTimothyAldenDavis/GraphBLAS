@@ -85,7 +85,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
             return (GrB_OUT_OF_MEMORY) ;
         }
         C->magic = GB_MAGIC ;
-        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;   // TODO::OK
         C->sparsity = C_sparsity ;      // restore the sparsity control of C
     }
 

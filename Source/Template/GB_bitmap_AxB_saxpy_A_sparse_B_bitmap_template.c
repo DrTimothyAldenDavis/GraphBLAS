@@ -108,14 +108,14 @@
 
                         GB_MULT_A_ik_B_kj ;
                         if (cb == 0)
-                        {
+                        { 
                             // C(i,j) = A(i,k) * B(k,j)
                             GB_CIJ_WRITE (pC, t) ;
                             Cb [pC] = keep ;
                             cnvals++ ;
                         }
                         else
-                        {
+                        { 
                             // C(i,j) += A(i,k) * B(k,j)
                             GB_CIJ_UPDATE (pC, t) ;
                         }
@@ -133,8 +133,8 @@
         //----------------------------------------------------------------------
 
         int tid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
+// TODO #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+// TODO     reduction(+:cnvals)
         for (tid = 0 ; tid < ntasks ; tid++)
         {
 
@@ -219,7 +219,8 @@
                             GB_ATOMIC_READ
                             cb = Cb [pC] ;          // grab the entry
                             if (cb == keep)
-                            {
+                            { 
+GB_GOTCHA ;
                                 #if !GB_IS_ANY_MONOID
                                 GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                                 GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
@@ -230,13 +231,13 @@
                         #endif
 
                         do  // lock the entry
-                        {
+                        { 
                             // do this atomically:
                             // { cb = Cb [pC] ;  Cb [pC] = 7 ; }
                             GB_ATOMIC_CAPTURE_INT8 (cb, Cb [pC], 7) ;
                         } while (cb == 7) ; // lock owner gets 0, 1, 2, or 3
                         if (cb == keep-1)
-                        {
+                        { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
@@ -244,7 +245,7 @@
                             cb = keep ;                     // keep the entry
                         }
                         else if (cb == keep)
-                        {
+                        { 
                             // C(i,j) is already present
                             #if !GB_IS_ANY_MONOID
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
@@ -268,7 +269,7 @@
                         #if defined ( GB_MASK_IS_BITMAP )
 
                             //--------------------------------------------------
-                            // M is bitmap or full, and not in the C bitmap
+                            // M is bitmap or full, and not in C bitmap
                             //--------------------------------------------------
 
                             // do not modify C(i,j) if not permitted by the mask
@@ -290,7 +291,7 @@
                             GB_ATOMIC_READ
                             cb = Cb [pC] ;          // grab the entry
                             if (cb == 1)
-                            {
+                            { 
                                 #if !GB_IS_ANY_MONOID
                                 GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                                 GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
@@ -301,20 +302,20 @@
                         #endif
 
                         do  // lock the entry
-                        {
+                        { 
                             // do this atomically:
                             // { cb = Cb [pC] ;  Cb [pC] = 7 ; }
                             GB_ATOMIC_CAPTURE_INT8 (cb, Cb [pC], 7) ;
                         } while (cb == 7) ; // lock owner gets 0 or 1
                         if (cb == 0)
-                        {
+                        { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
                             cnvals++ ;
                         }
                         else // cb == 1
-                        {
+                        { 
                             // C(i,j) is already present
                             #if !GB_IS_ANY_MONOID
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)

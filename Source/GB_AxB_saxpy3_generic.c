@@ -134,7 +134,8 @@ GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
         GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
 
         if (flipxy)
-        {
+        { 
+GB_GOTCHA ;
             // flip a positional multiplicative operator
             opcode = GB_binop_flip (opcode) ;
         }
@@ -187,27 +188,32 @@ GB_GOTCHA ;
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
+GB_GOTCHA ;
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
                     #include "GB_AxB_saxpy_template.c"
-GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
+GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
+GB_GOTCHA ;
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
+GB_GOTCHA ;
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
                     #include "GB_AxB_saxpy_template.c"
-GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
+GB_GOTCHA ;
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
                     #include "GB_AxB_saxpy_template.c"
-GB_GOTCHA ;
                     break ;
                 default: ;
             }
@@ -223,28 +229,33 @@ GB_GOTCHA ;
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
+GB_GOTCHA ;
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
                     #include "GB_AxB_saxpy_template.c"
-GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
+GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
+GB_GOTCHA ;
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
+GB_GOTCHA ;
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy_template.c"
-GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
+GB_GOTCHA ;
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
+GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy_template.c"
                     break ;
-GB_GOTCHA ;
                 default: ;
             }
         }

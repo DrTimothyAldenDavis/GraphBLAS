@@ -65,11 +65,11 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // BFS: will not come here since M is bitmap/full
 
         if (B_sparsity == GxB_HYPERSPARSE)
-        {
+        { 
             C_sparsity = GxB_HYPERSPARSE ;
         }
         else
-        {
+        { 
             C_sparsity = M_sparsity ;
         }
 

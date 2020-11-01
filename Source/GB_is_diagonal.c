@@ -143,11 +143,6 @@ bool GB_is_diagonal             // true if A is diagonal
     // return result
     //--------------------------------------------------------------------------
 
-    if (diagonal)
-    { 
-        A->nvec_nonempty = n ;
-        A->jumbled = false ;        // a diagonal matrix is never jumbled
-    }
     return ((bool) diagonal) ;
 }
 

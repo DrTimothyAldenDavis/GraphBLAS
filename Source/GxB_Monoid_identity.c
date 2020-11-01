@@ -18,7 +18,7 @@ GrB_Info GxB_Monoid_identity        // return the monoid identity
     void *identity,                 // returns the identity of the monoid
     GrB_Monoid monoid               // monoid to query
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

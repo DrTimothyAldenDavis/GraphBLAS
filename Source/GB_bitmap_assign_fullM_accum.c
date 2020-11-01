@@ -233,7 +233,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     if (C_replace)
-    {
+    { 
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)
         // for assign: for all entries in C(:,:)

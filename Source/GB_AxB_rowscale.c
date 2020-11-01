@@ -93,20 +93,28 @@ GB_GOTCHA ;
             {
                 // first_op(D,B) becomes position_i(B)
                 case GB_FIRSTI_opcode   : 
+GB_GOTCHA ;
                 case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT64  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_FIRSTI1_opcode  : 
+GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT64 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 // second_op(D,B) becomes position_op(B)
                 case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT64  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT64  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT64 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT64 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 default:  ;
             }
         }
@@ -116,20 +124,28 @@ GB_GOTCHA ;
             {
                 // first_op(D,B) becomes position_i(B)
                 case GB_FIRSTI_opcode   : 
+GB_GOTCHA ;
                 case GB_FIRSTJ_opcode   : op1 = GxB_POSITIONI_INT32  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_FIRSTI1_opcode  : 
+GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  : op1 = GxB_POSITIONI1_INT32 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 // second_op(D,B) becomes position_op(B)
                 case GB_SECONDI_opcode  : op1 = GxB_POSITIONI_INT32  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDJ_opcode  : op1 = GxB_POSITIONJ_INT32  ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDI1_opcode : op1 = GxB_POSITIONI1_INT32 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 case GB_SECONDJ1_opcode : op1 = GxB_POSITIONJ1_INT32 ; 
-                    GB_GOTCHA ; break ;
+GB_GOTCHA ;
+                    break ;
                 default:  ;
             }
         }

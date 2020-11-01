@@ -107,7 +107,7 @@ GrB_Info GB_ijsort
     int nth = GB_MSORT_NTHREADS (nthreads) ;
 
     if (nth > 1)
-    { 
+    {
         W0 = GB_MALLOC (ni, int64_t) ;
         W1 = GB_MALLOC (ni, int64_t) ;
         if (W0 == NULL || W1 == NULL)

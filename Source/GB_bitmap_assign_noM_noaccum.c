@@ -78,7 +78,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     //--------------------------------------------------------------------------
 
     if (C_replace)
-    {
+    { 
         // for row assign: set Cb(i,:) to zero
         // for col assign: set Cb(:,j) to zero
         // for assign: set all Cb(:,:) to zero
@@ -100,7 +100,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     {
 
         if (A == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assignment: C(I,J) = scalar
@@ -120,14 +120,14 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // matrix assignment: C(I,J) = A
             //------------------------------------------------------------------
 
             if (!C_replace)
-            {
+            { 
                 // delete all entries in C(I,J)
                 #undef  GB_IXJ_WORK
                 #define GB_IXJ_WORK(pC,ignore)          \

@@ -90,12 +90,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         pleft = i ;
         const int8_t *GB_RESTRICT Vb = V->b ;
         if (Vb != NULL)
-        {
+        { 
             // V is bitmap
             found = (Vb [pleft] == 1) ;
         }
         else
-        {
+        { 
             // V is full
             found = true ;
         }

@@ -54,7 +54,7 @@
             {
                 // A and C are both full
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
-                {
+                { 
                     // get i and j of the entry C(i,j)
                     // i = (pC % avdim) ;
                     // j = (pC / avdim) ;

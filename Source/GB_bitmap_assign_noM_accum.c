@@ -86,7 +86,7 @@ GrB_Info GB_bitmap_assign_noM_accum
         //----------------------------------------------------------------------
 
         if (A == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assignment: C(I,J) += scalar
@@ -113,7 +113,7 @@ GrB_Info GB_bitmap_assign_noM_accum
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // matrix assignment: C(I,J) += A
@@ -148,7 +148,8 @@ GrB_Info GB_bitmap_assign_noM_accum
 
     }
     else if (C_replace)
-    {
+    { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // mask not present yet complemented: C_replace phase only

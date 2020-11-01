@@ -449,7 +449,7 @@ GrB_Info GB_assign_prep
                     // delete all entries in each vector with index i
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    {
+                    { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         int scalar_unused = 0 ;
@@ -465,7 +465,7 @@ GrB_Info GB_assign_prep
                             GB_ROW_ASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
@@ -482,7 +482,8 @@ GrB_Info GB_assign_prep
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    {
+                    { 
+GB_GOTCHA ;
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         int scalar_unused = 0 ;
@@ -498,7 +499,7 @@ GrB_Info GB_assign_prep
                             GB_COL_ASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_assign_zombie1 (C, J [0], Context) ;
@@ -544,7 +545,7 @@ GrB_Info GB_assign_prep
                             GB_SUBASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         // Method 00: C(I,J) = empty, using S
                         GBURBLE ("C(I,J)=zombie ") ;
                         GB_ENSURE_SPARSE (C) ;
@@ -594,14 +595,14 @@ GrB_Info GB_assign_prep
 
     bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (whole_C_matrix)
-    {
+    { 
         // If the assignment is C<M>(:,:) = ... then convert the assignment
         // into a subassign.
         (*assign_kind) = GB_SUBASSIGN ;
     }
 
     if (whole_C_matrix && no_mask && accum == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C(:,:) = x or A:  whole matrix assignment with no mask
@@ -940,7 +941,7 @@ GrB_Info GB_assign_prep
 
     bool C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    {
+    { 
         // C is completely empty.  C_replace is irrelevant so set it to false.
         (*C_replace) = false ;
     }
@@ -1097,7 +1098,7 @@ GB_GOTCHA ;
 
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    {
+    { 
         // C is completely empty.  C_replace is irrelevant so set it to false.
         GBURBLE ("(C empty) ") ;
         (*C_replace) = false ;
@@ -1123,7 +1124,8 @@ GB_GOTCHA ;
     // explicit SECOND_Ctype operator.
 
     if (C->Pending != NULL)
-    {
+    { 
+GB_GOTCHA ;
         C->Pending->op = accum ;
     }
 

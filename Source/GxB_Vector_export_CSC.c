@@ -65,11 +65,10 @@ GB_GOTCHA ;
     // export the vector
     //--------------------------------------------------------------------------
 
-    int64_t nonempty, *vp = NULL ;
+    int64_t *vp = NULL ;
     GrB_Index vdim ;
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
-        nzmax, NULL, jumbled, &nonempty, NULL,
-        &vp, NULL, NULL, vi, vx, NULL, NULL, Context) ;
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, nzmax, NULL, jumbled,
+        NULL, &vp, NULL, NULL, vi, vx, NULL, NULL, Context) ;
     if (info == GrB_SUCCESS)
     { 
         (*nvals) = vp [1] ;

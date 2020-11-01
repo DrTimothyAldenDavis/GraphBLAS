@@ -67,13 +67,13 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 
     #define GB_PHASE_1_OF_2
     if (symbolic)
-    {
+    { 
         #define GB_SYMBOLIC
         #include "GB_subref_template.c"
         #undef  GB_SYMBOLIC
     }
     else
-    {
+    { 
         #define GB_NUMERIC
         #include "GB_subref_template.c"
         #undef  GB_NUMERIC

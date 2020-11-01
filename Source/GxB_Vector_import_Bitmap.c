@@ -19,7 +19,8 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     void **vx,          // values, size n entries
     const GrB_Descriptor desc
 )
-{
+{ 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
@@ -34,7 +35,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     // import the vector
     //--------------------------------------------------------------------------
 
-    info = GB_import ((GrB_Matrix *) v, type, n, 1, 0, nvals, false, 0, 0,
+    info = GB_import ((GrB_Matrix *) v, type, n, 1, 0, nvals, false, 0,
         NULL, NULL, vb, NULL, vx, GxB_BITMAP, true, desc) ;
     GB_BURBLE_END ;
     return (info) ;

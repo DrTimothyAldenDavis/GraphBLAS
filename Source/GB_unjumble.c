@@ -68,7 +68,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     int64_t *GB_RESTRICT A_slice = NULL ;   // size ntasks + 1
     if (!GB_pslice (&A_slice, Ap, anvec, ntasks))
-    {
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -96,7 +96,7 @@ GB_GOTCHA ;
             break ;
 
         case 4 : 
-GB_GOTCHA ;
+// GB_GOTCHA ;  by gbtest50
             // GrB_UINT32, GrB_INT32, GrB_FP32, and user-defined types of size 4
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size4 (Ai+pA_start, Ax4+pA_start, aknz) ;

@@ -413,7 +413,7 @@ GrB_Info GB_subassign_10_and_18
                         }
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

@@ -87,16 +87,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
 
-    if (B->nvec_nonempty < 0)
-    { 
-        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-    }
-
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-    }
-
     //--------------------------------------------------------------------------
     // prototype bitmap case:
     //--------------------------------------------------------------------------
@@ -104,7 +94,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
         A, B, semiring, flipxy, Context) ;
     if (info != GrB_NO_VALUE)
-    {
+    { 
+GB_GOTCHA ;
         (*done_in_place) = false ;
         (*mask_applied) = (M != NULL) ; // mask applied if present
         return (info) ;
@@ -166,7 +157,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         }
         else
         #endif
-        {
+        { 
             // use the CPU
             return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring,
                 flipxy, Context)) ;

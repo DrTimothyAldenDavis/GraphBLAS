@@ -181,7 +181,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap or full: only determine how many threads to use

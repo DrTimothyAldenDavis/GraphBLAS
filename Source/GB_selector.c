@@ -124,7 +124,7 @@ GrB_Info GB_selector
 
     bool use_bitmap_selector ;
     if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
-    {
+    { 
         // GB_bitmap_selector does not support these opcodes.  For the RESIZE
         // and NONZOMBIE operators, A will never be bitmap.  Full matrices
         // should use another method, but for now the sparse case works fine.
@@ -133,7 +133,7 @@ GrB_Info GB_selector
         use_bitmap_selector = false ;
     }
     else if (opcode == GB_DIAG_opcode)
-    {
+    { 
         // GB_bitmap_selector supports the DIAG operator, but it is currently
         // not efficient (GB_bitmap_selector should return a sparse diagonal
         // matrix, not bitmap).  So use the sparse case if A is not bitmap,
@@ -141,7 +141,7 @@ GrB_Info GB_selector
         use_bitmap_selector = GB_IS_BITMAP (A) ;
     }
     else
-    {
+    { 
         // For bitmap, full, or packed matrices (sparse/hypersparse with all
         // entries present, not jumbled, no zombies, and no pending tuples),
         // use the bitmap selector for all other operators (TRIL, TRIU,
@@ -415,7 +415,7 @@ GrB_Info GB_selector
         A->i = Ci ; Ci = NULL ;
         A->x = Cx ; Cx = NULL ;
         A->nzmax = cnz ;
-        A->nvec_nonempty = C_nvec_nonempty ;
+        A->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
         A->jumbled = A_jumbled ;
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
@@ -459,7 +459,6 @@ GB_GOTCHA ;
             {
                 if (Cp [k] < Cp [k+1])      // ok: C is hypersparse
                 { 
-GB_GOTCHA ;
                     Ch [cnvec] = Ah [k] ;       // ok: C is hypersparse
                     Cp [cnvec] = Cp [k] ;       // ok: C is hypersparse
                     cnvec++ ;
@@ -476,7 +475,7 @@ GB_GOTCHA ;
         C->x = Cx ; Cx = NULL ;
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
-        C->nvec_nonempty = C_nvec_nonempty ;
+        C->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
         C->jumbled = A->jumbled ;
 
         (*Chandle) = C ;

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: combine with GB_AxB_dot2_mask, with #ifdef's
+
 {
     int64_t cnvals = 0 ;
     int ntasks = naslice * nbslice ;
@@ -33,7 +35,7 @@
         int64_t *GB_RESTRICT C_count_start = NULL ;
         int64_t *GB_RESTRICT C_count_end   = NULL ;
         if (!C_is_bitmap)
-        {
+        { 
             C_count_start = (a_tid == 0) ?         NULL : C_counts [a_tid] ;
             C_count_end   = (a_tid == naslice-1) ? NULL : C_counts [a_tid+1] ;
         }
@@ -66,7 +68,7 @@
             // this thread computes Ci and Cx [cnz:cnz_last]
             int64_t cnz, cnz_last ;
             if (!C_is_bitmap)
-            {
+            { 
                 cnz = Cp [kB] +
                     ((C_count_start == NULL) ? 0 : C_count_start [kB]) ;
                 cnz_last = (C_count_end == NULL) ?
@@ -81,11 +83,11 @@
 
             // get the first and last index in B(:,j)
             int64_t ib_first = GBI (Bi, pB_start, vlen) ;
-            int64_t ib_last  = GBI (Bi, pB_end-1, vlen) ; ;
+            int64_t ib_last  = GBI (Bi, pB_end-1, vlen) ;
 
             // for each vector A(:,i):
             for (int64_t kA = A_slice [a_tid] ; kA < A_slice [a_tid+1] ; kA++)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // get A(:,i)
@@ -101,7 +103,7 @@
 
                 #if defined ( GB_PHASE_2_OF_2 )
                 if (C_is_bitmap)
-                {
+                { 
                     // cnz = position of C(i,j) in the bitmap
                     cnz = i + j * cvlen ;
                     Cb [cnz] = 0 ;

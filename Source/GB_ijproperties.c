@@ -320,7 +320,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         //----------------------------------------------------------------------
 
         if (I_contig)
-        { 
+        {
             // I is a contigous list of stride 1, imin:imax.
             // change Ikind to GB_ALL if 0:limit-1, or GB_RANGE otherwise
             if (imin == 0 && imax == limit-1)

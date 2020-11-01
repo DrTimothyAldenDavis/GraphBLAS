@@ -35,7 +35,7 @@
 
         #pragma omp parallel for num_threads(C_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
-        {
+        { 
             // C (i,j) = A (i,j) + B (i,j)
             GB_GETA (aij, Ax, p) ;
             GB_GETB (bij, Bx, p) ;
@@ -61,14 +61,14 @@
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Bb [p])
-                {
+                { 
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_GETA (aij, Ax, p) ;
                     GB_GETB (bij, Bx, p) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                 }
                 else
-                {
+                { 
                     // C (i,j) = A (i,j)
                     GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
                 }
@@ -106,7 +106,7 @@
                     int64_t pC_start = j * vlen ;
                     // traverse over B(:,j), the kth vector of B
                     for (int64_t pB = pB_start ; pB < pB_end ; pB++)
-                    {
+                    { 
                         // C (i,j) = A (i,j) + B (i,j)
                         int64_t i = Bi [pB] ;
                         int64_t p = pC_start + i ;
@@ -137,14 +137,16 @@
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Ab [p])
-                {
+                { 
+// GB_GOTCHA ; by gbtest11
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_GETA (aij, Ax, p) ;
                     GB_GETB (bij, Bx, p) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                 }
                 else
-                {
+                { 
+// GB_GOTCHA ; by gbtest11
                     // C (i,j) = B (i,j)
                     GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
                 }
@@ -182,7 +184,7 @@
                     int64_t pC_start = j * vlen ;
                     // traverse over A(:,j), the kth vector of A
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    {
+                    { 
                         // C (i,j) = A (i,j) + B (i,j)
                         int64_t i = Ai [pA] ;
                         int64_t p = pC_start + i ;

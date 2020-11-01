@@ -65,7 +65,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+// TODO    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
@@ -188,7 +188,7 @@
             // get the first and last indices in B(:,j) for this vector
             int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
-            {
+            { 
                 iB_first = GBI (Bi, pB, vlen) ;
                 iB_last  = GBI (Bi, pB_end-1, vlen) ;
             }
@@ -812,7 +812,7 @@
                     }
                     else if (B == M)
                     { 
-// GB_GOTCHA ;
+GB_GOTCHA ; // ok
                         // B is aliased to M
                         pB = pM ;
                         bfound = true ;
@@ -924,13 +924,13 @@
                     ASSERT (iA_first == iB_first) ;
                     ASSERT (iA_last  == iB_last ) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
+                    {
                         int64_t i = p + iA_first ;
                         ASSERT (Ai [pA + p] == i) ;
                         ASSERT (Bi [pB + p] == i) ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -953,11 +953,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -978,11 +978,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1003,11 +1003,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1020,11 +1020,11 @@
                     }
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1045,11 +1045,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1062,11 +1062,11 @@
                     }
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1091,10 +1091,10 @@
                         int64_t iA = Ai [pA] ;
                         int64_t iB = Bi [pB] ;
                         if (iA < iB)
-                        { 
+                        {
                             GB_GET_MIJ (iA) ;
                             if (mij)
-                            {
+                            { 
                                 // C (iA,j) = A (iA,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1107,10 +1107,10 @@
                             pA++ ;
                         }
                         else if (iA > iB)
-                        { 
+                        {
                             GB_GET_MIJ (iB) ;
                             if (mij)
-                            {
+                            { 
                                 // C (iB,j) = B (iB,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1123,10 +1123,10 @@
                             pB++ ;
                         }
                         else
-                        { 
+                        {
                             GB_GET_MIJ (iB) ;
                             if (mij)
-                            {
+                            { 
                                 // C (i,j) = A (i,j) + B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1152,7 +1152,7 @@
                         int64_t iA = Ai [pA] ;
                         GB_GET_MIJ (iA) ;
                         if (mij)
-                        {
+                        { 
                             // C (iA,j) = A (iA,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1169,7 +1169,7 @@
                         int64_t iB = Bi [pB] ;
                         GB_GET_MIJ (iB) ;
                         if (mij)
-                        {
+                        { 
                             // C (iB,j) = B (iB,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;

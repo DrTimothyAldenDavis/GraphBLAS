@@ -63,7 +63,8 @@ static GrB_Info GB_dc
             // mask
             if (! (v == GxB_DEFAULT || v == GrB_COMP || v == GrB_STRUCTURE ||
                    v == (GrB_COMP + GrB_STRUCTURE)))
-            {
+            { 
+GB_GOTCHA ;
                 ok = false ;
             }
         }

@@ -224,7 +224,7 @@ GB_GOTCHA ;
         #endif
 
         if (!done)
-        {
+        { 
             // Ax_new [pnew] = Ax [p]
             #define GB_COPY_A_TO_C(Ax_new,pnew,Ax,p) \
                 memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize)
@@ -254,7 +254,7 @@ GB_GOTCHA ;
 
     A->plen = -1 ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;       // TODO::OK
 
     A->magic = GB_MAGIC ;
 

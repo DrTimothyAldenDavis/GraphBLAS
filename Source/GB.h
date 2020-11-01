@@ -29,16 +29,14 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// TODO debug is on
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
 // #define GBCOMPACT 1
 
 // for code development only
-// TODO developer is on
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 // manage compiler warnings
 #include "GB_warnings.h"

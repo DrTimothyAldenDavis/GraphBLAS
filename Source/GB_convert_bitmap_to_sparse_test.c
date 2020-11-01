@@ -34,7 +34,7 @@ bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
     int64_t vlen,           // A->vlen
     int64_t vdim            // A->vdim
 )
-{
+{ 
 
     // current number of entries in the matrix or vector
     float nnz = (float) anz ;

@@ -122,7 +122,7 @@ GrB_Info GrB_Vector_removeElement
     //--------------------------------------------------------------------------
 
     if (V->jumbled || GB_IS_FULL (V))
-    { 
+    {
 GB_GOTCHA ;
         GrB_Info info ;
         GB_WHERE (V, GB_WHERE_STRING) ;

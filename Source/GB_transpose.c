@@ -281,7 +281,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
     }
     else if (op2_in != NULL)
-    {
+    { 
         // get the binary operator
         GrB_Type op2_intype = binop_bind1st ? op2_in->xtype : op2_in->ytype ;
         opcode = op2_in->opcode ;
@@ -317,7 +317,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     save_op1 = op1 ;
     save_op2 = op2 ;
     if (op_is_positional)
-    {
+    { 
         // do not apply the op until after the transpose
         op1 = NULL ;
         op2 = NULL ;
@@ -526,7 +526,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             C = (*Chandle) ;
         }
         else
-        { 
+        {
             ASSERT (A == C && A == (*Chandle)) ;
         }
 
@@ -606,7 +606,7 @@ GB_GOTCHA ;
         // C->p = 0:anz and C->i = zeros (1,anz), newly allocated
         C->plen = anz ;
         C->nvec = anz ;
-        C->nvec_nonempty = anz ;
+        C->nvec_nonempty = anz ;        // TODO::OK
         C->i = Ci ;
         C->p = Cp ;
         // fill the vector pointers C->p
@@ -666,7 +666,7 @@ GB_GOTCHA ;
             C = (*Chandle) ;
         }
         else
-        { 
+        {
             ASSERT (A == C && A == (*Chandle)) ;
         }
 
@@ -708,7 +708,7 @@ GB_GOTCHA ;
 
         // numerical values: apply the operator, typecast, or make shallow copy
         if (op1 != NULL || op2 != NULL)
-        { 
+        {
             // Cx = op (A)
             info = GB_apply_op ((GB_void *) Cx,
                 op1, op2, scalar, binop_bind1st, A, Context) ;
@@ -761,7 +761,7 @@ GB_GOTCHA ;
 
         }
         else
-        { 
+        {
 
             //------------------------------------------------------------------
             // find the non-empty vectors of A, which become entries in C
@@ -1038,7 +1038,7 @@ GB_GOTCHA ;
 
             // numerical values: apply the op, typecast, or make shallow copy
             if (op1 != NULL || op2 != NULL)
-            { 
+            {
                 // Swork = op (A)
                 info = GB_apply_op ((GB_void *) Swork,
                     op1, op2, scalar, binop_bind1st, A, Context) ;
@@ -1221,7 +1221,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     if (op_is_positional)
-    { 
+    {
         // the positional operator is applied in-place to the values of C
         op1 = save_op1 ;
         op2 = save_op2 ;

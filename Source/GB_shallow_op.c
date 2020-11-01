@@ -60,7 +60,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     {
         ASSERT_UNARYOP_OK (op1, "unop for shallow_op", GB0) ;
         if (!op_is_positional)
-        {
+        { 
             ASSERT (GB_Type_compatible (op1->xtype, A->type)) ;
             op_intype = op1->xtype ;
         }
@@ -70,7 +70,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     {
         ASSERT_BINARYOP_OK (op2, "binop for shallow_op", GB0) ;
         if (!op_is_positional)
-        {
+        { 
             op_intype = (binop_bind1st) ? op2->xtype : op2->ytype ;
             ASSERT (GB_Type_compatible (op_intype, A->type)) ;
         }
@@ -100,18 +100,17 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // make a shallow copy of the vector pointers
     //--------------------------------------------------------------------------
 
-    ASSERT (C->magic == GB_MAGIC2) ;   // [ be careful; C not yet initialized
-    C->p_shallow = (A->p != NULL) ;           // C->p not freed when freeing C
-    C->h_shallow = (A->h != NULL) ;           // C->h not freed when freeing C
-    C->p = A->p ;                   // C->p is of size A->plen + 1
-    C->h = A->h ;                   // C->h is of size A->plen
-    C->plen = A->plen ;             // C and A have the same hyperlist sizes
+    C->p_shallow = (A->p != NULL) ;     // C->p not freed when freeing C
+    C->h_shallow = (A->h != NULL) ;     // C->h not freed when freeing C
+    C->p = A->p ;                       // C->p is of size A->plen + 1
+    C->h = A->h ;                       // C->h is of size A->plen
+    C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
-    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
+    ASSERT (A->nvec_nonempty == -1 ||   // TODO::OK
+            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;    // TODO::OK
     C->nvec_nonempty = A->nvec_nonempty ;
-    C->nvals = A->nvals ;           // if A bitmap 
-    C->magic = GB_MAGIC ;           // C is now initialized ]
+    C->nvals = A->nvals ;               // if A bitmap 
+    C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // check for empty matrix

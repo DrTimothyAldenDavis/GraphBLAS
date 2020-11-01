@@ -19,7 +19,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
-    int64_t *nonempty,  // number of rows with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nzmax,"
-        " &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)") ;
+        " &jumbled, &Ap, &Aj, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_CSR") ;
     GB_RETURN_IF_NULL (A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
@@ -73,8 +73,7 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_export (A, type, ncols, nrows,
-        nzmax, NULL, jumbled, nonempty, NULL,
+    info = GB_export (A, type, ncols, nrows, nzmax, NULL, jumbled, NULL,
         Ap, NULL, NULL, Aj, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

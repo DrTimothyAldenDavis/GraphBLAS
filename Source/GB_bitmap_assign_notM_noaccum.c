@@ -92,7 +92,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     //--------------------------------------------------------------------------
 
     if (A == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // scalar assignment: C<!M>(I,J) = scalar
@@ -160,7 +160,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         //----------------------------------------------------------------------
 
         if (C_replace)
-        {
+        { 
             // for all IxJ
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pC,ignore)          \
@@ -172,7 +172,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
             #include "GB_bitmap_assign_IxJ_template.c"
         }
         else
-        {
+        { 
             // for all IxJ
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pC,ignore)          \
@@ -190,14 +190,14 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     //--------------------------------------------------------------------------
 
     if (assign_kind == GB_SUBASSIGN)
-    {
+    { 
         // see above.  no more work to do
     }
     else
     {
         #define GB_NO_SUBASSIGN_CASE
         if (C_replace)
-        {
+        { 
             // for all entries in C.  Also clears M from C
             #define GB_CIJ_WORK(pC)                 \
             {                                       \
@@ -208,7 +208,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
             #include "GB_bitmap_assign_C_template.c"
         }
         else
-        {
+        { 
             // clear M from C
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;

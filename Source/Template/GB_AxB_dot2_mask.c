@@ -16,8 +16,8 @@
     #endif
 
     int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:cnvals)
+// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+// TODO        reduction(+:cnvals)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         int a_tid = tid / nbslice ;
@@ -33,7 +33,8 @@
         int64_t *GB_RESTRICT C_count_start = NULL ;
         int64_t *GB_RESTRICT C_count_end   = NULL ;
         if (!C_is_bitmap)
-        {
+        { 
+GB_GOTCHA ;
             C_count_start = (a_tid == 0) ?         NULL : C_counts [a_tid] ;
             C_count_end   = (a_tid == naslice-1) ? NULL : C_counts [a_tid+1] ;
         }
@@ -66,7 +67,8 @@
             // this thread computes Ci and Cx [cnz:cnz_last]
             int64_t cnz, cnz_last ;
             if (!C_is_bitmap)
-            {
+            { 
+GB_GOTCHA ;
                 cnz = Cp [kB] +
                     ((C_count_start == NULL) ? 0 : C_count_start [kB]) ;
                 cnz_last = (C_count_end == NULL) ?
@@ -113,7 +115,7 @@
 
                 #if defined ( GB_PHASE_2_OF_2 )
                 if (C_is_bitmap)
-                {
+                { 
                     // cnz = position of C(i,j) in the bitmap
                     cnz = i + j * cvlen ;
                     Cb [cnz] = 0 ;

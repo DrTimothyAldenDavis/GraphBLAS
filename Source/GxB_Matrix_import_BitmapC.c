@@ -20,7 +20,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, nrows, ncols, 0, nvals, false, 0, 0,
+    info = GB_import (A, type, nrows, ncols, 0, nvals, false, 0,
         NULL, NULL, Ab, NULL, Ax, GxB_BITMAP, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;

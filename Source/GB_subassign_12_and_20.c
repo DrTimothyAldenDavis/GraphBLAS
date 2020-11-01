@@ -425,7 +425,7 @@ GrB_Info GB_subassign_12_and_20
                         }
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

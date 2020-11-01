@@ -20,7 +20,6 @@ GrB_Info GB_import      // import a matrix in any format
     GrB_Index nzmax,    // size of Ai and Ax for sparse/hypersparse
     GrB_Index nvals,    // # of entries for bitmap
     bool jumbled,       // if true, sparse/hypersparse may be jumbled
-    int64_t nonempty,   // # of non-empty vectors for sparse/hypersparse
     GrB_Index nvec,     // size of Ah for hypersparse
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
     GrB_Index **Ah,     // vector indices, size nvec for hyper
@@ -59,7 +58,7 @@ GB_GOTCHA ;
     }
 
     if (nzmax > 0)
-    {
+    { 
         GB_RETURN_IF_NULL (Ax) ;
         GB_RETURN_IF_NULL (*Ax) ;
     }
@@ -121,7 +120,7 @@ GB_GOTCHA ;
 
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;
-            (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
+            (*A)->nvec_nonempty = -1 ;      // TODO::OK, import
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             break ;

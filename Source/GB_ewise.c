@@ -248,12 +248,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // In all cases above, C remains dense and can be updated in-place
     // C_replace must be false.  M can be valued or structural.
 
-//  if (A_is_dense && B_is_dense)
-//  { 
-//      // no need to use eWiseAdd if both A and B are dense
-//      eWiseAdd = false ;
-//  }
-
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
         && (op->xtype == A1->type)          // no typecasting of A
@@ -407,7 +401,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
         GB_Matrix_free (&MT) ;
-        return (GB_transplant_conform (C, C->type, &T, Context)) ;
+        GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
+        return (GB_block (C, Context)) ;
     }
     else
     { 

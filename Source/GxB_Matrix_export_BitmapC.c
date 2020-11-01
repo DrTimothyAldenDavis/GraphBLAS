@@ -60,7 +60,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     // export the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_export (A, type, nrows, ncols, NULL, nvals, NULL, NULL, NULL,
+    info = GB_export (A, type, nrows, ncols, NULL, nvals, NULL, NULL,
         NULL, NULL, Ab, NULL, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

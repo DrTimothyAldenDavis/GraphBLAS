@@ -73,7 +73,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
 
     if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C=A*B, C<M>=A*B or C<!M>=A*B: sparse Gustavson/Hash method
@@ -86,7 +86,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 

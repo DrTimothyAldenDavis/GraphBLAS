@@ -187,7 +187,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
 
         // cumulative sum of the rowcount, and copy back into C->p
-        GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nth) ;
+        GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nth) ;  // TODO::OK
         GB_memcpy (Cp, rowcount, (vlen+1) * sizeof (int64_t), nth) ;
 
     }
@@ -220,8 +220,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
         Cp [vlen] = 0 ;
 
-        // compute the vector pointers for C; also compute C->nvec_nonempty
-        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth) ;
+        // compute the vector pointers for C
+        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth) ;    // TODO::OK
 
         // add Cp back to all Rowcounts
         #pragma omp parallel for num_threads(nth) schedule(static)

@@ -20,7 +20,6 @@ GrB_Info GB_import      // import a matrix in any format
     GrB_Index nzmax,    // size of Ai and Ax for sparse/hypersparse
     GrB_Index nvals,    // # of entries for bitmap
     bool jumbled,       // if true, sparse/hypersparse may be jumbled
-    int64_t nonempty,   // # of non-empty vectors for sparse/hypersparse
     GrB_Index nvec,     // size of Ah for hypersparse
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
     GrB_Index **Ah,     // vector indices, size nvec for hyper
@@ -41,7 +40,6 @@ GrB_Info GB_export      // export a matrix in any format
     GrB_Index *nzmax,   // size of Ab, Ai, and Ax
     GrB_Index *nvals,   // # of entries for bitmap matrices
     bool *jumbled,      // if true, sparse/hypersparse may be jumbled
-    int64_t *nonempty,  // # of non-empty vectors for sparse/hypersparse
     GrB_Index *nvec,    // size of Ah for hypersparse
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
     GrB_Index **Ah,     // vector indices, size nvec for hyper

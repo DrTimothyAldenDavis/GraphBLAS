@@ -226,12 +226,14 @@ GrB_Info GB_mask                // C<M> = Z
             GB_Matrix_free (Zhandle) ;
 
             if (C_replace)
-            {
+            { 
+GB_GOTCHA ;
                 // C_result = 0
                 return (GB_clear (C_result, Context)) ;
             }
             else
-            {
+            { 
+GB_GOTCHA ;
                 // nothing happens
                 return (GrB_SUCCESS) ;
             }

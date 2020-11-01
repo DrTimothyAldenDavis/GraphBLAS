@@ -68,8 +68,8 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
-logstat ('test157',t) ; % test sparsity formats
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
+logstat ('test157',t) ; % test sparsity formats
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
 logstat ('test156',t) ; % test GrB_assign C=A with typecasting
 

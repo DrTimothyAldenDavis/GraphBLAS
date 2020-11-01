@@ -150,14 +150,14 @@ void GB_merge_parallel_3                // parallel merge
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
-    { 
+    {
         if (GB_lt_3 (Smaller_0, Smaller_1, Smaller_2, pleft,
                      Pivot_0,   Pivot_1,   Pivot_2,   0))
-        {
+        { 
             pleft++ ;
         }
         else
-        {
+        { 
             pright++ ;
         }
     }
@@ -453,7 +453,7 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
     }
     else
-    {
+    { 
 
         // ---------------------------------------------------------------------
         // sequential quicksort

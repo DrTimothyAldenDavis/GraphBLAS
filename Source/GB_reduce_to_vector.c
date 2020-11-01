@@ -149,7 +149,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     if (monoid == NULL)
-    {
+    { 
         // GrB_Matrix_reduce_BinaryOp does not pass in a monoid; construct it
         GB_OK (GB_Monoid_new (&monoid2, reduce_op, NULL, NULL, ztype->code,
             Context)) ;

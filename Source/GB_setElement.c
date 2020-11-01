@@ -121,7 +121,7 @@ GB_GOTCHA ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
     if (GB_IS_FULL (C) || C_is_bitmap)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap or full
@@ -182,13 +182,13 @@ GB_GOTCHA ;
             (GB_void *) scalar, scalar_code, NULL, csize, 1, 1) ;
 
         if (is_zombie)
-        {
+        { 
             // bring the zombie back to life
             C->i [pleft] = i ;      // ok: C is sparse
             C->nzombies-- ;
         }
         else if (C_is_bitmap)
-        {
+        { 
             // set the entry in the C bitmap
             int8_t cb = C->b [pleft] ;
             C->nvals += (cb == 0) ;
@@ -291,7 +291,6 @@ GB_GOTCHA ;
         if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
             stype, NULL, i, j, C->vdim > 1))
         { 
-GB_GOTCHA ;
             // out of memory
             GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;

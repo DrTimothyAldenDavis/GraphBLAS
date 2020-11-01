@@ -25,7 +25,7 @@ GrB_Info GB_BinaryOp_new
     GrB_Type ytype,                 // type of input y
     const char *name                // name of the function (may be NULL)
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -188,7 +188,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // R is bitmap or full: only determine how many threads to use

@@ -77,7 +77,7 @@ GrB_Info GB_bitmap_assign_M_accum
     //--------------------------------------------------------------------------
 
     if (A == NULL && assign_kind == GB_SUBASSIGN)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // scalar subassignment: C(I,J)<M> += scalar
@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_assign_M_accum
         #include "GB_bitmap_assign_M_sub_template.c"
 
         if (C_replace)
-        {
+        { 
             // for all entries in IxJ
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pC,ignore)      \
@@ -168,7 +168,7 @@ GrB_Info GB_bitmap_assign_M_accum
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // matrix assignment: C<M>(I,J) += A or C(I,J)<M> += A
@@ -209,7 +209,7 @@ GrB_Info GB_bitmap_assign_M_accum
         //----------------------------------------------------------------------
 
         if (C_replace)
-        {
+        { 
             // scan all of C for the C_replace phase
             // for row assign: for all entries in C(i,:)
             // for col assign: for all entries in C(:,j)
@@ -228,7 +228,7 @@ GrB_Info GB_bitmap_assign_M_accum
             #include "GB_bitmap_assign_C_template.c"
         }
         else
-        {
+        { 
             // clear M from C
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] -= 2

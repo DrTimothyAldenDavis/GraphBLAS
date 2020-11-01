@@ -100,12 +100,12 @@ GrB_Info GB_subassign_06s_and_14
     //--------------------------------------------------------------------------
 
     if (A_is_bitmap)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }
@@ -423,7 +423,7 @@ GrB_Info GB_subassign_06s_and_14
                         }
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

@@ -22,7 +22,6 @@ GrB_Info GB_export      // export a matrix in any format
     GrB_Index *nzmax,   // size of Ab, Ai, and Ax
     GrB_Index *nvals,   // # of entries for bitmap matrices
     bool *jumbled,      // if true, sparse/hypersparse may be jumbled
-    int64_t *nonempty,  // # of non-empty vectors for sparse/hypersparse
     GrB_Index *nvec,    // size of Ah for hypersparse
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
     GrB_Index **Ah,     // vector indices, size nvec for hyper
@@ -59,7 +58,6 @@ GrB_Info GB_export      // export a matrix in any format
 
         case GxB_SPARSE : 
             GB_RETURN_IF_NULL (nzmax) ;
-            GB_RETURN_IF_NULL (nonempty) ;
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (Ai) ;
             break ;
@@ -91,12 +89,6 @@ GrB_Info GB_export      // export a matrix in any format
             if (jumbled != NULL)
             { 
                 (*jumbled) = (*A)->jumbled ;
-            }
-            (*nonempty) = (*A)->nvec_nonempty ;
-            if ((*nonempty) < 0)
-            { 
-                // count # of non-empty vectors
-                (*nonempty) = GB_nvec_nonempty (*A, Context) ;
             }
             (*Ap) = (*A)->p ; (*A)->p = NULL ;
             (*Ai) = (*A)->i ; (*A)->i = NULL ;

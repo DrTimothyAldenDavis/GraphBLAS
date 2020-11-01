@@ -430,7 +430,7 @@ GrB_Info GB_ewise_slice
                     kM = C_to_M [k] ;
                 }
                 else if (Ch_is_Mh)
-                {
+                { 
                     // M is hypersparse, but Ch is a copy of Mh
                     ASSERT (GB_IS_HYPERSPARSE (M)) ;
                     // Ch is a deep or shallow copy of Mh

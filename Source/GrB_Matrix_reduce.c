@@ -116,7 +116,7 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for w, M, and A
 )
-{
+{ 
     GB_WHERE (w, "GrB_Matrix_reduce_Monoid (w, M, accum, reduce, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce_monoid) ;

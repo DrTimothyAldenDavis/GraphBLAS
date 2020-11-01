@@ -12,7 +12,6 @@
 // in-place.  The accum operator is the same as the monoid.
 
 {
-// printf ("BITMAP AXB SAXPY #############################################\n") ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -105,14 +104,14 @@
         mtasks = (mthreads == 1) ? 1 : (8 * mthreads) ;
         if (!GB_ek_slice (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice,
             M, &mtasks))
-        {
+        { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)
-        {
+        { 
             #undef GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] += 2
             #include "GB_bitmap_assign_M_all_template.c"
@@ -169,7 +168,7 @@
         int naslice, nbslice ;
 
         if (nthreads == 1)
-        {
+        { 
             // do the entire computation with a single thread
             naslice = 1 ;
             nbslice = 1 ;
@@ -180,12 +179,12 @@
             ntasks = 8 * nthreads ;
             int dtasks = ceil (sqrt ((double) ntasks)) ;
             if (bnvec > dtasks || bnvec == 0)
-            {
+            { 
                 // slice B into nbslice slices
                 nbslice = dtasks ;
             }
             else
-            {
+            { 
                 // slice B into one task per vector
                 nbslice = bnvec ;
             }
@@ -207,18 +206,17 @@
         }
 
         if (M == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A*B, no mask, A bitmap, B sparse
             //------------------------------------------------------------------
 
-            // printf ("\n[bitmap C=A*B: A bitmap, B sparse]\n") ;
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_sparse_template.c"
 
         }
         else if (M_is_sparse_or_hyper)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M sparse, A bitmap, B sparse
@@ -227,13 +225,12 @@
             // A is bitmap or full.  B is sparse or hypersparse.  scatter M or
             // !M into the C bitmap.  A sliced by rows and B by columns.  No
             // atomics.
-            // printf ("\n[bitmap C<M sparse>=A*B: A bitmap, B sparse]\n") ;
             #define GB_MASK_IS_SPARSE
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_sparse_template.c"
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M bitmap, A bitmap, B sparse
@@ -241,7 +238,6 @@
 
             // Same as above, except that M can be used in-place, instead of
             // being copied into the C bitmap.
-            // printf ("\n[bitmap C<M bitmap>=A*B: A bitmap, B sparse]\n") ;
             #define GB_MASK_IS_BITMAP
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_sparse_template.c"
         }
@@ -283,12 +279,8 @@
         int nfine_tasks_per_vector = 0 ;
         bool use_coarse_tasks ;
 
-        // printf ("nthreads %d\n", nthreads) ;
-        // printf ("bvdim %ld\n", bvdim) ;
-        // printf ("anz %ld\n", anz) ;
-
         if (nthreads == 1 || bvdim == 0)
-        {
+        { 
             // do the entire computation with a single thread, with coarse task
             ntasks = 1 ;
             use_coarse_tasks = true ;
@@ -320,7 +312,7 @@
                 }
             }
             else
-            {
+            { 
                 // All tasks are coarse, and each coarse task does 1 or more
                 // whole vectors of B
                 use_coarse_tasks = true ;
@@ -328,7 +320,7 @@
         }
 
         if (M == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A*B, no mask, A sparse, B bitmap
@@ -338,25 +330,23 @@
             // coarse/fine Gustavson (fine Gustavson with atomics).  No
             // symbolic pre-analysis, and no Gustavson workspace.  C can be
             // modified in-place.
-            // printf ("\n[bitmap C=A*B: A sparse, B bitmap]\n") ;
             #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
 
         }
         else if (M_is_sparse_or_hyper)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M sparse, A sparse, B bitmap
             //------------------------------------------------------------------
 
             // As above, except scatter M into the C bitmap.
-            // printf ("\n[bitmap C<M sparse>=A*B: A sparse, B bitmap]\n") ;
             #define GB_MASK_IS_SPARSE
             #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M bitmap, A sparse, B bitmap
@@ -364,7 +354,6 @@
 
             // As above, except use M in-place; do not scatter into the C
             // bitmap.
-            // printf ("\n[bitmap C<M bitmap>=A*B: A sparse, B bitmap]\n") ;
             #define GB_MASK_IS_BITMAP
             #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
         }
@@ -410,7 +399,7 @@
         int64_t ntasks = nI_tasks * nJ_tasks ;
 
         if (M == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A*B, no mask, A bitmap, B bitmap
@@ -419,13 +408,12 @@
             // This method can used arbitrary tiling methods.  Divide up C
             // into K-by-K tiles for some chosen constant K, and compute
             // each C(i,j) tile independently.
-            // printf ("\n[bitmap C=A*B: A bitmap, B bitmap]\n") ;
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap_template.c"
 
         }
         else if (M_is_sparse_or_hyper)
-        {
-
+        { 
+GB_GOTCHA ;
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M sparse, A bitmap, B bitmap
             //------------------------------------------------------------------
@@ -436,20 +424,18 @@
             // If there are very few entries to compute in the C(i,j) tile,
             // could use a dot-product method instead, to compute each tile
             // multiply.
-            // printf ("\n[bitmap C<M sparse>=A*B: A bitmap, B bitmap]\n") ;
             #define GB_MASK_IS_SPARSE
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap_template.c"
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M bitmap, A bitmap, B bitmap
             //------------------------------------------------------------------
 
             // As above, except use M or !M in-place.
-            // printf ("\n[bitmap C<M bitmap>=A*B: A bitmap, B bitmap]\n") ;
             #define GB_MASK_IS_BITMAP
             #include "GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap_template.c"
         }
@@ -462,7 +448,7 @@
     //--------------------------------------------------------------------------
 
     if (M_is_sparse_or_hyper)
-    {
+    { 
         #undef GB_MASK_WORK
         #define GB_MASK_WORK(pC) Cb [pC] -= 2
         #include "GB_bitmap_assign_M_all_template.c"

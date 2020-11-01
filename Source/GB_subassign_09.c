@@ -157,14 +157,14 @@ GrB_Info GB_subassign_09
                         GB_NEXT (S) ;
                     }
                     else if (!Sfound && mij)
-                    {
+                    { 
                         // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
                         task_pending++ ;
                     }
                     else if (Sfound && mij)
-                    {
+                    { 
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -351,7 +351,7 @@ GrB_Info GB_subassign_09
                     bool mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;
 
                     if (!Sfound && mij)
-                    {
+                    { 
                         // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
@@ -359,7 +359,7 @@ GrB_Info GB_subassign_09
                         GB_PENDING_INSERT (scalar) ;
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

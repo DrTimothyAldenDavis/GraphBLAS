@@ -84,16 +84,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    if (B->nvec_nonempty < 0)
-    { 
-        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-    }
-
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-    }
-
     int64_t naslice = 0 ;
     int64_t nbslice = 0 ;
 
@@ -107,7 +97,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
     if (nthreads == 1)
-    {
+    { 
         // do the entire computation with a single thread
         naslice = 1 ;
         nbslice = 1 ;
@@ -182,13 +172,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int C_sparsity ;
     bool C_is_bitmap ;
     if (C_bitmap_size < 8 * (A_size + B_size))
-    {
+    { 
         // C is not too large: use a bitmap
         C_sparsity = GxB_BITMAP ;
         C_is_bitmap = true ;
     }
     else
-    {
+    { 
         // C is very large: construct it as sparse or hypersparse
         C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         C_is_bitmap = false ;
@@ -201,7 +191,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cnz ;
 
     if (C_is_bitmap)
-    {
+    { 
         cnz = cvlen * cvdim ;
     }
     else
@@ -273,7 +263,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         Cp [cnvec] = 0 ;    // ok: C is sparse
         C->nvec = cnvec ;
         // Cp = cumulative sum of Cp
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;  // TODO::OK
         cnz = Cp [cnvec] ;  // ok: C is sparse
 
         // C->h = B->h
@@ -345,7 +335,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
         #define GB_DOT2_GENERIC
         GB_BURBLE_MATRIX (C, "(generic C%s=A'*B) ", (M == NULL) ? "" : "<!M>") ;
         #include "GB_AxB_dot_generic.c"

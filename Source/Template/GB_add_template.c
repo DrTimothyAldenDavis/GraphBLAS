@@ -101,17 +101,17 @@
 
         // phase2
         if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        {
+        { 
             // C is sparse or hypersparse (phase1 and phase2)
             #include "GB_sparse_add_template.c"
         }
         else if (C_sparsity == GxB_BITMAP)
-        {
+        { 
             // C is bitmap (phase2 only)
             #include "GB_bitmap_add_template.c"
         }
         else
-        {
+        { 
             // C is full (phase2 only)
             ASSERT (C_sparsity == GxB_FULL) ;
             #include "GB_full_add_template.c"

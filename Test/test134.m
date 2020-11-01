@@ -21,12 +21,23 @@ for k1 = 1:length(types)
     atype = types {k1} ;
     fprintf ('%-14s ', atype) ;
 
-    for A_is_hyper = 0:1
+    for A_sparsity = [0 1 2]
     for A_is_csc   = 0:1
     for C_is_hyper = 0:1
     for C_is_csc   = 0:1
     for M_is_hyper = 0:1
     for M_is_csc   = 0:1
+
+    if (A_sparsity == 0)
+        A_is_hyper = 0 ;
+        A_sparsity_control = 2 ;    % sparse
+    elseif (A_sparsity == 1)
+        A_is_hyper = 1 ;
+        A_sparsity_control = 1 ;    % hypersparse
+    else
+        A_is_hyper = 0 ;
+        A_sparsity_control = 4 ;    % bitmap
+    end
 
     if (A_is_hyper)
         ha = 1 ;
@@ -54,6 +65,9 @@ for k1 = 1:length(types)
     cin = GB_mex_cast (0, atype) ;
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
     Mask.hyper_switch = hm ;
+
+    A.sparsity = A_sparsity_control ;
+    B.sparsity = A_sparsity_control ;
 
     fprintf ('.') ;
 

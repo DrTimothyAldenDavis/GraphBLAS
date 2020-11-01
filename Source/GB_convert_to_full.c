@@ -69,7 +69,7 @@ GB_GOTCHA ;
 
     A->plen = -1 ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;   // TODO::OK
 
     A->nzmax = GB_IMAX (anzmax, 1) ;
 

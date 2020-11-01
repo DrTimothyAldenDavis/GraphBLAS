@@ -105,7 +105,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
         //----------------------------------------------------------------------
 
         if (assign_kind == GB_SUBASSIGN)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar subassign: C(I,J)<M,repl or !repl> = scalar
@@ -134,7 +134,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
         }
         else // assign_kind == GB_ASSIGN
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assign: C<M,repl or !repl>(I,J) = scalar
@@ -158,7 +158,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
             #include "GB_bitmap_assign_IxJ_template.c"
 
             if (C_replace)
-            {
+            { 
                 // for all of C
                 #undef  GB_CIJ_WORK
                 #define GB_CIJ_WORK(pC)                 \
@@ -170,7 +170,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 #include "GB_bitmap_assign_C_template.c"
             }
             else
-            {
+            { 
                 // clear the mask
                 #undef  GB_MASK_WORK
                 #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;
@@ -221,7 +221,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
             //------------------------------------------------------------------
 
             if (C_replace)
-            {
+            { 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
                 #define GB_IXJ_WORK(pC,ignore)          \
@@ -234,7 +234,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
             }
             else
-            {
+            { 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
                 #define GB_IXJ_WORK(pC,ignore)          \
@@ -257,7 +257,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
             #define GB_NO_SUBASSIGN_CASE
 
             if (C_replace)
-            {
+            { 
 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
@@ -281,7 +281,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 #include "GB_bitmap_assign_C_template.c"
             }
             else
-            {
+            { 
 
                 // for all IxJ
                 #undef  GB_IXJ_WORK

@@ -60,11 +60,11 @@ int GB_masker_sparsity      // return the sparsity structure for R
         //      sparse  full        full            bitmap
 
         if (Z_is_sparse)
-        {
+        { 
             R_sparsity = GxB_SPARSE ;
         }
         else
-        {
+        { 
             R_sparsity = GxB_BITMAP ;
         }
 
@@ -89,11 +89,11 @@ int GB_masker_sparsity      // return the sparsity structure for R
         //      sparse  full        full            bitmap
 
         if (M_is_sparse || Z_is_sparse)
-        {
+        { 
             R_sparsity = GxB_SPARSE ;
         }
         else
-        {
+        { 
             R_sparsity = GxB_BITMAP ;
         }
     }

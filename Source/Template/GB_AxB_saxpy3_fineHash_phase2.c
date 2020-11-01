@@ -86,7 +86,7 @@
                 }
                 if (hf_unlocked)    // if true, update C(i,j)
                 { 
-// TODO: GB_GOTCHA
+GB_GOTCHA ;
                     // hash entry occuppied by C(i,j): update it
                     GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                 }
@@ -135,7 +135,7 @@
                     hf = Hf [hash] ;        // grab the entry
                     #if GB_HAS_ATOMIC
                     if (hf == i_unlocked)  // if true, update C(i,j)
-                    {
+                    { 
                         GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                         break ;         // C(i,j) has been updated
                     }
@@ -145,7 +145,7 @@
                     {
                         // h=0: unoccupied, h=i1: occupied by i
                         do  // lock the entry
-                        {
+                        { 
                             // do this atomically:
                             // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
                             GB_ATOMIC_CAPTURE_INT64_OR (hf, Hf [hash], 3) ;
@@ -166,6 +166,7 @@
                         }
                         if (hf == i_unlocked) // f == 2
                         { 
+GB_GOTCHA ;
                             // C(i,j) already appears in C(:,j)
                             // Hx [hash] += t
                             GB_ATOMIC_UPDATE_HX (hash, t) ;

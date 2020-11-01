@@ -41,7 +41,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 
     if (A->x == NULL)
     { 
-GB_GOTCHA ;
+// GB_GOTCHA ; by gbtest22
         ASSERT (A->nzmax == 0 && anz == 0) ;
         A->nzmax = 1 ;
         A->x = GB_CALLOC (A->type->size, GB_void) ;
@@ -59,7 +59,7 @@ GB_GOTCHA ;
 
     A->plen = avdim ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;       // TODO::OK
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -78,14 +78,14 @@ GB_GOTCHA ;
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (k = 0 ; k <= avdim ; k++)
-    {
+    { 
         Ap [k] = k * avlen ;        // ok: A becomes sparse
     }
 
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
-    {
+    { 
         Ai [p] = p % avlen ;        // ok: A becomes sparse
     }
 

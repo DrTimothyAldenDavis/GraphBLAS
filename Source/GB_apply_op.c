@@ -78,12 +78,12 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
         bool is64 ;
         if (op1 != NULL)
-        {
+        { 
             ASSERT_UNARYOP_OK (op1, "positional op1 for GB_apply_op", GB0) ;
             is64 = (op1->ztype == GrB_INT64) ;
         }
         else // if (op2 != NULL)
-        {
+        { 
             ASSERT_BINARYOP_OK (op2, "positional op2 for GB_apply_op", GB0) ;
             is64 = (op2->ztype == GrB_INT64) ;
         }
@@ -381,13 +381,13 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         GxB_binary_function fop = op2->function ;
 
         if (binop_bind1st)
-        { 
+        {
             // Cx = op (scalar,Ax)
             GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
-            {
+            { 
                 if (!GBB (Ab, p)) continue ;
                 // ywork = (ytype) Ax [p]
                 GB_void ywork [GB_VLA(ysize)] ;
@@ -397,13 +397,13 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             }
         }
         else
-        { 
+        {
             // Cx = op (Ax,scalar)
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
-            {
+            { 
                 if (!GBB (Ab, p)) continue ;
                 // xwork = (xtype) Ax [p]
                 GB_void xwork [GB_VLA(xsize)] ;

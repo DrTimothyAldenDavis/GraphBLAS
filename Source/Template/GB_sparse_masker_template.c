@@ -112,7 +112,7 @@
 
     ASSERT (C_is_sparse || C_is_hyper) ;
 
-    #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
+// TODO    #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < R_ntasks ; taskid++)
     {
 
@@ -309,7 +309,7 @@
                     int64_t iM = Mi [pM] ;      // ok: M is sparse
 
                     if (iC < iM)
-                    {
+                    { 
                         // C(i,j) is present but M(i,j) is not
                         // R(i,j) = C(i,j)
                         int64_t i = iC ;
@@ -317,7 +317,7 @@
                         pC++ ;
                     }
                     else if (iC > iM)
-                    {
+                    { 
                         // M(i,j) is present but C(i,j) is not
                         int64_t i = iM ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
@@ -334,12 +334,13 @@
                         int64_t i = iM ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
                         if (mij)
-                        {
+                        { 
                             // R(i,j) = Z(i,j)
                             GB_COPY_Z_BITMAP_OR_FULL ;
                         }
                         else
-                        {
+                        { 
+GB_GOTCHA ;
                             // R(i,j) = C(i,j)
                             GB_COPY_C ;
                         }
@@ -353,7 +354,7 @@
                 rjnz += (pC_end - pC) ;
                 #else
                 for ( ; pC < pC_end ; pC++)
-                {
+                { 
                     // C(i,j) is present but M(i,j) is not
                     int64_t i = Ci [pC] ;       // ok: C is sparse
                     GB_COPY_C ;
@@ -367,7 +368,7 @@
                     int64_t i = Mi [pM] ;       // ok: M is sparse
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
                         // R(i,j) = Z(i,j)
                         GB_COPY_Z_BITMAP_OR_FULL ;
                     }

@@ -16,7 +16,7 @@ GrB_Info GrB_init           // start up GraphBLAS
 (
     GrB_Mode mode           // blocking or non-blocking mode
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

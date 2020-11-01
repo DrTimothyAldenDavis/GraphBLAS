@@ -53,8 +53,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     GrB_Index vdim ;
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
-        NULL, nvals, NULL, NULL, NULL,
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, NULL, nvals, NULL, NULL,
         NULL, NULL, vb, NULL, vx, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

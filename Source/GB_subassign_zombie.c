@@ -87,7 +87,7 @@ GrB_Info GB_subassign_zombie
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:nzombies)
     for (pS = 0 ; pS < snz ; pS++)
-    { 
+    {
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
         int64_t pC = Sx [pS] ;
         int64_t i = Ci [pC] ;       // ok: C is sparse
@@ -96,7 +96,7 @@ GrB_Info GB_subassign_zombie
         // ----[C A 0] or [C . 0]-----------------------------------------------
         // action: C_repl: ( delete ): becomes a zombie
         if (!GB_IS_ZOMBIE (i))
-        {
+        { 
             nzombies++ ;
             Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
         }

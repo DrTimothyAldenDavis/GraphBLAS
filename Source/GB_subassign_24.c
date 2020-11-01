@@ -56,10 +56,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-    }
 
     // the prior pattern of C is discarded
     C->jumbled = false ;

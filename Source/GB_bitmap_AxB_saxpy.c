@@ -80,7 +80,8 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     int64_t cnzmax ;
     bool ok = GB_Index_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
     if (!ok)
-    {
+    { 
+GB_GOTCHA ;
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }

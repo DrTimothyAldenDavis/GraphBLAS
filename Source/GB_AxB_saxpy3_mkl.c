@@ -290,8 +290,8 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     C->plen = cnrows ;
     C->nvec = cnrows ;
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = -1 ;
-    C->jumbled = false ;    // assume MKL returns a non-jumbled matrix
+    C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;  // TODO::OK
+    C->jumbled = false ;        // assume MKL returns a non-jumbled matrix
 
     //--------------------------------------------------------------------------
     // prune empty vectors, free workspace, and return result

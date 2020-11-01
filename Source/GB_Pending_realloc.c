@@ -61,7 +61,6 @@ bool GB_Pending_realloc         // reallocate a list of pending tuples
 
         if (!ok1 || !ok2 || !ok3)
         { 
-GB_GOTCHA ;
             // out of memory
             GB_Pending_free (PHandle) ;
             return (false) ;

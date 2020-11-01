@@ -65,7 +65,7 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_export (A, type, ncols, nrows, NULL, NULL, NULL, NULL, NULL,
+    info = GB_export (A, type, ncols, nrows, NULL, NULL, NULL, NULL,
         NULL, NULL, NULL, NULL, Ax, NULL, NULL, Context) ;
     GB_BURBLE_END ;
     return (info) ;

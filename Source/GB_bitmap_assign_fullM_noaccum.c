@@ -90,7 +90,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     //--------------------------------------------------------------------------
 
     if (C_replace)
-    {
+    { 
         // for row assign: set Cb(i,:) to zero if mij == 0
         // for col assign: set Cb(:,j) to zero if mij == 0
         // for assign: set Cb(:,:) to zero if mij == 0

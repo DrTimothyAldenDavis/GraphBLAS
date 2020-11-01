@@ -53,7 +53,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
     {
         // A is full or bitmap
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        {
+        { 
             Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;
         }
     }

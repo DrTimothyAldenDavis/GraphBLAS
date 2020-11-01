@@ -163,7 +163,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // add Cp as the vector pointers for C, from GB_add_phase1
     if (C_is_sparse_or_hyper)
     {
-        C->nvec_nonempty = Cnvec_nonempty ;
+        C->nvec_nonempty = Cnvec_nonempty ;     // TODO::OK
         C->p = (int64_t *) Cp ;
     }
 
@@ -275,7 +275,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             bsize = B->type->size ;
 
             if (op_is_second || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of A(i,j)
                 xsize = 1 ;
                 cast_A_to_X = NULL ;
@@ -287,7 +287,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             }
 
             if (op_is_first || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of B(i,j)
                 ysize = 1 ;
                 cast_B_to_Y = NULL ;
@@ -406,7 +406,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // standard binary operator

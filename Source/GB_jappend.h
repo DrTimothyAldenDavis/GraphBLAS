@@ -38,7 +38,7 @@ static inline void GB_jstartup          // no longer used in v3.2.0
     {
         C->nvec = 0 ;       // clear existing vectors from C
     }
-    C->nvec_nonempty = 0 ;  // # of non-empty vectors will be counted
+    C->nvec_nonempty = 0 ;  // TODO::OK, not used here (method disabled)
 }
 #endif
 
@@ -54,9 +54,6 @@ static inline void GB_jstartup          // no longer used in v3.2.0
 // If C->h == NULL, C is in non-hypersparse form with
 // C->nvec == C->plen == C->vdim.  C->h is NULL.
 // In both cases, C->p has size C->plen+1.
-
-// For both hypersparse and non-hypersparse, C->nvec_nonempty <= C->nvec
-// is the number of vectors with at least one entry.
 
 static inline GrB_Info GB_jappend
 (
@@ -86,7 +83,7 @@ static inline GrB_Info GB_jappend
     }
 
     // one more non-empty vector
-    C->nvec_nonempty++ ;
+    C->nvec_nonempty++ ;        // TODO::OK
 
     if (C->h != NULL)
     { 
@@ -107,7 +104,6 @@ static inline GrB_Info GB_jappend
                 Context) ;
             if (info != GrB_SUCCESS)
             { 
-GB_GOTCHA ;
                 // out of memory
                 return (info) ;
             }

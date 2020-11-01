@@ -30,6 +30,11 @@ GrB_Info GB_Type_new
 
     #if ( ! GB_HAS_VLA )
 
+        // Microsoft Visual Studio does not support variable-length arrays
+        // allocating automatically on the stack.  These arrays are used for
+        // scalar values for a given type.  If VLA is not supported,
+        // user-defined types can be no larger than GB_VLA_MAXSIZE.
+
         if (sizeof_ctype > GB_VLA_MAXSIZE)
         {
             return (GrB_INVALID_VALUE) ;

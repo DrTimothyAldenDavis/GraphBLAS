@@ -91,8 +91,8 @@ void GB_assign_zombie4
     // the mask is not complemented) or M(0,j)=1 (if the mask is complemented.
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies)
+// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+// TODO        reduction(+:nzombies)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t kfirst, klast ;
@@ -141,7 +141,8 @@ void GB_assign_zombie4
                         mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;
                     }
                     else if (M_is_full)
-                    {
+                    { 
+GB_GOTCHA ;
                         // M is full, no need for GB_lookup
                         int64_t pM = j ;
                         mij = GB_mcast (Mx, pM, msize) ;

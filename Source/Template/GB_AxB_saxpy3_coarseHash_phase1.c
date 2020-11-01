@@ -77,7 +77,7 @@
                 bool marked = false ;
                 bool done = false ;
                 for (hash = GB_HASHF (i) ; ; GB_REHASH (hash, i))
-                {
+                { 
                     // if the hash entry is marked then it is occuppied with
                     // some row index in the current C(:,j).
                     marked = (Hf [hash] == mark) ;

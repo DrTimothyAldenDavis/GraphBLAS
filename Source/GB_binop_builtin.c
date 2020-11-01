@@ -131,7 +131,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // functions rminus (z=y-x)and rdiv (z=y/x).
 
     if (flipxy)
-    {
+    { 
         // All built-in semirings use either commutative multiplicative
         // operators (PLUS, TIMES, ANY, ...), or operators that have flipped
         // versions (DIV vs RDIV, ...).

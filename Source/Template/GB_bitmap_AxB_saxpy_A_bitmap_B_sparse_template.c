@@ -79,8 +79,8 @@
 
                     #if defined ( GB_MASK_IS_SPARSE )
 
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
                         // M is sparse or hypersparse
+                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
                         bool mij = (cb & 2) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
@@ -107,14 +107,14 @@
 
                     GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                     if (cb == 0)
-                    {
+                    { 
                         // C(i,j) = A(i,k) * B(k,j)
                         GB_CIJ_WRITE (pC, t) ;
                         Cb [pC] = keep ;
                         cnvals++ ;
                     }
                     else
-                    {
+                    { 
                         // C(i,j) += A(i,k) * B(k,j)
                         GB_CIJ_UPDATE (pC, t) ;
                     }

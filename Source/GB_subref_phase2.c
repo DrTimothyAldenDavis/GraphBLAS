@@ -96,7 +96,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     // now Cp and Ch have been transplanted into C, so they must not be freed.
 
-    C->nvec_nonempty = Cnvec_nonempty ;
+    C->nvec_nonempty = Cnvec_nonempty ;     // TODO::OK
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -105,13 +105,13 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     #define GB_PHASE_2_OF_2
     if (symbolic)
-    {
+    { 
         #define GB_SYMBOLIC
         #include "GB_subref_template.c"
         #undef  GB_SYMBOLIC
     }
     else
-    {
+    { 
         #define GB_NUMERIC
         #include "GB_subref_template.c"
         #undef  GB_NUMERIC

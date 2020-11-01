@@ -69,15 +69,15 @@ int GB_add_sparsity         // return the sparsity structure for C
         //      full    .           full            full  
 
         if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
-        {
+        { 
             C_sparsity = GxB_SPARSE ;
         }
         else if (A_is_full || B_is_full)
-        {
+        { 
             C_sparsity = GxB_FULL ;
         }
         else
-        {
+        { 
             C_sparsity = GxB_BITMAP ;
         }
 
@@ -86,7 +86,7 @@ int GB_add_sparsity         // return the sparsity structure for C
     {
 
         if (M_is_sparse_or_hyper)
-        {
+        { 
 
             //      ------------------------------------------
             //      C      <M> =        A       +       B
@@ -149,11 +149,11 @@ int GB_add_sparsity         // return the sparsity structure for C
             // The mask is very efficient to use in the case, when C is sparse.
 
             if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
-            {
+            { 
                 C_sparsity = GxB_SPARSE ;
             }
             else
-            {
+            { 
                 C_sparsity = GxB_BITMAP ;
             }
         }
@@ -202,7 +202,7 @@ int GB_add_sparsity         // return the sparsity structure for C
         //      bitmap  full        full            full  
 
         if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
-        {
+        { 
             // !M must be applied later if all 4 matrices are sparse or
             // hypersparse, since the GB_sparse_add_template method does not
             // handle this case.  See the "(mask later)" above.  The method can
@@ -212,7 +212,8 @@ int GB_add_sparsity         // return the sparsity structure for C
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else
-        {
+        { 
+GB_GOTCHA ;
             // !M can be applied now, or later.  TODO: If M is sparse and
             // either A or B are sparse/hyper, then there might be cases where
             // !M should be applied later, for better performance.

@@ -166,13 +166,12 @@ GrB_Info GB_resize              // change the size of a matrix
                 }
             }
             else
-            { 
+            {
 GB_GOTCHA ;
                 // use a single thread for each vector
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (j = 0 ; j < vdim_new ; j++)
                 { 
-// GB_GOTCHA ;
                     GB_void *pdest = Ax_new + j * vlen_new * asize ;
                     GB_void *psrc  = Ax_old + j * vlen_old * asize ;
                     memcpy (pdest, psrc, vlen_new * asize) ;
@@ -215,7 +214,7 @@ GB_GOTCHA ;
         A->vlen = vlen_new ;
         A->nzmax = nzmax_new ;
         A->nvec = vdim_new ;
-        A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+        A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;     // TODO::OK
         ASSERT_MATRIX_OK (A, "A bitmap/full shrunk", GB0) ;
         return (GrB_SUCCESS) ;
 
@@ -258,8 +257,8 @@ GB_GOTCHA ;
         if (vdim_new < vdim_old)
         { 
             // number of vectors is decreasing, need to count the new number of
-            // non-empty vectors, unless it is done during pruning, just below.
-            A->nvec_nonempty = -1 ;         // compute when needed
+            // non-empty vectors: done during pruning or by selector, below.
+            A->nvec_nonempty = -1 ;         // TODO::OK, recomputed below
         }
 
         //----------------------------------------------------------------------

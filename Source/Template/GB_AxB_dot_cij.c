@@ -464,13 +464,13 @@
             int64_t ia = Ai [pA] ;              // ok: A is sparse
             int64_t ib = Bi [pB] ;              // ok: B is sparse
             if (ia == ib)
-            {
+            { 
                 GB_DOT (ia, pA, pB) ;
                 pA++ ;
                 pB++ ;
             }
             else
-            {
+            { 
                 pA += (ia < ib) ;
                 pB += (ib < ia) ;
             }
@@ -513,7 +513,7 @@
         #else
 
             if (C_is_bitmap)
-            {
+            { 
                 int8_t c = GB_CIJ_EXISTS ;
                 if (c) GB_PUTC (cij, cnz) ;
                 Cb [cnz] = c ;

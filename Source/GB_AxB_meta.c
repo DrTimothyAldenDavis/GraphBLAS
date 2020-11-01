@@ -387,7 +387,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     bool allow_scale = true ;
     if (semiring->multiply->function == NULL || op_is_positional)
-    {
+    { 
         // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
         // operator for GB_reduce_to_vector, nor do they handle positional ops.
         allow_scale = false ;

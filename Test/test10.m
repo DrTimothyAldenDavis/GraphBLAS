@@ -159,7 +159,22 @@ for k1 = 1:length(types)
                 tol = 1e-12 ;
             end
 
-            for A_is_hyper = hrange
+            for A_sparsity = [hrange 2]
+
+            if (A_sparsity == 0)
+                A_is_hyper = 0 ;
+                A_is_bitmap = 0 ;
+                A_sparsity_control = 2 ;    % sparse
+            elseif (A_sparsity == 1)
+                A_is_hyper = 1 ;
+                A_is_bitmap = 0 ;
+                A_sparsity_control = 1 ;    % hypersparse
+            else
+                A_is_hyper = 0 ;
+                A_is_bitmap = 1 ;
+                A_sparsity_control = 4 ;    % bitmap
+            end
+
             for A_is_csc   = crange
 
             if (longer_tests)
@@ -174,6 +189,9 @@ for k1 = 1:length(types)
             Cin.is_csc  = C_is_csc ; Cin.is_hyper  = C_is_hyper ;
             B.is_csc    = A_is_csc ; B.is_hyper    = A_is_hyper ;
             Mask.is_csc = M_is_csc ; Mask.is_hyper = M_is_hyper ;
+
+            A.sparsity = A_sparsity_control ;
+            B.sparsity = A_sparsity_control ;
 
             % no mask
             C1 = GB_spec_apply (Cin, [], [], op, A, []) ;
