@@ -133,6 +133,10 @@
 
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
+// FIXED: by Tim but not tested:
+#include "../Source/GB_opaque.h"
+
+#if 0
 typedef struct GB_Pending_struct *GB_Pending ;
 
 //------------------------------------------------------------------------------
@@ -424,3 +428,4 @@ class Matrix {
 };
 typedef Matrix *GrB_Matrix; 
 */
+#endif
