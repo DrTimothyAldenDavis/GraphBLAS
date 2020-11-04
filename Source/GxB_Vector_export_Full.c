@@ -28,6 +28,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GB_WHERE1 ("GxB_Vector_export_Full (&v, &type, &n, &vx, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_Full") ;
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
@@ -37,7 +38,6 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GB_MATRIX_WAIT (*v) ;
     if (!GB_is_dense (*v))
     { 
-GB_GOTCHA ;
         // v must be dense or full
         return (GrB_INVALID_VALUE) ;
     }
@@ -54,9 +54,17 @@ GB_GOTCHA ;
     // export the vector
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     GrB_Index vdim ;
     info = GB_export ((GrB_Matrix *) v, type, n, &vdim, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, vx, NULL, NULL, Context) ;
+        NULL, NULL, NULL, NULL, vx, &sparsity, &is_csc, Context) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_FULL) ;
+        ASSERT (is_csc) ;
+        ASSERT (vdim == 1) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

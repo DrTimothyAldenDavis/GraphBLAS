@@ -228,7 +228,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
 
         if (info == GrB_OUT_OF_MEMORY)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (info) ;

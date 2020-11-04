@@ -10,11 +10,13 @@
 // M is a 1-by-(C->vdim) hypersparse or sparse matrix, not a vector, for
 // GrB_Row_assign (if C is CSC) or GrB_Col_assign (if C is CSR).
 
-{
+{ 
+GB_GOTCHA ; // row assignment: C<M>(iC,:), M is a row vector, C bitmap
     ASSERT (mvlen == 1) ;
     int64_t iC = I [0] ;
     int tid ;
-// TODO    #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) reduction(+:cnvals)
+    #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
+        reduction(+:cnvals)
     for (tid = 0 ; tid < mtasks ; tid++)
     {
         int64_t kfirst = kfirst_Mslice [tid] ;
@@ -49,7 +51,6 @@
                 bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
                 { 
-GB_GOTCHA ;
                     int64_t jC = jM ;
                     int64_t pC = iC + jC * cvlen ;
                     GB_MASK_WORK (pC) ;

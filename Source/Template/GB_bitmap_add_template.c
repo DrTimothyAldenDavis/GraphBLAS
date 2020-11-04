@@ -13,6 +13,7 @@
 
 {
 
+    // TODO: the input C can be modified in-place, if it is also bitmap
     int64_t p, cnvals = 0 ;
 
     if (M == NULL)
@@ -186,7 +187,7 @@
 
     }
     else if (M_is_sparse_or_hyper)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap, M is sparse or hyper and complemented
@@ -218,7 +219,7 @@
 
         GB_SLICE_MATRIX (M, 8) ;
 
-// TODO #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
+        #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
             int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -238,7 +239,6 @@
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
                     { 
-GB_GOTCHA ;
                         int64_t i = Mi [pM] ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 2 ;
@@ -264,8 +264,8 @@ GB_GOTCHA ;
             // Method24(!M,sparse): C is bitmap, both A and B are bitmap or full
             //------------------------------------------------------------------
 
-// TODO     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
-// TODO         reduction(+:cnvals)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
+                reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
                 int8_t c = Cb [p] ;
@@ -276,7 +276,6 @@ GB_GOTCHA ;
                     int8_t b = GBB (Bb, p) ;
                     if (a && b)
                     { 
-GB_GOTCHA ;
                         // C (i,j) = A (i,j) + B (i,j)
                         GB_GETA (aij, Ax, p) ;
                         GB_GETB (bij, Bx, p) ;
@@ -285,14 +284,12 @@ GB_GOTCHA ;
                     }
                     else if (b)
                     { 
-GB_GOTCHA ;
                         // C (i,j) = B (i,j)
                         GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
                         c = 1 ;
                     }
                     else if (a)
                     { 
-GB_GOTCHA ;
                         // C (i,j) = A (i,j)
                         GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
                         c = 1 ;
@@ -302,7 +299,6 @@ GB_GOTCHA ;
                 }
                 else
                 { 
-GB_GOTCHA ;
                     // M(i,j) == 1, so C(i,j) is not computed
                     Cb [p] = 0 ;
                 }
@@ -317,13 +313,12 @@ GB_GOTCHA ;
             // Method25(!M,sparse): C bitmap, A bitmap or full, B sparse/hyper
             //------------------------------------------------------------------
 
-// TODO     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
-// TODO         reduction(+:cnvals)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
+                reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Cb [p] == 0)
                 { 
-GB_GOTCHA ;
                     // C (i,j) = A (i,j)
                     int8_t a = GBB (Ab, p) ;
                     if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
@@ -356,7 +351,6 @@ GB_GOTCHA ;
                         int8_t c = Cb [p] ;
                         if (c == 1)
                         { 
-GB_GOTCHA ;
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, p) ;
                             GB_GETB (bij, Bx, pB) ;
@@ -364,7 +358,6 @@ GB_GOTCHA ;
                         }
                         else if (c == 0)
                         { 
-GB_GOTCHA ;
                             // C (i,j) = B (i,j)
                             GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
                             Cb [p] = 1 ;
@@ -382,15 +375,14 @@ GB_GOTCHA ;
             // Method26: C bitmap, A sparse or hypersparse, B bitmap or full
             //------------------------------------------------------------------
 
-// TODO     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
-// TODO         reduction(+:cnvals)
+            #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
+                reduction(+:cnvals)
             for (p = 0 ; p < cnz ; p++)
             {
                 if (Cb [p] == 0)
                 { 
-GB_GOTCHA ;
                     // C (i,j) = B (i,j)
-                    int8_t b = GBB (Bb, b) ;
+                    int8_t b = GBB (Bb, p) ;
                     if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
                     Cb [p] = b ;
                     cnvals += b ;
@@ -399,8 +391,8 @@ GB_GOTCHA ;
 
             GB_SLICE_MATRIX (A, 8) ;
 
-// TODO     #pragma omp parallel for num_threads(A_nthreads) \
-// TODO         schedule(dynamic,1) reduction(+:cnvals)
+            #pragma omp parallel for num_threads(A_nthreads) \
+                schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
@@ -421,7 +413,6 @@ GB_GOTCHA ;
                         int8_t c = Cb [p] ;
                         if (c == 1)
                         { 
-GB_GOTCHA ;
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, p) ;
@@ -429,7 +420,6 @@ GB_GOTCHA ;
                         }
                         else if (c == 0)
                         { 
-GB_GOTCHA ;
                             // C (i,j) = A (i,j)
                             GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
                             Cb [p] = 1 ;
@@ -451,7 +441,7 @@ GB_GOTCHA ;
             // an extra pass over the mask M, so this might be slower than
             // postponing the application of the mask, and doing it later.
 
-// TODO     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
+            #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
             for (taskid = 0 ; taskid < M_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -471,7 +461,6 @@ GB_GOTCHA ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
                         if (mij)
                         { 
-GB_GOTCHA ;
                             int64_t i = Mi [pM] ;
                             int64_t p = pC_start + i ;
                             Cb [p] = 0 ;

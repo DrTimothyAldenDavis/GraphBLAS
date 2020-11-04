@@ -447,7 +447,7 @@ GrB_Info GB_selector
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // out of memory in GB_selector, A hypersparse
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;

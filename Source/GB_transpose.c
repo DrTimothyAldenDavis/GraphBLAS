@@ -567,17 +567,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // Cx = op (A)
             info = GB_apply_op ((GB_void *) Cx,
                 op1, op2, scalar, binop_bind1st, A, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-GB_GOTCHA ;
-                // out of memory
-                GB_FREE (Cp) ;
-                GB_FREE (Ci) ;
-                GB_FREE (Cx) ;
-                GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
-                return (info) ;
-            }
+            // GB_apply_op can only fail if op1/op2 are positional
+            ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+            ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+            ASSERT (info == GrB_SUCCESS) ;
             C->x = Cx ;
             C->x_shallow = false ;
             // prior Ax will be freed
@@ -708,21 +701,14 @@ GB_GOTCHA ;
 
         // numerical values: apply the operator, typecast, or make shallow copy
         if (op1 != NULL || op2 != NULL)
-        {
+        { 
             // Cx = op (A)
             info = GB_apply_op ((GB_void *) Cx,
                 op1, op2, scalar, binop_bind1st, A, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-GB_GOTCHA ;
-                // out of memory
-                GB_FREE (Cp) ;
-                GB_FREE (Ci) ;
-                GB_FREE (Cx) ;
-                GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
-                return (info) ;
-            }
+            // GB_apply_op can only fail if op1/op2 are positional
+            ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+            ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+            ASSERT (info == GrB_SUCCESS) ;
             C->x = Cx ;
             C->x_shallow = false ;
             // prior Ax will be freed
@@ -1038,21 +1024,14 @@ GB_GOTCHA ;
 
             // numerical values: apply the op, typecast, or make shallow copy
             if (op1 != NULL || op2 != NULL)
-            {
+            { 
                 // Swork = op (A)
                 info = GB_apply_op ((GB_void *) Swork,
                     op1, op2, scalar, binop_bind1st, A, Context) ;
-                if (info != GrB_SUCCESS)
-                { 
-GB_GOTCHA ;
-                    // out of memory
-                    GB_FREE (iwork) ;
-                    GB_FREE (jwork) ;
-                    GB_FREE (Swork) ;
-                    GB_FREE_A_AND_C ;
-                    GB_FREE_WORK ;
-                    return (info) ;
-                }
+                // GB_apply_op can only fail if op1/op2 are positional
+                ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+                ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+                ASSERT (info == GrB_SUCCESS) ;
                 // GB_builder will not need to typecast Swork to T->x, and it
                 // may choose to transplant it into T->x
                 scode = ccode ;
@@ -1221,7 +1200,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     if (op_is_positional)
-    {
+    { 
         // the positional operator is applied in-place to the values of C
         op1 = save_op1 ;
         op2 = save_op2 ;

@@ -25,7 +25,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
 
     GrB_Info info = GrB_SUCCESS ;
     GB_WHERE (v, "GxB_Vector_Option_set (v, field, value)") ;
-    GB_BURBLE_START ("GxB_set") ;
+    GB_BURBLE_START ("GxB_set (vector option)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
@@ -46,7 +46,6 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                 va_end (ap) ;
                 if (sparsity <= 0 || sparsity > GxB_AUTO_SPARSITY)
                 { 
-GB_GOTCHA ;
                     // GxB_DEFAULT is zero, so this is changed to
                     // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
@@ -58,7 +57,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }

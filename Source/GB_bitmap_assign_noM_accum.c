@@ -149,7 +149,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     }
     else if (C_replace)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C(I,J)+=A with C_replace and no M, C bitmap
 
         //----------------------------------------------------------------------
         // mask not present yet complemented: C_replace phase only

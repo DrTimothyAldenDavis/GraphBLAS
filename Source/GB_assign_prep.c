@@ -997,7 +997,7 @@ GB_GOTCHA ;
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // prior pending tuples exist: check if action: ( delete ) can occur
@@ -1014,7 +1014,8 @@ GB_GOTCHA ;
             wait = true ;
         }
         else if (accum == NULL)
-        {
+        { 
+GB_GOTCHA ;
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
             // A is completely dense and if there is no mask M, then C(I,J)=A
@@ -1040,7 +1041,8 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         if (!wait)
-        {
+        { 
+GB_GOTCHA ;
 
             // ( delete ) will not occur, but new pending tuples may be added
             // via the action: ( insert ).  Check if the accum operator is the
@@ -1125,7 +1127,7 @@ GB_GOTCHA ;
 
     if (C->Pending != NULL)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C->Pending not NULL???
         C->Pending->op = accum ;
     }
 

@@ -75,7 +75,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             GB_code_string (scalar_code), ctype->name) ;
     }
 
-    // pending tuples and zombies are expected
+    // pending tuples and zombies are expected, and C might be jumbled too
+    ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
 
@@ -87,15 +88,23 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     #endif
 
     //--------------------------------------------------------------------------
-    // sort C if needed
+    // sort C if needed; do not assemble pending tuples or kill zombies yet
     //--------------------------------------------------------------------------
 
     if (C->jumbled)
     { 
-GB_GOTCHA ;
-        // C must not be jumbled
-        GB_MATRIX_WAIT (C) ;
+        // C must not be jumbled; this also kills zombies and assembles
+        // pending tuples
+        GB_OK (GB_Matrix_wait (C, Context)) ;
+        ASSERT (!GB_JUMBLED (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+        ASSERT (!GB_ZOMBIES (C)) ;
     }
+
+    // zombies and pending tuples are still OK, but C is no longer jumbled
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -260,7 +269,7 @@ GB_GOTCHA ;
             #endif
 
             // delete any lingering zombies and assemble the pending tuples
-            GB_MATRIX_WAIT (C) ;
+            GB_OK (GB_Matrix_wait (C, Context)) ;
 
             #if GB_BURBLE
             if (burble)

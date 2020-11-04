@@ -43,7 +43,6 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     if (A->b == NULL)
     { 
         // out of memory
-        GB_phbix_free (A) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

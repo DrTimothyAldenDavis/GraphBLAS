@@ -66,7 +66,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
             // matrix is empty, or a single thread is used
             for (int taskid = 1 ; taskid < ntasks ; taskid++)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // slice sparse/hyper with 1 task, n == 0, or no work
                 Slice [taskid] = 0 ;
             }
         }

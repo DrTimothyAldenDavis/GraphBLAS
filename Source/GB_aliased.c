@@ -54,7 +54,7 @@ bool GB_aliased             // determine if A and B are aliased
 
     if (GB_POINTER_ALIASED (A->p, B->p))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // A->i and B->i aliased but A != B
         ASSERT (A->p_shallow || B->p_shallow) ;
         aliased = true ;
     }
@@ -67,7 +67,7 @@ GB_GOTCHA ;
 
     if (GB_POINTER_ALIASED (A->i, B->i))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // A->i and B->i aliased but A != B
         ASSERT (A->i_shallow || B->i_shallow) ;
         aliased = true ;
     }

@@ -312,7 +312,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-// GB_GOTCHA ; by gbtest9
+// GB_GOTCHA ; by gbtest9:  GrB_build with nvals == 0
             // nothing to do
 
         }
@@ -1128,7 +1128,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-// GB_GOTCHA ; by gbtest9
+// GB_GOTCHA ; by gbtest9:  GrB_build with nvals == 0
             // nothing to do
 
         }

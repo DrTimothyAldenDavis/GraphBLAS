@@ -21,4 +21,3 @@ if (Mask_struct)
 end
 
 Mask = GB_mex_cast (full (Mask), 'logical') ;
-

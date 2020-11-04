@@ -94,13 +94,6 @@ GrB_Info GB_bitmap_selector
         //----------------------------------------------------------------------
 
         GB_phbix_free (A) ;
-        if (C->nvals == 0)
-        { 
-GB_GOTCHA ;
-            GB_FREE (C->b) ;
-            GB_FREE (C->x) ;
-            A->nzmax = 0 ;
-        }
         A->b = C->b ;
         C->b = NULL ;
         A->x = C->x ;

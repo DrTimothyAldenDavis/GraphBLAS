@@ -22,7 +22,6 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -32,6 +31,7 @@ GB_GOTCHA ;
         " &vb, &vx, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_Bitmap") ;
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
@@ -52,9 +52,17 @@ GB_GOTCHA ;
     // export the vector
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     GrB_Index vdim ;
     info = GB_export ((GrB_Matrix *) v, type, n, &vdim, NULL, nvals, NULL, NULL,
-        NULL, NULL, vb, NULL, vx, NULL, NULL, Context) ;
+        NULL, NULL, vb, NULL, vx, &sparsity, &is_csc, Context) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_BITMAP) ;
+        ASSERT (is_csc) ;
+        ASSERT (vdim == 1) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

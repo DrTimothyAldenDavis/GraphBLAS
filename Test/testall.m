@@ -68,8 +68,17 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap
+logstat ('test164',t) ; % test dot5 method
+logstat ('test163',t) ; % test C<!M>=A'*B where C and M are sparse
+logstat ('test162',t) ; % test C<M>=A*B with very sparse M
+logstat ('test161',t) ; % test A*B*E
+logstat ('test160',t) ; % test A*B, parallel
+logstat ('test160',s) ; % test A*B, single threaded
+logstat ('test159',t) ; % test A*B
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 logstat ('test157',t) ; % test sparsity formats
+logstat ('test158',t) ; % test colscale and rowscale
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
 logstat ('test156',t) ; % test GrB_assign C=A with typecasting
 
@@ -160,6 +169,7 @@ logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test23',t) ;  % quick test of GB_*_build
 
 logstat ('test00',s);   % GB_mex_mis (single threaded)
+logstat ('test00',t);   % GB_mex_mis (parallel)
 logstat ('test76',t) ;  % GxB_resize
 logstat ('test88',t) ;  % hypersparse matrices with heap-based method
 logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)

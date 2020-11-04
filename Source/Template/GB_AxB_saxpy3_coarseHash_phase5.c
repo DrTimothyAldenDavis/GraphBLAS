@@ -103,8 +103,6 @@
         // found i if: Hf [hash] == mark and Hi [hash] == i
         GB_SORT_AND_GATHER_HASHED_C_j (mark, Hi [hash] == i)
     }
-
-    continue ;
 }
 
 #undef M_TYPE

@@ -57,6 +57,7 @@ void mexFunction
 
     // create C
     pargout [0] = GB_mx_create_full (nrows, ncols, ctype) ;
+    if (ctype == Complex) ctype = GxB_FC64 ;
     if (xtype == Complex) xtype = GxB_FC64 ;
     GB_void *C = mxGetData (pargout [0]) ;
 

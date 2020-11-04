@@ -34,6 +34,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GB_BURBLE_START ("GxB_Vector_export_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     GB_RETURN_IF_NULL (nvals) ;
     ASSERT_VECTOR_OK (*v, "v to export", GB0) ;
 
@@ -43,7 +44,6 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 
     if (jumbled == NULL)
     { 
-GB_GOTCHA ;
         // the exported vector cannot be jumbled
         GB_MATRIX_WAIT (*v) ;
     }
@@ -65,13 +65,18 @@ GB_GOTCHA ;
     // export the vector
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     int64_t *vp = NULL ;
     GrB_Index vdim ;
     info = GB_export ((GrB_Matrix *) v, type, n, &vdim, nzmax, NULL, jumbled,
-        NULL, &vp, NULL, NULL, vi, vx, NULL, NULL, Context) ;
+        NULL, &vp, NULL, NULL, vi, vx, &sparsity, &is_csc, Context) ;
     if (info == GrB_SUCCESS)
     { 
         (*nvals) = vp [1] ;
+        ASSERT (sparsity == GxB_SPARSE) ;
+        ASSERT (is_csc) ;
+        ASSERT (vdim == 1) ;
     }
     GB_FREE (vp) ;
     GB_BURBLE_END ;

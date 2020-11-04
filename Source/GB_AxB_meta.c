@@ -120,11 +120,18 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //      the monoid of the semiring.  C_replace must be false, or
     //      effectively false.
     //
+    //      TODO:  if C is full and accum is not present, it can be quickly
+    //      converted to bitmap and then done in-place.
+    //
     // If C is bitmap:
     //
     //      C can be computed in-place if its type is the same as the semiring
     //      monoid.  The accum must not be present, or if present it must match
     //      the semiring monoid.  C_replace can be true or false.
+    //
+    //      TODO: modify GB_AxB_dot2 so it can compute C in-place,
+    //      or add a bitmap dot product method.  Also modify GB_AxB_saxpy
+    //      so it can compute a C bitmap in-place.
     //
     // In both cases, C must not be transposed, nor can it be aliased with any
     // input matrix.
@@ -135,6 +142,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     { 
         if (GB_IS_BITMAP (C_in))
         {
+            // C is bitmap
             ASSERT (!GB_PENDING (C_in)) ; // no pending tuples in bitmap
             ASSERT (!GB_ZOMBIES (C_in)) ; // bitmap never has zombies
             can_do_in_place = (C_in->type == semiring->add->op->ztype)
@@ -142,6 +150,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (accum != NULL)
         { 
+            // C is hypersparse, sparse, or full, and accum is present.
             // check if C_in is competely dense:  no zombies and
             // pending tuples.
             bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C_in)
@@ -386,10 +395,11 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     bool allow_scale = true ;
-    if (semiring->multiply->function == NULL || op_is_positional)
+    if (semiring->multiply->function == NULL && (op_is_first || op_is_second))
     { 
         // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
-        // operator for GB_reduce_to_vector, nor do they handle positional ops.
+        // operator for GB_reduce_to_vector.  They do handle any other
+        // positional operator (FIRSTI, FIRSTJ, SECONDI, SECONDJ, etc).
         allow_scale = false ;
     }
 
@@ -397,13 +407,19 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // select the algorithm
     //--------------------------------------------------------------------------
 
-    // Four cases remain with the swap_rule above.  M may or may not be
-    // present.
+    // Four cases remain with the swap_rule.  M may or may not be present.
 
-        //      C<M> = A *B
-        //      C<M> = A *B'
+        //      C<M> = A*B
+        //      C<M> = A*B'
         //      C<M> = A'*B
         //      C<M> = (A*B)'
+
+    // use GB_AxB_saxpy3 by default
+    #define GB_USE_ROWSCALE 0
+    #define GB_USE_COLSCALE 1
+    #define GB_USE_DOT      2
+    #define GB_USE_SAXPY    3
+    int axb_method = GB_USE_SAXPY ;
 
     if (atrans)
     {
@@ -441,91 +457,98 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // is very slow in general, and thus the saxpy method is usually used
         // instead.
 
-        bool do_rowscale = false ;
-        bool do_colscale = false ;
-        bool do_adotb = false ;
-
         if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (A)     // TODO
+            && !GB_IS_BITMAP (A)     // TODO: A'*D colscale with A bitmap
             && B_is_diagonal)
         { 
-GB_GOTCHA ;
-            // C = A'*D
-            do_colscale = true ;
+            // C = A'*D, col scale
+            axb_method = GB_USE_COLSCALE ;
         }
         else if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (B)     // TODO
+            && !GB_IS_BITMAP (B)     // TODO: D*B rowscale with B bitmap
             && GB_is_diagonal (A, Context))
         { 
-GB_GOTCHA ;
-            // C = D*B
-            do_rowscale = true ;
+            // C = D*B, row scale
+            axb_method = GB_USE_ROWSCALE ;
         }
         else if (AxB_method == GxB_DEFAULT)
         {
             // auto selection for A'*B
             if (M != NULL && !Mask_comp)
             { 
-                // C<M>=A'*B uses the masked dot product method
-                do_adotb = true ;
+                // C<M>=A'*B uses the masked dot product method (dot3)
+                axb_method = GB_USE_DOT ;
             }
-            else if (A->vdim == 1 || B->vdim == 1)
-            { 
-                // C=A'*B uses dot product method if C is a 1-by-n or n-by-1
-                do_adotb = true ;
+            else if (GB_AxB_dot2_sparsity (A, B) == GxB_BITMAP)
+            {
+                // GB_AxB_dot2 will construct C as bitmap, which is efficient
+                axb_method = GB_USE_DOT ;
             }
-            else
+            else if (GB_is_dense (A) || GB_is_dense (B))
             { 
-                // when C is a matrix, C=A'*B uses the dot product method if A
-                // or B are dense, since the dot product method requires no
-                // workspace in that case and can exploit dense vectors of A
-                // and/or B.
-                do_adotb = GB_is_dense (A) || GB_is_dense (B) ;
+                // GB_AxB_dot2 will construct C as sparse, but either A or B
+                // are dense and so it will be efficient.
+                axb_method = GB_USE_DOT ;
             }
         }
-        else
+        else if (AxB_method == GxB_AxB_DOT)
         { 
             // user selection for A'*B
-            do_adotb = (AxB_method == GxB_AxB_DOT) ;
+            axb_method = GB_USE_DOT ;
+        }
+
+        //----------------------------------------------------------------------
+        // AT = A'
+        //----------------------------------------------------------------------
+
+        if (axb_method == GB_USE_COLSCALE || axb_method == GB_USE_SAXPY)
+        {
+            // AT = A'
+            GB_OK (GB_transpose (&AT, atype_required, true, A,
+                NULL, NULL, NULL, false, Context)) ;
+            // do not use colscale if AT is now bitmap
+            if (GB_IS_BITMAP (AT))
+            { 
+                axb_method = GB_USE_SAXPY ;
+            }
         }
 
         //----------------------------------------------------------------------
         // C<M>=A'*B
         //----------------------------------------------------------------------
 
-        if (do_rowscale)
-        { 
-GB_GOTCHA ;
-            // C = D*B
-            GBURBLE ("C%s=A'*B, rowscale ", M_str) ;
-            GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
-        }
-        else if (do_colscale)
-        { 
-GB_GOTCHA ;
-            // C = A'*D
-            GBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
-            GB_OK (GB_transpose (&AT, atype_required, true, A,
-                NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_AxB_colscale (Chandle, AT, B, semiring, flipxy, Context));
-        }
-        else if (do_adotb)
-        { 
-            // C<M>=A'*B via dot product, or C_in<M>+=A'*B if in-place
-            GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
-                (M != NULL && !Mask_comp) ? "masked_" : "") ;
-            GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
-                M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
-                mask_applied, done_in_place, Context)) ;
-        }
-        else
-        { 
-            // C = A'*B via saxpy: Gustavson + Hash method
-            GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
-            GB_OK (GB_transpose (&AT, atype_required, true, A,
-                NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
-                AT, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
+        switch (axb_method)
+        {
+            case GB_USE_ROWSCALE : 
+                // C = D*B using rowscale
+                GBURBLE ("C%s=A'*B, rowscale ", M_str) ;
+                GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy,
+                    Context)) ;
+                break ;
+
+            case GB_USE_COLSCALE : 
+                // C = A'*D using colscale
+                GBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
+                GB_OK (GB_AxB_colscale (Chandle, AT, B, semiring, flipxy,
+                    Context)) ;
+                break ;
+
+            case GB_USE_DOT : 
+                // C<M>=A'*B via dot, or C_in<M>+=A'*B if in-place
+                GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
+                    (M != NULL && !Mask_comp) ? "masked_" : "") ;
+                GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
+                    M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
+                    mask_applied, done_in_place, Context)) ;
+                break ;
+
+            default : 
+                // C = A'*B via saxpy: Gustavson + Hash method
+                GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
+                GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
+                    AT, B, semiring, flipxy, mask_applied, AxB_method,
+                    Context)) ;
+                break ;
         }
 
     }
@@ -533,50 +556,83 @@ GB_GOTCHA ;
     {
 
         //----------------------------------------------------------------------
-        // C<M> = A*B'
+        // select the method for C<M> = A*B'
         //----------------------------------------------------------------------
 
         if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (A)     // TODO
+            && !GB_IS_BITMAP (A)     // TODO: A*D colscale with A bitmap
             && GB_is_diagonal (B, Context))
         { 
-GB_GOTCHA ;
-            // C = A*D
-            GBURBLE ("C%s=A*B', colscale ", M_str) ;
-            GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
+            // C = A*D, column scale
+            axb_method = GB_USE_COLSCALE ;
         }
         else if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (B)     // TODO
+            && !GB_IS_BITMAP (B)     // TODO: D*B' rowscale with B bitmap
             && GB_is_diagonal (A, Context))
         { 
-GB_GOTCHA ;
-            // C = D*B'
-            GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
-            GB_OK (GB_transpose (&BT, btype_required, true, B,
-                NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy, Context));
+            // C = D*B', row scale
+            axb_method = GB_USE_ROWSCALE ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
-            GBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
-                M_str, A_str, B_str) ;
-            GB_OK (GB_transpose (&AT, atype_required, true, A,
-                NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_transpose (&BT, btype_required, true, B,
-                NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
-                M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
-                mask_applied, done_in_place, Context)) ;
+            // only use the dot product method if explicitly requested
+            axb_method = GB_USE_DOT ;
         }
-        else
-        { 
-            // C = A*B' via saxpy: Gustavson + Hash method
-            GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
+
+        //----------------------------------------------------------------------
+        // BT = B'
+        //----------------------------------------------------------------------
+
+        if (axb_method != GB_USE_COLSCALE)
+        {
+            // BT = B'
             GB_OK (GB_transpose (&BT, btype_required, true, B,
                 NULL, NULL, NULL, false, Context)) ;
-            GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
-                A, BT, semiring, flipxy, mask_applied, AxB_method, Context)) ;
+            // do not use rowscale if BT is now bitmap
+            if (axb_method == GB_USE_ROWSCALE && GB_IS_BITMAP (BT))
+            { 
+                axb_method = GB_USE_SAXPY ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // C<M> = A*B'
+        //----------------------------------------------------------------------
+
+        switch (axb_method)
+        {
+            case GB_USE_COLSCALE : 
+                // C = A*D
+                GBURBLE ("C%s=A*B', colscale ", M_str) ;
+                GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy,
+                    Context)) ;
+                break ;
+
+            case GB_USE_ROWSCALE : 
+                // C = D*B'
+                GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
+                GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy,
+                    Context)) ;
+                break ;
+
+            case GB_USE_DOT : 
+                // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
+                GBURBLE ("C%s=A*B', dot_product (transposed %s) "
+                    "(transposed %s) ", M_str, A_str, B_str) ;
+                GB_OK (GB_transpose (&AT, atype_required, true, A,
+                    NULL, NULL, NULL, false, Context)) ;
+                GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
+                    M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
+                    mask_applied, done_in_place, Context)) ;
+                break ;
+
+            default : 
+                // C = A*B' via saxpy: Gustavson + Hash method
+                GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
+                GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
+                    A, BT, semiring, flipxy, mask_applied, AxB_method,
+                    Context)) ;
+                break ;
         }
 
     }
@@ -588,7 +644,7 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (A)     // TODO
+            && !GB_IS_BITMAP (A)     // TODO: A*D colscale with A bitmap
             && GB_is_diagonal (B, Context))
         { 
             // C = A*D, column scale
@@ -596,7 +652,7 @@ GB_GOTCHA ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (allow_scale && M == NULL
-            && !GB_IS_BITMAP (B)     // TODO
+            && !GB_IS_BITMAP (B)     // TODO: D*B rowscale with B bitmap
             && GB_is_diagonal (A, Context))
         { 
             // C = D*B, row scale
@@ -605,7 +661,8 @@ GB_GOTCHA ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place
+            // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place.
+            // only use the dot product method if explicitly requested
             GBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A,
                 NULL, NULL, NULL, false, Context)) ;
@@ -636,6 +693,7 @@ GB_GOTCHA ;
 
     if (*done_in_place)
     { 
+        GBURBLE ("(C in place) ") ;
         // C can be done in-place only if C is not transposed on output
         ASSERT_MATRIX_OK (C_in, "C_in output for all C=A*B", GB0) ;
         ASSERT (C_in->is_csc == C_is_csc) ;

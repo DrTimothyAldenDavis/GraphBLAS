@@ -18,7 +18,6 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

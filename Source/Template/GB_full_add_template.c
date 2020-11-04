@@ -128,6 +128,7 @@
 
         if (A_is_bitmap)
         {
+// GB_GOTCHA ; by gbtest11:  C=A+B, C and B are full, A bitmap
 
             //------------------------------------------------------------------
             // Method33: C and B are full; A is bitmap
@@ -138,7 +139,7 @@
             {
                 if (Ab [p])
                 { 
-// GB_GOTCHA ; by gbtest11
+// GB_GOTCHA ; by gbtest11:  C=A+B, C and B are full, A bitmap
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_GETA (aij, Ax, p) ;
                     GB_GETB (bij, Bx, p) ;
@@ -146,7 +147,7 @@
                 }
                 else
                 { 
-// GB_GOTCHA ; by gbtest11
+// GB_GOTCHA ; by gbtest11:  C=A+B, C and B are full, A bitmap
                     // C (i,j) = B (i,j)
                     GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
                 }

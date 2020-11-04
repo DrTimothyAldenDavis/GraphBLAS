@@ -208,12 +208,10 @@ int GB_add_sparsity         // return the sparsity structure for C
             // handle this case.  See the "(mask later)" above.  The method can
             // construct a sparse/hyper C with !M as bitmap or full. 
             C_sparsity = GxB_SPARSE ;
-            // if (!M_is_sparse_or_hyper) GBURBLE ("@") ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else
         { 
-GB_GOTCHA ;
             // !M can be applied now, or later.  TODO: If M is sparse and
             // either A or B are sparse/hyper, then there might be cases where
             // !M should be applied later, for better performance.

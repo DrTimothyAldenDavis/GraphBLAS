@@ -49,18 +49,17 @@
         //----------------------------------------------------------------------
 
         case GB_COL_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // column assignment: C<M>(:,jC), M is a column vector, C bitmap
         {
             // iterate over all of C(:,jC)
             int64_t iC ;
             int64_t jC = J [0] ;
             int64_t pC0 = jC * cvlen ;
             int nthreads = GB_nthreads (cvlen, chunk, nthreads_max) ;
-// TODO     #pragma omp parallel for num_threads(nthreads) schedule(static) \
-// TODO         reduction(+:cnvals)
+            #pragma omp parallel for num_threads(nthreads) schedule(static) \
+                reduction(+:cnvals)
             for (iC = 0 ; iC < cvlen ; iC++)
             { 
-GB_GOTCHA ;
                 int64_t pC = iC + pC0 ;
                 GB_GET_MIJ (mij, iC) ;          // mij = Mask (iC)
                 GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)

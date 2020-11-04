@@ -59,7 +59,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     if (GB_OP_IS_POSITIONAL (reduce))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // reduce operator cannot be a positional op
         // reduce operator cannot be a positional op
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Positional op z=%s(x,y) not supported as reduce op\n",

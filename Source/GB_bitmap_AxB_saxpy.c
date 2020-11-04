@@ -21,8 +21,10 @@
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
-// TODO: also pass in the user's C and the accum operator
+// TODO: also pass in the user's C and the accum operator, and done_in_place,
+// like GB_AxB_dot4.
 
+GB_PUBLIC                           // for testing only
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
     GrB_Matrix *Chandle,            // output matrix (not computed in-place)
@@ -81,7 +83,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     bool ok = GB_Index_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
     if (!ok)
     { 
-GB_GOTCHA ;
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }

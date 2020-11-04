@@ -133,8 +133,8 @@
         //----------------------------------------------------------------------
 
         int tid ;
-// TODO #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-// TODO     reduction(+:cnvals)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+            reduction(+:cnvals)
         for (tid = 0 ; tid < ntasks ; tid++)
         {
 
@@ -220,7 +220,6 @@
                             cb = Cb [pC] ;          // grab the entry
                             if (cb == keep)
                             { 
-GB_GOTCHA ;
                                 #if !GB_IS_ANY_MONOID
                                 GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                                 GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t

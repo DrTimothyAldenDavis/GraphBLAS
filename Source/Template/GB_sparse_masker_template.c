@@ -112,7 +112,7 @@
 
     ASSERT (C_is_sparse || C_is_hyper) ;
 
-// TODO    #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
+// TODO#pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < R_ntasks ; taskid++)
     {
 
@@ -340,7 +340,7 @@
                         }
                         else
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // masker: C and R sparse, Z bitmap/full, M(i,j) false
                             // R(i,j) = C(i,j)
                             GB_COPY_C ;
                         }

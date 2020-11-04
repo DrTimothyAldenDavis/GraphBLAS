@@ -210,7 +210,7 @@
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Method06: M and Z are bitmap or full, R is bitmap
@@ -248,7 +248,7 @@
         // 1    rij     1       zij         R(i,j) = Z(i,j), no change to rnvals
         // 1    rij     1       -           delete, rnvals--
 
-// TODO #pragma omp parallel for num_threads(R_nthreads) schedule(static) \
+// TODO#pragma omp parallel for num_threads(R_nthreads) schedule(static) \
 // TODO     reduction(+:rnvals)
         for (p = 0 ; p < rnz ; p++)
         {
@@ -262,13 +262,13 @@
                 {
                     if (z)
                     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // masker with R bitmap, C sparse, M/Z bitmap/full
                         // R(i,j) = Z(i,j), update, no change to rnvals
                         memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
                     }
                     else
                     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // masker with R bitmap, C sparse, M/Z bitmap/full  (LARGE) ]
                         // delete R(i,j)
                         Rb [p] = 0 ;
                         rnvals-- ;

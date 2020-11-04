@@ -206,7 +206,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<m>(I,j) += A with GrB_Col_assign, m bitmap/full, C bitmap
                 // C<m>(I,j) += A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC

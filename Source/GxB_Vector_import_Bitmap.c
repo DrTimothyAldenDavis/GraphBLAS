@@ -20,7 +20,6 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

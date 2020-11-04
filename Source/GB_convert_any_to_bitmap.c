@@ -11,7 +11,7 @@
 // to a bitmap.
 
 #include "GB.h"
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL ;
 
 GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
 (

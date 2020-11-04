@@ -81,7 +81,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         }
         else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // order not defined for complex types
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for complex types", op->name) ;
         }

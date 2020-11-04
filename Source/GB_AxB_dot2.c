@@ -165,24 +165,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cvlen = A->vdim ;
     int64_t cvdim = B->vdim ;
     GrB_Type ctype = add->op->ztype ;
-
-    double C_bitmap_size = ((double) cvlen) * ((double) cvdim) ;
-    double A_size = (double) GB_NNZ_HELD (A) ;
-    double B_size = (double) GB_NNZ_HELD (B) ;
-    int C_sparsity ;
-    bool C_is_bitmap ;
-    if (C_bitmap_size < 8 * (A_size + B_size))
-    { 
-        // C is not too large: use a bitmap
-        C_sparsity = GxB_BITMAP ;
-        C_is_bitmap = true ;
-    }
-    else
-    { 
-        // C is very large: construct it as sparse or hypersparse
-        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-        C_is_bitmap = false ;
-    }
+    int C_sparsity = GB_AxB_dot2_sparsity (A, B) ;
+    bool C_is_bitmap = (C_sparsity == GxB_BITMAP) ; 
 
     //--------------------------------------------------------------------------
     // compute # of entries in each vector of C

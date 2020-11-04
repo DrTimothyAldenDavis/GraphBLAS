@@ -35,7 +35,6 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     {
 
         case GxB_SPARSITY_CONTROL : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -49,7 +48,6 @@ GB_GOTCHA ;
         case GxB_SPARSITY_STATUS : 
 
             {
-GB_GOTCHA ;
                 va_start (ap, field) ;
                 int *sparsity = va_arg (ap, int *) ;
                 va_end (ap) ;
@@ -59,7 +57,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_FORMAT : 
-GB_GOTCHA ;
 
             {
                 // a GrB_Vector is always stored by-column
@@ -72,7 +69,7 @@ GB_GOTCHA ;
             break ;
 
         case GxB_IS_HYPER : // deprecated; use GxB_SPARSITY_STATUS instead
-GB_GOTCHA ;
+
             {
                 // a GrB_Vector is never hypersparse
                 va_start (ap, field) ;
@@ -84,7 +81,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
 

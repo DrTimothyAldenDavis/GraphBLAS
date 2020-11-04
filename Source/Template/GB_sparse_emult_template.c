@@ -91,7 +91,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-// TODO    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+// TODO#pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
@@ -883,7 +883,7 @@
                             GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                             if (found)
                             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) >> nnz(B(:,j))
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -924,7 +924,7 @@ GB_GOTCHA ;
                             GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                             if (found)
                             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) << nnz(B(:,j))
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -960,13 +960,13 @@ GB_GOTCHA ;
                         int64_t iB = Bi [pB] ;              // ok: B is sparse
                         if (iA < iB)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<M>A.*B, C sparse, M bitmap/full
                             // A(i,j) exists but not B(i,j)
                             pA++ ;
                         }
                         else if (iB < iA)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<M>A.*B, C sparse, M bitmap/full
                             // B(i,j) exists but not A(i,j)
                             pB++ ;
                         }

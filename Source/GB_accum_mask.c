@@ -304,7 +304,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         GB_MATRIX_WAIT (C) ;
         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // wait(C) changes it from sparse/hyper to bitmap/full
             // GB_mask does not handle the case where M is present, C_replace
             // is false, and C is bitmap/full, so switch to GB_subassign.
             use_subassign = true ;
@@ -399,7 +399,7 @@ GB_GOTCHA ;
             {
                 if (Z_sparsity == GxB_BITMAP || Z_sparsity == GxB_FULL)
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // Z = accum (C,T) with mask M, with Z bitmap/full
                     // always apply the mask in GB_add if C is bitmap or full
                     M1 = M ;
                 }

@@ -91,7 +91,7 @@ void GB_assign_zombie4
     // the mask is not complemented) or M(0,j)=1 (if the mask is complemented.
 
     int taskid ;
-// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
 // TODO        reduction(+:nzombies)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
@@ -142,13 +142,14 @@ void GB_assign_zombie4
                     }
                     else if (M_is_full)
                     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_Row_assign with M full
                         // M is full, no need for GB_lookup
                         int64_t pM = j ;
                         mij = GB_mcast (Mx, pM, msize) ;
                     }
                     else
-                    {
+                    { 
+GB_GOTCHA ; // GrB_Row_assign with M sparse/hyper
                         // M is sparse or hypersparse
                         int64_t pM, pM_end ;
                         int64_t pleft = 0 ;
@@ -157,7 +158,7 @@ GB_GOTCHA ;
                             j, &pM, &pM_end) ;
                         if (pM < pM_end)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_Row_assign with M sparse/hyper
                             // found it
                             mij = GB_mcast (Mx, pM, msize) ;
                         }

@@ -11,6 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "GB_bitmap_AxB_saxpy.h"
 
 #define USAGE "GB_mex_about"
 
@@ -765,6 +766,35 @@ void mexFunction
     OK (GrB_Vector_wait_(&victor)) ;
 
     //--------------------------------------------------------------------------
+    // GxB_get
+    //--------------------------------------------------------------------------
+
+    int sparsity ;
+    OK (GxB_Matrix_Option_get_(A, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_STATUS, &sparsity)) ;
+    CHECK (sparsity == GxB_SPARSE) ;
+    GxB_Format_Value fmt ;
+    OK (GxB_Vector_Option_get_(victor, GxB_FORMAT, &fmt)) ;
+    CHECK (fmt == GxB_BY_COL) ;
+    bool is_hyper ;
+    OK (GxB_Vector_Option_get_(victor, GxB_IS_HYPER, &is_hyper)) ;
+    CHECK (!is_hyper) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Vector_Option_get_(victor, -999, &is_hyper)) ;
+
+    //--------------------------------------------------------------------------
+    // GxB_set
+    //--------------------------------------------------------------------------
+
+    ERR (GxB_Vector_Option_set_(victor, -999, &is_hyper)) ;
+    OK (GxB_Vector_Option_set_(victor, GxB_SPARSITY_CONTROL, 9999)) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    //--------------------------------------------------------------------------
     // removeElement errors
     //--------------------------------------------------------------------------
 
@@ -1127,6 +1157,21 @@ void mexFunction
     GxB_Scalar_free_(&scalar) ;
     GrB_Type_free_(&user_type) ;
     GrB_Matrix_free_(&A) ;
+
+    //--------------------------------------------------------------------------
+    // test for problem too large in GB_bitmap_AxB_saxpy
+    //--------------------------------------------------------------------------
+
+    n = INT32_MAX ;
+    OK (GrB_Matrix_new (&A, GrB_FP32, n, 0)) ;
+    OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
+    expected = GrB_OUT_OF_MEMORY ;
+    bool ignore ;
+    ERR (GB_bitmap_AxB_saxpy (&C, GxB_BITMAP, NULL, false, false, A, B,
+        GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&B) ;
+    CHECK (C == NULL) ;
 
     //--------------------------------------------------------------------------
     // wrapup

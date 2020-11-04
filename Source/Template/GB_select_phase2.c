@@ -25,7 +25,7 @@
     //--------------------------------------------------------------------------
 
     int tid ;
-// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
 
@@ -88,7 +88,7 @@
                         int64_t i_start = pA_start % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=triu(A) or resize, C sparse and A full
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
                             Ci [pC+s] = i ;
@@ -127,7 +127,7 @@ GB_GOTCHA ;
                         int64_t i_start = pA_start % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=offdiag(A), C sparse and A full
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
                             Ci [pC+s] = i ;
@@ -156,7 +156,7 @@ GB_GOTCHA ;
                         int64_t i_start = p % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=offdiag(A), C sparse and A full
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, p+s, avlen) == i) ;
                             Ci [pC+s] = i ;
@@ -186,6 +186,7 @@ GB_GOTCHA ;
                         int64_t i_start = p % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
                         { 
+GB_GOTCHA ; // C=tril(A), C sparse and A full
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, p+s, avlen) == i) ;
                             Ci [pC+s] = i ;

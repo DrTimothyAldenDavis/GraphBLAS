@@ -202,7 +202,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<m>(I,j) = A with GrB_Col_assign, m bitmap/full, C bitmap
                 // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC
@@ -227,6 +227,7 @@ GB_GOTCHA ;
         // clear entries from C that were not in A
         //----------------------------------------------------------------------
 
+        // TODO: use a single switch case (merge with switch above)
         {
             // for all entries in IxJ
                 // get the effective value of the mask
@@ -256,7 +257,7 @@ GB_GOTCHA ;
                     #include "GB_bitmap_assign_IxJ_template.c"
                     break ;
                 case GB_COL_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<m>(I,j) = A with GrB_Col_assign, m bitmap/full, C bitmap
                     // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
                     #undef  GB_GET_pM
                     #define GB_GET_pM iC

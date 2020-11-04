@@ -20,14 +20,17 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
 )
 {
 
-    if (!GB_IS_FULL (A))
-    { 
-GB_GOTCHA ;
-        // matrix is already nonfull (hypersparse, sparse, or bitmap);
-        // nothing to do
-        return (GrB_SUCCESS) ;
-    }
-    else if (A->sparsity & GxB_BITMAP)
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_FULL (A)) ;
+
+    //--------------------------------------------------------------------------
+    // convert to bitmap, sparse, or hypersparse
+    //--------------------------------------------------------------------------
+
+    if (A->sparsity & GxB_BITMAP)
     { 
         // C can become bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
@@ -35,19 +38,16 @@ GB_GOTCHA ;
     else if (A->sparsity & GxB_SPARSE
         || (A->vdim <= 1 & (A->sparsity & GxB_HYPERSPARSE)))
     { 
-GB_GOTCHA ;
         // C can become sparse
         return (GB_convert_full_to_sparse (A, Context)) ;
     }
     else if (A->vdim > 1 && A->sparsity & GxB_HYPERSPARSE)
     { 
-GB_GOTCHA ;
         // C can become hypersparse
         return (GB_convert_any_to_hyper (A, Context)) ;
     }
     else
     { 
-GB_GOTCHA ;
         // none of the above conditions hold so make A bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
     }

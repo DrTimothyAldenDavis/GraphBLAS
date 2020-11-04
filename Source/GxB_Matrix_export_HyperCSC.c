@@ -37,6 +37,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
         " &jumbled, &nvec, &Ap, &Ah, &Ai, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_HyperCSC") ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
@@ -45,7 +46,6 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
     if (jumbled == NULL)
     { 
-GB_GOTCHA ;
         // the exported matrix cannot be jumbled
         GB_MATRIX_WAIT (*A) ;
     }
@@ -75,8 +75,15 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     info = GB_export (A, type, nrows, ncols, nzmax, NULL, jumbled, nvec,
-        Ap, Ah, NULL, Ai, Ax, NULL, NULL, Context) ;
+        Ap, Ah, NULL, Ai, Ax, &sparsity, &is_csc, Context) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_HYPERSPARSE) ;
+        ASSERT (is_csc) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

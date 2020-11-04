@@ -11,12 +11,11 @@
 // or converted to sparse/hypersparse.
 
 // The input matrix can have shallow A->p and/or A->h components.  If the
-// hypersparsity is changed, these components are no longer shallow.  If the
-// method fails and the matrix is shallow, all content is removed or freed.
+// hypersparsity is changed, these components are no longer shallow.
 
 #include "GB.h"
 
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL ;
 
 GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 (
@@ -50,25 +49,18 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
         A->nvec_nonempty, A->vdim)) // TODO::use
     { 
         // A is sparse but should be converted to hypersparse
-        info = GB_convert_sparse_to_hyper (A, Context) ;
+        GB_OK (GB_convert_sparse_to_hyper (A, Context)) ;
     }
     else if (A->h != NULL && GB_convert_hyper_to_sparse_test (A->hyper_switch,
         A->nvec_nonempty, A->vdim)) // TODO::use
     { 
         // A is hypersparse but should be converted to sparse
-        info = GB_convert_hyper_to_sparse (A, Context) ;
+        GB_OK (GB_convert_hyper_to_sparse (A, Context)) ;
     }
     else
     { 
         // leave the matrix as-is
         ;
-    }
-
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory; all content has been freed
-        ASSERT (A->magic == GB_MAGIC2) ;
-        return (info) ;
     }
 
     //--------------------------------------------------------------------------

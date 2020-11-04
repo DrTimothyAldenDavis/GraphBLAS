@@ -62,8 +62,6 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // same format as M, except when B is hypersparse, in which case C is
         // also hypersparse.
 
-        // BFS: will not come here since M is bitmap/full
-
         if (B_sparsity == GxB_HYPERSPARSE)
         { 
             C_sparsity = GxB_HYPERSPARSE ;
@@ -160,10 +158,6 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // larger than (m*k + k*n), then always construct C as sparse/hyper,
         // not bitmap.
 
-        // BFS: C<!M>=A*B, no accum, M is complemented, not structural, full
-        // (or bitmap in the future).  So C cannot be not computed in-place.
-        // Also, C is aliased with B.
-
         switch (B_sparsity)
         {
             case GxB_HYPERSPARSE : 
@@ -182,13 +176,11 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
                 }
                 break ;
             case GxB_BITMAP : 
-                // BFS comes here: B is bitmap
             case GxB_FULL : 
                 switch (A_sparsity)
                 {
                     case GxB_HYPERSPARSE : 
                     case GxB_SPARSE : 
-                        // BFS comes here: A is sparse, and C is not huge
                         C_sparsity = C_is_large ? GxB_SPARSE : GxB_BITMAP ;
                         break ;
                     case GxB_BITMAP : 

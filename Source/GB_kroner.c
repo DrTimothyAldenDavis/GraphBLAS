@@ -302,7 +302,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             }
                             break ;
                         case GB_SECONDI_opcode  : 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=kron(A,B) with secondi op
                             // z = second_i(x,B(iB,jB)) == iB
                         case GB_SECONDI1_opcode : 
                             // z = second_i1(x,B(iB,jB)) == iB+1
@@ -316,7 +316,7 @@ GB_GOTCHA ;
                             }
                             break ;
                         case GB_SECONDJ_opcode  : 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=kron(A,B) with secondj op
                             // z = second_j(x,B(iB,jB)) == jB
                         case GB_SECONDJ1_opcode : 
                             // z = second_j1(x,B(iB,jB)) == jB+1

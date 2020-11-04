@@ -51,7 +51,6 @@ GrB_Info GB_import      // import a matrix in any format
         bool ok = GB_Index_multiply ((GrB_Index *) &nzmax, vlen, vdim) ;
         if (!ok)
         { 
-GB_GOTCHA ;
             // problem too large
             return (GrB_OUT_OF_MEMORY) ;
         }

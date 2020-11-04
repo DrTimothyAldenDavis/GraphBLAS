@@ -30,6 +30,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
         " desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
@@ -39,7 +40,6 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GB_MATRIX_WAIT (*A) ;
     if (!GB_is_dense (*A))
     { 
-GB_GOTCHA ;
         // A must be dense or full
         return (GrB_INVALID_VALUE) ;
     }
@@ -51,7 +51,6 @@ GB_GOTCHA ;
     // ensure the matrix is in CSC format
     if (!((*A)->is_csc))
     { 
-// GB_GOTCHA ; by gbtest9
         // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, true, *A,
@@ -65,8 +64,15 @@ GB_GOTCHA ;
     // export the matrix
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     info = GB_export (A, type, nrows, ncols, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, Ax, NULL, NULL, Context) ;
+        NULL, NULL, NULL, Ax, &sparsity, &is_csc, Context) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_FULL) ;
+        ASSERT (is_csc) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

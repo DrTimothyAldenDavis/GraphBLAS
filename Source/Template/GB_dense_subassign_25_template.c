@@ -32,14 +32,14 @@
     // C<M> = A
     //--------------------------------------------------------------------------
 
-    int taskid ;
-// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    int tid ;
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
-        // if kfirst > klast then taskid does no work at all
-        int64_t kfirst = kfirst_slice [taskid] ;
-        int64_t klast  = klast_slice  [taskid] ;
+        // if kfirst > klast then task tid does no work at all
+        int64_t kfirst = kfirst_slice [tid] ;
+        int64_t klast  = klast_slice  [tid] ;
 
         //----------------------------------------------------------------------
         // C<M(:,kfirst:klast)> = A(:,kfirst:klast)
@@ -54,7 +54,7 @@
 
             int64_t j = GBH (Mh, k) ;
             int64_t pM_start, pM_end ;
-            GB_get_pA (&pM_start, &pM_end, taskid, k,
+            GB_get_pA (&pM_start, &pM_end, tid, k,
                 kfirst, klast, pstart_slice, Mp, mvlen) ;
 
             //------------------------------------------------------------------
@@ -66,7 +66,7 @@
                 // M is bitmap
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<M>=A with M bitmap, A dense
                     if (!GBB (Mb, pM)) continue ;
                     GB_COPY_A_TO_C (Cx, pM, Ax, pM) ;    // Cx [pM] = Ax [pM]
                 }

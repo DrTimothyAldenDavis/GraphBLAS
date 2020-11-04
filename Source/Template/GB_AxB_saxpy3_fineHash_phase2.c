@@ -86,7 +86,6 @@
                 }
                 if (hf_unlocked)    // if true, update C(i,j)
                 { 
-GB_GOTCHA ;
                     // hash entry occuppied by C(i,j): update it
                     GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                 }
@@ -166,7 +165,6 @@ GB_GOTCHA ;
                         }
                         if (hf == i_unlocked) // f == 2
                         { 
-GB_GOTCHA ;
                             // C(i,j) already appears in C(:,j)
                             // Hx [hash] += t
                             GB_ATOMIC_UPDATE_HX (hash, t) ;
@@ -183,9 +181,6 @@ GB_GOTCHA ;
             }
         }
     }
-
-    // this task is done; go to the next one
-    continue ;
 }
 
 #undef M_TYPE

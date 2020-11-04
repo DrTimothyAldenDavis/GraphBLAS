@@ -16,7 +16,7 @@
 
 #include "GB.h"
 
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // GB_hyper_or_bitmap: ensure a matrix is either hypersparse or bitmap
@@ -302,7 +302,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             }
             else if (is_bitmap)
             { 
-// GB_GOTCHA ; by gbtest10
+// GB_GOTCHA ; by gbtest10: A->sparsity == 11 (hyper/sparse/full), with A bitmap
                 // if bitmap: to sparse
                 GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
                 // conform between sparse and hypersparse

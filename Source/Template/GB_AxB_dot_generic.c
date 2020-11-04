@@ -68,7 +68,7 @@
     #define GB_PRAGMA_SIMD_DOT(cij) ;
 
     if (op_is_positional)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // generic semirings with positional multiply operators
@@ -76,7 +76,6 @@
 
         if (flipxy)
         { 
-GB_GOTCHA ;
             // flip a positional multiplicative operator
             opcode = GB_binop_flip (opcode) ;
         }
@@ -116,21 +115,17 @@ GB_GOTCHA ;
 
         if (mult->ztype == GrB_INT64)
         {
-GB_GOTCHA ;
             #define GB_CTYPE int64_t
             int64_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int64_t)) ;
             }
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A'(i,k),y) == i
-GB_GOTCHA ;
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A'(i,k),y) == i+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = i + offset
                     #if defined ( GB_DOT2_GENERIC )
@@ -142,13 +137,9 @@ GB_GOTCHA ;
                     #endif
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
-GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
-GB_GOTCHA ;
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
-GB_GOTCHA ;
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = k + offset
                     #if defined ( GB_DOT2_GENERIC )
@@ -160,9 +151,7 @@ GB_GOTCHA ;
                     #endif
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
-GB_GOTCHA ;
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = j + offset
                     #if defined ( GB_DOT2_GENERIC )
@@ -172,29 +161,24 @@ GB_GOTCHA ;
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 default: ;
             }
         }
         else
         {
-GB_GOTCHA ;
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
             int32_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int32_t)) ;
             }
             switch (opcode)
             {
                 case GB_FIRSTI_opcode   :   // z = first_i(A'(i,k),y) == i
-GB_GOTCHA ;
                 case GB_FIRSTI1_opcode  :   // z = first_i1(A'(i,k),y) == i+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (i + offset)
                     #if defined ( GB_DOT2_GENERIC )
@@ -206,13 +190,9 @@ GB_GOTCHA ;
                     #endif
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
-GB_GOTCHA ;
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
-GB_GOTCHA ;
                 case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
-GB_GOTCHA ;
                 case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (k + offset)
                     #if defined ( GB_DOT2_GENERIC )
@@ -224,9 +204,7 @@ GB_GOTCHA ;
                     #endif
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
-GB_GOTCHA ;
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
-GB_GOTCHA ;
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (j + offset)
                     #if defined ( GB_DOT2_GENERIC )
@@ -300,7 +278,6 @@ GB_GOTCHA ;
             // fmult is not used and can be NULL (for user-defined types)
             if (flipxy)
             { 
-GB_GOTCHA ;
                 // flip first and second
                 opcode = GB_binop_flip (opcode) ;
             }
@@ -320,7 +297,6 @@ GB_GOTCHA ;
             }
             else // opcode == GB_SECOND_opcode
             { 
-GB_GOTCHA ;
                 // t = B(i,k)
                 ASSERT (A_is_pattern) ;
                 #undef  GB_MULT

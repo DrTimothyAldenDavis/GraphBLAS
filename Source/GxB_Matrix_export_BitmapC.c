@@ -32,6 +32,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
         " &Ab, &Ax, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
@@ -60,8 +61,15 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     // export the matrix
     //--------------------------------------------------------------------------
 
+    int sparsity ;
+    bool is_csc ;
     info = GB_export (A, type, nrows, ncols, NULL, nvals, NULL, NULL,
-        NULL, NULL, Ab, NULL, Ax, NULL, NULL, Context) ;
+        NULL, NULL, Ab, NULL, Ax, &sparsity, &is_csc, Context) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_BITMAP) ;
+        ASSERT (is_csc) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

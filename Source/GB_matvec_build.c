@@ -68,7 +68,7 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;
     if (GB_OP_IS_POSITIONAL (dup))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_build with positional op
         // dup operator cannot be a positional op
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Positional op z=%s(x,y) not supported as dup op\n", dup->name) ;

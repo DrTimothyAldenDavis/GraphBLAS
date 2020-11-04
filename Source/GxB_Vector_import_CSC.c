@@ -46,10 +46,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     vp [1] = nvals ;
     info = GB_import ((GrB_Matrix *) v, type, n, 1, nzmax, 0, jumbled, 0,
         &vp, NULL, NULL, vi, vx, GxB_SPARSE, true, desc) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GB_FREE (vp) ;
-    }
+    GB_FREE (vp) ;
     GB_BURBLE_END ;
     return (info) ;
 }

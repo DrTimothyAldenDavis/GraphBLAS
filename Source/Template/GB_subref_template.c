@@ -103,7 +103,7 @@
     //--------------------------------------------------------------------------
 
     int taskid ;
-// TODO    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -323,7 +323,7 @@
                         // with zombies
                         for (int64_t k = 0 ; k < alen ; k++)
                         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // symbolic C(:,kC) = A(:,kA) where A has zombies
                             int64_t i = GB_Ai (pA + k) ;
                             ASSERT (i == GB_ijlist (I, i, Ikind, Icolon)) ;
                             Ci [pC + k] = i ;           // ok: C is sparse

@@ -107,7 +107,7 @@ void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
     const int64_t n
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // qsort_1b_size1
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -134,7 +134,7 @@ void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
     const int64_t n
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // qsort_1b_size2
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -162,7 +162,7 @@ void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
     const int64_t n
 )
 { 
-// GB_GOTCHA ; by gbtest50
+// GB_GOTCHA ; by gbtest50, qsort_1b_size4
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }

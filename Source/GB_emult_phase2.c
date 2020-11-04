@@ -214,7 +214,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         if (info == GrB_OUT_OF_MEMORY)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // emult phase2 out of memory (see GB_SLICE_MATRIX, bitmap case)
             // out of memory
             GB_FREE_ALL ;
             return (info) ;

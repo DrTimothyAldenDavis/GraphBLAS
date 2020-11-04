@@ -383,7 +383,6 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
             else                                                            \
             {                                                               \
                 /* another error has occurred */                            \
-                printf ("error: %s %d: %d\n", __FILE__, __LINE__, info) ;   \
                 FREE_ALL ;                                                  \
                 if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;            \
                 mexErrMsgTxt ("unexpected error") ;                         \

@@ -124,6 +124,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Context Context
 ) ;
 
+int GB_AxB_dot2_sparsity            // sparsity of C for C=A'*B or C<!M>=A'*B
+(
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B              // input matrix
+) ;
+
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A,         // input matrix to examine

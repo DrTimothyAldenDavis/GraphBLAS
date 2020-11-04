@@ -48,8 +48,8 @@ void GB_mx_put_global
     int64_t nmalloc = GB_Global_nmalloc_get ( ) ;
     if (nmalloc != 0)
     {
-        printf ("GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
-        mexErrMsgTxt ("memory leak!") ;
+        printf ("in GB_mx_put_global: GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
+        mexErrMsgTxt ("memory leak in test!") ;
     }
 }
 

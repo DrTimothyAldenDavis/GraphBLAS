@@ -160,7 +160,6 @@ GrB_Info GrB_Matrix_removeElement
         }
         else
         { 
-GB_GOTCHA ;
             // C is sparse or hypersparse, and jumbled
             GB_OK (GB_Matrix_wait (C, Context)) ;
         }

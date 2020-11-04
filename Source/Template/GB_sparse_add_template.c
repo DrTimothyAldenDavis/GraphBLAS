@@ -65,7 +65,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-// TODO    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+// TODO#pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
@@ -812,7 +812,7 @@
                     }
                     else if (B == M)
                     { 
-GB_GOTCHA ; // ok
+GB_GOTCHA ; // C<M>=A+M, where C and M are sparse, and B==M is aliased
                         // B is aliased to M
                         pB = pM ;
                         bfound = true ;

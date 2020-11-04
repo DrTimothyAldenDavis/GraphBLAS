@@ -106,12 +106,10 @@ GrB_Info GB_export      // export a matrix in any format
 
     if (sparsity != NULL)
     { 
-GB_GOTCHA ;
         (*sparsity) = s ;
     }
     if (is_csc != NULL)
     { 
-GB_GOTCHA ;
         (*is_csc) = (*A)->is_csc ;
     }
 

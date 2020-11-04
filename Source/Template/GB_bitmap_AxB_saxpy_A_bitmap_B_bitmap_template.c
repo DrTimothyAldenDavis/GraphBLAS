@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 {
+
     int64_t tid ;
-//  TODO  #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) reduction(+:cnvals)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(+:cnvals)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         
@@ -72,7 +74,6 @@
 
             if (!any_update_allowed)
             { 
-GB_GOTCHA ; // ok
                 // C(I,J) cannot be modified at all; skip it
                 continue ;
             }

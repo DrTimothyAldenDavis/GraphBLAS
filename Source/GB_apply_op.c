@@ -15,7 +15,8 @@
 // it is in CSC format.  The caller has already modified the op if A is in CSR
 // format.
 
-// TODO can this function return anything but GrB_SUCCESS?
+// Template/GB_positional_op_ijp can return GrB_OUT_OF_MEMORY.
+// Otherwise, this function only returns GrB_SUCCESS.
 
 #include "GB_apply.h"
 #include "GB_binop.h"
@@ -45,7 +46,6 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     ASSERT (Cx != NULL) ;
     ASSERT (op1 != NULL || op2 != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
-
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
 
     //--------------------------------------------------------------------------

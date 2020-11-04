@@ -101,9 +101,6 @@
         // count the entries in C(:,j)
         Cp [kk] = cjnz ;        // ok: C is sparse
     }
-
-    // this task is done; go to the next one
-    continue ;
 }
 
 #undef M_TYPE

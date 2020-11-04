@@ -99,7 +99,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     else
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // A is not hyper, sparse, bitmap, or full
         GBPR0 (" invalid structure\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -170,25 +170,21 @@ GB_GOTCHA ;
             break ;
 
         // 10
-GB_GOTCHA ;
         case GxB_SPARSE + GxB_FULL : 
             GBPR0 ("  sparsity control: sparse/full\n") ;
             break ;
 
         // 11
-GB_GOTCHA ;
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
             GBPR0 ("  sparsity control: hypersparse/sparse/full\n") ;
             break ;
 
         // 13
-GB_GOTCHA ;
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
             GBPR0 ("  sparsity control: hypersparse/bitmap/full\n") ;
             break ;
 
         // 14
-GB_GOTCHA ;
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
             GBPR0 ("  sparsity control: sparse/bitmap/full\n") ;
             break ;
@@ -201,7 +197,7 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
+GB_GOTCHA ; // invalid sparsity control
             GBPR0 ("  sparsity control: invalid\n") ;
             return (GrB_INVALID_OBJECT) ;
             break ;
@@ -228,7 +224,7 @@ GB_GOTCHA ;
         // A is full
         if (! (A->nvec == A->vdim && A->plen == -1))
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // invalid full
             GBPR0 ("  invalid full %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -239,7 +235,7 @@ GB_GOTCHA ;
         if (! (A->nvec == A->vdim && A->plen == -1 &&
                A->h == NULL && A->p == NULL && A->i == NULL))
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // invalid bitmap
             GBPR0 ("  invalid bitmap %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -429,21 +425,21 @@ GB_GOTCHA ;
     {
         if (A->nzombies != 0)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // full/bitmap with zombies
             GBPR0 ("  %s %s cannot have zombies\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (Pending != NULL)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // full/bitmap with pending tuples
             GBPR0 ("  %s %s cannot have pending tuples\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (A->jumbled)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // full/bitmap jumbled
             GBPR0 ("  %s %s cannot be jumbled\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
@@ -483,7 +479,7 @@ GB_GOTCHA ;
                 int8_t ab = A->b [p2] ;
                 if (ab < 0 || ab > 1)
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // bitmap with value other than 0, 1
                     GBPR0 ("invalid bitmap\n") ;
                     return (GrB_INVALID_OBJECT) ;
                 }
@@ -587,7 +583,7 @@ GB_GOTCHA ;
 
     if (is_bitmap && anz != anz_actual)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // bitmap with invalid nvals
         // this case can only occur for bitmapped matrices
         GBPR0 ("  invalid bitmap count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;
@@ -652,7 +648,7 @@ GB_GOTCHA ;
         info = GB_Type_check (Pending->type, "", pr, f) ;
         if (info != GrB_SUCCESS || (Pending->type->size != Pending->size))
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // invalid Pending->type
             GBPR0 ("  %s has an invalid Pending->type\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -724,12 +720,12 @@ GB_GOTCHA ;
     // GxB_Matrix_import*, and in other cases when its computation is postponed
     // or not needed.  If not -1, however, the value must be correct.
 
-    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A, NULL) ; // OK:non-atomic
+    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A, NULL) ; // TODO::OK
 
     if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||    // TODO::OK
            (A->nvec_nonempty == -1)))                       // TODO::OK
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // invalid nvec_nonempty
         GBPR0 ("  invalid count of non-empty vectors\n"
             "A->nvec_nonempty = " GBd " actual " GBd "\n",
             A->nvec_nonempty, actual_nvec_nonempty) ;       // TODO::OK

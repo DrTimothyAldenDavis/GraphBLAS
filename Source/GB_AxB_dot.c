@@ -95,7 +95,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         A, B, semiring, flipxy, Context) ;
     if (info != GrB_NO_VALUE)
     { 
-GB_GOTCHA ;
         (*done_in_place) = false ;
         (*mask_applied) = (M != NULL) ; // mask applied if present
         return (info) ;
@@ -108,7 +107,6 @@ GB_GOTCHA ;
     if (C_in != NULL && M == NULL && !Mask_comp
         && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
     { 
-        GBURBLE ("dense, C+=A'*B in-place ") ;
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
         return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
@@ -125,6 +123,7 @@ GB_GOTCHA ;
         // hypersparse
         GBURBLE ("dot3 ") ;
         (*mask_applied) = true ;    // mask is always applied
+        (*done_in_place) = false ;
 
         #if defined ( GBCUDA )
 
@@ -169,6 +168,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     (*mask_applied) = (M != NULL) ; // mask applied if present
+    (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
     return (GB_AxB_dot2 (Chandle, M, Mask_comp, Mask_struct, A, B, semiring,
         flipxy, Context)) ;
 }

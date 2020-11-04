@@ -64,7 +64,7 @@ static GrB_Info GB_dc
             if (! (v == GxB_DEFAULT || v == GrB_COMP || v == GrB_STRUCTURE ||
                    v == (GrB_COMP + GrB_STRUCTURE)))
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // descriptor with invalid GrB_MASK
                 ok = false ;
             }
         }

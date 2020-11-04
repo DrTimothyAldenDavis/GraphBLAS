@@ -57,7 +57,8 @@
 
     }
     else if (M_is_sparse_or_hyper)
-    {
+    { 
+GB_GOTCHA ; // C<!M>=A.*B with C bitmap, M sparse, A and B bitmap/full (LARGE)
 
         //----------------------------------------------------------------------
         // C is bitmap, M is sparse or hyper
@@ -84,7 +85,7 @@
 
         GB_SLICE_MATRIX (M, 8) ;
 
-// TODO #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
+        #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
             int64_t kfirst = kfirst_Mslice [taskid] ;
@@ -104,7 +105,6 @@
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
                     { 
-GB_GOTCHA ;
                         int64_t i = Mi [pM] ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 2 ;
@@ -121,8 +121,8 @@ GB_GOTCHA ;
         // Method19(!M,sparse): C is bitmap, both A and B are bitmap or full
         //----------------------------------------------------------------------
 
-// TODO #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
-// TODO     reduction(+:cnvals)
+        #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
+            reduction(+:cnvals)
         for (p = 0 ; p < cnz ; p++)
         {
             if (Cb [p] == 0)
@@ -130,7 +130,6 @@ GB_GOTCHA ;
                 // M(i,j) is zero, so C(i,j) can be computed
                 if (GBB (Ab, p) && GBB (Bb, p))
                 { 
-GB_GOTCHA ;
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_GETA (aij, Ax, p) ;
                     GB_GETB (bij, Bx, p) ;
@@ -141,7 +140,6 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
                 // M(i,j) == 1, so C(i,j) is not computed
                 Cb [p] = 0 ;
             }

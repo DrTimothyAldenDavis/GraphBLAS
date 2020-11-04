@@ -203,13 +203,13 @@ int GB_emult_sparsity       // return the sparsity structure for C
 
         if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<!M>=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<!M>=A.*B with A and B bitmap/full, C bitmap
             C_sparsity = GxB_BITMAP ;
         }
     }

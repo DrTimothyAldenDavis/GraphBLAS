@@ -34,7 +34,7 @@ void GB_AxB_pattern
     bool op_is_pair   = (mult_opcode == GB_PAIR_opcode) ;
 
     if (op_is_positional || op_is_pair)
-    {
+    { 
         // mult (x,y) does not depend on the values of x or y
         (*A_is_pattern) = true ;
         (*B_is_pattern) = true ;

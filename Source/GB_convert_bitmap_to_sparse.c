@@ -14,7 +14,6 @@
     GB_FREE (Ap) ;      \
     GB_FREE (Ai) ;      \
     GB_FREE (Ax) ;      \
-    GB_phbix_free (A) ; \
 }
 
 GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse

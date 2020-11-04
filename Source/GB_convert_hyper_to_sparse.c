@@ -73,7 +73,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         if (Ap_new == NULL)
         { 
             // out of memory
-            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

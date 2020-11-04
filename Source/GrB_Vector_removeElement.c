@@ -73,7 +73,6 @@ static inline bool GB_removeElement
         bool is_zombie ;
         if (vnz == V->vlen)
         { 
-GB_GOTCHA ;
             // V(:) is packed so no binary search is needed to find V(i)
             pleft = i ;
             ASSERT (GB_UNFLIP (Vi [pleft]) == i) ;
@@ -123,19 +122,16 @@ GrB_Info GrB_Vector_removeElement
 
     if (V->jumbled || GB_IS_FULL (V))
     {
-GB_GOTCHA ;
         GrB_Info info ;
         GB_WHERE (V, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_removeElement") ;
         if (GB_IS_FULL (V))
         { 
-GB_GOTCHA ;
             // convert V from full to sparse
             GB_OK (GB_convert_to_nonfull ((GrB_Matrix) V, Context)) ;
         }
         else
         { 
-GB_GOTCHA ;
             // V is sparse and jumbled
             GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
         }

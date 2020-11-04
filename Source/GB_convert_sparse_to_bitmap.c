@@ -20,7 +20,6 @@
     GB_FREE_WORK ;                      \
     if (!in_place) GB_FREE (Ax_new) ;   \
     GB_FREE (Ab) ;                      \
-    GB_phbix_free (A) ;                 \
 }
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -72,9 +71,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     int64_t anzmax ;
     if (!GB_Index_multiply (&anzmax, avdim, avlen))
     { 
-GB_GOTCHA ;
         // problem too large
-        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     anzmax = GB_IMAX (anzmax, 1) ;
@@ -82,7 +79,6 @@ GB_GOTCHA ;
     if (Ab == NULL)
     { 
         // out of memory
-        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -107,12 +103,9 @@ GB_GOTCHA ;
 
     if (in_place)
     { 
-        // keep the existing A->x, so remove it from the matrix for now so
-        // that it is not freed by GB_phbix_free
+        // keep the existing A->x
         Ax_new = A->x ;
         Ax_shallow = A->x_shallow ;
-        A->x = NULL ;
-        A->x_shallow = false ;
     }
     else
     {
@@ -237,7 +230,13 @@ GB_GOTCHA ;
     // free prior content of A and transplant the new content
     //--------------------------------------------------------------------------
 
-    // if done in-place, A->x has been removed from A and is thus not freed
+    if (in_place)
+    {
+        // if done in-place, remove A->x from A so it is not freed
+        A->x = NULL ;
+        A->x_shallow = false ;
+    }
+
     GB_phbix_free (A) ;
 
     A->b = Ab ;

@@ -33,7 +33,7 @@ void GB_memset                  // parallel memset
     }
     else
     {
-GB_GOTCHA ;
+GB_GOTCHA ; // parallel memset
 
         //----------------------------------------------------------------------
         // memset using multiple threads
@@ -42,19 +42,18 @@ GB_GOTCHA ;
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;
         if (((size_t) nthreads) > nchunks)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // parallel memset
             nthreads = (int) nchunks ;
         }
         GB_void *pdest = (GB_void *) dest ;
 
         int64_t k ;
-// TODO #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (k = 0 ; k < nchunks ; k++)
         {
             size_t start = k * GB_MEM_CHUNK ;
             if (start < n)
             { 
-GB_GOTCHA ;
                 size_t chunk = GB_IMIN (n - start, GB_MEM_CHUNK) ;
                 memset (pdest + start, c, chunk) ;
             }

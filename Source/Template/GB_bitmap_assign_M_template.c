@@ -23,7 +23,7 @@ ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
 switch (assign_kind)
 {
     case GB_ROW_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // row assignment: C<M>(iC,J), where M is a row vector, C bitmap
         // row assignment: C<M>(iC,J), where M is a row vector
         #include "GB_bitmap_assign_M_row_template.c"
         break ;
