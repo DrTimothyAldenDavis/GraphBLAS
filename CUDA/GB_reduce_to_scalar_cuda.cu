@@ -12,15 +12,26 @@
 #include "GB_cuda.h"
 
 #include "templates/reduceWarp.cu.jit"
+#include "templates/reduceNonZombiesWarp.cu.jit"
 #include "test/semiringFactory.hpp"
-#include "jitify.hpp"
+
+#include "GB_jit_launcher.h"
+#include "GB_callback.hpp"
+
+GB_callback *SR_callback_ptr;
+
+std::istream* callback_wrapper( std::string file_name, std::iostream& tmp){
+   return SR_callback_ptr->callback( file_name, tmp);
+}
+
+const std::vector<std::string> header_names ={};
 
 GrB_Info GB_reduce_to_scalar_cuda
 (
     GB_void *s,
     const GrB_Monoid reduce,
     const GrB_Matrix A,
-    GB_Context Contetxt
+    GB_Context Context
 )
 { 
 
@@ -32,34 +43,49 @@ GrB_Info GB_reduce_to_scalar_cuda
     // We have a workspace W of size ntasks.
 
     thread_local static jitify::JitCache kernel_cache;
+    std::string reduce_kernel_name = "reduceNonZombiesWarp";
 
     // stringified kernel specified above
-    jitify::Program program= kernel_cache.program( templates_reduceWarp_cu, 0, 0,
+    jitify::Program program= kernel_cache.program( templates_reduceNonZombiesWarp_cu, 0, 0,
         file_callback_plus);
     //{"--use_fast_math", "-I/usr/local/cuda/include"});
 
     int nnz = GB_NNZ( A ) ;
+
     int blocksize = 1024 ;
     int ntasks = ( nnz + blocksize -1) / blocksize ;
 
-    dim3 grid(ntasks);
-    dim3 block(blocksize);
+    int32_t *block_sum;
+    //cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
+    block_sum = (int32_t*)GB_cuda_malloc( (ntasks)*sizeof(int32_t)) ;
 
-    using jitify::reflection::type_of;
-    program.kernel("reduceWarp")
-                    .instantiate(type_of(*Ax))
-                    .configure(grid, block)
-                    .launch(Ax, W, anz);
+    dim3 red_grid(ntasks);
+    dim3 red_block(blocksize);
 
-    cudaDeviceSynchronize ( ) ;
+    GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", ntasks, blocksize) ;
+    jit::launcher( reduce_kernel_name + "_" + reduce->name,
+                   templates_reduceNonZombiesWarp_cu,
+                   header_names,
+                   compiler_flags,
+                   callback_wrapper)
+                   .set_kernel_inst( reduce_kernel_name , { ctype->name })
+                   .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
+                   .launch(
+                            A->i,   // index vector, only sum up values >= 0
+                            A->x,   // input pointer to vector to reduce, with zombies
+                            block_sum,             // Block sums on return 
+                            (unsigned int)nnz      // length of vector to reduce to scalar
 
-    int64_t s = 0 ;
+                        );
+
+    cudaDeviceSynchronize();
+
+
     for (int i = 0 ; i < ntasks ; i++)
     {
-        s += W [i] ; 
+        *s += (block_sum [i]) ; 
     }
 
-    (*result) = s ;
 
     return (GrB_SUCCESS) ;
 }

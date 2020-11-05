@@ -100,7 +100,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
     ASSERT (A->vlen == B->vlen) ;
-    GBBURBLE ("(GPU dot3) ") ;
+    GBURBLE ("(GPU dot3) ") ;
 
     int ntasks = 0, number_of_sms = 0 ;
     int64_t *Nanobuckets = NULL, *Blockbucket = NULL ;
@@ -130,7 +130,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     const int64_t mvdim = M->vdim ;
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
-    const bool M_is_hyper = M->is_hyper ;
+    const bool M_is_hyper = GB_IS_HYPERSPARSE( M ) ;
 
     const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
@@ -151,10 +151,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // TODO tell GB_CREATE where to put the data: CPU or GPU (via
     // cudaMemAdvise), but this works as-is.
-    // call cudaMemAdvise ( ... ) here
-    info = GB_create (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
-        cnz+1,  // add one to cnz for GB_cumsum
+    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
+        ctype, cvlen, cvdim, GB_Ap_malloc, true,
+        sparsity, M->hyper_switch, cnvec,
+        cnz+1,  // add one to cnz for GB_cumsum of Cwork 
         true, Context) ;
 
     if (info != GrB_SUCCESS)
@@ -190,7 +191,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = M->nvec ;
 
-    GBBURBLE ("(GPU C created and copied from M) ") ;
+    GBURBLE ("(GPU C created and copied from M) ") ;
     //--------------------------------------------------------------------------
     // stringify the semiring and the mask
     //--------------------------------------------------------------------------
@@ -203,7 +204,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         true, semiring_name, semiring_code, mask_name) ;
 
-    GBBURBLE ("(GPU stringified) ") ;
+    GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
     //--------------------------------------------------------------------------
@@ -223,7 +224,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // Idea is to have each task work on a continguous block of columns of C
     ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
 
-    GBBURBLE ("(GPU mnz=%ld mnvec=%ld blockDim=32, nblock= %d) ", mnz, mnvec, ntasks ) ;
+    GBURBLE ("(GPU mnz=%ld mnvec=%ld blockDim=32, nblock= %d) ", mnz, mnvec, ntasks ) ;
 
     std::cout<< "ntasks, nthreads = " <<ntasks<<","<<SYMBOLIC_PHASE_NTHREADS<<std::endl; 
     //--------------------------------------------------------------------------
@@ -414,7 +415,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // cudaDeviceSynchronize();
 
 
-    GBBURBLE ("(GPU phase1 done) ") ;
+    GBURBLE ("(GPU phase1 done) ") ;
     //for (int i = 0; i< cnz; i++){
     //  printf("C[%d] = %ld\n", i , Ci[i]);
     //}
@@ -447,7 +448,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
     }
 
-    GBBURBLE ("(GPU phase2 done) ") ;
+    GBURBLE ("(GPU phase2 done) ") ;
 
     phase2endKernel.launch(                    // input
                         Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
@@ -463,7 +464,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     cudaDeviceSynchronize();
 
-    GBBURBLE ("(GPU phase2end done) ") ;
+    GBURBLE ("(GPU phase2end done) ") ;
     /* 
     for (int i = 0; i< cnz; i++){
       printf("C[%d],Bucket = %ld,%ld\n", i , Ci[i], Bucket[i]);
@@ -497,7 +498,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         //Nothing to do, next bucket
         if ( Cnz == 0 ) continue;
 
-        GBBURBLE ("\n\n(GPU phase3 bucket,bucketsize= %d,%ld) ",bucket,Cnz) ;
+        GBURBLE ("\n\n(GPU phase3 bucket,bucketsize= %d,%ld) ",bucket,Cnz) ;
 
         switch (bucket)
         {
@@ -608,7 +609,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         dim3 block(blocksz);
 
         std::cout<< "Kernel name =" <<Opname<<std::endl; 
-        GBBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
+        GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
         jit::launcher( base_name + kernel_name + Opname + "_" + semiring_name,
                        jit_template,
                        header_names,
@@ -637,7 +638,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         cudaDeviceSynchronize();
     }
-    GBBURBLE ("(GPU phase3 done) ") ;
+    GBURBLE ("(GPU phase3 done) ") ;
     
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
     const char*  jit_template;
@@ -651,7 +652,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
     block_sum = (int32_t*)GB_cuda_malloc( (num_reduce_blocks)*sizeof(int32_t)) ;
 
-    GBBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
+    GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
     jit::launcher( reduce_kernel_name + "_" + semiring_name,
                    jit_template,
                    header_names,

@@ -34,6 +34,21 @@
 #define JITIFY_PRINT_LAUNCH 1
 #include <jitify.hpp>
 
+const std::vector<std::string> compiler_flags{
+   "-std=c++14",
+   "--use_fast_math",
+   "-remove-unused-globals",
+   "-w",
+   "-D__CUDACC_RTC__",
+   "-I.",
+   "-I..",
+   "-I../../Include",
+   "-I../../Source",
+   "-I../../Source/Template",
+   "-Ilocal_cub/block",
+   "-Itemplates",
+   "-I/usr/local/cuda/include"
+};
 
 namespace jit {
 
