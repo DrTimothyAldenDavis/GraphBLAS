@@ -100,18 +100,31 @@ void mexFunction
     // builtin comparators not defined for complex types
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_new (&C, GxB_FC32, 10, 10)) ;
-    OK (GrB_Matrix_new (&A, GxB_FC32, 10, 10)) ;
+    int n = 10 ;
+    OK (GrB_Matrix_new (&A, GxB_FC32, n, n)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+
+    OK (GrB_Matrix_new (&C, GxB_FC32, n, n)) ;
     OK (GxB_Scalar_new (&scalar, GxB_FC32)) ;
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GxB_Matrix_select (C, NULL, NULL, GxB_LT_THUNK, A, scalar, NULL)) ;
     char *message = NULL ;
     OK (GrB_Matrix_error (&message, C)) ;
     printf ("error expected: %s\n", message) ;
-
     GrB_Matrix_free_(&C) ;
-    GrB_Matrix_free_(&A) ;
     GxB_Scalar_free_(&scalar) ;
+
+    //--------------------------------------------------------------------------
+    // GB_pslice
+    //--------------------------------------------------------------------------
+
+    int64_t *Slice = NULL ;
+    GxB_print (A, 3) ;
+    GB_pslice (&Slice, A->p, n, 2) ;
+    CHECK (Slice [0] == 0) ;
+    GB_FREE (Slice) ;
+
+    GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
     // wrapup

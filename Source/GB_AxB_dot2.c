@@ -7,13 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_dot2 does its computation in two phases.  The first phase counts the
-// number of entries in each column of C.  The second phase can then construct
-// the result C in-place, and thus this method can be done in parallel, for the
-// single matrix computation C=A'*B.
+// GB_AxB_dot2 when C is sparse does its computation in two phases.  The first
+// phase counts the number of entries in each column of C.  The second phase
+// can then construct the result C in-place, and thus this method can be done
+// in parallel, for the single matrix computation C=A'*B.
 
-// Two variants are handled: C=A'*B and C<!M>=A'*B.
+// For the sparse case, two variants are handled: C=A'*B and C<!M>=A'*B.
 // The C<M>=A'*B computation is computed by GB_AxB_dot3.
+
+// The bitmap case handles all cases for M.
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
@@ -39,7 +41,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
+    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
