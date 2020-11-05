@@ -34,6 +34,9 @@
     k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
     k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads) ;
 
+// TODO: make sure this works:
+#include "GB_binary_search.h"
+#if 0
 //------------------------------------------------------------------------------
 // GB_BINARY_SEARCH
 //------------------------------------------------------------------------------
@@ -110,6 +113,8 @@
 }
 
 #include "../Source/Template/GB_lookup_template.c"
+#endif
+
 #include "../Source/Template/GB_search_for_vector_template.c"
 
 #undef GB_DOT_MERGE
