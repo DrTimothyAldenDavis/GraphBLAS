@@ -143,7 +143,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // ops) then the type of A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
-        GBBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
+        GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
         if (ngpus_to_use > 0 && semiring->semiring_is_builtin
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)

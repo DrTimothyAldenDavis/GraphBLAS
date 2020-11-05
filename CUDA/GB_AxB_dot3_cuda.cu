@@ -92,15 +92,34 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK (GB_check (M, "M for dot3 cuda A'*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for dot3 cuda A'*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for dot3 cuda A'*B", GB0)) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
+
+    // just in case M is jumbled and we don't handle it yet (TODO)
+    GB_MATRIX_WAIT (M) ;
+
+    ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for dot3 cuda A'*B", GB0) ;
+
+    ASSERT (!GB_PENDING (M)) ;
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_ZOMBIES (M)) ;
+
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+
+    ASSERT (!GB_PENDING (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (!GB_JUMBLED (B)) ;
+
+    ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB0) ;
+
     ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(GPU dot3) ") ;
+
+    //--------------------------------------------------------------------------
+    // initializations
+    //--------------------------------------------------------------------------
 
     int ntasks = 0, number_of_sms = 0 ;
     int64_t *Nanobuckets = NULL, *Blockbucket = NULL ;
