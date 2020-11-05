@@ -24,9 +24,9 @@ void mexFunction
 {
 
     GrB_Info info ;
-    GrB_Matrix A ;
-    GxB_Scalar scalar ;
-    GrB_Vector victor ;
+    GrB_Matrix A = NULL, B = NULL, C = NULL ;
+    GxB_Scalar scalar = NULL ;
+    GrB_Vector victor = NULL ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -97,12 +97,29 @@ void mexFunction
     GxB_Scalar_free_(&scalar) ;
 
     //--------------------------------------------------------------------------
+    // builtin comparators not defined for complex types
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GxB_FC32, 10, 10)) ;
+    OK (GrB_Matrix_new (&A, GxB_FC32, 10, 10)) ;
+    OK (GxB_Scalar_new (&scalar, GxB_FC32)) ;
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GxB_Matrix_select (C, NULL, NULL, GxB_LT_THUNK, A, scalar, NULL)) ;
+    char *message = NULL ;
+    OK (GrB_Matrix_error (&message, C)) ;
+    printf ("error expected: %s\n", message) ;
+
+    GrB_Matrix_free_(&C) ;
+    GrB_Matrix_free_(&A) ;
+    GxB_Scalar_free_(&scalar) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
     GB_mx_put_global (true) ;   
     fclose (f) ;
-    // printf ("\nAll errors printed above were expected.\n") ;
+    printf ("\nAll errors printed above were expected.\n") ;
     printf ("GB_mex_about2: all tests passed\n\n") ;
 }
 

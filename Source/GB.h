@@ -7,235 +7,33 @@
 
 //------------------------------------------------------------------------------
 
-// These defintions are not visible to the user.  They are used only inside
-// GraphBLAS itself.
-
-// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
-
 #ifndef GB_H
 #define GB_H
 
 //------------------------------------------------------------------------------
-// code development settings
+// defintions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
-// to turn on Debug for a single file of GraphBLAS, add '#define GB_DEBUG'
-// just before the statement '#include "GB.h"'
-
-// set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
-// -DGB_BURBLE=1.
-#ifndef GB_BURBLE
-#define GB_BURBLE 0
-#endif
-
-// to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
-
-// to reduce code size and for faster time to compile, uncomment this line;
-// GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// #define GBCOMPACT 1
-
-// for code development only
-// #define GB_DEVELOPER 1
-
-// manage compiler warnings
 #include "GB_warnings.h"
-
-//------------------------------------------------------------------------------
-// include GraphBLAS.h (depends on user threading model)
-//------------------------------------------------------------------------------
-
 #ifndef MATLAB_MEX_FILE
 #define GB_LIBRARY
 #endif
 
+//------------------------------------------------------------------------------
+// user-visible GraphBLAS.h
+//------------------------------------------------------------------------------
+
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
-// compiler variations
+// internal definitions
 //------------------------------------------------------------------------------
 
-// Determine the restrict keyword, and whether or not variable-length arrays
-// are supported.
-
-#if ( _MSC_VER && !__INTEL_COMPILER )
-
-    // Microsoft Visual Studio does not have the restrict keyword, but it does
-    // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.  OpenMP tasks are not available.
-
-    #define GB_MICROSOFT 1
-    #define GB_RESTRICT __restrict
-    #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 0
-
-#elif GxB_STDC_VERSION >= 199901L
-
-    // ANSI C99 and later have the restrict keyword and variable-length arrays.
-    #define GB_MICROSOFT 0
-    #define GB_RESTRICT restrict
-    #define GB_HAS_VLA  1
-    #define GB_HAS_OPENMP_TASKS 1
-
-#else
-
-    // ANSI C95 and earlier have neither
-    #define GB_MICROSOFT 0
-    #define GB_RESTRICT
-    #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 1
-
-#endif
-
-//------------------------------------------------------------------------------
-// Microsoft specific include files
-//------------------------------------------------------------------------------
-
-#if GB_MICROSOFT
-#include <malloc.h>
-#endif
-
-//------------------------------------------------------------------------------
-// OpenMP pragmas and tasks
-//------------------------------------------------------------------------------
-
-// GB_PRAGMA(x) becomes "#pragma x", but the way to do this depends on the
-// compiler:
-#if GB_MICROSOFT
-    // MS Visual Studio is not ANSI C11 compliant, and uses __pragma:
-    #define GB_PRAGMA(x) __pragma (x)
-#else
-    // ANSI C11 compilers use _Pragma:
-    #define GB_PRAGMA(x) _Pragma (#x)
-#endif
-
-// construct pragmas for loop vectorization:
-#if GB_MICROSOFT
-
-    // no #pragma omp simd is available in MS Visual Studio
-    #define GB_PRAGMA_SIMD
-    #define GB_PRAGMA_SIMD_REDUCTION(op,s)
-
-#else
-
-    // create two kinds of SIMD pragmas:
-    // GB_PRAGMA_SIMD becomes "#pragma omp simd"
-    // GB_PRAGMA_SIMD_REDUCTION (+,cij) becomes
-    // "#pragma omp simd reduction(+:cij)"
-    #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
-    #define GB_PRAGMA_SIMD_REDUCTION(op,s) GB_PRAGMA (omp simd reduction(op:s))
-
-#endif
-
-// construct pragmas for OpenMP tasks, if available:
-#if GB_HAS_OPENMP_TASKS
-
-    // Use OpenMP tasks
-    #define GB_TASK(func, ...)                          \
-        GB_PRAGMA(omp task firstprivate(__VA_ARGS__))   \
-        func (__VA_ARGS__)
-    #define GB_TASK_WAIT GB_PRAGMA (omp taskwait)
-    #define GB_TASK_LEADER(nthreads)                    \
-        GB_PRAGMA (omp parallel num_threads (nthreads)) \
-        GB_PRAGMA (omp master)
-
-#else
-
-    // OpenMP tasks not available
-    #define GB_TASK(func, ...) func (__VA_ARGS__)
-    #define GB_TASK_WAIT
-    #define GB_TASK_LEADER(nthreads)
-
-#endif
-
-#define GB_PRAGMA_IVDEP GB_PRAGMA(ivdep)
-
-//------------------------------------------------------------------------------
-// PGI_COMPILER_BUG
-//------------------------------------------------------------------------------
-
-// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
-// enabled for a bug in the PGI compiler.  The compiler does not correctly
-// handle automatic arrays of variable size.
-
-#ifdef PGI_COMPILER_BUG
-
-    // override the ANSI C compiler to turn off variable-length arrays
-    #undef  GB_HAS_VLA
-    #define GB_HAS_VLA  0
-
-#endif
-
-//------------------------------------------------------------------------------
-// variable-length arrays
-//------------------------------------------------------------------------------
-
-// If variable-length arrays are not supported, user-defined types are limited
-// in size to 128 bytes or less.  Many of the type-generic routines allocate
-// workspace for a single scalar of variable size, using a statement:
-//
-//      GB_void aij [xsize] ;
-//
-// To support non-variable-length arrays in ANSI C95 or earlier, this is used:
-//
-//      GB_void aij [GB_VLA(xsize)] ;
-//
-// GB_VLA(xsize) is either defined as xsize (for ANSI C99 or later), or a fixed
-// size of 128, in which case user-defined types are limited to a max of 128
-// bytes.
-
-typedef unsigned char GB_void ;
-
-#if ( GB_HAS_VLA )
-
-    // variable-length arrays are allowed
-    #define GB_VLA(s) s
-
-#else
-
-    // variable-length arrays are not allowed
-    #define GB_VLA_MAXSIZE 128
-    #define GB_VLA(s) GB_VLA_MAXSIZE
-
-#endif
-
-//------------------------------------------------------------------------------
-// for coverage tests in Tcov/
-//------------------------------------------------------------------------------
-
-#ifdef GBCOVER
-#define GBCOVER_MAX 20000
-GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
-GB_PUBLIC int GB_cover_max ;
-#endif
-
-//------------------------------------------------------------------------------
-// Accessing the pattern of a matrix or vector
-//------------------------------------------------------------------------------
-
-#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
-#define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
-#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
-
-//------------------------------------------------------------------------------
-// kind of index list, Ikind and Jkind:
-//------------------------------------------------------------------------------
-
-#define GB_ALL 0
-#define GB_RANGE 1
-#define GB_STRIDE 2
-#define GB_LIST 4
-
-#define GB_ASSIGN 0
-#define GB_SUBASSIGN 1
-#define GB_ROW_ASSIGN 2
-#define GB_COL_ASSIGN 3
-
-//------------------------------------------------------------------------------
-// GraphBLAS include files
-//------------------------------------------------------------------------------
-
+#include "GB_dev.h"
+#include "GB_defaults.h"
+#include "GB_compiler.h"
+#include "GB_coverage.h"
+#include "GB_index.h"
 #include "GB_cplusplus.h"
 #include "GB_Global.h"
 #include "GB_printf.h"
@@ -246,27 +44,6 @@ GB_PUBLIC int GB_cover_max ;
 #include "GB_bitwise.h"
 #include "GB_binary_search.h"
 #include "GB_check.h"
-
-//------------------------------------------------------------------------------
-// default options
-//------------------------------------------------------------------------------
-
-// These parameters define the content of values that can be
-// used as inputs to GxB_*Option_set.
-
-// The default format is by row (CSR), with a hyper_switch of 1/16,
-// and a bitmap_switch of 1/8.
-
-#define GB_HYPER_SWITCH_DEFAULT (0.0625)
-#define GB_BITMAP_SWITCH_DEFAULT (0.125)
-
-// compile SuiteSparse:GraphBLAS with "-DBYCOL" to make GxB_BY_COL the default
-// format
-#ifdef BYCOL
-#define GB_FORMAT_DEFAULT GxB_BY_COL
-#else
-#define GB_FORMAT_DEFAULT GxB_BY_ROW
-#endif
 
 //------------------------------------------------------------------------------
 // macros for matrices and vectors
@@ -365,21 +142,8 @@ bool GB_aliased             // determine if A and B are aliased
 ) ;
 
 //------------------------------------------------------------------------------
-// internal GraphBLAS type and operator codes
+// internal GraphBLAS type
 //------------------------------------------------------------------------------
-
-// GB_MAGIC is an arbitrary number that is placed inside each object when it is
-// initialized, as a way of detecting uninitialized objects.
-#define GB_MAGIC  0x72657473786f62ULL
-
-// The magic number is set to GB_FREED when the object is freed, as a way of
-// helping to detect dangling pointers.
-#define GB_FREED  0x6c6c756e786f62ULL
-
-// The value is set to GB_MAGIC2 when the object has been allocated but cannot
-// yet be used in most methods and operations.  Currently this is used only for
-// when A->p array is allocated but not initialized.
-#define GB_MAGIC2 0x7265745f786f62ULL
 
 // predefined type objects
 GB_PUBLIC struct GB_Type_opaque
@@ -1286,9 +1050,6 @@ GrB_Info GB_Semiring_new            // create a semiring
     #define GB_OPENMP_GET_WTIME         (0)
 
 #endif
-
-// by default, give each thread at least 64K units of work to do
-#define GB_CHUNK_DEFAULT (64*1024)
 
 //------------------------------------------------------------------------------
 

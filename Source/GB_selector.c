@@ -443,7 +443,8 @@ GrB_Info GB_selector
         GB_OK (info) ;
 
         if (A->h != NULL)
-        {
+        { 
+GB_GOTCHA ; // out of memory in GB_selector, A hypersparse
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)
             { 
@@ -454,6 +455,7 @@ GB_GOTCHA ; // out of memory in GB_selector, A hypersparse
             }
 
             // copy non-empty vectors from Ah to Ch
+            // TODO: do in parallel
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {

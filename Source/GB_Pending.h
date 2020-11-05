@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Pending.h: data structure and operations for pending tuples
+// GB_Pending.h: operations for pending tuples
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,26 +10,6 @@
 #ifndef GB_PENDING_H
 #define GB_PENDING_H
 #include "GB.h"
-
-//------------------------------------------------------------------------------
-// GB_Pending data structure
-//------------------------------------------------------------------------------
-
-struct GB_Pending_struct    // list of pending tuples for a matrix
-{
-    int64_t n ;         // number of pending tuples to add to matrix
-    int64_t nmax ;      // size of i,j,x
-    bool sorted ;       // true if pending tuples are in sorted order
-    int64_t *i ;        // row indices of pending tuples
-    int64_t *j ;        // col indices of pending tuples; NULL if A->vdim <= 1
-    GB_void *x ;        // values of pending tuples
-    GrB_Type type ;     // the type of s
-    size_t size ;       // type->size
-    GrB_BinaryOp op ;   // operator to assemble pending tuples
-} ;
-
-// initial size of the pending tuples
-#define GB_PENDING_INIT 256
 
 //------------------------------------------------------------------------------
 // GB_Pending functions

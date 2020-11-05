@@ -43,11 +43,11 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_RETURN_IF_FAULTY (Thunk_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_MATRIX_OK (C, "C input for GB_select", GB0) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_select", GB3) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_select", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_select", GB0) ;
-    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB0) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
+    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB3) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_select", GB3) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in for GB_select", GB0) ;
 
     GrB_Matrix T = NULL ;
@@ -81,7 +81,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         }
         else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
         { 
-GB_GOTCHA ; // order not defined for complex types
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for complex types", op->name) ;
         }
