@@ -93,15 +93,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
 
-    // just in case M is jumbled and we don't handle it yet (TODO)
-    GB_MATRIX_WAIT (M) ;
-
     ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot3 cuda A'*B", GB0) ;
 
     ASSERT (!GB_PENDING (M)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ;
 
     ASSERT (!GB_PENDING (A)) ;
@@ -126,15 +123,17 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t *Bucket = NULL;
     int64_t *Bucketp = NULL;
     int64_t *offset = NULL;
+    (*Chandle) = NULL ;
+
+    // just in case M is jumbled and we don't handle it yet (TODO)
+    GB_MATRIX_WAIT (M) ;
+    ASSERT (!GB_JUMBLED (M)) ;
 
     int device = -1;
 
     cudaSetDevice( 0 ) ;
 
     cudaGetDevice(&device);
-
-
-    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // get M
