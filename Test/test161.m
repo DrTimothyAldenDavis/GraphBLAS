@@ -11,7 +11,6 @@ d = 0.05 ;
 semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
 semiring.class = 'double' ;
-GrB.burble (1) ;
 
 for trial = 1:10
     

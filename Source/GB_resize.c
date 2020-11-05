@@ -167,7 +167,6 @@ GrB_Info GB_resize              // change the size of a matrix
             }
             else
             {
-GB_GOTCHA ; // single thread for each vector
                 // use a single thread for each vector
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (j = 0 ; j < vdim_new ; j++)
@@ -228,6 +227,7 @@ GB_GOTCHA ; // single thread for each vector
 
         // convert to hypersparse
         GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+        ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
         // resize the number of sparse vectors
         int64_t *GB_RESTRICT Ah = A->h ;

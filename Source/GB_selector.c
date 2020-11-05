@@ -128,8 +128,8 @@ GrB_Info GB_selector
         // GB_bitmap_selector does not support these opcodes.  For the RESIZE
         // and NONZOMBIE operators, A will never be bitmap.  Full matrices
         // should use another method, but for now the sparse case works fine.
-        // If A is sparse or hypersparse, but packed, then it has no zombies
-        // anyway.
+        // GB_resize when applied to a full matrix only uses GB_selector after
+        // converting A to hypersparse.  A full matrix never has zombies.
         use_bitmap_selector = false ;
     }
     else if (opcode == GB_DIAG_opcode)
@@ -383,7 +383,7 @@ GrB_Info GB_selector
         // transplant C back into A
         //----------------------------------------------------------------------
 
-        // TODO: this is not parallel, and should be its own utility function
+        // TODO: this is not parallel: use GB_hyper_prune
         if (A->h != NULL && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap
@@ -444,18 +444,20 @@ GrB_Info GB_selector
 
         if (A->h != NULL)
         { 
-GB_GOTCHA ; // out of memory in GB_selector, A hypersparse
+
+            //------------------------------------------------------------------
+            // A and C are hypersparse: copy non-empty vectors from Ah to Ch
+            //------------------------------------------------------------------
+
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)
             { 
-GB_GOTCHA ; // out of memory in GB_selector, A hypersparse
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
-            // copy non-empty vectors from Ah to Ch
-            // TODO: do in parallel
+            // TODO: do in parallel: use GB_hyper_prune
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {

@@ -68,6 +68,7 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test166',t) ; % test GxB_select with a dense matrix
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap
 logstat ('test164',t) ; % test dot5 method
 logstat ('test163',t) ; % test C<!M>=A'*B where C and M are sparse
@@ -177,6 +178,7 @@ logstat ('test143',t) ; % mxm, special cases
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
 logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
+logstat ('test134',t) ; % quick test of GxB_select
 
 %----------------------------------------
 % longer tests (200 seconds to 600 seconds)
@@ -193,7 +195,6 @@ if (malloc_debugging)
 end
 
 logstat ('test10',t) ;  % GrB_apply
-logstat ('test134',t) ; % quick test of GxB_select
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
 logstat ('test21',s) ;  % quick test of GB_mex_subassign
 logstat ('test16',t) ;  % user-defined complex operators

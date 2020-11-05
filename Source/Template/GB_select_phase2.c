@@ -19,13 +19,19 @@
     size_t asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
+    // if A is bitmap, the bitmap selector is always used instead
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    #ifndef GB_DIAG_SELECTOR
+    // if A is full, all opcodes except DIAG use the bitmap selector instead
+    ASSERT (!GB_IS_FULL (A)) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // C = select (A)
     //--------------------------------------------------------------------------
 
     int tid ;
-// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
 
@@ -57,7 +63,11 @@
                 GB_GET_J ;
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
-                    int64_t i = GBI (Ai, pA, avlen) ;
+                    // A is never full; that case is now handled by the
+                    // bitmap selector instead.
+                    // int64_t i = GBI (Ai, pA, avlen) ;
+                    ASSERT (Ai != NULL) ;
+                    int64_t i = Ai [pA] ;                        // ok: A sparse
                     if (GB_TEST_VALUE_OF_ENTRY (pA))
                     { 
                         ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ; // ok: C sparse
@@ -77,29 +87,35 @@
                 if (mynz > 0)
                 { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    if (Ai != NULL)
-                    { 
+                    ASSERT (Ai != NULL) ;
+                    // if (Ai != NULL)
+                    {
                         // A and C are both sparse or hypersparse
                         memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     }
+                    #if 0
                     else
                     {
-                        // A is full and C is sparse
+                        // A is full and C is sparse: for triu: the bitmap
+                        // selector is used.  For resize, A is converted to
+                        // hypersparse first.
+                        ASSERT (GB_DEAD_CODE) ;
                         int64_t i_start = pA_start % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
-                        { 
-GB_GOTCHA ; // C=triu(A) or resize, C sparse and A full
+                        {
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
                             Ci [pC+s] = i ;
                         }
                     }
+                    #endif
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
                 }
 
             #elif defined ( GB_DIAG_SELECTOR )
 
                 // task that owns the diagonal entry does this work
+                // A can be sparse or full, but not bitmap
                 int64_t p = Zp [k] ;
                 if (pA_start <= p && p < pA_end)
                 { 
@@ -116,24 +132,27 @@ GB_GOTCHA ; // C=triu(A) or resize, C sparse and A full
                 if (mynz > 0)
                 { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    if (Ai != NULL)
-                    { 
+                    ASSERT (Ai != NULL) ;
+                    // if (Ai != NULL)
+                    {
                         // A and C are both sparse or hypersparse
                         memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     }
+                    #if 0
                     else
                     {
-                        // A is full and C is sparse or hypersparse
+                        // A is full and C is sparse or hypersparse:
+                        // this is now always handled by the bitmap selector
+                        ASSERT (GB_DEAD_CODE) ;
                         int64_t i_start = pA_start % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
-                        { 
-GB_GOTCHA ; // C=offdiag(A), C sparse and A full
+                        {
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, pA_start+s, avlen) == i) ;
                             Ci [pC+s] = i ;
                         }
                     }
-
+                    #endif
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
                     pC += mynz ;
                 }
@@ -145,24 +164,26 @@ GB_GOTCHA ; // C=offdiag(A), C sparse and A full
                 { 
                     ASSERT (pA_start <= p && p < pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    if (Ai != NULL)
-                    { 
+                    ASSERT (Ai != NULL) ;
+                    // if (Ai != NULL)
+                    {
                         // A and C are both sparse or hypersparse
                         memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
                     }
+                    #if 0
                     else
                     {
                         // A is full and C is sparse or hypersparse
+                        ASSERT (GB_DEAD_CODE) ;
                         int64_t i_start = p % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
-                        { 
-GB_GOTCHA ; // C=offdiag(A), C sparse and A full
+                        {
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, p+s, avlen) == i) ;
                             Ci [pC+s] = i ;
                         }
                     }
-
+                    #endif
                     memcpy (Cx +pC*asize, Ax +p*asize, mynz*asize) ;
                 }
 
@@ -175,23 +196,27 @@ GB_GOTCHA ; // C=offdiag(A), C sparse and A full
                 { 
                     ASSERT (pA_start <= p && p + mynz <= pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
-                    if (Ai != NULL)
-                    { 
+                    ASSERT (Ai != NULL) ;
+                    // if (Ai != NULL)
+                    {
                         // A and C are both sparse or hypersparse
                         memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
                     }
+                    #if 0
                     else
                     {
-                        // A is full and C is sparse or hypersparse
+                        // A is full and C is sparse or hypersparse:
+                        // this is now always handled by the bitmap selector
+                        ASSERT (GB_DEAD_CODE) ;
                         int64_t i_start = p % avlen ;
                         for (int64_t s = 0 ; s < mynz ; s++)
-                        { 
-GB_GOTCHA ; // C=tril(A), C sparse and A full
+                        {
                             int64_t i = i_start + s ;
                             ASSERT (GBI (Ai, p+s, avlen) == i) ;
                             Ci [pC+s] = i ;
                         }
                     }
+                    #endif
                     memcpy (Cx +pC*asize, Ax +p*asize, mynz*asize) ;
                 }
 

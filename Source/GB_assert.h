@@ -58,7 +58,7 @@
 
 // for finding tests that trigger statement coverage.  If running a test
 // in GraphBLAS/Tcov, the test does not terminate.
-#if 1
+#if 0
 #ifdef GBTESTCOV
 #define GB_GOTCHA                                                   \
 {                                                                   \

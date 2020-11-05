@@ -9,7 +9,6 @@ semiring.multiply = 'times' ;
 semiring.class = 'double' ;
 
 rng ('default') ;
-GrB.burble (1) ;
 
 n = 1000 ;
 m = 10 ;
@@ -23,4 +22,3 @@ C1 = double (~M) .* (A'*B) ;
 C2 = GB_mex_mxm (Cin, M, [ ], semiring, A, B, dtn) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;

@@ -1,4 +1,4 @@
-function test134
+function test134(short)
 %TEST134 test GxB_select
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,8 +8,16 @@ function test134
 
 fprintf ('\ntest134: GxB_select tests\n') ;
 
+if (nargin < 1)
+    short = false ;
+end
+
 [~, ~, ~, types, ~, select_ops] = GB_spec_opsall ;
 types = types.all ;
+
+if (short)
+    types = { 'double' } ;
+end
 
 rng ('default') ;
 
