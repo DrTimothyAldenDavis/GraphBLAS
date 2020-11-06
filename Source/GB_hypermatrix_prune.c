@@ -34,16 +34,16 @@ GrB_Info GB_hypermatrix_prune
     // count # of empty vectors
     //--------------------------------------------------------------------------
 
-    if (A->nvec_nonempty < 0)           // TODO::OK
+    if (A->nvec_nonempty < 0)
     { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;  // TODO::OK
+        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
     //--------------------------------------------------------------------------
     // prune empty vectors
     //--------------------------------------------------------------------------
 
-    if (A->nvec_nonempty < A->nvec)     // TODO::use
+    if (A->nvec_nonempty < A->nvec)     // A->nvec_nonempty used here
     {
         // create new Ap_new and Ah_new arrays, with no empty vectors
         int64_t *GB_RESTRICT Ap_new = NULL ;
@@ -63,15 +63,10 @@ GrB_Info GB_hypermatrix_prune
         A->h = Ah_new ;
         A->nvec = nvec_new ;
         A->plen = nvec_new ;
-        A->nvec_nonempty = nvec_new ;       // TODO::OK
+        A->nvec_nonempty = nvec_new ;
         A->magic = GB_MAGIC ;
     }
 
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;    // TODO::OK
     return (GrB_SUCCESS) ;
 }
 

@@ -219,7 +219,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;  // TODO::OK
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
         if (C_is_hyper) C->nvec = cnvec ;
     }
 
@@ -302,7 +302,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             }
                             break ;
                         case GB_SECONDI_opcode  : 
-GB_GOTCHA ; // C=kron(A,B) with secondi op
                             // z = second_i(x,B(iB,jB)) == iB
                         case GB_SECONDI1_opcode : 
                             // z = second_i1(x,B(iB,jB)) == iB+1
@@ -316,7 +315,6 @@ GB_GOTCHA ; // C=kron(A,B) with secondi op
                             }
                             break ;
                         case GB_SECONDJ_opcode  : 
-GB_GOTCHA ; // C=kron(A,B) with secondj op
                             // z = second_j(x,B(iB,jB)) == jB
                         case GB_SECONDJ1_opcode : 
                             // z = second_j1(x,B(iB,jB)) == jB+1
@@ -347,7 +345,6 @@ GB_GOTCHA ; // C=kron(A,B) with secondj op
     //--------------------------------------------------------------------------
 
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;    // TODO::OK
 
     //--------------------------------------------------------------------------
     // return result

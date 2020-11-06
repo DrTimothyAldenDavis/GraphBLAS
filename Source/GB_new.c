@@ -129,21 +129,21 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->plen = -1 ;
         A->nvec = vdim ;
         // all vectors present, unless matrix has a zero dimension 
-        A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;      // TODO::OK
+        A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
     }
     else if (A_is_hyper)
     { 
         // A is hypersparse
         A->plen = GB_IMIN (plen, vdim) ;
         A->nvec = 0 ;                   // no vectors present
-        A->nvec_nonempty = 0 ;          // TODO::OK
+        A->nvec_nonempty = 0 ;
     }
     else
     { 
         // A is sparse
         A->plen = vdim ;
         A->nvec = vdim ;                // all vectors present
-        A->nvec_nonempty = 0 ;          // TODO::OK
+        A->nvec_nonempty = 0 ;
     }
 
     A->p = NULL ;

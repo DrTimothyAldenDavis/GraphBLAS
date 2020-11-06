@@ -36,7 +36,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C
     ASSERT (GB_JUMBLED_OK (A)) ;    // if A is jumbled, then C is jumbled
-    ASSERT (!GB_PENDING (A)) ;      // pending tuples may not appear in A
+    ASSERT (!GB_PENDING (A)) ;      // TODO:FIXME allow for this
 
     // C is about to be cleared, any pending work is OK
     ASSERT (C != NULL) ;
@@ -78,9 +78,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
-    ASSERT (A->nvec_nonempty == -1 ||                               // TODO::OK
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;    // TODO::OK
-    C->nvec_nonempty = A->nvec_nonempty ;                           // TODO::OK
+    C->nvec_nonempty = A->nvec_nonempty ;
 
     // C->hyper_switch is not modified by the transplant
 

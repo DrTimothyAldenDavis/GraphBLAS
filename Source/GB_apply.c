@@ -173,7 +173,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (op2 != NULL && GB_NNZ (scalar) != 1)
     { 
-GB_GOTCHA ; // bind2 with sparse GxB_Scalar
         // the scalar entry must be present
         GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
     }
@@ -284,7 +283,6 @@ GB_GOTCHA ; // bind2 with sparse GxB_Scalar
         }
         else if (op2 != NULL)
         { 
-// GB_GOTCHA ; // op2 with T in CSR format, gbtest23
             op2 = GB_positional_binop_ijflip (op2) ;
             opcode = op2->opcode ;
         }

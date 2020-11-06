@@ -33,7 +33,6 @@ void GB_memset                  // parallel memset
     }
     else
     {
-GB_GOTCHA ; // parallel memset
 
         //----------------------------------------------------------------------
         // memset using multiple threads
@@ -42,7 +41,6 @@ GB_GOTCHA ; // parallel memset
         size_t nchunks = 1 + (n / GB_MEM_CHUNK) ;
         if (((size_t) nthreads) > nchunks)
         { 
-GB_GOTCHA ; // parallel memset
             nthreads = (int) nchunks ;
         }
         GB_void *pdest = (GB_void *) dest ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jappend.h: definitions of GB_jstartup, GB_jappend, and GB_jwrapup
+// GB_jappend.h: definitions of GB_jappend, and GB_jwrapup
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,40 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// These methods are now only used by GB_Matrix_wait.
+
 #ifndef GB_JAPPEND_H
 #define GB_JAPPEND_H
 #include "GB.h"
-
-//------------------------------------------------------------------------------
-// GB_jstartup:  start the formation of a matrix
-//------------------------------------------------------------------------------
-
-// GB_jstartup is used with GB_jappend and GB_jwrapup to create the
-// hyperlist and vector pointers of a new matrix, one at a time.
-
-// GB_jstartup logs the start of C(:,0); it also acts as if it logs the end of
-// the sentinal vector C(:,-1).
-
-#if 0
-static inline void GB_jstartup          // no longer used in v3.2.0
-(
-    GrB_Matrix C,           // matrix to start creating
-    int64_t *jlast,         // last vector appended, set to -1
-    int64_t *cnz,           // set to zero
-    int64_t *cnz_last       // set to zero
-)
-{
-    C->p [0] = 0 ;          // log the start of C(:,0)  // ok: not used
-    (*cnz) = 0 ;            //
-    (*cnz_last) = 0 ;
-    (*jlast) = -1 ;         // last sentinal vector is -1
-    if (C->h != NULL)
-    {
-        C->nvec = 0 ;       // clear existing vectors from C
-    }
-    C->nvec_nonempty = 0 ;  // TODO::OK, not used here (method disabled)
-}
-#endif
 
 //------------------------------------------------------------------------------
 // GB_jappend:  append a new vector to the end of a matrix
@@ -83,7 +54,7 @@ static inline GrB_Info GB_jappend
     }
 
     // one more non-empty vector
-    C->nvec_nonempty++ ;        // TODO::OK
+    C->nvec_nonempty++ ;
 
     if (C->h != NULL)
     { 

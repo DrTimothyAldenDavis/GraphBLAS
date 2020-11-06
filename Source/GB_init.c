@@ -105,7 +105,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
     #if GB_HAS_MKL_GRAPH
-    printf ("MKL version: %d\n", GB_INTEL_MKL_VERSION) ;
     // also set the MKL allocator functions
     i_malloc  = malloc_function ;
     i_calloc  = calloc_function ;
@@ -182,7 +181,6 @@ GrB_Info GB_init            // start up GraphBLAS
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
         if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
-        fprintf (stderr, "gpu_count: %d\n", gpu_count) ;
         for (int device = 0 ; device < 1 /* HACK: gpu_count */ ; device++)
         {
             // query the GPU and then warm it up
@@ -194,9 +192,6 @@ GrB_Info GB_init            // start up GraphBLAS
             {
                 return (GrB_PANIC) ;
             }
-            fprintf (stderr, "gpu %d memory %g Gbytes, %d SMs\n", device,
-                ((double) GB_Global_gpu_memorysize_get (device)) / 1e9,
-                GB_Global_gpu_sm_get (device)) ;
         }
         // make GPU 0 the default device
         GB_cuda_set_device( 0 );

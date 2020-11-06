@@ -183,8 +183,11 @@ for problem = 0:2
     end
 
     C2 = GB_mex_assign (Corig, Work2) ;
-
     GB_spec_compare (C2, C3) ;
+
+    C2 = GB_mex_assign (Corig, Work2, 2) ;
+    GB_spec_compare (C2, C3) ;
+
 end
 
 if (debug_status)

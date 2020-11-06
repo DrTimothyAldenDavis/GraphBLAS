@@ -599,7 +599,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // C->p = 0:anz and C->i = zeros (1,anz), newly allocated
         C->plen = anz ;
         C->nvec = anz ;
-        C->nvec_nonempty = anz ;        // TODO::OK
+        C->nvec_nonempty = anz ;
         C->i = Ci ;
         C->p = Cp ;
         // fill the vector pointers C->p

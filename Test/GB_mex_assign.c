@@ -34,7 +34,8 @@
 }
 
 #define GET_DEEP_COPY \
-    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
+    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ; \
+    GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ;
 
 #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
@@ -50,6 +51,7 @@ bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
 GrB_Info assign (void) ;
+int sparsity_control = GxB_AUTO_SPARSITY ;
 
 GrB_Info many_assign
 (
@@ -445,9 +447,17 @@ void mexFunction
 
     // check inputs
     if (nargout > 1 || !
-        (nargin == 2 || nargin == 6 || nargin == 7 || nargin == 8))
+        (nargin == 2 || nargin == 3 || nargin == 6 || nargin == 7 ||
+         nargin == 8))
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
+    }
+
+    // get sparsity control if present
+    if (nargin == 2 || nargin == 3)
+    {
+        GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
+        printf ("sparsity_control: %d\n", sparsity_control) ;
     }
 
     //--------------------------------------------------------------------------
@@ -461,7 +471,7 @@ void mexFunction
         mexErrMsgTxt ("C failed") ;
     }
 
-    if (nargin == 2)
+    if (nargin == 2 || nargin == 3)
     {
 
         //----------------------------------------------------------------------

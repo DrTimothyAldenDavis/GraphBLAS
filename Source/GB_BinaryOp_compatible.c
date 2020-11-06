@@ -92,7 +92,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     // result of binary operator of op->ztype is cast to C
     //--------------------------------------------------------------------------
 
-    if (ctype != NULL && !GB_Type_compatible (ctype, op->ztype))
+    if (!GB_Type_compatible (ctype, op->ztype))
     { 
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Incompatible type for z=%s(x,y):\n"

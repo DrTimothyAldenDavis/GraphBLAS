@@ -483,7 +483,7 @@ GrB_Info GB_assign_prep
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
                     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C<!>=A, no mask, but complemented, col assign to bitmap
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         int scalar_unused = 0 ;
@@ -500,6 +500,7 @@ GB_GOTCHA ;
                     }
                     else
                     { 
+// GB_GOTCHA ; // C<!>=A, no mask, but complemented, col assign to sparse
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_assign_zombie1 (C, J [0], Context) ;
@@ -567,7 +568,8 @@ GB_GOTCHA ;
         ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
         (*done) = true ;
         GB_FREE_ALL ;
-        (*Chandle) = C ;            // C is C_in or C2
+        ASSERT (C == C_in) ;
+        (*Chandle) = C ;
         return (GB_block (C, Context)) ;
     }
 
@@ -732,10 +734,10 @@ GB_GOTCHA ;
     // matches the behavior in MATLAB, so the following holds:
 
     /*
-        C2 = C ;
-        C2 (I,J) = A ;
+        C4 = C ;
+        C4 (I,J) = A ;
         C3 = subassign (C, I, J, A) ;
-        assert (isequal (C2, C3)) ;
+        assert (isequal (C4, C3)) ;
     */
 
     // That is, the pre-sort of I, J, and A has no effect on the final C, in
@@ -998,6 +1000,7 @@ GB_GOTCHA ;
     }
     else
     { 
+        // test19, test19b
 
         //----------------------------------------------------------------------
         // prior pending tuples exist: check if action: ( delete ) can occur
@@ -1008,14 +1011,13 @@ GB_GOTCHA ;
         // Thus all prior pending tuples must be assembled first if
         // action: ( delete ) can occur.
 
-        if (C_replace)
+        if (*C_replace)
         { 
             // C_replace must use the action: ( delete )
             wait = true ;
         }
         else if (accum == NULL)
         { 
-GB_GOTCHA ;
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
             // A is completely dense and if there is no mask M, then C(I,J)=A
@@ -1023,15 +1025,15 @@ GB_GOTCHA ;
 
             if (M == NULL && GB_is_dense (A))
             { 
-GB_GOTCHA ;
                 // A is a dense matrix, so entries cannot be deleted
                 wait = false ;
             }
             else
             { 
-GB_GOTCHA ;
                 // A is sparse or M is present.
                 // In this case, action: ( delete ) might occur
+                // TODO: don't assemble pending tuples unless a deletion
+                // actually occurs.  Postpone this decision.
                 wait = true ;
             }
         }
@@ -1042,7 +1044,6 @@ GB_GOTCHA ;
 
         if (!wait)
         { 
-GB_GOTCHA ;
 
             // ( delete ) will not occur, but new pending tuples may be added
             // via the action: ( insert ).  Check if the accum operator is the
@@ -1054,7 +1055,6 @@ GB_GOTCHA ;
 
             if (atype != C->Pending->type)
             { 
-GB_GOTCHA ;
                 // entries in A are copied directly into the list of pending
                 // tuples for C, with no typecasting.  The type of the prior
                 // pending tuples must match the type of A.  Since the types
@@ -1073,7 +1073,6 @@ GB_GOTCHA ;
                   )
             )
             { 
-GB_GOTCHA ;
                 wait = true ;
             }
         }
@@ -1127,7 +1126,6 @@ GB_GOTCHA ;
 
     if (C->Pending != NULL)
     { 
-GB_GOTCHA ; // C->Pending not NULL???
         C->Pending->op = accum ;
     }
 

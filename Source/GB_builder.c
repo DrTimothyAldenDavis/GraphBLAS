@@ -56,13 +56,6 @@
 // all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
 // does O(e/p) reads/writes per thread.
 
-// For GrB_reduce_to_vector: like GrB_Vector_build, but many duplicates are
-// likely, and the indices will not be sorted.  The input is always a single
-// vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
-// I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
-// does O(e/p) read/writes.  Step 4 takes no time.  Step 5 does O(e/p)
-// read/writes per thread.
-
 // For GB_Matrix_wait:  the pending tuples are provided as I_work, J_work, and
 // S_work, so Step 1 is skipped (no need to check for invalid indices).  The
 // input J_work may be null (vdim can be anything, since GB_Matrix_wait is used
@@ -312,7 +305,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-// GB_GOTCHA ; by gbtest9:  GrB_build with nvals == 0
+
             // nothing to do
 
         }
@@ -905,7 +898,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     }
 
     // log the end of the last vector
-    T->nvec_nonempty = tnvec ;                  // TODO::OK
+    T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
     Tp [tnvec] = tnz ;  // ok: T is hypersparse
     ASSERT (T->nvec == T->plen) ;
@@ -1128,7 +1121,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-// GB_GOTCHA ; by gbtest9:  GrB_build with nvals == 0
+
             // nothing to do
 
         }

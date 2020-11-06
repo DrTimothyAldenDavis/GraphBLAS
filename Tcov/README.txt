@@ -30,7 +30,7 @@ To remove all compiled files, type this in the Unix/Linux shell:
 
 Or, delete these files manually:
 
-    *.o *.obj *.mex* cover_*.c errlog.txt grbstat.mat tmp*/*
+    *.o *.obj *.mex* cover_*.c errlog*.txt grbstat.mat tmp*/*
 
 To also remove the log.txt file:
 

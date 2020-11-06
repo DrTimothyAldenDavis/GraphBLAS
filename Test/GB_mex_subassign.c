@@ -56,7 +56,8 @@
 #define GET_DEEP_COPY                                                   \
 {                                                                       \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
-    if (nargin > 2 && mxIsChar (pargin [1]))                            \
+    GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ; \
+    if (nargin > 3 && mxIsChar (pargin [1]))                            \
     {                                                                   \
         M = GB_mx_alias ("M", pargin [1], "C", C, "A", A) ;             \
     }                                                                   \
@@ -87,6 +88,7 @@ GrB_Info info = GrB_SUCCESS ;
 GrB_Monoid reduce = NULL ;
 GrB_BinaryOp op = NULL ;
 bool user_complex = false ;
+int sparsity_control = GxB_AUTO_SPARSITY ;
 
 GrB_Info assign (GB_Context Context) ;
 
@@ -470,14 +472,19 @@ void mexFunction
     reduce = NULL ;
 
     GB_CONTEXT (USAGE) ;
-    if (!((nargout == 1 && (nargin == 2 || nargin == 6 || nargin == 7)) ||
+    if (!((nargout == 1 && (nargin == 2 || nargin == 3 ||
+            nargin == 6 || nargin == 7)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    if (nargin == 2)
+    if (nargin == 2 || nargin == 3)
     {
+
+        // get sparsity control if present
+        GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
+
         // get C (deep copy)
         GET_DEEP_COPY ;
         if (C == NULL)
@@ -529,7 +536,6 @@ void mexFunction
         //----------------------------------------------------------------------
         // C(I,J)<M> = A, with a single assignment
         //----------------------------------------------------------------------
-
 
         // get M (shallow copy)
         if (!mxIsChar (pargin [1]))

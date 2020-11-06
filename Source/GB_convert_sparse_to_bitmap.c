@@ -90,8 +90,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     { 
         // if done in-place, this work is skipped since all of Ab will
         // be set below
-        int nthreads = GB_nthreads (anzmax + anvec, chunk, nthreads_max) ;
-        GB_memset (Ab, 0, anzmax, nthreads) ;
+        GB_memset (Ab, 0, anzmax, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -135,14 +134,14 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // the sparse A has all entries: convert in-place
         //----------------------------------------------------------------------
 
-        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         if (nzombies == 0)
         { 
             // set all of Ab [0..anz-1] to 1, in parallel
-            GB_memset (Ab, 1, anz, nthreads) ;
+            GB_memset (Ab, 1, anz, nthreads_max) ;
         }
         else
         { 
+            int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             const int64_t *GB_RESTRICT Ai = A->i ;
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -253,7 +252,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     A->plen = -1 ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;       // TODO::OK
+    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
 
     A->magic = GB_MAGIC ;
 

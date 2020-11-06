@@ -229,6 +229,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*Chandle) = C ;
+    (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;
 }
 

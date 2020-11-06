@@ -93,8 +93,9 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (done)
     { 
         // GB_assign_prep has handle the entire assignment itself
-        ASSERT_MATRIX_OK (C, "Final C for subassign", GB0) ;
-        return (GB_block (C, Context)) ;
+        ASSERT (C == C_in) ;
+        ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -120,6 +121,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (C == C2)
     { 
         // zombies can be transplanted into C_in but pending tuples cannot
+        // TODO: allow for pending tuples to be transplanted
         GB_MATRIX_WAIT_IF_PENDING (C) ;
         // transplants the content of C into C_in and frees C
         GB_OK (GB_transplant (C_in, C_in->type, &C, Context)) ;

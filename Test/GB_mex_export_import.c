@@ -233,7 +233,17 @@ GrB_Info export_import
             OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
 
-        default : mexErrMsgTxt ("invalid format") ;
+        //----------------------------------------------------------------------
+        case 9 :    // to control == 11, then bitmap
+        //----------------------------------------------------------------------
+
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL,
+               GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL)) ;
+            OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL)) ;
+            break ;
+
+        default : mexErrMsgTxt ("invalid mtx format") ;
     }
 
     //--------------------------------------------------------------------------
@@ -376,7 +386,7 @@ GrB_Info export_import
             break ;
 
 
-        default : mexErrMsgTxt ("invalid format") ;
+        default : mexErrMsgTxt ("invalid export format") ;
     }
 
     return (GrB_SUCCESS) ;
@@ -434,6 +444,7 @@ GrB_Info vector_export_import
 
         //----------------------------------------------------------------------
         case 6 :    // bitmapC
+        case 9 :    // bitmapC
         //----------------------------------------------------------------------
 
             OK (GxB_Vector_Option_set_((GrB_Vector) C,

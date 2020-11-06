@@ -211,13 +211,12 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->p = Ap_new ;
         A->h = NULL ;
         A->nvec = n ;
-        A->nvec_nonempty = nvec_nonempty ;      // TODO::OK
+        A->nvec_nonempty = nvec_nonempty ;
         A->plen = n ;
         A->p_shallow = false ;
         A->h_shallow = false ;
         A->magic = GB_MAGIC ;
         ASSERT (anz == GB_NNZ (A)) ;
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
 
         //----------------------------------------------------------------------
         // A is now sparse

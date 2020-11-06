@@ -752,6 +752,7 @@
                 else if (B_is_bitmap)
                 {
 
+
                     //----------------------------------------------------------
                     // Method11: B(:,j) bitmap; A(:,j) sparse, M bitmap/full
                     //----------------------------------------------------------
@@ -781,6 +782,7 @@
                 }
                 else if (adense && bdense)
                 {
+
 
                     //----------------------------------------------------------
                     // Method12: A(:,j) and B(:,j) dense, M bitmap/full
@@ -813,6 +815,7 @@
                 else if (adense)
                 {
 
+
                     //----------------------------------------------------------
                     // Method13: A(:,j) dense, B(:,j) sparse, M bitmap/full
                     //----------------------------------------------------------
@@ -839,6 +842,7 @@
                 }
                 else if (bdense)
                 {
+
 
                     //----------------------------------------------------------
                     // Method14: A(:,j) sparse, B(:,j) dense, M bitmap/full
@@ -883,7 +887,6 @@
                             GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                             if (found)
                             { 
-GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) >> nnz(B(:,j))
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -924,7 +927,6 @@ GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) >> nnz(B(:,j))
                             GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                             if (found)
                             { 
-GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) << nnz(B(:,j))
                                 // C (i,j) = A (i,j) .* B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -960,13 +962,11 @@ GB_GOTCHA ; // C<M>=A.*B, C sparse, M bitmap/full, nnz(A(:,j)) << nnz(B(:,j))
                         int64_t iB = Bi [pB] ;              // ok: B is sparse
                         if (iA < iB)
                         { 
-GB_GOTCHA ; // C<M>A.*B, C sparse, M bitmap/full
                             // A(i,j) exists but not B(i,j)
                             pA++ ;
                         }
                         else if (iB < iA)
                         { 
-GB_GOTCHA ; // C<M>A.*B, C sparse, M bitmap/full
                             // B(i,j) exists but not A(i,j)
                             pB++ ;
                         }

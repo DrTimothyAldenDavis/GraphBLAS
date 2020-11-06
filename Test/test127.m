@@ -108,7 +108,6 @@ for k1 = 1:length (types)
 
         fprintf (' %s', binop) ;
 
-        % for A_is_hyper = 0 % 0:1
         for A_sparsity_control = 0:1
         for A_is_csc   = 0 % 0:1
         for B_sparsity_control = 0:1
@@ -390,6 +389,18 @@ for k1 = 1:length (types)
         C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, AT, BT, dtt);
         C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, AT, BT, dtt);
         GB_spec_compare (C0, C1, 0, tol) ;
+
+        %---------------------------------------
+        % A.*B, with mask complemented
+        %---------------------------------------
+
+        C0 = GB_spec_Matrix_eWiseMult (C, Mask, [ ], op, A, B, dnn_notM);
+        C1 = GB_mex_Matrix_eWiseMult  (C, Mask, [ ], op, A, B, dnn_notM);
+        GB_spec_compare (C0, C1, 0, tol) ;
+
+        w0 = GB_spec_Vector_eWiseMult (w, mask, [ ], op, u, v, dnn_notM);
+        w1 = GB_mex_Vector_eWiseMult  (w, mask, [ ], op, u, v, dnn_notM);
+        GB_spec_compare (w0, w1, 0, tol) ;
 
 
         end

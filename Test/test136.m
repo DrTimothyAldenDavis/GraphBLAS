@@ -102,4 +102,7 @@ end
 C2 = GB_mex_subassign  (C, Work2) ;
 GB_spec_compare (C1, C2) ;
 
+C2 = GB_mex_subassign  (C, Work2, 2) ;
+GB_spec_compare (C1, C2) ;
+
 fprintf ('test136: all tests passed\n') ;

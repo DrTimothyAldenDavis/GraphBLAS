@@ -213,7 +213,7 @@ GrB_Info GB_resize              // change the size of a matrix
         A->vlen = vlen_new ;
         A->nzmax = nzmax_new ;
         A->nvec = vdim_new ;
-        A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;     // TODO::OK
+        A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
         ASSERT_MATRIX_OK (A, "A bitmap/full shrunk", GB0) ;
         return (GrB_SUCCESS) ;
 
@@ -258,7 +258,7 @@ GrB_Info GB_resize              // change the size of a matrix
         { 
             // number of vectors is decreasing, need to count the new number of
             // non-empty vectors: done during pruning or by selector, below.
-            A->nvec_nonempty = -1 ;         // TODO::OK, recomputed below
+            A->nvec_nonempty = -1 ;
         }
 
         //----------------------------------------------------------------------

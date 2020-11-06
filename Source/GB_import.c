@@ -119,7 +119,7 @@ GrB_Info GB_import      // import a matrix in any format
 
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;
-            (*A)->nvec_nonempty = -1 ;      // TODO::OK, import
+            (*A)->nvec_nonempty = -1 ;
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             break ;

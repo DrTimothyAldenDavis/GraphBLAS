@@ -68,6 +68,11 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test172',t) ; % test eWiseMult with M bitmap/full
+logstat ('test171',t) ; % test conversion and GB_memset
+logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
+logstat ('test169',t) ; % test C<!M>=A+B with C sparse, M hyper, A and B sparse
+logstat ('test168',t) ; % test C=A+B with C and B full, A bitmap
 logstat ('test167',t) ; % test C<M>=A*B with very sparse M, different types
 logstat ('test166',t) ; % test GxB_select with a dense matrix
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap

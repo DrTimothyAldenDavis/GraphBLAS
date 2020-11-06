@@ -10,9 +10,9 @@ fprintf ('\ntest104: export/import tests\n') ;
 for m = [0 1 5 100]
     for n = [0 1 5 100]
         if (n == 1)
-            fmts = [-8:-1 1:8] ;
+            fmts = [-9:-1 1:9] ;
         else
-            fmts = [1:8] ;
+            fmts = [1:9] ;
         end
         for d = [0 0.1 0.5 inf]
             A = GB_spec_random (m, n, d) ;

@@ -45,7 +45,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
 
     A->plen = 0 ;
     A->nvec = 0 ;
-    A->nvec_nonempty = 0 ;      // TODO::OK
+    A->nvec_nonempty = 0 ;
 
     //--------------------------------------------------------------------------
     // set the status to invalid

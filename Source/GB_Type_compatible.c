@@ -11,7 +11,7 @@
 // types (of any kind) or if both are the same user-defined type.
 
 #include "GB.h"
- 
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_Type_compatible             // check if two types can be typecast
 (
@@ -19,12 +19,9 @@ bool GB_Type_compatible             // check if two types can be typecast
     const GrB_Type btype
 )
 {
-
     if (atype == NULL || btype == NULL)
     { 
-GB_GOTCHA ; // atype or btype NULL
-        // built-in positional ops have null op->[xy]type, and are compatible
-        // with anything.  TODO: FIXME.
+        // the op ignores its inputs
         return (true) ;
     }
     else if (atype->code == GB_UDT_code || btype->code == GB_UDT_code)

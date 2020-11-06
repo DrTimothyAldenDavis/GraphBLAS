@@ -58,7 +58,6 @@
     }
     else if (M_is_sparse_or_hyper)
     { 
-GB_GOTCHA ; // C<!M>=A.*B with C bitmap, M sparse, A and B bitmap/full (LARGE)
 
         //----------------------------------------------------------------------
         // C is bitmap, M is sparse or hyper

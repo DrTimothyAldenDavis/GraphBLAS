@@ -80,18 +80,18 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB2) ;
+    ASSERT_MATRIX_OK (A, "A for emult phase2", GB2) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult phase2", GB2) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB2) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -146,7 +146,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // transplant Cp into C as the vector pointers, from GB_emult_phase1.
     if (C_is_sparse_or_hyper)
     { 
-        C->nvec_nonempty = Cnvec_nonempty ;     // TODO::OK
+        C->nvec_nonempty = Cnvec_nonempty ;
         C->p = (int64_t *) Cp ;
     }
 
@@ -214,7 +214,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         if (info == GrB_OUT_OF_MEMORY)
         { 
-GB_GOTCHA ; // emult phase2 out of memory (see GB_SLICE_MATRIX, bitmap case)
             // out of memory
             GB_FREE_ALL ;
             return (info) ;
@@ -387,7 +386,7 @@ GB_GOTCHA ; // emult phase2 out of memory (see GB_SLICE_MATRIX, bitmap case)
 
     if (C_is_hyper)
     { 
-        C->nvec_nonempty = -1 ;     // TODO::OK, recomputed below
+        C->nvec_nonempty = -1 ;
         GB_OK (GB_hypermatrix_prune (C, Context)) ;
     }
 
@@ -397,7 +396,7 @@ GB_GOTCHA ; // emult phase2 out of memory (see GB_SLICE_MATRIX, bitmap case)
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB2) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

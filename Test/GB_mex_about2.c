@@ -11,6 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "GB_ij.h"
 
 #define USAGE "GB_mex_about2"
 
@@ -27,6 +28,7 @@ void mexFunction
     GrB_Matrix A = NULL, B = NULL, C = NULL ;
     GxB_Scalar scalar = NULL ;
     GrB_Vector victor = NULL ;
+    GrB_Descriptor desc = NULL ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -125,6 +127,196 @@ void mexFunction
     GB_FREE (Slice) ;
 
     GrB_Matrix_free_(&A) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_Matrix_check
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GrB_Matrix_assign_INT32 (A, NULL, NULL, 3, GrB_ALL, n, GrB_ALL, n,
+        NULL)) ;
+    OK (GrB_Matrix_wait (&A)) ;
+    OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
+    // mangle the matrix
+    GB_FREE (A->p) ;
+    GB_FREE (A->x) ;
+    expected = GrB_INVALID_OBJECT ;
+    ERR (GxB_Matrix_fprint (A, "invalid sparse matrix", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    A->sparsity = 999 ;
+    ERR (GxB_Matrix_fprint (A, "invalid sparsity control", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Matrix_assign_INT32 (A, NULL, NULL, 3, GrB_ALL, n, GrB_ALL, n,
+        NULL)) ;
+    OK (GrB_Matrix_wait (&A)) ;
+
+    A->jumbled = true ;
+    ERR (GxB_Matrix_fprint (A, "full matrix cannot be jumbled", GxB_SHORT,
+        NULL)) ;
+
+    A->jumbled = false ;
+    A->plen = 999 ;
+    ERR (GxB_Matrix_fprint (A, "invalid full matrix", GxB_SHORT, NULL)) ;
+
+    A->plen = -1 ;
+    A->nzombies = 1 ;
+    ERR (GxB_Matrix_fprint (A, "full matrix cannot have zombies",
+        GxB_SHORT, NULL)) ;
+    A->nzombies = 0 ;
+    CHECK (GB_Pending_alloc (&(A->Pending), GrB_INT32, NULL, true, 4)) ;
+    ERR (GxB_Matrix_fprint (A, "full matrix cannot have pending tuples",
+        GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    A->plen = 999 ;
+    ERR (GxB_Matrix_fprint (A, "invalid bitmap", GxB_SHORT, NULL)) ;
+
+    A->plen = -1 ;
+    A->b [0] = 1 ;
+    ERR (GxB_Matrix_fprint (A, "invalid bitmap", GxB_SUMMARY, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    OK (GrB_Matrix_setElement_INT32 (A, 12345, 0, 0)) ;
+    OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
+    A->b [0] = 3 ;
+    ERR (GxB_Matrix_fprint (A, "invalid bitmap", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    A->nvec_nonempty = 2 ;
+    ERR (GxB_Matrix_fprint (A, "invalid nvec_nonempty", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Matrix_setElement_INT32 (A, 12345, 0, 0)) ;
+    OK (GxB_Matrix_fprint (A, "valid matrix with 1 pending", GxB_SHORT, NULL)) ;
+    A->Pending->size = 900 ;
+    ERR (GxB_Matrix_fprint (A, "invalid pending type", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    //--------------------------------------------------------------------------
+    // lo:stride:hi with stride of zero
+    //--------------------------------------------------------------------------
+
+    OK (GxB_Global_Option_set_(GxB_BURBLE, true)) ;
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    GrB_Index I [3] = { 1, 1, 0 } ;
+    OK (GrB_Matrix_new (&C, GrB_INT32, n, 0)) ;
+    OK (GrB_Matrix_extract_(C, NULL, NULL, A, GrB_ALL, n, I, GxB_STRIDE,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C = A (:,1:0:1)", GxB_COMPLETE, NULL)) ;
+    GrB_Matrix_free_(&C) ;
+    OK (GrB_Matrix_new (&C, GrB_INT32, 0, n)) ;
+    OK (GrB_Matrix_extract_(C, NULL, NULL, A, I, GxB_STRIDE, GrB_ALL, n,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C = A (1:0:1,:)", GxB_COMPLETE, NULL)) ;
+    GrB_Matrix_free_(&C) ;
+    GrB_Matrix_free_(&A) ;
+    OK (GxB_Global_Option_set_(GxB_BURBLE, false)) ;
+
+    int64_t Icolon [3] = { 1, 1, 0 } ;
+    CHECK (!GB_ij_is_in_list (NULL, 0, 0, GB_STRIDE, Icolon)) ;
+
+    //--------------------------------------------------------------------------
+    // GB_aliased
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Matrix_setElement_INT32 (A, 12345, 0, 0)) ;
+    OK (GrB_Matrix_dup (&C, A)) ;
+    CHECK (!GB_aliased (A, C)) ;
+    GB_FREE (C->p) ;
+    C->p = A->p ;
+    C->p_shallow = true ;
+    CHECK (GB_aliased (A, C)) ;
+    C->p = NULL ;
+    C->p_shallow = false ;
+    CHECK (!GB_aliased (A, C)) ;
+    GB_FREE (C->i) ;
+    C->i = A->i ;
+    C->i_shallow = true ;
+    CHECK (GB_aliased (A, C)) ;
+    C->i = NULL ;
+    C->i_shallow = false ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_apply with empty scalar
+    //--------------------------------------------------------------------------
+
+    OK (GxB_Scalar_new (&scalar, GrB_INT32)) ;
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Matrix_new (&C, GrB_INT32, n, n)) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Matrix_apply_BinaryOp2nd (C, NULL, NULL, GrB_PLUS_INT32, A,
+        scalar, NULL)) ;
+    OK (GrB_Matrix_error (&message, C)) ;
+    printf ("error expected: %s\n", message) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+    GxB_Scalar_free_(&scalar) ;
+
+    //--------------------------------------------------------------------------
+    // invalid descriptor
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Descriptor_new (&desc)) ;
+    OK (GxB_Descriptor_fprint (desc, "descriptor", GxB_COMPLETE, NULL)) ;
+    desc->mask = GrB_REPLACE ;
+    expected = GrB_INVALID_OBJECT ;
+    ERR (GxB_Descriptor_fprint (desc, "invalid", GxB_COMPLETE, NULL)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_build an empty matrix
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Matrix_build_INT32 (A, I, I, I, 0, GrB_PLUS_INT32)) ;
+    OK (GxB_Matrix_fprint (A, "empty", GxB_COMPLETE, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GrB_Matrix_build_INT32 (A, I, I, I, 0, GxB_FIRSTI_INT32)) ;
+    OK (GrB_Matrix_error (&message, A)) ;
+    printf ("error expected: %s\n", message) ;
+    GrB_Matrix_free_(&A) ;
+
+    //--------------------------------------------------------------------------
+    // bitmap switch get/set
+    //--------------------------------------------------------------------------
+
+    GB_Global_bitmap_switch_set (0.5) ;
+    float s = GB_Global_bitmap_switch_get ( ) ;
+    CHECK (s == 0.5) ;
+    GB_Global_bitmap_switch_set (GB_BITMAP_SWITCH_DEFAULT) ;
+    s = GB_Global_bitmap_switch_get ( ) ;
+    CHECK (s == GB_BITMAP_SWITCH_DEFAULT) ;
+
+    //--------------------------------------------------------------------------
+    // reduce with positional op
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Vector_new (&victor, GrB_INT32, n)) ;
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GrB_Matrix_reduce_BinaryOp (victor, NULL, NULL, GxB_FIRSTI_INT32,
+        A, NULL)) ;
+    OK (GrB_Matrix_error (&message, victor)) ;
+    printf ("error expected: %s\n", message) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Vector_free_(&victor) ;
 
     //--------------------------------------------------------------------------
     // wrapup

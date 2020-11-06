@@ -302,7 +302,6 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             }
             else if (is_bitmap)
             { 
-// GB_GOTCHA ; by gbtest10: A->sparsity == 11 (hyper/sparse/full), with A bitmap
                 // if bitmap: to sparse
                 GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
                 // conform between sparse and hypersparse

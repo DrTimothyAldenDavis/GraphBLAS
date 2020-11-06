@@ -73,9 +73,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->plen = A->plen ;                 // C and A have the same hyperlist size
     C->nvec = A->nvec ;
     C->jumbled = A->jumbled ;
-    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
-    C->nvec_nonempty = A->nvec_nonempty ;   // TODO::OK
+    C->nvec_nonempty = A->nvec_nonempty ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

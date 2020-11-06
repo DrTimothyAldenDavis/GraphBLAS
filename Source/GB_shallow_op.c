@@ -106,8 +106,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->h = A->h ;                       // C->h is of size A->plen
     C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
-    ASSERT (A->nvec_nonempty == -1 ||   // TODO::OK
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;    // TODO::OK
     C->nvec_nonempty = A->nvec_nonempty ;
     C->nvals = A->nvals ;               // if A bitmap 
     C->magic = GB_MAGIC ;

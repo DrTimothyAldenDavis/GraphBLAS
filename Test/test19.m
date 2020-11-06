@@ -150,8 +150,11 @@ for problem = 0:2
     end
 
     C2 = GB_mex_subassign (Corig, Work2) ;
-
     GB_spec_compare (C2, C3) ;
+
+    C2 = GB_mex_subassign (Corig, Work2, 2) ;
+    GB_spec_compare (C2, C3) ;
+
 end
 
 fprintf ('\ntest19: all tests passed\n') ;

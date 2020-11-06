@@ -64,7 +64,7 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     A->x = Ax_new ;
     A->plen = -1 ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;   // TODO::OK
+    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
     A->nzmax = GB_IMAX (anzmax, 1) ;
     A->magic = GB_MAGIC ;
 

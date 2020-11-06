@@ -109,14 +109,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         #endif
         GB_OK (GB_selector (NULL, GB_NONZOMBIE_opcode, NULL, false, A,
             0, NULL, Context)) ;
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
         ASSERT (A->nzombies == (anz_orig - GB_NNZ (A))) ;
         A->nzombies = 0 ;
-    }
-    else if (A->nvec_nonempty < 0)
-    { 
-        // no zombies to remove
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;  // TODO::OK
     }
 
     // all the zombies are gone
@@ -236,7 +230,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (GB_NNZ (T) > 0) ;
     ASSERT (T->h != NULL) ;
-    ASSERT (T->nvec == T->nvec_nonempty) ;
 
     //--------------------------------------------------------------------------
     // check for quick transplant
@@ -375,7 +368,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             // finalize A1
             A1p [a1nvec] = anz1 ;                   // ok: A1 is sparse
             A1->nvec = a1nvec ;
-            A1->nvec_nonempty = a1nvec ;            // TODO::OK
+            A1->nvec_nonempty = a1nvec ;
             A1->magic = GB_MAGIC ;
 
             ASSERT_MATRIX_OK (A1, "A1 slice for GB_Matrix_wait", GB0) ;
@@ -442,8 +435,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         GB_jwrapup (A, jlast, anz) ;
         ASSERT (anz == anz_new) ;
 
-        // recompute the # of non-empty vectors
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;          // TODO::OK
+        // need to recompute the # of non-empty vectors in GB_conform
+        A->nvec_nonempty = -1 ;
 
         ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 

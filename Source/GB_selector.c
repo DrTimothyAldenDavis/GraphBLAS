@@ -415,7 +415,7 @@ GrB_Info GB_selector
         A->i = Ci ; Ci = NULL ;
         A->x = Cx ; Cx = NULL ;
         A->nzmax = cnz ;
-        A->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
+        A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
@@ -479,7 +479,7 @@ GrB_Info GB_selector
         C->x = Cx ; Cx = NULL ;
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
-        C->nvec_nonempty = C_nvec_nonempty ;        // TODO::OK
+        C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A->jumbled ;
 
         (*Chandle) = C ;

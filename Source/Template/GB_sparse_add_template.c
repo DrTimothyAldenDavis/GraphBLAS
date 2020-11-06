@@ -65,7 +65,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-// TODO#pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
 
@@ -753,10 +753,10 @@
                 // designed to be very efficient when M is very sparse compared
                 // with A and/or B.  It traverses all entries in the sparse M,
                 // and (for sparse A or B) does a binary search for entries in
-                // A or B.  In that case, the mask M should be ignored, and
-                // C=A+B should be computed without any mask.  The test for
-                // when to use M here should ignore A or B if they are bitmap
-                // or full.
+                // A or B.  In that case, if M has many entries, the mask M
+                // should be ignored, and C=A+B should be computed without any
+                // mask.  The test for when to use M here should ignore A or B
+                // if they are bitmap or full.
 
                 // A and B can have any sparsity pattern (hypersparse,
                 // sparse, bitmap, or full).
@@ -812,7 +812,6 @@
                     }
                     else if (B == M)
                     { 
-GB_GOTCHA ; // C<M>=A+M, where C and M are sparse, and B==M is aliased
                         // B is aliased to M
                         pB = pM ;
                         bfound = true ;

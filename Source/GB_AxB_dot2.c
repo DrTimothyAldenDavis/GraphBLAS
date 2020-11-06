@@ -249,7 +249,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         Cp [cnvec] = 0 ;    // ok: C is sparse
         C->nvec = cnvec ;
         // Cp = cumulative sum of Cp
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;  // TODO::OK
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
         cnz = Cp [cnvec] ;  // ok: C is sparse
 
         // C->h = B->h

@@ -332,7 +332,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         kB_start = GB_MALLOC (ntasks+1, int64_t) ;
         kC_start = GB_MALLOC (ntasks+1, int64_t) ;
         if (kA_start == NULL || kB_start == NULL || kC_start == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -629,14 +629,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         //----------------------------------------------------------------------
 
         // C will be sparse
-
         Cnvec = n ;
         nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
         if (!GB_allocate_result (Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
         { 
-GB_GOTCHA ; // C<M>=A+B with C sparse, M hyper, A and B non-hypersparse
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;

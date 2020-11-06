@@ -104,7 +104,6 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     (*Rp_handle) = Rp ;
-    GBURBLE ("masker_phase1 done\n") ;
     return (GrB_SUCCESS) ;
 }
 

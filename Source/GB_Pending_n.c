@@ -19,9 +19,6 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     if (A != NULL && A->Pending != NULL)
     { 
         // only sparse and hypersparse matries can have pending tuples
-        ASSERT (!GB_IS_FULL (A)) ;
-        ASSERT (!GB_IS_BITMAP (A)) ;
-        ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
         n = A->Pending->n ;
     }
     return (n) ;

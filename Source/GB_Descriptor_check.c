@@ -51,8 +51,8 @@ static GrB_Info GB_dc
     {
         if (kind == 0)
         {
-            // descriptor field can be set to the default,
-            // or one non-default value
+            // most descriptor fields can be set to the default,
+            // or just one non-default value
             if (! (v == GxB_DEFAULT || v == nondefault))
             { 
                 ok = false ;
@@ -60,11 +60,10 @@ static GrB_Info GB_dc
         }
         else if (kind == 1)
         {
-            // mask
+            // mask: can only be one of 4 different values
             if (! (v == GxB_DEFAULT || v == GrB_COMP || v == GrB_STRUCTURE ||
                    v == (GrB_COMP + GrB_STRUCTURE)))
             { 
-GB_GOTCHA ; // descriptor with invalid GrB_MASK
                 ok = false ;
             }
         }

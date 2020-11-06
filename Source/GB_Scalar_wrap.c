@@ -40,7 +40,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->vlen = 1 ;
     s->vdim = 1 ;
     s->nvec = 1 ;
-    s->nvec_nonempty = 1 ;      // TODO::OK
+    s->nvec_nonempty = 1 ;
     s->p = NULL ;
     s->h = NULL ;
     s->b = NULL ;

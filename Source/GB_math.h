@@ -138,8 +138,7 @@
 #define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
 
 // suitable for integers, and non-NaN floating point:
-#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
-#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
+#include "GB_imin.h"
 
 // ceiling of a/b for two integers a and b
 #define GB_ICEIL(a,b) (((a) + (b) - 1) / (b))

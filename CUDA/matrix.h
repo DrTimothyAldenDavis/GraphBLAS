@@ -12,18 +12,33 @@
 #define GB_DOT_TERMINAL ( c )   
 //# if ( c == TERMINAL_VALUE) break;
 
+// TODO: make sure this works:
+#include "GB_imin.h"
+#if 0
 #define GB_IMIN( A, B) ( (A) < (B) ) ?  (A) : (B)
 #define GB_IMAX( A, B) ( (A) > (B) ) ?  (A) : (B)
+#endif
 
+// TODO: make sure this works:
+#include "GB_zombie.h"
+#if 0
 #define GB_FLIP(i)             (-(i)-2)
 #define GB_IS_FLIPPED(i)       ((i) < 0)
 #define GB_IS_ZOMBIE(i)        ((i) < 0)
 #define GB_IS_NOT_FLIPPED(i)   ((i) >= 0)
 #define GB_IS_NOT_ZOMBIE(i)    ((i) >= 0)
 #define GB_UNFLIP(i)           (((i) < 0) ? GB_FLIP(i) : (i))
+#endif
 
+// TODO: make sure this works:
+#include "GB_nnz.h"
+#if 0
 #define GB_NNZ(A) (((A)->nzmax > 0) ? ((A)->p [(A)->nvec] - (A)->p [0]) : 0 )
+#endif
 
+// TODO: make sure this works:
+#include "GB_partition.h"
+#if 0
 // GB_PART and GB_PARTITION:  divide the index range 0:n-1 uniformly
 // for nthreads.  GB_PART(tid,n,nthreads) is the first index for thread tid.
 #define GB_PART(tid,n,nthreads)  \
@@ -33,6 +48,7 @@
 #define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
     k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
     k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads) ;
+#endif
 
 // TODO: make sure this works:
 #include "GB_binary_search.h"

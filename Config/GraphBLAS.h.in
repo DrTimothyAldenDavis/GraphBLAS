@@ -8725,8 +8725,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nzmax,    // size of Aj and Ax
     bool jumbled,       // if true, indices in each row may be unsorted
-    int64_t nonempty,   // number of rows with at least one entry:
-                        // either < 0 if not known, or >= 0 if exact
+    int64_t ignore,     // TODO::remove
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -8766,8 +8765,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nzmax,    // size of Ai and Ax
     bool jumbled,       // if true, indices in each column may be unsorted
-    int64_t nonempty,   // number of columns with at least one entry:
-                        // either < 0 if not known, or >= 0 if exact
+    int64_t ignore,     // TODO::remove
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -8807,8 +8805,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nzmax,    // size of Aj and Ax
     bool jumbled,       // if true, indices in each row may be unsorted
-    int64_t nonempty,   // number of rows with at least one entry:
-                        // either < 0 if not known, or >= 0 if exact
+    int64_t ignore,     // TODO::remove
     GrB_Index nvec,     // size of Ah
     GrB_Index **Ap,     // row "pointers", size nvec+1
     GrB_Index **Ah,     // rows that appear in A, size nvec
@@ -8858,8 +8855,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index nzmax,    // size of Ai and Ax
     bool jumbled,       // if true, indices in each column may be unsorted
-    int64_t nonempty,   // number of columns with at least one entry:
-                        // either < 0 if not known, or >= 0 if exact
+    int64_t ignore,     // TODO::remove
     GrB_Index nvec,     // size of Ah
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // columns that appear in A, size nvec
@@ -9064,7 +9060,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
-    int64_t *nonempty,  // number of rows with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index **Ap,     // row "pointers", size nrows+1
     GrB_Index **Aj,     // column indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -9080,7 +9076,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
-    int64_t *nonempty,  // number of columns with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index **Ap,     // column "pointers", size ncols+1
     GrB_Index **Ai,     // row indices, size nzmax
     void **Ax,          // values, size nzmax entries
@@ -9096,7 +9092,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Aj and Ax
     bool *jumbled,      // if true, indices in each row may be unsorted
-    int64_t *nonempty,  // number of rows with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index *nvec,    // size of Ah
     GrB_Index **Ap,     // row "pointers", size nvec+1
     GrB_Index **Ah,     // row indices, size nvec
@@ -9114,7 +9110,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index *nzmax,   // size of Ai and Ax
     bool *jumbled,      // if true, indices in each column may be unsorted
-    int64_t *nonempty,  // number of columns with at least one entry
+    int64_t *ignore,    // TODO::remove
     GrB_Index *nvec,    // size of Ah
     GrB_Index **Ap,     // column "pointers", size nvec+1
     GrB_Index **Ah,     // column indices, size nvec

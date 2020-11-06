@@ -96,7 +96,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     // now Cp and Ch have been transplanted into C, so they must not be freed.
 
-    C->nvec_nonempty = Cnvec_nonempty ;     // TODO::OK
+    C->nvec_nonempty = Cnvec_nonempty ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
