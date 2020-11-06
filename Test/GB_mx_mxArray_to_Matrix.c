@@ -230,7 +230,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (deep_copy)
     {
-        // TODO use GrB_Matrix_new here instead
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header

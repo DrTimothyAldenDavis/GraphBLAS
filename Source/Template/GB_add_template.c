@@ -96,7 +96,6 @@
 
         // phase1: symbolic phase
         // C is sparse or hypersparse (never bitmap or full)
-        ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
         #include "GB_sparse_add_template.c"
 
     #else

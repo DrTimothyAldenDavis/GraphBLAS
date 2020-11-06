@@ -335,7 +335,8 @@ void mexFunction
     // GxB_print (A, 2) ;
 
     // C<Mask> = accum(C,op(x,A))
-    if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT))
+    if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT)
+        && GB_VECTOR_OK (C))
     {
         // this is just to test the Vector version
         METHOD (apply2 (false)) ;

@@ -182,11 +182,15 @@ for problem = 0:2
         end
     end
 
+    % default sparsity
     C2 = GB_mex_assign (Corig, Work2) ;
     GB_spec_compare (C2, C3) ;
 
-    C2 = GB_mex_assign (Corig, Work2, 2) ;
-    GB_spec_compare (C2, C3) ;
+    % with sparsity control
+    for sparsity_control = 0:15
+        C2 = GB_mex_assign (Corig, Work2, sparsity_control) ;
+        GB_spec_compare (C2, C3) ;
+    end
 
 end
 

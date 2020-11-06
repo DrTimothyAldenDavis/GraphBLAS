@@ -68,6 +68,7 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test173',t) ; % test GrB_assign C<A>=A
 logstat ('test172',t) ; % test eWiseMult with M bitmap/full
 logstat ('test171',t) ; % test conversion and GB_memset
 logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
@@ -128,7 +129,7 @@ logstat ('test124',t) ; % GrB_extract, case 6
 logstat ('test101',t) ; % GrB_*_import and export
 logstat ('test26',t) ;  % quick test of GxB_select
 logstat ('test141',t) ; % eWiseAdd with dense matrices
-logstat ('test142',t) ; % assign with dense matrices
+logstat ('test142',t) ; % test GrB_assign with accum
 logstat ('test144') ;   % cumsum
 logstat ('test145',t) ; % dot4 for C += A'*B
 logstat ('test146',t) ; % expand scalar

@@ -483,7 +483,6 @@ GrB_Info GB_assign_prep
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
                     { 
-GB_GOTCHA ; // C<!>=A, no mask, but complemented, col assign to bitmap
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         int scalar_unused = 0 ;
@@ -500,7 +499,6 @@ GB_GOTCHA ; // C<!>=A, no mask, but complemented, col assign to bitmap
                     }
                     else
                     { 
-// GB_GOTCHA ; // C<!>=A, no mask, but complemented, col assign to sparse
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_assign_zombie1 (C, J [0], Context) ;

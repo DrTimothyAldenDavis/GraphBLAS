@@ -33,7 +33,7 @@
     //--------------------------------------------------------------------------
 
     int tid ;
-// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
 
@@ -66,7 +66,6 @@
                 // M is bitmap
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-GB_GOTCHA ; // C<M>=A with M bitmap, A dense
                     if (!GBB (Mb, pM)) continue ;
                     GB_COPY_A_TO_C (Cx, pM, Ax, pM) ;    // Cx [pM] = Ax [pM]
                 }

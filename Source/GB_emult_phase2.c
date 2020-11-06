@@ -80,18 +80,18 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB2) ;
-    ASSERT_MATRIX_OK (A, "A for emult phase2", GB2) ;
+    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for emult phase2", GB2) ;
+    ASSERT_MATRIX_OK (B, "B for emult phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB2) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -396,7 +396,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB2) ;
+    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

@@ -49,7 +49,6 @@
         //----------------------------------------------------------------------
 
         case GB_COL_ASSIGN : 
-GB_GOTCHA ; // column assignment: C<M>(:,jC), M is a column vector, C bitmap
         {
             // iterate over all of C(:,jC)
             int64_t iC ;

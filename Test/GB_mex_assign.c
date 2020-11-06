@@ -457,7 +457,6 @@ void mexFunction
     if (nargin == 2 || nargin == 3)
     {
         GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
-        printf ("sparsity_control: %d\n", sparsity_control) ;
     }
 
     //--------------------------------------------------------------------------
