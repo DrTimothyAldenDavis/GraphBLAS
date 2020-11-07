@@ -56,7 +56,10 @@
 #define GET_DEEP_COPY                                                   \
 {                                                                       \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
-    GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ; \
+    if (have_sparsity_control)                                          \
+    {                                                                   \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ; \
+    }                                                                   \
     if (nargin > 3 && mxIsChar (pargin [1]))                            \
     {                                                                   \
         M = GB_mx_alias ("M", pargin [1], "C", C, "A", A) ;             \
@@ -89,6 +92,7 @@ GrB_Monoid reduce = NULL ;
 GrB_BinaryOp op = NULL ;
 bool user_complex = false ;
 int sparsity_control = GxB_AUTO_SPARSITY ;
+bool have_sparsity_control = false ;
 
 GrB_Info assign (GB_Context Context) ;
 
@@ -483,6 +487,7 @@ void mexFunction
     {
 
         // get sparsity control if present
+        have_sparsity_control = true ;
         GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
 
         // get C (deep copy)

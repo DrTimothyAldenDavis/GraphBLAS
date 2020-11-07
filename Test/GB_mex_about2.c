@@ -15,6 +15,12 @@
 
 #define USAGE "GB_mex_about2"
 
+typedef struct
+{
+    int gunk [16] ;
+}
+wild ;
+
 void mexFunction
 (
     int nargout,
@@ -29,6 +35,7 @@ void mexFunction
     GxB_Scalar scalar = NULL ;
     GrB_Vector victor = NULL ;
     GrB_Descriptor desc = NULL ;
+    GrB_Type Wild = NULL ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -317,6 +324,40 @@ void mexFunction
     printf ("error expected: %s\n", message) ;
     GrB_Matrix_free_(&A) ;
     GrB_Vector_free_(&victor) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_init
+    //--------------------------------------------------------------------------
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_init (GrB_BLOCKING)) ;
+
+    //--------------------------------------------------------------------------
+    // jumbled user-defined matrix
+    //--------------------------------------------------------------------------
+
+    wild w ;
+    n = 3 ;
+    memset (w.gunk, 13, 16 * sizeof (int)) ;
+    OK (GrB_Type_new (&Wild, sizeof (wild))) ;
+    OK (GrB_Matrix_new (&C, Wild, n, n)) ;
+    OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GrB_Matrix_assign_UDT (C, NULL, NULL, &w, GrB_ALL, n, GrB_ALL, n,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (C, "wild matrix", GxB_SHORT, NULL)) ;
+
+    // jumble the matrix
+    C->jumbled = true ;
+    C->i [0] = 1 ;
+    C->i [1] = 0 ;
+    OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;
+
+    // unjumble the matrix
+    OK (GrB_Matrix_wait (&C)) ;
+    OK (GxB_Matrix_fprint (C, "wild matrix unjumbled", GxB_SHORT, NULL)) ;
+
+    GrB_Matrix_free_(&C) ;
+    GrB_Type_free_(&Wild) ;
 
     //--------------------------------------------------------------------------
     // wrapup

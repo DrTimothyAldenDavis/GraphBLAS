@@ -165,7 +165,6 @@ GrB_Info GB_subassign_11
                     }
                     else if (Sfound && mij)
                     { 
-GB_GOTCHA ;
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------

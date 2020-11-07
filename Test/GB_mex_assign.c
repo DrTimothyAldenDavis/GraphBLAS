@@ -35,7 +35,10 @@
 
 #define GET_DEEP_COPY \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ; \
-    GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ;
+    if (have_sparsity_control) \
+    { \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ; \
+    }
 
 #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
@@ -52,6 +55,7 @@ GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
 GrB_Info assign (void) ;
 int sparsity_control = GxB_AUTO_SPARSITY ;
+bool have_sparsity_control = false ;
 
 GrB_Info many_assign
 (
@@ -456,6 +460,7 @@ void mexFunction
     // get sparsity control if present
     if (nargin == 2 || nargin == 3)
     {
+        have_sparsity_control = true ;
         GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
     }
 

@@ -116,7 +116,6 @@ GrB_Info GB_unjumble        // unjumble a matrix
             break ;
 
         default : 
-GB_GOTCHA ; // unjumble with user-defined type of arbitrary size
             // user-defined types of arbitrary size
             #define GB_QSORT_WORKER \
                 GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;

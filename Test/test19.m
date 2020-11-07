@@ -137,7 +137,6 @@ for problem = 0:2
     end
 
     C3 = Corig ;
-
     for k = 1:ntrials
         J = Work (k).J ;
         I = Work (k).I ;
@@ -147,6 +146,30 @@ for problem = 0:2
         d = Work (k).desc ;
         scalar = Work (k).scalar ;
         C3 = GB_spec_subassign (C3, M, accum, A, I, J, d, scalar) ;
+    end
+
+    % default sparsity
+    C2 = GB_mex_subassign (Corig, Work2) ;
+    GB_spec_compare (C2, C3) ;
+
+    % with sparsity control
+    for sparsity_control = 0:15
+        C2 = GB_mex_subassign (Corig, Work2, sparsity_control) ;
+        GB_spec_compare (C2, C3) ;
+    end
+
+    % with no accum
+
+    C3 = Corig ;
+    for k = 1:ntrials
+        J = Work (k).J ;
+        I = Work (k).I ;
+        A = Work (k).A ;
+        M = Work (k).Mask ;
+        d = Work (k).desc ;
+        scalar = Work (k).scalar ;
+        C3 = GB_spec_subassign (C3, M, [ ], A, I, J, d, scalar) ;
+        Work2 (k).accum = [ ] ;
     end
 
     % default sparsity

@@ -68,6 +68,8 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test177',t) ; % test C<!M>=A*B, C and B bitmap, M and A sparse
+logstat ('test176',t) ; % test GrB_assign, method 09, 11
 logstat ('test142',t) ; % test GrB_assign with accum
 logstat ('test175',t) ; % test142 updated
 logstat ('test174',t) ; % test GrB_assign C<A>=A
@@ -176,6 +178,7 @@ logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test23',t) ;  % quick test of GB_*_build
 
 logstat ('test00',s);   % GB_mex_mis (single threaded)
+logstat ('test76',s) ;  % GxB_resize (single threaded)
 logstat ('test76',t) ;  % GxB_resize
 logstat ('test88',t) ;  % hypersparse matrices with heap-based method
 logstat ('test143',t) ; % mxm, special cases

@@ -16,7 +16,7 @@
 // A:           scalar
 // S:           constructed
 
-// C, M: none can be bitmap
+// C: not bitmap or full
 
 #include "GB_unused.h"
 #include "GB_subassign_methods.h"
@@ -165,7 +165,6 @@ GrB_Info GB_subassign_09
                     }
                     else if (Sfound && mij)
                     { 
-GB_GOTCHA ;
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------
