@@ -134,7 +134,6 @@ logstat ('test124',t) ; % GrB_extract, case 6
 logstat ('test101',t) ; % GrB_*_import and export
 logstat ('test26',t) ;  % quick test of GxB_select
 logstat ('test141',t) ; % eWiseAdd with dense matrices
-logstat ('test142',t) ; % test GrB_assign with accum
 logstat ('test144') ;   % cumsum
 logstat ('test145',t) ; % dot4 for C += A'*B
 logstat ('test146',t) ; % expand scalar
@@ -161,7 +160,6 @@ logstat ('test107',t) ; % monoids with terminal values
 logstat ('test93',t) ;  % pagerank
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
-logstat ('test106',t) ; % GxB_subassign with alias
 logstat ('test69',t) ;  % assign and subassign with alias
 logstat ('test19b',t) ; % GrB_assign, many pending operators
 logstat ('test19b',s);  % GrB_assign, many pending operators
@@ -316,6 +314,7 @@ logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
 logstat ('test100',t) ;    %    5 % GB_mex_isequal
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
+logstat ('test106',t) ;    %    4 % GxB_subassign with alias
 
 logstat ('test111',t) ;    %      % performance test for eWiseAdd
 logstat ('test112',t) ;    %      % test row/col scale
