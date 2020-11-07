@@ -136,6 +136,7 @@ void GB_assign_zombie4
 
                     if (M_is_bitmap)
                     { 
+// GB_GOTCHA ; // test19b only
                         // M is bitmap, no need for GB_lookup
                         int64_t pM = j ;
                         mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;

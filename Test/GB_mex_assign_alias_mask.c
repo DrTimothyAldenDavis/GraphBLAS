@@ -38,23 +38,20 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    // get C (make a deep copy)
-    #define GET_DEEP_COPY \
-        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
-    #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
+    // get A C (make a deep copy)
+    #define GET_DEEP_COPY       \
+        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C->sparsity) ;      \
+        A = GB_mx_mxArray_to_Matrix (pargin [1], "A input", true, true) ;   \
+        GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, A->sparsity) ;
+    #define FREE_DEEP_COPY      \
+        GrB_Matrix_free_(&C) ;  \
+        GrB_Matrix_free_(&A) ;
     GET_DEEP_COPY ;
-    if (C == NULL)
+    if (C == NULL || A == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("C failed") ;
-    }
-
-    // get A (shallow copy)
-    A = GB_mx_mxArray_to_Matrix (pargin [1], "A input", false, true) ;
-    if (A == NULL)
-    {
-        FREE_ALL ;
-        mexErrMsgTxt ("A failed") ;
+        mexErrMsgTxt ("C or A failed") ;
     }
 
     // get desc
@@ -69,7 +66,7 @@ void mexFunction
     GrB_Matrix_ncols (&ncols, C) ;
 
     // C<A> = A
-    METHOD (GrB_Matrix_assign_(C, A, NULL, A,
+    METHOD (GxB_Matrix_subassign_(C, A, NULL, A,
         GrB_ALL, nrows, GrB_ALL, ncols, desc)) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C

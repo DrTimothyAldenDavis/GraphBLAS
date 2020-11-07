@@ -13,11 +13,6 @@ n = 20 ;
 % create a CSR matrix
 C0 = GB_spec_random (m, n, 0.5, 100, 'double', false, false) ;
 
-Mcol.matrix = sparse (ones (m,1)) ; % spones (sprandn (m, 1, 0.5)) ;
-Mcol.sparsity = 8 ;
-Mrow.matrix = sparse (ones (n,1)) ; % spones (sprandn (n, 1, 0.5)) ;
-Mrow.sparsity = 8 ;
-
 Acol = sprandn (4, 1, 0.5)  ;
 Arow = sprandn (4, 1, 0.5)  ;
 
@@ -26,32 +21,50 @@ J0 = uint64 (J) - 1 ;
 I = 2 ;
 I0 = uint64 (I) - 1 ;
 
-for sparsity_control = 1:15
-    fprintf ('.') ;
-    C0.sparsity = sparsity_control ;
-    for csc = 0:1
-        C0.is_csc = csc ;
+for trial = 1:2
 
-        % row assign
-        C1 = GB_mex_assign      (C0, Mrow, 'plus', Arow, I0, J0, [ ], 2) ;
-        C2 = GB_spec_Row_assign (C0, Mrow, 'plus', Arow, I,  J,  [ ]) ;
-        GB_spec_compare (C1, C2) ;
+    clear Mrow Mcol
+    if (trial == 1)
+        Mcol.matrix = sparse (ones (m,1)) ; % spones (sprandn (m, 1, 0.5)) ;
+        Mrow.matrix = sparse (ones (n,1)) ; % spones (sprandn (n, 1, 0.5)) ;
+    else
+        Mcol.matrix = spones (sprandn (m, 1, 0.5)) ;
+        Mrow.matrix = spones (sprandn (n, 1, 0.5)) ;
+    end
 
-        % col assign
-        C1 = GB_mex_assign      (C0, Mcol, 'plus', Acol, J0, I0, [ ], 1) ;
-        C2 = GB_spec_Col_assign (C0, Mcol, 'plus', Acol, J,  I,  [ ]) ;
-        GB_spec_compare (C1, C2) ;
+    for M_sparsity = [1 2 4 8] 
 
-        % row assign, no accum
-        C1 = GB_mex_assign      (C0, Mrow, [ ], Arow, I0, J0, [ ], 2) ;
-        C2 = GB_spec_Row_assign (C0, Mrow, [ ], Arow, I,  J,  [ ]) ;
-        GB_spec_compare (C1, C2) ;
+        Mrow.sparsity = M_sparsity ;
+        Mcol.sparsity = M_sparsity ;
 
-        % col assign, no accum
-        C1 = GB_mex_assign      (C0, Mcol, [ ], Acol, J0, I0, [ ], 1) ;
-        C2 = GB_spec_Col_assign (C0, Mcol, [ ], Acol, J,  I,  [ ]) ;
-        GB_spec_compare (C1, C2) ;
+        for sparsity_control = 1:15
+            fprintf ('.') ;
+            C0.sparsity = sparsity_control ;
+            for csc = 0:1
+                C0.is_csc = csc ;
 
+                % row assign
+                C1 = GB_mex_assign      (C0, Mrow, 'plus', Arow, I0, J0, [], 2);
+                C2 = GB_spec_Row_assign (C0, Mrow, 'plus', Arow, I,  J,  []) ;
+                GB_spec_compare (C1, C2) ;
+
+                % col assign
+                C1 = GB_mex_assign      (C0, Mcol, 'plus', Acol, J0, I0, [], 1);
+                C2 = GB_spec_Col_assign (C0, Mcol, 'plus', Acol, J,  I,  [ ]) ;
+                GB_spec_compare (C1, C2) ;
+
+                % row assign, no accum
+                C1 = GB_mex_assign      (C0, Mrow, [ ], Arow, I0, J0, [ ], 2) ;
+                C2 = GB_spec_Row_assign (C0, Mrow, [ ], Arow, I,  J,  [ ]) ;
+                GB_spec_compare (C1, C2) ;
+
+                % col assign, no accum
+                C1 = GB_mex_assign      (C0, Mcol, [ ], Acol, J0, I0, [ ], 1) ;
+                C2 = GB_spec_Col_assign (C0, Mcol, [ ], Acol, J,  I,  [ ]) ;
+                GB_spec_compare (C1, C2) ;
+
+            end
+        end
     end
 end
 

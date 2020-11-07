@@ -151,9 +151,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         { 
             // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
             // method 06s (with S) is faster when nnz (A) < nnz (M).
-            // If M and A are aliased and not bitmap, then nnz (A) == nnz (M),
-            // so method 06n is used.
-            if (C_as_if_full && whole_C_matrix && M == A)
+            if ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M == A)
             {
                 // Method 06d: C<A> = A
                 method_06d = true ;
@@ -170,7 +168,9 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             else
             {
                 // Method 06n (no S) or Method 06s (with S):
-                // Method 06n is not used if M or A are bitmap.
+                // Method 06n is not used if M or A are bitmap.  If M and A are
+                // aliased and Method 06d is not used, then 06s is used instead
+                // of 06n since M==A implies nnz(A) == nnz(M).
                 S_Extraction = (GB_NNZ (A) < GB_NNZ (M))
                     || M_is_bitmap || A_is_bitmap ;
             }
@@ -274,7 +274,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     // For the single case C(I,J)<M>=A, two methods can be used: 06n and 06s.
 
-    int subassign_method ;
+    int subassign_method = -1 ;
 
     if (C_splat_scalar)
     { 
@@ -718,6 +718,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         // case GB_SUBASSIGN_METHOD_BITMAP:
         default :;
+            subassign_method = GB_SUBASSIGN_METHOD_BITMAP ;
     }
 
     //--------------------------------------------------------------------------

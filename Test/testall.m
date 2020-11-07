@@ -163,8 +163,9 @@ logstat ('test135',t) ; % reduce to scalar
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
 logstat ('test106',t) ; % GxB_subassign with alias
 logstat ('test69',t) ;  % assign and subassign with alias
-logstat ('test19b',t) ; % GrB_assign, many pending operators (malloc debug off)
-logstat ('test19b',s);  % GrB_assign, many pending operators (malloc debug off)
+logstat ('test19b',t) ; % GrB_assign, many pending operators
+logstat ('test19b',s);  % GrB_assign, many pending operators
+
 logstat ('test104',t) ; % export/import
 
 %----------------------------------------

@@ -4,10 +4,10 @@ function test173
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('test173 ------------ GrB_assign C<A>=A\n') ;
+% [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+% types = types.all ;
 
-[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
-types = types.all ;
+types = { 'logical', 'double', 'double complex' } ;
 
 m = 10 ;
 n = 14 ;
@@ -20,27 +20,35 @@ for k = 1:length (types)
 
     ctype = types {k} ;
     fprintf ('%s, ', ctype) ;
-    C = GB_spec_random (m, n, 0.5, 100, ctype) ;
-    C = GB_spec_matrix (C) ;
 
-    A = GB_spec_random (m, n, 0.5, 100, ctype) ;
-    A = GB_spec_matrix (A) ;
-    A_nonzero = full (A.matrix ~= 0) ;
+    for d = [0.5 inf]
 
-    for C_sparsity = 1:15
-        C.sparsity = C_sparsity ;
+        C = GB_spec_random (m, n, d, 100, ctype) ;
+        C = GB_spec_matrix (C) ;
+        C.matrix = sparse (C.matrix) ;
 
-        for A_sparsity = 1:15
-            A.sparsity = A_sparsity ;
+        A = GB_spec_random (m, n, 0.5, 100, ctype) ;
+        A.matrix = sparse (A.matrix) ;
+        A_nonzero = full (A.matrix ~= 0) ;
 
-            % C<A> = A
-            C1 = GB_mex_assign_alias_mask (C, A, [ ]) ;
-            C2 = full (C.matrix) ;
-            C2 (A_nonzero) = full (A.matrix (A_nonzero)) ;
-            err = norm (double (C2) - double (C1.matrix), 1) ;
-            assert (err == 0) ;
+        A_dense = GB_spec_random (m, n, inf, 100, ctype) ;
+        A_dense = GB_spec_matrix (A_dense) ;
+        A_dense.matrix = sparse (A_dense.matrix) ;
+        A_dense_nonzero = full (A_dense.matrix ~= 0) ;
 
-            if (isequal (ctype, 'double'))
+        for C_sparsity = 1:15
+            C.sparsity = C_sparsity ;
+
+            for A_sparsity = 1:15
+                A.sparsity = A_sparsity ;
+                A_dense.sparsity = A_sparsity ;
+
+                % C<A> = A
+                C1 = GB_mex_assign_alias_mask (C, A, [ ]) ;
+                C2 = full (C.matrix) ;
+                C2 (A_nonzero) = full (A.matrix (A_nonzero)) ;
+                err = norm (double (C2) - double (C1.matrix), 1) ;
+                assert (err == 0) ;
 
                 % C<A,struct> = A
                 B = A ;
@@ -49,8 +57,12 @@ for k = 1:length (types)
                 err = norm (double (C2) - double (C3.matrix), 1) ;
                 assert (err == 0) ;
 
-            end
+                % C<A,struct> = A where A is dense
+                C1 = GB_mex_assign_alias_mask (C, A_dense, desc) ;
+                err = norm (double (A_dense.matrix) - double (C1.matrix), 1) ;
+                assert (err == 0) ;
 
+            end
         end
     end
 end

@@ -55,7 +55,7 @@
 
             if (Mask_struct)
             {
-GB_GOTCHA ;                // C<A,struct>=A with C bitmap, A dense
+                // C<A,struct>=A with C bitmap, A dense
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -92,7 +92,7 @@ GB_GOTCHA ;                // C<A,struct>=A with C bitmap, A dense
 
             if (Mask_struct)
             {
-GB_GOTCHA ;                // C<A,struct>=A with C sparse/hyper/full
+                // C<A,struct>=A with C sparse/hyper/full
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -118,7 +118,6 @@ GB_GOTCHA ;                // C<A,struct>=A with C sparse/hyper/full
     }
     else if (A_is_bitmap)
     {
-
         //----------------------------------------------------------------------
         // A is bitmap
         //----------------------------------------------------------------------
@@ -148,7 +147,7 @@ GB_GOTCHA ;                // C<A,struct>=A with C sparse/hyper/full
             }
             else
             {
-GB_GOTCHA ;           // C<A>=A with A and C bitmap
+                // C<A>=A with A and C bitmap
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
@@ -188,7 +187,7 @@ GB_GOTCHA ;           // C<A>=A with A and C bitmap
             }
             else
             {
-GB_GOTCHA ;                // C<A>=A with A bitmap, and C hyper/sparse/full
+                // C<A>=A with A bitmap, and C hyper/sparse/full
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -273,7 +272,7 @@ GB_GOTCHA ;                // C<A>=A with A bitmap, and C hyper/sparse/full
                 {
                     if (C_is_bitmap)
                     {
-GB_GOTCHA ;                        // C<A,struct>=A with C bitmap, A sparse
+                        // C<A,struct>=A with C bitmap, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
@@ -289,7 +288,7 @@ GB_GOTCHA ;                        // C<A,struct>=A with C bitmap, A sparse
                     }
                     else
                     {
-GB_GOTCHA ;                        // C<A,struct>=A with C dense, A sparse
+                        // C<A,struct>=A with C dense, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
