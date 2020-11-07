@@ -1,0 +1,65 @@
+//------------------------------------------------------------------------------
+// GB_bitmap_assign_M_row_template:  traverse M for GB_ROW_ASSIGN
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// M is a 1-by-(C->vdim) hypersparse or sparse matrix, not a vector, for
+// GrB_Row_assign (if C is CSC) or GrB_Col_assign (if C is CSR).
+
+{   GB_cov[1131]++ ;
+// NOT COVERED (1131):
+GB_GOTCHA ; // row assignment: C<M>(iC,:), M is a row vector, C bitmap
+    ASSERT (mvlen == 1) ;
+    int64_t iC = I [0] ;
+    int tid ;
+// TODO#pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
+//        reduction(+:cnvals)
+    for (tid = 0 ; tid < mtasks ; tid++)
+    {
+        int64_t kfirst = kfirst_Mslice [tid] ;
+        int64_t klast  = klast_Mslice  [tid] ;
+
+        //----------------------------------------------------------------------
+        // traverse over M (0,kfirst:klast)
+        //----------------------------------------------------------------------
+
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // find the part of M(0,k) for this task
+            //------------------------------------------------------------------
+
+            int64_t jM = GBH (Mh, k) ;
+            int64_t pM_start, pM_end ;
+            GB_get_pA (&pM_start, &pM_end, tid, k, kfirst,
+                klast, pstart_Mslice, Mp, mvlen) ;
+
+            //------------------------------------------------------------------
+            // traverse over M(0,jM), the kth vector of M
+            //------------------------------------------------------------------
+
+            // for row_assign: M is a single row, iC = I [0]
+            // It has either 0 or 1 entry.
+            int64_t pM = pM_start ;
+
+            if (pM < pM_end)
+            {
+                bool mij = GB_mcast (Mx, pM, msize) ;
+                if (mij)
+                {   GB_cov[1132]++ ;
+// NOT COVERED (1132):
+GB_GOTCHA ; // row assignment: C<M>(iC,:), M is a row vector, C bitmap
+                    int64_t jC = jM ;
+                    int64_t pC = iC + jC * cvlen ;
+                    GB_MASK_WORK (pC) ;
+                }
+            }
+        }
+    }
+}
+

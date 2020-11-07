@@ -143,7 +143,8 @@ GrB_Info GB_assign_prep
 
     GrB_Type atype ;
     if (scalar_expansion)
-    { 
+    {   GB_cov[2679]++ ;
+// covered (2679): 954302
         // for scalar expansion, the NULL pointer case has been already checked
         // for user-defined types, and can't be NULL for built-in types.
         ASSERT (scalar != NULL) ;
@@ -152,7 +153,8 @@ GrB_Info GB_assign_prep
         atype = GB_code_type (scalar_code, C->type) ;
     }
     else
-    { 
+    {   GB_cov[2680]++ ;
+// covered (2680): 9060700
         // GrB_*assign, not scalar:  The user's input matrix has been checked.
         // The pointer to the scalar is NULL.
         ASSERT (scalar == NULL) ;
@@ -183,7 +185,8 @@ GrB_Info GB_assign_prep
 
     // GB_compatible is not used since most of it is slightly different here
     if (accum != NULL)
-    { 
+    {   GB_cov[2681]++ ;
+// covered (2681): 5209825
         // C<M>(Rows,Cols) = accum (C(Rows,Cols),A), or
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
@@ -196,7 +199,8 @@ GrB_Info GB_assign_prep
     if (scalar_expansion)
     {
         if (!GB_code_compatible (C->type->code, scalar_code))
-        { 
+        {   GB_cov[2682]++ ;
+// covered (2682): 8
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 GB_code_string (scalar_code), C->type->name) ;
@@ -205,7 +209,8 @@ GrB_Info GB_assign_prep
     else
     {
         if (!GB_Type_compatible (C->type, A->type))
-        { 
+        {   GB_cov[2683]++ ;
+// covered (2683): 16
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
                 A->type->name, C->type->name) ;
@@ -216,7 +221,8 @@ GrB_Info GB_assign_prep
     {
         // M is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
-        { 
+        {   GB_cov[2684]++ ;
+// covered (2684): 24
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "M of type [%s] cannot be typecast to boolean", M->type->name) ;
         }
@@ -241,7 +247,8 @@ GrB_Info GB_assign_prep
 
         switch (*assign_kind)
         {
-            case GB_ROW_ASSIGN : 
+            case GB_ROW_ASSIGN  : GB_cov[2685]++ ;  
+// covered (2685): 7378
             {
                 // GrB_Row_assign:
                 // M is a column vector the same size as one row of C
@@ -249,7 +256,8 @@ GrB_Info GB_assign_prep
                 ASSERT (!scalar_expansion) ;
                 ASSERT (GB_VECTOR_OK (M)) ;
                 if (GB_NROWS (M) != GB_NCOLS (C))
-                { 
+                {   GB_cov[2686]++ ;
+// covered (2686): 2
                     GB_ERROR (GrB_DIMENSION_MISMATCH, "Mask vector m length"
                         " is " GBd "; must match the number of columns of C ("
                         GBd ")", GB_NROWS (M), GB_NCOLS (C)) ;
@@ -257,7 +265,8 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_COL_ASSIGN : 
+            case GB_COL_ASSIGN  : GB_cov[2687]++ ;  
+// covered (2687): 7242
             {
                 // GrB_Col_assign:
                 // M is a column vector the same size as one column of C
@@ -265,7 +274,8 @@ GrB_Info GB_assign_prep
                 ASSERT (!scalar_expansion) ;
                 ASSERT (GB_VECTOR_OK (M)) ;
                 if (GB_NROWS (M) != GB_NROWS (C))
-                { 
+                {   GB_cov[2688]++ ;
+// covered (2688): 2
                     GB_ERROR (GrB_DIMENSION_MISMATCH, "Mask vector m length"
                         " is " GBd "; must match the number of rows of C ("
                         GBd ")", GB_NROWS (M), GB_NROWS (C)) ;
@@ -273,14 +283,16 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_ASSIGN : 
+            case GB_ASSIGN  : GB_cov[2689]++ ;  
+// covered (2689): 143354
             {
                 // GrB_Matrix_assign, GrB_Vector_assign, and scalar variants: M
                 // is a matrix the same size as C for entire matrix (or vector)
                 // assignment, where A is either a matrix or a scalar
                 if (GB_NROWS (M) != GB_NROWS (C) ||
                     GB_NCOLS (M) != GB_NCOLS (C))
-                { 
+                {   GB_cov[2690]++ ;
+// covered (2690): 2
                     GB_ERROR (GrB_DIMENSION_MISMATCH, "Mask M is " GBd "-by-"
                         GBd "; " "must match result C (" GBd "-by-" GBd ")",
                         GB_NROWS (M), GB_NCOLS (M),
@@ -289,13 +301,15 @@ GrB_Info GB_assign_prep
             }
             break ;
 
-            case GB_SUBASSIGN : 
+            case GB_SUBASSIGN  : GB_cov[2691]++ ;  
+// covered (2691): 6534954
             {
                 // GxB_subassign: M is a matrix the same size as C(Rows,Cols)
                 int64_t mnrows = M_transpose ? GB_NCOLS (M) : GB_NROWS (M) ;
                 int64_t mncols = M_transpose ? GB_NROWS (M) : GB_NCOLS (M) ;
                 if (mnrows != nRows || mncols != nCols)
-                { 
+                {   GB_cov[2692]++ ;
+// covered (2692): 2
                     GB_ERROR (GrB_DIMENSION_MISMATCH,
                         "M is " GBd "-by-" GBd "%s, "
                         "must match size of result C(I,J): " GBd "-by-" GBd "",
@@ -319,7 +333,8 @@ GrB_Info GB_assign_prep
         int64_t anrows = (A_transpose) ? GB_NCOLS (A) : GB_NROWS (A) ;
         int64_t ancols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
         if (nRows != anrows || nCols != ancols)
-        { 
+        {   GB_cov[2693]++ ;
+// covered (2693): 8
             GB_ERROR (GrB_DIMENSION_MISMATCH,
                 "Dimensions not compatible:\n"
                 "C(Rows,Cols) is " GBd "-by-" GBd "\n"
@@ -359,7 +374,8 @@ GrB_Info GB_assign_prep
 
     bool C_is_csc = C->is_csc ;
     if (!scalar_expansion && C_is_csc != A->is_csc)
-    { 
+    {   GB_cov[2694]++ ;
+// covered (2694): 89506
         // Flip the sense of A_transpose
         A_transpose = !A_transpose ;
     }
@@ -370,7 +386,8 @@ GrB_Info GB_assign_prep
     int64_t ni, nj, nI, nJ ;
 
     if (C_is_csc)
-    { 
+    {   GB_cov[2695]++ ;
+// covered (2695): 8089824
         // C is in CSC format
         I      = Rows     ;     J      = Cols     ;
         ni     = nRows_in ;     nj     = nCols_in ;
@@ -380,7 +397,8 @@ GrB_Info GB_assign_prep
         memcpy (Jcolon, ColColon, 3 * sizeof (int64_t)) ;
     }
     else
-    { 
+    {   GB_cov[2696]++ ;
+// covered (2696): 1925018
         // C is in CSR format
         I       = Cols     ;    J       = Rows     ;
         ni      = nCols_in ;    nj      = nRows_in ;
@@ -443,12 +461,14 @@ GrB_Info GB_assign_prep
                 // row assign: delete all entries in C(i,:)
                 //--------------------------------------------------------------
 
-                case GB_ROW_ASSIGN : 
+                case GB_ROW_ASSIGN  : GB_cov[2697]++ ;  
+// covered (2697): 749
                 {
                     // delete all entries in each vector with index i
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    { 
+                    {   GB_cov[2698]++ ;
+// covered (2698): 229
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         GBURBLE ("bitmap C(i,:)=zombie ") ;
@@ -465,7 +485,8 @@ GrB_Info GB_assign_prep
                             GB_ROW_ASSIGN, Context)) ;
                     }
                     else
-                    { 
+                    {   GB_cov[2699]++ ;
+// covered (2699): 520
                         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
@@ -478,11 +499,13 @@ GrB_Info GB_assign_prep
                 // col assign: delete all entries in C(:,j)
                 //--------------------------------------------------------------
 
-                case GB_COL_ASSIGN : 
+                case GB_COL_ASSIGN  : GB_cov[2700]++ ;  
+// covered (2700): 341
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    { 
+                    {   GB_cov[2701]++ ;
+// covered (2701): 61
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         GBURBLE ("bitmap C(:,j)=zombie ") ;
@@ -499,7 +522,8 @@ GrB_Info GB_assign_prep
                             GB_COL_ASSIGN, Context)) ;
                     }
                     else
-                    { 
+                    {   GB_cov[2702]++ ;
+// covered (2702): 280
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_assign_zombie1 (C, J [0], Context) ;
@@ -511,7 +535,8 @@ GrB_Info GB_assign_prep
                 // assign: delete all entries in C
                 //--------------------------------------------------------------
 
-                case GB_ASSIGN : 
+                case GB_ASSIGN  : GB_cov[2703]++ ;  
+// covered (2703): 14018
                 {
                     // C<!NULL>=NULL since result does not depend on computing
                     // Z.  Since C_replace is true, all of C is cleared.  This
@@ -525,11 +550,13 @@ GrB_Info GB_assign_prep
                 // subassign: delete all entries in C(I,J)
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN : 
+                case GB_SUBASSIGN  : GB_cov[2704]++ ;  
+// covered (2704): 265080
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    { 
+                    {   GB_cov[2705]++ ;
+// covered (2705): 109600
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
                         GBURBLE ("bitmap C(I,J)=zombie ") ;
@@ -546,7 +573,8 @@ GrB_Info GB_assign_prep
                             GB_SUBASSIGN, Context)) ;
                     }
                     else
-                    { 
+                    {   GB_cov[2706]++ ;
+// covered (2706): 155202
                         // Method 00: C(I,J) = empty, using S
                         GBURBLE ("C(I,J)=zombie ") ;
                         GB_ENSURE_SPARSE (C) ;
@@ -582,7 +610,8 @@ GrB_Info GB_assign_prep
     {
         // no_mask:  mask is not present, and not complemented
         if (*C_replace)
-        { 
+        {   GB_cov[2707]++ ;
+// covered (2707): 306539
             // The mask is not present and not complemented.  In this case,
             // C_replace is effectively false for subassign.  Disable it, since
             // it can force pending tuples to be assembled.
@@ -597,14 +626,16 @@ GrB_Info GB_assign_prep
 
     bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (whole_C_matrix)
-    { 
+    {   GB_cov[2708]++ ;
+// covered (2708): 5073929
         // If the assignment is C<M>(:,:) = ... then convert the assignment
         // into a subassign.
         (*assign_kind) = GB_SUBASSIGN ;
     }
 
     if (whole_C_matrix && no_mask && accum == NULL)
-    { 
+    {   GB_cov[2709]++ ;
+// covered (2709): 72389
 
         //----------------------------------------------------------------------
         // C(:,:) = x or A:  whole matrix assignment with no mask
@@ -628,7 +659,8 @@ GrB_Info GB_assign_prep
     ASSERT_MATRIX_OK (C, "C here in GB_assign", GB0) ;
 
     if (!scalar_expansion && A_transpose)
-    { 
+    {   GB_cov[2710]++ ;
+// covered (2710): 614455
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
@@ -649,14 +681,16 @@ GrB_Info GB_assign_prep
     if (M != NULL)
     {
         if (M->is_csc != C_is_csc)
-        { 
+        {   GB_cov[2711]++ ;
+// covered (2711): 32260
             // either G*B_Row_*assign and G*B_Col_*assign when matrix C is in
             // CSR format, and or G*B_Matrix_assign when the format of the
             // matrices C and M differ.
             M_transpose = !M_transpose ;
         }
         if (M_transpose)
-        { 
+        {   GB_cov[2712]++ ;
+// covered (2712): 421590
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: typecast, no op, not in-place
@@ -754,7 +788,8 @@ GrB_Info GB_assign_prep
         ASSERT (!whole_C_matrix) ;
 
         if (I_unsorted_or_has_dupl)
-        { 
+        {   GB_cov[2713]++ ;
+// covered (2713): 2006212
             // I2 = sort I and remove duplicates
             ASSERT (Ikind == GB_LIST) ;
             GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
@@ -768,7 +803,8 @@ GrB_Info GB_assign_prep
         }
 
         if (J_unsorted_or_has_dupl)
-        { 
+        {   GB_cov[2714]++ ;
+// covered (2714): 1977165
             // J2 = sort J and remove duplicates
             ASSERT (Jkind == GB_LIST) ;
             GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
@@ -786,7 +822,8 @@ GrB_Info GB_assign_prep
         const GrB_Index *Jinv = J_unsorted_or_has_dupl ? J2k : GrB_ALL ;
 
         if (!scalar_expansion)
-        { 
+        {   GB_cov[2715]++ ;
+// covered (2715): 2578803
             // A2 = A (Iinv, Jinv)
             GB_OK (GB_subref (&A2, A->is_csc, A, Iinv, ni, Jinv, nj, false,
                 Context)) ;
@@ -797,7 +834,8 @@ GrB_Info GB_assign_prep
         }
 
         if (M != NULL && (*assign_kind) == GB_SUBASSIGN)
-        { 
+        {   GB_cov[2716]++ ;
+// covered (2716): 1781368
             // M2 = M (Iinv, Jinv)
             GB_OK (GB_subref (&M2, M->is_csc, M, Iinv, ni, Jinv, nj, false,
                 Context)) ;
@@ -892,7 +930,8 @@ GrB_Info GB_assign_prep
     // GB_assign cannot tolerate any alias with the input mask,
     // if the C_replace phase will be performed.
     if ((*C_replace) && ((*assign_kind) != GB_SUBASSIGN))
-    { 
+    {   GB_cov[2717]++ ;
+// covered (2717): 28370
         // the C_replace phase requires C and M_in not to be aliased
         C_aliased = C_aliased || GB_aliased (C, M_in) ;
     }
@@ -901,7 +940,8 @@ GrB_Info GB_assign_prep
     {
         // C is aliased with M or A: make a copy of C to assign into
         if (C_replace_may_be_done_early)
-        { 
+        {   GB_cov[2718]++ ;
+// covered (2718): 7907
             // Instead of duplicating C, create a new empty matrix C2.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
             GB_OK (GB_new (&C2, // sparse or hyper, new header
@@ -911,7 +951,8 @@ GrB_Info GB_assign_prep
             (*C_replace) = false ;
         }
         else
-        { 
+        {   GB_cov[2719]++ ;
+// covered (2719): 100923
             // finish any computations in C, but leave it jumbled
             GBURBLE ("(C alias: make duplicate) ") ;
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (C) ;
@@ -928,7 +969,8 @@ GrB_Info GB_assign_prep
     {
         // C is not aliased, but check if it can be cleared early
         if (C_replace_may_be_done_early)
-        { 
+        {   GB_cov[2720]++ ;
+// covered (2720): 370726
             // Clear C early.
             GB_OK (GB_clear (C, Context)) ;
             GBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
@@ -943,7 +985,8 @@ GrB_Info GB_assign_prep
 
     bool C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    { 
+    {   GB_cov[2721]++ ;
+// covered (2721): 445073
         // C is completely empty.  C_replace is irrelevant so set it to false.
         (*C_replace) = false ;
     }
@@ -984,7 +1027,8 @@ GrB_Info GB_assign_prep
     bool wait = false ;
 
     if (C->Pending == NULL)
-    { 
+    {   GB_cov[2722]++ ;
+// covered (2722): 8298074
 
         //----------------------------------------------------------------------
         // no pending tuples currently exist
@@ -999,7 +1043,9 @@ GrB_Info GB_assign_prep
 
     }
     else
-    { 
+    {   GB_cov[2723]++ ;
+// covered (2723): 1111604
+        // test19, test19b
 
         //----------------------------------------------------------------------
         // prior pending tuples exist: check if action: ( delete ) can occur
@@ -1011,25 +1057,29 @@ GrB_Info GB_assign_prep
         // action: ( delete ) can occur.
 
         if (*C_replace)
-        { 
+        {   GB_cov[2724]++ ;
+// covered (2724): 128592
             // C_replace must use the action: ( delete )
             wait = true ;
         }
         else if (accum == NULL)
-        { 
+        {   GB_cov[2725]++ ;
+// covered (2725): 254868
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
             // A is completely dense and if there is no mask M, then C(I,J)=A
             // cannot delete any entries from C.
 
             if (M == NULL && GB_is_dense (A))
-            { 
+            {   GB_cov[2726]++ ;
+// NOT COVERED (2726):
 GB_GOTCHA ;
                 // A is a dense matrix, so entries cannot be deleted
                 wait = false ;
             }
             else
-            { 
+            {   GB_cov[2727]++ ;
+// covered (2727): 254868
                 // A is sparse or M is present.
                 // In this case, action: ( delete ) might occur
                 // TODO: don't assemble pending tuples unless a deletion
@@ -1043,7 +1093,8 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         if (!wait)
-        { 
+        {   GB_cov[2728]++ ;
+// covered (2728): 728144
 
             // ( delete ) will not occur, but new pending tuples may be added
             // via the action: ( insert ).  Check if the accum operator is the
@@ -1054,7 +1105,8 @@ GB_GOTCHA ;
             ASSERT (C->Pending->type != NULL) ;
 
             if (atype != C->Pending->type)
-            { 
+            {   GB_cov[2729]++ ;
+// covered (2729): 2
                 // entries in A are copied directly into the list of pending
                 // tuples for C, with no typecasting.  The type of the prior
                 // pending tuples must match the type of A.  Since the types
@@ -1072,14 +1124,16 @@ GB_GOTCHA ;
                         GB_op_is_second (C->Pending->op, C->type))
                   )
             )
-            { 
+            {   GB_cov[2730]++ ;
+// covered (2730): 336572
                 wait = true ;
             }
         }
     }
 
     if (wait)
-    { 
+    {   GB_cov[2731]++ ;
+// covered (2731): 720034
         // Prior computations are not compatible with this assignment, so all
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
@@ -1099,7 +1153,8 @@ GB_GOTCHA ;
 
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    { 
+    {   GB_cov[2732]++ ;
+// covered (2732): 445073
         // C is completely empty.  C_replace is irrelevant so set it to false.
         GBURBLE ("(C empty) ") ;
         (*C_replace) = false ;
@@ -1125,7 +1180,8 @@ GB_GOTCHA ;
     // explicit SECOND_Ctype operator.
 
     if (C->Pending != NULL)
-    { 
+    {   GB_cov[2733]++ ;
+// covered (2733): 391570
         C->Pending->op = accum ;
     }
 

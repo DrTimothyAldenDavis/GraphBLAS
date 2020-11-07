@@ -56,7 +56,8 @@ void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
     const size_t xsize,             // size of entries in A_1
     const int64_t n
 )
-{ 
+{   GB_cov[3665]++ ;
+// covered (3665): 6762372
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -106,7 +107,9 @@ void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
     uint8_t *GB_RESTRICT A_1,       // size n array
     const int64_t n
 )
-{ 
+{   GB_cov[3666]++ ;
+// NOT COVERED (3666):
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -132,7 +135,9 @@ void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
     uint16_t *GB_RESTRICT A_1,      // size n array
     const int64_t n
 )
-{ 
+{   GB_cov[3667]++ ;
+// NOT COVERED (3667):
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -159,7 +164,9 @@ void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
     uint32_t *GB_RESTRICT A_1,      // size n array
     const int64_t n
 )
-{ 
+{   GB_cov[3668]++ ;
+// NOT COVERED (3668):
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -186,7 +193,8 @@ void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
     uint64_t *GB_RESTRICT A_1,      // size n array
     const int64_t n
 )
-{ 
+{   GB_cov[3669]++ ;
+// covered (3669): 141716
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -212,7 +220,8 @@ void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
     GB_blob16 *GB_RESTRICT A_1,     // size n array
     const int64_t n
 )
-{ 
+{   GB_cov[3670]++ ;
+// covered (3670): 67
     ASSERT (sizeof (GB_blob16) == 16) ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;

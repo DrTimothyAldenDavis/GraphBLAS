@@ -17,8 +17,10 @@ for trial = 1:10
     A = sprand (n, n, d) ;
     B = sprand (n, n, d) ;
     E = sprand (n, n, d) ;
+    semiring.class = 'double' ;
 
     C1 = A*B*E ;
     C2 = GB_mex_triple_mxm (semiring, A, B, E) ;
     GB_spec_compare (C1, C2) ;
 end
+

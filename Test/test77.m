@@ -38,7 +38,7 @@ for k1 = k1test
     if (fulltest)
         k2test = 1:length(binops) ;
     else
-        k2test = [48 50 44 4 7 51 48 50] ;
+        k2test = [44:51 44 4 7] ;
     end
 
     for k2 = k2test
@@ -47,7 +47,7 @@ for k1 = k1test
     op.opname = binop ;
     op.optype = type ;
     if (GB_spec_is_positional (op.opname))
-        if (~isequal (type, 'int32'))
+        if (~(isequal (type, 'int32') || isequal (type, 'int64')))
             continue
         end
     end

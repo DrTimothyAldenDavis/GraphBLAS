@@ -494,7 +494,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // will be applied later in GB_mxm.
 
     double axbflops = total_flops - Mwork ;
-    GBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
+    GBURBLE ("axbwork %g mwork %g ", axbflops, (double) Mwork) ;
     int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
     bool M_is_dense = GB_is_packed (M) ;
@@ -929,9 +929,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
-    GBURBLE ("nthreads %d ntasks %d coarse: (gus: %d hash: %d)"
-        " fine: (gus: %d hash: %d) ", nthreads, ntasks,
-        ncoarse_gus, ncoarse_hash, nfine_gus, nfine_hash) ;
+    GBURBLE ("(nthreads %d", nthreads) ;
+    if (ncoarse_gus  > 0) GBURBLE (" coarse: %d",      ncoarse_gus) ;
+    if (ncoarse_hash > 0) GBURBLE (" coarse hash: %d", ncoarse_hash) ;
+    if (nfine_gus    > 0) GBURBLE (" fine: %d",        nfine_gus) ;
+    if (nfine_hash   > 0) GBURBLE (" fine hash: %d",   nfine_hash) ;
+    GBURBLE (") ") ;
     #endif
 
     // Bflops is no longer needed as an alias for Cp

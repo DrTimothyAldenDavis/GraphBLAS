@@ -60,10 +60,11 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     else
     {
         // this may convert C to full
-        GB_Matrix_wait (C, Context) ;
+        GrB_Matrix_wait (&C) ;
+        C = (*handle) ;
     }
 
-    // must be done after GB_Matrix_wait:
+    // must be done after GrB_Matrix_wait:
     int64_t cnz = GB_NNZ (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;

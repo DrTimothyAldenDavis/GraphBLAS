@@ -77,7 +77,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix A = A_in ;
     if (GB_IS_BITMAP (A))
-    { 
+    {   GB_cov[3435]++ ;
+// covered (3435): 2091082
         GBURBLE ("A:") ;
         GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
@@ -86,7 +87,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix B = B_in ;
     if (GB_IS_BITMAP (B))
-    { 
+    {   GB_cov[3436]++ ;
+// covered (3436): 1883574
         GBURBLE ("B:") ;
         GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
@@ -170,17 +172,20 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     GB_cast_function cast_A = NULL, cast_B = NULL ;
     if (!A_is_pattern)
-    { 
+    {   GB_cov[3437]++ ;
+// covered (3437): 2354716
         cast_A = GB_cast_factory (op->xtype->code, A->type->code) ;
     }
     if (!B_is_pattern)
-    { 
+    {   GB_cov[3438]++ ;
+// covered (3438): 2354716
         cast_B = GB_cast_factory (op->ytype->code, B->type->code) ;
     }
 
     int64_t offset = 0 ;
     if (op_is_positional)
-    { 
+    {   GB_cov[3439]++ ;
+// covered (3439): 528532
         offset = GB_positional_offset (opcode) ;
         Cx_int64 = (int64_t *) Cx ;
         Cx_int32 = (int32_t *) Cx ;
@@ -194,7 +199,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int64_t kC ;
 
     if (!C_is_full)
-    { 
+    {   GB_cov[3440]++ ;
+// covered (3440): 2883248
         #pragma omp parallel for num_threads(nthreads) schedule(guided)
         for (kC = 0 ; kC < cnvec ; kC++)
         {
@@ -210,11 +216,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             // determine # entries in C(:,jC), the (kC)th vector of C
             // int64_t kC = kA * bnvec + kB ;
             if (!C_is_full)
-            { 
+            {   GB_cov[3441]++ ;
+// covered (3441): 27849913
                 Cp [kC] = aknz * bknz ;
             }
             if (C_is_hyper)
-            { 
+            {   GB_cov[3442]++ ;
+// covered (3442): 9449647
                 Ch [kC] = jA * bvdim + jB ;
             }
         }
@@ -266,7 +274,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                 if (!B_is_pattern) cast_B (bwork, Bx +(pB*bsize), bsize) ;
                 // C(iC,jC) = A(iA,jA) * B(iB,jB)
                 if (!C_is_full)
-                { 
+                {   GB_cov[3443]++ ;
+// covered (3443): 36409128
                     int64_t iC = iAblock + iB ;
                     Ci [pC] = iC ;                  // ok: C is sparse
                 }
@@ -275,55 +284,75 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     // positional binary operator
                     switch (opcode)
                     {
-                        case GB_FIRSTI_opcode   : 
+                        case GB_FIRSTI_opcode    : GB_cov[3444]++ ;  
+// covered (3444): 498645
                             // z = first_i(A(iA,jA),y) == iA
-                        case GB_FIRSTI1_opcode  : 
+                        case GB_FIRSTI1_opcode   : GB_cov[3445]++ ;  
+// covered (3445): 498822
                             // z = first_i1(A(iA,jA),y) == iA+1
                             if (is64)
-                            { 
+                            {   GB_cov[3446]++ ;
+// NOT COVERED (3446):
+GB_GOTCHA ;
                                 Cx_int64 [pC] = iA + offset ;
                             }
                             else
-                            { 
+                            {   GB_cov[3447]++ ;
+// covered (3447): 498948
                                 Cx_int32 [pC] = (int32_t) (iA + offset) ;
                             }
                             break ;
-                        case GB_FIRSTJ_opcode   : 
+                        case GB_FIRSTJ_opcode    : GB_cov[3448]++ ;  
+// covered (3448): 565859
                             // z = first_j(A(iA,jA),y) == jA
-                        case GB_FIRSTJ1_opcode  : 
+                        case GB_FIRSTJ1_opcode   : GB_cov[3449]++ ;  
+// covered (3449): 566083
                             // z = first_j1(A(iA,jA),y) == jA+1
                             if (is64)
-                            { 
+                            {   GB_cov[3450]++ ;
+// NOT COVERED (3450):
+GB_GOTCHA ;
                                 Cx_int64 [pC] = jA + offset ;
                             }
                             else
-                            { 
+                            {   GB_cov[3451]++ ;
+// covered (3451): 566257
                                 Cx_int32 [pC] = (int32_t) (jA + offset) ;
                             }
                             break ;
-                        case GB_SECONDI_opcode  : 
+                        case GB_SECONDI_opcode   : GB_cov[3452]++ ;  
+// covered (3452): 2199980
                             // z = second_i(x,B(iB,jB)) == iB
-                        case GB_SECONDI1_opcode : 
+                        case GB_SECONDI1_opcode  : GB_cov[3453]++ ;  
+// covered (3453): 2767557
                             // z = second_i1(x,B(iB,jB)) == iB+1
                             if (is64)
-                            { 
+                            {   GB_cov[3454]++ ;
+// NOT COVERED (3454):
+GB_GOTCHA ;
                                 Cx_int64 [pC] = iB + offset ;
                             }
                             else
-                            { 
+                            {   GB_cov[3455]++ ;
+// covered (3455): 2768379
                                 Cx_int32 [pC] = (int32_t) (iB + offset) ;
                             }
                             break ;
-                        case GB_SECONDJ_opcode  : 
+                        case GB_SECONDJ_opcode   : GB_cov[3456]++ ;  
+// covered (3456): 2119284
                             // z = second_j(x,B(iB,jB)) == jB
-                        case GB_SECONDJ1_opcode : 
+                        case GB_SECONDJ1_opcode  : GB_cov[3457]++ ;  
+// covered (3457): 2668325
                             // z = second_j1(x,B(iB,jB)) == jB+1
                             if (is64)
-                            { 
+                            {   GB_cov[3458]++ ;
+// NOT COVERED (3458):
+GB_GOTCHA ;
                                 Cx_int64 [pC] = jB + offset ;
                             }
                             else
-                            { 
+                            {   GB_cov[3459]++ ;
+// covered (3459): 2668771
                                 Cx_int32 [pC] = (int32_t) (jB + offset) ;
                             }
                             break ;
@@ -331,7 +360,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     }
                 }
                 else
-                { 
+                {   GB_cov[3460]++ ;
+// covered (3460): 27060830
                     // standard binary operator
                     fmult (Cx +(pC*csize), awork, bwork) ;
                 }
