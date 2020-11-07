@@ -68,6 +68,8 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test175',t) ; % test142 updated
+logstat ('test174',t) ; % test GrB_assign C<A>=A
 logstat ('test173',t) ; % test GrB_assign C<A>=A
 logstat ('test172',t) ; % test eWiseMult with M bitmap/full
 logstat ('test171',t) ; % test conversion and GB_memset
