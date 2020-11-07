@@ -1,4 +1,0 @@
-06-Nov-2020 21:24:03 test174        0.0 sec coverage:     0 : 15699 of 16269 ( 96.5% rate:     0.00/sec)
-06-Nov-2020 21:25:08 test175       12.4 sec coverage:     0 : 15699 of 16269 ( 96.5% rate:     0.00/sec)
-06-Nov-2020 21:28:00 test175       12.3 sec coverage:     0 : 15699 of 16269 ( 96.5% rate:     0.00/sec)
-06-Nov-2020 21:34:04 test142        8.4 sec coverage:   504 : 16203 of 16269 ( 99.6% rate:    60.25/sec)
