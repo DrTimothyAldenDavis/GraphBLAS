@@ -162,22 +162,29 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         // matrix assignment: C<M or !M>(I,J) = A
         //----------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // assign A into C
-        //----------------------------------------------------------------------
+        // assign A into C:
+
+            //  for all entries aij in A
+            //      get the effective value of the mask:
+            //          for row assign: get mij = m(jC,0)
+            //          for col assign: get mij = m(iC,0)
+            //          for assign: get mij = M(iC,jC)
+            //          for subassign: get mij = M(i,j)
+            //          if complemented: mij = !mij
+            //      if mij == 1:
+            //          Cx(p) = aij     // C(iC,jC) inserted or updated
+            //          Cb(p) = 4
+
+        // clear entries from C that were not in A:
+
+            // for all entries in IxJ
+                // get the effective value of the mask
+                // if mij == 1
+                    // 0 -> 0
+                    // 1 -> 0           delete because aij not present
+                    // keep -> 1
 
         // TODO: if A is bitmap or full, use a single pass
-
-        //  for all entries aij in A (A can be hyper, sparse, bitmap, or full)
-        //      get the effective value of the mask:
-        //          for row assign: get mij = m(jC,0)
-        //          for col assign: get mij = m(iC,0)
-        //          for assign: get mij = M(iC,jC)
-        //          for subassign: get mij = M(i,j)
-        //          if complemented: mij = !mij
-        //      if mij == 1:
-        //          Cx(p) = aij     // C(iC,jC) inserted or updated
-        //          Cb(p) = 4    
 
         #define GB_AIJ_WORK(pC,pA)              \
         {                                       \
@@ -193,6 +200,19 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             }                                   \
         }
 
+        #undef  GB_IXJ_WORK
+        #define GB_IXJ_WORK(pC,pA)          \
+        {                                   \
+            int64_t pM = GB_GET_pM ;        \
+            GB_GET_MIJ (mij, pM) ;          \
+            if (mij)                        \
+            {                               \
+                int8_t cb = Cb [pC] ;       \
+                Cb [pC] = (cb > 1) ;        \
+                cnvals -= (cb == 1) ;       \
+            }                               \
+        }
+
         switch (assign_kind)
         {
             case GB_ROW_ASSIGN : 
@@ -200,83 +220,34 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 #undef  GB_GET_pM
                 #define GB_GET_pM jC
                 #include "GB_bitmap_assign_A_template.c"
+                #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
+
             case GB_COL_ASSIGN : 
-GB_GOTCHA ; // C<m>(I,j) = A with GrB_Col_assign, m bitmap/full, C bitmap
                 // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC
                 #include "GB_bitmap_assign_A_template.c"
+                #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
+
             case GB_ASSIGN : 
                 // C<M>(I,J) = A where M has the same size as C
                 #undef  GB_GET_pM
                 #define GB_GET_pM pC
                 #include "GB_bitmap_assign_A_template.c"
+                #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
+
             case GB_SUBASSIGN : 
                 // C(I,J)<M> = A where M has the same size as A
                 #undef  GB_GET_pM
                 #define GB_GET_pM (iA + jA * nI)
                 #include "GB_bitmap_assign_A_template.c"
+                #include "GB_bitmap_assign_IxJ_template.c"
                 break ;
+
             default: ;
-        }
-
-        //----------------------------------------------------------------------
-        // clear entries from C that were not in A
-        //----------------------------------------------------------------------
-
-        // TODO: use a single switch case (merge with switch above)
-        {
-            // for all entries in IxJ
-                // get the effective value of the mask
-                // if mij == 1
-                    // 0 -> 0
-                    // 1 -> 0           delete because aij not present
-                    // keep -> 1
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,pA)          \
-            {                                   \
-                int64_t pM = GB_GET_pM ;        \
-                GB_GET_MIJ (mij, pM) ;          \
-                if (mij)                        \
-                {                               \
-                    int8_t cb = Cb [pC] ;       \
-                    Cb [pC] = (cb > 1) ;        \
-                    cnvals -= (cb == 1) ;       \
-                }                               \
-            }
-
-            switch (assign_kind)
-            {
-                case GB_ROW_ASSIGN : 
-                    // C<m>(i,J) = A where m is a 1-by-C->vdim row vector
-                    #undef  GB_GET_pM
-                    #define GB_GET_pM jC
-                    #include "GB_bitmap_assign_IxJ_template.c"
-                    break ;
-                case GB_COL_ASSIGN : 
-GB_GOTCHA ; // C<m>(I,j) = A with GrB_Col_assign, m bitmap/full, C bitmap
-                    // C<m>(I,j) = A where m is a C->vlen-by-1 column vector
-                    #undef  GB_GET_pM
-                    #define GB_GET_pM iC
-                    #include "GB_bitmap_assign_IxJ_template.c"
-                    break ;
-                case GB_ASSIGN : 
-                    // C<M>(I,J) = A where M has the same size as C
-                    #undef  GB_GET_pM
-                    #define GB_GET_pM pC
-                    #include "GB_bitmap_assign_IxJ_template.c"
-                    break ;
-                case GB_SUBASSIGN : 
-                    // C(I,J)<M> = A where M has the same size as A
-                    #undef  GB_GET_pM
-                    #define GB_GET_pM (iA + jA * nI)
-                    #include "GB_bitmap_assign_IxJ_template.c"
-                    break ;
-                default: ;
-            }
         }
     }
 

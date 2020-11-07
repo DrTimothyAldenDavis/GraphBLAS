@@ -6,17 +6,17 @@
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-// C<>(I,J) += A       assign
-// C(I,J)<> += A       subassign
+// C<>(I,J) += A            assign
+// C(I,J)<> += A            subassign
 
-// C<repl>(I,J) += A       assign
-// C(I,J)<repl> += A       subassign
+// C<repl>(I,J) += A        assign
+// C(I,J)<repl> += A        subassign
 
-// C<!>(I,J) += A       assign: no work to do
-// C(I,J)<!> += A       subassign: no work to do
+// C<!>(I,J) += A           assign: no work to do
+// C(I,J)<!> += A           subassign: no work to do
 
-// C<!,repl>(I,J) += A       assign: just clear C(I,J) of all entries
-// C(I,J)<!,repl> += A       subassign: just clear C(I,J) of all entries
+// C<!,repl>(I,J) += A      assign: just clear C(I,J) of all entries
+// C(I,J)<!,repl> += A      subassign: just clear C(I,J) of all entries
 //------------------------------------------------------------------------------
 
 // C:           bitmap
@@ -26,7 +26,11 @@
 // C_replace:   true or false
 // accum:       present
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
-// kind:        assign, row assign, col assign, or subassign
+// kind:        assign, row assign, col assign, or subassign (all the same)
+
+// If Mask_comp is true, then an empty mask is complemented.  This case has
+// already been handled by GB_assign_prep, which calls
+// GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
 
 #include "GB_bitmap_assign_methods.h"
 
@@ -147,13 +151,16 @@ GrB_Info GB_bitmap_assign_noM_accum
         }
 
     }
+
+#if 0
     else if (C_replace)
-    { 
-GB_GOTCHA ; // C(I,J)+=A with C_replace and no M, C bitmap
+    {
 
         //----------------------------------------------------------------------
-        // mask not present yet complemented: C_replace phase only
+        // This case is handled by GB_assign_prep and is thus not needed here.
         //----------------------------------------------------------------------
+
+        // mask not present yet complemented: C_replace phase only
 
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)
@@ -170,6 +177,7 @@ GB_GOTCHA ; // C(I,J)+=A with C_replace and no M, C bitmap
         }
         #include "GB_bitmap_assign_C_template.c"
     }
+#endif
 
     //--------------------------------------------------------------------------
     // return result

@@ -414,9 +414,8 @@ GrB_Info GB_assign_prep
         ((*C_replace) && GB_IS_FULL (C) && C_may_be_bitmap)) ;
 
     // an empty mask occurs when M is not present, but complemented
-    bool empty_mask = (M == NULL && Mask_comp) ;
 
-    if (empty_mask)
+    if (M == NULL && Mask_comp)
     {
         // The mask M is empty, and complemented, and thus M(i,j)=0 for all i
         // and j.  The result does not depend on A, Rows, Cols, or accum.  The
@@ -452,6 +451,7 @@ GrB_Info GB_assign_prep
                     { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(i,:)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             I,    1, GB_LIST, NULL, // I
@@ -485,6 +485,7 @@ GrB_Info GB_assign_prep
                     { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(:,j)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             NULL, 0, GB_ALL,  NULL, // I
@@ -531,6 +532,7 @@ GrB_Info GB_assign_prep
                     { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(I,J)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             I, nI, Ikind, Icolon,

@@ -95,7 +95,7 @@ logstat ('test01',t) ;  % error handling
 logstat ('test01',s) ;  % error handling
 logstat ('test83',t) ;  % GrB_assign with C_replace and empty J
 logstat ('test136',s) ; % subassignment special cases
-logstat ('test84',t) ;  % GrB_assign (row and column with C in CSR format)
+logstat ('test84',t) ;  % GrB_assign (row and column with C in CSR/CSC format)
 logstat ('test85',t) ;  % GrB_transpose (1-by-n with typecasting)
 logstat ('test02',t) ;  % matrix copy and dup tests
 logstat ('test148',t) ; % ewise with alias

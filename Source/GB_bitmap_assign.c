@@ -76,7 +76,7 @@ GrB_Info GB_bitmap_assign
         }
         else
         { 
-            // C(I,J) += A or scalar, no mask
+            // C(I,J) += A or scalar, no mask.
             GB_OK (GB_bitmap_assign_noM_accum (C, C_replace,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                 /* no M, */ Mask_comp, Mask_struct, accum,

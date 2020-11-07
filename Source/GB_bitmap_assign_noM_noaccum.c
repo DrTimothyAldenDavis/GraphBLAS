@@ -6,14 +6,14 @@
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-// C<>(I,J) = A       assign
-// C(I,J)<> = A       subassign
+// C<>(I,J) = A             assign
+// C(I,J)<> = A             subassign
 
-// C<repl>(I,J) = A       assign
-// C(I,J)<repl> = A       subassign
+// C<repl>(I,J) = A         assign
+// C(I,J)<repl> = A         subassign
 
-// C<!>(I,J) = A       assign
-// C(I,J)<!> = A       subassign
+// C<!>(I,J) = A            assign
+// C(I,J)<!> = A            subassign
 
 // C<!,repl>(I,J) = A       assign
 // C(I,J)<!,repl> = A       subassign
@@ -22,11 +22,15 @@
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false
-// Mask_struct: true or false
+// Mask_struct: true or false (ignored)
 // C_replace:   true or false
 // accum:       not present
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign, row assign, col assign, or subassign
+
+// If M is not present and Mask_comp is true, then an empty mask is
+// complemented.  This case is been handled by GB_assign_prep by calling this
+// method with no matrix A, but with a scalar (which is unused).
 
 #include "GB_bitmap_assign_methods.h"
 
