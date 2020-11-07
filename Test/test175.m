@@ -243,5 +243,5 @@ for k1 = 1:length (types)
 end
 end
 
-fprintf ('\ntest142: all tests passed\n') ;
+fprintf ('\ntest175: all tests passed\n') ;
 

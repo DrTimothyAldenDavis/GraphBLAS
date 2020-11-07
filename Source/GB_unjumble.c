@@ -80,6 +80,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     switch (asize)
     {
         case 1 : 
+GB_GOTCHA ;
             // GrB_BOOL, GrB_UINT8, GrB_INT8, and user defined types of size 1
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size1 (Ai+pA_start, Ax1+pA_start, aknz) ;
@@ -87,6 +88,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             break ;
 
         case 2 : 
+GB_GOTCHA ;
             // GrB_UINT16, GrB_INT16, and user-defined types of size 2
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size2 (Ai+pA_start, Ax2+pA_start, aknz) ;

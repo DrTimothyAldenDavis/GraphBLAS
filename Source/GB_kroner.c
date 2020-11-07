@@ -281,6 +281,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             // z = first_i1(A(iA,jA),y) == iA+1
                             if (is64)
                             { 
+GB_GOTCHA ;
                                 Cx_int64 [pC] = iA + offset ;
                             }
                             else
@@ -294,6 +295,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             // z = first_j1(A(iA,jA),y) == jA+1
                             if (is64)
                             { 
+GB_GOTCHA ;
                                 Cx_int64 [pC] = jA + offset ;
                             }
                             else
@@ -307,6 +309,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             // z = second_i1(x,B(iB,jB)) == iB+1
                             if (is64)
                             { 
+GB_GOTCHA ;
                                 Cx_int64 [pC] = iB + offset ;
                             }
                             else
@@ -320,6 +323,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             // z = second_j1(x,B(iB,jB)) == jB+1
                             if (is64)
                             { 
+GB_GOTCHA ;
                                 Cx_int64 [pC] = jB + offset ;
                             }
                             else

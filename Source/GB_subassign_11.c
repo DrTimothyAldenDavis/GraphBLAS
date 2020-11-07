@@ -110,8 +110,8 @@ GrB_Info GB_subassign_11
         // phase1: M is bitmap
         //----------------------------------------------------------------------
 
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:nzombies)
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+//            reduction(+:nzombies)
         for (taskid = 0 ; taskid < ntasks ; taskid++)
         {
 
@@ -165,6 +165,7 @@ GrB_Info GB_subassign_11
                     }
                     else if (Sfound && mij)
                     { 
+GB_GOTCHA ;
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------

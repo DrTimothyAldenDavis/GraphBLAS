@@ -68,6 +68,7 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
+logstat ('test142',t) ; % test GrB_assign with accum
 logstat ('test175',t) ; % test142 updated
 logstat ('test174',t) ; % test GrB_assign C<A>=A
 logstat ('test173',t) ; % test GrB_assign C<A>=A

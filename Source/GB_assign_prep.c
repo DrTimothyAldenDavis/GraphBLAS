@@ -1025,6 +1025,7 @@ GrB_Info GB_assign_prep
 
             if (M == NULL && GB_is_dense (A))
             { 
+GB_GOTCHA ;
                 // A is a dense matrix, so entries cannot be deleted
                 wait = false ;
             }

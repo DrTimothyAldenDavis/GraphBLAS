@@ -55,7 +55,7 @@
 
             if (Mask_struct)
             {
-                // C<A,struct>=A with C bitmap, A dense
+GB_GOTCHA ;                // C<A,struct>=A with C bitmap, A dense
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -92,7 +92,7 @@
 
             if (Mask_struct)
             {
-                // C<A,struct>=A with C sparse/hyper/full
+GB_GOTCHA ;                // C<A,struct>=A with C sparse/hyper/full
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -148,7 +148,7 @@
             }
             else
             {
-                // C<A>=A with A and C bitmap
+GB_GOTCHA ;           // C<A>=A with A and C bitmap
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
@@ -188,7 +188,7 @@
             }
             else
             {
-                // C<A>=A with A bitmap, and C hyper/sparse/full
+GB_GOTCHA ;                // C<A>=A with A bitmap, and C hyper/sparse/full
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -273,7 +273,7 @@
                 {
                     if (C_is_bitmap)
                     {
-                        // C<A,struct>=A with C bitmap, A sparse
+GB_GOTCHA ;                        // C<A,struct>=A with C bitmap, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
@@ -289,7 +289,7 @@
                     }
                     else
                     {
-                        // C<A,struct>=A with C dense, A sparse
+GB_GOTCHA ;                        // C<A,struct>=A with C dense, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {

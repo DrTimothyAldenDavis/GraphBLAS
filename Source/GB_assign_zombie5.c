@@ -105,6 +105,7 @@ GrB_Info GB_assign_zombie5
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, C, &ntasks))
     { 
+GB_GOTCHA ;
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
