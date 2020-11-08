@@ -113,6 +113,7 @@ void GB_sel_bitmap__nonzero_any
     const int nthreads
 )
 { 
+    ;
     #include "GB_bitmap_select_template.c"
 }
 
