@@ -58,8 +58,6 @@ void mexFunction
     GxB_FC64_t zero = GxB_CMPLX (0,0) ;
 
     // create the monoid
-    // GxB_print (Complex_times, 5) ;
-
     if (Complex == GxB_FC64)
     {
         Times_terminal = GxB_TIMES_FC64_MONOID ;

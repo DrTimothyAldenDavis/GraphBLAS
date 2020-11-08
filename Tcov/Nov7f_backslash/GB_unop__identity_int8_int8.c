@@ -77,8 +77,8 @@ GrB_Info GB_unop_apply__identity_int8_int8
     #else
     int64_t p ;
     if (Ab == NULL)
-    { 
-GB_GOTCHA ; // GB_unop_apply__identity_*_*, sparse
+    {   GB_cov[15796]++ ;
+// NOT COVERED (15796):
         // FIXME: not needed for the identity operator, when Ab is NULL
         // A and C are hypersparse, sparse, or full
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -90,8 +90,8 @@ GB_GOTCHA ; // GB_unop_apply__identity_*_*, sparse
         }
     }
     else
-    { 
-GB_GOTCHA ; // GB_unop_apply__identity_*_*, bitmap
+    {   GB_cov[15797]++ ;
+// NOT COVERED (15797):
         // bitmap case, no transpose
         // A->b has already been memcpy'd into C->b
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -120,7 +120,8 @@ GrB_Info GB_unop_tran__identity_int8_int8
     int naslice,
     int nthreads
 )
-{ 
+{   GB_cov[15798]++ ;
+// covered (15798): 213755
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

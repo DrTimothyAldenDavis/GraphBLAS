@@ -326,13 +326,6 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-// printf ("\nin GB_mex_apply1 ---------------------------\n")  ;
-// printf ("input:\n") ; GxB_print (C, 3) ;
-// GxB_print (accum, 3) ;
-// GxB_print (op, 3) ;
-// GxB_print (scalar, 3) ;
-// GxB_print (A, 3) ;
-
     // C<Mask> = accum(C,op(x,A))
     if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT))
     {
@@ -343,8 +336,6 @@ void mexFunction
     {
         METHOD (apply1 (true)) ;
     }
-
-// printf ("result:\n") ; GxB_print (C, 3) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

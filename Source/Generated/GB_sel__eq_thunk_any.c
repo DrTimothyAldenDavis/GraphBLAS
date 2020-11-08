@@ -113,6 +113,7 @@ void GB_sel_bitmap__eq_thunk_any
     const int nthreads
 )
 { 
+GB_GOTCHA ; // GB_sel_bitmap__eq_thunk_any
     ;
     #include "GB_bitmap_select_template.c"
 }

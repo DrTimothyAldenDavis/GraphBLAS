@@ -441,7 +441,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         { 
             // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
             subassign_method = GB_SUBASSIGN_METHOD_06d ;
-            ASSERT (C_as_if_full && whole_C_matrix && M == A) ;
+            ASSERT ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M == A) ;
+            ASSERT ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M == A) ;
         }
         else if (C_is_empty && whole_C_matrix && A_as_if_full && Mask_struct)
         { 

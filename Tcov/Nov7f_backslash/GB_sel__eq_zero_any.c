@@ -15,8 +15,8 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__nonzero_any
-// phase2: GB_sel_phase2__nonzero_any
+// phase1: GB_sel_phase1__eq_zero_any
+// phase2: GB_sel_phase2__eq_zero_any
 // A type: GB_void
 
 // kind
@@ -27,7 +27,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    GB_is_nonzero (Ax +((p)*asize), asize)
+    !GB_is_nonzero (Ax +((p)*asize), asize)
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \
@@ -35,15 +35,15 @@
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
+    /* assignment skipped, Cx already all zero */
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__nonzero_any
+// GB_sel_phase1__eq_zero_any
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_phase1__nonzero_any
+void GB_sel_phase1__eq_zero_any
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -60,7 +60,8 @@ void GB_sel_phase1__nonzero_any
     const int ntasks,
     const int nthreads
 )
-{ 
+{   GB_cov[14758]++ ;
+// covered (14758): 2
     ;
     #include "GB_select_phase1.c"
 }
@@ -68,10 +69,10 @@ void GB_sel_phase1__nonzero_any
 
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__nonzero_any
+// GB_sel_phase2__eq_zero_any
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__nonzero_any
+void GB_sel_phase2__eq_zero_any
 (
     int64_t *GB_RESTRICT Ci,
     GB_void *GB_RESTRICT Cx,
@@ -89,18 +90,19 @@ void GB_sel_phase2__nonzero_any
     const int ntasks,
     const int nthreads
 )
-{ 
+{   GB_cov[14759]++ ;
+// covered (14759): 2
     ;
     #include "GB_select_phase2.c"
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__nonzero_any
+// GB_sel_bitmap__eq_zero_any
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_bitmap__nonzero_any
+void GB_sel_bitmap__eq_zero_any
 (
     int8_t *Cb,
     GB_void *GB_RESTRICT Cx,
@@ -112,8 +114,8 @@ void GB_sel_bitmap__nonzero_any
     const GxB_select_function user_select,
     const int nthreads
 )
-{ 
-GB_GOTCHA ; // GB_sel_bitmap__nonzero_any
+{   GB_cov[14760]++ ;
+// NOT COVERED (14760):
     ;
     #include "GB_bitmap_select_template.c"
 }

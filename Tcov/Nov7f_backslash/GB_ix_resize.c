@@ -46,19 +46,19 @@ GrB_Info GB_ix_resize           // resize a matrix
     // resize the matrix
     //--------------------------------------------------------------------------
 
-#if 0
     if (anz_new < anzmax_orig / 4)
-    {
+    {   GB_cov[3427]++ ;
+// NOT COVERED (3427):
 
         //----------------------------------------------------------------------
         // shrink the space
         //----------------------------------------------------------------------
 
         // the new matrix has lots of leftover space.  Trim the size but leave
-        // space for future growth.  Do not increase the size beyond the
-        // existing space, however.
+        // 50% for future growth, if possible.  Do not increase the size beyond
+        // the existing space, however.
 
-        int64_t anzmax_new = GB_IMAX (anzmax_orig, 2 * anz_new) ;
+        int64_t anzmax_new = GB_IMAX (anzmax_orig, anz_new + (anz_new/2)) ;
 
         // since the space is shrinking, this is guaranteed not to fail
         ASSERT (anzmax_new <= anzmax_orig) ;
@@ -70,17 +70,16 @@ GrB_Info GB_ix_resize           // resize a matrix
 
     }
     else if (anz_new > anzmax_orig)
-#endif
-    ASSERT (anz_new > anzmax_orig) ;
     {
 
         //----------------------------------------------------------------------
         // grow the space
         //----------------------------------------------------------------------
 
-        // original A->nzmax is not enough; double the matrix space for nnz(A)
+        // original A->nzmax is not enough; give the matrix space for nnz(A)
+        // plus 50% for future growth
 
-        int64_t anzmax_new = 2 * anz_new ;
+        int64_t anzmax_new = anz_new + (anz_new/2) ;
 
         // the space is growing so this might run out of memory
         ASSERT (anzmax_new > anzmax_orig) ;
@@ -88,7 +87,8 @@ GrB_Info GB_ix_resize           // resize a matrix
 
         info = GB_ix_realloc (A, anzmax_new, true, Context) ;
         if (info != GrB_SUCCESS)
-        { 
+        {   GB_cov[3428]++ ;
+// covered (3428): 7611
             // out of memory
             GB_phbix_free (A) ;
             return (info) ;
@@ -96,10 +96,9 @@ GrB_Info GB_ix_resize           // resize a matrix
         ASSERT_MATRIX_OK (A, "A increased in size", GB0) ;
 
     }
-
-#if  0
     else
-    {
+    {   GB_cov[3429]++ ;
+// covered (3429): 140098
 
         //----------------------------------------------------------------------
         // leave as-is
@@ -110,7 +109,6 @@ GrB_Info GB_ix_resize           // resize a matrix
         ASSERT (anz_new <= anzmax_orig) ;
         ASSERT_MATRIX_OK (A, "A left as-is", GB0) ;
     }
-#endif
 
     //--------------------------------------------------------------------------
     // return the result

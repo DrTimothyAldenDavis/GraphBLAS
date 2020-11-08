@@ -16,23 +16,23 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop_apply__identity_int8_int8
-// op(A') function:  GB_unop_tran__identity_int8_int8
+// op(A)  function:  GB_unop_apply__identity_uint8_uint8
+// op(A') function:  GB_unop_tran__identity_uint8_uint8
 
-// C type:   int8_t
-// A type:   int8_t
-// cast:     int8_t cij = aij
+// C type:   uint8_t
+// A type:   uint8_t
+// cast:     uint8_t cij = aij
 // unaryop:  cij = aij
 
 #define GB_ATYPE \
-    int8_t
+    uint8_t
 
 #define GB_CTYPE \
-    int8_t
+    uint8_t
 
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA) \
-    int8_t aij = Ax [pA]
+    uint8_t aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
@@ -42,30 +42,30 @@
 
 // casting
 #define GB_CAST(z, aij) \
-    int8_t z = aij ;
+    uint8_t z = aij ;
 
 // cij = op (aij)
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
-    int8_t aij = Ax [pA] ;          \
+    uint8_t aij = Ax [pA] ;          \
     /* Cx [pC] = op (cast (aij)) */ \
-    int8_t z = aij ;               \
+    uint8_t z = aij ;               \
     Cx [pC] = z ;        \
 }
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_IDENTITY || GxB_NO_INT8)
+    (GxB_NO_IDENTITY || GxB_NO_UINT8)
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_apply__identity_int8_int8
+GrB_Info GB_unop_apply__identity_uint8_uint8
 (
-    int8_t *Cx,       // Cx and Ax may be aliased
-    const int8_t *Ax,
+    uint8_t *Cx,       // Cx and Ax may be aliased
+    const uint8_t *Ax,
     const int8_t *GB_RESTRICT Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -77,29 +77,29 @@ GrB_Info GB_unop_apply__identity_int8_int8
     #else
     int64_t p ;
     if (Ab == NULL)
-    { 
-GB_GOTCHA ; // GB_unop_apply__identity_*_*, sparse
+    {   GB_cov[15964]++ ;
+// NOT COVERED (15964):
         // FIXME: not needed for the identity operator, when Ab is NULL
         // A and C are hypersparse, sparse, or full
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            int8_t aij = Ax [p] ;
-            int8_t z = aij ;
+            uint8_t aij = Ax [p] ;
+            uint8_t z = aij ;
             Cx [p] = z ;
         }
     }
     else
-    { 
-GB_GOTCHA ; // GB_unop_apply__identity_*_*, bitmap
+    {   GB_cov[15965]++ ;
+// NOT COVERED (15965):
         // bitmap case, no transpose
         // A->b has already been memcpy'd into C->b
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            int8_t aij = Ax [p] ;
-            int8_t z = aij ;
+            uint8_t aij = Ax [p] ;
+            uint8_t z = aij ;
             Cx [p] = z ;
         }
     }
@@ -111,7 +111,7 @@ GB_GOTCHA ; // GB_unop_apply__identity_*_*, bitmap
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_tran__identity_int8_int8
+GrB_Info GB_unop_tran__identity_uint8_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -120,7 +120,8 @@ GrB_Info GB_unop_tran__identity_int8_int8
     int naslice,
     int nthreads
 )
-{ 
+{   GB_cov[15966]++ ;
+// covered (15966): 161043
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

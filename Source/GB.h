@@ -557,9 +557,9 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
-    GrB_Matrix A,           // matrix to allocate space for (sparse or hyper)
-    const GrB_Index nzmax,  // new number of entries the matrix can hold
-    const bool numeric,     // if true, reallocate A->x, otherwise A->x is NULL
+    GrB_Matrix A,               // matrix to allocate space for
+    const int64_t nzmax_new,    // new number of entries the matrix can hold
+    const bool numeric,         // if true, reallocate A->x, else A->x is NULL
     GB_Context Context
 ) ;
 

@@ -1,0 +1,196 @@
+//------------------------------------------------------------------------------
+// GB_assign_zombie4: delete entries in C(i,:) for C_replace_phase
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// For GrB_Row_assign or GrB_Col_assign, C(i,J)<M,repl>=..., if C_replace is
+// true, and mask M is present, then any entry C(i,j) outside the list J must
+// be deleted, if M(0,j)=0.
+
+// GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
+
+// C must be sparse or hypersparse.
+// M can have any sparsity structure: hypersparse, sparse, bitmap, or full
+
+#include "GB_assign.h"
+#include "GB_assign_zombie.h"
+
+void GB_assign_zombie4
+(
+    GrB_Matrix C,                   // the matrix C, or a copy
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const int64_t i,                // index of entries to delete
+    const GrB_Index *J,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    GB_Context Context
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
+    ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (!GB_JUMBLED (C)) ;      // binary search on C
+    ASSERT (!GB_PENDING (C)) ;
+    ASSERT (!GB_ZOMBIES (M)) ; 
+    ASSERT (!GB_JUMBLED (M)) ;
+    ASSERT (!GB_PENDING (M)) ; 
+    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+
+    //--------------------------------------------------------------------------
+    // get C
+    //--------------------------------------------------------------------------
+
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
+    const int64_t Cnvec = C->nvec ;
+    int64_t *GB_RESTRICT Ci = C->i ;
+    int64_t nzombies = C->nzombies ;
+    const int64_t zorig = nzombies ;
+
+    //--------------------------------------------------------------------------
+    // get M
+    //--------------------------------------------------------------------------
+
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mh = M->h ;
+    const int8_t  *GB_RESTRICT Mb = M->b ;
+    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const size_t msize = M->type->size ;
+    const int64_t Mnvec = M->nvec ;
+    const int64_t Mvlen = M->vlen ;
+    ASSERT (Mvlen == 1) ;
+    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
+    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    const bool M_is_full = GB_IS_FULL (M) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+    int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
+
+    //--------------------------------------------------------------------------
+    // delete entries in C(i,:)
+    //--------------------------------------------------------------------------
+
+    // The entry C(i,j) is deleted if j is not in the J, and if M(0,j)=0 (if
+    // the mask is not complemented) or M(0,j)=1 (if the mask is complemented.
+
+    int taskid ;
+// TODO#pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+// TODO        reduction(+:nzombies)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+        int64_t kfirst, klast ;
+        GB_PARTITION (kfirst, klast, Cnvec, taskid, ntasks) ;
+        for (int64_t k = kfirst ; k < klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // get C(:,j) and determine if j is outside the list J
+            //------------------------------------------------------------------
+
+            int64_t j = GBH (Ch, k) ;
+            bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
+            if (j_outside)
+            {
+
+                //--------------------------------------------------------------
+                // j is not in J; find C(i,j)
+                //--------------------------------------------------------------
+
+                int64_t pC = Cp [k] ;           // ok: C is sparse
+                int64_t pC_end = Cp [k+1] ;     // ok: C is sparse
+                int64_t pright = pC_end - 1 ;
+                bool found, is_zombie ;
+                GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
+                    is_zombie) ;
+
+                //--------------------------------------------------------------
+                // delete C(i,j) if found, not a zombie, and M(0,j) allows it
+                //--------------------------------------------------------------
+
+                if (found && !is_zombie)
+                {
+
+                    //----------------------------------------------------------
+                    // C(i,j) is a live entry not in the C(I,J) submatrix
+                    //----------------------------------------------------------
+
+                    // Check the mask M to see if it should be deleted.
+                    bool mij = false ;
+
+                    if (M_is_bitmap)
+                    {   GB_cov[2739]++ ;
+// covered (2739): 800
+// GB_GOTCHA ; // test19b only
+                        // M is bitmap, no need for GB_lookup
+                        int64_t pM = j ;
+                        mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;
+                    }
+                    else if (M_is_full)
+                    {   GB_cov[2740]++ ;
+// NOT COVERED (2740):
+GB_GOTCHA ; // GrB_Row_assign with M full
+                        // M is full, no need for GB_lookup
+                        int64_t pM = j ;
+                        mij = GB_mcast (Mx, pM, msize) ;
+                    }
+                    else
+                    {   GB_cov[2741]++ ;
+// NOT COVERED (2741):
+GB_GOTCHA ; // GrB_Row_assign with M sparse/hyper
+                        // M is sparse or hypersparse
+                        int64_t pM, pM_end ;
+                        int64_t pleft = 0 ;
+                        int64_t pright = Mnvec - 1 ;
+                        GB_lookup (M_is_hyper, Mh, Mp, Mvlen, &pleft, pright,
+                            j, &pM, &pM_end) ;
+                        if (pM < pM_end)
+                        {   GB_cov[2742]++ ;
+// NOT COVERED (2742):
+GB_GOTCHA ; // GrB_Row_assign with M sparse/hyper
+                            // found it
+                            mij = GB_mcast (Mx, pM, msize) ;
+                        }
+                    }
+
+                    if (Mask_comp)
+                    {   GB_cov[2743]++ ;
+// covered (2743): 280
+                        // negate the mask if Mask_comp is true
+                        mij = !mij ;
+                    }
+                    if (!mij)
+                    {   GB_cov[2744]++ ;
+// covered (2744): 496
+                        // delete C(i,j) by marking it as a zombie
+                        nzombies++ ;
+                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                    }
+                }
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    C->nzombies = nzombies ;
+}
+

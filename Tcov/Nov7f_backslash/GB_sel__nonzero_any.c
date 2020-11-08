@@ -60,7 +60,8 @@ void GB_sel_phase1__nonzero_any
     const int ntasks,
     const int nthreads
 )
-{ 
+{   GB_cov[15031]++ ;
+// covered (15031): 2
     ;
     #include "GB_select_phase1.c"
 }
@@ -89,7 +90,8 @@ void GB_sel_phase2__nonzero_any
     const int ntasks,
     const int nthreads
 )
-{ 
+{   GB_cov[15032]++ ;
+// covered (15032): 2
     ;
     #include "GB_select_phase2.c"
 }
@@ -112,8 +114,8 @@ void GB_sel_bitmap__nonzero_any
     const GxB_select_function user_select,
     const int nthreads
 )
-{ 
-GB_GOTCHA ; // GB_sel_bitmap__nonzero_any
+{   GB_cov[15033]++ ;
+// NOT COVERED (15033):
     ;
     #include "GB_bitmap_select_template.c"
 }

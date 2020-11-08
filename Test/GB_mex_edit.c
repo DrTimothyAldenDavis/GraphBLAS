@@ -73,10 +73,7 @@ void mexFunction
     OK (GrB_Matrix_ncols (&ncols, C)) ;
     OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
     OK (GxB_Matrix_Option_get (C, GxB_IS_HYPER, &is_hyper)) ;   // deprecated
-    // printf ("init: \n"); GxB_print (C, 3) ;
     bool is_vector = (fmt == GxB_BY_COL && !is_hyper && ncols == 1) ;
-    // printf ("fmt %d is_hyper %d ncols %ld is_vector: %d\n", 
-    //     fmt, is_hyper, ncols, is_vector) ;
 
     // get I
     if (!GB_mx_mxArray_to_indices (&I, pargin [1], &ni, I_range, &ignore))
@@ -130,12 +127,10 @@ void mexFunction
             // remove the (i,j) entry
             if (is_vector)
             {
-                // printf ("vector remove: %ld: (%ld)\n", k, i) ;
                 OK (GrB_Vector_removeElement ((GrB_Vector) C, i)) ;
             }
             else
             {
-                // printf ("matrix remove: %ld: (%ld, %ld)\n", k, i, j) ;
                 OK (GrB_Matrix_removeElement (C, i, j)) ;
             }
         }
@@ -144,12 +139,10 @@ void mexFunction
             // add the (i,j) entry
             if (is_vector)
             {
-                // printf ("vector set: %ld: (%ld) %g\n", k, i, x) ;
                 OK (GrB_Vector_setElement_FP64_ ((GrB_Vector) C, x, i)) ;
             }
             else
             {
-                // printf ("matrix set: %ld: (%ld, %ld) %g\n", k, i, j, x) ;
                 OK (GrB_Matrix_setElement_FP64_ (C, x, i, j)) ;
             }
         }

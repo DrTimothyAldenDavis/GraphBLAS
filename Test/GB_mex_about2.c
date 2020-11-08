@@ -128,7 +128,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t *Slice = NULL ;
-    GxB_print (A, 3) ;
     GB_pslice (&Slice, A->p, n, 2) ;
     CHECK (Slice [0] == 0) ;
     GB_FREE (Slice) ;
@@ -358,6 +357,19 @@ void mexFunction
 
     GrB_Matrix_free_(&C) ;
     GrB_Type_free_(&Wild) ;
+
+    //--------------------------------------------------------------------------
+    // malloc/realloc wrappers
+    //--------------------------------------------------------------------------
+
+    bool ok = false ;
+    int *p = GB_malloc_memory (4, sizeof (int)) ;
+    CHECK (p != NULL) ;
+    p = GB_realloc_memory (4, 4, sizeof (int), p, &ok) ;
+    CHECK (p != NULL) ;
+    CHECK (ok) ;
+    GB_free_memory (p) ;
+    p = NULL ;
 
     //--------------------------------------------------------------------------
     // wrapup

@@ -40,14 +40,16 @@
     int64_t cnvals = C->nvals ;     // for C bitmap
 
     if (A_is_dense)
-    { 
+    {   GB_cov[1168]++ ;
+// covered (1168): 1084
 
         //----------------------------------------------------------------------
         // A is dense: all entries present
         //----------------------------------------------------------------------
 
         if (C_is_bitmap)
-        { 
+        {   GB_cov[1169]++ ;
+// covered (1169): 585
 
             //------------------------------------------------------------------
             // C is bitmap, A is dense
@@ -58,7 +60,8 @@
                 // C<A,struct>=A with C bitmap, A dense
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
-                { 
+                {   GB_cov[1170]++ ;
+// covered (1170): 34416
                     // Cx [p] = Ax [p]
                     GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                     Cb [p] = 1 ;
@@ -67,14 +70,14 @@
             }
             else
             {
-GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 // C<A>=A with C bitmap, A dense
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (GB_AX_MASK (Ax, p, asize))
-                    { 
+                    {   GB_cov[1171]++ ;
+// NOT COVERED (1171):
                         // Cx [p] = Ax [p]
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                         cnvals += (Cb [p] == 0) ;
@@ -96,7 +99,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 // C<A,struct>=A with C sparse/hyper/full
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
-                { 
+                {   GB_cov[1172]++ ;
+// covered (1172): 33848
                     // Cx [p] = Ax [p]
                     GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                 }
@@ -108,7 +112,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (GB_AX_MASK (Ax, p, asize))
-                    { 
+                    {   GB_cov[1173]++ ;
+// covered (1173): 46
                         // Cx [p] = Ax [p]
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                     }
@@ -138,7 +143,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (Ab [p])
-                    { 
+                    {   GB_cov[1174]++ ;
+// covered (1174): 9803
                         // Cx [p] = Ax [p]
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                         cnvals += (Cb [p] == 0) ;
@@ -154,7 +160,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
-                    { 
+                    {   GB_cov[1175]++ ;
+// covered (1175): 10298
                         // Cx [p] = Ax [p]
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                         cnvals += (Cb [p] == 0) ;
@@ -181,7 +188,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 {
                     // Cx [p] = Ax [p]
                     if (Ab [p])
-                    { 
+                    {   GB_cov[1176]++ ;
+// covered (1176): 11918
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                     }
                 }
@@ -193,7 +201,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
-                    { 
+                    {   GB_cov[1177]++ ;
+// covered (1177): 9873
                         // Cx [p] = Ax [p]
                         GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                     }
@@ -249,7 +258,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                         // C<A,struct>=A with C bitmap, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        { 
+                        {   GB_cov[1178]++ ;
+// covered (1178): 7681
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -262,7 +272,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                         // C<A,struct>=A with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        { 
+                        {   GB_cov[1179]++ ;
+// covered (1179): 6142
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -278,7 +289,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
-                            { 
+                            {   GB_cov[1180]++ ;
+// covered (1180): 7759
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -294,7 +306,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
-                            { 
+                            {   GB_cov[1181]++ ;
+// covered (1181): 6103
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -311,7 +324,8 @@ GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
     //--------------------------------------------------------------------------
 
     if (C_is_bitmap)
-    { 
+    {   GB_cov[1182]++ ;
+// covered (1182): 1767
         C->nvals = cnvals ;
     }
 }

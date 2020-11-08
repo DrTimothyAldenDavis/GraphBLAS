@@ -44,7 +44,6 @@ GrB_Info apply2 (bool is_matrix)
     GrB_Type stype ;
     GxB_Scalar_type (&stype, scalar) ;
 
-    // printf ("ismatrix: %d how %d\n", is_matrix, how) ;
     if (is_matrix && how == 1)
     {
         if (stype == GrB_BOOL)
@@ -327,13 +326,6 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // printf ("\nin GB_mex_apply2 ---------------------------\n")  ;
-    // printf ("input:\n") ; GxB_print (C, 2) ;
-    // GxB_print (accum, 3) ;
-    // GxB_print (op, 3) ;
-    // GxB_print (scalar, 3) ;
-    // GxB_print (A, 2) ;
-
     // C<Mask> = accum(C,op(x,A))
     if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT)
         && GB_VECTOR_OK (C))
@@ -345,8 +337,6 @@ void mexFunction
     {
         METHOD (apply2 (true)) ;
     }
-
-    // printf ("result:\n") ; GxB_print (C, 2) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
