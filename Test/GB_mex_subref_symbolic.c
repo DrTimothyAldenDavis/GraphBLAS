@@ -68,7 +68,7 @@ void mexFunction
 
     // symbolic subref is not needed when A is bitmap.
     int sparsity = 0 ;
-    OK (GxB_Matrix_Option_get_(A, GxB_SPARSITY_STATUS, &sparsity)) ;
+    GxB_Matrix_Option_get_(A, GxB_SPARSITY_STATUS, &sparsity) ;
     if (sparsity == GxB_BITMAP)
     {
         mexErrMsgTxt ("A failed: cannot be bitmap") ;
