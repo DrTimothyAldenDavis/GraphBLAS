@@ -54,6 +54,10 @@
     GB_unaryop(Cx [pC], z) ;        \
 }
 
+// true if operator is the identity op with no typecasting
+#define GB_OP_IS_IDENTITY_WITH_NO_TYPECAST \
+    GB_op_is_identity_with_no_typecast
+
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
@@ -71,27 +75,27 @@ GrB_Info GB_unop_apply
     int nthreads
 )
 {
-
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
     if (Ab == NULL)
     { 
-        // FIXME: not needed for the identity operator, when Ab is NULL
-        // A and C are hypersparse, sparse, or full
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < anz ; p++)
-        {
-            GB_geta(aij, Ax, p) ;
-            GB_cast(z, aij) ;
-            GB_unaryop(Cx [p], z) ;
-        }
+        #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
+            GB_memcpy (Cx, Ax, anz * sizeof (GB_atype), nthreads) ;
+        #else
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < anz ; p++)
+            {
+                GB_geta(aij, Ax, p) ;
+                GB_cast(z, aij) ;
+                GB_unaryop(Cx [p], z) ;
+            }
+        #endif
     }
     else
     { 
-        // bitmap case, no transpose
-        // A->b has already been memcpy'd into C->b
+        // bitmap case, no transpose; A->b already memcpy'd into C->b
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {

@@ -312,8 +312,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         { 
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_void *Cx = (GB_void *) C->x ;
-            info = GB_apply_op (Cx, op1, op2, scalar, binop_bind1st, C,
-                Context) ;
+            info = GB_apply_op (Cx, op1, op2,   // op1 != identity
+                scalar, binop_bind1st, C, Context) ;
         }
         return (info) ;
     }

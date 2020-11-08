@@ -66,10 +66,10 @@
 
 #include "GB_mex_errors.h"
 
-#define G3 GB3
-#define G2 GB2
-#define G1 GB1
-#define G0 GB0
+#define G3 GxB_COMPLETE
+#define G2 GxB_SHORT
+#define G1 GxB_SUMMARY
+#define G0 GxB_SILENT
 
 void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;

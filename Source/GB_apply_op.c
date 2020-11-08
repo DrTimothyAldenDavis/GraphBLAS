@@ -170,7 +170,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // built-in unary operator
+        // unary operator
         //----------------------------------------------------------------------
 
         ASSERT_UNARYOP_OK (op1, "op1 for GB_apply_op", GB0) ;
@@ -180,19 +180,14 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         GrB_UnaryOp op = op1 ;
 
         #ifndef GBCOMPACT
-        bool no_typecasting = (Atype == op->xtype)
-            || (opcode == GB_IDENTITY_opcode)
-            || (opcode == GB_ONE_opcode) ;
-
-        if (no_typecasting)
+        if ((Atype == op->xtype)
+            || (opcode == GB_IDENTITY_opcode) || (opcode == GB_ONE_opcode))
         { 
 
-            // only two workers are allowed to do their own typecasting from
-            // the Atype to the xtype of the operator: IDENTITY and ONE.  For
-            // all others, the input type Atype must match the op->xtype of the
-            // operator.  If this check isn't done, abs.fp32 with fc32 input
-            // will map to abs.fc32, based on the type of the input Ax, which is
-            // the wrong operator.
+            // The switch factory is used if the op is IDENTITY or ONE, or if
+            // no typecasting is being done.  The ONE operator ignores the type
+            // of its input and just produces a 1 of op->ztype == op->xtype.
+            // The IDENTITY operator can do arbitrary typecasting.
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -247,7 +242,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // built-in binary operator
+        // binary operator
         //----------------------------------------------------------------------
 
         ASSERT_BINARYOP_OK (op2, "standard op2 for GB_apply_op", GB0) ;

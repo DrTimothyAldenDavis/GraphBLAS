@@ -181,7 +181,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
 
     GB_void *Cx = (GB_void *) C->x ;
-    info = GB_apply_op (Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
+    info = GB_apply_op (Cx, op1,    // op1 is never identity of same types
+        op2, scalar, binop_bind1st, A, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

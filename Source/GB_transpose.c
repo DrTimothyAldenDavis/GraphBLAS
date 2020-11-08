@@ -259,8 +259,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     // If a unary or binary operator is present, C is always returned as
     // the ztype of the operator.  The input ctype is ignored.
 
-    GrB_UnaryOp op1 = NULL, save_op1 ;
-    GrB_BinaryOp op2 = NULL, save_op2 ;
+    GrB_UnaryOp  op1 = NULL ;
+    GrB_BinaryOp op2 = NULL ;
     GB_Opcode opcode = GB_ignore_code ;
 
     if (op1_in != NULL)
@@ -270,7 +270,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (atype == op1_in->xtype && opcode == GB_IDENTITY_opcode)
         { 
             // op1 is a built-in identity operator, with the same type as A, so
-            // do not apply the operator and do not typecast.
+            // do not apply the operator and do not typecast.  op1 is NULL.
             ctype = atype ;
         }
         else
@@ -298,7 +298,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     }
     else
     {
-        // no operator
+        // no operator.  both op1 and op2 are NULL
         if (ctype == NULL)
         { 
             // no typecasting if ctype is NULL
@@ -314,8 +314,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    save_op1 = op1 ;
-    save_op2 = op2 ;
+    GrB_UnaryOp  save_op1 = op1 ;
+    GrB_BinaryOp save_op2 = op2 ;
     if (op_is_positional)
     { 
         // do not apply the op until after the transpose
@@ -565,8 +565,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op (A)
-            info = GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st, A, Context) ;
+            info = GB_apply_op ( // op1 != identity of same types
+                (GB_void *) Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
             // GB_apply_op can only fail if op1/op2 are positional
             ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
             ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
@@ -703,8 +703,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op (A)
-            info = GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st, A, Context) ;
+            info = GB_apply_op ( // op1 != identity of same types
+                (GB_void *) Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
             // GB_apply_op can only fail if op1/op2 are positional
             ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
             ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
@@ -1026,8 +1026,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (op1 != NULL || op2 != NULL)
             { 
                 // Swork = op (A)
-                info = GB_apply_op ((GB_void *) Swork,
-                    op1, op2, scalar, binop_bind1st, A, Context) ;
+                info = GB_apply_op ( // op1 != identity of same types
+                    (GB_void *) Swork, op1, op2, scalar, binop_bind1st,
+                    A, Context) ;
                 // GB_apply_op can only fail if op1/op2 are positional
                 ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
                 ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
@@ -1205,7 +1206,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         op1 = save_op1 ;
         op2 = save_op2 ;
         // Cx = op (C)
-        info = GB_apply_op (C->x, op1, op2, scalar, binop_bind1st, C, Context) ;
+        info = GB_apply_op (C->x, op1,  // positional unary/binary op only
+            op2, scalar, binop_bind1st, C, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

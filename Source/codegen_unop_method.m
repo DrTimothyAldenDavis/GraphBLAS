@@ -15,8 +15,14 @@ f = fopen ('control.m4', 'w') ;
 
 name = sprintf ('%s_%s_%s', unop, zname, xname) ;
 
+% determine if the op is identity with no typecast
 is_identity = isequal (unop, 'identity') ;
 no_typecast = isequal (ztype, xtype) ;
+if (is_identity && no_typecast)
+    fprintf (f, 'define(`GB_op_is_identity_with_no_typecast'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_op_is_identity_with_no_typecast'', `0'')\n') ;
+end
 
 % function names
 fprintf (f, 'define(`GB_unop_apply'', `GB_unop_apply__%s'')\n', name) ;

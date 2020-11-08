@@ -46,16 +46,6 @@ void GB_cast_array              // typecast an array
     ASSERT (GB_code_compatible (code1, code2)) ;
 
     //--------------------------------------------------------------------------
-    // quick memcpy if no typecast is needed
-    //--------------------------------------------------------------------------
-
-    if (code1 == code2 && Ab == NULL)
-    { 
-        GB_memcpy (Cx, Ax, anz * GB_code_size (code2, user_size), nthreads) ;
-        return ;
-    }
-
-    //--------------------------------------------------------------------------
     // typecast the array
     //--------------------------------------------------------------------------
 
@@ -80,7 +70,6 @@ void GB_cast_array              // typecast an array
         // launch the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_EXCLUDE_SAME_TYPES
         #include "GB_2type_factory.c"
 
     #endif

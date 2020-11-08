@@ -135,7 +135,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        info = GB_apply_op (C->x, op1, NULL, NULL, NULL, A, Context) ;
+        info = GB_apply_op (C->x, op1,      // positional unary op only
+            NULL, NULL, NULL, A, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

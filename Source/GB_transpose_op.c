@@ -82,18 +82,21 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     {
 
         //----------------------------------------------------------------------
-        // built-in unary operator
+        // unary operator
         //----------------------------------------------------------------------
 
         ASSERT_UNARYOP_OK (op1, "op1 for transpose", GB0) ;
         GrB_UnaryOp op = op1 ;
 
         #ifndef GBCOMPACT
-        bool no_typecasting = (Atype == op->xtype)
-            || (opcode == GB_IDENTITY_opcode) || (opcode == GB_ONE_opcode) ;
-
-        if (no_typecasting)
+        if ((Atype == op->xtype)
+            || (opcode == GB_IDENTITY_opcode) || (opcode == GB_ONE_opcode))
         { 
+
+            // The switch factory is used if the op is IDENTITY or ONE, or if
+            // no typecasting is being done.  The ONE operator ignores the type
+            // of its input and just produces a 1 of op->ztype == op->xtype.
+            // The IDENTITY operator can do arbitrary typecasting.
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -158,7 +161,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     {
 
         //----------------------------------------------------------------------
-        // built-in binary operator
+        // binary operator
         //----------------------------------------------------------------------
 
         ASSERT_BINARYOP_OK (op2, "op2 for transpose", GB0) ;
