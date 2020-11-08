@@ -113,7 +113,7 @@ void GB_sel_bitmap__user_any
     const int nthreads
 )
 { 
-// GB_GOTCHA ; // GB_sel_bitmap__user_any: gbtest41
+// GB_GOTCHA ; // GB_sel_bitmap__user_any: gbtest42
     ;
     #include "GB_bitmap_select_template.c"
 }
