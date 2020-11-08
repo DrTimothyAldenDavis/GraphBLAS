@@ -42,6 +42,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) bitmap subref", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_SPARSE (A)) ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -132,9 +134,19 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         // C = A (I,J) where A and C are both bitmap
         //----------------------------------------------------------------------
 
+        // symbolic subref is only used by GB_subassign_symbolic, which only
+        // operates on a matrix that is hypersparse, sparse, or full, but not
+        // bitmap.  As a result, the symbolic subref C=A(I,J) where both A and
+        // C are bitmap is not needed.  The code is left here in case it is
+        // needed in the future.
+
+        ASSERT (!symbolic) ;
+
+#if 0
         if (symbolic)
-        { 
-GB_GOTCHA ; // C=A(I,J) symbolic with A and C bitmap
+        {
+            // C=A(I,J) symbolic with A and C bitmap
+            ASSERT (GB_DEAD_CODE) ;
             int64_t *GB_RESTRICT Cx = (int64_t *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
@@ -147,7 +159,9 @@ GB_GOTCHA ; // C=A(I,J) symbolic with A and C bitmap
             #include "GB_bitmap_assign_IxJ_template.c"
         }
         else
+#endif
         { 
+            // C=A(I,J) numeric with A and C bitmap
             GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
@@ -175,6 +189,7 @@ GB_GOTCHA ; // C=A(I,J) symbolic with A and C bitmap
 
         if (symbolic)
         { 
+            // C=A(I,J) symbolic with A and C full (from GB_subassign_symbolic)
             int64_t *GB_RESTRICT Cx = (int64_t *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
@@ -185,6 +200,7 @@ GB_GOTCHA ; // C=A(I,J) symbolic with A and C bitmap
         }
         else
         { 
+            // C=A(I,J) numeric with A and C full
             GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \

@@ -66,7 +66,7 @@ void mexFunction
         mexErrMsgTxt ("J failed") ;
     }
 
-    // C = A(I,J)
+    // C = A(I,J), numeric not symbolic
     METHOD (GB_subref (&C, true, A, I, ni, J, nj, false, Context)) ;
 
     // return C to MATLAB

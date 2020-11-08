@@ -240,7 +240,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             GB_OK (GB_subref (&SubMask, true, M,
                 I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
-                false, Context));
+                false, Context)) ;
 
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (SubMask)) ;
