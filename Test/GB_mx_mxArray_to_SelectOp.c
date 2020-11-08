@@ -68,6 +68,8 @@ bool GB_mx_mxArray_to_SelectOp          // true if successful
     else if (MATCH (opname, "lt_thunk" )) { op = GxB_LT_THUNK ; }
     else if (MATCH (opname, "le_thunk" )) { op = GxB_LE_THUNK ; }
 
+    else if (MATCH (opname, "isnan"    )) { op = NULL ; }
+
     else
     {
         mexWarnMsgIdAndTxt ("GB:warn", "unknown select op") ;
@@ -75,7 +77,10 @@ bool GB_mx_mxArray_to_SelectOp          // true if successful
     }
 
     // return the op
-    ASSERT_SELECTOP_OK (op, name, GB0) ;
+    if (op != NULL)
+    {
+        ASSERT_SELECTOP_OK (op, name, GB0) ;
+    }
     (*handle) = op ;
     return (true) ;
 }

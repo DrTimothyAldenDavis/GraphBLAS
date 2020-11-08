@@ -90,7 +90,6 @@ void GB_sel_phase2__user_any
     const int nthreads
 )
 { 
-    ;
     #include "GB_select_phase2.c"
 }
 
@@ -113,9 +112,7 @@ void GB_sel_bitmap__user_any
     const int nthreads
 )
 { 
-// GB_GOTCHA ; // GB_sel_bitmap__user_any: gbtest42
     ;
     #include "GB_bitmap_select_template.c"
 }
-
 

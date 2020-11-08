@@ -1,4 +1,4 @@
-% function test178
+function test178
 %TEST178 matrix realloc
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

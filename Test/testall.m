@@ -68,6 +68,8 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test179',t) ; % test bitmap select
+
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap
 logstat ('test01',t) ;  logstat ('test01',s) ;  % error handling
 logstat ('test07b',t) ; % quick test GB_mex_assign
@@ -144,7 +146,6 @@ logstat ('test125',t) ; % test GrB_mxm: row and column scaling
 logstat ('test14',t) ;  % GrB_reduce
 logstat ('test131',t) ; % GrB_Matrix_clear
 logstat ('test82',t) ;  % GrB_extract with index range (hypersparse)
-logstat ('test85',t) ;  % GrB_transpose (1-by-n with typecasting)
 
 %----------------------------------------
 % tests with low coverage/sec rates (1/sec to 10/sec)
@@ -172,7 +173,6 @@ logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
 logstat ('test102',t);  % GB_AxB_saxpy3_flopcount
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
-logstat ('test90',t) ;  % test user-defined semirings
 logstat ('test28',t) ;  % mxm with aliased inputs, C<C> = accum(C,C*C)
 
 %----------------------------------------
@@ -187,7 +187,6 @@ logstat ('test88',t) ;  % hypersparse matrices with heap-based method
 logstat ('test76',s) ;  % GxB_resize (single threaded)
 logstat ('test107',t) ; % monoids with terminal values
 logstat ('test69',t) ;  % assign and subassign with alias
-logstat ('test99',t) ;  % GB_mex_transpose with explicit zeros in the Mask
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test17',t) ;  % quick test of GrB_*_extractElement
 logstat ('test93',t) ;  % pagerank
@@ -196,7 +195,6 @@ logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
 logstat ('test12',t) ;  % Wathen finite-element matrices (short test)
 logstat ('test77',t) ;  % quick tests of GrB_kronecker
-logstat ('test126',t) ; % test GrB_reduce to vector on a very sparse matrix 
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 
 %----------------------------------------
@@ -312,15 +310,18 @@ logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
 logstat ('test78',t) ;     %    1 % quick test of hypersparse subref
 logstat ('test79',t) ;     %      % run all in SuiteSparse Collection w/ test06
 
+logstat ('test85',t) ;     %    0 % GrB_transpose (1-by-n with typecasting)
 logstat ('test86',t) ;     %      % performance test of of GrB_Matrix_extract
 logstat ('test87',t) ;     %      % performance test of GrB_mxm
 logstat ('test89',t) ;     %      % performance test of complex A*B
 
+logstat ('test90',t) ;     %    1 % test user-defined semirings
 logstat ('test91',t) ;     %      % test subref performance on dense vectors
 logstat ('test93b',t) ;    %      % dpagerank and ipagerank
 logstat ('test95',t) ;     %      % performance test for GrB_transpose
 logstat ('test96',t) ;     %   16 % A*B using dot product
 logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
+logstat ('test99',t) ;     %   20 % GB_mex_transpose with explicit zeros in the Mask
 
 logstat ('test100',t) ;    %    5 % GB_mex_isequal
 logstat ('test103',t) ;    %      % GrB_transpose aliases
@@ -341,6 +342,7 @@ logstat ('test120',t) ;    %      % performance tests for GrB_assign
 logstat ('test121',t) ;    %      % performance tests for GrB_assign
 logstat ('test122',t) ;    %      % performance tests for GrB_assign
 logstat ('test123',t) ;    %      % test MIS on large matrix
+logstat ('test126',t) ;    %    7 % test GrB_reduce to vector on a very sparse matrix 
 
 logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B

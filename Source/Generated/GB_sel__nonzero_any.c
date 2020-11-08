@@ -113,8 +113,6 @@ void GB_sel_bitmap__nonzero_any
     const int nthreads
 )
 { 
-GB_GOTCHA ; // GB_sel_bitmap__nonzero_any
-    ;
     #include "GB_bitmap_select_template.c"
 }
 

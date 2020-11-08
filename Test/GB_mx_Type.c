@@ -22,7 +22,10 @@ GrB_Type GB_mx_Type                    // returns a GraphBLAS type
 
     GrB_Type xtype ;
 
-    if (X == NULL) return (NULL) ;
+    if (X == NULL)
+    {
+        return (NULL) ;
+    }
 
     if (mxIsComplex (X))
     {

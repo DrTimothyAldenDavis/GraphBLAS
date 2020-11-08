@@ -80,6 +80,8 @@ switch (opname)
         p = A.pattern & (A.matrix < xthunk) ;
     case 'le_thunk'
         p = A.pattern & (A.matrix <= xthunk) ;
+    case 'isnan'
+        p = A.pattern & isnan (A.matrix) ;
     otherwise
         error ('invalid op') ;
 end
