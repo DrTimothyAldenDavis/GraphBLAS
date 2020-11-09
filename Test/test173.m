@@ -62,6 +62,11 @@ for k = 1:length (types)
                 err = norm (double (A_dense.matrix) - double (C1.matrix), 1) ;
                 assert (err == 0) ;
 
+                % C<A> = A where A is dense
+                C1 = GB_mex_assign_alias_mask (C, A_dense, [ ]) ;
+                err = norm (double (A_dense.matrix) - double (C1.matrix), 1) ;
+                assert (err == 0) ;
+
             end
         end
     end

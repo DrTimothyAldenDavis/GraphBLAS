@@ -77,7 +77,6 @@ GrB_Info assign ( )
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
 
-    // printf ("\n--- assign:\n") ;
     ASSERT_MATRIX_OK (C, "C", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Mask, "Mask", GB0) ;
     ASSERT_MATRIX_OK (A, "A", GB0) ;
@@ -169,7 +168,6 @@ GrB_Info assign ( )
         {
 
             // test Matrix_assign_scalar functions
-            // printf ("scalar assign to matrix\n") ;
             #undef  ASSIGN
             #define ASSIGN(prefix,suffix,type)                          \
             {                                                           \
@@ -371,8 +369,6 @@ void mexFunction
     C = NULL ;
     Mask = NULL ;
     desc = NULL ;
-
-    // printf ("\n========================= GB_mex_assign:\n") ;
 
     if (nargout > 1 || ! (nargin == 2 || nargin == 6 || nargin == 7))
     {

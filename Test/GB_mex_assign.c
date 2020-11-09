@@ -98,39 +98,6 @@ GrB_Info assign ( )
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mex_assign", pr) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for GB_mex_assign", pr) ;
 
-    /*
-    if (I == NULL)
-    {
-        printf ("I is NULL\n") ;
-    }
-    else if (I == GrB_ALL)
-    {
-        printf ("I is ALL\n") ;
-    }
-    else
-    {
-        for (int64_t k = 0 ; k < ni ; k++)
-        {
-            printf ("I [%lld] = %lld\n", k, I [k]) ;
-        }
-    }
-    if (J == NULL)
-    {
-        printf ("J is NULL\n") ;
-    }
-    else if (J == GrB_ALL)
-    {
-        printf ("J is ALL\n") ;
-    }
-    else
-    {
-        for (int64_t k = 0 ; k < nj ; k++)
-        {
-            printf ("J [%lld] = %lld\n", k, J [k]) ;
-        }
-    }
-    */
-
     if (kind == 1)
     {
         // test GrB_Col_assign
@@ -343,9 +310,9 @@ GrB_Info many_assign
             }
         }
 
-        // get A (shallow copy)
+        // get A (deep copy)
         p = mxGetFieldByNumber (pargin [1], k, fA) ;
-        A = GB_mx_mxArray_to_Matrix (p, "A", false, true) ;
+        A = GB_mx_mxArray_to_Matrix (p, "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;
@@ -440,6 +407,20 @@ void mexFunction
 )
 {
 
+    C = NULL ;
+    Mask = NULL ;
+    A = NULL ;
+    desc = NULL ;
+    accum = NULL ;
+    I = NULL ; ni = 0 ;
+    J = NULL ; nj = 0 ;
+    malloc_debug = false ;
+    info = GrB_SUCCESS ;
+    kind = 0 ;
+    C_sparsity_control = GxB_AUTO_SPARSITY ;
+    M_sparsity_control = GxB_AUTO_SPARSITY ;
+    have_sparsity_control = false ;
+
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -528,16 +509,16 @@ void mexFunction
         // C<Mask>(I,J) = A, with a single assignment
         //----------------------------------------------------------------------
 
-        // get Mask (shallow copy)
-        Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", false, false) ;
+        // get Mask (deep copy)
+        Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", true, false) ;
         if (Mask == NULL && !mxIsEmpty (pargin [1]))
         {
             FREE_ALL ;
             mexErrMsgTxt ("Mask failed") ;
         }
 
-        // get A (shallow copy)
-        A = GB_mx_mxArray_to_Matrix (pargin [3], "A", false, true) ;
+        // get A (deep copy)
+        A = GB_mx_mxArray_to_Matrix (pargin [3], "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;

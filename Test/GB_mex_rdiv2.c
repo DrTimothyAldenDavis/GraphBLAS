@@ -120,7 +120,6 @@ GrB_Info axb (GB_Context Context)
     {
         if (done_in_place != do_in_place)
         {
-            printf ("done in place: %d %d\n", do_in_place, done_in_place) ;
             mexErrMsgTxt ("failure: not in place as expected\n") ;
         }
         if (!done_in_place)
@@ -219,7 +218,6 @@ void mexFunction
 
     // get the C_scalar
     GET_SCALAR (6, double, C_scalar, 0) ;
-    // printf ("C scalar: %g\n", C_scalar) ;
 
     // determine the dimensions
     anrows = (atranspose) ? GB_NCOLS (A) : GB_NROWS (A) ;
@@ -234,7 +232,6 @@ void mexFunction
 
     if (atranspose && btranspose && C_scalar != 0)
     {
-        printf ("C=A'*B'; ignoring C_scalar!\n") ;
         C_scalar = 0 ;
     }
 

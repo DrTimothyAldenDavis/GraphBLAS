@@ -4,6 +4,8 @@ function test180
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% For test coverage, this test must be run with 1 thread
+
 fprintf ('test180: --------------------------------- assign\n') ;
 
 n = 20 ;
@@ -82,7 +84,6 @@ for c = 1:15
             C1 = GB_spec_subassign (Cin, M1, 'plus', 3, I1, J1, drc, true) ;
             C2 = GB_mex_subassign  (Cin, M1, 'plus', 3, I0, J0, drc) ;
             GB_spec_compare (C1, C2) ;
-
         end
 
     end

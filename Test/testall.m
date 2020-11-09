@@ -68,7 +68,8 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test180',t) ; % test assign and subassign
+logstat ('test180',s) ; % test assign and subassign (single threaded)
+logstat ('test180',t) ; % test assign and subassign (multi threaded)
 logstat ('test179',t) ; % test bitmap select
 
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap

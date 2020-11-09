@@ -380,9 +380,9 @@ GrB_Info many_subassign
             }
         }
 
-        // get A (shallow copy)
+        // get A (true copy)
         p = mxGetFieldByNumber (pargin [1], k, fA) ;
-        A = GB_mx_mxArray_to_Matrix (p, "A", false, true) ;
+        A = GB_mx_mxArray_to_Matrix (p, "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;
@@ -467,6 +467,24 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
+
+    C = NULL ;
+    M = NULL ;
+    A = NULL ;
+    mask = NULL ;
+    u = NULL ;
+    desc = NULL ;
+    accum = NULL ;
+    I = NULL ; ni = 0 ;
+    J = NULL ; nj = 0 ;
+    malloc_debug = false ;
+    info = GrB_SUCCESS ;
+    reduce = NULL ;
+    op = NULL ;
+    user_complex = false ;
+    C_sparsity_control = GxB_AUTO_SPARSITY ;
+    M_sparsity_control = GxB_AUTO_SPARSITY ;
+    have_sparsity_control = false ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -555,10 +573,10 @@ void mexFunction
         // C(I,J)<M> = A, with a single assignment
         //----------------------------------------------------------------------
 
-        // get M (shallow copy)
+        // get M (deep copy)
         if (!mxIsChar (pargin [1]))
         {
-            M = GB_mx_mxArray_to_Matrix (pargin [1], "M", false, false) ;
+            M = GB_mx_mxArray_to_Matrix (pargin [1], "M", true, false) ;
             if (M == NULL && !mxIsEmpty (pargin [1]))
             {
                 FREE_ALL ;
@@ -566,10 +584,10 @@ void mexFunction
             }
         }
 
-        // get A (shallow copy)
+        // get A (deep copy)
         if (!mxIsChar (pargin [3]))
         {
-            A = GB_mx_mxArray_to_Matrix (pargin [3], "A", false, true) ;
+            A = GB_mx_mxArray_to_Matrix (pargin [3], "A", true, true) ;
             if (A == NULL)
             {
                 FREE_ALL ;

@@ -50,7 +50,6 @@ void mexFunction
 
     // get Mask_comp
     bool GET_SCALAR (1, bool, Mask_comp, 0) ;
-    // printf ("complement: %d\n", Mask_comp) ;
 
     // get A (shallow copy)
     A = GB_mx_mxArray_to_Matrix (pargin [2], "A", false, true) ;

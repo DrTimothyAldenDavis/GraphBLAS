@@ -11,6 +11,13 @@ clast = grb_get_coverage ;
 if (nargin < 2)
     % by default, use 4 threads and a tiny chunk size of 1
     threads {1} = [4 1] ;
+else
+    % only the # of threads is specified; also set the chunk size to 1
+    if (isscalar (threads) && isnumeric (threads))
+        threads = max (threads, 1) ;
+        t {1} = [threads 1] ;
+        threads = t ;
+    end
 end
 
 ntrials = length (threads) ;
@@ -79,7 +86,6 @@ for trial = 1:ntrials
         if (isempty (GraphBLAS_debug))
             GraphBLAS_debug = false ;
         end
-        % fprintf ('malloc debug: %d\n', GraphBLAS_debug) ;
         if (~isempty (GraphBLAS_grbcov))
             c = sum (GraphBLAS_grbcov > 0) ;
             n = length (GraphBLAS_grbcov) ;

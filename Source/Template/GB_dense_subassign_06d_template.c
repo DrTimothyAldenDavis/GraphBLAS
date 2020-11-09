@@ -67,7 +67,6 @@
             }
             else
             {
-GB_GOTCHA ;     // C<A>=A with C bitmap, A dense
                 // C<A>=A with C bitmap, A dense
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
