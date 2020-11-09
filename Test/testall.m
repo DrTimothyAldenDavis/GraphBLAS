@@ -214,7 +214,6 @@ end
 logstat ('test20',t) ;  % quick test of GB_mex_mxm on a few semirings
 logstat ('test10',t) ;  % GrB_apply
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
-logstat ('test21',s) ;  % quick test of GB_mex_subassign
 logstat ('test16',t) ;  % user-defined complex operators
 logstat ('test81',t) ;  % GrB_Matrix_extract with stride, range, backwards
 logstat ('test21b',t) ; % quick test of GB_mex_assign
@@ -247,6 +246,7 @@ logstat ('test13',t) ;     %      % simple tests of GB_mex_transpose
 logstat ('test18(1)',t) ;  %      % lengthy tests of GrB_eWiseAdd and eWiseMult
 
 logstat ('test20(1)',t) ;  %      % test of GB_mex_mxm on all built-in semirings
+logstat ('test21',s) ;     %   41 % quick test of GB_mex_subassign
 logstat ('test21(1)',t) ;  %      % exhaustive test of GB_mex_subassign
 logstat ('test22',t) ;     %      % quick test of GB_mex_transpose
 logstat ('test23(1)',t) ;  %      % exhaustive test of GB_*_build
