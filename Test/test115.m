@@ -47,11 +47,12 @@ rng ('default') ;
 
     GB_spec_compare (C1, C2) ;
 
-    C1 = GB_mex_assign (C, Work, 2) ;   % force C1 to be sparse
-    GB_spec_compare (C1, C2) ;
-
-    C1 = GB_mex_assign (C, Work, 4) ;   % force C1 to be bitmap
-    GB_spec_compare (C1, C2) ;
+    for C_sparsity = [2 4]
+        for M_sparsity = [2 4]
+            C1 = GB_mex_assign (C, Work, [C_sparsity M_sparsity]) ;
+            GB_spec_compare (C1, C2) ;
+        end
+    end
 
 fprintf ('\ntest115: all tests passed\n') ;
 

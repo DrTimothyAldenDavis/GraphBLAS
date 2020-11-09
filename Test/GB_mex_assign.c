@@ -34,10 +34,10 @@
 }
 
 #define GET_DEEP_COPY \
-    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ; \
-    if (have_sparsity_control) \
-    { \
-        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control) ; \
+    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;         \
+    if (have_sparsity_control)                                                \
+    {                                                                         \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C_sparsity_control) ; \
     }
 
 #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
@@ -54,7 +54,8 @@ bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
 GrB_Info assign (void) ;
-int sparsity_control = GxB_AUTO_SPARSITY ;
+int C_sparsity_control = GxB_AUTO_SPARSITY ;
+int M_sparsity_control = GxB_AUTO_SPARSITY ;
 bool have_sparsity_control = false ;
 
 GrB_Info many_assign
@@ -324,16 +325,21 @@ GrB_Info many_assign
         bool save = GB_Global_malloc_debug_get ( ) ;
         GB_Global_malloc_debug_set (false) ;
 
-        // get Mask (shallow copy)
+        // get Mask (deep copy)
         Mask = NULL ;
         if (fMask >= 0)
         {
             p = mxGetFieldByNumber (pargin [1], k, fMask) ;
-            Mask = GB_mx_mxArray_to_Matrix (p, "Mask", false, false) ;
+            Mask = GB_mx_mxArray_to_Matrix (p, "Mask", true, false) ;
             if (Mask == NULL && !mxIsEmpty (p))
             {
                 FREE_ALL ;
                 mexErrMsgTxt ("Mask failed") ;
+            }
+            if (have_sparsity_control)
+            {
+                GxB_Matrix_Option_set (Mask, GxB_SPARSITY_CONTROL,
+                    M_sparsity_control) ;
             }
         }
 
@@ -376,11 +382,6 @@ GrB_Info many_assign
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
         }
-
-        /*
-        printf ("many assign: fI %d fJ %d ni %lld nj %lld\n", fI, fJ, ni, nj) ;
-        for (int kk = 0 ; kk < nj ; kk++) printf ("J[%d]=%lld\n", kk, J[kk]) ;
-        */
 
         // get desc
         desc = NULL ;
@@ -458,10 +459,14 @@ void mexFunction
     }
 
     // get sparsity control if present
-    if (nargin == 2 || nargin == 3)
+    if (nargin == 3)
     {
+        int n = mxGetNumberOfElements (pargin [2]) ;
+        if (n != 2) mexErrMsgTxt ("invalid sparsity control") ;
         have_sparsity_control = true ;
-        GET_SCALAR (2, int, sparsity_control, GxB_AUTO_SPARSITY) ;
+        double *p = mxGetDoubles (pargin [2]) ;
+        C_sparsity_control = (int) p [0] ;
+        M_sparsity_control = (int) p [1] ;
     }
 
     //--------------------------------------------------------------------------

@@ -128,15 +128,30 @@ for problem = 0:2
                 % no mask
                 Mask = [ ] ;
             case 2
-                if (kind == 0)
-                    % mask same size as C: Matrix or Vector assign
-                    Mask = (sprand (m, n, 0.3) ~= 0) ;
-                elseif (kind == 1)
-                    % mask same size as C(:,j): column assign
-                    Mask = (sprand (m, 1, 0.3) ~= 0) ;
-                else % (kind == 2)
-                    % mask same size as C(i,:)': row assign
-                    Mask = (sprand (n, 1, 0.3) ~= 0) ;
+                density = rand (1) ;
+                if (density < 0.8)
+                    if (kind == 0)
+                        % mask same size as C: Matrix or Vector assign
+                        Mask = (sprand (m, n, 0.3) ~= 0) ;
+                    elseif (kind == 1)
+                        % mask same size as C(:,j): column assign
+                        Mask = (sprand (m, 1, 0.3) ~= 0) ;
+                    else % (kind == 2)
+                        % mask same size as C(i,:)': row assign
+                        Mask = (sprand (n, 1, 0.3) ~= 0) ;
+                    end
+                else
+                    if (kind == 0)
+                        % mask same size as C: Matrix or Vector assign
+                        Mask = sparse (true (m, n)) ;
+                    elseif (kind == 1)
+                        % mask same size as C(:,j): column assign
+                        Mask = sparse (true (m, 1)) ;
+                    else % (kind == 2)
+                        % mask same size as C(i,:)': row assign
+                        Mask = sparse (true (n, 1)) ;
+                    end
+
                 end
         end
 
@@ -187,10 +202,18 @@ for problem = 0:2
     GB_spec_compare (C2, C3) ;
 
     % with sparsity control
-    for sparsity_control = 0:15
-        C2 = GB_mex_assign (Corig, Work2, sparsity_control) ;
+    for s = 0:15
+        C2 = GB_mex_assign (Corig, Work2, [s s]) ;
         GB_spec_compare (C2, C3) ;
     end
+
+    % default sparsity but both C and M sparse
+    C2 = GB_mex_assign (Corig, Work2, [2 2]) ;
+    GB_spec_compare (C2, C3) ;
+
+    % default sparsity but C sparse and M bitmap/full
+    C2 = GB_mex_assign (Corig, Work2, [2 8]) ;
+    GB_spec_compare (C2, C3) ;
 
 end
 
