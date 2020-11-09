@@ -1,5 +1,5 @@
 function test180
-%TEST180 subassign
+%TEST180 subassign and assign
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -25,9 +25,9 @@ drc = struct ('outp', 'replace', 'mask', 'complement') ;
 
 for c = 1:15
     Cin.sparsity = c ;
+    fprintf ('.') ;
     for a = 1:15
         A.sparsity = a ;
-        M1.sparsity = 15 ;
 
         % C(I,J) = A
         C1 = GB_spec_subassign (Cin, [ ], [ ], A, I1, J1, [ ], false) ;
