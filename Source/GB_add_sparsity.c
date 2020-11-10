@@ -114,6 +114,8 @@ int GB_add_sparsity         // return the sparsity structure for C
             // and one of the 3 conditions holds.  In this case, ignore the
             // 8*nnz(M) <= (...) test, and always use the mask.
 
+            // TODO: See the GB_MASK_VERY_SPARSE (M, A, B) macro for this test.
+
             C_sparsity = GxB_SPARSE ;
 
         }

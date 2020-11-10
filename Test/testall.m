@@ -68,6 +68,8 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test182',s) ; % test for internal wait
+logstat ('test181',s) ; % test transpose with explicit zeros in the mask
 logstat ('test180',s) ; % test assign and subassign (single threaded)
 logstat ('test180',t) ; % test assign and subassign (multi threaded)
 logstat ('test179',t) ; % test bitmap select

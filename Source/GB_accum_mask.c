@@ -300,13 +300,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // appears.  GB_subassign does not require the pending work in C to be
         // finished, but GB_accum_mask does in most cases.  Finish the work on
         // C now.  This may change C to bitmap/full, so recheck the bitmap/full
-        // condition on C.
+        // condition on C after doing the GB_MATRIX_WAIT (C).
         GB_MATRIX_WAIT (C) ;
         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
         { 
-GB_GOTCHA ; // wait(C) changes it from sparse/hyper to bitmap/full
-            // GB_mask does not handle the case where M is present, C_replace
-            // is false, and C is bitmap/full, so switch to GB_subassign.
+            // See Test/test182 for a test that triggers this condition.
+            // GB_MATRIX_WAIT (C) has changed C from sparse/hyper to
+            // bitmap/full.  GB_mask does not handle the case where M is
+            // present, C_replace is false, and C is bitmap/full, so switch to
+            // GB_subassign.
             use_subassign = true ;
         }
     }
@@ -394,29 +396,12 @@ GB_GOTCHA ; // wait(C) changes it from sparse/hyper to bitmap/full
             bool apply_mask ;
             int Z_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, C, T) ;
 
-            GrB_Matrix M1 = NULL ;
-            if (apply_mask)
-            {
-                if (Z_sparsity == GxB_BITMAP || Z_sparsity == GxB_FULL)
-                { 
-GB_GOTCHA ; // Z = accum (C,T) with mask M, with Z bitmap/full
-                    // always apply the mask in GB_add if C is bitmap or full
-                    M1 = M ;
-                }
-                else if (!Mask_comp /* && GB_MASK_VERY_SPARSE (M, C, T) */ )
-                { 
-                    // if C is sparse or hypersparse, apply the mask
-                    // not complemented and very sparse
-                    M1 = M ;
-                }
-            }
-
             // whether or not GB_add chooses to exploit the mask, it must still
             // be used in GB_mask, below.  So ignore the mask_applied return
             // flag from GB_add.
             bool ignore ;
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, Mask_comp,
-                &ignore, C, T, accum, Context)) ;
+            GB_OK (GB_add (&Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
+                Mask_struct, Mask_comp, &ignore, C, T, accum, Context)) ;
             GB_Matrix_free (Thandle) ;
         }
 
