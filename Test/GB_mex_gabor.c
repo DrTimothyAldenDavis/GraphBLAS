@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_gabor: test case from Gábor Szarnyas and Márton Elekes (modified)
+// GB_mex_gabor: test case from Gabor Szarnyas and Marton Elekes (modified)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

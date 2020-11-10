@@ -31,7 +31,7 @@ function test182
 %
 % The sparsity control for A and v has no effect on this condition.
 %
-% This test case comes from Gábor Szarnyas and Márton Elekes (modified).
+% This test case comes from Gabor Szarnyas and Marton Elekes (modified)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
