@@ -143,7 +143,6 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 % tests with decent rates (10 to 20/sec)
 %----------------------------------------
 
-logstat ('test97',t) ;  % GB_mex_assign, scalar expansion and zombies
 logstat ('test03',t) ; logstat ('test03',s) ;  % random matrix tests
 logstat ('test128',t) ; % eWiseMult, eWiseAdd, special cases
 logstat ('test125',t) ; % test GrB_mxm: row and column scaling
@@ -324,8 +323,9 @@ logstat ('test91',t) ;     %      % test subref performance on dense vectors
 logstat ('test93b',t) ;    %      % dpagerank and ipagerank
 logstat ('test95',t) ;     %      % performance test for GrB_transpose
 logstat ('test96',t) ;     %   16 % A*B using dot product
+logstat ('test97',t) ;     %    0 % GB_mex_assign, scalar expansion and zombies
 logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
-logstat ('test99',t) ;     %   20 % GB_mex_transpose with explicit zeros in the Mask
+logstat ('test99',t) ;     %   20 % GB_mex_transpose w/ explicit 0s in the Mask
 
 logstat ('test100',t) ;    %    5 % GB_mex_isequal
 logstat ('test103',t) ;    %      % GrB_transpose aliases
