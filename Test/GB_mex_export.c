@@ -27,6 +27,7 @@
     info = method ;                     \
     if (info != GrB_SUCCESS)            \
     {                                   \
+        if (dump) printf ("%d: %d\n", __LINE__, info) ; \
         FREE_ALL ;                      \
         return (info) ;                 \
     }                                   \
@@ -43,7 +44,7 @@ GrB_Index ncols = 0 ;
 GrB_Index nvals = 0 ;
 GrB_Index nvec = 0 ;
 GrB_Index nzmax = 0 ;
-int64_t nonempty = -1 ;
+int64_t ignore = -1 ;
 char *Ax = NULL ;
 int format = 0 ;
 bool jumbled = false ;
@@ -90,8 +91,8 @@ GrB_Info import_export ( )
             }
         }
 
-        OK (GxB_Vector_import_CSC ((GrB_Vector *) (&C), type, nrows, nzmax,
-            nvals, jumbled, &Ai, &Ax, desc)) ;
+        OK (GxB_Vector_import_CSC ((GrB_Vector *) (&C), type, nrows,
+            &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
 
         return (GrB_SUCCESS) ;
     }
@@ -108,7 +109,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nzmax,
-                    &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
+                    &jumbled, &ignore, &Ap, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
             nvec = nrows ;
 
@@ -116,7 +117,6 @@ GrB_Info import_export ( )
             {
                 printf ("\nexport standard CSR: %llu-by-%llu, nzmax %llu:\n",
                     nrows, ncols, nzmax) ;
-                printf ("nonempty: %" PRId64"\n", nonempty) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 GB_Type_code code = type->code ;
 
@@ -132,10 +132,8 @@ GrB_Info import_export ( )
                 }
             }
 
-            if (clear_nvec) nonempty = -1 ;     // for testing
-
-            OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nzmax,
-                jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
+                &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -146,7 +144,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
+                &jumbled, &ignore, &Ap, &Ai, &Ax, desc)) ;
             nvec = ncols ;
             OK (GxB_Type_size (&asize, type)) ;
 
@@ -170,10 +168,8 @@ GrB_Info import_export ( )
 
             }
 
-            if (clear_nvec) nonempty = -1 ;     // for testing
-
-            OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nzmax,
-                jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
+                &Ap, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -184,7 +180,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &nonempty, &nvec, &Ap, &Ah, &Aj, &Ax, desc)) ;
+                &jumbled, &ignore, &nvec, &Ap, &Ah, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
@@ -207,10 +203,9 @@ GrB_Info import_export ( )
                 }
             }
 
-            if (clear_nvec) nonempty = -1 ;     // for testing
-
-            OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nzmax,
-                jumbled, nonempty, nvec, &Ap, &Ah, &Aj, &Ax, desc)) ;
+            OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
+                &Ap, &Ah, &Aj, &Ax, nvec+1, nvec, nzmax, nzmax,
+                nvec, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout));
@@ -221,7 +216,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &nonempty, &nvec, &Ap, &Ah, &Ai, &Ax, desc)) ;
+                &jumbled, &ignore, &nvec, &Ap, &Ah, &Ai, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
@@ -244,10 +239,9 @@ GrB_Info import_export ( )
                 }
             }
 
-            if (clear_nvec) nonempty = -1 ;     // for testing
-
-            OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nzmax,
-                jumbled, nonempty, nvec, &Ap, &Ah, &Ai, &Ax, desc)) ;
+            OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
+                &Ap, &Ah, &Ai, &Ax, nvec+1, nvec, nzmax, nzmax,
+                nvec, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;

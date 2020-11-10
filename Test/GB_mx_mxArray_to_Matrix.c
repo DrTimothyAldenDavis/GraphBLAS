@@ -400,7 +400,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (sparsity != GxB_FULL)
     {
-        A->nvec_nonempty = -1 ; // compute when needed; see GxB_Matrix_import
+        A->nvec_nonempty = -1 ;
     }
 
     ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;

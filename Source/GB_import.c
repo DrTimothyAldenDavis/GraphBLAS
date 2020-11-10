@@ -17,15 +17,32 @@ GrB_Info GB_import      // import a matrix in any format
     GrB_Type type,      // type of matrix to create
     GrB_Index vlen,     // vector length
     GrB_Index vdim,     // vector dimension
-    GrB_Index nzmax,    // size of Ai and Ax for sparse/hypersparse
-    GrB_Index nvals,    // # of entries for bitmap
-    bool jumbled,       // if true, sparse/hypersparse may be jumbled
-    GrB_Index nvec,     // size of Ah for hypersparse
-    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
-    GrB_Index **Ah,     // vector indices, size nvec for hyper
-    int8_t **Ab,        // bitmap, size nzmax
-    GrB_Index **Ai,     // indices, size nzmax
-    void **Ax,          // values, size nzmax
+
+    // the 5 arrays:
+    GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
+                        // Ap_size >= nvec+1 for hyper, Ap_size >= vdim+1 for
+                        // sparse.  Ignored for bitmap and full formats.
+    GrB_Index Ap_size,  // size of Ap; ignored if Ap is ignored.
+    GrB_Index **Ah,     // vector indices, Ah_size >= nvec for hyper.
+                        // Ignored for sparse, bitmap, and full formats.
+    GrB_Index Ah_size,  // size of Ah; ignored if Ah is ignored.
+    int8_t **Ab,        // bitmap, for bitmap format only, Ab_size >= vlen*vdim.
+                        // Ignored for hyper, sparse, and full formats.  
+    GrB_Index Ab_size,  // size of Ab; ignored if Ab is ignored.
+    GrB_Index **Ai,     // indices, size Ai_size >= nvals(A) for hyper and
+                        // sparse formats.  Ignored for bitmap and full.
+    GrB_Index Ai_size,  // size of Ai; ignored if Ai is ignored.
+    void **Ax,          // values, Ax_size is either 1, or >= nvals(A) for
+                        // hyper or sparse formats.  Ax_size >= vlen*vdim for
+                        // bitmap or full formats.
+    GrB_Index Ax_size,  // size of Ax; never ignored.
+
+    // additional information for specific formats:
+    GrB_Index nvals,    // # of entries for bitmap format.
+    bool jumbled,       // if true, sparse/hypersparse may be jumbled.
+    GrB_Index nvec,     // size of Ah for hypersparse format.
+
+    // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
     bool is_csc,        // if true then matrix is by-column, else by-row
     GB_Context Context
@@ -39,24 +56,29 @@ GrB_Info GB_import      // import a matrix in any format
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
-    if (vlen > GxB_INDEX_MAX || nvals > GxB_INDEX_MAX ||
-        vdim > GxB_INDEX_MAX || nzmax > GxB_INDEX_MAX)
+    if (vlen  > GxB_INDEX_MAX || vdim > GxB_INDEX_MAX ||
+        nvals > GxB_INDEX_MAX || nvec > GxB_INDEX_MAX ||
+        Ap_size > GxB_INDEX_MAX ||
+        Ah_size > GxB_INDEX_MAX || Ab_size > GxB_INDEX_MAX ||
+        Ai_size > GxB_INDEX_MAX || Ax_size > GxB_INDEX_MAX)
     { 
         return (GrB_INVALID_VALUE) ;
     }
 
+    // full_size = vlen*vdim, for bitmap and full formats
+    bool ok = true ;
+    int64_t full_size ;
     if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
     {
-        // ignore nzmax on input; compute it instead
-        bool ok = GB_Index_multiply ((GrB_Index *) &nzmax, vlen, vdim) ;
+        ok = GB_Index_multiply ((GrB_Index *) &full_size, vlen, vdim) ;
         if (!ok)
         { 
-            // problem too large
-            return (GrB_OUT_OF_MEMORY) ;
+            // problem too large: only Ax_size == 1 is possible
+            full_size = 1 ;
         }
     }
 
-    if (nzmax > 0)
+    if (Ax_size > 0)
     { 
         GB_RETURN_IF_NULL (Ax) ;
         GB_RETURN_IF_NULL (*Ax) ;
@@ -67,25 +89,52 @@ GrB_Info GB_import      // import a matrix in any format
         case GxB_HYPERSPARSE : 
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
-
-        case GxB_SPARSE : 
+            if (Ap_size < nvec+1) {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
+            if (Ah_size < nvec)   {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
+            if (nvec > vdim)      {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (*Ap) ;
-            if (nzmax > 0)
+            if (Ai_size > 0)
             {
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
+            nvals = (*Ap) [nvec] ;
+            // printf ("Ai_size %ld nvals %ld\n", Ai_size, nvals) ;
+            if (Ai_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ax_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
             break ;
-            
+
+        case GxB_SPARSE : 
+
+            GB_RETURN_IF_NULL (Ap) ;
+            GB_RETURN_IF_NULL (*Ap) ;
+            if (Ai_size > 0)
+            {
+                GB_RETURN_IF_NULL (Ai) ;
+                GB_RETURN_IF_NULL (*Ai) ;
+            }
+            // printf ("Ap_size %ld vdim %ld\n", Ap_size, vdim) ;
+            if (Ap_size < vdim+1) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            nvals = (*Ap) [vdim] ;
+            if (Ai_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ax_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            break ;
+
         case GxB_BITMAP : 
-            if (nzmax > 0)
+            if (Ab_size > 0)
             {
                 GB_RETURN_IF_NULL (Ab) ;
                 GB_RETURN_IF_NULL (*Ab) ;
             }
+            if (!ok) {GB_GOTCHA; return (GrB_OUT_OF_MEMORY) ;}
+            if (nvals > full_size)   {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ab_size < full_size) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
 
         case GxB_FULL : 
+            if (Ax_size > 1 && Ax_size < full_size) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            break ;
+
         default: ;
     }
 
@@ -99,6 +148,7 @@ GrB_Info GB_import      // import a matrix in any format
     if (info != GrB_SUCCESS)
     { 
         // out of memory
+        GB_GOTCHA ;
         ASSERT ((*A) == NULL) ;
         return (info) ;
     }
@@ -108,8 +158,10 @@ GrB_Info GB_import      // import a matrix in any format
     //--------------------------------------------------------------------------
 
     // transplant the user's content into the matrix
-    (*A)->nzmax = nzmax ;
     (*A)->magic = GB_MAGIC ;
+
+    // TODO: keep Ap_size, Ah_size, Ab_size, Ai_size, Ax_size in the
+    // GrB_Matrix data structure, and remove A->nzmax.
 
     switch (sparsity)
     {
@@ -122,13 +174,19 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->nvec_nonempty = -1 ;
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
+            (*A)->nzmax = GB_IMIN (Ai_size, Ax_size) ;
             break ;
 
         case GxB_BITMAP : 
             (*A)->nvals = nvals ;
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
+            (*A)->nzmax = GB_IMIN (Ab_size, Ax_size) ;
+            break ;
 
         case GxB_FULL : 
+            (*A)->nzmax = Ax_size ;
+            break ;
+
         default: ;
     }
 

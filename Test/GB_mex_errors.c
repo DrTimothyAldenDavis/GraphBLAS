@@ -5245,8 +5245,9 @@ void mexFunction
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
     }
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax, jumbled,
-        nonempty, &Ap, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
     OK (GxB_Matrix_fprint (A, "A imported", GxB_COMPLETE, stdout)) ;
 
     expected = GrB_NULL_POINTER ;
@@ -5332,122 +5333,167 @@ void mexFunction
     OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, NULL, desc)) ;
+    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        NULL, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, NULL, nrows+1, nzmax, nzmax, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, INT64_MAX, jumbled, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, desc)) ;
 
     OK (GB_Matrix_check (A, "A also OK", G1, NULL)) ;
 
     OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, NULL, desc)) ;
+    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        NULL, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, NULL, ncols+1, nzmax, nzmax, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, ncols+1, nzmax, INT64_MAX, jumbled, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, ncols+1, nzmax, nzmax, jumbled, desc)) ;
 
     OK (GB_Matrix_check (A, "A here too OK", G1, NULL)) ;
 
     OK (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_HyperCSR (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, NULL, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, NULL, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSR (NULL, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, NULL, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        NULL, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, NULL, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, NULL, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, NULL, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, INT64_MAX,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
 
     OK (GB_Matrix_check (A, "A yet still OK", G1, NULL)) ;
 
     OK (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
         &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_HyperCSC (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, NULL, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, NULL, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSC (NULL, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, NULL, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        NULL, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, NULL, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, NULL, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, INT64_MAX,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, nvecs+1, nvecs, nzmax, nzmax,
+        nvecs, jumbled, desc)) ;
 
     OK (GB_Matrix_check (A, "A yet again OK", G1, NULL)) ;
 
@@ -5465,7 +5511,7 @@ void mexFunction
     {
         printf ("   col %lld value %g\n", Ai [p], Ax [p]) ; // ok:
     }
-    OK (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
     OK (GxB_Vector_fprint (u, "u imported", GxB_COMPLETE, stdout)) ;
 
     expected = GrB_NULL_POINTER ;
@@ -5482,17 +5528,17 @@ void mexFunction
 
     OK (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, &nvals, &jumbled, &Ai, &Ax, desc)) ;
 
-    ERR (GxB_Vector_import_CSC (NULL, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, NULL, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, NULL, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, NULL, desc)) ;
+    ERR (GxB_Vector_import_CSC (NULL, utype, n, &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, NULL, n, &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, NULL, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, &Ai, NULL, nzmax, nzmax, nvals, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Vector_import_CSC (&u, utype, INT64_MAX, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, INT64_MAX, nvals, jumbled, &Ai, &Ax, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, INT64_MAX, &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, INT64_MAX, nzmax, nvals, jumbled, desc)) ;
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, nzmax, nzmax, nvals, jumbled, desc)) ;
 
     OK (GB_Vector_check (u, "u still OK", G3, NULL)) ;
 

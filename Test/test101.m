@@ -17,6 +17,7 @@ for clear_nvec = 0:1
             for f = 0:3
                 for hyper = 0:1
                     for csc = 0:1
+save gunk A f hyper csc dump clear_nvec
                         C = GB_mex_export (A, f, hyper, csc, dump, clear_nvec) ;
                         assert (isequal (A, C)) ;
                     end

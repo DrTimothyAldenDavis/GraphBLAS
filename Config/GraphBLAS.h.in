@@ -8723,17 +8723,20 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index nzmax,    // size of Aj and Ax
+
+    GrB_Index **Ap,     // row "pointers", Ap_size >= nrows+1
+    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)
+    void **Ax,          // values, Ax_size 1, or >= nvals(A)
+    GrB_Index Ap_size,  // size of Ap
+    GrB_Index Aj_size,  // size of Aj
+    GrB_Index Ax_size,  // size of Ax
+
     bool jumbled,       // if true, indices in each row may be unsorted
-    int64_t ignore,     // TODO::remove
-    GrB_Index **Ap,     // row "pointers", size nrows+1
-    GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
     // CSR:  an nrows-by-ncols matrix with nvals entries in CSR format consists
-    // of 3 arrays:
+    // of 3 arrays, where nvals = Ap [nrows]:
     //
     //          GrB_Index Ap [nrows+1], Aj [nvals] ; <type> Ax [nvals] ;
     //
@@ -8748,32 +8751,30 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     //      zero, then the Aj and Ax arrays need not be present and can be
     //      NULL.
 
-    //      The nonempty parameter is optional.  It states the number of rows
-    //      that have at least one entry: if not known, use -1;
-    //      if nonempty >= 0 the value must be exact.
-
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_CSC: import a CSC matrix
 //------------------------------------------------------------------------------
 
-GB_PUBLIC
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index nzmax,    // size of Ai and Ax
+
+    GrB_Index **Ap,     // column "pointers", Ap_size >= ncols+1
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
+    void **Ax,          // values, Ax_size 1, or >= nvals(A)
+    GrB_Index Ap_size,  // size of Ap
+    GrB_Index Ai_size,  // size of Ai
+    GrB_Index Ax_size,  // size of Ax
+
     bool jumbled,       // if true, indices in each column may be unsorted
-    int64_t ignore,     // TODO::remove
-    GrB_Index **Ap,     // column "pointers", size ncols+1
-    GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
     // CSC:  an nrows-by-ncols matrix with nvals entries in CSC format consists
-    // of 3 arrays:
+    // of 3 arrays, where nvals = Ap [ncols]:
     //
     //          GrB_Index Ap [ncols+1], Ai [nvals] ; <type> Ax [nvals] ;
     //
@@ -8788,10 +8789,6 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     //      zero, then the Ai and Ax arrays need not be present and can be
     //      NULL.
 
-    //      The nonempty parameter is optional.  It states the number of
-    //      columns that have at least one entry: if not known, use -1;
-    //      if nonempty >= 0 the value must be exact.
-
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_HyperCSR: import a hypersparse CSR matrix
 //------------------------------------------------------------------------------
@@ -8803,19 +8800,24 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index nzmax,    // size of Aj and Ax
+
+    GrB_Index **Ap,     // row "pointers", Ap_size >= nvec+1
+    GrB_Index **Ah,     // row indices, Ah_size >= nvec
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)
+    void **Ax,          // values, Ax_size 1, or >= nvals(A)
+    GrB_Index Ap_size,  // size of Ap
+    GrB_Index Ah_size,  // size of Ah
+    GrB_Index Aj_size,  // size of Aj
+    GrB_Index Ax_size,  // size of Ax
+
+    GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
-    int64_t ignore,     // TODO::remove
-    GrB_Index nvec,     // size of Ah
-    GrB_Index **Ap,     // row "pointers", size nvec+1
-    GrB_Index **Ah,     // rows that appear in A, size nvec
-    GrB_Index **Aj,     // column indices, size nzmax
-    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
     // HyperCSR: an nrows-by-ncols matrix with nvals entries and nvec
-    // rows that may have entries in HyperCSR format consists of 4 arrays:
+    // rows that may have entries in HyperCSR format consists of 4 arrays,
+    // where nvals = Ap [nvec]:
     //
     //          GrB_Index Ah [nvec], Ap [nvec+1], Aj [nvals] ;
     //          <type> Ax [nvals] ;
@@ -8836,12 +8838,6 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     //      Aj and Ax must be at least of size nvals.  If nvals is zero, then
     //      the Aj and Ax arrays need not be present and can be NULL.
 
-    //      The nonempty parameter is optional.  Row indices that do not appear
-    //      in the Ah list have no entries.  Row indices that do appear in Ah
-    //      have >= 0 entries.  The nonempty parameter states the number of
-    //      rows in the Ah list that have at least one entry: if not known, use
-    //      -1.  If nonempty >= 0 the value must be exact.
-
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_HyperCSC: import a hypersparse CSC matrix
 //------------------------------------------------------------------------------
@@ -8853,19 +8849,24 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index nzmax,    // size of Ai and Ax
+
+    GrB_Index **Ap,     // column "pointers", Ap_size >= nvec+1
+    GrB_Index **Ah,     // column indices, Ah_size >= nvec
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
+    void **Ax,          // values, Ax_size 1, or >= nvals(A)
+    GrB_Index Ap_size,  // size of Ap
+    GrB_Index Ah_size,  // size of Ah
+    GrB_Index Ai_size,  // size of Ai
+    GrB_Index Ax_size,  // size of Ax
+
+    GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
-    int64_t ignore,     // TODO::remove
-    GrB_Index nvec,     // size of Ah
-    GrB_Index **Ap,     // column "pointers", size nvec+1
-    GrB_Index **Ah,     // columns that appear in A, size nvec
-    GrB_Index **Ai,     // row indices, size nzmax
-    void **Ax,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
     // HyperCSC: an nrows-by-ncols matrix with nvals entries and nvec
-    // columns that may have entries in HyperCSC format consists of 4 arrays:
+    // columns that may have entries in HyperCSC format consists of 4 arrays,
+    // where nvals = Ap [nvec]:
     //
     //
     //          GrB_Index Ah [nvec], Ap [nvec+1], Ai [nvals] ;
@@ -8887,12 +8888,6 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     //      If nvals is zero, then the Ai and Ax arrays need not be present and
     //      can be NULL.
 
-    //      The nonempty parameter is optional.  Column indices that do not
-    //      appear in the Ah list have no entries.  Column indices that do
-    //      appear in Ah have >= 0 entries.  The nonempty parameter states the
-    //      number of columns in the Ah list that have at least one entry: if
-    //      not known, use -1.  If nonempty >= 0 the value must be exact.
-
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_BitmapR: import a bitmap matrix, held by row
 //------------------------------------------------------------------------------
@@ -8904,9 +8899,13 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index Ab_size,  // size of Ab
+    GrB_Index Ax_size,  // size of Ax
+
     GrB_Index nvals,    // # of entries in bitmap
-    int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8923,9 +8922,13 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index Ab_size,  // size of Ab
+    GrB_Index Ax_size,  // size of Ax
+
     GrB_Index nvals,    // # of entries in bitmap
-    int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 ) ;
 
@@ -8942,7 +8945,10 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols entries
+
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index Ax_size,  // size of Ax
+
     const GrB_Descriptor desc
 ) ;
 
@@ -8964,7 +8970,10 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols entries
+
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index Ax_size,  // size of Ax
+
     const GrB_Descriptor desc
 ) ;
 
@@ -8985,11 +8994,14 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
-    GrB_Index nzmax,    // size of vi and vx
+
+    GrB_Index **vi,     // indices, vi_size >= nvals(v)
+    void **vx,          // values, vx_size 1, or >= nvals(v)
+    GrB_Index vi_size,  // size of Ai
+    GrB_Index vx_size,  // size of Ax
+
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
-    GrB_Index **vi,     // indices, size nzmax
-    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 ) ;
 
@@ -9008,11 +9020,17 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
+
+    int8_t **vb,        // bitmap, vb_size >= n
+    void **vx,          // values, vx_size 1, or >= n
+    GrB_Index vb_size,  // size of vb
+    GrB_Index vx_size,  // size of vx
+
     GrB_Index nvals,    // # of entries in bitmap
-    int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n entries
     const GrB_Descriptor desc
 ) ;
+
+    // TODO: describe
 
 //------------------------------------------------------------------------------
 // GxB_Vector_import_FuLL: import a vector in full format
@@ -9024,9 +9042,14 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
-    void **vx,          // values, size n entries
+
+    void **vx,          // values, vx_size 1, or >= nvals(v)
+    GrB_Index vx_size,  // size of vx
+
     const GrB_Descriptor desc
 ) ;
+
+    // TODO: describe
 
 //------------------------------------------------------------------------------
 

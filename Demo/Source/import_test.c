@@ -69,7 +69,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
     GrB_Type type ;
     GrB_Index nrows, ncols, nvals, nzmax, nvec ;
     GrB_Index *Ap = NULL, *Ah = NULL, *Ai = NULL, *Aj = NULL ;
-    int64_t nonempty ;
+    int64_t ignore ;
     bool jumbled ;
 
     void *Ax = NULL ;
@@ -100,7 +100,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (C_handle, &type, &nrows, &ncols,
-                &nzmax, &jumbled, &nonempty, &Ap, &Aj, &Ax, NULL)) ;
+                &nzmax, &jumbled, &ignore, &Ap, &Aj, &Ax, NULL)) ;
 
             // the export destroys the matrix (*C_handle), returning its
             // contents in Ap, Aj, and Ax.
@@ -128,7 +128,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
 
             // reimport the matrix
             OK (GxB_Matrix_import_CSR (C_handle, type, nrows, ncols,
-                nzmax, jumbled, nonempty, &Ap, &Aj, &Ax, NULL)) ;
+                &Ap, &Aj, &Ax, nrows+1, nzmax, nzmax, jumbled, NULL)) ;
 
             OK (GxB_Matrix_fprint ((*C_handle), "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -139,7 +139,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (C_handle, &type, &nrows, &ncols,
-                &nzmax, &jumbled, &nonempty, &Ap, &Ai, &Ax, NULL)) ;
+                &nzmax, &jumbled, &ignore, &Ap, &Ai, &Ax, NULL)) ;
 
             CHECK (*C_handle == NULL, GrB_INVALID_VALUE) ;
 
@@ -164,7 +164,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
             }
 
             OK (GxB_Matrix_import_CSC (C_handle, type, nrows, ncols,
-                nzmax, jumbled, nonempty, &Ap, &Ai, &Ax, NULL)) ;
+                &Ap, &Ai, &Ax, nrows+1, nzmax, nzmax, jumbled, NULL)) ;
 
             OK (GxB_Matrix_fprint ((*C_handle), "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -175,7 +175,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (C_handle, &type, &nrows, &ncols,
-                &nzmax, &jumbled, &nonempty, &nvec, &Ap, &Ah, &Aj, &Ax, NULL)) ;
+                &nzmax, &jumbled, &ignore, &nvec, &Ap, &Ah, &Aj, &Ax, NULL)) ;
 
             CHECK (*C_handle == NULL, GrB_INVALID_VALUE) ;
 
@@ -200,7 +200,8 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
             }
 
             OK (GxB_Matrix_import_HyperCSR (C_handle, type, nrows, ncols,
-                nzmax, jumbled, nonempty, nvec, &Ap, &Ah, &Aj, &Ax, NULL)) ;
+                &Ap, &Ah, &Aj, &Ax, nvec+1, nvec, nzmax, nzmax,
+                nvec, jumbled, NULL)) ;
 
             OK (GxB_Matrix_fprint ((*C_handle), "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -211,7 +212,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (C_handle, &type, &nrows, &ncols,
-                &nzmax, &jumbled, &nonempty, &nvec, &Ap, &Ah, &Ai, &Ax, NULL)) ;
+                &nzmax, &jumbled, &ignore, &nvec, &Ap, &Ah, &Ai, &Ax, NULL)) ;
 
             CHECK (*C_handle == NULL, GrB_INVALID_VALUE) ;
 
@@ -236,7 +237,8 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
             }
 
             OK (GxB_Matrix_import_HyperCSC (C_handle, type, nrows, ncols,
-                nzmax, jumbled, nonempty, nvec, &Ap, &Ah, &Ai, &Ax, NULL)) ;
+                &Ap, &Ah, &Ai, &Ax, nvec+1, nvec, nzmax, nzmax,
+                nvec, jumbled, NULL)) ;
 
             OK (GxB_Matrix_fprint ((*C_handle), "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
