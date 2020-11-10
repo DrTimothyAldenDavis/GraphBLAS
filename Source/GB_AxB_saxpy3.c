@@ -79,7 +79,7 @@
 // Multiplication and Permuted Transposition. ACM Trans. Math. Softw.  4, 3
 // (Sept. 1978), 250–269. DOI:https://doi.org/10.1145/355791.355796
 
-// [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
+// [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydin Buluc. 2018.
 // High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
 // Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
 // Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
