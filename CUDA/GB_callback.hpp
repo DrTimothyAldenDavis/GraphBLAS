@@ -2,7 +2,7 @@
 
 // Implementations of string callbacks
 #include <iostream>
-
+#pragma once
 // Define function pointer we will use later
 //std::istream* (*file_callback)(std::string, std::iostream&);
 

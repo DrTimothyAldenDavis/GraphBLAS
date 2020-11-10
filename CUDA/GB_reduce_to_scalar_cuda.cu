@@ -51,6 +51,7 @@ GrB_Info GB_reduce_to_scalar_cuda
     //{"--use_fast_math", "-I/usr/local/cuda/include"});
 
     int nnz = GB_NNZ( A ) ;
+    GrB_Type ctype = reduce->op->ztype ;
 
     int blocksize = 1024 ;
     int ntasks = ( nnz + blocksize -1) / blocksize ;
@@ -63,7 +64,7 @@ GrB_Info GB_reduce_to_scalar_cuda
     dim3 red_block(blocksize);
 
     GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", ntasks, blocksize) ;
-    jit::launcher( reduce_kernel_name + "_" + reduce->name,
+    jit::launcher( reduce_kernel_name + "_" + reduce->op->name,
                    templates_reduceNonZombiesWarp_cu,
                    header_names,
                    compiler_flags,
