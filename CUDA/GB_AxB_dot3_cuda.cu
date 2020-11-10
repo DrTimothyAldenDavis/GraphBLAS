@@ -38,21 +38,6 @@ std::istream* callback_wrapper( std::string file_name, std::iostream& tmp){
    return SR_callback_ptr->callback( file_name, tmp);
 }
 
-const std::vector<std::string> compiler_flags{
-   "-std=c++14",
-   "--use_fast_math",
-   "-remove-unused-globals",
-   "-w",
-   "-D__CUDACC_RTC__",
-   "-I.",
-   "-I..",
-   "-I../../Include",
-   "-I../../Source",
-   "-I../../Source/Template",
-   "-Ilocal_cub/block",
-   "-Itemplates",
-   "-I/usr/local/cuda/include"
-};
 
 const std::vector<std::string> header_names ={};
 

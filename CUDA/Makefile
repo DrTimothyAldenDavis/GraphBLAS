@@ -43,7 +43,7 @@ OBJ = $(SRC2:.cu=.o)
 cSRC = $(wildcard *.c) 
 cOBJ = $(cSRC:.c=.o)
 
-I = -I. -I../Source -I../Source/Template -I../Include -Irmm/include/  -Irmm/thirdparty/spdlog/include -Irmm/include/thirdparty/cnmem/include
+I = -I. -I../Source -I../Source/Template -I../Include -Irmm/rmm/include/  -Irmm/thirdparty/spdlog/include -Irmm/include/thirdparty/cnmem/include
 SO_NAME = libgraphblascuda.so
 SO_OPTS = --shared \
     -Xlinker -soname \
