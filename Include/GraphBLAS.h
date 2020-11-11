@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Nov 10, 2020 (DRAFT: DO NOT BENCHMARK; debug/etc on)"
+#define GxB_IMPLEMENTATION_DATE "Nov 11, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -3680,7 +3680,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 // GxB_CHUNK: an integer parameter that determines the number of threads to use
 //      for a small problem.  If w is the work to be performed, and chunk is
 //      the value of this parameter, then the # of threads is limited to floor
-//      (w/chunk).  The default chunk is currently 4096, but this may change in
+//      (w/chunk).  The default chunk is currently 64K, but this may change in
 //      the future.  If chunk is set to <= GxB_DEFAULT (that is, zero), the
 //      default is used.
 //

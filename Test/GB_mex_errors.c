@@ -4162,14 +4162,6 @@ void mexFunction
         I00, 1, J00, 1, NULL)) ;
     OK (GB_Matrix_check (A, "with bool pending", G3, NULL)) ;
 
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1) ;
-    CHECK (AP->type == GrB_BOOL) ;
-#endif
-
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 3, 3)) ;
     OK (GB_Matrix_check (A, "with pi pending", G3, NULL)) ;
 
@@ -4336,17 +4328,8 @@ void mexFunction
     J [0] = 0 ;
     OK (GxB_Matrix_subassign (A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
     OK (GB_Matrix_check (A, "valid zombie", G3, NULL)) ;
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    CHECK (A->Pending == NULL && A->nzombies == 1) ;
-#endif
     OK (GrB_Matrix_setElement_INT32 (A, 99099, 0, 0)) ;
     OK (GB_Matrix_check (A, "no more zombie", G3, NULL)) ;
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    CHECK (A->Pending == NULL)
-    CHECK (A->nzombies == 0) ;
-#endif
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
     CHECK (nvals == 5) ;
@@ -4516,19 +4499,6 @@ void mexFunction
     OK (GrB_Matrix_new (&Eleven, GrB_BOOL, 11, 11)) ;
     I [0] = 0 ;
     OK (GrB_Matrix_assign_BOOL (Eleven, NULL, NULL, (bool) true, I, 1, GrB_ALL, 0, NULL)) ;
-
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    AP = Eleven->Pending ;
-    CHECK (AP != NULL) ;
-    GrB_Type tsave = AP->type ;
-
-    OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
-    AP->type = NULL ;
-    ERR (GB_Matrix_check (Eleven, "Eleven invalid pending type", G2, NULL)) ;
-    ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid pending type", G2, ff)) ;
-    AP->type = tsave ;
-#endif
     OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
 
     if (!GB_IS_FULL (Eleven)) GB_Matrix_wait (Eleven, Context) ;

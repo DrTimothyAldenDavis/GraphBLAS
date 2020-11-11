@@ -93,7 +93,6 @@ int main (int argc, char **argv)
         // All methods give identical results, just using different methods
 
         GrB_Index s = 0 ;
-        GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, 2) ;
 
         switch (method)
         {

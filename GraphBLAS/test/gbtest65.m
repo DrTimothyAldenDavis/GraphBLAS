@@ -15,8 +15,6 @@ n = size (A, 1) ;
 
 for trial = 1:100
 
-save gunk A trial
-
     if (mod (trial, 4) == 1)
         iset  = GrB.mis (A, 'check') ;
     else

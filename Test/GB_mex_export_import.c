@@ -130,31 +130,9 @@ void mexFunction
 
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
-
-    //--------------------------------------------------------------------------
-    // additional tests, unrelated to the inputs/outputs of this mexFunction:
-    //--------------------------------------------------------------------------
-
-#if 0
-    // try to import a huge full matrix (this will fail):
-    GrB_Matrix X = NULL ;
-    info = GxB_Matrix_import_FullC (&X, GrB_FP32, GxB_INDEX_MAX, GxB_INDEX_MAX,
-        NULL, UINT64_MAX, NULL) ;
-    if (info != GrB_OUT_OF_MEMORY || X != NULL) mexErrMsgTxt ("huge fail1") ;
-
-    // try to convert a huge sparse matrix to bitmap (this will fail too):
-    GrB_Index n = (((GrB_Index) 2) << 50) ;
-    info = GrB_Matrix_new (&X, GrB_FP32, n, n) ;
-    if (info != GrB_SUCCESS) mexErrMsgTxt ("huge fail2") ;
-    info = GxB_Matrix_Option_set_(X, GxB_SPARSITY_CONTROL, GxB_BITMAP) ;
-    if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail3") ;
-    info = GB_convert_to_full (X) ;
-    if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail4") ;
-    GrB_Matrix_free (&X) ;
-#endif
-
     FREE_ALL ;
 }
+
 
 
 //------------------------------------------------------------------------------
