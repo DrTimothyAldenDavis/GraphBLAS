@@ -8,8 +8,7 @@
 //------------------------------------------------------------------------------
 
 // No conversion is done, and the matrix is exported in its current sparsity
-// structure and by-row/by-col format.   A->nvec_nonempty is computed if
-// negative and A is sparse or hypersparse.
+// structure and by-row/by-col format.
 
 #include "GB_export.h"
 
@@ -19,17 +18,31 @@ GrB_Info GB_export      // export a matrix in any format
     GrB_Type *type,     // type of matrix to export
     GrB_Index *vlen,    // vector length
     GrB_Index *vdim,    // vector dimension
-    GrB_Index *nzmax,   // size of Ab, Ai, and Ax
-    GrB_Index *nvals,   // # of entries for bitmap matrices
-    bool *jumbled,      // if true, sparse/hypersparse may be jumbled
-    GrB_Index *nvec,    // size of Ah for hypersparse
+
+    // the 5 arrays:
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
+    GrB_Index *Ap_size, // size of Ap
+
     GrB_Index **Ah,     // vector indices, size nvec for hyper
+    GrB_Index *Ah_size, // size of Ah
+
     int8_t **Ab,        // bitmap, size nzmax
+    GrB_Index *Ab_size, // size of Ab
+
     GrB_Index **Ai,     // indices, size nzmax
+    GrB_Index *Ai_size, // size of Ai
+
     void **Ax,          // values, size nzmax
+    GrB_Index *Ax_size, // size of Ax (# of entries)
+
+    // additional information for specific formats:
+    GrB_Index *nvals,   // # of entries for bitmap format.
+    bool *jumbled,      // if true, sparse/hypersparse may be jumbled.
+    GrB_Index *nvec,    // size of Ah for hypersparse format.
+
+    // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
-    bool *is_csc,       // if true then export matrix by-column, else by-row
+    bool *is_csc,       // if true then matrix is by-column, else by-row
     GB_Context Context
 )
 {
@@ -44,29 +57,31 @@ GrB_Info GB_export      // export a matrix in any format
     ASSERT (!GB_ZOMBIES (*A)) ;
     ASSERT (GB_JUMBLED_OK (*A)) ;
     ASSERT (!GB_PENDING (*A)) ;
+
     GB_RETURN_IF_NULL (type) ;
     GB_RETURN_IF_NULL (vlen) ;
     GB_RETURN_IF_NULL (vdim) ;
-    GB_RETURN_IF_NULL (Ax) ;
+    GB_RETURN_IF_NULL (Ax) ; GB_RETURN_IF_NULL (Ax_size) ;
 
     int s = GB_sparsity (*A) ;
     switch (s)
     {
         case GxB_HYPERSPARSE : 
             GB_RETURN_IF_NULL (nvec) ;
-            GB_RETURN_IF_NULL (Ah) ;
+            GB_RETURN_IF_NULL (Ah) ; GB_RETURN_IF_NULL (Ah_size) ;
 
         case GxB_SPARSE : 
-            GB_RETURN_IF_NULL (nzmax) ;
-            GB_RETURN_IF_NULL (Ap) ;
-            GB_RETURN_IF_NULL (Ai) ;
+            GB_RETURN_IF_NULL (Ap) ; GB_RETURN_IF_NULL (Ap_size) ;
+            GB_RETURN_IF_NULL (Ai) ; GB_RETURN_IF_NULL (Ai_size) ;
             break ;
 
         case GxB_BITMAP : 
             GB_RETURN_IF_NULL (nvals) ;
-            GB_RETURN_IF_NULL (Ab) ;
+            GB_RETURN_IF_NULL (Ab) ; GB_RETURN_IF_NULL (Ab_size) ;
 
         case GxB_FULL : 
+            break ;
+
         default: ;
     }
 
@@ -77,32 +92,31 @@ GrB_Info GB_export      // export a matrix in any format
     (*type) = (*A)->type ;
     (*vlen) = (*A)->vlen ;
     (*vdim) = (*A)->vdim ;
+    (*Ax) = (*A)->x ; (*A)->x = NULL ; (*Ax_size) = (*A)->nzmax ;
 
     switch (s)
     {
         case GxB_HYPERSPARSE : 
             (*nvec) = (*A)->nvec ;
-            (*Ah) = (*A)->h ; (*A)->h = NULL ;
+            (*Ah) = (*A)->h ; (*A)->h = NULL ; (*Ah_size) = (*A)->plen ;
 
         case GxB_SPARSE : 
-            (*nzmax) = (*A)->nzmax ;
             if (jumbled != NULL)
             { 
                 (*jumbled) = (*A)->jumbled ;
             }
-            (*Ap) = (*A)->p ; (*A)->p = NULL ;
-            (*Ai) = (*A)->i ; (*A)->i = NULL ;
+            (*Ap) = (*A)->p ; (*A)->p = NULL ; (*Ap_size) = (*A)->plen + 1 ;
+            (*Ai) = (*A)->i ; (*A)->i = NULL ; (*Ai_size) = (*A)->nzmax ;
             break ;
 
         case GxB_BITMAP : 
             (*nvals) = (*A)->nvals ;
-            (*Ab) = (*A)->b ; (*A)->b = NULL ;
+            (*Ab) = (*A)->b ; (*A)->b = NULL ; (*Ab_size) = (*A)->nzmax ;
 
         case GxB_FULL : 
+
         default: ;
     }
-
-    (*Ax) = (*A)->x ; (*A)->x = NULL ;
 
     if (sparsity != NULL)
     { 

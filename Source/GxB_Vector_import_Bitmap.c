@@ -45,7 +45,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
         NULL, 0,        // Ai
         vx,   vx_size,  // Ax
         nvals, false, 0,                    // nvals for bitmap
-        GxB_BITMAP, true, Context) ;        // sparse by col
+        GxB_BITMAP, true, Context) ;        // bitmap by col
 
     GB_BURBLE_END ;
     return (info) ;

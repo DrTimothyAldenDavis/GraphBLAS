@@ -16,11 +16,14 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    GrB_Index *nzmax,   // size of vi and vx
-    GrB_Index *nvals,   // number of entries in the vector
+
+    GrB_Index **vi,     // indices, vi_size >= nvals(v)
+    void **vx,          // values, vx_size 1, or >= nvals(v)
+    GrB_Index *vi_size, // size of Ai
+    GrB_Index *vx_size, // size of Ax
+
+    GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
-    GrB_Index **vi,     // indices, size nzmax
-    void **vx,          // values, size nzmax entries
     const GrB_Descriptor desc
 )
 {
@@ -29,8 +32,8 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_CSC (&v, &type, &n, &nzmax, &nvals,"
-        " &jumbled, &vi, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_export_CSC (&v, &type, &n, "
+        " &vi, &vx, &vi_size, &vx_size, &nvals, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
     GB_RETURN_IF_NULL (v) ;
@@ -68,15 +71,24 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     int sparsity ;
     bool is_csc ;
     int64_t *vp = NULL ;
-    GrB_Index vdim ;
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, nzmax, NULL, jumbled,
-        NULL, &vp, NULL, NULL, vi, vx, &sparsity, &is_csc, Context) ;
+    GrB_Index vdim, vp_size ;
+
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
+        &vp,  &vp_size, // Ap
+        NULL, NULL,     // Ah
+        NULL, NULL,     // Ab
+        vi,   vi_size,  // Ai
+        vx,   vx_size,  // Ax
+        NULL, jumbled, NULL,                // jumbled or not
+        &sparsity, &is_csc, Context) ;      // sparse by col
+
     if (info == GrB_SUCCESS)
     { 
         (*nvals) = vp [1] ;
         ASSERT (sparsity == GxB_SPARSE) ;
         ASSERT (is_csc) ;
         ASSERT (vdim == 1) ;
+        ASSERT (vp_size == 2) ;
     }
     GB_FREE (vp) ;
     GB_BURBLE_END ;

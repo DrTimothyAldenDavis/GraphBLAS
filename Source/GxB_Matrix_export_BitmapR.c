@@ -17,19 +17,23 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index *nvals,   // # of entries
-    int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols entries
+
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index *Ab_size, // size of Ab
+    GrB_Index *Ax_size, // size of Ax
+
+    GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols, &nvals,"
-        " &Ab, &Ax, desc)") ;
+    GB_WHERE1 ("GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols, "
+        " &Ab, &Ax, &Ab_size, &Ax_size, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_BitmapR") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -63,8 +67,16 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
 
     int sparsity ;
     bool is_csc ;
-    info = GB_export (A, type, ncols, nrows, NULL, nvals, NULL, NULL,
-        NULL, NULL, Ab, NULL, Ax, &sparsity, &is_csc, Context) ;
+
+    info = GB_export (A, type, ncols, nrows,
+        NULL, NULL,     // Ap
+        NULL, NULL,     // Ah
+        Ab,   Ab_size,  // Ab
+        NULL, NULL,     // Ai
+        Ax,   Ax_size,  // Ax
+        nvals, NULL, NULL,                  // nvals for bitmap
+        &sparsity, &is_csc, Context) ;      // bitmap by col
+
     if (info == GrB_SUCCESS)
     {
         ASSERT (sparsity == GxB_BITMAP) ;

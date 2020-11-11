@@ -17,17 +17,20 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, size nrows*ncols entries
+
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index *Ax_size, // size of Ax
+
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols, &Ax,"
-        " desc)") ;
+    GB_WHERE1 ("GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols, "
+        "&Ax, &Ax_size, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_FullR") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -66,8 +69,16 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
 
     int sparsity ;
     bool is_csc ;
-    info = GB_export (A, type, ncols, nrows, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, Ax, &sparsity, &is_csc, Context) ;
+
+    info = GB_export (A, type, ncols, nrows,
+        NULL, NULL,     // Ap
+        NULL, NULL,     // Ah
+        NULL, NULL,     // Ab
+        NULL, NULL,     // Ai
+        Ax,   Ax_size,  // Ax
+        NULL, NULL, NULL,
+        &sparsity, &is_csc, Context) ;      // full by row
+
     if (info == GrB_SUCCESS)
     {
         ASSERT (sparsity == GxB_FULL) ;

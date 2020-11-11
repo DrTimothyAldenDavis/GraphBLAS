@@ -53,8 +53,9 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         void *Cx ;
         GrB_Type ctype ;
+        GrB_Index Cx_size ;
         OK (GxB_Matrix_export_FullC (C_handle, &ctype, &nrows, &ncols,
-            &Cx, NULL)) ;
+            &Cx, &Cx_size, NULL)) ;
 
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 

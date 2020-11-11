@@ -184,7 +184,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         else
         { 
             // X is a MATLAB dense matrix; so is the GrB_Matrix
-            nzmax = MAX (nrows * ncols, 1) ;
+            nzmax = nrows * ncols ;
             Xp = NULL ;
             Xi = NULL ;
         }

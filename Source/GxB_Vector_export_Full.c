@@ -16,16 +16,20 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    void **vx,          // values, size n entries
+
+    void **vx,          // values, vx_size 1, or >= nvals(v)
+    GrB_Index *vx_size, // size of vx
+
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_Full (&v, &type, &n, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_export_Full (&v, &type, &n, "
+        "&vx, &vx_size, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_Full") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
@@ -57,8 +61,16 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     int sparsity ;
     bool is_csc ;
     GrB_Index vdim ;
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, vx, &sparsity, &is_csc, Context) ;
+
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
+        NULL, NULL,     // Ap
+        NULL, NULL,     // Ah
+        NULL, NULL,     // Ab
+        NULL, NULL,     // Ai
+        vx,   vx_size,  // Ax
+        NULL, NULL, NULL,
+        &sparsity, &is_csc, Context) ;      // full by col
+
     if (info == GrB_SUCCESS)
     {
         ASSERT (sparsity == GxB_FULL) ;

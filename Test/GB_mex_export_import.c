@@ -50,7 +50,15 @@ GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL ;
 GB_void *Cx = NULL ;
 int8_t *Cb = NULL ;
 GB_Context Context = NULL ;
-GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0, nzmax = 0 ;
+GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0 ;
+
+GrB_Index Ci_size = 0 ;
+GrB_Index Cx_size = 0 ;
+GrB_Index Cp_size = 0 ;
+GrB_Index Cj_size = 0 ;
+GrB_Index Cb_size = 0 ;
+GrB_Index Ch_size = 0 ;
+
 int64_t ignore = -1 ;
 bool jumbled = false ;
 GrB_Type type = NULL ;
@@ -259,136 +267,152 @@ GrB_Info export_import
         case 0 :    // standard CSR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &ignore, &Cp, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols,
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, nrows+1, nzmax, nzmax, jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, jumbled, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 1 :    // standard CSC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &ignore, &Cp, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols,
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, ncols+1, nzmax, nzmax, jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, jumbled, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 2 :    // hypersparse CSR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &ignore, &nvec, &Cp, &Ch, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols,
+                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &nvec, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, nvec+1, nvec, nzmax, nzmax,
+                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
                 nvec, jumbled, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 3 :    // hypersparse CSC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nzmax,
-                &jumbled, &ignore, &nvec, &Cp, &Ch, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols,
+                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &nvec, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, nvec+1, nvec, nzmax, nzmax,
+                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
                 nvec, jumbled, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 4 :    // bitmapR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_BitmapR (&C, &type, &nrows, &ncols, &nvals,
-                &Cb, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_BitmapR (&C, &type, &nrows, &ncols,
+                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
 
             OK (GxB_Matrix_import_BitmapR (&C, type, nrows, ncols,
-                &Cb, &Cx, nrows*ncols, nrows*ncols, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 5 :    // bitmapC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_BitmapC (&C, &type, &nrows, &ncols, &nvals,
-                &Cb, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_BitmapC (&C, &type, &nrows, &ncols,
+                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
 
             OK (GxB_Matrix_import_BitmapC (&C, type, nrows, ncols,
-                &Cb, &Cx, nrows*ncols, nrows*ncols, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 6 :    // FullR
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_FullR (&C, &type, &nrows, &ncols, &Cx,
-                NULL)) ;
+            OK (GxB_Matrix_export_FullR (&C, &type, &nrows, &ncols,
+                &Cx, &Cx_size, NULL)) ;
 
             OK (GxB_Matrix_import_FullR (&C, type, nrows, ncols,
-                &Cx, nrows*ncols, NULL)) ;
+                &Cx, Cx_size, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 7 :    // FullC
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_FullC (&C, &type, &nrows, &ncols, &Cx,
-                NULL)) ;
+            OK (GxB_Matrix_export_FullC (&C, &type, &nrows, &ncols,
+                &Cx, &Cx_size, NULL)) ;
 
             OK (GxB_Matrix_import_FullC (&C, type, nrows, ncols,
-                &Cx, nrows*ncols, NULL)) ;
+                &Cx, Cx_size, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 8 :    // standard CSR, not jumbled
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nzmax,
-                NULL, &ignore, &Cp, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols,
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, nrows+1, nzmax, nzmax, false, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, false, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 9 :    // standard CSC, not jumbled
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nzmax,
-                NULL, &ignore, &Cp, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols,
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, ncols+1, nzmax, nzmax, false, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, false, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 10 :    // hypersparse CSR, not jumbled
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nzmax,
-                NULL, &ignore, &nvec, &Cp, &Ch, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols,
+                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &nvec, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, nvec+1, nvec, nzmax, nzmax,
+                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
                 nvec, false, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
         case 11 :    // hypersparse CSC, not jumbled
         //----------------------------------------------------------------------
 
-            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nzmax,
-                NULL, &ignore, &nvec, &Cp, &Ch, &Ci, &Cx, NULL)) ;
+            OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols,
+                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &nvec, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, nvec+1, nvec, nzmax, nzmax,
+                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
                 nvec, false, NULL)) ;
+
             break ;
 
 
@@ -491,11 +515,12 @@ GrB_Info vector_export_import
         case 1 :    // standard CSC
         //----------------------------------------------------------------------
 
-            OK (GxB_Vector_export_CSC ((GrB_Vector *) &C,
-                &type, &nrows, &nzmax, &nvals, &jumbled, &Ci, &Cx, NULL)) ;
+            OK (GxB_Vector_export_CSC ((GrB_Vector *) &C, &type, &nrows,
+                &Ci, &Cx, &Ci_size, &Cx_size, &nvals, &jumbled, NULL)) ;
 
             OK (GxB_Vector_import_CSC ((GrB_Vector *) &C, type, nrows,
-                &Ci, &Cx, nzmax, nzmax, nvals, jumbled, NULL)) ;
+                &Ci, &Cx, Ci_size, Cx_size, nvals, jumbled, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
@@ -520,11 +545,12 @@ GrB_Info vector_export_import
         case 5 :    // bitmapC
         //----------------------------------------------------------------------
 
-            OK (GxB_Vector_export_Bitmap ((GrB_Vector *) &C,
-                &type, &nrows, &nvals, &Cb, &Cx, NULL)) ;
+            OK (GxB_Vector_export_Bitmap ((GrB_Vector *) &C, &type, &nrows,
+                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
 
             OK (GxB_Vector_import_Bitmap ((GrB_Vector *) &C, type, nrows,
-                &Cb, &Cx, nrows, nrows, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
@@ -537,10 +563,12 @@ GrB_Info vector_export_import
         case 7 :    // FullC
         //----------------------------------------------------------------------
 
-            OK (GxB_Vector_export_Full ((GrB_Vector *) &C,
-                &type, &nrows, &Cx, NULL)) ;
+            OK (GxB_Vector_export_Full ((GrB_Vector *) &C, &type, &nrows,
+                &Cx, &Cx_size, NULL)) ;
+
             OK (GxB_Vector_import_Full ((GrB_Vector *) &C, type, nrows,
-                &Cx, nrows, NULL)) ;
+                &Cx, Cx_size, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------
@@ -553,11 +581,12 @@ GrB_Info vector_export_import
         case 9 :    // standard CSC, not jumbled
         //----------------------------------------------------------------------
 
-            OK (GxB_Vector_export_CSC ((GrB_Vector *) &C,
-                &type, &nrows, &nzmax, &nvals, NULL, &Ci, &Cx, NULL)) ;
+            OK (GxB_Vector_export_CSC ((GrB_Vector *) &C, &type, &nrows,
+                &Ci, &Cx, &Ci_size, &Cx_size, &nvals, NULL, NULL)) ;
 
             OK (GxB_Vector_import_CSC ((GrB_Vector *) &C, type, nrows,
-                &Ci, &Cx, nzmax, nzmax, nvals, false, NULL)) ;
+                &Ci, &Cx, Ci_size, Cx_size, nvals, false, NULL)) ;
+
             break ;
 
         //----------------------------------------------------------------------

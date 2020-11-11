@@ -139,15 +139,15 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // export the content of T
         //----------------------------------------------------------------------
 
-        GrB_Index nzmax ;
+        GrB_Index Tp_size, Ti_size, Tx_size ;
         int64_t nonempty, *Tp, *Ti ;
         void *Tx ;
 
         // pass jumbled as NULL to indicate the matrix must be sorted
-        OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax,
-            NULL, &nonempty, &Tp, &Ti, &Tx, NULL)) ;
+        OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols,
+            &Tp, &Ti, &Tx, &Tp_size, &Ti_size, &Tx_size, NULL, NULL)) ;
 
-        CHECK_ERROR (nzmax == 0, "internal error 8") ;
+        CHECK_ERROR (Ti_size == 0, "internal error 8") ;
         CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL,
             "internal error 9") ;
 
@@ -171,7 +171,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // set the size
         mxSetM (S, nrows) ;
         mxSetN (S, ncols) ;
-        mxSetNzmax (S, nzmax) ;
+        mxSetNzmax (S, Ti_size) ;
 
         // set the column pointers
         void *p = mxGetJc (S) ;

@@ -16,9 +16,13 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    GrB_Index *nvals,   // # of entries
-    int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n entries
+
+    int8_t **vb,        // bitmap, vb_size >= n
+    void **vx,          // values, vx_size 1, or >= n
+    GrB_Index *vb_size, // size of vb
+    GrB_Index *vx_size, // size of vx
+
+    GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 
@@ -27,8 +31,8 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_Bitmap (&v, &type, &n, &nvals,"
-        " &vb, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_export_Bitmap (&v, &type, &n, "
+        " &vb, &vx, &vb_size, &vx_size, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_Bitmap") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
@@ -55,8 +59,16 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     int sparsity ;
     bool is_csc ;
     GrB_Index vdim ;
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, NULL, nvals, NULL, NULL,
-        NULL, NULL, vb, NULL, vx, &sparsity, &is_csc, Context) ;
+
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
+        NULL, NULL,     // Ap
+        NULL, NULL,     // Ah
+        vb,   vb_size,  // Ab
+        NULL, NULL,     // Ai
+        vx,   vx_size,  // Ax
+        nvals, NULL, NULL,                  // nvals for bitmap
+        &sparsity, &is_csc, Context) ;      // bitmap by col
+
     if (info == GrB_SUCCESS)
     {
         ASSERT (sparsity == GxB_BITMAP) ;

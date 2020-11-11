@@ -89,9 +89,9 @@ GrB_Info GB_import      // import a matrix in any format
         case GxB_HYPERSPARSE : 
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
-            if (Ap_size < nvec+1) {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
-            if (Ah_size < nvec)   {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
-            if (nvec > vdim)      {GB_GOTCHA ; return (GrB_INVALID_VALUE) ;}
+            if (Ap_size < nvec+1) return (GrB_INVALID_VALUE) ;
+            if (Ah_size < nvec)   return (GrB_INVALID_VALUE) ;
+            if (nvec > vdim)      return (GrB_INVALID_VALUE) ;
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (*Ap) ;
             if (Ai_size > 0)
@@ -101,8 +101,8 @@ GrB_Info GB_import      // import a matrix in any format
             }
             nvals = (*Ap) [nvec] ;
             // printf ("Ai_size %ld nvals %ld\n", Ai_size, nvals) ;
-            if (Ai_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
-            if (Ax_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ai_size < nvals)  return (GrB_INVALID_VALUE) ;
+            if (Ax_size < nvals)  return (GrB_INVALID_VALUE) ;
             break ;
 
         case GxB_SPARSE : 
@@ -115,10 +115,10 @@ GrB_Info GB_import      // import a matrix in any format
                 GB_RETURN_IF_NULL (*Ai) ;
             }
             // printf ("Ap_size %ld vdim %ld\n", Ap_size, vdim) ;
-            if (Ap_size < vdim+1) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ap_size < vdim+1) return (GrB_INVALID_VALUE) ;
             nvals = (*Ap) [vdim] ;
-            if (Ai_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
-            if (Ax_size < nvals)  {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ai_size < nvals)  return (GrB_INVALID_VALUE) ;
+            if (Ax_size < nvals)  return (GrB_INVALID_VALUE) ;
             break ;
 
         case GxB_BITMAP : 
@@ -127,12 +127,12 @@ GrB_Info GB_import      // import a matrix in any format
                 GB_RETURN_IF_NULL (Ab) ;
                 GB_RETURN_IF_NULL (*Ab) ;
             }
-            if (!ok) {GB_GOTCHA; return (GrB_OUT_OF_MEMORY) ;}
-            if (nvals > full_size)   {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
-            if (Ab_size < full_size) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (!ok) return (GrB_OUT_OF_MEMORY) ;
+            if (nvals > full_size)   return (GrB_INVALID_VALUE) ;
+            if (Ab_size < full_size) return (GrB_INVALID_VALUE) ;
 
         case GxB_FULL : 
-            if (Ax_size > 1 && Ax_size < full_size) {GB_GOTCHA; return (GrB_INVALID_VALUE) ;}
+            if (Ax_size > 1 && Ax_size < full_size) return (GrB_INVALID_VALUE) ;
             break ;
 
         default: ;
@@ -148,7 +148,6 @@ GrB_Info GB_import      // import a matrix in any format
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_GOTCHA ;
         ASSERT ((*A) == NULL) ;
         return (info) ;
     }
