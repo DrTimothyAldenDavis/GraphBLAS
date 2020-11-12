@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SPDX-License-Identifier: Apache-2.0
 
 // This function is a wrapper for all GxB_*_subassign functions.
 // For these uses, the mask M must always be the same size as C(I,J) and A.

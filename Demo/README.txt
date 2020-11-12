@@ -1,5 +1,5 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+SPDX-License-Identifier: Apache-2.0
 
 This is the GraphBLAS/Demo folder.  It contains a set of simple demo programs
 that illustrate the use of GraphBLAS.  To compile and run the demos, see

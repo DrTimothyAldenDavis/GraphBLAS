@@ -169,7 +169,7 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 gap_pr         % run pagerank for the GAP benchmark
 gap_tc         % run tricount for the GAP benchmark
@@ -192,7 +192,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 gap_pr         % run pagerank for the GAP benchmark
 gap_tc         % run tricount for the GAP benchmark
@@ -452,7 +451,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % gap_pr         % run pagerank for the GAP benchmark
 gap_tc         % run tricount for the GAP benchmark
@@ -532,7 +530,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_pr         % run pagerank for the GAP benchmark
@@ -686,7 +683,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_pr         % run pagerank for the GAP benchmark
@@ -703,7 +699,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_pr         % run pagerank for the GAP benchmark
@@ -720,7 +715,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_pr         % run pagerank for the GAP benchmark
@@ -811,7 +805,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 gap_bc         % run centrality for the GAP benchmark
@@ -908,7 +901,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 gap_bc         % run centrality for the GAP benchmark
@@ -937,7 +929,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 gap_bc         % run centrality for the GAP benchmark
@@ -1483,7 +1474,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_bc         % run centrality for the GAP benchmark
@@ -1500,7 +1490,6 @@ function gap
 % CC has not yet been implemented.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 type gap
 % gap_bc         % run centrality for the GAP benchmark

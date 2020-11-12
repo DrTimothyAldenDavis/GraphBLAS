@@ -16,7 +16,7 @@ This folder contains the following files:
     Makefile                    to create the User Gude
 
     GraphBLAS_version.tex       this version of SuiteSparse:GraphBLAS
-    License.txt                 the license: Apache 2.0
+    License.txt                 SPDX-License-Identifier: Apache-2.0
     README_Doc.txt              this file
 
 Papers on SuiteSparse:GraphBLAS.  See the User Guide for the full citations.
