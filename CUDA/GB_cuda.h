@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: Apache-2.0
 //------------------------------------------------------------------------------
 // GB_cuda.h: definitions for using CUDA in GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS/CUDA, (c) NVIDIA Corp. 2017-2019, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -34,6 +33,8 @@ extern "C"
 // compiled with nvcc, nor do they see the cuda.h or cuda_runtime.h
 // definitions.  Thus, this #include comes first.
 #include "GB_cuda_gateway.h"
+
+#include "GB_cuda_global.h"
 
 // Finally, include the CUDA definitions
 #include "cuda.h"
