@@ -23,7 +23,7 @@ function gbtest
 % See also GrB.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % gbtest3 requires ../demo/dnn_matlab.m and ../demo/dnn_mat2gb.m.
 demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;

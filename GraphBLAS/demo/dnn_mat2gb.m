@@ -24,7 +24,7 @@ function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 % See also GrB.dnn, dnn_matlab.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 d = struct ('format', 'by row') ;
 n = size (Y0, 2) ;

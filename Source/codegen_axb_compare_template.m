@@ -1,6 +1,9 @@
 function codegen_axb_compare_template (multop, bmult, mult)
 %CODEGEN_AXB_COMPARE_TEMPLATE create a function for a semiring with a TxT -> bool multiplier
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % For gcc and icc: lor, land, and lxor monoids can be done with OpenMP atomics.
 % For Microsoft Visual Studio: no boolean monoids work with OpenMP atomics.
 

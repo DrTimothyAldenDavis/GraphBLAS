@@ -2,7 +2,7 @@ function test39(use_ssget)
 %TEST39 performance test for GrB_transpose
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest39 performance tests : GrB_transpose \n') ;
 

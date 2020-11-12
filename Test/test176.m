@@ -2,7 +2,7 @@ function test176
 %TEST176 test C(I,J)<M,repl> = scalar (method 09, 11), M bitmap
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test176 ------------ assign/subassign: methods 09, 11\n') ;
 

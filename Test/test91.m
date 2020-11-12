@@ -2,7 +2,7 @@ function test91
 %TEST91 test subref performance on dense vectors
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n------------------------------ testing GB_mex_Matrix_subref\n') ;
 

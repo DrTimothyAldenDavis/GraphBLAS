@@ -34,7 +34,7 @@ function test182
 % This test case comes from Gabor Szarnyas and Marton Elekes.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 I  = [ 1, 2, 4, 5, 7, 11, 12, 13, 15, 18, 19, 20, 27, 32, 33, ...
     35, 37, 41, 46, 50, 52, 53, 55, 57, 58, 61, 62, 63, 65, 66, 69, 70, 72, ...

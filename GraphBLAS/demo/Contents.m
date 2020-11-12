@@ -19,5 +19,5 @@
 %   mxm_demo_DGX_Station.txt - mxm_demo results on Intel Xeon E5-2689 (20 core)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 

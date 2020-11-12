@@ -2,7 +2,7 @@ function test168
 %TEST168 C=A+B with C and B full, A bitmap
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
 

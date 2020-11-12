@@ -4,8 +4,8 @@ function path_length = gap_sssp12 (source, A, delta)
 % A is square, unsymmetric, int32, and stored by row.  It is assumed that all
 % its explicit entries are > 0.  The method is based on LAGraph_sssp12.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 %-------------------------------------------------------------------------------
 % check inputs

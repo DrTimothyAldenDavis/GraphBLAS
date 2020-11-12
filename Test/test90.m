@@ -2,7 +2,7 @@ function test90
 %TEST90 test AxB with user-defined semirings: plus_rdiv and plus_rdiv2
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n -------------- A*B plus_rdiv (user-defined semiring)\n') ;
 

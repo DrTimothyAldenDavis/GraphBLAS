@@ -4,8 +4,10 @@
 % for more details and resources.  See also the SuiteSparse:GraphBLAS
 % User Guide in this package.
 %
-% SuiteSparse:GraphBLAS, (c) 2017-2020, Tim Davis, Texas A&M University,
 % http://faculty.cse.tamu.edu/davis
+%
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 %% GraphBLAS: faster and more general sparse matrices for MATLAB
 % GraphBLAS is not only useful for creating graph algorithms; it also

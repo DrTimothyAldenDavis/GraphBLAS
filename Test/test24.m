@@ -3,7 +3,7 @@ function test24(fulltest)
 % test24(fulltest); fulltest=1 if longer test, 0 for quick test
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 test_types = types.all ;

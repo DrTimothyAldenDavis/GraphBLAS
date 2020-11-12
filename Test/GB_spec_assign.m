@@ -17,7 +17,7 @@ function C = GB_spec_assign (C, Mask, accum, A, I, J, descriptor, scalar)
 % have their own GB_spec_Row_assign.m and GB_spec_Col_assign.m functions.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 %-------------------------------------------------------------------------------
 % get inputs

@@ -4,7 +4,7 @@ function test129
 % This is a shorter version of test25
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest129: GxB_select tests (tril and nonzero)\n') ;
 

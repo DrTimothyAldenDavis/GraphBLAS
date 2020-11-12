@@ -2,7 +2,7 @@ function test119
 %TEST119 performance tests for GrB_assign
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test119:-------------------  C(I,J) += scalar:\n') ;
 

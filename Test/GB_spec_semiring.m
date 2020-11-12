@@ -25,7 +25,7 @@ function [multiply_op add_op identity ztype xtype ytype] = GB_spec_semiring (sem
 %               'single complex', and 'double complex'
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % set the default semiring
 if (isempty (semiring))

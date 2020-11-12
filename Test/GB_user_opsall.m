@@ -2,7 +2,7 @@ function [complex_binaryops complex_unaryops ] = GB_user_opsall
 %GB_USER_OPSALL return list of complex operators
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % complex binary operators
 complex_binaryops = {

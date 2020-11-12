@@ -42,11 +42,11 @@ function C = bitset (A, B, arg3, arg4)
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
 % GrB/bitset, GrB/bitclr.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % FUTURE: bitset(A,B,V) for two matrices A and B is slower than it could be.
 % See comments in gb_union_op.
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (A))
     A = A.opaque ;

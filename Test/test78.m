@@ -2,7 +2,7 @@ function test78
 %TEST78 test subref
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 n = 500 ;
 I = speye (n) ;

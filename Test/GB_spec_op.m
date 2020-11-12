@@ -39,7 +39,7 @@ function C = GB_spec_op (op, A, B)
 % Positional ops are not computed by this function.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % get the operator name and class
 [opname optype ztype xtype ytype] = GB_spec_operator (op, GB_spec_type (A)) ;

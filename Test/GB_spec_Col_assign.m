@@ -9,7 +9,7 @@ function C = GB_spec_Col_assign (C, Mask, accum, A, I, j, descriptor)
 % This function does the same thing as GrB_Col_assign
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 %-------------------------------------------------------------------------------
 % get inputs

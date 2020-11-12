@@ -2,7 +2,7 @@ function test45(use_ssget)
 %TEST45 test GrB_*_setElement and GrB_*_*build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest45\n------------------ testing GrB_setElement and _build\n') ;
 

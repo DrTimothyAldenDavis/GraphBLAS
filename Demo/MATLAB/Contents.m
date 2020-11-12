@@ -13,4 +13,4 @@
 %   dpagerank2   - compute the pagerank of nodes in a graph using a real semiring
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0

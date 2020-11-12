@@ -2,7 +2,7 @@ function test134(short)
 %TEST134 test GxB_select
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % A shorter version of test25
 

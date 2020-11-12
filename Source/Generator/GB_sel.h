@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 if_phase1
 void GB_sel_phase1
 (

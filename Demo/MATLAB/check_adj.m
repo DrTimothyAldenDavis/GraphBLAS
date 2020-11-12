@@ -5,7 +5,7 @@ function check_adj (A)
 % A must be square, symmetric, binary, with no entries on the diagonal
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [m n] = size (A) ;
 if (m ~= n)

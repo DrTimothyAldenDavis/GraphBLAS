@@ -2,7 +2,7 @@ function testcc
 %TESTCC test complex transpose
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 dt = struct ('inp0', 'tran') ;
 seed = 1 ;

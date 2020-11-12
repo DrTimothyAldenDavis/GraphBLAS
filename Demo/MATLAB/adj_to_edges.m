@@ -9,7 +9,7 @@ function E = adj_to_edges (A)
 % its diagonal is ignored.  A is symmetrized with A=A+A'.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [m n] = size (A) ;
 if (m ~= n)

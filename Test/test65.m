@@ -2,7 +2,7 @@ function test65
 %TEST65 test type casting
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 X = logical (rand (4) > 0.5) ;
 C = GB_mex_cast (X, 'logical', 1) ;

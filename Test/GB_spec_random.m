@@ -12,7 +12,7 @@ function A = GB_spec_random (m, n, d, scale, type, is_csc,is_hyper,hyper_switch)
 % is_hyper: false for non-hypersparse, true for hypersparse, default false
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 1)
     m = 4 ;

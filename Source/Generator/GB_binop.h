@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: Apache-2.0
 if_is_binop_subset
 void GB_Cdense_ewise3_accum
 (

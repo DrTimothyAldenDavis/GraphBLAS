@@ -2,7 +2,7 @@ function test141
 %TEST141 test GrB_eWiseAdd (all types and operators) for dense matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;
 binops = binops.all ;

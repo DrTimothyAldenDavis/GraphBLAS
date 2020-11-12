@@ -2,7 +2,7 @@ function test60
 %TEST60 test min and max operators with NaNs
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('min\n') ;
 for x = [3 nan inf]

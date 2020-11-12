@@ -52,8 +52,8 @@ function result = nonz (A, varargin)
 %
 % See also GrB.entries, GrB/nnz, GrB/nonzeros, GrB.prune.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 matlab_sparse = false ;
 if (isobject (A))

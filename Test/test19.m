@@ -2,7 +2,7 @@ function test19(fulltest)
 %TEST19 test GxB_subassign and GrB_*_setElement with many pending operations
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 1)
     fulltest = 0 ;

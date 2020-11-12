@@ -4,7 +4,7 @@ function [nthreads chunk] = nthreads_get
 % [nthreads chunk] = nthreads_get
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 global GraphBLAS_nthreads
 if (isempty (GraphBLAS_nthreads))

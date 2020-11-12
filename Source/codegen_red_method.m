@@ -3,6 +3,9 @@ function codegen_red_method (opname, func, atype, identity, terminal, panel)
 %
 % codegen_red_method (opname, func, atype, identity, terminal)
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 f = fopen ('control.m4', 'w') ;
 
 [aname, unsigned, bits] = codegen_type (atype) ;

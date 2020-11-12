@@ -20,3 +20,7 @@
 %   codegen_unop                 - create functions for all unary operators
 %   codegen_unop_method          - create a function to compute C=unop(cast(A))
 %   codegen_unop_template        - create unop functions
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+

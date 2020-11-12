@@ -3,7 +3,7 @@ function test145
 % GB_AxB_dot4 computes C+=A'*B when C is dense.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test145 -------------------- C+=A''*B when C is dense, with dot4\n') ;
 

@@ -4,6 +4,9 @@ function codegen_axb
 % This function creates all files of the form GB_AxB__*.[ch], including all
 % built-in semirings (GB_AxB__*.c) and one include file, GB_AxB__include.h.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % The ANY operator is not used as a multiplicative operator in the generated
 % functions.  It can be used as the multiplicative op in a semiring, but is
 % renamed to SECOND before calling the generated function.
@@ -16,8 +19,7 @@ fprintf (f, '// GB_AxB__include.h: definitions for GB_AxB__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '\n') ;
 fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.\n') ;
-fprintf (f, '// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.\n') ;
-fprintf (f, '\n') ;
+fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
 fprintf (f, '\n\n') ;
 fclose (f) ;

@@ -6,7 +6,7 @@ function ok = isequal_roundoff (A,B,tol)
 % tol, but the NaN and +/-Inf pattern must be the same.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % if (~isequal (GB_spec_type (A), GB_spec_type (B)))
 %     ok = false ;

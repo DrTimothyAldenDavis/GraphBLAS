@@ -2,7 +2,7 @@ function test27
 %TEST27 test GxB_select with user-defined select op (LoHi_band)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test 27: GxB_select with user-defined op (LoHi_band)\n') ;
 

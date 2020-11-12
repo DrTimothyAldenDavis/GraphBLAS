@@ -2,7 +2,7 @@ function test34
 %TEST34 test GrB_eWiseAdd
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n----- quick test for GB_mex_Matrix_eWiseAdd\n') ;
 

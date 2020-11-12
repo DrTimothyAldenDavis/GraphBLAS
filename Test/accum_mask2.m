@@ -5,7 +5,7 @@ function C = accum_mask (C, Mask, accum, T, C_replace, Mask_complement)
 % does, not for actual testing.  This file appears in the User Guide.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [nrows ncols] = size (C.matrix) ;
 Z.matrix  = zeros (nrows, ncols) ;

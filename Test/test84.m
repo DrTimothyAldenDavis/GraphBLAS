@@ -2,7 +2,7 @@ function test84
 %TEST84 test GrB_assign (row and column with C in CSR/CSC format)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest84: GrB_assign with row/col assignments\n') ;
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 GrB_Info GB_unop_apply
 (
     GB_ctype *Cx,

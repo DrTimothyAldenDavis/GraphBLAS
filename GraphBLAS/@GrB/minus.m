@@ -7,11 +7,11 @@ function C = minus (A, B)
 %
 % See also GrB.eadd, GrB/plus, GrB/uminus.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % FUTURE: minus(A,B) for two matrices A and B is slower than it could be.
 % See comments in gb_union_op.
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
 
 if (isobject (A))
     A = A.opaque ;

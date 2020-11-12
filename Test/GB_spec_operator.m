@@ -10,7 +10,7 @@ function [opname optype ztype xtype ytype] = GB_spec_operator (op,optype_default
 % f is a binary operator, or z = f(x) if f is a unary operator.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 if (isempty (op))
     % No operator has been defined; return an empty operator.  GB_spec_accum

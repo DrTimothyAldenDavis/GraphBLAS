@@ -22,7 +22,7 @@ function centrality = gap_centrality (sources, A, AT)
 % The list of sources should be small; length(sources) == 4 is typical.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 %-------------------------------------------------------------------------------
 % check inputs

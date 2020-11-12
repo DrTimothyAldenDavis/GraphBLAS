@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 if_is_monoid
 
 GrB_Info GB_red_scalar

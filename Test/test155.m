@@ -2,7 +2,7 @@ function test155
 %TEST155 test GrB_*_setElement and GrB_*_removeElement
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
 mlist  = [ 1  1  10  20    5  ] ;

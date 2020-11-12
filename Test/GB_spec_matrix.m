@@ -66,7 +66,7 @@ function Cout = GB_spec_matrix (Cin, identity)
 % then C0 and C1 should be identical.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % get the semiring addititive identity, if present
 if (nargin < 2)

@@ -2,8 +2,8 @@ function C = gb_random (varargin)
 %GB_RANDOM uniformly distributed random GraphBLAS matrix.
 % Implements C = GrB.random (...), C = sprand (...), C = sprand (...),
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 %---------------------------------------------------------------------------
 % parse inputs

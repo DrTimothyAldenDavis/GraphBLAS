@@ -13,7 +13,7 @@ function floptest (M, Mask_complement, A, B, flops1)
 % only the total flop count is checked.  In that case, flops1 is a scalar.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [flops2 mwork] = GB_mex_mxm_flops (M, Mask_complement, A, B) ;
 total_flops = flops2 (end) ;

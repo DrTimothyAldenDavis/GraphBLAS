@@ -3,7 +3,7 @@ function C = rowscale (A)
 % C = rowscale (A)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 % scale the adjacency matrix by out-degree
 dout = sum (A,2) ;              % dout(i) is the out-degree of node i

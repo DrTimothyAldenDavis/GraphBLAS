@@ -3,6 +3,9 @@ function codegen_binop_method (binop, op, xtype)
 %
 % codegen_binop_method (binop, op, xtype)
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 f = fopen ('control.m4', 'w') ;
 
 % no code is generated for the ANY operator (SECOND is used in its place)

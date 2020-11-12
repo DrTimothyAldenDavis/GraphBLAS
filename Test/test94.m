@@ -2,7 +2,7 @@ function test94
 %TEST94 test pagerank
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 T = load ('../Demo/Matrix/west0067') ;
 n = max (max (T (:, 1:2))) + 1 ;

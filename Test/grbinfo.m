@@ -4,7 +4,7 @@ function [nth chnk] = grbinfo
 % nthreads = grbinfo
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SPDX-License-Identifier: Apache-2.0
 
 [nthreads, ~, ~, format, hyper_switch,
 name, version, date, about, license, compiledate, compiletime, api, ...

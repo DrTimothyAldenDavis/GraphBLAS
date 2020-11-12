@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: Apache-2.0
 GrB_Info GB_Cdense_05d
 (
     GrB_Matrix C,
