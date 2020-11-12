@@ -28,3 +28,9 @@ class GB_callback {
      }
 };
 
+//Global definition required here, sorry
+GB_callback *SR_callback_ptr;
+
+std::istream* callback_wrapper( std::string file_name, std::iostream& tmp){
+   return SR_callback_ptr->callback( file_name, tmp);
+}
