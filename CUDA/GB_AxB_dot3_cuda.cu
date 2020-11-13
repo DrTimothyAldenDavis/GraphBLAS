@@ -30,13 +30,6 @@ extern "C"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
 #include "GB_jit_launcher.h"
-#include "GB_callback.hpp"
-
-GB_callback *SR_callback_ptr;
-
-std::istream* callback_wrapper( std::string file_name, std::iostream& tmp){
-   return SR_callback_ptr->callback( file_name, tmp);
-}
 
 
 const std::vector<std::string> header_names ={};
