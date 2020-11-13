@@ -124,10 +124,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             &(A->Pending->j),       // jwork_handle, free on output
             &(A->Pending->x),       // Swork_handle, free on output
             A->Pending->sorted,     // tuples may or may not be sorted
-            false,                  // check for duplicates
+            false,                  // there might be duplicates; look for them
             A->Pending->nmax,       // size of Pending->[ijx] arrays
             true,                   // is_matrix: unused
-            false,                  // ijcheck: unused
             NULL, NULL, NULL,       // original I,J,S tuples, not used here
             npending,               // # of tuples
             A->Pending->op,         // dup operator for assembling duplicates

@@ -131,8 +131,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 // if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
 
         // very rough estimate of the work to do
-        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
-        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
+        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
+        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
         int64_t mnz = GB_NNZ (M) ;
 
         double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;

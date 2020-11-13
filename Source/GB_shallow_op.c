@@ -44,9 +44,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    // TODO: if A is jumbled, T will be jumbled.  That is OK, except then
-    // T cannot be sorted without changing A.
-
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;

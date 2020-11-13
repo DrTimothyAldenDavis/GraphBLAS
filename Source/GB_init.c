@@ -196,7 +196,7 @@ GrB_Info GB_init            // start up GraphBLAS
         // make GPU 0 the default device
         GB_cuda_set_device( 0 );
 
-        // TODO for GPU: check for jit cache, pre-load library of common kernels
+        // also check for jit cache, pre-load library of common kernels ...
     }
     else
     #endif

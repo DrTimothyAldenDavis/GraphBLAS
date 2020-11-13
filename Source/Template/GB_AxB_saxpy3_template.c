@@ -10,9 +10,6 @@
 // GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types,
 // where C is sparse or hypersparse.
 
-// TODO rename GB_AxB_saxpy_C_sparse_template.c or
-// GB_sparse_AxB_saxpy_template.c
-
 #include "GB_unused.h"
 
 //------------------------------------------------------------------------------

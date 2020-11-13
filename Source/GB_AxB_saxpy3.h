@@ -150,7 +150,7 @@ void GB_AxB_saxpy3_cumsum
 // GB_AxB_saxpy3_generic: for any types and operators
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
+GrB_Info GB_AxB_saxpy3_generic
 (
     GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,

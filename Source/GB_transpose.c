@@ -1085,7 +1085,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 true,       // tuples have no duplicates
                 anz,        // size of iwork, jwork, and Swork
                 true,       // is_matrix: unused
-                false,      // ijcheck: unused
                 NULL, NULL, // original I,J indices: not used here
                 S,          // array of values of type scode, not modified
                 anz,        // number of tuples
