@@ -32,7 +32,7 @@
     const GB_ATYPE *GB_RESTRICT Dx = (GB_ATYPE *) (D_is_pattern ? NULL : D->x) ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t  *GB_RESTRICT Bi = B->i ;
-    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // FIXME
+    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
     const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------

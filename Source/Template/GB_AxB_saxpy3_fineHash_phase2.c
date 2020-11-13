@@ -150,10 +150,6 @@
                             GB_ATOMIC_CAPTURE_INT64_OR (hf, Hf [hash], 3) ;
                         } while ((hf & 3) == 3) ; // owner: f=0 or 2
 
-                        // TODO: this can be simplified by combining the
-                        // 2 actions below into a single update, if Hx [..]
-                        // is initialized with the monoid identity value.
-
                         if (hf == 0) // f == 0
                         { 
                             // C(i,j) is a new entry in C(:,j)

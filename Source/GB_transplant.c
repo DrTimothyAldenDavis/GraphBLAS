@@ -36,7 +36,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C
     ASSERT (GB_JUMBLED_OK (A)) ;    // if A is jumbled, then C is jumbled
-    ASSERT (!GB_PENDING (A)) ;      // TODO:FIXME allow for this
+    ASSERT (!GB_PENDING (A)) ;      // TODO: allow transplant of pending tuples
 
     // C is about to be cleared, any pending work is OK
     ASSERT (C != NULL) ;

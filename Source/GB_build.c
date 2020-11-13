@@ -7,17 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_matvec_build and GB_reduce_to_vector
+// CALLED BY: GB_matvec_build
 // CALLS:     GB_builder
 
 // GB_matvec_build constructs a GrB_Matrix or GrB_Vector from the tuples
 // provided by the user.  In that case, the tuples must be checked for
 // duplicates.  They might be sorted on input, so this condition is checked and
-// exploited if found.  GB_reduce_to_vector constructs a GrB_Vector from a
-// GrB_Matrix, by discarding the vector index.  As a result, duplicates are
-// likely to appear, and the input is likely to be unsorted.  But for
-// GB_reduce_to_vector, the validity of the tuples need not be checked.  All of
-// these conditions are checked in GB_builder.
+// exploited if that condition is found.  All of these conditions are checked
+// in GB_builder.
 
 // GB_build constructs a matrix C from a list of indices and values.  Any
 // duplicate entries with identical indices are assembled using the binary dup
@@ -93,14 +90,13 @@ GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
     const GrB_Index *I_input,   // "row" indices of tuples (as if CSC)
-    const GrB_Index *J_input,   // "col" indices of tuples (as if CSC) NULL for
-                                // GrB_Vector_build or GB_reduce_to_vector
+    const GrB_Index *J_input,   // "col" indices of tuples (as if CSC)
+                                // J_input is NULL for GrB_Vector_build
     const void *S_input,        // values
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
     const GB_Type_code scode,   // GB_Type_code of S_input array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
-    const bool ijcheck,         // true if I and J are to be checked
     GB_Context Context
 )
 {
@@ -152,7 +148,6 @@ GrB_Info GB_build               // build matrix
         false,          // known_no_duplicates: not yet known
         0,              // I_work, J_work, and S_work not used here
         is_matrix,      // true if T is a GrB_Matrix
-        ijcheck,        // true if I and J are to be checked
         (int64_t *) ((C->is_csc) ? I_input : J_input),
         (int64_t *) ((C->is_csc) ? J_input : I_input),
         (const GB_void *) S_input,   // original values, each of size nvals

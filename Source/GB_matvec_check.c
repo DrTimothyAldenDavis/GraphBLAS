@@ -390,7 +390,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     // # of entries cannot be computed until all the tests above are OK
-    int64_t anz = is_full ? GB_NNZ_FULL (A) : GB_NNZ (A) ;   // TODO
+    int64_t anz = is_full ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
     if (anz == 0)
     { 
         GBPR0 ("no entries\n") ;

@@ -128,7 +128,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool known_no_duplicates,       // true if tuples known to not have dupl
     int64_t ijslen,                 // size of I_work and J_work arrays
     const bool is_matrix,           // true if T a GrB_Matrix, false if vector
-    const bool ijcheck,             // true if I_input,J_input must be checked
     const int64_t *GB_RESTRICT I_input,// original indices, size nvals
     const int64_t *GB_RESTRICT J_input,// original indices, size nvals
     const GB_void *GB_RESTRICT S_input,// array of values of tuples, size nvals
@@ -428,7 +427,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
 
         }
-        else if (ijcheck)
+        else
         {
 
             //------------------------------------------------------------------
@@ -490,15 +489,17 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         i, vlen) ;
                 }
             }
-
         }
+
+#if 0
         else
-        {
-            ASSERT (0) ;    // TODO: dead code
+        { 
 
             //------------------------------------------------------------------
             // GB_reduce_to_vector: do not check I_input, assume not sorted
             //------------------------------------------------------------------
+
+            // GB_reduce_to_vector no longer
 
             // Many duplicates are possible, since the tuples are being used to
             // construct a single vector.  For a CSC format, each entry A(i,j)
@@ -507,9 +508,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // vector.  The input is unlikely to be sorted, so do not bother to
             // check.
 
+            ASSERT (GB_DEAD_CODE) ;
             GB_memcpy (I_work, I_input, nvals * sizeof (int64_t), nthreads) ;
             known_sorted = false ;
         }
+#endif
 
         //----------------------------------------------------------------------
         // determine if duplicates are possible

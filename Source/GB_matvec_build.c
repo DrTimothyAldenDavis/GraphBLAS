@@ -137,6 +137,7 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
 
     // GB_build treats I, J, and X as read-only; they must not be modified
 
-    return (GB_build (C, I, J, X, nvals, dup, scode, is_matrix, true, Context));
+    return (GB_build (C, I, J, X, nvals, dup, scode, is_matrix,
+        /* true, */ Context)) ;
 }
 

@@ -148,7 +148,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
 
     if (M != NULL)
     {
-        // TODO: not actually supported by MKL
+        // note: not actually supported by MKL
         return (GrB_NO_VALUE) ;
         /*
         GB_MKL_OK (mkl_graph_matrix_create (&M_mkl)) ;
@@ -175,7 +175,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     // C=A*B or C<M>=A*B via MKL
     //--------------------------------------------------------------------------
 
-// TODO for MKL: figure out how to call mkl_mxv for both dense and sparse v
+// note for MKL: figure out how to call mkl_mxv for both dense and sparse v
 
     GB_MKL_OK (mkl_graph_matrix_create (&C_mkl)) ;
     GBURBLE ("(MKL start) ") ;
