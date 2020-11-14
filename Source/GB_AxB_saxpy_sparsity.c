@@ -34,9 +34,10 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
     int C_sparsity ;
 
     double m = (double) A->vlen ;
-    double k = (double) A->vdim ;
     double n = (double) B->vdim ;
-    bool C_is_large = (m*n) > 4 * (m*k + k*n) ;
+    double anz = (double) GB_NNZ_HELD (A) ;
+    double bnz = (double) GB_NNZ_HELD (B) ;
+    bool C_is_large = (m*n) > 8 * (anz + bnz) ;
 
     int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
     int B_sparsity = GB_sparsity (B) ;
@@ -154,9 +155,9 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // full.
 
         // For the cases where C is labelled as hyper/bitmap or sparse/bitmap:
-        // Let A by m-by-k, let B by k-by-n, then C is m-by-n.  If m*n is much
-        // larger than (m*k + k*n), then always construct C as sparse/hyper,
-        // not bitmap.
+        // If m*n is much larger than nnz(A)+nnz(B), then always construct C as
+        // sparse/hyper, not bitmap.   TODO: give the user control over this
+        // decision.
 
         switch (B_sparsity)
         {
