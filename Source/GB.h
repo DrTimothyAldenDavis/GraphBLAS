@@ -864,7 +864,8 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
     int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
     const int64_t *GB_RESTRICT Ap,         // array of size n+1
     const int64_t n,
-    const int ntasks                    // # of tasks
+    const int ntasks,                       // # of tasks
+    const bool perfectly_balanced
 ) ;
 
 void GB_eslice

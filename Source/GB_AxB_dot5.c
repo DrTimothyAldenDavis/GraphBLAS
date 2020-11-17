@@ -40,6 +40,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     GB_Context Context
 )
 {
+double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // prototype
@@ -57,11 +58,17 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // semiring for BFS
     if (semiring != GxB_ANY_SECONDI1_INT32) return (GrB_NO_VALUE) ;
 
-    // mask present, complemented, valued, full, and GrB_INT32
+    // mask present, complemented, valued, full+valued or bitmap+structural,
+    // and GrB_INT32
     if (M == NULL) return (GrB_NO_VALUE) ;
-    if (!GB_IS_FULL (M)) return (GrB_NO_VALUE) ;
     if (!Mask_comp) return (GrB_NO_VALUE) ;
-    if (Mask_struct) return (GrB_NO_VALUE) ;
+
+    bool M_is_full_and_valued = GB_IS_FULL (M) && !Mask_struct ;
+    bool M_is_bitmap_and_structural = GB_IS_BITMAP (M) && Mask_struct ;
+
+    if (!(M_is_full_and_valued ||
+          M_is_bitmap_and_structural)) return (GrB_NO_VALUE) ;
+
     if (M->type != GrB_INT32) return (GrB_NO_VALUE) ;
 
     // no accum
@@ -210,6 +217,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // const GB_void *GB_RESTRICT Mx ;
     const int32_t *GB_RESTRICT Mx ;
     Mx = (int32_t *) (Mask_struct ? NULL : (M->x)) ;
+    const int8_t *GB_RESTRICT Mb = M->b ;
     size_t msize = M->type->size ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
@@ -262,6 +270,13 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     // GxB_ANY_FIRSTJ1_INT32.
 
     int64_t cnvals = 0 ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (15, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
+if (M_is_full_and_valued) {
+    printf ("^") ;
 
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -402,6 +417,145 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
         }
     }
 
+} else {
+    printf (":") ;
+
+
+    int tid ;
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(+:cnvals)
+    for (int tid = 0 ; tid < ntasks ; tid++)
+    {
+        // assume B is a single vector:
+        int a_tid = tid ;
+        int b_tid = 0 ;
+        // int a_tid = tid / nbslice ;
+        // int b_tid = tid % nbslice ;
+
+        // determine the part of A and B to work on
+        int64_t kA_start, kA_end, kB_start, kB_end ;
+        GB_PARTITION (kA_start, kA_end, anvec, a_tid, naslice) ;
+        // assume B is a single vector:
+        // GB_PARTITION (kB_start, kB_end, bnvec, b_tid, nbslice) ;
+        kB_start = 0 ;
+        kB_end = 1 ;
+
+        // compute C (kA_start:kA_start-1, kB_start:kB_start-1)
+        for (int64_t kB = kB_start ; kB < kB_end ; kB++)
+        {
+            // for B bitmap, sparse, or full, do this:
+            int64_t j = kB ;
+            // for all kinds of matrices B, do this instead:
+            // int64_t j = GBH (Bh, kB) ;
+
+            // since B is bitmap (also works for full):
+            int64_t pB_start = kB * vlen ;
+            // this also works for all matrices, including bitmap:
+            // int64_t pB_start = GBP (Bp, kB, vlen) ;
+            // int64_t pB_end   = GBP (Bp, kB+1, vlen) ;
+
+            // if A and/or B are hypersparse, then some rows and columns of
+            // C will not be computed at all.  They must be set to Cb[p]=0,
+            // unless they are preserved by the mask or accum.
+
+            // since C is always bitmap:
+            // pC_start = the start of C(:,j)
+            int64_t pC_start = j * cvlen ;
+
+            for (int64_t kA = kA_start ; kA < kA_end ; kA++)
+            {
+
+                // if A is hypersparse, or for all matrices, do:
+                // int64_t i = GBH (Ah, kA) ;
+                // for A sparse:
+                int64_t i = kA ;
+
+                //--------------------------------------------------------------
+                // compute C(i,j)<M(i,j) = A(:,i)'*B(:,j)
+                //--------------------------------------------------------------
+
+                // M is bitmap/structural and used in-place
+                // (see M_dense_in_place in GB_AxB_saxpy3)
+                // pC = the location of C(i,j) in the bitmap
+                int64_t pC = pC_start + i ;     // C is bitmap
+                bool mij ;
+                mij = Mb [pC] ;
+                if (!mij)
+                {
+
+                    //----------------------------------------------------------
+                    // C(i,j) = A(:,i)'*B(:,j)
+                    //----------------------------------------------------------
+
+                    // assumes A is sparse or hypersparse:
+                    int64_t pA = Ap [kA] ; // GBP (Ap, kA, vlen) ;
+                    int64_t pA_end = Ap [kA+1] ; // GBP (Ap, kA+1, vlen) ;
+
+                    // GB_AxB_dot_cij starts here, if it did bitmaps:
+                    int32_t cij ;
+
+                    // last panel
+                    for ( ; pA < pA_end ; pA++)
+                    {
+                        // next index of A(:,k)
+                        int64_t k = Ai [pA] ;                // ok: A is sparse
+                        // for any matrix A, do this instead:
+                        // int64_t k = GBI (Ai, pA, vlen) ;
+
+                        // to handle A bitmap, do this:
+                        // if (!GBB (Ab, pA)) continue ;
+
+                        // check existence of B(k,j): assumes B bitmap:
+                        if (!Bb [pB_start+k]) continue ;
+                        // to handle B bitmap or full, do:
+                        // if (!GBB (Bb, pB_start+k)) continue ;
+
+                        // see GB_DOT in Template/GB_AxB_dot_cij.c:
+                        // cij += A(k,i) * B(k,j)
+                        GB_GETA (aki, Ax, pA) ;             // aki = A(k,i)
+                        GB_GETB (bkj, Bx, pB_start+k) ;     // bkj = B(k,j)
+                        GB_MULTADD (cij, aki, bkj, i, k, j) ;
+
+                        #if GB_IS_ANY_MONOID
+                        // for the ANY monoid: always terminal:
+                        cnvals++ ;              // one more entry in the bitmap
+                        Cb [pC] = 1 ;           // assumes Cb is calloc'ed
+                        GB_PUTC (cij, pC) ;     // Cx [pC] = cij
+                        break ;
+                        #else
+                        cij_exists = true ;
+                        // test terminal condition here
+                        #endif
+                    }
+
+                    #if !GB_IS_ANY_MONOID
+                    if (cij_exists)
+                    {
+                        cnvals++ ;              // one more entry in the bitmap
+                        Cb [pC] = 1 ;           // assumes Cb is calloc'ed
+                        GB_PUTC (cij, pC) ;     // Cx [pC] = cij
+                    }
+                    ASSERT (Cb [pC] == cij_exists) ;
+                    #endif
+
+                }
+                else
+                {
+
+                    //----------------------------------------------------------
+                    // the mask prevents C(i,j) from existing
+                    //----------------------------------------------------------
+
+                    // commented out because C->b is calloc'd above
+                    // Cb [pC] = 0 ;
+                    ASSERT (Cb [pC] == 0) ;
+                }
+            }
+        }
+    }
+
+}
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
@@ -414,6 +568,11 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (16, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     return (GrB_SUCCESS) ;
 }
 

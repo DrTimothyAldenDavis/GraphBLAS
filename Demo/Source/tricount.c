@@ -187,7 +187,6 @@ GrB_Info tricount           // count # of triangles
 
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, ctype, n, n)) ;
-            OK (GrB_Descriptor_new (&d)) ;
             OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
             OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
@@ -202,7 +201,6 @@ GrB_Info tricount           // count # of triangles
 
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, ctype, n, n)) ;
-            OK (GrB_Descriptor_new (&d)) ;
             OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
             OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
@@ -215,6 +213,7 @@ GrB_Info tricount           // count # of triangles
 
         default:    // invalid method
 
+            FREE_ALL ;
             return (GrB_INVALID_VALUE) ;
             break ;
     }

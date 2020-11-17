@@ -124,12 +124,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Context Context
 ) ;
 
-int GB_AxB_dot2_sparsity            // sparsity of C for C=A'*B or C<!M>=A'*B
-(
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B              // input matrix
-) ;
-
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A,         // input matrix to examine
@@ -209,6 +203,68 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
 ) ;
+
+//------------------------------------------------------------------------------
+// GB_AxB_dot4_control: determine if the dot4 method should be used
+//------------------------------------------------------------------------------
+
+// C += A'*B where C is modified in-place
+
+static inline bool GB_AxB_dot4_control
+(
+    const GrB_Matrix C_in,      // NULL if C cannot be modified in-place
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B
+)
+{
+    return (C_in != NULL && M == NULL && !Mask_comp
+        && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_AxB_dot3_control: determine if the dot3 method should be used
+//------------------------------------------------------------------------------
+
+// C<M>=A'*B where M is sparse or hypersparse, and not complemented
+
+static inline bool GB_AxB_dot3_control
+(
+    const GrB_Matrix M,
+    const bool Mask_comp
+)
+{
+    return (M != NULL && !Mask_comp &&
+        (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_AxB_dot2_control: determine if the dot2 method should be used
+//------------------------------------------------------------------------------
+
+// C=A'*B, C<M>=A'*B, or C<!M>=A'*B where C is constructed in bitmap format.
+// C must be small and likely very dense.
+
+static inline bool GB_AxB_dot2_control
+(
+    const GrB_Matrix A,
+    const GrB_Matrix B
+)
+{
+
+    double C_bitmap_size = ((double) A->vdim) * ((double) B->vdim) ;
+
+    double anvec = GB_IS_HYPERSPARSE (A) ? A->nvec : A->vdim ;
+    double bnvec = GB_IS_HYPERSPARSE (B) ? B->nvec : B->vdim ;
+    double C_max_density = (anvec * bnvec) / GB_IMAX (C_bitmap_size, 1) ;
+
+    double A_size = (double) GB_NNZ_HELD (A) ;
+    double B_size = (double) GB_NNZ_HELD (B) ;
+
+    return ((C_bitmap_size < 8 * (A_size + B_size)) &&      // C is small
+            (C_max_density > GB_BITMAP_SWITCH_DEFAULT)) ;   // and likely dense
+}
 
 #endif
 

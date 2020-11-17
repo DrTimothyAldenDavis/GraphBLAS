@@ -163,7 +163,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     // slice the A matrix
-    if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
+    if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice, true))
     { 
         // out of memory
         GB_FREE_ALL ;

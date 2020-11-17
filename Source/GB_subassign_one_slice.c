@@ -154,7 +154,7 @@ GrB_Info GB_subassign_one_slice
     //--------------------------------------------------------------------------
 
     // M may be hypersparse, sparse, bitmap, or full
-    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1))
+    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;

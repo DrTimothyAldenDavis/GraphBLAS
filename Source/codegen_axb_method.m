@@ -28,9 +28,9 @@ switch (multop)
         is_pair = true ;
 end
 
-is_any       = isequal (addop, 'any') ;
-is_eq        = isequal (addop, 'eq') ;
-is_any_pair  = is_any && isequal (multop, 'pair') ;
+is_any = isequal (addop, 'any') ;
+is_eq  = isequal (addop, 'eq') ;
+is_any_pair   = is_any && isequal (multop, 'pair') ;
 ztype_is_real = ~contains (ztype, 'FC') ;
 is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
     && ztype_is_real ;

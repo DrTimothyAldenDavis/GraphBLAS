@@ -41,11 +41,23 @@
 #define GB_SCATTER_M_j_TYPE(mask_t,pMstart,pMend,mark)                  \
 {                                                                       \
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \
-    for (int64_t pM = pMstart ; pM < pMend ; pM++) /* scan M(:,j) */    \
+    if (M_is_bitmap)                                                    \
     {                                                                   \
-        if (!GBB (Mb, pM)) continue ;                                   \
-        int64_t i = GBI (Mi, pM, mvlen) ;                               \
-        if (Mxx [pM]) Hf [i] = mark ; /* Hf [i] = M(i,j) */             \
+        /* scan M(:,j) */                                               \
+        for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
+        {                                                               \
+            /* Hf [i] = M(i,j) */                                       \
+            if (Mb [pM] && Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;  \
+        }                                                               \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+        /* scan M(:,j) */                                               \
+        for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
+        {                                                               \
+            /* Hf [i] = M(i,j) */                                       \
+            if (Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;             \
+        }                                                               \
     }                                                                   \
 }                                                                       \
 break ;
@@ -55,11 +67,21 @@ break ;
     if (Mx == NULL)                                                         \
     {                                                                       \
         /* mask is structural, not valued */                                \
-        for (int64_t pM = pMstart ; pM < pMend ; pM++)                      \
+        if (M_is_bitmap)                                                    \
         {                                                                   \
-            if (!GBB (Mb, pM)) continue ;                                   \
-            int64_t i = GBI (Mi, pM, mvlen) ;                               \
-            Hf [i] = mark ;   /* Hf [i] = M(i,j) */                         \
+            for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
+            {                                                               \
+                /* Hf [i] = M(i,j) */                                       \
+                if (Mb [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;              \
+            }                                                               \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
+            {                                                               \
+                /* Hf [i] = M(i,j) */                                       \
+                Hf [GBI (Mi, pM, mvlen)] = mark ;                           \
+            }                                                               \
         }                                                                   \
     }                                                                       \
     else                                                                    \

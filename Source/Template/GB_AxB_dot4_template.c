@@ -12,7 +12,6 @@
 // accum.  That is, no typecasting can be done with C.
 
 // The PAIR operator as the multiplier provides important special cases.
-// See Template/GB_AxB_dot_cij.c.
 
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT_MERGE

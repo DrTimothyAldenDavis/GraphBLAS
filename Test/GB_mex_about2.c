@@ -128,7 +128,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t *Slice = NULL ;
-    GB_pslice (&Slice, A->p, n, 2) ;
+    GB_pslice (&Slice, A->p, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
     GB_FREE (Slice) ;
 

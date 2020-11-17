@@ -474,22 +474,23 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_DEFAULT)
         {
             // auto selection for A'*B
-            if (M != NULL && !Mask_comp)
+            if (GB_AxB_dot4_control (can_do_in_place ? C_in : NULL,
+                M, Mask_comp, A, B))
+            {
+                // C+=A'*B can be done with dot4
+                axb_method = GB_USE_DOT ;
+            }
+            else if (GB_AxB_dot3_control (M, Mask_comp))
             { 
                 // C<M>=A'*B uses the masked dot product method (dot3)
                 axb_method = GB_USE_DOT ;
             }
-            else if (GB_AxB_dot2_sparsity (A, B) == GxB_BITMAP)
+            else if (GB_AxB_dot2_control (A, B))
             {
-                // GB_AxB_dot2 will construct C as bitmap, which is efficient
+                // C=A'*B or C<!M>=A'B* can efficiently use the dot2 method
                 axb_method = GB_USE_DOT ;
             }
-            else if (GB_is_dense (A) || GB_is_dense (B))
-            { 
-                // GB_AxB_dot2 will construct C as sparse, but either A or B
-                // are dense and so it will be efficient.
-                axb_method = GB_USE_DOT ;
-            }
+
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 

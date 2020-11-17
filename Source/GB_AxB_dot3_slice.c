@@ -143,7 +143,7 @@ GrB_Info GB_AxB_dot3_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1))
+    if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;

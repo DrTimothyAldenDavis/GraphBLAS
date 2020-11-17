@@ -67,7 +67,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT A_slice = NULL ;   // size ntasks + 1
-    if (!GB_pslice (&A_slice, Ap, anvec, ntasks))
+    if (!GB_pslice (&A_slice, Ap, anvec, ntasks, false))
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;

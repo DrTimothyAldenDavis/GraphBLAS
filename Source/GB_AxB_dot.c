@@ -91,6 +91,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // prototype bitmap case:
     //--------------------------------------------------------------------------
 
+#if 1
     info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
         A, B, semiring, flipxy, Context) ;
     if (info != GrB_NO_VALUE)
@@ -99,13 +100,13 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         (*mask_applied) = (M != NULL) ; // mask applied if present
         return (info) ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (C_in != NULL && M == NULL && !Mask_comp
-        && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+    if (GB_AxB_dot4_control (C_in, M, Mask_comp, A, B))
     { 
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
@@ -116,7 +117,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // C<M>=A'*B where C and M are sparse or hypersparse
     //--------------------------------------------------------------------------
 
-    if (M != NULL && !Mask_comp && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
+    if (GB_AxB_dot3_control (M, Mask_comp))
     { 
 
         // use dot3 if M is present and not complemented, and either sparse or

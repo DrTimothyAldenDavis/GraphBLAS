@@ -198,7 +198,7 @@
         ntasks = naslice * nbslice ;
 
         // slice the matrix B
-        if (!GB_pslice (&B_slice, Bp, bnvec, nbslice))
+        if (!GB_pslice (&B_slice, Bp, bnvec, nbslice, false))
         { 
             // out of memory
             GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;
@@ -303,7 +303,8 @@
                 ASSERT (nfine_tasks_per_vector > 1) ;
 
                 // slice the matrix A for each team of fine tasks
-                if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector))
+                if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector,
+                    false))
                 { 
                     // out of memory
                     GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice,

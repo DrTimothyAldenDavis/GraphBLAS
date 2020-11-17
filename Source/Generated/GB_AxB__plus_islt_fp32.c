@@ -213,7 +213,7 @@
     (GxB_NO_PLUS || GxB_NO_ISLT || GxB_NO_FP32 || GxB_NO_PLUS_FP32 || GxB_NO_ISLT_FP32 || GxB_NO_PLUS_ISLT_FP32)
 
 //------------------------------------------------------------------------------
-// C=A'*B or C<!M>=A'*B: dot product (phase 2)
+// C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method where C is bitmap
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot2B__plus_islt_fp32
@@ -222,17 +222,13 @@ GrB_Info GB_Adot2B__plus_islt_fp32
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A, bool A_is_pattern, int64_t *GB_RESTRICT A_slice,
     const GrB_Matrix B, bool B_is_pattern, int64_t *GB_RESTRICT B_slice,
-    int64_t *GB_RESTRICT *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 
-    // C<M>=A'*B now uses dot3
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #define GB_PHASE_2_OF_2
     #include "GB_AxB_dot2_meta.c"
-    #undef GB_PHASE_2_OF_2
     return (GrB_SUCCESS) ;
     #endif
 }

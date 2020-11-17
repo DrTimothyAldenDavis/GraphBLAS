@@ -8,18 +8,10 @@
 //------------------------------------------------------------------------------
 
 // computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
-// used for all three cases: C=A'*B and C<!M>=A'*B in dot2, and C<M>=A'*B in
-// dot3.
-
-// GB_AxB_dot2 defines either one of these, and uses this template twice:
-
-//      GB_PHASE_1_OF_2 ; determine if cij exists, and increment C_count
-//      GB_PHASE_2_OF_2 : 2nd phase, compute cij, no realloc of C
-
-// GB_AxB_dot3 defines GB_DOT3, and uses this template just once.
-
-// Only one of the three are #defined: either GB_PHASE_1_OF_2, GB_PHASE_2_OF_2,
-// or GB_DOT3.
+// used for all three cases: C=A'*B, C<M>=A'B, and C<!M>=A'*B in dot2, and
+// C<M>=A'*B in dot3.  GB_AxB_dot2 does not define GB_DOT3, and constructs
+// C as bitmap.  GB_AxB_dot3 defines GB_DOT3 and constructs C as sparse
+// with the same pattern as M.
 
 // When used as the multiplicative operator, the PAIR operator provides some
 // useful special cases.  Its output is always one, for any matching pair of
@@ -47,83 +39,100 @@
 // GB_DOT: cij += A(k,i) * B(k,j), then break if terminal
 //------------------------------------------------------------------------------
 
-// Ai [pA+adelta] and Bi [pB+bdelta] are both equal to the index k.
+// Ai [pA] and Bi [pB] are both equal to the index k.
 
 // use the boolean flag cij_exists to set/check if C(i,j) exists
 #undef  GB_CIJ_CHECK
 #define GB_CIJ_CHECK true
 #undef  GB_CIJ_EXIST
-#define GB_CIJ_EXISTS (cij_exists)
+#define GB_CIJ_EXISTS cij_exists
 #undef  GB_DOT
 
-#if defined ( GB_PHASE_1_OF_2 )
+#if GB_IS_PLUS_PAIR_REAL_SEMIRING
 
-    // symbolic phase (phase 1 of 2 for dot2):
-    #define GB_DOT(k,pA,pB)                                                 \
-        cij_exists = true ;                                                 \
-        break ;
+    //--------------------------------------------------------------------------
+    // plus_pair_real semiring
+    //--------------------------------------------------------------------------
 
-#else
+    #if GB_CTYPE_IGNORE_OVERFLOW
 
-    // numerical phase (phase 2 of 2 for dot2, or dot3):
-    #if GB_IS_PLUS_PAIR_REAL_SEMIRING
+        // PLUS_PAIR for 64-bit integers, float, and double (not complex):
+        // To check if C(i,j) exists, test (cij != 0) when done.  The
+        // boolean flag cij_exists is not defined.
+        #undef  GB_CIJ_CHECK
+        #define GB_CIJ_CHECK false
+        #undef  GB_CIJ_EXISTS
+        #define GB_CIJ_EXISTS (cij != 0)
+        #define GB_DOT(k,pA,pB) cij++ ;
 
-        #if GB_CTYPE_IGNORE_OVERFLOW
+    #else
 
-            // PLUS_PAIR for 64-bit integers, float, and double (not complex):
-            // To check if C(i,j) exists, test (cij != 0) when done.  The
-            // boolean flag cij_exists is not defined.
-            #undef  GB_CIJ_CHECK
-            #define GB_CIJ_CHECK false
-            #undef  GB_CIJ_EXISTS
-            #define GB_CIJ_EXISTS (cij != 0)
-            #define GB_DOT(k,pA,pB) cij++ ;
+        // PLUS_PAIR semiring for small integers
+        #define GB_DOT(k,pA,pB)                                         \
+            cij_exists = true ;                                         \
+            cij++ ;
 
-        #else
+    #endif
 
-            // PLUS_PAIR semiring for small integers
-            #define GB_DOT(k,pA,pB)                                         \
-                cij_exists = true ;                                         \
-                cij++ ;
+#elif GB_IS_ANY_MONOID
 
-        #endif
+    //--------------------------------------------------------------------------
+    // ANY monoid
+    //--------------------------------------------------------------------------
 
-    #elif GB_IS_ANY_MONOID
+    #if defined ( GB_DOT3 )
 
-        // ANY monoid
-        #define GB_DOT(k,pA,pB)                                             \
-        {                                                                   \
-            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
-            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
-            /* cij = (A')(i,k) * B(k,j), and add to the pattern */          \
-            cij_exists = true ;                                             \
-            GB_MULT (cij, aki, bkj, i, k, j) ;                              \
-            break ;                                                         \
+        #define GB_DOT(k,pA,pB)                                         \
+        {                                                               \
+            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \
+            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                 \
+            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
+            cij_exists = true ;                                         \
+            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
+            break ;                                                     \
         }
 
     #else
 
-        // all other semirings
-        #define GB_DOT(k,pA,pB)                                             \
-        {                                                                   \
-            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
-            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
-            if (cij_exists)                                                 \
-            {                                                               \
-                /* cij += (A')(i,k) * B(k,j) */                             \
-                GB_MULTADD (cij, aki, bkj, i, k, j) ;                       \
-            }                                                               \
-            else                                                            \
-            {                                                               \
-                /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
-                cij_exists = true ;                                         \
-                GB_MULT (cij, aki, bkj, i, k, j) ;                          \
-            }                                                               \
-            /* if (cij is terminal) break ; */                              \
-            GB_DOT_TERMINAL (cij) ;                                         \
+        #define GB_DOT(k,pA,pB)                                         \
+        {                                                               \
+            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \
+            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                 \
+            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
+            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
+            int64_t pC = pC_start + i ;                                 \
+            GB_PUTC (cij, pC) ;                                         \
+            Cb [pC] = 1 ;                                               \
+            cnvals++ ;                                                  \
+            break ;                                                     \
         }
 
     #endif
+
+#else
+
+    //--------------------------------------------------------------------------
+    // all other semirings
+    //--------------------------------------------------------------------------
+
+    #define GB_DOT(k,pA,pB)                                             \
+    {                                                                   \
+        GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
+        GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
+        if (cij_exists)                                                 \
+        {                                                               \
+            /* cij += (A')(i,k) * B(k,j) */                             \
+            GB_MULTADD (cij, aki, bkj, i, k, j) ;                       \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
+            cij_exists = true ;                                         \
+            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
+        }                                                               \
+        /* if (cij is terminal) break ; */                              \
+        GB_DOT_TERMINAL (cij) ;                                         \
+    }
 
 #endif
 
@@ -133,22 +142,31 @@
 
 {
 
+    GB_CIJ_DECLARE (cij) ;
+
     //--------------------------------------------------------------------------
-    // get the start of A(:,i) and B(:,j)
+    // special case
+    //--------------------------------------------------------------------------
+
+    #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
+
+        // A is sparse, B is bitmap
+        for (int64_t p = pA ; p < pA_end ; p++)
+        { 
+            int64_t k = Ai [p] ;
+            if (!Bb [pB_start+k]) continue ;
+            GB_DOT (k, p, pB_start+k) ;
+        }
+
+    #else
+
+    //--------------------------------------------------------------------------
+    // get the start of A(:,i) and B(:,j) and declare the cij scalar
     //--------------------------------------------------------------------------
 
     int64_t pB = pB_start ;
     int64_t ainz = pA_end - pA ;
-    ASSERT (ainz >= 0) ;
     bool cij_exists = false ;
-
-    //--------------------------------------------------------------------------
-    // declare the cij scalar
-    //--------------------------------------------------------------------------
-
-    #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
-    GB_CIJ_DECLARE (cij) ;
-    #endif
 
     //--------------------------------------------------------------------------
     // 11 cases for computing C(i,j) = A(:,i)' * B(j,:)
@@ -209,8 +227,7 @@
         ;
 
     }
-    else if (GBI (Ai, pA_end-1, vlen) < ib_first
-        || ib_last < GBI (Ai, pA, vlen))
+    else if (GBI (Ai, pA_end-1, vlen) < ib_first || ib_last < GBI (Ai,pA,vlen))
     { 
 
         //----------------------------------------------------------------------
@@ -227,42 +244,38 @@
         // both A(:,i) and B(:,j) are dense
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
+        #if GB_IS_PAIR_MULTIPLIER
 
-            #if GB_IS_PAIR_MULTIPLIER
-
-                #if GB_IS_ANY_MONOID
-                // ANY monoid: take the first entry found; this sets cij = 1
-                GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-                #elif GB_IS_EQ_MONOID
-                // EQ_PAIR semiring: all entries are equal to 1
-                cij = 1 ;
-                #elif (GB_CTYPE_BITS > 0)
-                // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                // for bool, 8-bit, 16-bit, or 32-bit integer
-                cij = (GB_CTYPE) (((uint64_t) vlen) & GB_CTYPE_BITS) ;
-                #else
-                // PLUS monoid for float, double, or 64-bit integers 
-                cij = GB_CTYPE_CAST (vlen, 0) ;
-                #endif
-
+            #if GB_IS_ANY_MONOID
+            // ANY monoid: take the first entry found; this sets cij = 1
+            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
+            #elif GB_IS_EQ_MONOID
+            // EQ_PAIR semiring: all entries are equal to 1
+            cij = 1 ;
+            #elif (GB_CTYPE_BITS > 0)
+            // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
+            // for bool, 8-bit, 16-bit, or 32-bit integer
+            cij = (GB_CTYPE) (((uint64_t) vlen) & GB_CTYPE_BITS) ;
             #else
-
-                // cij = A(0,i) * B(0,j)
-                GB_GETA (aki, Ax, pA) ;             // aki = A(0,i)
-                GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
-                GB_MULT (cij, aki, bkj, i, 0, j) ;  // cij = aki * bkj
-                GB_PRAGMA_SIMD_DOT (cij)
-                for (int64_t k = 1 ; k < vlen ; k++)
-                { 
-                    GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                    // cij += A(k,i) * B(k,j)
-                    GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
-                    GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
-                    GB_MULTADD (cij, aki, bkj, i, k, j) ; // cij += aki * bkj
-                }
-
+            // PLUS monoid for float, double, or 64-bit integers 
+            cij = GB_CTYPE_CAST (vlen, 0) ;
             #endif
+
+        #else
+
+            // cij = A(0,i) * B(0,j)
+            GB_GETA (aki, Ax, pA) ;             // aki = A(0,i)
+            GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
+            GB_MULT (cij, aki, bkj, i, 0, j) ;  // cij = aki * bkj
+            GB_PRAGMA_SIMD_DOT (cij)
+            for (int64_t k = 1 ; k < vlen ; k++)
+            { 
+                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // cij += A(k,i) * B(k,j)
+                GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
+                GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
+                GB_MULTADD (cij, aki, bkj, i, k, j) ; // cij += aki * bkj
+            }
 
         #endif
 
@@ -278,46 +291,43 @@
         // A(:,i) is dense and B(:,j) is sparse
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
+        #if GB_IS_PAIR_MULTIPLIER
 
-            #if GB_IS_PAIR_MULTIPLIER
-
-                #if GB_IS_ANY_MONOID
-                // ANY monoid: take the first entry found; this sets cij = 1
-                GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-                #elif GB_IS_EQ_MONOID
-                // EQ_PAIR semiring: all entries are equal to 1
-                cij = 1 ;
-                #elif (GB_CTYPE_BITS > 0)
-                // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                // for bool, 8-bit, 16-bit, or 32-bit integer
-                cij = (GB_CTYPE) (((uint64_t) bjnz) & GB_CTYPE_BITS) ;
-                #else
-                // PLUS monoid for float, double, or 64-bit integers 
-                cij = GB_CTYPE_CAST (bjnz, 0) ;
-                #endif
-
+            #if GB_IS_ANY_MONOID
+            // ANY monoid: take the first entry found; this sets cij = 1
+            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
+            #elif GB_IS_EQ_MONOID
+            // EQ_PAIR semiring: all entries are equal to 1
+            cij = 1 ;
+            #elif (GB_CTYPE_BITS > 0)
+            // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
+            // for bool, 8-bit, 16-bit, or 32-bit integer
+            cij = (GB_CTYPE) (((uint64_t) bjnz) & GB_CTYPE_BITS) ;
             #else
-
-                // first row index of B(:,j)
-                int64_t k = Bi [pB] ;               // ok: B is sparse
-                // cij = A(k,i) * B(k,j)
-                GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
-                GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
-                GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
-                GB_PRAGMA_SIMD_DOT (cij)
-                for (int64_t p = pB+1 ; p < pB_end ; p++)
-                { 
-                    GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                    // next index of B(:,j)
-                    int64_t k = Bi [p] ;                // ok: B is sparse
-                    // cij += A(k,i) * B(k,j)
-                    GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
-                    GB_GETB (bkj, Bx, p   ) ;           // bkj = B(k,j)
-                    GB_MULTADD (cij, aki, bkj, i, k, j) ;   // cij += aki * bkj
-                }
-
+            // PLUS monoid for float, double, or 64-bit integers 
+            cij = GB_CTYPE_CAST (bjnz, 0) ;
             #endif
+
+        #else
+
+            // first row index of B(:,j)
+            int64_t k = Bi [pB] ;               // ok: B is sparse
+            // cij = A(k,i) * B(k,j)
+            GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
+            GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
+            GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
+            GB_PRAGMA_SIMD_DOT (cij)
+            for (int64_t p = pB+1 ; p < pB_end ; p++)
+            { 
+                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // next index of B(:,j)
+                int64_t k = Bi [p] ;                // ok: B is sparse
+                // cij += A(k,i) * B(k,j)
+                GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
+                GB_GETB (bkj, Bx, p   ) ;           // bkj = B(k,j)
+                GB_MULTADD (cij, aki, bkj, i, k, j) ;   // cij += aki * bkj
+            }
+
         #endif
 
         #if GB_CIJ_CHECK
@@ -332,46 +342,42 @@
         // A(:,i) is sparse and B(:,j) is dense
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
+        #if GB_IS_PAIR_MULTIPLIER
 
-            #if GB_IS_PAIR_MULTIPLIER
-
-                #if GB_IS_ANY_MONOID
-                // ANY monoid: take the first entry found; this sets cij = 1
-                GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-                #elif GB_IS_EQ_MONOID
-                // EQ_PAIR semiring: all entries are equal to 1
-                cij = 1 ;
-                #elif (GB_CTYPE_BITS > 0)
-                // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                // for bool, 8-bit, 16-bit, or 32-bit integer
-                cij = (GB_CTYPE) (((uint64_t) ainz) & GB_CTYPE_BITS) ;
-                #else
-                // PLUS monoid for float, double, or 64-bit integers 
-                cij = GB_CTYPE_CAST (ainz, 0) ;
-                #endif
-
+            #if GB_IS_ANY_MONOID
+            // ANY monoid: take the first entry found; this sets cij = 1
+            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
+            #elif GB_IS_EQ_MONOID
+            // EQ_PAIR semiring: all entries are equal to 1
+            cij = 1 ;
+            #elif (GB_CTYPE_BITS > 0)
+            // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
+            // for bool, 8-bit, 16-bit, or 32-bit integer
+            cij = (GB_CTYPE) (((uint64_t) ainz) & GB_CTYPE_BITS) ;
             #else
-
-                // first row index of A(:,i)
-                int64_t k = Ai [pA] ;               // ok: A is sparse
-                // cij = A(k,i) * B(k,j)
-                GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
-                GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
-                GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
-                GB_PRAGMA_SIMD_DOT (cij)
-                for (int64_t p = pA+1 ; p < pA_end ; p++)
-                { 
-                    GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                    // next index of A(:,i)
-                    int64_t k = Ai [p] ;                // ok: A is sparse
-                    // cij += A(k,i) * B(k,j)
-                    GB_GETA (aki, Ax, p   ) ;           // aki = A(k,i)
-                    GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
-                    GB_MULTADD (cij, aki, bkj, i, k, j) ;   // cij += aki * bkj
-                }
-
+            // PLUS monoid for float, double, or 64-bit integers 
+            cij = GB_CTYPE_CAST (ainz, 0) ;
             #endif
+
+        #else
+
+            // first row index of A(:,i)
+            int64_t k = Ai [pA] ;               // ok: A is sparse
+            // cij = A(k,i) * B(k,j)
+            GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
+            GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
+            GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
+            GB_PRAGMA_SIMD_DOT (cij)
+            for (int64_t p = pA+1 ; p < pA_end ; p++)
+            { 
+                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // next index of A(:,i)
+                int64_t k = Ai [p] ;                // ok: A is sparse
+                // cij += A(k,i) * B(k,j)
+                GB_GETA (aki, Ax, p   ) ;           // aki = A(k,i)
+                GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
+                GB_MULTADD (cij, aki, bkj, i, k, j) ;   // cij += aki * bkj
+            }
 
         #endif
 
@@ -476,6 +482,7 @@
             }
         }
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // save C(i,j)
@@ -499,35 +506,20 @@
 
     #else
 
-        // GB_AxB_dot2: computing C=A'*B, C<M>=A'*B, or C<!M>=A'*B,
-        // where M, A, B, and C can have any sparsity pattern
+        // GB_AxB_dot2: computing C=A'*B, C<M>=A'*B, or C<!M>=A'*B, where M, A,
+        // B, can have any sparsity pattern, and C is bitmap.  The ANY monoid
+        // writes its values to C immediately.
 
-        #if defined ( GB_PHASE_1_OF_2 )
-
-            if (GB_CIJ_EXISTS)
-            { 
-                // C(i,j) = cij
-                C_count [kB]++ ;
-            }
-
-        #else
-
-            if (C_is_bitmap)
-            { 
-                int8_t c = GB_CIJ_EXISTS ;
-                if (c) GB_PUTC (cij, cnz) ;
-                Cb [cnz] = c ;
-                cnvals += c ;
-            }
-            else if (GB_CIJ_EXISTS)
-            { 
-                // C(i,j) = cij
-                GB_PUTC (cij, cnz) ;    // Cx [cnz] = cij
-                Ci [cnz++] = i ;        // ok: C is sparse
-                if (cnz > cnz_last) break ;
-            }
-
+        #if ( !GB_IS_ANY_MONOID )
+        if (GB_CIJ_EXISTS)
+        { 
+            int64_t pC = pC_start + i ;
+            GB_PUTC (cij, pC) ;
+            Cb [pC] = 1 ;
+            cnvals++ ;
+        }
         #endif
+
     #endif
 }
 

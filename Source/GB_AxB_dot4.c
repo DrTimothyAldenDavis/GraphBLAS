@@ -170,8 +170,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     naslice = GB_IMIN (naslice, anvec) ;
     nbslice = GB_IMIN (nbslice, bnvec) ;
 
-    if (!GB_pslice (&A_slice, A->p, anvec, naslice)  ||
-        !GB_pslice (&B_slice, B->p, bnvec, nbslice))
+    if (!GB_pslice (&A_slice, A->p, anvec, naslice, false)  ||
+        !GB_pslice (&B_slice, B->p, bnvec, nbslice, false))
     { 
         // out of memory
         GB_FREE_WORK ;

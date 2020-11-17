@@ -588,7 +588,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t *Slice = NULL ;
-    GB_pslice (&Slice, NULL, 0, 4) ;
+    GB_pslice (&Slice, NULL, 0, 4, true) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
     GB_FREE (Slice) ;
 

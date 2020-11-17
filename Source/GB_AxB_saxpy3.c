@@ -278,7 +278,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_Context Context
 )
 {
-// double ttt = omp_get_wtime ( ) ;
+double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -461,9 +461,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         ASSERT (C_sparsity == GxB_SPARSE) ;
     }
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (3, ttt) ;
-// ttt = omp_get_wtime ( ) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (3, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase0: create parallel tasks
@@ -480,9 +480,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (4, ttt) ;
-// ttt = omp_get_wtime ( ) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (4, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
@@ -598,7 +598,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // construct initial coarse tasks
         //----------------------------------------------------------------------
 
-        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial))
+        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial, false))
         { 
             // out of memory
             GB_FREE_ALL ;
@@ -807,7 +807,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
                         ASSERT (Fine_slice != NULL) ;
-                        GB_pslice (&Fine_slice, Bflops2, bjnz, team_size) ;
+                        GB_pslice (&Fine_slice, Bflops2, bjnz, team_size, false) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
                         int64_t hsize = 
@@ -1120,16 +1120,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // phase1: symbolic analysis
     //==========================================================================
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (5, ttt) ;
-// ttt = omp_get_wtime ( ) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (5, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
         A, B, TaskList, ntasks, nfine, nthreads) ;
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (6, ttt) ;
-// ttt = omp_get_wtime ( ) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (6, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
@@ -1188,9 +1188,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // prune empty vectors, free workspace, and return result
     //==========================================================================
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (7, ttt) ;
-// ttt = omp_get_wtime ( ) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (7, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
@@ -1200,8 +1200,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = apply_mask ;
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (8, ttt) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (8, ttt) ;
 
     return (info) ;
 }
