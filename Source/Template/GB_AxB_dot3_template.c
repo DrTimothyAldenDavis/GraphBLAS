@@ -165,7 +165,7 @@
                             anvec-1, i, &pA, &pA_end) ;
 
                         // C(i,j) = A(:,i)'*B(:,j)
-                        #include "GB_AxB_dot_cij.c"
+                        #include "GB_AxB_dot3_cij.c"
                     }
                     else
                     { 

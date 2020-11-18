@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2_tempate:  C=A'B, C<!M>=A'*B, or C<M>=A'*B via dot products
+// GB_AxB_dot2_template:  C=A'B, C<!M>=A'*B, or C<M>=A'*B via dot products
 //------------------------------------------------------------------------------
 
 // TODO: rename GB_bitmap_AxB_dot_template.c
@@ -8,14 +8,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// GB_ANY_FIRSTJ_SPECIALIZED is defined if the following conditions:
-// semiring: GxB_ANY_FIRSTJ_INT32 or GxB_ANY_FIRSTJ_INT64
-// B: bitmap
-// A: sparse
-// M: bitmap
-// Mask_comp: true or false
-// Mask_struct: true
 
 {
 
@@ -48,21 +40,33 @@
         {
 
             //------------------------------------------------------------------
-            // get B(:,j) and C(:,j)
+            // get B(:,j)
             //------------------------------------------------------------------
 
-            #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
-            // B is bitmap
+            #if GB_B_IS_SPARSE_OR_HYPER
+            // B is sparse or hypersparse
+            int64_t j = GBH (Bh, kB) ;
+            int64_t pB_start = Bp [kB] ;
+            int64_t pB_end   = Bp [kB+1] ;
+            int64_t bjnz = pB_end - pB_start ;
+                #if ( GB_A_IS_SPARSE_OR_HYPER )
+                // get the first and last index in B(:,j)
+                int64_t ib_first = Bi [pB_start] ;
+                int64_t ib_last  = Bi [pB_end-1] ;
+                #endif
+            #else
+            // B is bitmap or full
             int64_t j = kB ;
             int64_t pB_start = kB * vlen ;
-            #else
-            int64_t j = GBH (Bh, kB) ;
-            int64_t pB_start = GBP (Bp, kB, vlen) ;
-            int64_t pB_end   = GBP (Bp, kB+1, vlen) ;
-            int64_t bjnz = pB_end - pB_start ;
+            int64_t bjnz = vlen ;
+            #endif
             // no work to do if B(:,j) is empty
             if (bjnz == 0) continue ;
-            #endif
+
+            //------------------------------------------------------------------
+            // get C(:,j)
+            //------------------------------------------------------------------
+
             int64_t pC_start = j * cvlen ;
 
             //------------------------------------------------------------------
@@ -93,21 +97,6 @@
             }
             #endif
 
-            #if !defined ( GB_ANY_FIRSTJ_SPECIALIZED )
-            // get the first and last index in B(:,j)
-            int64_t ib_first, ib_last ;
-            if (B_is_sparse_or_hyper)
-            {
-                ib_first = Bi [pB_start] ;
-                ib_last  = Bi [pB_end-1] ;
-            }
-            else
-            {
-                ib_first = 0 ;
-                ib_last = vlen ;
-            }
-            #endif
-
             //------------------------------------------------------------------
             // C(:,j)<#M(:,j)> = A'*B(:,j), or C(:,j) = A'*B(:,j) if no mask
             //------------------------------------------------------------------
@@ -122,8 +111,11 @@
                 #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
                 // A is sparse
                 int64_t i = kA ;
-                #else
+                #elif GB_A_IS_SPARSE_OR_HYPER
                 int64_t i = GBH (Ah, kA) ;
+                #else
+                // A is bitmap or full
+                int64_t i = kA ;
                 #endif
 
                 //--------------------------------------------------------------
@@ -159,21 +151,26 @@
                     // C(i,j) = A(:,i)'*B(:,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
+                    #if GB_A_IS_SPARSE_OR_HYPER
                     int64_t pA     = Ap [kA] ;
                     int64_t pA_end = Ap [kA+1] ;
+                    int64_t ainz = pA_end - pA ;
+                    if (ainz == 0) continue ;
                     #else
-                    int64_t pA     = GBP (Ap, kA, vlen) ;
-                    int64_t pA_end = GBP (Ap, kA+1, vlen) ;
+                    int64_t pA     = (kA  ) * vlen ;
+                    int64_t pA_end = (kA+1) * vlen ;
                     #endif
-                    #include "GB_AxB_dot_cij.c"
+                    #include "GB_AxB_dot2_cij.c"
                 }
             }
         }
     }
-
-    C->nvals = cnvals ;
 }
 
-#undef GB_MASK_IS_PRESENT
+#undef GB_A_IS_SPARSE_OR_HYPER
+#undef GB_A_IS_BITMAP
+#undef GB_A_IS_FULL
+#undef GB_B_IS_SPARSE_OR_HYPER
+#undef GB_B_IS_BITMAP
+#undef GB_B_IS_FULL
 

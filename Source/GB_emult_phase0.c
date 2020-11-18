@@ -288,7 +288,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                     // (8) A sparse, B sparse, M sparse: C sparse
                     //----------------------------------------------------------
 
-                    ;
+                    Ch = NULL ;
                 }
             }
         }
@@ -354,7 +354,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                 // (4) A sparse, B sparse: C sparse
                 //--------------------------------------------------------------
 
-                ;
+                Ch = NULL ;
             }
         }
     }
@@ -373,7 +373,8 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     }
     else
     {
-        // C is hypersparse
+        // C is hypersparse; one of A, B, or M are hypersparse
+        ASSERT (A_is_hyper || B_is_hyper || M_is_hyper) ;
         (*C_sparsity) = GxB_HYPERSPARSE ;
         if (Ch == Ah)
         { 

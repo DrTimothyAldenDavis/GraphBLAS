@@ -9,6 +9,39 @@
 
 //------------------------------------------------------------------------------
 
+#include "GB_unused.h"
+#include "GB_AxB_dot_cij.h"
+
+// GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
+#define GB_DOT_ALWAYS_SAVE_CIJ      \
+{                                   \
+    int64_t pC = pC_start + i ;     \
+    GB_PUTC (cij, pC) ;             \
+    Cb [pC] = 1 ;                   \
+    cnvals++ ;                      \
+}                                   \
+
+// GB_DOT_SAVE_CIJ: C(i,j) = cij, unless already done by GB_DOT
+#if GB_IS_ANY_MONOID
+
+    // for the ANY monoid, GB_DOT saves C(i,j) as soon as a value is found
+    #define GB_DOT_SAVE_CIJ
+
+#else
+
+    // all other monoids: C(i,j) = cij if it exists
+    #define GB_DOT_SAVE_CIJ             \
+    {                                   \
+        if (GB_CIJ_EXISTS)              \
+        {                               \
+            GB_DOT_ALWAYS_SAVE_CIJ ;    \
+        }                               \
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+
 {
 
     //--------------------------------------------------------------------------
@@ -30,7 +63,9 @@
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
+    const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -39,6 +74,8 @@
     const int64_t anvec = A->nvec ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
+    const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
 
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;
@@ -56,7 +93,7 @@
         // C = A'*B via dot products
         //----------------------------------------------------------------------
 
-        #include "GB_AxB_dot2_template.c"
+        #include "GB_AxB_dot2_meta2.c"
 
     }
     else
@@ -94,11 +131,17 @@
             // Mask_comp: either true or false
             // Mask_struct: true
 
-printf ("#") ;
-
             #define GB_ANY_FIRSTJ_SPECIALIZED
+            #define GB_MASK_IS_PRESENT
+            #define GB_A_IS_SPARSE_OR_HYPER 1
+            #define GB_A_IS_BITMAP          0
+            #define GB_A_IS_FULL            0
+            #define GB_B_IS_SPARSE_OR_HYPER 0
+            #define GB_B_IS_BITMAP          1
+            #define GB_B_IS_FULL            0
             #include "GB_AxB_dot2_template.c"
             #undef  GB_ANY_FIRSTJ_SPECIALIZED
+            #undef GB_MASK_IS_PRESENT
 
         }
         else
@@ -109,9 +152,13 @@ printf ("#") ;
             // C<M>=A'*B or C<!M>=A'*B via dot products
             //------------------------------------------------------------------
 
-            #include "GB_AxB_dot2_template.c"
+            #define GB_MASK_IS_PRESENT
+            #include "GB_AxB_dot2_meta2.c"
+            #undef GB_MASK_IS_PRESENT
 
         }
     }
+
+    C->nvals = cnvals ;
 }
 

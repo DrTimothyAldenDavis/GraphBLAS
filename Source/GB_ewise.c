@@ -195,8 +195,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     GrB_Matrix M1 = M ;
-    if (T_is_csc != M_is_csc)
+    bool M_transpose = (T_is_csc != M_is_csc) ;
+    if (M_transpose)
     { 
+        // MT = M'
+        // transpose: no typecast, no op, not in-place
         GBURBLE ("(M transpose) ") ;
         GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
             NULL, NULL, NULL, false, Context)) ;
@@ -216,6 +219,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
+        ASSERT_MATRIX_OK (AT, "AT from transpose", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -325,6 +329,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (eWiseAdd)
     { 
 
+        //----------------------------------------------------------------------
+        // T<any mask> = A+B
+        //----------------------------------------------------------------------
+
         // TODO: check the mask condition in GB_add_sparsity.
         // Only exploit the mask in GB_add if it's more efficient than
         // exploiting it later, probably this condition:
@@ -341,6 +349,17 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
     else
     { 
+
+        //----------------------------------------------------------------------
+        // T<any mask> = A.*B
+        //----------------------------------------------------------------------
+
+        // T can be returned with shallow components derived from its inputs A1
+        // and/or B1.  In particular, if T is hypersparse, T->h may be a
+        // shallow copy of A1->h, B1->h, or M1->h.  T is hypersparse if any
+        // matrix A1, B1, or M1 are hypersparse.  Internally, T->h always
+        // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
+        // pruned by GB_hypermatrix_prune, and thus no longer shallow.
 
 #if 0
         // TODO: check whether or not to exploit the mask in GB_emult_sparsity.
@@ -376,6 +395,55 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
+
+        //----------------------------------------------------------------------
+        // transplant shallow content from AT, BT, or MT
+        //----------------------------------------------------------------------
+
+        // If T is hypersparse, T->h may be a shallow copy of A1->h, B1->h, or
+        // M1->h.  Any of the three matrices A1, B1, or M1 may be temporary
+        // transposes, AT, BT, and MT respectively.  If T->h is a shallow cpoy
+        // of a temporary matrix, then flip the ownership of the T->h array,
+        // from the temporary matrix into T, so that T->h is not freed when AT,
+        // BT, and MT are freed.
+
+        if (T->h_shallow)
+        {
+            // T->h is shallow and T is hypersparse
+            ASSERT (GB_IS_HYPERSPARSE (T)) ;
+            // one of A1, B1, or M1 is hypersparse
+            ASSERT (GB_IS_HYPERSPARSE (A1) || GB_IS_HYPERSPARSE (B1) ||
+                    GB_IS_HYPERSPARSE (M1))
+            if (A_transpose && T->h == A1->h)
+            { 
+                // A1 is the temporary matrix AT
+                ASSERT (A1 == AT) ;
+                ASSERT (!AT->h_shallow) ;
+                AT->h_shallow = true ;
+                T->h_shallow = false ;
+            }
+            else if (B_transpose && T->h == B1->h)
+            { 
+                // B1 is the temporary matrix BT
+                ASSERT (B1 == BT) ;
+                ASSERT (!BT->h_shallow) ;
+                BT->h_shallow = true ;
+                T->h_shallow = false ;
+            }
+            else if (M_transpose && T->h == M1->h)
+            { 
+                // M1 is the temporary matrix MT
+                ASSERT (M1 == MT) ;
+                ASSERT (!MT->h_shallow) ;
+                MT->h_shallow = true ;
+                T->h_shallow = false ;
+            }
+
+            // T->h may still be shallow, but if so, it is a shallow copy of
+            // the user input matrices A->h, B->h, or M->h.  In this case, it
+            // must remain shallow.  A deep copy of it will be made when T->h
+            // is transplanted into the result C.
+        }
     }
 
     //--------------------------------------------------------------------------

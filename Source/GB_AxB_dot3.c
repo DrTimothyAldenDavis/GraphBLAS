@@ -258,9 +258,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             // either A(:,i) or B(:,j), or a merge of the two vectors.  Or it
             // could require no work at all if all entries in A(:,i) appear
             // before all entries in B(:,j), or visa versa.  No work is done if
-            // M(i,j)=0.  A more accurate estimate is possible to compute,
-            // following the different methods used in
-            // Template/GB_AxB_dot_cij.c.
+            // M(i,j)=0.
 
             if (bjnz == 0)
             {

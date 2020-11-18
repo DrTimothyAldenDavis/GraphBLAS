@@ -120,7 +120,7 @@ double ttt = omp_get_wtime ( ) ;
     int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
-    {
+    { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -244,7 +244,6 @@ double ttt = omp_get_wtime ( ) ;
     // GxB_ANY_FIRSTJ1_INT32 definitions:
     //--------------------------------------------------------------------------
 
-        // for DOT5 (like DOT3)
         #define GB_CIJ_DECLARE(cij) \
             int32_t cij
 
@@ -276,7 +275,6 @@ GB_Global_timing_add (15, ttt) ;
 ttt = omp_get_wtime ( ) ;
 
 if (M_is_full_and_valued) {
-    printf ("^") ;
 
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -350,8 +348,6 @@ if (M_is_full_and_valued) {
                     int64_t pA = Ap [kA] ; // GBP (Ap, kA, vlen) ;
                     int64_t pA_end = Ap [kA+1] ; // GBP (Ap, kA+1, vlen) ;
 
-                    // GB_AxB_dot_cij starts here, if it did bitmaps:
-
                     GB_CIJ_DECLARE (cij) ;
 
                     // A(:,i) is sparse and B(:,j) is bitmap
@@ -374,7 +370,6 @@ if (M_is_full_and_valued) {
                         // to handle B bitmap or full, do:
                         // if (!GBB (Bb, pB_start+k)) continue ;
 
-                        // see GB_DOT in Template/GB_AxB_dot_cij.c:
                         // cij += A(k,i) * B(k,j)
                         GB_GETA (aki, Ax, pA) ;             // aki = A(k,i)
                         GB_GETB (bkj, Bx, pB_start+k) ;     // bkj = B(k,j)
@@ -418,7 +413,6 @@ if (M_is_full_and_valued) {
     }
 
 } else {
-    printf (":") ;
 
 
     int tid ;
@@ -491,7 +485,6 @@ if (M_is_full_and_valued) {
                     int64_t pA = Ap [kA] ; // GBP (Ap, kA, vlen) ;
                     int64_t pA_end = Ap [kA+1] ; // GBP (Ap, kA+1, vlen) ;
 
-                    // GB_AxB_dot_cij starts here, if it did bitmaps:
                     int32_t cij ;
 
                     // last panel
@@ -510,7 +503,6 @@ if (M_is_full_and_valued) {
                         // to handle B bitmap or full, do:
                         // if (!GBB (Bb, pB_start+k)) continue ;
 
-                        // see GB_DOT in Template/GB_AxB_dot_cij.c:
                         // cij += A(k,i) * B(k,j)
                         GB_GETA (aki, Ax, pA) ;             // aki = A(k,i)
                         GB_GETB (bkj, Bx, pB_start+k) ;     // bkj = B(k,j)

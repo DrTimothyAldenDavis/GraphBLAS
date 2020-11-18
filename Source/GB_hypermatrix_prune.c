@@ -65,6 +65,8 @@ GrB_Info GB_hypermatrix_prune
         A->plen = nvec_new ;
         A->nvec_nonempty = nvec_new ;
         A->magic = GB_MAGIC ;
+        ASSERT (!A->p_shallow) ;
+        ASSERT (!A->h_shallow) ;
     }
 
     return (GrB_SUCCESS) ;

@@ -2047,11 +2047,12 @@ void mexFunction
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
+    expected = GrB_OUT_OF_MEMORY ;
+    ERR (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
         GxB_PLUS_TIMES_FP64, false, Context)) ;
 
-    GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
-    GrB_Matrix_free_(&HugeMatrix) ;
+    // GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
+    // GrB_Matrix_free_(&HugeMatrix) ;
     GrB_Matrix_free_(&HugeRow) ;
 
     //--------------------------------------------------------------------------

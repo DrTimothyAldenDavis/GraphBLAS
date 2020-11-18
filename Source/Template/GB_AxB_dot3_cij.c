@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot_cij: compute C(i,j) = A(:,i)'*B(:,j)
+// GB_AxB_dot3_cij: compute C(i,j)<M(i,j)> = A(:,i)'*B(:,j)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,11 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
-// used for all three cases: C=A'*B, C<M>=A'B, and C<!M>=A'*B in dot2, and
-// C<M>=A'*B in dot3.  GB_AxB_dot2 does not define GB_DOT3, and constructs
-// C as bitmap.  GB_AxB_dot3 defines GB_DOT3 and constructs C as sparse
-// with the same pattern as M.
+// C and M are sparse/hyper and have the same pattern.
+// Computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.
 
 // When used as the multiplicative operator, the PAIR operator provides some
 // useful special cases.  Its output is always one, for any matching pair of
@@ -34,107 +31,7 @@
 // ANY_PAIR, they differ for the C+=A'*B operation (see *dot4*).
 
 #include "GB_unused.h"
-
-//------------------------------------------------------------------------------
-// GB_DOT: cij += A(k,i) * B(k,j), then break if terminal
-//------------------------------------------------------------------------------
-
-// Ai [pA] and Bi [pB] are both equal to the index k.
-
-// use the boolean flag cij_exists to set/check if C(i,j) exists
-#undef  GB_CIJ_CHECK
-#define GB_CIJ_CHECK true
-#undef  GB_CIJ_EXIST
-#define GB_CIJ_EXISTS cij_exists
-#undef  GB_DOT
-
-#if GB_IS_PLUS_PAIR_REAL_SEMIRING
-
-    //--------------------------------------------------------------------------
-    // plus_pair_real semiring
-    //--------------------------------------------------------------------------
-
-    #if GB_CTYPE_IGNORE_OVERFLOW
-
-        // PLUS_PAIR for 64-bit integers, float, and double (not complex):
-        // To check if C(i,j) exists, test (cij != 0) when done.  The
-        // boolean flag cij_exists is not defined.
-        #undef  GB_CIJ_CHECK
-        #define GB_CIJ_CHECK false
-        #undef  GB_CIJ_EXISTS
-        #define GB_CIJ_EXISTS (cij != 0)
-        #define GB_DOT(k,pA,pB) cij++ ;
-
-    #else
-
-        // PLUS_PAIR semiring for small integers
-        #define GB_DOT(k,pA,pB)                                         \
-            cij_exists = true ;                                         \
-            cij++ ;
-
-    #endif
-
-#elif GB_IS_ANY_MONOID
-
-    //--------------------------------------------------------------------------
-    // ANY monoid
-    //--------------------------------------------------------------------------
-
-    #if defined ( GB_DOT3 )
-
-        #define GB_DOT(k,pA,pB)                                         \
-        {                                                               \
-            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \
-            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                 \
-            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
-            cij_exists = true ;                                         \
-            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
-            break ;                                                     \
-        }
-
-    #else
-
-        #define GB_DOT(k,pA,pB)                                         \
-        {                                                               \
-            GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \
-            GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                 \
-            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
-            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
-            int64_t pC = pC_start + i ;                                 \
-            GB_PUTC (cij, pC) ;                                         \
-            Cb [pC] = 1 ;                                               \
-            cnvals++ ;                                                  \
-            break ;                                                     \
-        }
-
-    #endif
-
-#else
-
-    //--------------------------------------------------------------------------
-    // all other semirings
-    //--------------------------------------------------------------------------
-
-    #define GB_DOT(k,pA,pB)                                             \
-    {                                                                   \
-        GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                     \
-        GB_GETB (bkj, Bx, pB) ;  /* bkj = B(k,j) */                     \
-        if (cij_exists)                                                 \
-        {                                                               \
-            /* cij += (A')(i,k) * B(k,j) */                             \
-            GB_MULTADD (cij, aki, bkj, i, k, j) ;                       \
-        }                                                               \
-        else                                                            \
-        {                                                               \
-            /* cij = (A')(i,k) * B(k,j), and add to the pattern */      \
-            cij_exists = true ;                                         \
-            GB_MULT (cij, aki, bkj, i, k, j) ;                          \
-        }                                                               \
-        /* if (cij is terminal) break ; */                              \
-        GB_DOT_TERMINAL (cij) ;                                         \
-    }
-
-#endif
+#include "GB_AxB_dot_cij.h"
 
 //------------------------------------------------------------------------------
 // C(i,j) = A(:,i)'*B(:,j): a single dot product
@@ -150,7 +47,7 @@
 
     #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
 
-        // A is sparse, B is bitmap
+        // A is sparse or hypersparse, B is bitmap
         for (int64_t p = pA ; p < pA_end ; p++)
         { 
             int64_t k = Ai [p] ;
@@ -488,39 +385,19 @@
     // save C(i,j)
     //--------------------------------------------------------------------------
 
-    #if defined ( GB_DOT3 )
-
-        // GB_AxB_dot3: computing C<M>=A'*B; C and M are sparse/hypersparse
-        if (GB_CIJ_EXISTS)
-        { 
-            // C(i,j) = cij
-            GB_PUTC (cij, pC) ;         // Cx [pC] = cij
-            Ci [pC] = i ;               // ok: C is sparse
-        }
-        else
-        { 
-            // C(i,j) becomes a zombie
-            task_nzombies++ ;           // GB_AxB_dot3: computing C<M>=A'*B
-            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
-        }
-
-    #else
-
-        // GB_AxB_dot2: computing C=A'*B, C<M>=A'*B, or C<!M>=A'*B, where M, A,
-        // B, can have any sparsity pattern, and C is bitmap.  The ANY monoid
-        // writes its values to C immediately.
-
-        #if ( !GB_IS_ANY_MONOID )
-        if (GB_CIJ_EXISTS)
-        { 
-            int64_t pC = pC_start + i ;
-            GB_PUTC (cij, pC) ;
-            Cb [pC] = 1 ;
-            cnvals++ ;
-        }
-        #endif
-
-    #endif
+    // GB_AxB_dot3: computing C<M>=A'*B; C and M are sparse/hypersparse
+    if (GB_CIJ_EXISTS)
+    { 
+        // C(i,j) = cij
+        GB_PUTC (cij, pC) ;         // Cx [pC] = cij
+        Ci [pC] = i ;               // ok: C is sparse
+    }
+    else
+    { 
+        // C(i,j) becomes a zombie
+        task_nzombies++ ;           // GB_AxB_dot3: computing C<M>=A'*B
+        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+    }
 }
 
 #undef GB_DOT

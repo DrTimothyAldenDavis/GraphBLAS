@@ -17,7 +17,6 @@ C = GB_mex_AxB (A, B) ;
 assert (GB_spok (C) == 1) ;
 assert (norm (C-C1,1) / norm (C,1)< 1e-12) ;
 
-
 A = A' ;
 C1 = A'*B ;
 C = GB_mex_AdotB (A, B) ;

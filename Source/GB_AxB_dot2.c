@@ -71,6 +71,13 @@ double ttt = omp_get_wtime ( ) ;
     int64_t cvlen = A->vdim ;
     int64_t cvdim = B->vdim ;
 
+    int64_t cnz ;
+    if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
+    {
+        // problem too large
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -166,7 +173,6 @@ ttt = omp_get_wtime ( ) ;
     // allocate C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = cvlen * cvdim ;
     GrB_Type ctype = add->op->ztype ;
     info = GB_new_bix (Chandle, // bitmap, new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
@@ -185,10 +191,8 @@ GB_Global_timing_add (18, ttt) ;
 ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
-    // if M is sparse, scatter it into the C bitmap
+    // TODO: if M is sparse, scatter it into the C bitmap
     //--------------------------------------------------------------------------
-
-    // TODO
 
     //--------------------------------------------------------------------------
     // C<#>=A'*B, computing each entry with a dot product, via builtin semiring
