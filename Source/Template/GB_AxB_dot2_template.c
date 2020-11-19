@@ -73,7 +73,7 @@
             // get M(:,j), if present
             //------------------------------------------------------------------
 
-            #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
+            #if defined ( GB_ANY_SPECIALIZED )
             // M is bitmap, and pM is the same as pC_start
             #elif defined ( GB_MASK_IS_PRESENT )
             // TODO: delete this and scatter M into the C bitmap if sparse,
@@ -81,12 +81,7 @@
             // find vector j in M
             int64_t pM, pM_end ;
             bool mdense = false ;           // TODO remove this
-            if (M_is_bitmap_or_full)
-            {
-                // M is bitmap or full
-                pM = pC_start ;
-            }
-            else
+            if (!M_is_bitmap_or_full)
             {
                 // M is hypersparse or sparse
                 int64_t mpleft = 0 ;
@@ -108,7 +103,7 @@
                 // get A(:,i)
                 //--------------------------------------------------------------
 
-                #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
+                #if defined ( GB_ANY_SPECIALIZED )
                 // A is sparse
                 int64_t i = kA ;
                 #elif GB_A_IS_SPARSE_OR_HYPER
@@ -122,16 +117,26 @@
                 // get M(i,j)
                 //--------------------------------------------------------------
 
-                #if defined ( GB_ANY_FIRSTJ_SPECIALIZED )
-                // M is bitmap and structural; Mask_comp either true or false
-                if (Mb [pC_start + i] ^ Mask_comp)
+                #if defined ( GB_ANY_SPECIALIZED )
+                // M is bitmap and structural; Mask_comp true
+                if (!Mb [pC_start + i])
                 #elif defined ( GB_MASK_IS_PRESENT )
                 bool mij ;
-                if (M_is_bitmap_or_full || mdense)
+                if (M_is_bitmap)
+                {
+                    // M is bitmap
+                    mij = Mb [pC_start + i] &&
+                          GB_mcast (Mx, pC_start + i, msize) ;
+                }
+                else if (M_is_full || mdense)
+                {
+                    // M is full
+                    mij = GB_mcast (Mx, pC_start + i, msize) ;
+                }
+                else if (mdense)
                 { 
-                    // M(:,j) is dense: M is full, bitmap, or M sparse/hyper,
-                    // with a fully-populated vector M(:,j)
-                    mij = GBB (Mb, pM + i) && GB_mcast (Mx, pM + i, msize) ;
+                    // M sparse/hyper, with a fully-populated vector M(:,j)
+                    mij = GB_mcast (Mx, pM + i, msize) ;
                 }
                 else
                 {

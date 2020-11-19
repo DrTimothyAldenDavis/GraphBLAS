@@ -11,6 +11,8 @@
 // complemented, either valued or structural.  The mask is always applied.
 // C and M are both sparse or hypersparse.
 
+// TODO: use the same 9-way cases as dot2
+
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT

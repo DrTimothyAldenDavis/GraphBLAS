@@ -93,6 +93,7 @@
         // C = A'*B via dot products
         //----------------------------------------------------------------------
 
+        #undef GB_MASK_IS_PRESENT
         #include "GB_AxB_dot2_meta2.c"
 
     }
@@ -115,23 +116,25 @@
         const bool M_is_full = GB_IS_FULL (M) ;
         const bool M_is_bitmap_or_full = M_is_full || M_is_bitmap ;
 
-        #if ( GB_IS_ANY_MONOID && GB_IS_FIRSTJ_MULTIPLIER )
-        if (B_is_bitmap && A_is_sparse && M_is_bitmap && Mask_struct)
+        #if ( GB_IS_ANY_MONOID )
+        if (B_is_bitmap && A_is_sparse && M_is_bitmap && Mask_struct
+            && Mask_comp)
         {
 
             //------------------------------------------------------------------
             // C<#M,struct> = A'*B, special case
             //------------------------------------------------------------------
 
-            // GB_ANY_FIRSTJ_SPECIALIZED is defined if the following conditions:
-            // semirings: GxB_ANY_FIRSTJ* (FIRSTJ or FIRSTJ1)
-            // B: bitmap
+            // GB_ANY_SPECIALIZED is defined if the following conditions:
+            // semirings: all built-in semirings with the ANY monoid
             // A: sparse
+            // B: bitmap
             // M: bitmap
-            // Mask_comp: either true or false
+            // Mask_comp: true
             // Mask_struct: true
 
-            #define GB_ANY_FIRSTJ_SPECIALIZED
+            GBURBLE ("(specialized) ") ;
+            #define GB_ANY_SPECIALIZED
             #define GB_MASK_IS_PRESENT
             #define GB_A_IS_SPARSE_OR_HYPER 1
             #define GB_A_IS_BITMAP          0
@@ -140,7 +143,7 @@
             #define GB_B_IS_BITMAP          1
             #define GB_B_IS_FULL            0
             #include "GB_AxB_dot2_template.c"
-            #undef  GB_ANY_FIRSTJ_SPECIALIZED
+            #undef  GB_ANY_SPECIALIZED
             #undef GB_MASK_IS_PRESENT
 
         }
