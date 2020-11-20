@@ -111,13 +111,13 @@
 //              note: EQ_BOOL and LXNOR are the same operator, and
 //                    NE_BOOL and LXOR  are the same operator.
 //
-//  120 semirings with MIN/MAX monoids (12 kinds, 10 real types each): all are GrB*
+//  120 semirings with MIN/MAX monoids (12 kinds, 10 real types each):
 //
 //      monoid  multiply ops
 //      MAX:    MIN, PLUS, TIMES, FIRST, SECOND, PAIR
 //      MIN:    MAX, PLUS, TIMES, FIRST, SECOND, PAIR
 //
-//  140 semirings with PLUS monoids (14 kinds, 10 real types each): 4 kinds are GrB*
+//  140 semirings with PLUS monoids (14 kinds, 10 real types each):
 //
 //      monoid  multiply ops
 //      PLUS:   MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
@@ -145,7 +145,7 @@
 //
 //  note: the above list includes the following identical semirings:
 //      EQ_PAIR_BOOL, XNOR_PAIR_BOOL, LAND_PAIR_BOOL, LOR_PAIR_BOOL, are all
-//      the same as ANY_PAIR_BOOL.  For the other types, MAX_PAIR, MAX_PAIR,
+//      the same as ANY_PAIR_BOOL.  For the other types, MAX_PAIR, MIN_PAIR,
 //      and TIMES_PAIR are the same as ANY_PAIR.
 
 // These changes have no effect on the performance of binary operations such

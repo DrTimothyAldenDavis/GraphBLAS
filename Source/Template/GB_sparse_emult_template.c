@@ -803,7 +803,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;                   // ok: C is sparse
-                            GB_GETA (aij, Ax, pA + p) ;
+                            GB_GETA (aij, Ax, pA + p) ;     // aij = Ax [pA+p]
                             GB_GETB (bij, Bx, pB + p) ;
                             GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
