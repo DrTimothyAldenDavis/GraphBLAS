@@ -4423,7 +4423,7 @@ GrB_Info GxB_Scalar_error (const char **error, const GxB_Scalar s) ;
 GB_PUBLIC
 GrB_Info GrB_Vector_error (const char **error, const GrB_Vector v) ;
 GB_PUBLIC
-GrB_Info GrB_Matrix_error (const char **error, const GrB_Vector A) ;
+GrB_Info GrB_Matrix_error (const char **error, const GrB_Matrix A) ;
 GB_PUBLIC
 GrB_Info GrB_Descriptor_error (const char **error, const GrB_Descriptor d) ;
 
