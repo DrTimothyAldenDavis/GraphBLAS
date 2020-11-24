@@ -170,10 +170,9 @@ double ttt = omp_get_wtime ( ) ;
 
     GrB_Type ctype = add->op->ztype ;
 
-    // TODO: C->b could be malloc'd
     info = GB_new_bix (Chandle, // bitmap, new header
         ctype, cvlen, cvdim, GB_Ap_calloc, true,
-        GxB_BITMAP, B->hyper_switch, cnvec, cnz, true, Context) ;
+        GxB_BITMAP, false, B->hyper_switch, cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory
@@ -333,6 +332,7 @@ if (M_is_full_and_valued) {
                 // GB_AxB_saxpy3)
                 // pC = the location of C(i,j) in the bitmap
                 int64_t pC = pC_start + i ;     // C is bitmap
+                Cb [pC] = 0 ;
                 bool mij ;
                 // since M is full and used in-place, it has the same
                 // dimensions as C.
@@ -404,9 +404,7 @@ if (M_is_full_and_valued) {
                     // the mask prevents C(i,j) from existing
                     //----------------------------------------------------------
 
-                    // commented out because C->b is calloc'd above
                     // Cb [pC] = 0 ;
-                    ASSERT (Cb [pC] == 0) ;
                 }
             }
         }
@@ -472,6 +470,7 @@ if (M_is_full_and_valued) {
                 // (see M_dense_in_place in GB_AxB_saxpy3)
                 // pC = the location of C(i,j) in the bitmap
                 int64_t pC = pC_start + i ;     // C is bitmap
+                Cb [pC] = 0 ;
                 bool mij ;
                 mij = Mb [pC] ;
                 if (!mij)

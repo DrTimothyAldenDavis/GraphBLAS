@@ -473,8 +473,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
@@ -549,6 +549,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     GrB_Matrix A,           // matrix to allocate space for
     const GrB_Index nzmax,  // number of entries the matrix can hold
     const bool is_bitmap,   // if true, allocate A->b, otherwise A->b is NULL
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
     GB_Context Context

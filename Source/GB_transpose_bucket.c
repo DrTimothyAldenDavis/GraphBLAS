@@ -130,7 +130,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GrB_Matrix C = NULL ;
     GB_OK (GB_new_bix (&C, // sparse, new header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GxB_SPARSE, A->hyper_switch, vlen, anz, true, Context)) ;
+        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
 

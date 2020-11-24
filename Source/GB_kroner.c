@@ -150,7 +150,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; new header
         op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
+        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
     (*Chandle) = C ;
 
     //--------------------------------------------------------------------------

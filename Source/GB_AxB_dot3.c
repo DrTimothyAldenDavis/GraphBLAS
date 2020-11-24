@@ -153,7 +153,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        sparsity, M->hyper_switch, cnvec,
+        sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)

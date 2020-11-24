@@ -78,7 +78,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         int C_sparsity = C->sparsity ;  // save the sparsity control of C
         info = GB_new_bix (&C,  // full, old header
             C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
-            GxB_FULL, C->hyper_switch, -1, cnzmax, true, Context) ;
+            GxB_FULL, true, C->hyper_switch, -1, cnzmax, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

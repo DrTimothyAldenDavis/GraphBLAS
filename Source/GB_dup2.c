@@ -58,7 +58,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     GrB_Matrix C = (*Chandle) ;
     GrB_Info info = GB_new_bix (&C, // same sparsity as A; old or new header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
-        GB_sparsity (A), A->hyper_switch, A->plen, anz, true, Context) ;
+        GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

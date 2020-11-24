@@ -271,7 +271,8 @@ GrB_Info GB_mask                // C<M> = Z
                 GB_OK (
                 GB_new_bix (&C_cleared, // auto (sparse or hyper), new header
                     C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
-                    sparsity, C_result->hyper_switch, 0, 0, true, Context)) ;
+                    sparsity, true, C_result->hyper_switch, 0, 0, true,
+                    Context)) ;
                 C = C_cleared ;
             }
             else

@@ -173,10 +173,14 @@ ttt = omp_get_wtime ( ) ;
     // allocate C
     //--------------------------------------------------------------------------
 
+    // if M is sparse/hyper, then calloc C->b; otherwise use malloc
+    bool C_bitmap_calloc = (M != NULL) &&
+        (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
     info = GB_new_bix (Chandle, // bitmap, new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GxB_BITMAP, B->hyper_switch, cnvec, cnz, true, Context) ;
+        GxB_BITMAP, C_bitmap_calloc, B->hyper_switch, cnvec, cnz, true,
+        Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

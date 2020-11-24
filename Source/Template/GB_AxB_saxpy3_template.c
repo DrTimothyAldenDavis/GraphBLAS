@@ -853,8 +853,7 @@ ttt = omp_get_wtime ( ) ;
 
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;      // ok: C is sparse
-    GrB_Info info =
-        GB_bix_alloc (C, cnz, false, true, true, Context) ; // ok: C is sparse
+    GrB_Info info = GB_bix_alloc (C, cnz, false, false, true, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -243,7 +243,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_bix_alloc (A, anz, false, sparsity != GxB_FULL, true,
+        info = GB_bix_alloc (A, anz, false, false, sparsity != GxB_FULL, true,
             Context) ;
         if (info != GrB_SUCCESS)
         {

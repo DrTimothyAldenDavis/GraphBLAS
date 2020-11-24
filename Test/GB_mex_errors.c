@@ -4726,7 +4726,7 @@ void mexFunction
 
     CHECK (A != NULL) ;
     Context->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, false, true, true, Context) ;
+    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, true, true, true, true, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     Context->where = "GB_ix_realloc" ;

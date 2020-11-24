@@ -151,7 +151,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix C = NULL ;
     GrB_Info info = GB_new_bix (&C, // any sparsity, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B

@@ -348,7 +348,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // returned.
         info = GB_new_bix (Chandle, // hyper, old or new header
             ctype, avdim, avlen, GB_Ap_calloc, C_is_csc,
-            GxB_HYPERSPARSE, A_hyper_switch, 1, 1, true, Context) ;
+            GxB_HYPERSPARSE, true, A_hyper_switch, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -391,7 +391,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // allocate all of T, including T->b and T->x
             info = GB_new_bix (&T,  // bitmap or full, new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                sparsity, A_hyper_switch, 1, anzmax, true, Context) ;
+                sparsity, true, A_hyper_switch, 1, anzmax, true, Context) ;
         }
 
         if (info != GrB_SUCCESS)

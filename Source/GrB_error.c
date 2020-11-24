@@ -73,7 +73,7 @@ GrB_Info GrB_Vector_error (const char **error, const GrB_Vector v)
     return (GrB_SUCCESS) ;
 }
 
-GrB_Info GrB_Matrix_error (const char **error, const GrB_Vector A)
+GrB_Info GrB_Matrix_error (const char **error, const GrB_Matrix A)
 { 
     GB_RETURN_IF_NULL (error) ;
     (*error) = empty ;
