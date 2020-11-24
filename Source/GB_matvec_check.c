@@ -8,8 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// TODO dev is on
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"

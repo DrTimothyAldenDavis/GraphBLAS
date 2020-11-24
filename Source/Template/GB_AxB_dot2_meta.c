@@ -15,7 +15,6 @@
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
 #define GB_DOT_ALWAYS_SAVE_CIJ      \
 {                                   \
-    int64_t pC = pC_start + i ;     \
     GB_PUTC (cij, pC) ;             \
     Cb [pC] = 1 ;                   \
     cnvals++ ;                      \

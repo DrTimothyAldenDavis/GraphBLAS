@@ -44,32 +44,45 @@
         {
 
             //------------------------------------------------------------------
-            // get B(:,j)
-            //------------------------------------------------------------------
-
-            #if GB_B_IS_SPARSE_OR_HYPER
-            // B is sparse (never hypersparse)
-            const int64_t pB_start = Bp [j] ;
-            const int64_t pB_end   = Bp [j+1] ;
-            const int64_t bjnz = pB_end - pB_start ;
-                #if ( GB_A_IS_SPARSE_OR_HYPER )
-                // get the first and last index in B(:,j)
-                const int64_t ib_first = Bi [pB_start] ;
-                const int64_t ib_last  = Bi [pB_end-1] ;
-                #endif
-            #else
-            // B is bitmap or full
-            const int64_t pB_start = j * vlen ;
-            const int64_t bjnz = vlen ;
-            #endif
-            // no work to do if B(:,j) is empty
-            if (bjnz == 0) continue ;
-
-            //------------------------------------------------------------------
             // get C(:,j)
             //------------------------------------------------------------------
 
             const int64_t pC_start = j * cvlen ;
+
+            //------------------------------------------------------------------
+            // get B(:,j)
+            //------------------------------------------------------------------
+
+            #if GB_B_IS_SPARSE_OR_HYPER
+
+                // B is sparse (never hypersparse)
+                const int64_t pB_start = Bp [j] ;
+                const int64_t pB_end   = Bp [j+1] ;
+                const int64_t bjnz = pB_end - pB_start ;
+                if (bjnz == 0)
+                {
+                    // no work to do if B(:,j) is empty, except to clear Cb
+                    // for (int64_t i = kA_start ; i < kA_end ; i++)
+                    // {
+                    //     Cb [pC_start + i] = 0 ;
+                    // }
+                    memset (&Cb [pC_start + kA_start], 0, kA_end - kA_start) ;
+                    continue ;
+                }
+
+                #if ( GB_A_IS_SPARSE_OR_HYPER )
+                    // get the first and last index in B(:,j)
+                    const int64_t ib_first = Bi [pB_start] ;
+                    const int64_t ib_last  = Bi [pB_end-1] ;
+                #endif
+
+            #else
+
+                // B is bitmap or full
+                const int64_t pB_start = j * vlen ;
+                const int64_t bjnz = vlen ;
+
+            #endif
 
             //------------------------------------------------------------------
             // get M(:,j), if present
@@ -102,24 +115,30 @@
             {
 
                 //--------------------------------------------------------------
+                // clear Cb (i,j)
+                //--------------------------------------------------------------
+
+                int64_t pC = pC_start + i ;     // C is bitmap
+                Cb [pC] = 0 ;
+
+                //--------------------------------------------------------------
                 // get M(i,j)
                 //--------------------------------------------------------------
 
                 #if defined ( GB_ANY_SPECIALIZED )
                 // M is bitmap and structural; Mask_comp true
-                if (!Mb [pC_start + i])
+                if (!Mb [pC])
                 #elif defined ( GB_MASK_IS_PRESENT )
                 bool mij ;
                 if (M_is_bitmap)
                 {
                     // M is bitmap
-                    mij = Mb [pC_start + i] &&
-                          GB_mcast (Mx, pC_start + i, msize) ;
+                    mij = Mb [pC] && GB_mcast (Mx, pC, msize) ;
                 }
                 else if (M_is_full || mdense)
                 {
                     // M is full
-                    mij = GB_mcast (Mx, pC_start + i, msize) ;
+                    mij = GB_mcast (Mx, pC, msize) ;
                 }
                 else if (mdense)
                 { 

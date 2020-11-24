@@ -66,7 +66,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     }
     else if (is_bitmap)
     { 
-        if (1) // (bitmap_calloc)
+        if (bitmap_calloc)
         { 
             // content is fully defined
             A->b = GB_CALLOC (A->nzmax, int8_t) ;
