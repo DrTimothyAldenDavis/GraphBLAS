@@ -13,13 +13,15 @@
 // This method always constructs C as bitmap.
 
 #include "GB_mxm.h"
+#include "GB_subref.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                                            \
+#define GB_FREE_ALL                                             \
 {                                                               \
+    GB_Matrix_free (&M2) ;                                      \
     GB_FREE (A_slice) ;                                         \
     GB_FREE (B_slice) ;                                         \
 }
@@ -28,11 +30,11 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B, may be NULL
+    const GrB_Matrix M_in,           // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
+    const GrB_Matrix A_in,          // input matrix
+    const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
@@ -48,22 +50,56 @@ double ttt = omp_get_wtime ( ) ;
 
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for dot A'*B", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A_in, "A for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK (B_in, "B for dot A'*B", GB0) ;
 
-    ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;    // C is jumbled if M is jumbled
-    ASSERT (!GB_PENDING (M)) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
-    ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT (!GB_JUMBLED (B)) ;
-    ASSERT (!GB_PENDING (B)) ;
+    ASSERT (!GB_ZOMBIES (M_in)) ;
+    ASSERT (GB_JUMBLED_OK (M_in)) ;
+    ASSERT (!GB_PENDING (M_in)) ;
+    ASSERT (!GB_ZOMBIES (A_in)) ;
+    ASSERT (!GB_JUMBLED (A_in)) ;
+    ASSERT (!GB_PENDING (A_in)) ;
+    ASSERT (!GB_ZOMBIES (B_in)) ;
+    ASSERT (!GB_JUMBLED (B_in)) ;
+    ASSERT (!GB_PENDING (B_in)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
-    ASSERT (A->vlen == B->vlen) ;
+    ASSERT (A_in->vlen == B_in->vlen) ;
+
+    (*Chandle) = NULL ;
+    int64_t *GB_RESTRICT Cp = NULL ;
+    int64_t *GB_RESTRICT Ch = NULL ;
+    int64_t *GB_RESTRICT Ci = NULL ;
+
+    //--------------------------------------------------------------------------
+    // construct shallow copies of A and B, if hypersparse
+    //--------------------------------------------------------------------------
+
+    // If A_in is hypersparse, a new sparse matrix A is constructed with
+    // A->vdim = A_in->nvec and the same vlen as A_in, and then the packed
+    // C->vlen will equal A->vdim < cvlen_final.
+
+    // If B_in is hypersparse, a new sparse matrix B is constructed with
+    // B->vdim = B_in->nvec and the same vlen as B_in, and then the packed
+    // C->vdim will equal B->vdim < cvdim_final.
+
+    int64_t cvlen_final = A_in->vdim ;
+    int64_t cvdim_final = B_in->vdim ;
+    bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
+    bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
+    bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
+    GrB_Index *GB_RESTRICT Ah = A_in->h ;
+    GrB_Index *GB_RESTRICT Bh = B_in->h ;
+    struct GB_Matrix_opaque A_header, B_header ;
+    GrB_Matrix A = (A_is_hyper) ? GB_hyper_pack (&A_header, A_in) : A_in ;
+    GrB_Matrix B = (B_is_hyper) ? GB_hyper_pack (&B_header, B_in) : B_in ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (!GB_IS_HYPERSPARSE (B)) ;
+
+    //--------------------------------------------------------------------------
+    // determine the size of C
+    //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
@@ -76,6 +112,27 @@ double ttt = omp_get_wtime ( ) ;
     {
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // extract the submask if A or B are hypersparse 
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix M, M2 = NULL ;
+    if (A_or_B_hyper && M_in != NULL)
+    {
+        // M2 = M_in (Ah, Bh)
+        GB_OK (GB_subref (&M2, M_in->is_csc, M_in,
+            (A_is_hyper) ? Ah : GrB_ALL, cvlen,
+            (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Context)) ;
+        // TODO: if Mask_struct is true, only extract the pattern of M_in
+        M = M2 ;
+        ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
+    }
+    else
+    {
+        // use the mask as-is
+        M = M_in ;
     }
 
     //--------------------------------------------------------------------------
@@ -142,8 +199,6 @@ double ttt = omp_get_wtime ( ) ;
     bool A_is_pattern, B_is_pattern ;
     GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
-    (*Chandle) = NULL ;
-
     //--------------------------------------------------------------------------
     // allocate workspace and slice A and B
     //--------------------------------------------------------------------------
@@ -151,17 +206,11 @@ double ttt = omp_get_wtime ( ) ;
     // A and B can have any sparsity: full, bitmap, sparse, or hypersparse.
     // C is always created as bitmap
 
-    if (!GB_pslice (&A_slice, A->p, A->nvec, naslice, false))
+    if (!GB_pslice (&A_slice, A->p, A->nvec, naslice, false) ||
+        !GB_pslice (&B_slice, B->p, B->nvec, nbslice, false))
     { 
         // out of memory
-        GB_FREE_WORK ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    if (!GB_pslice (&B_slice, B->p, B->nvec, nbslice, false))
-    { 
-        // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -177,17 +226,10 @@ ttt = omp_get_wtime ( ) ;
     bool C_bitmap_calloc = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
-    info = GB_new_bix (Chandle, // bitmap, new header
+    GB_OK (GB_new_bix (Chandle, // bitmap, new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GxB_BITMAP, C_bitmap_calloc, B->hyper_switch, cnvec, cnz, true,
-        Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_WORK ;
-        return (info) ;
-    }
-
+        Context)) ;
     GrB_Matrix C = (*Chandle) ;
 
 ttt = omp_get_wtime ( ) - ttt ;
@@ -250,12 +292,120 @@ ttt = omp_get_wtime ( ) ;
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "dot2: C = A'*B output", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // unpack C if A or B are hypersparse
+    //--------------------------------------------------------------------------
+
+    if (A_or_B_hyper)
+    {
+
+        //----------------------------------------------------------------------
+        // unpack C from bitmap to sparse/hyper
+        //----------------------------------------------------------------------
+
+        // C is currently A_in->nvec by B_in->nvec, in bitmap form.  It must be
+        // unpacked into sparse/hypersparse form, with zombies.
+
+        //----------------------------------------------------------------------
+        // allocate the sparse/hypersparse structure of the final C
+        //----------------------------------------------------------------------
+
+        Cp = GB_MALLOC (cvdim+1, int64_t) ;
+        Ch = B_is_hyper ? GB_MALLOC (cvdim, int64_t) : NULL ;
+        Ci = GB_MALLOC (cnz, int64_t) ;
+        if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
+        {
+            // out of memory
+            GB_Matrix_free (Chandle) ;
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+
+        //----------------------------------------------------------------------
+        // construct the hyperlist of C, if B is hypersparse
+        //----------------------------------------------------------------------
+
+        nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
+        if (B_is_hyper)
+        {
+            // C becomes hypersparse
+            ASSERT (cvdim == B_in->nvec) ;
+            GB_memcpy (Ch, B_in->h, cvdim, nthreads) ;
+        }
+
+        //----------------------------------------------------------------------
+        // construct the vector pointers of C
+        //----------------------------------------------------------------------
+
+        int64_t pC ;
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (pC = 0 ; pC < cvdim+1 ; pC++)
+        { 
+            Cp [pC] = pC * cvlen ;
+        }
+
+        //----------------------------------------------------------------------
+        // construct the pattern of C from its bitmap
+        //----------------------------------------------------------------------
+
+        // C(i,j) becomes a zombie if not present in the bitmap
+        nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+
+        int8_t *GB_RESTRICT Cb = C->b ;
+        if (A_is_hyper)
+        { 
+            ASSERT (cvlen == A_in->nvec) ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (pC = 0 ; pC < cnz ; pC++)
+            {
+                int64_t i = Ah [pC % cvlen] ;
+                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
+            }
+        }
+        else
+        { 
+            ASSERT (cvlen == cvlen_final && cvlen == A->vdim) ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (pC = 0 ; pC < cnz ; pC++)
+            {
+                int64_t i = pC % cvlen ;
+                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // transplant the new content and finalize C
+        //----------------------------------------------------------------------
+
+        C->p = Cp ; Cp = NULL ;
+        C->h = Ch ; Ch = NULL ;
+        C->i = Ci ; Ci = NULL ;
+        C->nzombies = cnz - C->nvals ;
+        C->vdim = cvdim_final ;
+        C->vlen = cvlen_final ;
+        C->nvals = -1 ;
+        C->nvec = cvdim ;
+        C->plen = cvdim ;
+        C->nvec_nonempty = cvdim ;
+
+        // free the bitmap
+        GB_FREE (C->b) ;
+
+        // C is now sparse or hypersparse
+        ASSERT_MATRIX_OK (C, "dot2: unpacked C", GB0) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;

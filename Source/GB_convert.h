@@ -315,5 +315,11 @@ static inline char *GB_sparsity_char_matrix (GrB_Matrix A)
     ASSERT (0) ;               return ("?") ;
 }
 
+GrB_Matrix GB_hyper_pack            // return C
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix A              // input matrix
+) ;
+
 #endif
 

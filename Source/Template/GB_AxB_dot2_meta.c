@@ -5,9 +5,9 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-// TODO: rename to GB_bitmap_AxB_dot_meta.c
-
 //------------------------------------------------------------------------------
+
+// TODO: rename to GB_bitmap_AxB_dot_meta.c
 
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
@@ -48,6 +48,11 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
+    // A and B are never hypersparse.  If they are hypersparse on input, they
+    // are converted to packed sparse form first, and the C matrix has smaller
+    // dimensions.  The C bitmap matrix is unpacked into a sparse or
+    // hypersparse matrix when done.
+
     int64_t cnvals = 0 ;
 
     ASSERT (GB_IS_BITMAP (C)) ;
@@ -58,24 +63,22 @@
     const int64_t cvlen = C->vlen ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
     const int8_t  *GB_RESTRICT Bb = B->b ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
-    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
+    const bool B_is_sparse_or_hyper = B_is_sparse ;
+    ASSERT (!GB_IS_HYPERSPARSE (B)) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
     const int8_t  *GB_RESTRICT Ab = A->b ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
-    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
+    const bool A_is_sparse_or_hyper = A_is_sparse ;
+    ASSERT (!GB_IS_HYPERSPARSE (A)) ;
 
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;

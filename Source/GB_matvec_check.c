@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+// TODO dev is on
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -281,7 +282,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (Pending != NULL && Pending->x != NULL) ;
     if (pr_short || pr_complete)
     {
-        GBPR ("  A %p number of memory blocks: " GBd "\n", A, nallocs) ;
+        GBPR ("  header %p number of memory blocks: " GBd "\n", A, nallocs) ;
     }
     #endif
 

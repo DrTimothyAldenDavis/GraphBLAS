@@ -252,18 +252,12 @@ static inline bool GB_AxB_dot2_control
     const GrB_Matrix B
 )
 {
-
-    double C_bitmap_size = ((double) A->vdim) * ((double) B->vdim) ;
-
     double anvec = GB_IS_HYPERSPARSE (A) ? A->nvec : A->vdim ;
     double bnvec = GB_IS_HYPERSPARSE (B) ? B->nvec : B->vdim ;
-    double C_max_density = (anvec * bnvec) / GB_IMAX (C_bitmap_size, 1) ;
-
+    double C_bitmap_size = (anvec * bnvec) ;
     double A_size = (double) GB_NNZ_HELD (A) ;
     double B_size = (double) GB_NNZ_HELD (B) ;
-
-    return ((C_bitmap_size < 8 * (A_size + B_size)) &&      // C is small
-            (C_max_density > GB_BITMAP_SWITCH_DEFAULT)) ;   // and likely dense
+    return (C_bitmap_size < 8 * (A_size + B_size)) ;
 }
 
 #endif
