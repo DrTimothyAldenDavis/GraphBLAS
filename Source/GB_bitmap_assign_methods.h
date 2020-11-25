@@ -47,10 +47,7 @@
     const int64_t cvlen = C->vlen ;                                         \
     const int64_t vlen = cvlen ;    /* for GB_bitmap_assign_IxJ_template */ \
     const int64_t cnzmax = cvlen * cvdim ;                                  \
-    int64_t cnvals = C->nvals ;                                             \
-    /* determine if all of C(:,:) is being assigned to, with no (I,J) */    \
-    /* submatrix or permutation: */                                         \
-    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+    int64_t cnvals = C->nvals ;
 
 //------------------------------------------------------------------------------
 // GB_GET_M: get the mask matrix M and check for aliasing
@@ -71,7 +68,12 @@
     const int64_t *Mi = M->i ;                                              \
     const GB_void *Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;         \
     const size_t msize = M->type->size ;                                    \
-    const size_t mvlen = M->vlen ;                                          \
+    const size_t mvlen = M->vlen ;
+
+#if 0
+    /* determine if all of C(:,:) is being assigned to, with no (I,J) */    \
+    /* submatrix or permutation: */                                         \
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;            \
     if (assign_kind == GB_SUBASSIGN)                                        \
     {                                                                       \
         /* ALIAS OK: C==M for bitmap subassign only for C(:,:)<M>=... */    \
@@ -81,6 +83,7 @@
     {                                                                       \
         /* ALIAS OK: C==M always OK for bitmap assign and row/col assign */ \
     }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_SLICE_M: slice the mask matrix M
@@ -124,7 +127,7 @@
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
         /* ALIAS OK: C==A for bitmap assign/subassign only for C(:,:)=A */  \
-        ASSERT (GB_IMPLIES (GB_aliased (C, A), whole_C_matrix)) ;           \
+        /* ASSERT (GB_IMPLIES (GB_aliased (C, A), whole_C_matrix)) ; */     \
         ASSERT (nI == A->vlen && nJ == A->vdim) ;                           \
         asize = A->type->size ;                                             \
         acode = A->type->code ;                                             \
@@ -406,6 +409,36 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
+    GB_Context Context
+) ;
+
+#define GB_BITMAP_M_SCATTER_PLUS_2  0
+#define GB_BITMAP_M_SCATTER_MINUS_2 1
+#define GB_BITMAP_M_SCATTER_MOD_2   2
+
+void GB_bitmap_M_scatter        // scatter M into the C bitmap
+(
+    // input/output:
+    GrB_Matrix C,
+    // int64_t *cnvals_handle,     // cnvals = C->nvals
+    // inputs:
+    const GrB_Index *I,         // I index list
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    const GrB_Index *J,         // J index list
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    const GrB_Matrix M,         // mask to scatter into the C bitmap
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const int assign_kind,      // row assign, col assign, assign, or subassign
+    const int operation,        // +=2, -=2, or %=2
+    const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
+    const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks
+    const int64_t *GB_RESTRICT klast_Mslice,  // size ntasks
+    const int mthreads,
+    const int mtasks,
     GB_Context Context
 ) ;
 

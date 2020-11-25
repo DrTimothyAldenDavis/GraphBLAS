@@ -75,17 +75,17 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     // scatter M into the bitmap of C
     //--------------------------------------------------------------------------
 
-    // for each entry mij == 1
-    //     Cb (i,j) += 2
-    #undef  GB_MASK_WORK
-    #define GB_MASK_WORK(pC) Cb [pC] += 2 ;
-    #include "GB_bitmap_assign_M_template.c"
+    // Cb [pC] += 2 for each entry M(i,j) in the mask
+    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+        pstart_Mslice, kfirst_Mslice, klast_Mslice,
+        mthreads, mtasks, Context) ;
 
-        // Cb (i,j) = 0:   cij not present, mij zero: can be modified
-        // Cb (i,j) = 1:   cij present, mij zero: can be modified,
-        //                      but delete if aij not present
-        // Cb (i,j) = 2:   cij not present, mij == 1: do not modify
-        // Cb (i,j) = 3:   cij present, mij == 1: do not modify
+    // Cb (i,j) = 0:   cij not present, mij zero: can be modified
+    // Cb (i,j) = 1:   cij present, mij zero: can be modified,
+    //                      but delete if aij not present
+    // Cb (i,j) = 2:   cij not present, mij == 1: do not modify
+    // Cb (i,j) = 3:   cij present, mij == 1: do not modify
 
     //--------------------------------------------------------------------------
     // assign A into C
@@ -210,9 +210,11 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         else
         { 
             // clear M from C
-            #undef  GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;
-            #include "GB_bitmap_assign_M_template.c"
+            // Cb [pC] %= 2 for each entry M(i,j) in the mask
+            GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
+                pstart_Mslice, kfirst_Mslice, klast_Mslice,
+                mthreads, mtasks, Context) ;
         }
     }
 

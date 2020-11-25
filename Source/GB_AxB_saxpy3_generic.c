@@ -20,6 +20,7 @@
 #include "GB_sort.h"
 #include "GB_atomics.h"
 #include "GB_ek_slice.h"
+#include "GB_bitmap_assign_methods.h"
 
 GrB_Info GB_AxB_saxpy3_generic
 (

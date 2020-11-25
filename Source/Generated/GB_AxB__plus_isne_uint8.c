@@ -20,6 +20,7 @@
 #include "GB_AxB_saxpy3.h"
 #include "GB_AxB__include.h"
 #include "GB_unused.h"
+#include "GB_bitmap_assign_methods.h"
 
 // The C=A*B semiring is defined by the following types and operators:
 

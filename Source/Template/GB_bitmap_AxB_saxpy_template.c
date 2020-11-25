@@ -112,9 +112,12 @@
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)
         { 
-            #undef GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] += 2
-            #include "GB_bitmap_assign_M_all_template.c"
+            // Cb [pC] += 2 for each entry M(i,j) in the mask
+            GB_bitmap_M_scatter (C,
+                NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
+                M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
+                pstart_Mslice, kfirst_Mslice, klast_Mslice,
+                mthreads, mtasks, Context) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
             //  Cb (i,j) = 1:   cij present, mij zero
@@ -450,9 +453,12 @@
 
     if (M_is_sparse_or_hyper)
     { 
-        #undef GB_MASK_WORK
-        #define GB_MASK_WORK(pC) Cb [pC] -= 2
-        #include "GB_bitmap_assign_M_all_template.c"
+        // Cb [pC] -= 2 for each entry M(i,j) in the mask
+        GB_bitmap_M_scatter (C,
+            NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
+            M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            mthreads, mtasks, Context) ;
     }
 
     //--------------------------------------------------------------------------

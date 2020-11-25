@@ -30,7 +30,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M_in,           // mask matrix for C<!M>=A'*B, may be NULL
+    const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A_in,          // input matrix
@@ -68,9 +68,6 @@ double ttt = omp_get_wtime ( ) ;
     ASSERT (A_in->vlen == B_in->vlen) ;
 
     (*Chandle) = NULL ;
-    int64_t *GB_RESTRICT Cp = NULL ;
-    int64_t *GB_RESTRICT Ch = NULL ;
-    int64_t *GB_RESTRICT Ci = NULL ;
 
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
@@ -317,14 +314,17 @@ ttt = omp_get_wtime ( ) ;
         // allocate the sparse/hypersparse structure of the final C
         //----------------------------------------------------------------------
 
-        Cp = GB_MALLOC (cvdim+1, int64_t) ;
-        Ch = B_is_hyper ? GB_MALLOC (cvdim, int64_t) : NULL ;
-        Ci = GB_MALLOC (cnz, int64_t) ;
+        int64_t *GB_RESTRICT Cp = GB_MALLOC (cvdim+1, int64_t) ;
+        int64_t *GB_RESTRICT Ch =
+            B_is_hyper ? GB_MALLOC (cvdim, int64_t) : NULL ;
+        int64_t *GB_RESTRICT Ci = GB_MALLOC (cnz, int64_t) ;
         if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
-        {
+        { 
             // out of memory
             GB_Matrix_free (Chandle) ;
-            GB_FREE_ALL ;
+            GB_FREE (Cp) ;
+            GB_FREE (Ch) ;
+            GB_FREE (Ci) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -334,10 +334,10 @@ ttt = omp_get_wtime ( ) ;
 
         nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
         if (B_is_hyper)
-        {
+        { 
             // C becomes hypersparse
             ASSERT (cvdim == B_in->nvec) ;
-            GB_memcpy (Ch, B_in->h, cvdim, nthreads) ;
+            GB_memcpy (Ch, B_in->h, cvdim * sizeof (int64_t), nthreads) ;
         }
 
         //----------------------------------------------------------------------
@@ -393,7 +393,7 @@ ttt = omp_get_wtime ( ) ;
         C->nvals = -1 ;
         C->nvec = cvdim ;
         C->plen = cvdim ;
-        C->nvec_nonempty = cvdim ;
+        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
 
         // free the bitmap
         GB_FREE (C->b) ;
@@ -407,7 +407,7 @@ ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     ASSERT (*Chandle == C) ;
-    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
 

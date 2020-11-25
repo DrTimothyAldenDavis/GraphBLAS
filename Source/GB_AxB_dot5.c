@@ -120,9 +120,9 @@ double ttt = omp_get_wtime ( ) ;
     int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
-    { 
-        // problem too large
-        return (GrB_OUT_OF_MEMORY) ;
+    {
+        // problem too large: case not handled yet
+        return (GrB_NO_VALUE) ;
     }
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;

@@ -76,11 +76,11 @@ GrB_Info GB_bitmap_assign_notM_accum
     // scatter the mask M into C
     //--------------------------------------------------------------------------
 
-    // for each entry mij == 1
-    //      Cb (i,j) += 2
-    #undef  GB_MASK_WORK
-    #define GB_MASK_WORK(pC) Cb [pC] += 2 ;
-    #include "GB_bitmap_assign_M_template.c"
+    // Cb [pC] += 2 for each entry M(i,j) in the mask
+    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+        pstart_Mslice, kfirst_Mslice, klast_Mslice,
+        mthreads, mtasks, Context) ;
 
     //--------------------------------------------------------------------------
     // do the assignment
@@ -159,9 +159,11 @@ GrB_Info GB_bitmap_assign_notM_accum
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 1       keep this entry
-        #undef  GB_MASK_WORK
-        #define GB_MASK_WORK(pC) Cb [pC] -= 2 ;
-        #include "GB_bitmap_assign_M_template.c"
+        // Cb [pC] -= 2 for each entry M(i,j) in the mask
+        GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+            M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MINUS_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            mthreads, mtasks, Context) ;
     }
     else
     { 

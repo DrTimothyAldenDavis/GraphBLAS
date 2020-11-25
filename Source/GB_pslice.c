@@ -205,7 +205,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
                 int64_t k = 0 ;
                 for (int taskid = 1 ; taskid < ntasks ; taskid++)
                 { 
-                    // binary search to find k so that Ap [k] == (taskid * work) /
+                    // binary search to find k so that Ap [k] == (taskid*work) /
                     // ntasks.  The exact value will not typically not be found;
                     // just pick what the binary search comes up with.
                     int64_t wtask = (int64_t) GB_PART (taskid, work, ntasks) ;
@@ -215,7 +215,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
                 }
             }
             else
-            {
+            { 
                 // this is much faster, and results in good load balancing if
                 // there is more than one task per thread, and dynamic
                 // scheduling is used.
