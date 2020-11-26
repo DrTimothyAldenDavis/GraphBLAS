@@ -256,7 +256,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // if M(:,j) is full, bitmap, or dense, do not add mjnz to bjflops
             // or task_MWork.
 
-            int64_t bjflops = my_bjnz ;
+            int64_t bjflops = (B_is_bitmap) ? my_bjnz : 0 ;
             int64_t mjnz = 0 ;
             if (M != NULL && !M_is_dense)
             {

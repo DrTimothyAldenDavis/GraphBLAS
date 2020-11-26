@@ -256,6 +256,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             M, &mtasks))
         { 
             // out of memory
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
