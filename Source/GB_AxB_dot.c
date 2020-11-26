@@ -88,19 +88,17 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
 
     //--------------------------------------------------------------------------
-    // prototype bitmap case:
+    // prototype bitmap case: removed
     //--------------------------------------------------------------------------
 
-#if 1
-    info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
-        A, B, semiring, flipxy, Context) ;
-    if (info != GrB_NO_VALUE)
-    { 
-        (*done_in_place) = false ;
-        (*mask_applied) = (M != NULL) ; // mask applied if present
-        return (info) ;
-    }
-#endif
+//  info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
+//      A, B, semiring, flipxy, Context) ;
+//  if (info != GrB_NO_VALUE)
+//  { 
+//      (*done_in_place) = false ;
+//      (*mask_applied) = (M != NULL) ; // mask applied if present
+//      return (info) ;
+//  }
 
     //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)

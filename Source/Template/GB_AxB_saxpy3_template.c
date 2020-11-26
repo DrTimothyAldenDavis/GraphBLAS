@@ -347,6 +347,7 @@
 
                 GB_GET_M_j ;                // get M(:,j)
 
+#if 0
 // TODO: decide if this test is worth it
 if (A_is_bitmap)
 {
@@ -425,6 +426,7 @@ if (!Ab [pA]) continue ;
 
 }
 else
+#endif
 {
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -436,7 +438,8 @@ else
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-// if (!GBB (Ab, pA)) continue ;
+// TODO: should this test be lifted out of the loop?
+if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
 
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
