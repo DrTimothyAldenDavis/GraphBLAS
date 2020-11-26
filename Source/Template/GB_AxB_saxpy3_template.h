@@ -411,6 +411,7 @@ break ;
 // GB_SCAN_M_j_OR_A_k: compute C(:,j) using linear scan or binary search
 //------------------------------------------------------------------------------
 
+#if 1
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #define GB_SCAN_M_j_OR_A_k                                              \
 {                                                                       \
@@ -459,6 +460,27 @@ break ;
         }                                                               \
     }                                                                   \
 }
+#endif
+
+#if 0
+// C(:,j)<M(:,j)>=A(:,k)*B(k,j)
+#define GB_SCAN_M_j_OR_A_k                                              \
+{                                                                       \
+    {                                                                   \
+        /* A(:,j) is sparse enough relative to M(:,j) */                \
+        /* M and/or A can dense, and either can be jumbled. */          \
+        /* scan A(:,k), and lookup M(i,j) (in the hash table) */        \
+        for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
+        {                                                               \
+            if (!GBB (Ab, pA)) continue ;                               \
+            int64_t i = GBI (Ai, pA, avlen) ;    /* get A(i,k) */       \
+            /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */  \
+            /* M(i,j) may be 0 or 1, as given in the hash table */      \
+            GB_IKJ ;                                                    \
+        }                                                               \
+    }                                                                   \
+}
+#endif
 
 //------------------------------------------------------------------------------
 // GB_ATOMIC_UPDATE_HX:  Hx [i] += t

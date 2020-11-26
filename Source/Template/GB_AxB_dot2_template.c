@@ -60,12 +60,8 @@
                 const int64_t pB_end   = Bp [j+1] ;
                 const int64_t bjnz = pB_end - pB_start ;
                 if (bjnz == 0)
-                {
+                { 
                     // no work to do if B(:,j) is empty, except to clear Cb
-                    // for (int64_t i = kA_start ; i < kA_end ; i++)
-                    // {
-                    //     Cb [pC_start + i] = 0 ;
-                    // }
                     memset (&Cb [pC_start + kA_start], 0, kA_end - kA_start) ;
                     continue ;
                 }
@@ -80,31 +76,7 @@
 
                 // B is bitmap or full
                 const int64_t pB_start = j * vlen ;
-                const int64_t bjnz = vlen ;
 
-            #endif
-
-            //------------------------------------------------------------------
-            // get M(:,j), if present
-            //------------------------------------------------------------------
-
-            #if defined ( GB_ANY_SPECIALIZED )
-            // M is bitmap, and pM is the same as pC_start
-            #elif defined ( GB_MASK_IS_PRESENT )
-            // TODO: delete this and scatter M into the C bitmap if sparse,
-            // or use in-place is M is dense, bitmap, or full
-            // find vector j in M
-            int64_t pM, pM_end ;
-            bool mdense = false ;           // TODO remove this
-            if (!M_is_bitmap_or_full)
-            {
-                // M is hypersparse or sparse
-                int64_t mpleft = 0 ;
-                GB_lookup (M_is_hyper, Mh, Mp, mvlen, &mpleft, mnvec-1, j,
-                    &pM, &pM_end) ;
-                int64_t mjnz = pM_end - pM ;
-                mdense = (mjnz == mvlen) ;  // TODO remove this
-            }
             #endif
 
             //------------------------------------------------------------------
@@ -115,47 +87,43 @@
             {
 
                 //--------------------------------------------------------------
-                // clear Cb (i,j)
+                // get C(i,j), M(i,j), and clear the C(i,j) bitmap
                 //--------------------------------------------------------------
 
                 int64_t pC = pC_start + i ;     // C is bitmap
-                Cb [pC] = 0 ;
-
-                //--------------------------------------------------------------
-                // get M(i,j)
-                //--------------------------------------------------------------
 
                 #if defined ( GB_ANY_SPECIALIZED )
+
                 // M is bitmap and structural; Mask_comp true
+                Cb [pC] = 0 ;
                 if (!Mb [pC])
+
                 #elif defined ( GB_MASK_IS_PRESENT )
+
                 bool mij ;
                 if (M_is_bitmap)
-                {
+                { 
                     // M is bitmap
                     mij = Mb [pC] && GB_mcast (Mx, pC, msize) ;
                 }
-                else if (M_is_full || mdense)
-                {
+                else if (M_is_full)
+                { 
                     // M is full
                     mij = GB_mcast (Mx, pC, msize) ;
                 }
-                else if (mdense)
+                else // M is sparse or hyper
                 { 
-                    // M sparse/hyper, with a fully-populated vector M(:,j)
-                    mij = GB_mcast (Mx, pM + i, msize) ;
+                    // M has been scattered into the C bitmap
+                    mij = (Cb [pC] > 1) ;
                 }
-                else
-                {
-                    // M(:,j) is sparse:
-                    // TODO: delete this and scatter M into the C bitmap
-                    // instead.
-                    bool found ;
-                    int64_t pright = pM_end - 1 ;
-                    GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                    mij = found && GB_mcast (Mx, pM, msize) ;
-                }
+                Cb [pC] = 0 ;
                 if (mij ^ Mask_comp)
+
+                #else
+
+                // M is not present
+                Cb [pC] = 0 ;
+
                 #endif
                 { 
 

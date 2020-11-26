@@ -39,7 +39,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 )
 {
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -131,9 +131,9 @@ double ttt = omp_get_wtime ( ) ;
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (0, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (0, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     bool mask_applied = false ;
     bool done_in_place = false ;
@@ -141,9 +141,9 @@ ttt = omp_get_wtime ( ) ;
         Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
         &mask_applied, &done_in_place, AxB_method, Context)) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (1, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (1, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     if (done_in_place)
     { 

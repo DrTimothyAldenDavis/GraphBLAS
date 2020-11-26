@@ -80,6 +80,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         //----------------------------------------------------------------------
 
         // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
+        GBURBLE ("(compute C sparse) ") ;
         C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         return (GB_AxB_saxpy3 (Chandle, C_sparsity, M, Mask_comp, Mask_struct,
             A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
@@ -92,6 +93,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 
         //----------------------------------------------------------------------
 
+        GBURBLE ("(compute C bitmap) ") ;
         return (GB_bitmap_AxB_saxpy (Chandle, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }

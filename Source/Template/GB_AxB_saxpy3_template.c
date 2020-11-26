@@ -18,7 +18,7 @@
 
 {
 
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get the chunk size
@@ -43,6 +43,7 @@ double ttt = omp_get_wtime ( ) ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
     const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
+    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -346,7 +347,9 @@ double ttt = omp_get_wtime ( ) ;
 
                 GB_GET_M_j ;                // get M(:,j)
 
-if (A_is_bitmap) {
+// TODO: decide if this test is worth it
+if (A_is_bitmap)
+{
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
@@ -420,11 +423,12 @@ if (!Ab [pA]) continue ;
                     }
                 }
 
-} else {
+}
+else
+{
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
-                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -833,9 +837,9 @@ if (!Ab [pA]) continue ;
         }
     }
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (9, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (9, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
@@ -843,9 +847,9 @@ ttt = omp_get_wtime ( ) ;
 
     GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (10, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (10, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
@@ -890,9 +894,9 @@ ttt = omp_get_wtime ( ) ;
 
     #endif
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (11, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (11, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     bool C_jumbled = false ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -1598,8 +1602,8 @@ ttt = omp_get_wtime ( ) ;
 
     C->jumbled = C_jumbled ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (12, ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (12, ttt) ;
 
 }
 

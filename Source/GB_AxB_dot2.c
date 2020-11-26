@@ -10,20 +10,24 @@
 //------------------------------------------------------------------------------
 
 // The C<M>=A'*B dot product when C is sparse is computed by GB_AxB_dot3.
-// This method always constructs C as bitmap.
+// This method always constructs C as bitmap; it then converts C to sparse or
+// hyper if A or B are hypersparse.
 
 #include "GB_mxm.h"
 #include "GB_subref.h"
 #include "GB_binop.h"
+#include "GB_ek_slice.h"
+#include "GB_bitmap_assign_methods.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL                                             \
-{                                                               \
-    GB_Matrix_free (&M2) ;                                      \
-    GB_FREE (A_slice) ;                                         \
-    GB_FREE (B_slice) ;                                         \
+#define GB_FREE_ALL                                                     \
+{                                                                       \
+    GB_Matrix_free (&M2) ;                                              \
+    GB_FREE (A_slice) ;                                                 \
+    GB_FREE (B_slice) ;                                                 \
+    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -40,7 +44,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Context Context
 )
 {
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -68,6 +72,12 @@ double ttt = omp_get_wtime ( ) ;
     ASSERT (A_in->vlen == B_in->vlen) ;
 
     (*Chandle) = NULL ;
+    GrB_Matrix M, M2 = NULL ;
+    int64_t *GB_RESTRICT A_slice = NULL ;
+    int64_t *GB_RESTRICT B_slice = NULL ;
+    int64_t *GB_RESTRICT pstart_Mslice = NULL ;
+    int64_t *GB_RESTRICT kfirst_Mslice = NULL ;
+    int64_t *GB_RESTRICT klast_Mslice  = NULL ;
 
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
@@ -98,8 +108,6 @@ double ttt = omp_get_wtime ( ) ;
     // determine the size of C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT A_slice = NULL ;
-    int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t cnvec = B->nvec ;
     int64_t cvlen = A->vdim ;
     int64_t cvdim = B->vdim ;
@@ -115,7 +123,6 @@ double ttt = omp_get_wtime ( ) ;
     // extract the submask if A or B are hypersparse 
     //--------------------------------------------------------------------------
 
-    GrB_Matrix M, M2 = NULL ;
     if (A_or_B_hyper && M_in != NULL)
     {
         // M2 = M_in (Ah, Bh)
@@ -211,9 +218,9 @@ double ttt = omp_get_wtime ( ) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (17, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (17, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -229,13 +236,41 @@ ttt = omp_get_wtime ( ) ;
         Context)) ;
     GrB_Matrix C = (*Chandle) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (18, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (18, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
-    // TODO: if M is sparse, scatter it into the C bitmap
+    // if M is sparse/hyper, scatter it into the C bitmap
     //--------------------------------------------------------------------------
+
+    if (C_bitmap_calloc)
+    { 
+        // FUTURE:: could just set Cb [pC] = 2 since Cb has just been calloc'd.
+        // However, in the future, this method might be able to modify C on
+        // input, in which case C->b will not be all zero.
+
+        int mthreads = GB_nthreads (GB_NNZ (M) + M->nvec, chunk, nthreads_max) ;
+        int mtasks = (mthreads == 1) ? 1 : (8 * mthreads) ;
+        if (!GB_ek_slice (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice,
+            M, &mtasks))
+        { 
+            // out of memory
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+
+        // Cb [pC] += 2 for each entry M(i,j) in the mask
+        GB_bitmap_M_scatter (C,
+            NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
+            M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            mthreads, mtasks, Context) ;
+        // the bitmap of C now contains:
+        //  Cb (i,j) = 0:   cij not present, mij zero
+        //  Cb (i,j) = 1:   cij present, mij zero           (not used yet)
+        //  Cb (i,j) = 2:   cij not present, mij 1
+        //  Cb (i,j) = 3:   cij present, mij 1              (not used yet)
+    }
 
     //--------------------------------------------------------------------------
     // C<#>=A'*B, computing each entry with a dot product, via builtin semiring
@@ -295,6 +330,7 @@ ttt = omp_get_wtime ( ) ;
     GB_FREE_ALL ;
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "dot2: C = A'*B output", GB0) ;
+    ASSERT (!GB_ZOMBIES (C)) ;
 
     //--------------------------------------------------------------------------
     // unpack C if A or B are hypersparse
@@ -400,6 +436,7 @@ ttt = omp_get_wtime ( ) ;
 
         // C is now sparse or hypersparse
         ASSERT_MATRIX_OK (C, "dot2: unpacked C", GB0) ;
+        ASSERT (GB_ZOMBIES_OK (C)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -411,9 +448,9 @@ ttt = omp_get_wtime ( ) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (19, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (19, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     return (GrB_SUCCESS) ;
 }

@@ -278,7 +278,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_Context Context
 )
 {
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -461,9 +461,9 @@ double ttt = omp_get_wtime ( ) ;
         ASSERT (C_sparsity == GxB_SPARSE) ;
     }
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (3, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (3, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase0: create parallel tasks
@@ -480,9 +480,9 @@ ttt = omp_get_wtime ( ) ;
         Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (4, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (4, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
@@ -790,6 +790,7 @@ ttt = omp_get_wtime ( ) ;
                             // get B(k,j)
                             int64_t pB = pB_start + s ;
                             int64_t k = GBI (Bi, pB, bvlen) ;
+                            Bflops2 [s] = 1 ;
                             if (!GBB (Bb, pB)) continue ;
                             // fl = flop count for just A(:,k)*B(k,j)
                             int64_t pA, pA_end ;
@@ -807,7 +808,8 @@ ttt = omp_get_wtime ( ) ;
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
                         ASSERT (Fine_slice != NULL) ;
-                        GB_pslice (&Fine_slice, Bflops2, bjnz, team_size, false) ;
+                        GB_pslice (&Fine_slice, Bflops2, bjnz, team_size,
+                            false) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
                         int64_t hsize = 
@@ -1120,16 +1122,23 @@ ttt = omp_get_wtime ( ) ;
     // phase1: symbolic analysis
     //==========================================================================
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (5, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// TODO constructing the tasks (the work above) can take a lot of time.
+// See the web graph, where it takes a total of 3.03 sec for 64 trials, vs
+// a total of 5.9 second for phase 7 (the numerical work below).
+// Figure out a faster method.
+
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (5, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
         A, B, TaskList, ntasks, nfine, nthreads) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (6, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// the above phase takes 1.6 seconds for 64 trials of the web graph.
+
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (6, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
@@ -1188,9 +1197,9 @@ ttt = omp_get_wtime ( ) ;
     // prune empty vectors, free workspace, and return result
     //==========================================================================
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (7, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (7, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
@@ -1200,8 +1209,8 @@ ttt = omp_get_wtime ( ) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = apply_mask ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (8, ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (8, ttt) ;
 
     return (info) ;
 }

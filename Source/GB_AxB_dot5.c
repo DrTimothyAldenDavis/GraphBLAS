@@ -40,7 +40,7 @@ GrB_Info GB_AxB_dot5                // A'*B, dot product method
     GB_Context Context
 )
 {
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // prototype
@@ -269,9 +269,9 @@ double ttt = omp_get_wtime ( ) ;
 
     int64_t cnvals = 0 ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (15, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (15, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
 if (M_is_full_and_valued) {
 
@@ -560,9 +560,9 @@ if (M_is_full_and_valued) {
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (16, ttt) ;
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (16, ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     return (GrB_SUCCESS) ;
 }
