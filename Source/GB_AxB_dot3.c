@@ -67,7 +67,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (!GB_IS_FULL (M)) ;          // ok: dot2 used instead
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
-    ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(CPU dot3) ") ;
 
     int ntasks, max_ntasks = 0, nthreads ;
@@ -136,6 +135,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     ASSERT (A->vlen == B->vlen) ;
+    ASSERT (vlen > 0) ;
 
     //--------------------------------------------------------------------------
     // allocate C, the same size and # of entries as M
@@ -146,9 +146,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cvdim = mvdim ;
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
+    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
-    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         sparsity, true, M->hyper_switch, cnvec,
@@ -204,7 +204,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
-    // TODO: use 9-way cases for phase1 via GB_AxB_dot_meta2.c
+    // TODO: use 16-way cases for phase1 via GB_AxB_dot_meta2.c
 
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)

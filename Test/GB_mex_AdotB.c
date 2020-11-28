@@ -193,6 +193,12 @@ void mexFunction
         mexErrMsgTxt ("inner dimensions of A'*B do not match") ;
     }
 
+    if (anrows == 0)
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("inner dimensions of A'*B must be > 0") ;
+    }
+
     // get flipxy
     GET_SCALAR (3, bool, flipxy, false) ;
 

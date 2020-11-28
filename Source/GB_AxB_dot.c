@@ -88,19 +88,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
 
     //--------------------------------------------------------------------------
-    // prototype bitmap case: removed
-    //--------------------------------------------------------------------------
-
-//  info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
-//      A, B, semiring, flipxy, Context) ;
-//  if (info != GrB_NO_VALUE)
-//  { 
-//      (*done_in_place) = false ;
-//      (*mask_applied) = (M != NULL) ; // mask applied if present
-//      return (info) ;
-//  }
-
-    //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
@@ -112,7 +99,20 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     }
 
     //--------------------------------------------------------------------------
-    // C<M>=A'*B where C and M are sparse or hypersparse
+    // check the empty case
+    //--------------------------------------------------------------------------
+
+    if (A->vlen == 0)
+    { 
+        // no work to do; C is an empty matrix, normally hypersparse
+        if (C_in != NULL) return (GrB_SUCCESS) ;
+        return (GB_new (Chandle, // auto sparsity, new header
+            semiring->add->op->ztype, A->vdim, B->vdim, GB_Ap_calloc, true,
+            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C<M>=A'*B: general case
     //--------------------------------------------------------------------------
 
     if (GB_AxB_dot3_control (M, Mask_comp))

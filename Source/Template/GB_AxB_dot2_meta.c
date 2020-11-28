@@ -65,7 +65,6 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
-    const bool B_is_sparse_or_hyper = B_is_sparse ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
@@ -74,7 +73,6 @@
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
-    const bool A_is_sparse_or_hyper = A_is_sparse ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
 
     const int64_t vlen = A->vlen ;
@@ -138,12 +136,14 @@
             GBURBLE ("(specialized) ") ;
             #define GB_ANY_SPECIALIZED
             #define GB_MASK_IS_PRESENT
-            #define GB_A_IS_SPARSE_OR_HYPER 1
-            #define GB_A_IS_BITMAP          0
-            #define GB_A_IS_FULL            0
-            #define GB_B_IS_SPARSE_OR_HYPER 0
-            #define GB_B_IS_BITMAP          1
-            #define GB_B_IS_FULL            0
+            #define GB_A_IS_SPARSE 1
+            #define GB_A_IS_HYPER  0
+            #define GB_A_IS_BITMAP 0
+            #define GB_A_IS_FULL   0
+            #define GB_B_IS_SPARSE 0
+            #define GB_B_IS_SPARSE 0
+            #define GB_B_IS_BITMAP 1
+            #define GB_B_IS_FULL   0
             #include "GB_AxB_dot2_template.c"
             #undef  GB_ANY_SPECIALIZED
             #undef GB_MASK_IS_PRESENT

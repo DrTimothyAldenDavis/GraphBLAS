@@ -37,6 +37,7 @@
 
 {
     int64_t pB = pB_start ;
+    GB_CIJ_DECLARE (cij) ;
 
     //--------------------------------------------------------------------------
     // A is full
@@ -103,7 +104,7 @@
         GB_DOT_SAVE_CIJ ;
 
     }
-    #elif ( GB_A_IS_FULL && GB_B_IS_SPARSE_OR_HYPER )
+    #elif ( GB_A_IS_FULL && ( GB_B_IS_SPARSE || GB_B_IS_HYPER ) )
     {
 
         //----------------------------------------------------------------------
@@ -185,7 +186,7 @@
         GB_DOT_SAVE_CIJ ;
 
     }
-    #elif ( GB_A_IS_BITMAP && GB_B_IS_SPARSE_OR_HYPER )
+    #elif ( GB_A_IS_BITMAP && ( GB_B_IS_SPARSE || GB_B_IS_HYPER ) )
     {
 
         //----------------------------------------------------------------------
@@ -203,7 +204,7 @@
         GB_DOT_SAVE_CIJ ;
 
     }
-    #elif ( GB_A_IS_SPARSE_OR_HYPER && GB_B_IS_FULL )
+    #elif ( (GB_A_IS_SPARSE || GB_A_IS_HYPER) && GB_B_IS_FULL )
     {
 
         //----------------------------------------------------------------------
@@ -251,7 +252,7 @@
         GB_DOT_ALWAYS_SAVE_CIJ ;
 
     }
-    #elif ( GB_A_IS_SPARSE_OR_HYPER && GB_B_IS_BITMAP )
+    #elif ( (GB_A_IS_SPARSE || GB_A_IS_HYPER) && GB_B_IS_BITMAP )
     {
 
         //----------------------------------------------------------------------
@@ -269,7 +270,7 @@
         GB_DOT_SAVE_CIJ ;
 
     }
-    #elif ( GB_A_IS_SPARSE_OR_HYPER && GB_B_IS_SPARSE_OR_HYPER )
+    #else
     {
 
         //----------------------------------------------------------------------

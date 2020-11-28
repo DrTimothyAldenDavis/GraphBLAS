@@ -45,7 +45,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     GrB_Info info ;
     int64_t vlen, vdim ;
 
-    // A is created with auto hypersparsity (typically hypersparse unless
+    // A is created with auto sparsity (typically hypersparse unless
     // vdim <= 1 or hyper_switch < 0) and default CSR/CSC format.
 
     bool A_is_csc = GB_Global_is_csc_get ( ) ;
@@ -61,10 +61,9 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-    info = GB_new (A, // new matrix (auto sparse or hyper), new header
+    info = GB_new (A, // auto sparsity, new header
         type, vlen, vdim, GB_Ap_calloc, A_is_csc,
-        GxB_SPARSE + GxB_HYPERSPARSE,
-        GB_Global_hyper_switch_get ( ), 1, Context) ;
+        GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context) ;
     return (info) ;
 }
 

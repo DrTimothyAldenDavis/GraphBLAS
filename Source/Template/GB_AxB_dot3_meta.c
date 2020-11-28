@@ -72,7 +72,6 @@
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
-    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -83,7 +82,6 @@
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
-    const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
 
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;

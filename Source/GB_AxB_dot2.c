@@ -69,7 +69,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (!GB_PENDING (B_in)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
-    ASSERT (A_in->vlen == B_in->vlen) ;
 
     (*Chandle) = NULL ;
     GrB_Matrix M, M2 = NULL ;
@@ -78,6 +77,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t *GB_RESTRICT pstart_Mslice = NULL ;
     int64_t *GB_RESTRICT kfirst_Mslice = NULL ;
     int64_t *GB_RESTRICT klast_Mslice  = NULL ;
+    ASSERT (A_in->vlen == B_in->vlen) ;
+    ASSERT (A_in->vlen > 0) ;
 
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
@@ -227,12 +228,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     // if M is sparse/hyper, then calloc C->b; otherwise use malloc
-    bool C_bitmap_calloc = (M != NULL) &&
+    bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
     GB_OK (GB_new_bix (Chandle, // bitmap, new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GxB_BITMAP, C_bitmap_calloc, B->hyper_switch, cnvec, cnz, true,
+        GxB_BITMAP, M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true,
         Context)) ;
     GrB_Matrix C = (*Chandle) ;
 
@@ -244,7 +245,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // if M is sparse/hyper, scatter it into the C bitmap
     //--------------------------------------------------------------------------
 
-    if (C_bitmap_calloc)
+    if (M_is_sparse_or_hyper)
     { 
         // FUTURE:: could just set Cb [pC] = 2 since Cb has just been calloc'd.
         // However, in the future, this method might be able to modify C on

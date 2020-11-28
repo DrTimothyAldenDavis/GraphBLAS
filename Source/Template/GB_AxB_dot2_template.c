@@ -53,11 +53,10 @@
             // get B(:,j)
             //------------------------------------------------------------------
 
-            #if GB_B_IS_SPARSE_OR_HYPER
-
+            #if GB_B_IS_SPARSE
                 // B is sparse (never hypersparse)
                 const int64_t pB_start = Bp [j] ;
-                const int64_t pB_end   = Bp [j+1] ;
+                const int64_t pB_end = Bp [j+1] ;
                 const int64_t bjnz = pB_end - pB_start ;
                 if (bjnz == 0)
                 { 
@@ -65,18 +64,14 @@
                     memset (&Cb [pC_start + kA_start], 0, kA_end - kA_start) ;
                     continue ;
                 }
-
-                #if ( GB_A_IS_SPARSE_OR_HYPER )
-                    // get the first and last index in B(:,j)
+                #if GB_A_IS_SPARSE
+                    // Both A and B are sparse; get first and last in B(:,j)
                     const int64_t ib_first = Bi [pB_start] ;
                     const int64_t ib_last  = Bi [pB_end-1] ;
                 #endif
-
             #else
-
                 // B is bitmap or full
                 const int64_t pB_start = j * vlen ;
-
             #endif
 
             //------------------------------------------------------------------
@@ -93,13 +88,10 @@
                 int64_t pC = pC_start + i ;     // C is bitmap
 
                 #if defined ( GB_ANY_SPECIALIZED )
-
                 // M is bitmap and structural; Mask_comp true
                 Cb [pC] = 0 ;
                 if (!Mb [pC])
-
                 #elif defined ( GB_MASK_IS_PRESENT )
-
                 bool mij ;
                 if (M_is_bitmap)
                 { 
@@ -118,40 +110,43 @@
                 }
                 Cb [pC] = 0 ;
                 if (mij ^ Mask_comp)
-
                 #else
-
                 // M is not present
                 Cb [pC] = 0 ;
-
                 #endif
                 { 
 
                     //----------------------------------------------------------
-                    // C(i,j) = A(:,i)'*B(:,j)
+                    // the mask allows C(i,j) to be computed
                     //----------------------------------------------------------
 
-                    #if GB_A_IS_SPARSE_OR_HYPER
+                    #if GB_A_IS_SPARSE
+                    // A is sparse
                     int64_t pA = Ap [i] ;
                     const int64_t pA_end = Ap [i+1] ;
                     const int64_t ainz = pA_end - pA ;
-                    if (ainz == 0) continue ;
+                    if (ainz > 0)
                     #else
+                    // A is bitmap or full
                     const int64_t pA = i * vlen ;
                     #endif
-                    bool cij_exists = false ;
-                    GB_CIJ_DECLARE (cij) ;
-                    #include "GB_AxB_dot_cij.c"
+                    { 
+                        // C(i,j) = A(:,i)'*B(:,j)
+                        bool cij_exists = false ;
+                        #include "GB_AxB_dot_cij.c"
+                    }
                 }
             }
         }
     }
 }
 
-#undef GB_A_IS_SPARSE_OR_HYPER
+#undef GB_A_IS_SPARSE
+#undef GB_A_IS_HYPER
 #undef GB_A_IS_BITMAP
 #undef GB_A_IS_FULL
-#undef GB_B_IS_SPARSE_OR_HYPER
+#undef GB_B_IS_SPARSE
+#undef GB_B_IS_HYPER
 #undef GB_B_IS_BITMAP
 #undef GB_B_IS_FULL
 
