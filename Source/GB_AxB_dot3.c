@@ -123,17 +123,22 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
+    const bool M_is_sparse = GB_IS_SPARSE (M) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t vlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
+    const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (vlen > 0) ;
 
@@ -204,93 +209,24 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
-    // TODO: use 16-way cases for phase1 via GB_AxB_dot_meta2.c
+    #define GB_DOT3
+    #define GB_DOT3_PHASE1
 
-    int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    if (M_is_sparse && Mask_struct)
     {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t kfirst = TaskList [taskid].kfirst ;
-        int64_t klast  = TaskList [taskid].klast ;
-        bool fine_task = (klast == -1) ;
-        if (fine_task)
-        { 
-            // a fine task operates on a slice of a single vector
-            klast = kfirst ;
-        }
-
-        int64_t bpleft = 0 ;
-
-        //----------------------------------------------------------------------
-        // compute all vectors in this task
-        //----------------------------------------------------------------------
-
-        for (int64_t k = kfirst ; k <= klast ; k++)
-        {
-
-            //------------------------------------------------------------------
-            // get j, the kth vector of C and M
-            //------------------------------------------------------------------
-
-            int64_t j = GBH (Mh, k) ;
-            GB_GET_VECTOR (pM, pM_end, pM, pM_end, Mp, k, mvlen) ;
-
-            //------------------------------------------------------------------
-            // get B(:,j)
-            //------------------------------------------------------------------
-
-            int64_t pB, pB_end ;
-            GB_lookup (B_is_hyper, Bh, Bp, vlen, &bpleft, bnvec-1, j,
-                &pB, &pB_end) ;
-            int64_t bjnz = pB_end - pB ;
-
-            //------------------------------------------------------------------
-            // estimate the work to compute each entry of C(:,j)
-            //------------------------------------------------------------------
-
-            // A decent estimate of the work to compute the dot product C(i,j)
-            // = A(:,i)'*B(:,j) is min (|A(:,i)|, |B(:,j)|) + 1.  This is a
-            // lower bound.  The actual work could require a binary search of
-            // either A(:,i) or B(:,j), or a merge of the two vectors.  Or it
-            // could require no work at all if all entries in A(:,i) appear
-            // before all entries in B(:,j), or visa versa.  No work is done if
-            // M(i,j)=0.
-
-            if (bjnz == 0)
-            {
-                // B(:,j) is empty, so C(:,j) is empty as well.  No work is to
-                // be done, but it still takes unit work to flag each C(:,j) as
-                // a zombie
-                for ( ; pM < pM_end ; pM++)
-                { 
-                    Cwork [pM] = 1 ;
-                }
-            }
-            else
-            {
-                int64_t apleft = 0 ;
-                for ( ; pM < pM_end ; pM++)
-                {
-                    int64_t work = 1 ;
-                    if (GB_mcast (Mx, pM, msize))
-                    { 
-                        int64_t pA, pA_end ;
-                        int64_t i = GBI (Mi, pM, mvlen) ;
-                        GB_lookup (A_is_hyper, Ah, Ap, vlen, &apleft,
-                            anvec-1, i, &pA, &pA_end) ;
-                        int64_t ainz = pA_end - pA ;
-                        work += GB_IMIN (ainz, bjnz) ;
-                    }
-                    Cwork [pM] = work ;
-                }
-            }
-        }
+        // special case: M is sparse and structural
+        #define GB_MASK_SPARSE_AND_STRUCTURAL
+        #include "GB_AxB_dot_meta16.c"
+        #undef GB_MASK_SPARSE_AND_STRUCTURAL
     }
+    else
+    {
+        // general case: M sparse/hyper, structural/valued
+        #include "GB_AxB_dot_meta16.c"
+    }
+
+    #undef GB_DOT3
+    #undef GB_DOT3_PHASE1
 
     //--------------------------------------------------------------------------
     // free the current tasks and construct the tasks for the second phase

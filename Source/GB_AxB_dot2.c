@@ -5,8 +5,6 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-// TODO: rename to GB_bitmap_AxB_dot.c
-
 //------------------------------------------------------------------------------
 
 // The C<M>=A'*B dot product when C is sparse is computed by GB_AxB_dot3.

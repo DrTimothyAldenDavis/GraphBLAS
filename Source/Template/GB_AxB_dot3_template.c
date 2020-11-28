@@ -40,7 +40,14 @@
             // get C(:,k) and M(:k)
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ch, k) ;
+            #if defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
+            // M and C are sparse
+            const int64_t j = k ;
+            #else
+            // M and C are either both sparse or both hypersparse
+            const int64_t j = GBH (Ch, k) ;
+            #endif
+
             int64_t pC_start = Cp [k] ;
             int64_t pC_end   = Cp [k+1] ;
             if (k == kfirst)
@@ -105,21 +112,24 @@
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             {
 
-                //----------------------------------------------------------
+                //--------------------------------------------------------------
                 // get C(i,j) and M(i,j)
-                //----------------------------------------------------------
+                //--------------------------------------------------------------
 
                 bool cij_exists = false ;
                 GB_CIJ_DECLARE (cij) ;
 
                 // get the value of M(i,j)
                 int64_t i = Mi [pC] ;
+                #if !defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
+                // if M is structural, no need to check its values
                 if (GB_mcast (Mx, pC, msize))
+                #endif
                 { 
 
-                    //------------------------------------------------------
+                    //----------------------------------------------------------
                     // the mask allows C(i,j) to be computed
-                    //------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #if GB_A_IS_HYPER
                     // A is hyper

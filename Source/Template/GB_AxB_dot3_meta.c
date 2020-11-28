@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: rename GB_sparse_AxB_dot_meta.c
-
 #define GB_DOT3
+#define GB_DOT3_PHASE2
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
 
@@ -86,18 +85,14 @@
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;
 
-    ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
+    const bool M_is_sparse = GB_IS_SPARSE (M) ;
+    ASSERT (M_is_sparse || GB_IS_HYPERSPARSE (M)) ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-    const size_t msize = M->type->size ;
     const size_t mvlen = M->vlen ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B via dot products, where C and M are both sparse/hyper
     //--------------------------------------------------------------------------
-
-    // TODO add specialized case for TC: M is sparse and structural
-    // or add all 4 cases?
 
     // 4 possible cases of the mask are handled:
 
@@ -108,12 +103,35 @@
     // The other 12 cases of the mask, and the one no-mask case, are handled
     // by dot2.
 
-    #include "GB_AxB_dot_meta2.c"
+    if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
+    {
+        // special case: M is sparse and structural, and A and B are sparse
+        #define GB_MASK_SPARSE_AND_STRUCTURAL
+        #define GB_A_IS_SPARSE 1
+        #define GB_A_IS_HYPER  0
+        #define GB_A_IS_BITMAP 0
+        #define GB_A_IS_FULL   0
+        #define GB_B_IS_SPARSE 1
+        #define GB_B_IS_HYPER  0
+        #define GB_B_IS_BITMAP 0
+        #define GB_B_IS_FULL   0
+        #include "GB_AxB_dot3_template.c"
+        #undef GB_MASK_SPARSE_AND_STRUCTURAL
+    }
+    else
+    {
+        // general case
+        const GB_void *GB_RESTRICT Mx = (GB_void *)
+            (Mask_struct ? NULL : (M->x)) ;
+        const size_t msize = M->type->size ;
+        #include "GB_AxB_dot_meta16.c"
+    }
 
     C->nzombies = nzombies ;
 }
 
 #undef GB_DOT3
+#undef GB_DOT3_PHASE2
 #undef GB_DOT_ALWAYS_SAVE_CIJ
 #undef GB_DOT_SAVE_CIJ
 

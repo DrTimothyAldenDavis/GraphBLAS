@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: rename GB_bitmap_AxB_dot_template.c
-
 // A and B are sparse, bitmap, or full; never hypersparse.  If the input
 // matrices A and/or B are hypersparse, they are packed into sparse matrices,
 // and C is unpacked from bitmap to sparse/hypersparse when done.

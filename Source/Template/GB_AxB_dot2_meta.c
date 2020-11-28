@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: rename to GB_bitmap_AxB_dot_meta.c
-
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
 
@@ -92,7 +90,7 @@
         //----------------------------------------------------------------------
 
         #undef GB_MASK_IS_PRESENT
-        #include "GB_AxB_dot_meta2.c"
+        #include "GB_AxB_dot_meta16.c"
 
     }
     else
@@ -162,7 +160,7 @@
             const size_t msize = M->type->size ;
 
             #define GB_MASK_IS_PRESENT
-            #include "GB_AxB_dot_meta2.c"
+            #include "GB_AxB_dot_meta16.c"
             #undef GB_MASK_IS_PRESENT
 
         }
