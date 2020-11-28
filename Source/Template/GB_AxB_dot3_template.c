@@ -110,6 +110,7 @@
                 //----------------------------------------------------------
 
                 bool cij_exists = false ;
+                GB_CIJ_DECLARE (cij) ;
 
                 // get the value of M(i,j)
                 int64_t i = Mi [pC] ;

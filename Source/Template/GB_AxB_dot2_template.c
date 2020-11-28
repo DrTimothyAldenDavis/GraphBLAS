@@ -133,6 +133,7 @@
                     { 
                         // C(i,j) = A(:,i)'*B(:,j)
                         bool cij_exists = false ;
+                        GB_CIJ_DECLARE (cij) ;
                         #include "GB_AxB_dot_cij.c"
                     }
                 }
