@@ -26,7 +26,6 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     int A_sparsity = GB_sparsity (A) ;
     if (A_sparsity != GB_sparsity (B))
     {
-        // TODO: allow A and B to differ in sparsity structure
         return (false) ;
     }
 
