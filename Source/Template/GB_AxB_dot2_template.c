@@ -134,12 +134,14 @@
                     #if GB_A_IS_SPARSE_OR_HYPER
                     int64_t pA = Ap [i] ;
                     const int64_t pA_end = Ap [i+1] ;
-                    int64_t ainz = pA_end - pA ;
+                    const int64_t ainz = pA_end - pA ;
                     if (ainz == 0) continue ;
                     #else
                     const int64_t pA = i * vlen ;
                     #endif
-                    #include "GB_AxB_dot2_cij.c"
+                    bool cij_exists = false ;
+                    GB_CIJ_DECLARE (cij) ;
+                    #include "GB_AxB_dot_cij.c"
                 }
             }
         }

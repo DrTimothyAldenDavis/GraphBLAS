@@ -235,7 +235,7 @@ GrB_Info GB_Adot2B__eq_eq_int64
 }
 
 //------------------------------------------------------------------------------
-// C<M>=A'*B: masked dot product method (phase 2)
+// C<M>=A'*B: masked dot product method (phase 2) where C is sparse or hyper
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot3B__eq_eq_int64
@@ -252,7 +252,7 @@ GrB_Info GB_Adot3B__eq_eq_int64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot3_template.c"
+    #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }

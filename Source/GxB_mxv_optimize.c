@@ -65,7 +65,7 @@ GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
         // note for MKL: doesn't the analysis depend on C'*x or C*x?
 
         int A_mkl_type = GB_type_mkl (C->type->code) ;
-        if (!GB_IS_HYPER (C) && A_mkl_type >= 0)
+        if (!GB_IS_HYPERSPARSE (C) && A_mkl_type >= 0)
         {
 
             // create the MKL version of the matrix

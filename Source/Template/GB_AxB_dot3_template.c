@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot3_template: C<M>=A'*B via dot products
+// GB_AxB_dot3_template: C<M>=A'*B via dot products, where C is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,70 +7,27 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_DOT3
-#define GB_DOT3
-#endif
+// C and M are both sparse or hyper, and C->h is a copy of M->h.
+// M is present, and not complemented.  It may be valued or structural.
+
+// TODO: exploit GB_A_IS_SPARSE_OR_HYPER, etc
 
 {
 
-    //--------------------------------------------------------------------------
-    // get M, A, B, and C
-    //--------------------------------------------------------------------------
-
-    const int64_t *GB_RESTRICT Cp = C->p ;
-    const int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t  *GB_RESTRICT Ci = C->i ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
-    const int64_t cvlen = C->vlen ;
-    ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
-
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
-    ASSERT (A->vlen == B->vlen) ;
-    const int64_t bnvec = B->nvec ;
-    const bool B_is_hyper = (Bh != NULL) ;
-    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-    const size_t msize = M->type->size ;
-    const size_t mvlen = M->vlen ;
-
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
-    const int64_t anvec = A->nvec ;
-    const int64_t vlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPER (A) ;
-    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
-
-    //--------------------------------------------------------------------------
-    // C<M> = A'*B
-    //--------------------------------------------------------------------------
-
-    // C and M have the same pattern, except some entries of C may become
-    // zombies.
-    int64_t nzombies = 0 ;
-
-    int taskid ;
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t kfirst = TaskList [taskid].kfirst ;
-        int64_t klast  = TaskList [taskid].klast ;
-        int64_t pC_first = TaskList [taskid].pC ;
-        int64_t pC_last  = TaskList [taskid].pC_end ;
+        int64_t kfirst = TaskList [tid].kfirst ;
+        int64_t klast  = TaskList [tid].klast ;
+        int64_t pC_first = TaskList [tid].pC ;
+        int64_t pC_last  = TaskList [tid].pC_end ;
         int64_t task_nzombies = 0 ;
         int64_t bpleft = 0 ;
 
@@ -86,8 +43,8 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH (Ch, k) ;
-            int64_t pC_start = GBP (Cp, k, cvlen) ;
-            int64_t pC_end   = GBP (Cp, k+1, cvlen) ;
+            int64_t pC_start = Cp [k] ;
+            int64_t pC_end   = Cp [k+1] ;
             if (k == kfirst)
             { 
                 // First vector for task; may only be partially owned.
@@ -128,9 +85,10 @@
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
                 { 
                     // C(i,j) is a zombie
-                    int64_t i = GBI (Mi, pC, mvlen) ;
-                    Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                    int64_t i = Mi [pC] ;
+                    Ci [pC] = GB_FLIP (i) ;
                 }
+
             }
             else
             {
@@ -150,9 +108,12 @@
                     // compute C(i,j)
                     //----------------------------------------------------------
 
+                    bool cij_exists = false ;
+                    GB_CIJ_DECLARE (cij) ;
+
                     // get the value of M(i,j)
-                    int64_t i = GBI (Mi, pC, mvlen) ;
-                    if (GB_mcast (Mx, pC, msize))   // note: Mx [pC], same as Cx
+                    int64_t i = Mi [pC] ;
+                    if (GB_mcast (Mx, pC, msize))
                     { 
 
                         //------------------------------------------------------
@@ -163,19 +124,19 @@
                         int64_t pA, pA_end ;
                         GB_lookup (A_is_hyper, Ah, Ap, vlen, &apleft,
                             anvec-1, i, &pA, &pA_end) ;
-
-                        // C(i,j) = A(:,i)'*B(:,j)
-                        #include "GB_AxB_dot3_cij.c"
+                        const int64_t ainz = pA_end - pA ;
+                        if (ainz > 0)
+                        {
+                            // C(i,j) = A(:,i)'*B(:,j)
+                            #include "GB_AxB_dot_cij.c"
+                        }
                     }
-                    else
+
+                    if (!GB_CIJ_EXISTS)
                     { 
-
-                        //------------------------------------------------------
-                        // M(i,j) is false, so C(i,j) is a zombie
-                        //------------------------------------------------------
-
-                        task_nzombies++ ;   // GB_AxB_dot3: computing C<M>=A'*B
-                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                        // C(i,j) is a zombie
+                        task_nzombies++ ;
+                        Ci [pC] = GB_FLIP (i) ;
                     }
                 }
             }
@@ -185,14 +146,14 @@
         // sum up the zombies found by this task
         //----------------------------------------------------------------------
 
-        nzombies += task_nzombies ;
+        nzombies += task_nzombies ; // TODO: just use nzombies
     }
-
-    //--------------------------------------------------------------------------
-    // finalize the zombie count for C
-    //--------------------------------------------------------------------------
-
-    C->nzombies = nzombies ;
 }
 
-#undef GB_DOT3
+#undef GB_A_IS_SPARSE_OR_HYPER
+#undef GB_A_IS_BITMAP
+#undef GB_A_IS_FULL
+#undef GB_B_IS_SPARSE_OR_HYPER
+#undef GB_B_IS_BITMAP
+#undef GB_B_IS_FULL
+

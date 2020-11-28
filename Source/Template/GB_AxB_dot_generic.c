@@ -131,7 +131,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -145,7 +145,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -157,7 +157,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -184,7 +184,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -198,7 +198,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -210,7 +210,7 @@
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
                     #include "GB_AxB_dot4_template.c"
                     #endif
@@ -290,7 +290,7 @@
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
                 #include "GB_AxB_dot4_template.c"
                 #endif
@@ -304,7 +304,7 @@
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
                 #include "GB_AxB_dot4_template.c"
                 #endif
@@ -320,7 +320,7 @@
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
                 #include "GB_AxB_dot4_template.c"
                 #endif
@@ -333,7 +333,7 @@
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
                 #include "GB_AxB_dot4_template.c"
                 #endif

@@ -95,17 +95,17 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB2) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
-    ASSERT_MATRIX_OK (A, "A for flop count A*B", GB2) ;
+    ASSERT_MATRIX_OK (A, "A for flop count A*B", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for flop count A*B", GB2) ;
+    ASSERT_MATRIX_OK (B, "B for flop count A*B", GB0) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_PENDING (B)) ;

@@ -77,7 +77,7 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_jumbled = A->jumbled ;
 

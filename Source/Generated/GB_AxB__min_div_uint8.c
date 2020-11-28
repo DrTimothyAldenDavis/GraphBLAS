@@ -234,7 +234,7 @@ GrB_Info GB_Adot2B__min_div_uint8
 }
 
 //------------------------------------------------------------------------------
-// C<M>=A'*B: masked dot product method (phase 2)
+// C<M>=A'*B: masked dot product method (phase 2) where C is sparse or hyper
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot3B__min_div_uint8
@@ -251,7 +251,7 @@ GrB_Info GB_Adot3B__min_div_uint8
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot3_template.c"
+    #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -2,10 +2,12 @@
 // GB_AxB_dot_cij.h: definitions for GB_AxB_dot*_cij.c
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// GB_DOT: cij += A(k,i) * B(k,j), then break if terminal
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
+// GB_DOT: cij += A(k,i) * B(k,j), then break if terminal
 // Ai [pA] and Bi [pB] are both equal to the index k.
 
 // use the boolean flag cij_exists to set/check if C(i,j) exists
@@ -25,7 +27,7 @@
 
         // PLUS_PAIR for 64-bit integers, float, and double (not complex):
         // To check if C(i,j) exists, test (cij != 0) when done.  The
-        // boolean flag cij_exists is not defined.
+        // boolean flag cij_exists is not used.
         #undef  GB_CIJ_CHECK
         #define GB_CIJ_CHECK false
         #undef  GB_CIJ_EXISTS
@@ -51,7 +53,7 @@
 
     #if defined ( GB_DOT3 )
 
-        // for the dot3 method
+        // for the dot3 method: C is sparse or hyper
         #define GB_DOT(k,pA,pB)                                         \
         {                                                               \
             GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \
@@ -64,7 +66,7 @@
 
     #else
 
-        // for the dot2 method
+        // for the dot2 method: C is bitmap
         #define GB_DOT(k,pA,pB)                                         \
         {                                                               \
             GB_GETA (aki, Ax, pA) ;  /* aki = A(k,i) */                 \

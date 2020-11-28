@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2_cij: compute C(i,j) = A(:,i)'*B(:,j)
+// GB_AxB_dot_cij: compute C(i,j) = A(:,i)'*B(:,j)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
-// used for all three cases: C=A'*B, C<M>=A'B, and C<!M>=A'*B in dot2.
+// used for all three cases: C=A'*B, C<M>=A'*B, and C<!M>=A'*B in dot2 when C
+// is bitmap, and for C<M>=A'*B when C is sparse or hyper.
 
 // When used as the multiplicative operator, the PAIR operator provides some
 // useful special cases.  Its output is always one, for any matching pair of
@@ -36,8 +37,6 @@
 
 {
     int64_t pB = pB_start ;
-    bool cij_exists = false ;
-    GB_CIJ_DECLARE (cij) ;
 
     //--------------------------------------------------------------------------
     // A is full
@@ -282,10 +281,10 @@
         { 
 
             //------------------------------------------------------------------
-            // pattern of A(:,i) and B(:,j) do not overlap
+            // pattern of A(:,i) and B(:,j) don't overlap; C(i,j) doesn't exist
             //------------------------------------------------------------------
 
-            ;
+            ASSERT (!GB_CIJ_EXISTS) ;
 
         }
         else if (ainz > 8 * bjnz)

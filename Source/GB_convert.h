@@ -29,10 +29,6 @@
 // true if A is sparse (but not hypersparse)
 #define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
-// if A is hypersparse but all vectors are present, then
-// treat A as if it were non-hypersparse
-#define GB_IS_HYPER(A) (GB_IS_HYPERSPARSE (A) && ((A)->nvec < (A)->vdim))
-
 // GB_sparsity: determine the current sparsity structure of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {

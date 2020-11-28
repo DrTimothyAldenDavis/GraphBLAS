@@ -18,7 +18,7 @@
     GB_PUTC (cij, pC) ;             \
     Cb [pC] = 1 ;                   \
     cnvals++ ;                      \
-}                                   \
+}
 
 // GB_DOT_SAVE_CIJ: C(i,j) = cij, unless already done by GB_DOT
 #if GB_IS_ANY_MONOID
@@ -94,7 +94,7 @@
         //----------------------------------------------------------------------
 
         #undef GB_MASK_IS_PRESENT
-        #include "GB_AxB_dot2_meta2.c"
+        #include "GB_AxB_dot_meta2.c"
 
     }
     else
@@ -103,6 +103,16 @@
         //----------------------------------------------------------------------
         // C<M>=A'*B or C<!M>=A'*B
         //----------------------------------------------------------------------
+
+        // 12 possible cases of the mask are handled:
+
+        // if M is not complemented (Mask_comp is false): 4 cases
+        // M can be bitmap or full, not sparse or hyper (dot3 handles that)
+        // M can be structural or valued
+
+        // if M is complemented (Mask_comp is true): 8 cases
+        // M can be sparse, hyper, bitmap, or full
+        // M can be structural or valued
 
         const int8_t *GB_RESTRICT Mb = M->b ;
         const bool M_is_bitmap = GB_IS_BITMAP (M) ;
@@ -152,7 +162,7 @@
             const size_t msize = M->type->size ;
 
             #define GB_MASK_IS_PRESENT
-            #include "GB_AxB_dot2_meta2.c"
+            #include "GB_AxB_dot_meta2.c"
             #undef GB_MASK_IS_PRESENT
 
         }
@@ -160,4 +170,7 @@
 
     C->nvals = cnvals ;
 }
+
+#undef GB_DOT_ALWAYS_SAVE_CIJ
+#undef GB_DOT_SAVE_CIJ
 

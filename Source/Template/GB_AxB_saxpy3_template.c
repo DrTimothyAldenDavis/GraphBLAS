@@ -51,7 +51,7 @@
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPER (A) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_jumbled = A->jumbled ;

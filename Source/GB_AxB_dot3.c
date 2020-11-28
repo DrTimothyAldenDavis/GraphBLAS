@@ -11,8 +11,6 @@
 // complemented, either valued or structural.  The mask is always applied.
 // C and M are both sparse or hypersparse.
 
-// TODO: use the same 9-way cases as dot2
-
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
@@ -125,7 +123,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t mvdim = M->vdim ;
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
-    const bool M_is_hyper = (Mh != NULL) ;
+    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -206,6 +204,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
+    // TODO: use 9-way cases for phase1 via GB_AxB_dot_meta2.c
+
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
@@ -215,7 +215,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        // GB_GET_TASK_DESCRIPTOR ;
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
         bool fine_task = (klast == -1) ;
@@ -284,8 +283,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                         int64_t i = GBI (Mi, pM, mvlen) ;
                         GB_lookup (A_is_hyper, Ah, Ap, vlen, &apleft,
                             anvec-1, i, &pA, &pA_end) ;
-                        int64_t ajnz = pA_end - pA ;
-                        work += GB_IMIN (ajnz, bjnz) ;
+                        int64_t ainz = pA_end - pA ;
+                        work += GB_IMIN (ainz, bjnz) ;
                     }
                     Cwork [pM] = work ;
                 }

@@ -77,6 +77,7 @@ for k1 = 1:length(types)
         GB_spec_compare (w1, w2, identity, tol) ;
 
         % with mask
+save gunk w mask op A identity tol
         w1 = GB_spec_reduce_to_vector (w, mask, [], op, A, []) ;
         w2 = GB_mex_reduce_to_vector  (w, mask, [], op, A, []) ;
         GB_spec_compare (w1, w2, identity, tol) ;
