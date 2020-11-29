@@ -76,7 +76,7 @@
             int64_t pC = pC_start + i ;                                 \
             GB_PUTC (cij, pC) ;                                         \
             Cb [pC] = 1 ;                                               \
-            cnvals++ ;                                                  \
+            task_cnvals++ ;                                             \
             break ;                                                     \
         }
 

@@ -33,6 +33,7 @@
         const int64_t kA_end   = A_slice [a_tid+1] ;
         const int64_t kB_start = B_slice [b_tid] ;
         const int64_t kB_end   = B_slice [b_tid+1] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // C=A'*B, C<M>=A'*B, or C<!M>=A'*B via dot products
@@ -137,6 +138,7 @@
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

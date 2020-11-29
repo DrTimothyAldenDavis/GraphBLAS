@@ -15,7 +15,7 @@
 {                                   \
     GB_PUTC (cij, pC) ;             \
     Cb [pC] = 1 ;                   \
-    cnvals++ ;                      \
+    task_cnvals++ ;                 \
 }
 
 // GB_DOT_SAVE_CIJ: C(i,j) = cij, unless already done by GB_DOT

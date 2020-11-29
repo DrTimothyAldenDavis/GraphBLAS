@@ -27,6 +27,7 @@
         int64_t pC_first = TaskList [tid].pC ;
         int64_t pC_last  = TaskList [tid].pC_end ;
         int64_t bpleft = 0 ;    // ok: Ch is not jumbled
+        int64_t task_nzombies = 0 ;     // # of zombies found by this task
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -88,7 +89,7 @@
                 if (bjnz == 0)
                 {
                     // no work to do if B(:,j) is empty, except for zombies
-                    nzombies += (pC_end - pC_start) ;
+                    task_nzombies += (pC_end - pC_start) ;
                     for (int64_t pC = pC_start ; pC < pC_end ; pC++)
                     { 
                         // C(i,j) is a zombie
@@ -157,11 +158,12 @@
                 if (!GB_CIJ_EXISTS)
                 { 
                     // C(i,j) is a zombie
-                    nzombies++ ;
+                    task_nzombies++ ;
                     Ci [pC] = GB_FLIP (i) ;
                 }
             }
         }
+        nzombies += task_nzombies ;
     }
 }
 
