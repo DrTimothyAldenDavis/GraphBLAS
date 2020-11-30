@@ -8,8 +8,8 @@ function result = nonz (A, varargin)
 %
 % e = GrB.nonz (A)         number of nonzeros
 % e = GrB.nonz (A, 'all')  number of nonzeros
-% e = GrB.nonz (A, 'row')  number of rows with at least one nonzeros
-% e = GrB.nonz (A, 'col')  number of columns with at least one nonzeros
+% e = GrB.nonz (A, 'row')  number of rows with at least one nonzero
+% e = GrB.nonz (A, 'col')  number of columns with at least one nonzero
 %
 % X = GrB.nonz (A, 'list')         list of values of unique nonzeros
 % X = GrB.nonz (A, 'all', 'list')  list of values of unique nonzeros

@@ -352,8 +352,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             return (info) ;
         }
 
-        GBURBLE ("(MKL tried) ") ;
-
         // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
         // so fall through to use GraphBLAS, below.
     }
@@ -894,39 +892,42 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int ncoarse_hash = 0 ;
     int ncoarse_1hash = 0 ;
     int ncoarse_gus = 0 ;
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    if (GB_Global_burble_get ( ))
     {
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool is_fine = (taskid < nfine) ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        if (is_fine)
+        for (int taskid = 0 ; taskid < ntasks ; taskid++)
         {
-            // fine task
-            if (use_Gustavson)
+            int64_t hash_size = TaskList [taskid].hsize ;
+            bool is_fine = (taskid < nfine) ;
+            bool use_Gustavson = (hash_size == cvlen) ;
+            if (is_fine)
             {
-                // fine Gustavson task
-                nfine_gus++ ;
+                // fine task
+                if (use_Gustavson)
+                {
+                    // fine Gustavson task
+                    nfine_gus++ ;
+                }
+                else
+                {
+                    // fine hash task
+                    nfine_hash++ ;
+                }
             }
             else
             {
-                // fine hash task
-                nfine_hash++ ;
-            }
-        }
-        else
-        {
-            // coarse task
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast = TaskList [taskid].end ;
-            if (use_Gustavson)
-            {
-                // coarse Gustavson task
-                ncoarse_gus++ ;
-            }
-            else
-            {
-                // hash task
-                ncoarse_hash++ ;
+                // coarse task
+                int64_t kfirst = TaskList [taskid].start ;
+                int64_t klast = TaskList [taskid].end ;
+                if (use_Gustavson)
+                {
+                    // coarse Gustavson task
+                    ncoarse_gus++ ;
+                }
+                else
+                {
+                    // hash task
+                    ncoarse_hash++ ;
+                }
             }
         }
     }
