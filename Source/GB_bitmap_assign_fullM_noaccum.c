@@ -82,8 +82,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
 
     #undef  GB_GET_MIJ
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;   \
-        if (Mask_comp) mij = !mij ;
+        bool mij = (GBB (Mb, pM) && GB_mcast (Mx, pM, msize)) ^ Mask_comp ;
 
     //--------------------------------------------------------------------------
     // C_replace phase
@@ -91,6 +90,10 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
 
     if (C_replace)
     { 
+        // if C FULL: use two passes: first pass checks if any
+        // entry must be deleted.  If none: do nothing.  Else:  change C
+        // to full and do 2nd pass as below.
+
         // for row assign: set Cb(i,:) to zero if mij == 0
         // for col assign: set Cb(:,j) to zero if mij == 0
         // for assign: set Cb(:,:) to zero if mij == 0
@@ -118,6 +121,8 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
         //----------------------------------------------------------------------
         // scalar assignment: C<M or !M>(I,J) = scalar
         //----------------------------------------------------------------------
+
+        // if C FULL: no change, just cb = GBB (CB,pC)
 
         // for all entries in IxJ
         #undef  GB_IXJ_WORK
@@ -182,7 +187,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 // if mij == 1
                     // 0 -> 0
                     // 1 -> 0           delete because aij not present
-                    // keep -> 1
+                    // 4 -> 1
 
         // TODO: if A is bitmap or full, use a single pass
 

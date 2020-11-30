@@ -74,7 +74,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
+    GB_GET_C_BITMAP ;           // C must be bitmap TODO: C full is OK
     GB_GET_A
     GB_GET_ACCUM
 

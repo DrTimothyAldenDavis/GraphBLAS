@@ -72,6 +72,9 @@ GrB_Info GB_bitmap_assign_M_accum
     GB_GET_A
     GB_GET_ACCUM
 
+    // if C FULL:  if C_replace false, no deletion occurs
+    // if C_replace is true: convert C to bitmap first
+
     //--------------------------------------------------------------------------
     // do the assignment
     //--------------------------------------------------------------------------
