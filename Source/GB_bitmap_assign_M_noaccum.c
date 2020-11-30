@@ -104,6 +104,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
         // scalar assignment: C<M>(I,J) = scalar or C(I,J)<M> = scalar
         //----------------------------------------------------------------------
 
+        // if C FULL:  if C_replace false, no deletion occurs
+        // otherwise: convert C to bitmap
+
         if (assign_kind == GB_SUBASSIGN)
         { 
 

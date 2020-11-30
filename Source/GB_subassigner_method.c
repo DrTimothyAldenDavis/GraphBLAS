@@ -53,10 +53,9 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     ASSERT (GB_IMPLIES (C_is_empty, !C_replace)) ;
 
     //--------------------------------------------------------------------------
-    // check if A is dense; a scalar is an implicit dense matrix 
+    // check if A is dense; a scalar is an implicit dense matrix, or bitmap
     //--------------------------------------------------------------------------
 
-    bool A_as_if_full = scalar_expansion || GB_as_if_full (A) ;
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
     //--------------------------------------------------------------------------
@@ -114,6 +113,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     bool S_Extraction ;
     bool method_06d = false ;
+    bool method_25 = false ;
 
     if (C_splat_scalar)
     { 
@@ -157,12 +157,13 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 method_06d = true ;
                 S_Extraction = false ;
             }
-            else if (C_is_empty && whole_C_matrix && A_as_if_full &&
-                Mask_struct)
+            else if (C_is_empty && whole_C_matrix && Mask_struct &&
+                (scalar_expansion || GB_as_if_full (A) || A_is_bitmap))
             {
                 // Method 25: C<M,s> = A, where M is structural, A is
                 // dense, and C starts out empty.  The pattern of C will be the
                 // same as M, and the subassign method is extremely simple.
+                method_25 = true ;
                 S_Extraction = false ;
             }
             else
@@ -444,10 +445,9 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             ASSERT ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M == A) ;
             ASSERT ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M == A) ;
         }
-        else if (C_is_empty && whole_C_matrix && A_as_if_full && Mask_struct)
+        else if (method_25)
         { 
-            // Method 25:  C<M,struct> = A, A dense, C empty
-            // A is dense or full; remains unchanged
+            // Method 25: C<M,struct> = A, C empty; A is dense, full, or bitmap
             subassign_method = GB_SUBASSIGN_METHOD_25 ;
         }
         else if (!S_Extraction)
@@ -699,8 +699,13 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense
         case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
         case GB_SUBASSIGN_METHOD_24 :   // C = A
-        case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,struct> = A ; C empty
             // C, M, and A can have any sparsity structure, including bitmap
+            break ;
+
+        case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,struct> = A ; C empty
+            // C, M, and A can have any sparsity structure, including bitmap,
+            // but if M is bitmap or full, use bitmap assignment instead.
+            GB_USE_BITMAP_IF (M_is_bitmap || GB_IS_FULL (M)) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S

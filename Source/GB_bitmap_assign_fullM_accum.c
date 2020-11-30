@@ -82,8 +82,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;   \
-        if (Mask_comp) mij = !mij ;
+        bool mij = (GBB (Mb, pM) && GB_mcast (Mx, pM, msize)) ^ Mask_comp ;
 
     //--------------------------------------------------------------------------
     // assignment phase
@@ -109,6 +108,8 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //          Cb(p) = 1       // C(iC,jC) is now present, insert
         //      else // if Cb(p) == 1:
         //          Cx(p) += scalar // C(iC,jC) still present, updated
+
+        // if C FULL: no change, just cb = GBB (Cb,pC)
 
         #undef  GB_IXJ_WORK
         #define GB_IXJ_WORK(pC,pA)                  \
@@ -175,6 +176,8 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //         else // if Cb(p) == 1:
         //             Cx(p) += aij    // C(iC,jC) still present, updated
 
+        // if C FULL: no change, just cb = GBB (Cb,pC)
+
         #define GB_AIJ_WORK(pC,pA)                  \
         {                                           \
             int64_t pM = GB_GET_pM ;                \
@@ -233,6 +236,10 @@ GrB_Info GB_bitmap_assign_fullM_accum
 
     if (C_replace)
     { 
+        // if C FULL: use two passes: first pass checks if any
+        // entry must be deleted.  If none: do nothing.  Else:  change C
+        // to full and do 2nd pass as below.
+
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)
         // for assign: for all entries in C(:,:)

@@ -235,13 +235,34 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             break ;
 
         //----------------------------------------------------------------------
-        // (8), (12): bitmap or full
+        // (8): full
         //----------------------------------------------------------------------
 
         case GxB_FULL : 
-        case GxB_FULL + GxB_BITMAP : 
 
             if (is_full_or_dense_with_no_pending_work)
+            { 
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to bitmap
+                GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (12): bitmap or full
+        //----------------------------------------------------------------------
+
+        case GxB_FULL + GxB_BITMAP : 
+
+            if (is_bitmap)
+            { 
+                // leave in bitmap form, even if it can be converted to full
+            }
+            else if (is_full_or_dense_with_no_pending_work)
             { 
                 // if full or all entries present: to full
                 GB_convert_any_to_full (A) ;
@@ -320,9 +341,9 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else
@@ -342,9 +363,9 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else
@@ -364,9 +385,9 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         case GxB_AUTO_SPARSITY : 
         default:
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else
