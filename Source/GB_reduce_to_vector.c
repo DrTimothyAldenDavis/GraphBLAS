@@ -149,7 +149,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     if (monoid == NULL)
     { 
-        // GrB_Matrix_reduce_BinaryOp does not pass in a monoid; construct it
+        // GrB_Matrix_reduce_BinaryOp does not pass in a monoid; construct it.
+        // Note the monoid2->identity value is NULL, but GrB_mxm doesn't
+        // actually need it (for now!) so this is OK.
         GB_OK (GB_Monoid_new (&monoid2, reduce_op, NULL, NULL, ztype->code,
             Context)) ;
         monoid = monoid2 ;
