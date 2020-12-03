@@ -97,8 +97,8 @@
     #else
 
         // ARM, Power8/9, and others need the explicit atomic read/write
-        #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-        #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
+        #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
+        #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
 
     #endif
 
@@ -109,7 +109,7 @@
 //------------------------------------------------------------------------------
 
 // An atomic capture loads the prior value of the target into a thread-local
-// result, and then overwrites the targe with the new value.  The target is a
+// result, and then overwrites the target with the new value.  The target is a
 // value that is shared between threads.  The value and result arguments are
 // thread-local.  SuiteSparse:GraphBLAS uses three atomic captures,
 // defined below, of the form:
