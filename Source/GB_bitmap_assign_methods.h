@@ -19,12 +19,12 @@
 //------------------------------------------------------------------------------
 
 #if GB_BURBLE
-    #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum)                 \
+    #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind) \
         GBURBLE ("Method:" method " ") ;                                    \
         GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,            \
-            Mask_struct, accum, A, assign_kind) ;
+            Mask_struct, accum, A, akind) ;
 #else
-    #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum) ;
+    #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind) ;
 #endif
 
 //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
         /* ALIAS OK: C==A for bitmap assign/subassign only for C(:,:)=A */  \
         /* ASSERT (GB_IMPLIES (GB_aliased (C, A), whole_C_matrix)) ; */     \
-        ASSERT (nI == A->vlen && nJ == A->vdim) ;                           \
+        /* ASSERT (nI == A->vlen && nJ == A->vdim) ; */                     \
         asize = A->type->size ;                                             \
         acode = A->type->code ;                                             \
         Ap = A->p ;                                                         \
@@ -237,6 +237,22 @@ GrB_Info GB_bitmap_assign_fullM_accum
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_assign_fullM_accum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+    const GrB_Matrix M,         // mask matrix, which is present here
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present here
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
+    GB_Context Context
+) ;
+
 GrB_Info GB_bitmap_assign_fullM_noaccum
 (
     // input/output:
@@ -259,6 +275,22 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
+    GB_Context Context
+) ;
+
+GrB_Info GB_bitmap_assign_fullM_noaccum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    const bool C_replace,       // descriptor for C
+    // inputs:
+    const GrB_Matrix M,         // mask matrix, which is present here
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+//  const GrB_BinaryOp accum,   // not present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
     GB_Context Context
 ) ;
 
@@ -287,6 +319,22 @@ GrB_Info GB_bitmap_assign_M_accum
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_assign_M_accum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+    const GrB_Matrix M,         // mask matrix, which is not NULL here
+//  const bool Mask_comp,       // false here
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present here
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
+    GB_Context Context
+) ;
+
 GrB_Info GB_bitmap_assign_M_noaccum
 (
     // input/output:
@@ -309,6 +357,22 @@ GrB_Info GB_bitmap_assign_M_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
+    GB_Context Context
+) ;
+
+GrB_Info GB_bitmap_assign_M_noaccum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+    const GrB_Matrix M,         // mask matrix, which is not NULL here
+//  const bool Mask_comp,       // false here
+    const bool Mask_struct,     // true if M is structural, false if valued
+//  const GrB_BinaryOp accum,   // not present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
     GB_Context Context
 ) ;
 
@@ -337,6 +401,22 @@ GrB_Info GB_bitmap_assign_noM_accum
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_assign_noM_accum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+//  const GrB_Matrix M,         // mask matrix, not present here
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
+    GB_Context Context
+) ;
+
 GrB_Info GB_bitmap_assign_noM_noaccum
 (
     // input/output:
@@ -359,6 +439,22 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
+    GB_Context Context
+) ;
+
+GrB_Info GB_bitmap_assign_noM_noaccum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+//  const GrB_Matrix M,         // mask matrix, not present here
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+//  const GrB_BinaryOp accum,   // not present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
     GB_Context Context
 ) ;
 
@@ -387,6 +483,22 @@ GrB_Info GB_bitmap_assign_notM_accum
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_assign_notM_accum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+    const GrB_Matrix M,         // mask matrix
+//  const bool Mask_comp,       // true here, for !M only
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
+    GB_Context Context
+) ;
+
 GrB_Info GB_bitmap_assign_notM_noaccum
 (
     // input/output:
@@ -412,6 +524,22 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_assign_notM_noaccum_whole
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const bool C_replace,       // descriptor for C
+    const GrB_Matrix M,         // mask matrix
+//  const bool Mask_comp,       // true here, for !M only
+    const bool Mask_struct,     // true if M is structural, false if valued
+//  const GrB_BinaryOp accum,   // not present
+    const GrB_Matrix A,         // input matrix, not transposed
+    const void *scalar,         // input scalar
+    const GrB_Type scalar_type, // type of input scalar
+    GB_Context Context
+) ;
+
 #define GB_BITMAP_M_SCATTER_PLUS_2  0
 #define GB_BITMAP_M_SCATTER_MINUS_2 1
 #define GB_BITMAP_M_SCATTER_MOD_2   2
@@ -433,6 +561,23 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     const GrB_Matrix M,         // mask to scatter into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued
     const int assign_kind,      // row assign, col assign, assign, or subassign
+    const int operation,        // +=2, -=2, or %=2
+    const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
+    const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks
+    const int64_t *GB_RESTRICT klast_Mslice,  // size ntasks
+    const int mthreads,
+    const int mtasks,
+    GB_Context Context
+) ;
+
+void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
+(
+    // input/output:
+    GrB_Matrix C,
+    // int64_t *cnvals_handle,     // cnvals = C->nvals
+    // inputs:
+    const GrB_Matrix M,         // mask to scatter into the C bitmap
+    const bool Mask_struct,     // true if M is structural, false if valued
     const int operation,        // +=2, -=2, or %=2
     const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
     const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks

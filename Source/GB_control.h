@@ -814,8 +814,9 @@
 // If GrB_NO_PLUS is enabled above, then all semirings of the form
 // GxB_PLUS_<multop>_<type> and GxB_<multop>_<PLUS>_<type> are disabled.
 
-// These options have no effect on GrB_eWiseAdd, GrB_eWiseMult, GrB_reduce,
-// GrB_*_build, or GrB_apply.
+// These options have no effect on GrB_eWiseAdd, GrB_eWiseMult,
+// GrB_*_build, or GrB_apply.  They do affect GrB_reduce to vector, which
+// converts the reduction of a vector into a matrix-vector multiplication.
 
 // Any disabled semirings will still work just fine, but operations using them
 // will be slower.
@@ -1209,7 +1210,7 @@
 // #define GxB_NO_MAX_TIMES_UINT64      1
 // #define GxB_NO_MAX_TIMES_UINT8       1
 
-// builtin GrB*:
+// builtin GrB*: also needed by GrB_reduce to vector
 // #define GxB_NO_MAX_FIRST_FP32        1
 // #define GxB_NO_MAX_FIRST_FP64        1
 // #define GxB_NO_MAX_FIRST_INT16       1
@@ -1221,7 +1222,7 @@
 // #define GxB_NO_MAX_FIRST_UINT64      1
 // #define GxB_NO_MAX_FIRST_UINT8       1
 
-// builtin GrB*:
+// builtin GrB*: also needed by GrB_reduce to vector
 // #define GxB_NO_MAX_SECOND_FP32       1
 // #define GxB_NO_MAX_SECOND_FP64       1
 // #define GxB_NO_MAX_SECOND_INT16      1
@@ -1440,7 +1441,7 @@
 // #define GxB_NO_MIN_TIMES_UINT64      1
 // #define GxB_NO_MIN_TIMES_UINT8       1
 
-// builtin GrB*:
+// builtin GrB*: also needed by GrB_reduce to vector
 // #define GxB_NO_MIN_FIRST_FP32        1
 // #define GxB_NO_MIN_FIRST_FP64        1
 // #define GxB_NO_MIN_FIRST_INT16       1
@@ -1452,7 +1453,7 @@
 // #define GxB_NO_MIN_FIRST_UINT64      1
 // #define GxB_NO_MIN_FIRST_UINT8       1
 
-// builtin GrB*:
+// builtin GrB*: also needed by GrB_reduce to vector
 // #define GxB_NO_MIN_SECOND_FP32       1
 // #define GxB_NO_MIN_SECOND_FP64       1
 // #define GxB_NO_MIN_SECOND_INT16      1
@@ -1695,6 +1696,7 @@
 // #define GxB_NO_PLUS_TIMES_UINT8      1
 
 // not GrB*, used in LAGraph: pagerank and Betweeness-Centrality
+// also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_FIRST_FP32       1
 // #define GxB_NO_PLUS_FIRST_FP64       1
 // #define GxB_NO_PLUS_FIRST_INT16      1
@@ -1707,6 +1709,7 @@
 // #define GxB_NO_PLUS_FIRST_UINT8      1
 
 // not GrB*, used in LAGraph: Betweeness-Centrality and PageRank
+// also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_SECOND_FP32      1
 // #define GxB_NO_PLUS_SECOND_FP64      1
 // #define GxB_NO_PLUS_SECOND_INT16     1
@@ -1923,6 +1926,7 @@
 // #define GxB_NO_TIMES_TIMES_UINT64    1
 // #define GxB_NO_TIMES_TIMES_UINT8     1
 
+// needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_FIRST_FP32      1
 // #define GxB_NO_TIMES_FIRST_FP64      1
 // #define GxB_NO_TIMES_FIRST_INT16     1
@@ -1934,6 +1938,7 @@
 // #define GxB_NO_TIMES_FIRST_UINT64    1
 // #define GxB_NO_TIMES_FIRST_UINT8     1
 
+// needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_SECOND_FP32     1
 // #define GxB_NO_TIMES_SECOND_FP64     1
 // #define GxB_NO_TIMES_SECOND_INT16    1
@@ -2103,6 +2108,8 @@
 // 52 unique complex semirings:
 //----------------------------------------
 
+// _FIRST and _SECOND are needed by GrB_reduce to vector
+
 // #define GxB_NO_PLUS_PLUS_FC32        1
 // #define GxB_NO_PLUS_PLUS_FC64        1
 // #define GxB_NO_PLUS_TIMES_FC32       1
@@ -2169,7 +2176,7 @@
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
-// used in LAGraph: BFS
+// used in LAGraph: BFS, also needed by GrB_reduce to vector
 // #define GxB_NO_ANY_FIRST_BOOL        1
 // #define GxB_NO_ANY_FIRST_FP32        1
 // #define GxB_NO_ANY_FIRST_FP64        1

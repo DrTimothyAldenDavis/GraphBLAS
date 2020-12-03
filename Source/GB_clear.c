@@ -46,6 +46,26 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
+    // clear the content of A if bitmap
+    //--------------------------------------------------------------------------
+
+// printf ("A->sparsity %d:\n", A->sparsity) ;
+// printf ("GxB_SPARSE + GxB_HYPERSPARSE: %d\n", GxB_SPARSE + GxB_HYPERSPARSE) ;
+// printf ("((A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE))): %d\n",
+    // (A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE))) ;
+
+    if (((A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0)
+        && GB_IS_BITMAP (A))
+    { 
+        // A should remain bitmap
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_memset (A->b, 0, GB_NNZ_HELD (A), nthreads_max) ;
+        A->nvals = 0 ;
+        A->magic = GB_MAGIC ;
+        return (GrB_SUCCESS) ;
+    }
+
+    //--------------------------------------------------------------------------
     // clear the content of A
     //--------------------------------------------------------------------------
 

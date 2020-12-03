@@ -147,11 +147,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             ASSERT (!GB_ZOMBIES (C_in)) ; // bitmap never has zombies
             can_do_in_place = (C_in->type == semiring->add->op->ztype)
                 && ((accum == NULL) || (accum == semiring->add->op)) ;
-            GBURBLE ("(C_in bitmap) ") ;
         }
         else if (accum != NULL)
         { 
-            GBURBLE ("(C_in bitmap, but accum present) ") ;
             // C is hypersparse, sparse, or full, and accum is present.
             // check if C_in is competely dense:  no zombies and
             // pending tuples.
@@ -175,8 +173,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // CSR/CSC formats since the input matrices may be transposed (thus
         // breaking the alias with C).
     }
-
-    GBURBLE ("(can do in place: %d) ", can_do_in_place) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC formats of C, M, A, and B
@@ -338,7 +334,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (C_transpose || C_aliased)
         { 
             can_do_in_place = false ;
-            GBURBLE ("(alias: not in place)" ) ;
         }
 
         // TODO: A and B can be transposed below, so this check should be

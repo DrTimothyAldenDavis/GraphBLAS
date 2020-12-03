@@ -32,7 +32,6 @@
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     const int8_t   *GB_RESTRICT Ab = A->b ;
     const int64_t avlen = A->vlen ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_is_full (A)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A
@@ -100,6 +99,7 @@
             }
             nzombies += task_nzombies ;
         }
+        C->nzombies = nzombies ;
 
     }
     else
@@ -151,5 +151,4 @@
         }
     }
 }
-
 

@@ -65,6 +65,11 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
 
+    GBURBLE ("(%s+=%s'*%s) ",
+        GB_sparsity_char_matrix (C),
+        GB_sparsity_char_matrix (A),
+        GB_sparsity_char_matrix (B)) ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use, and the use_mkl flag
     //--------------------------------------------------------------------------

@@ -37,6 +37,11 @@ GB_Opcode GB_boolean_rename     // renamed opcode
     const GB_Opcode opcode      // opcode to rename
 ) ;
 
+GrB_BinaryOp GB_boolean_rename_op   // return renamed op
+(
+    const GrB_BinaryOp op           // op to rename
+) ;
+
 GrB_Info GB_binop_new
 (
     GrB_BinaryOp *binaryop,         // handle for the new binary operator

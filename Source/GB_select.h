@@ -10,6 +10,7 @@
 #ifndef GB_SELECT_H
 #define GB_SELECT_H
 #include "GB.h"
+#include "GB_is_nonzero.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (
@@ -49,19 +50,6 @@ GrB_Info GB_bitmap_selector
     const GB_void *GB_RESTRICT xthunk,
     GB_Context Context
 ) ;
-
-//------------------------------------------------------------------------------
-// GB_is_nonzero
-//------------------------------------------------------------------------------
-
-static inline bool GB_is_nonzero (const GB_void *value, int64_t size)
-{ 
-    for (int64_t i = 0 ; i < size ; i++)
-    {
-        if (value [i] != 0) return (true) ;
-    }
-    return (false) ;
-}
 
 //------------------------------------------------------------------------------
 // compiler diagnostics

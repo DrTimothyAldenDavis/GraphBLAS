@@ -29,6 +29,8 @@ switch (multop)
 end
 
 is_any = isequal (addop, 'any') ;
+is_max = isequal (addop, 'max') ;
+is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
 is_any_pair   = is_any && isequal (multop, 'pair') ;
 ztype_is_real = ~contains (ztype, 'FC') ;
@@ -141,6 +143,32 @@ if (is_eq)
     fprintf (f, 'define(`GB_is_eq_monoid'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
+end
+
+if (is_max)
+    if (contains (ztype, 'int'))
+        fprintf (f, 'define(`GB_is_imax_monoid'', `1'')\n') ;
+        fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
+    else
+        fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
+        fprintf (f, 'define(`GB_is_fmax_monoid'', `1'')\n') ;
+    end
+else
+    fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
+    fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
+end
+
+if (is_min)
+    if (contains (ztype, 'int'))
+        fprintf (f, 'define(`GB_is_imin_monoid'', `1'')\n') ;
+        fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
+    else
+        fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
+        fprintf (f, 'define(`GB_is_fmin_monoid'', `1'')\n') ;
+    end
+else
+    fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
+    fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
 end
 
 if (is_any)
@@ -274,9 +302,13 @@ mult2 = strrep (mult2, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 
 % create the add operator, of the form w += t
-add2 = strrep (add,  'w', '`$1''') ;
-add2 = strrep (add2, 't', '`$2''') ;
-fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
+% if (is_min || is_max)
+%   TODO
+% else
+    add2 = strrep (add,  'w', '`$1''') ;
+    add2 = strrep (add2, 't', '`$2''') ;
+    fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
+% end
 
 % create the add function, of the form w + t
 add2 = strrep (addfunc,  'w', '`$1''') ;
@@ -323,14 +355,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +39 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +39 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

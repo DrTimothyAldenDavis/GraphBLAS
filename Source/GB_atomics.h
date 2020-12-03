@@ -91,15 +91,20 @@
 
         // No need for atomic read/write on x86_64.  gcc already treats atomic
         // read/write as plain read/write, so these definitions only affect icc.
-        #define GB_ATOMIC_READ
-        #define GB_ATOMIC_WRITE
+        #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
+        #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 
     #else
 
         // ARM, Power8/9, and others need the explicit atomic read/write
-        #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
-        #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
-
+        #if ( _OPENMP > 201811 )
+            // acquire/release clauses require OpenMP 5.0 (version 201811)
+            #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
+            #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
+        #else
+            #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
+            #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
+        #endif
     #endif
 
 #endif

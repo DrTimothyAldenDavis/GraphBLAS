@@ -33,6 +33,7 @@
 // accessed by the user.
 
 #include "GB.h"
+#include "GB_binop.h"
 
 GrB_Info GB_Monoid_new          // create a monoid
 (
@@ -53,7 +54,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     (*monoid) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for monoid", GB3) ;
     ASSERT (idcode <= GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
@@ -66,57 +67,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     // This is done before the operator is checked, so that any error messages
     // reflect the renaming.
 
-    if (op == GrB_DIV_BOOL)
-    { 
-        // FIRST and DIV are the same for boolean:
-        op = GrB_FIRST_BOOL ;
-    }
-    else if (op == GxB_RDIV_BOOL)
-    { 
-        // SECOND and RDIV are the same for boolean:
-        op = GrB_SECOND_BOOL ;
-    }
-    else if (op == GrB_MIN_BOOL || op == GrB_TIMES_BOOL)
-    { 
-        // MIN, TIMES, and LAND are the same for boolean:
-        op = GrB_LAND ;
-    }
-    else if (op == GrB_MAX_BOOL || op == GrB_PLUS_BOOL)
-    { 
-        // MAX, PLUS, and OR are the same for boolean:
-        op = GrB_LOR ;
-    }
-    else if (op == GxB_ISNE_BOOL || op == GrB_NE_BOOL || op == GrB_MINUS_BOOL
-        || op == GxB_RMINUS_BOOL)
-    { 
-        // ISNE, NE, MINUS, RMINUS, and XOR are the same for boolean:
-        op = GrB_LXOR ;
-    }
-    else if (op == GxB_ISEQ_BOOL || op == GrB_LXNOR)
-    { 
-        // LXNOR, ISEQ, EQ are the same for boolean:
-        op = GrB_EQ_BOOL ;
-    }
-    else if (op == GxB_ISGT_BOOL)
-    { 
-        // ISGT, GT are the same for boolean:
-        op = GrB_GT_BOOL ;
-    }
-    else if (op == GxB_ISLT_BOOL)
-    { 
-        // ISLT, LT are the same for boolean:
-        op = GrB_LT_BOOL ;
-    }
-    else if (op == GxB_ISGE_BOOL)
-    { 
-        // ISGE, GE are the same for boolean:
-        op = GrB_GE_BOOL ;
-    }
-    else if (op == GxB_ISLE_BOOL)
-    { 
-        // ISLE, LE are the same for boolean:
-        op = GrB_LE_BOOL ;
-    }
+    op = GB_boolean_rename_op (op) ;
+    ASSERT_BINARYOP_OK (op, "revised op", GB3) ;
 
     //--------------------------------------------------------------------------
     // continue checking inputs
@@ -394,7 +346,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         }
     }
 
-    ASSERT_MONOID_OK (mon, "new monoid", GB0) ;
+    ASSERT_MONOID_OK (mon, "new monoid", GB3) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -106,11 +106,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-    GB_BURBLE_DENSE (B, "(B %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-
     //--------------------------------------------------------------------------
     // T = A*B, A'*B, A*B', or A'*B', also using the mask if present
     //--------------------------------------------------------------------------

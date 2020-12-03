@@ -67,6 +67,29 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
 
     int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B) ;
+    if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
+    {
+        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    }
+
+    if (M == NULL)
+    {
+        GBURBLE ("(%s=%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            GB_sparsity_char_matrix (A),
+            GB_sparsity_char_matrix (B)) ;
+    }
+    else
+    {
+        GBURBLE ("(%s%s%s%s%s=%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            Mask_struct ? "{" : "<",
+            Mask_comp ? "!" : "",
+            GB_sparsity_char_matrix (M),
+            Mask_struct ? "}" : ">",
+            GB_sparsity_char_matrix (A),
+            GB_sparsity_char_matrix (B)) ;
+    }
 
     //--------------------------------------------------------------------------
     // select the method to use
@@ -80,8 +103,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         //----------------------------------------------------------------------
 
         // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
-        GBURBLE ("(compute C sparse) ") ;
-        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         return (GB_AxB_saxpy3 (Chandle, C_sparsity, M, Mask_comp, Mask_struct,
             A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
 
@@ -93,7 +114,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 
         //----------------------------------------------------------------------
 
-        GBURBLE ("(compute C bitmap) ") ;
         return (GB_bitmap_AxB_saxpy (Chandle, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }

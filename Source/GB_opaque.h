@@ -193,7 +193,7 @@ typedef enum
     // binary operators z=f(x,y) that return bool (TxT -> bool)
     //--------------------------------------------------------------------------
 
-    GB_EQ_opcode        = 80,   // z = (x == y)
+    GB_EQ_opcode        = 80,   // z = (x == y), same as LXNOR operator for bool
     GB_NE_opcode        = 81,   // z = (x != y)
     GB_GT_opcode        = 82,   // z = (x >  y)
     GB_LT_opcode        = 83,   // z = (x <  y)

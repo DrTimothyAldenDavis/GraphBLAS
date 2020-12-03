@@ -1019,20 +1019,17 @@ GrB_Info GB_assign_prep
         { 
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
-            // A is completely dense and if there is no mask M, then C(I,J)=A
-            // cannot delete any entries from C.
+            // A is completely dense, then C(I,J)=A cannot delete any entries
+            // from C.
 
-            if (M == NULL && GB_is_dense (A))
+            if (scalar_expansion || GB_is_dense (A))
             { 
-                // A is a dense matrix, so entries cannot be deleted
+                // A is a scalar or dense matrix, so entries cannot be deleted
                 wait = false ;
             }
             else
             { 
-                // A is sparse or M is present.
-                // In this case, action: ( delete ) might occur
-                // TODO: don't assemble pending tuples unless a deletion
-                // actually occurs.  Postpone this decision.
+                // A is sparse.  action: ( delete ) might occur.
                 wait = true ;
             }
         }

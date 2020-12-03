@@ -62,7 +62,8 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit2", M, Mask_comp, NULL) ;
+    GBURBLE_BITMAP_ASSIGN ("bit2", M, Mask_comp, NULL,
+        Ikind, Jkind, assign_kind) ;
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, noaccum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, noaccum", GB0) ;

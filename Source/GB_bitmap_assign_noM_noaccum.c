@@ -66,7 +66,8 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit6", NULL, Mask_comp, NULL) ;
+    GBURBLE_BITMAP_ASSIGN ("bit6", NULL, Mask_comp, NULL,
+        Ikind, Jkind, assign_kind) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 

@@ -50,6 +50,11 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (!GB_IS_BITMAP (B)) ;        // ok: for now
     ASSERT (!GB_IS_FULL (D)) ;          // ok: D is not full
 
+    GBURBLE ("(%s=%s*%s) ",
+        GB_sparsity_char_matrix (B),    // C has the sparsity structure of B
+        GB_sparsity_char_matrix (D),
+        GB_sparsity_char_matrix (B)) ;
+
     //--------------------------------------------------------------------------
     // get the semiring operators
     //--------------------------------------------------------------------------

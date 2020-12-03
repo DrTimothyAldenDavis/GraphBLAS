@@ -8,8 +8,9 @@
 //------------------------------------------------------------------------------
 
 // This function only computes C<M>=A'*B.  The mask must be present, and not
-// complemented, either valued or structural.  The mask is always applied.
-// C and M are both sparse or hypersparse.
+// complemented, and can be either valued or structural.  The mask is always
+// applied.  C and M are both sparse or hypersparse, and have the same sparsity
+// structure.
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
@@ -67,10 +68,17 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (!GB_IS_FULL (M)) ;          // ok: dot2 used instead
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
-    GBURBLE ("(CPU dot3) ") ;
 
     int ntasks, max_ntasks = 0, nthreads ;
     GB_task_struct *TaskList = NULL ;
+
+    GBURBLE ("(%s%s%s%s=%s'*%s) ",
+        GB_sparsity_char_matrix (M),    // C has the same sparsity as M
+        Mask_struct ? "{" : "<",
+        GB_sparsity_char_matrix (M),
+        Mask_struct ? "}" : ">",
+        GB_sparsity_char_matrix (A),
+        GB_sparsity_char_matrix (B)) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -151,12 +159,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cvdim = mvdim ;
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
-    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
     info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        sparsity, true, M->hyper_switch, cnvec,
+        C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)

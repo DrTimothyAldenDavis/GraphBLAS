@@ -114,6 +114,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     }
 
+    GBURBLE ("(pending: %ld) ", GB_Pending_n (C)) ;
+
     //==========================================================================
     // submatrix assignment C(I,J)<M> = accum (C(I,J),A): meta-algorithm
     //==========================================================================
@@ -340,7 +342,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         case GB_SUBASSIGN_METHOD_07 : 
         {
             // Method 07: C(I,J)<M> += scalar ; no S
-            GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S",
+            GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_07 (C,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,

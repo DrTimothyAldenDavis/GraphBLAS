@@ -78,6 +78,25 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (A_in->vlen == B_in->vlen) ;
     ASSERT (A_in->vlen > 0) ;
 
+    if (M_in == NULL)
+    {
+        GBURBLE ("(%s=%s'*%s) ",
+            GB_sparsity_char (GxB_BITMAP),
+            GB_sparsity_char_matrix (A_in),
+            GB_sparsity_char_matrix (B_in)) ;
+    }
+    else
+    {
+        GBURBLE ("(%s%s%s%s%s=%s'*%s) ",
+            GB_sparsity_char (GxB_BITMAP),
+            Mask_struct ? "{" : "<",
+            Mask_comp ? "!" : "",
+            GB_sparsity_char_matrix (M_in),
+            Mask_struct ? "}" : ">",
+            GB_sparsity_char_matrix (A_in),
+            GB_sparsity_char_matrix (B_in)) ;
+    }
+
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
     //--------------------------------------------------------------------------

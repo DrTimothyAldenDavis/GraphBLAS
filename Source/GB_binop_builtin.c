@@ -18,8 +18,6 @@
 #include "GB_binop.h"
 #include "GB_unused.h"
 
-#ifndef GBCOMPACT
-
 bool GB_binop_builtin               // true if binary operator is builtin
 (
     // inputs:
@@ -140,6 +138,4 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
     return (true) ;
 }
-
-#endif
 

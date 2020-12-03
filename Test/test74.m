@@ -96,6 +96,7 @@ for k0 = 1:size(m_list,2)
                 C0 = GB_spec_mxm (C, [ ], [ ], semiring, AT, B, dtn);
                 GB_spec_compare (C0, C1, identity) ;
 
+save gunk C semiring A B dnn_hash identity AT dtn dnn_Gus dnn_hash
                 % C = A*B, no Mask, no typecasting, Gustavson
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_Gus);
                 % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_Gus);

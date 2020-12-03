@@ -134,6 +134,22 @@
 #define GB_IS_ANY_MONOID \
     0
 
+// 1 if monoid is MIN_INT* or MIN_UINT*
+#define GB_IS_IMIN_MONOID \
+    0
+
+// 1 if monoid is MAX_INT* or MAX_UINT*
+#define GB_IS_IMAX_MONOID \
+    0
+
+// 1 if monoid is MIN_FP*
+#define GB_IS_FMIN_MONOID \
+    0
+
+// 1 if monoid is MAX_FP*
+#define GB_IS_FMAX_MONOID \
+    0
+
 // 1 if monoid update is EQ
 #define GB_IS_EQ_MONOID \
     1

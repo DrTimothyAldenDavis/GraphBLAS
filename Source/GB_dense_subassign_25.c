@@ -207,7 +207,7 @@ GrB_Info GB_dense_subassign_25
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
-    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;

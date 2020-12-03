@@ -90,6 +90,7 @@
 #include "GB_mxm.h"
 #include "GB_mkl.h"
 #include "GB_Global.h"
+#include "GB_is_nonzero.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -293,22 +294,22 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB3) ;
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ;
 
-    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB3) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB3) ;
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
 
-    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB3) ;
     ASSERT (A->vdim == B->vlen) ;
 
     (*Chandle) = NULL ;
@@ -387,14 +388,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool A_is_pattern, B_is_pattern ;
     GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
-    #ifdef GBCOMPACT
-    bool is_any_pair_semiring = false ;
-    #else
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xcode, ycode, zcode ;
     bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
         B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
         &ycode, &zcode) ;
+
+    #ifdef GBCOMPACT
+    bool is_any_pair_semiring = false ;
+    #else
     bool is_any_pair_semiring = builtin_semiring
         && (add_opcode == GB_ANY_opcode)
         && (mult_opcode == GB_PAIR_opcode) ;
@@ -884,68 +886,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_INITIAL_WORK ;
 
-    //--------------------------------------------------------------------------
-
-    #if GB_BURBLE
-    int nfine_hash = 0 ;
-    int nfine_gus = 0 ;
-    int ncoarse_hash = 0 ;
-    int ncoarse_1hash = 0 ;
-    int ncoarse_gus = 0 ;
-    if (GB_Global_burble_get ( ))
-    {
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)
-        {
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool is_fine = (taskid < nfine) ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            if (is_fine)
-            {
-                // fine task
-                if (use_Gustavson)
-                {
-                    // fine Gustavson task
-                    nfine_gus++ ;
-                }
-                else
-                {
-                    // fine hash task
-                    nfine_hash++ ;
-                }
-            }
-            else
-            {
-                // coarse task
-                int64_t kfirst = TaskList [taskid].start ;
-                int64_t klast = TaskList [taskid].end ;
-                if (use_Gustavson)
-                {
-                    // coarse Gustavson task
-                    ncoarse_gus++ ;
-                }
-                else
-                {
-                    // hash task
-                    ncoarse_hash++ ;
-                }
-            }
-        }
-    }
-
-    GBURBLE ("(nthreads %d", nthreads) ;
-    if (ncoarse_gus  > 0) GBURBLE (" coarse: %d",      ncoarse_gus) ;
-    if (ncoarse_hash > 0) GBURBLE (" coarse hash: %d", ncoarse_hash) ;
-    if (nfine_gus    > 0) GBURBLE (" fine: %d",        nfine_gus) ;
-    if (nfine_hash   > 0) GBURBLE (" fine hash: %d",   nfine_hash) ;
-    GBURBLE (") ") ;
-    #endif
-
     // Bflops is no longer needed as an alias for Cp
     Bflops = NULL ;
 
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // allocate the hash tables
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
     // If Gustavson's method is used (coarse tasks):
     //
@@ -986,29 +932,67 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.
-    size_t hx_pad = 64 ;
+    size_t hx_pad = GB_ICEIL (64, csize) ;
     size_t hi_pad = 64 / sizeof (int64_t) ;
 
     Hi_size_total = 0 ;
     Hf_size_total = 0 ;
     Hx_size_total = 0 ;
 
+    //--------------------------------------------------------------------------
     // determine the total size of all hash tables
+    //--------------------------------------------------------------------------
+
+    int nfine_hash = 0 ;
+    int nfine_gus = 0 ;
+    int ncoarse_hash = 0 ;
+    int ncoarse_1hash = 0 ;
+    int ncoarse_gus = 0 ;
+
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
+
+        // get the task type and is hash size
+        int64_t hash_size = TaskList [taskid].hsize ;
+        int64_t k = TaskList [taskid].vector ;
+        bool is_fine = (k >= 0) ;
+        bool use_Gustavson = (hash_size == cvlen) ;
+
+        if (is_fine)
+        {
+            // fine task
+            if (use_Gustavson)
+            {
+                // fine Gustavson task
+                nfine_gus++ ;
+            }
+            else
+            {
+                // fine hash task
+                nfine_hash++ ;
+            }
+        }
+        else
+        {
+            // coarse task
+            if (use_Gustavson)
+            {
+                // coarse Gustavson task
+                ncoarse_gus++ ;
+            }
+            else
+            {
+                // coarse hash task
+                ncoarse_hash++ ;
+            }
+        }
+
         if (taskid != TaskList [taskid].leader)
         { 
             // allocate a single shared hash table for all fine
             // tasks that compute a single C(:,j)
             continue ;
         }
-
-        int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t k = TaskList [taskid].vector ;
-        bool is_fine = (k >= 0) ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        // int64_t kfirst = TaskList [taskid].start ;
-        // int64_t klast = TaskList [taskid].end ;
 
         if (is_fine && use_Gustavson)
         { 
@@ -1030,11 +1014,66 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (!is_any_pair_semiring)
         { 
             // except that the ANY_PAIR semiring does not use Hx
-            Hx_size_total += (hash_size * csize + hx_pad) ;
+            Hx_size_total += (hash_size + hx_pad) ;
         }
     }
 
+    GBURBLE ("(nthreads %d", nthreads) ;
+    if (ncoarse_gus  > 0) GBURBLE (" coarse: %d",      ncoarse_gus) ;
+    if (ncoarse_hash > 0) GBURBLE (" coarse hash: %d", ncoarse_hash) ;
+    if (nfine_gus    > 0) GBURBLE (" fine: %d",        nfine_gus) ;
+    if (nfine_hash   > 0) GBURBLE (" fine hash: %d",   nfine_hash) ;
+    GBURBLE (") ") ;
+
+    //--------------------------------------------------------------------------
+    // get the identity value
+    //--------------------------------------------------------------------------
+
+    bool identity_is_zero ;
+    GB_void identity [GB_VLA (csize)] ;
+
+    if ((add_opcode == GB_MIN_opcode || add_opcode == GB_MAX_opcode) &&
+        (zcode == GB_FP32_code || zcode == GB_FP64_code))
+    {
+        // min or max monoid with FP32 or FP64: use NaN as the identity instead
+        // of +Inf or -Inf, to get the 'omitnan' behavior.  The initial NaN
+        // value will always be overwitten by the first non-NaN value of t =
+        // aik*bkj during the multiplication C=A*B.  If t is NaN, the value is
+        // not written by the GB_ATOMIC_UPDATE_HX, and fmin (Hx[i],t) and also
+        // fminf, fmax, and fmaxf will also ignore the value of t.
+        identity_is_zero = false ;
+        if (zcode == GB_FP32_code)
+        { 
+            float x = (float) NAN ;     // get a silent float NAN
+            memcpy (identity, &x, sizeof (float)) ;
+        }
+        else
+        { 
+            double x = (double) NAN ;   // get a silent double NAN
+            memcpy (identity, &x, sizeof (double)) ;
+        }
+    }
+    else if (add->identity == NULL)
+    { 
+        // The monoid doesn't have an identity value; use the value zero.
+        // TODO: see GB_reduce_to_vector
+        printf ("NULL Identity!\n") ;
+        identity_is_zero = true ;
+        memset (identity, 0, csize) ;
+    }
+    else
+    { 
+        // get the identity value and check if it's zero 
+        memcpy (identity, add->identity, csize) ;
+        identity_is_zero = !GB_is_nonzero (identity, csize) ;
+        printf ("min/max identity zero? %d\n", identity_is_zero) ;
+        GxB_print (semiring, 3) ;
+    }
+
+    //--------------------------------------------------------------------------
     // allocate space for all hash tables
+    //--------------------------------------------------------------------------
+
     if (Hi_size_total > 0)
     { 
         Hi_all = GB_MALLOC (Hi_size_total, int64_t) ;
@@ -1045,7 +1084,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC (Hx_size_total, GB_void) ;
+        if (nfine_gus > 0 && M == NULL && identity_is_zero)
+        {
+            // fine Gustavson tasks require Hx to be initialized when M == NULL
+            Hx_all = GB_CALLOC (Hx_size_total * csize, GB_void) ;
+        }
+        else
+        {
+            Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
+        }
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
@@ -1057,13 +1104,106 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    //--------------------------------------------------------------------------
+    // initialize Hx if needed
+    //--------------------------------------------------------------------------
+
+    if (Hx_size_total > 0 && nfine_gus > 0 && M == NULL && !identity_is_zero)
+    {
+        // Fine Gustavson tasks with no mask require Hx to be initialized to
+        // the identity value.  This has been done above if the identity value
+        // is zero, via calloc, but needs explicit work if the identity is
+        // nonzero.
+
+        int nthreads = GB_nthreads (Hx_size_total, chunk, nthreads_max) ;
+        int64_t p ;
+
+        switch (csize)
+        {
+            case 1 :
+            { 
+                uint8_t c ;
+                memcpy (&c, identity, 1) ;
+                GB_memset (Hx_all, (int) c, Hx_size_total, nthreads_max) ;
+            }
+            break ;
+
+            case 2 :
+            { 
+                uint16_t c ;
+                memcpy (&c, identity, 2) ;
+                uint16_t *GB_RESTRICT Hx = (uint16_t *) Hx_all ;
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (p = 0 ; p < Hx_size_total ; p++)
+                {
+                    Hx [p] = c ;
+                }
+            }
+            break ;
+
+            case 4 :
+            { 
+                uint32_t c ;
+                memcpy (&c, identity, 4) ;
+                uint32_t *GB_RESTRICT Hx = (uint32_t *) Hx_all ;
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (p = 0 ; p < Hx_size_total ; p++)
+                {
+                    Hx [p] = c ;
+                }
+            }
+            break ;
+
+            case 8 :
+            { 
+                uint64_t c ;
+                memcpy (&c, identity, 8) ;
+                uint64_t *GB_RESTRICT Hx = (uint64_t *) Hx_all ;
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (p = 0 ; p < Hx_size_total ; p++)
+                {
+                    Hx [p] = c ;
+                }
+            }
+            break ;
+
+            case 16 :
+            { 
+                uint64_t c [2] ;
+                memcpy (c, identity, 16) ;
+                uint64_t *GB_RESTRICT Hx = (uint64_t *) Hx_all ;
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (p = 0 ; p < Hx_size_total ; p++)
+                {
+                    Hx [2*p  ] = c [0] ;
+                    Hx [2*p+1] = c [1] ;
+                }
+            }
+            break ;
+
+            default :
+            { 
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (p = 0 ; p < Hx_size_total ; p++)
+                {
+                    memcpy (Hx_all + p*csize, identity, csize) ;
+                }
+            }
+            break ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // split the space into separate hash tables
+    //--------------------------------------------------------------------------
+
     int64_t *GB_RESTRICT Hi_split = Hi_all ;
     int64_t *GB_RESTRICT Hf_split = Hf_all ;
     GB_void *GB_RESTRICT Hx_split = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
+
         if (taskid != TaskList [taskid].leader)
         { 
             // allocate a single hash table for all fine
@@ -1071,16 +1211,14 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             continue ;
         }
 
-        TaskList [taskid].Hi = Hi_split ;
-        TaskList [taskid].Hf = (GB_void *) Hf_split ;
-        TaskList [taskid].Hx = Hx_split ;
-
         int64_t hash_size = TaskList [taskid].hsize ;
         int64_t k = TaskList [taskid].vector ;
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        // int64_t kfirst = TaskList [taskid].start ;
-        // int64_t klast = TaskList [taskid].end ;
+
+        TaskList [taskid].Hi = Hi_split ;
+        TaskList [taskid].Hf = (GB_void *) Hf_split ;
+        TaskList [taskid].Hx = Hx_split ;
 
         if (is_fine && use_Gustavson)
         { 
@@ -1100,7 +1238,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
         { 
-            Hx_split += (hash_size * csize + hx_pad) ;
+            Hx_split += (hash_size + hx_pad) * csize ;
         }
     }
 
@@ -1204,7 +1342,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
+    ASSERT_MATRIX_OK (C, "saxpy3: output", GB3) ;
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
