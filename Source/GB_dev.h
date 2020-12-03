@@ -31,7 +31,7 @@
 // #define GBCOMPACT 1
 
 // for code development only
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #endif
 

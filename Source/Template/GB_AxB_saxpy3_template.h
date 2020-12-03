@@ -518,89 +518,6 @@ break ;
             GB_ATOMIC_UPDATE                                        \
             Hx_imag [2*(i)] += cimag (t) ;
 
-    #elif GB_IS_IMIN_MONOID
-
-        // fast integer min monoid via atomic read and atomic write,
-        // for MIN_INT* and MIN_UINT* built-in monoids.
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-        {                                                           \
-            GB_CTYPE xold, *px = Hx + (i) ;                         \
-            do                                                      \
-            {                                                       \
-                GB_ATOMIC_READ                                      \
-                xold = (*px) ;                                      \
-                if (xold <= t) break ;                              \
-                GB_ATOMIC_WRITE                                     \
-                (*px) = t ;                                         \
-            }                                                       \
-            while (1) ;                                             \
-        }
-
-    #elif GB_IS_FMIN_MONOID
-
-        // fast float/double min monoid via atomic read and atomic write.
-        // for MIN_FP32 and MIN_FP64 built-in monoids.
-
-        // Hx [i] starts out as NaN, so the first instance of xold is NaN.
-        // If t is NaN, the update is skipped ('omitnan' behavior).
-        // islessequal (xold,t) is false if either xold or t are NaN,
-        // so the first non-NaN value of t will always be written to Hx [i].
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-        {                                                           \
-            if (!isnan (t))                                         \
-            {                                                       \
-                GB_CTYPE xold, *px = Hx + (i) ;                     \
-                do                                                  \
-                {                                                   \
-                    GB_ATOMIC_READ                                  \
-                    xold = (*px) ;                                  \
-                    if (islessequal (xold, t)) break ;              \
-                    GB_ATOMIC_WRITE                                 \
-                    (*px) = t ;                                     \
-                }                                                   \
-                while (1) ;                                         \
-            }                                                       \
-        }
-
-    #elif GB_IS_IMAX_MONOID
-
-        // fast integer max monoid via atomic read and atomic write,
-        // for MAX_INT* and MAX_UINT* built-in monoids.
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-        {                                                           \
-            GB_CTYPE xold, *px = Hx + (i) ;                         \
-            do                                                      \
-            {                                                       \
-                GB_ATOMIC_READ                                      \
-                xold = (*px) ;                                      \
-                if (xold >= t) break ;                              \
-                GB_ATOMIC_WRITE                                     \
-                (*px) = t ;                                         \
-            }                                                       \
-            while (1) ;                                             \
-        }
-
-    #elif GB_IS_FMAX_MONOID
-
-        // fast float/double max monoid via atomic read and atomic write.
-        // for MAX_FP32 and MAX_FP64 built-in monoids.
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-        {                                                           \
-            if (!isnan (t))                                         \
-            {                                                       \
-                GB_CTYPE xold, *px = Hx + (i) ;                     \
-                do                                                  \
-                {                                                   \
-                    GB_ATOMIC_READ                                  \
-                    xold = (*px) ;                                  \
-                    if (isgreaterequal (xold, t)) break ;           \
-                    GB_ATOMIC_WRITE                                 \
-                    (*px) = t ;                                     \
-                }                                                   \
-                while (1) ;                                         \
-            }                                                       \
-        }
-
     #elif GB_HAS_OMP_ATOMIC
 
         // built-in PLUS, TIMES, LOR, LAND, LXOR monoids can be
@@ -611,7 +528,7 @@ break ;
 
     #else
 
-        // built-in EQ monoids only, which cannot
+        // built-in MIN, MAX, EQ monoids only, which cannot
         // be implemented with an OpenMP pragma
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_CTYPE xold, xnew, *px = Hx + (i) ;                   \
@@ -634,16 +551,11 @@ break ;
     //--------------------------------------------------------------------------
 
     #define GB_ATOMIC_UPDATE_HX(i,t)    \
-        GB_PRAGMA (omp flush)           \
+        GB_OMP_FLUSH                    \
         GB_HX_UPDATE (i, t) ;           \
-        GB_PRAGMA (omp flush)
+        GB_OMP_FLUSH
 
 #endif
-
-// true for min or max built-in monoids
-#define GB_IS_MINMAX_MONOID \
-    (GB_IS_IMIN_MONOID || GB_IS_IMAX_MONOID || \
-     GB_IS_FMIN_MONOID || GB_IS_FMAX_MONOID)
 
 //------------------------------------------------------------------------------
 // GB_ATOMIC_WRITE_HX:  Hx [i] = t
@@ -696,10 +608,10 @@ break ;
     // Hx [i] = t via critical section
     //--------------------------------------------------------------------------
 
-    #define GB_ATOMIC_WRITE_HX(i,t)    \
-        GB_PRAGMA (omp flush)          \
-        GB_HX_WRITE (i, t) ;           \
-        GB_PRAGMA (omp flush)
+    #define GB_ATOMIC_WRITE_HX(i,t)     \
+        GB_OMP_FLUSH                    \
+        GB_HX_WRITE (i, t) ;            \
+        GB_OMP_FLUSH
 
 #endif
 

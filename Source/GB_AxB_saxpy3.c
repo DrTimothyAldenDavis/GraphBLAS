@@ -294,22 +294,22 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB3) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ;
 
-    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB3) ;
+    ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB3) ;
+    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;
 
-    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB3) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
     (*Chandle) = NULL ;
@@ -1029,6 +1029,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // get the identity value
     //--------------------------------------------------------------------------
 
+#if 0
     bool identity_is_zero ;
     GB_void identity [GB_VLA (csize)] ;
 
@@ -1066,9 +1067,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // get the identity value and check if it's zero 
         memcpy (identity, add->identity, csize) ;
         identity_is_zero = !GB_is_nonzero (identity, csize) ;
-        printf ("min/max identity zero? %d\n", identity_is_zero) ;
-        GxB_print (semiring, 3) ;
+        // printf ("min/max identity zero? %d\n", identity_is_zero) ;
+        // GxB_print (semiring, 3) ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // allocate space for all hash tables
@@ -1080,16 +1082,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     if (Hf_size_total > 0)
     { 
+        // Hf must be calloc'd to initialize all entries as empty 
         Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
     }
     if (Hx_size_total > 0)
     { 
+#if 0
         if (nfine_gus > 0 && M == NULL && identity_is_zero)
         {
             // fine Gustavson tasks require Hx to be initialized when M == NULL
             Hx_all = GB_CALLOC (Hx_size_total * csize, GB_void) ;
         }
         else
+#endif
         {
             Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
         }
@@ -1108,6 +1113,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // initialize Hx if needed
     //--------------------------------------------------------------------------
 
+#if 0
     if (Hx_size_total > 0 && nfine_gus > 0 && M == NULL && !identity_is_zero)
     {
         // Fine Gustavson tasks with no mask require Hx to be initialized to
@@ -1121,7 +1127,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         switch (csize)
         {
             case 1 :
-            { 
+            {
                 uint8_t c ;
                 memcpy (&c, identity, 1) ;
                 GB_memset (Hx_all, (int) c, Hx_size_total, nthreads_max) ;
@@ -1129,7 +1135,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
 
             case 2 :
-            { 
+            {
                 uint16_t c ;
                 memcpy (&c, identity, 2) ;
                 uint16_t *GB_RESTRICT Hx = (uint16_t *) Hx_all ;
@@ -1142,7 +1148,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
 
             case 4 :
-            { 
+            {
                 uint32_t c ;
                 memcpy (&c, identity, 4) ;
                 uint32_t *GB_RESTRICT Hx = (uint32_t *) Hx_all ;
@@ -1155,7 +1161,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
 
             case 8 :
-            { 
+            {
                 uint64_t c ;
                 memcpy (&c, identity, 8) ;
                 uint64_t *GB_RESTRICT Hx = (uint64_t *) Hx_all ;
@@ -1168,7 +1174,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
 
             case 16 :
-            { 
+            {
                 uint64_t c [2] ;
                 memcpy (c, identity, 16) ;
                 uint64_t *GB_RESTRICT Hx = (uint64_t *) Hx_all ;
@@ -1182,7 +1188,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
 
             default :
-            { 
+            {
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < Hx_size_total ; p++)
                 {
@@ -1192,6 +1198,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             break ;
         }
     }
+#endif
 
     //--------------------------------------------------------------------------
     // split the space into separate hash tables
@@ -1342,7 +1349,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    ASSERT_MATRIX_OK (C, "saxpy3: output", GB3) ;
+    ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

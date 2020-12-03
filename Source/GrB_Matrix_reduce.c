@@ -102,7 +102,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (op_in) ;
-    ASSERT_BINARYOP_OK (op_in, "binary op for reduce-to-vector", GB3) ;
+    ASSERT_BINARYOP_OK (op_in, "binary op for reduce-to-vector", GB0) ;
 
     // check operator types; all must be identical
     if (op_in->xtype != op_in->ztype || op_in->ytype != op_in->ztype)
@@ -294,7 +294,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
             " z=%s(x,y) has no equivalent monoid\n", op_in->name) ;
     }
 
-    ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB3) ;
+    ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
 
     GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
         accum, monoid, A, desc, Context) ;

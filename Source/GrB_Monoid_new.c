@@ -49,7 +49,6 @@ GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
 )
 { 
     GB_WHERE1 ("GrB_Monoid_new_UDT (&monoid, op, identity)") ;
-    GB_RETURN_IF_NULL (identity) ;
     return (GB_Monoid_new (monoid, op, identity, NULL, GB_UDT_code, Context)) ;
 }
 

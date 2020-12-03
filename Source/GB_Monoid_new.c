@@ -15,11 +15,6 @@
 // known values are used instead.  This is to allow the use of the hard-coded
 // functions for built-in monoids.
 
-// User-defined monoids are required to have a non-NULL identity value.  The
-// identity value is required by GraphBLAS only when reducing a matrix or
-// vector to a scalar (in GB_reduce_to_scalar), and even there, it is only
-// required when nvals(A) is zero.
-
 // The identity value of built-in monoids is exploited in one special case in
 // Template/GB_AxB_saxpy3_template.c, but it is used via the #define
 // GB_IDENTITY value, not monoid->identity.  This #define is also used for
@@ -28,10 +23,6 @@
 // User-defined monoids may have a NULL terminal value, which denotes that the
 // monoid does not have a terminal value.
 
-// Internally-defined monoids may have a NULL identity value; these monoids are
-// not exposed to the user API, however, and cannot be created or directly
-// accessed by the user.
-
 #include "GB.h"
 #include "GB_binop.h"
 
@@ -39,7 +30,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 (
     GrB_Monoid *monoid,         // handle of monoid to create
     GrB_BinaryOp op,            // binary operator of the monoid
-    const void *identity,       // identity value, if any (may be NULL)
+    const void *identity,       // identity value, if any
     const void *terminal,       // terminal value, if any (may be NULL)
     GB_Type_code idcode,        // identity and terminal type code
     GB_Context Context
@@ -52,9 +43,10 @@ GrB_Info GB_Monoid_new          // create a monoid
 
     GB_RETURN_IF_NULL (monoid) ;
     (*monoid) = NULL ;
+    GB_RETURN_IF_NULL (identity) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_BINARYOP_OK (op, "op for monoid", GB3) ;
+    ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
     ASSERT (idcode <= GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
@@ -64,11 +56,9 @@ GrB_Info GB_Monoid_new          // create a monoid
     // If the user requests the creation of a monoid based on a duplicate
     // built-in binary operator, the unique boolean operator is used instead.
     // See also GB_boolean_rename, which does this for opcodes, not operators.
-    // This is done before the operator is checked, so that any error messages
-    // reflect the renaming.
 
     op = GB_boolean_rename_op (op) ;
-    ASSERT_BINARYOP_OK (op, "revised op", GB3) ;
+    ASSERT_BINARYOP_OK (op, "revised op", GB0) ;
 
     //--------------------------------------------------------------------------
     // continue checking inputs
@@ -332,12 +322,9 @@ GrB_Info GB_Monoid_new          // create a monoid
 
     if (!done)
     {
-        if (identity != NULL)
-        { 
-            // create the monoid identity value
-            GB_ALLOC_IDENTITY ;
-            memcpy (mon->identity, identity, zsize) ;
-        }
+        // create the monoid identity value
+        GB_ALLOC_IDENTITY ;
+        memcpy (mon->identity, identity, zsize) ;
         if (terminal != NULL)
         { 
             // create the monoid terminal value
@@ -346,7 +333,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         }
     }
 
-    ASSERT_MONOID_OK (mon, "new monoid", GB3) ;
+    ASSERT_MONOID_OK (mon, "new monoid", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

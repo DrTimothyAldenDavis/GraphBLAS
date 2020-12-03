@@ -116,10 +116,7 @@ GrB_Info GB_AxB_saxpy3_generic
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-    // The monoid identity value is not used, to support the creation of
-    // arbitrary monoids from any operator that have no identity value.
-    // This can be used by GB_reduce_to_vector, which can be given either
-    // a monoid or binary operator from GrB_Matrix_reduce.
+    // The monoid identity value is not used.
     #undef GB_IDENTITY
 
     // definitions for GB_AxB_saxpy_template.c

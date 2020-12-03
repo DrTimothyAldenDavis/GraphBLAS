@@ -182,22 +182,14 @@
                         if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
                         GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
+                        int8_t f ;
 
-                        #if GB_IS_MINMAX_MONOID
-
-                            //--------------------------------------------------
-                            // C(i,j) += t ; with the MIN or MAX monoids
-                            //--------------------------------------------------
-
-                            GB_ATOMIC_UPDATE_HX (i, t) ; // Hx [i] += t
-
-                        #elif GB_IS_ANY_MONOID
+                        #if GB_IS_ANY_MONOID
 
                             //--------------------------------------------------
                             // C(i,j) += t ; with the ANY monoid
                             //--------------------------------------------------
 
-                            int8_t f ;
                             GB_ATOMIC_READ
                             f = Hf [i] ;            // grab the entry
                             if (f == 2) continue ;  // check if already updated
@@ -209,7 +201,6 @@
                             // C(i,j) += t ; with all other monoids
                             //--------------------------------------------------
 
-                            int8_t f ;
                             #if GB_HAS_ATOMIC
 
                                 // if C(i,j) is already present (f==2), and the

@@ -61,7 +61,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
-    ASSERT (reduce->identity != NULL) ;
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;

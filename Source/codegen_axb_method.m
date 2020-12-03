@@ -145,32 +145,6 @@ else
     fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
 end
 
-if (is_max)
-    if (contains (ztype, 'int'))
-        fprintf (f, 'define(`GB_is_imax_monoid'', `1'')\n') ;
-        fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
-    else
-        fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
-        fprintf (f, 'define(`GB_is_fmax_monoid'', `1'')\n') ;
-    end
-else
-    fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
-end
-
-if (is_min)
-    if (contains (ztype, 'int'))
-        fprintf (f, 'define(`GB_is_imin_monoid'', `1'')\n') ;
-        fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
-    else
-        fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
-        fprintf (f, 'define(`GB_is_fmin_monoid'', `1'')\n') ;
-    end
-else
-    fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
-end
-
 if (is_any)
     % the ANY monoid terminates on the first entry seen
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
@@ -355,14 +329,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +39 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +39 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

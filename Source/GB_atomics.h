@@ -91,8 +91,8 @@
 
         // No need for atomic read/write on x86_64.  gcc already treats atomic
         // read/write as plain read/write, so these definitions only affect icc.
-        #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-        #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
+        #define GB_ATOMIC_READ
+        #define GB_ATOMIC_WRITE
 
     #else
 
@@ -108,6 +108,12 @@
     #endif
 
 #endif
+
+//------------------------------------------------------------------------------
+// flush
+//------------------------------------------------------------------------------
+
+#define GB_OMP_FLUSH GB_PRAGMA (omp flush)
 
 //------------------------------------------------------------------------------
 // atomic capture
