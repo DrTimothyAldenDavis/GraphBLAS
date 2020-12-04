@@ -442,7 +442,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-// #define GBX(...)     TODO
+// #define GBX(...)     TODO: constant-valued matrices
 
 #endif
 

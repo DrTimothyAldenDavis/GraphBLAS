@@ -351,8 +351,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     char B_str [GB_PROP_LEN+1] ;
     if (GB_Global_burble_get ( ))
     {
-        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
-        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
+        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
+        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
         snprintf (A_str, GB_PROP_LEN, "A: " GBd "-by-" GBd ", %s, " GBd 
             " entries", GB_NROWS (A), GB_NCOLS (A), A->type->name, anz) ;
         snprintf (B_str, GB_PROP_LEN, "B: " GBd "-by-" GBd ", %s, " GBd

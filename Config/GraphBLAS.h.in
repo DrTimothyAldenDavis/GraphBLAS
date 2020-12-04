@@ -1320,7 +1320,7 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 // SPEC: GxB_SelectOp and all related functions are an extenstion to the spec.
 
-// TODO: delete nrows, ncols from my GxB_select
+// TODO:: delete nrows, ncols from my GxB_select
 
 // GxB_SelectOp is an operator used by GxB_select to select entries from an
 // input matrix A that are kept in the output C.  If an entry A(i,j) in the
@@ -8909,7 +8909,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     const GrB_Descriptor desc
 ) ;
 
-    // BitmapR: TODO describe
+    // BitmapR: TODO:: describe
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_BitmapC: import a bitmap matrix, held by column
@@ -8932,7 +8932,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     const GrB_Descriptor desc
 ) ;
 
-    // BitmapC: TODO describe
+    // BitmapC: TODO:: describe
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_FullR:  import a full matrix, held by row
@@ -9005,7 +9005,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     const GrB_Descriptor desc
 ) ;
 
-    // For the import of a GrB_Vector, TODO  ...  
+    // For the import of a GrB_Vector, TODO::  ...  
     // The GrB_Vector is treated as if it was
     // a single column of an n-by-1 matrix in CSC format.  If nvals is zero,
     // then the vi and vx arrays need not be present and can be NULL.
@@ -9030,7 +9030,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     const GrB_Descriptor desc
 ) ;
 
-    // TODO: describe
+    // TODO:: describe
 
 //------------------------------------------------------------------------------
 // GxB_Vector_import_FuLL: import a vector in full format
@@ -9049,7 +9049,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     const GrB_Descriptor desc
 ) ;
 
-    // TODO: describe
+    // TODO:: describe
 
 //------------------------------------------------------------------------------
 

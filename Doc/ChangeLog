@@ -1,4 +1,4 @@
-Version 4.0.0, TODO:, 2020
+Version 4.0.1, TODO::, 2020
 
     * GrB_wait(), with no inputs: removed
     * GrB_wait(&object): polymorphic function added

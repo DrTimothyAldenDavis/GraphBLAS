@@ -64,13 +64,13 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
             #include "GB_bitmap_assign_M_all_template.c"
             break ;
 
-        case GB_BITMAP_M_SCATTER_MOD_2 :        // Cb (i,j) %= 2
+//      case GB_BITMAP_M_SCATTER_MOD_2:         // Cb (i,j) %= 2
 
-            // TODO unused so far
-            #undef  GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] %= 2
-            #include "GB_bitmap_assign_M_all_template.c"
-            break ;
+//          // TODO unused so far, and probably not needed
+//          #undef  GB_MASK_WORK
+//          #define GB_MASK_WORK(pC) Cb [pC] %= 2
+//          #include "GB_bitmap_assign_M_all_template.c"
+//          break ;
 
         default: ;
     }

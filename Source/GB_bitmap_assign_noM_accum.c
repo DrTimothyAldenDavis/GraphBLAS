@@ -184,7 +184,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     // return result
     //--------------------------------------------------------------------------
 
-    C->nvals = cnvals ;
+    C->nvals = cnvals ; // TODO: use task_cnvals
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     return (GrB_SUCCESS) ;
 }

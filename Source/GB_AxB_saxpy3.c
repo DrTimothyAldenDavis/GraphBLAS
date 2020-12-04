@@ -494,7 +494,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // will be applied later in GB_mxm.
 
     double axbflops = total_flops - Mwork ;
-    GBURBLE ("axbwork %g mwork %g ", axbflops, (double) Mwork) ;
+    GBURBLE ("axbwork %g ", axbflops) ;
+    if (Mwork > 0) GBURBLE ("mwork %g ", (double) Mwork) ;
     int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
     bool M_is_dense = GB_is_packed (M) ;
@@ -1053,14 +1054,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             double x = (double) NAN ;   // get a silent double NAN
             memcpy (identity, &x, sizeof (double)) ;
         }
-    }
-    else if (add->identity == NULL)
-    { 
-        // The monoid doesn't have an identity value; use the value zero.
-        // TODO: see GB_reduce_to_vector
-        printf ("NULL Identity!\n") ;
-        identity_is_zero = true ;
-        memset (identity, 0, csize) ;
     }
     else
     { 

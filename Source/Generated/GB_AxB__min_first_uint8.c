@@ -166,6 +166,22 @@
 #define GB_IS_PLUS_FC64_MONOID \
     0
 
+// 1 if monoid is MIN for signed or unsigned integers
+#define GB_IS_IMIN_MONOID \
+    1
+
+// 1 if monoid is MAX for signed or unsigned integers
+#define GB_IS_IMAX_MONOID \
+    0
+
+// 1 if monoid is MIN for float or double
+#define GB_IS_FMIN_MONOID \
+    0
+
+// 1 if monoid is MAX for float or double
+#define GB_IS_FMAX_MONOID \
+    0
+
 // 1 for the FIRSTI or FIRSTI1 multiply operator
 #define GB_IS_FIRSTI_MULTIPLIER \
     0

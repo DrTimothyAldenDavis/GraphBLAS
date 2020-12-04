@@ -52,7 +52,8 @@
 //  lgamma      gammaln
 //  tgamma      gamma
 //  exp2        pow2
-// TODO: use "i" for 1-based, add aliases "i0" and "i1".
+
+// TODO:: use "i" for 1-based, add aliases "i0" and "i1".
 // ditto for binary ops
 //  i           positioni
 //  i1          positioni1

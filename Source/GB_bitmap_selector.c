@@ -46,20 +46,15 @@ GrB_Info GB_bitmap_selector
     // allocate C
     //--------------------------------------------------------------------------
 
+    bool bitmap_calloc = true ;
     // TODO: can malloc C->b
     // TODO: must calloc C->x for GB_EQ_ZERO_opcode
 
     GrB_Matrix C = NULL ;
     GB_OK (GB_new_bix (&C, // always bitmap, new header
         A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
-        GxB_BITMAP, true, A->hyper_switch, -1, anz, true, Context)) ;
+        GxB_BITMAP, bitmap_calloc, A->hyper_switch, -1, anz, true, Context)) ;
     int64_t cnvals ;
-
-    // if (opcode == GB_EQ_ZERO_opcode)
-    { 
-        // TODO use calloc instead
-        memset (C->x, 0, anz * A->type->size) ;
-    }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

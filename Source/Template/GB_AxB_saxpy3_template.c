@@ -345,14 +345,8 @@
 
                 GB_GET_M_j ;                // get M(:,j)
 
-#if 0
-// TODO: decide if this test is worth it
-if (A_is_bitmap)
-{
-
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
-                    if (!GBB (Bb, pB)) continue ;
                     int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
@@ -360,10 +354,8 @@ if (A_is_bitmap)
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-// if (!GBB (Ab, pA)) continue ;
-if (!Ab [pA]) continue ;
+                        if (!GBB (Ab, pA)) continue ;
                         int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
@@ -421,84 +413,6 @@ if (!Ab [pA]) continue ;
                         #endif
                     }
                 }
-
-}
-else
-#endif
-{
-
-                for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                {
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
-                    GB_GET_A_k ;                // get A(:,k)
-                    if (aknz == 0) continue ;
-                    GB_GET_B_kj ;               // bkj = B(k,j)
-                    // scan A(:,k)
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    {
-// TODO: should this test be lifted out of the loop?
-if (!GBB (Ab, pA)) continue ;
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-
-                        GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                        int8_t f ;
-
-                        #if GB_IS_ANY_MONOID
-
-                            //--------------------------------------------------
-                            // ANY monoid
-                            //--------------------------------------------------
-
-                            // lock state (3) not needed
-                            // 0: not seen: update with new value, f becomes 2
-                            // 1: masked, do nothing, f stays 1
-                            // 2: already updated, do nothing, f stays 2
-                            // 3: state not used, f can be 2
-                            GB_ATOMIC_READ
-                            f = Hf [i] ;
-                            if (!f)
-                            {
-                                GB_ATOMIC_WRITE
-                                Hf [i] = 2 ;
-                                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-                            }
-
-
-                        #else
-
-                        GB_ATOMIC_READ
-                        f = Hf [i] ;            // grab the entry
-                        #if GB_HAS_ATOMIC
-                        if (f == 2)             // if true, update C(i,j)
-                        { 
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                            continue ;          // C(i,j) has been updated
-                        }
-                        #endif
-                        if (f == 1) continue ; // M(i,j)=1; ignore C(i,j)
-                        do  // lock the entry
-                        { 
-                            // do this atomically:
-                            // { f = Hf [i] ; Hf [i] = 3 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 3) ;
-                        } while (f == 3) ; // lock owner of gets f=0 or 2
-                        if (f == 0)
-                        { 
-                            // C(i,j) is a new entry
-                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
-                        }
-                        else // f == 2
-                        { 
-                            // C(i,j) already seen
-                            GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
-                        }
-                        GB_ATOMIC_WRITE
-                        Hf [i] = 2 ;                // unlock the entry
-                        #endif
-                    }
-                }
-}
-
             }
 
         }
@@ -943,8 +857,6 @@ if (!GBB (Ab, pA)) continue ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)
                 {
-                    // TODO: if all of C is dense, skip this step and
-                    // free the pattern of C.
                     // C(:,j) is dense
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
@@ -953,10 +865,6 @@ if (!GBB (Ab, pA)) continue ;
                     #if !GB_IS_ANY_PAIR_SEMIRING
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
-
-                    // TODO: if C is a single vector, skip the memcpy of
-                    // Hx into Cx.  Instead, free C->x and transplant
-                    // C->x = Hx, and do not free Hx.
                     #endif
                 }
                 else

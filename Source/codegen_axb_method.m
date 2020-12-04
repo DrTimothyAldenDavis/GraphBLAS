@@ -238,6 +238,40 @@ else
     fprintf (f, 'define(`GB_is_plus_fc64_monoid'', `0'')\n') ;
 end
 
+% min monoids:
+if (is_min)
+    if (contains (ztype, 'int'))
+        % min monoid for signed or unsigned integers
+        fprintf (f, 'define(`GB_is_imin_monoid'', `1'')\n') ;
+        fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
+    else
+        % min monoid for float or double
+        fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
+        fprintf (f, 'define(`GB_is_fmin_monoid'', `1'')\n') ;
+    end
+else
+    % not a min monoid
+    fprintf (f, 'define(`GB_is_imin_monoid'', `0'')\n') ;
+    fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
+end
+
+% max monoids:
+if (is_max)
+    if (contains (ztype, 'int'))
+        % max monoid for signed or unsigned integers
+        fprintf (f, 'define(`GB_is_imax_monoid'', `1'')\n') ;
+        fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
+    else
+        % max monoid for float or double
+        fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
+        fprintf (f, 'define(`GB_is_fmax_monoid'', `1'')\n') ;
+    end
+else
+    % not a max monoid
+    fprintf (f, 'define(`GB_is_imax_monoid'', `0'')\n') ;
+    fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
+end
+
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
 % in gcc and icc.  However, only PLUS and TIMES work with OpenMP atomics
 % in Microsoft Visual Studio; the LOR, LAND, and LXOR atomics don't compile.
@@ -277,7 +311,7 @@ fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 
 % create the add operator, of the form w += t
 % if (is_min || is_max)
-%   TODO
+%   TODO:: add update
 % else
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', '`$2''') ;
@@ -329,14 +363,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +35 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +39 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +35 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +39 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

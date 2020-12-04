@@ -93,7 +93,7 @@ classdef GrB
 %   When a GraphBLAS matrix is converted into a MATLAB sparse or full
 %   matrix, it is always returned to MATLAB 'by col'.
 %
-%   TODO: describe hypersparse, sparse, bitmap, full
+%   TODO:: describe hypersparse, sparse, bitmap, full
 %
 %--------------------
 % Integer operations:

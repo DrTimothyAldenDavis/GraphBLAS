@@ -500,7 +500,65 @@ break ;
     // Hx [i] += t via atomic update
     //--------------------------------------------------------------------------
 
-    #if GB_IS_PLUS_FC32_MONOID
+    // for built-in MIN/MAX monoids only, on built-in types
+    #define GB_MINMAX(i,t,done)                                     \
+    {                                                               \
+        GB_CTYPE xold, xnew, *px = Hx + (i) ;                       \
+        do                                                          \
+        {                                                           \
+            /* xold = Hx [i] via atomic read */                     \
+            GB_ATOMIC_READ                                          \
+            xold = (*px) ;                                          \
+            /* done if xold <= t for MIN, or xold >= t for MAX, */  \
+            /* but not done if xold is NaN */                       \
+            if (done) break ;                                       \
+            xnew = t ;  /* t should be assigned; it is not NaN */   \
+        }                                                           \
+        while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;      \
+    }
+
+    #if GB_IS_IMIN_ATOMIC
+
+        // built-in MIN monoids for signed and unsigned integers
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+            GB_MINMAX (i, t, xold <= t)
+
+    #elif GB_IS_IMAX_ATOMIC
+
+        // built-in MAX monoids for signed and unsigned integers
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+            GB_MINMAX (i, t, xold >= t)
+
+    #elif GB_IS_FMIN_ATOMIC
+
+        // built-in MIN monoids for float and double, with omitnan behavior.
+        // The update is skipped entirely if t is NaN.  Otherwise, if t is not
+        // NaN, xold is checked.  If xold is NaN, islessequal (xold, t) is
+        // always false, so the non-NaN t must be always be assigned to Hx [i].
+        // If both terms are not NaN, then islessequal (xold,t) is just the
+        // comparison xold <= t.  If that is true, there is no work to do and
+        // the loop breaks.  Otherwise, t is smaller than xold and so it must
+        // be assigned to Hx [i].
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        {                                                           \
+            if (!isnan (t))                                         \
+            {                                                       \
+                GB_MINMAX (i, t, islessequal (xold, t)) ;           \
+            }                                                       \
+        }
+
+    #elif GB_IS_FMAX_ATOMIC
+
+        // built-in MAX monoids for float and double, with omitnan behavior.
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        {                                                           \
+            if (!isnan (t))                                         \
+            {                                                       \
+                GB_MINMAX (i, t, isgreaterequal (xold, t)) ;        \
+            }                                                       \
+        }
+
+    #elif GB_IS_PLUS_FC32_MONOID
 
         // built-in PLUS_FC32 monoid
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
@@ -520,17 +578,19 @@ break ;
 
     #elif GB_HAS_OMP_ATOMIC
 
-        // built-in PLUS, TIMES, LOR, LAND, LXOR monoids can be
-        // implemented with an OpenMP pragma
+        // built-in PLUS and TIMES for integers and real, and boolean LOR,
+        // LAND, LXOR monoids can be implemented with an OpenMP pragma.
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_ATOMIC_UPDATE                                        \
             GB_HX_UPDATE (i, t)
 
     #else
 
-        // built-in MIN, MAX, EQ monoids only, which cannot
-        // be implemented with an OpenMP pragma
+        // all other atomic monoids (boolean EQ, bitwise monoids, etc)
+        // on boolean, signed and unsigned integers, float, and double
+        // (not used for single and double complex).
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        {                                                           \
             GB_CTYPE xold, xnew, *px = Hx + (i) ;                   \
             do                                                      \
             {                                                       \
@@ -540,7 +600,8 @@ break ;
                 /* xnew = xold + t */                               \
                 xnew = GB_ADD_FUNCTION (xold, t) ;                  \
             }                                                       \
-            while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew))
+            while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;  \
+        }
 
     #endif
 
@@ -550,12 +611,17 @@ break ;
     // Hx [i] += t can only be done inside the critical section
     //--------------------------------------------------------------------------
 
+    // all user-defined monoids go here, and all complex monoids (except PLUS)
     #define GB_ATOMIC_UPDATE_HX(i,t)    \
         GB_OMP_FLUSH                    \
         GB_HX_UPDATE (i, t) ;           \
         GB_OMP_FLUSH
 
 #endif
+
+#define GB_IS_MINMAX_MONOID \
+    (GB_IS_IMIN_MONOID || GB_IS_IMAX_MONOID ||  \
+     GB_IS_FMIN_MONOID || GB_IS_FMAX_MONOID)
 
 //------------------------------------------------------------------------------
 // GB_ATOMIC_WRITE_HX:  Hx [i] = t
