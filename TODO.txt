@@ -24,4 +24,5 @@ PR:  TODO::benchmark this
 
     need aggressive exploit of non-blocking mode, for x = sum (abs (t-r))
 
+TC:  TODO:: figure out why Feb 21st results are faster than Aug 2nd and current
 
