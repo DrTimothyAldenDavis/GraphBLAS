@@ -63,6 +63,9 @@ GrB_Info GB_bitmap_selector
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
+    // clear C->x  TODO:: only need this for GB_EQ_ZERO_opcode
+    GB_memset (C->x, 0, anz * A->type->size, nthreads_max) ;
+
     //--------------------------------------------------------------------------
     // launch the switch factory to select the entries
     //--------------------------------------------------------------------------
