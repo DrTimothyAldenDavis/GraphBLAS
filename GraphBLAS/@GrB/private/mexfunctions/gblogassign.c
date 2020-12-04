@@ -100,11 +100,8 @@ void mexFunction
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
-    GrB_Matrix M ;
-    OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY_CONTROL,
-        GxB_SPARSE + GxB_HYPERSPARSE)) ;
+    GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL,
+        GxB_SPARSE + GxB_HYPERSPARSE) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
@@ -155,11 +152,8 @@ void mexFunction
         if (fmt == GxB_BY_COL)
         { 
             // A is 1-by-ancols and held by column: transpose it
-            OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
-                GxB_BY_COL)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY_CONTROL,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            A_copy = gb_new (atype, mnz, 1, GxB_BY_COL, 
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
@@ -173,11 +167,8 @@ void mexFunction
         if (fmt == GxB_BY_ROW)
         { 
             // A is anrows-by-1 and held by row: transpose it
-            OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
-                GxB_BY_ROW)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY_CONTROL,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            A_copy = gb_new (atype, 1, mnz, GxB_BY_ROW,
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
@@ -210,9 +201,7 @@ void mexFunction
 
     GB_matlab_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
 
-    GrB_Matrix S ;
-    OK (GrB_Matrix_new (&S, atype, nrows, ncols)) ;
-    OK1 (S, GxB_Matrix_Option_set (S, GxB_FORMAT, GxB_BY_COL)) ;
+    GrB_Matrix S = gb_new (atype, nrows, ncols, GxB_BY_COL, 0) ;
 
     if (atype == GrB_BOOL)
     { 

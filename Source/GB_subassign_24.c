@@ -18,6 +18,8 @@
 // A can be jumbled, in which case C is also jumbled.
 // A can have any sparsity structure (sparse, hyper, bitmap, or full)
 
+// TODO:: preserve C->sparsity
+
 #include "GB_dense.h"
 #include "GB_Pending.h"
 #define GB_FREE_ALL ;
@@ -106,6 +108,8 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
         // copy the pattern from A to C
         //----------------------------------------------------------------------
+
+        // TODO: this does not preserve C->sparsity
 
         // clear prior content of C, but keep the CSR/CSC format and its type
         GBURBLE ("(deep copy) ") ;

@@ -86,7 +86,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
             type = GrB_FP64 ;
         }
 
-        T = gb_typecast (type, GxB_BY_COL, *A_handle) ;
+        T = gb_typecast (type, *A_handle, GxB_BY_COL, GxB_SPARSE) ;
 
         OK (GrB_Matrix_free (A_handle)) ;
     }

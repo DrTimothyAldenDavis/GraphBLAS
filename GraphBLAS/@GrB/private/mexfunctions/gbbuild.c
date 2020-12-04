@@ -208,12 +208,9 @@ void mexFunction
     // build the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A ;
-    OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
-    OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
     sparsity = gb_get_sparsity (NULL, NULL, sparsity) ;
-    OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
+    GrB_Matrix A = gb_new (type, nrows, ncols, fmt, sparsity) ;
 
     // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;

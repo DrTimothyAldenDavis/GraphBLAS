@@ -159,11 +159,9 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         GB_ijlength (I, ni, cnrows, &nI, &Ikind, Icolon) ;
         GB_ijlength (J, nj, cncols, &nJ, &Jkind, Jcolon) ;
         OK (GrB_Matrix_free (&A)) ;
-        OK (GrB_Matrix_new (&A, ctype, nI, nJ)) ;
         OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
         OK (GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &sparsity)) ;
-        OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
-        OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
+        A = gb_new (ctype, nI, nJ, fmt, sparsity) ;
         scalar_assignment = false ;
     }
 

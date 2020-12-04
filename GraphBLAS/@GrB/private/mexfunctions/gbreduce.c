@@ -108,11 +108,9 @@ void mexFunction
         OK (GxB_Monoid_operator (&binop, monoid)) ;
         OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
 
-        OK (GrB_Matrix_new (&C, ctype, 1, 1)) ;
         fmt = gb_get_format (1, 1, A, NULL, fmt) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
         sparsity = gb_get_sparsity (A, NULL, sparsity) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
+        C = gb_new (ctype, 1, 1, fmt, sparsity) ;
     }
 
     //--------------------------------------------------------------------------

@@ -21,7 +21,6 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
 )
 {
 
-    GrB_Matrix C = NULL ;
     GrB_Index nrows1, ncols1, nrows2, ncols2, nvals, nvals1, nvals2 ;
 
     //--------------------------------------------------------------------------
@@ -67,13 +66,10 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     // C = A .* B, where the pattern of C is the intersection of A and B
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_new (&C, GrB_BOOL, nrows1, ncols1)) ;
     GxB_Format_Value fmt ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-    OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     int sparsity = gb_get_sparsity (A, B, 0) ;
-    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
-
+    GrB_Matrix C = gb_new (GrB_BOOL, nrows1, ncols1, fmt, sparsity) ;
     OK1 (C, GrB_Matrix_eWiseMult_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
 
     //--------------------------------------------------------------------------

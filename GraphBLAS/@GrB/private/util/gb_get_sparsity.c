@@ -59,6 +59,7 @@ GxB_Format_Value gb_get_sparsity        // 0 to 15
         OK (GrB_Matrix_ncols (&ncols, A)) ;
         if (nrows > 1 || ncols > 1)
         {
+            // A is a vector or matrix, not a scalar
             OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &A_sparsity)) ;
         }
     }
@@ -69,6 +70,7 @@ GxB_Format_Value gb_get_sparsity        // 0 to 15
         OK (GrB_Matrix_ncols (&ncols, B)) ;
         if (nrows > 1 || ncols > 1)
         {
+            // B is a vector or matrix, not a scalar
             OK (GxB_Matrix_Option_get (B, GxB_SPARSITY_CONTROL, &B_sparsity)) ;
         }
     }

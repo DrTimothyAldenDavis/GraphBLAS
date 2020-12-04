@@ -27,6 +27,11 @@
 //  'bitmap'
 //  'full'
 
+// The sparsity formats can be combined as well, such as:
+//  'sparse/hyper by row'
+
+// hypersparse can be abbreviated as 'hyper'
+
 #include "gb_matlab.h"
 
 bool gb_mxstring_to_format      // true if a valid format is found
@@ -87,7 +92,8 @@ bool gb_mxstring_to_format      // true if a valid format is found
             { 
                 s += GxB_SPARSE ;
             }
-            else if (MATCH (format_string + kstart, "hypersparse"))
+            else if (MATCH (format_string + kstart, "hypersparse") ||
+                     MATCH (format_string + kstart, "hyper"))
             { 
                 s += GxB_HYPERSPARSE ;
             }

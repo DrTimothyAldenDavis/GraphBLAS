@@ -92,7 +92,8 @@ void mexFunction
                     // A is a 0-by-0 MATLAB matrix.  create a new 0-by-0
                     // GraphBLAS matrix C of the given type, with the default
                     // format.
-                    OK (GrB_Matrix_new (&C, type, 0, 0)) ;
+                    // TODO: why?
+                    C = gb_new (type, 0, 0, -1, 0) ;
                 }
                 else
                 { 
@@ -100,7 +101,7 @@ void mexFunction
                     // use the same format as A
                     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
                     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-                    C = gb_typecast (type, fmt, A) ;
+                    C = gb_typecast (type, A, fmt, 0) ;
                     OK (GrB_Matrix_free (&A)) ;
                 }
 
@@ -112,17 +113,10 @@ void mexFunction
                 // C = GrB (A, format)
                 //--------------------------------------------------------------
 
-                // TODO: it would be faster to get a shallow copy and
-                // transpose it.
-
-                // get a deep copy of A and convert it to the requested format
-                C = gb_get_deep (pargin [0]) ;
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-                if (sparsity > 0)
-                {
-                    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
-                        sparsity)) ;
-                }
+                // get a shallow copy of A
+                GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+                // C = A with the requested format and sparsity, no typecast
+                C = gb_typecast (NULL, A, fmt, sparsity) ;
 
             }
             else
@@ -142,12 +136,7 @@ void mexFunction
             // m-by-n GraphBLAS double matrix, no entries, default format
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
-            OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
-
-            // set to BY_COL if column vector, BY_ROW if row vector,
-            // use global default format otherwise
-            OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT,
-                gb_default_format (nrows, ncols))) ;
+            C = gb_new (GrB_FP64, nrows, ncols, -1, 0) ;
 
         }
         else
@@ -185,24 +174,12 @@ void mexFunction
             { 
                 // create an m-by-n matrix of the desired type, no entries,
                 // use the default format.
-                OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
-
-                // set to BY_COL if column vector, BY_ROW if row vector,
-                // use global default format otherwise
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT,
-                    gb_default_format (nrows, ncols))) ;
-
+                C = gb_new (type, nrows, ncols, -1, sparsity) ;
             }
             else if (ok)
             { 
                 // create an m-by-n double matrix of the desired format
-                OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-                if (sparsity > 0)
-                {
-                    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
-                        sparsity)) ;
-                }
+                C = gb_new (GrB_FP64, nrows, ncols, fmt, sparsity) ;
             }
             else
             { 
@@ -239,20 +216,14 @@ void mexFunction
 
             if (gb_mxarray_is_empty (pargin [0]))
             { 
-                OK (GrB_Matrix_new (&C, type, 0, 0)) ;
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+                C = gb_new (type, 0, 0, fmt, sparsity) ;
             }
             else
             { 
                 // get a shallow copy, typecast it, and set the format
                 GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-                C = gb_typecast (type, fmt, A) ;
+                C = gb_typecast (type, A, fmt, sparsity) ;
                 OK (GrB_Matrix_free (&A)) ;
-            }
-            if (sparsity > 0)
-            {
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
-                    sparsity)) ;
             }
         }
         else
@@ -298,13 +269,7 @@ void mexFunction
                 ERROR ("unknown type and/or format") ;
             }
 
-            OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
-            OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-            if (sparsity > 0)
-            {
-                OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL,
-                    sparsity)) ;
-            }
+            C = gb_new (type, nrows, ncols, fmt, sparsity) ;
         }
         else
         { 

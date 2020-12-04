@@ -47,7 +47,7 @@ void mexFunction
     GrB_Matrix T = NULL ;
     if (type != xtype)
     { 
-        T = gb_typecast (type, GxB_BY_COL, X) ;
+        T = gb_typecast (type, X, GxB_BY_COL, GxB_SPARSE) ;
         OK (GrB_Matrix_free (&X)) ;
         X = T ;
     }

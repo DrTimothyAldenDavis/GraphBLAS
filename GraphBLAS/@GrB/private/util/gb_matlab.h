@@ -166,11 +166,21 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
     const GrB_Type type
 ) ;
 
-GrB_Matrix gb_typecast          // A = (type) S, where A is deep
+GrB_Matrix gb_typecast          // A = (atype) S, where A is deep
 (
-    GrB_Type type,              // if NULL, copy but do not typecast
+    GrB_Type atype,             // if NULL, copy but do not typecast
+    GrB_Matrix S,               // may be shallow
     GxB_Format_Value fmt,       // also convert to the requested format
-    GrB_Matrix S                // may be shallow
+    int sparsity                // sparsity control for A, if 0 use S
+) ;
+
+GrB_Matrix gb_new               // create and empty matrix A
+(
+    GrB_Type type,              // type of A
+    GrB_Index nrows,            // # of rows
+    GrB_Index ncols,            // # of rows
+    GxB_Format_Value fmt,       // requested format
+    int sparsity                // sparsity control for A, 0 for default
 ) ;
 
 void gb_abort ( void ) ;    // failure

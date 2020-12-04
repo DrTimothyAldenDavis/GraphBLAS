@@ -101,9 +101,7 @@ void mexFunction
     // expand the identity into a dense matrix B the same size as C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix B ;
-    OK (GrB_Matrix_new (&B, type, nrows, ncols)) ;
-    OK1 (B, GxB_Matrix_Option_set (B, GxB_FORMAT, fmt)) ;
+    GrB_Matrix B = gb_new (type, nrows, ncols, fmt, 0) ;
     gb_matrix_assign_scalar (B, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
         false) ;
 
@@ -117,8 +115,7 @@ void mexFunction
     if (gb_is_integer (type) && gb_is_float (atype))
     { 
         // T = (type) round (A)
-        OK (GrB_Matrix_new (&T, type, nrows, ncols)) ;
-        OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, fmt)) ;
+        T = gb_new (type, nrows, ncols, fmt, 0) ;
         OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A,
             NULL)) ;
         S = T ;
@@ -133,10 +130,7 @@ void mexFunction
     // C = first (S, B)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C ;
-    OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
-    OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-    OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
+    GrB_Matrix C = gb_new (type, nrows, ncols, fmt, sparsity) ;
     OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
         gb_first_binop (type), S, B, NULL)) ;
 

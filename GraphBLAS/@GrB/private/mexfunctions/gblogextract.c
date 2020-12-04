@@ -113,14 +113,12 @@ void mexFunction
     // get M
     //--------------------------------------------------------------------------
 
-    // make M boolean, stored by column, and drop explicit zeros
-    GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
-    GrB_Matrix M ;
-    OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
     // M can be hypersparse, sparse, or full, but not bitmap
     int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY_CONTROL, not_bitmap)) ;
+
+    // make M boolean, stored by column, and drop explicit zeros
+    GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
+    GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
@@ -139,10 +137,7 @@ void mexFunction
     // Also ensure the G is not bitmap.
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
-    GrB_Matrix G ;
-    OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
-    OK1 (G, GxB_Matrix_Option_set (G, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (G, GxB_Matrix_Option_set (G, GxB_SPARSITY_CONTROL, not_bitmap)) ;
+    GrB_Matrix G = gb_new (type, nrows, ncols, GxB_BY_COL, not_bitmap) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     OK (GrB_Matrix_free (&A_copy)) ;
@@ -194,10 +189,7 @@ void mexFunction
     // T<G> = K
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T ;
-    OK (GrB_Matrix_new (&T, GrB_UINT64, nrows, ncols)) ;
-    OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (T, GxB_Matrix_Option_set (T, GxB_SPARSITY_CONTROL, not_bitmap)) ;
+    GrB_Matrix T = gb_new (GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap) ;
     OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 

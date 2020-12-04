@@ -134,11 +134,9 @@ void mexFunction
         OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
 
         // create the matrix C and set its format and sparsity
-        OK (GrB_Matrix_new (&C, ctype, cnrows, 1)) ;
         fmt = gb_get_format (cnrows, 1, A, NULL, fmt) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
         sparsity = gb_get_sparsity (A, NULL, sparsity) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
+        C = gb_new (ctype, cnrows, 1, fmt, sparsity) ;
     }
 
     //--------------------------------------------------------------------------

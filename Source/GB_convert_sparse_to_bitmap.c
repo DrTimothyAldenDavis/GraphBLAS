@@ -65,6 +65,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // allocate A->b
     //--------------------------------------------------------------------------
 
+    const int64_t anz = GB_NNZ (A) ;
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
@@ -75,22 +76,29 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         return (GrB_OUT_OF_MEMORY) ;
     }
     anzmax = GB_IMAX (anzmax, 1) ;
-    Ab = GB_MALLOC (anzmax, int8_t) ;
+    if (in_place)
+    { 
+        // if done in-place, malloc is fine since all of Ab will be set below
+        Ab = GB_MALLOC (anzmax, int8_t) ;
+    }
+    else if (anz == 0)
+    { 
+        // calloc Ab so all bitmap entries are zero; no need to touch them.
+        // This case occurs when setting the GxB_SPARSITY_CONTROL of a new
+        // matrix to GxB_BITMAP, with no entries.
+        Ab = GB_CALLOC (anzmax, int8_t) ;       // anz is zero
+    }
+    else
+    { 
+        // Set all of Ab [0..anz-1] to 0, in parallel.  This is faster than
+        // calloc since most of Ab will be set below.
+        Ab = GB_MALLOC (anzmax, int8_t) ;
+        GB_memset (Ab, 0, anz, nthreads_max) ;
+    }
     if (Ab == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // clear A->b
-    //--------------------------------------------------------------------------
-
-    if (!in_place)
-    { 
-        // if done in-place, this work is skipped since all of Ab will
-        // be set below
-        GB_memset (Ab, 0, anzmax, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -123,10 +131,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // scatter the pattern and values into the new bitmap
     //--------------------------------------------------------------------------
 
-    // A retains its CSR/CSC format.
-    int64_t anz = GB_NNZ (A) ;
     int64_t nzombies = A->nzombies ;
-
     if (in_place)
     { 
 
@@ -153,7 +158,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         }
 
     }
-    else
+    else if (anz > 0)
     {
 
         //----------------------------------------------------------------------

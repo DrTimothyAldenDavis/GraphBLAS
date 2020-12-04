@@ -56,7 +56,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     { 
         if (A->nzmax <= 1)
         {
-            A->i = GB_CALLOC (A->nzmax, int64_t) ;
+            A->i = GB_CALLOC (1, int64_t) ;
         }
         else
         { 
