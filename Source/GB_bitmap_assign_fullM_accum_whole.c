@@ -95,7 +95,6 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
             // C<M,replace> += scalar
             //------------------------------------------------------------------
 
-            //      also: if mij == 0 set Cb(p) = 0
             #undef  GB_CIJ_WORK
             #define GB_CIJ_WORK(pC)                     \
             {                                           \

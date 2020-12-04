@@ -30,7 +30,9 @@
 
 // If M is not present and Mask_comp is true, then an empty mask is
 // complemented.  This case is been handled by GB_assign_prep by calling this
-// method with no matrix A, but with a scalar (which is unused).
+// method with no matrix A, but with a scalar (which is unused).  However,
+// for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
+// I and J.  In that case, GB_assign_prep calls GB_clear instead.
 
 #include "GB_bitmap_assign_methods.h"
 
@@ -84,17 +86,26 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
     if (C_replace)
     { 
-        // for row assign: set Cb(i,:) to zero
-        // for col assign: set Cb(:,j) to zero
-        // for assign: set all Cb(:,:) to zero
-        // for subassign: set all Cb(I,J) to zero
-        #define GB_CIJ_WORK(pC)                 \
-        {                                       \
-            int8_t cb = Cb [pC] ;               \
-            Cb [pC] = 0 ;                       \
-            cnvals -= (cb == 1) ;               \
+        if (assign_kind == GB_ASSIGN)
+        {
+            // for assign: set all Cb(:,:) to zero
+            GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+            cnvals = 0 ;
         }
-        #include "GB_bitmap_assign_C_template.c"
+        else
+        {
+            // for row assign: set Cb(i,:) to zero
+            // for col assign: set Cb(:,j) to zero
+            // for subassign: set all Cb(I,J) to zero
+            #define NO_ASSIGN_CASE
+            #define GB_CIJ_WORK(pC)                 \
+            {                                       \
+                int8_t cb = Cb [pC] ;               \
+                Cb [pC] = 0 ;                       \
+                cnvals -= (cb == 1) ;               \
+            }
+            #include "GB_bitmap_assign_C_template.c"
+        }
     }
 
     //--------------------------------------------------------------------------

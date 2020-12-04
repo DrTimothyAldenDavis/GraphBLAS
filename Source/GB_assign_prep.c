@@ -404,6 +404,8 @@ GrB_Info GB_assign_prep
     // J is now a list of vectors in the range 0:C->vdim-1
     // I is now a list of indices in the range 0:C->vlen-1
 
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+
     //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented
     //--------------------------------------------------------------------------
@@ -417,12 +419,17 @@ GrB_Info GB_assign_prep
 
     if (M == NULL && Mask_comp)
     {
+
+        //----------------------------------------------------------------------
+        // C<!,replace or !replace>(I,J) = anything
+        //----------------------------------------------------------------------
+
         // The mask M is empty, and complemented, and thus M(i,j)=0 for all i
-        // and j.  The result does not depend on A, Rows, Cols, or accum.  The
-        // output C is either untouched (if C_replace is false) or cleared (if
-        // C_replace is true).  However, the GrB_Row_assign and GrB_Col_assign
-        // only clear their specific row or column of C, respectively.
-        // GB_subassign only clears C(I,J).  GrB_assign clears all of C.
+        // and j.  The result does not depend on A or accum.  The output C is
+        // either untouched (if C_replace is false) or cleared (if C_replace is
+        // true).  However, the GrB_Row_assign and GrB_Col_assign only clear
+        // their specific row or column of C, respectively.  GB_subassign only
+        // clears C(I,J).  GrB_assign clears all of C.
 
         // M is NULL so C and M cannot be the same, and A is ignored so
         // it doesn't matter whether or not C == A.  Thus C is not aliased
@@ -434,7 +441,18 @@ GrB_Info GB_assign_prep
 
         if (*C_replace)
         {
+
+            //------------------------------------------------------------------
+            // C<!,replace>(I,J) = anything
+            //------------------------------------------------------------------
+
             ASSERT_MATRIX_OK (C, "C for quick mask", GB0) ;
+
+            if (whole_C_matrix)
+            { 
+                // clear the whole C matrix: assign and subassign are the same
+                (*assign_kind) = GB_ASSIGN ;
+            }
 
             switch (*assign_kind)
             {
@@ -513,9 +531,12 @@ GrB_Info GB_assign_prep
 
                 case GB_ASSIGN : 
                 {
-                    // C<!NULL>=NULL since result does not depend on computing
+                    // C<!>=anything since result does not depend on computing
                     // Z.  Since C_replace is true, all of C is cleared.  This
                     // is the same as the GB_RETURN_IF_QUICK_MASK macro.
+                    // GB_clear either converts C to an empty sparse/hyper
+                    // matrix, or to a bitmap matrix with no entries, depending
+                    // on its sparsity control setting.
                     GBURBLE ("clear C ") ;
                     GB_OK (GB_clear (C, Context)) ;
                 }
@@ -595,7 +616,6 @@ GrB_Info GB_assign_prep
     // delete pending tuples for C(:,:) = x and C(:,:) = A
     //--------------------------------------------------------------------------
 
-    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (whole_C_matrix)
     { 
         // If the assignment is C<M>(:,:) = ... then convert the assignment

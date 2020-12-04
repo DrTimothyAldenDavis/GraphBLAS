@@ -15,8 +15,8 @@
 // C<!> += A           assign: no work to do
 // C<!> += A           subassign: no work to do
 
-// C<!,repl> += A      assign: just clear C(I,J) of all entries
-// C<!,repl> += A      subassign: just clear C(I,J) of all entries
+// C<!,repl> += A      assign: just clear C of all entries, not done here
+// C<!,repl> += A      subassign: just clear C of all entries, not done here
 //------------------------------------------------------------------------------
 
 // C:           bitmap
@@ -29,8 +29,8 @@
 // kind:        assign or subassign (same action)
 
 // If Mask_comp is true, then an empty mask is complemented.  This case has
-// already been handled by GB_assign_prep, which calls
-// GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
+// already been handled by GB_assign_prep, which calls GB_clear (which is
+// unused).
 
 #include "GB_bitmap_assign_methods.h"
 
@@ -78,26 +78,24 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     {
 
         //----------------------------------------------------------------------
-        // C(I,J) += A or += scalar
+        // C += A or += scalar
         //----------------------------------------------------------------------
 
         if (A == NULL)
         { 
 
             //------------------------------------------------------------------
-            // scalar assignment: C(I,J) += scalar
+            // scalar assignment: C += scalar
             //------------------------------------------------------------------
 
-            // for all entries in IxJ
-            #define GB_IXJ_WORK(pC,ignore)          \
+            #undef  GB_CIJ_WORK
+            #define GB_CIJ_WORK(pC)                 \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 if (cb == 0)                        \
                 {                                   \
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
-                    Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
                 }                                   \
                 else                                \
                 {                                   \
@@ -105,43 +103,77 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     GB_ACCUM_SCALAR (pC) ;          \
                 }                                   \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "GB_bitmap_assign_C_whole_template.c"
+
+            // all entries in C are now present; C becomes a full matrix
+            GB_memset (Cb, 1, cnzmax, nthreads_max) ;
+            cnvals = cnzmax ;
 
         }
         else
-        { 
+        {
 
             //------------------------------------------------------------------
-            // matrix assignment: C(I,J) += A
+            // matrix assignment: C += A
             //------------------------------------------------------------------
 
-            // for all entries aij in A (A hyper, sparse, bitmap, or full)
-            //        if Cb(p) == 0
-            //            Cx(p) = aij
-            //            Cb(p) = 1       // C(iC,jC) is now present, insert
-            //        else // if Cb(p) == 1:
-            //            Cx(p) += aij    // C(iC,jC) still present, updated
-            //            cnvals++
+            if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
+            { 
 
-            #define GB_AIJ_WORK(pC,pA)              \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                if (cb == 0)                        \
-                {                                   \
-                    /* Cx [pC] = Ax [pA] */         \
-                    GB_ASSIGN_AIJ (pC, pA) ;        \
-                    Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
-                }                                   \
-                else                                \
-                {                                   \
-                    /* Cx [pC] += Ax [pA] */        \
-                    GB_ACCUM_AIJ (pC, pA) ;         \
-                }                                   \
+                //--------------------------------------------------------------
+                // C += A where A is bitmap or full
+                //--------------------------------------------------------------
+
+                #undef  GB_CIJ_WORK
+                #define GB_CIJ_WORK(pC)                     \
+                {                                           \
+                    if (GBB (Ab, pC))                       \
+                    {                                       \
+                        int8_t cb = Cb [pC] ;               \
+                        if (cb == 0)                        \
+                        {                                   \
+                            /* Cx [pC] = Ax [pC] */         \
+                            GB_ASSIGN_AIJ (pC, pC) ;        \
+                            Cb [pC] = 1 ;                   \
+                            cnvals++ ;                      \
+                        }                                   \
+                        else                                \
+                        {                                   \
+                            /* Cx [pC] += Ax [pC] */        \
+                            GB_ACCUM_AIJ (pC, pC) ;         \
+                        }                                   \
+                    }                                       \
+                }
+                #include "GB_bitmap_assign_C_whole_template.c"
+
             }
-            #include "GB_bitmap_assign_A_template.c"
-        }
+            else
+            { 
 
+                //--------------------------------------------------------------
+                // C += A where A is sparse or hyper
+                //--------------------------------------------------------------
+
+                #undef  GB_AIJ_WORK
+                #define GB_AIJ_WORK(pC,pA)                  \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    if (cb == 0)                            \
+                    {                                       \
+                        /* Cx [pC] = Ax [pA] */             \
+                        GB_ASSIGN_AIJ (pC, pA) ;            \
+                        Cb [pC] = 1 ;                       \
+                        cnvals++ ;                          \
+                    }                                       \
+                    else                                    \
+                    {                                       \
+                        /* Cx [pC] += Ax [pA] */            \
+                        GB_ACCUM_AIJ (pC, pA) ;             \
+                    }                                       \
+                }
+                #include "GB_bitmap_assign_A_whole_template.c"
+            }
+        }
     }
 
 #if 0
@@ -152,22 +184,12 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
         // This case is handled by GB_assign_prep and is thus not needed here.
         //----------------------------------------------------------------------
 
-        // mask not present yet complemented: C_replace phase only
+        // mask not present yet complemented: C_replace phase only.  all
+        // entries are deleted.  This is done by GB_clear in GB_assign_prep
+        // and is thus not needed here.
 
-        // for row assign: for all entries in C(i,:)
-        // for col assign: for all entries in C(:,j)
-        // for assign: for all entries in C(:,:)
-        // for subassign: for all entries in C(I,J)
-        //      M not present; so effective value of the mask is mij==0
-        //      set Cb(p) = 0
-
-        #define GB_CIJ_WORK(pC)         \
-        {                               \
-            int8_t cb = Cb [pC] ;       \
-            Cb [pC] = 0 ;               \
-            cnvals -= (cb == 1) ;       \
-        }
-        #include "GB_bitmap_assign_C_template.c"
+        GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+        cnvals = 0 ;
     }
 #endif
 
@@ -176,7 +198,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     //--------------------------------------------------------------------------
 
     C->nvals = cnvals ;
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum, whole", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -326,8 +326,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         GBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),
-            ((use_subassign) ? "assign" :
-                ((use_transplant) ? "transplant" : "add")),
+            ((use_subassign) ? "assign" : "add"),
             (M_transposed ? "(M transposed)" : ""),
             (T_transposed ? "(result transposed)" : "")) ;
     }

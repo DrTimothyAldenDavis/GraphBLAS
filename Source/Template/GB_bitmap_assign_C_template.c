@@ -70,12 +70,14 @@
         // GrB_assign: C<M>(I,J), M is a matrix the same size as C
         //----------------------------------------------------------------------
 
+        #ifndef GB_NO_ASSIGN_CASE
         case GB_ASSIGN : 
         {
             // iterate over all of C(:,:).
             #include "GB_bitmap_assign_C_whole_template.c"
         }
         break ;
+        #endif
 
         //----------------------------------------------------------------------
         // GxB_subassign: C(I,J)<M>, M is a matrix the same size as C(I,J)
@@ -100,3 +102,5 @@
     }
 }
 
+#undef GB_NO_ASSIGN_CASE
+#undef GB_NO_SUBASSIGN_CASE

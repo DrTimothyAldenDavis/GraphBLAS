@@ -122,20 +122,21 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // all of C), or all that the operation can modify for row/col assign.
 
     bool whole_submatrix ;
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (assign_kind == GB_ROW_ASSIGN)
     { 
-        // row assignment to the entire row
+        // C(i,:) = ... row assignment to the entire row
         whole_submatrix = (Jkind == GB_ALL) ;
     }
     else if (assign_kind == GB_COL_ASSIGN)
     { 
-        // col assignment to the entire column
+        // C(:,j) = ... col assignment to the entire column
         whole_submatrix = (Ikind == GB_ALL) ;
     }
     else
     { 
-        // matrix assignment to the entire matrix
-        whole_submatrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+        // C(:,:) = ... matrix assignment to the entire matrix
+        whole_submatrix = whole_C_matrix ;
     }
 
     // Mask_is_same is true if SubMask == M (:,:)
@@ -144,7 +145,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // C_replace_phase is true if a final pass over all of C is required
     // to delete entries outside the C(I,J) submatrix.
     bool C_replace_phase = (C_replace && !Mask_is_same) ;
-    ASSERT (!Mask_is_same == (M != NULL && !whole_submatrix)) ;
 
     if ((GB_IS_BITMAP (C) || GB_IS_FULL (C)) && C_replace_phase)
     { 
