@@ -21,6 +21,7 @@
     {
         int64_t kfirst = kfirst_Mslice [tid] ;
         int64_t klast  = klast_Mslice  [tid] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // traverse over M (0,kfirst:klast)
@@ -57,6 +58,7 @@
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

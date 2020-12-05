@@ -9,56 +9,56 @@
 
 #include "gb_matlab.h"
 
-GrB_Matrix gb_typecast          // A = (atype) S, where A is deep
+GrB_Matrix gb_typecast          // C = (type) A, where C is deep
 (
-    GrB_Type atype,             // if NULL, copy but do not typecast
-    GrB_Matrix S,               // may be shallow
-    GxB_Format_Value fmt,       // also convert to the requested format
-    int sparsity                // sparsity control for A, if 0 use S
+    GrB_Matrix A,               // may be shallow
+    GrB_Type type,              // if NULL, use the type of A
+    GxB_Format_Value fmt,       // format of C
+    int sparsity                // sparsity control for C, if 0 use A
 )
 {
 
     //--------------------------------------------------------------------------
-    // determine the sparsity control for A
+    // determine the sparsity control for C
     //--------------------------------------------------------------------------
 
-    sparsity = gb_get_sparsity (S, NULL, sparsity) ;
+    sparsity = gb_get_sparsity (A, NULL, sparsity) ;
 
     //--------------------------------------------------------------------------
-    // get the type of A and S
+    // get the type of C and A
     //--------------------------------------------------------------------------
 
-    GrB_Type stype ;
-    OK (GxB_Matrix_type (&stype, S)) ;
-    if (atype == NULL)
+    GrB_Type atype ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (type == NULL)
     { 
         // keep the same type
-        atype = stype ;
+        type = atype ;
     }
 
     //--------------------------------------------------------------------------
-    // create the empty A matrix and set its format and sparsity
+    // create the empty C matrix and set its format and sparsity
     //--------------------------------------------------------------------------
 
     GrB_Index nrows, ncols ;
-    OK (GrB_Matrix_nrows (&nrows, S)) ;
-    OK (GrB_Matrix_ncols (&ncols, S)) ;
-    GrB_Matrix A = gb_new (atype, nrows, ncols, fmt, sparsity) ;
+    OK (GrB_Matrix_nrows (&nrows, A)) ;
+    OK (GrB_Matrix_ncols (&ncols, A)) ;
+    GrB_Matrix C = gb_new (type, nrows, ncols, fmt, sparsity) ;
 
     //--------------------------------------------------------------------------
-    // A = S
+    // C = A
     //--------------------------------------------------------------------------
 
-    if (gb_is_integer (atype) && gb_is_float (stype))
+    if (gb_is_integer (type) && gb_is_float (atype))
     { 
-        // A = (atype) round (S), using MATLAB rules for typecasting.
-        OK1 (A, GrB_Matrix_apply (A, NULL, NULL, gb_round_binop (stype), S,
+        // C = (type) round (A), using MATLAB rules for typecasting.
+        OK1 (C, GrB_Matrix_apply (C, NULL, NULL, gb_round_binop (atype), A,
             NULL)) ;
     }
     else
     { 
-        // A = (atype) S, with GraphBLAS typecasting if needed.
-        OK1 (A, GrB_assign (A, NULL, NULL, S, GrB_ALL, nrows, GrB_ALL, ncols,
+        // C = (type) A, with GraphBLAS typecasting if needed.
+        OK1 (C, GrB_assign (C, NULL, NULL, A, GrB_ALL, nrows, GrB_ALL, ncols,
             NULL)) ;
     }
 
@@ -66,6 +66,6 @@ GrB_Matrix gb_typecast          // A = (atype) S, where A is deep
     // return result
     //--------------------------------------------------------------------------
 
-    return (A) ;
+    return (C) ;
 }
 

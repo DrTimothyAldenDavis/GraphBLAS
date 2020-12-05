@@ -10,6 +10,7 @@
 // TODO allow this function to do typecasting
 
 #include "GB.h"
+#include "GB_partition.h"
 
 #define GB_FREE_ALL     \
 {                       \

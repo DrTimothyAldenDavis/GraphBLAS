@@ -101,7 +101,7 @@ void mexFunction
                     // use the same format as A
                     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
                     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-                    C = gb_typecast (type, A, fmt, 0) ;
+                    C = gb_typecast (A, type, fmt, 0) ;
                     OK (GrB_Matrix_free (&A)) ;
                 }
 
@@ -116,7 +116,7 @@ void mexFunction
                 // get a shallow copy of A
                 GrB_Matrix A = gb_get_shallow (pargin [0]) ;
                 // C = A with the requested format and sparsity, no typecast
-                C = gb_typecast (NULL, A, fmt, sparsity) ;
+                C = gb_typecast (A, NULL, fmt, sparsity) ;
 
             }
             else
@@ -222,7 +222,7 @@ void mexFunction
             { 
                 // get a shallow copy, typecast it, and set the format
                 GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-                C = gb_typecast (type, A, fmt, sparsity) ;
+                C = gb_typecast (A, type, fmt, sparsity) ;
                 OK (GrB_Matrix_free (&A)) ;
             }
         }
@@ -278,7 +278,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C back to MATLAB as a GraphBLAS matrix
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, KIND_GRB) ;

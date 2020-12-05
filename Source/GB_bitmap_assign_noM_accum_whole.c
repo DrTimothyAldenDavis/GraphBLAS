@@ -135,7 +135,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                             /* Cx [pC] = Ax [pC] */         \
                             GB_ASSIGN_AIJ (pC, pC) ;        \
                             Cb [pC] = 1 ;                   \
-                            cnvals++ ;                      \
+                            task_cnvals++ ;                 \
                         }                                   \
                         else                                \
                         {                                   \
@@ -163,7 +163,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         /* Cx [pC] = Ax [pA] */             \
                         GB_ASSIGN_AIJ (pC, pA) ;            \
                         Cb [pC] = 1 ;                       \
-                        cnvals++ ;                          \
+                        task_cnvals++ ;                     \
                     }                                       \
                     else                                    \
                     {                                       \

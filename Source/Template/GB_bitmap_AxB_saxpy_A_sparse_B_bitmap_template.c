@@ -28,6 +28,7 @@
 
             int64_t jstart, jend ;
             GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
+            int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
             // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1)
@@ -112,7 +113,7 @@
                             // C(i,j) = A(i,k) * B(k,j)
                             GB_CIJ_WRITE (pC, t) ;
                             Cb [pC] = keep ;
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                         else
                         { 
@@ -122,6 +123,7 @@
                     }
                 }
             }
+            cnvals += task_cnvals ;
         }
 
     }
@@ -153,6 +155,7 @@
             int64_t pB_start = j * bvlen ;      // pointer to B(:,j)
             int64_t pC_start = j * avlen ;      // pointer to C(:,j)
             GB_GET_T_FOR_SECONDJ ;              // t = j or j+1 for SECONDJ*
+            int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
             GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Cx) + (pC_start * GB_CSIZE);
@@ -240,7 +243,7 @@
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            cnvals++ ;
+                            task_cnvals++ ;
                             cb = keep ;                     // keep the entry
                         }
                         else if (cb == keep)
@@ -311,7 +314,7 @@
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                         else // cb == 1
                         { 
@@ -328,6 +331,7 @@
 
                 }
             }
+            cnvals += task_cnvals ;
         }
     }
 }

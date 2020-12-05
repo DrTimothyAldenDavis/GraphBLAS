@@ -41,6 +41,7 @@
         // if kfirst > klast then task tid does no work at all
         int64_t kfirst = kfirst_slice [tid] ;
         int64_t klast  = klast_slice  [tid] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // traverse over A (:,kfirst:klast)
@@ -74,6 +75,7 @@
                 GB_AIJ_WORK (pC, pA) ;
             }
         }
+        cnvals += task_cnvals ;
     }
 
     //--------------------------------------------------------------------------

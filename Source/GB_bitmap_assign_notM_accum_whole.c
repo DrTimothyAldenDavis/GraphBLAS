@@ -106,7 +106,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                         /* Cx [pC] = scalar */                      \
                         GB_ASSIGN_SCALAR (pC) ;                     \
                         Cb [pC] = 1 ;                               \
-                        cnvals++ ;                                  \
+                        task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
                         /* Cx [pC] += scalar */                     \
@@ -119,7 +119,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                     case 3: /* C(i,j) present, !M(i,j) = 0 */       \
                         /* delete this entry */                     \
                         Cb [pC] = 0 ;                               \
-                        cnvals-- ;                                  \
+                        task_cnvals-- ;                             \
                         break ;                                     \
                     default: ;                                      \
                 }                                                   \
@@ -143,7 +143,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                         /* Cx [pC] = scalar */                      \
                         GB_ASSIGN_SCALAR (pC) ;                     \
                         Cb [pC] = 1 ;                               \
-                        cnvals++ ;                                  \
+                        task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
                         /* Cx [pC] += scalar */                     \
@@ -196,7 +196,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                                 /* Cx [pC] = Ax [pC] */                 \
                                 GB_ASSIGN_AIJ (pC, pC) ;                \
                                 Cb [pC] = 1 ;                           \
-                                cnvals++ ;                              \
+                                task_cnvals++ ;                         \
                             }                                           \
                             break ;                                     \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */       \
@@ -213,7 +213,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                         case 3: /* C(i,j) present, !M(i,j) = 0 */       \
                             /* delete this entry */                     \
                             Cb [pC] = 0 ;                               \
-                            cnvals-- ;                                  \
+                            task_cnvals-- ;                             \
                             break ;                                     \
                         default: ;                                      \
                     }                                                   \
@@ -239,7 +239,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                                 /* Cx [pC] = Ax [pC] */                 \
                                 GB_ASSIGN_AIJ (pC, pC) ;                \
                                 Cb [pC] = 1 ;                           \
-                                cnvals++ ;                              \
+                                task_cnvals++ ;                         \
                             }                                           \
                             break ;                                     \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */       \
@@ -282,7 +282,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                     /* Cx [pC] = Ax [pA] */     \
                     GB_ASSIGN_AIJ (pC, pA) ;    \
                     Cb [pC] = 1 ;               \
-                    cnvals++ ;                  \
+                    task_cnvals++ ;             \
                 }                               \
                 else if (cb == 1)               \
                 {                               \
@@ -300,7 +300,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                 {                                       \
                     int8_t cb = Cb [pC] ;               \
                     Cb [pC] = 0 ;                       \
-                    cnvals -= (cb == 3) ;               \
+                    task_cnvals -= (cb == 3) ;          \
                 }
                 #include "GB_bitmap_assign_M_all_template.c"
             }

@@ -1,15 +1,15 @@
 function C = complex (A, B)
-%COMPLEX cast to a MATLAB sparse double complex matrix.
-% C = complex (G) typecasts the GraphBLAS matrix G to into a MATLAB sparse
-% complex matrix.
+%COMPLEX cast to a MATLAB double complex matrix.
+% C = complex (G) typecasts the GraphBLAS matrix G to into a MATLAB
+% double complex matrix.  C is full if all entries in G are present,
+% or sparse otherwse.
 %
 % With two inputs, C = complex (A,B) returns a MATLAB matrix C = A + 1i*B,
 % where A or B are real matrices (MATLAB and/or GraphBLAS, in any
 % combination).  If A or B are nonzero scalars and the other input is a
-% matrix, or if both A and B are scalars, C is full.  Otherwise, C is
-% sparse.
+% matrix, or if both A and B are scalars, C is full.
 %
-% To typecast the matrix G to a GraphBLAS sparse double complex matrix
+% To typecast the matrix G to a GraphBLAS double complex matrix
 % instead, use C = GrB (G, 'complex') or C = GrB (G, 'double complex').
 % To typecast the matrix G to a GraphBLAS single complex matrix, use
 % C = GrB (G, 'single complex').
@@ -36,7 +36,7 @@ if (nargin == 1)
     % this overloaded method for GrB objects would not be called).
     % Convert A to a double complex matrix C.
     A = A.opaque ;
-    C = gbsparse (A, 'double complex') ;
+    C = gbmatlab (A, 'double complex') ;
 
 else
 
@@ -67,8 +67,8 @@ else
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
             if (gb_scalar (A) == 0)
-                % C = 1i*B, so A = zero, C is sparse.
-                desc.kind = 'sparse' ;
+                % C = 1i*B, so A = zero, C is sparse or full.
+                desc.kind = 'matlab' ;
                 C = gbapply2 ('cmplx.double', 0, B, desc) ;
             else
                 % expand A and B to full double matrices; C is full
@@ -82,8 +82,8 @@ else
         if (b_is_scalar)
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
             if (gb_scalar (B) == 0)
-                % C = complex (A); C is sparse
-                C = gbsparse (A, 'double.complex') ;
+                % C = complex (A); C is sparse or full
+                C = gbmatlab (A, 'double.complex') ;
             else
                 % expand A and B to full double matrices; C is full
                 A = gbfull (A, 'double') ;
@@ -92,8 +92,8 @@ else
                 C = gbemult ('cmplx.double', A, B, desc) ;
             end
         else
-            % both A and B are matrices.  C is sparse.
-            desc.kind = 'sparse' ;
+            % both A and B are matrices.  C is sparse or full.
+            desc.kind = 'matlab' ;
             C = gbeadd (A, '+', gbapply2 (1i, '*', B), desc) ;
         end
     end

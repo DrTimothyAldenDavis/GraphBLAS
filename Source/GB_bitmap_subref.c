@@ -154,7 +154,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 int8_t ab = Ab [pA] ;                                       \
                 Cb [pC] = ab ;                                              \
                 Cx [pC] = pA ;                                              \
-                cnvals += ab ;                                              \
+                task_cnvals += ab ;                                         \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
         }
@@ -172,7 +172,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 {                                                           \
                     /* Cx [pC] = Ax [pA] */                                 \
                     memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;    \
-                    cnvals++ ;                                              \
+                    task_cnvals++ ;                                         \
                 }                                                           \
             }
             #include "GB_bitmap_assign_IxJ_template.c"

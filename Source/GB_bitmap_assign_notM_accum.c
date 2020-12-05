@@ -103,7 +103,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 /* Cx [pC] = scalar  */         \
                 GB_ASSIGN_SCALAR (pC) ;         \
                 Cb [pC] = 1 ;                   \
-                cnvals++ ;                      \
+                task_cnvals++ ;                 \
             }                                   \
             else if (cb == 1)                   \
             {                                   \
@@ -125,7 +125,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         //     if Cb(p) == 0
         //         Cx(p) = aij
         //         Cb(p) = 1       // C(iC,jC) is now present, insert
-        //         cnvals++
+        //         task_cnvals++
         //     if Cb(p) == 1
         //         Cx(p) += aij    // C(iC,jC) still present, updated
         //         Cb(p) still 1
@@ -140,7 +140,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 /* Cx [pC] = Ax [pA] */         \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
                 Cb [pC] = 1 ;                   \
-                cnvals++ ;                      \
+                task_cnvals++ ;                 \
             }                                   \
             else if (cb == 1)                   \
             {                                   \
@@ -175,7 +175,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         #define GB_MASK_WORK(pC)                \
         {                                       \
             int8_t cb = Cb [pC] ;               \
-            cnvals -= (cb == 3) ;               \
+            task_cnvals -= (cb == 3) ;          \
             Cb [pC] = 0 ;                       \
         }
         #include "GB_bitmap_assign_M_template.c"

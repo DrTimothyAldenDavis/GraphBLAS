@@ -76,7 +76,7 @@ static void get_descriptor
             }
             else if (MATCH (s, "structural complement"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP + GrB_STRUCTURE)) ;
+                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP+GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "replace"))
             { 
@@ -173,15 +173,19 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
         gb_mxstring_to_string (s, LEN, mxkind, "kind") ;
         if (MATCH (s, "grb") || MATCH (s, "default"))
         { 
-            (*kind) = KIND_GRB ;
+            (*kind) = KIND_GRB ;        // @GrB matrix
         }
         else if (MATCH (s, "sparse"))
         { 
-            (*kind) = KIND_SPARSE ;
+            (*kind) = KIND_SPARSE ;     // MATLAB sparse matrix
         }
         else if (MATCH (s, "full"))
         { 
-            (*kind) = KIND_FULL ;
+            (*kind) = KIND_FULL ;       // MATLAB full matrix
+        }
+        else if (MATCH (s, "matlab"))
+        {
+            (*kind) = KIND_MATLAB ;     // MATLAB sparse or full matrix
         }
         else
         { 

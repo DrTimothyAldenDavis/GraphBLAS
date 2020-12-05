@@ -65,7 +65,7 @@ GrB_Info GB_bitmap_assign
     {
         if (accum == NULL)
         { 
-            if (whole_C_matrix) GB_GOTCHA ;
+            if (whole_C_matrix) GB_GOTCHA ;     // TODO::
             // C(I,J) = A or scalar, no mask
             // This method is used by GB_assign_prep, when whole_C_matrix
             // is false and Mask_comp is true.

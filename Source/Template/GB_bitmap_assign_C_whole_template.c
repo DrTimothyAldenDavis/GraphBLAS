@@ -21,16 +21,21 @@
 
 {
     // iterate over all of C(:,:).
-    int64_t pC ;
     int nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:cnvals)
-    for (pC = 0 ; pC < cnzmax ; pC++)
-    { 
-        // int64_t iC = pC % cvlen ;
-        // int64_t jC = pC / cvlen ;
-        GB_GET_MIJ (mij, pC) ;          // mij = Mask (pC)
-        GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+    for (tid = 0 ; tid < nthreads ; tid++)
+    {
+        int64_t pC_start, pC_end, task_cnvals = 0 ;
+        GB_PARTITION (pC_start, pC_end, cnzmax, tid, nthreads) ;
+        for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+        { 
+            // int64_t iC = pC % cvlen ;
+            // int64_t jC = pC / cvlen ;
+            GB_GET_MIJ (mij, pC) ;          // mij = Mask (pC)
+            GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+        }
+        cnvals += task_cnvals ;
     }
 }
-

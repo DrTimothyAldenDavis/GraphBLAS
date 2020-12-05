@@ -1,9 +1,10 @@
 function C = double (G)
-%DOUBLE cast a GraphBLAS sparse matrix to a MATLAB sparse double matrix.
-% C = double (G) typecasts the GraphBLAS matrix G into a MATLAB sparse
-% double matrix C, either real or complex.  Explicit zeros are dropped.
+%DOUBLE cast a GraphBLAS matrix to a MATLAB double matrix.
+% C = double (G) typecasts the GraphBLAS matrix G into a MATLAB
+% double matrix C, either real or complex.  C is full if all
+% entries in G are present, and sparse otherwise.
 %
-% To typecast the matrix G to a GraphBLAS sparse double (real) matrix
+% To typecast the matrix G to a GraphBLAS double (real) matrix
 % instead, use C = GrB (G, 'double').  Explicit zeros are kept in C.
 %
 % See also GrB/cast, GrB, GrB/complex, GrB/single, GrB/logical, GrB/int8,
@@ -16,8 +17,8 @@ function C = double (G)
 G = G.opaque ;
 
 if (contains (gbtype (G), 'complex'))
-    C = gbsparse (G, 'double complex') ;
+    C = gbmatlab (G, 'double complex') ;
 else
-    C = gbsparse (G, 'double') ;
+    C = gbmatlab (G, 'double') ;
 end
 

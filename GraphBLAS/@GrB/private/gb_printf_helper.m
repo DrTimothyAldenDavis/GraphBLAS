@@ -11,7 +11,7 @@ for k = 2:len
     if (isobject (arg))
         arg = arg.opaque ;
         desc.kind = 'full' ;
-        varargin {k} = gbfull (arg, gbtype (arg), 0, desc) ;
+        varargin {k} = gbfull (arg, gbtype (arg), 0, desc) ;    % as MATLAB full
     end
 end
 

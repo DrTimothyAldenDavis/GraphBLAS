@@ -125,7 +125,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else /* (cb == 1) */                \
                 {                                   \
@@ -173,7 +173,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //         if Cb(p) == 0
         //             Cx(p) = aij
         //             Cb(p) = 1       // C(iC,jC) is now present, insert
-        //             cnvals++
+        //             task_cnvals++
         //         else // if Cb(p) == 1:
         //             Cx(p) += aij    // C(iC,jC) still present, updated
 
@@ -191,7 +191,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                     /* Cx [pC] = Ax [pA] */         \
                     GB_ASSIGN_AIJ (pC, pA) ;        \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else /* (cb == 1) */                \
                 {                                   \
@@ -253,7 +253,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
             {                               \
                 int8_t cb = Cb [pC] ;       \
                 Cb [pC] = 0 ;               \
-                cnvals -= (cb == 1) ;       \
+                task_cnvals -= (cb == 1) ;  \
             }                               \
         }
         #include "GB_bitmap_assign_C_template.c"

@@ -79,7 +79,9 @@ typedef enum            // output of GrB.methods
 {
     KIND_GRB = 0,       // return a MATLAB struct containing a GrB_Matrix
     KIND_SPARSE = 1,    // return a MATLAB sparse matrix
-    KIND_FULL = 2       // return a MATLAB dense matrix
+    KIND_FULL = 2,      // return a MATLAB full matrix
+    KIND_MATLAB = 3     // return a MATLAB sparse or full matrix (full if all
+                        // entries present, sparse otherwise)
 }
 kind_enum_t ;
 
@@ -166,21 +168,21 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
     const GrB_Type type
 ) ;
 
-GrB_Matrix gb_typecast          // A = (atype) S, where A is deep
+GrB_Matrix gb_typecast          // C = (type) A, where C is deep
 (
-    GrB_Type atype,             // if NULL, copy but do not typecast
-    GrB_Matrix S,               // may be shallow
-    GxB_Format_Value fmt,       // also convert to the requested format
-    int sparsity                // sparsity control for A, if 0 use S
+    GrB_Matrix A,               // may be shallow
+    GrB_Type type,              // if NULL, copy but do not typecast
+    GxB_Format_Value fmt,       // format of C
+    int sparsity                // sparsity control for C, if 0 use A
 ) ;
 
-GrB_Matrix gb_new               // create and empty matrix A
+GrB_Matrix gb_new               // create and empty matrix C
 (
-    GrB_Type type,              // type of A
+    GrB_Type type,              // type of C
     GrB_Index nrows,            // # of rows
     GrB_Index ncols,            // # of rows
     GxB_Format_Value fmt,       // requested format
-    int sparsity                // sparsity control for A, 0 for default
+    int sparsity                // sparsity control for C, 0 for default
 ) ;
 
 void gb_abort ( void ) ;    // failure
@@ -269,6 +271,14 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     GxB_Format_Value *fmt,      // by row or by col
     int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
+) ;
+
+GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
+(
+    const GrB_Matrix A,         // input matrix to expand to full
+    GrB_Type type,              // type of C, if NULL use the type of A
+    GxB_Format_Value fmt,       // format of C
+    GrB_Matrix id               // identity value, use zero if NULL
 ) ;
 
 mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G

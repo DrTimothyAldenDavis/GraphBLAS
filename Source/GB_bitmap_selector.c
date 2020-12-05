@@ -47,8 +47,8 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     bool bitmap_calloc = true ;
-    // TODO: can malloc C->b
-    // TODO: must calloc C->x for GB_EQ_ZERO_opcode
+    // TODO:: can malloc C->b
+    // TODO:: must calloc C->x for GB_EQ_ZERO_opcode
 
     GrB_Matrix C = NULL ;
     GB_OK (GB_new_bix (&C, // always bitmap, new header

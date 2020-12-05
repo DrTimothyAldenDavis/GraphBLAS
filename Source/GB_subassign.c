@@ -121,7 +121,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (C == C2)
     { 
         // zombies can be transplanted into C_in but pending tuples cannot
-        // TODO: allow for pending tuples to be transplanted
+        // TODO:: allow for pending tuples to be transplanted
         GB_MATRIX_WAIT_IF_PENDING (C) ;
         // transplants the content of C into C_in and frees C
         GB_OK (GB_transplant (C_in, C_in->type, &C, Context)) ;

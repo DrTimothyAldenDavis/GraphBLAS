@@ -30,6 +30,8 @@
         int64_t jstart = J_tid * GB_TILE_SIZE ;
         int64_t jend   = GB_IMIN (bvdim, jstart + GB_TILE_SIZE) ;
 
+        int64_t task_cnvals = 0 ;
+
         //----------------------------------------------------------------------
         // check if any entry in the M(I,J) mask permits any change to C(I,J)
         //----------------------------------------------------------------------
@@ -251,7 +253,7 @@
                                 GB_CIJ_WRITE (pC, t) ;
                                 Cb [pC] = keep ;
                                 cb = keep ;
-                                cnvals++ ;
+                                task_cnvals++ ;
                             }
                             else
                             { 
@@ -283,6 +285,7 @@
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

@@ -9,19 +9,19 @@
 
 #include "gb_matlab.h"
 
-GrB_Matrix gb_new               // create and empty matrix A
+GrB_Matrix gb_new               // create and empty matrix C
 (
-    GrB_Type type,              // type of A
+    GrB_Type type,              // type of C
     GrB_Index nrows,            // # of rows
     GrB_Index ncols,            // # of rows
     GxB_Format_Value fmt,       // requested format, if < 0 use default
-    int sparsity                // sparsity control for A, 0 for default
+    int sparsity                // sparsity control for C, 0 for default
 )
 {
 
     // create the matrix
-    GrB_Matrix A = NULL ;
-    OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
+    GrB_Matrix C = NULL ;
+    OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
 
     // get the default format, if needed
     if (fmt < 0)
@@ -31,23 +31,23 @@ GrB_Matrix gb_new               // create and empty matrix A
 
     // set the desired format
     GxB_Format_Value fmt_current ;
-    OK1 (A, GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt_current)) ;
+    OK1 (C, GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt_current)) ;
     if (fmt != fmt_current)
     {
-        OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     // set the desired sparsity structure
     if (sparsity != 0)
     {
         int current ;
-        OK1 (A, GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &current)) ;
+        OK1 (C, GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &current)) ;
         if (current != sparsity)
         {
-            OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, sparsity)) ;
+            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
         }
     }
 
-    return (A) ;
+    return (C) ;
 }
 

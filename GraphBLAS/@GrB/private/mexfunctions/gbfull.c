@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbfull: convert a GraphBLAS matrix struct into a MATLAB dense matrix
+// gbfull: add identity values to a matrix so all entries are present
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,10 +8,14 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse or dense matrix.  The output is a GraphBLAS matrix by default, with
+// sparse or full matrix.  The output is a GraphBLAS matrix by default, with
 // all entries present, of the given type.  Entries are filled in with the id
-// value, whose default value is zero.  If desc.kind = 'full', the output is a
-// MATLAB dense matrix.
+// value, whose default value is zero.
+
+// If desc.kind = 'grb', or if the descriptor is not present, the output is a
+// GraphBLAS full matrix.  Otherwise the output is a MATLAB full matrix
+// (desc.kind = 'full').   The two other cases, desc.kind = 'sparse' and
+// 'matlab' are treated as 'full'.
 
 // Usage:
 //  C = gbfull (A)
@@ -41,6 +45,7 @@ void mexFunction
     // get a shallow copy of the input matrix
     //--------------------------------------------------------------------------
 
+printf ("here %d %s\n", __LINE__, __FILE__) ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -50,6 +55,7 @@ void mexFunction
     // get the type of C
     //--------------------------------------------------------------------------
 
+printf ("here %d %s\n", __LINE__, __FILE__) ;
     GrB_Matrix type ;
     if (nargin > 1)
     { 
@@ -65,22 +71,18 @@ void mexFunction
     // get the identity scalar
     //--------------------------------------------------------------------------
 
-    GrB_Matrix id ;
+printf ("here %d %s\n", __LINE__, __FILE__) ;
+    GrB_Matrix id = NULL ;
     if (nargin > 2)
     { 
         id = gb_get_shallow (pargin [2]) ;
-    }
-    else
-    { 
-        // Assume the identity is zero, of the same type as C.
-        // The format does not matter, since only id (0,0) will be used.
-        OK (GrB_Matrix_new (&id, type, 1, 1)) ;
     }
 
     //--------------------------------------------------------------------------
     // get the descriptor
     //--------------------------------------------------------------------------
 
+printf ("here %d %s\n", __LINE__, __FILE__) ;
     base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_GRB ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
@@ -93,61 +95,41 @@ void mexFunction
     }
     OK (GrB_Descriptor_free (&desc)) ;
 
-    // A determines the format of C, unless defined by the descriptor
-    fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
-    sparsity = gb_get_sparsity (A, NULL, sparsity) ;
-
     //--------------------------------------------------------------------------
-    // expand the identity into a dense matrix B the same size as C
+    // finalize the kind and format
     //--------------------------------------------------------------------------
 
-    GrB_Matrix B = gb_new (type, nrows, ncols, fmt, 0) ;
-    gb_matrix_assign_scalar (B, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
-        false) ;
+printf ("here %d %s\n", __LINE__, __FILE__) ;
+    // ignore desc.kind = 'sparse' or 'matlab' and just use 'full' instead
+    kind = (kind == KIND_SPARSE || kind == KIND_MATLAB) ? KIND_FULL : kind ;
 
-    //--------------------------------------------------------------------------
-    // typecast A from float to integer using the MATLAB rules
-    //--------------------------------------------------------------------------
-
-    GrB_Matrix S, T = NULL ;
-    GrB_Type atype ;
-    OK (GxB_Matrix_type (&atype, A)) ;
-    if (gb_is_integer (type) && gb_is_float (atype))
-    { 
-        // T = (type) round (A)
-        T = gb_new (type, nrows, ncols, fmt, 0) ;
-        OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A,
-            NULL)) ;
-        S = T ;
+    if (kind == KIND_FULL)
+    {
+        // MATLAB matrices are always held by column
+        fmt = GxB_BY_COL ;
     }
     else
-    { 
-        // T = A, and let GrB_Matrix_eWiseAdd_BinaryOp do the typecasting
-        S = A ;
+    {
+        // A determines the format of C, unless defined by the descriptor
+        fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
     }
 
     //--------------------------------------------------------------------------
-    // C = first (S, B)
+    // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = gb_new (type, nrows, ncols, fmt, sparsity) ;
-    OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
-        gb_first_binop (type), S, B, NULL)) ;
+printf ("here %d %s\n", __LINE__, __FILE__) ;
 
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    OK (GrB_Matrix_free (&id)) ;
-    OK (GrB_Matrix_free (&B)) ;
+    GrB_Matrix C = gb_expand_to_full (A, type, fmt, id) ;
     OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&T)) ;
 
     //--------------------------------------------------------------------------
-    // export C to a MATLAB dense matrix
+    // export C
     //--------------------------------------------------------------------------
 
+printf ("here %d %s\n", __LINE__, __FILE__) ;
     pargout [0] = gb_export (&C, kind) ;
+printf ("here %d %s\n", __LINE__, __FILE__) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }

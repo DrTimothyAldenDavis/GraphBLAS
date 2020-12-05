@@ -93,7 +93,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // Set all of Ab [0..anz-1] to 0, in parallel.  This is faster than
         // calloc since most of Ab will be set below.
         Ab = GB_MALLOC (anzmax, int8_t) ;
-        GB_memset (Ab, 0, anz, nthreads_max) ;
+        GB_memset (Ab, 0, anzmax, nthreads_max) ;
     }
     if (Ab == NULL)
     { 

@@ -42,6 +42,7 @@
 
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
+        int64_t task_cnvals = 0 ;
         bool fine_task = (klast == -1) ;
         int64_t iA_start = 0, iA_end = nI ;
         if (fine_task)
@@ -83,6 +84,7 @@
                 GB_IXJ_WORK (pC, pA) ;
             }
         }
+        cnvals += task_cnvals ;
     }
 
     //--------------------------------------------------------------------------

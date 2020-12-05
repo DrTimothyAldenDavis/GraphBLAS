@@ -30,16 +30,22 @@
         case GB_ROW_ASSIGN : 
         {
             // iterate over all of C(iC,:)
-            int64_t iC = I [0] ;
-            int64_t jC ;
-            int nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
+            const int64_t iC = I [0] ;
+            const int nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (jC = 0 ; jC < cvdim ; jC++)
-            { 
-                int64_t pC = iC + jC * cvlen ;
-                GB_GET_MIJ (mij, jC) ;          // mij = Mask (jC)
-                GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+            for (tid = 0 ; tid < nthreads ; tid++)
+            {
+                int64_t jC_start, jC_end, task_cnvals = 0 ;
+                GB_PARTITION (jC_start, jC_end, cvdim, tid, nthreads) ;
+                for (int64_t jC = jC_start ; jC < jC_end ; jC++)
+                { 
+                    int64_t pC = iC + jC * cvlen ;
+                    GB_GET_MIJ (mij, jC) ;          // mij = Mask (jC)
+                    GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+                }
+                cnvals += task_cnvals ;
             }
         }
         break ;
@@ -51,17 +57,23 @@
         case GB_COL_ASSIGN : 
         {
             // iterate over all of C(:,jC)
-            int64_t iC ;
-            int64_t jC = J [0] ;
-            int64_t pC0 = jC * cvlen ;
-            int nthreads = GB_nthreads (cvlen, chunk, nthreads_max) ;
+            const int64_t jC = J [0] ;
+            const int64_t pC0 = jC * cvlen ;
+            const int nthreads = GB_nthreads (cvlen, chunk, nthreads_max) ;
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (iC = 0 ; iC < cvlen ; iC++)
-            { 
-                int64_t pC = iC + pC0 ;
-                GB_GET_MIJ (mij, iC) ;          // mij = Mask (iC)
-                GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+            for (tid = 0 ; tid < nthreads ; tid++)
+            {
+                int64_t iC_start, iC_end, task_cnvals = 0 ;
+                GB_PARTITION (iC_start, iC_end, cvlen, tid, nthreads) ;
+                for (int64_t iC = iC_start ; iC < iC_end ; iC++)
+                { 
+                    int64_t pC = iC + pC0 ;
+                    GB_GET_MIJ (mij, iC) ;          // mij = Mask (iC)
+                    GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
+                }
+                cnvals += task_cnvals ;
             }
         }
         break ;

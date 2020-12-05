@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbsparse: convert a GraphBLAS matrix struct into a MATLAB sparse matrix
+// gbmatlab: convert to a MATLAB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,11 +8,12 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse matrix.  The output is a standard MATLAB sparse matrix.
+// sparse or full matrix.  The output is a standard MATLAB sparse or full
+// matrix: full if all entries are present, and sparse otherwise.
 
 // Usage:
 
-// A = gbsparse (X, type)
+// A = gbmatlab (X, type)
 
 #include "gb_matlab.h"
 
@@ -29,7 +30,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, "usage: A = GrB.sparse (X, type)") ;
+    gb_usage (nargin == 2 && nargout <= 1, "usage: A = gbmatlab (X, type)") ;
 
     //--------------------------------------------------------------------------
     // get the input matrix
@@ -47,16 +48,16 @@ void mexFunction
     GrB_Matrix T = NULL ;
     if (type != xtype)
     { 
-        T = gb_typecast (type, X, GxB_BY_COL, GxB_SPARSE) ;
+        T = gb_typecast (X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL) ;
         OK (GrB_Matrix_free (&X)) ;
         X = T ;
     }
 
     //--------------------------------------------------------------------------
-    // export the input matrix to a MATLAB sparse matrix
+    // export the input matrix to a MATLAB sparse or full matrix
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&X, KIND_SPARSE) ;
+    pargout [0] = gb_export (&X, KIND_MATLAB) ;
     GB_WRAPUP ;
 }
 

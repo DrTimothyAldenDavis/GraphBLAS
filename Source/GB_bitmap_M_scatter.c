@@ -13,7 +13,6 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
 (
     // input/output:
     GrB_Matrix C,
-    // int64_t *cnvals_handle,     // cnvals = C->nvals
     // inputs:
     const GrB_Index *I,         // I index list
     const int64_t nI,
@@ -50,7 +49,7 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     GB_GET_M ;
     int8_t *Cb = C->b ;
     const int64_t cvlen = C->vlen ;
-    int64_t cnvals = 0 ; // (*cnvals_handle) ;
+    int64_t cnvals = 0 ;
 
     //--------------------------------------------------------------------------
     // scatter M into the C bitmap
@@ -82,7 +81,5 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
 
         default: ;
     }
-
-    // (*cnvals_handle) = cnvals ;
 }
 

@@ -1,4 +1,4 @@
-function A = gbsparse (X, type)     %#ok
+function A = gbmatlab (X, type)     %#ok
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

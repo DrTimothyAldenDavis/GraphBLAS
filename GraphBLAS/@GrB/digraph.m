@@ -62,13 +62,13 @@ switch (type)
 
     case { 'logical' }
 
-        % The MATLAB digraph(...) function allows for sparse logical
+        % The MATLAB digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        DiGraph = digraph (gbsparse (G, 'logical')) ;
+        DiGraph = digraph (gbmatlab (G, 'logical')) ;
 
     otherwise
 
         % typecast to double
-        DiGraph = digraph (gbsparse (G, 'double')) ;
+        DiGraph = digraph (gbmatlab (G, 'double')) ;
 end
 

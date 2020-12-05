@@ -101,7 +101,7 @@ GrB_Info GB_bitmap_assign_M_accum
             {                               \
                 /* Cx [pC] = scalar */      \
                 GB_ASSIGN_SCALAR (pC) ;     \
-                cnvals++ ;                  \
+                task_cnvals++ ;             \
             }                               \
             else /* (cb == 1) */            \
             {                               \
@@ -119,7 +119,7 @@ GrB_Info GB_bitmap_assign_M_accum
             {                                   \
                 int8_t cb = Cb [pC] ;           \
                 Cb [pC] = (cb == 3) ;           \
-                cnvals -= (cb == 1) ;           \
+                task_cnvals -= (cb == 1) ;      \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
         }
@@ -161,7 +161,7 @@ GrB_Info GB_bitmap_assign_M_accum
                     /* Cx [pC] = scalar */      \
                     GB_ASSIGN_SCALAR (pC) ;     \
                     Cb [pC] = 3 ;               \
-                    cnvals++ ;                  \
+                    task_cnvals++ ;             \
                 }                               \
                 else if (cb == 3)               \
                 {                               \
@@ -185,7 +185,7 @@ GrB_Info GB_bitmap_assign_M_accum
             //      if Cb(p) == 2:
             //          Cx(p) = aij
             //          Cb(p) = 3       // C(iC,jC) is now present, insert
-            //          cnvals++
+            //          task_cnvals++
             //      if Cb(p) == 3:
             //          Cx(p) += aij    // C(iC,jC) still present, updated
             //          Cb(p) still 3
@@ -198,7 +198,7 @@ GrB_Info GB_bitmap_assign_M_accum
                     /* Cx [pC] = Ax [pA] */     \
                     GB_ASSIGN_AIJ (pC, pA) ;    \
                     Cb [pC] = 3 ;               \
-                    cnvals++ ;                  \
+                    task_cnvals++ ;             \
                 }                               \
                 else if (cb == 3)               \
                 {                               \
@@ -228,7 +228,7 @@ GrB_Info GB_bitmap_assign_M_accum
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = (cb == 3) ;               \
-                cnvals -= (cb == 1) ;               \
+                task_cnvals -= (cb == 1) ;          \
             }
             #include "GB_bitmap_assign_C_template.c"
         }

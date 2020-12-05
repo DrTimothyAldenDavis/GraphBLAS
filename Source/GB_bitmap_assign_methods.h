@@ -11,6 +11,7 @@
 #define GB_BITMAP_ASSIGN_METHODS_H
 #include "GB_bitmap_assign.h"
 #include "GB_ek_slice.h"
+#include "GB_partition.h"
 #include "GB_ij.h"
 #include "GB_subassign_IxJ_slice.h"
 
@@ -548,7 +549,6 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
 (
     // input/output:
     GrB_Matrix C,
-    // int64_t *cnvals_handle,     // cnvals = C->nvals
     // inputs:
     const GrB_Index *I,         // I index list
     const int64_t nI,
@@ -574,7 +574,6 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
 (
     // input/output:
     GrB_Matrix C,
-    // int64_t *cnvals_handle,     // cnvals = C->nvals
     // inputs:
     const GrB_Matrix M,         // mask to scatter into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued

@@ -25,6 +25,7 @@
         GB_PARTITION (istart, iend, avlen, a_tid, naslice) ;
         int64_t kfirst = B_slice [b_tid] ;          // defines j1
         int64_t klast = B_slice [b_tid + 1] ;       // defines j2
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // C<#M>(istart:iend-1, j1:j2-1) += A(istart:iend-1,:) * B(:,j1:j2-1)
@@ -111,7 +112,7 @@
                         // C(i,j) = A(i,k) * B(k,j)
                         GB_CIJ_WRITE (pC, t) ;
                         Cb [pC] = keep ;
-                        cnvals++ ;
+                        task_cnvals++ ;
                     }
                     else
                     { 
@@ -121,6 +122,7 @@
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

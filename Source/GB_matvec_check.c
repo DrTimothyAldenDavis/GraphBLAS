@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -482,7 +482,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 if (ab < 0 || ab > 1)
                 { 
                     // bitmap with value other than 0, 1
-                    GBPR0 ("    invalid bitmap\n") ;
+                    GBPR0 ("    invalid bitmap %d\n", ab) ;
                     return (GrB_INVALID_OBJECT) ;
                 }
                 ajnz += (ab != 0)  ;

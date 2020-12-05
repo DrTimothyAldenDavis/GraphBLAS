@@ -106,7 +106,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
@@ -130,7 +130,7 @@ GrB_Info GB_bitmap_assign_noM_accum
             //            Cb(p) = 1       // C(iC,jC) is now present, insert
             //        else // if Cb(p) == 1:
             //            Cx(p) += aij    // C(iC,jC) still present, updated
-            //            cnvals++
+            //            task_cnvals++
 
             #define GB_AIJ_WORK(pC,pA)              \
             {                                       \
@@ -140,7 +140,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     /* Cx [pC] = Ax [pA] */         \
                     GB_ASSIGN_AIJ (pC, pA) ;        \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
@@ -174,7 +174,7 @@ GrB_Info GB_bitmap_assign_noM_accum
         {                               \
             int8_t cb = Cb [pC] ;       \
             Cb [pC] = 0 ;               \
-            cnvals -= (cb == 1) ;       \
+            task_cnvals -= (cb == 1) ;  \
         }
         #include "GB_bitmap_assign_C_template.c"
     }
@@ -184,7 +184,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     // return result
     //--------------------------------------------------------------------------
 
-    C->nvals = cnvals ; // TODO: use task_cnvals
+    C->nvals = cnvals ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     return (GrB_SUCCESS) ;
 }

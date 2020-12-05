@@ -106,7 +106,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             {                               \
                 int8_t cb = Cb [pC] ;       \
                 Cb [pC] = 0 ;               \
-                cnvals -= (cb == 1) ;       \
+                task_cnvals -= (cb == 1) ;  \
             }                               \
         }
         #include "GB_bitmap_assign_C_template.c"
@@ -137,7 +137,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 /* Cx [pC] = scalar */          \
                 GB_ASSIGN_SCALAR (pC) ;         \
                 Cb [pC] = 1 ;                   \
-                cnvals += (cb == 0) ;           \
+                task_cnvals += (cb == 0) ;      \
             }                                   \
         }
 
@@ -202,7 +202,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
                 /* Cx [pC] = Ax [pA] */         \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
                 Cb [pC] = 4 ;                   \
-                cnvals += (cb == 0) ;           \
+                task_cnvals += (cb == 0) ;      \
             }                                   \
         }
 
@@ -215,7 +215,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             {                               \
                 int8_t cb = Cb [pC] ;       \
                 Cb [pC] = (cb > 1) ;        \
-                cnvals -= (cb == 1) ;       \
+                task_cnvals -= (cb == 1) ;  \
             }                               \
         }
 

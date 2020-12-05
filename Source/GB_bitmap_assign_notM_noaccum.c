@@ -108,13 +108,13 @@ GrB_Info GB_bitmap_assign_notM_noaccum
                 /* Cx [pC] = scalar */      \
                 GB_ASSIGN_SCALAR (pC) ;     \
                 Cb [pC] = 1 ;               \
-                cnvals += (cb == 0) ;       \
+                task_cnvals += (cb == 0) ;  \
             }                               \
             else if (C_replace)             \
             {                               \
                 /* delete this entry */     \
                 Cb [pC] = 0 ;               \
-                cnvals -= (cb == 3) ;       \
+                task_cnvals -= (cb == 3) ;  \
             }                               \
             else                            \
             {                               \
@@ -136,7 +136,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         //     if Cb(p) == 0       // C(iC,jC) is now present, insert
         //         Cx(p) = aij     //
         //         Cb(p) = 4       // keep it
-        //         cnvals++
+        //         task_cnvals++
         //     if Cb(p) == 1       // C(iC,jC) still present, updated
         //         Cx(p) = aij     //
         //         Cb(p) = 4       // keep it
@@ -151,7 +151,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
                 /* Cx [pC] = Ax [pA] */     \
                 GB_ASSIGN_AIJ (pC, pA) ;    \
                 Cb [pC] = 4 ;               \
-                cnvals += (cb == 0) ;       \
+                task_cnvals += (cb == 0) ;  \
             }                               \
         }
         #include "GB_bitmap_assign_A_template.c"
@@ -164,11 +164,11 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         { 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,ignore)          \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                Cb [pC] = (cb == 4) ;               \
-                cnvals -= (cb == 1 || cb == 3) ;    \
+            #define GB_IXJ_WORK(pC,ignore)              \
+            {                                           \
+                int8_t cb = Cb [pC] ;                   \
+                Cb [pC] = (cb == 4) ;                   \
+                task_cnvals -= (cb == 1 || cb == 3) ;   \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
         }
@@ -176,11 +176,11 @@ GrB_Info GB_bitmap_assign_notM_noaccum
         { 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,ignore)          \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                Cb [pC] = (cb == 4 || cb == 3) ;    \
-                cnvals -= (cb == 1) ;               \
+            #define GB_IXJ_WORK(pC,ignore)              \
+            {                                           \
+                int8_t cb = Cb [pC] ;                   \
+                Cb [pC] = (cb == 4 || cb == 3) ;        \
+                task_cnvals -= (cb == 1) ;              \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
         }
@@ -204,7 +204,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = (cb == 1) ;               \
-                cnvals -= (cb == 3) ;               \
+                task_cnvals -= (cb == 3) ;          \
             }
             #include "GB_bitmap_assign_C_template.c"
         }

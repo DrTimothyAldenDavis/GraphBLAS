@@ -253,28 +253,6 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             break ;
 
         //----------------------------------------------------------------------
-        // (12): bitmap or full
-        //----------------------------------------------------------------------
-
-        case GxB_FULL + GxB_BITMAP : 
-
-            if (is_bitmap)
-            { 
-                // leave in bitmap form, even if it can be converted to full
-            }
-            else if (is_full_or_dense_with_no_pending_work)
-            { 
-                // if full or all entries present: to full
-                GB_convert_any_to_full (A) ;
-            }
-            else
-            { 
-                // otherwise: to bitmap
-                GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
         // (9) hypersparse or full
         //----------------------------------------------------------------------
 
@@ -332,6 +310,28 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             { 
                 // conform between sparse and hypersparse
                 GB_OK (GB_conform_hyper (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // (12): bitmap or full
+        //----------------------------------------------------------------------
+
+        case GxB_FULL + GxB_BITMAP : 
+
+            if (is_bitmap)
+            { 
+                // leave in bitmap form, even if it can be converted to full
+            }
+            else if (is_full_or_dense_with_no_pending_work)
+            { 
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to bitmap
+                GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
             }
             break ;
 

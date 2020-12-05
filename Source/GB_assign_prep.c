@@ -448,13 +448,9 @@ GrB_Info GB_assign_prep
 
             ASSERT_MATRIX_OK (C, "C for quick mask", GB0) ;
 
-            if (whole_C_matrix)
-            { 
-                // clear the whole C matrix: assign and subassign are the same
-                (*assign_kind) = GB_ASSIGN ;
-            }
+            // to clear the whole C matrix: assign and subassign are the same
 
-            switch (*assign_kind)
+            switch (whole_C_matrix ? GB_ASSIGN : (*assign_kind))
             {
 
                 //--------------------------------------------------------------

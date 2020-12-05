@@ -66,6 +66,7 @@ void mexFunction
     {
         case KIND_SPARSE : printf ("sparse\n")  ; break ;
         case KIND_FULL   : printf ("full\n")    ; break ;
+        case KIND_MATLAB : printf ("matlab\n")  ; break ;
         case KIND_GRB    :
         default          : printf ("GrB\n")     ; break ;
     }
@@ -84,49 +85,50 @@ void mexFunction
 
     switch (sparsity)
     {
-        case GxB_HYPERSPARSE : 
+        case GxB_HYPERSPARSE :                              // 1
             printf ("hypersparse ") ;
             break ;
-        case GxB_SPARSE : 
+        case GxB_SPARSE :                                   // 2
             printf ("sparse ") ;
             break ;
-        case GxB_HYPERSPARSE + GxB_SPARSE : 
+        case GxB_HYPERSPARSE + GxB_SPARSE :                 // 3
             printf ("hypersparse/sparse ") ;
             break ;
-        case GxB_BITMAP : 
+        case GxB_BITMAP :                                   // 4
             printf ("bitmap ") ;
             break ;
-        case GxB_HYPERSPARSE + GxB_BITMAP : 
+        case GxB_HYPERSPARSE + GxB_BITMAP :                 // 5
             printf ("hypersparse/bitmap ") ;
             break ;
-        case GxB_SPARSE + GxB_BITMAP : 
+        case GxB_SPARSE + GxB_BITMAP :                      // 6
             printf ("sparse/bitmap ") ;
             break ;
-        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP : 
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP :    // 7
             printf ("hypersparse/sparse/bitmap ") ;
             break ;
-        case GxB_FULL:
+        case GxB_FULL :                                     // 8
             printf ("full ") ;
             break ;
-        case GxB_BITMAP + GxB_FULL :
-            printf ("bitmap/full ") ;
-            break ;
-        case GxB_HYPERSPARSE + GxB_FULL : 
+        case GxB_HYPERSPARSE + GxB_FULL :                   // 9
             printf ("hypersparse/full ") ;
             break ;
-        case GxB_SPARSE + GxB_FULL :  
+        case GxB_SPARSE + GxB_FULL :                        // 10
             printf ("sparse/full ") ;
             break ;
-        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :      // 11
             printf ("hypersparse/sparse/full ") ;
             break ;
-        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
+        case GxB_BITMAP + GxB_FULL :                        // 12
+            printf ("bitmap/full ") ;
+            break ;
+        case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL :      // 13
             printf ("hypersparse/bitmap/full ") ;
             break ;
-        case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
-            printf ("sparse/gitmap/full ") ;
+        case GxB_SPARSE + GxB_BITMAP + GxB_FULL :           // 14
+            printf ("sparse/bitmap/full ") ;
             break ;
-        default :
+        default :                                           // 15, or other
+            // default sparsity control (not printed)
             break ;
     }
 

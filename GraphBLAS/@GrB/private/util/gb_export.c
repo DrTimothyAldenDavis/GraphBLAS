@@ -15,12 +15,36 @@
 mxArray *gb_export              // return the exported MATLAB matrix or struct
 (
     GrB_Matrix *C_handle,       // GrB_Matrix to export and free
-    kind_enum_t kind            // GrB, sparse, or full
+    kind_enum_t kind            // GrB, sparse, full, or matlab
 )
 {
+printf ("here %d %s kind %d\n", __LINE__, __FILE__, kind) ;
 
-    // TODO:: add an option to export as a MATLAB matrix, but keep the matrix
-    // structure: full if C is dense or full, sparse otherwise.
+    //--------------------------------------------------------------------------
+    // determine if all entries in C are present
+    //--------------------------------------------------------------------------
+
+    GrB_Index nrows, ncols ;
+    bool is_full = false ;
+    if (kind == KIND_MATLAB || kind == KIND_FULL)
+    { 
+        GrB_Index nvals ;
+        OK (GrB_Matrix_nvals (&nvals, *C_handle)) ;
+        OK (GrB_Matrix_nrows (&nrows, *C_handle)) ;
+        OK (GrB_Matrix_ncols (&ncols, *C_handle)) ;
+        is_full = ((double) nrows * (double) ncols == (double) nvals) ;
+    }
+
+printf ("here %d %s\n", __LINE__, __FILE__) ;
+    if (kind == KIND_MATLAB)
+    { 
+        // export as full if all entries present, or sparse otherwise
+        kind = (is_full) ? KIND_FULL : KIND_SPARSE ;
+    }
+
+    //--------------------------------------------------------------------------
+    // export the matrix
+    //--------------------------------------------------------------------------
 
     if (kind == KIND_SPARSE)
     { 
@@ -30,6 +54,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
+printf ("here %d %s\n", __LINE__, __FILE__) ;
 
         return (gb_export_to_mxsparse (C_handle)) ;
 
@@ -38,19 +63,23 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
     { 
 
         //----------------------------------------------------------------------
-        // export C as a MATLAB dense matrix
+        // export C as a MATLAB full matrix, adding explicit zeros if needed
         //----------------------------------------------------------------------
 
         // No typecasting is needed since MATLAB supports all the same types.
 
-        // ensure nvals(C) is equal to nrows*ncols
-        GrB_Index nrows, ncols, nvals ;
-        OK (GrB_Matrix_nvals (&nvals, *C_handle)) ;
-        OK (GrB_Matrix_nrows (&nrows, *C_handle)) ;
-        OK (GrB_Matrix_ncols (&ncols, *C_handle)) ;
-        CHECK_ERROR ((double) nrows * (double) ncols != (double) nvals,
-            "matrix must be full to export as full matrix") ;
+printf ("here %d %s\n", __LINE__, __FILE__) ;
+        if (!is_full)
+        {
+            // expand C with explicit zeros so all entries are present
+printf ("here %d %s\n", __LINE__, __FILE__) ;
+            GrB_Matrix C = gb_expand_to_full (*C_handle, NULL, GxB_BY_COL,
+                NULL) ;
+            OK (GrB_Matrix_free (C_handle)) ;
+            (*C_handle) = C ;
+        }
 
+        // export as a full matrix, held by column
         void *Cx ;
         GrB_Type ctype ;
         GrB_Index Cx_size ;
@@ -60,7 +89,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 
     }
-    else
+    else // kind == KIND_GRB
     { 
 
         //----------------------------------------------------------------------
@@ -69,6 +98,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         // No typecasting is needed since the MATLAB struct can hold all of the
         // opaque content of the GrB_Matrix.
+printf ("here %d %s\n", __LINE__, __FILE__) ;
 
         return (gb_export_to_mxstruct (C_handle)) ;
     }
