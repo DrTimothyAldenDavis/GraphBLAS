@@ -76,25 +76,26 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         return (GrB_OUT_OF_MEMORY) ;
     }
     anzmax = GB_IMAX (anzmax, 1) ;
+
     if (in_place)
     { 
         // if done in-place, malloc is fine since all of Ab will be set below
         Ab = GB_MALLOC (anzmax, int8_t) ;
     }
-    else if (anz == 0)
+    else if (anz > 0)
+    { 
+        // malloc Ab and set it to 0, in parallel.  This is faster than
+        // calloc since most of Ab will be set below.
+        Ab = GB_MALLOC (anzmax, int8_t) ;
+    }
+    else
     { 
         // calloc Ab so all bitmap entries are zero; no need to touch them.
         // This case occurs when setting the GxB_SPARSITY_CONTROL of a new
         // matrix to GxB_BITMAP, with no entries.
         Ab = GB_CALLOC (anzmax, int8_t) ;       // anz is zero
     }
-    else
-    { 
-        // Set all of Ab [0..anz-1] to 0, in parallel.  This is faster than
-        // calloc since most of Ab will be set below.
-        Ab = GB_MALLOC (anzmax, int8_t) ;
-        GB_memset (Ab, 0, anzmax, nthreads_max) ;
-    }
+
     if (Ab == NULL)
     { 
         // out of memory
@@ -160,6 +161,12 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     }
     else if (anz > 0)
     {
+
+        //----------------------------------------------------------------------
+        // set all of Ab to zero
+        //----------------------------------------------------------------------
+
+        GB_memset (Ab, 0, anzmax, nthreads_max) ;
 
         //----------------------------------------------------------------------
         // scatter the values and pattern of A into the bitmap
