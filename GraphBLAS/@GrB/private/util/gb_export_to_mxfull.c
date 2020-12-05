@@ -9,8 +9,9 @@
 
 // The input (void *) X is exported to a MATLAB dense mxArray S.
 
-// The input array must be deep.  The output is a standard
-// MATLAB dense matrix as an mxArray.  No typecasting is done.
+// The input array must be deep, but this cannot be checked here.  The caller
+// must ensure that the input X is deep.  The output is a standard MATLAB dense
+// matrix as an mxArray.  No typecasting is done.
 
 #include "gb_matlab.h"
 

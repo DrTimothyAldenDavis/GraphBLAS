@@ -92,7 +92,6 @@ void mexFunction
                     // A is a 0-by-0 MATLAB matrix.  create a new 0-by-0
                     // GraphBLAS matrix C of the given type, with the default
                     // format.
-                    // TODO: why?
                     C = gb_new (type, 0, 0, -1, 0) ;
                 }
                 else

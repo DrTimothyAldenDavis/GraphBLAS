@@ -24,8 +24,6 @@
 // type is a string that defines is the type of A, which defaults to the type
 // of X.
 
-// TODO: take dup and type as strings in any order, and add 'by row', etc.
-
 // The descriptor is optional; if present, it must be the last input parameter.
 // desc.kind is the only part used from the descriptor, and it defaults to
 // desc.kind = 'GrB'.

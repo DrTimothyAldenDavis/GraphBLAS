@@ -57,7 +57,8 @@ for trial = 1:40
 
     A = sparse (A+A') ;
     G = GrB (A) ;
-    assert (isequal (eig (A), double (eig (G)))) ;
+    err = norm (eig (A) - double (eig (G)), 2) ;
+    assert (err < 1e-12) ;
 
     A = rand (10) ;
     B = rand (10) ;

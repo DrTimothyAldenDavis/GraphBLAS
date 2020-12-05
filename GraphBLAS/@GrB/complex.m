@@ -34,12 +34,15 @@ if (nargin == 1)
 
     % with a single input, A must be a GraphBLAS matrix (otherwise,
     % this overloaded method for GrB objects would not be called).
-    % Convert A to a double complex matrix C.
+    % Convert A to a MATLAB double complex matrix C.
     A = A.opaque ;
     C = gbmatlab (A, 'double complex') ;
 
 else
 
+    % with two inputs, A and B are real matrices (either MATLAB or GrB,
+    % but at least one must be GrB or otherwise this overloaded method
+    % would not be called).  The output is a MATLAB double complex matrix.
     if (isobject (A))
         A = A.opaque ;
     end

@@ -33,7 +33,6 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     {
         type = atype ;
     }
-printf ("here %d %s\n", __LINE__, __FILE__) ;
 
     //--------------------------------------------------------------------------
     // get the identity, use zero if NULL
@@ -45,7 +44,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
         OK (GrB_Matrix_new (&id2, type, 1, 1)) ;
         id = id2 ;
     }
-printf ("here %d %s\n", __LINE__, __FILE__) ;
 
     //--------------------------------------------------------------------------
     // expand the identity into a dense matrix B the same size as C
@@ -55,7 +53,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     gb_matrix_assign_scalar (B, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
         false) ;
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     //--------------------------------------------------------------------------
     // typecast A from float to integer using the MATLAB rules
     //--------------------------------------------------------------------------
@@ -75,11 +72,9 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
         S = A ;
     }
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     //--------------------------------------------------------------------------
     // C = first (S, B)
     //--------------------------------------------------------------------------
-printf ("here %d %s\n", __LINE__, __FILE__) ;
 
     GrB_Matrix C = gb_new (type, nrows, ncols, fmt, 0) ;
     OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
@@ -89,11 +84,9 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     OK (GrB_Matrix_free (&id2)) ;
     OK (GrB_Matrix_free (&B)) ;
     OK (GrB_Matrix_free (&T)) ;
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     return (C) ;
 }
 

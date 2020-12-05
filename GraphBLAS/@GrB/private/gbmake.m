@@ -57,7 +57,7 @@ if (have_octave)
 else
     % use -R2018a for the new interleaved complex API
     % flags = '-O -R2018a' ;
-    flags = '-g -R2018a' ;  % TODO::
+    flags = '-O -R2018a' ;
 
     try
         if (strncmp (computer, 'GLNX', 4))

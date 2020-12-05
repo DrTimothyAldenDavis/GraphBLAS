@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmatlab: convert to a MATLAB matrix
+// gbmatlab: convert to a sparse or full MATLAB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

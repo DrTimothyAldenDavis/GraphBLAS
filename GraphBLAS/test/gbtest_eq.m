@@ -4,10 +4,5 @@ function s = gbtest_eq (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-A
-B
-GrB.prune (A)
-GrB.prune (B)
 s = isequal (GrB.prune (A), GrB.prune (B)) ;
-s
 

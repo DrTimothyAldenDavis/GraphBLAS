@@ -45,7 +45,6 @@ void mexFunction
     // get a shallow copy of the input matrix
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -55,7 +54,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // get the type of C
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     GrB_Matrix type ;
     if (nargin > 1)
     { 
@@ -71,7 +69,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // get the identity scalar
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     GrB_Matrix id = NULL ;
     if (nargin > 2)
     { 
@@ -82,7 +79,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // get the descriptor
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_GRB ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
@@ -99,7 +95,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // finalize the kind and format
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     // ignore desc.kind = 'sparse' or 'matlab' and just use 'full' instead
     kind = (kind == KIND_SPARSE || kind == KIND_MATLAB) ? KIND_FULL : kind ;
 
@@ -118,8 +113,6 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
-
     GrB_Matrix C = gb_expand_to_full (A, type, fmt, id) ;
     OK (GrB_Matrix_free (&A)) ;
 
@@ -127,9 +120,7 @@ printf ("here %d %s\n", __LINE__, __FILE__) ;
     // export C
     //--------------------------------------------------------------------------
 
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     pargout [0] = gb_export (&C, kind) ;
-printf ("here %d %s\n", __LINE__, __FILE__) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }

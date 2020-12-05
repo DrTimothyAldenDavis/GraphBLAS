@@ -49,11 +49,6 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // clear the content of A if bitmap
     //--------------------------------------------------------------------------
 
-// printf ("A->sparsity %d:\n", A->sparsity) ;
-// printf ("GxB_SPARSE + GxB_HYPERSPARSE: %d\n", GxB_SPARSE + GxB_HYPERSPARSE) ;
-// printf ("((A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE))): %d\n",
-    // (A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE))) ;
-
     if (((A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0)
         && GB_IS_BITMAP (A))
     { 

@@ -1060,8 +1060,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // get the identity value and check if it's zero 
         memcpy (identity, add->identity, csize) ;
         identity_is_zero = !GB_is_nonzero (identity, csize) ;
-        // printf ("min/max identity zero? %d\n", identity_is_zero) ;
-        // GxB_print (semiring, 3) ;
     }
 #endif
 

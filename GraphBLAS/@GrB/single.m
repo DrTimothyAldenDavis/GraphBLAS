@@ -18,9 +18,11 @@ G = G.opaque ;
 desc.kind = 'full' ;
 if (contains (gbtype (G), 'complex'))
     z = complex (single (0)) ;
-    C = gbfull (G, 'single complex', z, desc) ; % export as a MATLAB full matrix
+    ctype = 'single complex' ;
 else
-    zero = single (0) ;
-    C = gbfull (G, 'single', z, desc) ;         % export as a MATLAB full matrix
+    z = single (0) ;
+    ctype = 'single complex' ;
 end
+
+C = gbfull (G, ctype, z, desc) ;                % export as a MATLAB full matrix
 

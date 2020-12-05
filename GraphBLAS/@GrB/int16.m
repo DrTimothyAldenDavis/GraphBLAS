@@ -15,5 +15,5 @@ function C = int16 (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int16', int16 (0), desc) ;  % export as a MATLAB full matrix
+C = gbfull (G, 'int16', int16 (0), desc) ;      % export as a MATLAB full matrix
 

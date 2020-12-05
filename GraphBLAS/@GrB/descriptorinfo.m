@@ -28,14 +28,14 @@ function descriptorinfo (d)
 %            determine the method automatically, via a heuristic.
 %
 %   d.kind   For most GrB.methods, this is a string equal to 'default',
-%            'GrB', 'sparse', 'full', or 'matlab'.  The default is d.kind
-%            = 'GrB', where the GraphBLAS operation returns an object,
-%            which is preferred since GraphBLAS sparse matrices are faster
-%            and can represent many more data types.  However, if you want
-%            a standard MATLAB sparse matrix on ouput, use
-%            d.kind='sparse'.  Use d.kind='full' to return a MATLAB full
-%            matrix.  Use d.kind='matlab' for a MATLAB sparse or full
-%            matrix (full if all entries are present, sparse otherwise).
+%            'GrB', 'sparse', 'full', or 'matlab'.  The default is 'GrB',
+%            where the GraphBLAS operation returns an object, which is
+%            preferred since GraphBLAS sparse matrices are faster and can
+%            represent many more data types.  However, if you want a
+%            standard MATLAB sparse matrix on ouput, use d.kind='sparse'.
+%            Use d.kind='full' to return a MATLAB full matrix.  Use
+%            d.kind='matlab' for a MATLAB sparse or full matrix (full if
+%            all entries are present, sparse otherwise).
 %
 %   d.base   A string equal to 'default', 'zero-based', 'one-based', or
 %            'one-based int'.  The default is 'one-based'.  If d.base is
