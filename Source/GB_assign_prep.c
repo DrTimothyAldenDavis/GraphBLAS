@@ -64,8 +64,7 @@ GrB_Info GB_assign_prep
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results
     bool *C_replace,                // descriptor for C
-    int *assign_kind,               // row assign, col assign, assign, or
-                                    // subassign
+    int *assign_kind,               // row/col assign, assign, or subassign
 
     // input
     const GrB_Matrix M_in,          // optional mask for C
@@ -629,6 +628,20 @@ GrB_Info GB_assign_prep
         // C_replace is already effectively false (see no_mask condition above)
         ASSERT ((*C_replace) == false) ;
 
+        if (GB_aliased (C, A) && !A_transpose && !scalar_expansion)
+        { 
+            // C = C, with C and A aliased, no transpose, no mask, no accum
+            // operator, both I and J are ":", Mask_comp false.  C is not
+            // modified at all, and there's no work to do except to check for
+            // blocking mode.
+            GBURBLE ("(no-op) ") ;
+            (*done) = true ;
+            GB_FREE_ALL ;
+            ASSERT (C == C_in) ;
+            (*Chandle) = C ;
+            return (GB_block (C, Context)) ;
+        }
+
         // free pending tuples early but do not clear C.  If it is
         // already dense then its pattern can be reused.
         GB_Pending_free (&(C->Pending)) ;
@@ -647,6 +660,8 @@ GrB_Info GB_assign_prep
     { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in-place
+        // TODO: if accum is present and it does not depend on the values of
+        // A,  only construct the pattern of AT, not the values.
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
@@ -676,6 +691,7 @@ GrB_Info GB_assign_prep
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: typecast, no op, not in-place
+            // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;

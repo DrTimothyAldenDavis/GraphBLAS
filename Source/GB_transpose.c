@@ -15,7 +15,7 @@
 
 // If the input matrix has a single vector, it must be already sorted on input.
 // The input matrix may have shallow components (even if in-place), and the
-// output may also have shallow components (even in the input matrix is not
+// output may also have shallow components (even if the input matrix is not
 // shallow).
 
 // This function is CSR/CSC agnostic; it sets the output matrix format from
@@ -100,6 +100,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GB_Context Context
 )
 {
+double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs and determine if transpose is done in-place
@@ -107,6 +108,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     GrB_Info info ;
     bool in_place_C, in_place_A ;
+    GBURBLE ("(transpose) ") ;
 
     GrB_Matrix A, C ;
 
@@ -228,6 +230,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
+    GBURBLE ("(threads %d) ", nthreads) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -333,6 +336,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT (GB_IMPLIES (avlen == 0 || avdim == 0, anz == 0)) ;
 
     bool allocate_new_Cx = (ctype != atype) || (op1 != NULL) || (op2 != NULL) ;
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("init %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
 
     if (anz == 0)
     { 
@@ -875,28 +882,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // not shallow, A->i can be used and then freed.  Otherwise, A->i is
         // not modified at all.
         bool recycle_Ai = (in_place && !Ai_shallow) ;
-        bool use_qsort ;
-
-        if (A_is_hyper)
-        { 
-
-            //------------------------------------------------------------------
-            // always use qsort for hypersparse matrices
-            //------------------------------------------------------------------
-
-            use_qsort = true ;
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // select qsort if the transpose will likely be hypersparse
-            //------------------------------------------------------------------
-
-            use_qsort = GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET (anz, avlen) ;
-
-        }
+        bool use_qsort = GB_transpose_method (A) ;
 
         //----------------------------------------------------------------------
         // transpose the matrix with the selected method
@@ -929,6 +915,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // destroys A.
 
             GB_extract_vector_list (iwork, A, nthreads) ;
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("extract %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)
@@ -1001,6 +990,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
+ttt = omp_get_wtime ( ) - ttt ; printf ("alloc %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
             //------------------------------------------------------------------
             // construct jwork and Swork
             //------------------------------------------------------------------
@@ -1070,6 +1062,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
 
+ttt = omp_get_wtime ( ) - ttt ; printf ("j/Swork %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
             GrB_Matrix T = NULL ;
             info = GB_builder
             (
@@ -1120,6 +1115,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             info = GB_transplant (*Chandle, ctype, &T, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
 
+ttt = omp_get_wtime ( ) - ttt ; printf ("build %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
         }
         else
         {
@@ -1139,6 +1137,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             info = GB_transpose_bucket (&T, ctype, C_is_csc, A,
                 op1, op2, scalar, binop_bind1st,
                 Context) ;
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("bucket %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
 
             // free prior content, if C=A' is being done in-place
             if (in_place_A)
@@ -1179,6 +1180,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (*Chandle == NULL) ;
                 (*Chandle) = T ;
             }
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("wrapup %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
         }
     }
 
@@ -1232,6 +1236,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_FREE_C ;
         return (info) ;
     }
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("fini %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     ASSERT_MATRIX_OK (*Chandle, "Chandle conformed in GB_transpose", GB0) ;
     return (GrB_SUCCESS) ;

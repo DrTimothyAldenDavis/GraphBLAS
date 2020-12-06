@@ -11,6 +11,11 @@
 #define GB_TRANSPOSE_H
 #include "GB.h"
 
+bool GB_transpose_method    // true: use sort, false: use bucket
+(
+    GrB_Matrix A
+) ;
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (

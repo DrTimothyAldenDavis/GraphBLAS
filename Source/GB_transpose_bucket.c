@@ -68,6 +68,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_Context Context
 )
 {
+double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -115,6 +116,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     int naslice = GB_nthreads (anz, GB_IMAX (vlen, chunk), nthreads_max) ;
 
+printf ("naslice: %d\n", naslice) ;
+
     int64_t *GB_RESTRICT A_slice = NULL ;          // size naslice+1
     int64_t *GB_RESTRICT *Rowcounts = NULL ;       // size naslice
 
@@ -148,7 +151,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
-        int64_t *rowcount = GB_CALLOC (vlen + 1, int64_t) ;
+        int64_t *rowcount = GB_MALLOC (vlen + 1, int64_t) ;
+        GB_memset (rowcount, 0, (vlen + 1) * sizeof (int64_t), nthreads_max) ;
         if (rowcount == NULL)
         { 
             // out of memory
@@ -170,6 +174,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+ttt = omp_get_wtime ( ) - ttt ; printf ("slice %g\n", ttt) ;
+ttt = omp_get_wtime ( ) - ttt ;
+
     // sum up the row counts and find C->p
     if (naslice == 1)
     {
@@ -189,6 +196,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // cumulative sum of the rowcount, and copy back into C->p
         GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nth) ;
         GB_memcpy (Cp, rowcount, (vlen+1) * sizeof (int64_t), nth) ;
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("phase1, one slice %g\n", ttt) ;
+ttt = omp_get_wtime ( ) - ttt ;
 
     }
     else
@@ -220,6 +230,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
         Cp [vlen] = 0 ;
 
+ttt = omp_get_wtime ( ) - ttt ; printf ("phase1a, multislice %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
         // compute the vector pointers for C
         GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth) ;
 
@@ -236,6 +249,10 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
                 rowcount [i] += s ;
             }
         }
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("phase1b, multislice %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
+
     }
 
     C->magic = GB_MAGIC ;      // C is now initialized ]
@@ -259,6 +276,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GB_transpose_op (C, op1, op2, scalar, binop_bind1st, A, Rowcounts,
             A_slice, naslice, 0) ;
     }
+
+ttt = omp_get_wtime ( ) - ttt ; printf ("phase2, %g\n", ttt) ;
+ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

@@ -89,7 +89,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #define GB_SCALAR_OK(v) (GB_VECTOR_OK(v) && ((v)->vlen == 1))
 
 //------------------------------------------------------------------------------
-// aliased objects
+// aliased and shallow objects
 //------------------------------------------------------------------------------
 
 // GraphBLAS allows all inputs to all user-accessible objects to be aliased, as
@@ -102,6 +102,13 @@ bool GB_aliased             // determine if A and B are aliased
 (
     GrB_Matrix A,           // input A matrix
     GrB_Matrix B            // input B matrix
+) ;
+
+// matrices returned to the user are never shallow; internal matrices may be
+GB_PUBLIC                       // used by the MATLAB interface
+bool GB_is_shallow              // true if any component of A is shallow
+(
+    GrB_Matrix A                // matrix to query
 ) ;
 
 //------------------------------------------------------------------------------
@@ -928,11 +935,6 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     const GB_Type_code bcode,       // B may not have a type, just a code
     GB_Context Context
 ) ;
-
-// Several methods can use choose between a qsort-based method that takes
-// O(anz*log(anz)) time, or a bucket-sort method that takes O(anz+n) time.
-// The qsort method is choosen if the following condition is true:
-#define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
 
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Index_multiply      // true if ok, false if overflow

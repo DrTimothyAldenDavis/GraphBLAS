@@ -83,8 +83,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // C->hyper_switch is not modified by the transplant
 
     // C is not shallow, and has no content
-    ASSERT (!C->p_shallow && !C->h_shallow && !C->i_shallow && !C->x_shallow) ;
-    ASSERT (!C->b_shallow && C->b == NULL) ;
+    ASSERT (!GB_is_shallow (C)) ;
+    ASSERT (C->b == NULL) ;
     ASSERT (C->h == NULL && C->p == NULL && C->i == NULL && C->x == NULL) ;
 
     // determine if C should be constructed as a bitmap or full matrix

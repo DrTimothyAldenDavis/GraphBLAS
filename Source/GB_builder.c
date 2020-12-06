@@ -1140,7 +1140,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // copy S into Tx.  S cannot be transplanted into T->x since
             // S_work is NULL and S_input cannot be modified by GB_builder.
 
-            GBURBLE ("(memcpy S into T) ") ;
+            GBURBLE ("(build:memcpy) ") ;
             ASSERT (S_work == NULL) ;
             ASSERT (S == S_input) ;
             GB_memcpy (Tx, S, nvals * tsize, nthreads) ;
@@ -1170,7 +1170,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             // Early exit cannot be exploited, so the terminal is ignored.
 
-            GBURBLE ("(assemble S into T, no casting) ") ;
+            GBURBLE ("(build:assemble) ") ;
             bool done = false ;
 
             #ifndef GBCOMPACT
@@ -1208,7 +1208,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
-                GB_BURBLE_N (nvals, "(generic build) ") ;
+                GB_BURBLE_N (nvals, "(generic) ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1260,7 +1260,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // assemble the values S into T, typecasting as needed
             //------------------------------------------------------------------
 
-            GB_BURBLE_N (nvals, "(generic build with typecast) ") ;
+            GB_BURBLE_N (nvals, "(generic with typecast) ") ;
 
             // S (either S_work or S_input) must be permuted and copied into
             // T->x, since the tuples had to be sorted, or duplicates appear.

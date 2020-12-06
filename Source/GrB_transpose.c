@@ -91,7 +91,6 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
         // T = A', the default behavior.  This step may seem counter-intuitive,
         // but method computes C<M>=A' by default when A_transpose is false.
-        GBURBLE ("(transpose) ") ;
 
         // Precasting:
         if (accum == NULL)

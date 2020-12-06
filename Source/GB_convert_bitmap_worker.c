@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// TODO allow this function to do typecasting
+// TODO allow this function to do typecasting.  Create 169 different versions
+// for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
 
 #include "GB.h"
 #include "GB_partition.h"
@@ -60,8 +61,9 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         // compute all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
+        for (j = 0 ; j < avdim ; j++)
         {
             // ajnz = nnz (A (:,j))
             int64_t ajnz = 0 ;
@@ -116,8 +118,9 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         }
 
         // cumulative sum to compute nnz(A(:,j)) for each vector j
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
+        for (j = 0 ; j < avdim ; j++)
         {
             int64_t ajnz = 0 ;
             for (int taskid = 0 ; taskid < nthreads ; taskid++)
@@ -155,8 +158,9 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         // construct all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
+        for (j = 0 ; j < avdim ; j++)
         {
             // gather from the bitmap into the new A (:,j)
             int64_t pnew = Ap [j] ;
