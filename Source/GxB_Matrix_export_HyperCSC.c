@@ -46,21 +46,6 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
-    // finish any pending work
-    //--------------------------------------------------------------------------
-
-    if (jumbled == NULL)
-    { 
-        // the exported matrix cannot be jumbled
-        GB_MATRIX_WAIT (*A) ;
-    }
-    else
-    { 
-        // the exported matrix is allowed to be jumbled
-        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
-    }
-
-    //--------------------------------------------------------------------------
     // ensure the matrix is hypersparse CSC
     //--------------------------------------------------------------------------
 
@@ -75,6 +60,21 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
     GB_OK (GB_convert_any_to_hyper (*A, Context)) ;
     ASSERT (GB_IS_HYPERSPARSE (*A)) ;
+
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
+    if (jumbled == NULL)
+    { 
+        // the exported matrix cannot be jumbled
+        GB_MATRIX_WAIT (*A) ;
+    }
+    else
+    { 
+        // the exported matrix is allowed to be jumbled
+        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
+    }
 
     //--------------------------------------------------------------------------
     // export the matrix

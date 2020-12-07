@@ -13,6 +13,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
+#include "GB_atomics.h"
 #include "GB_unop__include.h"
 
 // C=unop(A) is defined by the following types and operators:
@@ -118,16 +119,15 @@ GrB_Info GB_unop_tran__identity_uint16_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif

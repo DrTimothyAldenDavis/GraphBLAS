@@ -230,6 +230,36 @@
     #endif
 
 //------------------------------------------------------------------------------
+// atomic post-increment
+//------------------------------------------------------------------------------
+
+// Increment an int64_t value and return the value prior to being incremented:
+//
+//      int64_t result = target++ ;
+//
+// See https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedincrement-intrinsic-functions?view=msvc-160
+// The MS Visual Studio version computes result = ++target, so result must be
+// decremented by one.
+
+    #if GB_MICROSOFT
+
+        #define GB_ATOMIC_CAPTURE_INC64(result,target)                  \
+        {                                                               \
+            result = _InterlockedIncrement64                            \
+                ((int64_t volatile *) (&(target))) - 1 ;                \
+        }
+
+    #else
+
+        #define GB_ATOMIC_CAPTURE_INC64(result,target)                  \
+        {                                                               \
+            GB_PRAGMA (omp atomic capture)                              \
+            result = (target)++ ;                                       \
+        }
+
+    #endif
+
+//------------------------------------------------------------------------------
 // atomic compare-and-exchange
 //------------------------------------------------------------------------------
 

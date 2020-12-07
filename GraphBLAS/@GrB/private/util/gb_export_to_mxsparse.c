@@ -44,7 +44,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // A is already in a native MATLAB sparse matrix type, by column
         //----------------------------------------------------------------------
 
-        if (gb_is_shallow (*A_handle))
+        if (GB_is_shallow (*A_handle))
         { 
             // A is shallow so make a deep copy
             OK (GrB_Matrix_dup (&T, *A_handle)) ;
@@ -92,7 +92,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     }
 
     // ensure T is deep
-    CHECK_ERROR (gb_is_shallow (T), "internal error 7") ;
+    CHECK_ERROR (GB_is_shallow (T), "internal error 7") ;
 
     //--------------------------------------------------------------------------
     // drop zeros from T

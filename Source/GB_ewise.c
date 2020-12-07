@@ -117,16 +117,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // quick return if an empty mask M is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;        // cannot be jumbled
-    GB_MATRIX_WAIT (A) ;        // cannot be jumbled
-    GB_MATRIX_WAIT (B) ;        // cannot be jumbled
-
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-    GB_BURBLE_DENSE (B, "(B %s) ") ;
-
     //--------------------------------------------------------------------------
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
@@ -236,6 +226,14 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             NULL, NULL, NULL, false, Context)) ;
         B1 = BT ;
     }
+
+    //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_MATRIX_WAIT (M1) ;       // cannot be jumbled
+    GB_MATRIX_WAIT (A1) ;       // cannot be jumbled
+    GB_MATRIX_WAIT (B1) ;       // cannot be jumbled
 
     //--------------------------------------------------------------------------
     // special cases

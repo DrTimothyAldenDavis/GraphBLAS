@@ -11,18 +11,18 @@
 
 // If A is sparse or hypersparse
 //      The pattern of C is constructed.  C is sparse.
-//      Rowcounts and A_slice are non-NULL.
+//      Workspaces and A_slice are non-NULL.
 //      This method is parallel, but not highly scalable.  It uses only
 //      nthreads = nnz(A)/(A->vlen) threads.
 
 // If A is full or packed:
 //      The pattern of C is not constructed.  C is full.
-//      Rowcounts and A_slice are NULL.
+//      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
 // If A is bitmap:
 //      C->b is constructed.  C is bitmap.
-//      Rowcounts and A_slice are NULL.
+//      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
 #include "GB_transpose.h"
@@ -35,10 +35,10 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
     // for sparse case:
-    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
-    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
-    int naslice,                        // # of slices (and # threads to use)
-    // for full or bitmap case:
+    int64_t *GB_RESTRICT *Workspaces,   // Workspaces, size nworkspaces
+    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size nthreads+1
+    int nworkspaces,                    // # of workspaces to use
+    // for all cases:
     int nthreads                        // # of threads to use
 )
 { 
@@ -72,7 +72,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         #define GB_WORKER(ignore1,zname,ztype,aname,atype)          \
         {                                                           \
             info = GB_unop_tran (zname,aname)                       \
-                (C, A, Rowcounts, A_slice, naslice, nthreads) ;     \
+                (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
             if (info == GrB_SUCCESS) return ;                       \
         }                                                           \
         break ;
@@ -102,7 +102,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     #define GB_ATYPE GB_void
     #define GB_CTYPE GB_void
 
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
 }
 

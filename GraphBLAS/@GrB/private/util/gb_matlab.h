@@ -315,11 +315,6 @@ GxB_SelectOp gb_mxstring_to_selectop    // return select operator from a string
     const mxArray *mxstring             // MATLAB string
 ) ;
 
-bool gb_is_shallow              // true if any component of A is shallow
-(
-    GrB_Matrix A                // GrB_Matrix to query
-) ;
-
 bool gb_mxarray_is_scalar   // true if MATLAB array is a scalar
 (
     const mxArray *S

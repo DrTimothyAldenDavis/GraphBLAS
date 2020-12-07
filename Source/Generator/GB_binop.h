@@ -126,9 +126,9 @@ GrB_Info GB_bind1st_tran
     GrB_Matrix C,
     const GB_void *x_input,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 ) ;
 endif_binop_bind1st_is_enabled
@@ -139,9 +139,9 @@ GrB_Info GB_bind2nd_tran
     GrB_Matrix C,
     const GrB_Matrix A,
     const GB_void *y_input,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 ) ;
 endif_binop_bind2nd_is_enabled

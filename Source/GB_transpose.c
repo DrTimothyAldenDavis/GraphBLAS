@@ -29,7 +29,7 @@
 // the A_in matrix is not freed when done.
 
 // The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
-// m-by-n, then at most O(e/n) threads are used.  The qsort method is more
+// m-by-n, then at most O(e/n) threads are used.  The GB_builder method is more
 // scalable, but not as fast with a modest number of threads.
 
 #include "GB_transpose.h"
@@ -100,7 +100,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GB_Context Context
 )
 {
-double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs and determine if transpose is done in-place
@@ -337,10 +336,6 @@ double ttt = omp_get_wtime ( ) ;
 
     bool allocate_new_Cx = (ctype != atype) || (op1 != NULL) || (op2 != NULL) ;
 
-ttt = omp_get_wtime ( ) - ttt ; printf ("init %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
-
-
     if (anz == 0)
     { 
 
@@ -420,7 +415,7 @@ ttt = omp_get_wtime ( ) ;
         //----------------------------------------------------------------------
 
         // Since A is full, # threads to use is nthreads, and the
-        // naslice parameter is not used
+        // nworkspaces parameter is not used
 
         if (T_cheap)
         {
@@ -878,21 +873,22 @@ ttt = omp_get_wtime ( ) ;
         // select the method
         //----------------------------------------------------------------------
 
-        // for the qsort method, if the transpose is done in-place and A->i is
-        // not shallow, A->i can be used and then freed.  Otherwise, A->i is
-        // not modified at all.
+        // for the GB_builder method, if the transpose is done in-place and
+        // A->i is not shallow, A->i can be used and then freed.  Otherwise,
+        // A->i is not modified at all.
         bool recycle_Ai = (in_place && !Ai_shallow) ;
-        bool use_qsort = GB_transpose_method (A) ;
+        bool use_builder = GB_transpose_method (A,
+            &nworkspaces_bucket, &nthreads_bucket, Context) ;
 
         //----------------------------------------------------------------------
         // transpose the matrix with the selected method
         //----------------------------------------------------------------------
 
-        if (use_qsort)
+        if (use_builder)
         {
 
             //==================================================================
-            // transpose via quicksort
+            // transpose via GB_builder
             //==================================================================
 
             //------------------------------------------------------------------
@@ -915,9 +911,6 @@ ttt = omp_get_wtime ( ) ;
             // destroys A.
 
             GB_extract_vector_list (iwork, A, nthreads) ;
-
-ttt = omp_get_wtime ( ) - ttt ; printf ("extract %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)
@@ -990,9 +983,6 @@ ttt = omp_get_wtime ( ) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
-ttt = omp_get_wtime ( ) - ttt ; printf ("alloc %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
-
             //------------------------------------------------------------------
             // construct jwork and Swork
             //------------------------------------------------------------------
@@ -1062,9 +1052,6 @@ ttt = omp_get_wtime ( ) ;
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
 
-ttt = omp_get_wtime ( ) - ttt ; printf ("j/Swork %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
-
             GrB_Matrix T = NULL ;
             info = GB_builder
             (
@@ -1115,9 +1102,6 @@ ttt = omp_get_wtime ( ) ;
             info = GB_transplant (*Chandle, ctype, &T, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
 
-ttt = omp_get_wtime ( ) - ttt ; printf ("build %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
-
         }
         else
         {
@@ -1136,10 +1120,7 @@ ttt = omp_get_wtime ( ) ;
             GrB_Matrix T = NULL ;
             info = GB_transpose_bucket (&T, ctype, C_is_csc, A,
                 op1, op2, scalar, binop_bind1st,
-                Context) ;
-
-ttt = omp_get_wtime ( ) - ttt ; printf ("bucket %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
+                nworkspaces_bucket, nthreads_bucket, Context) ;
 
             // free prior content, if C=A' is being done in-place
             if (in_place_A)
@@ -1162,7 +1143,7 @@ ttt = omp_get_wtime ( ) ;
             }
 
             ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
-            ASSERT (!GB_JUMBLED (T)) ;
+            ASSERT (GB_JUMBLED_OK (T)) ;
 
             if (in_place_A)
             { 
@@ -1180,9 +1161,6 @@ ttt = omp_get_wtime ( ) ;
                 ASSERT (*Chandle == NULL) ;
                 (*Chandle) = T ;
             }
-
-ttt = omp_get_wtime ( ) - ttt ; printf ("wrapup %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
         }
     }
 
@@ -1197,7 +1175,7 @@ ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     C = (*Chandle) ;
-    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // apply a positional operator, after transposing the matrix
@@ -1236,9 +1214,6 @@ ttt = omp_get_wtime ( ) ;
         GB_FREE_C ;
         return (info) ;
     }
-
-ttt = omp_get_wtime ( ) - ttt ; printf ("fini %g\n", ttt) ;
-ttt = omp_get_wtime ( ) ;
 
     ASSERT_MATRIX_OK (*Chandle, "Chandle conformed in GB_transpose", GB0) ;
     return (GrB_SUCCESS) ;

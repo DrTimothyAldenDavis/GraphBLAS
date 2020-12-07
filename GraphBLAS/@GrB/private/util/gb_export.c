@@ -72,15 +72,18 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
             C = gb_expand_to_full (*C_handle, NULL, GxB_BY_COL, NULL) ;
             OK (GrB_Matrix_free (C_handle)) ;
             (*C_handle) = C ;
+            CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 707")
         }
 
-        if (gb_is_shallow (*C_handle))
+        if (GB_is_shallow (*C_handle))
         {
             // C is shallow so make a deep copy
             OK (GrB_Matrix_dup (&C, *C_handle)) ;
             OK (GrB_Matrix_free (C_handle)) ;
             (*C_handle) = C ;
         }
+
+        CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 717")
 
         // export as a full matrix, held by column
         void *Cx = NULL ;

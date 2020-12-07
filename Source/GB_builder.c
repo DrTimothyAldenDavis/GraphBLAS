@@ -107,7 +107,7 @@
     GB_FREE (K_work) ;              \
     GB_FREE (W0) ;                  \
     GB_FREE (W1) ;                  \
-    GB_FREE (W1) ;                  \
+    GB_FREE (W2) ;                  \
 }
 
 //------------------------------------------------------------------------------
@@ -796,10 +796,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
         return (info) ;
     }
 
+    ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
     ASSERT (T->nzmax == 0) ;        // T->i and T->x not yet allocated
-    ASSERT (T->x == NULL) ;
+    ASSERT (T->b == NULL) ;
     ASSERT (T->i == NULL) ;
+    ASSERT (T->x == NULL) ;
 
     (*Thandle) = T ;
 
@@ -1094,8 +1096,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // S_work.  The transplant can be used by GB_Matrix_wait (whenever the
         // tuples are already sorted, with no duplicates, and no typecasting is
         // needed, since S_work is always A->Pending->x).  This transplant can
-        // rarely be used for GB_transpose (when op is NULL and the transposed
-        // tuples happen to be sorted, which is unlikely).
+        // rarely be used for GB_transpose, in the case when op is NULL and the
+        // transposed tuples happen to be sorted (which is unlikely).
 
         T->x = S_work ;
         S_work = NULL ;

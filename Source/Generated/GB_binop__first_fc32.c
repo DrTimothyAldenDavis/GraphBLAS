@@ -14,6 +14,7 @@
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
+#include "GB_atomics.h"
 #include "GB_mkl.h"
 #include "GB_binop__include.h"
 
@@ -426,9 +427,9 @@ GrB_Info GB_bind1st_tran__first_fc32
     GrB_Matrix C,
     const GB_void *x_input,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 )
 { 
@@ -441,7 +442,6 @@ GrB_Info GB_bind1st_tran__first_fc32
     return (GrB_NO_VALUE) ;
     #else
     GxB_FC32_t x = (*((const GxB_FC32_t *) x_input)) ;
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -471,9 +471,9 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A,
     const GB_void *y_input,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 )
 { 
@@ -481,7 +481,6 @@ GrB_Info (none)
     return (GrB_NO_VALUE) ;
     #else
     GxB_FC32_t y = (*((const GxB_FC32_t *) y_input)) ;
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif

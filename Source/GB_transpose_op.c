@@ -19,18 +19,18 @@
 
 // If A is sparse or hypersparse
 //      The pattern of C is constructed.  C is sparse.
-//      Rowcounts and A_slice are non-NULL.
+//      Workspaces and A_slice are non-NULL.
 //      This method is parallel, but not highly scalable.  It uses only
 //      nthreads = nnz(A)/(A->vlen) threads.
 
 // If A is full or packed:
 //      The pattern of C is not constructed.  C is full.
-//      Rowcounts and A_slice are NULL.
+//      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
 // If A is bitmap:
 //      C->b is constructed.  C is bitmap.
-//      Rowcounts and A_slice are NULL.
+//      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
 #include "GB_transpose.h"
@@ -50,10 +50,10 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
     // for sparse or hypersparse case:
-    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts, size naslice
-    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size naslice+1
-    int naslice,                        // # of slices of A
-    // for full or bitmap case:
+    int64_t *GB_RESTRICT *Workspaces,   // Workspaces, size nworkspaces
+    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size nthreads+1
+    int nworkspaces,                    // # of workspaces to use
+    // for all cases:
     int nthreads                        // # of threads to use
 )
 {
@@ -108,7 +108,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             #define GB_WORKER(opname,zname,ztype,aname,atype)       \
             {                                                       \
                 info = GB_unop_tran (opname,zname,aname)            \
-                    (C, A, Rowcounts, A_slice, naslice, nthreads) ; \
+                    (C, A, Workspaces, A_slice, nworkspaces, nthreads) ; \
                 if (info == GrB_SUCCESS) return ;                   \
             }                                                       \
             break ;
@@ -153,7 +153,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
         #define GB_ATYPE GB_void
         #define GB_CTYPE GB_void
-        #define GB_PHASE_2_OF_2
         #include "GB_unop_transpose.c"
 
     }
@@ -231,7 +230,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
                     if (GB_bind1st_tran (op, xname) (C, scalarx, A,         \
-                        Rowcounts, A_slice, naslice, nthreads)              \
+                        Workspaces, A_slice, nworkspaces, nthreads)         \
                         == GrB_SUCCESS) return ;                            \
                 }                                                           \
                 break ;
@@ -268,7 +267,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
                     if (GB_bind2nd_tran (op, xname) (C, A, scalarx,         \
-                        Rowcounts, A_slice, naslice, nthreads)              \
+                        Workspaces, A_slice, nworkspaces, nthreads)              \
                         == GrB_SUCCESS) return ;                            \
                 }                                                           \
                 break ;

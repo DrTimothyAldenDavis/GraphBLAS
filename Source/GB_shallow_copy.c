@@ -37,10 +37,9 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow copy", GB0) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
-
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
     (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
@@ -72,7 +71,6 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->h = A->h ;                       // C->h is of size A->plen
     C->plen = A->plen ;                 // C and A have the same hyperlist size
     C->nvec = A->nvec ;
-    C->jumbled = A->jumbled ;
     C->nvec_nonempty = A->nvec_nonempty ;
     C->magic = GB_MAGIC ;
 

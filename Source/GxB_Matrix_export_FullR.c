@@ -58,6 +58,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
         GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose (NULL, NULL, false, *A,
             NULL, NULL, NULL, false, Context)) ;
+        GB_MATRIX_WAIT (*A) ;
     }
 
     GB_convert_any_to_full (*A) ;

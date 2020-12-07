@@ -60,16 +60,15 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix B2 = NULL ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (A_in)) ; 
-    ASSERT (!GB_JUMBLED (A_in)) ;
-    ASSERT (!GB_PENDING (A_in)) ; 
-
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (B_in)) ; 
-    ASSERT (!GB_JUMBLED (B_in)) ;
-    ASSERT (!GB_PENDING (B_in)) ; 
-
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
+    GB_MATRIX_WAIT (A_in) ;
+    GB_MATRIX_WAIT (B_in) ;
 
     //--------------------------------------------------------------------------
     // bitmap case: create sparse copies of A and B if they are bitmap

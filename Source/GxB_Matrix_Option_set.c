@@ -89,6 +89,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                     GB_OK (GB_transpose (NULL, NULL, new_csc, A,
                         NULL, NULL, NULL, false, Context)) ;
                     ASSERT (A->is_csc == new_csc) ;
+                    ASSERT (GB_JUMBLED_OK (A)) ;
                 }
             }
             break ;

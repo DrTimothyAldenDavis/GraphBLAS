@@ -665,6 +665,7 @@ GrB_Info GB_assign_prep
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
+        GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
     }
 
@@ -695,6 +696,7 @@ GrB_Info GB_assign_prep
             GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
+            GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
         }
     }

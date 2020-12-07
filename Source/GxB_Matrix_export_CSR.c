@@ -43,21 +43,6 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     ASSERT_MATRIX_OK (*A, "A to export as CSR", GB0) ;
 
     //--------------------------------------------------------------------------
-    // finish any pending work
-    //--------------------------------------------------------------------------
-
-    if (jumbled == NULL)
-    { 
-        // the exported matrix cannot be jumbled
-        GB_MATRIX_WAIT (*A) ;
-    }
-    else
-    { 
-        // the exported matrix is allowed to be jumbled
-        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
-    }
-
-    //--------------------------------------------------------------------------
     // ensure the matrix is sparse CSR
     //--------------------------------------------------------------------------
 
@@ -72,6 +57,21 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
     GB_OK (GB_convert_any_to_sparse (*A, Context)) ;
     ASSERT (GB_IS_SPARSE (*A)) ;
+
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
+    if (jumbled == NULL)
+    { 
+        // the exported matrix cannot be jumbled
+        GB_MATRIX_WAIT (*A) ;
+    }
+    else
+    { 
+        // the exported matrix is allowed to be jumbled
+        GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (*A) ;
+    }
 
     //--------------------------------------------------------------------------
     // export the matrix
