@@ -77,60 +77,64 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
 
     bool atomics ;
     if (nthreads == 1)
-    {
+    { 
         // sequential bucket method, no atomics needed
         atomics = false ;
     }
     else if ((double) nthreads * (double) avlen > (double) anz)
-    {
+    { 
         // non-atomic workspace is too high; use atomic method
         atomics = true ;
     }
     else
     {
-        // select between atomic and non-atomic methods.  This rule is
-        // based on performance on a 4-core system with 4 threads.
+        // select between atomic and non-atomic methods.  This rule is based on
+        // performance on a 4-core system with 4 threads with gcc 7.5.  The icc
+        // compiler has much slower atomics than gcc and so beta should likely
+        // be smaller when using icc.
         int beta ;
         if (anzlog < 14)
-        {
-            beta = -5 ;
+        { 
+            beta = -5 ;     // fewer than 16K entries in A
         }
         else
-        {
+        { 
             switch (anzlog)
             {
-                case 14: beta = -4 ; break ;
-                case 15: beta = -3 ; break ;
-                case 16: beta = -2 ; break ;
-                case 17: beta = -1 ; break ;
-                case 18: beta =  0 ; break ;
-                case 19: beta =  1 ; break ;
-                case 20: beta =  2 ; break ;
-                case 21: beta =  3 ; break ;
-                case 22: beta =  4 ; break ;
-                case 23: beta =  5 ; break ;
-                case 24: beta =  6 ; break ;
-                case 25: beta =  8 ; break ;
-                case 26: beta =  8 ; break ;
-                case 27: beta =  8 ; break ;        // TODO::
-                case 28: beta =  8 ; break ;        // TODO::
-                default: beta =  8 ; break ;        // TODO::
+                case 14: beta = -4 ; break ;        // 16K entried in A
+                case 15: beta = -3 ; break ;        // 32K
+                case 16: beta = -2 ; break ;        // 64K
+                case 17: beta = -1 ; break ;        // 128K
+                case 18: beta =  0 ; break ;        // 256K
+                case 19: beta =  1 ; break ;        // 512K
+                case 20: beta =  2 ; break ;        // 1M
+                case 21: beta =  3 ; break ;        // 2M
+                case 22: beta =  4 ; break ;        // 4M
+                case 23: beta =  5 ; break ;        // 8M
+                case 24: beta =  6 ; break ;        // 16M
+                case 25: beta =  8 ; break ;        // 32M
+                case 26: beta =  9 ; break ;        // 64M
+                case 27: beta =  9 ; break ;        // 128M
+                case 28: beta =  9 ; break ;        // 256M TODO::
+                default: beta =  9 ; break ;        // > 256M TODO::
             }
         }
         if (anzlog - mlog <= beta)
-        {
+        { 
             // use atomic method
             // anzlog - mlog is the log2 of the average row degree, rounded.
             // If the average row degree is <= 2^beta, use the atomic method.
-            // That is, the non-atomic method works better for dense matrices.
-            // As the problem gets larger, the atomic method becomes more
-            // attractive relative to the non-atomic method.
+            // That is, the atomic method works better for sparser matrices,
+            // and the non-atomic works better or denser matrices.  However,
+            // the threshold changes as the problem gets larger, in terms of #
+            // of entries in A, when the atomic method becomes more attractive
+            // relative to the non-atomic method.
             atomics = true ;
         }
         else
-        {
+        { 
             // use non-atomic method
-            atomics = true ;
+            atomics = false ;
         }
     }
 
@@ -150,30 +154,29 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     // mergesort, which has good memory locality.
 
     if (anzlog < 14)
-    {
-        // fewer than 2^14 = 16K entries
-        alpha = 0.5 ;
+    { 
+        alpha = 0.5 ;       // fewer than 2^14 = 16K entries
     }
     else
-    {
+    { 
         switch (anzlog)
-        {                                       // # of entries in A
-            case 14 : alpha =  0.6 ; break ;    // 16K
-            case 15 : alpha =  0.7 ; break ;    // 32K
-            case 16 : alpha =  1.0 ; break ;    // 64K
-            case 17 : alpha =  1.7 ; break ;    // 128K
-            case 18 : alpha =  3.0 ; break ;    // 256K
-            case 19 : alpha =  4.0 ; break ;    // 512K
-            case 20 : alpha =  6.0 ; break ;    // 1M
-            case 21 : alpha =  7.0 ; break ;    // 2M
-            case 22 : alpha =  8.0 ; break ;    // 4M
-            case 23 : alpha =  5.0 ; break ;    // 8M
-            case 24 : alpha =  5.0 ; break ;    // 16M
-            case 25 : alpha =  5.0 ; break ;    // 32M
-            case 26 : alpha =  5.0 ; break ;    // 64M      TODO::
-            case 27 : alpha =  5.0 ; break ;    // 128M     TODO::
-            case 28 : alpha =  5.0 ; break ;    // 256M     TODO::
-            default : alpha =  5.0 ; break ;    // > 256M       TODO::
+        {
+            case 14: alpha = 0.6 ; break ;      // 16K entries in A
+            case 15: alpha = 0.7 ; break ;      // 32K
+            case 16: alpha = 1.0 ; break ;      // 64K
+            case 17: alpha = 1.7 ; break ;      // 128K
+            case 18: alpha = 3.0 ; break ;      // 256K
+            case 19: alpha = 4.0 ; break ;      // 512K
+            case 20: alpha = 6.0 ; break ;      // 1M
+            case 21: alpha = 7.0 ; break ;      // 2M
+            case 22: alpha = 8.0 ; break ;      // 4M
+            case 23: alpha = 5.0 ; break ;      // 8M
+            case 24: alpha = 5.0 ; break ;      // 16M
+            case 25: alpha = 5.0 ; break ;      // 32M
+            case 26: alpha = 5.0 ; break ;      // 64M
+            case 27: alpha = 5.0 ; break ;      // 128M     TODO::
+            case 28: alpha = 5.0 ; break ;      // 256M     TODO::
+            default: alpha = 5.0 ; break ;      // > 256M       TODO::
         }
     }
 
