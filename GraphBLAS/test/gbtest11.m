@@ -9,25 +9,22 @@ A = 100 * rand (4) ;
 A (1,1:2) = 0 %#ok<*NOPRT>
 S = sparse (A)
 
-x1 = GrB (S)
-x2 = full (x1)
-x3 = double (x2)
-assert (gbtest_eq (S, x3))
+% x1 = GrB (S)
+% x2 = full (x1)
+% x3 = double (x2)
+% assert (gbtest_eq (S, x3))
 
-% assert (gbtest_eq (S, double (full (GrB (S)))))
-'here1'
+assert (gbtest_eq (S, double (full (GrB (S)))))
 
-x1 = GrB (S)
-x2 = full (x1)
-x3 = full (x2)
-x4 = double (x3)
-assert (gbtest_eq (S, x4))
+% x1 = GrB (S)
+% x2 = full (x1)
+% x3 = full (x2)
+% x4 = double (x3)
+% assert (gbtest_eq (S, x4))
 
-% assert (gbtest_eq (S, double (full (full (GrB (S))))))
+assert (gbtest_eq (S, double (full (full (GrB (S))))))
 
-'here2'
 assert (gbtest_eq (S, double (full (double (full (GrB (S)))))))
-'here3'
 
 S2 = double (GrB (full (double (full (GrB (S))))))
 assert (norm (S-S2,1) == 0)
