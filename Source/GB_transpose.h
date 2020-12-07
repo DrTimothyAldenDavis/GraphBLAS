@@ -12,9 +12,12 @@
 #include "GB.h"
 #include "GB_atomics.h"
 
-bool GB_transpose_method    // true: use sort, false: use bucket
+bool GB_transpose_method        // if true: use GB_builder, false: use bucket
 (
-    GrB_Matrix A
+    const GrB_Matrix A,         // matrix to transpose
+    int *nworkspaces_bucket,    // # of slices of A for the bucket method
+    int *nthreads_bucket,       // # of threads to use for the bucket method
+    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -33,7 +36,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
     GrB_Matrix *Chandle,        // output matrix (unallocated on input)
@@ -45,6 +47,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         const GrB_BinaryOp op2,         // binary operator to apply
         const GxB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
+    const int nworkspaces,      // # of workspaces to use
+    const int nthreads,         // # of threads to use
     GB_Context Context
 ) ;
 

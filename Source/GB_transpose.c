@@ -873,10 +873,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // select the method
         //----------------------------------------------------------------------
 
-        // for the GB_builder method, if the transpose is done in-place and
-        // A->i is not shallow, A->i can be used and then freed.  Otherwise,
-        // A->i is not modified at all.
-        bool recycle_Ai = (in_place && !Ai_shallow) ;
+        int nworkspaces_bucket, nthreads_bucket ;
         bool use_builder = GB_transpose_method (A,
             &nworkspaces_bucket, &nthreads_bucket, Context) ;
 
@@ -957,7 +954,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_void *S = NULL ;
             GB_void *Swork = NULL ;
 
+            // for the GB_builder method, if the transpose is done in-place and
+            // A->i is not shallow, A->i can be used and then freed.
+            // Otherwise, A->i is not modified at all.
             bool ok = true ;
+            bool recycle_Ai = (in_place && !Ai_shallow) ;
             if (!recycle_Ai)
             { 
                 // allocate jwork of size anz

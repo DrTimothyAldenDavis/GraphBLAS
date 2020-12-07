@@ -30,8 +30,8 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     int64_t anz = GB_NNZ (A) ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
-    int anzlog = (int) ceil (log2 ((double) anz + 1)) ;
-    int mlog   = (int) ceil (log2 ((double) avlen + 1)) ;
+    int anzlog = (anz   == 0) ? 1 : (int) ceil (log2 ((double) anz)) ;
+    int mlog   = (avlen == 0) ? 1 : (int) ceil (log2 ((double) avlen)) ;
     double alpha ;
 
     // determine # of threads for bucket method
@@ -92,10 +92,11 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
         // performance on a 4-core system with 4 threads with gcc 7.5.  The icc
         // compiler has much slower atomics than gcc and so beta should likely
         // be smaller when using icc.
+
         int beta ;
         if (anzlog < 14)
         { 
-            beta = -5 ;     // fewer than 16K entries in A
+            beta = -4 ;     // fewer than 16K entries in A
         }
         else
         { 
@@ -119,6 +120,7 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
                 default: beta =  9 ; break ;        // > 256M TODO::
             }
         }
+
         if (anzlog - mlog <= beta)
         { 
             // use atomic method
@@ -140,6 +142,9 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
 
     (*nworkspaces_bucket) = (atomics) ? 1 : nthreads ;
     (*nthreads_bucket) = nthreads ;
+
+//  printf ("a %d m %d  a-m %d  beta %d nthreads %d atomics %d\n",
+//      anzlog, mlog, anzlog-mlog, beta, nthreads, atomics) ;
 
     //--------------------------------------------------------------------------
     // select between GB_builder method and bucket method
