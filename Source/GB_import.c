@@ -189,7 +189,7 @@ GrB_Info GB_import      // import a matrix in any format
 
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;
-            (*A)->nvec_nonempty = -1 ;
+            (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             (*A)->nzmax = GB_IMIN (Ai_size, Ax_size) ;

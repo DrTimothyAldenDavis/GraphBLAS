@@ -290,7 +290,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
     C->plen = cnrows ;
     C->nvec = cnrows ;
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = -1 ;
+    C->nvec_nonempty = -1 ;     // not computed; delay until required
     C->jumbled = false ;        // assume MKL returns a non-jumbled matrix
 
     //--------------------------------------------------------------------------

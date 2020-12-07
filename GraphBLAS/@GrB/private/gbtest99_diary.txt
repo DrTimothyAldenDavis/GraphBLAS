@@ -1,0 +1,155 @@
+gbtest99
+MATLAB detected: 4 physical cores.
+MATLAB detected: 8 logical cores.
+MATLAB was assigned: 8 logical cores by the OS.
+MATLAB is using: 4 logical cores.
+MATLAB is not using all logical cores because hyper-threading is enabled.
+# of threads in @GrB: 4
+
+======================== k = 1
+MATLAB time: 8.59885e-05 sec
+@GrB dot time: 7.51511e-05 sec, speedup 1.14421 error: 0
+@GrB saxpy/transpose time: 0.000139963 sec, speedup 0.614366, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.000117 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GxB_set (transpose) (threads 1) (hyper to sparse) 9.99e-05 sec ]
+ [ GrB_transpose (cheap) 3.5e-05 sec ]
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.000109 sec ]
+{Operation terminated by user during gbtest99 (line 71)} 
+
+
+
+
+gbtest99
+MATLAB detected: 4 physical cores.
+MATLAB detected: 8 logical cores.
+MATLAB was assigned: 8 logical cores by the OS.
+MATLAB is using: 4 logical cores.
+MATLAB is not using all logical cores because hyper-threading is enabled.
+# of threads in @GrB: 4
+
+======================== k = 1
+MATLAB time: 9.9724e-05 sec
+@GrB dot time: 7.521e-05 sec, speedup 1.32594 error: 0
+@GrB saxpy/transpose time: 0.000140251 sec, speedup 0.711039, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.000118 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GxB_set (transpose) (threads 1) (hyper to sparse) 8.49e-05 sec ]
+ [ GrB_transpose (cheap) 3.5e-05 sec ]
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.000107 sec ]
+
+MATLAB transpose time: 0.0299025 sec
+@GrB transpose time: 3.4939e-05 sec, speedup 855.85
+
+======================== k = 2
+MATLAB time: 0.000367565 sec
+@GrB dot time: 0.000237108 sec, speedup 1.5502 error: 0
+@GrB saxpy/transpose time: 0.0022596 sec, speedup 0.162668, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.000314 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GrB_transpose (transpose) (threads 1) (build:assemble) 0.000773 sec ]
+ [ GrB_mxm C=A*B, saxpy (S=H*S) axbwork 44 (nthreads 1 coarse: 1) 0.00165 sec ]
+
+MATLAB transpose time: 0.03378 sec
+@GrB transpose time: 0.000712847 sec, speedup 47.3875
+
+======================== k = 10
+MATLAB time: 0.00878427 sec
+@GrB dot time: 0.00186542 sec, speedup 4.709 error: 0
+@GrB saxpy/transpose time: 0.014978 sec, speedup 0.586479, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.00187 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GrB_transpose (transpose) (threads 1) (build:assemble) 0.00432 sec ]
+ [ GrB_mxm C=A*B, saxpy (S=H*S) axbwork 1001 (nthreads 1 coarse: 1) 0.0112 sec ]
+
+MATLAB transpose time: 0.0467905 sec
+@GrB transpose time: 0.00412622 sec, speedup 11.3398
+
+======================== k = 32
+MATLAB time: 0.0890473 sec
+@GrB dot time: 0.0128978 sec, speedup 6.90407 error: 0
+@GrB saxpy/transpose time: 0.0427728 sec, speedup 2.08187, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.0132 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GrB_transpose (transpose) (threads 4) (build:assemble) 0.00849 sec ]
+ [ GrB_mxm C=A*B, saxpy (S=H*S) axbwork 9975 (nthreads 1 coarse: 1) 0.0385 sec ]
+
+MATLAB transpose time: 0.0907313 sec
+@GrB transpose time: 0.0092477 sec, speedup 9.81123
+
+======================== k = 100
+MATLAB time: 0.27284 sec
+@GrB dot time: 0.133508 sec, speedup 2.04363 error: 0
+@GrB saxpy/transpose time: 0.283599 sec, speedup 0.962064, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 0.141 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GrB_transpose (transpose) (threads 4) (build:assemble) 0.0402 sec ]
+ [ GrB_mxm C=A*B, saxpy (S=H*S) axbwork 100155 (nthreads 1 coarse: 1) (sparse to bitmap) 0.278 sec ]
+
+MATLAB transpose time: 0.209762 sec
+@GrB transpose time: 0.0314089 sec, speedup 6.67844
+
+======================== k = 1000
+MATLAB time: 4.2059 sec
+@GrB dot time: 20.5269 sec, speedup 0.204897 error: 0
+@GrB saxpy/transpose time: 1.69204 sec, speedup 2.48569, error: 0
+
+GrB with mxm and descriptor transpose:
+ [ GrB_mxm C=A'*B, dot_product (B=S'*S) 19.9 sec ]
+
+GrB with A'*B syntax and explicit transpose:
+ [ GrB_transpose (transpose) (threads 4) 0.621 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 0.0327 sec ]
+ [ GrB_mxm C=A*B, saxpy (S=S*S) axbwork 9.98917e+06 (nthreads 4 coarse: 8) (sparse to bitmap) 1.12 sec ]
+
+MATLAB transpose time: 1.94499 sec
+@GrB transpose time: 0.599301 sec, speedup 3.24544
+gbtest99: all tests passed
+
+ver
+-----------------------------------------------------------------------------------------------------
+MATLAB Version: 9.8.0.1396136 (R2020a) Update 3
+MATLAB License Number: 625273
+Operating System: Linux 4.15.0-1101-oem #112-Ubuntu SMP Wed Oct 21 15:53:52 UTC 2020 x86_64
+Java Version: Java 1.8.0_202-b08 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+-----------------------------------------------------------------------------------------------------
+MATLAB                                                Version 9.8         (R2020a)
+Matrix Computation Toolbox                            Version 1.2                 
+Optimization Toolbox                                  Version 8.5         (R2020a)
+Parallel Computing Toolbox                            Version 7.2         (R2020a)
+Symbolic Math Toolbox                                 Version 8.5         (R2020a)
+tic ; C=(A')*B; toc
+{Unrecognized function or variable 'A'.} 
+n = 10*1e6 ;
+k = 1000 ;
+A = sprand(n,k,0.001) ;
+B = sprand(n,k,0.001) ;
+tic ; C=A'*B ; toc
+Elapsed time is 4.330340 seconds.
+tic ; C=A'*B ; toc
+Elapsed time is 4.378126 seconds.
+tic ; C=(A')*B ; toc
+Elapsed time is 4.577096 seconds.
+
+
+tic ; AT = A' ; C = AT*B ; toc
+Elapsed time is 4.425467 seconds.
+diary off

@@ -430,7 +430,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         ASSERT (anz == anz_new) ;
 
         // need to recompute the # of non-empty vectors in GB_conform
-        A->nvec_nonempty = -1 ;
+        A->nvec_nonempty = -1 ;     // recomputed just below
 
         ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 

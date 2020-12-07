@@ -4,12 +4,17 @@ function gbtest99
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (~ispc)
+    feature ('numcores') ;
+end
 fprintf ('# of threads in @GrB: %d\n', GrB.threads) ;
 n = 10 * 1e6 ;
-% n = 1000 ;
-ntrials = 1 ;
+kset = [1    2    10  32 100 1000] ;
+nset = [1000 1000 100 10 10  10  ] ;
 
-for k = [1 2 10 32 100 1000]
+for kk = 1:6
+    ntrials = nset (kk) ;
+    k = kset (kk) ;
 
     fprintf ('\n======================== k = %d\n', k) ;
     A = sprand (n, k, 0.001) ;

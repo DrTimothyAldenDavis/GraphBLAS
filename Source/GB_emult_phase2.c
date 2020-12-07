@@ -386,7 +386,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     if (C_is_hyper)
     { 
-        C->nvec_nonempty = -1 ;
+        C->nvec_nonempty = -1 ;     // recomputed just below
         GB_OK (GB_hypermatrix_prune (C, Context)) ;
     }
 

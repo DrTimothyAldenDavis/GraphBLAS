@@ -258,7 +258,7 @@ GrB_Info GB_resize              // change the size of a matrix
         { 
             // number of vectors is decreasing, need to count the new number of
             // non-empty vectors: done during pruning or by selector, below.
-            A->nvec_nonempty = -1 ;
+            A->nvec_nonempty = -1 ;     // recomputed just below
         }
 
         //----------------------------------------------------------------------
