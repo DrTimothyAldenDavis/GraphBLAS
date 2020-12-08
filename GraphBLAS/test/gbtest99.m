@@ -9,10 +9,11 @@ if (~ispc)
 end
 fprintf ('# of threads in @GrB: %d\n', GrB.threads) ;
 n = 10 * 1e6 ;
-kset = [1    2    10  32 100 1000] ;
-nset = [1000 1000 100 10 10  10  ] ;
+kset = [1    2    10  32 100 120 150 1000] ;
+nset = [1000 1000 100 10 10  10  10  10  ] ;
+nset = nset/10 ;
 
-for kk = 1:6
+for kk = 1:length (kset)
     ntrials = nset (kk) ;
     k = kset (kk) ;
 
@@ -29,7 +30,7 @@ for kk = 1:6
     t1 = toc / ntrials ;
     fprintf ('MATLAB time: %g sec\n', t1) ;
 
-    % GrB, with warmup, using the dot product
+    % GrB, with warmup, using the descriptor transpose
     A = GrB (A) ;
     B = GrB (B) ;
     d.in0 = 'transpose' ;
@@ -40,7 +41,8 @@ for kk = 1:6
     end
     t2 = toc / ntrials ;
     err = norm (C1-C2, 1) ;
-    fprintf ('@GrB dot time: %g sec, speedup %g error: %g\n', t2, t1/t2, err) ;
+    fprintf ('@GrB default time: %g sec, speedup %g error: %g\n', ...
+        t2, t1/t2, err) ;
     assert (err <= 1e-12 * norm (C1,1)) ;
 
     % GrB, with warmup, using the explicit transpose

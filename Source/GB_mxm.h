@@ -188,22 +188,6 @@ void GB_AxB_pattern
     const GB_Opcode mult_opcode // opcode of multiply operator
 ) ;
 
-// C and B are bitmap: (method removed)
-// GrB_Info GB_AxB_dot5                // A'*B, dot product method
-// (
-//  GrB_Matrix *Chandle,            // output matrix (if not done in-place)
-//  GrB_Matrix C_in_place,          // input/output matrix, if done in-place
-//  const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
-//  const bool Mask_comp,           // if true, use !M
-//  const bool Mask_struct,         // if true, use the only structure of M
-//  const GrB_BinaryOp accum,       // accum operator for C+=A'*B
-//  const GrB_Matrix A,             // input matrix
-//  const GrB_Matrix B,             // input matrix
-//  const GrB_Semiring semiring,    // semiring that defines C=A*B
-//  const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-//  GB_Context Context
-// ) ;
-
 //------------------------------------------------------------------------------
 // GB_AxB_dot4_control: determine if the dot4 method should be used
 //------------------------------------------------------------------------------
@@ -246,19 +230,12 @@ static inline bool GB_AxB_dot3_control
 // C=A'*B, C<M>=A'*B, or C<!M>=A'*B where C is constructed in bitmap format.
 // C must be small and likely very dense.
 
-static inline bool GB_AxB_dot2_control
+bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 (
     const GrB_Matrix A,
-    const GrB_Matrix B
-)
-{
-    double anvec = GB_IS_HYPERSPARSE (A) ? A->nvec : A->vdim ;
-    double bnvec = GB_IS_HYPERSPARSE (B) ? B->nvec : B->vdim ;
-    double C_bitmap_size = (anvec * bnvec) ;
-    double A_size = (double) GB_NNZ_HELD (A) ;
-    double B_size = (double) GB_NNZ_HELD (B) ;
-    return (C_bitmap_size < 8 * (A_size + B_size)) ;
-}
+    const GrB_Matrix B,
+    GB_Context Context
+) ;
 
 #endif
 

@@ -210,7 +210,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool A_is_bitmap  = GB_IS_BITMAP (A) ;
     bool A_is_packed  = GB_is_packed (A) ;
     bool A_is_hyper   = GB_IS_HYPERSPARSE (A) ;
-    bool A_is_jumbled = A->jumbled ;
 
     bool Ap_shallow = A->p_shallow ;
     bool Ah_shallow = A->h_shallow ;
@@ -489,7 +488,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
 
     }
-    else if (avdim == 1 && !A_is_jumbled)
+    else if (avdim == 1)
     {
 
         //======================================================================
@@ -497,8 +496,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         //======================================================================
 
         // transpose a vector (avlen-by-1) into a "row" matrix (1-by-avlen).
-        // A must be already sorted on input
+        // A must be sorted first.
         ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB0) ;
+        GB_MATRIX_WAIT (A) ;
         ASSERT (!GB_JUMBLED (A)) ;
 
         //----------------------------------------------------------------------

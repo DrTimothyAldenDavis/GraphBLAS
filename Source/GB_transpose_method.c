@@ -116,8 +116,8 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
                 case 25: beta =  8 ; break ;        // 32M
                 case 26: beta =  9 ; break ;        // 64M
                 case 27: beta =  9 ; break ;        // 128M
-                case 28: beta =  9 ; break ;        // 256M TODO::
-                default: beta =  9 ; break ;        // > 256M TODO::
+                case 28: beta = 10 ; break ;        // 256M
+                default: beta = 10 ; break ;        // > 256M
             }
         }
 
@@ -130,7 +130,9 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
             // and the non-atomic works better or denser matrices.  However,
             // the threshold changes as the problem gets larger, in terms of #
             // of entries in A, when the atomic method becomes more attractive
-            // relative to the non-atomic method.
+            // relative to the non-atomic method.  The atomic has the
+            // advantange of needing much less workspace, which becomes more
+            // important for larger problems.
             atomics = true ;
         }
         else
@@ -142,9 +144,6 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
 
     (*nworkspaces_bucket) = (atomics) ? 1 : nthreads ;
     (*nthreads_bucket) = nthreads ;
-
-//  printf ("a %d m %d  a-m %d  beta %d nthreads %d atomics %d\n",
-//      anzlog, mlog, anzlog-mlog, beta, nthreads, atomics) ;
 
     //--------------------------------------------------------------------------
     // select between GB_builder method and bucket method
@@ -179,71 +178,14 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
             case 24: alpha = 5.0 ; break ;      // 16M
             case 25: alpha = 5.0 ; break ;      // 32M
             case 26: alpha = 5.0 ; break ;      // 64M
-            case 27: alpha = 5.0 ; break ;      // 128M     TODO::
-            case 28: alpha = 5.0 ; break ;      // 256M     TODO::
-            default: alpha = 5.0 ; break ;      // > 256M       TODO::
+            case 27: alpha = 5.0 ; break ;      // 128M
+            case 28: alpha = 5.0 ; break ;      // 256M
+            default: alpha = 5.0 ; break ;      // > 256M
         }
     }
 
     double bucket_work  = (double) (anz + avlen + anvec) * alpha ;
     double builder_work = (log2 ((double) anz + 1) * (anz)) ;
-
-#if 0
-
-    // workspace required for builder method:
-    //      asize = A->type->size
-    //      csize = C->type->size
-
-    //--------------------------------------------------------------------------
-    // memory space for GB_builder method
-    //--------------------------------------------------------------------------
-
-    //      iwork       anz * sizeof (int64_t), will become T->i
-    //      jwork       anz * sizeof (int64_t), or zero if Ai recycled
-    //      Swork       anz * asize, if op1 or op2 are present
-    //      K_work      anz * sizeof (int64_t)
-    //      W0          anz * sizeof (int64_t)
-    //      W1          anz * sizeof (int64_t)
-    //      W2          anz * sizeof (int64_t)
-
-    //      Then W0, W1, and W2 are freed.
-    //      Then T is allocated:
-    //      T->h        nvec * sizeof (int64_t)
-    //      T->p        (nvec+1) * sizeof (int64_t)
-    //      then jwork is freed
-    //      iwork is reallocated (no change) and becomes T->i
-    //      T->x is allocated
-    //      T->x        anz * csize
-    //      Swork, K_work are freed
-
-    int64_t mem = anz * (5 * sizeof (int64_t)) // iwork, K_work, W0, W1, W2
-        + (recycle_Ai) ? 0 : (anz * sizeof (int64_t))   // jwork
-        + (op_is_present) ? (anz * asize) : 0 ;         // Swork
-    int64_t builder_mem = mem ;
-    mem -= anz * (3 * sizeof (int64_t)) ;       // free W0, W1, W2
-    // upper bound for nvec:
-    int64_t nvec = GB_IMIN (avlen, anz) ;
-    mem += nvec * (2 * sizeof (int64_t)) ;      // allocate T->h and T->p
-    builder_mem = GB_IMAX (builder_mem, mem) ;
-    mem -= anz * sizeof (int64_t) ;             // free jwork
-    mem += anz * csize ;                        // allocate T->x
-    builder_mem = GB_IMAX (builder_mem, mem) ;
-
-    //--------------------------------------------------------------------------
-    // memory space for GB_transpose_bucket method
-    //--------------------------------------------------------------------------
-
-    //      rowcounts       anz * sizeof (int64_t), single-threaded and atomic,
-    //                      multiply by nthreads for non-atomic
-    //      T->p            always size avlen * sizeof (int64_t)
-    //      T->i            anz * sizeof (int64_t)
-    //      T->x            anz * csize
-
-    // This can be larger than GB_builder if avlen >> anz, but most of the
-    // time the bucket method uses less workspace.  This doesn't seem to be
-    // a useful metric for comparing the two methods.
-
-#endif
 
     //--------------------------------------------------------------------------
     // select the method with the least amount of work

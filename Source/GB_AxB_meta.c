@@ -485,7 +485,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A'*B uses the masked dot product method (dot3)
                 axb_method = GB_USE_DOT ;
             }
-            else if (GB_AxB_dot2_control (A, B))
+            else if (GB_AxB_dot2_control (A, B, Context))
             {
                 // C=A'*B or C<!M>=A'B* can efficiently use the dot2 method
                 axb_method = GB_USE_DOT ;
