@@ -2,7 +2,7 @@
 % dot2 rule
 
 clear all
-diary d2_Dec8d_hyper.txt
+diary d2_Dec8e_hyper.txt
 !hostname
 feature ('numcores') ;
 desc.in0 = 'transpose' ;
