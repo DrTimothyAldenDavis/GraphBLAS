@@ -364,4 +364,1031 @@ anz   16774581 bnz   16774622 n 1073741824 k   50 nvec   50 tdot     1.626412 ts
 anz      65536 bnz      65536 n 4294967296 k   50 nvec   50 tdot     0.010882 tsax     0.010589 tdot/tsax     1.027661 tauto:     0.010289 auto best
  [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.079 sec ]
 anz    1048573 bnz    1048575 n 4294967296 k   50 nvec   50 tdot     0.088717 tsax     0.218471 tdot/tsax     0.406081 tauto:     0.087349 auto best
- [ GrB_mxm (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 
+ [ GrB_mxm (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.18 sec ]
+anz   16776519 bnz   16776562 n 4294967296 k   50 nvec   50 tdot     1.546798 tsax     6.988995 tdot/tsax     0.221319 tauto:     1.188170 auto best
+
+k: 60
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0111 sec ]
+anz      57459 bnz      57527 n       4096 k   60 nvec   60 tdot     0.011228 tsax     0.043041 tdot/tsax     0.260859 tauto:     0.012358 auto   1.1007
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-60, double, 63404 entries) (S=S*S) axbwork 245012 (nthreads 3 coarse: 6) 0.00195 sec ]
+anz      63404 bnz      63367 n      16384 k   60 nvec   60 tdot     0.021203 tsax     0.005296 tdot/tsax     4.003944 tauto:     0.001912 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-60, double, 64997 entries) (S=S*S) axbwork 64420 (nthreads 1 coarse: 1) 0.00316 sec ]
+anz      64997 bnz      65002 n      65536 k   60 nvec   60 tdot     0.020236 tsax     0.006328 tdot/tsax     3.197914 tauto:     0.004279 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.185 sec ]
+anz     920119 bnz     920694 n      65536 k   60 nvec   60 tdot     0.192190 tsax     0.643787 tdot/tsax     0.298530 tauto:     0.230017 auto   1.1968
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-60, double, 65400 entries) (S=S*S) axbwork 16262 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00296 sec ]
+anz      65400 bnz      65395 n     262144 k   60 nvec   60 tdot     0.018502 tsax     0.005009 tdot/tsax     3.693748 tauto:     0.004808 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-60, double, 1014251 entries) (S=S*S) axbwork 3.92792e+06 (nthreads 4 coarse: 8) 0.0603 sec ]
+anz    1014251 bnz    1014797 n     262144 k   60 nvec   60 tdot     0.083734 tsax     0.062828 tdot/tsax     1.332742 tauto:     0.069923 auto   1.1129
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.029 sec ]
+anz      65504 bnz      65502 n    1048576 k   60 nvec   60 tdot     0.020299 tsax     0.011751 tdot/tsax     1.727477 tauto:     0.021720 auto   1.8484
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-60, double, 1039640 entries) (S=S*S) axbwork 1.03038e+06 (nthreads 4 coarse: 8) 0.0812 sec ]
+anz    1039640 bnz    1039867 n    1048576 k   60 nvec   60 tdot     0.106546 tsax     0.079835 tdot/tsax     1.334578 tauto:     0.084603 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 4.58 sec ]
+anz   14725380 bnz   14727516 n    1048576 k   60 nvec   60 tdot     4.573729 tsax    11.438196 tdot/tsax     0.399865 tauto:     4.606388 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0237 sec ]
+anz      65530 bnz      65525 n    4194304 k   60 nvec   60 tdot     0.027053 tsax     0.014569 tdot/tsax     1.856870 tauto:     0.024885 auto   1.7081
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 1046496 entries) (S=S*S) axbwork 261118 (nthreads 3 coarse: 6) 0.0956 sec ]
+anz    1046496 bnz    1046464 n    4194304 k   60 nvec   60 tdot     0.136860 tsax     0.085620 tdot/tsax     1.598458 tauto:     0.111931 auto   1.3073
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 16230881 entries) (S=S*S) axbwork 6.27957e+07 (nthreads 4 coarse: 8) 1 sec ]
+anz   16230881 bnz   16228919 n    4194304 k   60 nvec   60 tdot     2.077570 tsax     1.169451 tdot/tsax     1.776534 tauto:     0.979664 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0211 sec ]
+anz      65533 bnz      65534 n   16777216 k   60 nvec   60 tdot     0.020963 tsax     0.013546 tdot/tsax     1.547470 tauto:     0.021686 auto   1.6009
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0907 sec ]
+anz    1048027 bnz    1048059 n   16777216 k   60 nvec   60 tdot     0.100064 tsax     0.277684 tdot/tsax     0.360352 tauto:     0.100351 auto ~
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-60, double, 16638087 entries) (S=S*S) axbwork 1.64964e+07 (nthreads 4 coarse: 8) 1.7 sec ]
+anz   16638087 bnz   16638039 n   16777216 k   60 nvec   60 tdot     2.024407 tsax     1.698935 tdot/tsax     1.191574 tauto:     1.623673 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0189 sec ]
+anz      65535 bnz      65534 n   67108864 k   60 nvec   60 tdot     0.018489 tsax     0.010089 tdot/tsax     1.832540 tauto:     0.019452 auto   1.9280
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.101 sec ]
+anz    1048437 bnz    1048447 n   67108864 k   60 nvec   60 tdot     0.085325 tsax     0.272771 tdot/tsax     0.312810 tauto:     0.098379 auto   1.1530
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-60, double, 16742470 entries) (S=S*S) axbwork 4.17587e+06 (nthreads 4 coarse: 8) 1.9 sec ]
+anz   16742470 bnz   16742430 n   67108864 k   60 nvec   60 tdot     1.958120 tsax     1.893552 tdot/tsax     1.034099 tauto:     1.861982 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0184 sec ]
+anz      65536 bnz      65535 n  268435456 k   60 nvec   60 tdot     0.018330 tsax     0.008863 tdot/tsax     2.068110 tauto:     0.019407 auto   2.1896
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0845 sec ]
+anz    1048542 bnz    1048548 n  268435456 k   60 nvec   60 tdot     0.075743 tsax     0.234942 tdot/tsax     0.322388 tauto:     0.080214 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.4 sec ]
+anz   16768410 bnz   16768399 n  268435456 k   60 nvec   60 tdot     1.852989 tsax     3.270012 tdot/tsax     0.566661 tauto:     1.805027 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0228 sec ]
+anz      65536 bnz      65535 n 1073741824 k   60 nvec   60 tdot     0.025075 tsax     0.010657 tdot/tsax     2.352824 tauto:     0.023153 auto   2.1725
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0908 sec ]
+anz    1048572 bnz    1048566 n 1073741824 k   60 nvec   60 tdot     0.103483 tsax     0.238255 tdot/tsax     0.434337 tauto:     0.102793 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.36 sec ]
+anz   16775070 bnz   16774996 n 1073741824 k   60 nvec   60 tdot     1.844256 tsax     4.190033 tdot/tsax     0.440153 tauto:     1.459011 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.012 sec ]
+anz      65536 bnz      65536 n 4294967296 k   60 nvec   60 tdot     0.012863 tsax     0.010720 tdot/tsax     1.199942 tauto:     0.012204 auto   1.1384
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.092 sec ]
+anz    1048573 bnz    1048572 n 4294967296 k   60 nvec   60 tdot     0.107439 tsax     0.238823 tdot/tsax     0.449869 tauto:     0.104894 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.54 sec ]
+anz   16776648 bnz   16776677 n 4294967296 k   60 nvec   60 tdot     1.835703 tsax     8.514079 tdot/tsax     0.215608 tauto:     1.500146 auto best
+
+k: 70
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0141 sec ]
+anz      42890 bnz      42936 n       1024 k   70 nvec   70 tdot     0.013936 tsax     0.025417 tdot/tsax     0.548314 tauto:     0.014836 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0155 sec ]
+anz      58817 bnz      58485 n       4096 k   70 nvec   70 tdot     0.014379 tsax     0.040354 tdot/tsax     0.356329 tauto:     0.016130 auto   1.1217
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-70, double, 63694 entries) (S=S*S) axbwork 248059 (nthreads 3 coarse: 6) 0.00228 sec ]
+anz      63694 bnz      63698 n      16384 k   70 nvec   70 tdot     0.021887 tsax     0.005543 tdot/tsax     3.948881 tauto:     0.002510 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.113 sec ]
+anz     687425 bnz     686515 n      16384 k   70 nvec   70 tdot     0.119267 tsax     0.378097 tdot/tsax     0.315440 tauto:     0.129249 auto ~
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-70, double, 65068 entries) (S=S*S) axbwork 64418 (nthreads 1 coarse: 1) 0.00365 sec ]
+anz      65068 bnz      65046 n      65536 k   70 nvec   70 tdot     0.025951 tsax     0.006806 tdot/tsax     3.812922 tauto:     0.005069 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.32 sec ]
+anz     937433 bnz     937076 n      65536 k   70 nvec   70 tdot     0.347494 tsax     0.715911 tdot/tsax     0.485387 tauto:     0.395184 auto   1.1372
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-70, double, 65422 entries) (S=S*S) axbwork 16393 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00403 sec ]
+anz      65422 bnz      65424 n     262144 k   70 nvec   70 tdot     0.034693 tsax     0.006984 tdot/tsax     4.967687 tauto:     0.005669 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-70, double, 1019286 entries) (S=S*S) axbwork 3.96263e+06 (nthreads 4 coarse: 8) 0.0607 sec ]
+anz    1019286 bnz    1019250 n     262144 k   70 nvec   70 tdot     0.138254 tsax     0.063503 tdot/tsax     2.177125 tauto:     0.068729 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 3.07 sec ]
+anz   10993847 bnz   10995564 n     262144 k   70 nvec   70 tdot     3.256304 tsax     6.634124 tdot/tsax     0.490842 tauto:     2.912096 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0302 sec ]
+anz      65506 bnz      65506 n    1048576 k   70 nvec   70 tdot     0.036193 tsax     0.018915 tdot/tsax     1.913506 tauto:     0.029876 auto   1.5795
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-70, double, 1041032 entries) (S=S*S) axbwork 1.03441e+06 (nthreads 4 coarse: 8) 0.105 sec ]
+anz    1041032 bnz    1041180 n    1048576 k   70 nvec   70 tdot     0.132996 tsax     0.090270 tdot/tsax     1.473313 tauto:     0.101068 auto   1.1196
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 6.62 sec ]
+anz   14998473 bnz   14998508 n    1048576 k   70 nvec   70 tdot     6.558838 tsax    12.359268 tdot/tsax     0.530682 tauto:     6.430551 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0264 sec ]
+anz      65530 bnz      65526 n    4194304 k   70 nvec   70 tdot     0.030083 tsax     0.014302 tdot/tsax     2.103388 tauto:     0.028224 auto   1.9734
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 1046702 entries) (S=S*S) axbwork 261754 (nthreads 3 coarse: 6) 0.0914 sec ]
+anz    1046702 bnz    1046688 n    4194304 k   70 nvec   70 tdot     0.134183 tsax     0.089318 tdot/tsax     1.502298 tauto:     0.100424 auto   1.1243
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 16307812 entries) (S=S*S) axbwork 6.34088e+07 (nthreads 4 coarse: 8) 1.13 sec ]
+anz   16307812 bnz   16307762 n    4194304 k   70 nvec   70 tdot     2.543347 tsax     1.280527 tdot/tsax     1.986172 tauto:     1.179133 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0214 sec ]
+anz      65535 bnz      65534 n   16777216 k   70 nvec   70 tdot     0.021372 tsax     0.011177 tdot/tsax     1.912215 tauto:     0.022922 auto   2.0508
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.103 sec ]
+anz    1048121 bnz    1048101 n   16777216 k   70 nvec   70 tdot     0.114275 tsax     0.287910 tdot/tsax     0.396912 tauto:     0.110297 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-70, double, 16657538 entries) (S=S*S) axbwork 1.65379e+07 (nthreads 4 coarse: 8) 1.92 sec ]
+anz   16657538 bnz   16658597 n   16777216 k   70 nvec   70 tdot     2.497131 tsax     1.843924 tdot/tsax     1.354248 tauto:     1.797593 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0216 sec ]
+anz      65536 bnz      65535 n   67108864 k   70 nvec   70 tdot     0.021407 tsax     0.010501 tdot/tsax     2.038664 tauto:     0.022968 auto   2.1873
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0992 sec ]
+anz    1048463 bnz    1048454 n   67108864 k   70 nvec   70 tdot     0.089674 tsax     0.266410 tdot/tsax     0.336601 tauto:     0.104325 auto   1.1634
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-70, double, 16747213 entries) (S=S*S) axbwork 4.17704e+06 (nthreads 4 coarse: 8) 1.91 sec ]
+anz   16747213 bnz   16747237 n   67108864 k   70 nvec   70 tdot     2.272721 tsax     1.791594 tdot/tsax     1.268547 tauto:     1.847319 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0109 sec ]
+anz      65536 bnz      65536 n  268435456 k   70 nvec   70 tdot     0.011804 tsax     0.009129 tdot/tsax     1.293012 tauto:     0.011539 auto   1.2640
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0987 sec ]
+anz    1048555 bnz    1048549 n  268435456 k   70 nvec   70 tdot     0.089068 tsax     0.264670 tdot/tsax     0.336525 tauto:     0.092497 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.62 sec ]
+anz   16769714 bnz   16769751 n  268435456 k   70 nvec   70 tdot     2.157078 tsax     3.476391 tdot/tsax     0.620493 tauto:     2.080119 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0148 sec ]
+anz      65536 bnz      65536 n 1073741824 k   70 nvec   70 tdot     0.015506 tsax     0.011298 tdot/tsax     1.372547 tauto:     0.014764 auto   1.3068
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.105 sec ]
+anz    1048568 bnz    1048568 n 1073741824 k   70 nvec   70 tdot     0.122986 tsax     0.255269 tdot/tsax     0.481790 tauto:     0.118068 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.63 sec ]
+anz   16775277 bnz   16775332 n 1073741824 k   70 nvec   70 tdot     2.127228 tsax     3.489792 tdot/tsax     0.609557 tauto:     2.040456 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0144 sec ]
+anz      65536 bnz      65536 n 4294967296 k   70 nvec   70 tdot     0.015532 tsax     0.011200 tdot/tsax     1.386826 tauto:     0.014420 auto   1.2875
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.108 sec ]
+anz    1048576 bnz    1048575 n 4294967296 k   70 nvec   70 tdot     0.124343 tsax     0.238826 tdot/tsax     0.520643 tauto:     0.123205 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.62 sec ]
+anz   16776760 bnz   16776780 n 4294967296 k   70 nvec   70 tdot     2.126000 tsax     8.598540 tdot/tsax     0.247251 tauto:     1.743325 auto best
+
+k: 80
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.025 sec ]
+anz      45184 bnz      45181 n       1024 k   80 nvec   80 tdot     0.018156 tsax     0.030121 tdot/tsax     0.602758 tauto:     0.028049 auto   1.5449
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0308 sec ]
+anz      59470 bnz      59325 n       4096 k   80 nvec   80 tdot     0.029170 tsax     0.045403 tdot/tsax     0.642463 tauto:     0.028381 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-80, double, 63972 entries) (S=S*S) axbwork 249452 (nthreads 3 coarse: 6) 0.00204 sec ]
+anz      63972 bnz      63917 n      16384 k   80 nvec   80 tdot     0.025137 tsax     0.005396 tdot/tsax     4.658679 tauto:     0.002296 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.196 sec ]
+anz     721860 bnz     721309 n      16384 k   80 nvec   80 tdot     0.173326 tsax     0.423172 tdot/tsax     0.409588 tauto:     0.228228 auto   1.3168
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-80, double, 65112 entries) (S=S*S) axbwork 64736 (nthreads 1 coarse: 1) 0.00603 sec ]
+anz      65112 bnz      65131 n      65536 k   80 nvec   80 tdot     0.057408 tsax     0.013011 tdot/tsax     4.412271 tauto:     0.009703 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.365 sec ]
+anz     950227 bnz     950086 n      65536 k   80 nvec   80 tdot     0.734916 tsax     0.858490 tdot/tsax     0.856057 tauto:     0.490937 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-80, double, 65447 entries) (S=S*S) axbwork 16454 (nthreads 1 coarse: 1) (sparse to bitmap) 0.0206 sec ]
+anz      65447 bnz      65445 n     262144 k   80 nvec   80 tdot     0.038638 tsax     0.006821 tdot/tsax     5.664406 tauto:     0.005175 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-80, double, 1022827 entries) (S=S*S) axbwork 3.9895e+06 (nthreads 4 coarse: 8) 0.079 sec ]
+anz    1022827 bnz    1022914 n     262144 k   80 nvec   80 tdot     0.155770 tsax     0.075250 tdot/tsax     2.070019 tauto:     0.110523 auto   1.4687
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 4.36 sec ]
+anz   11547566 bnz   11548681 n     262144 k   80 nvec   80 tdot     3.662365 tsax     7.512254 tdot/tsax     0.487519 tauto:     4.468442 auto   1.2201
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0372 sec ]
+anz      65511 bnz      65507 n    1048576 k   80 nvec   80 tdot     0.054352 tsax     0.019610 tdot/tsax     2.771624 tauto:     0.037065 auto   1.8901
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-80, double, 1042045 entries) (S=S*S) axbwork 1.0363e+06 (nthreads 4 coarse: 8) 0.0943 sec ]
+anz    1042045 bnz    1042075 n    1048576 k   80 nvec   80 tdot     0.151230 tsax     0.074844 tdot/tsax     2.020603 tauto:     0.110465 auto   1.4759
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 7.72 sec ]
+anz   15207251 bnz   15206382 n    1048576 k   80 nvec   80 tdot     9.075360 tsax    11.419915 tdot/tsax     0.794696 tauto:     8.085048 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0344 sec ]
+anz      65529 bnz      65531 n    4194304 k   80 nvec   80 tdot     0.037106 tsax     0.016532 tdot/tsax     2.244437 tauto:     0.035301 auto   2.1353
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-80, double, 1046929 entries) (S=S*S) axbwork 261507 (nthreads 3 coarse: 6) 0.131 sec ]
+anz    1046929 bnz    1047004 n    4194304 k   80 nvec   80 tdot     0.155042 tsax     0.089899 tdot/tsax     1.724624 tauto:     0.125241 auto   1.3931
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-80, double, 16365408 entries) (S=S*S) axbwork 6.38509e+07 (nthreads 4 coarse: 8) 1.78 sec ]
+anz   16365408 bnz   16366454 n    4194304 k   80 nvec   80 tdot     3.329268 tsax     2.165209 tdot/tsax     1.537620 tauto:     1.850612 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0303 sec ]
+anz      65535 bnz      65536 n   16777216 k   80 nvec   80 tdot     0.039607 tsax     0.014425 tdot/tsax     2.745770 tauto:     0.030652 auto   2.1249
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.129 sec ]
+anz    1048176 bnz    1048161 n   16777216 k   80 nvec   80 tdot     0.142822 tsax     0.505852 tdot/tsax     0.282339 tauto:     0.140196 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-80, double, 16672821 entries) (S=S*S) axbwork 1.65712e+07 (nthreads 4 coarse: 8) 2.81 sec ]
+anz   16672821 bnz   16672699 n   16777216 k   80 nvec   80 tdot     3.116503 tsax     2.284193 tdot/tsax     1.364378 tauto:     2.047175 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0128 sec ]
+anz      65536 bnz      65536 n   67108864 k   80 nvec   80 tdot     0.014954 tsax     0.011315 tdot/tsax     1.321570 tauto:     0.013307 auto   1.1760
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.115 sec ]
+anz    1048461 bnz    1048471 n   67108864 k   80 nvec   80 tdot     0.103778 tsax     0.325458 tdot/tsax     0.318868 tauto:     0.109265 auto ~
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-80, double, 16751023 entries) (S=S*S) axbwork 4.18336e+06 (nthreads 4 coarse: 8) 2.24 sec ]
+anz   16751023 bnz   16750899 n   67108864 k   80 nvec   80 tdot     3.121361 tsax     2.148990 tdot/tsax     1.452478 tauto:     2.161666 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0506 sec ]
+anz      65535 bnz      65536 n  268435456 k   80 nvec   80 tdot     0.034429 tsax     0.016008 tdot/tsax     2.150795 tauto:     0.033893 auto   2.1173
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.18 sec ]
+anz    1048543 bnz    1048550 n  268435456 k   80 nvec   80 tdot     0.127680 tsax     0.478821 tdot/tsax     0.266655 tauto:     0.123142 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.9 sec ]
+anz   16770631 bnz   16770735 n  268435456 k   80 nvec   80 tdot     2.852028 tsax     5.128663 tdot/tsax     0.556096 tauto:     2.153582 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.019 sec ]
+anz      65536 bnz      65536 n 1073741824 k   80 nvec   80 tdot     0.019064 tsax     0.012336 tdot/tsax     1.545410 tauto:     0.017525 auto   1.4207
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.118 sec ]
+anz    1048568 bnz    1048571 n 1073741824 k   80 nvec   80 tdot     0.161828 tsax     0.292760 tdot/tsax     0.552767 tauto:     0.132642 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.86 sec ]
+anz   16775622 bnz   16775580 n 1073741824 k   80 nvec   80 tdot     3.013709 tsax     5.380382 tdot/tsax     0.560129 tauto:     3.087719 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0199 sec ]
+anz      65536 bnz      65536 n 4294967296 k   80 nvec   80 tdot     0.024581 tsax     0.016357 tdot/tsax     1.502833 tauto:     0.021675 auto   1.3252
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.119 sec ]
+anz    1048575 bnz    1048576 n 4294967296 k   80 nvec   80 tdot     0.158694 tsax     0.280750 tdot/tsax     0.565250 tauto:     0.134601 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.76 sec ]
+anz   16776797 bnz   16776837 n 4294967296 k   80 nvec   80 tdot     2.604166 tsax     8.591527 tdot/tsax     0.303109 tauto:     1.912940 auto best
+
+k: 90
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0281 sec ]
+anz      46810 bnz      47207 n       1024 k   90 nvec   90 tdot     0.024580 tsax     0.026872 tdot/tsax     0.914706 tauto:     0.024742 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0197 sec ]
+anz      60125 bnz      60049 n       4096 k   90 nvec   90 tdot     0.021112 tsax     0.032991 tdot/tsax     0.639915 tauto:     0.021897 auto ~
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-90, double, 64065 entries) (S=S*S) axbwork 250767 (nthreads 3 coarse: 6) 0.00196 sec ]
+anz      64065 bnz      64113 n      16384 k   90 nvec   90 tdot     0.034408 tsax     0.005268 tdot/tsax     6.531379 tauto:     0.002655 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.242 sec ]
+anz     749916 bnz     750567 n      16384 k   90 nvec   90 tdot     0.190402 tsax     0.471747 tdot/tsax     0.403610 tauto:     0.317611 auto   1.6681
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-90, double, 65129 entries) (S=S*S) axbwork 64678 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00479 sec ]
+anz      65129 bnz      65134 n      65536 k   90 nvec   90 tdot     0.052664 tsax     0.009765 tdot/tsax     5.393038 tauto:     0.005568 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.488 sec ]
+anz     961221 bnz     960689 n      65536 k   90 nvec   90 tdot     0.511006 tsax     0.642144 tdot/tsax     0.795781 tauto:     0.569343 auto   1.1142
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-90, double, 65460 entries) (S=S*S) axbwork 16227 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00412 sec ]
+anz      65460 bnz      65454 n     262144 k   90 nvec   90 tdot     0.042750 tsax     0.006870 tdot/tsax     6.222889 tauto:     0.006710 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-90, double, 1025613 entries) (S=S*S) axbwork 4.0126e+06 (nthreads 4 coarse: 8) 0.107 sec ]
+anz    1025613 bnz    1025643 n     262144 k   90 nvec   90 tdot     0.173585 tsax     0.131848 tdot/tsax     1.316554 tauto:     0.134451 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 4.49 sec ]
+anz   12006153 bnz   12009272 n     262144 k   90 nvec   90 tdot     4.765771 tsax     7.250393 tdot/tsax     0.657312 tauto:     4.721302 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0486 sec ]
+anz      65511 bnz      65519 n    1048576 k   90 nvec   90 tdot     0.053949 tsax     0.020095 tdot/tsax     2.684646 tauto:     0.055173 auto   2.7456
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-90, double, 1042718 entries) (S=S*S) axbwork 1.03733e+06 (nthreads 4 coarse: 8) 0.129 sec ]
+anz    1042718 bnz    1042714 n    1048576 k   90 nvec   90 tdot     0.194123 tsax     0.086452 tdot/tsax     2.245456 tauto:     0.145649 auto   1.6847
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 9 sec ]
+anz   15370308 bnz   15369935 n    1048576 k   90 nvec   90 tdot     9.086878 tsax     9.642992 tdot/tsax     0.942330 tauto:     9.409238 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0326 sec ]
+anz      65531 bnz      65535 n    4194304 k   90 nvec   90 tdot     0.029501 tsax     0.012882 tdot/tsax     2.290045 tauto:     0.031096 auto   2.4139
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-90, double, 1047136 entries) (S=S*S) axbwork 261236 (nthreads 3 coarse: 6) 0.108 sec ]
+anz    1047136 bnz    1047103 n    4194304 k   90 nvec   90 tdot     0.168613 tsax     0.092217 tdot/tsax     1.828437 tauto:     0.108009 auto   1.1712
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-90, double, 16410190 entries) (S=S*S) axbwork 6.42107e+07 (nthreads 4 coarse: 8) 1.62 sec ]
+anz   16410190 bnz   16410619 n    4194304 k   90 nvec   90 tdot     3.434844 tsax     1.506045 tdot/tsax     2.280705 tauto:     1.427121 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0283 sec ]
+anz      65533 bnz      65533 n   16777216 k   90 nvec   90 tdot     0.027394 tsax     0.012043 tdot/tsax     2.274620 tauto:     0.030257 auto   2.5124
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.127 sec ]
+anz    1048221 bnz    1048194 n   16777216 k   90 nvec   90 tdot     0.139782 tsax     0.305713 tdot/tsax     0.457233 tauto:     0.141941 auto ~
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-90, double, 16684274 entries) (S=S*S) axbwork 1.65844e+07 (nthreads 4 coarse: 8) 2.12 sec ]
+anz   16684274 bnz   16684503 n   16777216 k   90 nvec   90 tdot     3.162606 tsax     2.155794 tdot/tsax     1.467026 tauto:     2.279767 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0278 sec ]
+anz      65535 bnz      65535 n   67108864 k   90 nvec   90 tdot     0.029448 tsax     0.010589 tdot/tsax     2.781023 tauto:     0.030416 auto   2.8724
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.124 sec ]
+anz    1048490 bnz    1048487 n   67108864 k   90 nvec   90 tdot     0.121411 tsax     0.311679 tdot/tsax     0.389539 tauto:     0.133591 auto   1.1003
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-90, double, 16754188 entries) (S=S*S) axbwork 4.18384e+06 (nthreads 4 coarse: 8) 2.05 sec ]
+anz   16754188 bnz   16753758 n   67108864 k   90 nvec   90 tdot     2.942409 tsax     2.055560 tdot/tsax     1.431439 tauto:     2.057342 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0144 sec ]
+anz      65536 bnz      65536 n  268435456 k   90 nvec   90 tdot     0.014099 tsax     0.009397 tdot/tsax     1.500347 tauto:     0.014851 auto   1.5804
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.129 sec ]
+anz    1048554 bnz    1048558 n  268435456 k   90 nvec   90 tdot     0.112537 tsax     0.303379 tdot/tsax     0.370945 tauto:     0.121638 auto ~
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 2.24 sec ]
+anz   16771561 bnz   16771309 n  268435456 k   90 nvec   90 tdot     2.819188 tsax     5.443366 tdot/tsax     0.517913 tauto:     3.448368 auto   1.2232
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0186 sec ]
+anz      65536 bnz      65536 n 1073741824 k   90 nvec   90 tdot     0.020450 tsax     0.012276 tdot/tsax     1.665759 tauto:     0.019056 auto   1.5522
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.149 sec ]
+anz    1048573 bnz    1048568 n 1073741824 k   90 nvec   90 tdot     0.157823 tsax     0.511457 tdot/tsax     0.308575 tauto:     0.150143 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 2.22 sec ]
+anz   16775755 bnz   16775795 n 1073741824 k   90 nvec   90 tdot     2.907496 tsax     7.534062 tdot/tsax     0.385913 tauto:     3.388823 auto   1.1655
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0208 sec ]
+anz      65536 bnz      65536 n 4294967296 k   90 nvec   90 tdot     0.024006 tsax     0.013934 tdot/tsax     1.722808 tauto:     0.020893 auto   1.4994
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.175 sec ]
+anz    1048573 bnz    1048575 n 4294967296 k   90 nvec   90 tdot     0.199729 tsax     0.366392 tdot/tsax     0.545124 tauto:     0.193833 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 2.17 sec ]
+anz   16776823 bnz   16776843 n 4294967296 k   90 nvec   90 tdot     3.180722 tsax    10.350427 tdot/tsax     0.307303 tauto:     2.313520 auto best
+
+k: 100
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0225 sec ]
+anz      48426 bnz      48547 n       1024 k  100 nvec  100 tdot     0.019923 tsax     0.029088 tdot/tsax     0.684916 tauto:     0.020995 auto ~
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0221 sec ]
+anz      60564 bnz      60535 n       4096 k  100 nvec  100 tdot     0.023304 tsax     0.028709 tdot/tsax     0.811731 tauto:     0.025797 auto   1.1070
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-100, double, 64224 entries) (S=S*S) axbwork 252373 (nthreads 3 coarse: 6) 0.0021 sec ]
+anz      64224 bnz      64236 n      16384 k  100 nvec  100 tdot     0.031824 tsax     0.005666 tdot/tsax     5.616936 tauto:     0.002355 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.311 sec ]
+anz     774851 bnz     774583 n      16384 k  100 nvec  100 tdot     0.297731 tsax     0.482235 tdot/tsax     0.617398 tauto:     0.349564 auto   1.1741
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-100, double, 65209 entries) (S=S*S) axbwork 64873 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00423 sec ]
+anz      65209 bnz      65177 n      65536 k  100 nvec  100 tdot     0.046389 tsax     0.008214 tdot/tsax     5.647606 tauto:     0.005383 auto best
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.53 sec ]
+anz     969462 bnz     968681 n      65536 k  100 nvec  100 tdot     0.569471 tsax     0.573876 tdot/tsax     0.992324 tauto:     0.639430 auto   1.1228
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-100, double, 65455 entries) (S=S*S) axbwork 16647 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00483 sec ]
+anz      65455 bnz      65446 n     262144 k  100 nvec  100 tdot     0.056134 tsax     0.007917 tdot/tsax     7.090036 tauto:     0.006351 auto best
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-100, double, 1027968 entries) (S=S*S) axbwork 4.03014e+06 (nthreads 4 coarse: 8) 0.0677 sec ]
+anz    1027968 bnz    1028028 n     262144 k  100 nvec  100 tdot     0.221102 tsax     0.084717 tdot/tsax     2.609905 tauto:     0.104562 auto   1.2343
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 6.58 sec ]
+anz   12394072 bnz   12393160 n     262144 k  100 nvec  100 tdot     5.834726 tsax     8.512949 tdot/tsax     0.685394 tauto:     6.885233 auto   1.1800
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0444 sec ]
+anz      65513 bnz      65518 n    1048576 k  100 nvec  100 tdot     0.052082 tsax     0.017831 tdot/tsax     2.920841 tauto:     0.043654 auto   2.4482
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-100, double, 1043355 entries) (S=S*S) axbwork 1.03759e+06 (nthreads 4 coarse: 8) 0.122 sec ]
+anz    1043355 bnz    1043294 n    1048576 k  100 nvec  100 tdot     0.190076 tsax     0.091224 tdot/tsax     2.083618 tauto:     0.109183 auto   1.1969
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 10.2 sec ]
+anz   15503937 bnz   15503883 n    1048576 k  100 nvec  100 tdot    10.456626 tsax     8.991107 tdot/tsax     1.162997 tauto:    10.074052 auto   1.1204
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0329 sec ]
+anz      65531 bnz      65528 n    4194304 k  100 nvec  100 tdot     0.030320 tsax     0.012476 tdot/tsax     2.430223 tauto:     0.033590 auto   2.6923
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-100, double, 1047276 entries) (S=S*S) axbwork 260873 (nthreads 3 coarse: 6) 0.106 sec ]
+anz    1047276 bnz    1047303 n    4194304 k  100 nvec  100 tdot     0.141780 tsax     0.089235 tdot/tsax     1.588838 tauto:     0.106389 auto   1.1922
+ [ GrB_mxm (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-100, double, 16445924 entries) (S=S*S) axbwork 6.44836e+07 (nthreads 4 coarse: 8) 1.46 sec ]
+anz   16445924 bnz   16445959 n    4194304 k  100 nvec  100 tdot     3.716494 tsax     1.562993 tdot/tsax     2.377806 tauto:     1.496061 auto best
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0327 sec ]
+anz      65534 bnz      65535 n   16777216 k  100 nvec  100 tdot     0.031725 tsax     0.011924 tdot/tsax     2.660717 tauto:     0.032546 auto   2.7295
+ [ GrB_mxm (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.141 sec ]
+anz    1048240 bnz    1048257 n   16777216 k  100 nvec  100 tdot     0.146383 tsax     0.330927 tdot/tsax     0.442342 tauto:     0.151869 auto ~
+{Operation terminated by user during GrB.mxm (line 90)
+
+
+In d2 (line 56)
+            tstart = tic ;
+} 
+
+diary off
+slash
+MATLAB detected: 4 physical cores.
+MATLAB detected: 8 logical cores.
+MATLAB was assigned: 8 logical cores by the OS.
+MATLAB is using: 4 logical cores.
+MATLAB is not using all logical cores because hyper-threading is enabled.
+
+k: 1
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00916 sec ]
+anz      41484 bnz      41419 n      65536 k    1 nvec    1 tdot     0.000433 tsax     0.000662 tdot/tsax     0.654313 tauto:     0.000590 auto   1.3619 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.000806 sec ]
+anz      57893 bnz      57926 n     262144 k    1 nvec    1 tdot     0.000923 tsax     0.001661 tdot/tsax     0.555474 tauto:     0.000953 auto ~
+
+ [ GrB_mxm (rowdeg 0.0605726 coldeg 63515) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000466 sec ]
+anz      63515 bnz      63563 n    1048576 k    1 nvec    1 tdot     0.000583 tsax     0.002747 tdot/tsax     0.212261 tauto:     0.000677 auto   1.1606 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00517 sec ]
+anz     662302 bnz     663405 n    1048576 k    1 nvec    1 tdot     0.005347 tsax     0.010366 tdot/tsax     0.515846 tauto:     0.006358 auto   1.1890 
+
+ [ GrB_mxm (rowdeg 0.0155165 coldeg 65081) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000473 sec ]
+anz      65081 bnz      65023 n    4194304 k    1 nvec    1 tdot     0.000592 tsax     0.002523 tdot/tsax     0.234822 tauto:     0.000607 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0135 sec ]
+anz     928113 bnz     928033 n    4194304 k    1 nvec    1 tdot     0.014584 tsax     0.035744 tdot/tsax     0.408028 tauto:     0.015622 auto ~
+
+ [ GrB_mxm (rowdeg 0.00389767 coldeg 65392) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000487 sec ]
+anz      65392 bnz      65398 n   16777216 k    1 nvec    1 tdot     0.000577 tsax     0.002759 tdot/tsax     0.209006 tauto:     0.000797 auto   1.3818 
+
+ [ GrB_mxm (rowdeg 0.0605791 coldeg 1.01635e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00639 sec ]
+anz    1016348 bnz    1016400 n   16777216 k    1 nvec    1 tdot     0.007321 tsax     0.031308 tdot/tsax     0.233851 tauto:     0.009536 auto   1.3025 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0826 sec ]
+anz   10604506 bnz   10606789 n   16777216 k    1 nvec    1 tdot     0.079856 tsax     0.163385 tdot/tsax     0.488763 tauto:     0.089816 auto   1.1247 
+
+ [ GrB_mxm (rowdeg 0.000976026 coldeg 65500) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00044 sec ]
+anz      65500 bnz      65510 n   67108864 k    1 nvec    1 tdot     0.000479 tsax     0.002516 tdot/tsax     0.190192 tauto:     0.000570 auto   1.1918 
+
+ [ GrB_mxm (rowdeg 0.0155029 coldeg 1.04038e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00606 sec ]
+anz    1040381 bnz    1040389 n   67108864 k    1 nvec    1 tdot     0.006827 tsax     0.031453 tdot/tsax     0.217071 tauto:     0.008368 auto   1.2256 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.205 sec ]
+anz   14843317 bnz   14844851 n   67108864 k    1 nvec    1 tdot     0.182716 tsax     0.489929 tdot/tsax     0.372944 tauto:     0.270221 auto   1.4789 
+
+ [ GrB_mxm (rowdeg 0.000244088 coldeg 65522) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000479 sec ]
+anz      65522 bnz      65528 n  268435456 k    1 nvec    1 tdot     0.000427 tsax     0.003054 tdot/tsax     0.139807 tauto:     0.000589 auto   1.3793 
+
+ [ GrB_mxm (rowdeg 0.00389878 coldeg 1.04657e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00573 sec ]
+anz    1046570 bnz    1046479 n  268435456 k    1 nvec    1 tdot     0.006698 tsax     0.033550 tdot/tsax     0.199654 tauto:     0.006302 auto best
+
+ [ GrB_mxm (rowdeg 0.0605852 coldeg 1.62632e+07) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.119 sec ]
+anz   16263208 bnz   16262988 n  268435456 k    1 nvec    1 tdot     0.133393 tsax     0.508891 tdot/tsax     0.262125 tauto:     0.137626 auto ~
+
+ [ GrB_mxm (rowdeg 6.10324e-05 coldeg 65533) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000473 sec ]
+anz      65533 bnz      65534 n 1073741824 k    1 nvec    1 tdot     0.000453 tsax     0.002768 tdot/tsax     0.163524 tauto:     0.000587 auto   1.2959 
+
+ [ GrB_mxm (rowdeg 0.000976081 coldeg 1.04806e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00596 sec ]
+anz    1048059 bnz    1048090 n 1073741824 k    1 nvec    1 tdot     0.006329 tsax     0.034848 tdot/tsax     0.181607 tauto:     0.006445 auto ~
+
+ [ GrB_mxm (rowdeg 0.0155026 coldeg 1.66458e+07) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.116 sec ]
+anz   16645752 bnz   16647088 n 1073741824 k    1 nvec    1 tdot     0.108850 tsax     0.612066 tdot/tsax     0.177840 tauto:     0.131853 auto   1.2113 
+
+ [ GrB_mxm (rowdeg 1.52586e-05 coldeg 65535) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.000534 sec ]
+anz      65535 bnz      65536 n 4294967296 k    1 nvec    1 tdot     0.000459 tsax     0.002820 tdot/tsax     0.162907 tauto:     0.000570 auto   1.2401 
+
+ [ GrB_mxm (rowdeg 0.000244111 coldeg 1.04845e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00582 sec ]
+anz    1048450 bnz    1048449 n 4294967296 k    1 nvec    1 tdot     0.005945 tsax     0.033027 tdot/tsax     0.179990 tauto:     0.006610 auto   1.1120 
+
+ [ GrB_mxm (rowdeg 0.00389861 coldeg 1.67444e+07) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.101 sec ]
+anz   16744415 bnz   16744490 n 4294967296 k    1 nvec    1 tdot     0.107020 tsax     0.631966 tdot/tsax     0.169345 tauto:     0.120093 auto   1.1222 
+
+k: 5
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0015 sec ]
+anz      45010 bnz      45193 n      16384 k    5 nvec    5 tdot     0.001758 tsax     0.005090 tdot/tsax     0.345393 tauto:     0.001809 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00158 sec ]
+anz      59262 bnz      59310 n      65536 k    5 nvec    5 tdot     0.001913 tsax     0.008555 tdot/tsax     0.223647 tauto:     0.002186 auto   1.1424 
+
+ [ GrB_mxm (rowdeg 0.243702 coldeg 12777) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00244 sec ]
+anz      63885 bnz      63939 n     262144 k    5 nvec    5 tdot     0.002642 tsax     0.005307 tdot/tsax     0.497764 tauto:     0.002885 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0131 sec ]
+anz     721858 bnz     721390 n     262144 k    5 nvec    5 tdot     0.015146 tsax     0.068202 tdot/tsax     0.222078 tauto:     0.015082 auto best
+
+ [ GrB_mxm (rowdeg 0.0621023 coldeg 13023.8) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00227 sec ]
+anz      65119 bnz      65120 n    1048576 k    5 nvec    5 tdot     0.002582 tsax     0.010906 tdot/tsax     0.236711 tauto:     0.002540 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0254 sec ]
+anz     950429 bnz     950637 n    1048576 k    5 nvec    5 tdot     0.028834 tsax     0.137510 tdot/tsax     0.209688 tauto:     0.030285 auto ~
+
+ [ GrB_mxm (rowdeg 0.0155988 coldeg 13085.2) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00215 sec ]
+anz      65426 bnz      65452 n    4194304 k    5 nvec    5 tdot     0.002526 tsax     0.010973 tdot/tsax     0.230206 tauto:     0.002363 auto best
+
+ [ GrB_mxm (rowdeg 0.243846 coldeg 204553) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0137 sec ]
+anz    1022763 bnz    1022951 n    4194304 k    5 nvec    5 tdot     0.013875 tsax     0.050526 tdot/tsax     0.274609 tauto:     0.013993 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.188 sec ]
+anz   11548348 bnz   11547682 n    4194304 k    5 nvec    5 tdot     0.231858 tsax     0.890689 tdot/tsax     0.260313 tauto:     0.228073 auto best
+
+ [ GrB_mxm (rowdeg 0.003905 coldeg 13103) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00217 sec ]
+anz      65515 bnz      65521 n   16777216 k    5 nvec    5 tdot     0.002469 tsax     0.010852 tdot/tsax     0.227493 tauto:     0.002365 auto best
+
+ [ GrB_mxm (rowdeg 0.0621012 coldeg 208377) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0107 sec ]
+anz    1041885 bnz    1042122 n   16777216 k    5 nvec    5 tdot     0.013281 tsax     0.150519 tdot/tsax     0.088231 tauto:     0.013966 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.491 sec ]
+anz   15205546 bnz   15206626 n   16777216 k    5 nvec    5 tdot     0.431488 tsax     1.851048 tdot/tsax     0.233105 tauto:     0.535263 auto   1.2405 OUCH
+
+ [ GrB_mxm (rowdeg 0.000976473 coldeg 13106) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00203 sec ]
+anz      65530 bnz      65530 n   67108864 k    5 nvec    5 tdot     0.002177 tsax     0.009586 tdot/tsax     0.227050 tauto:     0.002136 auto best
+
+ [ GrB_mxm (rowdeg 0.0156004 coldeg 209385) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0108 sec ]
+anz    1046926 bnz    1046855 n   67108864 k    5 nvec    5 tdot     0.011420 tsax     0.140094 tdot/tsax     0.081514 tauto:     0.013747 auto   1.2038 
+
+ [ GrB_mxm (rowdeg 0.243848 coldeg 3.27287e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.218 sec ]
+anz   16364374 bnz   16366850 n   67108864 k    5 nvec    5 tdot     0.207828 tsax     1.142974 tdot/tsax     0.181831 tauto:     0.255353 auto   1.2287 
+
+ [ GrB_mxm (rowdeg 0.000244137 coldeg 13107) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0021 sec ]
+anz      65535 bnz      65534 n  268435456 k    5 nvec    5 tdot     0.001880 tsax     0.009094 tdot/tsax     0.206683 tauto:     0.002223 auto   1.1826 
+
+ [ GrB_mxm (rowdeg 0.00390471 coldeg 209633) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0123 sec ]
+anz    1048163 bnz    1048134 n  268435456 k    5 nvec    5 tdot     0.011411 tsax     0.139948 tdot/tsax     0.081537 tauto:     0.012255 auto ~
+
+ [ GrB_mxm (rowdeg 0.0621112 coldeg 3.33457e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.193 sec ]
+anz   16672853 bnz   16673162 n  268435456 k    5 nvec    5 tdot     0.200365 tsax     1.762304 tdot/tsax     0.113695 tauto:     0.264607 auto   1.3206 
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 13107.2) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00161 sec ]
+anz      65536 bnz      65536 n 1073741824 k    5 nvec    5 tdot     0.001795 tsax     0.011261 tdot/tsax     0.159427 tauto:     0.001629 auto best
+
+ [ GrB_mxm (rowdeg 0.000976469 coldeg 209695) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0108 sec ]
+anz    1048476 bnz    1048462 n 1073741824 k    5 nvec    5 tdot     0.011982 tsax     0.143574 tdot/tsax     0.083452 tauto:     0.012309 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156005 coldeg 3.35017e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.183 sec ]
+anz   16750867 bnz   16750807 n 1073741824 k    5 nvec    5 tdot     0.183693 tsax     1.666055 tdot/tsax     0.110256 tauto:     0.214153 auto   1.1658 
+
+ [ GrB_mxm (rowdeg 1.52586e-05 coldeg 13107) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0023 sec ]
+anz      65535 bnz      65536 n 4294967296 k    5 nvec    5 tdot     0.002453 tsax     0.008016 tdot/tsax     0.306025 tauto:     0.002487 auto ~
+
+ [ GrB_mxm (rowdeg 0.000244134 coldeg 209710) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00989 sec ]
+anz    1048548 bnz    1048539 n 4294967296 k    5 nvec    5 tdot     0.011530 tsax     0.135735 tdot/tsax     0.084945 tauto:     0.012795 auto   1.1097 
+
+ [ GrB_mxm (rowdeg 0.00390473 coldeg 3.35414e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.155 sec ]
+anz   16770683 bnz   16770792 n 4294967296 k    5 nvec    5 tdot     0.180815 tsax     2.443842 tdot/tsax     0.073988 tauto:     0.172987 auto best
+
+k: 10
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00206 sec ]
+anz      53968 bnz      53995 n      16384 k   10 nvec   10 tdot     0.002036 tsax     0.010674 tdot/tsax     0.190727 tauto:     0.002687 auto   1.3201 
+
+ [ GrB_mxm (rowdeg 0.950974 coldeg 6232.3) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00437 sec ]
+anz      62323 bnz      62288 n      65536 k   10 nvec   10 tdot     0.004765 tsax     0.006674 tdot/tsax     0.714022 tauto:     0.004866 auto ~
+
+ [ GrB_mxm (rowdeg 0.246761 coldeg 6468.7) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00446 sec ]
+anz      64687 bnz      64752 n     262144 k   10 nvec   10 tdot     0.004424 tsax     0.005462 tdot/tsax     0.810032 tauto:     0.004949 auto   1.1184 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0402 sec ]
+anz     863722 bnz     864132 n     262144 k   10 nvec   10 tdot     0.040970 tsax     0.169302 tdot/tsax     0.241992 tauto:     0.045179 auto   1.1027 
+
+ [ GrB_mxm (rowdeg 0.0623026 coldeg 6532.9) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0044 sec ]
+anz      65329 bnz      65335 n    1048576 k   10 nvec   10 tdot     0.004826 tsax     0.012573 tdot/tsax     0.383850 tauto:     0.004864 auto ~
+
+ [ GrB_mxm (rowdeg 0.951852 coldeg 99808.9) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0254 sec ]
+anz     998089 bnz     997795 n    1048576 k   10 nvec   10 tdot     0.024113 tsax     0.046132 tdot/tsax     0.522704 tauto:     0.029386 auto   1.2187 
+
+ [ GrB_mxm (rowdeg 0.0156107 coldeg 6547.6) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00459 sec ]
+anz      65476 bnz      65472 n    4194304 k   10 nvec   10 tdot     0.005441 tsax     0.013286 tdot/tsax     0.409485 tauto:     0.005018 auto best
+
+ [ GrB_mxm (rowdeg 0.246909 coldeg 103561) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0302 sec ]
+anz    1035612 bnz    1035697 n    4194304 k   10 nvec   10 tdot     0.024532 tsax     0.062336 tdot/tsax     0.393545 tauto:     0.027851 auto   1.1353 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.551 sec ]
+anz   13827298 bnz   13826705 n    4194304 k   10 nvec   10 tdot     0.697071 tsax     2.321562 tdot/tsax     0.300259 tauto:     0.695815 auto best
+
+ [ GrB_mxm (rowdeg 0.00390577 coldeg 6552.8) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0134 sec ]
+anz      65528 bnz      65530 n   16777216 k   10 nvec   10 tdot     0.005392 tsax     0.012682 tdot/tsax     0.425132 tauto:     0.004551 auto best
+
+ [ GrB_mxm (rowdeg 0.0623102 coldeg 104539) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0226 sec ]
+anz    1045391 bnz    1045264 n   16777216 k   10 nvec   10 tdot     0.022621 tsax     0.173057 tdot/tsax     0.130715 tauto:     0.023249 auto ~
+
+ [ GrB_mxm (rowdeg 0.951667 coldeg 1.59663e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.625 sec ]
+anz   15966320 bnz   15966943 n   16777216 k   10 nvec   10 tdot     0.408199 tsax     1.020101 tdot/tsax     0.400155 tauto:     0.710931 auto   1.7416 OUCH
+
+ [ GrB_mxm (rowdeg 0.000976488 coldeg 6553.1) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00652 sec ]
+anz      65531 bnz      65534 n   67108864 k   10 nvec   10 tdot     0.005923 tsax     0.014473 tdot/tsax     0.409225 tauto:     0.006094 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156128 coldeg 104776) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0343 sec ]
+anz    1047758 bnz    1047769 n   67108864 k   10 nvec   10 tdot     0.042120 tsax     0.224594 tdot/tsax     0.187537 tauto:     0.035228 auto best
+
+ [ GrB_mxm (rowdeg 0.246909 coldeg 1.65698e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.353 sec ]
+anz   16569763 bnz   16569612 n   67108864 k   10 nvec   10 tdot     0.624229 tsax     1.248543 tdot/tsax     0.499966 tauto:     0.586997 auto best
+
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 6553.6) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00424 sec ]
+anz      65536 bnz      65534 n  268435456 k   10 nvec   10 tdot     0.004949 tsax     0.011226 tdot/tsax     0.440868 tauto:     0.004832 auto best
+
+ [ GrB_mxm (rowdeg 0.00390551 coldeg 104838) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0184 sec ]
+anz    1048377 bnz    1048374 n  268435456 k   10 nvec   10 tdot     0.023470 tsax     0.155106 tdot/tsax     0.151318 tauto:     0.021106 auto best
+
+ [ GrB_mxm (rowdeg 0.0623037 coldeg 1.67245e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.376 sec ]
+anz   16724510 bnz   16724558 n  268435456 k   10 nvec   10 tdot     0.383593 tsax     1.818669 tdot/tsax     0.210920 tauto:     0.439020 auto   1.1445 
+
+ [ GrB_mxm (rowdeg 6.10342e-05 coldeg 6553.5) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00533 sec ]
+anz      65535 bnz      65536 n 1073741824 k   10 nvec   10 tdot     0.004847 tsax     0.011304 tdot/tsax     0.428778 tauto:     0.005007 auto ~
+
+ [ GrB_mxm (rowdeg 0.000976526 coldeg 104854) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0193 sec ]
+anz    1048537 bnz    1048523 n 1073741824 k   10 nvec   10 tdot     0.021193 tsax     0.163702 tdot/tsax     0.129460 tauto:     0.021322 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156128 coldeg 1.67641e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.375 sec ]
+anz   16764064 bnz   16764103 n 1073741824 k   10 nvec   10 tdot     0.387974 tsax     1.714667 tdot/tsax     0.226268 tauto:     0.397004 auto ~
+
+ [ GrB_mxm (rowdeg 1.52586e-05 coldeg 6553.5) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.00415 sec ]
+anz      65535 bnz      65536 n 4294967296 k   10 nvec   10 tdot     0.004684 tsax     0.009572 tdot/tsax     0.489306 tauto:     0.004669 auto best
+
+ [ GrB_mxm (rowdeg 0.000244138 coldeg 104856) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.0181 sec ]
+anz    1048565 bnz    1048559 n 4294967296 k   10 nvec   10 tdot     0.020437 tsax     0.146256 tdot/tsax     0.139737 tauto:     0.020410 auto best
+
+ [ GrB_mxm (rowdeg 0.00390549 coldeg 1.6774e+06) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.271 sec ]
+anz   16773968 bnz   16773914 n 4294967296 k   10 nvec   10 tdot     0.355582 tsax     3.067869 tdot/tsax     0.115905 tauto:     0.294823 auto best
+
+k: 20
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00497 sec ]
+anz      45006 bnz      45135 n       4096 k   20 nvec   20 tdot     0.005115 tsax     0.012265 tdot/tsax     0.417076 tauto:     0.005691 auto   1.1126 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00474 sec ]
+anz      59428 bnz      59365 n      16384 k   20 nvec   20 tdot     0.005606 tsax     0.021484 tdot/tsax     0.260923 tauto:     0.006188 auto   1.1039 
+
+ [ GrB_mxm (rowdeg 0.975128 coldeg 3195.3) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-20, double, 63906 entries) (S=S*S) axbwork 62613 (nthreads 1 coarse: 1) 0.00365 sec ]
+anz      63906 bnz      63886 n      65536 k   20 nvec   20 tdot     0.009147 tsax     0.007315 tdot/tsax     1.250396 tauto:     0.004474 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0474 sec ]
+anz     721745 bnz     721751 n      65536 k   20 nvec   20 tdot     0.051745 tsax     0.192895 tdot/tsax     0.268255 tauto:     0.051225 auto best
+
+ [ GrB_mxm (rowdeg 0.248428 coldeg 3256.2) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-20, double, 65124 entries) (S=S*S) axbwork 16122 (nthreads 1 coarse: 1) 0.00341 sec ]
+anz      65124 bnz      65134 n     262144 k   20 nvec   20 tdot     0.009032 tsax     0.006184 tdot/tsax     1.460654 tauto:     0.004279 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0933 sec ]
+anz     950518 bnz     949971 n     262144 k   20 nvec   20 tdot     0.100206 tsax     0.307344 tdot/tsax     0.326039 tauto:     0.124607 auto   1.2435 
+
+ [ GrB_mxm (rowdeg 0.0624027 coldeg 3271.7) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00773 sec ]
+anz      65434 bnz      65423 n    1048576 k   20 nvec   20 tdot     0.008668 tsax     0.012552 tdot/tsax     0.690588 tauto:     0.008241 auto best
+
+ [ GrB_mxm (rowdeg 0.975187 coldeg 51127.9) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-20, double, 1022558 entries) (S=S*S) axbwork 997025 (nthreads 4 coarse: 8) 0.0581 sec ]
+anz    1022558 bnz    1022727 n    1048576 k   20 nvec   20 tdot     0.041732 tsax     0.059907 tdot/tsax     0.696619 tauto:     0.064135 auto   1.5368 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.8 sec ]
+anz   11549504 bnz   11547833 n    1048576 k   20 nvec   20 tdot     0.909572 tsax     2.574453 tdot/tsax     0.353307 tauto:     0.924989 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156183 coldeg 3275.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.008 sec ]
+anz      65508 bnz      65510 n    4194304 k   20 nvec   20 tdot     0.009384 tsax     0.013392 tdot/tsax     0.700777 tauto:     0.008769 auto best
+
+ [ GrB_mxm (rowdeg 0.248429 coldeg 52099.4) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-20, double, 1041988 entries) (S=S*S) axbwork 259297 (nthreads 3 coarse: 6) 0.0914 sec ]
+anz    1041988 bnz    1042062 n    4194304 k   20 nvec   20 tdot     0.042753 tsax     0.074581 tdot/tsax     0.573238 tauto:     0.102482 auto   2.3971 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 1.6 sec ]
+anz   15204377 bnz   15205008 n    4194304 k   20 nvec   20 tdot     1.653260 tsax     4.407348 tdot/tsax     0.375114 tauto:     1.796637 auto ~
+
+ [ GrB_mxm (rowdeg 0.00390601 coldeg 3276.6) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00815 sec ]
+anz      65532 bnz      65530 n   16777216 k   20 nvec   20 tdot     0.009184 tsax     0.013258 tdot/tsax     0.692687 tauto:     0.009395 auto ~
+
+ [ GrB_mxm (rowdeg 0.0623993 coldeg 52344.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0384 sec ]
+anz    1046887 bnz    1046957 n   16777216 k   20 nvec   20 tdot     0.040058 tsax     0.200904 tdot/tsax     0.199389 tauto:     0.040226 auto ~
+
+ [ GrB_mxm (rowdeg 0.975435 coldeg 818254) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.757 sec ]
+anz   16365083 bnz   16365070 n   16777216 k   20 nvec   20 tdot     0.904367 tsax     1.280942 tdot/tsax     0.706017 tauto:     0.808613 auto best
+
+ [ GrB_mxm (rowdeg 0.000976533 coldeg 3276.7) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00799 sec ]
+anz      65534 bnz      65534 n   67108864 k   20 nvec   20 tdot     0.009295 tsax     0.012937 tdot/tsax     0.718496 tauto:     0.008630 auto best
+
+ [ GrB_mxm (rowdeg 0.0156192 coldeg 52409.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0363 sec ]
+anz    1048186 bnz    1048191 n   67108864 k   20 nvec   20 tdot     0.037805 tsax     0.182813 tdot/tsax     0.206796 tauto:     0.038692 auto ~
+
+ [ GrB_mxm (rowdeg 0.248445 coldeg 833643) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.597 sec ]
+anz   16672851 bnz   16672667 n   67108864 k   20 nvec   20 tdot     0.751688 tsax     1.556598 tdot/tsax     0.482904 tauto:     0.674576 auto best
+
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 3276.8) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00427 sec ]
+anz      65536 bnz      65536 n  268435456 k   20 nvec   20 tdot     0.004776 tsax     0.011650 tdot/tsax     0.409985 tauto:     0.004694 auto best
+
+ [ GrB_mxm (rowdeg 0.00390592 coldeg 52424.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0362 sec ]
+anz    1048487 bnz    1048484 n  268435456 k   20 nvec   20 tdot     0.038561 tsax     0.177873 tdot/tsax     0.216791 tauto:     0.039079 auto ~
+
+ [ GrB_mxm (rowdeg 0.0624027 coldeg 837555) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.66 sec ]
+anz   16751099 bnz   16751015 n  268435456 k   20 nvec   20 tdot     0.761364 tsax     2.243803 tdot/tsax     0.339319 tauto:     0.783735 auto ~
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 3276.8) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00463 sec ]
+anz      65536 bnz      65536 n 1073741824 k   20 nvec   20 tdot     0.005369 tsax     0.012023 tdot/tsax     0.446565 tauto:     0.004667 auto best
+
+ [ GrB_mxm (rowdeg 0.000976533 coldeg 52427.2) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0373 sec ]
+anz    1048544 bnz    1048548 n 1073741824 k   20 nvec   20 tdot     0.042161 tsax     0.172859 tdot/tsax     0.243906 tauto:     0.041751 auto best
+
+ [ GrB_mxm (rowdeg 0.015619 coldeg 838538) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.603 sec ]
+anz   16770766 bnz   16770580 n 1073741824 k   20 nvec   20 tdot     0.710543 tsax     2.477432 tdot/tsax     0.286806 tauto:     0.739059 auto ~
+
+ [ GrB_mxm (rowdeg 1.52586e-05 coldeg 3276.75) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00834 sec ]
+anz      65535 bnz      65536 n 4294967296 k   20 nvec   20 tdot     0.009737 tsax     0.010474 tdot/tsax     0.929653 tauto:     0.009272 auto best
+
+ [ GrB_mxm (rowdeg 0.000244139 coldeg 52428.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0352 sec ]
+anz    1048569 bnz    1048573 n 4294967296 k   20 nvec   20 tdot     0.038362 tsax     0.168032 tdot/tsax     0.228304 tauto:     0.041774 auto ~
+
+ [ GrB_mxm (rowdeg 0.00390589 coldeg 838782) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.593 sec ]
+anz   16775649 bnz   16775600 n 4294967296 k   20 nvec   20 tdot     0.754714 tsax     5.601928 tdot/tsax     0.134724 tauto:     0.937707 auto   1.2425 OUCH
+
+k: 30
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00556 sec ]
+anz      50816 bnz      50829 n       4096 k   30 nvec   30 tdot     0.008512 tsax     0.019717 tdot/tsax     0.431712 tauto:     0.006617 auto best
+
+ [ GrB_mxm (rowdeg 3.74341 coldeg 2044.4) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-30, double, 61332 entries) (S=S*S) axbwork 229333 (nthreads 3 coarse: 6) 0.00189 sec ]
+anz      61332 bnz      61325 n      16384 k   30 nvec   30 tdot     0.010488 tsax     0.005255 tdot/tsax     1.995795 tauto:     0.002066 auto best
+
+ [ GrB_mxm (rowdeg 0.983643 coldeg 2148.8) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-30, double, 64464 entries) (S=S*S) axbwork 63642 (nthreads 1 coarse: 1) 0.00322 sec ]
+anz      64464 bnz      64466 n      65536 k   30 nvec   30 tdot     0.013232 tsax     0.006331 tdot/tsax     2.089890 tauto:     0.004901 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0955 sec ]
+anz     812396 bnz     812484 n      65536 k   30 nvec   30 tdot     0.078739 tsax     0.337363 tdot/tsax     0.233395 tauto:     0.148543 auto   1.8865 
+
+ [ GrB_mxm (rowdeg 0.24889 coldeg 2174.83) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-30, double, 65245 entries) (S=S*S) axbwork 16165 (nthreads 1 coarse: 1) 0.0158 sec ]
+anz      65245 bnz      65266 n     262144 k   30 nvec   30 tdot     0.018827 tsax     0.008940 tdot/tsax     2.105871 tauto:     0.006427 auto best
+
+ [ GrB_mxm (rowdeg 3.7427 coldeg 32704.2) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-30, double, 981126 entries) (S=S*S) axbwork 3.67462e+06 (nthreads 4 coarse: 8) 0.0513 sec ]
+anz     981126 bnz     981249 n     262144 k   30 nvec   30 tdot     0.080078 tsax     0.059925 tdot/tsax     1.336304 tauto:     0.055831 auto best
+
+ [ GrB_mxm (rowdeg 0.0624352 coldeg 2182.27) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0172 sec ]
+anz      65468 bnz      65454 n    1048576 k   30 nvec   30 tdot     0.021469 tsax     0.020754 tdot/tsax     1.034431 tauto:     0.015377 auto best
+
+ [ GrB_mxm (rowdeg 0.983541 coldeg 34377.2) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-30, double, 1031317 entries) (S=S*S) axbwork 1.01373e+06 (nthreads 4 coarse: 8) 0.0764 sec ]
+anz    1031317 bnz    1031161 n    1048576 k   30 nvec   30 tdot     0.092280 tsax     0.079727 tdot/tsax     1.157451 tauto:     0.070139 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 1.73 sec ]
+anz   13004404 bnz   13002343 n    1048576 k   30 nvec   30 tdot     1.875985 tsax     4.929659 tdot/tsax     0.380551 tauto:     1.895952 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156207 coldeg 2183.93) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0122 sec ]
+anz      65518 bnz      65516 n    4194304 k   30 nvec   30 tdot     0.013394 tsax     0.013714 tdot/tsax     0.976684 tauto:     0.012266 auto best
+
+ [ GrB_mxm (rowdeg 0.248961 coldeg 34807.3) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-30, double, 1044220 entries) (S=S*S) axbwork 259473 (nthreads 3 coarse: 6) 0.103 sec ]
+anz    1044220 bnz    1044253 n    4194304 k   30 nvec   30 tdot     0.060421 tsax     0.083041 tdot/tsax     0.727598 tauto:     0.113035 auto   1.8708 
+
+ [ GrB_mxm (rowdeg 3.74494 coldeg 523581) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.15 sec ]
+anz   15707419 bnz   15704668 n    4194304 k   30 nvec   30 tdot     1.152017 tsax     1.025411 tdot/tsax     1.123469 tauto:     1.231965 auto   1.2014 OUCH
+
+ [ GrB_mxm (rowdeg 0.00390607 coldeg 2184.43) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0128 sec ]
+anz      65533 bnz      65529 n   16777216 k   30 nvec   30 tdot     0.015764 tsax     0.015234 tdot/tsax     1.034809 tauto:     0.013141 auto best
+
+ [ GrB_mxm (rowdeg 0.0624368 coldeg 34917.2) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0525 sec ]
+anz    1047516 bnz    1047556 n   16777216 k   30 nvec   30 tdot     0.066269 tsax     0.233940 tdot/tsax     0.283273 tauto:     0.063917 auto best
+
+ [ GrB_mxm (rowdeg 0.983509 coldeg 550018) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.16 sec ]
+anz   16500543 bnz   16500867 n   16777216 k   30 nvec   30 tdot     1.212374 tsax     1.360398 tdot/tsax     0.891191 tauto:     1.262852 auto ~
+
+ [ GrB_mxm (rowdeg 0.000976518 coldeg 2184.43) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0118 sec ]
+anz      65533 bnz      65536 n   67108864 k   30 nvec   30 tdot     0.013484 tsax     0.012950 tdot/tsax     1.041225 tauto:     0.012068 auto best
+
+ [ GrB_mxm (rowdeg 0.0156212 coldeg 34944.1) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0549 sec ]
+anz    1048324 bnz    1048277 n   67108864 k   30 nvec   30 tdot     0.055981 tsax     0.220562 tdot/tsax     0.253808 tauto:     0.054952 auto best
+
+ [ GrB_mxm (rowdeg 0.24896 coldeg 556915) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.881 sec ]
+anz   16707436 bnz   16707504 n   67108864 k   30 nvec   30 tdot     1.113245 tsax     1.623339 tdot/tsax     0.685775 tauto:     1.117638 auto ~
+
+ [ GrB_mxm (rowdeg 0.000244133 coldeg 2184.47) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0119 sec ]
+anz      65534 bnz      65535 n  268435456 k   30 nvec   30 tdot     0.013768 tsax     0.011561 tdot/tsax     1.190956 tauto:     0.012397 auto ~
+
+ [ GrB_mxm (rowdeg 0.003906 coldeg 34950.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0532 sec ]
+anz    1048509 bnz    1048513 n  268435456 k   30 nvec   30 tdot     0.059564 tsax     0.197241 tdot/tsax     0.301988 tauto:     0.058743 auto best
+
+ [ GrB_mxm (rowdeg 0.0624351 coldeg 558660) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.783 sec ]
+anz   16759786 bnz   16759934 n  268435456 k   30 nvec   30 tdot     1.080257 tsax     2.539566 tdot/tsax     0.425371 tauto:     1.075690 auto best
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 2184.53) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0065 sec ]
+anz      65536 bnz      65536 n 1073741824 k   30 nvec   30 tdot     0.007259 tsax     0.011691 tdot/tsax     0.620905 tauto:     0.007192 auto best
+
+ [ GrB_mxm (rowdeg 0.000976544 coldeg 34951.9) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0536 sec ]
+anz    1048556 bnz    1048552 n 1073741824 k   30 nvec   30 tdot     0.058600 tsax     0.184363 tdot/tsax     0.317851 tauto:     0.058306 auto best
+
+ [ GrB_mxm (rowdeg 0.0156208 coldeg 559092) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.911 sec ]
+anz   16772756 bnz   16772863 n 1073741824 k   30 nvec   30 tdot     1.045930 tsax     2.696415 tdot/tsax     0.387897 tauto:     1.173362 auto   1.1218 OUCH
+
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 2184.53) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0151 sec ]
+anz      65536 bnz      65536 n 4294967296 k   30 nvec   30 tdot     0.007929 tsax     0.011895 tdot/tsax     0.666590 tauto:     0.006881 auto best
+
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 34952.5) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0518 sec ]
+anz    1048574 bnz    1048571 n 4294967296 k   30 nvec   30 tdot     0.057911 tsax     0.185477 tdot/tsax     0.312227 tauto:     0.062693 auto ~
+
+ [ GrB_mxm (rowdeg 0.003906 coldeg 559204) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.744 sec ]
+anz   16776124 bnz   16776099 n 4294967296 k   30 nvec   30 tdot     1.040779 tsax     5.737976 tdot/tsax     0.181384 tauto:     0.773077 auto best
+
+k: 40
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00619 sec ]
+anz      53969 bnz      53953 n       4096 k   40 nvec   40 tdot     0.006572 tsax     0.027278 tdot/tsax     0.240934 tauto:     0.007065 auto ~
+
+ [ GrB_mxm (rowdeg 3.80963 coldeg 1560.42) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-40, double, 62417 entries) (S=S*S) axbwork 236681 (nthreads 3 coarse: 6) 0.00187 sec ]
+anz      62417 bnz      62433 n      16384 k   40 nvec   40 tdot     0.013870 tsax     0.005284 tdot/tsax     2.625093 tauto:     0.002055 auto best
+
+ [ GrB_mxm (rowdeg 0.987396 coldeg 1617.75) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-40, double, 64710 entries) (S=S*S) axbwork 63797 (nthreads 1 coarse: 1) 0.00327 sec ]
+anz      64710 bnz      64722 n      65536 k   40 nvec   40 tdot     0.013527 tsax     0.006442 tdot/tsax     2.099817 tauto:     0.004272 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.108 sec ]
+anz     864237 bnz     863846 n      65536 k   40 nvec   40 tdot     0.110790 tsax     0.429262 tdot/tsax     0.258094 tauto:     0.137172 auto   1.2381 
+
+ [ GrB_mxm (rowdeg 0.249256 coldeg 1633.53) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-40, double, 65341 entries) (S=S*S) axbwork 16124 (nthreads 1 coarse: 1) 0.00303 sec ]
+anz      65341 bnz      65334 n     262144 k   40 nvec   40 tdot     0.013435 tsax     0.005302 tdot/tsax     2.533844 tauto:     0.004881 auto best
+
+ [ GrB_mxm (rowdeg 3.80624 coldeg 24944.5) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-40, double, 997782 entries) (S=S*S) axbwork 3.79835e+06 (nthreads 4 coarse: 8) 0.0382 sec ]
+anz     997782 bnz     997922 n     262144 k   40 nvec   40 tdot     0.060965 tsax     0.047667 tdot/tsax     1.278977 tauto:     0.042030 auto best
+
+ [ GrB_mxm (rowdeg 0.0624428 coldeg 1636.9) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0139 sec ]
+anz      65476 bnz      65491 n    1048576 k   40 nvec   40 tdot     0.013676 tsax     0.012157 tdot/tsax     1.124928 tauto:     0.013935 auto   1.1463 
+
+ [ GrB_mxm (rowdeg 0.987526 coldeg 25887.4) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-40, double, 1035496 entries) (S=S*S) axbwork 1.02227e+06 (nthreads 4 coarse: 8) 0.073 sec ]
+anz    1035496 bnz    1035624 n    1048576 k   40 nvec   40 tdot     0.074057 tsax     0.063465 tdot/tsax     1.166895 tauto:     0.073594 auto   1.1596 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 2.57 sec ]
+anz   13828573 bnz   13828881 n    1048576 k   40 nvec   40 tdot     2.617368 tsax     7.132700 tdot/tsax     0.366953 tauto:     2.719606 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156217 coldeg 1638.05) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0156 sec ]
+anz      65522 bnz      65519 n    4194304 k   40 nvec   40 tdot     0.017799 tsax     0.014313 tdot/tsax     1.243580 tauto:     0.015990 auto   1.1172 
+
+ [ GrB_mxm (rowdeg 0.249218 coldeg 26132.4) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-40, double, 1045295 entries) (S=S*S) axbwork 260423 (nthreads 3 coarse: 6) 0.108 sec ]
+anz    1045295 bnz    1045274 n    4194304 k   40 nvec   40 tdot     0.078948 tsax     0.085521 tdot/tsax     0.923142 tauto:     0.104792 auto   1.3274 
+
+ [ GrB_mxm (rowdeg 3.8064 coldeg 399130) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.44 sec ]
+anz   15965202 bnz   15966244 n    4194304 k   40 nvec   40 tdot     1.533069 tsax     1.228607 tdot/tsax     1.247811 tauto:     1.568322 auto   1.2765 OUCH
+
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 1638.35) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0157 sec ]
+anz      65534 bnz      65531 n   16777216 k   40 nvec   40 tdot     0.018274 tsax     0.014555 tdot/tsax     1.255491 tauto:     0.016414 auto   1.1277 
+
+ [ GrB_mxm (rowdeg 0.0624514 coldeg 26194) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0892 sec ]
+anz    1047760 bnz    1047767 n   16777216 k   40 nvec   40 tdot     0.077031 tsax     0.244446 tdot/tsax     0.315123 tauto:     0.075362 auto best
+
+ [ GrB_mxm (rowdeg 0.987607 coldeg 414232) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.48 sec ]
+anz   16569289 bnz   16569496 n   16777216 k   40 nvec   40 tdot     1.571292 tsax     1.356742 tdot/tsax     1.158136 tauto:     1.667414 auto   1.2290 OUCH
+
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 1638.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00894 sec ]
+anz      65536 bnz      65536 n   67108864 k   40 nvec   40 tdot     0.010165 tsax     0.014732 tdot/tsax     0.690028 tauto:     0.009235 auto best
+
+ [ GrB_mxm (rowdeg 0.0156222 coldeg 26209.7) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0794 sec ]
+anz    1048387 bnz    1048372 n   67108864 k   40 nvec   40 tdot     0.083288 tsax     0.239268 tdot/tsax     0.348095 tauto:     0.077663 auto best
+
+ [ GrB_mxm (rowdeg 0.249224 coldeg 418128) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.14 sec ]
+anz   16725115 bnz   16724689 n   67108864 k   40 nvec   40 tdot     1.637634 tsax     1.940213 tdot/tsax     0.844049 tauto:     1.480030 auto best
+
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1638.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0157 sec ]
+anz      65536 bnz      65535 n  268435456 k   40 nvec   40 tdot     0.018212 tsax     0.012181 tdot/tsax     1.495184 tauto:     0.016317 auto   1.3396 
+
+ [ GrB_mxm (rowdeg 0.00390609 coldeg 26213.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0655 sec ]
+anz    1048534 bnz    1048524 n  268435456 k   40 nvec   40 tdot     0.076286 tsax     0.245016 tdot/tsax     0.311351 tauto:     0.080501 auto ~
+
+ [ GrB_mxm (rowdeg 0.0624514 coldeg 419104) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.09 sec ]
+anz   16764161 bnz   16764112 n  268435456 k   40 nvec   40 tdot     1.431913 tsax     2.827553 tdot/tsax     0.506414 tauto:     1.452054 auto ~
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1638.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00897 sec ]
+anz      65536 bnz      65536 n 1073741824 k   40 nvec   40 tdot     0.009430 tsax     0.012570 tdot/tsax     0.750191 tauto:     0.010946 auto   1.1608 
+
+ [ GrB_mxm (rowdeg 0.00097655 coldeg 26214.1) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0721 sec ]
+anz    1048563 bnz    1048568 n 1073741824 k   40 nvec   40 tdot     0.105964 tsax     0.225605 tdot/tsax     0.469688 tauto:     0.082448 auto best
+
+ [ GrB_mxm (rowdeg 0.0156219 coldeg 419346) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.05 sec ]
+anz   16773853 bnz   16774005 n 1073741824 k   40 nvec   40 tdot     1.467045 tsax     2.701265 tdot/tsax     0.543096 tauto:     1.411070 auto best
+
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1638.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.00858 sec ]
+anz      65536 bnz      65536 n 4294967296 k   40 nvec   40 tdot     0.009640 tsax     0.011730 tdot/tsax     0.821801 tauto:     0.009287 auto best
+
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 26214.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0683 sec ]
+anz    1048573 bnz    1048574 n 4294967296 k   40 nvec   40 tdot     0.077754 tsax     0.204069 tdot/tsax     0.381018 tauto:     0.081551 auto ~
+
+ [ GrB_mxm (rowdeg 0.00390605 coldeg 419409) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 0.954 sec ]
+anz   16776359 bnz   16776432 n 4294967296 k   40 nvec   40 tdot     1.349438 tsax     6.556601 tdot/tsax     0.205814 tauto:     1.027470 auto best
+
+k: 50
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.00842 sec ]
+anz      56112 bnz      56051 n       4096 k   50 nvec   50 tdot     0.008608 tsax     0.034604 tdot/tsax     0.248765 tauto:     0.009419 auto ~
+
+ [ GrB_mxm (rowdeg 3.84503 coldeg 1259.94) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-50, double, 62997 entries) (S=S*S) axbwork 241775 (nthreads 3 coarse: 6) 0.00339 sec ]
+anz      62997 bnz      63015 n      16384 k   50 nvec   50 tdot     0.017348 tsax     0.005483 tdot/tsax     3.164174 tauto:     0.002203 auto best
+
+ [ GrB_mxm (rowdeg 0.9897 coldeg 1297.22) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-50, double, 64861 entries) (S=S*S) axbwork 64704 (nthreads 1 coarse: 1) 0.00455 sec ]
+anz      64861 bnz      64917 n      65536 k   50 nvec   50 tdot     0.018896 tsax     0.007043 tdot/tsax     2.683098 tauto:     0.004058 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.144 sec ]
+anz     897074 bnz     897333 n      65536 k   50 nvec   50 tdot     0.147888 tsax     0.535529 tdot/tsax     0.276153 tauto:     0.184007 auto   1.2442 
+
+ [ GrB_mxm (rowdeg 0.249447 coldeg 1307.82) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-50, double, 65391 entries) (S=S*S) axbwork 16657 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00329 sec ]
+anz      65391 bnz      65372 n     262144 k   50 nvec   50 tdot     0.017836 tsax     0.005581 tdot/tsax     3.195587 tauto:     0.005060 auto best
+
+ [ GrB_mxm (rowdeg 3.84378 coldeg 20152.5) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-50, double, 1007625 entries) (S=S*S) axbwork 3.87438e+06 (nthreads 4 coarse: 8) 0.0587 sec ]
+anz    1007625 bnz    1007662 n     262144 k   50 nvec   50 tdot     0.077470 tsax     0.055984 tdot/tsax     1.383797 tauto:     0.065976 auto   1.1785 
+
+ [ GrB_mxm (rowdeg 0.0624657 coldeg 1310) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0194 sec ]
+anz      65500 bnz      65494 n    1048576 k   50 nvec   50 tdot     0.022820 tsax     0.015066 tdot/tsax     1.514612 tauto:     0.020204 auto   1.3410 
+
+ [ GrB_mxm (rowdeg 0.99002 coldeg 20762.2) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-50, double, 1038111 entries) (S=S*S) axbwork 1.02862e+06 (nthreads 4 coarse: 8) 0.0862 sec ]
+anz    1038111 bnz    1038183 n    1048576 k   50 nvec   50 tdot     0.103043 tsax     0.071777 tdot/tsax     1.435599 tauto:     0.081314 auto   1.1329 
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 3.52 sec ]
+anz   14357016 bnz   14356305 n    1048576 k   50 nvec   50 tdot     3.539964 tsax     8.761917 tdot/tsax     0.404017 tauto:     3.648683 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156229 coldeg 1310.54) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0191 sec ]
+anz      65527 bnz      65523 n    4194304 k   50 nvec   50 tdot     0.021536 tsax     0.014505 tdot/tsax     1.484745 tauto:     0.020081 auto   1.3845 
+
+ [ GrB_mxm (rowdeg 0.249357 coldeg 20917.6) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-50, double, 1045881 entries) (S=S*S) axbwork 261844 (nthreads 3 coarse: 6) 0.125 sec ]
+anz    1045881 bnz    1045939 n    4194304 k   50 nvec   50 tdot     0.097238 tsax     0.088256 tdot/tsax     1.101773 tauto:     0.121085 auto   1.3720 
+
+ [ GrB_mxm (rowdeg 3.8442 coldeg 322475) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.9 sec ]
+anz   16123732 bnz   16125006 n    4194304 k   50 nvec   50 tdot     1.941677 tsax     1.232606 tdot/tsax     1.575262 tauto:     1.994654 auto   1.6182 OUCH
+
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 1310.68) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0192 sec ]
+anz      65534 bnz      65533 n   16777216 k   50 nvec   50 tdot     0.022366 tsax     0.014805 tdot/tsax     1.510678 tauto:     0.020017 auto   1.3520 
+
+ [ GrB_mxm (rowdeg 0.0624595 coldeg 20957.9) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.081 sec ]
+anz    1047896 bnz    1047925 n   16777216 k   50 nvec   50 tdot     0.095093 tsax     0.261699 tdot/tsax     0.363368 tauto:     0.093110 auto best
+
+ [ GrB_mxm (rowdeg 0.990057 coldeg 332208) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.8 sec ]
+anz   16610400 bnz   16610692 n   16777216 k   50 nvec   50 tdot     1.925997 tsax     1.436903 tdot/tsax     1.340381 tauto:     1.995974 auto   1.3891 OUCH
+
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 1310.72) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0114 sec ]
+anz      65536 bnz      65536 n   67108864 k   50 nvec   50 tdot     0.011591 tsax     0.013960 tdot/tsax     0.830317 tauto:     0.010648 auto best
+
+ [ GrB_mxm (rowdeg 0.0156227 coldeg 20968.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.081 sec ]
+anz    1048421 bnz    1048417 n   67108864 k   50 nvec   50 tdot     0.096072 tsax     0.241590 tdot/tsax     0.397665 tauto:     0.095934 auto best
+
+ [ GrB_mxm (rowdeg 0.249375 coldeg 334705) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.46 sec ]
+anz   16735261 bnz   16735520 n   67108864 k   50 nvec   50 tdot     1.824771 tsax     1.780013 tdot/tsax     1.025145 tauto:     1.855266 auto ~
+
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1310.72) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0104 sec ]
+anz      65536 bnz      65536 n  268435456 k   50 nvec   50 tdot     0.011637 tsax     0.012818 tdot/tsax     0.907864 tauto:     0.010861 auto best
+
+ [ GrB_mxm (rowdeg 0.00390607 coldeg 20970.6) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0827 sec ]
+anz    1048529 bnz    1048536 n  268435456 k   50 nvec   50 tdot     0.096696 tsax     0.238927 tdot/tsax     0.404709 tauto:     0.095833 auto best
+
+ [ GrB_mxm (rowdeg 0.0624604 coldeg 335332) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.34 sec ]
+anz   16766592 bnz   16766754 n  268435456 k   50 nvec   50 tdot     1.716354 tsax     3.340389 tdot/tsax     0.513819 tauto:     2.148315 auto   1.2517 OUCH
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1310.72) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.015 sec ]
+anz      65536 bnz      65536 n 1073741824 k   50 nvec   50 tdot     0.017912 tsax     0.019045 tdot/tsax     0.940467 tauto:     0.017449 auto best
+
+ [ GrB_mxm (rowdeg 0.000976552 coldeg 20971.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.119 sec ]
+anz    1048565 bnz    1048564 n 1073741824 k   50 nvec   50 tdot     0.132088 tsax     0.293595 tdot/tsax     0.449899 tauto:     0.156976 auto   1.1884 
+
+ [ GrB_mxm (rowdeg 0.0156225 coldeg 335492) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.22 sec ]
+anz   16774579 bnz   16774535 n 1073741824 k   50 nvec   50 tdot     1.712697 tsax     3.945094 tdot/tsax     0.434133 tauto:     1.402241 auto best
+
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1310.72) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0106 sec ]
+anz      65536 bnz      65536 n 4294967296 k   50 nvec   50 tdot     0.011801 tsax     0.011951 tdot/tsax     0.987393 tauto:     0.010455 auto best
+
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 20971.5) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0903 sec ]
+anz    1048574 bnz    1048575 n 4294967296 k   50 nvec   50 tdot     0.098920 tsax     0.217960 tdot/tsax     0.453847 tauto:     0.090925 auto best
+
+ [ GrB_mxm (rowdeg 0.0039061 coldeg 335531) (C tiny: use dot) C=A'*B, dot_product (B=S'*S) 1.21 sec ]
+anz   16776552 bnz   16776548 n 4294967296 k   50 nvec   50 tdot     1.811016 tsax     7.699654 tdot/tsax     0.235207 tauto:     1.220001 auto best
+
+k: 60
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.012 sec ]
+anz      57488 bnz      57420 n       4096 k   60 nvec   60 tdot     0.010749 tsax     0.041722 tdot/tsax     0.257627 tauto:     0.011733 auto ~
+
+ [ GrB_mxm (rowdeg 3.8703 coldeg 1056.85) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-60, double, 63411 entries) (S=S*S) axbwork 245049 (nthreads 3 coarse: 6) 0.00195 sec ]
+anz      63411 bnz      63289 n      16384 k   60 nvec   60 tdot     0.019231 tsax     0.005296 tdot/tsax     3.631457 tauto:     0.001883 auto best
+
+ [ GrB_mxm (rowdeg 0.992249 coldeg 1083.8) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-60, double, 65028 entries) (S=S*S) axbwork 64102 (nthreads 1 coarse: 1) 0.00328 sec ]
+anz      65028 bnz      64964 n      65536 k   60 nvec   60 tdot     0.019541 tsax     0.006644 tdot/tsax     2.941100 tauto:     0.003426 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.191 sec ]
+anz     920140 bnz     920393 n      65536 k   60 nvec   60 tdot     0.189338 tsax     0.648893 tdot/tsax     0.291786 tauto:     0.198325 auto ~
+
+ [ GrB_mxm (rowdeg 0.249481 coldeg 1090) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-60, double, 65400 entries) (S=S*S) axbwork 16322 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00309 sec ]
+anz      65400 bnz      65406 n     262144 k   60 nvec   60 tdot     0.019415 tsax     0.005370 tdot/tsax     3.615319 tauto:     0.003396 auto best
+
+ [ GrB_mxm (rowdeg 3.87061 coldeg 16911) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-60, double, 1014657 entries) (S=S*S) axbwork 3.92703e+06 (nthreads 4 coarse: 8) 0.0457 sec ]
+anz    1014657 bnz    1014440 n     262144 k   60 nvec   60 tdot     0.092290 tsax     0.057459 tdot/tsax     1.606183 tauto:     0.050559 auto best
+
+ [ GrB_mxm (rowdeg 0.0624666 coldeg 1091.68) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0295 sec ]
+anz      65501 bnz      65498 n    1048576 k   60 nvec   60 tdot     0.021764 tsax     0.013608 tdot/tsax     1.599309 tauto:     0.021268 auto   1.5629 
+
+ [ GrB_mxm (rowdeg 0.991633 coldeg 17330) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-60, double, 1039803 entries) (S=S*S) axbwork 1.03007e+06 (nthreads 4 coarse: 8) 0.0746 sec ]
+anz    1039803 bnz    1039758 n    1048576 k   60 nvec   60 tdot     0.116569 tsax     0.073041 tdot/tsax     1.595939 tauto:     0.078338 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 4.44 sec ]
+anz   14726258 bnz   14725654 n    1048576 k   60 nvec   60 tdot     4.502349 tsax    10.578390 tdot/tsax     0.425618 tauto:     4.599659 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156231 coldeg 1092.13) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0215 sec ]
+anz      65528 bnz      65523 n    4194304 k   60 nvec   60 tdot     0.023979 tsax     0.014390 tdot/tsax     1.666305 tauto:     0.022256 auto   1.5466 
+
+ [ GrB_mxm (rowdeg 0.249476 coldeg 17439.7) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 1046379 entries) (S=S*S) axbwork 261117 (nthreads 3 coarse: 6) 0.0915 sec ]
+anz    1046379 bnz    1046457 n    4194304 k   60 nvec   60 tdot     0.113333 tsax     0.089362 tdot/tsax     1.268239 tauto:     0.094811 auto ~
+
+ [ GrB_mxm (rowdeg 3.86943 coldeg 270492) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 16229549 entries) (S=S*S) axbwork 6.28073e+07 (nthreads 4 coarse: 8) 1.04 sec ]
+anz   16229549 bnz   16229035 n    4194304 k   60 nvec   60 tdot     2.341611 tsax     1.268767 tdot/tsax     1.845580 tauto:     1.134152 auto best
+
+ [ GrB_mxm (rowdeg 0.00390607 coldeg 1092.22) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0189 sec ]
+anz      65533 bnz      65532 n   16777216 k   60 nvec   60 tdot     0.019293 tsax     0.012123 tdot/tsax     1.591482 tauto:     0.019687 auto   1.6240 
+
+ [ GrB_mxm (rowdeg 0.0624683 coldeg 17467.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0889 sec ]
+anz    1048044 bnz    1047985 n   16777216 k   60 nvec   60 tdot     0.108501 tsax     0.304025 tdot/tsax     0.356882 tauto:     0.107021 auto best
+
+ [ GrB_mxm (rowdeg 0.991694 coldeg 277298) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-60, double, 16637866 entries) (S=S*S) axbwork 1.65001e+07 (nthreads 4 coarse: 8) 1.68 sec ]
+anz   16637866 bnz   16637948 n   16777216 k   60 nvec   60 tdot     2.301619 tsax     1.671848 tdot/tsax     1.376692 tauto:     1.637004 auto best
+
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 1092.27) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0184 sec ]
+anz      65536 bnz      65535 n   67108864 k   60 nvec   60 tdot     0.018334 tsax     0.010763 tdot/tsax     1.703381 tauto:     0.019182 auto   1.7822 
+
+ [ GrB_mxm (rowdeg 0.0156232 coldeg 17474.2) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0843 sec ]
+anz    1048452 bnz    1048449 n   67108864 k   60 nvec   60 tdot     0.084310 tsax     0.260731 tdot/tsax     0.323360 tauto:     0.097303 auto   1.1541 
+
+ [ GrB_mxm (rowdeg 0.249477 coldeg 279035) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-60, double, 16742106 entries) (S=S*S) axbwork 4.17611e+06 (nthreads 4 coarse: 8) 1.96 sec ]
+anz   16742106 bnz   16742221 n   67108864 k   60 nvec   60 tdot     2.095460 tsax     1.854073 tdot/tsax     1.130193 tauto:     2.109327 auto   1.1377 OUCH
+
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1092.27) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.00979 sec ]
+anz      65536 bnz      65536 n  268435456 k   60 nvec   60 tdot     0.010013 tsax     0.009943 tdot/tsax     1.007008 tauto:     0.010301 auto ~
+
+ [ GrB_mxm (rowdeg 0.00390611 coldeg 17475.6) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0848 sec ]
+anz    1048538 bnz    1048543 n  268435456 k   60 nvec   60 tdot     0.084107 tsax     0.253867 tdot/tsax     0.331301 tauto:     0.082070 auto best
+
+ [ GrB_mxm (rowdeg 0.062467 coldeg 279472) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.51 sec ]
+anz   16768348 bnz   16768539 n  268435456 k   60 nvec   60 tdot     2.120477 tsax     4.417678 tdot/tsax     0.479998 tauto:     1.782881 auto best
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1092.27) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0125 sec ]
+anz      65536 bnz      65536 n 1073741824 k   60 nvec   60 tdot     0.013779 tsax     0.012129 tdot/tsax     1.136017 tauto:     0.012887 auto ~
+
+ [ GrB_mxm (rowdeg 0.000976554 coldeg 17476.1) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0929 sec ]
+anz    1048567 bnz    1048565 n 1073741824 k   60 nvec   60 tdot     0.112294 tsax     0.241662 tdot/tsax     0.464674 tauto:     0.108999 auto best
+
+ [ GrB_mxm (rowdeg 0.0156229 coldeg 279583) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.39 sec ]
+anz   16775002 bnz   16775011 n 1073741824 k   60 nvec   60 tdot     1.982331 tsax     3.750094 tdot/tsax     0.528608 tauto:     1.736046 auto best
+
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1092.27) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0126 sec ]
+anz      65536 bnz      65536 n 4294967296 k   60 nvec   60 tdot     0.014318 tsax     0.012409 tdot/tsax     1.153764 tauto:     0.013139 auto ~
+
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 17476.2) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0973 sec ]
+anz    1048575 bnz    1048574 n 4294967296 k   60 nvec   60 tdot     0.113855 tsax     0.260711 tdot/tsax     0.436710 tauto:     0.112167 auto best
+
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 279612) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.37 sec ]
+anz   16776693 bnz   16776686 n 4294967296 k   60 nvec   60 tdot     1.960702 tsax     6.878229 tdot/tsax     0.285059 tauto:     1.412915 auto best
+
+k: 70
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0132 sec ]
+anz      42948 bnz      42944 n       1024 k   70 nvec   70 tdot     0.013329 tsax     0.023911 tdot/tsax     0.557432 tauto:     0.013680 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.0128 sec ]
+anz      58522 bnz      58591 n       4096 k   70 nvec   70 tdot     0.012786 tsax     0.041095 tdot/tsax     0.311127 tauto:     0.013474 auto ~
+
+ [ GrB_mxm (rowdeg 3.88641 coldeg 909.643) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-70, double, 63675 entries) (S=S*S) axbwork 248202 (nthreads 3 coarse: 6) 0.00201 sec ]
+anz      63675 bnz      63703 n      16384 k   70 nvec   70 tdot     0.022570 tsax     0.005498 tdot/tsax     4.105407 tauto:     0.001910 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.107 sec ]
+anz     687402 bnz     686840 n      16384 k   70 nvec   70 tdot     0.114497 tsax     0.379562 tdot/tsax     0.301656 tauto:     0.114214 auto best
+
+ [ GrB_mxm (rowdeg 0.992493 coldeg 929.2) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-70, double, 65044 entries) (S=S*S) axbwork 64507 (nthreads 1 coarse: 1) 0.00337 sec ]
+anz      65044 bnz      65082 n      65536 k   70 nvec   70 tdot     0.022678 tsax     0.006694 tdot/tsax     3.387848 tauto:     0.003321 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 0.249 sec ]
+anz     937748 bnz     937093 n      65536 k   70 nvec   70 tdot     0.302972 tsax     0.682430 tdot/tsax     0.443961 tauto:     0.301487 auto best
+
+ [ GrB_mxm (rowdeg 0.249535 coldeg 934.486) (punt: saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-70, double, 65414 entries) (S=S*S) axbwork 16208 (nthreads 1 coarse: 1) (sparse to bitmap) 0.00386 sec ]
+anz      65414 bnz      65412 n     262144 k   70 nvec   70 tdot     0.031082 tsax     0.006613 tdot/tsax     4.699996 tauto:     0.003929 auto best
+
+ [ GrB_mxm (rowdeg 3.88813 coldeg 14560.7) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-70, double, 1019250 entries) (S=S*S) axbwork 3.96283e+06 (nthreads 4 coarse: 8) 0.0534 sec ]
+anz    1019250 bnz    1019397 n     262144 k   70 nvec   70 tdot     0.139598 tsax     0.065079 tdot/tsax     2.145038 tauto:     0.058848 auto best
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 2.54 sec ]
+anz   10996058 bnz   10995688 n     262144 k   70 nvec   70 tdot     2.634846 tsax     6.198188 tdot/tsax     0.425099 tauto:     2.661333 auto ~
+
+ [ GrB_mxm (rowdeg 0.0624752 coldeg 935.857) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0267 sec ]
+anz      65510 bnz      65513 n    1048576 k   70 nvec   70 tdot     0.030606 tsax     0.015662 tdot/tsax     1.954089 tauto:     0.027735 auto   1.7708 
+
+ [ GrB_mxm (rowdeg 0.992913 coldeg 14873.5) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-70, double, 1041145 entries) (S=S*S) axbwork 1.03451e+06 (nthreads 4 coarse: 8) 0.0708 sec ]
+anz    1041145 bnz    1041049 n    1048576 k   70 nvec   70 tdot     0.135889 tsax     0.070558 tdot/tsax     1.925905 tauto:     0.074955 auto ~
+
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 5.28 sec ]
+anz   14996826 bnz   14999689 n    1048576 k   70 nvec   70 tdot     5.290911 tsax    11.136533 tdot/tsax     0.475095 tauto:     5.327278 auto ~
+
+ [ GrB_mxm (rowdeg 0.015624 coldeg 936.171) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0258 sec ]
+anz      65532 bnz      65529 n    4194304 k   70 nvec   70 tdot     0.028638 tsax     0.014858 tdot/tsax     1.927446 tauto:     0.026228 auto   1.7652 
+
+ [ GrB_mxm (rowdeg 0.249565 coldeg 14953.6) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 1046752 entries) (S=S*S) axbwork 261687 (nthreads 3 coarse: 6) 0.0862 sec ]
+anz    1046752 bnz    1046746 n    4194304 k   70 nvec   70 tdot     0.132767 tsax     0.084892 tdot/tsax     1.563943 tauto:     0.088375 auto ~
+
+ [ GrB_mxm (rowdeg 3.88782 coldeg 232953) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 16306694 entries) (S=S*S) axbwork 6.33921e+07 (nthreads 4 coarse: 8) 1.18 sec ]
+anz   16306694 bnz   16307317 n    4194304 k   70 nvec   70 tdot     2.642449 tsax     1.384861 tdot/tsax     1.908097 tauto:     1.192529 auto best
+
+ [ GrB_mxm (rowdeg 0.00390619 coldeg 936.214) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0213 sec ]
+anz      65535 bnz      65534 n   16777216 k   70 nvec   70 tdot     0.022321 tsax     0.011841 tdot/tsax     1.885024 tauto:     0.022400 auto   1.8917 
+
+ [ GrB_mxm (rowdeg 0.062474 coldeg 14973.4) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.103 sec ]
+anz    1048140 bnz    1048062 n   16777216 k   70 nvec   70 tdot     0.119865 tsax     0.263089 tdot/tsax     0.455606 tauto:     0.117811 auto best
+
+ [ GrB_mxm (rowdeg 0.992889 coldeg 237970) (punt: saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 16777216-by-70, double, 16657911 entries) (S=S*S) axbwork 1.65369e+07 (nthreads 4 coarse: 8) 1.63 sec ]
+anz   16657911 bnz   16658305 n   16777216 k   70 nvec   70 tdot     2.504215 tsax     1.469135 tdot/tsax     1.704551 tauto:     1.631600 auto   1.1106 OUCH
+
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 936.229) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0216 sec ]
+anz      65536 bnz      65535 n   67108864 k   70 nvec   70 tdot     0.021324 tsax     0.011054 tdot/tsax     1.929057 tauto:     0.022711 auto   2.0545 
+
+ [ GrB_mxm (rowdeg 0.0156232 coldeg 14978) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.104 sec ]
+anz    1048458 bnz    1048466 n   67108864 k   70 nvec   70 tdot     0.102302 tsax     0.234582 tdot/tsax     0.436103 tauto:     0.120353 auto   1.1764 
+
+ [ GrB_mxm (rowdeg 0.249551 coldeg 239244) (punt: saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-70, double, 16747056 entries) (S=S*S) axbwork 4.17837e+06 (nthreads 4 coarse: 8) 1.86 sec ]
+anz   16747056 bnz   16747245 n   67108864 k   70 nvec   70 tdot     2.471528 tsax     1.816077 tdot/tsax     1.360916 tauto:     1.760918 auto best
+
+ [ GrB_mxm (rowdeg 0.000244137 coldeg 936.214) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0217 sec ]
+anz      65535 bnz      65536 n  268435456 k   70 nvec   70 tdot     0.021050 tsax     0.009627 tdot/tsax     2.186414 tauto:     0.022917 auto   2.3804 
+
+ [ GrB_mxm (rowdeg 0.00390616 coldeg 14979.3) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.0914 sec ]
+anz    1048552 bnz    1048552 n  268435456 k   70 nvec   70 tdot     0.097477 tsax     0.229614 tdot/tsax     0.424528 tauto:     0.097113 auto best
+
+ [ GrB_mxm (rowdeg 0.062472 coldeg 239567) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.74 sec ]
+anz   16769696 bnz   16769679 n  268435456 k   70 nvec   70 tdot     2.314191 tsax     3.239332 tdot/tsax     0.714404 tauto:     2.356278 auto ~
+
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 936.229) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0143 sec ]
+anz      65536 bnz      65536 n 1073741824 k   70 nvec   70 tdot     0.016271 tsax     0.012794 tdot/tsax     1.271802 tauto:     0.014636 auto   1.1439 
+
+ [ GrB_mxm (rowdeg 0.000976558 coldeg 14979.6) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.115 sec ]
+anz    1048571 bnz    1048567 n 1073741824 k   70 nvec   70 tdot     0.132866 tsax     0.244241 tdot/tsax     0.543995 tauto:     0.133651 auto ~
+
+ [ GrB_mxm (rowdeg 0.0156232 coldeg 239647) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.62 sec ]
+anz   16775312 bnz   16775381 n 1073741824 k   70 nvec   70 tdot     2.312523 tsax     3.970074 tdot/tsax     0.582489 tauto:     2.198563 auto best
+
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 936.229) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) (sparse to hyper) 0.0146 sec ]
+anz      65536 bnz      65536 n 4294967296 k   70 nvec   70 tdot     0.016041 tsax     0.012501 tdot/tsax     1.283152 tauto:     0.015004 auto   1.2002 
+
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 14979.6) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 0.114 sec ]
+anz    1048574 bnz    1048574 n 4294967296 k   70 nvec   70 tdot     0.133059 tsax     0.223265 tdot/tsax     0.595969 tauto:     0.130044 auto best
+
+ [ GrB_mxm (rowdeg 0.00390614 coldeg 239668) (rowdeg tiny, coldeg big: use dot) C=A'*B, dot_product (B=S'*S) 1.76 sec ]
+{Operation terminated by user during GrB.mxm (line 90)
+
+
+In d2 (line 95)
+                C = GrB.mxm (A, '+.*', B, desc) ;
+} 
+
+
+
+
+
+
+d2p
+clear all
+d2

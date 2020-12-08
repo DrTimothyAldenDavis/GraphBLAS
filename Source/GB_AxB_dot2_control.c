@@ -48,6 +48,11 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 
     double anz = GB_NNZ (A) ;       // # of entries in A
     double bnz = GB_NNZ (B) ;       // # of entries in B
+    if (anz == 0)
+    { 
+        // C is empty, so use saxpy and compute it as a sparse empty matrix
+        return (false) ;
+    }
 
     if (A->nvec_nonempty < 0) A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     if (B->nvec_nonempty < 0) B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
@@ -56,43 +61,44 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     double avlen = A->vlen ;
     ASSERT (avlen == B->vlen) ;
 
-    if (anz == 0)
-    { 
-        // C is empty, so use saxpy and compute it as a sparse empty matrix
-        return (false) ;
-    }
+    double row_degree = anz / avlen ;
+    double col_degree = anz / anvec ;
+    GBURBLE ("(rowdeg %g coldeg %g) ", row_degree, col_degree) ; // TODO::remove
 
     double cnz = (anvec * bnvec) ;  // size of the C bitmap
-    if (anz + bnz > 10000 * cnz || cnz <= 100)
-    { 
-        // The C bitmap is very small compared with A and B, so use dot2
-        // and construct C as bitmap
-        GBURBLE ("(C tiny: use dot) ") ;
-        return (true) ;
-    }
 
     if (anz + bnz < 10 * cnz)
     { 
         // The C bitmap is too big, use saxpy and construct C as sparse
-        GBURBLE ("(C huge: use saxpy) ") ;
+        GBURBLE ("(C huge: saxpy C=(A')*B) ") ;
         return (false) ;
     }
 
+    GBURBLE ("(anz+bnz %g cnz %g) ", anz+bnz, cnz) ; // TODO::remove
+    if ((anz + bnz > 10000 * cnz) || (cnz <= 100))
+    { 
+        // The C bitmap is very small compared with A and B, so use dot2
+        // and construct C as bitmap
+        GBURBLE ("(C tiny: dot) ") ;
+        return (true) ;
+    }
+
     // average # of entries in each row and column of A (assuming A is CSC)
-    double row_degree = anz / avlen ;
-    double col_degree = anz / anvec ;
-    if (row_degree < 0.125 && col_degree > 256)
+    if (row_degree < 0.125 && col_degree > 1400)
     { 
         // If AT=A' is computed, it will have mostly empty vectors (the
-        // row_degree of A), so do not transpose it.  However, the vectors
-        // (col_degree) have lots of entries, and dot2 is efficient in this
-        // case.  Use dot2 anc compute C as bitmap.
-        GBURBLE ("(rowdeg tiny, coldeg big: use dot) ") ;
+        // row_degree of A), so do not transpose it.  If the fraction of
+        // populated vectors in AT is very low (< 0.0625 by default), then AT
+        // will become hypersparse, and this slows down the saxpy method.  If
+        // the vectors (col_degree) have lots of entries, then dot2 is
+        // efficient in this case.  If both conditions how, use dot2 and
+        // compute C as bitmap.
+        GBURBLE ("(A' implicit: dot) ") ;
         return (true) ;
     }
 
     // if none of the above rules trigger, use saxpy
-    GBURBLE ("(punt: saxpy C=(A')*B) ") ;
+    GBURBLE ("(saxpy C=(A')*B) ") ;
     return (false) ;
 }
 

@@ -2,7 +2,9 @@
 % dot2 rule
 
 clear all
-diary d2_Dec8_slash.txt
+diary d2_Dec8d_slash.txt
+!hostname
+feature ('numcores') ;
 desc.in0 = 'transpose' ;
 GrB (1) ;
 
@@ -35,6 +37,7 @@ for kk = 1:length (kset)
                 continue ;
             end
 
+            fprintf ('\n') ;
             A = GrB.random (n, k, d) ;
             B = GrB.random (n, k, d) ;
             Anz (nk, kk, ak) = nnz (A) ;
@@ -113,7 +116,11 @@ for kk = 1:length (kset)
             elseif (rel < 1.1)
                 fprintf ('auto ~\n') ;
             else
-                fprintf ('auto %8.4f\n', rel) ;
+                fprintf ('auto %8.4f ', rel) ;
+                if (tauto > 0.5)
+                    fprintf ('OUCH') ;
+                end
+                fprintf ('\n') ;
             end
 
             Tdot (nk, kk, ak) = tdot ;
