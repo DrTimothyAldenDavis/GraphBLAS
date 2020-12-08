@@ -79,7 +79,7 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     }
 
     // average # of entries in each row and column of A (assuming A is CSC)
-    if (row_degree < 0.125 && col_degree > 1024)
+    if (row_degree < 0.125 && col_degree > 1200)
     { 
         // If AT=A' is computed, it will have mostly empty vectors (the
         // row_degree of A), so do not transpose it.  If the fraction of
