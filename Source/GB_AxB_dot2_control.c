@@ -57,13 +57,11 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     double bnvec = B->nvec_nonempty ;
     double avlen = A->vlen ;
     ASSERT (avlen == B->vlen) ;
-
+    double cnz = (anvec * bnvec) ;  // size of the C bitmap
     double row_degree = anz / avlen ;
     double col_degree = anz / anvec ;
     GBURBLE ("(rowdeg %g coldeg %g ", row_degree, col_degree) ; // TODO::remove
     GBURBLE ("anz+bnz %g cnz %g) ", anz+bnz, cnz) ; // TODO::remove
-
-    double cnz = (anvec * bnvec) ;  // size of the C bitmap
 
     if (cnz > anz + bnz)
     { 
