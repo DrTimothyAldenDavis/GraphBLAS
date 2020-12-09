@@ -14,10 +14,6 @@ function gbmake (what)
 % used is ../build/libgraphblas.so if found, or in /usr/local/lib if not found
 % there.
 %
-% If GraphBLAS has been initialized already, then gbmake must first finalize
-% GraphBLAS, just as GrB.clear does.  It then calls GrB.init to initialize
-% GraphBLAS.
-%
 % See also mex, version, GrB.clear.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -57,7 +53,7 @@ if (have_octave)
 else
     % use -R2018a for the new interleaved complex API
     % flags = '-O -R2018a' ;
-    flags = '-O -R2018a' ;
+      flags = '-g -R2018a' ;    % TODO::
 
     try
         if (strncmp (computer, 'GLNX', 4))

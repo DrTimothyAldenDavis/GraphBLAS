@@ -84,7 +84,8 @@ endif ( )
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# set ( CMAKE_BUILD_TYPE Debug )
+# TODO:: debug is on
+set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -352,6 +353,7 @@ endif ( )
 
 if ( OPENMP_FOUND )
 #   set this to 'false' if you do not want OpenMP
+# TODO:: openmp disabled
 #   set ( USE_OPENMP false )
     set ( USE_OPENMP true )
 endif ( )

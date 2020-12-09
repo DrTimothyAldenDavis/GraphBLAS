@@ -44,7 +44,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
         if (GB_Global_malloc_tracking_get ( ))
         {
-
+printf ("debug is on\n") ;
             //------------------------------------------------------------------
             // for memory usage testing only
             //------------------------------------------------------------------
@@ -85,6 +85,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         }
 
     }
+    printf ("%p = malloc (%ld, %ld)\n", p, nitems, size_of_item) ;
     return (p) ;
 }
 

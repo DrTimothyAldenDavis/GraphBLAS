@@ -58,12 +58,12 @@ for kk = 1:length (kset)
     assert (err <= 1e-12 * norm (C1,1)) ;
 
     % with burble, to see what GraphBLAS is doing
-    GrB.burble (1) ;
+    % GrB.burble (1) ;
     fprintf ('\nGrB with mxm and descriptor transpose:\n') ;
     C2 = GrB.mxm (A, '+.*', B, d) ;
     fprintf ('\nGrB with A''*B syntax and explicit transpose:\n') ;
     C2 = A'*B ;
-    GrB.burble (0) ;
+    % GrB.burble (0) ;
 
     % MATLAB transpose time
     A = double (A) ;

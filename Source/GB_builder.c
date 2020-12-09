@@ -147,8 +147,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (Thandle != NULL) ;
     ASSERT (nvals >= 0) ;
     ASSERT (scode <= GB_UDT_code) ;
-    ASSERT_TYPE_OK (ttype, "ttype for builder", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (dup, "dup for builder", GB0) ;
+    ASSERT_TYPE_OK (ttype, "ttype for builder", GB2) ;
+    ASSERT_BINARYOP_OK_OR_NULL (dup, "dup for builder", GB2) ;
     ASSERT (I_work_handle != NULL) ;
     ASSERT (J_work_handle != NULL) ;
     ASSERT (S_work_handle != NULL) ;
@@ -261,6 +261,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // happens to be already sorted, then duplicates are detected and the # of
     // vectors in each slice is counted.
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     if (I_work == NULL)
     {
 
@@ -320,6 +321,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (vdim >= 0) ;
             ASSERT (I_input != NULL) ;
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
             int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
@@ -374,6 +376,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 tnz_slice   [tid] = kend - kstart ;
 
             }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
             // collect the report from each thread
             for (int tid = 0 ; tid < nthreads ; tid++)
@@ -433,6 +436,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
             // C is a typecasted GrB_Vector; check only I_input
             //------------------------------------------------------------------
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
             ASSERT (I_input != NULL) ;
             ASSERT (J_input == NULL) ;
@@ -475,6 +479,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     ilast = i ;
                 }
             }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
             // collect the report from each thread
             for (int tid = 0 ; tid < nthreads ; tid++)
@@ -490,29 +495,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
         }
-
-#if 0
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // GB_reduce_to_vector: do not check I_input, assume not sorted
-            //------------------------------------------------------------------
-
-            // GB_reduce_to_vector no longer
-
-            // Many duplicates are possible, since the tuples are being used to
-            // construct a single vector.  For a CSC format, each entry A(i,j)
-            // becomes an (i,aij) tuple, with the vector index j discarded.  All
-            // entries in a single row i are reduced to a single entry in the
-            // vector.  The input is unlikely to be sorted, so do not bother to
-            // check.
-
-            ASSERT (GB_DEAD_CODE) ;
-            GB_memcpy (I_work, I_input, nvals * sizeof (int64_t), nthreads) ;
-            known_sorted = false ;
-        }
-#endif
 
         //----------------------------------------------------------------------
         // determine if duplicates are possible
@@ -533,6 +515,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // If the tuples are known to already be sorted, Step 2 is skipped.  In
     // that case, K_work is NULL (not allocated), which implicitly means that
     // K_work [k] = k for all k = 0:nvals-1.
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
     if (!known_sorted)
     {
@@ -555,11 +538,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // tuple (i,k) or (j,i,k), regardless of where the tuple appears in the
         // list after it is sorted.
         int64_t k ;
+printf ("here %d: %s K_work %p\n", __LINE__, __FILE__, K_work) ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (k = 0 ; k < nvals ; k++)
         { 
             K_work [k] = k ;
         }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     
         // determine # of threads to use in the parallel mergesort
         int nth = GB_MSORT_NTHREADS (nthreads) ;
@@ -574,6 +559,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (nth > 1)
             {
+printf ("nthreads for msort: %d\n", nth) ;
                 W0 = GB_MALLOC (nvals, int64_t) ;
                 W1 = GB_MALLOC (nvals, int64_t) ;
                 W2 = GB_MALLOC (nvals, int64_t) ;
@@ -585,7 +571,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
 
+printf ("here %d: %s: W %p %p %p \n", __LINE__, __FILE__, W0, W1, W2) ;
             GB_msort_3 (J_work, I_work, K_work, W0, W1, W2, nvals, nth) ;
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
         }
         else
@@ -607,13 +595,16 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
             GB_msort_2 (I_work, K_work, W0, W1, nvals, nth) ;
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
         }
 
         GB_FREE (W0) ;
         GB_FREE (W1) ;
         GB_FREE (W2) ;
     }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
     //--------------------------------------------------------------------------
     // STEP 3: count vectors and duplicates in each slice
@@ -674,6 +665,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (!tnvec_and_tnz_slice_computed)
             {
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
                 int tid ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (tid = 0 ; tid < nthreads ; tid++)
@@ -701,6 +693,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
         }
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     }
     else
     {
@@ -715,6 +708,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ilast_slice [tid] = GB_I_WORK (tstart-1) ;
         }
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
@@ -761,6 +755,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             tnvec_slice [tid] = my_tnvec ;
             tnz_slice   [tid] = (tend - tstart) - my_ndupl ;
         }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     }
 
     //--------------------------------------------------------------------------
@@ -784,6 +779,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
     info = GB_new (&T, // always hyper (even vectors), new header
@@ -836,6 +832,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // no duplicates appear
         //----------------------------------------------------------------------
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
@@ -860,6 +857,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
         }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
     }
     else
@@ -869,6 +867,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // it is known that at least one duplicate appears
         //----------------------------------------------------------------------
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
@@ -900,6 +899,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
         }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     }
 
     // log the end of the last vector
@@ -913,6 +913,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // free J_work if it exists
     //--------------------------------------------------------------------------
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     ASSERT (J_work_handle != NULL) ;
     GB_FREE (*J_work_handle) ;
     J_work = NULL ;
@@ -1005,7 +1006,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_Type_code tcode = ttype->code ;
     bool op_2nd ;
 
-    ASSERT_TYPE_OK (ttype, "ttype for build_factorize", GB0) ;
+    ASSERT_TYPE_OK (ttype, "ttype for build_factory", GB2) ;
 
     if (dup == NULL)
     { 
@@ -1044,7 +1045,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         //      z = (dup->ztype) dup (x,y)
         //      T(i,j) = (ttype) z
 
-        ASSERT_BINARYOP_OK (dup, "dup for build_factory", GB0) ;
+        ASSERT_BINARYOP_OK (dup, "dup for build_factory", GB2) ;
         #ifndef GBCOMPACT
         opcode = dup->opcode ;
         #endif
@@ -1080,6 +1081,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // STEP 5: assemble the tuples
     //--------------------------------------------------------------------------
 
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
     bool copy_S_into_T = (nocasting && known_sorted && ndupl == 0) ;
 
     if (copy_S_into_T && S_work != NULL)
@@ -1328,6 +1330,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
         }
     }
+printf ("here %d: %s\n", __LINE__, __FILE__) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -1335,7 +1338,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     GB_FREE_WORK ;
     T->jumbled = false ;
-    ASSERT_MATRIX_OK (T, "T built", GB0) ;
+    ASSERT_MATRIX_OK (T, "T built", GB2) ;
     ASSERT (GB_IS_HYPERSPARSE (T)) ;
     return (GrB_SUCCESS) ;
 }

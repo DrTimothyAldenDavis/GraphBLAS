@@ -166,11 +166,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     bool in_place = (in_place_A || in_place_C) ;
 
-    ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
-    ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
-    ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
-    ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB2) ;
+    ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB2) ;
+    ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB2) ;
+    ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB2) ;
+    ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB2) ;
 
     // get the current sparsity control of A
     float A_hyper_switch = A->hyper_switch ;
@@ -325,7 +325,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE_C ;
             return (info) ;
         }
-        ASSERT_MATRIX_OK (*Chandle, "C transpose empty", GB0) ;
+        ASSERT_MATRIX_OK (*Chandle, "C transpose empty", GB2) ;
         ASSERT (!GB_JUMBLED (*Chandle)) ;
 
     }
@@ -422,7 +422,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 NULL, NULL, 0, nthreads) ;
         }
 
-        ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
+        ASSERT_MATRIX_OK (T, "T dense/bitmap", GB2) ;
         ASSERT (!GB_JUMBLED (T)) ;
 
         // free prior space of A, if transpose is done in-place
@@ -454,7 +454,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE_A_AND_C ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
+        ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB2) ;
 
     }
     else if (avdim == 1)
@@ -466,7 +466,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // transpose a vector (avlen-by-1) into a "row" matrix (1-by-avlen).
         // A must be sorted first.
-        ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB0) ;
+        ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB2) ;
         GB_MATRIX_WAIT (A) ;
         ASSERT (!GB_JUMBLED (A)) ;
 
@@ -595,7 +595,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // transpose a "row" matrix (1-by-avdim) into a vector (avdim-by-1).
         // if A->vlen is 1, all vectors of A are implicitly sorted
-        ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB0) ;
+        ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB2) ;
 
         //----------------------------------------------------------------------
         // allocate workspace, if needed
@@ -845,7 +845,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // transpose a general sparse or hypersparse matrix
         //======================================================================
 
-        ASSERT_MATRIX_OK (A, "A for GB_transpose", GB0) ;
+        ASSERT_MATRIX_OK (A, "A for GB_transpose", GB2) ;
 
         // T=A' with optional typecasting, or T=op(A')
 
@@ -1117,7 +1117,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 return (info) ;
             }
 
-            ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
+            ASSERT_MATRIX_OK (T, "T from bucket", GB2) ;
             ASSERT (GB_JUMBLED_OK (T)) ;
 
             if (in_place_A)
@@ -1174,7 +1174,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     C->hyper_switch = A_hyper_switch ;
     C->sparsity = A_sparsity ;  // transplant sparsity control into C
 
-    ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB2) ;
 
     info = GB_conform (C, Context) ;
     if (info != GrB_SUCCESS)
@@ -1184,7 +1184,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         return (info) ;
     }
 
-    ASSERT_MATRIX_OK (*Chandle, "Chandle conformed in GB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (*Chandle, "Chandle conformed in GB_transpose", GB2) ;
     return (GrB_SUCCESS) ;
 }
 
