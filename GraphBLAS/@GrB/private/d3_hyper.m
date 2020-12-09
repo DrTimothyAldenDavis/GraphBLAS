@@ -7,7 +7,7 @@ clear all
 % to use the auto method selection
 GB_mex_hack (0) ;
 
-diary d3_Dec8a_hyper.txt
+diary d3_Dec8b_hyper.txt
 !hostname
 feature ('numcores') ;
 ver
@@ -38,9 +38,10 @@ for kk = 1:length (kset)
             B = GrB.random (n, k, d) ;
             anvec = GrB.entries (A, 'col') ;
 
-            % ensure A and B are sparse, for fairer comparison w/ GrB:
-            A = GrB (A, 'sparse') ;
-            B = GrB (A, 'sparse') ;
+            % ensure A and B are sparse/hyper, not bitmap, for fairer
+            % comparison w/ GrB:
+            A = GrB (A, 'sparse/hyper') ;
+            B = GrB (A, 'sparse/hyper') ;
 
             % auto
             % warmup
@@ -63,7 +64,6 @@ for kk = 1:length (kset)
             % MATLAB
             A = double (A) ;
             B = double (B) ;
-            GrB.burble (1) ;
             % warmup
             C = A'*B ;
             ntrials = 0 ;
@@ -78,7 +78,6 @@ for kk = 1:length (kset)
                 clear C
             end
             tmatlab = tmatlab / ntrials ;
-            GrB.burble (0) ;
 
             fprintf ('anz %10d bnz %10d n %10d k %4d nvec %4d ', ...
                 nnz (A), nnz (B), n, k, anvec) ;
