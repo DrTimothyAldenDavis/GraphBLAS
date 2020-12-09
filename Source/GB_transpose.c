@@ -36,11 +36,6 @@
 #include "GB_build.h"
 #include "GB_apply.h"
 
-#define GB_FREE_WORK    \
-{                       \
-    GB_FREE (Count) ;   \
-}                       \
-
 #define GB_FREE_ALL ;
 
 // free prior content of A, if transpose is done in-place
@@ -108,7 +103,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GrB_Info info ;
     bool in_place_C, in_place_A ;
     GBURBLE ("(transpose) ") ;
-
     GrB_Matrix A, C ;
 
     if (A_in == NULL)
@@ -218,40 +212,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool Ab_shallow = A->b_shallow ;
 
     int64_t anz = GB_NNZ (A) ;
-    int64_t anz_held = GB_NNZ_HELD (A) ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use here
+    // determine the max number of threads to use
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
-    GBURBLE ("(threads %d) ", nthreads) ;
-
-    //--------------------------------------------------------------------------
-    // allocate workspace
-    //--------------------------------------------------------------------------
-
-    int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-
-    int ntasks = (nth == 1) ? 1 : (8 * nth) ;
-    ntasks = GB_IMIN (ntasks, avdim) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
-    int64_t *GB_RESTRICT Count = NULL ;    // size ntasks+1, if allocated
-
-    if (anz > 0 && avdim != 1 && avlen == 1 && !A_is_packed)
-    {
-        // Count is only used in one case below
-        Count = GB_CALLOC (ntasks+1, int64_t) ;
-        if (Count == NULL)
-        { 
-            // out of memory
-            GB_FREE_C ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-    }
 
     //--------------------------------------------------------------------------
     // determine the type of C and get the unary or binary operator
@@ -342,6 +310,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // quick return if A is empty
         //======================================================================
 
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
 
         // A is empty; create a new empty matrix C, with the new type and
@@ -354,7 +323,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_C ;
-            GB_FREE_WORK ;
             return (info) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "C transpose empty", GB0) ;
@@ -399,7 +367,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -415,6 +382,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // Since A is full, # threads to use is nthreads, and the
         // nworkspaces parameter is not used
+
+        int64_t anz_held = GB_NNZ_HELD (A) ;
+        int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
 
         if (T_cheap)
         {
@@ -454,12 +424,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
         ASSERT (!GB_JUMBLED (T)) ;
 
-        //----------------------------------------------------------------------
-        // free prior space and transplant T into C
-        //----------------------------------------------------------------------
-
-        // Free the prior content of the input matrix, if done in-place.
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
+
+        //----------------------------------------------------------------------
+        // transplace T into C
+        //----------------------------------------------------------------------
 
         // allocate the output matrix C as a full or bitmap matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
@@ -472,7 +442,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
             GB_Matrix_free (&T) ;
-            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -482,7 +451,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
@@ -518,8 +486,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
-            GB_FREE_WORK ;
-            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -555,7 +521,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -605,6 +570,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->i = Ci ;
         C->p = Cp ;
         // fill the vector pointers C->p
+        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (k = 0 ; k <= anz ; k++)
@@ -615,10 +581,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->nzmax = anz ;
         C->magic = GB_MAGIC ;
 
-        //----------------------------------------------------------------------
-        // free prior space
-        //----------------------------------------------------------------------
-
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
 
     }
@@ -634,8 +597,26 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB0) ;
 
         //----------------------------------------------------------------------
-        // allocate space
+        // allocate workspace, if needed
         //----------------------------------------------------------------------
+
+        int ntasks = 0 ;
+        int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
+        int64_t *GB_RESTRICT Count = NULL ;
+        if (nth > 1 && !A_is_hyper)
+        {
+            // ntasks and Count are not needed if nth == 1
+            ntasks = 8 * nth ;
+            ntasks = GB_IMIN (ntasks, avdim) ;
+            ntasks = GB_IMAX (ntasks, 1) ;
+            Count = GB_CALLOC (ntasks+1, int64_t) ;
+            if (Count == NULL)
+            { 
+                // out of memory
+                GB_FREE_C ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+        }
 
         // Allocate the header of C, with no C->p, C->h, C->i, or C->x content,
         // and initialize the type and dimension of C.   If in-place, A->p,
@@ -652,7 +633,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;        // cannot fail if in-place
             GB_FREE_C ;
-            GB_FREE_WORK ;
+            GB_FREE (Count) ;
             return (info) ;
         }
 
@@ -693,7 +674,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
+            GB_FREE (Count) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -851,11 +832,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->magic = GB_MAGIC ;
         ASSERT (!GB_JUMBLED (C)) ;
 
-        //----------------------------------------------------------------------
-        // free prior space
-        //----------------------------------------------------------------------
-
+        // free prior space of A, if transpose done in-place, and free workspace
         GB_FREE_IN_PLACE_A ;
+        GB_FREE (Count) ;
 
     }
     else
@@ -898,7 +877,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -907,6 +885,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // must be done before Chandle is created below, since that step
             // destroys A.
 
+            int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
             GB_extract_vector_list (iwork, A, nthreads) ;
 
             //------------------------------------------------------------------
@@ -929,7 +908,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (!in_place) ;        // cannot fail if in-place
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -980,7 +958,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_FREE (jwork) ;
                 GB_FREE (Swork) ;
                 GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -1093,7 +1070,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_builder
                 GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -1139,7 +1115,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_transpose_bucket
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -1164,12 +1139,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
         }
     }
-
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    GB_FREE_WORK ;
 
     //--------------------------------------------------------------------------
     // get the output matrix

@@ -20,10 +20,6 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 )
 {
 
-//  int hack = GB_Global_hack_get ( ) ;     // see d2.m test script 
-//  if (hack == 10) { GBURBLE ("(dot2:force true) ") ; return (true) ; }
-//  if (hack == 11) { GBURBLE ("(dot2:force false) ") ; return (false) ; }
-
     //--------------------------------------------------------------------------
     // C = A'*B is very efficient if A and/or B are full or bitmap
     //--------------------------------------------------------------------------

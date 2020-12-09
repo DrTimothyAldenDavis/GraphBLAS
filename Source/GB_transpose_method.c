@@ -39,39 +39,6 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     int nthreads = GB_nthreads (anz + avlen, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // TODO::HACK
-    //--------------------------------------------------------------------------
-
-    int64_t hack = GB_Global_hack_get ( ) ;
-    if (hack < 0) 
-    {
-        // bucket method
-        if (nthreads == 1)
-        {
-            // sequential method
-            (*nworkspaces_bucket) = 1 ;
-        }
-        else if (hack == -2)
-        {
-            // non-atomic method
-            (*nworkspaces_bucket) = nthreads ;
-        }
-        else
-        {
-            // atomic method
-            (*nworkspaces_bucket) = 1 ;
-        }
-        (*nthreads_bucket) = nthreads ;
-        return (false) ;      // use bucket
-    }
-    if (hack > 0)
-    {
-        (*nworkspaces_bucket) = 0 ;
-        (*nthreads_bucket) = 0 ;
-        return (true) ;       // use builder
-    }
-
-    //--------------------------------------------------------------------------
     // select between the atomic and non-atomic bucket method
     //--------------------------------------------------------------------------
 

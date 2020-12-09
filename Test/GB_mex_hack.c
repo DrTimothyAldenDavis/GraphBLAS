@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_hack: return global hack flag
+// GB_mex_hack: get or set the global hack flag
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
