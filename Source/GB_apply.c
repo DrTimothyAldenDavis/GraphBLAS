@@ -297,7 +297,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBURBLE ("(transpose-op) ") ;
         info = GB_transpose (&T, T_type, T_is_csc, A,
             op1, op2, scalar, binop_bind1st, Context) ;
-        GB_MATRIX_WAIT (T) ;       // TODO:: is this needed?
+        ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
         // using the T_is_csc format.  The ijflip is handled
         // above.

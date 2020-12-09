@@ -4473,11 +4473,13 @@ void mexFunction
     // #undef FREE_DEEP_COPY
     // #undef GET_DEEP_COPY
 
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+
     expected = GrB_INVALID_OBJECT ;
 
     int64_t *Ah_save = A->h ;
     A->h = NULL ;
-    ERR (GB_Matrix_check (A, "h invalid", G1, NULL)) ;
+    ERR (GB_Matrix_check (A, "h invalid", G3, NULL)) ;
     A->h = Ah_save ;
     OK (GB_Matrix_check (A, "h restored", G1, NULL)) ;
 

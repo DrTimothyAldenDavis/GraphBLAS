@@ -60,10 +60,10 @@ GrB_Matrix gb_typecast          // C = (type) A, where C is deep
         // C = (type) A, with GraphBLAS typecasting if needed.
         OK1 (C, GrB_assign (C, NULL, NULL, A, GrB_ALL, nrows, GrB_ALL, ncols,
             NULL)) ;
-        // TODO:: FIXME, sparsity is mangled
+        // TODO:: FIXME, sparsity is mangled in GB_subassign_24.c
     }
 
-    // HACK
+    // TODO::HACK to fix mangled sparsity
     OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
 
     //--------------------------------------------------------------------------

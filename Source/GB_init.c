@@ -178,10 +178,11 @@ GrB_Info GB_init            // start up GraphBLAS
     if (caller_is_GxB_cuda_init)
     {
         // query the system for the # of GPUs
+        // TODO for GPU: make this a function in the CUDA folder
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
         if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
-        for (int device = 0 ; device < 1 /* HACK: gpu_count */ ; device++)
+        for (int device = 0 ; device < 1 ; device++) // TODO for GPU: gpu_count
         {
             // query the GPU and then warm it up
             if (!GB_Global_gpu_device_properties_get (device))

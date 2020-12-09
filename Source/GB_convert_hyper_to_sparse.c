@@ -36,6 +36,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     ASSERT_MATRIX_OK (A, "A being converted from hyper to sparse", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A from hypersparse to sparse
@@ -43,13 +44,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
     if (GB_IS_HYPERSPARSE (A))
     { 
-
-        //----------------------------------------------------------------------
-        // matrix is hypersparse (not sparse, bitmap, or full)
-        //----------------------------------------------------------------------
-
-        ASSERT (!GB_IS_FULL (A)) ;
-        ASSERT (!GB_IS_BITMAP (A)) ;
 
         //----------------------------------------------------------------------
         // determine the number of threads to use
@@ -226,11 +220,14 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // A is now in sparse form (or left as full or bitmap)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converted to sparse (or left as-is)", GB0) ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

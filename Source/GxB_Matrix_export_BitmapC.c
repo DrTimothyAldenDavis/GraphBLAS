@@ -53,11 +53,16 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     }
 
     GB_OK (GB_convert_any_to_bitmap (*A, Context)) ;
-    ASSERT (GB_IS_BITMAP (*A)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_BITMAP (*A)) ;
+    ASSERT (((*A)->is_csc)) ;
+    ASSERT (!GB_ZOMBIES (*A)) ;
+    ASSERT (!GB_JUMBLED (*A)) ;
+    ASSERT (!GB_PENDING (*A)) ;
 
     int sparsity ;
     bool is_csc ;

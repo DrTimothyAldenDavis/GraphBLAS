@@ -38,24 +38,24 @@ for k1 = 1:length (types)
                 for A_is_csc   = 0:1
                 A.is_hyper = A_is_hyper ;
                 A.is_csc   = A_is_csc   ;
-
                 for i = 0:m-1
+                    iu = uint64 (i) ;
                     for j = 0:n-1
-                        x1 = GB_mex_Matrix_extractElement  (A, uint64(i), uint64(j), xtype) ;
+                        ju = uint64 (j) ;
+                        x1 = GB_mex_Matrix_extractElement  (A, iu, ju, xtype) ;
                         x2 = GB_spec_Matrix_extractElement (A, i, j, xtype) ;
                         assert (isequal (x1,x2))
                     end
                 end
-
                 end
                 end
 
                 for i = 0:(m*n)-1
-                    x1 = GB_mex_Vector_extractElement  (B, uint64(i), xtype) ;
-                    x2 = GB_spec_Vector_extractElement (B, uint64(i), xtype) ;
+                    iu = uint64 (i) ;
+                    x1 = GB_mex_Vector_extractElement  (B, iu, xtype) ;
+                    x2 = GB_spec_Vector_extractElement (B, i, xtype) ;
                     assert (isequal (x1,x2))
                 end
-
             end
         end
     end

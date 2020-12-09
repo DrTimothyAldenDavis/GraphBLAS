@@ -57,16 +57,20 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     }
 
     //--------------------------------------------------------------------------
-    // ensure the vector is sparse CSC
+    // ensure the vector is sparse
     //--------------------------------------------------------------------------
 
-    ASSERT ((*v)->is_csc) ;
     GB_OK (GB_convert_any_to_sparse ((GrB_Matrix) *v, Context)) ;
-    ASSERT (GB_IS_SPARSE (*v)) ;
 
     //--------------------------------------------------------------------------
     // export the vector
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_SPARSE (*v)) ;
+    ASSERT ((*v)->is_csc) ;
+    ASSERT (!GB_ZOMBIES (*v)) ;
+    ASSERT (GB_IMPLIES (jumbled == NULL, !GB_JUMBLED (*v))) ;
+    ASSERT (!GB_PENDING (*v)) ;
 
     int sparsity ;
     bool is_csc ;

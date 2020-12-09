@@ -89,6 +89,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // The full and bitmap cases are handled in GB_transpose.
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     int64_t *GB_RESTRICT A_slice = NULL ;          // size nthreads+1
     int64_t *GB_RESTRICT *Workspaces = NULL ;      // size nworkspaces
@@ -196,8 +197,10 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
         // Only requires a single int64 workspace of size vlen, shared by all
         // threads.  Scales well, but requires atomics.  If the # of rows is
-        // very small and the average row degree is high, this can be very
-        // slow.  The resulting C matrix is jumbled.
+        // very small and the average row degree is high, this can be very slow
+        // because of contention on the atomic workspace.  Otherwise, it is
+        // typically faster than the non-atomic method.  The resulting C matrix
+        // is jumbled.
 
         // compute the row counts of A.  No need to scan the A->p pointers
         int64_t *GB_RESTRICT workspace = Workspaces [0] ;

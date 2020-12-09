@@ -29,7 +29,7 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     // finish all pending work on the matrix
     //--------------------------------------------------------------------------
 
-    if (GB_PENDING_OR_ZOMBIES (*A) || GB_JUMBLED (*A))
+    if (GB_ANY_PENDING_WORK (*A))
     { 
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Matrix_wait") ;

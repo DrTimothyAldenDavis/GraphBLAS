@@ -46,7 +46,6 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     // ensure the matrix is sparse CSR
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is in CSR format
     if ((*A)->is_csc)
     { 
         // A = A', done in-place, to put A in CSR format
@@ -54,9 +53,6 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
         GB_OK (GB_transpose (NULL, NULL, false, *A,
             NULL, NULL, NULL, false, Context)) ;
     }
-
-    GB_OK (GB_convert_any_to_sparse (*A, Context)) ;
-    ASSERT (GB_IS_SPARSE (*A)) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -74,8 +70,20 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     }
 
     //--------------------------------------------------------------------------
+    // ensure the matrix is sparse
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_convert_any_to_sparse (*A, Context)) ;
+
+    //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_SPARSE (*A)) ;
+    ASSERT (!((*A)->is_csc)) ;
+    ASSERT (!GB_ZOMBIES (*A)) ;
+    ASSERT (GB_IMPLIES (jumbled == NULL, !GB_JUMBLED (*A))) ;
+    ASSERT (!GB_PENDING (*A)) ;
 
     int sparsity ;
     bool is_csc ;

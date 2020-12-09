@@ -930,7 +930,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            I_work = GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
+            GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i

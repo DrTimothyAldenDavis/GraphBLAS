@@ -34,17 +34,17 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (x) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    if (GB_PENDING_OR_ZOMBIES (A))
+    // delete any lingering zombies, assemble any pending tuples, and unjumble
+    if (GB_ANY_PENDING_WORK (A))
     { 
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_extractElement") ;
         GB_OK (GB_Matrix_wait (A, Context)) ;
-        ASSERT (!GB_ZOMBIES (A)) ;
-        ASSERT (!GB_PENDING (A)) ;
         GB_BURBLE_END ;
     }
+
+    ASSERT (!GB_ANY_PENDING_WORK (A)) ;
 
     // look for index i in vector j
     int64_t i, j, nrows, ncols ;

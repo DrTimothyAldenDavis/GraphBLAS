@@ -42,6 +42,8 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     // allocate new space for A->x
     //--------------------------------------------------------------------------
 
+    // TODO:: do the GB_phbix_free first
+
     #ifdef GB_DEBUG
     // in debug mode, calloc the matrix so it can be safely printed below
     Ax_new = GB_CALLOC (anzmax * A->type->size, GB_void) ;    // BIG (debug)
@@ -74,6 +76,9 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
 
     ASSERT_MATRIX_OK (A, "A converted to full (values all zero)", GB0) ;
     ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -31,20 +31,19 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     GB_RETURN_IF_NULL_OR_FAULTY (S) ;
     GB_RETURN_IF_NULL (x) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    if (GB_PENDING_OR_ZOMBIES (S))
+    // delete any lingering zombies, assemble any pending tuples, and unjumble
+    if (GB_ANY_PENDING_WORK (S))
     { 
-        // extract scalar with pending tuples or zombies.  This may be dead
-        // code since a scalar will normally by a full 1-by-1 matrix, and
-        // thus cannot have any zombies or pending tuples.
+        // extract scalar with pending tuples or zombies.  It cannot be
+        // actually jumbled, but S->jumbled might true anyway.
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GxB_Scalar_extractElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) S, Context)) ;
-        ASSERT (!GB_ZOMBIES (S)) ;
-        ASSERT (!GB_PENDING (S)) ;
         GB_BURBLE_END ;
     }
+
+    ASSERT (!GB_ANY_PENDING_WORK (S)) ;
 
     // GB_XCODE and S must be compatible
     GB_Type_code scode = S->type->code ;

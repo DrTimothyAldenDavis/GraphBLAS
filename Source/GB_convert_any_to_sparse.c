@@ -58,6 +58,9 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
 
     ASSERT_MATRIX_OK (A, "A to sparse", GB0) ;
     ASSERT (GB_IS_SPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

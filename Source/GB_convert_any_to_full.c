@@ -65,5 +65,8 @@ void GB_convert_any_to_full     // convert any matrix to full
 
     ASSERT_MATRIX_OK (A, "A converted from any to full", GB0) ;
     ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 }
 

@@ -52,11 +52,16 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 
     ASSERT ((*v)->is_csc) ;
     GB_convert_any_to_full ((GrB_Matrix) *v) ;
-    ASSERT (GB_IS_FULL (*v)) ;
 
     //--------------------------------------------------------------------------
     // export the vector
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_FULL (*v)) ;
+    ASSERT ((*v)->is_csc) ;
+    ASSERT (!GB_ZOMBIES (*v)) ;
+    ASSERT (!GB_JUMBLED (*v)) ;
+    ASSERT (!GB_PENDING (*v)) ;
 
     int sparsity ;
     bool is_csc ;

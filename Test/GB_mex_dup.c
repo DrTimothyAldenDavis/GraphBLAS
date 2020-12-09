@@ -62,7 +62,6 @@ void mexFunction
         // copy C with the same type as A
         if (method == 0)
         {
-            // printf ("dup\n") ;
             METHOD (GrB_Matrix_dup (&C, A)) ;
         }
         else
@@ -70,7 +69,6 @@ void mexFunction
             // try another method, just for testing (see User Guide)
 
             // C = create an exact copy of A, just like GrB_Matrix_dup
-            // printf ("tran dup\n") ;
             GrB_Type type ;
             GrB_Index nrows, ncols ;
 
@@ -94,7 +92,6 @@ void mexFunction
 
             GET_DEEP_COPY ;
             METHOD (GrB_transpose (C, NULL, NULL, A, desc)) ;
-
             #undef GET_DEEP_COPY
             #undef FREE_DEEP_COPY
 
@@ -109,7 +106,6 @@ void mexFunction
         }
 
         // C = (ctype) A
-        // printf ("cast\n") ;
         GrB_Index nrows, ncols ;
         #define GET_DEEP_COPY                               \
         {                                                   \

@@ -101,9 +101,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    bool in_place_C, in_place_A ;
     GBURBLE ("(transpose) ") ;
     GrB_Matrix A, C ;
+    bool in_place_C, in_place_A ;
 
     if (A_in == NULL)
     { 
@@ -338,7 +338,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // A is packed if it is either: (a) bitmap, (b) full, or (c) sparse or
         // hypersparse with all entries present, no zombies, no pending tuples,
-        // and not jumbled.
+        // and not jumbled.  For (c), the matrix A can be treated as if it was
+        // full, and the pattern (A->p, A->h, and A->i) can be ignored.
 
         int sparsity = (A_is_bitmap) ? GxB_BITMAP : GxB_FULL ;
         bool T_cheap =                  // T can be done quickly if:
@@ -1090,8 +1091,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // This method does not operate on the matrix in-place, so it must
             // create a temporary matrix T.  Then the input matrix is freed and
             // replaced with the new matrix T.
-
-            ASSERT (!A_is_hyper) ;
 
             // T is also typecasted to ctype, if not NULL
             GrB_Matrix T = NULL ;

@@ -50,11 +50,16 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
 
     ASSERT ((*v)->is_csc) ;
     GB_OK (GB_convert_any_to_bitmap ((GrB_Matrix) *v, Context)) ;
-    ASSERT (GB_IS_BITMAP (*v)) ;
 
     //--------------------------------------------------------------------------
     // export the vector
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_BITMAP (*v)) ;
+    ASSERT ((*v)->is_csc) ;
+    ASSERT (!GB_ZOMBIES (*v)) ;
+    ASSERT (!GB_JUMBLED (*v)) ;
+    ASSERT (!GB_PENDING (*v)) ;
 
     int sparsity ;
     bool is_csc ;

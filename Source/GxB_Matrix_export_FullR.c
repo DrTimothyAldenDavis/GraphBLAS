@@ -62,11 +62,16 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     }
 
     GB_convert_any_to_full (*A) ;
-    ASSERT (GB_IS_FULL (*A)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_FULL (*A)) ;
+    ASSERT (!((*A)->is_csc)) ;
+    ASSERT (!GB_ZOMBIES (*A)) ;
+    ASSERT (!GB_JUMBLED (*A)) ;
+    ASSERT (!GB_PENDING (*A)) ;
 
     int sparsity ;
     bool is_csc ;

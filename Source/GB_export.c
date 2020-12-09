@@ -61,7 +61,8 @@ GrB_Info GB_export      // export a matrix in any format
     GB_RETURN_IF_NULL (type) ;
     GB_RETURN_IF_NULL (vlen) ;
     GB_RETURN_IF_NULL (vdim) ;
-    GB_RETURN_IF_NULL (Ax) ; GB_RETURN_IF_NULL (Ax_size) ;
+    GB_RETURN_IF_NULL (Ax) ;
+    GB_RETURN_IF_NULL (Ax_size) ;
 
     int s = GB_sparsity (*A) ;
     switch (s)

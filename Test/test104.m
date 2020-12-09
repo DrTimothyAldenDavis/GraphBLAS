@@ -18,8 +18,8 @@ for m = [0 1 5 100]
             A = GB_spec_random (m, n, d) ;
             nz = nnz (A.pattern) ;
             is_sparse = (nz < m*n) ;
+            fprintf ('.') ;
             for fmt_matrix = fmts
-                fprintf ('.') ;
                 for fmt_export = 0:11
                     try
                         C = GB_mex_export_import (A, fmt_matrix, fmt_export) ;
@@ -30,7 +30,12 @@ for m = [0 1 5 100]
                         ok = is_sparse && ...
                             (fmt_export == 6 || fmt_export == 7 || ...
                              fmt_export == -6 || fmt_export == -7) ;
-                        assert (ok) ;
+                        if (~ok)
+                            % this should not have failed
+                            me
+                            me.message
+                            assert (false) ;
+                        end
                     end
                 end
             end

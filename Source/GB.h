@@ -684,7 +684,7 @@ GB_task_struct ;
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        TaskList = GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ; \
+        GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ;            \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -841,10 +841,10 @@ void GB_free_memory
     void *p                 // pointer to allocated block of memory to free
 ) ;
 
-#define GB_FREE(p)                                                            \
-{                                                                             \
-    GB_free_memory ((void *) p) ;                                             \
-    (p) = NULL ;                                                              \
+#define GB_FREE(p)                                          \
+{                                                           \
+    GB_free_memory ((void *) p) ;                           \
+    (p) = NULL ;                                            \
 }
 
 #define GB_CALLOC(n,type) (type *) GB_calloc_memory (n, sizeof (type))
@@ -1220,45 +1220,32 @@ GrB_Info GB_unjumble        // unjumble a matrix
 // true if a matrix is allowed to be jumbled
 #define GB_JUMBLED_OK(A) (GB_JUMBLED (A) || !GB_JUMBLED (A))
 
-// do all pending work:  zombies, pending tuples, and unjumble
-#define GB_MATRIX_WAIT(A)                                               \
+// true if a matrix has pending tuples, zombies, or is jumbled
+#define GB_ANY_PENDING_WORK(A) \
+    (GB_PENDING (A) || GB_ZOMBIES (A) || GB_JUMBLED (A))
+
+// wait if condition holds
+#define GB_WAIT_IF(condition,A)                                         \
 {                                                                       \
-    if (GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A))                    \
+    if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
     }                                                                   \
 }
 
+// do all pending work:  zombies, pending tuples, and unjumble
+#define GB_MATRIX_WAIT(A) GB_WAIT_IF (GB_ANY_PENDING_WORK (A), A)
+
 // do all pending work if pending tuples; zombies and jumbled are OK
-#define GB_MATRIX_WAIT_IF_PENDING(A)                                    \
-{                                                                       \
-    if (GB_PENDING (A))                                                 \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+#define GB_MATRIX_WAIT_IF_PENDING(A) GB_WAIT_IF (GB_PENDING (A), A)
 
 // delete zombies and assemble any pending tuples; jumbled is O
 #define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
-{                                                                       \
-    if (GB_PENDING_OR_ZOMBIES (A))                                      \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+    GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A)
 
 // ensure A is not jumbled
-#define GB_MATRIX_WAIT_IF_JUMBLED(A)                                    \
-{                                                                       \
-    if (GB_JUMBLED (A))                                                 \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+#define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A)
 
 // true if a matrix has no entries; zombies OK
 #define GB_IS_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))

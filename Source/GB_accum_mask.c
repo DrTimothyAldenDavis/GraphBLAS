@@ -199,7 +199,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         #endif
         T = (*Thandle) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
-        GB_MATRIX_WAIT (T) ;    // TODO:: is this needed?
         ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
 
@@ -220,7 +219,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // use the transpose mask
             M = MT ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            GB_MATRIX_WAIT (M) ;    // TODO:: is this needed?
             #if GB_BURBLE
             M_transposed = true ;
             #endif

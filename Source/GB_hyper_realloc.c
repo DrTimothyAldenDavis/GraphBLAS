@@ -43,8 +43,8 @@ GrB_Info GB_hyper_realloc
 
         // change the size of A->h and A->p
         bool ok1 = true, ok2 = true ;
-        A->p = GB_REALLOC (A->p, plen_new+1, plen_old+1, int64_t, &ok1) ;
-        A->h = GB_REALLOC (A->h, plen_new,   plen_old,   int64_t, &ok2) ;
+        GB_REALLOC (A->p, plen_new+1, plen_old+1, int64_t, &ok1) ;
+        GB_REALLOC (A->h, plen_new,   plen_old,   int64_t, &ok2) ;
         bool ok = ok1 && ok2 ;
 
         // always succeeds if the space shrinks

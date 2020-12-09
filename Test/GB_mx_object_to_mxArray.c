@@ -48,12 +48,16 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT_MATRIX_OK (C, name, GB0) ;
 
     // C must not be shallow
-    ASSERT (!C->i_shallow && !C->x_shallow && !C->p_shallow && !C->h_shallow) ;
+    ASSERT (!C->p_shallow) ;
+    ASSERT (!C->h_shallow) ;
+    ASSERT (!C->b_shallow) ;
+    ASSERT (!C->i_shallow) ;
+    ASSERT (!C->x_shallow) ;
 
     // make sure there are no pending computations
-    bool C_is_full = GB_IS_FULL (C) ;
-    if (C_is_full)
+    if (GB_IS_FULL (C) || GB_IS_BITMAP (C))
     {
+        ASSERT (!GB_JUMBLED (C)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
     }
@@ -86,9 +90,17 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL) ;
     }
 
+    // setting to CSC may have transposed the matrix
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    GrB_Matrix_wait (&C) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    cnz = GB_NNZ (C) ;
+
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
+    ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_IS_HYPERSPARSE (C)) ;
     ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (GB_IS_SPARSE (C) || GB_IS_FULL (C)) ;
     ASSERT (C->is_csc) ;
 
     // MATLAB doesn't want NULL pointers in its empty matrices
@@ -99,7 +111,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         C->x_shallow = false ;
     }
 
-    C_is_full = (sparsity == GxB_FULL) ;
+    bool C_is_full = (sparsity == GxB_FULL) ;
     if (!C_is_full)
     {
         // MATLAB doesn't want NULL pointers in its empty sparse matrices

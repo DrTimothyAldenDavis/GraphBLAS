@@ -169,6 +169,9 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
     ASSERT (anz == GB_NNZ (A)) ;
     ASSERT_MATRIX_OK (A, "A conv to hypersparse (or left full/bitmap)", GB0) ;
     ASSERT (!GB_IS_SPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

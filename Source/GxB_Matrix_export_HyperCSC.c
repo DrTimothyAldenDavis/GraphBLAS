@@ -46,10 +46,9 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is hypersparse CSC
+    // ensure the matrix is in CSC format
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is in CSC format
     if (!((*A)->is_csc))
     { 
         // A = A', done in-place, to put A in CSC format
@@ -57,9 +56,6 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
         GB_OK (GB_transpose (NULL, NULL, true, *A,
             NULL, NULL, NULL, false, Context)) ;
     }
-
-    GB_OK (GB_convert_any_to_hyper (*A, Context)) ;
-    ASSERT (GB_IS_HYPERSPARSE (*A)) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -77,8 +73,20 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     }
 
     //--------------------------------------------------------------------------
+    // ensure the matrix is hypersparse
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_convert_any_to_hyper (*A, Context)) ;
+
+    //--------------------------------------------------------------------------
     // export the matrix
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_HYPERSPARSE (*A)) ;
+    ASSERT ((*A)->is_csc) ;
+    ASSERT (!GB_ZOMBIES (*A)) ;
+    ASSERT (GB_IMPLIES (jumbled == NULL, !GB_JUMBLED (*A))) ;
+    ASSERT (!GB_PENDING (*A)) ;
 
     int sparsity ;
     bool is_csc ;

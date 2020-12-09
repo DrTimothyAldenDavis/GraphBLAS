@@ -60,6 +60,9 @@ GrB_Info GB_convert_any_to_hyper // convert to hypersparse
 
     ASSERT_MATRIX_OK (A, "A to hypersparse", GB0) ;
     ASSERT (GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -175,7 +175,7 @@ static inline bool GB_shall_block
 )
 { 
 
-    if (!(GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A)))
+    if (!GB_ANY_PENDING_WORK (A))
     { 
         // no pending work, so no need to block
         return (false) ;
