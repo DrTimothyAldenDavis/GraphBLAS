@@ -1048,3 +1048,33 @@ anz      65497 bnz      65505 n     262144 k  200 nvec  200 tdot     0.076302 ts
  [ GrB_mxm (rowdeg 3.9609 coldeg 5191.63 anz+bnz 2.07674e+06 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 262144-by-200, double, 1038326 entries) (S=S*S) axbwork 4.11266e+06 (nthreads 4 coarse: 8) 0.0902 sec ]
 anz    1038326 bnz    1038415 n     262144 k  200 nvec  200 tdot     0.405682 tsax     0.086569 tdot/tsax     4.686200 tauto:     0.080324 auto best
 
+ [ GrB_mxm C=A'*B, dot_product (B=B'*B) 16.7 sec ]
+anz   14355681 bnz   14355454 n     262144 k  200 nvec  200 tdot    15.852729 tsax    16.554302 tdot/tsax     0.957620 tauto:    15.541668 auto best
+
+ [ GrB_mxm (rowdeg 0.0624886 coldeg 327.62 anz+bnz 131053 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1048576-by-200, double, 65524 entries) (S=H*S) axbwork 4221 (nthreads 1 coarse: 1) 0.0172 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 4.6e-05 sec ]
+anz      65524 bnz      65529 n    1048576 k  200 nvec  200 tdot     0.076228 tsax     0.016741 tdot/tsax     4.553463 tauto:     0.017148 auto ~
+
+ [ GrB_mxm (rowdeg 0.997469 coldeg 5229.61 anz+bnz 2.09186e+06 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-200, double, 1045922 entries) (S=S*S) axbwork 1.04379e+06 (nthreads 4 coarse: 8) 0.0992 sec ]
+anz    1045922 bnz    1045933 n    1048576 k  200 nvec  200 tdot     0.372115 tsax     0.093199 tdot/tsax     3.992714 tauto:     0.102661 auto   1.1015 
+
+ [ GrB_mxm (rowdeg 15.3776 coldeg 80623.1 anz+bnz 3.22477e+07 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 4) C=A'*B, saxpy (transposed A: 1048576-by-200, double, 16124627 entries) (S=S*S) axbwork 2.47933e+08 (nthreads 4 coarse: 8) 1.76 sec ]
+anz   16124627 bnz   16123040 n    1048576 k  200 nvec  200 tdot     7.506851 tsax     2.059261 tdot/tsax     3.645410 tauto:     1.773657 auto best
+
+ [ GrB_mxm (rowdeg 0.0156243 coldeg 327.665 anz+bnz 131063 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4194304-by-200, double, 65533 entries) (S=H*S) axbwork 1034 (nthreads 1 coarse: 1) 0.0154 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 4.01e-05 sec ]
+anz      65533 bnz      65530 n    4194304 k  200 nvec  200 tdot     0.061089 tsax     0.016750 tdot/tsax     3.647197 tauto:     0.015827 auto best
+
+ [ GrB_mxm (rowdeg 0.249839 coldeg 5239.51 anz+bnz 2.09586e+06 cnz 40000) (saxpy C=(A')*B) (transpose) (threads 4) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-200, double, 1047901 entries) (S=S*S) axbwork 261234 (nthreads 3 coarse: 6) (sparse to bitmap) 0.113 sec ]
+anz    1047901 bnz    1047960 n    4194304 k  200 nvec  200 tdot     0.331744 tsax     0.105598 tdot/tsax     3.141560 tauto:     0.102900 auto best
+
+{Operation terminated by user during GrB.mxm (line 90)
+
+
+In d2 (line 76)
+                C = GrB.mxm (A, '+.*', B, desc) ;
+} 
+clear all
+
+
+d2

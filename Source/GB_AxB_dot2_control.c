@@ -20,10 +20,9 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 )
 {
 
-    // TODO:: HACK
-    int hack = GB_Global_hack_get ( ) ;
-    if (hack == 10) { GBURBLE ("(dot2:force true) ") ; return (true) ; }
-    if (hack == 11) { GBURBLE ("(dot2:force false) ") ; return (false) ; }
+//  int hack = GB_Global_hack_get ( ) ;     // see d2.m test script 
+//  if (hack == 10) { GBURBLE ("(dot2:force true) ") ; return (true) ; }
+//  if (hack == 11) { GBURBLE ("(dot2:force false) ") ; return (false) ; }
 
     //--------------------------------------------------------------------------
     // C = A'*B is very efficient if A and/or B are full or bitmap
@@ -60,8 +59,8 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     double cnz = (anvec * bnvec) ;  // size of the C bitmap
     double row_degree = anz / avlen ;
     double col_degree = anz / anvec ;
-    GBURBLE ("(rowdeg %g coldeg %g ", row_degree, col_degree) ; // TODO::remove
-    GBURBLE ("anz+bnz %g cnz %g) ", anz+bnz, cnz) ; // TODO::remove
+//  GBURBLE ("(rowdeg %g coldeg %g ", row_degree, col_degree) ;
+//  GBURBLE ("anz+bnz %g cnz %g) ", anz+bnz, cnz) ;
 
     if (cnz > anz + bnz)
     { 

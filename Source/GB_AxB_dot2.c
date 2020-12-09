@@ -7,9 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// The C<M>=A'*B dot product when C is sparse is computed by GB_AxB_dot3.
 // This method always constructs C as bitmap; it then converts C to sparse or
-// hyper if A or B are hypersparse.
+// hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C is sparse
+// is computed by GB_AxB_dot3.  This method handles the case when C is bitmap.
+
+// TODO:  this is slower than it could be if A and B are both bitmap, when
+// A->vlen is large, and likely if A and B are both either bitmap or full.
+// This is because the inner loop is a simple full/bitmap dot product, across
+// the entire input vectors.  No tiling is used, so cache performance is not
+// as good as it could be.  For large problems, C=(A')*B is faster with
+// the saxpy3 method, as compared to this method with C=A'*B.
 
 #include "GB_mxm.h"
 #include "GB_subref.h"

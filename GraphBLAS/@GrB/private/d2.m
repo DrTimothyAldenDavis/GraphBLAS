@@ -2,7 +2,7 @@
 % dot2 rule
 
 clear all
-diary d2_Dec8e_slash.txt
+diary d2_Dec8f_slash.txt
 !hostname
 feature ('numcores') ;
 desc.in0 = 'transpose' ;
