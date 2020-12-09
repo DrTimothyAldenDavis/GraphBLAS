@@ -61,23 +61,28 @@ for kk = 1:length (kset)
             end
             tauto = tauto / ntrials ;
 
-            % MATLAB
-            A = double (A) ;
-            B = double (B) ;
-            % warmup
-            C = A'*B ;
-            ntrials = 0 ;
-            tstart = tic ;
-            while (1)
+            try
+                % MATLAB
+                A = double (A) ;
+                B = double (B) ;
+                % warmup
                 C = A'*B ;
-                ntrials = ntrials + 1 ;
-                tmatlab = toc (tstart) ;
-                if (tmatlab > 0.1)
-                    break ;
+                ntrials = 0 ;
+                tstart = tic ;
+                while (1)
+                    C = A'*B ;
+                    ntrials = ntrials + 1 ;
+                    tmatlab = toc (tstart) ;
+                    if (tmatlab > 0.1)
+                        break ;
+                    end
+                    clear C
                 end
-                clear C
+                tmatlab = tmatlab / ntrials ;
+            catch me
+                fprintf ('MATLAB failed: %s\n', me.message) ;
+                tmatlab = inf ;
             end
-            tmatlab = tmatlab / ntrials ;
 
             fprintf ('anz %10d bnz %10d n %10d k %4d nvec %4d ', ...
                 nnz (A), nnz (B), n, k, anvec) ;

@@ -1,0 +1,1263 @@
+hypersparse.cs.tamu.edu
+MATLAB detected: 20 physical cores.
+MATLAB detected: 40 logical cores.
+MATLAB was assigned: 40 logical cores by the OS.
+MATLAB is using: 20 logical cores.
+MATLAB is not using all logical cores because hyper-threading is enabled.
+------------------------------------------------------------------------------------------------------
+MATLAB Version: 9.4.0.813654 (R2018a)
+MATLAB License Number: 40874530
+Operating System: Linux 4.15.0-112-generic #113~16.04.1-Ubuntu SMP Fri Jul 10 04:37:08 UTC 2020 x86_64
+Java Version: Java 1.8.0_144-b01 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+------------------------------------------------------------------------------------------------------
+MATLAB                                                Version 9.4         (R2018a)
+Simulink                                              Version 9.1         (R2018a)
+Aerospace Blockset                                    Version 3.21        (R2018a)
+Aerospace Toolbox                                     Version 2.21        (R2018a)
+Antenna Toolbox                                       Version 3.1         (R2018a)
+Bioinformatics Toolbox                                Version 4.10        (R2018a)
+Communications System Toolbox                         Version 6.6         (R2018a)
+Computer Vision System Toolbox                        Version 8.1         (R2018a)
+Control System Toolbox                                Version 10.4        (R2018a)
+Curve Fitting Toolbox                                 Version 3.5.7       (R2018a)
+DSP System Toolbox                                    Version 9.6         (R2018a)
+Database Toolbox                                      Version 8.1         (R2018a)
+Datafeed Toolbox                                      Version 5.7         (R2018a)
+Econometrics Toolbox                                  Version 5.0         (R2018a)
+Embedded Coder                                        Version 7.0         (R2018a)
+Financial Instruments Toolbox                         Version 2.7         (R2018a)
+Financial Toolbox                                     Version 5.11        (R2018a)
+Fixed-Point Designer                                  Version 6.1         (R2018a)
+Fuzzy Logic Toolbox                                   Version 2.3.1       (R2018a)
+Global Optimization Toolbox                           Version 3.4.4       (R2018a)
+Image Acquisition Toolbox                             Version 5.4         (R2018a)
+Image Processing Toolbox                              Version 10.2        (R2018a)
+Instrument Control Toolbox                            Version 3.13        (R2018a)
+MATLAB Coder                                          Version 4.0         (R2018a)
+MATLAB Compiler                                       Version 6.6         (R2018a)
+MATLAB Compiler SDK                                   Version 6.5         (R2018a)
+MATLAB Report Generator                               Version 5.4         (R2018a)
+Mapping Toolbox                                       Version 4.6         (R2018a)
+Model Predictive Control Toolbox                      Version 6.1         (R2018a)
+Neural Network Toolbox                                Version 11.1        (R2018a)
+Optimization Toolbox                                  Version 8.1         (R2018a)
+Parallel Computing Toolbox                            Version 6.12        (R2018a)
+Partial Differential Equation Toolbox                 Version 3.0         (R2018a)
+Phased Array System Toolbox                           Version 3.6         (R2018a)
+RF Blockset                                           Version 7.0         (R2018a)
+RF Toolbox                                            Version 3.4         (R2018a)
+Robotics System Toolbox                               Version 2.0         (R2018a)
+Robust Control Toolbox                                Version 6.4.1       (R2018a)
+Signal Processing Toolbox                             Version 8.0         (R2018a)
+SimBiology                                            Version 5.8         (R2018a)
+SimEvents                                             Version 5.4         (R2018a)
+Simscape                                              Version 4.4         (R2018a)
+Simscape Driveline                                    Version 2.14        (R2018a)
+Simscape Fluids                                       Version 2.4         (R2018a)
+Simscape Multibody                                    Version 5.2         (R2018a)
+Simscape Power Systems                                Version 6.9         (R2018a)
+Simulink 3D Animation                                 Version 8.0         (R2018a)
+Simulink Check                                        Version 4.1         (R2018a)
+Simulink Coder                                        Version 8.14        (R2018a)
+Simulink Control Design                               Version 5.1         (R2018a)
+Simulink Coverage                                     Version 4.1         (R2018a)
+Simulink Design Optimization                          Version 3.4         (R2018a)
+Simulink Report Generator                             Version 5.4         (R2018a)
+Simulink Requirements                                 Version 1.1         (R2018a)
+Stateflow                                             Version 9.1         (R2018a)
+Statistics and Machine Learning Toolbox               Version 11.3        (R2018a)
+Symbolic Math Toolbox                                 Version 8.1         (R2018a)
+System Identification Toolbox                         Version 9.8         (R2018a)
+Trading Toolbox                                       Version 3.4         (R2018a)
+Vehicle Network Toolbox                               Version 4.0         (R2018a)
+Vision HDL Toolbox                                    Version 1.6         (R2018a)
+Wavelet Toolbox                                       Version 5.0         (R2018a)
+
+k: 1
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.631714 coldeg 41400 anz+bnz 82800 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000816 sec ]
+anz      41400 bnz      41400 n      65536 k    1 nvec    1 tmatlab     0.000071 tgrb     0.000266 tmatlab/tgrb     0.268309 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.221378 coldeg 58033 anz+bnz 116066 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000473 sec ]
+anz      58033 bnz      58033 n     262144 k    1 nvec    1 tmatlab     0.000088 tgrb     0.000285 tmatlab/tgrb     0.307796 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0605679 coldeg 63510 anz+bnz 127020 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000489 sec ]
+anz      63510 bnz      63510 n    1048576 k    1 nvec    1 tmatlab     0.000132 tgrb     0.000327 tmatlab/tgrb     0.402185 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.632178 coldeg 662887 anz+bnz 1.32577e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00201 sec ]
+anz     662887 bnz     662887 n    1048576 k    1 nvec    1 tmatlab     0.000844 tgrb     0.001776 tmatlab/tgrb     0.474881 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0155087 coldeg 65048 anz+bnz 130096 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000492 sec ]
+anz      65048 bnz      65048 n    4194304 k    1 nvec    1 tmatlab     0.000098 tgrb     0.000295 tmatlab/tgrb     0.330758 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.221177 coldeg 927685 anz+bnz 1.85537e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00299 sec ]
+anz     927685 bnz     927685 n    4194304 k    1 nvec    1 tmatlab     0.001197 tgrb     0.003093 tmatlab/tgrb     0.386857 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0038985 coldeg 65406 anz+bnz 130812 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000503 sec ]
+anz      65406 bnz      65406 n   16777216 k    1 nvec    1 tmatlab     0.000098 tgrb     0.000296 tmatlab/tgrb     0.329371 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.060595 coldeg 1.01662e+06 anz+bnz 2.03323e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00285 sec ]
+anz    1016615 bnz    1016615 n   16777216 k    1 nvec    1 tmatlab     0.001317 tgrb     0.003380 tmatlab/tgrb     0.389505 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.631924 coldeg 1.06019e+07 anz+bnz 2.12038e+07 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0328 sec ]
+anz   10601923 bnz   10601923 n   16777216 k    1 nvec    1 tmatlab     0.027237 tgrb     0.033749 tmatlab/tgrb     0.807062 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976101 coldeg 65505 anz+bnz 131010 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000486 sec ]
+anz      65505 bnz      65505 n   67108864 k    1 nvec    1 tmatlab     0.000099 tgrb     0.000306 tmatlab/tgrb     0.323223 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0155043 coldeg 1.04047e+06 anz+bnz 2.08095e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00307 sec ]
+anz    1040473 bnz    1040473 n   67108864 k    1 nvec    1 tmatlab     0.001357 tgrb     0.003359 tmatlab/tgrb     0.403969 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.221224 coldeg 1.48461e+07 anz+bnz 2.96921e+07 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0402 sec ]
+anz   14846068 bnz   14846068 n   67108864 k    1 nvec    1 tmatlab     0.037695 tgrb     0.042457 tmatlab/tgrb     0.887825 OUCH
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244118 coldeg 65530 anz+bnz 131060 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000494 sec ]
+anz      65530 bnz      65530 n  268435456 k    1 nvec    1 tmatlab     0.000104 tgrb     0.000297 tmatlab/tgrb     0.349083 OUCH
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00389867 coldeg 1.04654e+06 anz+bnz 2.09308e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00261 sec ]
+anz    1046540 bnz    1046540 n  268435456 k    1 nvec    1 tmatlab     0.001445 tgrb     0.003162 tmatlab/tgrb     0.456994 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0605822 coldeg 1.62624e+07 anz+bnz 3.25248e+07 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0512 sec ]
+anz   16262408 bnz   16262408 n  268435456 k    1 nvec    1 tmatlab     0.041221 tgrb     0.048188 tmatlab/tgrb     0.855420 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 6.10324e-05 coldeg 65533 anz+bnz 131066 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000469 sec ]
+anz      65533 bnz      65533 n 1073741824 k    1 nvec    1 tmatlab     0.000103 tgrb     0.000297 tmatlab/tgrb     0.345858 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976076 coldeg 1.04805e+06 anz+bnz 2.09611e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00269 sec ]
+anz    1048054 bnz    1048054 n 1073741824 k    1 nvec    1 tmatlab     0.001466 tgrb     0.003400 tmatlab/tgrb     0.431257 OUCH
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0155038 coldeg 1.66471e+07 anz+bnz 3.32941e+07 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0465 sec ]
+anz   16647068 bnz   16647068 n 1073741824 k    1 nvec    1 tmatlab     0.042266 tgrb     0.046261 tmatlab/tgrb     0.913656 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 65536 anz+bnz 131072 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.000482 sec ]
+anz      65536 bnz      65536 n 4294967296 k    1 nvec    1 tmatlab     0.000103 tgrb     0.000305 tmatlab/tgrb     0.335666 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244107 coldeg 1.04843e+06 anz+bnz 2.09686e+06 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00251 sec ]
+anz    1048431 bnz    1048431 n 4294967296 k    1 nvec    1 tmatlab     0.001359 tgrb     0.003337 tmatlab/tgrb     0.407346 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0038986 coldeg 1.67444e+07 anz+bnz 3.34887e+07 cnz 1) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0451 sec ]
+anz   16744359 bnz   16744359 n 4294967296 k    1 nvec    1 tmatlab     0.042557 tgrb     0.048701 tmatlab/tgrb     0.873855 OUCH
+
+k: 5
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 2.76135 coldeg 9048.4 anz+bnz 90484 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00218 sec ]
+anz      45242 bnz      45242 n      16384 k    5 nvec    5 tmatlab     0.001963 tgrb     0.001970 tmatlab/tgrb     0.996428 OUCH
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.90567 coldeg 11870.8 anz+bnz 118708 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00242 sec ]
+anz      59354 bnz      59354 n      65536 k    5 nvec    5 tmatlab     0.002669 tgrb     0.002245 tmatlab/tgrb     1.188723
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.244061 coldeg 12795.8 anz+bnz 127958 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00246 sec ]
+anz      63979 bnz      63979 n     262144 k    5 nvec    5 tmatlab     0.002917 tgrb     0.002295 tmatlab/tgrb     1.271236
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 2.75257 coldeg 144314 anz+bnz 1.44314e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00348 sec ]
+anz     721570 bnz     721570 n     262144 k    5 nvec    5 tmatlab     0.030914 tgrb     0.002235 tmatlab/tgrb    13.833693
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0621243 coldeg 13028.4 anz+bnz 130284 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0025 sec ]
+anz      65142 bnz      65142 n    1048576 k    5 nvec    5 tmatlab     0.002974 tgrb     0.002304 tmatlab/tgrb     1.291016
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.906399 coldeg 190086 anz+bnz 1.90086e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00427 sec ]
+anz     950428 bnz     950428 n    1048576 k    5 nvec    5 tmatlab     0.042472 tgrb     0.004094 tmatlab/tgrb    10.373091
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156002 coldeg 13086.4 anz+bnz 130864 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00248 sec ]
+anz      65432 bnz      65432 n    4194304 k    5 nvec    5 tmatlab     0.002984 tgrb     0.002306 tmatlab/tgrb     1.294143
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.243849 coldeg 204556 anz+bnz 2.04556e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00443 sec ]
+anz    1022778 bnz    1022778 n    4194304 k    5 nvec    5 tmatlab     0.046310 tgrb     0.004181 tmatlab/tgrb    11.075856
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 2.75391 coldeg 2.31014e+06 anz+bnz 2.31014e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0326 sec ]
+anz   11550715 bnz   11550715 n    4194304 k    5 nvec    5 tmatlab     0.524740 tgrb     0.030594 tmatlab/tgrb    17.151729
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390464 coldeg 13101.8 anz+bnz 131018 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00247 sec ]
+anz      65509 bnz      65509 n   16777216 k    5 nvec    5 tmatlab     0.003009 tgrb     0.002320 tmatlab/tgrb     1.296843
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0621116 coldeg 208412 anz+bnz 2.08412e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0044 sec ]
+anz    1042059 bnz    1042059 n   16777216 k    5 nvec    5 tmatlab     0.048711 tgrb     0.004396 tmatlab/tgrb    11.082037
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.906374 coldeg 3.04129e+06 anz+bnz 3.04129e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0382 sec ]
+anz   15206426 bnz   15206426 n   16777216 k    5 nvec    5 tmatlab     0.724000 tgrb     0.037176 tmatlab/tgrb    19.474755
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976443 coldeg 13105.6 anz+bnz 131056 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00248 sec ]
+anz      65528 bnz      65528 n   67108864 k    5 nvec    5 tmatlab     0.002975 tgrb     0.002307 tmatlab/tgrb     1.289706
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.015601 coldeg 209393 anz+bnz 2.09393e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00495 sec ]
+anz    1046966 bnz    1046966 n   67108864 k    5 nvec    5 tmatlab     0.047558 tgrb     0.002762 tmatlab/tgrb    17.217792
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.243878 coldeg 3.27328e+06 anz+bnz 3.27328e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0426 sec ]
+anz   16366387 bnz   16366387 n   67108864 k    5 nvec    5 tmatlab     0.818162 tgrb     0.041385 tmatlab/tgrb    19.769689
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 13107.2 anz+bnz 131072 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00145 sec ]
+anz      65536 bnz      65536 n  268435456 k    5 nvec    5 tmatlab     0.002965 tgrb     0.001493 tmatlab/tgrb     1.986403
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390493 coldeg 209644 anz+bnz 2.09644e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00495 sec ]
+anz    1048221 bnz    1048221 n  268435456 k    5 nvec    5 tmatlab     0.047429 tgrb     0.002785 tmatlab/tgrb    17.029362
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.062111 coldeg 3.33456e+06 anz+bnz 3.33456e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0415 sec ]
+anz   16672792 bnz   16672792 n  268435456 k    5 nvec    5 tmatlab     0.824783 tgrb     0.043474 tmatlab/tgrb    18.972014
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 13107.2 anz+bnz 131072 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00191 sec ]
+anz      65536 bnz      65536 n 1073741824 k    5 nvec    5 tmatlab     0.002982 tgrb     0.001532 tmatlab/tgrb     1.945802
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00097647 coldeg 209695 anz+bnz 2.09695e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00727 sec ]
+anz    1048477 bnz    1048477 n 1073741824 k    5 nvec    5 tmatlab     0.047377 tgrb     0.004285 tmatlab/tgrb    11.057629
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156006 coldeg 3.35021e+06 anz+bnz 3.35021e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0437 sec ]
+anz   16751037 bnz   16751037 n 1073741824 k    5 nvec    5 tmatlab     0.806902 tgrb     0.038816 tmatlab/tgrb    20.788049
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 13107.2 anz+bnz 131072 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00166 sec ]
+anz      65536 bnz      65536 n 4294967296 k    5 nvec    5 tmatlab     0.002965 tgrb     0.001464 tmatlab/tgrb     2.025113
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244135 coldeg 209710 anz+bnz 2.0971e+06 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0044 sec ]
+anz    1048550 bnz    1048550 n 4294967296 k    5 nvec    5 tmatlab     0.047349 tgrb     0.004583 tmatlab/tgrb    10.331442
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390473 coldeg 3.35414e+06 anz+bnz 3.35414e+07 cnz 25) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0401 sec ]
+anz   16770684 bnz   16770684 n 4294967296 k    5 nvec    5 tmatlab     0.798178 tgrb     0.038468 tmatlab/tgrb    20.749142
+
+k: 10
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.29108 coldeg 5392.1 anz+bnz 107842 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0047 sec ]
+anz      53921 bnz      53921 n      16384 k   10 nvec   10 tmatlab     0.005251 tgrb     0.004524 tmatlab/tgrb     1.160576
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.951797 coldeg 6237.7 anz+bnz 124754 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00496 sec ]
+anz      62377 bnz      62377 n      65536 k   10 nvec   10 tmatlab     0.006227 tgrb     0.004757 tmatlab/tgrb     1.308881
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.246807 coldeg 6469.9 anz+bnz 129398 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00497 sec ]
+anz      64699 bnz      64699 n     262144 k   10 nvec   10 tmatlab     0.006497 tgrb     0.004798 tmatlab/tgrb     1.354066
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.29868 coldeg 86472.9 anz+bnz 1.72946e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00511 sec ]
+anz     864729 bnz     864729 n     262144 k   10 nvec   10 tmatlab     0.084244 tgrb     0.005140 tmatlab/tgrb    16.390202
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0623198 coldeg 6534.7 anz+bnz 130694 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00502 sec ]
+anz      65347 bnz      65347 n    1048576 k   10 nvec   10 tmatlab     0.006569 tgrb     0.004809 tmatlab/tgrb     1.366004
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.951334 coldeg 99754.6 anz+bnz 1.99509e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00627 sec ]
+anz     997546 bnz     997546 n    1048576 k   10 nvec   10 tmatlab     0.099718 tgrb     0.006056 tmatlab/tgrb    16.466784
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156138 coldeg 6548.9 anz+bnz 130978 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00501 sec ]
+anz      65489 bnz      65489 n    4194304 k   10 nvec   10 tmatlab     0.006565 tgrb     0.004812 tmatlab/tgrb     1.364189
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.246905 coldeg 103559 anz+bnz 2.07119e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0071 sec ]
+anz    1035593 bnz    1035593 n    4194304 k   10 nvec   10 tmatlab     0.104185 tgrb     0.005653 tmatlab/tgrb    18.429132
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.29683 coldeg 1.38279e+06 anz+bnz 2.76558e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0772 sec ]
+anz   13827905 bnz   13827905 n    4194304 k   10 nvec   10 tmatlab     1.390684 tgrb     0.077484 tmatlab/tgrb    17.948015
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390524 coldeg 6551.9 anz+bnz 131038 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00498 sec ]
+anz      65519 bnz      65519 n   16777216 k   10 nvec   10 tmatlab     0.006556 tgrb     0.004816 tmatlab/tgrb     1.361347
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0623097 coldeg 104538 anz+bnz 2.09077e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00634 sec ]
+anz    1045383 bnz    1045383 n   16777216 k   10 nvec   10 tmatlab     0.105130 tgrb     0.005649 tmatlab/tgrb    18.610923
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.951592 coldeg 1.59651e+06 anz+bnz 3.19301e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0839 sec ]
+anz   15965061 bnz   15965061 n   16777216 k   10 nvec   10 tmatlab     1.660380 tgrb     0.083471 tmatlab/tgrb    19.891699
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976518 coldeg 6553.3 anz+bnz 131066 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00503 sec ]
+anz      65533 bnz      65533 n   67108864 k   10 nvec   10 tmatlab     0.006554 tgrb     0.004813 tmatlab/tgrb     1.361595
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156128 coldeg 104776 anz+bnz 2.09551e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00634 sec ]
+anz    1047757 bnz    1047757 n   67108864 k   10 nvec   10 tmatlab     0.105203 tgrb     0.006127 tmatlab/tgrb    17.171547
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.246905 coldeg 1.65695e+06 anz+bnz 3.31391e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0922 sec ]
+anz   16569545 bnz   16569545 n   67108864 k   10 nvec   10 tmatlab     1.789340 tgrb     0.093316 tmatlab/tgrb    19.174958
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 6553.6 anz+bnz 131072 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00316 sec ]
+anz      65536 bnz      65536 n  268435456 k   10 nvec   10 tmatlab     0.006542 tgrb     0.002803 tmatlab/tgrb     2.334064
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390547 coldeg 104837 anz+bnz 2.09673e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00632 sec ]
+anz    1048366 bnz    1048366 n  268435456 k   10 nvec   10 tmatlab     0.104992 tgrb     0.005697 tmatlab/tgrb    18.428810
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0623052 coldeg 1.67249e+06 anz+bnz 3.34498e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0842 sec ]
+anz   16724924 bnz   16724924 n  268435456 k   10 nvec   10 tmatlab     1.761695 tgrb     0.084965 tmatlab/tgrb    20.734239
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 6553.6 anz+bnz 131072 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00361 sec ]
+anz      65536 bnz      65536 n 1073741824 k   10 nvec   10 tmatlab     0.006550 tgrb     0.002824 tmatlab/tgrb     2.318995
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976526 coldeg 104854 anz+bnz 2.09707e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00632 sec ]
+anz    1048537 bnz    1048537 n 1073741824 k   10 nvec   10 tmatlab     0.104941 tgrb     0.005686 tmatlab/tgrb    18.455311
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156127 coldeg 1.67641e+06 anz+bnz 3.35281e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0813 sec ]
+anz   16764055 bnz   16764055 n 1073741824 k   10 nvec   10 tmatlab     1.737425 tgrb     0.081349 tmatlab/tgrb    21.357669
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 6553.6 anz+bnz 131072 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00361 sec ]
+anz      65536 bnz      65536 n 4294967296 k   10 nvec   10 tmatlab     0.006545 tgrb     0.002818 tmatlab/tgrb     2.322412
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244139 coldeg 104857 anz+bnz 2.09713e+06 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0063 sec ]
+anz    1048567 bnz    1048567 n 4294967296 k   10 nvec   10 tmatlab     0.104998 tgrb     0.005677 tmatlab/tgrb    18.495513
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390548 coldeg 1.67739e+06 anz+bnz 3.35478e+07 cnz 100) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.08 sec ]
+anz   16773920 bnz   16773920 n 4294967296 k   10 nvec   10 tmatlab     1.724830 tgrb     0.080187 tmatlab/tgrb    21.510095
+
+k: 20
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 11.0117 coldeg 2255.2 anz+bnz 90208 cnz 400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-20, double, 45104 entries) (S=S*S) axbwork 517556 (nthreads 7 coarse: 14) (full to sparse) 0.00278 sec ]
+anz      45104 bnz      45104 n       4096 k   20 nvec   20 tmatlab     0.008927 tgrb     0.001988 tmatlab/tgrb     4.490175
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.62408 coldeg 2968.85 anz+bnz 118754 cnz 400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-20, double, 59377 entries) (S=S*S) axbwork 263095 (nthreads 4 coarse: 8) (full to sparse) 0.00327 sec ]
+anz      59377 bnz      59377 n      16384 k   20 nvec   20 tmatlab     0.012286 tgrb     0.002539 tmatlab/tgrb     4.839386
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.976181 coldeg 3198.75 anz+bnz 127950 cnz 400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-20, double, 63975 entries) (S=S*S) axbwork 123481 (nthreads 1 coarse: 1) (full to sparse) 0.00481 sec ]
+anz      63975 bnz      63975 n      65536 k   20 nvec   20 tmatlab     0.013432 tgrb     0.004241 tmatlab/tgrb     3.167576
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 11.0134 coldeg 36088.8 anz+bnz 1.44355e+06 cnz 400) (saxpy C=(A')*B) (transpose) (threads 11) C=A'*B, saxpy (transposed A: 65536-by-20, double, 721776 entries) (S=S*S) axbwork 8.27306e+06 (nthreads 20 coarse: 20) (full to sparse) 0.0137 sec ]
+anz     721776 bnz     721776 n      65536 k   20 nvec   20 tmatlab     0.143617 tgrb     0.012840 tmatlab/tgrb    11.185125
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.248325 coldeg 3254.85 anz+bnz 130194 cnz 400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-20, double, 65097 entries) (S=S*S) axbwork 80265 (nthreads 1 coarse: 1) (full to sparse) 0.00489 sec ]
+anz      65097 bnz      65097 n     262144 k   20 nvec   20 tmatlab     0.013691 tgrb     0.004251 tmatlab/tgrb     3.220873
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.62614 coldeg 47528.5 anz+bnz 1.90114e+06 cnz 400) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 262144-by-20, double, 950570 entries) (S=S*S) axbwork 4.22585e+06 (nthreads 20 coarse: 20) (full to sparse) 0.0116 sec ]
+anz     950570 bnz     950570 n     262144 k   20 nvec   20 tmatlab     0.197267 tgrb     0.012007 tmatlab/tgrb    16.429181
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0623941 coldeg 3271.25 anz+bnz 130850 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00999 sec ]
+anz      65425 bnz      65425 n    1048576 k   20 nvec   20 tmatlab     0.013765 tgrb     0.009826 tmatlab/tgrb     1.400927
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.975352 coldeg 51136.6 anz+bnz 2.04546e+06 cnz 400) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-20, double, 1022731 entries) (S=S*S) axbwork 1.97007e+06 (nthreads 20 coarse: 20) (full to sparse) 0.0126 sec ]
+anz    1022731 bnz    1022731 n    1048576 k   20 nvec   20 tmatlab     0.215331 tgrb     0.011154 tmatlab/tgrb    19.304502
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 11.0119 coldeg 577342 anz+bnz 2.30937e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.118 sec ]
+anz   11546849 bnz   11546849 n    1048576 k   20 nvec   20 tmatlab     2.410264 tgrb     0.115016 tmatlab/tgrb    20.955902
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156159 coldeg 3274.9 anz+bnz 130996 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0123 sec ]
+anz      65498 bnz      65498 n    4194304 k   20 nvec   20 tmatlab     0.013737 tgrb     0.010594 tmatlab/tgrb     1.296691
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.248435 coldeg 52100.5 anz+bnz 2.08402e+06 cnz 400) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-20, double, 1042010 entries) (S=S*S) axbwork 1.28759e+06 (nthreads 19 coarse: 20) (full to sparse) 0.0218 sec ]
+anz    1042010 bnz    1042010 n    4194304 k   20 nvec   20 tmatlab     0.219628 tgrb     0.020403 tmatlab/tgrb    10.764601
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.62497 coldeg 760212 anz+bnz 3.04085e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.137 sec ]
+anz   15204232 bnz   15204232 n    4194304 k   20 nvec   20 tmatlab     3.228559 tgrb     0.131979 tmatlab/tgrb    24.462672
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390583 coldeg 3276.45 anz+bnz 131058 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.01 sec ]
+anz      65529 bnz      65529 n   16777216 k   20 nvec   20 tmatlab     0.013721 tgrb     0.009819 tmatlab/tgrb     1.397354
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624021 coldeg 52346.7 anz+bnz 2.09387e+06 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0109 sec ]
+anz    1046933 bnz    1046933 n   16777216 k   20 nvec   20 tmatlab     0.220530 tgrb     0.010058 tmatlab/tgrb    21.925394
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.975451 coldeg 818267 anz+bnz 3.27307e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.154 sec ]
+anz   16365347 bnz   16365347 n   16777216 k   20 nvec   20 tmatlab     3.579464 tgrb     0.152625 tmatlab/tgrb    23.452672
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976533 coldeg 3276.7 anz+bnz 131068 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.01 sec ]
+anz      65534 bnz      65534 n   67108864 k   20 nvec   20 tmatlab     0.013690 tgrb     0.009823 tmatlab/tgrb     1.393694
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.015619 coldeg 52408.5 anz+bnz 2.09634e+06 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0113 sec ]
+anz    1048170 bnz    1048170 n   67108864 k   20 nvec   20 tmatlab     0.220438 tgrb     0.010082 tmatlab/tgrb    21.865595
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.248456 coldeg 833680 anz+bnz 3.33472e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.148 sec ]
+anz   16673609 bnz   16673609 n   67108864 k   20 nvec   20 tmatlab     3.671392 tgrb     0.146282 tmatlab/tgrb    25.098044
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 3276.8 anz+bnz 131072 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00718 sec ]
+anz      65536 bnz      65536 n  268435456 k   20 nvec   20 tmatlab     0.013706 tgrb     0.005619 tmatlab/tgrb     2.439411
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390583 coldeg 52423.2 anz+bnz 2.09693e+06 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0109 sec ]
+anz    1048464 bnz    1048464 n  268435456 k   20 nvec   20 tmatlab     0.219760 tgrb     0.010069 tmatlab/tgrb    21.825621
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624023 coldeg 837550 anz+bnz 3.3502e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.141 sec ]
+anz   16751003 bnz   16751003 n  268435456 k   20 nvec   20 tmatlab     3.633772 tgrb     0.138516 tmatlab/tgrb    26.233590
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 3276.8 anz+bnz 131072 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.00719 sec ]
+anz      65536 bnz      65536 n 1073741824 k   20 nvec   20 tmatlab     0.013713 tgrb     0.005580 tmatlab/tgrb     2.457812
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976543 coldeg 52427.8 anz+bnz 2.09711e+06 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0112 sec ]
+anz    1048555 bnz    1048555 n 1073741824 k   20 nvec   20 tmatlab     0.219812 tgrb     0.010065 tmatlab/tgrb    21.838594
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156189 coldeg 838534 anz+bnz 3.35414e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.138 sec ]
+anz   16770675 bnz   16770675 n 1073741824 k   20 nvec   20 tmatlab     3.600128 tgrb     0.134912 tmatlab/tgrb    26.685009
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 3276.8 anz+bnz 131072 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0072 sec ]
+anz      65536 bnz      65536 n 4294967296 k   20 nvec   20 tmatlab     0.013707 tgrb     0.005647 tmatlab/tgrb     2.427187
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244139 coldeg 52428.4 anz+bnz 2.09714e+06 cnz 400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0113 sec ]
+anz    1048569 bnz    1048569 n 4294967296 k   20 nvec   20 tmatlab     0.219945 tgrb     0.009807 tmatlab/tgrb    22.426308
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390589 coldeg 838783 anz+bnz 3.35513e+07 cnz 400) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.136 sec ]
+anz   16775662 bnz   16775662 n 4294967296 k   20 nvec   20 tmatlab     3.585606 tgrb     0.132626 tmatlab/tgrb    27.035468
+
+k: 30
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 12.3977 coldeg 1692.7 anz+bnz 101562 cnz 900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-30, double, 50781 entries) (S=S*S) axbwork 659387 (nthreads 10 coarse: 19) (full to sparse) 0.00299 sec ]
+anz      50781 bnz      50781 n       4096 k   30 nvec   30 tmatlab     0.015621 tgrb     0.002296 tmatlab/tgrb     6.802033
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 3.74872 coldeg 2047.3 anz+bnz 122838 cnz 900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-30, double, 61419 entries) (S=S*S) axbwork 285285 (nthreads 4 coarse: 8) (full to sparse) 0.00345 sec ]
+anz      61419 bnz      61419 n      16384 k   30 nvec   30 tmatlab     0.019468 tgrb     0.002783 tmatlab/tgrb     6.995179
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.983047 coldeg 2147.5 anz+bnz 128850 cnz 900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-30, double, 64425 entries) (S=S*S) axbwork 125455 (nthreads 1 coarse: 1) (full to sparse) 0.00503 sec ]
+anz      64425 bnz      64425 n      65536 k   30 nvec   30 tmatlab     0.020626 tgrb     0.004579 tmatlab/tgrb     4.504523
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 12.3939 coldeg 27074.9 anz+bnz 1.6245e+06 cnz 900) (saxpy C=(A')*B) (transpose) (threads 12) C=A'*B, saxpy (transposed A: 65536-by-30, double, 812248 entries) (S=S*S) axbwork 1.05443e+07 (nthreads 20 coarse: 30) (full to sparse) 0.0201 sec ]
+anz     812248 bnz     812248 n      65536 k   30 nvec   30 tmatlab     0.250774 tgrb     0.015378 tmatlab/tgrb    16.307777
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.24892 coldeg 2175.1 anz+bnz 130506 cnz 900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-30, double, 65253 entries) (S=S*S) axbwork 81073 (nthreads 1 coarse: 1) (full to sparse) 0.00534 sec ]
+anz      65253 bnz      65253 n     262144 k   30 nvec   30 tmatlab     0.020901 tgrb     0.004389 tmatlab/tgrb     4.762463
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.74511 coldeg 32725.3 anz+bnz 1.96352e+06 cnz 900) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 262144-by-30, double, 981759 entries) (S=S*S) axbwork 4.53233e+06 (nthreads 20 coarse: 30) (full to sparse) 0.0125 sec ]
+anz     981759 bnz     981759 n     262144 k   30 nvec   30 tmatlab     0.312240 tgrb     0.011258 tmatlab/tgrb    27.736039
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624342 coldeg 2182.23 anz+bnz 130934 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.015 sec ]
+anz      65467 bnz      65467 n    1048576 k   30 nvec   30 tmatlab     0.020945 tgrb     0.014834 tmatlab/tgrb     1.411959
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.983706 coldeg 34383 anz+bnz 2.06298e+06 cnz 900) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-30, double, 1031491 entries) (S=S*S) axbwork 2.01329e+06 (nthreads 20 coarse: 30) (full to sparse) 0.0133 sec ]
+anz    1031491 bnz    1031491 n    1048576 k   30 nvec   30 tmatlab     0.331974 tgrb     0.012589 tmatlab/tgrb    26.371212
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 12.4004 coldeg 433427 anz+bnz 2.60056e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.186 sec ]
+anz   13002797 bnz   13002797 n    1048576 k   30 nvec   30 tmatlab     4.090773 tgrb     0.185917 tmatlab/tgrb    22.003222
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156205 coldeg 2183.9 anz+bnz 131034 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0152 sec ]
+anz      65517 bnz      65517 n    4194304 k   30 nvec   30 tmatlab     0.020925 tgrb     0.014965 tmatlab/tgrb     1.398303
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.24897 coldeg 34808.6 anz+bnz 2.08851e+06 cnz 900) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-30, double, 1044257 entries) (S=S*S) axbwork 1.29441e+06 (nthreads 19 coarse: 30) (full to sparse) 0.0223 sec ]
+anz    1044257 bnz    1044257 n    4194304 k   30 nvec   30 tmatlab     0.335863 tgrb     0.021149 tmatlab/tgrb    15.880648
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.74498 coldeg 523586 anz+bnz 3.14152e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.204 sec ]
+anz   15707584 bnz   15707584 n    4194304 k   30 nvec   30 tmatlab     5.104450 tgrb     0.200786 tmatlab/tgrb    25.422340
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390589 coldeg 2184.33 anz+bnz 131060 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.015 sec ]
+anz      65530 bnz      65530 n   16777216 k   30 nvec   30 tmatlab     0.020870 tgrb     0.014834 tmatlab/tgrb     1.406903
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.062433 coldeg 34915.1 anz+bnz 2.0949e+06 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0164 sec ]
+anz    1047452 bnz    1047452 n   16777216 k   30 nvec   30 tmatlab     0.336646 tgrb     0.014930 tmatlab/tgrb    22.548508
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.983536 coldeg 550033 anz+bnz 3.3002e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.231 sec ]
+anz   16500994 bnz   16500994 n   16777216 k   30 nvec   30 tmatlab     5.540827 tgrb     0.229408 tmatlab/tgrb    24.152719
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976548 coldeg 2184.5 anz+bnz 131070 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0151 sec ]
+anz      65535 bnz      65535 n   67108864 k   30 nvec   30 tmatlab     0.020866 tgrb     0.014960 tmatlab/tgrb     1.394773
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156208 coldeg 34943.2 anz+bnz 2.09659e+06 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0161 sec ]
+anz    1048296 bnz    1048296 n   67108864 k   30 nvec   30 tmatlab     0.335771 tgrb     0.014206 tmatlab/tgrb    23.636274
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.24897 coldeg 556936 anz+bnz 3.34161e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.216 sec ]
+anz   16708066 bnz   16708066 n   67108864 k   30 nvec   30 tmatlab     5.568685 tgrb     0.213758 tmatlab/tgrb    26.051352
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 2184.53 anz+bnz 131072 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0109 sec ]
+anz      65536 bnz      65536 n  268435456 k   30 nvec   30 tmatlab     0.020886 tgrb     0.008382 tmatlab/tgrb     2.491744
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390602 coldeg 34950.4 anz+bnz 2.09703e+06 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0165 sec ]
+anz    1048513 bnz    1048513 n  268435456 k   30 nvec   30 tmatlab     0.335036 tgrb     0.014483 tmatlab/tgrb    23.133053
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624348 coldeg 558657 anz+bnz 3.35194e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.214 sec ]
+anz   16759719 bnz   16759719 n  268435456 k   30 nvec   30 tmatlab     5.515693 tgrb     0.207464 tmatlab/tgrb    26.586266
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 2184.53 anz+bnz 131072 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0108 sec ]
+anz      65536 bnz      65536 n 1073741824 k   30 nvec   30 tmatlab     0.020863 tgrb     0.008320 tmatlab/tgrb     2.507641
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976549 coldeg 34952 anz+bnz 2.09712e+06 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0156 sec ]
+anz    1048561 bnz    1048561 n 1073741824 k   30 nvec   30 tmatlab     0.335498 tgrb     0.014837 tmatlab/tgrb    22.612035
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156209 coldeg 559093 anz+bnz 3.35456e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.202 sec ]
+anz   16772803 bnz   16772803 n 1073741824 k   30 nvec   30 tmatlab     5.472764 tgrb     0.199158 tmatlab/tgrb    27.479509
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 2184.53 anz+bnz 131072 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0109 sec ]
+anz      65536 bnz      65536 n 4294967296 k   30 nvec   30 tmatlab     0.020897 tgrb     0.008353 tmatlab/tgrb     2.501709
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000244139 coldeg 34952.3 anz+bnz 2.09714e+06 cnz 900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0163 sec ]
+anz    1048568 bnz    1048568 n 4294967296 k   30 nvec   30 tmatlab     0.335075 tgrb     0.014991 tmatlab/tgrb    22.352170
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.003906 coldeg 559205 anz+bnz 3.35523e+07 cnz 900) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.201 sec ]
+anz   16776141 bnz   16776141 n 4294967296 k   30 nvec   30 tmatlab     5.454186 tgrb     0.197856 tmatlab/tgrb    27.566442
+
+k: 40
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 13.1792 coldeg 1349.55 anz+bnz 107964 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-40, double, 53982 entries) (S=S*S) axbwork 747376 (nthreads 11 coarse: 22) (full to sparse) 0.00329 sec ]
+anz      53982 bnz      53982 n       4096 k   40 nvec   40 tmatlab     0.022473 tgrb     0.002495 tmatlab/tgrb     9.007046
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.80475 coldeg 1558.42 anz+bnz 124674 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-40, double, 62337 entries) (S=S*S) axbwork 293287 (nthreads 4 coarse: 8) (full to sparse) 0.00347 sec ]
+anz      62337 bnz      62337 n      16384 k   40 nvec   40 tmatlab     0.026635 tgrb     0.002998 tmatlab/tgrb     8.883377
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.987747 coldeg 1618.33 anz+bnz 129466 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-40, double, 64733 entries) (S=S*S) axbwork 126801 (nthreads 1 coarse: 1) (full to sparse) 0.00562 sec ]
+anz      64733 bnz      64733 n      65536 k   40 nvec   40 tmatlab     0.027812 tgrb     0.005184 tmatlab/tgrb     5.364607
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 13.1932 coldeg 21615.7 anz+bnz 1.72925e+06 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 13) C=A'*B, saxpy (transposed A: 65536-by-40, double, 864627 entries) (S=S*S) axbwork 1.19818e+07 (nthreads 20 coarse: 36) (full to sparse) 0.0124 sec ]
+anz     864627 bnz     864627 n      65536 k   40 nvec   40 tmatlab     0.361343 tgrb     0.014575 tmatlab/tgrb    24.791487
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249161 coldeg 1632.9 anz+bnz 130632 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-40, double, 65316 entries) (S=S*S) axbwork 81174 (nthreads 1 coarse: 1) (full to sparse) 0.00533 sec ]
+anz      65316 bnz      65316 n     262144 k   40 nvec   40 tmatlab     0.028079 tgrb     0.004574 tmatlab/tgrb     6.139140
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.80792 coldeg 24955.6 anz+bnz 1.99645e+06 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-40, double, 998223 entries) (S=S*S) axbwork 4.70622e+06 (nthreads 20 coarse: 38) (full to sparse) 0.0114 sec ]
+anz     998223 bnz     998223 n     262144 k   40 nvec   40 tmatlab     0.428068 tgrb     0.011656 tmatlab/tgrb    36.726520
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624523 coldeg 1637.15 anz+bnz 130972 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.02 sec ]
+anz      65486 bnz      65486 n    1048576 k   40 nvec   40 tmatlab     0.028112 tgrb     0.019848 tmatlab/tgrb     1.416390
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.987449 coldeg 25885.4 anz+bnz 2.07083e+06 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-40, double, 1035415 entries) (S=S*S) axbwork 2.03477e+06 (nthreads 20 coarse: 35) (full to sparse) 0.015 sec ]
+anz    1035415 bnz    1035415 n    1048576 k   40 nvec   40 tmatlab     0.446893 tgrb     0.013326 tmatlab/tgrb    33.535734
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 13.1852 coldeg 345641 anz+bnz 2.76513e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.25 sec ]
+anz   13825653 bnz   13825653 n    1048576 k   40 nvec   40 tmatlab     5.895995 tgrb     0.245997 tmatlab/tgrb    23.967752
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156231 coldeg 1638.2 anz+bnz 131056 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.02 sec ]
+anz      65528 bnz      65528 n    4194304 k   40 nvec   40 tmatlab     0.028086 tgrb     0.019862 tmatlab/tgrb     1.414044
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249227 coldeg 26133.4 anz+bnz 2.09067e+06 cnz 1600) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-40, double, 1045335 entries) (S=S*S) axbwork 1.30008e+06 (nthreads 19 coarse: 34) (full to sparse) 0.0229 sec ]
+anz    1045335 bnz    1045335 n    4194304 k   40 nvec   40 tmatlab     0.451231 tgrb     0.022715 tmatlab/tgrb    19.865066
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.80643 coldeg 399133 anz+bnz 3.19307e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.273 sec ]
+anz   15965338 bnz   15965338 n    4194304 k   40 nvec   40 tmatlab     7.005599 tgrb     0.271717 tmatlab/tgrb    25.782704
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390601 coldeg 1638.3 anz+bnz 131064 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0201 sec ]
+anz      65532 bnz      65532 n   16777216 k   40 nvec   40 tmatlab     0.028070 tgrb     0.019846 tmatlab/tgrb     1.414390
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624505 coldeg 26193.7 anz+bnz 2.09549e+06 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0208 sec ]
+anz    1047746 bnz    1047746 n   16777216 k   40 nvec   40 tmatlab     0.451522 tgrb     0.019391 tmatlab/tgrb    23.284732
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.987589 coldeg 414225 anz+bnz 3.3138e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.299 sec ]
+anz   16569000 bnz   16569000 n   16777216 k   40 nvec   40 tmatlab     7.492690 tgrb     0.297639 tmatlab/tgrb    25.173751
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976548 coldeg 1638.38 anz+bnz 131070 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.02 sec ]
+anz      65535 bnz      65535 n   67108864 k   40 nvec   40 tmatlab     0.028029 tgrb     0.019843 tmatlab/tgrb     1.412515
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156219 coldeg 26209.2 anz+bnz 2.09673e+06 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0211 sec ]
+anz    1048367 bnz    1048367 n   67108864 k   40 nvec   40 tmatlab     0.450639 tgrb     0.019405 tmatlab/tgrb    23.222829
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249215 coldeg 418114 anz+bnz 3.34491e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.281 sec ]
+anz   16724542 bnz   16724542 n   67108864 k   40 nvec   40 tmatlab     7.458878 tgrb     0.278047 tmatlab/tgrb    26.825961
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1638.4 anz+bnz 131072 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0142 sec ]
+anz      65536 bnz      65536 n  268435456 k   40 nvec   40 tmatlab     0.028011 tgrb     0.011064 tmatlab/tgrb     2.531633
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390606 coldeg 26213.1 anz+bnz 2.09705e+06 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0208 sec ]
+anz    1048524 bnz    1048524 n  268435456 k   40 nvec   40 tmatlab     0.449857 tgrb     0.019395 tmatlab/tgrb    23.193885
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624511 coldeg 419102 anz+bnz 3.35282e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.27 sec ]
+anz   16764084 bnz   16764084 n  268435456 k   40 nvec   40 tmatlab     7.385214 tgrb     0.267215 tmatlab/tgrb    27.637722
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1638.4 anz+bnz 131072 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0143 sec ]
+anz      65536 bnz      65536 n 1073741824 k   40 nvec   40 tmatlab     0.028031 tgrb     0.011053 tmatlab/tgrb     2.535916
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976553 coldeg 26214.2 anz+bnz 2.09713e+06 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0209 sec ]
+anz    1048566 bnz    1048566 n 1073741824 k   40 nvec   40 tmatlab     0.449749 tgrb     0.019455 tmatlab/tgrb    23.117003
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.015622 coldeg 419349 anz+bnz 3.3548e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.265 sec ]
+anz   16773978 bnz   16773978 n 1073741824 k   40 nvec   40 tmatlab     7.333287 tgrb     0.261646 tmatlab/tgrb    28.027514
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1638.4 anz+bnz 131072 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0142 sec ]
+anz      65536 bnz      65536 n 4294967296 k   40 nvec   40 tmatlab     0.028063 tgrb     0.011082 tmatlab/tgrb     2.532327
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 26214.3 anz+bnz 2.09715e+06 cnz 1600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0214 sec ]
+anz    1048574 bnz    1048574 n 4294967296 k   40 nvec   40 tmatlab     0.449598 tgrb     0.019669 tmatlab/tgrb    22.858397
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390606 coldeg 419410 anz+bnz 3.35528e+07 cnz 1600) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.266 sec ]
+anz   16776417 bnz   16776417 n 4294967296 k   40 nvec   40 tmatlab     7.314894 tgrb     0.263504 tmatlab/tgrb    27.760087
+
+k: 50
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 13.6731 coldeg 1120.1 anz+bnz 112010 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-50, double, 56005 entries) (S=S*S) axbwork 806345 (nthreads 12 coarse: 24) (full to sparse) 0.0034 sec ]
+anz      56005 bnz      56005 n       4096 k   50 nvec   50 tmatlab     0.029412 tgrb     0.002663 tmatlab/tgrb    11.044359
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.84369 coldeg 1259.5 anz+bnz 125950 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-50, double, 62975 entries) (S=S*S) axbwork 300869 (nthreads 4 coarse: 8) (full to sparse) 0.00394 sec ]
+anz      62975 bnz      62975 n      16384 k   50 nvec   50 tmatlab     0.033842 tgrb     0.003510 tmatlab/tgrb     9.640553
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.990173 coldeg 1297.84 anz+bnz 129784 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-50, double, 64892 entries) (S=S*S) axbwork 127658 (nthreads 1 coarse: 1) (full to sparse) 0.00584 sec ]
+anz      64892 bnz      64892 n      65536 k   50 nvec   50 tmatlab     0.035017 tgrb     0.005327 tmatlab/tgrb     6.573623
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 13.6958 coldeg 17951.3 anz+bnz 1.79513e+06 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 13) C=A'*B, saxpy (transposed A: 65536-by-50, double, 897565 entries) (S=S*S) axbwork 1.29416e+07 (nthreads 20 coarse: 38) (full to sparse) 0.0143 sec ]
+anz     897565 bnz     897565 n      65536 k   50 nvec   50 tmatlab     0.473263 tgrb     0.013260 tmatlab/tgrb    35.691362
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249424 coldeg 1307.7 anz+bnz 130770 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-50, double, 65385 entries) (S=S*S) axbwork 81479 (nthreads 1 coarse: 1) 0.00538 sec ]
+anz      65385 bnz      65385 n     262144 k   50 nvec   50 tmatlab     0.035250 tgrb     0.004652 tmatlab/tgrb     7.577981
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 3.84364 coldeg 20151.7 anz+bnz 2.01517e+06 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-50, double, 1007586 entries) (S=S*S) axbwork 4.80104e+06 (nthreads 20 coarse: 39) (full to sparse) 0.014 sec ]
+anz    1007586 bnz    1007586 n     262144 k   50 nvec   50 tmatlab     0.543489 tgrb     0.011036 tmatlab/tgrb    49.247812
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624619 coldeg 1309.92 anz+bnz 130992 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.025 sec ]
+anz      65496 bnz      65496 n    1048576 k   50 nvec   50 tmatlab     0.035294 tgrb     0.024863 tmatlab/tgrb     1.419537
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.989833 coldeg 20758.3 anz+bnz 2.07583e+06 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-50, double, 1037915 entries) (S=S*S) axbwork 2.04548e+06 (nthreads 20 coarse: 39) (full to sparse) 0.0142 sec ]
+anz    1037915 bnz    1037915 n    1048576 k   50 nvec   50 tmatlab     0.562686 tgrb     0.013333 tmatlab/tgrb    42.202901
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 13.6917 coldeg 287136 anz+bnz 2.87136e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.317 sec ]
+anz   14356814 bnz   14356814 n    1048576 k   50 nvec   50 tmatlab     7.731802 tgrb     0.313016 tmatlab/tgrb    24.700980
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156221 coldeg 1310.48 anz+bnz 131048 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0253 sec ]
+anz      65524 bnz      65524 n    4194304 k   50 nvec   50 tmatlab     0.035263 tgrb     0.025060 tmatlab/tgrb     1.407116
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249387 coldeg 20920.1 anz+bnz 2.09201e+06 cnz 2500) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-50, double, 1046004 entries) (S=S*S) axbwork 1.30196e+06 (nthreads 19 coarse: 36) (full to sparse) 0.026 sec ]
+anz    1046004 bnz    1046004 n    4194304 k   50 nvec   50 tmatlab     0.566924 tgrb     0.024091 tmatlab/tgrb    23.532410
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.84395 coldeg 322454 anz+bnz 3.22454e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.348 sec ]
+anz   16122695 bnz   16122695 n    4194304 k   50 nvec   50 tmatlab     8.917135 tgrb     0.346129 tmatlab/tgrb    25.762461
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390619 coldeg 1310.7 anz+bnz 131070 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0251 sec ]
+anz      65535 bnz      65535 n   16777216 k   50 nvec   50 tmatlab     0.035220 tgrb     0.024853 tmatlab/tgrb     1.417133
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624573 coldeg 20957.2 anz+bnz 2.09572e+06 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0259 sec ]
+anz    1047859 bnz    1047859 n   16777216 k   50 nvec   50 tmatlab     0.566608 tgrb     0.024266 tmatlab/tgrb    23.350257
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.990092 coldeg 332220 anz+bnz 3.3222e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.37 sec ]
+anz   16610979 bnz   16610979 n   16777216 k   50 nvec   50 tmatlab     9.416728 tgrb     0.365955 tmatlab/tgrb    25.731929
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976548 coldeg 1310.7 anz+bnz 131070 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0251 sec ]
+anz      65535 bnz      65535 n   67108864 k   50 nvec   50 tmatlab     0.035211 tgrb     0.024849 tmatlab/tgrb     1.416985
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156229 coldeg 20968.7 anz+bnz 2.09687e+06 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0253 sec ]
+anz    1048436 bnz    1048436 n   67108864 k   50 nvec   50 tmatlab     0.564984 tgrb     0.024080 tmatlab/tgrb    23.463180
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249372 coldeg 334702 anz+bnz 3.34702e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.342 sec ]
+anz   16735102 bnz   16735102 n   67108864 k   50 nvec   50 tmatlab     9.339547 tgrb     0.340735 tmatlab/tgrb    27.410002
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1310.72 anz+bnz 131072 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0172 sec ]
+anz      65536 bnz      65536 n  268435456 k   50 nvec   50 tmatlab     0.035221 tgrb     0.013824 tmatlab/tgrb     2.547723
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390609 coldeg 20970.7 anz+bnz 2.09707e+06 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0256 sec ]
+anz    1048533 bnz    1048533 n  268435456 k   50 nvec   50 tmatlab     0.564723 tgrb     0.024315 tmatlab/tgrb    23.224911
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624606 coldeg 335333 anz+bnz 3.35333e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.331 sec ]
+anz   16766637 bnz   16766637 n  268435456 k   50 nvec   50 tmatlab     9.251044 tgrb     0.328156 tmatlab/tgrb    28.190995
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1310.72 anz+bnz 131072 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0172 sec ]
+anz      65536 bnz      65536 n 1073741824 k   50 nvec   50 tmatlab     0.035260 tgrb     0.013828 tmatlab/tgrb     2.549900
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976553 coldeg 20971.3 anz+bnz 2.09713e+06 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0258 sec ]
+anz    1048566 bnz    1048566 n 1073741824 k   50 nvec   50 tmatlab     0.564470 tgrb     0.024237 tmatlab/tgrb    23.289983
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156225 coldeg 335491 anz+bnz 3.35491e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.328 sec ]
+anz   16774527 bnz   16774527 n 1073741824 k   50 nvec   50 tmatlab     9.194275 tgrb     0.324843 tmatlab/tgrb    28.303750
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1310.72 anz+bnz 131072 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0174 sec ]
+anz      65536 bnz      65536 n 4294967296 k   50 nvec   50 tmatlab     0.035211 tgrb     0.013835 tmatlab/tgrb     2.544997
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 20971.4 anz+bnz 2.09714e+06 cnz 2500) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0256 sec ]
+anz    1048572 bnz    1048572 n 4294967296 k   50 nvec   50 tmatlab     0.564131 tgrb     0.024128 tmatlab/tgrb    23.380955
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0039061 coldeg 335531 anz+bnz 3.35531e+07 cnz 2500) (C tiny: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.328 sec ]
+anz   16776565 bnz   16776565 n 4294967296 k   50 nvec   50 tmatlab     9.172315 tgrb     0.323696 tmatlab/tgrb    28.336201
+
+k: 60
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 14.0574 coldeg 959.65 anz+bnz 115158 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-60, double, 57579 entries) (S=S*S) axbwork 854599 (nthreads 13 coarse: 26) (full to sparse) 0.00335 sec ]
+anz      57579 bnz      57579 n       4096 k   60 nvec   60 tmatlab     0.036566 tgrb     0.002724 tmatlab/tgrb    13.421767
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.86719 coldeg 1056 anz+bnz 126720 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-60, double, 63360 entries) (S=S*S) axbwork 303552 (nthreads 4 coarse: 8) (full to sparse) 0.00405 sec ]
+anz      63360 bnz      63360 n      16384 k   60 nvec   60 tmatlab     0.040997 tgrb     0.003638 tmatlab/tgrb    11.269989
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.991714 coldeg 1083.22 anz+bnz 129986 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-60, double, 64993 entries) (S=S*S) axbwork 128087 (nthreads 1 coarse: 1) (full to sparse) 0.00612 sec ]
+anz      64993 bnz      64993 n      65536 k   60 nvec   60 tmatlab     0.042204 tgrb     0.005386 tmatlab/tgrb     7.835718
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 14.0473 coldeg 15343.4 anz+bnz 1.8412e+06 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 65536-by-60, double, 920601 entries) (S=S*S) axbwork 1.36308e+07 (nthreads 20 coarse: 38) (full to sparse) 0.0128 sec ]
+anz     920601 bnz     920601 n      65536 k   60 nvec   60 tmatlab     0.587071 tgrb     0.012904 tmatlab/tgrb    45.495273
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249462 coldeg 1089.92 anz+bnz 130790 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-60, double, 65395 entries) (S=S*S) axbwork 81485 (nthreads 1 coarse: 1) 0.00572 sec ]
+anz      65395 bnz      65395 n     262144 k   60 nvec   60 tmatlab     0.042445 tgrb     0.004689 tmatlab/tgrb     9.052037
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.86889 coldeg 16903.4 anz+bnz 2.02841e+06 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-60, double, 1014206 entries) (S=S*S) axbwork 4.87738e+06 (nthreads 20 coarse: 39) (full to sparse) 0.0129 sec ]
+anz    1014206 bnz    1014206 n     262144 k   60 nvec   60 tmatlab     0.659393 tgrb     0.011462 tmatlab/tgrb    57.529732
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.062479 coldeg 1091.9 anz+bnz 131028 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1048576-by-60, double, 65514 entries) (S=H*S) axbwork 69602 (nthreads 1 coarse: 1) 0.0254 sec ]
+anz      65514 bnz      65514 n    1048576 k   60 nvec   60 tmatlab     0.042512 tgrb     0.024531 tmatlab/tgrb     1.733006
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.991718 coldeg 17331.5 anz+bnz 2.07978e+06 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-60, double, 1039892 entries) (S=S*S) axbwork 2.05621e+06 (nthreads 20 coarse: 39) (full to sparse) 0.0146 sec ]
+anz    1039892 bnz    1039892 n    1048576 k   60 nvec   60 tmatlab     0.678378 tgrb     0.012851 tmatlab/tgrb    52.787954
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 14.0416 coldeg 245396 anz+bnz 2.94475e+07 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 1048576-by-60, double, 14723737 entries) (S=S*S) axbwork 2.18017e+08 (nthreads 20 coarse: 37) (full to sparse) 0.312 sec ]
+anz   14723737 bnz   14723737 n    1048576 k   60 nvec   60 tmatlab     9.579784 tgrb     0.308039 tmatlab/tgrb    31.099257
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156229 coldeg 1092.12 anz+bnz 131054 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 65527 entries) (S=H*S) axbwork 66509 (nthreads 1 coarse: 1) 0.0256 sec ]
+anz      65527 bnz      65527 n    4194304 k   60 nvec   60 tmatlab     0.042469 tgrb     0.024971 tmatlab/tgrb     1.700747
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.24949 coldeg 17440.6 anz+bnz 2.09288e+06 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 1046438 entries) (S=S*S) axbwork 1.30383e+06 (nthreads 19 coarse: 38) (full to sparse) 0.0249 sec ]
+anz    1046438 bnz    1046438 n    4194304 k   60 nvec   60 tmatlab     0.682498 tgrb     0.023622 tmatlab/tgrb    28.892962
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.86961 coldeg 270505 anz+bnz 3.24606e+07 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 4194304-by-60, double, 16230309 entries) (S=S*S) axbwork 7.7977e+07 (nthreads 20 coarse: 39) (full to sparse) 0.335 sec ]
+anz   16230309 bnz   16230309 n    4194304 k   60 nvec   60 tmatlab    10.850907 tgrb     0.335215 tmatlab/tgrb    32.369992
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 1092.23 anz+bnz 131068 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 16777216-by-60, double, 65534 entries) (S=H*S) axbwork 65772 (nthreads 1 coarse: 1) 0.0254 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 7.51e-05 sec ]
+anz      65534 bnz      65534 n   16777216 k   60 nvec   60 tmatlab     0.042446 tgrb     0.024842 tmatlab/tgrb     1.708625
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624667 coldeg 17467 anz+bnz 2.09604e+06 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.031 sec ]
+anz    1048018 bnz    1048018 n   16777216 k   60 nvec   60 tmatlab     0.681161 tgrb     0.029384 tmatlab/tgrb    23.181160
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.991703 coldeg 277300 anz+bnz 3.3276e+07 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 16777216-by-60, double, 16638013 entries) (S=S*S) axbwork 3.28556e+07 (nthreads 20 coarse: 38) (full to sparse) 0.425 sec ]
+anz   16638013 bnz   16638013 n   16777216 k   60 nvec   60 tmatlab    11.326477 tgrb     0.419133 tmatlab/tgrb    27.023587
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 1092.27 anz+bnz 131072 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 67108864-by-60, double, 65536 entries) (S=H*S) axbwork 65590 (nthreads 1 coarse: 1) 0.025 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.39e-05 sec ]
+anz      65536 bnz      65536 n   67108864 k   60 nvec   60 tmatlab     0.042468 tgrb     0.025118 tmatlab/tgrb     1.690753
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156229 coldeg 17474 anz+bnz 2.09688e+06 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0311 sec ]
+anz    1048438 bnz    1048438 n   67108864 k   60 nvec   60 tmatlab     0.679751 tgrb     0.029370 tmatlab/tgrb    23.144399
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249479 coldeg 279037 anz+bnz 3.34845e+07 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 20) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-60, double, 16742235 entries) (S=S*S) axbwork 2.0848e+07 (nthreads 20 coarse: 40) (full to sparse) 0.52 sec ]
+anz   16742235 bnz   16742235 n   67108864 k   60 nvec   60 tmatlab    11.214608 tgrb     0.517223 tmatlab/tgrb    21.682346
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 1092.27 anz+bnz 131072 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 268435456-by-60, double, 65536 entries) (S=H*S) axbwork 65558 (nthreads 1 coarse: 1) 0.0259 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.29e-05 sec ]
+anz      65536 bnz      65536 n  268435456 k   60 nvec   60 tmatlab     0.042370 tgrb     0.024732 tmatlab/tgrb     1.713165
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390615 coldeg 17475.8 anz+bnz 2.0971e+06 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0308 sec ]
+anz    1048549 bnz    1048549 n  268435456 k   60 nvec   60 tmatlab     0.679303 tgrb     0.029188 tmatlab/tgrb    23.273565
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0624679 coldeg 279477 anz+bnz 3.35372e+07 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.396 sec ]
+anz   16768604 bnz   16768604 n  268435456 k   60 nvec   60 tmatlab    11.113656 tgrb     0.392492 tmatlab/tgrb    28.315624
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 1092.27 anz+bnz 131072 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1073741824-by-60, double, 65536 entries) (S=H*S) axbwork 65542 (nthreads 1 coarse: 1) 0.0256 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.2e-05 sec ]
+anz      65536 bnz      65536 n 1073741824 k   60 nvec   60 tmatlab     0.042403 tgrb     0.025115 tmatlab/tgrb     1.688320
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976555 coldeg 17476.1 anz+bnz 2.09714e+06 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0309 sec ]
+anz    1048568 bnz    1048568 n 1073741824 k   60 nvec   60 tmatlab     0.678753 tgrb     0.029292 tmatlab/tgrb    23.171563
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.015623 coldeg 279584 anz+bnz 3.35501e+07 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.394 sec ]
+anz   16775037 bnz   16775037 n 1073741824 k   60 nvec   60 tmatlab    11.053409 tgrb     0.390463 tmatlab/tgrb    28.308467
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 1092.27 anz+bnz 131072 cnz 3600) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4294967296-by-60, double, 65536 entries) (S=H*S) axbwork 65538 (nthreads 1 coarse: 1) 0.025 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.39e-05 sec ]
+anz      65536 bnz      65536 n 4294967296 k   60 nvec   60 tmatlab     0.042408 tgrb     0.024699 tmatlab/tgrb     1.716979
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 17476.2 anz+bnz 2.09715e+06 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0309 sec ]
+anz    1048575 bnz    1048575 n 4294967296 k   60 nvec   60 tmatlab     0.678339 tgrb     0.029289 tmatlab/tgrb    23.159801
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390612 coldeg 279611 anz+bnz 3.35533e+07 cnz 3600) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.39 sec ]
+anz   16776662 bnz   16776662 n 4294967296 k   60 nvec   60 tmatlab    11.033372 tgrb     0.386490 tmatlab/tgrb    28.547626
+
+k: 70
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 41.7842 coldeg 611.243 anz+bnz 85574 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 1024-by-70, double, 42787 entries) (S=S*S) axbwork 1.80463e+06 (nthreads 20 coarse: 40) (full to sparse) 0.0024 sec ]
+anz      42787 bnz      42787 n       1024 k   70 nvec   70 tmatlab     0.003895 tgrb     0.001749 tmatlab/tgrb     2.227448
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 14.3193 coldeg 837.886 anz+bnz 117304 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-70, double, 58652 entries) (S=S*S) axbwork 888452 (nthreads 13 coarse: 26) (full to sparse) 0.00335 sec ]
+anz      58652 bnz      58652 n       4096 k   70 nvec   70 tmatlab     0.004190 tgrb     0.002851 tmatlab/tgrb     1.469715
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.88934 coldeg 910.329 anz+bnz 127446 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-70, double, 63723 entries) (S=S*S) axbwork 307501 (nthreads 4 coarse: 8) (full to sparse) 0.00398 sec ]
+anz      63723 bnz      63723 n      16384 k   70 nvec   70 tmatlab     0.004084 tgrb     0.003634 tmatlab/tgrb     1.123720
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 41.9741 coldeg 9824.33 anz+bnz 1.37541e+06 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 10) C=A'*B, saxpy (transposed A: 16384-by-70, double, 687703 entries) (S=S*S) axbwork 2.91427e+07 (nthreads 20 coarse: 40) (full to sparse) 0.0163 sec ]
+anz     687703 bnz     687703 n      16384 k   70 nvec   70 tmatlab     0.069489 tgrb     0.012294 tmatlab/tgrb     5.652320
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.992874 coldeg 929.557 anz+bnz 130138 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-70, double, 65069 entries) (S=S*S) axbwork 128199 (nthreads 1 coarse: 1) (full to sparse) 0.00602 sec ]
+anz      65069 bnz      65069 n      65536 k   70 nvec   70 tmatlab     0.004012 tgrb     0.005524 tmatlab/tgrb     0.726307 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 14.3132 coldeg 13400.4 anz+bnz 1.87606e+06 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 65536-by-70, double, 938030 entries) (S=S*S) axbwork 1.41654e+07 (nthreads 20 coarse: 40) (full to sparse) 0.012 sec ]
+anz     938030 bnz     938030 n      65536 k   70 nvec   70 tmatlab     0.069153 tgrb     0.011580 tmatlab/tgrb     5.971489
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249603 coldeg 934.743 anz+bnz 130864 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-70, double, 65432 entries) (S=S*S) axbwork 81274 (nthreads 1 coarse: 1) 0.00552 sec ]
+anz      65432 bnz      65432 n     262144 k   70 nvec   70 tmatlab     0.003899 tgrb     0.004864 tmatlab/tgrb     0.801659 OUCH
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 3.88755 coldeg 14558.5 anz+bnz 2.0382e+06 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-70, double, 1019098 entries) (S=S*S) axbwork 4.93031e+06 (nthreads 20 coarse: 40) (full to sparse) 0.013 sec ]
+anz    1019098 bnz    1019098 n     262144 k   70 nvec   70 tmatlab     0.065952 tgrb     0.010455 tmatlab/tgrb     6.307984
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 41.9473 coldeg 157089 anz+bnz 2.19924e+07 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 262144-by-70, double, 10996223 entries) (S=S*S) axbwork 4.65671e+08 (nthreads 20 coarse: 40) (full to sparse) 0.253 sec ]
+anz   10996223 bnz   10996223 n     262144 k   70 nvec   70 tmatlab     1.500201 tgrb     0.250874 tmatlab/tgrb     5.979898
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624647 coldeg 935.7 anz+bnz 130998 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1048576-by-70, double, 65499 entries) (S=H*S) axbwork 69399 (nthreads 1 coarse: 1) 0.026 sec ]
+anz      65499 bnz      65499 n    1048576 k   70 nvec   70 tmatlab     0.005862 tgrb     0.026330 tmatlab/tgrb     0.222619 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.992935 coldeg 14873.8 anz+bnz 2.08234e+06 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-70, double, 1041168 entries) (S=S*S) axbwork 2.06026e+06 (nthreads 20 coarse: 40) (full to sparse) 0.014 sec ]
+anz    1041168 bnz    1041168 n    1048576 k   70 nvec   70 tmatlab     0.069093 tgrb     0.011752 tmatlab/tgrb     5.879421
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 14.3051 coldeg 214286 anz+bnz 3e+07 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 1048576-by-70, double, 15000015 entries) (S=S*S) axbwork 2.26512e+08 (nthreads 20 coarse: 40) (full to sparse) 0.287 sec ]
+anz   15000015 bnz   15000015 n    1048576 k   70 nvec   70 tmatlab     1.802078 tgrb     0.277882 tmatlab/tgrb     6.485048
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.015624 coldeg 936.171 anz+bnz 131064 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 65532 entries) (S=H*S) axbwork 66590 (nthreads 1 coarse: 1) 0.0263 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.51e-05 sec ]
+anz      65532 bnz      65532 n    4194304 k   70 nvec   70 tmatlab     0.022228 tgrb     0.026382 tmatlab/tgrb     0.842552 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.24954 coldeg 14952.1 anz+bnz 2.09329e+06 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 1046646 entries) (S=S*S) axbwork 1.30492e+06 (nthreads 19 coarse: 38) (full to sparse) 0.0258 sec ]
+anz    1046646 bnz    1046646 n    4194304 k   70 nvec   70 tmatlab     0.144150 tgrb     0.022842 tmatlab/tgrb     6.310743
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.88799 coldeg 232963 anz+bnz 3.26149e+07 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 4194304-by-70, double, 16307431 entries) (S=S*S) axbwork 7.88074e+07 (nthreads 20 coarse: 40) (full to sparse) 0.356 sec ]
+anz   16307431 bnz   16307431 n    4194304 k   70 nvec   70 tmatlab     2.067755 tgrb     0.355232 tmatlab/tgrb     5.820858
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 936.2 anz+bnz 131068 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 16777216-by-70, double, 65534 entries) (S=H*S) axbwork 65818 (nthreads 1 coarse: 1) 0.0271 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.51e-05 sec ]
+anz      65534 bnz      65534 n   16777216 k   70 nvec   70 tmatlab     0.091809 tgrb     0.026019 tmatlab/tgrb     3.528571
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624725 coldeg 14973.1 anz+bnz 2.09623e+06 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.036 sec ]
+anz    1048114 bnz    1048114 n   16777216 k   70 nvec   70 tmatlab     0.312993 tgrb     0.033876 tmatlab/tgrb     9.239282
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.992911 coldeg 237975 anz+bnz 3.33166e+07 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 16777216-by-70, double, 16658281 entries) (S=S*S) axbwork 3.29533e+07 (nthreads 20 coarse: 40) (full to sparse) 0.408 sec ]
+anz   16658281 bnz   16658281 n   16777216 k   70 nvec   70 tmatlab     3.227594 tgrb     0.407666 tmatlab/tgrb     7.917251
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 936.229 anz+bnz 131072 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 67108864-by-70, double, 65536 entries) (S=H*S) axbwork 65622 (nthreads 1 coarse: 1) 0.0271 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.48e-05 sec ]
+anz      65536 bnz      65536 n   67108864 k   70 nvec   70 tmatlab     0.407807 tgrb     0.026308 tmatlab/tgrb    15.500960
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156236 coldeg 14978.3 anz+bnz 2.09696e+06 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0358 sec ]
+anz    1048481 bnz    1048481 n   67108864 k   70 nvec   70 tmatlab     0.601377 tgrb     0.034150 tmatlab/tgrb    17.610040
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249555 coldeg 239248 anz+bnz 3.34947e+07 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 20) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-70, double, 16747364 entries) (S=S*S) axbwork 2.08681e+07 (nthreads 20 coarse: 40) (full to sparse) 0.497 sec ]
+anz   16747364 bnz   16747364 n   67108864 k   70 nvec   70 tmatlab     4.987676 tgrb     0.498037 tmatlab/tgrb    10.014670
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 936.229 anz+bnz 131072 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 268435456-by-70, double, 65536 entries) (S=H*S) axbwork 65552 (nthreads 1 coarse: 1) 0.0266 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.1e-05 sec ]
+anz      65536 bnz      65536 n  268435456 k   70 nvec   70 tmatlab     1.696251 tgrb     0.026003 tmatlab/tgrb    65.233523
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390613 coldeg 14979.2 anz+bnz 2.09709e+06 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0362 sec ]
+anz    1048543 bnz    1048543 n  268435456 k   70 nvec   70 tmatlab     1.606864 tgrb     0.034294 tmatlab/tgrb    46.855543
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624725 coldeg 239569 anz+bnz 3.35396e+07 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.463 sec ]
+anz   16769825 bnz   16769825 n  268435456 k   70 nvec   70 tmatlab     6.575137 tgrb     0.455940 tmatlab/tgrb    14.421058
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 936.229 anz+bnz 131072 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1073741824-by-70, double, 65536 entries) (S=H*S) axbwork 65536 (nthreads 1 coarse: 1) 0.0263 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 9.2e-05 sec ]
+anz      65536 bnz      65536 n 1073741824 k   70 nvec   70 tmatlab     6.803253 tgrb     0.026233 tmatlab/tgrb   259.334553
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976559 coldeg 14979.6 anz+bnz 2.09714e+06 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0357 sec ]
+anz    1048572 bnz    1048572 n 1073741824 k   70 nvec   70 tmatlab     6.444777 tgrb     0.034182 tmatlab/tgrb   188.543005
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156232 coldeg 239647 anz+bnz 3.35505e+07 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.457 sec ]
+anz   16775274 bnz   16775274 n 1073741824 k   70 nvec   70 tmatlab    10.483380 tgrb     0.454241 tmatlab/tgrb    23.078894
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 936.229 anz+bnz 131072 cnz 4900) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4294967296-by-70, double, 65536 entries) (S=H*S) axbwork 65538 (nthreads 1 coarse: 1) 0.0264 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 5.89e-05 sec ]
+anz      65536 bnz      65536 n 4294967296 k   70 nvec   70 tmatlab    26.946359 tgrb     0.026513 tmatlab/tgrb  1016.354735
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 14979.6 anz+bnz 2.09715e+06 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0354 sec ]
+anz    1048574 bnz    1048574 n 4294967296 k   70 nvec   70 tmatlab    26.583928 tgrb     0.034051 tmatlab/tgrb   780.709172
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390614 coldeg 239668 anz+bnz 3.35535e+07 cnz 4900) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.458 sec ]
+anz   16776755 bnz   16776755 n 4294967296 k   70 nvec   70 tmatlab    26.887937 tgrb     0.452922 tmatlab/tgrb    59.365491
+
+k: 80
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 43.9688 coldeg 562.8 anz+bnz 90048 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 1024-by-80, double, 45024 entries) (S=S*S) axbwork 1.99967e+06 (nthreads 20 coarse: 40) (full to sparse) 0.00269 sec ]
+anz      45024 bnz      45024 n       1024 k   80 nvec   80 tmatlab     0.004373 tgrb     0.002093 tmatlab/tgrb     2.088867
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 14.509 coldeg 742.862 anz+bnz 118858 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-80, double, 59429 entries) (S=S*S) axbwork 911163 (nthreads 13 coarse: 26) (full to sparse) 0.00353 sec ]
+anz      59429 bnz      59429 n       4096 k   80 nvec   80 tmatlab     0.004421 tgrb     0.002967 tmatlab/tgrb     1.490147
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.89935 coldeg 798.587 anz+bnz 127774 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-80, double, 63887 entries) (S=S*S) axbwork 310301 (nthreads 4 coarse: 8) (full to sparse) 0.00415 sec ]
+anz      63887 bnz      63887 n      16384 k   80 nvec   80 tmatlab     0.004306 tgrb     0.003671 tmatlab/tgrb     1.173034
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 44.0529 coldeg 9022.04 anz+bnz 1.44353e+06 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 11) C=A'*B, saxpy (transposed A: 16384-by-80, double, 721763 entries) (S=S*S) axbwork 3.21224e+07 (nthreads 20 coarse: 40) (full to sparse) 0.0138 sec ]
+anz     721763 bnz     721763 n      16384 k   80 nvec   80 tmatlab     0.075857 tgrb     0.012257 tmatlab/tgrb     6.188872
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.993546 coldeg 813.913 anz+bnz 130226 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-80, double, 65113 entries) (S=S*S) axbwork 129327 (nthreads 1 coarse: 1) (full to sparse) 0.00604 sec ]
+anz      65113 bnz      65113 n      65536 k   80 nvec   80 tmatlab     0.004226 tgrb     0.005525 tmatlab/tgrb     0.764908 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 14.5052 coldeg 11882.6 anz+bnz 1.90122e+06 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 65536-by-80, double, 950610 entries) (S=S*S) axbwork 1.45702e+07 (nthreads 20 coarse: 40) (full to sparse) 0.0138 sec ]
+anz     950610 bnz     950610 n      65536 k   80 nvec   80 tmatlab     0.072367 tgrb     0.012187 tmatlab/tgrb     5.937995
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.24958 coldeg 817.825 anz+bnz 130852 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-80, double, 65426 entries) (S=S*S) axbwork 81640 (nthreads 1 coarse: 1) 0.00535 sec ]
+anz      65426 bnz      65426 n     262144 k   80 nvec   80 tmatlab     0.003983 tgrb     0.004814 tmatlab/tgrb     0.827330 OUCH
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.90024 coldeg 12780.3 anz+bnz 2.04485e+06 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-80, double, 1022424 entries) (S=S*S) axbwork 4.96242e+06 (nthreads 20 coarse: 40) (full to sparse) 0.013 sec ]
+anz    1022424 bnz    1022424 n     262144 k   80 nvec   80 tmatlab     0.068634 tgrb     0.011923 tmatlab/tgrb     5.756288
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 44.0532 coldeg 144353 anz+bnz 2.30965e+07 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 262144-by-80, double, 11548271 entries) (S=S*S) axbwork 5.13959e+08 (nthreads 20 coarse: 40) (full to sparse) 0.336 sec ]
+anz   11548271 bnz   11548271 n     262144 k   80 nvec   80 tmatlab     1.691551 tgrb     0.316018 tmatlab/tgrb     5.352705
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624695 coldeg 818.8 anz+bnz 131008 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1048576-by-80, double, 65504 entries) (S=H*S) axbwork 69486 (nthreads 1 coarse: 1) 0.0285 sec ]
+anz      65504 bnz      65504 n    1048576 k   80 nvec   80 tmatlab     0.005866 tgrb     0.027879 tmatlab/tgrb     0.210425 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.993738 coldeg 13025.1 anz+bnz 2.08402e+06 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-80, double, 1042010 entries) (S=S*S) axbwork 2.0642e+06 (nthreads 20 coarse: 40) (full to sparse) 0.0142 sec ]
+anz    1042010 bnz    1042010 n    1048576 k   80 nvec   80 tmatlab     0.071280 tgrb     0.012998 tmatlab/tgrb     5.483973
+
+ [ GxB_set 3.1e-06 sec ]
+ [ GrB_mxm (rowdeg 14.5028 coldeg 190092 anz+bnz 3.04147e+07 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 1048576-by-80, double, 15207338 entries) (S=S*S) axbwork 2.33012e+08 (nthreads 20 coarse: 40) (full to sparse) 0.346 sec ]
+anz   15207338 bnz   15207338 n    1048576 k   80 nvec   80 tmatlab     1.872181 tgrb     0.338523 tmatlab/tgrb     5.530440
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156233 coldeg 819.112 anz+bnz 131058 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4194304-by-80, double, 65529 entries) (S=H*S) axbwork 66557 (nthreads 1 coarse: 1) 0.0281 sec ]
+anz      65529 bnz      65529 n    4194304 k   80 nvec   80 tmatlab     0.021529 tgrb     0.027512 tmatlab/tgrb     0.782532 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249624 coldeg 13087.5 anz+bnz 2.09399e+06 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-80, double, 1046997 entries) (S=S*S) axbwork 1.30606e+06 (nthreads 19 coarse: 38) (full to sparse) 0.0261 sec ]
+anz    1046997 bnz    1046997 n    4194304 k   80 nvec   80 tmatlab     0.141758 tgrb     0.024977 tmatlab/tgrb     5.675496
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 3.90186 coldeg 204570 anz+bnz 3.27312e+07 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 4194304-by-80, double, 16365602 entries) (S=S*S) axbwork 7.94233e+07 (nthreads 20 coarse: 40) (full to sparse) 0.356 sec ]
+anz   16365602 bnz   16365602 n    4194304 k   80 nvec   80 tmatlab     2.182334 tgrb     0.357716 tmatlab/tgrb     6.100745
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390625 coldeg 819.2 anz+bnz 131072 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 16777216-by-80, double, 65536 entries) (S=H*S) axbwork 65782 (nthreads 1 coarse: 1) 0.0274 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.6e-05 sec ]
+anz      65536 bnz      65536 n   16777216 k   80 nvec   80 tmatlab     0.090275 tgrb     0.027326 tmatlab/tgrb     3.303649
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624743 coldeg 13101.8 anz+bnz 2.09629e+06 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0406 sec ]
+anz    1048144 bnz    1048144 n   16777216 k   80 nvec   80 tmatlab     0.301592 tgrb     0.038879 tmatlab/tgrb     7.757262
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.993741 coldeg 208403 anz+bnz 3.33444e+07 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 16777216-by-80, double, 16672211 entries) (S=S*S) axbwork 3.30281e+07 (nthreads 20 coarse: 40) (full to sparse) 0.45 sec ]
+anz   16672211 bnz   16672211 n   16777216 k   80 nvec   80 tmatlab     3.215117 tgrb     0.449375 tmatlab/tgrb     7.154641
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 819.2 anz+bnz 131072 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 67108864-by-80, double, 65536 entries) (S=H*S) axbwork 65596 (nthreads 1 coarse: 1) 0.0269 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.29e-05 sec ]
+anz      65536 bnz      65536 n   67108864 k   80 nvec   80 tmatlab     0.401565 tgrb     0.027258 tmatlab/tgrb    14.732140
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156236 coldeg 13106 anz+bnz 2.09696e+06 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0407 sec ]
+anz    1048480 bnz    1048480 n   67108864 k   80 nvec   80 tmatlab     0.583335 tgrb     0.039088 tmatlab/tgrb    14.923507
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249606 coldeg 209384 anz+bnz 3.35015e+07 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 20) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-80, double, 16750752 entries) (S=S*S) axbwork 2.08839e+07 (nthreads 20 coarse: 40) (full to sparse) 0.53 sec ]
+anz   16750752 bnz   16750752 n   67108864 k   80 nvec   80 tmatlab     4.891276 tgrb     0.524290 tmatlab/tgrb     9.329333
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244141 coldeg 819.2 anz+bnz 131072 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 268435456-by-80, double, 65536 entries) (S=H*S) axbwork 65562 (nthreads 1 coarse: 1) 0.0269 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 5.7e-05 sec ]
+anz      65536 bnz      65536 n  268435456 k   80 nvec   80 tmatlab     1.673142 tgrb     0.027017 tmatlab/tgrb    61.928084
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390616 coldeg 13106.9 anz+bnz 2.09711e+06 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0407 sec ]
+anz    1048553 bnz    1048553 n  268435456 k   80 nvec   80 tmatlab     1.570474 tgrb     0.039024 tmatlab/tgrb    40.244142
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.062475 coldeg 209631 anz+bnz 3.3541e+07 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.525 sec ]
+anz   16770499 bnz   16770499 n  268435456 k   80 nvec   80 tmatlab     6.274450 tgrb     0.521166 tmatlab/tgrb    12.039254
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 6.10352e-05 coldeg 819.2 anz+bnz 131072 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1073741824-by-80, double, 65536 entries) (S=H*S) axbwork 65538 (nthreads 1 coarse: 1) 0.0269 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 5.7e-05 sec ]
+anz      65536 bnz      65536 n 1073741824 k   80 nvec   80 tmatlab     6.720593 tgrb     0.027262 tmatlab/tgrb   246.523229
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000976559 coldeg 13107.1 anz+bnz 2.09714e+06 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0407 sec ]
+anz    1048572 bnz    1048572 n 1073741824 k   80 nvec   80 tmatlab     6.345114 tgrb     0.038875 tmatlab/tgrb   163.219766
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0156234 coldeg 209694 anz+bnz 3.3551e+07 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.523 sec ]
+anz   16775522 bnz   16775522 n 1073741824 k   80 nvec   80 tmatlab    10.433684 tgrb     0.517383 tmatlab/tgrb    20.166268
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 1.52588e-05 coldeg 819.2 anz+bnz 131072 cnz 6400) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4294967296-by-80, double, 65536 entries) (S=H*S) axbwork 65536 (nthreads 1 coarse: 1) 0.0286 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.1e-05 sec ]
+anz      65536 bnz      65536 n 4294967296 k   80 nvec   80 tmatlab    26.862785 tgrb     0.027736 tmatlab/tgrb   968.508180
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00024414 coldeg 13107.1 anz+bnz 2.09714e+06 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0405 sec ]
+anz    1048572 bnz    1048572 n 4294967296 k   80 nvec   80 tmatlab    26.529070 tgrb     0.038835 tmatlab/tgrb   683.122699
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390616 coldeg 209710 anz+bnz 3.35536e+07 cnz 6400) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.521 sec ]
+anz   16776825 bnz   16776825 n 4294967296 k   80 nvec   80 tmatlab    27.003821 tgrb     0.517793 tmatlab/tgrb    52.151769
+
+k: 90
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 45.6611 coldeg 519.522 anz+bnz 93514 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 1024-by-90, double, 46757 entries) (S=S*S) axbwork 2.15772e+06 (nthreads 20 coarse: 40) (full to sparse) 0.00398 sec ]
+anz      46757 bnz      46757 n       1024 k   90 nvec   90 tmatlab     0.004662 tgrb     0.002228 tmatlab/tgrb     2.092480
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 14.6499 coldeg 666.733 anz+bnz 120012 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 4096-by-90, double, 60006 entries) (S=S*S) axbwork 929066 (nthreads 14 coarse: 28) (full to sparse) 0.00328 sec ]
+anz      60006 bnz      60006 n       4096 k   90 nvec   90 tmatlab     0.004613 tgrb     0.002773 tmatlab/tgrb     1.663657
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.91339 coldeg 712.411 anz+bnz 128234 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 16384-by-90, double, 64117 entries) (S=S*S) axbwork 312623 (nthreads 4 coarse: 8) (full to sparse) 0.00425 sec ]
+anz      64117 bnz      64117 n      16384 k   90 nvec   90 tmatlab     0.004498 tgrb     0.003859 tmatlab/tgrb     1.165575
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 45.8005 coldeg 8337.72 anz+bnz 1.50079e+06 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 11) C=A'*B, saxpy (transposed A: 16384-by-90, double, 750395 entries) (S=S*S) axbwork 3.47428e+07 (nthreads 20 coarse: 40) (full to sparse) 0.0184 sec ]
+anz     750395 bnz     750395 n      16384 k   90 nvec   90 tmatlab     0.081454 tgrb     0.014050 tmatlab/tgrb     5.797592
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.994644 coldeg 724.278 anz+bnz 130370 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 65536-by-90, double, 65185 entries) (S=S*S) axbwork 129003 (nthreads 1 coarse: 1) 0.00587 sec ]
+anz      65185 bnz      65185 n      65536 k   90 nvec   90 tmatlab     0.004466 tgrb     0.005440 tmatlab/tgrb     0.821028 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 14.6544 coldeg 10671 anz+bnz 1.92078e+06 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 14) C=A'*B, saxpy (transposed A: 65536-by-90, double, 960392 entries) (S=S*S) axbwork 1.48826e+07 (nthreads 20 coarse: 40) (full to sparse) 0.0148 sec ]
+anz     960392 bnz     960392 n      65536 k   90 nvec   90 tmatlab     0.074525 tgrb     0.012716 tmatlab/tgrb     5.860784
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.249638 coldeg 727.122 anz+bnz 130882 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) C=A'*B, saxpy (transposed A: 262144-by-90, double, 65441 entries) (S=S*S) axbwork 81243 (nthreads 1 coarse: 1) 0.00544 sec ]
+anz      65441 bnz      65441 n     262144 k   90 nvec   90 tmatlab     0.004008 tgrb     0.004844 tmatlab/tgrb     0.827375 OUCH
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 3.91214 coldeg 11394.9 anz+bnz 2.05109e+06 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 262144-by-90, double, 1025545 entries) (S=S*S) axbwork 4.99372e+06 (nthreads 20 coarse: 40) (full to sparse) 0.0137 sec ]
+anz    1025545 bnz    1025545 n     262144 k   90 nvec   90 tmatlab     0.070264 tgrb     0.012289 tmatlab/tgrb     5.717829
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 45.7845 coldeg 133357 anz+bnz 2.40042e+07 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 262144-by-90, double, 12002121 entries) (S=S*S) axbwork 5.55416e+08 (nthreads 20 coarse: 40) (full to sparse) 0.305 sec ]
+anz   12002121 bnz   12002121 n     262144 k   90 nvec   90 tmatlab     1.851572 tgrb     0.295552 tmatlab/tgrb     6.264793
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624828 coldeg 727.978 anz+bnz 131036 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 1048576-by-90, double, 65518 entries) (S=H*S) axbwork 69466 (nthreads 1 coarse: 1) 0.0289 sec ]
+anz      65518 bnz      65518 n    1048576 k   90 nvec   90 tmatlab     0.005868 tgrb     0.029186 tmatlab/tgrb     0.201046 OUCH
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.994463 coldeg 11586.3 anz+bnz 2.08554e+06 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 15) C=A'*B, saxpy (transposed A: 1048576-by-90, double, 1042770 entries) (S=S*S) axbwork 2.06501e+06 (nthreads 20 coarse: 40) (full to sparse) 0.0155 sec ]
+anz    1042770 bnz    1042770 n    1048576 k   90 nvec   90 tmatlab     0.072328 tgrb     0.012569 tmatlab/tgrb     5.754647
+
+ [ GxB_set 3.1e-06 sec ]
+ [ GrB_mxm (rowdeg 14.6594 coldeg 170795 anz+bnz 3.0743e+07 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 1048576-by-90, double, 15371509 entries) (S=S*S) axbwork 2.38204e+08 (nthreads 20 coarse: 40) (full to sparse) 0.331 sec ]
+anz   15371509 bnz   15371509 n    1048576 k   90 nvec   90 tmatlab     2.014938 tgrb     0.330187 tmatlab/tgrb     6.102415
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156231 coldeg 728.089 anz+bnz 131056 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 4194304-by-90, double, 65528 entries) (S=H*S) axbwork 66486 (nthreads 1 coarse: 1) 0.03 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.6e-05 sec ]
+anz      65528 bnz      65528 n    4194304 k   90 nvec   90 tmatlab     0.021949 tgrb     0.029378 tmatlab/tgrb     0.747125 OUCH
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249645 coldeg 11634.3 anz+bnz 2.09417e+06 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 15) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 4194304-by-90, double, 1047087 entries) (S=S*S) axbwork 1.30705e+06 (nthreads 19 coarse: 38) (full to sparse) 0.0254 sec ]
+anz    1047087 bnz    1047087 n    4194304 k   90 nvec   90 tmatlab     0.148469 tgrb     0.023962 tmatlab/tgrb     6.195915
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 3.91234 coldeg 182328 anz+bnz 3.28191e+07 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 4194304-by-90, double, 16409557 entries) (S=S*S) axbwork 7.98896e+07 (nthreads 20 coarse: 40) (full to sparse) 0.37 sec ]
+anz   16409557 bnz   16409557 n    4194304 k   90 nvec   90 tmatlab     2.389794 tgrb     0.368749 tmatlab/tgrb     6.480815
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.00390619 coldeg 728.167 anz+bnz 131070 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 16777216-by-90, double, 65535 entries) (S=H*S) axbwork 65781 (nthreads 1 coarse: 1) 0.0301 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.58e-05 sec ]
+anz      65535 bnz      65535 n   16777216 k   90 nvec   90 tmatlab     0.091324 tgrb     0.029546 tmatlab/tgrb     3.090857
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.0624797 coldeg 11647.1 anz+bnz 2.09647e+06 cnz 8100) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0453 sec ]
+anz    1048236 bnz    1048236 n   16777216 k   90 nvec   90 tmatlab     0.320012 tgrb     0.043189 tmatlab/tgrb     7.409629
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.994474 coldeg 185383 anz+bnz 3.3369e+07 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 20) C=A'*B, saxpy (transposed A: 16777216-by-90, double, 16684506 entries) (S=S*S) axbwork 3.31023e+07 (nthreads 20 coarse: 40) (full to sparse) 0.458 sec ]
+anz   16684506 bnz   16684506 n   16777216 k   90 nvec   90 tmatlab     3.410530 tgrb     0.463327 tmatlab/tgrb     7.360957
+
+ [ GxB_set 2.15e-06 sec ]
+ [ GrB_mxm (rowdeg 0.000976562 coldeg 728.178 anz+bnz 131072 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 67108864-by-90, double, 65536 entries) (S=H*S) axbwork 65586 (nthreads 1 coarse: 1) 0.0301 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.39e-05 sec ]
+anz      65536 bnz      65536 n   67108864 k   90 nvec   90 tmatlab     0.406856 tgrb     0.029321 tmatlab/tgrb    13.875807
+
+ [ GxB_set 1.19e-06 sec ]
+ [ GrB_mxm (rowdeg 0.0156235 coldeg 11649.7 anz+bnz 2.09695e+06 cnz 8100) (A' implicit: dot) C=A'*B, dot_product (B=S'*S) (bitmap to sparse) 0.0454 sec ]
+anz    1048476 bnz    1048476 n   67108864 k   90 nvec   90 tmatlab     0.599770 tgrb     0.043353 tmatlab/tgrb    13.834461
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.249654 coldeg 186155 anz+bnz 3.3508e+07 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 20) (build:assemble) (hyper to sparse) C=A'*B, saxpy (transposed A: 67108864-by-90, double, 16753979 entries) (S=S*S) axbwork 2.08881e+07 (nthreads 20 coarse: 40) (full to sparse) 0.552 sec ]
+anz   16753979 bnz   16753979 n   67108864 k   90 nvec   90 tmatlab     5.100054 tgrb     0.548792 tmatlab/tgrb     9.293237
+
+ [ GxB_set 9.54e-07 sec ]
+ [ GrB_mxm (rowdeg 0.000244137 coldeg 728.167 anz+bnz 131070 cnz 8100) (saxpy C=(A')*B) (transpose) (threads 1) (build:assemble) C=A'*B, saxpy (transposed A: 268435456-by-90, double, 65535 entries) (S=H*S) axbwork 65551 (nthreads 1 coarse: 1) 0.0303 sec ]
+ [ GrB_Matrix_wait (wait: 0 zombies, 0 pending, jumbled) 6.29e-05 sec ]
+anz      65535 bnz      65535 n  268435456 k   90 nvec   90 tmatlab     1.688978 tgrb     0.029668 tmatlab/tgrb    56.928804
+
+ [ GxB_set 1.91e-06 sec ]
+ [ GrB_mxm (rowdeg 0.00390614 coldeg 11650.5 anz+bnz 2.09709e+06 cnz 810
