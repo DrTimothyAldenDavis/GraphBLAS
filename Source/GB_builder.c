@@ -549,7 +549,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // sort a set of (j,i,k) tuples
             //------------------------------------------------------------------
 
-#if 1
+#if 0
             if (nth > 1)
             {
                 W0 = GB_MALLOC (nvals, int64_t) ;
@@ -564,6 +564,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
             GB_msort_3 (J_work, I_work, K_work, W0, W1, W2, nvals, nth) ;
 #else
+            printf ("\n3b: %d %ld\n", nthreads, nvals) ;
             GB_msort_3b (J_work, I_work, K_work, nvals, nthreads) ;
 #endif
 
