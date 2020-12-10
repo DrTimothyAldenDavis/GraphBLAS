@@ -352,7 +352,6 @@ endif ( )
 
 if ( OPENMP_FOUND )
 #   set this to 'false' if you do not want OpenMP
-# TODO:: openmp disabled
 #   set ( USE_OPENMP false )
     set ( USE_OPENMP true )
 endif ( )
