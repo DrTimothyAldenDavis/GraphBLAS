@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_msort_3b: sort a 3-by-n list of integers, using A[0:2][ ] as the key
+// GB_msort_2b: sort a 2-by-n list of integers, using A[0:1][ ] as the key
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// A parallel mergesort of an array of 3-by-n integers.  Each key
-// consists of three integers.
+// A parallel mergesort of an array of 2-by-n integers.  Each key
+// consists of two integers.
 
-#include "GB_msort_3b.h"
+#include "GB_msort_2b.h"
 
 //------------------------------------------------------------------------------
-// GB_msort_3b_binary_search: binary search for the pivot
+// GB_msort_2b_binary_search: binary search for the pivot
 //------------------------------------------------------------------------------
 
 // The Pivot value is Y [pivot], and a binary search for the Pivot is made in
@@ -29,15 +29,13 @@
 // larger than all entries in X [p_start...p_end-1], and the right list X
 // [pleft...p_end-1] is empty.
 
-static int64_t GB_msort_3b_binary_search    // return pleft
+static int64_t GB_msort_2b_binary_search    // return pleft
 (
     const int64_t *GB_RESTRICT Y_0,         // Pivot is Y [pivot]
     const int64_t *GB_RESTRICT Y_1,
-    const int64_t *GB_RESTRICT Y_2,
     const int64_t pivot,
     const int64_t *GB_RESTRICT X_0,         // search in X [p_start..p_end_-1]
     const int64_t *GB_RESTRICT X_1,
-    const int64_t *GB_RESTRICT X_2,
     const int64_t p_start,
     const int64_t p_end
 )
@@ -53,10 +51,10 @@ static int64_t GB_msort_3b_binary_search    // return pleft
     for (int64_t p = p_start ; p < p_end - 1 ; p++)
     {
         // X [p] <= X [p+1]
-        ASSERT (GB_lt_3 (X_0, X_1, X_2, p,
-                         X_0, X_1, X_2, p+1) ||
-                GB_eq_3 (X_0, X_1, X_2, p,
-                         X_0, X_1, X_2, p+1)) ;
+        ASSERT (GB_lt_2 (X_0, X_1, p,
+                         X_0, X_1, p+1) ||
+                GB_eq_2 (X_0, X_1, p,
+                         X_0, X_1, p+1)) ;
     }
     #endif
 
@@ -71,8 +69,8 @@ static int64_t GB_msort_3b_binary_search    // return pleft
     {
         int64_t pmiddle = (pleft + pright) >> 1 ;
         // less = (X [pmiddle] < Pivot)
-        bool less = GB_lt_3 (X_0, X_1, X_2, pmiddle,
-                             Y_0, Y_1, Y_2, pivot) ;
+        bool less = GB_lt_2 (X_0, X_1, pmiddle,
+                             Y_0, Y_1, pivot) ;
         pleft  = less ? (pmiddle+1) : pleft ;
         pright = less ? pright : pmiddle ;
     }
@@ -87,14 +85,14 @@ static int64_t GB_msort_3b_binary_search    // return pleft
     //    X [p_start ... pleft-1] < Pivot and
     //    X [pleft+1 ... p_end-1] > Pivot holds.
     //    The value X [pleft] may be either < or > Pivot.
-    bool found = (pleft == pright) && GB_eq_3 (X_0, X_1, X_2, pleft,
-                                               Y_0, Y_1, Y_2, pivot) ;
+    bool found = (pleft == pright) && GB_eq_2 (X_0, X_1, pleft,
+                                               Y_0, Y_1, pivot) ;
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
     {
-        if (GB_lt_3 (X_0, X_1, X_2, pleft,
-                     Y_0, Y_1, Y_2, pivot))
+        if (GB_lt_2 (X_0, X_1, pleft,
+                     Y_0, Y_1, pivot))
         { 
             pleft++ ;
         }
@@ -126,16 +124,16 @@ static int64_t GB_msort_3b_binary_search    // return pleft
     for (int64_t p = p_start ; p < pleft ; p++)
     {
         // X [p] <= Pivot
-        ASSERT (GB_lt_3 (X_0, X_1, X_2, p,
-                         Y_0, Y_1, Y_2, pivot) ||
-                GB_eq_3 (X_0, X_1, X_2, p,
-                         Y_0, Y_1, Y_2, pivot)) ;
+        ASSERT (GB_lt_2 (X_0, X_1, p,
+                         Y_0, Y_1, pivot) ||
+                GB_eq_2 (X_0, X_1, p,
+                         Y_0, Y_1, pivot)) ;
     }
     for (int64_t p = pleft ; p < p_end ; p++)
     {
         // X [p] >= Pivot
-        ASSERT (!GB_lt_3 (X_0, X_1, X_2, p,
-                          Y_0, Y_1, Y_2, pivot)) ;
+        ASSERT (!GB_lt_2 (X_0, X_1, p,
+                          Y_0, Y_1, pivot)) ;
     }
     #endif
 
@@ -143,7 +141,7 @@ static int64_t GB_msort_3b_binary_search    // return pleft
 }
 
 //------------------------------------------------------------------------------
-// GB_msort_3b_create_merge_tasks
+// GB_msort_2b_create_merge_tasks
 //------------------------------------------------------------------------------
 
 // Recursively constructs ntasks tasks to merge two arrays, Left and Right,
@@ -156,7 +154,7 @@ static int64_t GB_msort_3b_binary_search    // return pleft
 // array S [S_task [tid] ... ].  The task tids created are t0 to
 // t0+ntasks-1.
 
-void GB_msort_3b_create_merge_tasks
+void GB_msort_2b_create_merge_tasks
 (
     // output:
     int64_t *GB_RESTRICT L_task,        // L_task [t0...t0+ntasks-1] computed
@@ -170,12 +168,10 @@ void GB_msort_3b_create_merge_tasks
     const int64_t pS_start,             // merge into S [pS_start...]
     const int64_t *GB_RESTRICT L_0,     // Left = L [pL_start...pL_end-1]
     const int64_t *GB_RESTRICT L_1,
-    const int64_t *GB_RESTRICT L_2,
     const int64_t pL_start,
     const int64_t pL_end,
     const int64_t *GB_RESTRICT R_0,     // Right = R [pR_start...pR_end-1]
     const int64_t *GB_RESTRICT R_1,
-    const int64_t *GB_RESTRICT R_2,
     const int64_t pR_start,
     const int64_t pR_end
 )
@@ -226,18 +222,18 @@ void GB_msort_3b_create_merge_tasks
             // split Left in half, and search for its pivot in Right
 //          printf ("split left\n") ;
             pleft = (pL_end + pL_start) >> 1 ;
-            pright = GB_msort_3b_binary_search (
-                        L_0, L_1, L_2, pleft,
-                        R_0, R_1, R_2, pR_start, pR_end) ;
+            pright = GB_msort_2b_binary_search (
+                        L_0, L_1, pleft,
+                        R_0, R_1, pR_start, pR_end) ;
         }
         else
         {
             // split Right in half, and search for its pivot in Left
 //          printf ("split right\n") ;
             pright = (pR_end + pR_start) >> 1 ;
-            pleft = GB_msort_3b_binary_search (
-                        R_0, R_1, R_2, pright,
-                        L_0, L_1, L_2, pL_start, pL_end) ;
+            pleft = GB_msort_2b_binary_search (
+                        R_0, R_1, pright,
+                        L_0, L_1, pL_start, pL_end) ;
         }
 
         //----------------------------------------------------------------------
@@ -261,10 +257,10 @@ void GB_msort_3b_create_merge_tasks
         // ntasks0 tasks merge L [pL_start...pleft-1] and R [pR_start..pright-1]
         // into the result S [pS_start...work0-1].
 
-        GB_msort_3b_create_merge_tasks (
+        GB_msort_2b_create_merge_tasks (
             L_task, L_len, R_task, R_len, S_task, t0, ntasks0, pS_start,
-            L_0, L_1, L_2, pL_start, pleft,
-            R_0, R_1, R_2, pR_start, pright) ;
+            L_0, L_1, pL_start, pleft,
+            R_0, R_1, pR_start, pright) ;
 
         //----------------------------------------------------------------------
         // assign ntasks1 to the second half
@@ -275,31 +271,28 @@ void GB_msort_3b_create_merge_tasks
 
         int t1 = t0 + ntasks0 ;     // first task id of the second set of tasks
         int64_t pS_start1 = pS_start + work0 ;  // 2nd set starts here in S
-        GB_msort_3b_create_merge_tasks (
+        GB_msort_2b_create_merge_tasks (
             L_task, L_len, R_task, R_len, S_task, t1, ntasks1, pS_start1,
-            L_0, L_1, L_2, pleft,  pL_end,
-            R_0, R_1, R_2, pright, pR_end) ;
+            L_0, L_1, pleft,  pL_end,
+            R_0, R_1, pright, pR_end) ;
     }
 }
 
 //------------------------------------------------------------------------------
-// GB_msort_3b_merge: merge two sorted lists via a single thread
+// GB_msort_2b_merge: merge two sorted lists via a single thread
 //------------------------------------------------------------------------------
 
 // merge Left [0..nleft-1] and Right [0..nright-1] into S [0..nleft+nright-1] */
 
-static void GB_msort_3b_merge
+static void GB_msort_2b_merge
 (
     int64_t *GB_RESTRICT S_0,              // output of length nleft + nright
     int64_t *GB_RESTRICT S_1,
-    int64_t *GB_RESTRICT S_2,
     const int64_t *GB_RESTRICT Left_0,     // left input of length nleft
     const int64_t *GB_RESTRICT Left_1,
-    const int64_t *GB_RESTRICT Left_2,
     const int64_t nleft,
     const int64_t *GB_RESTRICT Right_0,    // right input of length nright
     const int64_t *GB_RESTRICT Right_1,
-    const int64_t *GB_RESTRICT Right_2,
     const int64_t nright
 )
 {
@@ -308,13 +301,12 @@ static void GB_msort_3b_merge
     // merge the two inputs, Left and Right, while both inputs exist
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
     {
-        if (GB_lt_3 (Left_0,  Left_1,  Left_2,  pleft,
-                     Right_0, Right_1, Right_2, pright))
+        if (GB_lt_2 (Left_0,  Left_1,  pleft,
+                     Right_0, Right_1, pright))
         { 
             // S [p] = Left [pleft++]
             S_0 [p] = Left_0 [pleft] ;
             S_1 [p] = Left_1 [pleft] ;
-            S_2 [p] = Left_2 [pleft] ;
             pleft++ ;
         }
         else
@@ -322,7 +314,6 @@ static void GB_msort_3b_merge
             // S [p] = Right [pright++]
             S_0 [p] = Right_0 [pright] ;
             S_1 [p] = Right_1 [pright] ;
-            S_2 [p] = Right_2 [pright] ;
             pright++ ;
         }
     }
@@ -333,27 +324,24 @@ static void GB_msort_3b_merge
         int64_t nremaining = (nleft - pleft) ;
         memcpy (S_0 + p, Left_0 + pleft, nremaining * sizeof (int64_t)) ;
         memcpy (S_1 + p, Left_1 + pleft, nremaining * sizeof (int64_t)) ;
-        memcpy (S_2 + p, Left_2 + pleft, nremaining * sizeof (int64_t)) ;
     }
     else if (pright < nright)
     { 
         int64_t nremaining = (nright - pright) ;
         memcpy (S_0 + p, Right_0 + pright, nremaining * sizeof (int64_t)) ;
         memcpy (S_1 + p, Right_1 + pright, nremaining * sizeof (int64_t)) ;
-        memcpy (S_2 + p, Right_2 + pright, nremaining * sizeof (int64_t)) ;
     }
 }
 
 //------------------------------------------------------------------------------
-// GB_msort_3b: parallel mergesort
+// GB_msort_2b: parallel mergesort
 //------------------------------------------------------------------------------
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
+GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *GB_RESTRICT A_0,   // size n array
     int64_t *GB_RESTRICT A_1,   // size n array
-    int64_t *GB_RESTRICT A_2,   // size n array
     const int64_t n,
     int nthreads                // # of threads to use
 )
@@ -366,8 +354,8 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     if (nthreads <= 1 || n <= GB_BASECASE)
     {
         // sequential quicksort
-//      printf ("msort3b: sequential\n") ;
-        GB_qsort_3 (A_0, A_1, A_2, n) ;
+//      printf ("msort2b: sequential\n") ;
+        GB_qsort_2 (A_0, A_1, n) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -388,13 +376,13 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
     int k = (int) (2 + 2 * ceil (log2 ((double) nthreads) / 2)) ;
     int ntasks = 1 << k ;
-//  printf ("msort3b: n %ld nthreads %d ntasks %d\n", n, nthreads, ntasks) ;
+//  printf ("msort2b: n %ld nthreads %d ntasks %d\n", n, nthreads, ntasks) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT W = GB_MALLOC (3*n + 6*ntasks + 1, int64_t) ;
+    int64_t *GB_RESTRICT W = GB_MALLOC (2*n + 6*ntasks + 1, int64_t) ;
     if (W == NULL)
     {
         // out of memory
@@ -404,7 +392,6 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     int64_t *T = W ;
     int64_t *GB_RESTRICT W_0    = T ; T += n ;
     int64_t *GB_RESTRICT W_1    = T ; T += n ;
-    int64_t *GB_RESTRICT W_2    = T ; T += n ;
     int64_t *GB_RESTRICT L_task = T ; T += ntasks ;
     int64_t *GB_RESTRICT L_len  = T ; T += ntasks ;
     int64_t *GB_RESTRICT R_task = T ; T += ntasks ;
@@ -423,7 +410,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
 //      printf ("leaf A [%ld:%ld]\n", leaf, leaf + leafsize - 1) ;
-        GB_qsort_3 (A_0 + leaf, A_1 + leaf, A_2 + leaf, leafsize) ;
+        GB_qsort_2 (A_0 + leaf, A_1 + leaf, leafsize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -444,10 +431,10 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         {
             // create 2*nt tasks to merge two A sublists into one W sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
-            GB_msort_3b_create_merge_tasks (
+            GB_msort_2b_create_merge_tasks (
                 L_task, L_len, R_task, R_len, S_task, tid, 2*nt, Slice [tid],
-                A_0, A_1, A_2, Slice [tid],    Slice [tid+nt],
-                A_0, A_1, A_2, Slice [tid+nt], Slice [tid+2*nt]) ;
+                A_0, A_1, Slice [tid],    Slice [tid+nt],
+                A_0, A_1, Slice [tid+nt], Slice [tid+2*nt]) ;
         }
 
 //      for (int tid = 0 ; tid < ntasks ; tid++)
@@ -468,10 +455,10 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             int64_t pR = R_task [tid], nR = R_len [tid] ;
             int64_t pS = S_task [tid] ;
 
-            GB_msort_3b_merge (
-                W_0 + pS, W_1 + pS, W_2 + pS,
-                A_0 + pL, A_1 + pL, A_2 + pL, nL,
-                A_0 + pR, A_1 + pR, A_2 + pR, nR) ;
+            GB_msort_2b_merge (
+                W_0 + pS, W_1 + pS,
+                A_0 + pL, A_1 + pL, nL,
+                A_0 + pR, A_1 + pR, nR) ;
         }
         nt = 2*nt ;
 
@@ -485,10 +472,10 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         {
             // create 2*nt tasks to merge two W sublists into one A sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
-            GB_msort_3b_create_merge_tasks (
+            GB_msort_2b_create_merge_tasks (
                 L_task, L_len, R_task, R_len, S_task, tid, 2*nt, Slice [tid],
-                W_0, W_1, W_2, Slice [tid],    Slice [tid+nt],
-                W_0, W_1, W_2, Slice [tid+nt], Slice [tid+2*nt]) ;
+                W_0, W_1, Slice [tid],    Slice [tid+nt],
+                W_0, W_1, Slice [tid+nt], Slice [tid+2*nt]) ;
         }
 
 //      for (int tid = 0 ; tid < ntasks ; tid++)
@@ -508,10 +495,10 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             int64_t pL = L_task [tid], nL = L_len [tid] ;
             int64_t pR = R_task [tid], nR = R_len [tid] ;
             int64_t pS = S_task [tid] ;
-            GB_msort_3b_merge (
-                A_0 + pS, A_1 + pS, A_2 + pS,
-                W_0 + pL, W_1 + pL, W_2 + pL, nL,
-                W_0 + pR, W_1 + pR, W_2 + pR, nR) ;
+            GB_msort_2b_merge (
+                A_0 + pS, A_1 + pS,
+                W_0 + pL, W_1 + pL, nL,
+                W_0 + pR, W_1 + pR, nR) ;
         }
         nt = 2*nt ;
     }

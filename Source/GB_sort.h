@@ -86,25 +86,10 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_msort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *GB_RESTRICT A_0,   // size n array
     int64_t *GB_RESTRICT A_1,   // size n array
-    int64_t *GB_RESTRICT W_0,   // size n array, workspace
-    int64_t *GB_RESTRICT W_1,   // size n array, workspace
-    const int64_t n,
-    int nthreads                // # of threads to use
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
-(
-    int64_t *GB_RESTRICT A_0,   // size n array
-    int64_t *GB_RESTRICT A_1,   // size n array
-    int64_t *GB_RESTRICT A_2,   // size n array
-    int64_t *GB_RESTRICT W_0,   // size n array, workspace
-    int64_t *GB_RESTRICT W_1,   // size n array, workspace
-    int64_t *GB_RESTRICT W_2,   // size n array, workspace
     const int64_t n,
     int nthreads                // # of threads to use
 ) ;
@@ -118,49 +103,6 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     const int64_t n,
     int nthreads                // # of threads to use
 ) ;
-
-void GB_msort_3b_create_merge_tasks
-(
-    // output:
-    int64_t *GB_RESTRICT L_task,        // L_task [t0...t0+ntasks-1] computed
-    int64_t *GB_RESTRICT L_len,         // L_len  [t0...t0+ntasks-1] computed
-    int64_t *GB_RESTRICT R_task,        // R_task [t0...t0+ntasks-1] computed
-    int64_t *GB_RESTRICT R_len,         // R_len  [t0...t0+ntasks-1] computed
-    int64_t *GB_RESTRICT S_task,        // S_task [t0...t0+ntasks-1] computed
-    // input:
-    const int t0,                       // first task tid to create
-    const int ntasks,                   // # of tasks to create
-    const int64_t pS_start,             // merge into S [pS_start...]
-    const int64_t *GB_RESTRICT L_0,     // Left = L [pL_start...pL_end-1]
-    const int64_t *GB_RESTRICT L_1,
-    const int64_t *GB_RESTRICT L_2,
-    const int64_t pL_start,
-    const int64_t pL_end,
-    const int64_t *GB_RESTRICT R_0,     // Right = R [pR_start...pR_end-1]
-    const int64_t *GB_RESTRICT R_1,
-    const int64_t *GB_RESTRICT R_2,
-    const int64_t pR_start,
-    const int64_t pR_end
-) ;
-
-//------------------------------------------------------------------------------
-// # of threads to use in parallel mergesort
-//------------------------------------------------------------------------------
-
-#if defined ( _OPENMP ) && GB_HAS_OPENMP_TASKS
-
-    // With OpenMP v4.0: use all available threads in a parallel mergesort.
-    #define GB_MSORT_NTHREADS(nthreads) nthreads
-
-#else
-
-    // OpenMP tasks are not available, so just use a sequential quicksort
-    // with a single thread.  OpenMP tasks requires OpenMP v4.0 or later.
-    // Microsoft Visual Studio only supports OpenMP 2.0, so the parallel
-    // mergesort is not available when using that compiler.
-    #define GB_MSORT_NTHREADS(nthreads) 1
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_lt_1: sorting comparator function, one key
@@ -178,7 +120,7 @@ void GB_msort_3b_create_merge_tasks
 
 // A [a] and B [b] are keys of two integers.
 
-// GB_lt_2 returns true if A [a] < B [b], for GB_qsort_2 and GB_msort_2
+// GB_lt_2 returns true if A [a] < B [b], for GB_qsort_2 and GB_msort_2b
 
 #define GB_lt_2(A_0, A_1, a, B_0, B_1, b)                                   \
 (                                                                           \
@@ -206,7 +148,7 @@ void GB_msort_3b_create_merge_tasks
 
 // A [a] and B [b] are keys of three integers.
 
-// GB_lt_3 returns true if A [a] < B [b], for GB_qsort_3 and GB_msort_2
+// GB_lt_3 returns true if A [a] < B [b], for GB_qsort_3 and GB_msort_3b
 
 #define GB_lt_3(A_0, A_1, A_2, a, B_0, B_1, B_2, b)                         \
 (                                                                           \
@@ -229,18 +171,23 @@ void GB_msort_3b_create_merge_tasks
 )
 
 //------------------------------------------------------------------------------
-// GB_eq_3: sorting comparator function, three keys
+// GB_eq_*: sorting comparator function, three keys
 //------------------------------------------------------------------------------
 
-// A [a] and B [b] are keys of three integers.
-
-// GB_eq_3 returns true if A [a] == B [b]
+// A [a] and B [b] are keys of two or three integers.
+// GB_eq_* returns true if A [a] == B [b]
 
 #define GB_eq_3(A_0, A_1, A_2, a, B_0, B_1, B_2, b)                         \
 (                                                                           \
     (A_0 [a] == B_0 [b]) &&                                                 \
     (A_1 [a] == B_1 [b]) &&                                                 \
     (A_2 [a] == B_2 [b])                                                    \
+)
+
+#define GB_eq_2(A_0, A_1, a, B_0, B_1, b)                                   \
+(                                                                           \
+    (A_0 [a] == B_0 [b]) &&                                                 \
+    (A_1 [a] == B_1 [b])                                                    \
 )
 
 //------------------------------------------------------------------------------

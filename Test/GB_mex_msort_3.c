@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_msort_3: sort using GB_msort_3
+// GB_mex_msort_3: sort using GB_msort_3b
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -69,31 +69,9 @@ void mexFunction
     int64_t *Kout = mxGetData (pargout [2]) ;
     memcpy (Kout, K, n * sizeof (int64_t)) ;
 
-    // get workspace
-    int64_t *Work_0 = NULL ;
-    int64_t *Work_1 = NULL ;
-    int64_t *Work_2 = NULL ;
-
-    if (nthreads > 1)
-    {
-        Work_0 = mxMalloc ((n+1) * sizeof (int64_t)) ;
-        Work_1 = mxMalloc ((n+1) * sizeof (int64_t)) ;
-        Work_2 = mxMalloc ((n+1) * sizeof (int64_t)) ;
-    }
-
     GB_MEX_TIC ;
-
-    GB_msort_3 (Iout, Jout, Kout, Work_0, Work_1, Work_2, n, nthreads) ;
-
+    GB_msort_3b (Iout, Jout, Kout, n, nthreads) ;
     GB_MEX_TOC ;
-
-    // free workspace
-    if (nthreads > 1)
-    {
-        mxFree (Work_0) ;
-        mxFree (Work_1) ;
-        mxFree (Work_2) ;
-    }
 
     GB_mx_put_global (true) ;   
 }

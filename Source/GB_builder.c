@@ -105,9 +105,6 @@
     GB_FREE (*J_work_handle) ;      \
     GB_FREE (*S_work_handle) ;      \
     GB_FREE (K_work) ;              \
-    GB_FREE (W0) ;                  \
-    GB_FREE (W1) ;                  \
-    GB_FREE (W2) ;                  \
 }
 
 //------------------------------------------------------------------------------
@@ -187,9 +184,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
     int64_t *GB_RESTRICT K_work = NULL ;
-    int64_t *GB_RESTRICT W0 = NULL ;
-    int64_t *GB_RESTRICT W1 = NULL ;
-    int64_t *GB_RESTRICT W2 = NULL ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -537,63 +531,18 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             K_work [k] = k ;
         }
-    
-        // determine # of threads to use in the parallel mergesort
-        int nth = GB_MSORT_NTHREADS (nthreads) ;
 
         // sort all the tuples
         if (vdim > 1)
         {
-
-            //------------------------------------------------------------------
             // sort a set of (j,i,k) tuples
-            //------------------------------------------------------------------
-
-#if 0
-            if (nth > 1)
-            {
-                W0 = GB_MALLOC (nvals, int64_t) ;
-                W1 = GB_MALLOC (nvals, int64_t) ;
-                W2 = GB_MALLOC (nvals, int64_t) ;
-                if (W0 == NULL || W1 == NULL || W2 == NULL)
-                { 
-                    // out of memory
-                    GB_FREE_WORK ;
-                    return (GrB_OUT_OF_MEMORY) ;
-                }
-            }
-            GB_msort_3 (J_work, I_work, K_work, W0, W1, W2, nvals, nth) ;
-#else
-            printf ("\n3b: %d %ld\n", nthreads, nvals) ;
             GB_msort_3b (J_work, I_work, K_work, nvals, nthreads) ;
-#endif
-
         }
         else
         {
-
-            //------------------------------------------------------------------
             // sort a set of (i,k) tuples
-            //------------------------------------------------------------------
-
-            if (nth > 1)
-            {
-                W0 = GB_MALLOC (nvals, int64_t) ;
-                W1 = GB_MALLOC (nvals, int64_t) ;
-                if (W0 == NULL || W1 == NULL)
-                { 
-                    // out of memory
-                    GB_FREE_WORK ;
-                    return (GrB_OUT_OF_MEMORY) ;
-                }
-            }
-
-            GB_msort_2 (I_work, K_work, W0, W1, nvals, nth) ;
+            GB_msort_2b (I_work, K_work, nvals, nthreads) ;
         }
-
-        GB_FREE (W0) ;
-        GB_FREE (W1) ;
-        GB_FREE (W2) ;
     }
 
     //--------------------------------------------------------------------------

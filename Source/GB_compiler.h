@@ -21,12 +21,12 @@
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.  OpenMP tasks are not available.
+    // not supported.  OpenMP tasks are not available, GraphBLAS no longer
+    // uses OpenMP tasks.
 
     #define GB_MICROSOFT 1
     #define GB_RESTRICT __restrict
     #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 0
 
 #elif GxB_STDC_VERSION >= 199901L
 
@@ -34,7 +34,6 @@
     #define GB_MICROSOFT 0
     #define GB_RESTRICT restrict
     #define GB_HAS_VLA  1
-    #define GB_HAS_OPENMP_TASKS 1
 
 #else
 
@@ -42,13 +41,8 @@
     #define GB_MICROSOFT 0
     #define GB_RESTRICT
     #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 1
 
 #endif
-
-// TODO::HACK disable openmp threads
-// #undef  GB_HAS_OPENMP_TASKS
-// #define GB_HAS_OPENMP_TASKS 0
 
 //------------------------------------------------------------------------------
 // Microsoft specific include files
@@ -103,27 +97,6 @@
     // "#pragma omp simd reduction(+:cij)"
     #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
     #define GB_PRAGMA_SIMD_REDUCTION(op,s) GB_PRAGMA (omp simd reduction(op:s))
-
-#endif
-
-// construct pragmas for OpenMP tasks, if available:
-#if GB_HAS_OPENMP_TASKS
-
-    // Use OpenMP tasks
-    #define GB_TASK(func, ...)                          \
-        GB_PRAGMA(omp task firstprivate(__VA_ARGS__))   \
-        func (__VA_ARGS__)
-    #define GB_TASK_WAIT GB_PRAGMA (omp taskwait)
-    #define GB_TASK_LEADER(nthreads)                    \
-        GB_PRAGMA (omp parallel num_threads (nthreads)) \
-        GB_PRAGMA (omp master)
-
-#else
-
-    // OpenMP tasks not available
-    #define GB_TASK(func, ...) func (__VA_ARGS__)
-    #define GB_TASK_WAIT
-    #define GB_TASK_LEADER(nthreads)
 
 #endif
 
