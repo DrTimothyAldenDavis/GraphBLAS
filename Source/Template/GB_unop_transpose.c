@@ -138,10 +138,8 @@
 
             int64_t *GB_RESTRICT workspace = Workspaces [0] ;
             int tid ;
-// TODO::HACK
-//            #pragma omp parallel for num_threads(nthreads) schedule(static)
-for (tid = 0 ; tid < nthreads ; tid++)
-// for (tid = nthreads-1 ; tid >= 0 ; tid--)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
                 for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
                 {

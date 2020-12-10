@@ -122,11 +122,13 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 void GB_msort_3b_create_merge_tasks
 (
     // output:
-    int64_t *GB_RESTRICT L_task,        // L_task [tfirst...ntasks] computed
-    int64_t *GB_RESTRICT R_task,        // R_task [tfirst...ntasks] computed
-    int64_t *GB_RESTRICT S_task,        // S_task [tfirst...ntasks] computed
+    int64_t *GB_RESTRICT L_task,        // L_task [t0...t0+ntasks-1] computed
+    int64_t *GB_RESTRICT L_len,         // L_len  [t0...t0+ntasks-1] computed
+    int64_t *GB_RESTRICT R_task,        // R_task [t0...t0+ntasks-1] computed
+    int64_t *GB_RESTRICT R_len,         // R_len  [t0...t0+ntasks-1] computed
+    int64_t *GB_RESTRICT S_task,        // S_task [t0...t0+ntasks-1] computed
     // input:
-    const int tfirst,                   // first task tid to create
+    const int t0,                       // first task tid to create
     const int ntasks,                   // # of tasks to create
     const int64_t pS_start,             // merge into S [pS_start...]
     const int64_t *GB_RESTRICT L_0,     // Left = L [pL_start...pL_end-1]
