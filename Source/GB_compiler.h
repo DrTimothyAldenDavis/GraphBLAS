@@ -46,9 +46,9 @@
 
 #endif
 
-// TODO::HACK
-// #undef  GB_HAS_OPENMP_TASKS
-// #define GB_HAS_OPENMP_TASKS 0
+// TODO::HACK disable openmp threads
+#undef  GB_HAS_OPENMP_TASKS
+#define GB_HAS_OPENMP_TASKS 0
 
 //------------------------------------------------------------------------------
 // Microsoft specific include files

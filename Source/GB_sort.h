@@ -109,6 +109,38 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     int nthreads                // # of threads to use
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
+(
+    int64_t *GB_RESTRICT A_0,   // size n array
+    int64_t *GB_RESTRICT A_1,   // size n array
+    int64_t *GB_RESTRICT A_2,   // size n array
+    const int64_t n,
+    int nthreads                // # of threads to use
+) ;
+
+void GB_msort_3b_create_merge_tasks
+(
+    // output:
+    int64_t *GB_RESTRICT L_task,        // L_task [tfirst...ntasks] computed
+    int64_t *GB_RESTRICT R_task,        // R_task [tfirst...ntasks] computed
+    int64_t *GB_RESTRICT S_task,        // S_task [tfirst...ntasks] computed
+    // input:
+    const int tfirst,                   // first task tid to create
+    const int ntasks,                   // # of tasks to create
+    const int64_t pS_start,             // merge into S [pS_start...]
+    const int64_t *GB_RESTRICT L_0,     // Left = L [pL_start...pL_end-1]
+    const int64_t *GB_RESTRICT L_1,
+    const int64_t *GB_RESTRICT L_2,
+    const int64_t pL_start,
+    const int64_t pL_end,
+    const int64_t *GB_RESTRICT R_0,     // Right = R [pR_start...pR_end-1]
+    const int64_t *GB_RESTRICT R_1,
+    const int64_t *GB_RESTRICT R_2,
+    const int64_t pR_start,
+    const int64_t pR_end
+) ;
+
 //------------------------------------------------------------------------------
 // # of threads to use in parallel mergesort
 //------------------------------------------------------------------------------
@@ -165,7 +197,7 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         )                                                                   \
     )                                                                       \
 )
-    
+
 //------------------------------------------------------------------------------
 // GB_lt_3: sorting comparator function, three keys
 //------------------------------------------------------------------------------
@@ -192,6 +224,21 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             false                                                           \
         )                                                                   \
     )                                                                       \
+)
+
+//------------------------------------------------------------------------------
+// GB_eq_3: sorting comparator function, three keys
+//------------------------------------------------------------------------------
+
+// A [a] and B [b] are keys of three integers.
+
+// GB_eq_3 returns true if A [a] == B [b]
+
+#define GB_eq_3(A_0, A_1, A_2, a, B_0, B_1, B_2, b)                         \
+(                                                                           \
+    (A_0 [a] == B_0 [b]) &&                                                 \
+    (A_1 [a] == B_1 [b]) &&                                                 \
+    (A_2 [a] == B_2 [b])                                                    \
 )
 
 //------------------------------------------------------------------------------

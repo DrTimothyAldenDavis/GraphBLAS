@@ -11,7 +11,6 @@
 // of three integers.
 
 #include "GB_msort_3.h"
-#define ME GB_OPENMP_GET_THREAD_ID
 
 //------------------------------------------------------------------------------
 // GB_merge_sequential_3: merge two sorted lists via a single thread
@@ -35,7 +34,6 @@ static void GB_merge_sequential_3
 )
 {
     int64_t p, pleft, pright ;
-    printf ("%2d: here %d: %ld %ld\n", ME, __LINE__, nleft, nright) ;
 
     // merge the two inputs, Left and Right, while both inputs exist
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
@@ -58,7 +56,6 @@ static void GB_merge_sequential_3
             pright++ ;
         }
     }
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
     // either input is exhausted; copy the remaining list into S
     if (pleft < nleft)
@@ -75,7 +72,6 @@ static void GB_merge_sequential_3
         memcpy (S_1 + p, Right_1 + pright, nremaining * sizeof (int64_t)) ;
         memcpy (S_2 + p, Right_2 + pright, nremaining * sizeof (int64_t)) ;
     }
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +104,6 @@ void GB_merge_parallel_3                // parallel merge
 
     // The first task will handle Bigger [0..nhalf-1], and the second task
     // will handle Bigger [nhalf..n-1].
-    printf ("%2d: here %d: %ld %ld\n", ME, __LINE__, nbigger, nsmaller) ;
 
     int64_t nhalf = nbigger/2 ;
     int64_t Pivot_0 [1] ; Pivot_0 [0] = Bigger_0 [nhalf] ;
@@ -138,7 +133,6 @@ void GB_merge_parallel_3                // parallel merge
         }
     }
 
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     // binary search is narrowed down to a single item
     // or it has found the list is empty:
     ASSERT (pleft == pright || pleft == pright + 1) ;
@@ -154,7 +148,6 @@ void GB_merge_parallel_3                // parallel merge
         Smaller_1 [pleft] == Pivot_1 [0] &&
         Smaller_2 [pleft] == Pivot_2 [0]) ;
 
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     // Modify pleft and pright:
     if (!found && (pleft == pright))
     {
@@ -180,7 +173,6 @@ void GB_merge_parallel_3                // parallel merge
     //    Smaller [original_pleft ... pleft-1] < Pivot and
     //    Smaller [pleft ... original_pright] >= Pivot holds.
 
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     //--------------------------------------------------------------------------
     // merge each part in parallel
     //--------------------------------------------------------------------------
@@ -221,14 +213,11 @@ void GB_merge_parallel_3                // parallel merge
     const int64_t *GB_RESTRICT Right_task1_1 = Smaller_1 + pleft ;
     const int64_t *GB_RESTRICT Right_task1_2 = Smaller_2 + pleft ;
     const int64_t nright_task1 = (nsmaller - pleft) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
     GB_TASK (GB_merge_select_3,
         S_task0_0, S_task0_1, S_task0_2,
         Left_task0_0,  Left_task0_1,  Left_task0_2,  nleft_task0,
         Right_task0_0, Right_task0_1, Right_task0_2, nright_task0) ;
-
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
     GB_TASK (GB_merge_select_3,
         S_task1_0, S_task1_1, S_task1_2,
@@ -236,7 +225,6 @@ void GB_merge_parallel_3                // parallel merge
         Right_task1_0, Right_task1_1, Right_task1_2, nright_task1) ;
 
     GB_TASK_WAIT
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 }
 
 //------------------------------------------------------------------------------
@@ -263,7 +251,6 @@ void GB_merge_select_3      // parallel or sequential merge of 3-by-n arrays
     const int64_t nright
 )
 {
-    printf ("%2d: %d: n: %ld %ld\n", ME, __LINE__, nleft, nright) ;
 
     if (nleft + nright < GB_BASECASE)
     { 
@@ -275,20 +262,16 @@ void GB_merge_select_3      // parallel or sequential merge of 3-by-n arrays
     else if (nleft >= nright)
     { 
         // parallel merge, where Left [0..nleft-1] is the bigger of the two.
-    printf ("%2d: here %d\n", ME, __LINE__) ;
         GB_merge_parallel_3 (S_0, S_1, S_2,
             Left_0,  Left_1,  Left_2,  nleft,
             Right_0, Right_1, Right_2, nright) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     }
     else
     { 
         // parallel merge, where Right [0..nright-1] is the bigger of the two.
-    printf ("%2d: here %d\n", ME, __LINE__) ;
         GB_merge_parallel_3 (S_0, S_1, S_2,
             Right_0, Right_1, Right_2, nright,
             Left_0,  Left_1,  Left_2,  nleft) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     }
 }
 
@@ -312,9 +295,6 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
 )
 {
 
-    printf ("%2d: here %d: n: %ld A %p %p %p, W %p %p %p\n",
-        ME, __LINE__, n, A_0, A_1, A_2, W_0, W_1, W_2) ;
-
     if (n <= GB_BASECASE)
     { 
 
@@ -322,9 +302,7 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
         // sequential quicksort; no workspace needed
         // ---------------------------------------------------------------------
 
-        printf ("%2d: qsort\n", ME) ;
         GB_qsort_3 (A_0, A_1, A_2, n) ;
-        printf ("%2d: qsort done\n", ME) ;
 
     }
     else
@@ -384,69 +362,44 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
         int64_t *GB_RESTRICT W_4th0 = W_0 + n123 ;
         int64_t *GB_RESTRICT W_4th1 = W_1 + n123 ;
         int64_t *GB_RESTRICT W_4th2 = W_2 + n123 ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
         // ---------------------------------------------------------------------
         // sort each quarter of A in parallel, using W as workspace
         // ---------------------------------------------------------------------
 
-//      GB_TASK (GB_mergesort_3,
-//          A_1st0, A_1st1, A_1st2, W_1st0, W_1st1, W_1st2, n1) ;
-        GB_mergesort_3 (
+        GB_TASK (GB_mergesort_3,
             A_1st0, A_1st1, A_1st2, W_1st0, W_1st1, W_1st2, n1) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-//      GB_TASK (GB_mergesort_3,
-//          A_2nd0, A_2nd1, A_2nd2, W_2nd0, W_2nd1, W_2nd2, n2) ;
-        GB_mergesort_3 (
+        GB_TASK (GB_mergesort_3,
             A_2nd0, A_2nd1, A_2nd2, W_2nd0, W_2nd1, W_2nd2, n2) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-//      GB_TASK (GB_mergesort_3,
-//          A_3rd0, A_3rd1, A_3rd2, W_3rd0, W_3rd1, W_3rd2, n3) ;
-        GB_mergesort_3 (
+        GB_TASK (GB_mergesort_3,
             A_3rd0, A_3rd1, A_3rd2, W_3rd0, W_3rd1, W_3rd2, n3) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-//      GB_TASK (GB_mergesort_3,
-//          A_4th0, A_4th1, A_4th2, W_4th0, W_4th1, W_4th2, n4) ;
-        GB_mergesort_3 (
+        GB_TASK (GB_mergesort_3,
             A_4th0, A_4th1, A_4th2, W_4th0, W_4th1, W_4th2, n4) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-//      GB_TASK_WAIT
-    printf ("%2d: here %d\n", ME, __LINE__) ;
+        GB_TASK_WAIT
 
         // ---------------------------------------------------------------------
         // merge pairs of quarters of A into two halves of W, in parallel
         // ---------------------------------------------------------------------
 
-        GB_merge_select_3 ( W_1st0, W_1st1, W_1st2,
+        GB_TASK (GB_merge_select_3, W_1st0, W_1st1, W_1st2,
             A_1st0, A_1st1, A_1st2, n1, A_2nd0, A_2nd1, A_2nd2, n2) ;
-//      GB_TASK (GB_merge_select_3, W_1st0, W_1st1, W_1st2,
-//          A_1st0, A_1st1, A_1st2, n1, A_2nd0, A_2nd1, A_2nd2, n2) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-        GB_merge_select_3 ( W_3rd0, W_3rd1, W_3rd2,
+        GB_TASK (GB_merge_select_3, W_3rd0, W_3rd1, W_3rd2,
             A_3rd0, A_3rd1, A_3rd2, n3, A_4th0, A_4th1, A_4th2, n4) ;
-//      GB_TASK (GB_merge_select_3, W_3rd0, W_3rd1, W_3rd2,
-//          A_3rd0, A_3rd1, A_3rd2, n3, A_4th0, A_4th1, A_4th2, n4) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
 
-//      GB_TASK_WAIT
-    printf ("%2d: here %d\n", ME, __LINE__) ;
+        GB_TASK_WAIT
 
         // ---------------------------------------------------------------------
         // merge the two halves of W into A
         // ---------------------------------------------------------------------
 
-    printf ("%2d: here %d\n", ME, __LINE__) ;
         GB_merge_select_3 (A_0, A_1, A_2, W_1st0, W_1st1, W_1st2, n12,
             W_3rd0, W_3rd1, W_3rd2, n34) ;
-    printf ("%2d: here %d\n", ME, __LINE__) ;
     }
-
-    printf ("%2d: done %d: n: %ld\n", ME, __LINE__, n) ;
 }
 
 //------------------------------------------------------------------------------
@@ -468,7 +421,6 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 {
 
     nthreads = GB_MSORT_NTHREADS (nthreads) ;
-    printf ("msort3 nthreads: %d\n", nthreads) ;
 
     if (nthreads > 1)
     {
@@ -484,9 +436,7 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             // does not occur inside GraphBLAS, but the user application might
             // be calling GraphBLAS inside its own parallel region.
 
-            printf ("%2d: here %d\n", ME, __LINE__) ;
             GB_mergesort_3 (A_0, A_1, A_2, W_0, W_1, W_2, n) ;
-            printf ("%2d: here %d\n", ME, __LINE__) ;
 
         }
         else
@@ -496,10 +446,8 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             // parallel mergesort: start a parallel region
             // -----------------------------------------------------------------
 
-            printf ("%2d: here %d\n", ME, __LINE__) ;
             GB_TASK_LEADER (nthreads)
             GB_mergesort_3 (A_0, A_1, A_2, W_0, W_1, W_2, n) ;
-            printf ("%2d: here %d\n", ME, __LINE__) ;
 
         }
 
@@ -512,7 +460,6 @@ void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         // ---------------------------------------------------------------------
 
         // The method is in-place, and the workspace is not used.
-        printf ("%2d: here %d:%s\n", ME, __LINE__, __FILE__) ;
         GB_qsort_3 (A_0, A_1, A_2, n) ;
     }
 }

@@ -84,20 +84,19 @@ tic
 A3 = GrB.build (i, j, x, m, n) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (...), same inputs as MATLAB\n', t) ;
+assert (gbtest_eq (A1, A3)) ;
 
 tic
 A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
+assert (gbtest_eq (A1, A4)) ;
 
 tic
 A2 = GrB.build (i0, j0, x, m, n, desc0) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (i0,j0,...), with i0 and j0 uint64\n', t) ;
-
 assert (gbtest_eq (A1, A2)) ;
-assert (gbtest_eq (A1, A3)) ;
-assert (gbtest_eq (A1, A4)) ;
 
 fprintf ('\ngbtest28: all tests passed\n') ;
 
