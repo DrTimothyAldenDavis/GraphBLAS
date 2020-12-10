@@ -55,7 +55,6 @@ void mexFunction
     }
 
     int GET_SCALAR (3, int, nthreads, 1) ;
-    nthreads = GB_MSORT_NTHREADS (nthreads) ;
 
     pargout [0] = GB_mx_create_full (n, 1, GrB_INT64) ;
     int64_t *Iout = mxGetData (pargout [0]) ;

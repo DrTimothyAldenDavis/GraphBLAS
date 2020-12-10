@@ -45,7 +45,6 @@ void mexFunction
     }
 
     int GET_SCALAR (2, int, nthreads, 1) ;
-    nthreads = GB_MSORT_NTHREADS (nthreads) ;
 
     // make a copy of the input arrays
     pargout [0] = GB_mx_create_full (n, 1, GrB_INT64) ;
