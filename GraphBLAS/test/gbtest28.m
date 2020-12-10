@@ -41,8 +41,6 @@ j0 = uint64 (j) - 1 ;
 d.kind = 'sparse' ;
 desc0.base = 'zero-based' ;
 
-% TODO::
-%{
 fprintf ('\nwith [I J] already sorted on input:\n') ;
 
 tic
@@ -67,15 +65,18 @@ A2 = GrB.build (i0, j0, x, m, n, desc0) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (i0, j0, ...), with i0 and j0 uint64\n',t);
 assert (gbtest_eq (A1, A2)) ;
-%}
 
-fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
+if (0)
+    fprintf ('\nwith [I J] completely jumbled so that a sort is required:\n') ;
+    i = i (randperm (length (i))) ;
+    j = j (randperm (length (j))) ;
+else
+    fprintf ('\nwith [I J] reversed/jumbled so that a sort is required:\n') ;
+    i = i (end:-1:1) ;
+    j = j (end:-1:1) ;
+    i (1:10) = i (randperm (10)) ;
+end
 
-% i  = i (randperm (length (i))) ;
-% j  = j (randperm (length (j))) ;
-i = i (end:-1:1) ;
-j = j (end:-1:1) ;
-i (1:10) = i (randperm (10)) ;
 i0 = uint64 (i) - 1 ;
 j0 = uint64 (j) - 1 ;
 
