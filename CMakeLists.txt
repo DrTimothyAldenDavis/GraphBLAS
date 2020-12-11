@@ -59,7 +59,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 10, 2020 (DRAFT)")
+set ( GraphBLAS_DATE "Dec 11, 2020 (DRAFT)")
 set ( GraphBLAS_VERSION_MAJOR 4 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   1 )
@@ -102,9 +102,8 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
-# TODO burble is on
-  set ( GB_BURBLE true )
-# set ( GB_BURBLE false )
+# set ( GB_BURBLE true )
+  set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
