@@ -386,7 +386,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
                 FREE_ALL ;                                                  \
                 if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;            \
                 printf ("info: %d\n", info) ;                               \
-                mexErrMsgTxt ("unexpected error") ;                         \
+                mexErrMsgTxt ("unexpected error in mex brutal malloc debug") ; \
             }                                                               \
         }                                                                   \
     }

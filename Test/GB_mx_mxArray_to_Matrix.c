@@ -471,6 +471,14 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // return the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
+    info = GrB_Matrix_wait (&A) ;
+    if (info != GrB_SUCCESS)
+    {
+        FREE_ALL ;
+        mexWarnMsgIdAndTxt ("GB:warn", "matrix wait failed") ;
+        return (NULL) ;
+    }
+
     ASSERT_MATRIX_OK (A, "got A from MATLAB", GB0) ;
     return (A) ;
 }

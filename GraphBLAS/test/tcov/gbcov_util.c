@@ -42,7 +42,7 @@ void gbcov_get ( )
     // it should exist now, but double-check
     if (GB_cov_matlab == NULL || mxIsEmpty (GB_cov_matlab))
     {
-        mexErrMsgTxt ("GB_cov_matlab still null!") ;
+        mexErrMsgIdAndTxt ("GrB:panic", "GB_cov_matlab still null!") ;
     }
 
     // get a pointer to the content of the gbcov_global array in the
@@ -50,7 +50,7 @@ void gbcov_get ( )
     int64_t *g = (int64_t *) mxGetData (GB_cov_matlab) ;
 
     // getting paranoid here; this should never happen
-    if (g == NULL) mexErrMsgTxt ("g null!") ;
+    if (g == NULL) mexErrMsgIdAndTxt ("GrB:panic", "g null!") ;
 
     // copy the count from the MATLAB gbcov_global into gbcov
     memcpy (gbcov, g, gbcov_max * sizeof (int64_t)) ;
