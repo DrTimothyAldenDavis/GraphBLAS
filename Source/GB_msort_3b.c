@@ -68,7 +68,7 @@ static int64_t GB_msort_3b_binary_search    // return pleft
     int64_t pleft = p_start ;
     int64_t pright = p_end - 1 ;
     while (pleft < pright)
-    {
+    { 
         int64_t pmiddle = (pleft + pright) >> 1 ;
         // less = (X [pmiddle] < Pivot)
         bool less = GB_lt_3 (X_0, X_1, X_2, pmiddle,
@@ -196,7 +196,7 @@ void GB_msort_3b_create_merge_tasks
     //--------------------------------------------------------------------------
 
     if (ntasks == 1)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // a single task will merge all of Left and Right into Sresult
@@ -222,7 +222,7 @@ void GB_msort_3b_create_merge_tasks
 
         int64_t pleft, pright ;
         if (nleft >= nright)
-        {
+        { 
             // split Left in half, and search for its pivot in Right
 //          printf ("split left\n") ;
             pleft = (pL_end + pL_start) >> 1 ;
@@ -231,7 +231,7 @@ void GB_msort_3b_create_merge_tasks
                         R_0, R_1, R_2, pR_start, pR_end) ;
         }
         else
-        {
+        { 
             // split Right in half, and search for its pivot in Left
 //          printf ("split right\n") ;
             pright = (pR_end + pR_start) >> 1 ;
@@ -364,7 +364,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     //--------------------------------------------------------------------------
 
     if (nthreads <= 1 || n <= GB_BASECASE)
-    {
+    { 
         // sequential quicksort
 //      printf ("msort3b: sequential\n") ;
         GB_qsort_3 (A_0, A_1, A_2, n) ;
@@ -396,7 +396,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
     int64_t *GB_RESTRICT W = GB_MALLOC (3*n + 6*ntasks + 1, int64_t) ;
     if (W == NULL)
-    {
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -419,7 +419,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     GB_eslice (Slice, n, ntasks) ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int tid = 0 ; tid < ntasks ; tid++)
-    {
+    { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
 //      printf ("leaf A [%ld:%ld]\n", leaf, leaf + leafsize - 1) ;
@@ -441,7 +441,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         // this could be done in parallel if ntasks was large
 //      printf ("----------------------k %d: from A to W\n", k) ;
         for (int tid = 0 ; tid < ntasks ; tid += 2*nt)
-        {
+        { 
             // create 2*nt tasks to merge two A sublists into one W sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
             GB_msort_3b_create_merge_tasks (
@@ -462,7 +462,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
-        {
+        { 
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;
             int64_t pR = R_task [tid], nR = R_len [tid] ;
@@ -482,7 +482,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         // this could be done in parallel if ntasks was large
 //      printf ("----------------------back to A\n") ;
         for (int tid = 0 ; tid < ntasks ; tid += 2*nt)
-        {
+        { 
             // create 2*nt tasks to merge two W sublists into one A sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
             GB_msort_3b_create_merge_tasks (
@@ -503,7 +503,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
-        {
+        { 
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;
             int64_t pR = R_task [tid], nR = R_len [tid] ;
