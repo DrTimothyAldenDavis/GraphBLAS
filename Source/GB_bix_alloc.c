@@ -82,11 +82,6 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 
     if (numeric)
     { 
-        // Accessing the values of the matrix will result in valgrind errors,
-        // but the matrix should not be accessed anyway.
-        // TODO: valgrind will complain about GrB_Matrix_dup, which
-        // copies all of A->x with a memcpy.  So if A is a bitmap perhaps
-        // calloc should always be used.
         A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
         ok = ok && (A->x != NULL) ;
     }

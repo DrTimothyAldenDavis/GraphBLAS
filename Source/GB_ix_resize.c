@@ -46,31 +46,6 @@ GrB_Info GB_ix_resize           // resize a matrix
     // resize the matrix
     //--------------------------------------------------------------------------
 
-#if 0
-    if (anz_new < anzmax_orig / 4)
-    {
-
-        //----------------------------------------------------------------------
-        // shrink the space
-        //----------------------------------------------------------------------
-
-        // the new matrix has lots of leftover space.  Trim the size but leave
-        // space for future growth.  Do not increase the size beyond the
-        // existing space, however.
-
-        int64_t anzmax_new = GB_IMAX (anzmax_orig, 2 * anz_new) ;
-
-        // since the space is shrinking, this is guaranteed not to fail
-        ASSERT (anzmax_new <= anzmax_orig) ;
-        ASSERT (anz_new <= anzmax_new) ;
-
-        info = GB_ix_realloc (A, anzmax_new, true, Context) ;
-        ASSERT (info == GrB_SUCCESS) ;
-        ASSERT_MATRIX_OK (A, "A trimmed in size", GB0) ;
-
-    }
-    else if (anz_new > anzmax_orig)
-#endif
     ASSERT (anz_new > anzmax_orig) ;
     {
 
@@ -96,21 +71,6 @@ GrB_Info GB_ix_resize           // resize a matrix
         ASSERT_MATRIX_OK (A, "A increased in size", GB0) ;
 
     }
-
-#if  0
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // leave as-is
-        //----------------------------------------------------------------------
-
-        // nnz(A) has changed but the old space is enough to use as-is;
-        // do nothing
-        ASSERT (anz_new <= anzmax_orig) ;
-        ASSERT_MATRIX_OK (A, "A left as-is", GB0) ;
-    }
-#endif
 
     //--------------------------------------------------------------------------
     // return the result

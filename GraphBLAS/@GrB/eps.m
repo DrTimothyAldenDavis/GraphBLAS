@@ -13,6 +13,9 @@ function C = eps (G)
 
 % convert to a MATLAB full matrix and use the MATLAB eps:
 
+% FUTURE: there should be a sparse version of 'eps'.  C is full because
+% eps (0) is 2^(-1024).
+
 switch (GrB.type (G))
 
     case { 'single' }

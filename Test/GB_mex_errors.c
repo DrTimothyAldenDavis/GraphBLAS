@@ -4155,6 +4155,7 @@ void mexFunction
 
     OK (GrB_Matrix_free_(&A)) ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 4)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GB_Matrix_check (A, "A empty", G3, NULL)) ;
 
     // change the type of the pending tuples, forcing a wait
@@ -4301,6 +4302,7 @@ void mexFunction
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
     CHECK (!GB_IS_FULL (A)) ;
+    CHECK (!GB_IS_BITMAP (A)) ;
     A->i [0] = 1 ;
     A->i [1] = 0 ;
 
@@ -4313,6 +4315,7 @@ void mexFunction
     CHECK (info == GrB_INVALID_OBJECT) ;
 
     CHECK (!GB_IS_FULL (A)) ;
+    CHECK (!GB_IS_BITMAP (A)) ;
     A->i [0] = 0 ;
     A->i [1] = 1 ;
     OK (GB_Matrix_check (A, "OK", G3, NULL)) ;
@@ -4349,38 +4352,41 @@ void mexFunction
     // #define FREE_DEEP_COPY ;
     // #define GET_DEEP_COPY ;
 
-    CHECK (!GB_IS_FULL (A)) ;
-    OK (GB_convert_sparse_to_hyper (A, Context)) ;
-    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (GB_IS_SPARSE (A)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     OK (GB_Matrix_check (A, "A now hyper", G3, NULL)) ;
     CHECK (A->h != NULL) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     CHECK (A->h == NULL) ;
     bool A_is_hyper ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (!A_is_hyper) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
     CHECK (A->h != NULL) ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (A_is_hyper) ;
 
     // make sure A->nvec_nonempty is valid
-    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     if (A->nvec_nonempty < 0)
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
-    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     isave = A->p [1] ;
     A->p [1] = 0 ;
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
     ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", G1, NULL)) ;
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "A", G1, ff)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     A->p [1] = isave ;
     OK (GB_Matrix_check (A, "A fixed", G0, NULL)) ;
 
@@ -4392,6 +4398,7 @@ void mexFunction
     CHECK (hratio == hratio2) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     CHECK (A->is_csc) ;
 
     GxB_Format_Value format = 0;

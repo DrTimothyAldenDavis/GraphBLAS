@@ -116,8 +116,3 @@ These features are supported, but are not as fast as they could be:
     concatenation: [A B], [A;B], and the built-in functions: bandwidth, eps,
     isbanded, isdiag, ishermitian, issymmetric, istril, istriu, spfun.
 
-For Windows: Microsoft Visual Studio does not support OpenMP tasking,
-    which means that the internal sort is not parallel, but sequential.
-    This affects the performance of GrB.build, and some uses of matrix
-    subreferencing (C(I,J) when I and/or J are unsorted lists).
-

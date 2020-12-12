@@ -308,7 +308,7 @@ void mexFunction
     CHECK (s == 0.5) ;
     GB_Global_bitmap_switch_set (GB_BITMAP_SWITCH_DEFAULT) ;
     s = GB_Global_bitmap_switch_get ( ) ;
-    CHECK (s == GB_BITMAP_SWITCH_DEFAULT) ;
+    CHECK (fabsf (s - GB_BITMAP_SWITCH_DEFAULT) < 1e-6) ;
 
     //--------------------------------------------------------------------------
     // reduce with positional op

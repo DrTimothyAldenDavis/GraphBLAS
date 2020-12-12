@@ -126,10 +126,9 @@ GrB_Info GB_selector
     if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
     { 
         // GB_bitmap_selector does not support these opcodes.  For the RESIZE
-        // and NONZOMBIE operators, A will never be bitmap.  Full matrices
-        // should use another method, but for now the sparse case works fine.
-        // GB_resize when applied to a full matrix only uses GB_selector after
-        // converting A to hypersparse.  A full matrix never has zombies.
+        // and NONZOMBIE operators, A will never be bitmap.  A is converted to
+        // hypersparse first for RESIZE, and a full/bitmap matrix never has
+        // zombies.
         use_bitmap_selector = false ;
     }
     else if (opcode == GB_DIAG_opcode)

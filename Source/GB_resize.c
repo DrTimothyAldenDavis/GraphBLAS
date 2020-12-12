@@ -152,7 +152,6 @@ GrB_Info GB_resize              // change the size of a matrix
         
             GB_void *GB_RESTRICT Ax_old = A->x ;
 
-            // TODO if A is bitmap, this might cause valgrind to complain
             int64_t j ;
             if (vdim_new <= 4*nthreads)
             {

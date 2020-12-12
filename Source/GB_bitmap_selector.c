@@ -46,14 +46,11 @@ GrB_Info GB_bitmap_selector
     // allocate C
     //--------------------------------------------------------------------------
 
-    bool bitmap_calloc = true ;
-    // TODO:: can malloc C->b
-    // TODO:: must calloc C->x for GB_EQ_ZERO_opcode
-
+    // C->b and C->x are malloc'd, not calloc'd
     GrB_Matrix C = NULL ;
     GB_OK (GB_new_bix (&C, // always bitmap, new header
         A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
-        GxB_BITMAP, bitmap_calloc, A->hyper_switch, -1, anz, true, Context)) ;
+        GxB_BITMAP, false, A->hyper_switch, -1, anz, true, Context)) ;
     int64_t cnvals ;
 
     //--------------------------------------------------------------------------
@@ -63,8 +60,11 @@ GrB_Info GB_bitmap_selector
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
-    // clear C->x  TODO:: only need this for GB_EQ_ZERO_opcode
-    GB_memset (C->x, 0, anz * A->type->size, nthreads_max) ;
+    if (opcode == GB_EQ_ZERO_opcode)
+    { 
+        // clear C->x; all other opcodes set C->x in the worker below
+        GB_memset (C->x, 0, anz * A->type->size, nthreads_max) ;
+    }
 
     //--------------------------------------------------------------------------
     // launch the switch factory to select the entries
@@ -85,7 +85,7 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     if (Chandle == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // transplant C back into A
