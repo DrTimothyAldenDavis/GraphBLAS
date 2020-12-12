@@ -40,8 +40,9 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
     // get the operator type
     //--------------------------------------------------------------------------
 
+    bool type_not_given = (op_typename == NULL) ;
     GrB_Type type ;
-    if (op_typename == NULL)
+    if (type_not_given)
     { 
         type = gb_default_type (atype, btype) ;
     }
@@ -54,6 +55,6 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
     // convert the string to a GraphBLAS binary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    return (gb_string_and_type_to_binop (op_name, type)) ;
+    return (gb_string_and_type_to_binop (op_name, type, type_not_given)) ;
 }
 

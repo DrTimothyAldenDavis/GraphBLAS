@@ -364,6 +364,8 @@ classdef GrB
 %   C = GrB.random (...)         random GraphBLAS matrix (like 'sprand')
 %   C = GrB.speye (m,n,type)     identity matrix of any type (like 'speye')
 %   t = GrB.type (A)             get the type of a MATLAB or GrB matrix A
+%   v = GrB.version              string with SuiteSparse:GraphBLAS version
+%   v = GrB.ver                  struct with SuiteSparse:GraphBLAS version
 %
 %-------------------------------------
 % Static Methods for graph algorithms:
@@ -1010,6 +1012,8 @@ methods (Static)
     s = tricount (A, check, d) ;                % uses GrB matrices
     s = type (A) ;
     unopinfo (op, type) ;
+    v = version ;
+    v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
 
 end

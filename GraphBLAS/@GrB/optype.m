@@ -7,6 +7,8 @@ function type = optype (a, b)
 %
 % The rules are listed below; the first one that applies is used:
 %
+% (0) for positional operators, int64 is used by default.
+%
 % (1) same:
 %
 %   if A and B have the same type:  optype is the type of A and B.

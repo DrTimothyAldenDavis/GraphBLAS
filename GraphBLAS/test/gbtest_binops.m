@@ -53,13 +53,13 @@ binops = {
     'bitand'
     'bitxor'
     'bitxnor'
-    'firsti'
+    'firsti0'
     'firsti1'
-    'firstj'
+    'firstj0'
     'firstj1'
-    'secondi'
+    'secondi0'
     'secondi1'
-    'secondj'
+    'secondj0'
     'secondj1'
     } ;
 

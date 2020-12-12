@@ -20,8 +20,8 @@
 //      bitand, bitor, bitxor, bitxnor, bitget, bitset, bitclr, bitshift
 
 // positional operators:
-//      firsti, firsti1, firstj, firstj1, secondi, secondi1, secondj, secondj1.
-//      The type is ignored.
+//      firsti0, firsti1, firstj0, firstj1, secondi0, secondi1, secondj0,
+//      secondj1.  The default type is int64
 
 // The following synonyms are allowed for specifying these operators:
 //
@@ -47,7 +47,8 @@
 GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 (
     const char *op_name,        // name of the operator, as a string
-    const GrB_Type type         // type of the x,y inputs to the operator
+    const GrB_Type type,        // type of the x,y inputs to the operator
+    const bool type_not_given   // true if no type present in the string
 )
 {
 
@@ -692,45 +693,73 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         if (type == GrB_UINT64) return (GxB_BSHIFT_UINT64) ;
 
     }
-    else if (MATCH (op_name, "firsti"  ) || MATCH (op_name, "1sti"))
+    else if (MATCH (op_name, "firsti0" ) || MATCH (op_name, "1sti0"))
     {
+
         if (type == GrB_INT32) return (GxB_FIRSTI_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_FIRSTI_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_FIRSTI_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "firsti1" ) || MATCH (op_name, "1sti1"))
+    else if (MATCH (op_name, "firsti1" ) || MATCH (op_name, "1sti1") ||
+             MATCH (op_name, "firsti"  ) || MATCH (op_name, "1sti"))
     {
+
         if (type == GrB_INT32) return (GxB_FIRSTI1_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_FIRSTI1_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_FIRSTI1_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "firstj"  ) || MATCH (op_name, "1stj"))
+    else if (MATCH (op_name, "firstj0" ) || MATCH (op_name, "1stj0"))
     {
+
         if (type == GrB_INT32) return (GxB_FIRSTJ_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_FIRSTJ_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_FIRSTJ_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "firstj1" ) || MATCH (op_name, "1stj1"))
+    else if (MATCH (op_name, "firstj1" ) || MATCH (op_name, "1stj1") ||
+             MATCH (op_name, "firstj"  ) || MATCH (op_name, "1stj"))
     {
+
         if (type == GrB_INT32) return (GxB_FIRSTJ1_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_FIRSTJ1_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_FIRSTJ1_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "secondi" ) || MATCH (op_name, "2ndi"))
+    else if (MATCH (op_name, "secondi0") || MATCH (op_name, "2ndi0"))
     {
+
         if (type == GrB_INT32) return (GxB_SECONDI_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_SECONDI_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_SECONDI_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "secondi1") || MATCH (op_name, "2ndi1"))
+    else if (MATCH (op_name, "secondi1") || MATCH (op_name, "2ndi1") ||
+             MATCH (op_name, "secondi" ) || MATCH (op_name, "2ndi"))
     {
+
         if (type == GrB_INT32) return (GxB_SECONDI1_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_SECONDI1_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_SECONDI1_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "secondj" ) || MATCH (op_name, "2ndj"))
+    else if (MATCH (op_name, "secondj0" ) || MATCH (op_name, "2ndj0"))
     {
+
         if (type == GrB_INT32) return (GxB_SECONDJ_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_SECONDJ_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_SECONDJ_INT64 ) ;
+
     }
-    else if (MATCH (op_name, "secondj1") || MATCH (op_name, "2ndj1"))
+    else if (MATCH (op_name, "secondj1") || MATCH (op_name, "2ndj1") ||
+             MATCH (op_name, "secondj" ) || MATCH (op_name, "2ndj"))
     {
+
         if (type == GrB_INT32) return (GxB_SECONDJ1_INT32 ) ;
-        if (type == GrB_INT64) return (GxB_SECONDJ1_INT64 ) ;
+        if (type == GrB_INT64
+        ||  type_not_given   ) return (GxB_SECONDJ1_INT64 ) ;
+
     }
 
     ERROR2 ("unknown binary operator", op_name) ;

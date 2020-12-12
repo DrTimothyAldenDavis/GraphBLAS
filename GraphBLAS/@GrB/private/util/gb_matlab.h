@@ -221,7 +221,8 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
 GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 (
     const char *op_name,        // name of the operator, as a string
-    const GrB_Type type         // type of the x,y inputs to the operator
+    const GrB_Type type,        // type of the x,y inputs to the operator
+    const bool type_not_given   // true if no type present in the string
 ) ;
 
 GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
@@ -241,7 +242,8 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 (
     const char *op_name,        // name of the operator, as a string
-    const GrB_Type type         // type of the x,y inputs to the operator
+    const GrB_Type type,        // type of the x,y inputs to the operator
+    const bool type_not_given   // true if no type present in the string
 ) ;
 
 GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string

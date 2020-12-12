@@ -39,6 +39,7 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
     // get the operator type
     //--------------------------------------------------------------------------
 
+    bool type_not_given = (op_typename == NULL) ;
     GrB_Type type ;
     if (op_typename == NULL)
     { 
@@ -53,6 +54,6 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
     // convert the string to a GraphBLAS unary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    return (gb_string_and_type_to_unop (op_name, type)) ;
+    return (gb_string_and_type_to_unop (op_name, type, type_not_given)) ;
 }
 
