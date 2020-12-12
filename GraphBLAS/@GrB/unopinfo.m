@@ -79,10 +79,10 @@ function unopinfo (op, type)
 %   bitcmp      z = ~(x)        bitwise complement, also 'bitnot'
 %
 % For int32 and int64 types, applied to an entry A(i,j)
-%   positioni   z = i-1
-%   positioni1  z = i
-%   positionj   z = i-1
-%   positionj1  z = i
+%   positioni0  z = i-1     also 'i0'
+%   positioni1  z = i       also 'i', 'i1', and 'positioni'
+%   positionj0  z = j-1     also 'j0'
+%   positionj1  z = j       also 'j', 'j1', and 'positionj'
 %
 % Example:
 %
