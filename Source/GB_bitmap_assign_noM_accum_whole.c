@@ -105,7 +105,8 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
             }
             #include "GB_bitmap_assign_C_whole_template.c"
 
-            // all entries in C are now present; C becomes a full matrix
+            // TODO:: if C->sparsity allows for full, just free C->b instead
+            // all entries in C are now present
             GB_memset (Cb, 1, cnzmax, nthreads_max) ;
             cnvals = cnzmax ;
 

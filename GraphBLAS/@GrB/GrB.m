@@ -32,7 +32,9 @@ classdef GrB
 %   The m and n parameters above are MATLAB scalars.  The type and format
 %   parameters are strings.  The default format is 'by col', to match the
 %   format used in MATLAB (see also GrB.format), but many graph
-%   algorithms are faster if the format is 'by row'.
+%   algorithms are faster if the format is 'by row'.  The format can also
+%   specify the data structure to use (hypersparse, sparse, bitmap, and/or
+%   full).
 %
 %   The usage C = GrB (m, n, type) is analgous to A = sparse (m, n),
 %   which creates an empty MATLAB sparse matrix A.  The type parameter is
@@ -93,7 +95,9 @@ classdef GrB
 %   When a GraphBLAS matrix is converted into a MATLAB sparse or full
 %   matrix, it is always returned to MATLAB 'by col'.
 %
-%   TODO:: describe hypersparse, sparse, bitmap, full
+%   The format can also specify the data structure to use.  By default
+%   GraphBLAS selects automatically between hypersparse, sparse, bitmap,
+%   and full formats.  See 'help GrB.format' for details.
 %
 %--------------------
 % Integer operations:

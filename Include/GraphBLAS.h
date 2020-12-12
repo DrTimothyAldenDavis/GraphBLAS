@@ -112,7 +112,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 11, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "Dec 12, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -3982,8 +3982,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 //  GxB_set: sets a global option, a GrB_Matrix option or a GrB_Descriptor
 //  GxB_get: queries a global option, a GrB_Matrix option or a GrB_Descriptor
 
-// ADDED in V3.0: GxB_CHUNK, GxB_LIBRARY_*, GxB_API_* options:
-// ADDED in V3.3: GxB_MKL and GxB_GPU* (DRAFT: in progress, do not use)
+// TODO:: add GxB_BITMAP_SWITCH
 
 #define GxB_HYPER 0     // (deprecated)
 

@@ -5,9 +5,6 @@ function result = gb_entries (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% TODO:: gbdegree should use the transpose if A is hypersparse,
-% and mat-vec otherwise.
-
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'

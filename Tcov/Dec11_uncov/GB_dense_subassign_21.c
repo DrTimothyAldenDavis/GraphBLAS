@@ -54,7 +54,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
     GrB_Index cnzmax ;
     bool ok = GB_Index_multiply (&cnzmax, cvlen, cvdim) ;
     if (!ok)
-    { 
+    {   GB_cov[3214]++ ;
+// covered (3214): 2
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -87,7 +88,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
             C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
             GxB_FULL, true, C->hyper_switch, -1, cnzmax, true, Context) ;
         if (info != GrB_SUCCESS)
-        { 
+        {   GB_cov[3215]++ ;
+// covered (3215): 843
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -98,12 +100,14 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
     else if (GB_IS_BITMAP (C))
     {
         if (C->sparsity & GxB_FULL)
-        { 
+        {   GB_cov[3216]++ ;
+// covered (3216): 82
             // C is bitmap but can become full; convert it to full
             GB_FREE (C->b) ;
         }
         else
-        { 
+        {   GB_cov[3217]++ ;
+// NOT COVERED (3217):
             // C is bitmap and must remain so
             GB_memset (C->b, 1, cnzmax, nthreads_max) ;
             C->nvals = cnzmax ;
@@ -115,7 +119,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
     //--------------------------------------------------------------------------
 
     if (!GB_is_nonzero (cwork, csize))
-    { 
+    {   GB_cov[3218]++ ;
+// covered (3218): 486
 
         //----------------------------------------------------------------------
         // set all of C->x to zero
@@ -153,19 +158,32 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
 
         switch (C->type->code)
         {
-            case GB_BOOL_code   : GB_WORKER (bool) ;
-            case GB_INT8_code   : GB_WORKER (int8_t) ;
-            case GB_INT16_code  : GB_WORKER (int16_t) ;
-            case GB_INT32_code  : GB_WORKER (int32_t) ;
-            case GB_INT64_code  : GB_WORKER (int64_t) ;
-            case GB_UINT8_code  : GB_WORKER (uint8_t) ;
-            case GB_UINT16_code : GB_WORKER (uint16_t) ;
-            case GB_UINT32_code : GB_WORKER (uint32_t) ;
-            case GB_UINT64_code : GB_WORKER (uint64_t) ;
-            case GB_FP32_code   : GB_WORKER (float) ;
-            case GB_FP64_code   : GB_WORKER (double) ;
-            case GB_FC32_code   : GB_WORKER (GxB_FC32_t) ;
-            case GB_FC64_code   : GB_WORKER (GxB_FC64_t) ;
+            case GB_BOOL_code    : GB_cov[3219]++ ;  GB_WORKER (bool) ;
+// covered (3219): 30
+            case GB_INT8_code    : GB_cov[3220]++ ;  GB_WORKER (int8_t) ;
+// covered (3220): 104
+            case GB_INT16_code   : GB_cov[3221]++ ;  GB_WORKER (int16_t) ;
+// covered (3221): 4
+            case GB_INT32_code   : GB_cov[3222]++ ;  GB_WORKER (int32_t) ;
+// covered (3222): 8
+            case GB_INT64_code   : GB_cov[3223]++ ;  GB_WORKER (int64_t) ;
+// covered (3223): 4
+            case GB_UINT8_code   : GB_cov[3224]++ ;  GB_WORKER (uint8_t) ;
+// covered (3224): 4
+            case GB_UINT16_code  : GB_cov[3225]++ ;  GB_WORKER (uint16_t) ;
+// covered (3225): 106
+            case GB_UINT32_code  : GB_cov[3226]++ ;  GB_WORKER (uint32_t) ;
+// covered (3226): 4
+            case GB_UINT64_code  : GB_cov[3227]++ ;  GB_WORKER (uint64_t) ;
+// covered (3227): 102
+            case GB_FP32_code    : GB_cov[3228]++ ;  GB_WORKER (float) ;
+// covered (3228): 4
+            case GB_FP64_code    : GB_cov[3229]++ ;  GB_WORKER (double) ;
+// covered (3229): 52
+            case GB_FC32_code    : GB_cov[3230]++ ;  GB_WORKER (GxB_FC32_t) ;
+// covered (3230): 4
+            case GB_FC64_code    : GB_cov[3231]++ ;  GB_WORKER (GxB_FC64_t) ;
+// covered (3231): 111
             default:
                 {
                     // worker for all user-defined types
@@ -174,7 +192,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
                     for (pC = 0 ; pC < cnzmax ; pC++)
-                    { 
+                    {   GB_cov[3232]++ ;
+// covered (3232): 13
                         memcpy (Cx +((pC)*csize), cwork, csize) ;
                     }
                 }

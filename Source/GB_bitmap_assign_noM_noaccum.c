@@ -29,7 +29,7 @@
 // kind:        assign, row assign, col assign, or subassign
 
 // If M is not present and Mask_comp is true, then an empty mask is
-// complemented.  This case is been handled by GB_assign_prep by calling this
+// complemented.  This case is handled by GB_assign_prep by calling this
 // method with no matrix A, but with a scalar (which is unused).  However,
 // for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
 // I and J.  In that case, GB_assign_prep calls GB_clear instead.

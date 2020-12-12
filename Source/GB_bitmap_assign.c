@@ -10,6 +10,10 @@
 // Implements GrB_Row_assign, GrB_Col_assign, GrB_assign, GxB_subassign when C
 // is in bitmap form, or when C is converted into bitmap form.
 
+// C is returned as bitmap in all cases except for C = A or C = scalar (the
+// whole_C_matrix case with GB_bitmap_assign_noM_noaccum_whole).  For that
+// method, C can be returned with any sparsity structure.
+
 #include "GB_bitmap_assign_methods.h"
 #include "GB_dense.h"
 
@@ -64,13 +68,23 @@ GrB_Info GB_bitmap_assign
     if (M == NULL)
     {
         if (accum == NULL)
-        { 
-            // C(I,J) = A or scalar, no mask
-            // TODO:: decide if whole_C_matrix case needs to be exploited
-            GB_OK (GB_bitmap_assign_noM_noaccum (C, C_replace,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                /* no M, */ Mask_comp, Mask_struct, /* no accum, */
-                A, scalar, scalar_type, assign_kind, Context)) ;
+        {
+            if (whole_C_matrix)
+            { 
+                // C = A or scalar, no mask.  C may become sparse, hyper, or
+                // full, or it may remain bitmap.
+                GB_OK (GB_bitmap_assign_noM_noaccum_whole (C, C_replace,
+                    /* no M, */ Mask_comp, Mask_struct, /* no accum, */
+                    A, scalar, scalar_type, Context)) ;
+            }
+            else
+            { 
+                // C(I,J) = A or scalar, no mask
+                GB_OK (GB_bitmap_assign_noM_noaccum (C, C_replace,
+                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                    /* no M, */ Mask_comp, Mask_struct, /* no accum, */
+                    A, scalar, scalar_type, assign_kind, Context)) ;
+            }
         }
         else
         {
@@ -214,7 +228,6 @@ GrB_Info GB_bitmap_assign
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "final C for bitmap assign", GB0) ;
-    ASSERT (GB_IS_BITMAP (C)) ;
     return (GrB_SUCCESS) ;
 }
 

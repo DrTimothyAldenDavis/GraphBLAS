@@ -653,13 +653,13 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
         case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
         case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
+        case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
         case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct> = scalar
-        case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar ; C becomes full
         case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
             // C and M can have any sparsity pattern, including bitmap
             break ;
@@ -692,13 +692,13 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
         case GB_SUBASSIGN_METHOD_08s :  // C(I,J)< M> += A, with S
         case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
+        case GB_SUBASSIGN_METHOD_24 :   // C = A
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense
         case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
-        case GB_SUBASSIGN_METHOD_24 :   // C = A
             // C, M, and A can have any sparsity structure, including bitmap
             break ;
 

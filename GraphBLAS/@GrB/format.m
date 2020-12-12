@@ -3,12 +3,12 @@ function [f,s] = format (arg)
 %
 % In its ANSI C interface, SuiteSparse:GraphBLAS stores its matrices by
 % row, by default, since that format tends to be fastest for graph
-% algorithms, but it can also store its matrices by column.  MATLAB
-% sparse and dense sparse matrices are always stored by column.  For
-% better compatibility with MATLAB sparse matrices, the default for the
-% MATLAB interface for SuiteSparse:GraphBLAS is to store matrices by
-% column.  This has performance implications, and algorithms should be
-% designed accordingly.  The default format can be can changed via:
+% algorithms, but it can also store its matrices by column.  MATLAB sparse
+% and full matrices are always stored by column.  For better compatibility
+% with MATLAB matrices, the default for the MATLAB interface for
+% SuiteSparse:GraphBLAS is to store matrices by column.  This has
+% performance implications, and algorithms should be designed accordingly.
+% The default format can be can changed via:
 %
 %   GrB.format ('by row')
 %   GrB.format ('by col')
@@ -70,6 +70,37 @@ function [f,s] = format (arg)
 %
 % Use G = GrB (G, 'by row') or G = GrB (G, 'by col') to change the format
 % of G after it is constructed.
+%
+% Individual matrices are held in one of four data structurs, each of
+% which can be held 'by row' and 'by col'.  By default, GraphBLAS selects
+% automatically between the following four formats.  Let A by m-by-n with
+% e entries:
+%
+%   (1) 'hypersparse' (or 'hyper' for short):  This is useful if A
+%       n << e and A is 'by col', or m << e if A is 'by row'.  The data
+%       structure takes only O (e) space.
+%   (2) 'sparse':  This the same as the MATLAB sparse matrix, except that
+%       A can be either 'by col' (taking O(n+e) space), or 'by row'
+%       taking O(m+e) space.  A native MATLAB sparse matrix is only held
+%       'by col'.
+%   (3) 'bitmap':  This data structure takes O(m*n) space, but it can
+%       represent a sparse matrix with e < m*n.  It is very efficient
+%       if e is about 0.1*m*n or greater.
+%   (4) 'full':  This takes O(m*n) sparse, and 'full by col' is the same
+%       as a MATLAB full matrix.  All entries must be present (e == m*n).
+%       GraphBLAS can also store a matrix 'full by row'.
+%
+% The sparsity formats can be combined.  For example, to store a matrix
+% in either sparse or bitmap format (but not hypersparse or full) use
+% G = GrB (A, 'sparse/bitmap by col').  GraphBLAS will automatically
+% select between the 'sparse by col' and 'bitmap by col' formats,
+% choosing the latter if the matrix becomes more than 10% dense, and
+% a bitmap matrix is converted to sparse if the density is <= 0.2%.
+% A matrix between these two ranges is kept in its current format.
+% The with 'sparse/bitmap by col' format, a matrix will not be held in
+% hypersparse or full formats.  The default is 'hyper/sparse/bitmap/full
+% by col', which allows GraphBLAS to select between all 4 formats, each
+% column-oriented 'by col'.
 %
 % Examples:
 %

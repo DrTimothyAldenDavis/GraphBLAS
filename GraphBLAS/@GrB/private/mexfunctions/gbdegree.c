@@ -42,8 +42,14 @@ void mexFunction
     // get the inputs 
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    int64_t *degree = NULL ;
+    GrB_Index *list = NULL, nvec = 0 ;
+    GrB_Vector d = NULL ;
+    GrB_Vector y = NULL ;
+    GrB_Matrix T = NULL ;
     GrB_Matrix Z = NULL ;
+
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     GxB_Format_Value fmt ;
     OK (GxB_Matrix_Option_get (X, GxB_FORMAT, &fmt)) ;
 
@@ -88,15 +94,16 @@ void mexFunction
     // get the degree of each row or column of X
     //--------------------------------------------------------------------------
 
-    int64_t *degree = NULL ;
-    GrB_Index *list = NULL, nvec = 0 ;
-    GrB_Vector d = NULL ;
+    GrB_Index nvals, nrows, ncols ;
+    OK (GrB_Matrix_nvals (&nvals, X)) ;
+    OK (GrB_Matrix_nrows (&nrows, X)) ;
+    OK (GrB_Matrix_ncols (&ncols, X)) ;
 
     if (native)
     { 
 
         //----------------------------------------------------------------------
-        // get the degree of each vector of X
+        // get the degree of each vector of X, where X is sparse or hypersparse
         //----------------------------------------------------------------------
 
         if (!GB_matlab_helper9 (X, &degree, &list, &nvec))
@@ -111,14 +118,8 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // get the degree of each index of X
+        // get the degree of each index of X, where X is sparse or hypersparse
         //----------------------------------------------------------------------
-
-        GrB_Index nvals, nrows, ncols ;
-        OK (GrB_Matrix_nvals (&nvals, X)) ;
-        OK (GrB_Matrix_nrows (&nrows, X)) ;
-        OK (GrB_Matrix_ncols (&ncols, X)) ;
-        GrB_Vector y = NULL ;
 
         if (fmt == GxB_BY_COL)
         {
@@ -129,26 +130,38 @@ void mexFunction
 
             if (nvals < ncols / 16 && ncols > 256)
             { 
-                // X is hypersparse, or might as well be, so let y be the
-                // pattern of nonempty columns of X.
-                if (!GB_matlab_helper9 (X, &degree, &list, &nvec))
+
+                // X is hypersparse, or might as well be, and held by column,
+                // so compute the degree of each vector of T = GrB(X,'by row')
+                // instead.
+
+                OK (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
+                OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_ROW)) ;
+                OK1 (T, GrB_Matrix_apply (T, NULL, NULL, GxB_ONE_BOOL, X,
+                    NULL)) ;
+
+                // get the degree of nonempty rows of T
+                if (!GB_matlab_helper9 (T, &degree, &list, &nvec))
                 {
                     ERROR ("out of memory") ;
                 }
-                OK (GxB_Vector_import_CSC (&y, GrB_INT64, ncols,
+                OK (GxB_Vector_import_CSC (&d, GrB_INT64, nrows,
                     &list, &degree, nvec, nvec, nvec, false, NULL)) ;
+
             }
             else
             { 
+
                 // y = dense vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
                 OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     ncols, NULL)) ;
-            }
 
-            // d = X*y using the PLUS_PAIR semiring
-            OK (GrB_Vector_new (&d, GrB_INT64, nrows)) ;
-            OK1 (d, GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y, NULL)) ;
+                // d = X*y using the PLUS_PAIR semiring
+                OK (GrB_Vector_new (&d, GrB_INT64, nrows)) ;
+                OK1 (d, GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y,
+                    NULL)) ;
+            }
 
         }
         else
@@ -160,35 +173,47 @@ void mexFunction
 
             if (nvals < nrows / 16 && nrows > 256)
             { 
-                // X is hypersparse, or might as well be, so let y be the
-                // pattern of nonempty rows of X.
-                if (!GB_matlab_helper9 (X, &degree, &list, &nvec))
+
+                // X is hypersparse, or might as well be, and held by row,
+                // so compute the degree of each vector of T = GrB(X,'by col')
+                // instead.
+
+                OK (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
+                OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
+                OK1 (T, GrB_Matrix_apply (T, NULL, NULL, GxB_ONE_BOOL, X,
+                    NULL)) ;
+
+                // get the degree of nonempty columns of T
+                if (!GB_matlab_helper9 (T, &degree, &list, &nvec))
                 {
                     ERROR ("out of memory") ;
                 }
-                OK (GxB_Vector_import_CSC (&y, GrB_INT64, nrows,
+                OK (GxB_Vector_import_CSC (&d, GrB_INT64, ncols,
                     &list, &degree, nvec, nvec, nvec, false, NULL)) ;
+
             }
             else
             { 
+
                 // y = dense vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
                 OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     nrows, NULL)) ;
+
+                // d = y*X using the PLUS_PAIR semiring
+                OK (GrB_Vector_new (&d, GrB_INT64, ncols)) ;
+                OK1 (d, GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X,
+                    NULL)) ;
             }
-
-            // d = y*X using the PLUS_PAIR semiring
-            OK (GrB_Vector_new (&d, GrB_INT64, ncols)) ;
-            OK1 (d, GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X, NULL)) ;
         }
-
-        OK (GrB_Vector_free (&y)) ;
     }
 
     //--------------------------------------------------------------------------
-    // export d to MATLAB as a GraphBLAS matrix
+    // free workspace and export d to MATLAB as a GraphBLAS matrix
     //--------------------------------------------------------------------------
 
+    OK (GrB_Vector_free (&y)) ;
+    OK (GrB_Matrix_free (&T)) ;
     OK (GrB_Matrix_free (&X)) ;
     pargout [0] = gb_export (&d, KIND_GRB) ;
     GB_WRAPUP ;

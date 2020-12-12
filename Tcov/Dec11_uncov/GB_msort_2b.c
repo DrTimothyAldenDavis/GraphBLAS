@@ -66,7 +66,8 @@ static int64_t GB_msort_2b_binary_search    // return pleft
     int64_t pleft = p_start ;
     int64_t pright = p_end - 1 ;
     while (pleft < pright)
-    { 
+    {   GB_cov[3639]++ ;
+// covered (3639): 1204
         int64_t pmiddle = (pleft + pright) >> 1 ;
         // less = (X [pmiddle] < Pivot)
         bool less = GB_lt_2 (X_0, X_1, pmiddle,
@@ -93,11 +94,13 @@ static int64_t GB_msort_2b_binary_search    // return pleft
     {
         if (GB_lt_2 (X_0, X_1, pleft,
                      Y_0, Y_1, pivot))
-        { 
+        {   GB_cov[3640]++ ;
+// covered (3640): 22
             pleft++ ;
         }
         else
-        { 
+        {   GB_cov[3641]++ ;
+// covered (3641): 52
 //          pright++ ;  // (not needed)
         }
     }
@@ -192,7 +195,8 @@ void GB_msort_2b_create_merge_tasks
     //--------------------------------------------------------------------------
 
     if (ntasks == 1)
-    { 
+    {   GB_cov[3642]++ ;
+// covered (3642): 128
 
         //----------------------------------------------------------------------
         // a single task will merge all of Left and Right into Sresult
@@ -218,7 +222,8 @@ void GB_msort_2b_create_merge_tasks
 
         int64_t pleft, pright ;
         if (nleft >= nright)
-        { 
+        {   GB_cov[3643]++ ;
+// covered (3643): 64
             // split Left in half, and search for its pivot in Right
 //          printf ("split left\n") ;
             pleft = (pL_end + pL_start) >> 1 ;
@@ -227,7 +232,8 @@ void GB_msort_2b_create_merge_tasks
                         R_0, R_1, pR_start, pR_end) ;
         }
         else
-        { 
+        {   GB_cov[3644]++ ;
+// covered (3644): 34
             // split Right in half, and search for its pivot in Left
 //          printf ("split right\n") ;
             pright = (pR_end + pR_start) >> 1 ;
@@ -303,14 +309,16 @@ static void GB_msort_2b_merge
     {
         if (GB_lt_2 (Left_0,  Left_1,  pleft,
                      Right_0, Right_1, pright))
-        { 
+        {   GB_cov[3645]++ ;
+// covered (3645): 859169
             // S [p] = Left [pleft++]
             S_0 [p] = Left_0 [pleft] ;
             S_1 [p] = Left_1 [pleft] ;
             pleft++ ;
         }
         else
-        { 
+        {   GB_cov[3646]++ ;
+// NOT COVERED (3646):
             // S [p] = Right [pright++]
             S_0 [p] = Right_0 [pright] ;
             S_1 [p] = Right_1 [pright] ;
@@ -320,13 +328,15 @@ static void GB_msort_2b_merge
 
     // either input is exhausted; copy the remaining list into S
     if (pleft < nleft)
-    { 
+    {   GB_cov[3647]++ ;
+// covered (3647): 64
         int64_t nremaining = (nleft - pleft) ;
         memcpy (S_0 + p, Left_0 + pleft, nremaining * sizeof (int64_t)) ;
         memcpy (S_1 + p, Left_1 + pleft, nremaining * sizeof (int64_t)) ;
     }
     else if (pright < nright)
-    { 
+    {   GB_cov[3648]++ ;
+// covered (3648): 64
         int64_t nremaining = (nright - pright) ;
         memcpy (S_0 + p, Right_0 + pright, nremaining * sizeof (int64_t)) ;
         memcpy (S_1 + p, Right_1 + pright, nremaining * sizeof (int64_t)) ;
@@ -352,7 +362,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
     //--------------------------------------------------------------------------
 
     if (nthreads <= 1 || n <= GB_BASECASE)
-    { 
+    {   GB_cov[3649]++ ;
+// covered (3649): 4750591
         // sequential quicksort
 //      printf ("msort2b: sequential\n") ;
         GB_qsort_2 (A_0, A_1, n) ;
@@ -384,7 +395,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 
     int64_t *GB_RESTRICT W = GB_MALLOC (2*n + 6*ntasks + 1, int64_t) ;
     if (W == NULL)
-    { 
+    {   GB_cov[3650]++ ;
+// NOT COVERED (3650):
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -406,7 +418,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
     GB_eslice (Slice, n, ntasks) ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int tid = 0 ; tid < ntasks ; tid++)
-    { 
+    {   GB_cov[3651]++ ;
+// covered (3651): 32
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
 //      printf ("leaf A [%ld:%ld]\n", leaf, leaf + leafsize - 1) ;
@@ -425,13 +438,11 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
         // merge level k into level k-1, from A into W
         //----------------------------------------------------------------------
 
-        // TODO: skip k and k-1 for each group of 4 sublists of A if they are
-        // already sorted with respect to each other.
-
         // this could be done in parallel if ntasks was large
 //      printf ("----------------------k %d: from A to W\n", k) ;
         for (int tid = 0 ; tid < ntasks ; tid += 2*nt)
-        { 
+        {   GB_cov[3652]++ ;
+// covered (3652): 20
             // create 2*nt tasks to merge two A sublists into one W sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
             GB_msort_2b_create_merge_tasks (
@@ -452,7 +463,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
-        { 
+        {   GB_cov[3653]++ ;
+// covered (3653): 64
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;
             int64_t pR = R_task [tid], nR = R_len [tid] ;
@@ -472,7 +484,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
         // this could be done in parallel if ntasks was large
 //      printf ("----------------------back to A\n") ;
         for (int tid = 0 ; tid < ntasks ; tid += 2*nt)
-        { 
+        {   GB_cov[3654]++ ;
+// covered (3654): 10
             // create 2*nt tasks to merge two W sublists into one A sublist
 //          printf ("tasks: tid %d nt %d tid+2*nt: %d\n", tid, nt, tid+2*nt) ;
             GB_msort_2b_create_merge_tasks (
@@ -493,7 +506,8 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
-        { 
+        {   GB_cov[3655]++ ;
+// covered (3655): 64
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;
             int64_t pR = R_task [tid], nR = R_len [tid] ;

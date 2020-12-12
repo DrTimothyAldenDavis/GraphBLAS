@@ -9,6 +9,8 @@
 
 // C = A, making a deep copy into an existing non-shallow matrix C, but
 // possibly reusing parts of C if C is dense.  See also GB_dup.
+// C can have any sparsity structure on input.  C takes on the same sparsity
+// structure as A.
 
 // Handles arbitrary typecasting.
 
@@ -16,9 +18,7 @@
 // C->sparsity.  C is conformed to its desired sparsity structure later.
 
 // A can be jumbled, in which case C is also jumbled.
-// A can have any sparsity structure (sparse, hyper, bitmap, or full)
-
-// TODO:: preserve C->sparsity
+// A can have any sparsity structure (sparse, hyper, bitmap, or full).
 
 #include "GB_dense.h"
 #include "GB_Pending.h"
@@ -37,6 +37,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_is_shallow (C)) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -62,6 +63,11 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // the prior pattern of C is discarded
     C->jumbled = false ;
 
+    // save the sparsity control of C
+    int C_sparsity = C->sparsity ;
+    float C_hyper_switch = C->hyper_switch ;
+    float C_bitmap_switch = C->bitmap_switch ;
+
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -85,7 +91,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
             && C->vlen == A->vlen
             && C->is_csc == A->is_csc   // A and C have the same format
             && C->x != NULL             // C->x exists
-            && !(C->x_shallow)          // C->x is not shallow
         ) ;
 
     if (copy_dense_A_to_C)
@@ -96,7 +101,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // make C full, if not full already
-        GBURBLE ("(dense copy) ") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
         GB_convert_any_to_full (C) ;        // ensure C is full
@@ -109,10 +113,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         // copy the pattern from A to C
         //----------------------------------------------------------------------
 
-        // TODO: this does not preserve C->sparsity
-
         // clear prior content of C, but keep the CSR/CSC format and its type
-        GBURBLE ("(deep copy) ") ;
         bool C_is_csc = C->is_csc ;
         GB_phbix_free (C) ;
         // copy the pattern, not the values
@@ -133,6 +134,14 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     GB_cast_array (C->x, C->type->code, A->x, A->type->code,
         A->b, A->type->size, anz, nthreads) ;
+
+    //-------------------------------------------------------------------------
+    // restore the sparsity control of C
+    //-------------------------------------------------------------------------
+
+    C->sparsity = C_sparsity ;
+    C->hyper_switch = C_hyper_switch ;
+    C->bitmap_switch = C_bitmap_switch ;
 
     //-------------------------------------------------------------------------
     // return the result

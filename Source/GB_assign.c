@@ -164,16 +164,15 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         //----------------------------------------------------------------------
 
         // GB_bitmap_assign does not need to create the SubMask, and it also
-        // handles the C_replace_phase itself.  C is bitmap, or is converted
-        // to bitmap by GB_bitmap_assign, before the assignment.
+        // handles the C_replace_phase itself.  C is bitmap, or is converted to
+        // bitmap by GB_bitmap_assign, before the assignment.  For the C = A
+        // and C = scalar assignment, C may be returned in any sparsity
+        // structure, but otherwise C is returned as bitmap.
 
         GB_OK (GB_bitmap_assign (C, C_replace,
             I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
             M, Mask_comp, Mask_struct, accum, A,
             scalar, atype, assign_kind, Context)) ;
-
-        // C was bitmap on input and stays that way, or has now become bitmap
-        ASSERT (GB_IS_BITMAP (C)) ;
 
     }
     else
@@ -379,6 +378,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C_in, "C to conform", GB0) ;
     GB_OK (GB_conform (C_in, Context)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for assign", GB0) ;
     GB_FREE_ALL ;

@@ -11,20 +11,12 @@
 // (or full if all entries are present, but in that case, this function is not
 // called).  Returns false if the matrix should stay hypersparse/sparse.
 
-// If A is m-by-n and A->sparsity is GxB_AUTO_SPARSITY with the default
-// A->bitmap_switch: the matrix switches to bitmap if nnz(A)/(m*n) > (1/8).
-// That, if the density is 12.5% or more.  A bitmap matrix switches to sparse
-// if nnz(A)/(m*n) <= (1/512), that is, if the matrix density is about 0.2% or
-// less.  A matrix whose density is between 0.2% and 12.5% remains in its
-// current state.
-
-// A->bitmap_switch is normally a fraction in range 0 to 1, and is (1/8) by
-// default.  If set to 1 or more, A never becomes bitmap.
-
+// See GB_convert_bitmap_to_sparse_test for a description of this rule.
 // These default rules may change in future releases of SuiteSparse:GraphBLAS.
 
 // This rule is not used if all entries are present.  In that case, the matrix
-// becomes full, not bitmap.
+// becomes full, not bitmap, assuming the full format permitted by the sparsity
+// control setting of the matrix.
 
 #include "GB.h"
 

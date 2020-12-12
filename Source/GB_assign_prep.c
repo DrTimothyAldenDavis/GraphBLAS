@@ -99,6 +99,7 @@ GrB_Info GB_assign_prep
     GrB_Matrix A = A_in ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_assign/subassign", GB0) ;
+    ASSERT (!GB_is_shallow (C)) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign/subassign", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign/subassign", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;

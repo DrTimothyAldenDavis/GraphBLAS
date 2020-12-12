@@ -18,10 +18,10 @@
 // used as inputs to GxB_*Option_set.
 
 // The default format is by row (CSR), with a hyper_switch of 1/16,
-// and a bitmap_switch of 1/8.
+// and a bitmap_switch of 1/10.
 
 #define GB_HYPER_SWITCH_DEFAULT (0.0625)
-#define GB_BITMAP_SWITCH_DEFAULT (0.125)
+#define GB_BITMAP_SWITCH_DEFAULT (0.1)
 
 // compile SuiteSparse:GraphBLAS with "-DBYCOL" to make GxB_BY_COL the default
 // format

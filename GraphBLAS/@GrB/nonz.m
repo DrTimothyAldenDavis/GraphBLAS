@@ -80,7 +80,9 @@ if (id ~= 0)
     % id is nonzero, so prune A first (for any matrix A)
     A = gbselect (A, '~=', id) ;
 elseif (~matlab_sparse)
-    % id is zero, so prune A only if it is a GraphBLAS matrix
+    % id is zero, so prune A only if it is a GraphBLAS matrix,
+    % or a MATLAB full matrix.  A MATLAB sparse matrix can remain
+    % unchanged.
     A = gbselect (A, 'nonzero') ;
 end
 
