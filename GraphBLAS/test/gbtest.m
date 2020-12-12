@@ -135,10 +135,8 @@ gbtest96  % test GrB.optype
 gbtest97  % test GrB.apply2
 gbtest98  % test row/col degree for hypersparse matrices
 gbtest99  % test performance of C=A'*B and C=A'
-
+gbtest100 % test GrB.ver and GrB.version
 gbtest00  % test GrB.bfs and plot (graph (G))
-gbtest01  % test GrB.ver and GrB.version
-
 
 fprintf ('\ngbtest: all tests passed\n') ;
 
