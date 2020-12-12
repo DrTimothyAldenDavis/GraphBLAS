@@ -119,37 +119,43 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \end{spec}
 
 \newpage
-%-------------------------------------------------------------------------------
-\subsection{Future plans}
-%-------------------------------------------------------------------------------
-
-\begin{itemize}
-
-\item Version 4.0.0 (likely in July, 2020), will follow the V2.0 of the C API.
-    {\bf The following is tentative, but all of these changes have been
-    implemented in the current draft of v4.0.0 (July 1, 2020).}
-
-    \verb'GrB_wait()', with no inputs is removed.
-    \verb'GrB_wait(&object)': polymorphic function is added.
-    \verb'GrB_*_nvals' and related functions:
-        no longer guarantee completion
-        (per the v1.3 C API);
-        use \verb'GrB_wait(&object)'
-        or non-polymorphic \verb'GrB_*_wait(&object)' instead.
-
-    \verb'GrB_error' has changed; it now takes two parameters,
-    \verb'GrB_error(&s,C)' where \verb's' is the error string generated
-    when \verb'C' was last operated on.
-
-    V4.0.0 is otherwise identical to V3.3.1.
-
-\end{itemize}
 
 %-------------------------------------------------------------------------------
 \subsection{Release Notes}
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 4.0.1 (TODO:: 2020).      % TODO::
+
+    \begin{packed_itemize}
+    \item \verb'GrB_wait()', with no inputs: removed
+    \item \verb'GrB_wait(&object)': polymorphic function added
+    \item \verb'GrB_*_nvals': no longer guarantees completion;
+        use \verb'GrB_wait(&object)'
+        or non-polymorphic \verb'GrB_*_wait (&object)' instead
+    \item \verb'GrB_error': now has two parameters: a string
+        (\verb'char **') and an object
+    \item \verb'GrB_*_extractTuples': may return indices out of order
+    \item removed internal features: GBI iterator, slice and hyperslice matrices
+    \item bitmap/full matrices and vectors added
+    \item positional operators and semirings:
+        \verb'GxB_FIRSTI_INT32' and related ops
+    \item jumbled matrices: sort left pending, like zombies and pending tuples
+    \item \verb'GxB_get/set': added \verb'GxB_SPARSITY_*'
+        (hyper, sparse, bitmap, or full)
+    \item \verb'GxB_HYPER': enum renamed to \verb'GxB_HYPER_SWITCH'
+    \item \verb'GxB*import/export': API modified
+    \item OpenMP tasking removed from mergesort:
+        just as fast; now ports to Windows
+    \item bug fix: \verb'A({lo,hi})=scalar' in MATLAB;
+        \verb'A(lo:hi)=scalar' was OK.
+    \end{packed_itemize}
+
+\item Version 3.3.3 (July 14, 2020).
+    Bug fix: \verb'w<m>=A*u' with mask non-empty and u empty.
+
+\item Version 3.3.2 (July 3, 2020).  Minor changes to build system.
 
 \item Version 3.3.1 (June 30, 2020).  Bug fix to \verb'GrB_assign' and
     \verb'GxB_subassign' when the assignment is simple (\verb'C=A') but
@@ -11072,17 +11078,10 @@ result, GraphBLAS on Windows will have a few limitations.
 keyword, required for the polymorphic GraphBLAS functions.  So for example, you
 will need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.
 
-\item Another limitation is the lack of support for OpenMP tasking, used in the
-parallel sort inside GraphBLAS.  With Microsoft Visual Studio, the sort is
-compiled to use just a single thread.  The sort is used for
-\verb'GrB_Matrix_build' and \verb'GrB_Vector_build', and for \verb'GrB_assign'
-and  \verb'GxB_subassign' when the index lists are unsorted on input.  The
-internal sort still works as specified; it will just be single-threaded and
-thus these GraphBLAS functions will be slower on Windows as compared to Linux
-or MacOS.
-
-\item In addition, variable-length arrays are not supported, so user-defined
-types are limited to 128 bytes in size.
+\item Variable-length arrays are not supported, so user-defined
+types are limited to 128 bytes in size.  This can be changed by editting
+\verb'GB_VLA_MAXSIZE' in \verb'Source/GB_compiler.h', and recompiling
+SuiteSparse:GraphBLAS.
 \end{itemize}
 
 If you use a recent \verb'gcc' or \verb'icc' compiler on Windows other than the
