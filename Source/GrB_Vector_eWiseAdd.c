@@ -9,12 +9,6 @@
 
 // w<M> = accum (w,u+v)
 
-// SuiteSparse:GraphBLAS v3.2 and earlier included these functions from the C
-// API with the wrong name.  It is corrected in this version.  The prior
-// misnamed functions are kept for backward compatibility, but they are
-// deprecated and their use is not recommend. The generic version,
-// GrB_eWiseAdd, is not affected.
-
 #include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
@@ -74,17 +68,6 @@ GrB_Info GrB_Vector_eWiseAdd_BinaryOp       // w<M> = accum (w, u+v)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // misnamed
-(
-    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
-    const GrB_BinaryOp add, const GrB_Vector u, const GrB_Vector v,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Vector_eWiseAdd_BinaryOp (w, M, accum, add, u, v, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Vector_eWiseAdd_Monoid: vector addition
 //------------------------------------------------------------------------------
@@ -119,17 +102,6 @@ GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<M> = accum (w, u+v)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseAdd_Vector_Monoid         // misnamed
-(
-    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
-    const GrB_Monoid monoid, const GrB_Vector u, const GrB_Vector v,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Vector_eWiseAdd_Monoid (w, M, accum, monoid, u, v, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Vector_eWiseAdd_Semiring: vector addition
 //------------------------------------------------------------------------------
@@ -162,16 +134,5 @@ GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<M> = accum (w, u+v)
     GB_EWISE (semiring->add->op) ;
     GB_BURBLE_END ;
     return (info) ;
-}
-
-GrB_Info GrB_eWiseAdd_Vector_Semiring       // misnamed
-(
-    GrB_Vector w, const GrB_Vector M, const GrB_BinaryOp accum,
-    const GrB_Semiring semiring, const GrB_Vector u, const GrB_Vector v,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Vector_eWiseAdd_Semiring (w, M, accum, semiring, u, v, desc)) ;
 }
 
