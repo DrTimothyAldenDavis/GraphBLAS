@@ -18,11 +18,9 @@ A.sparsity = 4 ;    % bitmap
 B = GB_spec_random (n, n, inf, 1, 'double') ;
 B.sparsity = 8 ;    % full
 
-GrB.burble (1) ;
 C1 = A.matrix + B.matrix ;
 C2 = GB_mex_Matrix_eWiseAdd (C, [ ], [ ], 'plus', A, B, [ ]) ;
 GB_spec_compare (C1, C2) ;
-GrB.burble (0) ;
 
 fprintf ('test168: all tests passed\n') ;
 

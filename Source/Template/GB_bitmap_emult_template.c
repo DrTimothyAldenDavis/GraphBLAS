@@ -90,8 +90,11 @@
         //----------------------------------------------------------------------
 
         GB_SLICE_MATRIX (M, 8) ;
+        GB_bitmap_M_scatter_whole (C, M, Mask_struct, GB_BITMAP_M_SCATTER_SET_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            M_nthreads, M_ntasks, Context) ;
 
-        // TODO:: use GB_.._M_scatter_whole
+#if 0
         #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
@@ -119,6 +122,7 @@
                 }
             }
         }
+#endif
 
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only

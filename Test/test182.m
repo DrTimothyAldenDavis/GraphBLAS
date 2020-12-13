@@ -50,8 +50,6 @@ n = 1000 ;
 Aok = sparse (I+1, I+1, I, n, n) ;
 wok = diag (Aok) ;
 
-GrB.burble (0) ;
-
 for wait = 0:1
     for w_sparsity = 1:15
         fprintf ('.') ;
@@ -66,8 +64,6 @@ for wait = 0:1
         end
     end
 end
-
-GrB.burble (0) ;
 
 fprintf ('\ntest182: all tests passed\n') ;
 

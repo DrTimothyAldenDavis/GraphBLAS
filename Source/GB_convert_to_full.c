@@ -39,10 +39,10 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     }
 
     //--------------------------------------------------------------------------
-    // allocate new space for A->x
+    // free all prior content and allocate new space for A->x
     //--------------------------------------------------------------------------
 
-    // TODO:: do the GB_phbix_free first
+    GB_phbix_free (A) ;
 
     #ifdef GB_DEBUG
     // in debug mode, calloc the matrix so it can be safely printed below
@@ -59,10 +59,9 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     }
 
     //--------------------------------------------------------------------------
-    // free all prior content and transplant the new content into A
+    // transplant the new content into A
     //--------------------------------------------------------------------------
 
-    GB_phbix_free (A) ;
     A->x = Ax_new ;
     A->plen = -1 ;
     A->nvec = avdim ;

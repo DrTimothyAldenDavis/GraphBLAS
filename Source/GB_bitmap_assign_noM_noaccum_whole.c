@@ -101,7 +101,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
             //------------------------------------------------------------------
 
             GB_GET_C_BITMAP ;           // C must be bitmap
-            GB_GET_A
+            GB_GET_A_AND_SCALAR
 
             if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
             { 
@@ -116,27 +116,16 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                     A->type->code, Ab, A->type->size, cnzmax, nthreads) ;
 
                 if (GB_IS_BITMAP (A))
-                {
+                { 
                     // copy the bitmap
                     GB_memcpy (Cb, Ab, cnzmax, nthreads_max) ;
+                    C->nvals = GB_NNZ (A) ;
                 }
                 else
-                {
-                    // free or set the bitmap to all ones
-                    if (C->sparsity & GxB_FULL)
-                    { 
-                        // C is bitmap but can become full; convert it to full
-                        GB_FREE (C->b) ;
-                        C->nvals = -1 ;
-                    }
-                    else
-                    { 
-                        // all entries in C are now present; C remains bitmap
-                        GB_memset (Cb, 1, cnzmax, nthreads_max) ;
-                        C->nvals = cnzmax ;
-                    }
+                { 
+                    // free the bitmap or set it to all ones
+                    GB_bitmap_assign_to_full (C, nthreads_max) ;
                 }
-                C->nvals = GB_NNZ (A) ;
 
             }
             else

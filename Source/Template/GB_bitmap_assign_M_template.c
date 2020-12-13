@@ -11,9 +11,9 @@
 // operates on C(i,j) if the mask M(i,j) == 1, via the GB_MASK_WORK macro,
 // where C(i,j) is at Cx [pC] and Cb [pC].  M is hypersparse or sparse.
 
-// GB_ek_slice has alreadly sliced M for parallel work.  The tasks are held in
-// pstart_Mslice, kfirst_Mslice, klast_Mslice, mtasks, and the work is done
-// by mthreads threads.
+// GB_SLICE_MATRIX (M,...) has alreadly sliced M for parallel work.  The tasks
+// are held in pstart_Mslice, kfirst_Mslice, klast_Mslice, M_ntasks, and the
+// work is done by M_nthreads threads.
 
 // The work done by this kernel is independent of Mask_comp; both M and !M
 // do the same work by scattering their entries into the C bitmap.

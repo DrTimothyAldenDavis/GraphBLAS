@@ -5,7 +5,6 @@ function test160
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-GrB.burble (0) ;
 
 n = 100 ;
 Mask.matrix = (rand (n) > 0.5) ;

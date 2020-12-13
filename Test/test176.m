@@ -17,8 +17,6 @@ J = [3 2 4 9 7 1] ;
 I0 = uint64 (I) - 1 ;
 J0 = uint64 (J) - 1 ;
 
-GrB.burble (0) ;
-
 for trial = 1:10
 
     clear M Cin
@@ -48,7 +46,5 @@ for trial = 1:10
     GB_spec_compare (C1, C2) ;
 
 end
-
-GrB.burble (0) ;
 
 fprintf ('\ntest176: all tests passed\n') ;

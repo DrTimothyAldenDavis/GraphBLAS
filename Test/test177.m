@@ -13,8 +13,6 @@ rng ('default') ;
 desc.mask = 'complement' ;
 semiring.class = 'double' ;
 
-GrB.burble (0) ;
-
 for trial = 1:10
 
     clear M Cin
@@ -45,8 +43,6 @@ for trial = 1:10
     GB_spec_compare (C1, C2) ;
 
 end
-
-GrB.burble (0) ;
 
 fprintf ('\ntest177: all tests passed\n') ;
 

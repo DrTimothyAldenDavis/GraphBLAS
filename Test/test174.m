@@ -5,7 +5,6 @@ function test174
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-GrB.burble (1) ;
 
 n = 100 ;
 A = GB_spec_random (n, n, 0.05, 1, 'double') ;
@@ -51,5 +50,4 @@ C1 = GB_spec_Col_assign (C, [ ], 'plus', Acol, [ ], I,  desc) ;
 C2 = GB_mex_assign      (C, [ ], 'plus', Acol, [ ], I0, desc, 1) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
 fprintf ('test174: all tests passed\n') ;

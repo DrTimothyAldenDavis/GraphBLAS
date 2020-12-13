@@ -13,9 +13,9 @@
 {
     int64_t jC = J [0] ;
     int tid ;
-    #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
-    for (tid = 0 ; tid < mtasks ; tid++)
+    for (tid = 0 ; tid < M_ntasks ; tid++)
     {
         int64_t kfirst = kfirst_Mslice [tid] ;
         int64_t klast  = klast_Mslice  [tid] ;

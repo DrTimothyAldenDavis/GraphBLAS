@@ -97,17 +97,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
     }
     else if (GB_IS_BITMAP (C))
     {
-        if (C->sparsity & GxB_FULL)
-        { 
-            // C is bitmap but can become full; convert it to full
-            GB_FREE (C->b) ;
-        }
-        else
-        { 
-            // C is bitmap and must remain so
-            GB_memset (C->b, 1, cnzmax, nthreads_max) ;
-            C->nvals = cnzmax ;
-        }
+        // free the bitmap or set it to all ones
+        GB_bitmap_assign_to_full (C, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------

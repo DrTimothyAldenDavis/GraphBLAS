@@ -4,7 +4,6 @@ function test163
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-GrB.burble (1) ;
 semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
 semiring.class = 'double' ;
@@ -23,4 +22,3 @@ C1 = double (~M) .* (A'*B) ;
 C2 = GB_mex_mxm (Cin, M, [ ], semiring, A, B, dtn) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;

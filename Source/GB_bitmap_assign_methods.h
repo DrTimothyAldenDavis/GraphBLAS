@@ -71,39 +71,17 @@
     const size_t msize = M->type->size ;                                    \
     const size_t mvlen = M->vlen ;
 
-#if 0
-    /* determine if all of C(:,:) is being assigned to, with no (I,J) */    \
-    /* submatrix or permutation: */                                         \
-    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;            \
-    if (assign_kind == GB_SUBASSIGN)                                        \
-    {                                                                       \
-        /* ALIAS OK: C==M for bitmap subassign only for C(:,:)<M>=... */    \
-        ASSERT (GB_IMPLIES (GB_aliased (C, M), whole_C_matrix)) ;           \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* ALIAS OK: C==M always OK for bitmap assign and row/col assign */ \
-    }
-#endif
-
 //------------------------------------------------------------------------------
 // GB_SLICE_M: slice the mask matrix M
 //------------------------------------------------------------------------------
 
 #define GB_SLICE_M                                                          \
     GB_GET_M                                                                \
-    int64_t mnz = GB_NNZ (M) ;                                              \
-    int mthreads = GB_nthreads (mnz + M->nvec, chunk, nthreads_max) ;       \
-    int mtasks = (mthreads == 1) ? 1 : (8 * mthreads) ;                     \
     int64_t *pstart_Mslice = NULL ;                                         \
     int64_t *kfirst_Mslice = NULL ;                                         \
     int64_t *klast_Mslice  = NULL ;                                         \
-    if (!GB_ek_slice (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice,        \
-        M, &mtasks))                                                        \
-    {                                                                       \
-        /* out of memory */                                                 \
-        return (GrB_OUT_OF_MEMORY) ;                                        \
-    }
+    int M_nthreads, M_ntasks ;                                              \
+    GB_SLICE_MATRIX (M, 8) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_A: get the A matrix or the scalar
@@ -111,7 +89,7 @@
 
 // ALIAS of C and A for bitmap methods: OK only for C(:,:)=A assignment.
 
-#define GB_GET_A                                                            \
+#define GB_GET_A_AND_SCALAR                                                 \
     const int64_t *Ap = NULL ;                                              \
     const int64_t *Ah = NULL ;                                              \
     const int8_t  *Ab = NULL ;                                              \
@@ -149,7 +127,7 @@
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
 //------------------------------------------------------------------------------
 
-#define GB_GET_ACCUM                                                        \
+#define GB_GET_ACCUM_FOR_BITMAP                                             \
     ASSERT_BINARYOP_OK (accum, "accum for bitmap assign", GB0) ;            \
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;                                 \
     GxB_binary_function faccum = accum->function ;                          \
@@ -543,7 +521,8 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 
 #define GB_BITMAP_M_SCATTER_PLUS_2  0
 #define GB_BITMAP_M_SCATTER_MINUS_2 1
-#define GB_BITMAP_M_SCATTER_MOD_2   2
+#define GB_BITMAP_M_SCATTER_SET_2   2
+#define GB_BITMAP_M_SCATTER_MOD_2   3
 
 void GB_bitmap_M_scatter        // scatter M into the C bitmap
 (
@@ -584,6 +563,12 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const int mthreads,
     const int mtasks,
     GB_Context Context
+) ;
+
+void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
+(
+    GrB_Matrix C,
+    int nthreads_max
 ) ;
 
 #endif

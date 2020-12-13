@@ -923,6 +923,7 @@ methods
     C = sprandsym (arg1, arg2) ;
     c = sprintf (varargin) ;
     C = sqrt (G) ;
+    S = struct (G) ;
     C = sum (G, option) ;
     [p, varargout] = symamd (G, varargin) ;
     p = symrcm (G) ;

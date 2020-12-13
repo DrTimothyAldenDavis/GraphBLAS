@@ -20,8 +20,8 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
     const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks
     const int64_t *GB_RESTRICT klast_Mslice,  // size ntasks
-    const int mthreads,
-    const int mtasks,
+    const int M_nthreads,
+    const int M_ntasks,
     GB_Context Context
 )
 {
@@ -37,7 +37,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     // get C and M
     //--------------------------------------------------------------------------
 
-    GB_GET_M ;
+    GB_GET_M
     int8_t *Cb = C->b ;
     const int64_t cvlen = C->vlen ;
     int64_t cnvals = 0 ;
@@ -63,13 +63,12 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
             #include "GB_bitmap_assign_M_all_template.c"
             break ;
 
-//      case GB_BITMAP_M_SCATTER_MOD_2:         // Cb (i,j) %= 2
+        case GB_BITMAP_M_SCATTER_SET_2 :        // Cb (i,j) = 2
 
-//          // TODO unused so far, and probably not needed
-//          #undef  GB_MASK_WORK
-//          #define GB_MASK_WORK(pC) Cb [pC] %= 2
-//          #include "GB_bitmap_assign_M_all_template.c"
-//          break ;
+            #undef  GB_MASK_WORK
+            #define GB_MASK_WORK(pC) Cb [pC] = 2
+            #include "GB_bitmap_assign_M_all_template.c"
+            break ;
 
         default: ;
     }

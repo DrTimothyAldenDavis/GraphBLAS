@@ -15,6 +15,7 @@
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
 #include "GB_atomics.h"
+#include "GB_bitmap_assign_methods.h"
 #include "GB_mkl.h"
 #include "GB_binop__include.h"
 

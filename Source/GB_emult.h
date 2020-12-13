@@ -10,6 +10,7 @@
 #ifndef GB_EMULT_H
 #define GB_EMULT_H
 #include "GB.h"
+#include "GB_bitmap_assign_methods.h"
 
 GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (

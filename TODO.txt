@@ -1,5 +1,3 @@
-TODO:: MATLAB: GrB.load and GrB.save, as an object or optionally a struct
-    (Octave can't save an object and requires the latter)
 
 TODO:: check alternative/Makefile
 TODO:: check Windows, Mac, Linux, Power8

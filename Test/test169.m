@@ -23,11 +23,9 @@ B.sparsity = 2 ;    % sparse
 
 desc = struct ('mask', 'complement') ;
 
-GrB.burble (1) ;
 C1 = GB_spec_Matrix_eWiseAdd (C, M, [ ], 'plus', A, B, desc) ;
 C2 = GB_mex_Matrix_eWiseAdd  (C, M, [ ], 'plus', A, B, desc) ;
 GB_spec_compare (C1, C2) ;
-GrB.burble (0) ;
 
 fprintf ('test169: all tests passed\n') ;
 

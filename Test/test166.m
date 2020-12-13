@@ -6,7 +6,6 @@ function test166
 
 rng ('default') ;
 fprintf ('test166: ') ;
-GrB.burble (0) ;
 
 n = 10 ;
 A.matrix = rand (n) ;

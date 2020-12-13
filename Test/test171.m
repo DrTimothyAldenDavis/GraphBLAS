@@ -8,8 +8,6 @@ rng ('default') ;
 
 fprintf ('test171:\n') ;
 
-GrB.burble (1) ;
-
 for n = [ 1000 1025 2000 ]
 
     A.matrix = rand (n) ;
@@ -21,6 +19,5 @@ for n = [ 1000 1025 2000 ]
     C = GB_mex_dump (A, 1) ;
 end
 
-GrB.burble (0) ;
 fprintf ('test171: all tests passed\n') ;
 

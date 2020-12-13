@@ -11,7 +11,6 @@ types = types.all ;
 unary_ops = unary_ops.all ;
 
 rng ('default') ;
-GrB.burble (0) ;
 
 m = 8 ;
 n = 4 ;

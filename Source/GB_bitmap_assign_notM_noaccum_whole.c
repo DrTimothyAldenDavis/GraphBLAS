@@ -61,7 +61,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A
+    GB_GET_A_AND_SCALAR
 
     //--------------------------------------------------------------------------
     // scatter M into the bitmap of C
@@ -71,7 +71,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     GB_bitmap_M_scatter_whole (C,
         M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
         pstart_Mslice, kfirst_Mslice, klast_Mslice,
-        mthreads, mtasks, Context) ;
+        M_nthreads, M_ntasks, Context) ;
     // the bitmap of C now contains:
     //  Cb (i,j) = 0:   cij not present, mij zero
     //  Cb (i,j) = 1:   cij present, mij zero

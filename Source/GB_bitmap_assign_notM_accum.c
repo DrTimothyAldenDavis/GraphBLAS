@@ -70,8 +70,8 @@ GrB_Info GB_bitmap_assign_notM_accum
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A
-    GB_GET_ACCUM
+    GB_GET_A_AND_SCALAR
+    GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // scatter the mask M into C
@@ -81,7 +81,7 @@ GrB_Info GB_bitmap_assign_notM_accum
     GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
         pstart_Mslice, kfirst_Mslice, klast_Mslice,
-        mthreads, mtasks, Context) ;
+        M_nthreads, M_ntasks, Context) ;
 
     //--------------------------------------------------------------------------
     // do the assignment
@@ -164,7 +164,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
             M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MINUS_2,
             pstart_Mslice, kfirst_Mslice, klast_Mslice,
-            mthreads, mtasks, Context) ;
+            M_nthreads, M_ntasks, Context) ;
     }
     else
     { 

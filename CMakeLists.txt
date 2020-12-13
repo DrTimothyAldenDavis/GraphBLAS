@@ -102,6 +102,7 @@ else ( )
 endif ( )
 
 # select "true" to enable burble, for GraphBLAS development only
+# TODO:: burble is on
   set ( GB_BURBLE true )
 # set ( GB_BURBLE false )
 

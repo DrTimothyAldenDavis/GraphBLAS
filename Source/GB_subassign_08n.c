@@ -17,7 +17,7 @@
 // S:           none
 
 // C not bitmap; C can be full since no zombies are inserted in that case.
-// If C is bitmap: GB_bitmap_assign_M_accum is used instead.
+// If C is bitmap, then GB_bitmap_assign_M_accum is used instead.
 // M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
