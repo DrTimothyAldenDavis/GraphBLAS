@@ -309,14 +309,29 @@ mult2 = strrep (mult,  'xarg', '`$2''') ;
 mult2 = strrep (mult2, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 
-% create the add operator, of the form w += t
-% if (is_min || is_max)
-%   TODO:: add update
-% else
+% create the add update, of the form w += t
+if (is_min)
+    if (contains (ztype, 'int'))
+        % min monoid for signed or unsigned integers
+        add2 = 'if ($1 > $2) $1 = $2' ;
+    else
+        % min monoid for float or double, with omitnan property
+        add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) $1 = $2' ;
+    end
+elseif (is_max)
+    if (contains (ztype, 'int'))
+        % max monoid for signed or unsigned integers
+        add2 = 'if ($1 < $2) $1 = $2' ;
+    else
+        % max monoid for float or double, with omitnan property
+        add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) $1 = $2' ;
+    end
+else
+    % use the add function as given
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', '`$2''') ;
-    fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
-% end
+end
+fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
 
 % create the add function, of the form w + t
 add2 = strrep (addfunc,  'w', '`$1''') ;

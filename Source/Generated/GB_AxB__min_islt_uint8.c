@@ -33,7 +33,7 @@
 // B type:   uint8_t
 
 // Multiply: z = (aik < bkj)
-// Add:      cij = GB_IMIN (cij, z)
+// Add:      if (cij > z) cij = z
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 0
@@ -119,7 +119,7 @@
 
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
-    Cx [p] = GB_IMIN (Cx [p], t)
+    if (Cx [p] > t) Cx [p] = t
 
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
@@ -216,7 +216,7 @@
 
     // Hx [i] += t
     #define GB_HX_UPDATE(i,t) \
-        Hx [i] = GB_IMIN (Hx [i], t)
+        if (Hx [i] > t) Hx [i] = t
 
     // memcpy (&(Cx [p]), &(Hx [i]), len)
     #define GB_CIJ_MEMCPY(p,i,len) \

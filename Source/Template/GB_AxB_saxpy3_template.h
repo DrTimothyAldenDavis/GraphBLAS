@@ -560,7 +560,7 @@ break ;
 
     #elif GB_IS_PLUS_FC32_MONOID
 
-        // built-in PLUS_FC32 monoid
+        // built-in PLUS_FC32 monoid can be done as two independent atomics
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_ATOMIC_UPDATE                                        \
             Hx_real [2*(i)] += crealf (t) ;                         \
@@ -569,7 +569,7 @@ break ;
 
     #elif GB_IS_PLUS_FC64_MONOID
 
-        // built-in PLUS_FC64 monoid
+        // built-in PLUS_FC64 monoid can be done as two independent atomics
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_ATOMIC_UPDATE                                        \
             Hx_real [2*(i)] += creal (t) ;                          \

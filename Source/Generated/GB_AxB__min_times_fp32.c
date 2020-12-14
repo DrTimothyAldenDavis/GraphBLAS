@@ -33,7 +33,7 @@
 // B type:   float
 
 // Multiply: z = (aik * bkj)
-// Add:      cij = fminf (cij, z)
+// Add:      if (!isnan (z) && !islessequal (cij, z)) cij = z
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 0
@@ -119,7 +119,7 @@
 
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
-    Cx [p] = fminf (Cx [p], t)
+    if (!isnan (t) && !islessequal (Cx [p], t)) Cx [p] = t
 
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
@@ -216,7 +216,7 @@
 
     // Hx [i] += t
     #define GB_HX_UPDATE(i,t) \
-        Hx [i] = fminf (Hx [i], t)
+        if (!isnan (t) && !islessequal (Hx [i], t)) Hx [i] = t
 
     // memcpy (&(Cx [p]), &(Hx [i]), len)
     #define GB_CIJ_MEMCPY(p,i,len) \
