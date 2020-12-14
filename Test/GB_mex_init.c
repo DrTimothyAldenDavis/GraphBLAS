@@ -13,7 +13,7 @@
 
 #define USAGE "[nthreads format hyper_switch " \
 "name version date about license compiledate compiletime api api_about" \
-" chunk mkl bitmap_switch] = GB_mex_init"
+" chunk bitmap_switch] = GB_mex_init"
 
 void mexFunction
 (
@@ -91,15 +91,14 @@ void mexFunction
     double chunk ;
     GxB_Global_Option_get_(GxB_CHUNK, &chunk) ;
     pargout [12] = mxCreateDoubleScalar (chunk) ;
-    printf ("CHUnk is %g\n", chunk) ;
-
-    bool use_mkl ;
-    GxB_Global_Option_get_(GxB_MKL, &use_mkl) ;
-    pargout [13] = mxCreateLogicalScalar (use_mkl) ;
 
     double bitmap_switch ;
     GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bitmap_switch) ;
-    pargout [14] = mxCreateDoubleScalar (bitmap_switch) ;
+    pargout [13] = mxCreateDoubleScalar (bitmap_switch) ;
+
+//  bool use_mkl ;
+//  GxB_Global_Option_get_(GxB_MKL, &use_mkl) ;
+//  pargout [14] = mxCreateLogicalScalar (use_mkl) ;
 
     GrB_finalize ( ) ;
 }

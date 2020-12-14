@@ -398,12 +398,13 @@ if ( CMAKE_THREAD_LIBS_INIT )
     endif ( )
 endif ( )
 
-if ( BLAS_FOUND )
-    # use the dense CBLAS
-    message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
-    target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
-endif ( )
+# FUTURE:
+# if ( BLAS_FOUND )
+#   # use the dense CBLAS
+#   message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
+#   target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
+# endif ( )
 
 #-------------------------------------------------------------------------------
 # determine the default matrix format

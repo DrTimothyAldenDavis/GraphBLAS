@@ -33,7 +33,7 @@ typedef struct
     // threading and MKL control
     //--------------------------------------------------------------------------
 
-    bool use_mkl ;              // control usage of Intel MKL
+//  bool use_mkl ;              // control usage of Intel MKL (in progress)
     int nthreads_max ;          // max number of threads to use
     double chunk ;              // chunk size for determining # threads to use
 
@@ -134,7 +134,7 @@ GB_Global_struct GB_Global =
     .GrB_init_called = false,   // GrB_init has not yet been called
 
     // Intel MKL control (DRAFT: in progress)
-    .use_mkl = false,           // if true, exploit the Intel MKL
+//  .use_mkl = false,           // if true, exploit the Intel MKL
 
     // max number of threads and chunk size
     .nthreads_max = 1,
@@ -286,17 +286,17 @@ float GB_Global_bitmap_switch_get (void)
 // use_mkl
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
-void GB_Global_use_mkl_set (bool use_mkl)
-{ 
-    GB_Global.use_mkl = use_mkl ;
-}
+// GB_PUBLIC   // accessed by the MATLAB interface only
+// void GB_Global_use_mkl_set (bool use_mkl)
+// { 
+//     GB_Global.use_mkl = use_mkl ;
+// }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
-bool GB_Global_use_mkl_get (void)
-{ 
-    return (GB_Global.use_mkl) ;
-}
+// GB_PUBLIC   // accessed by the MATLAB interface only
+// bool GB_Global_use_mkl_get (void)
+// { 
+//     return (GB_Global.use_mkl) ;
+// }
 
 //------------------------------------------------------------------------------
 // is_csc

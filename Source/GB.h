@@ -289,7 +289,7 @@ typedef struct
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char **logger ;             // error report
-    bool use_mkl ;              // control usage of Intel MKL
+//  bool use_mkl ;              // control usage of Intel MKL (in progress)
 }
 GB_Context_struct ;
 
@@ -316,7 +316,7 @@ typedef GB_Context_struct *GB_Context ;
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
-    Context->use_mkl = GB_Global_use_mkl_get ( ) ;                  \
+    /* Context->use_mkl = GB_Global_use_mkl_get ( ) ; */            \
     /* get the pointer to where any error will be logged */         \
     Context->logger = NULL ;
 
@@ -1157,7 +1157,7 @@ void GB_cast_array              // typecast an array
 }
 
 // check the descriptor and extract its contents; also copies
-// nthreads_max, chunk, and use_mkl from the descriptor to the Context
+// nthreads_max and chunk from the descriptor to the Context
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
     GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \

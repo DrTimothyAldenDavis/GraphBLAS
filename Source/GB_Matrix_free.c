@@ -11,7 +11,7 @@
 // NULL.
 
 #include "GB.h"
-#include "GB_mkl.h"
+// #include "GB_mkl.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Matrix_free             // free a matrix
@@ -27,10 +27,12 @@ void GB_Matrix_free             // free a matrix
         { 
             // free all content of A
             GB_phbix_free (A) ;
-            // free the MKL optimization, if it exists
-            #if GB_HAS_MKL
-            GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
-            #endif
+
+//          // free the MKL optimization, if it exists
+//          #if GB_HAS_MKL
+//          GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
+//          #endif
+
             // free the error logger string
             GB_FREE (A->logger) ;
             // free the header of A itself

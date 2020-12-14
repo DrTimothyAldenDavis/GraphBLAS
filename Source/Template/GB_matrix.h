@@ -338,10 +338,10 @@ GB_Pending Pending ;        // list of pending tuples
 uint64_t nzombies ;     // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
-// MKL analysis, if available
+// MKL analysis (in progress)
 //------------------------------------------------------------------------------
 
-void *mkl ;
+// void *mkl ;
 
 //------------------------------------------------------------------------------
 // sparsity control

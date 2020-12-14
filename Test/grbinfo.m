@@ -8,7 +8,7 @@ function [nth chnk] = grbinfo
 
 [nthreads, format, hyper_switch, ...
 name, version, date, about, license, compiledate, compiletime, api, ...
-api_about, chunk, mkl, bitmap_switch ] = GB_mex_init ;
+api_about, chunk, bitmap_switch ] = GB_mex_init ;
 
 d = stat ;
 

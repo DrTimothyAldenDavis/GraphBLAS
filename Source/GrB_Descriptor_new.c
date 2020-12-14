@@ -47,7 +47,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     desc->axb  = GxB_DEFAULT ;     // descriptor for selecting the C=A*B method
     desc->nthreads_max = GxB_DEFAULT ;  // max # of threads to use
     desc->chunk = GxB_DEFAULT ;         // chunk for auto-tuning of # threads
-    desc->use_mkl = false ;        // control usage of Intel MKL
+//  desc->use_mkl = false ;        // control usage of Intel MKL (in progress)
     desc->predefined = false ;     // user-defined
     return (GrB_SUCCESS) ;
 }

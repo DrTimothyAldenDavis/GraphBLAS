@@ -16,7 +16,7 @@
 #include "GB_dense.h"
 #include "GB_atomics.h"
 #include "GB_bitmap_assign_methods.h"
-#include "GB_mkl.h"
+// #include "GB_mkl.h"
 #include "GB_binop__include.h"
 
 // C=binop(A,B) is defined by the following types and operators:

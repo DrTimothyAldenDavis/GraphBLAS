@@ -71,7 +71,6 @@
 
 //  desc->nthreads_max          max # number of threads to use (auto if <= 0)
 //  desc->chunk                 chunk size for threadds
-//  desc->use_mkl               control usage of Intel MKL
 
 //      These are copied from the GrB_Descriptor into the Context.
 
@@ -111,7 +110,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     GrB_Desc_Value AxB_desc  = GxB_DEFAULT ;
     int nthreads_desc        = GxB_DEFAULT ;
     double chunk_desc        = GxB_DEFAULT ;
-    bool use_mkl             = false ;
+//  bool use_mkl             = false ;
 
     // non-defaults descriptor values
     if (desc != NULL)
@@ -129,7 +128,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         // threads to use in the current GraphBLAS operation.
         nthreads_desc = desc->nthreads_max ;
         chunk_desc = desc->chunk ;
-        use_mkl = desc->use_mkl ;
+//      use_mkl = desc->use_mkl ;
     }
 
     // check for valid values of each descriptor field
@@ -176,7 +175,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     // it is available to any internal function that needs it.
     Context->nthreads_max = nthreads_desc ;
     Context->chunk = chunk_desc ;
-    Context->use_mkl = use_mkl ;
+//  Context->use_mkl = use_mkl ;
 
     return (GrB_SUCCESS) ;
 }

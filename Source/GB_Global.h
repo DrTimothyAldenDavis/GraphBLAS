@@ -45,10 +45,8 @@ float    GB_Global_bitmap_switch_get (void) ;
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;
 
-GB_PUBLIC   // accessed by the MATLAB interface only
-void     GB_Global_use_mkl_set (bool use_mkl) ;
-GB_PUBLIC   // accessed by the MATLAB interface only
-bool     GB_Global_use_mkl_get (void) ;
+// void     GB_Global_use_mkl_set (bool use_mkl) ;
+// bool     GB_Global_use_mkl_get (void) ;
 
 GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_abort_function_set (void (* abort_function) (void)) ;

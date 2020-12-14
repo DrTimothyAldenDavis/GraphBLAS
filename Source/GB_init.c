@@ -30,7 +30,7 @@
 // both pass this flag in as false.
 
 #include "GB.h"
-#include "GB_mkl.h"
+// #include "GB_mkl.h"
 
 //------------------------------------------------------------------------------
 // GB_init
@@ -104,13 +104,13 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_free_function_set    (free_function   ) ;
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
-    #if GB_HAS_MKL_GRAPH
-    // also set the MKL allocator functions
-    i_malloc  = malloc_function ;
-    i_calloc  = calloc_function ;
-    i_realloc = realloc_function ;
-    i_free    = free_function ;
-    #endif
+//  #if GB_HAS_MKL_GRAPH
+//  // also set the MKL allocator functions
+//  i_malloc  = malloc_function ;
+//  i_calloc  = calloc_function ;
+//  i_realloc = realloc_function ;
+//  i_free    = free_function ;
+//  #endif
 
     //--------------------------------------------------------------------------
     // max number of threads
@@ -129,7 +129,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // control usage of Intel MKL
     //--------------------------------------------------------------------------
 
-    GB_Global_use_mkl_set (false) ;
+//  GB_Global_use_mkl_set (false) ;
 
     //--------------------------------------------------------------------------
     // initialize the blocking/nonblocking mode

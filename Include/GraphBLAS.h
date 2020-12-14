@@ -3429,7 +3429,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 #define GxB_CHUNK 7
 
 // MKL and GPU control (DRAFT: in progress, do not use)
-#define GxB_MKL 31
+// #define GxB_MKL 31
 #define GxB_GPU_CONTROL 21
 #define GxB_GPU_CHUNK   22
 
@@ -3452,8 +3452,8 @@ typedef enum
     GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
     // GxB_DESCRIPTOR_GPU_SET  = GxB_GPU_SET,       // FUTURE
 
-    // MKL control (DRAFT: in progress, do not use)
-    GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL (DRAFT)
+//  // MKL control (DRAFT: in progress, do not use)
+//  GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL (DRAFT)
 
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
     // conflict with future enum values added to the spec:
@@ -3683,8 +3683,8 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
     // GxB_GLOBAL_GPU_SET  = GxB_GPU_SET,       // FUTURE
 
-    // MKL control
-    GxB_GLOBAL_MKL = GxB_MKL,       // control usage of Intel MKL
+//  // MKL control
+//  GxB_GLOBAL_MKL = GxB_MKL,       // control usage of Intel MKL
 
 } GxB_Option_Field ;
 
@@ -8672,6 +8672,8 @@ void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
 void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
 void  GxB_cuda_free (void *p) ;                 // standard free signature
 
+#if 0
+
 //==============================================================================
 // MKL optimization (DRAFT: in progress, do not use)
 //==============================================================================
@@ -8687,6 +8689,8 @@ GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
 (
     GrB_Matrix C                    // input/output matrix
 ) ;
+
+#endif
 
 #endif
 

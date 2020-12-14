@@ -12,11 +12,17 @@
 #ifndef GB_MKL_H
 #define GB_MKL_H
 
+// disable MKL and the CBLAS: work in progress
+#undef  GB_HAS_CBLAS
+#define GB_HAS_CBLAS 0
+
+#undef  GB_HAS_MKL_GRAPH
+#define GB_HAS_MKL_GRAPH 0
+
 //==============================================================================
 // determine if MKL and/or CBLAS is available
 //==============================================================================
 
-#define GB_HAS_MKL_GRAPH 0
 #define GB_INTEL_MKL_VERSION 0
 
 #if !defined ( GBCOMPACT )
