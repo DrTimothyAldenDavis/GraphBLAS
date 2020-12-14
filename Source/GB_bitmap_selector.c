@@ -30,10 +30,10 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
     ASSERT (GB_is_packed (A)) ;
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
-    ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -112,6 +112,7 @@ GrB_Info GB_bitmap_selector
 
         (*Chandle) = C ;
         C->nvals = cnvals ;
+        C->magic = GB_MAGIC ;
         ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;
     }
 

@@ -103,17 +103,17 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
-            GBPR0 (" already freed!\n") ;                               \
+            GBPR0 (" object already freed!\n") ;                        \
             return (GrB_UNINITIALIZED_OBJECT) ;                         \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
-            GBPR0 (" invalid\n") ;                                      \
+            GBPR0 (" invalid object\n") ;                               \
             return (GrB_INVALID_OBJECT) ;                               \
                                                                         \
         default :                                                       \
             /* uninitialized */                                         \
-            GBPR0 (" uninititialized\n") ;                              \
+            GBPR0 (" uninititialized object\n") ;                       \
             return (GrB_UNINITIALIZED_OBJECT) ;                         \
     }                                                                   \
 }

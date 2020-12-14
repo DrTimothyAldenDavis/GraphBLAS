@@ -32,7 +32,7 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     ASSERT_TYPE_OK (ctype, "ctype for transplant into C", GB0) ;
     ASSERT (GB_ZOMBIES_OK (*Thandle)) ;
     ASSERT (GB_JUMBLED_OK (*Thandle)) ;
-    ASSERT (!GB_PENDING (*Thandle)) ;
+    ASSERT (GB_PENDING_OK (*Thandle)) ;
 
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, and free T

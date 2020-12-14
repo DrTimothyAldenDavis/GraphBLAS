@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -120,8 +120,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         GBPR0 (" nvec_nonempty: " GBd , A->nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd " hyper_switch %g\n",
-        A->nvec, A->plen, A->vdim, A->hyper_switch) ;
+    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd "\n  hyper_switch %g "
+        "bitmap_switch %g\n",
+        A->nvec, A->plen, A->vdim, A->hyper_switch, A->bitmap_switch) ;
     #endif
 
     switch (A->sparsity)
@@ -270,10 +271,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #if GB_DEVELOPER
     // a matrix contains 1 to 9 different allocated blocks
     int64_t nallocs = 1 +                       // header
-        (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
-        (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
+        (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow
+        (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
         (A->x != NULL && !A->x_shallow) +       // A->x, if not shallow
         (Pending != NULL) +
         (Pending != NULL && Pending->i != NULL) +

@@ -110,13 +110,13 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     int nth = GB_nthreads (vlen, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // allocate C: always non-hypersparse
+    // allocate C: always sparse
     //--------------------------------------------------------------------------
 
-    // The bucket transpose only works when C is not hypersparse.
-    // A can be hypersparse.
+    // The bucket transpose only works when C is sparse.
+    // A can be sparse or hypersparse.
 
-    // [ C->p is allocated but not initialized.  It is NON-hypersparse.
+    // C->p is allocated but not initialized.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
     GB_OK (GB_new_bix (&C, // sparse, new header
@@ -153,11 +153,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // phase1: symbolic analysis
     //==========================================================================
 
-    // TODO:: the perfect balance option is costly; only use for the
-    // non-atomic method.  Use ntasks = 8*nthreads for atomic case.
-
-    // slice the A matrix
-    if (!GB_pslice (&A_slice, A->p, A->nvec, nthreads, true)) // TODO::PERFECT
+    // slice the A matrix, perfectly balanced for one task per thread
+    if (!GB_pslice (&A_slice, A->p, A->nvec, nthreads, true))
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -302,13 +299,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
     }
 
-    C->magic = GB_MAGIC ;      // C is now initialized ]
+    C->magic = GB_MAGIC ;
 
     //==========================================================================
     // phase2: transpose A into C
     //==========================================================================
-
-    // TODO:: pass in ntasks for atomic method
 
     // transpose both the pattern and the values
     if (op1 == NULL && op2 == NULL)
@@ -319,8 +314,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, op1, op2, scalar, binop_bind1st, A, Workspaces,
-            A_slice, nworkspaces, nthreads) ;
+        GB_transpose_op (C, op1, op2, scalar, binop_bind1st, A,
+            Workspaces, A_slice, nworkspaces, nthreads) ;
     }
 
     //--------------------------------------------------------------------------

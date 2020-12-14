@@ -239,7 +239,7 @@ static inline bool GB_as_if_full
         // A is full; the pattern is not present
         return (true) ;
     }
-    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
+    if (GB_ANY_PENDING_WORK (A))
     {
         // A has pending work and so cannot be treated as if full.
         return (false) ;
@@ -272,7 +272,7 @@ static inline bool GB_is_packed
         // A is full or bitmap
         return (true) ;
     }
-    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
+    if (GB_ANY_PENDING_WORK (A))
     { 
         // A is sparse or hypersparse with pending work
         return (false) ;

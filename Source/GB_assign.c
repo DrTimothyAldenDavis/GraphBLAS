@@ -367,10 +367,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     if (C == C2)
     { 
-        // zombies can be transplanted into C_in but pending tuples cannot
-        // TODO : allow for pending tuples to be transplanted
-        GB_MATRIX_WAIT_IF_PENDING (C2) ;
-        // transplants the content of C2 into C_in and frees C2
+        // Transplant the content of C2 into C_in and free C2.  Zombies and
+        // pending tuples can be transplanted from C2 into C_in, and if C2 is
+        // jumbled, C_in becomes jumbled too.
         GB_OK (GB_transplant (C_in, C_in->type, &C2, Context)) ;
     }
 

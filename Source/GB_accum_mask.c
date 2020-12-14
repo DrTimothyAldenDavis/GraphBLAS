@@ -172,10 +172,13 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
     //--------------------------------------------------------------------------
-    // remove zombies and pending tuples from T
+    // remove zombies and pending tuples from T, but leave it jumbled
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (T) ;
+    ASSERT (!GB_PENDING (T)) ;
+    ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
@@ -259,7 +262,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // then use subassign.  It will be fast when T is very sparse and C has
     // many nonzeros.  If the # of pending tuples in C is growing, however,
     // then it would be better to finish the work now, and leave C completed.
-    // In this case, GB_transplant (if no accum) or GB_add with accum, and
+    // In this case, GB_transplant if no accum or GB_add with accum, and
     // GB_mask are used for the accum/mask step.
 
     // If there is no mask M, and no accum, then C=T is fast (just

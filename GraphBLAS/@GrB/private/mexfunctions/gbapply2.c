@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbapply2: apply a binary operator to a matrix, with scalaring binding
+// gbapply2: apply a binary operator to a matrix, with scalar binding
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
