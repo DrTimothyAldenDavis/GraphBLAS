@@ -73,8 +73,7 @@
 
 void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
-bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *k) ;
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k) ;
 
 void f1 (double *z, const uint32_t *x)
 { 
@@ -92,8 +91,7 @@ void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
     (*z) = GB_FC64_add ((*x), GxB_CMPLX (0,(*y))) ;
 }
 
-bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *k)
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k)
 {
     // select entries in triu(A) that are greater than k
     int64_t i2 = (int64_t) i ;
@@ -1870,12 +1868,6 @@ void mexFunction
     OK (GB_Descriptor_check (d7, "new descriptor (default)", G3, NULL)) ;
     OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
 
-    OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_AxB_HEAP)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (heap)", G3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
-    OK (GxB_Desc_get (d7, GxB_AxB_METHOD, &dval)) ;
-    CHECK (dval == GxB_AxB_HEAP) ;
-
     OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
     OK (GB_Descriptor_check (d7, "new descriptor (dot)", G3, NULL)) ;
     OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
@@ -1903,7 +1895,7 @@ void mexFunction
     ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->out = GxB_DEFAULT ;
 
-    d7->out = GxB_AxB_HEAP ;
+    d7->out = GxB_AxB_HASH ;
     ERR (GB_Descriptor_check (d7, "invalid", G3, NULL)) ;
     ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->out = GxB_DEFAULT ;
@@ -4397,6 +4389,13 @@ void mexFunction
     OK (GxB_Matrix_Option_get_(A, GxB_HYPER_SWITCH, &hratio2)) ;
     CHECK (hratio == hratio2) ;
 
+    double bratio = 0.5;
+    OK (GxB_Matrix_Option_set_(A, GxB_BITMAP_SWITCH, bratio)) ;
+
+    double bratio2 = 0 ;
+    OK (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, &bratio2)) ;
+    CHECK (hratio == hratio2) ;
+
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
     CHECK (GB_IS_HYPERSPARSE (A)) ;
     CHECK (A->is_csc) ;
@@ -4430,6 +4429,10 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     CHECK (hratio == GxB_HYPER_DEFAULT) ;
 
+    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, GxB_BITMAP_SWITCH_DEFAULT)) ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bratio)) ;
+    CHECK (fabs (bratio - GxB_BITMAP_SWITCH_DEFAULT) < 1e-6) ;
+
     expected = GrB_NULL_POINTER ;
     GrB_Matrix O_NULL = NULL ;
     ERR1 (O_NULL, GxB_Matrix_Option_set_(O_NULL, GxB_FORMAT, GxB_BY_COL)) ;
@@ -4447,8 +4450,13 @@ void mexFunction
     GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
+    ERR (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, NULL)) ;
+    GrB_Matrix_error_(&err, A) ;
+    printf ("error expected:%s\n", err) ;
+
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Global_Option_get_(GxB_HYPER_SWITCH, NULL)) ;
+    ERR (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_get_(-1, NULL)) ;

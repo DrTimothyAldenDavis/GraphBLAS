@@ -6,9 +6,9 @@ function [nth chnk] = grbinfo
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[nthreads, ~, ~, format, hyper_switch,
+[nthreads, format, hyper_switch, ...
 name, version, date, about, license, compiledate, compiletime, api, ...
-api_about, chunk ] = GB_mex_init ;
+api_about, chunk, mkl, bitmap_switch ] = GB_mex_init ;
 
 d = stat ;
 
@@ -21,10 +21,11 @@ else
 end
 
 ncores = feature ('numcores') ;
-[nthreads chunk] = nthreads_get ;
+[nthreads2 chunk2] = nthreads_get ;
 
-fprintf ('    # of threads to use:   %d\n', nthreads) ;
-fprintf ('    chunk:                 %g\n', chunk) ;
+fprintf ('    # of threads to use:   %d (%d)\n', nthreads, nthreads2) ;
+fprintf ('    chunk:                 %g (%g)\n', chunk, chunk2) ;
+
 fprintf ('    OpenMP max threads:    %d\n', GB_mex_omp_max_threads) ;
 fprintf ('    # of cores for MATLAB: %d\n', ncores) ;
 
@@ -38,6 +39,7 @@ switch (format)
 end
 
 fprintf ('    hyper_switch: %g\n', hyper_switch) ;
+fprintf ('    bitmap_switch: %g\n', bitmap_switch) ;
 fprintf ('    date: %s\n', date) ;
 fprintf ('    compile date: %s\n', compiledate) ;
 fprintf ('    compile time: %s\n\n', compiletime) ;

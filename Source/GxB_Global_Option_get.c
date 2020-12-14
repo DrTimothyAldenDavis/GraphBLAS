@@ -47,6 +47,21 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+        // bitmap_switch
+        //----------------------------------------------------------------------
+
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (bitmap_switch) ;
+                (*bitmap_switch) = (double) GB_Global_bitmap_switch_get ( ) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // matrix format (CSR or CSC)
         //----------------------------------------------------------------------
 

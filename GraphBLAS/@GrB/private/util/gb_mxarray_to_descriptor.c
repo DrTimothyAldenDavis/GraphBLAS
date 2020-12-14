@@ -94,10 +94,6 @@ static void get_descriptor
             { 
                 OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
             }
-            else if (MATCH (s, "heap"))
-            { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HEAP)) ;
-            }
             else if (MATCH (s, "hash"))
             { 
                 OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;

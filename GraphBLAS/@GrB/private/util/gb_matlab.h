@@ -451,29 +451,14 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     GrB_BinaryOp op
 ) ;
 
-bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b) ;
-
-bool gb_isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b) ;
-
-bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b) ;
-
-bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b) ;
-
-bool gb_isnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b) ;
-
-bool gb_isnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b) ;
-
-bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b) ;
-
-bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b) ;
+bool gb_isnan32      (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnan64      (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnotnan32   (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnotnan64   (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnanfc32    (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnanfc64    (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
 
 void gb_get_mxargs
 (

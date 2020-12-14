@@ -94,10 +94,6 @@ static bool get_descriptor
         {
             info = GxB_Desc_set (D, field, GxB_AxB_DOT) ;
         }
-        else if (MATCH (s, "heap"))
-        {
-            info = GxB_Desc_set (D, field, GxB_AxB_HEAP) ;
-        }
         else if (MATCH (s, "hash"))
         {
             info = GxB_Desc_set (D, field, GxB_AxB_HASH) ;

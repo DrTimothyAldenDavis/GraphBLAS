@@ -153,8 +153,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // phase1: symbolic analysis
     //==========================================================================
 
+    // TODO:: the perfect balance option is costly; only use for the
+    // non-atomic method.  Use ntasks = 8*nthreads for atomic case.
+
     // slice the A matrix
-    if (!GB_pslice (&A_slice, A->p, A->nvec, nthreads, true))
+    if (!GB_pslice (&A_slice, A->p, A->nvec, nthreads, true)) // TODO::PERFECT
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -304,6 +307,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //==========================================================================
     // phase2: transpose A into C
     //==========================================================================
+
+    // TODO:: pass in ntasks for atomic method
 
     // transpose both the pattern and the values
     if (op1 == NULL && op2 == NULL)

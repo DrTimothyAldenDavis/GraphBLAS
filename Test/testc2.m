@@ -50,7 +50,7 @@ semiring.add = 'plus' ;
 semiring.class = 'complex' ;
 dtn.inp0 = 'tran' ;
 
-anum = [0 1001 1002 1003] ;
+anum = [0 1001 1003 1004] ;
 algos = {'auto', 'gustavson', 'dot', 'hash'} ;
 
 seed = 1 ;

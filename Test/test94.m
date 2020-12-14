@@ -37,11 +37,11 @@ t = grbresults
 
 ir_diff = length (find (ir2 ~= ir3))
 
-summary = [((r2-r3)')./(r2')  ir2' ir3' ir2'-ir3'] ; 
+% summary = [((r2-r3)')./(r2')  ir2' ir3' ir2'-ir3'] ; 
 
 C.is_csc = false ;
 
-for method = [0 1001 1002 1003]
+for method = [0 1001 1003 1004 1005]
     fprintf ('------------------ method: %d\n', method) ;
     tic ;
     [r4, ir4] = GB_mex_dpagerank (C, method) ;
@@ -51,5 +51,8 @@ for method = [0 1001 1002 1003]
     assert (isequal (ir3, ir4)) ;
 end
 
-k = min (300, n) ;
-summary (1:k,:) 
+% k = min (300, n) ;
+% summary (1:k,:) 
+
+fprintf ('test94: all tests passed\n') ;
+

@@ -402,9 +402,9 @@ void *mkl ;
 //      (d) A matrix with anz = GB_NNZ(A) entries and dimension A->vlen by
 //          A->vdim can have at most anz_dense = (A->vlen)*(A->vdim) entries.
 //          If A is sparse/hypersparse with anz > A->bitmap_switch * anz_dense,
-//          then it switches to bitmap.  A->bitmap_switch = (1/8) by default.
-//          If A is bitmap and anz = (A->bitmap_switch / 64) * anz_dense, that
-//          is, (1/512)*anz_dense, then it switches to sparse.  In between
+//          then it switches to bitmap.  A->bitmap_switch = (1/10) by default.
+//          If A is bitmap and anz = (A->bitmap_switch / 50) * anz_dense, that
+//          is, (1/500)*anz_dense, then it switches to sparse.  In between
 //          those two regions, the sparsity structure is unchanged.
 
 float hyper_switch ;    // controls conversion hyper to/from sparse

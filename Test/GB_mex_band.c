@@ -40,11 +40,11 @@ typedef struct
     int64_t hi ;
 } LoHi_type ; 
 
-bool LoHi_band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk) ;
+bool LoHi_band (GrB_Index i, GrB_Index j,
+    /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
-bool LoHi_band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk)
+bool LoHi_band (GrB_Index i, GrB_Index j,
+    /* x is unused: */ const void *x, const LoHi_type *thunk)
 {
     int64_t i2 = (int64_t) i ;
     int64_t j2 = (int64_t) j ;

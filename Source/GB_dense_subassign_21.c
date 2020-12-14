@@ -20,6 +20,7 @@
 #include "GB_dense.h"
 #include "GB_select.h"
 #include "GB_Pending.h"
+#include "GB_bitmap_assign_methods.h"
 
 GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
 (

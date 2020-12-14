@@ -160,17 +160,17 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
     else if (MATCH (op_name, "abs"))
     { 
 
-        if (type == GrB_BOOL  ) return (GxB_ABS_BOOL  ) ;
-        if (type == GrB_INT8  ) return (GxB_ABS_INT8  ) ;
-        if (type == GrB_INT16 ) return (GxB_ABS_INT16 ) ;
-        if (type == GrB_INT32 ) return (GxB_ABS_INT32 ) ;
-        if (type == GrB_INT64 ) return (GxB_ABS_INT64 ) ;
-        if (type == GrB_UINT8 ) return (GxB_ABS_UINT8 ) ;
-        if (type == GrB_UINT16) return (GxB_ABS_UINT16) ;
-        if (type == GrB_UINT32) return (GxB_ABS_UINT32) ;
-        if (type == GrB_UINT64) return (GxB_ABS_UINT64) ;
-        if (type == GrB_FP32  ) return (GxB_ABS_FP32  ) ;
-        if (type == GrB_FP64  ) return (GxB_ABS_FP64  ) ;
+        if (type == GrB_BOOL  ) return (GrB_ABS_BOOL  ) ;
+        if (type == GrB_INT8  ) return (GrB_ABS_INT8  ) ;
+        if (type == GrB_INT16 ) return (GrB_ABS_INT16 ) ;
+        if (type == GrB_INT32 ) return (GrB_ABS_INT32 ) ;
+        if (type == GrB_INT64 ) return (GrB_ABS_INT64 ) ;
+        if (type == GrB_UINT8 ) return (GrB_ABS_UINT8 ) ;
+        if (type == GrB_UINT16) return (GrB_ABS_UINT16) ;
+        if (type == GrB_UINT32) return (GrB_ABS_UINT32) ;
+        if (type == GrB_UINT64) return (GrB_ABS_UINT64) ;
+        if (type == GrB_FP32  ) return (GrB_ABS_FP32  ) ;
+        if (type == GrB_FP64  ) return (GrB_ABS_FP64  ) ;
         if (type == GxB_FC32  ) return (GxB_ABS_FC32  ) ;
         if (type == GxB_FC64  ) return (GxB_ABS_FC64  ) ;
 

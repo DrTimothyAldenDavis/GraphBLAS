@@ -24,11 +24,9 @@
     GB_mx_put_global (true) ;           \
 }
 
-bool isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b) ;
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
 
-bool isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b)
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;

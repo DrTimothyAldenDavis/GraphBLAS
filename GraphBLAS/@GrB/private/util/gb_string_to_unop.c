@@ -10,7 +10,7 @@
 #include "gb_matlab.h"
 
 // The string has the form op_name.op_type.  For example 'abs.double' is the
-// GxB_ABS_FP64 operator.  The type is optional.  If not present, it defaults
+// GrB_ABS_FP64 operator.  The type is optional.  If not present, it defaults
 // to the default_type parameter.
 
 GrB_UnaryOp gb_string_to_unop           // return unary operator from a string

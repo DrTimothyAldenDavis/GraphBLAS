@@ -18,7 +18,7 @@
 // matrix C passed in from the user (C_in).
 
 // The method is chosen automatically:  a gather/scatter saxpy method
-// (Gustavson), a heap-based saxpy method, or a dot product method.
+// (Gustavson), or a dot product method.
 
 // FUTURE:: an outer-product method for C=A*B'
 
@@ -101,12 +101,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     (*mask_applied) = false ;
     (*done_in_place) = false ;
-
-    if (AxB_method == GxB_AxB_HEAP)
-    { 
-        // Heap method no longer exists; using Hash instead
-        AxB_method = GxB_AxB_HASH ;
-    }
 
     //--------------------------------------------------------------------------
     // see if the work can be done in-place
@@ -447,7 +441,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         //----------------------------------------------------------------------
 
         // A'*B is being computed: use the dot product without computing A'
-        // or use the saxpy (heap or Gustavson) method
+        // or use the saxpy (Gustavson) method
 
         // If the mask is present, only entries for which M(i,j)=1 are
         // computed, which makes this method very efficient when the mask is

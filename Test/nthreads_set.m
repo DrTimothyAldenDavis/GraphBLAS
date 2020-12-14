@@ -24,7 +24,7 @@ if (nargin > 1 || nargout > 1)
     if (nargin > 1)
         GraphBLAS_chunk = chunk ;
     elseif (isempty (GraphBLAS_chunk))
-        GraphBLAS_chunk = 4096 ;
+        GraphBLAS_chunk = 64*1024 ;
     end
     if (nargout > 1)
         chunk = GraphBLAS_chunk ;

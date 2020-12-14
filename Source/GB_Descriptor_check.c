@@ -38,7 +38,6 @@ static GrB_Info GB_dc
         case GrB_REPLACE            : GBPR0 ("replace   ") ; break ;
         case GxB_AxB_SAXPY          : GBPR0 ("saxpy     ") ; break ;
         case GxB_AxB_GUSTAVSON      : GBPR0 ("Gustavson ") ; break ;
-        case GxB_AxB_HEAP           : GBPR0 ("heap      ") ; break ;
         case GxB_AxB_HASH           : GBPR0 ("hash      ") ; break ;
         case GxB_AxB_DOT            : GBPR0 ("dot       ") ; break ;
         default                     : GBPR0 ("unknown   ") ;
@@ -71,8 +70,7 @@ static GrB_Info GB_dc
         {
             // GxB_AxB_METHOD:
             if (! (v == GxB_DEFAULT || v == GxB_AxB_GUSTAVSON
-                || v == GxB_AxB_HEAP || v == GxB_AxB_DOT
-                || v == GxB_AxB_HASH || v == GxB_AxB_SAXPY))
+                || v == GxB_AxB_DOT || v == GxB_AxB_HASH || v == GxB_AxB_SAXPY))
             { 
                 ok = false ;
             }

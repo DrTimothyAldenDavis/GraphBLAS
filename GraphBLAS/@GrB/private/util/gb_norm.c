@@ -39,7 +39,7 @@ double gb_norm              // compute norm (A,kind)
     { 
         // if A is FP32, use the FP32 type and operators
         xtype = GrB_FP32 ;
-        absop = GxB_ABS_FP32 ;
+        absop = GrB_ABS_FP32 ;
         sumop = GrB_PLUS_MONOID_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
@@ -69,7 +69,7 @@ double gb_norm              // compute norm (A,kind)
         // otherwise, use FP64 type and operators; this will typecast the 
         // input matrix to FP64 if A is not of that type.
         xtype = GrB_FP64 ;
-        absop = GxB_ABS_FP64 ;
+        absop = GrB_ABS_FP64 ;
         sumop = GrB_PLUS_MONOID_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;

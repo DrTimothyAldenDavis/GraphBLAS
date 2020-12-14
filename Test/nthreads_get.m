@@ -15,7 +15,7 @@ nthreads = GraphBLAS_nthreads ;
 if (nargout > 1)
     global GraphBLAS_chunk
     if (isempty (GraphBLAS_chunk))
-        [nthreads chunk] = nthreads_set (nthreads, 4096) ;
+        [nthreads chunk] = nthreads_set (nthreads, 64*1024) ;
     end
     chunk = GraphBLAS_chunk ;
 end

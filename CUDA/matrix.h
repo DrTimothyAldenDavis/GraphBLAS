@@ -180,7 +180,6 @@ typedef enum
 
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
-    GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
     GxB_AxB_HASH      = 1004,   // hash-based saxpy method
     GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)

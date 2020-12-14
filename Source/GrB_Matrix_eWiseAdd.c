@@ -9,12 +9,6 @@
 
 // C<M> = accum (C,A+B) and variations.
 
-// SuiteSparse:GraphBLAS v3.2 and earlier included these functions from the C
-// API with the wrong name.  It is corrected in this version.  The prior
-// misnamed functions are kept for backward compatibility, but they are
-// deprecated and their use is not recommend. The generic version,
-// GrB_eWiseAdd, is not affected.
-
 #include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
@@ -70,17 +64,6 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<M> = accum (C, A+B)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // misnamed
-(
-    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
-    const GrB_BinaryOp add, const GrB_Matrix A, const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function
-    return (GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseAdd_Monoid: matrix addition
 //------------------------------------------------------------------------------
@@ -117,17 +100,6 @@ GrB_Info GrB_Matrix_eWiseAdd_Monoid         // C<M> = accum (C, A+B)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseAdd_Matrix_Monoid         // misnamed
-(
-    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
-    const GrB_Monoid monoid, const GrB_Matrix A, const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function
-    return (GrB_Matrix_eWiseAdd_Monoid (C, M, accum, monoid, A, B, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseAdd_Semiring: matrix addition
 //------------------------------------------------------------------------------
@@ -162,16 +134,5 @@ GrB_Info GrB_Matrix_eWiseAdd_Semiring       // C<M> = accum (C, A+B)
     GB_EWISE (semiring->add->op) ;
     GB_BURBLE_END ;
     return (info) ;
-}
-
-GrB_Info GrB_eWiseAdd_Matrix_Semiring       // misnamed
-(
-    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
-    const GrB_Semiring semiring, const GrB_Matrix A, const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function
-    return (GrB_Matrix_eWiseAdd_Semiring (C, M, accum, semiring, A, B, desc)) ;
 }
 

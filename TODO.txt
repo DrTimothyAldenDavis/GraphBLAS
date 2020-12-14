@@ -1,7 +1,6 @@
 
 TODO:: check alternative/Makefile
 TODO:: check Windows, Mac, Linux, Power8
-TODO:: remove functions deprecated in v3.3.3
 
 FUTURE: can handle transpose of full or bitmap input matrices just by
 changing how they are accessed

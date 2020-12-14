@@ -62,39 +62,9 @@ C0 = GB_mex_Matrix_eWiseMult  (Z, [ ], [ ], 'times', B, A, [ ]) ;
 C1 = B .* double (A) ;
 assert (isequal (C1, sparse (C0.matrix))) ;
 
-
-%{
-M = spones (sprand (n, n, 0.5)) ;
-A = [ 11 12 13 14 ;
-      21 22 23 99
-      31 42 33 34
-      32 33 34 35 ]
-A = sparse (A) ;
-B = [ 1.1 4.2 1.3 1.4 ;
-      2.1 2.2 2.3 2.4
-      0.1 3.2 3.3 3.4
-      3.2 3.3 7.4 3.5 ]
-B = sparse (B) ;
-M = spones (M + speye (n)) ;
-M = spones (M + M') ;
-M(1,2)=0 ;
-%}
-
 M = sprand (n, n, 0.01) ;
 C0 = GB_mex_mxm  (Z, M, [ ], semiring, A, B, dnt) ;
 C1 = (A*B') .* spones (M) ;
 assert (isequal (C1, sparse (C0.matrix))) ;
-
-%{
-M = full (M)
-C1 = full (C1)
-C0 = full (C0.matrix)
-
-C2 = (A*B') .* spones (M') ;
-C2 = full (C2)
-
-(isequal (C2, C0))
-(isequal (C1, C0))
-%}
 
 fprintf ('test72: all tests passed\n') ;

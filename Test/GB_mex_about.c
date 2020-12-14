@@ -24,21 +24,21 @@ GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
     return (GrB_SUCCESS) ;
 }
 
-bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *thunk) ;
+bool select_plus_one (GrB_Index i, GrB_Index j, 
+    const double *x, const double *thunk) ;
 
-bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *thunk) ;
+bool select_nothing (GrB_Index i, GrB_Index j,
+    const void *x, const void *thunk) ;
 
-bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *thunk)
+bool select_plus_one (GrB_Index i, GrB_Index j,
+    const double *x, const double *thunk)
 {
     // return true if x >= thunk+1
     return ((*x) >= ((*thunk)+1)) ;
 }
 
-bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *thunk)
+bool select_nothing (GrB_Index i, GrB_Index j,
+    const void *x, const void *thunk)
 {
     return (false) ;
 }
@@ -478,11 +478,13 @@ void mexFunction
     // global get/set
     //--------------------------------------------------------------------------
 
-    double h ;
+    double h, bswitch ;
     GxB_Format_Value ff ;
     GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
+    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bswitch) ;
     GxB_Global_Option_get_(GxB_FORMAT, &ff) ;
-    printf ("hyper_switch %g csc %d\n", h, (ff == GxB_BY_COL)) ;
+    printf ("hyper_switch %g bitmap_switch %g csc %d\n",
+        h, bswitch, (ff == GxB_BY_COL)) ;
 
     GrB_Mode mode ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;
@@ -1022,8 +1024,6 @@ void mexFunction
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_SAXPY)) ;
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_HASH)) ;
-    OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
-    OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_HEAP)) ;
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;

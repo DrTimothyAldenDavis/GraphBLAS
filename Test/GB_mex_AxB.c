@@ -237,7 +237,6 @@ void mexFunction
     // get the axb_method
     // 0 or not present: default
     // 1001: Gustavson
-    // 1002: heap
     // 1003: dot
     // 1004: hash
     // 1005: saxpy
@@ -245,7 +244,7 @@ void mexFunction
 
     if (! ((AxB_method == GxB_DEFAULT) ||
         (AxB_method == GxB_AxB_GUSTAVSON) ||
-        (AxB_method == GxB_AxB_HEAP) ||
+        (AxB_method == GxB_AxB_HASH) ||
         (AxB_method == GxB_AxB_DOT)))
     {
         mexErrMsgTxt ("unknown method") ;

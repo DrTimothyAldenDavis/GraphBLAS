@@ -44,57 +44,49 @@
 // nan operators
 //------------------------------------------------------------------------------
 
-bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b)
+bool gb_isnan32 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     float aij = * ((float *) x) ;
     return (isnan (aij)) ;
 }
 
-bool gb_isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b)
+bool gb_isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;
 }
 
-bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b)
+bool gb_isnotnan32 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     float aij = * ((float *) x) ;
     return (!isnan (aij)) ;
 }
 
-bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *b)
+bool gb_isnotnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (!isnan (aij)) ;
 }
 
-bool gb_isnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b)
+bool gb_isnanfc32 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     GxB_FC32_t aij = * ((GxB_FC32_t *) x) ;
     return (isnan (crealf (aij)) || isnan (cimagf (aij))) ;
 }
 
-bool gb_isnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b)
+bool gb_isnanfc64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     GxB_FC64_t aij = * ((GxB_FC64_t *) x) ;
     return (isnan (creal (aij)) || isnan (cimag (aij))) ;
 }
 
-bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b)
+bool gb_isnotnanfc32 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     GxB_FC32_t aij = * ((GxB_FC32_t *) x) ;
     return (!isnan (crealf (aij)) && !isnan (cimagf (aij))) ;
 }
 
-bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *b)
+bool gb_isnotnanfc64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     GxB_FC64_t aij = * ((GxB_FC64_t *) x) ;
     return (!isnan (creal (aij)) && !isnan (cimag (aij))) ;

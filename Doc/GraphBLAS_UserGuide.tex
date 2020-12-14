@@ -146,6 +146,8 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
         (hyper, sparse, bitmap, or full)
     \item \verb'GxB_HYPER': enum renamed to \verb'GxB_HYPER_SWITCH'
     \item \verb'GxB*import/export': API modified
+    \item \verb'GxB_SelectOp': \verb'nrows' and \verb'ncols' removed
+        from function signature.
     \item OpenMP tasking removed from mergesort:
         just as fast; now ports to Windows
     \item bug fix: \verb'A({lo,hi})=scalar' in MATLAB;
@@ -2591,8 +2593,6 @@ bool f                      // returns true if A(i,j) is kept
 (
     const GrB_Index i,      // row index of A(i,j)
     const GrB_Index j,      // column index of A(i,j)
-    const GrB_Index nrows,  // number of rows of A
-    const GrB_Index ncols,  // number of columns of A
     const void *x,          // value of A(i,j), or NULL if f is type-generic
     const void *thunk       // user-defined auxiliary data
 ) ; \end{verbatim}}
@@ -5567,7 +5567,6 @@ typedef enum
     GrB_TRAN = 3,       // use the transpose of the input
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
-    GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
     GxB_AxB_HASH      = 1004,   // hash-based saxpy method
     GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
@@ -5675,7 +5674,7 @@ need not be an array:
     \item \verb'GxB_DEFAULT' means that a method is selected automatically.
 
     \item \verb'GxB_AxB_SAXPY': select any saxpy-based method:
-        \verb'GxB_AxB_GUSTAVSON', \verb'GxB_AxB_HEAP', and/or
+        \verb'GxB_AxB_GUSTAVSON', and/or
         \verb'GxB_AxB_HASH', or any mix of the three,
         in contrast to the dot-product method.
 
@@ -5690,10 +5689,6 @@ need not be an array:
     by row, then it computes \verb'C(i,:)=A(i,:)*B' in a sequence of sparse
     {\em saxpy} operations, and using workspace of size $n$ per thread,
     corresponding to the number of columns of \verb'C'.
-
-    \item \verb'GxB_AxB_HEAP': no longer appears in SuiteSparse:GraphBLAS, but
-    may be reintroduced in a future version.  This is silently replaced with
-    \verb'GxB_AxB_HASH'.
 
     \item \verb'GxB_AxB_HASH':  a hash-based method, based on
         \cite{10.1145/3229710.3229720}.  Very efficient for hypersparse
@@ -5784,7 +5779,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 \verb'GrB_MASK', \verb'GrB_INP0', \verb'GrB_INP1', or \verb'GxB_AxB_METHOD') to
 a particular value (\verb'GxB_DEFAULT', \verb'GrB_COMP',
 \verb'GrB_STRUCTURE', \verb'GrB_COMP+GrB_STRUCTURE', \verb'GrB_TRAN',
-\verb'GrB_REPLACE', \verb'GxB_AxB_GUSTAVSON', \verb'GxB_AxB_HEAP',
+\verb'GrB_REPLACE', \verb'GxB_AxB_GUSTAVSON',
 \verb'GxB_AxB_HASH',
 \verb'GxB_AxB_SAXPY',
 or
@@ -6832,7 +6827,6 @@ To set/get a descriptor field:
 
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
-    GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;

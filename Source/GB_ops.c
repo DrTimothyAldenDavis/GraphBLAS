@@ -462,8 +462,11 @@ GxB_SelectOp GxB_LE_THUNK = & GB_opaque_GxB_LE_THUNK ;
 GrB_Index GB_opaque_GrB_ALL = 0 ;
 const GrB_Index *GrB_ALL = & GB_opaque_GrB_ALL ;
 
-// the default hyper_switch is (1/16)
+// the default hyper_switch is defined in GB_defaults.h
 const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
+
+// the default bitmap_switch is defined in GB_defaults.h
+const double GxB_BITMAP_SWITCH_DEFAULT = GB_BITMAP_SWITCH_DEFAULT ;
 
 // set GxB_HYPER_SWITCH to either of these to ensure matrix is always, or never,
 // stored in hypersparse format, respectively.

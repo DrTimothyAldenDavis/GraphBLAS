@@ -48,6 +48,16 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
             }
             break ;
 
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double bitmap_switch = va_arg (ap, double) ;
+                va_end (ap) ;
+                A->bitmap_switch = (float) bitmap_switch ;
+            }
+            break ;
+
         case GxB_SPARSITY_CONTROL : 
 
             {

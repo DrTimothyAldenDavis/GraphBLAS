@@ -160,16 +160,16 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                 int value = va_arg (ap, int) ;
                 va_end (ap) ;
                 if (! (value == GxB_DEFAULT  || value == GxB_AxB_GUSTAVSON
-                    || value == GxB_AxB_HEAP || value == GxB_AxB_DOT
+                    || value == GxB_AxB_DOT
                     || value == GxB_AxB_HASH || value == GxB_AxB_SAXPY))
                 { 
                     GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_AxB_METHOD"
                         " field;\nmust be GxB_DEFAULT [%d], GxB_AxB_GUSTAVSON"
-                        " [%d]\nGxB_AxB_HEAP [%d], GxB_AxB_DOT [%d]\n"
+                        " [%d]\nGxB_AxB_DOT [%d]"
                         "GxB_AxB_HASH [%d] or GxB_AxB_SAXPY [%d]",
                         value, (int) GxB_DEFAULT, (int) GxB_AxB_GUSTAVSON,
-                        (int) GxB_AxB_HEAP, (int) GxB_AxB_DOT,
+                        (int) GxB_AxB_DOT,
                         (int) GxB_AxB_HASH, (int) GxB_AxB_SAXPY) ;
                 }
                 desc->axb = (GrB_Desc_Value) value ;

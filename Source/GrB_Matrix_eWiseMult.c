@@ -9,12 +9,6 @@
 
 // C<M> = accum (C,A.*B) and variations.
 
-// SuiteSparse:GraphBLAS v3.2 and earlier included these functions from the C
-// API with the wrong name.  It is corrected in this version.  The prior
-// misnamed functions are kept for backward compatibility, but they are
-// deprecated and their use is not recommend. The generic version,
-// GrB_eWiseMult, is not affected.
-
 #include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
@@ -71,17 +65,6 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<M> = accum (C, A.*B)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // misnamed
-(
-    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
-    const GrB_BinaryOp mult, const GrB_Matrix A, const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, mult, A, B, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseMult_Monoid: matrix element-wise multiplication
 //------------------------------------------------------------------------------
@@ -118,17 +101,6 @@ GrB_Info GrB_Matrix_eWiseMult_Monoid         // C<M> = accum (C, A.*B)
     return (info) ;
 }
 
-GrB_Info GrB_eWiseMult_Matrix_Monoid         // misnamed
-(
-    GrB_Matrix C, const GrB_Matrix M, const GrB_BinaryOp accum,
-    const GrB_Monoid monoid, const GrB_Matrix A, const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Matrix_eWiseMult_Monoid (C, M, accum, monoid, A, B, desc)) ;
-}
-
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseMult_Semiring: matrix element-wise multiplication
 //------------------------------------------------------------------------------
@@ -163,20 +135,5 @@ GrB_Info GrB_Matrix_eWiseMult_Semiring       // C<M> = accum (C, A.*B)
     GB_EWISE (semiring->multiply) ;
     GB_BURBLE_END ;
     return (info) ;
-}
-
-GrB_Info GrB_eWiseMult_Matrix_Semiring       // misnamed
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_BinaryOp accum,
-    const GrB_Semiring semiring,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Descriptor desc
-)
-{ 
-    // call the correctly-named function:
-    return (GrB_Matrix_eWiseMult_Semiring (C, M, accum, semiring, A, B, desc)) ;
 }
 

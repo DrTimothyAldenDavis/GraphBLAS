@@ -93,13 +93,13 @@ alternative:    an alternative to CMake; edit the alternative/Makefile and do
 
 --------------------------------------------------------------------------------
 
-## SPEC:
+## GraphBLAS C API Specification:
 
 This version fully conforms to the version @GraphBLAS_API_VERSION_MAJOR@.@GraphBLAS_API_VERSION_MINOR@.@GraphBLAS_API_VERSION_SUB@ (@GraphBLAS_API_DATE@)
 of the GraphBLAS C API Specification.  It includes several additional functions
-and features as extensions to the spec.  These extensions are tagged with the
-keyword SPEC: in the code and in the User Guide, and in the Include/GraphBLAS.h
-file.  All functions, objects, and macros with the prefix GxB are extensions to
+and features as extensions to the spec.
+
+All functions, objects, and macros with the prefix GxB are extensions to
 the spec.  Functions, objects, and macros with prefix GB must not be accessed
 by user code.  They are for internal use in GraphBLAS only.
 

@@ -187,7 +187,7 @@ logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
 logstat ('test171',t) ; % test conversion and GB_memset
 logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
-logstat ('test88',t) ;  % hypersparse matrices with heap-based method
+logstat ('test88',t) ;  % hypersparse matrices with hash-based method
 logstat ('test76',s) ;  % GxB_resize (single threaded)
 logstat ('test107',t) ; % monoids with terminal values
 logstat ('test69',t) ;  % assign and subassign with alias

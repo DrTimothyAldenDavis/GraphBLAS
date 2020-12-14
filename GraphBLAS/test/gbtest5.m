@@ -8,7 +8,7 @@ list_out  = { [ ], 'default', 'replace' } ;
 list_in   = { [ ], 'default', 'transpose' } ;
 list_mask = { [ ], 'default', 'complement', ...
                    'structural complement', 'structure' } ;
-list_axb  = { [ ], 'default', 'gustavson', 'heap', 'dot', 'hash', 'saxpy' } ;
+list_axb  = { [ ], 'default', 'gustavson', 'dot', 'hash', 'saxpy' } ;
 list_kind = { [ ], 'sparse', 'full', 'grb', 'default' } ;
 
 ntrials = 0;

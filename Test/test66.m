@@ -8,8 +8,8 @@ fprintf ('\ntest66: ---- quick test for GrB_reduce_to_scalar and vector\n') ;
 
 rng ('default') ;
 A = sparse (rand (4,3)) ;
-x = full (sum (sum (A))) + 1.3 ;
-c = GB_mex_reduce_to_scalar (1.3, 'plus', 'plus', A) ;
+x = full (sum (sum (A))) + 3.1416
+c = GB_mex_reduce_to_scalar (3.1416, 'plus', 'plus', A) ;
 assert (isequal (x,c))
 
 tic

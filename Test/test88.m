@@ -5,7 +5,7 @@ function test88
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-d.axb = 'heap' ;
+d.axb = 'hash' ;
 semiring.multiply = 'times' ;
 semiring.class = 'double' ;
 semiring.add = 'plus' ;

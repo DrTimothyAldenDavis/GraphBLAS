@@ -81,8 +81,50 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 }
 
 //------------------------------------------------------------------------------
+// GrB_Matrix_reduce_Monoid: reduce a matrix to a vector via a monoid
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Monoid monoid,        // reduce monoid for t=reduce(A)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Descriptor desc       // descriptor for w, M, and A
+)
+{ 
+    GB_WHERE (w, "GrB_Matrix_reduce_Monoid (w, M, accum, reduce, A, desc)") ;
+    GB_BURBLE_START ("GrB_reduce") ;
+    GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
+        accum, monoid, A, desc, Context) ;
+    GB_BURBLE_END ;
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
 // GrB_Matrix_reduce_BinaryOp: reduce a matrix to a vector via a binary op
 //------------------------------------------------------------------------------
+
+// This method should not be in the GraphBLAS C API Specification.  All other
+// case of reduction in the C API, including all other uses of GrB_reduce,
+// GrB_vxm, GrB_mxv, and GrB_mxm, require a monoid with an identity value.
+// This function is an outlier.  To implement it in SuiteSparse:GraphBLAS, the
+// binary operator "op_in" is promoted to the corresponding monoid, for
+// built-in operators:
+//
+//      operator                data-types (all built-in)
+//      ----------------------  ---------------------------
+//      MIN, MAX                int*, uint*, fp*
+//      TIMES PLUS              int*, uint*, fp*, fc*
+//      ANY                     int*, uint*, fp*, fc*, bool
+//      LOR, LAND, LXOR, EQ     bool
+//      BOR, BAND, BXOR, BXNOR  uint*
+//
+// No other cases are supported.  In particular, user-defined types and
+// operators are not supported, since in those cases the identity value cannot
+// be inferred.  Use GrB_Matrix_reduce_Monoid with a user-defined monoid
+// instead.
 
 GrB_Info GrB_Matrix_reduce_BinaryOp
 (
@@ -296,28 +338,6 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
 
     ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
 
-    GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
-        accum, monoid, A, desc, Context) ;
-    GB_BURBLE_END ;
-    return (info) ;
-}
-
-//------------------------------------------------------------------------------
-// GrB_Matrix_reduce_Monoid: reduce a matrix to a vector via a monoid
-//------------------------------------------------------------------------------
-
-GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Monoid monoid,        // reduce monoid for t=reduce(A)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc       // descriptor for w, M, and A
-)
-{ 
-    GB_WHERE (w, "GrB_Matrix_reduce_Monoid (w, M, accum, reduce, A, desc)") ;
-    GB_BURBLE_START ("GrB_reduce") ;
     GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
         accum, monoid, A, desc, Context) ;
     GB_BURBLE_END ;
