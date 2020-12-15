@@ -8,19 +8,11 @@ changing how they are accessed
 FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 
 --------------------------------------------------------------------------------
-CC: TODO::benchmark this
-    lots of conversion of full to sparse for vector export.
+PR:
 
-TODO: need a matrix/vector import/export that never does conversion
-
---------------------------------------------------------------------------------
-PR:  TODO::benchmark this
-
-    TODO: constant-valued matrices/vectors (for r(:)=teleport)
+    FUTURE: constant-valued matrices/vectors (for r(:)=teleport)
         probably coupled with lazy malloc/free of A->x when converting from
         full (non-constant) to constant-valued
 
     need aggressive exploit of non-blocking mode, for x = sum (abs (t-r))
-
-TC:  TODO:: figure out why Feb 21st results are faster than Aug 2nd and current
 
