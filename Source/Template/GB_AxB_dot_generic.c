@@ -133,7 +133,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
@@ -147,7 +147,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
@@ -159,7 +159,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -186,7 +186,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
@@ -200,7 +200,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
@@ -212,7 +212,7 @@
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -292,7 +292,7 @@
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else // opcode == GB_SECOND_opcode
@@ -306,7 +306,7 @@
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }
@@ -322,7 +322,7 @@
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else
@@ -335,7 +335,7 @@
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }

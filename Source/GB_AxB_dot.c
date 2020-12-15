@@ -91,7 +91,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (GB_AxB_dot4_control (C_in, M, Mask_comp, A, B))
+    if (GB_AxB_dot4_control (C_in, M, Mask_comp))
     { 
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply

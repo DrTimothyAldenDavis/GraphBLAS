@@ -198,13 +198,10 @@ static inline bool GB_AxB_dot4_control
 (
     const GrB_Matrix C_in,      // NULL if C cannot be modified in-place
     const GrB_Matrix M,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B
+    const bool Mask_comp
 )
 {
-    return (C_in != NULL && M == NULL && !Mask_comp
-        && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)) ;
+    return (C_in != NULL && M == NULL && !Mask_comp && !GB_IS_BITMAP (C_in)) ;
 }
 
 //------------------------------------------------------------------------------

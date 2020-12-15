@@ -28,8 +28,7 @@
 
 // For built-in, pre-generated semirings, the PAIR operator is only coupled
 // with either the ANY, PLUS, EQ, or XOR monoids, since the other monoids are
-// equivalent to the ANY monoid.  With no accumulator, EQ_PAIR is the same as
-// ANY_PAIR, they differ for the C+=A'*B operation (see *dot4*).
+// equivalent to the ANY monoid.
 
 //------------------------------------------------------------------------------
 // C(i,j) = A(:,i)'*B(:,j): a single dot product
@@ -37,10 +36,6 @@
 
 {
     int64_t pB = pB_start ;
-
-    //--------------------------------------------------------------------------
-    // A is full
-    //--------------------------------------------------------------------------
 
     #if ( GB_A_IS_FULL && GB_B_IS_FULL )
     {
@@ -129,8 +124,7 @@
         }
         #else
         {
-            // first row index of B(:,j)
-            int64_t k = Bi [pB] ;
+            int64_t k = Bi [pB] ;               // first row index of B(:,j)
             // cij = A(k,i) * B(k,j)
             GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
             GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
@@ -139,7 +133,6 @@
             for (int64_t p = pB+1 ; p < pB_end ; p++)
             { 
                 GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                // next index of B(:,j)
                 int64_t k = Bi [p] ;
                 // cij += A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
@@ -229,8 +222,7 @@
         }
         #else
         {
-            // first row index of A(:,i)
-            int64_t k = Ai [pA] ;
+            int64_t k = Ai [pA] ;               // first row index of A(:,i)
             // cij = A(k,i) * B(k,j)
             GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
             GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
@@ -239,7 +231,6 @@
             for (int64_t p = pA+1 ; p < pA_end ; p++)
             { 
                 GB_DOT_TERMINAL (cij) ;             // break if cij terminal
-                // next index of A(:,i)
                 int64_t k = Ai [p] ;
                 // cij += A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, p   ) ;           // aki = A(k,i)
@@ -255,7 +246,7 @@
     {
 
         //----------------------------------------------------------------------
-        // A is sparse/hyper, B is bitmap
+        // A is sparse/hyper and B is bitmap
         //----------------------------------------------------------------------
 
         for (int64_t p = pA ; p < pA_end ; p++)
@@ -372,16 +363,22 @@
             {
                 int64_t ia = Ai [pA] ;
                 int64_t ib = Bi [pB] ;
-                if (ia == ib)
+                if (ia < ib)
                 { 
+                    // A(ia,i) appears before B(ib,j)
+                    pA++ ;
+                }
+                else if (ib < ia)
+                { 
+                    // B(ib,j) appears before A(ia,i)
+                    pB++ ;
+                }
+                else // ia == ib == k
+                { 
+                    // A(k,i) and B(k,j) are the next entries to merge
                     GB_DOT (ia, pA, pB) ;
                     pA++ ;
                     pB++ ;
-                }
-                else
-                { 
-                    pA += (ia < ib) ;
-                    pB += (ib < ia) ;
                 }
             }
             GB_DOT_SAVE_CIJ ;

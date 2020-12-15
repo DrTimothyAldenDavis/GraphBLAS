@@ -18,6 +18,9 @@
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
+#if GB_KERNEL
+
+// version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
@@ -33,8 +36,9 @@
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
 
-#if 0
-// slower version
+#else
+
+// version for the CPU
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
@@ -106,6 +110,9 @@
 // GB_TRIM_BINARY_SEARCH_ZOMBIE: binary search in the presence of zombies
 //------------------------------------------------------------------------------
 
+#if GB_KERNEL
+
+// version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
@@ -121,7 +128,9 @@
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
 
-#if 0
+#else
+
+// version for the CPU
 #define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \

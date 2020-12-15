@@ -145,10 +145,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (accum != NULL)
         { 
             // C is hypersparse, sparse, or full, and accum is present.
-            // check if C_in is competely dense:  no zombies and
-            // pending tuples.
-            bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C_in)
-                && GB_is_dense (C_in) ;
+            // check if C_in is competely dense:  no pending work.
+            bool C_is_dense = GB_as_if_full (C_in) ;
 
             // accum must be present, and must match the monoid of the
             // semiring, and the ztype of the monoid must match the type of C
@@ -469,7 +467,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         {
             // auto selection for A'*B
             if (GB_AxB_dot4_control (can_do_in_place ? C_in : NULL,
-                M, Mask_comp, A, B))
+                M, Mask_comp))
             {
                 // C+=A'*B can be done with dot4
                 axb_method = GB_USE_DOT ;

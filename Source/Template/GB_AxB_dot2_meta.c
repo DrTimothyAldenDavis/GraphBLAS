@@ -7,6 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DOT2 1
+#define GB_DOT3 0
+#define GB_DOT4 0
+#define GB_DOT3_PHASE1 0
+#define GB_DOT3_PHASE2 0
+
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
 
@@ -37,8 +43,6 @@
 
 #endif
 
-//------------------------------------------------------------------------------
-
 {
 
     //--------------------------------------------------------------------------
@@ -64,6 +68,7 @@
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
+    #define B_is_hyper false
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int8_t  *GB_RESTRICT Ab = A->b ;
@@ -72,6 +77,7 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
+    #define A_is_hyper false
 
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;
@@ -169,6 +175,15 @@
     C->nvals = cnvals ;
 }
 
+#undef A_is_hyper
+#undef B_is_hyper
+
 #undef GB_DOT_ALWAYS_SAVE_CIJ
 #undef GB_DOT_SAVE_CIJ
+
+#undef GB_DOT2
+#undef GB_DOT3
+#undef GB_DOT4
+#undef GB_DOT3_PHASE1
+#undef GB_DOT3_PHASE1
 

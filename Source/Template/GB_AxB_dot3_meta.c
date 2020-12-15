@@ -7,8 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DOT3
-#define GB_DOT3_PHASE2
+#define GB_DOT2 0
+#define GB_DOT3 1
+#define GB_DOT4 0
+#define GB_DOT3_PHASE1 0
+#define GB_DOT3_PHASE2 1
+
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
 
@@ -41,8 +45,6 @@
         Ci [pC] = i ;               \
     }                               \
 }
-
-//------------------------------------------------------------------------------
 
 {
 
@@ -130,8 +132,12 @@
     C->nzombies = nzombies ;
 }
 
-#undef GB_DOT3
-#undef GB_DOT3_PHASE2
 #undef GB_DOT_ALWAYS_SAVE_CIJ
 #undef GB_DOT_SAVE_CIJ
+
+#undef GB_DOT2
+#undef GB_DOT3
+#undef GB_DOT4
+#undef GB_DOT3_PHASE1
+#undef GB_DOT3_PHASE2
 

@@ -11,6 +11,7 @@
 // matrices A and/or B are hypersparse, they are packed into sparse matrices,
 // and C is unpacked from bitmap to sparse/hypersparse when done.
 
+#if ( !GB_A_IS_HYPER && !GB_B_IS_HYPER )
 {
 
     //--------------------------------------------------------------------------
@@ -43,14 +44,10 @@
         {
 
             //------------------------------------------------------------------
-            // get C(:,j)
+            // get B(:,j) and C(:,j)
             //------------------------------------------------------------------
 
             const int64_t pC_start = j * cvlen ;
-
-            //------------------------------------------------------------------
-            // get B(:,j)
-            //------------------------------------------------------------------
 
             #if GB_B_IS_SPARSE
                 // B is sparse (never hypersparse)
@@ -141,6 +138,7 @@
         cnvals += task_cnvals ;
     }
 }
+#endif
 
 #undef GB_A_IS_SPARSE
 #undef GB_A_IS_HYPER
