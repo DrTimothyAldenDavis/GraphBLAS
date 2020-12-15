@@ -185,5 +185,5 @@
 #undef GB_DOT3
 #undef GB_DOT4
 #undef GB_DOT3_PHASE1
-#undef GB_DOT3_PHASE1
+#undef GB_DOT3_PHASE2
 

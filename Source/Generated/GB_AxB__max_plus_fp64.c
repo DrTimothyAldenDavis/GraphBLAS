@@ -289,7 +289,7 @@ GrB_Info GB_Adot4B__max_plus_fp64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot4_template.c"
+    #include "GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
