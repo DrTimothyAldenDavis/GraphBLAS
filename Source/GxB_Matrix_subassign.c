@@ -38,7 +38,7 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // C(Rows,Cols)<M> = accum (C(Rows,Cols), A) and variations

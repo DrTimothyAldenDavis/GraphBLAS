@@ -15,6 +15,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     const GrB_Desc_Value AxB_method,
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 ) ;
 

@@ -1411,7 +1411,7 @@
     // log the state of C->jumbled
     //--------------------------------------------------------------------------
 
-    C->jumbled = C_jumbled ;
+    C->jumbled = C_jumbled ;    // C is jumbled if any task left it jumbled
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (12, ttt) ;

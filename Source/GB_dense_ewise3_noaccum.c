@@ -84,7 +84,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     else if (!GB_IS_FULL (C))
     {
         // C is dense, but not full; convert to full
-        C->jumbled = false ;    // existing pattern is discarded
         GB_convert_any_to_full (C) ;
     }
     ASSERT (GB_IS_FULL (C)) ;

@@ -275,16 +275,19 @@ break ;
 // GB_SORT_C_j_PATTERN: sort C(:,j) for a coarse task, or flag as jumbled
 //------------------------------------------------------------------------------
 
+// Only coarse tasks do the optional sort.  Fine hash tasks always leave C
+// jumbled.
+
 #define GB_SORT_C_j_PATTERN                                     \
-    if (0)  /* TODO:: */                                        \
+    if (do_sort)                                                \
     {                                                           \
-        /* the pattern of C(:,j) is now jumbled */              \
-        task_C_jumbled = true ;                                 \
+        /* sort the pattern of C(:,j) (non-default) */          \
+        GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
     }                                                           \
     else                                                        \
     {                                                           \
-        /* sort the pattern of C(:,j) */                        \
-        GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
+        /* lazy sort: C(:,j) is now jumbled (default) */        \
+        task_C_jumbled = true ;                                 \
     }
 
 //------------------------------------------------------------------------------

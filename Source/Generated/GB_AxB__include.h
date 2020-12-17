@@ -39,6 +39,7 @@ GrB_Info GB_Asaxpy3B__min_first_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -84,6 +85,7 @@ GrB_Info GB_Asaxpy3B__min_first_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -129,6 +131,7 @@ GrB_Info GB_Asaxpy3B__min_first_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -174,6 +177,7 @@ GrB_Info GB_Asaxpy3B__min_first_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -219,6 +223,7 @@ GrB_Info GB_Asaxpy3B__min_first_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -264,6 +269,7 @@ GrB_Info GB_Asaxpy3B__min_first_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -309,6 +315,7 @@ GrB_Info GB_Asaxpy3B__min_first_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -354,6 +361,7 @@ GrB_Info GB_Asaxpy3B__min_first_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -399,6 +407,7 @@ GrB_Info GB_Asaxpy3B__min_first_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -444,6 +453,7 @@ GrB_Info GB_Asaxpy3B__min_first_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -489,6 +499,7 @@ GrB_Info GB_Asaxpy3B__max_first_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -534,6 +545,7 @@ GrB_Info GB_Asaxpy3B__max_first_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -579,6 +591,7 @@ GrB_Info GB_Asaxpy3B__max_first_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -624,6 +637,7 @@ GrB_Info GB_Asaxpy3B__max_first_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -669,6 +683,7 @@ GrB_Info GB_Asaxpy3B__max_first_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -714,6 +729,7 @@ GrB_Info GB_Asaxpy3B__max_first_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -759,6 +775,7 @@ GrB_Info GB_Asaxpy3B__max_first_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -804,6 +821,7 @@ GrB_Info GB_Asaxpy3B__max_first_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -849,6 +867,7 @@ GrB_Info GB_Asaxpy3B__max_first_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -894,6 +913,7 @@ GrB_Info GB_Asaxpy3B__max_first_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -939,6 +959,7 @@ GrB_Info GB_Asaxpy3B__any_first_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -984,6 +1005,7 @@ GrB_Info GB_Asaxpy3B__any_first_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1029,6 +1051,7 @@ GrB_Info GB_Asaxpy3B__any_first_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1074,6 +1097,7 @@ GrB_Info GB_Asaxpy3B__any_first_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1119,6 +1143,7 @@ GrB_Info GB_Asaxpy3B__any_first_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1164,6 +1189,7 @@ GrB_Info GB_Asaxpy3B__any_first_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1209,6 +1235,7 @@ GrB_Info GB_Asaxpy3B__any_first_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1254,6 +1281,7 @@ GrB_Info GB_Asaxpy3B__any_first_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1299,6 +1327,7 @@ GrB_Info GB_Asaxpy3B__any_first_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1344,6 +1373,7 @@ GrB_Info GB_Asaxpy3B__any_first_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1389,6 +1419,7 @@ GrB_Info GB_Asaxpy3B__any_first_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1434,6 +1465,7 @@ GrB_Info GB_Asaxpy3B__any_first_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1479,6 +1511,7 @@ GrB_Info GB_Asaxpy3B__plus_first_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1524,6 +1557,7 @@ GrB_Info GB_Asaxpy3B__plus_first_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1569,6 +1603,7 @@ GrB_Info GB_Asaxpy3B__plus_first_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1614,6 +1649,7 @@ GrB_Info GB_Asaxpy3B__plus_first_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1659,6 +1695,7 @@ GrB_Info GB_Asaxpy3B__plus_first_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1704,6 +1741,7 @@ GrB_Info GB_Asaxpy3B__plus_first_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1749,6 +1787,7 @@ GrB_Info GB_Asaxpy3B__plus_first_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1794,6 +1833,7 @@ GrB_Info GB_Asaxpy3B__plus_first_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1839,6 +1879,7 @@ GrB_Info GB_Asaxpy3B__plus_first_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1884,6 +1925,7 @@ GrB_Info GB_Asaxpy3B__plus_first_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1929,6 +1971,7 @@ GrB_Info GB_Asaxpy3B__plus_first_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -1974,6 +2017,7 @@ GrB_Info GB_Asaxpy3B__plus_first_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2019,6 +2063,7 @@ GrB_Info GB_Asaxpy3B__times_first_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2064,6 +2109,7 @@ GrB_Info GB_Asaxpy3B__times_first_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2109,6 +2155,7 @@ GrB_Info GB_Asaxpy3B__times_first_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2154,6 +2201,7 @@ GrB_Info GB_Asaxpy3B__times_first_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2199,6 +2247,7 @@ GrB_Info GB_Asaxpy3B__times_first_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2244,6 +2293,7 @@ GrB_Info GB_Asaxpy3B__times_first_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2289,6 +2339,7 @@ GrB_Info GB_Asaxpy3B__times_first_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2334,6 +2385,7 @@ GrB_Info GB_Asaxpy3B__times_first_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2379,6 +2431,7 @@ GrB_Info GB_Asaxpy3B__times_first_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2424,6 +2477,7 @@ GrB_Info GB_Asaxpy3B__times_first_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2469,6 +2523,7 @@ GrB_Info GB_Asaxpy3B__times_first_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2514,6 +2569,7 @@ GrB_Info GB_Asaxpy3B__times_first_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2559,6 +2615,7 @@ GrB_Info GB_Asaxpy3B__lor_first_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2604,6 +2661,7 @@ GrB_Info GB_Asaxpy3B__land_first_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2649,6 +2707,7 @@ GrB_Info GB_Asaxpy3B__lxor_first_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2694,6 +2753,7 @@ GrB_Info GB_Asaxpy3B__any_first_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2739,6 +2799,7 @@ GrB_Info GB_Asaxpy3B__eq_first_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2784,6 +2845,7 @@ GrB_Info GB_Asaxpy3B__min_second_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2829,6 +2891,7 @@ GrB_Info GB_Asaxpy3B__min_second_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2874,6 +2937,7 @@ GrB_Info GB_Asaxpy3B__min_second_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2919,6 +2983,7 @@ GrB_Info GB_Asaxpy3B__min_second_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -2964,6 +3029,7 @@ GrB_Info GB_Asaxpy3B__min_second_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3009,6 +3075,7 @@ GrB_Info GB_Asaxpy3B__min_second_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3054,6 +3121,7 @@ GrB_Info GB_Asaxpy3B__min_second_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3099,6 +3167,7 @@ GrB_Info GB_Asaxpy3B__min_second_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3144,6 +3213,7 @@ GrB_Info GB_Asaxpy3B__min_second_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3189,6 +3259,7 @@ GrB_Info GB_Asaxpy3B__min_second_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3234,6 +3305,7 @@ GrB_Info GB_Asaxpy3B__max_second_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3279,6 +3351,7 @@ GrB_Info GB_Asaxpy3B__max_second_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3324,6 +3397,7 @@ GrB_Info GB_Asaxpy3B__max_second_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3369,6 +3443,7 @@ GrB_Info GB_Asaxpy3B__max_second_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3414,6 +3489,7 @@ GrB_Info GB_Asaxpy3B__max_second_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3459,6 +3535,7 @@ GrB_Info GB_Asaxpy3B__max_second_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3504,6 +3581,7 @@ GrB_Info GB_Asaxpy3B__max_second_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3549,6 +3627,7 @@ GrB_Info GB_Asaxpy3B__max_second_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3594,6 +3673,7 @@ GrB_Info GB_Asaxpy3B__max_second_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3639,6 +3719,7 @@ GrB_Info GB_Asaxpy3B__max_second_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3684,6 +3765,7 @@ GrB_Info GB_Asaxpy3B__any_second_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3729,6 +3811,7 @@ GrB_Info GB_Asaxpy3B__any_second_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3774,6 +3857,7 @@ GrB_Info GB_Asaxpy3B__any_second_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3819,6 +3903,7 @@ GrB_Info GB_Asaxpy3B__any_second_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3864,6 +3949,7 @@ GrB_Info GB_Asaxpy3B__any_second_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3909,6 +3995,7 @@ GrB_Info GB_Asaxpy3B__any_second_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3954,6 +4041,7 @@ GrB_Info GB_Asaxpy3B__any_second_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -3999,6 +4087,7 @@ GrB_Info GB_Asaxpy3B__any_second_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4044,6 +4133,7 @@ GrB_Info GB_Asaxpy3B__any_second_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4089,6 +4179,7 @@ GrB_Info GB_Asaxpy3B__any_second_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4134,6 +4225,7 @@ GrB_Info GB_Asaxpy3B__any_second_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4179,6 +4271,7 @@ GrB_Info GB_Asaxpy3B__any_second_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4224,6 +4317,7 @@ GrB_Info GB_Asaxpy3B__plus_second_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4269,6 +4363,7 @@ GrB_Info GB_Asaxpy3B__plus_second_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4314,6 +4409,7 @@ GrB_Info GB_Asaxpy3B__plus_second_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4359,6 +4455,7 @@ GrB_Info GB_Asaxpy3B__plus_second_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4404,6 +4501,7 @@ GrB_Info GB_Asaxpy3B__plus_second_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4449,6 +4547,7 @@ GrB_Info GB_Asaxpy3B__plus_second_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4494,6 +4593,7 @@ GrB_Info GB_Asaxpy3B__plus_second_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4539,6 +4639,7 @@ GrB_Info GB_Asaxpy3B__plus_second_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4584,6 +4685,7 @@ GrB_Info GB_Asaxpy3B__plus_second_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4629,6 +4731,7 @@ GrB_Info GB_Asaxpy3B__plus_second_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4674,6 +4777,7 @@ GrB_Info GB_Asaxpy3B__plus_second_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4719,6 +4823,7 @@ GrB_Info GB_Asaxpy3B__plus_second_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4764,6 +4869,7 @@ GrB_Info GB_Asaxpy3B__times_second_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4809,6 +4915,7 @@ GrB_Info GB_Asaxpy3B__times_second_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4854,6 +4961,7 @@ GrB_Info GB_Asaxpy3B__times_second_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4899,6 +5007,7 @@ GrB_Info GB_Asaxpy3B__times_second_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4944,6 +5053,7 @@ GrB_Info GB_Asaxpy3B__times_second_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -4989,6 +5099,7 @@ GrB_Info GB_Asaxpy3B__times_second_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5034,6 +5145,7 @@ GrB_Info GB_Asaxpy3B__times_second_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5079,6 +5191,7 @@ GrB_Info GB_Asaxpy3B__times_second_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5124,6 +5237,7 @@ GrB_Info GB_Asaxpy3B__times_second_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5169,6 +5283,7 @@ GrB_Info GB_Asaxpy3B__times_second_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5214,6 +5329,7 @@ GrB_Info GB_Asaxpy3B__times_second_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5259,6 +5375,7 @@ GrB_Info GB_Asaxpy3B__times_second_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5304,6 +5421,7 @@ GrB_Info GB_Asaxpy3B__lor_second_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5349,6 +5467,7 @@ GrB_Info GB_Asaxpy3B__land_second_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5394,6 +5513,7 @@ GrB_Info GB_Asaxpy3B__lxor_second_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5439,6 +5559,7 @@ GrB_Info GB_Asaxpy3B__any_second_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5484,6 +5605,7 @@ GrB_Info GB_Asaxpy3B__eq_second_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5529,6 +5651,7 @@ GrB_Info GB_Asaxpy3B__any_pair_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5574,6 +5697,7 @@ GrB_Info GB_Asaxpy3B__any_pair_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5619,6 +5743,7 @@ GrB_Info GB_Asaxpy3B__any_pair_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5664,6 +5789,7 @@ GrB_Info GB_Asaxpy3B__any_pair_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5709,6 +5835,7 @@ GrB_Info GB_Asaxpy3B__any_pair_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5754,6 +5881,7 @@ GrB_Info GB_Asaxpy3B__any_pair_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5799,6 +5927,7 @@ GrB_Info GB_Asaxpy3B__any_pair_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5844,6 +5973,7 @@ GrB_Info GB_Asaxpy3B__any_pair_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5889,6 +6019,7 @@ GrB_Info GB_Asaxpy3B__any_pair_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5934,6 +6065,7 @@ GrB_Info GB_Asaxpy3B__any_pair_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -5979,6 +6111,7 @@ GrB_Info GB_Asaxpy3B__any_pair_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6024,6 +6157,7 @@ GrB_Info GB_Asaxpy3B__any_pair_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6069,6 +6203,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6114,6 +6249,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6159,6 +6295,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6204,6 +6341,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6249,6 +6387,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6294,6 +6433,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6339,6 +6479,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6384,6 +6525,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6429,6 +6571,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6474,6 +6617,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6519,6 +6663,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6564,6 +6709,7 @@ GrB_Info GB_Asaxpy3B__plus_pair_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6609,6 +6755,7 @@ GrB_Info GB_Asaxpy3B__lxor_pair_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6654,6 +6801,7 @@ GrB_Info GB_Asaxpy3B__any_pair_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6699,6 +6847,7 @@ GrB_Info GB_Asaxpy3B__min_min_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6744,6 +6893,7 @@ GrB_Info GB_Asaxpy3B__min_min_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6789,6 +6939,7 @@ GrB_Info GB_Asaxpy3B__min_min_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6834,6 +6985,7 @@ GrB_Info GB_Asaxpy3B__min_min_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6879,6 +7031,7 @@ GrB_Info GB_Asaxpy3B__min_min_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6924,6 +7077,7 @@ GrB_Info GB_Asaxpy3B__min_min_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -6969,6 +7123,7 @@ GrB_Info GB_Asaxpy3B__min_min_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7014,6 +7169,7 @@ GrB_Info GB_Asaxpy3B__min_min_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7059,6 +7215,7 @@ GrB_Info GB_Asaxpy3B__min_min_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7104,6 +7261,7 @@ GrB_Info GB_Asaxpy3B__min_min_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7149,6 +7307,7 @@ GrB_Info GB_Asaxpy3B__max_min_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7194,6 +7353,7 @@ GrB_Info GB_Asaxpy3B__max_min_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7239,6 +7399,7 @@ GrB_Info GB_Asaxpy3B__max_min_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7284,6 +7445,7 @@ GrB_Info GB_Asaxpy3B__max_min_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7329,6 +7491,7 @@ GrB_Info GB_Asaxpy3B__max_min_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7374,6 +7537,7 @@ GrB_Info GB_Asaxpy3B__max_min_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7419,6 +7583,7 @@ GrB_Info GB_Asaxpy3B__max_min_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7464,6 +7629,7 @@ GrB_Info GB_Asaxpy3B__max_min_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7509,6 +7675,7 @@ GrB_Info GB_Asaxpy3B__max_min_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7554,6 +7721,7 @@ GrB_Info GB_Asaxpy3B__max_min_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7599,6 +7767,7 @@ GrB_Info GB_Asaxpy3B__any_min_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7644,6 +7813,7 @@ GrB_Info GB_Asaxpy3B__any_min_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7689,6 +7859,7 @@ GrB_Info GB_Asaxpy3B__any_min_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7734,6 +7905,7 @@ GrB_Info GB_Asaxpy3B__any_min_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7779,6 +7951,7 @@ GrB_Info GB_Asaxpy3B__any_min_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7824,6 +7997,7 @@ GrB_Info GB_Asaxpy3B__any_min_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7869,6 +8043,7 @@ GrB_Info GB_Asaxpy3B__any_min_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7914,6 +8089,7 @@ GrB_Info GB_Asaxpy3B__any_min_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -7959,6 +8135,7 @@ GrB_Info GB_Asaxpy3B__any_min_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8004,6 +8181,7 @@ GrB_Info GB_Asaxpy3B__any_min_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8049,6 +8227,7 @@ GrB_Info GB_Asaxpy3B__plus_min_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8094,6 +8273,7 @@ GrB_Info GB_Asaxpy3B__plus_min_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8139,6 +8319,7 @@ GrB_Info GB_Asaxpy3B__plus_min_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8184,6 +8365,7 @@ GrB_Info GB_Asaxpy3B__plus_min_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8229,6 +8411,7 @@ GrB_Info GB_Asaxpy3B__plus_min_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8274,6 +8457,7 @@ GrB_Info GB_Asaxpy3B__plus_min_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8319,6 +8503,7 @@ GrB_Info GB_Asaxpy3B__plus_min_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8364,6 +8549,7 @@ GrB_Info GB_Asaxpy3B__plus_min_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8409,6 +8595,7 @@ GrB_Info GB_Asaxpy3B__plus_min_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8454,6 +8641,7 @@ GrB_Info GB_Asaxpy3B__plus_min_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8499,6 +8687,7 @@ GrB_Info GB_Asaxpy3B__times_min_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8544,6 +8733,7 @@ GrB_Info GB_Asaxpy3B__times_min_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8589,6 +8779,7 @@ GrB_Info GB_Asaxpy3B__times_min_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8634,6 +8825,7 @@ GrB_Info GB_Asaxpy3B__times_min_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8679,6 +8871,7 @@ GrB_Info GB_Asaxpy3B__times_min_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8724,6 +8917,7 @@ GrB_Info GB_Asaxpy3B__times_min_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8769,6 +8963,7 @@ GrB_Info GB_Asaxpy3B__times_min_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8814,6 +9009,7 @@ GrB_Info GB_Asaxpy3B__times_min_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8859,6 +9055,7 @@ GrB_Info GB_Asaxpy3B__times_min_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8904,6 +9101,7 @@ GrB_Info GB_Asaxpy3B__times_min_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8949,6 +9147,7 @@ GrB_Info GB_Asaxpy3B__min_max_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -8994,6 +9193,7 @@ GrB_Info GB_Asaxpy3B__min_max_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9039,6 +9239,7 @@ GrB_Info GB_Asaxpy3B__min_max_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9084,6 +9285,7 @@ GrB_Info GB_Asaxpy3B__min_max_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9129,6 +9331,7 @@ GrB_Info GB_Asaxpy3B__min_max_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9174,6 +9377,7 @@ GrB_Info GB_Asaxpy3B__min_max_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9219,6 +9423,7 @@ GrB_Info GB_Asaxpy3B__min_max_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9264,6 +9469,7 @@ GrB_Info GB_Asaxpy3B__min_max_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9309,6 +9515,7 @@ GrB_Info GB_Asaxpy3B__min_max_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9354,6 +9561,7 @@ GrB_Info GB_Asaxpy3B__min_max_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9399,6 +9607,7 @@ GrB_Info GB_Asaxpy3B__max_max_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9444,6 +9653,7 @@ GrB_Info GB_Asaxpy3B__max_max_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9489,6 +9699,7 @@ GrB_Info GB_Asaxpy3B__max_max_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9534,6 +9745,7 @@ GrB_Info GB_Asaxpy3B__max_max_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9579,6 +9791,7 @@ GrB_Info GB_Asaxpy3B__max_max_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9624,6 +9837,7 @@ GrB_Info GB_Asaxpy3B__max_max_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9669,6 +9883,7 @@ GrB_Info GB_Asaxpy3B__max_max_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9714,6 +9929,7 @@ GrB_Info GB_Asaxpy3B__max_max_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9759,6 +9975,7 @@ GrB_Info GB_Asaxpy3B__max_max_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9804,6 +10021,7 @@ GrB_Info GB_Asaxpy3B__max_max_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9849,6 +10067,7 @@ GrB_Info GB_Asaxpy3B__any_max_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9894,6 +10113,7 @@ GrB_Info GB_Asaxpy3B__any_max_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9939,6 +10159,7 @@ GrB_Info GB_Asaxpy3B__any_max_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -9984,6 +10205,7 @@ GrB_Info GB_Asaxpy3B__any_max_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10029,6 +10251,7 @@ GrB_Info GB_Asaxpy3B__any_max_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10074,6 +10297,7 @@ GrB_Info GB_Asaxpy3B__any_max_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10119,6 +10343,7 @@ GrB_Info GB_Asaxpy3B__any_max_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10164,6 +10389,7 @@ GrB_Info GB_Asaxpy3B__any_max_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10209,6 +10435,7 @@ GrB_Info GB_Asaxpy3B__any_max_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10254,6 +10481,7 @@ GrB_Info GB_Asaxpy3B__any_max_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10299,6 +10527,7 @@ GrB_Info GB_Asaxpy3B__plus_max_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10344,6 +10573,7 @@ GrB_Info GB_Asaxpy3B__plus_max_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10389,6 +10619,7 @@ GrB_Info GB_Asaxpy3B__plus_max_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10434,6 +10665,7 @@ GrB_Info GB_Asaxpy3B__plus_max_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10479,6 +10711,7 @@ GrB_Info GB_Asaxpy3B__plus_max_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10524,6 +10757,7 @@ GrB_Info GB_Asaxpy3B__plus_max_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10569,6 +10803,7 @@ GrB_Info GB_Asaxpy3B__plus_max_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10614,6 +10849,7 @@ GrB_Info GB_Asaxpy3B__plus_max_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10659,6 +10895,7 @@ GrB_Info GB_Asaxpy3B__plus_max_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10704,6 +10941,7 @@ GrB_Info GB_Asaxpy3B__plus_max_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10749,6 +10987,7 @@ GrB_Info GB_Asaxpy3B__times_max_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10794,6 +11033,7 @@ GrB_Info GB_Asaxpy3B__times_max_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10839,6 +11079,7 @@ GrB_Info GB_Asaxpy3B__times_max_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10884,6 +11125,7 @@ GrB_Info GB_Asaxpy3B__times_max_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10929,6 +11171,7 @@ GrB_Info GB_Asaxpy3B__times_max_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -10974,6 +11217,7 @@ GrB_Info GB_Asaxpy3B__times_max_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11019,6 +11263,7 @@ GrB_Info GB_Asaxpy3B__times_max_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11064,6 +11309,7 @@ GrB_Info GB_Asaxpy3B__times_max_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11109,6 +11355,7 @@ GrB_Info GB_Asaxpy3B__times_max_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11154,6 +11401,7 @@ GrB_Info GB_Asaxpy3B__times_max_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11199,6 +11447,7 @@ GrB_Info GB_Asaxpy3B__min_plus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11244,6 +11493,7 @@ GrB_Info GB_Asaxpy3B__min_plus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11289,6 +11539,7 @@ GrB_Info GB_Asaxpy3B__min_plus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11334,6 +11585,7 @@ GrB_Info GB_Asaxpy3B__min_plus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11379,6 +11631,7 @@ GrB_Info GB_Asaxpy3B__min_plus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11424,6 +11677,7 @@ GrB_Info GB_Asaxpy3B__min_plus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11469,6 +11723,7 @@ GrB_Info GB_Asaxpy3B__min_plus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11514,6 +11769,7 @@ GrB_Info GB_Asaxpy3B__min_plus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11559,6 +11815,7 @@ GrB_Info GB_Asaxpy3B__min_plus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11604,6 +11861,7 @@ GrB_Info GB_Asaxpy3B__min_plus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11649,6 +11907,7 @@ GrB_Info GB_Asaxpy3B__max_plus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11694,6 +11953,7 @@ GrB_Info GB_Asaxpy3B__max_plus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11739,6 +11999,7 @@ GrB_Info GB_Asaxpy3B__max_plus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11784,6 +12045,7 @@ GrB_Info GB_Asaxpy3B__max_plus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11829,6 +12091,7 @@ GrB_Info GB_Asaxpy3B__max_plus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11874,6 +12137,7 @@ GrB_Info GB_Asaxpy3B__max_plus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11919,6 +12183,7 @@ GrB_Info GB_Asaxpy3B__max_plus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -11964,6 +12229,7 @@ GrB_Info GB_Asaxpy3B__max_plus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12009,6 +12275,7 @@ GrB_Info GB_Asaxpy3B__max_plus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12054,6 +12321,7 @@ GrB_Info GB_Asaxpy3B__max_plus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12099,6 +12367,7 @@ GrB_Info GB_Asaxpy3B__any_plus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12144,6 +12413,7 @@ GrB_Info GB_Asaxpy3B__any_plus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12189,6 +12459,7 @@ GrB_Info GB_Asaxpy3B__any_plus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12234,6 +12505,7 @@ GrB_Info GB_Asaxpy3B__any_plus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12279,6 +12551,7 @@ GrB_Info GB_Asaxpy3B__any_plus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12324,6 +12597,7 @@ GrB_Info GB_Asaxpy3B__any_plus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12369,6 +12643,7 @@ GrB_Info GB_Asaxpy3B__any_plus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12414,6 +12689,7 @@ GrB_Info GB_Asaxpy3B__any_plus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12459,6 +12735,7 @@ GrB_Info GB_Asaxpy3B__any_plus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12504,6 +12781,7 @@ GrB_Info GB_Asaxpy3B__any_plus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12549,6 +12827,7 @@ GrB_Info GB_Asaxpy3B__any_plus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12594,6 +12873,7 @@ GrB_Info GB_Asaxpy3B__any_plus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12639,6 +12919,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12684,6 +12965,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12729,6 +13011,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12774,6 +13057,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12819,6 +13103,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12864,6 +13149,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12909,6 +13195,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12954,6 +13241,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -12999,6 +13287,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13044,6 +13333,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13089,6 +13379,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13134,6 +13425,7 @@ GrB_Info GB_Asaxpy3B__plus_plus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13179,6 +13471,7 @@ GrB_Info GB_Asaxpy3B__times_plus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13224,6 +13517,7 @@ GrB_Info GB_Asaxpy3B__times_plus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13269,6 +13563,7 @@ GrB_Info GB_Asaxpy3B__times_plus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13314,6 +13609,7 @@ GrB_Info GB_Asaxpy3B__times_plus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13359,6 +13655,7 @@ GrB_Info GB_Asaxpy3B__times_plus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13404,6 +13701,7 @@ GrB_Info GB_Asaxpy3B__times_plus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13449,6 +13747,7 @@ GrB_Info GB_Asaxpy3B__times_plus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13494,6 +13793,7 @@ GrB_Info GB_Asaxpy3B__times_plus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13539,6 +13839,7 @@ GrB_Info GB_Asaxpy3B__times_plus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13584,6 +13885,7 @@ GrB_Info GB_Asaxpy3B__times_plus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13629,6 +13931,7 @@ GrB_Info GB_Asaxpy3B__times_plus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13674,6 +13977,7 @@ GrB_Info GB_Asaxpy3B__times_plus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13719,6 +14023,7 @@ GrB_Info GB_Asaxpy3B__min_minus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13764,6 +14069,7 @@ GrB_Info GB_Asaxpy3B__min_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13809,6 +14115,7 @@ GrB_Info GB_Asaxpy3B__min_minus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13854,6 +14161,7 @@ GrB_Info GB_Asaxpy3B__min_minus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13899,6 +14207,7 @@ GrB_Info GB_Asaxpy3B__min_minus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13944,6 +14253,7 @@ GrB_Info GB_Asaxpy3B__min_minus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -13989,6 +14299,7 @@ GrB_Info GB_Asaxpy3B__min_minus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14034,6 +14345,7 @@ GrB_Info GB_Asaxpy3B__min_minus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14079,6 +14391,7 @@ GrB_Info GB_Asaxpy3B__min_minus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14124,6 +14437,7 @@ GrB_Info GB_Asaxpy3B__min_minus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14169,6 +14483,7 @@ GrB_Info GB_Asaxpy3B__max_minus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14214,6 +14529,7 @@ GrB_Info GB_Asaxpy3B__max_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14259,6 +14575,7 @@ GrB_Info GB_Asaxpy3B__max_minus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14304,6 +14621,7 @@ GrB_Info GB_Asaxpy3B__max_minus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14349,6 +14667,7 @@ GrB_Info GB_Asaxpy3B__max_minus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14394,6 +14713,7 @@ GrB_Info GB_Asaxpy3B__max_minus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14439,6 +14759,7 @@ GrB_Info GB_Asaxpy3B__max_minus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14484,6 +14805,7 @@ GrB_Info GB_Asaxpy3B__max_minus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14529,6 +14851,7 @@ GrB_Info GB_Asaxpy3B__max_minus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14574,6 +14897,7 @@ GrB_Info GB_Asaxpy3B__max_minus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14619,6 +14943,7 @@ GrB_Info GB_Asaxpy3B__any_minus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14664,6 +14989,7 @@ GrB_Info GB_Asaxpy3B__any_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14709,6 +15035,7 @@ GrB_Info GB_Asaxpy3B__any_minus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14754,6 +15081,7 @@ GrB_Info GB_Asaxpy3B__any_minus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14799,6 +15127,7 @@ GrB_Info GB_Asaxpy3B__any_minus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14844,6 +15173,7 @@ GrB_Info GB_Asaxpy3B__any_minus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14889,6 +15219,7 @@ GrB_Info GB_Asaxpy3B__any_minus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14934,6 +15265,7 @@ GrB_Info GB_Asaxpy3B__any_minus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -14979,6 +15311,7 @@ GrB_Info GB_Asaxpy3B__any_minus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15024,6 +15357,7 @@ GrB_Info GB_Asaxpy3B__any_minus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15069,6 +15403,7 @@ GrB_Info GB_Asaxpy3B__any_minus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15114,6 +15449,7 @@ GrB_Info GB_Asaxpy3B__any_minus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15159,6 +15495,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15204,6 +15541,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15249,6 +15587,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15294,6 +15633,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15339,6 +15679,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15384,6 +15725,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15429,6 +15771,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15474,6 +15817,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15519,6 +15863,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15564,6 +15909,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15609,6 +15955,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15654,6 +16001,7 @@ GrB_Info GB_Asaxpy3B__plus_minus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15699,6 +16047,7 @@ GrB_Info GB_Asaxpy3B__times_minus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15744,6 +16093,7 @@ GrB_Info GB_Asaxpy3B__times_minus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15789,6 +16139,7 @@ GrB_Info GB_Asaxpy3B__times_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15834,6 +16185,7 @@ GrB_Info GB_Asaxpy3B__times_minus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15879,6 +16231,7 @@ GrB_Info GB_Asaxpy3B__times_minus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15924,6 +16277,7 @@ GrB_Info GB_Asaxpy3B__times_minus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -15969,6 +16323,7 @@ GrB_Info GB_Asaxpy3B__times_minus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16014,6 +16369,7 @@ GrB_Info GB_Asaxpy3B__times_minus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16059,6 +16415,7 @@ GrB_Info GB_Asaxpy3B__times_minus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16104,6 +16461,7 @@ GrB_Info GB_Asaxpy3B__times_minus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16149,6 +16507,7 @@ GrB_Info GB_Asaxpy3B__times_minus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16194,6 +16553,7 @@ GrB_Info GB_Asaxpy3B__times_minus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16239,6 +16599,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16284,6 +16645,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16329,6 +16691,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16374,6 +16737,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16419,6 +16783,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16464,6 +16829,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16509,6 +16875,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16554,6 +16921,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16599,6 +16967,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16644,6 +17013,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16689,6 +17059,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16734,6 +17105,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16779,6 +17151,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16824,6 +17197,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16869,6 +17243,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16914,6 +17289,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -16959,6 +17335,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17004,6 +17381,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17049,6 +17427,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17094,6 +17473,7 @@ GrB_Info GB_Asaxpy3B__max_rminus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17139,6 +17519,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17184,6 +17565,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17229,6 +17611,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17274,6 +17657,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17319,6 +17703,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17364,6 +17749,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17409,6 +17795,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17454,6 +17841,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17499,6 +17887,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17544,6 +17933,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17589,6 +17979,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17634,6 +18025,7 @@ GrB_Info GB_Asaxpy3B__any_rminus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17679,6 +18071,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17724,6 +18117,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17769,6 +18163,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17814,6 +18209,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17859,6 +18255,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17904,6 +18301,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17949,6 +18347,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -17994,6 +18393,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18039,6 +18439,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18084,6 +18485,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18129,6 +18531,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18174,6 +18577,7 @@ GrB_Info GB_Asaxpy3B__plus_rminus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18219,6 +18623,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18264,6 +18669,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18309,6 +18715,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18354,6 +18761,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18399,6 +18807,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18444,6 +18853,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18489,6 +18899,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18534,6 +18945,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18579,6 +18991,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18624,6 +19037,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18669,6 +19083,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18714,6 +19129,7 @@ GrB_Info GB_Asaxpy3B__times_rminus_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18759,6 +19175,7 @@ GrB_Info GB_Asaxpy3B__min_times_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18804,6 +19221,7 @@ GrB_Info GB_Asaxpy3B__min_times_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18849,6 +19267,7 @@ GrB_Info GB_Asaxpy3B__min_times_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18894,6 +19313,7 @@ GrB_Info GB_Asaxpy3B__min_times_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18939,6 +19359,7 @@ GrB_Info GB_Asaxpy3B__min_times_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -18984,6 +19405,7 @@ GrB_Info GB_Asaxpy3B__min_times_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19029,6 +19451,7 @@ GrB_Info GB_Asaxpy3B__min_times_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19074,6 +19497,7 @@ GrB_Info GB_Asaxpy3B__min_times_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19119,6 +19543,7 @@ GrB_Info GB_Asaxpy3B__min_times_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19164,6 +19589,7 @@ GrB_Info GB_Asaxpy3B__min_times_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19209,6 +19635,7 @@ GrB_Info GB_Asaxpy3B__max_times_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19254,6 +19681,7 @@ GrB_Info GB_Asaxpy3B__max_times_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19299,6 +19727,7 @@ GrB_Info GB_Asaxpy3B__max_times_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19344,6 +19773,7 @@ GrB_Info GB_Asaxpy3B__max_times_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19389,6 +19819,7 @@ GrB_Info GB_Asaxpy3B__max_times_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19434,6 +19865,7 @@ GrB_Info GB_Asaxpy3B__max_times_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19479,6 +19911,7 @@ GrB_Info GB_Asaxpy3B__max_times_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19524,6 +19957,7 @@ GrB_Info GB_Asaxpy3B__max_times_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19569,6 +20003,7 @@ GrB_Info GB_Asaxpy3B__max_times_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19614,6 +20049,7 @@ GrB_Info GB_Asaxpy3B__max_times_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19659,6 +20095,7 @@ GrB_Info GB_Asaxpy3B__any_times_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19704,6 +20141,7 @@ GrB_Info GB_Asaxpy3B__any_times_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19749,6 +20187,7 @@ GrB_Info GB_Asaxpy3B__any_times_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19794,6 +20233,7 @@ GrB_Info GB_Asaxpy3B__any_times_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19839,6 +20279,7 @@ GrB_Info GB_Asaxpy3B__any_times_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19884,6 +20325,7 @@ GrB_Info GB_Asaxpy3B__any_times_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19929,6 +20371,7 @@ GrB_Info GB_Asaxpy3B__any_times_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -19974,6 +20417,7 @@ GrB_Info GB_Asaxpy3B__any_times_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20019,6 +20463,7 @@ GrB_Info GB_Asaxpy3B__any_times_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20064,6 +20509,7 @@ GrB_Info GB_Asaxpy3B__any_times_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20109,6 +20555,7 @@ GrB_Info GB_Asaxpy3B__any_times_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20154,6 +20601,7 @@ GrB_Info GB_Asaxpy3B__any_times_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20199,6 +20647,7 @@ GrB_Info GB_Asaxpy3B__plus_times_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20244,6 +20693,7 @@ GrB_Info GB_Asaxpy3B__plus_times_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20289,6 +20739,7 @@ GrB_Info GB_Asaxpy3B__plus_times_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20334,6 +20785,7 @@ GrB_Info GB_Asaxpy3B__plus_times_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20379,6 +20831,7 @@ GrB_Info GB_Asaxpy3B__plus_times_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20424,6 +20877,7 @@ GrB_Info GB_Asaxpy3B__plus_times_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20469,6 +20923,7 @@ GrB_Info GB_Asaxpy3B__plus_times_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20514,6 +20969,7 @@ GrB_Info GB_Asaxpy3B__plus_times_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20559,6 +21015,7 @@ GrB_Info GB_Asaxpy3B__plus_times_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20604,6 +21061,7 @@ GrB_Info GB_Asaxpy3B__plus_times_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20649,6 +21107,7 @@ GrB_Info GB_Asaxpy3B__plus_times_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20694,6 +21153,7 @@ GrB_Info GB_Asaxpy3B__plus_times_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20739,6 +21199,7 @@ GrB_Info GB_Asaxpy3B__times_times_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20784,6 +21245,7 @@ GrB_Info GB_Asaxpy3B__times_times_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20829,6 +21291,7 @@ GrB_Info GB_Asaxpy3B__times_times_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20874,6 +21337,7 @@ GrB_Info GB_Asaxpy3B__times_times_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20919,6 +21383,7 @@ GrB_Info GB_Asaxpy3B__times_times_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -20964,6 +21429,7 @@ GrB_Info GB_Asaxpy3B__times_times_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21009,6 +21475,7 @@ GrB_Info GB_Asaxpy3B__times_times_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21054,6 +21521,7 @@ GrB_Info GB_Asaxpy3B__times_times_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21099,6 +21567,7 @@ GrB_Info GB_Asaxpy3B__times_times_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21144,6 +21613,7 @@ GrB_Info GB_Asaxpy3B__times_times_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21189,6 +21659,7 @@ GrB_Info GB_Asaxpy3B__times_times_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21234,6 +21705,7 @@ GrB_Info GB_Asaxpy3B__times_times_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21279,6 +21751,7 @@ GrB_Info GB_Asaxpy3B__min_div_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21324,6 +21797,7 @@ GrB_Info GB_Asaxpy3B__min_div_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21369,6 +21843,7 @@ GrB_Info GB_Asaxpy3B__min_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21414,6 +21889,7 @@ GrB_Info GB_Asaxpy3B__min_div_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21459,6 +21935,7 @@ GrB_Info GB_Asaxpy3B__min_div_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21504,6 +21981,7 @@ GrB_Info GB_Asaxpy3B__min_div_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21549,6 +22027,7 @@ GrB_Info GB_Asaxpy3B__min_div_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21594,6 +22073,7 @@ GrB_Info GB_Asaxpy3B__min_div_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21639,6 +22119,7 @@ GrB_Info GB_Asaxpy3B__min_div_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21684,6 +22165,7 @@ GrB_Info GB_Asaxpy3B__min_div_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21729,6 +22211,7 @@ GrB_Info GB_Asaxpy3B__max_div_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21774,6 +22257,7 @@ GrB_Info GB_Asaxpy3B__max_div_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21819,6 +22303,7 @@ GrB_Info GB_Asaxpy3B__max_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21864,6 +22349,7 @@ GrB_Info GB_Asaxpy3B__max_div_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21909,6 +22395,7 @@ GrB_Info GB_Asaxpy3B__max_div_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21954,6 +22441,7 @@ GrB_Info GB_Asaxpy3B__max_div_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -21999,6 +22487,7 @@ GrB_Info GB_Asaxpy3B__max_div_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22044,6 +22533,7 @@ GrB_Info GB_Asaxpy3B__max_div_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22089,6 +22579,7 @@ GrB_Info GB_Asaxpy3B__max_div_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22134,6 +22625,7 @@ GrB_Info GB_Asaxpy3B__max_div_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22179,6 +22671,7 @@ GrB_Info GB_Asaxpy3B__any_div_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22224,6 +22717,7 @@ GrB_Info GB_Asaxpy3B__any_div_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22269,6 +22763,7 @@ GrB_Info GB_Asaxpy3B__any_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22314,6 +22809,7 @@ GrB_Info GB_Asaxpy3B__any_div_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22359,6 +22855,7 @@ GrB_Info GB_Asaxpy3B__any_div_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22404,6 +22901,7 @@ GrB_Info GB_Asaxpy3B__any_div_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22449,6 +22947,7 @@ GrB_Info GB_Asaxpy3B__any_div_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22494,6 +22993,7 @@ GrB_Info GB_Asaxpy3B__any_div_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22539,6 +23039,7 @@ GrB_Info GB_Asaxpy3B__any_div_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22584,6 +23085,7 @@ GrB_Info GB_Asaxpy3B__any_div_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22629,6 +23131,7 @@ GrB_Info GB_Asaxpy3B__any_div_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22674,6 +23177,7 @@ GrB_Info GB_Asaxpy3B__any_div_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22719,6 +23223,7 @@ GrB_Info GB_Asaxpy3B__plus_div_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22764,6 +23269,7 @@ GrB_Info GB_Asaxpy3B__plus_div_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22809,6 +23315,7 @@ GrB_Info GB_Asaxpy3B__plus_div_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22854,6 +23361,7 @@ GrB_Info GB_Asaxpy3B__plus_div_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22899,6 +23407,7 @@ GrB_Info GB_Asaxpy3B__plus_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22944,6 +23453,7 @@ GrB_Info GB_Asaxpy3B__plus_div_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -22989,6 +23499,7 @@ GrB_Info GB_Asaxpy3B__plus_div_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23034,6 +23545,7 @@ GrB_Info GB_Asaxpy3B__plus_div_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23079,6 +23591,7 @@ GrB_Info GB_Asaxpy3B__plus_div_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23124,6 +23637,7 @@ GrB_Info GB_Asaxpy3B__plus_div_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23169,6 +23683,7 @@ GrB_Info GB_Asaxpy3B__plus_div_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23214,6 +23729,7 @@ GrB_Info GB_Asaxpy3B__plus_div_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23259,6 +23775,7 @@ GrB_Info GB_Asaxpy3B__times_div_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23304,6 +23821,7 @@ GrB_Info GB_Asaxpy3B__times_div_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23349,6 +23867,7 @@ GrB_Info GB_Asaxpy3B__times_div_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23394,6 +23913,7 @@ GrB_Info GB_Asaxpy3B__times_div_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23439,6 +23959,7 @@ GrB_Info GB_Asaxpy3B__times_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23484,6 +24005,7 @@ GrB_Info GB_Asaxpy3B__times_div_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23529,6 +24051,7 @@ GrB_Info GB_Asaxpy3B__times_div_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23574,6 +24097,7 @@ GrB_Info GB_Asaxpy3B__times_div_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23619,6 +24143,7 @@ GrB_Info GB_Asaxpy3B__times_div_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23664,6 +24189,7 @@ GrB_Info GB_Asaxpy3B__times_div_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23709,6 +24235,7 @@ GrB_Info GB_Asaxpy3B__times_div_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23754,6 +24281,7 @@ GrB_Info GB_Asaxpy3B__times_div_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23799,6 +24327,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23844,6 +24373,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23889,6 +24419,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23934,6 +24465,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -23979,6 +24511,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24024,6 +24557,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24069,6 +24603,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24114,6 +24649,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24159,6 +24695,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24204,6 +24741,7 @@ GrB_Info GB_Asaxpy3B__min_rdiv_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24249,6 +24787,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24294,6 +24833,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24339,6 +24879,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24384,6 +24925,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24429,6 +24971,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24474,6 +25017,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24519,6 +25063,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24564,6 +25109,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24609,6 +25155,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24654,6 +25201,7 @@ GrB_Info GB_Asaxpy3B__max_rdiv_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24699,6 +25247,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24744,6 +25293,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24789,6 +25339,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24834,6 +25385,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24879,6 +25431,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24924,6 +25477,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -24969,6 +25523,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25014,6 +25569,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25059,6 +25615,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25104,6 +25661,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25149,6 +25707,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25194,6 +25753,7 @@ GrB_Info GB_Asaxpy3B__any_rdiv_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25239,6 +25799,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25284,6 +25845,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25329,6 +25891,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25374,6 +25937,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25419,6 +25983,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25464,6 +26029,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25509,6 +26075,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25554,6 +26121,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25599,6 +26167,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25644,6 +26213,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25689,6 +26259,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25734,6 +26305,7 @@ GrB_Info GB_Asaxpy3B__plus_rdiv_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25779,6 +26351,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25824,6 +26397,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25869,6 +26443,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25914,6 +26489,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -25959,6 +26535,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26004,6 +26581,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26049,6 +26627,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26094,6 +26673,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26139,6 +26719,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26184,6 +26765,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26229,6 +26811,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_fc32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26274,6 +26857,7 @@ GrB_Info GB_Asaxpy3B__times_rdiv_fc64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26319,6 +26903,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26364,6 +26949,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26409,6 +26995,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26454,6 +27041,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26499,6 +27087,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26544,6 +27133,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26589,6 +27179,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26634,6 +27225,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26679,6 +27271,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26724,6 +27317,7 @@ GrB_Info GB_Asaxpy3B__min_iseq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26769,6 +27363,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26814,6 +27409,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26859,6 +27455,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26904,6 +27501,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26949,6 +27547,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -26994,6 +27593,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27039,6 +27639,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27084,6 +27685,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27129,6 +27731,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27174,6 +27777,7 @@ GrB_Info GB_Asaxpy3B__max_iseq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27219,6 +27823,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27264,6 +27869,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27309,6 +27915,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27354,6 +27961,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27399,6 +28007,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27444,6 +28053,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27489,6 +28099,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27534,6 +28145,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27579,6 +28191,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27624,6 +28237,7 @@ GrB_Info GB_Asaxpy3B__any_iseq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27669,6 +28283,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27714,6 +28329,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27759,6 +28375,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27804,6 +28421,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27849,6 +28467,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27894,6 +28513,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27939,6 +28559,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -27984,6 +28605,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28029,6 +28651,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28074,6 +28697,7 @@ GrB_Info GB_Asaxpy3B__plus_iseq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28119,6 +28743,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28164,6 +28789,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28209,6 +28835,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28254,6 +28881,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28299,6 +28927,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28344,6 +28973,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28389,6 +29019,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28434,6 +29065,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28479,6 +29111,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28524,6 +29157,7 @@ GrB_Info GB_Asaxpy3B__times_iseq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28569,6 +29203,7 @@ GrB_Info GB_Asaxpy3B__min_isne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28614,6 +29249,7 @@ GrB_Info GB_Asaxpy3B__min_isne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28659,6 +29295,7 @@ GrB_Info GB_Asaxpy3B__min_isne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28704,6 +29341,7 @@ GrB_Info GB_Asaxpy3B__min_isne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28749,6 +29387,7 @@ GrB_Info GB_Asaxpy3B__min_isne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28794,6 +29433,7 @@ GrB_Info GB_Asaxpy3B__min_isne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28839,6 +29479,7 @@ GrB_Info GB_Asaxpy3B__min_isne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28884,6 +29525,7 @@ GrB_Info GB_Asaxpy3B__min_isne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28929,6 +29571,7 @@ GrB_Info GB_Asaxpy3B__min_isne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -28974,6 +29617,7 @@ GrB_Info GB_Asaxpy3B__min_isne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29019,6 +29663,7 @@ GrB_Info GB_Asaxpy3B__max_isne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29064,6 +29709,7 @@ GrB_Info GB_Asaxpy3B__max_isne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29109,6 +29755,7 @@ GrB_Info GB_Asaxpy3B__max_isne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29154,6 +29801,7 @@ GrB_Info GB_Asaxpy3B__max_isne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29199,6 +29847,7 @@ GrB_Info GB_Asaxpy3B__max_isne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29244,6 +29893,7 @@ GrB_Info GB_Asaxpy3B__max_isne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29289,6 +29939,7 @@ GrB_Info GB_Asaxpy3B__max_isne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29334,6 +29985,7 @@ GrB_Info GB_Asaxpy3B__max_isne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29379,6 +30031,7 @@ GrB_Info GB_Asaxpy3B__max_isne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29424,6 +30077,7 @@ GrB_Info GB_Asaxpy3B__max_isne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29469,6 +30123,7 @@ GrB_Info GB_Asaxpy3B__any_isne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29514,6 +30169,7 @@ GrB_Info GB_Asaxpy3B__any_isne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29559,6 +30215,7 @@ GrB_Info GB_Asaxpy3B__any_isne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29604,6 +30261,7 @@ GrB_Info GB_Asaxpy3B__any_isne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29649,6 +30307,7 @@ GrB_Info GB_Asaxpy3B__any_isne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29694,6 +30353,7 @@ GrB_Info GB_Asaxpy3B__any_isne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29739,6 +30399,7 @@ GrB_Info GB_Asaxpy3B__any_isne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29784,6 +30445,7 @@ GrB_Info GB_Asaxpy3B__any_isne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29829,6 +30491,7 @@ GrB_Info GB_Asaxpy3B__any_isne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29874,6 +30537,7 @@ GrB_Info GB_Asaxpy3B__any_isne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29919,6 +30583,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -29964,6 +30629,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30009,6 +30675,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30054,6 +30721,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30099,6 +30767,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30144,6 +30813,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30189,6 +30859,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30234,6 +30905,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30279,6 +30951,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30324,6 +30997,7 @@ GrB_Info GB_Asaxpy3B__plus_isne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30369,6 +31043,7 @@ GrB_Info GB_Asaxpy3B__times_isne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30414,6 +31089,7 @@ GrB_Info GB_Asaxpy3B__times_isne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30459,6 +31135,7 @@ GrB_Info GB_Asaxpy3B__times_isne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30504,6 +31181,7 @@ GrB_Info GB_Asaxpy3B__times_isne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30549,6 +31227,7 @@ GrB_Info GB_Asaxpy3B__times_isne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30594,6 +31273,7 @@ GrB_Info GB_Asaxpy3B__times_isne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30639,6 +31319,7 @@ GrB_Info GB_Asaxpy3B__times_isne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30684,6 +31365,7 @@ GrB_Info GB_Asaxpy3B__times_isne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30729,6 +31411,7 @@ GrB_Info GB_Asaxpy3B__times_isne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30774,6 +31457,7 @@ GrB_Info GB_Asaxpy3B__times_isne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30819,6 +31503,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30864,6 +31549,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30909,6 +31595,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30954,6 +31641,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -30999,6 +31687,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31044,6 +31733,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31089,6 +31779,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31134,6 +31825,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31179,6 +31871,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31224,6 +31917,7 @@ GrB_Info GB_Asaxpy3B__min_isgt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31269,6 +31963,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31314,6 +32009,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31359,6 +32055,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31404,6 +32101,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31449,6 +32147,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31494,6 +32193,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31539,6 +32239,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31584,6 +32285,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31629,6 +32331,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31674,6 +32377,7 @@ GrB_Info GB_Asaxpy3B__max_isgt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31719,6 +32423,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31764,6 +32469,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31809,6 +32515,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31854,6 +32561,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31899,6 +32607,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31944,6 +32653,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -31989,6 +32699,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32034,6 +32745,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32079,6 +32791,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32124,6 +32837,7 @@ GrB_Info GB_Asaxpy3B__any_isgt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32169,6 +32883,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32214,6 +32929,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32259,6 +32975,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32304,6 +33021,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32349,6 +33067,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32394,6 +33113,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32439,6 +33159,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32484,6 +33205,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32529,6 +33251,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32574,6 +33297,7 @@ GrB_Info GB_Asaxpy3B__plus_isgt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32619,6 +33343,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32664,6 +33389,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32709,6 +33435,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32754,6 +33481,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32799,6 +33527,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32844,6 +33573,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32889,6 +33619,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32934,6 +33665,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -32979,6 +33711,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33024,6 +33757,7 @@ GrB_Info GB_Asaxpy3B__times_isgt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33069,6 +33803,7 @@ GrB_Info GB_Asaxpy3B__min_islt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33114,6 +33849,7 @@ GrB_Info GB_Asaxpy3B__min_islt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33159,6 +33895,7 @@ GrB_Info GB_Asaxpy3B__min_islt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33204,6 +33941,7 @@ GrB_Info GB_Asaxpy3B__min_islt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33249,6 +33987,7 @@ GrB_Info GB_Asaxpy3B__min_islt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33294,6 +34033,7 @@ GrB_Info GB_Asaxpy3B__min_islt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33339,6 +34079,7 @@ GrB_Info GB_Asaxpy3B__min_islt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33384,6 +34125,7 @@ GrB_Info GB_Asaxpy3B__min_islt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33429,6 +34171,7 @@ GrB_Info GB_Asaxpy3B__min_islt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33474,6 +34217,7 @@ GrB_Info GB_Asaxpy3B__min_islt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33519,6 +34263,7 @@ GrB_Info GB_Asaxpy3B__max_islt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33564,6 +34309,7 @@ GrB_Info GB_Asaxpy3B__max_islt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33609,6 +34355,7 @@ GrB_Info GB_Asaxpy3B__max_islt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33654,6 +34401,7 @@ GrB_Info GB_Asaxpy3B__max_islt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33699,6 +34447,7 @@ GrB_Info GB_Asaxpy3B__max_islt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33744,6 +34493,7 @@ GrB_Info GB_Asaxpy3B__max_islt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33789,6 +34539,7 @@ GrB_Info GB_Asaxpy3B__max_islt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33834,6 +34585,7 @@ GrB_Info GB_Asaxpy3B__max_islt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33879,6 +34631,7 @@ GrB_Info GB_Asaxpy3B__max_islt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33924,6 +34677,7 @@ GrB_Info GB_Asaxpy3B__max_islt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -33969,6 +34723,7 @@ GrB_Info GB_Asaxpy3B__any_islt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34014,6 +34769,7 @@ GrB_Info GB_Asaxpy3B__any_islt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34059,6 +34815,7 @@ GrB_Info GB_Asaxpy3B__any_islt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34104,6 +34861,7 @@ GrB_Info GB_Asaxpy3B__any_islt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34149,6 +34907,7 @@ GrB_Info GB_Asaxpy3B__any_islt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34194,6 +34953,7 @@ GrB_Info GB_Asaxpy3B__any_islt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34239,6 +34999,7 @@ GrB_Info GB_Asaxpy3B__any_islt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34284,6 +35045,7 @@ GrB_Info GB_Asaxpy3B__any_islt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34329,6 +35091,7 @@ GrB_Info GB_Asaxpy3B__any_islt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34374,6 +35137,7 @@ GrB_Info GB_Asaxpy3B__any_islt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34419,6 +35183,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34464,6 +35229,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34509,6 +35275,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34554,6 +35321,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34599,6 +35367,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34644,6 +35413,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34689,6 +35459,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34734,6 +35505,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34779,6 +35551,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34824,6 +35597,7 @@ GrB_Info GB_Asaxpy3B__plus_islt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34869,6 +35643,7 @@ GrB_Info GB_Asaxpy3B__times_islt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34914,6 +35689,7 @@ GrB_Info GB_Asaxpy3B__times_islt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -34959,6 +35735,7 @@ GrB_Info GB_Asaxpy3B__times_islt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35004,6 +35781,7 @@ GrB_Info GB_Asaxpy3B__times_islt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35049,6 +35827,7 @@ GrB_Info GB_Asaxpy3B__times_islt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35094,6 +35873,7 @@ GrB_Info GB_Asaxpy3B__times_islt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35139,6 +35919,7 @@ GrB_Info GB_Asaxpy3B__times_islt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35184,6 +35965,7 @@ GrB_Info GB_Asaxpy3B__times_islt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35229,6 +36011,7 @@ GrB_Info GB_Asaxpy3B__times_islt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35274,6 +36057,7 @@ GrB_Info GB_Asaxpy3B__times_islt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35319,6 +36103,7 @@ GrB_Info GB_Asaxpy3B__min_isge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35364,6 +36149,7 @@ GrB_Info GB_Asaxpy3B__min_isge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35409,6 +36195,7 @@ GrB_Info GB_Asaxpy3B__min_isge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35454,6 +36241,7 @@ GrB_Info GB_Asaxpy3B__min_isge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35499,6 +36287,7 @@ GrB_Info GB_Asaxpy3B__min_isge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35544,6 +36333,7 @@ GrB_Info GB_Asaxpy3B__min_isge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35589,6 +36379,7 @@ GrB_Info GB_Asaxpy3B__min_isge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35634,6 +36425,7 @@ GrB_Info GB_Asaxpy3B__min_isge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35679,6 +36471,7 @@ GrB_Info GB_Asaxpy3B__min_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35724,6 +36517,7 @@ GrB_Info GB_Asaxpy3B__min_isge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35769,6 +36563,7 @@ GrB_Info GB_Asaxpy3B__max_isge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35814,6 +36609,7 @@ GrB_Info GB_Asaxpy3B__max_isge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35859,6 +36655,7 @@ GrB_Info GB_Asaxpy3B__max_isge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35904,6 +36701,7 @@ GrB_Info GB_Asaxpy3B__max_isge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35949,6 +36747,7 @@ GrB_Info GB_Asaxpy3B__max_isge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -35994,6 +36793,7 @@ GrB_Info GB_Asaxpy3B__max_isge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36039,6 +36839,7 @@ GrB_Info GB_Asaxpy3B__max_isge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36084,6 +36885,7 @@ GrB_Info GB_Asaxpy3B__max_isge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36129,6 +36931,7 @@ GrB_Info GB_Asaxpy3B__max_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36174,6 +36977,7 @@ GrB_Info GB_Asaxpy3B__max_isge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36219,6 +37023,7 @@ GrB_Info GB_Asaxpy3B__any_isge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36264,6 +37069,7 @@ GrB_Info GB_Asaxpy3B__any_isge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36309,6 +37115,7 @@ GrB_Info GB_Asaxpy3B__any_isge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36354,6 +37161,7 @@ GrB_Info GB_Asaxpy3B__any_isge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36399,6 +37207,7 @@ GrB_Info GB_Asaxpy3B__any_isge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36444,6 +37253,7 @@ GrB_Info GB_Asaxpy3B__any_isge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36489,6 +37299,7 @@ GrB_Info GB_Asaxpy3B__any_isge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36534,6 +37345,7 @@ GrB_Info GB_Asaxpy3B__any_isge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36579,6 +37391,7 @@ GrB_Info GB_Asaxpy3B__any_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36624,6 +37437,7 @@ GrB_Info GB_Asaxpy3B__any_isge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36669,6 +37483,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36714,6 +37529,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36759,6 +37575,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36804,6 +37621,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36849,6 +37667,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36894,6 +37713,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36939,6 +37759,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -36984,6 +37805,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37029,6 +37851,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37074,6 +37897,7 @@ GrB_Info GB_Asaxpy3B__plus_isge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37119,6 +37943,7 @@ GrB_Info GB_Asaxpy3B__times_isge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37164,6 +37989,7 @@ GrB_Info GB_Asaxpy3B__times_isge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37209,6 +38035,7 @@ GrB_Info GB_Asaxpy3B__times_isge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37254,6 +38081,7 @@ GrB_Info GB_Asaxpy3B__times_isge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37299,6 +38127,7 @@ GrB_Info GB_Asaxpy3B__times_isge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37344,6 +38173,7 @@ GrB_Info GB_Asaxpy3B__times_isge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37389,6 +38219,7 @@ GrB_Info GB_Asaxpy3B__times_isge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37434,6 +38265,7 @@ GrB_Info GB_Asaxpy3B__times_isge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37479,6 +38311,7 @@ GrB_Info GB_Asaxpy3B__times_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37524,6 +38357,7 @@ GrB_Info GB_Asaxpy3B__times_isge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37569,6 +38403,7 @@ GrB_Info GB_Asaxpy3B__min_isle_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37614,6 +38449,7 @@ GrB_Info GB_Asaxpy3B__min_isle_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37659,6 +38495,7 @@ GrB_Info GB_Asaxpy3B__min_isle_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37704,6 +38541,7 @@ GrB_Info GB_Asaxpy3B__min_isle_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37749,6 +38587,7 @@ GrB_Info GB_Asaxpy3B__min_isle_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37794,6 +38633,7 @@ GrB_Info GB_Asaxpy3B__min_isle_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37839,6 +38679,7 @@ GrB_Info GB_Asaxpy3B__min_isle_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37884,6 +38725,7 @@ GrB_Info GB_Asaxpy3B__min_isle_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37929,6 +38771,7 @@ GrB_Info GB_Asaxpy3B__min_isle_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -37974,6 +38817,7 @@ GrB_Info GB_Asaxpy3B__min_isle_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38019,6 +38863,7 @@ GrB_Info GB_Asaxpy3B__max_isle_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38064,6 +38909,7 @@ GrB_Info GB_Asaxpy3B__max_isle_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38109,6 +38955,7 @@ GrB_Info GB_Asaxpy3B__max_isle_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38154,6 +39001,7 @@ GrB_Info GB_Asaxpy3B__max_isle_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38199,6 +39047,7 @@ GrB_Info GB_Asaxpy3B__max_isle_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38244,6 +39093,7 @@ GrB_Info GB_Asaxpy3B__max_isle_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38289,6 +39139,7 @@ GrB_Info GB_Asaxpy3B__max_isle_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38334,6 +39185,7 @@ GrB_Info GB_Asaxpy3B__max_isle_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38379,6 +39231,7 @@ GrB_Info GB_Asaxpy3B__max_isle_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38424,6 +39277,7 @@ GrB_Info GB_Asaxpy3B__max_isle_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38469,6 +39323,7 @@ GrB_Info GB_Asaxpy3B__any_isle_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38514,6 +39369,7 @@ GrB_Info GB_Asaxpy3B__any_isle_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38559,6 +39415,7 @@ GrB_Info GB_Asaxpy3B__any_isle_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38604,6 +39461,7 @@ GrB_Info GB_Asaxpy3B__any_isle_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38649,6 +39507,7 @@ GrB_Info GB_Asaxpy3B__any_isle_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38694,6 +39553,7 @@ GrB_Info GB_Asaxpy3B__any_isle_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38739,6 +39599,7 @@ GrB_Info GB_Asaxpy3B__any_isle_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38784,6 +39645,7 @@ GrB_Info GB_Asaxpy3B__any_isle_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38829,6 +39691,7 @@ GrB_Info GB_Asaxpy3B__any_isle_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38874,6 +39737,7 @@ GrB_Info GB_Asaxpy3B__any_isle_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38919,6 +39783,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -38964,6 +39829,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39009,6 +39875,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39054,6 +39921,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39099,6 +39967,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39144,6 +40013,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39189,6 +40059,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39234,6 +40105,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39279,6 +40151,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39324,6 +40197,7 @@ GrB_Info GB_Asaxpy3B__plus_isle_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39369,6 +40243,7 @@ GrB_Info GB_Asaxpy3B__times_isle_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39414,6 +40289,7 @@ GrB_Info GB_Asaxpy3B__times_isle_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39459,6 +40335,7 @@ GrB_Info GB_Asaxpy3B__times_isle_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39504,6 +40381,7 @@ GrB_Info GB_Asaxpy3B__times_isle_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39549,6 +40427,7 @@ GrB_Info GB_Asaxpy3B__times_isle_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39594,6 +40473,7 @@ GrB_Info GB_Asaxpy3B__times_isle_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39639,6 +40519,7 @@ GrB_Info GB_Asaxpy3B__times_isle_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39684,6 +40565,7 @@ GrB_Info GB_Asaxpy3B__times_isle_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39729,6 +40611,7 @@ GrB_Info GB_Asaxpy3B__times_isle_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39774,6 +40657,7 @@ GrB_Info GB_Asaxpy3B__times_isle_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39819,6 +40703,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39864,6 +40749,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39909,6 +40795,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39954,6 +40841,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -39999,6 +40887,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40044,6 +40933,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40089,6 +40979,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40134,6 +41025,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40179,6 +41071,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40224,6 +41117,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40269,6 +41163,7 @@ GrB_Info GB_Asaxpy3B__lor_eq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40314,6 +41209,7 @@ GrB_Info GB_Asaxpy3B__any_eq_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40359,6 +41255,7 @@ GrB_Info GB_Asaxpy3B__any_eq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40404,6 +41301,7 @@ GrB_Info GB_Asaxpy3B__any_eq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40449,6 +41347,7 @@ GrB_Info GB_Asaxpy3B__any_eq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40494,6 +41393,7 @@ GrB_Info GB_Asaxpy3B__any_eq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40539,6 +41439,7 @@ GrB_Info GB_Asaxpy3B__any_eq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40584,6 +41485,7 @@ GrB_Info GB_Asaxpy3B__any_eq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40629,6 +41531,7 @@ GrB_Info GB_Asaxpy3B__any_eq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40674,6 +41577,7 @@ GrB_Info GB_Asaxpy3B__any_eq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40719,6 +41623,7 @@ GrB_Info GB_Asaxpy3B__any_eq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40764,6 +41669,7 @@ GrB_Info GB_Asaxpy3B__any_eq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40809,6 +41715,7 @@ GrB_Info GB_Asaxpy3B__land_eq_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40854,6 +41761,7 @@ GrB_Info GB_Asaxpy3B__land_eq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40899,6 +41807,7 @@ GrB_Info GB_Asaxpy3B__land_eq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40944,6 +41853,7 @@ GrB_Info GB_Asaxpy3B__land_eq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -40989,6 +41899,7 @@ GrB_Info GB_Asaxpy3B__land_eq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41034,6 +41945,7 @@ GrB_Info GB_Asaxpy3B__land_eq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41079,6 +41991,7 @@ GrB_Info GB_Asaxpy3B__land_eq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41124,6 +42037,7 @@ GrB_Info GB_Asaxpy3B__land_eq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41169,6 +42083,7 @@ GrB_Info GB_Asaxpy3B__land_eq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41214,6 +42129,7 @@ GrB_Info GB_Asaxpy3B__land_eq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41259,6 +42175,7 @@ GrB_Info GB_Asaxpy3B__land_eq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41304,6 +42221,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41349,6 +42267,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41394,6 +42313,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41439,6 +42359,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41484,6 +42405,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41529,6 +42451,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41574,6 +42497,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41619,6 +42543,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41664,6 +42589,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41709,6 +42635,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41754,6 +42681,7 @@ GrB_Info GB_Asaxpy3B__lxor_eq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41799,6 +42727,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41844,6 +42773,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41889,6 +42819,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41934,6 +42865,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -41979,6 +42911,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42024,6 +42957,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42069,6 +43003,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42114,6 +43049,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42159,6 +43095,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42204,6 +43141,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42249,6 +43187,7 @@ GrB_Info GB_Asaxpy3B__eq_eq_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42294,6 +43233,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42339,6 +43279,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42384,6 +43325,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42429,6 +43371,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42474,6 +43417,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42519,6 +43463,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42564,6 +43509,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42609,6 +43555,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42654,6 +43601,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42699,6 +43647,7 @@ GrB_Info GB_Asaxpy3B__lor_ne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42744,6 +43693,7 @@ GrB_Info GB_Asaxpy3B__any_ne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42789,6 +43739,7 @@ GrB_Info GB_Asaxpy3B__any_ne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42834,6 +43785,7 @@ GrB_Info GB_Asaxpy3B__any_ne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42879,6 +43831,7 @@ GrB_Info GB_Asaxpy3B__any_ne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42924,6 +43877,7 @@ GrB_Info GB_Asaxpy3B__any_ne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -42969,6 +43923,7 @@ GrB_Info GB_Asaxpy3B__any_ne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43014,6 +43969,7 @@ GrB_Info GB_Asaxpy3B__any_ne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43059,6 +44015,7 @@ GrB_Info GB_Asaxpy3B__any_ne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43104,6 +44061,7 @@ GrB_Info GB_Asaxpy3B__any_ne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43149,6 +44107,7 @@ GrB_Info GB_Asaxpy3B__any_ne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43194,6 +44153,7 @@ GrB_Info GB_Asaxpy3B__land_ne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43239,6 +44199,7 @@ GrB_Info GB_Asaxpy3B__land_ne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43284,6 +44245,7 @@ GrB_Info GB_Asaxpy3B__land_ne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43329,6 +44291,7 @@ GrB_Info GB_Asaxpy3B__land_ne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43374,6 +44337,7 @@ GrB_Info GB_Asaxpy3B__land_ne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43419,6 +44383,7 @@ GrB_Info GB_Asaxpy3B__land_ne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43464,6 +44429,7 @@ GrB_Info GB_Asaxpy3B__land_ne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43509,6 +44475,7 @@ GrB_Info GB_Asaxpy3B__land_ne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43554,6 +44521,7 @@ GrB_Info GB_Asaxpy3B__land_ne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43599,6 +44567,7 @@ GrB_Info GB_Asaxpy3B__land_ne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43644,6 +44613,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43689,6 +44659,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43734,6 +44705,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43779,6 +44751,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43824,6 +44797,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43869,6 +44843,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43914,6 +44889,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -43959,6 +44935,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44004,6 +44981,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44049,6 +45027,7 @@ GrB_Info GB_Asaxpy3B__lxor_ne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44094,6 +45073,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44139,6 +45119,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44184,6 +45165,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44229,6 +45211,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44274,6 +45257,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44319,6 +45303,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44364,6 +45349,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44409,6 +45395,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44454,6 +45441,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44499,6 +45487,7 @@ GrB_Info GB_Asaxpy3B__eq_ne_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44544,6 +45533,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44589,6 +45579,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44634,6 +45625,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44679,6 +45671,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44724,6 +45717,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44769,6 +45763,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44814,6 +45809,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44859,6 +45855,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44904,6 +45901,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44949,6 +45947,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -44994,6 +45993,7 @@ GrB_Info GB_Asaxpy3B__lor_gt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45039,6 +46039,7 @@ GrB_Info GB_Asaxpy3B__any_gt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45084,6 +46085,7 @@ GrB_Info GB_Asaxpy3B__any_gt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45129,6 +46131,7 @@ GrB_Info GB_Asaxpy3B__any_gt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45174,6 +46177,7 @@ GrB_Info GB_Asaxpy3B__any_gt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45219,6 +46223,7 @@ GrB_Info GB_Asaxpy3B__any_gt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45264,6 +46269,7 @@ GrB_Info GB_Asaxpy3B__any_gt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45309,6 +46315,7 @@ GrB_Info GB_Asaxpy3B__any_gt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45354,6 +46361,7 @@ GrB_Info GB_Asaxpy3B__any_gt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45399,6 +46407,7 @@ GrB_Info GB_Asaxpy3B__any_gt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45444,6 +46453,7 @@ GrB_Info GB_Asaxpy3B__any_gt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45489,6 +46499,7 @@ GrB_Info GB_Asaxpy3B__any_gt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45534,6 +46545,7 @@ GrB_Info GB_Asaxpy3B__land_gt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45579,6 +46591,7 @@ GrB_Info GB_Asaxpy3B__land_gt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45624,6 +46637,7 @@ GrB_Info GB_Asaxpy3B__land_gt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45669,6 +46683,7 @@ GrB_Info GB_Asaxpy3B__land_gt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45714,6 +46729,7 @@ GrB_Info GB_Asaxpy3B__land_gt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45759,6 +46775,7 @@ GrB_Info GB_Asaxpy3B__land_gt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45804,6 +46821,7 @@ GrB_Info GB_Asaxpy3B__land_gt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45849,6 +46867,7 @@ GrB_Info GB_Asaxpy3B__land_gt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45894,6 +46913,7 @@ GrB_Info GB_Asaxpy3B__land_gt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45939,6 +46959,7 @@ GrB_Info GB_Asaxpy3B__land_gt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -45984,6 +47005,7 @@ GrB_Info GB_Asaxpy3B__land_gt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46029,6 +47051,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46074,6 +47097,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46119,6 +47143,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46164,6 +47189,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46209,6 +47235,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46254,6 +47281,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46299,6 +47327,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46344,6 +47373,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46389,6 +47419,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46434,6 +47465,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46479,6 +47511,7 @@ GrB_Info GB_Asaxpy3B__lxor_gt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46524,6 +47557,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46569,6 +47603,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46614,6 +47649,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46659,6 +47695,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46704,6 +47741,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46749,6 +47787,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46794,6 +47833,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46839,6 +47879,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46884,6 +47925,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46929,6 +47971,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -46974,6 +48017,7 @@ GrB_Info GB_Asaxpy3B__eq_gt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47019,6 +48063,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47064,6 +48109,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47109,6 +48155,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47154,6 +48201,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47199,6 +48247,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47244,6 +48293,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47289,6 +48339,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47334,6 +48385,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47379,6 +48431,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47424,6 +48477,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47469,6 +48523,7 @@ GrB_Info GB_Asaxpy3B__lor_lt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47514,6 +48569,7 @@ GrB_Info GB_Asaxpy3B__any_lt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47559,6 +48615,7 @@ GrB_Info GB_Asaxpy3B__any_lt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47604,6 +48661,7 @@ GrB_Info GB_Asaxpy3B__any_lt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47649,6 +48707,7 @@ GrB_Info GB_Asaxpy3B__any_lt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47694,6 +48753,7 @@ GrB_Info GB_Asaxpy3B__any_lt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47739,6 +48799,7 @@ GrB_Info GB_Asaxpy3B__any_lt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47784,6 +48845,7 @@ GrB_Info GB_Asaxpy3B__any_lt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47829,6 +48891,7 @@ GrB_Info GB_Asaxpy3B__any_lt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47874,6 +48937,7 @@ GrB_Info GB_Asaxpy3B__any_lt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47919,6 +48983,7 @@ GrB_Info GB_Asaxpy3B__any_lt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -47964,6 +49029,7 @@ GrB_Info GB_Asaxpy3B__any_lt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48009,6 +49075,7 @@ GrB_Info GB_Asaxpy3B__land_lt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48054,6 +49121,7 @@ GrB_Info GB_Asaxpy3B__land_lt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48099,6 +49167,7 @@ GrB_Info GB_Asaxpy3B__land_lt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48144,6 +49213,7 @@ GrB_Info GB_Asaxpy3B__land_lt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48189,6 +49259,7 @@ GrB_Info GB_Asaxpy3B__land_lt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48234,6 +49305,7 @@ GrB_Info GB_Asaxpy3B__land_lt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48279,6 +49351,7 @@ GrB_Info GB_Asaxpy3B__land_lt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48324,6 +49397,7 @@ GrB_Info GB_Asaxpy3B__land_lt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48369,6 +49443,7 @@ GrB_Info GB_Asaxpy3B__land_lt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48414,6 +49489,7 @@ GrB_Info GB_Asaxpy3B__land_lt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48459,6 +49535,7 @@ GrB_Info GB_Asaxpy3B__land_lt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48504,6 +49581,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48549,6 +49627,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48594,6 +49673,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48639,6 +49719,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48684,6 +49765,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48729,6 +49811,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48774,6 +49857,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48819,6 +49903,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48864,6 +49949,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48909,6 +49995,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48954,6 +50041,7 @@ GrB_Info GB_Asaxpy3B__lxor_lt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -48999,6 +50087,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49044,6 +50133,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49089,6 +50179,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49134,6 +50225,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49179,6 +50271,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49224,6 +50317,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49269,6 +50363,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49314,6 +50409,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49359,6 +50455,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49404,6 +50501,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49449,6 +50547,7 @@ GrB_Info GB_Asaxpy3B__eq_lt_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49494,6 +50593,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49539,6 +50639,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49584,6 +50685,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49629,6 +50731,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49674,6 +50777,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49719,6 +50823,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49764,6 +50869,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49809,6 +50915,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49854,6 +50961,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49899,6 +51007,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49944,6 +51053,7 @@ GrB_Info GB_Asaxpy3B__lor_ge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -49989,6 +51099,7 @@ GrB_Info GB_Asaxpy3B__any_ge_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50034,6 +51145,7 @@ GrB_Info GB_Asaxpy3B__any_ge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50079,6 +51191,7 @@ GrB_Info GB_Asaxpy3B__any_ge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50124,6 +51237,7 @@ GrB_Info GB_Asaxpy3B__any_ge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50169,6 +51283,7 @@ GrB_Info GB_Asaxpy3B__any_ge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50214,6 +51329,7 @@ GrB_Info GB_Asaxpy3B__any_ge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50259,6 +51375,7 @@ GrB_Info GB_Asaxpy3B__any_ge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50304,6 +51421,7 @@ GrB_Info GB_Asaxpy3B__any_ge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50349,6 +51467,7 @@ GrB_Info GB_Asaxpy3B__any_ge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50394,6 +51513,7 @@ GrB_Info GB_Asaxpy3B__any_ge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50439,6 +51559,7 @@ GrB_Info GB_Asaxpy3B__any_ge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50484,6 +51605,7 @@ GrB_Info GB_Asaxpy3B__land_ge_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50529,6 +51651,7 @@ GrB_Info GB_Asaxpy3B__land_ge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50574,6 +51697,7 @@ GrB_Info GB_Asaxpy3B__land_ge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50619,6 +51743,7 @@ GrB_Info GB_Asaxpy3B__land_ge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50664,6 +51789,7 @@ GrB_Info GB_Asaxpy3B__land_ge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50709,6 +51835,7 @@ GrB_Info GB_Asaxpy3B__land_ge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50754,6 +51881,7 @@ GrB_Info GB_Asaxpy3B__land_ge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50799,6 +51927,7 @@ GrB_Info GB_Asaxpy3B__land_ge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50844,6 +51973,7 @@ GrB_Info GB_Asaxpy3B__land_ge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50889,6 +52019,7 @@ GrB_Info GB_Asaxpy3B__land_ge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50934,6 +52065,7 @@ GrB_Info GB_Asaxpy3B__land_ge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -50979,6 +52111,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51024,6 +52157,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51069,6 +52203,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51114,6 +52249,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51159,6 +52295,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51204,6 +52341,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51249,6 +52387,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51294,6 +52433,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51339,6 +52479,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51384,6 +52525,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51429,6 +52571,7 @@ GrB_Info GB_Asaxpy3B__lxor_ge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51474,6 +52617,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51519,6 +52663,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51564,6 +52709,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51609,6 +52755,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51654,6 +52801,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51699,6 +52847,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51744,6 +52893,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51789,6 +52939,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51834,6 +52985,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51879,6 +53031,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51924,6 +53077,7 @@ GrB_Info GB_Asaxpy3B__eq_ge_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -51969,6 +53123,7 @@ GrB_Info GB_Asaxpy3B__lor_le_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52014,6 +53169,7 @@ GrB_Info GB_Asaxpy3B__lor_le_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52059,6 +53215,7 @@ GrB_Info GB_Asaxpy3B__lor_le_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52104,6 +53261,7 @@ GrB_Info GB_Asaxpy3B__lor_le_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52149,6 +53307,7 @@ GrB_Info GB_Asaxpy3B__lor_le_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52194,6 +53353,7 @@ GrB_Info GB_Asaxpy3B__lor_le_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52239,6 +53399,7 @@ GrB_Info GB_Asaxpy3B__lor_le_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52284,6 +53445,7 @@ GrB_Info GB_Asaxpy3B__lor_le_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52329,6 +53491,7 @@ GrB_Info GB_Asaxpy3B__lor_le_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52374,6 +53537,7 @@ GrB_Info GB_Asaxpy3B__lor_le_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52419,6 +53583,7 @@ GrB_Info GB_Asaxpy3B__lor_le_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52464,6 +53629,7 @@ GrB_Info GB_Asaxpy3B__any_le_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52509,6 +53675,7 @@ GrB_Info GB_Asaxpy3B__any_le_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52554,6 +53721,7 @@ GrB_Info GB_Asaxpy3B__any_le_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52599,6 +53767,7 @@ GrB_Info GB_Asaxpy3B__any_le_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52644,6 +53813,7 @@ GrB_Info GB_Asaxpy3B__any_le_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52689,6 +53859,7 @@ GrB_Info GB_Asaxpy3B__any_le_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52734,6 +53905,7 @@ GrB_Info GB_Asaxpy3B__any_le_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52779,6 +53951,7 @@ GrB_Info GB_Asaxpy3B__any_le_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52824,6 +53997,7 @@ GrB_Info GB_Asaxpy3B__any_le_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52869,6 +54043,7 @@ GrB_Info GB_Asaxpy3B__any_le_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52914,6 +54089,7 @@ GrB_Info GB_Asaxpy3B__any_le_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -52959,6 +54135,7 @@ GrB_Info GB_Asaxpy3B__land_le_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53004,6 +54181,7 @@ GrB_Info GB_Asaxpy3B__land_le_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53049,6 +54227,7 @@ GrB_Info GB_Asaxpy3B__land_le_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53094,6 +54273,7 @@ GrB_Info GB_Asaxpy3B__land_le_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53139,6 +54319,7 @@ GrB_Info GB_Asaxpy3B__land_le_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53184,6 +54365,7 @@ GrB_Info GB_Asaxpy3B__land_le_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53229,6 +54411,7 @@ GrB_Info GB_Asaxpy3B__land_le_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53274,6 +54457,7 @@ GrB_Info GB_Asaxpy3B__land_le_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53319,6 +54503,7 @@ GrB_Info GB_Asaxpy3B__land_le_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53364,6 +54549,7 @@ GrB_Info GB_Asaxpy3B__land_le_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53409,6 +54595,7 @@ GrB_Info GB_Asaxpy3B__land_le_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53454,6 +54641,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53499,6 +54687,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53544,6 +54733,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53589,6 +54779,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53634,6 +54825,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53679,6 +54871,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53724,6 +54917,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53769,6 +54963,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53814,6 +55009,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53859,6 +55055,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53904,6 +55101,7 @@ GrB_Info GB_Asaxpy3B__lxor_le_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53949,6 +55147,7 @@ GrB_Info GB_Asaxpy3B__eq_le_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -53994,6 +55193,7 @@ GrB_Info GB_Asaxpy3B__eq_le_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54039,6 +55239,7 @@ GrB_Info GB_Asaxpy3B__eq_le_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54084,6 +55285,7 @@ GrB_Info GB_Asaxpy3B__eq_le_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54129,6 +55331,7 @@ GrB_Info GB_Asaxpy3B__eq_le_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54174,6 +55377,7 @@ GrB_Info GB_Asaxpy3B__eq_le_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54219,6 +55423,7 @@ GrB_Info GB_Asaxpy3B__eq_le_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54264,6 +55469,7 @@ GrB_Info GB_Asaxpy3B__eq_le_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54309,6 +55515,7 @@ GrB_Info GB_Asaxpy3B__eq_le_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54354,6 +55561,7 @@ GrB_Info GB_Asaxpy3B__eq_le_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54399,6 +55607,7 @@ GrB_Info GB_Asaxpy3B__eq_le_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54444,6 +55653,7 @@ GrB_Info GB_Asaxpy3B__min_lor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54489,6 +55699,7 @@ GrB_Info GB_Asaxpy3B__min_lor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54534,6 +55745,7 @@ GrB_Info GB_Asaxpy3B__min_lor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54579,6 +55791,7 @@ GrB_Info GB_Asaxpy3B__min_lor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54624,6 +55837,7 @@ GrB_Info GB_Asaxpy3B__min_lor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54669,6 +55883,7 @@ GrB_Info GB_Asaxpy3B__min_lor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54714,6 +55929,7 @@ GrB_Info GB_Asaxpy3B__min_lor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54759,6 +55975,7 @@ GrB_Info GB_Asaxpy3B__min_lor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54804,6 +56021,7 @@ GrB_Info GB_Asaxpy3B__min_lor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54849,6 +56067,7 @@ GrB_Info GB_Asaxpy3B__min_lor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54894,6 +56113,7 @@ GrB_Info GB_Asaxpy3B__max_lor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54939,6 +56159,7 @@ GrB_Info GB_Asaxpy3B__max_lor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -54984,6 +56205,7 @@ GrB_Info GB_Asaxpy3B__max_lor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55029,6 +56251,7 @@ GrB_Info GB_Asaxpy3B__max_lor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55074,6 +56297,7 @@ GrB_Info GB_Asaxpy3B__max_lor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55119,6 +56343,7 @@ GrB_Info GB_Asaxpy3B__max_lor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55164,6 +56389,7 @@ GrB_Info GB_Asaxpy3B__max_lor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55209,6 +56435,7 @@ GrB_Info GB_Asaxpy3B__max_lor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55254,6 +56481,7 @@ GrB_Info GB_Asaxpy3B__max_lor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55299,6 +56527,7 @@ GrB_Info GB_Asaxpy3B__max_lor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55344,6 +56573,7 @@ GrB_Info GB_Asaxpy3B__any_lor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55389,6 +56619,7 @@ GrB_Info GB_Asaxpy3B__any_lor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55434,6 +56665,7 @@ GrB_Info GB_Asaxpy3B__any_lor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55479,6 +56711,7 @@ GrB_Info GB_Asaxpy3B__any_lor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55524,6 +56757,7 @@ GrB_Info GB_Asaxpy3B__any_lor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55569,6 +56803,7 @@ GrB_Info GB_Asaxpy3B__any_lor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55614,6 +56849,7 @@ GrB_Info GB_Asaxpy3B__any_lor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55659,6 +56895,7 @@ GrB_Info GB_Asaxpy3B__any_lor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55704,6 +56941,7 @@ GrB_Info GB_Asaxpy3B__any_lor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55749,6 +56987,7 @@ GrB_Info GB_Asaxpy3B__any_lor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55794,6 +57033,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55839,6 +57079,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55884,6 +57125,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55929,6 +57171,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -55974,6 +57217,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56019,6 +57263,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56064,6 +57309,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56109,6 +57355,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56154,6 +57401,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56199,6 +57447,7 @@ GrB_Info GB_Asaxpy3B__plus_lor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56244,6 +57493,7 @@ GrB_Info GB_Asaxpy3B__times_lor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56289,6 +57539,7 @@ GrB_Info GB_Asaxpy3B__times_lor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56334,6 +57585,7 @@ GrB_Info GB_Asaxpy3B__times_lor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56379,6 +57631,7 @@ GrB_Info GB_Asaxpy3B__times_lor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56424,6 +57677,7 @@ GrB_Info GB_Asaxpy3B__times_lor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56469,6 +57723,7 @@ GrB_Info GB_Asaxpy3B__times_lor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56514,6 +57769,7 @@ GrB_Info GB_Asaxpy3B__times_lor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56559,6 +57815,7 @@ GrB_Info GB_Asaxpy3B__times_lor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56604,6 +57861,7 @@ GrB_Info GB_Asaxpy3B__times_lor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56649,6 +57907,7 @@ GrB_Info GB_Asaxpy3B__times_lor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56694,6 +57953,7 @@ GrB_Info GB_Asaxpy3B__lor_lor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56739,6 +57999,7 @@ GrB_Info GB_Asaxpy3B__land_lor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56784,6 +58045,7 @@ GrB_Info GB_Asaxpy3B__lxor_lor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56829,6 +58091,7 @@ GrB_Info GB_Asaxpy3B__any_lor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56874,6 +58137,7 @@ GrB_Info GB_Asaxpy3B__eq_lor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56919,6 +58183,7 @@ GrB_Info GB_Asaxpy3B__min_land_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -56964,6 +58229,7 @@ GrB_Info GB_Asaxpy3B__min_land_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57009,6 +58275,7 @@ GrB_Info GB_Asaxpy3B__min_land_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57054,6 +58321,7 @@ GrB_Info GB_Asaxpy3B__min_land_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57099,6 +58367,7 @@ GrB_Info GB_Asaxpy3B__min_land_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57144,6 +58413,7 @@ GrB_Info GB_Asaxpy3B__min_land_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57189,6 +58459,7 @@ GrB_Info GB_Asaxpy3B__min_land_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57234,6 +58505,7 @@ GrB_Info GB_Asaxpy3B__min_land_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57279,6 +58551,7 @@ GrB_Info GB_Asaxpy3B__min_land_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57324,6 +58597,7 @@ GrB_Info GB_Asaxpy3B__min_land_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57369,6 +58643,7 @@ GrB_Info GB_Asaxpy3B__max_land_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57414,6 +58689,7 @@ GrB_Info GB_Asaxpy3B__max_land_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57459,6 +58735,7 @@ GrB_Info GB_Asaxpy3B__max_land_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57504,6 +58781,7 @@ GrB_Info GB_Asaxpy3B__max_land_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57549,6 +58827,7 @@ GrB_Info GB_Asaxpy3B__max_land_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57594,6 +58873,7 @@ GrB_Info GB_Asaxpy3B__max_land_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57639,6 +58919,7 @@ GrB_Info GB_Asaxpy3B__max_land_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57684,6 +58965,7 @@ GrB_Info GB_Asaxpy3B__max_land_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57729,6 +59011,7 @@ GrB_Info GB_Asaxpy3B__max_land_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57774,6 +59057,7 @@ GrB_Info GB_Asaxpy3B__max_land_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57819,6 +59103,7 @@ GrB_Info GB_Asaxpy3B__any_land_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57864,6 +59149,7 @@ GrB_Info GB_Asaxpy3B__any_land_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57909,6 +59195,7 @@ GrB_Info GB_Asaxpy3B__any_land_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57954,6 +59241,7 @@ GrB_Info GB_Asaxpy3B__any_land_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -57999,6 +59287,7 @@ GrB_Info GB_Asaxpy3B__any_land_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58044,6 +59333,7 @@ GrB_Info GB_Asaxpy3B__any_land_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58089,6 +59379,7 @@ GrB_Info GB_Asaxpy3B__any_land_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58134,6 +59425,7 @@ GrB_Info GB_Asaxpy3B__any_land_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58179,6 +59471,7 @@ GrB_Info GB_Asaxpy3B__any_land_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58224,6 +59517,7 @@ GrB_Info GB_Asaxpy3B__any_land_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58269,6 +59563,7 @@ GrB_Info GB_Asaxpy3B__plus_land_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58314,6 +59609,7 @@ GrB_Info GB_Asaxpy3B__plus_land_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58359,6 +59655,7 @@ GrB_Info GB_Asaxpy3B__plus_land_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58404,6 +59701,7 @@ GrB_Info GB_Asaxpy3B__plus_land_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58449,6 +59747,7 @@ GrB_Info GB_Asaxpy3B__plus_land_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58494,6 +59793,7 @@ GrB_Info GB_Asaxpy3B__plus_land_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58539,6 +59839,7 @@ GrB_Info GB_Asaxpy3B__plus_land_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58584,6 +59885,7 @@ GrB_Info GB_Asaxpy3B__plus_land_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58629,6 +59931,7 @@ GrB_Info GB_Asaxpy3B__plus_land_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58674,6 +59977,7 @@ GrB_Info GB_Asaxpy3B__plus_land_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58719,6 +60023,7 @@ GrB_Info GB_Asaxpy3B__times_land_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58764,6 +60069,7 @@ GrB_Info GB_Asaxpy3B__times_land_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58809,6 +60115,7 @@ GrB_Info GB_Asaxpy3B__times_land_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58854,6 +60161,7 @@ GrB_Info GB_Asaxpy3B__times_land_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58899,6 +60207,7 @@ GrB_Info GB_Asaxpy3B__times_land_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58944,6 +60253,7 @@ GrB_Info GB_Asaxpy3B__times_land_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -58989,6 +60299,7 @@ GrB_Info GB_Asaxpy3B__times_land_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59034,6 +60345,7 @@ GrB_Info GB_Asaxpy3B__times_land_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59079,6 +60391,7 @@ GrB_Info GB_Asaxpy3B__times_land_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59124,6 +60437,7 @@ GrB_Info GB_Asaxpy3B__times_land_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59169,6 +60483,7 @@ GrB_Info GB_Asaxpy3B__lor_land_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59214,6 +60529,7 @@ GrB_Info GB_Asaxpy3B__land_land_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59259,6 +60575,7 @@ GrB_Info GB_Asaxpy3B__lxor_land_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59304,6 +60621,7 @@ GrB_Info GB_Asaxpy3B__any_land_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59349,6 +60667,7 @@ GrB_Info GB_Asaxpy3B__eq_land_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59394,6 +60713,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59439,6 +60759,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59484,6 +60805,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59529,6 +60851,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59574,6 +60897,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59619,6 +60943,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59664,6 +60989,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59709,6 +61035,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59754,6 +61081,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59799,6 +61127,7 @@ GrB_Info GB_Asaxpy3B__min_lxor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59844,6 +61173,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59889,6 +61219,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59934,6 +61265,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -59979,6 +61311,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60024,6 +61357,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60069,6 +61403,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60114,6 +61449,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60159,6 +61495,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60204,6 +61541,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60249,6 +61587,7 @@ GrB_Info GB_Asaxpy3B__max_lxor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60294,6 +61633,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60339,6 +61679,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60384,6 +61725,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60429,6 +61771,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60474,6 +61817,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60519,6 +61863,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60564,6 +61909,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60609,6 +61955,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60654,6 +62001,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60699,6 +62047,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60744,6 +62093,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60789,6 +62139,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60834,6 +62185,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60879,6 +62231,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60924,6 +62277,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -60969,6 +62323,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61014,6 +62369,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61059,6 +62415,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61104,6 +62461,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61149,6 +62507,7 @@ GrB_Info GB_Asaxpy3B__plus_lxor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61194,6 +62553,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61239,6 +62599,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61284,6 +62645,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61329,6 +62691,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61374,6 +62737,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61419,6 +62783,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61464,6 +62829,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61509,6 +62875,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61554,6 +62921,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61599,6 +62967,7 @@ GrB_Info GB_Asaxpy3B__times_lxor_fp64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61644,6 +63013,7 @@ GrB_Info GB_Asaxpy3B__lor_lxor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61689,6 +63059,7 @@ GrB_Info GB_Asaxpy3B__land_lxor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61734,6 +63105,7 @@ GrB_Info GB_Asaxpy3B__lxor_lxor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61779,6 +63151,7 @@ GrB_Info GB_Asaxpy3B__any_lxor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61824,6 +63197,7 @@ GrB_Info GB_Asaxpy3B__eq_lxor_bool
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61869,6 +63243,7 @@ GrB_Info GB_Asaxpy3B__bor_bor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61914,6 +63289,7 @@ GrB_Info GB_Asaxpy3B__bor_bor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -61959,6 +63335,7 @@ GrB_Info GB_Asaxpy3B__bor_bor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62004,6 +63381,7 @@ GrB_Info GB_Asaxpy3B__bor_bor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62049,6 +63427,7 @@ GrB_Info GB_Asaxpy3B__bor_band_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62094,6 +63473,7 @@ GrB_Info GB_Asaxpy3B__bor_band_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62139,6 +63519,7 @@ GrB_Info GB_Asaxpy3B__bor_band_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62184,6 +63565,7 @@ GrB_Info GB_Asaxpy3B__bor_band_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62229,6 +63611,7 @@ GrB_Info GB_Asaxpy3B__bor_bxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62274,6 +63657,7 @@ GrB_Info GB_Asaxpy3B__bor_bxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62319,6 +63703,7 @@ GrB_Info GB_Asaxpy3B__bor_bxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62364,6 +63749,7 @@ GrB_Info GB_Asaxpy3B__bor_bxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62409,6 +63795,7 @@ GrB_Info GB_Asaxpy3B__bor_bxnor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62454,6 +63841,7 @@ GrB_Info GB_Asaxpy3B__bor_bxnor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62499,6 +63887,7 @@ GrB_Info GB_Asaxpy3B__bor_bxnor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62544,6 +63933,7 @@ GrB_Info GB_Asaxpy3B__bor_bxnor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62589,6 +63979,7 @@ GrB_Info GB_Asaxpy3B__band_bor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62634,6 +64025,7 @@ GrB_Info GB_Asaxpy3B__band_bor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62679,6 +64071,7 @@ GrB_Info GB_Asaxpy3B__band_bor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62724,6 +64117,7 @@ GrB_Info GB_Asaxpy3B__band_bor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62769,6 +64163,7 @@ GrB_Info GB_Asaxpy3B__band_band_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62814,6 +64209,7 @@ GrB_Info GB_Asaxpy3B__band_band_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62859,6 +64255,7 @@ GrB_Info GB_Asaxpy3B__band_band_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62904,6 +64301,7 @@ GrB_Info GB_Asaxpy3B__band_band_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62949,6 +64347,7 @@ GrB_Info GB_Asaxpy3B__band_bxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -62994,6 +64393,7 @@ GrB_Info GB_Asaxpy3B__band_bxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63039,6 +64439,7 @@ GrB_Info GB_Asaxpy3B__band_bxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63084,6 +64485,7 @@ GrB_Info GB_Asaxpy3B__band_bxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63129,6 +64531,7 @@ GrB_Info GB_Asaxpy3B__band_bxnor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63174,6 +64577,7 @@ GrB_Info GB_Asaxpy3B__band_bxnor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63219,6 +64623,7 @@ GrB_Info GB_Asaxpy3B__band_bxnor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63264,6 +64669,7 @@ GrB_Info GB_Asaxpy3B__band_bxnor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63309,6 +64715,7 @@ GrB_Info GB_Asaxpy3B__bxor_bor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63354,6 +64761,7 @@ GrB_Info GB_Asaxpy3B__bxor_bor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63399,6 +64807,7 @@ GrB_Info GB_Asaxpy3B__bxor_bor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63444,6 +64853,7 @@ GrB_Info GB_Asaxpy3B__bxor_bor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63489,6 +64899,7 @@ GrB_Info GB_Asaxpy3B__bxor_band_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63534,6 +64945,7 @@ GrB_Info GB_Asaxpy3B__bxor_band_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63579,6 +64991,7 @@ GrB_Info GB_Asaxpy3B__bxor_band_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63624,6 +65037,7 @@ GrB_Info GB_Asaxpy3B__bxor_band_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63669,6 +65083,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63714,6 +65129,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63759,6 +65175,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63804,6 +65221,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63849,6 +65267,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxnor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63894,6 +65313,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxnor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63939,6 +65359,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxnor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -63984,6 +65405,7 @@ GrB_Info GB_Asaxpy3B__bxor_bxnor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64029,6 +65451,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64074,6 +65497,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64119,6 +65543,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64164,6 +65589,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64209,6 +65635,7 @@ GrB_Info GB_Asaxpy3B__bxnor_band_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64254,6 +65681,7 @@ GrB_Info GB_Asaxpy3B__bxnor_band_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64299,6 +65727,7 @@ GrB_Info GB_Asaxpy3B__bxnor_band_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64344,6 +65773,7 @@ GrB_Info GB_Asaxpy3B__bxnor_band_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64389,6 +65819,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64434,6 +65865,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64479,6 +65911,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64524,6 +65957,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64569,6 +66003,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxnor_uint8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64614,6 +66049,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxnor_uint16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64659,6 +66095,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxnor_uint32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64704,6 +66141,7 @@ GrB_Info GB_Asaxpy3B__bxnor_bxnor_uint64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64749,6 +66187,7 @@ GrB_Info GB_Asaxpy3B__min_firsti_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64794,6 +66233,7 @@ GrB_Info GB_Asaxpy3B__min_firsti_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64839,6 +66279,7 @@ GrB_Info GB_Asaxpy3B__max_firsti_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64884,6 +66325,7 @@ GrB_Info GB_Asaxpy3B__max_firsti_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64929,6 +66371,7 @@ GrB_Info GB_Asaxpy3B__any_firsti_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -64974,6 +66417,7 @@ GrB_Info GB_Asaxpy3B__any_firsti_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65019,6 +66463,7 @@ GrB_Info GB_Asaxpy3B__plus_firsti_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65064,6 +66509,7 @@ GrB_Info GB_Asaxpy3B__plus_firsti_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65109,6 +66555,7 @@ GrB_Info GB_Asaxpy3B__times_firsti_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65154,6 +66601,7 @@ GrB_Info GB_Asaxpy3B__times_firsti_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65199,6 +66647,7 @@ GrB_Info GB_Asaxpy3B__min_firsti1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65244,6 +66693,7 @@ GrB_Info GB_Asaxpy3B__min_firsti1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65289,6 +66739,7 @@ GrB_Info GB_Asaxpy3B__max_firsti1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65334,6 +66785,7 @@ GrB_Info GB_Asaxpy3B__max_firsti1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65379,6 +66831,7 @@ GrB_Info GB_Asaxpy3B__any_firsti1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65424,6 +66877,7 @@ GrB_Info GB_Asaxpy3B__any_firsti1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65469,6 +66923,7 @@ GrB_Info GB_Asaxpy3B__plus_firsti1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65514,6 +66969,7 @@ GrB_Info GB_Asaxpy3B__plus_firsti1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65559,6 +67015,7 @@ GrB_Info GB_Asaxpy3B__times_firsti1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65604,6 +67061,7 @@ GrB_Info GB_Asaxpy3B__times_firsti1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65649,6 +67107,7 @@ GrB_Info GB_Asaxpy3B__min_firstj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65694,6 +67153,7 @@ GrB_Info GB_Asaxpy3B__min_firstj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65739,6 +67199,7 @@ GrB_Info GB_Asaxpy3B__max_firstj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65784,6 +67245,7 @@ GrB_Info GB_Asaxpy3B__max_firstj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65829,6 +67291,7 @@ GrB_Info GB_Asaxpy3B__any_firstj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65874,6 +67337,7 @@ GrB_Info GB_Asaxpy3B__any_firstj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65919,6 +67383,7 @@ GrB_Info GB_Asaxpy3B__plus_firstj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -65964,6 +67429,7 @@ GrB_Info GB_Asaxpy3B__plus_firstj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66009,6 +67475,7 @@ GrB_Info GB_Asaxpy3B__times_firstj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66054,6 +67521,7 @@ GrB_Info GB_Asaxpy3B__times_firstj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66099,6 +67567,7 @@ GrB_Info GB_Asaxpy3B__min_firstj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66144,6 +67613,7 @@ GrB_Info GB_Asaxpy3B__min_firstj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66189,6 +67659,7 @@ GrB_Info GB_Asaxpy3B__max_firstj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66234,6 +67705,7 @@ GrB_Info GB_Asaxpy3B__max_firstj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66279,6 +67751,7 @@ GrB_Info GB_Asaxpy3B__any_firstj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66324,6 +67797,7 @@ GrB_Info GB_Asaxpy3B__any_firstj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66369,6 +67843,7 @@ GrB_Info GB_Asaxpy3B__plus_firstj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66414,6 +67889,7 @@ GrB_Info GB_Asaxpy3B__plus_firstj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66459,6 +67935,7 @@ GrB_Info GB_Asaxpy3B__times_firstj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66504,6 +67981,7 @@ GrB_Info GB_Asaxpy3B__times_firstj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66549,6 +68027,7 @@ GrB_Info GB_Asaxpy3B__min_secondj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66594,6 +68073,7 @@ GrB_Info GB_Asaxpy3B__min_secondj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66639,6 +68119,7 @@ GrB_Info GB_Asaxpy3B__max_secondj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66684,6 +68165,7 @@ GrB_Info GB_Asaxpy3B__max_secondj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66729,6 +68211,7 @@ GrB_Info GB_Asaxpy3B__any_secondj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66774,6 +68257,7 @@ GrB_Info GB_Asaxpy3B__any_secondj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66819,6 +68303,7 @@ GrB_Info GB_Asaxpy3B__plus_secondj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66864,6 +68349,7 @@ GrB_Info GB_Asaxpy3B__plus_secondj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66909,6 +68395,7 @@ GrB_Info GB_Asaxpy3B__times_secondj_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66954,6 +68441,7 @@ GrB_Info GB_Asaxpy3B__times_secondj_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -66999,6 +68487,7 @@ GrB_Info GB_Asaxpy3B__min_secondj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67044,6 +68533,7 @@ GrB_Info GB_Asaxpy3B__min_secondj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67089,6 +68579,7 @@ GrB_Info GB_Asaxpy3B__max_secondj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67134,6 +68625,7 @@ GrB_Info GB_Asaxpy3B__max_secondj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67179,6 +68671,7 @@ GrB_Info GB_Asaxpy3B__any_secondj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67224,6 +68717,7 @@ GrB_Info GB_Asaxpy3B__any_secondj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67269,6 +68763,7 @@ GrB_Info GB_Asaxpy3B__plus_secondj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67314,6 +68809,7 @@ GrB_Info GB_Asaxpy3B__plus_secondj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67359,6 +68855,7 @@ GrB_Info GB_Asaxpy3B__times_secondj1_int64
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 
@@ -67404,6 +68901,7 @@ GrB_Info GB_Asaxpy3B__times_secondj1_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 

@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GB_WHERE1 ("GxB_Matrix_import_CSR (&A, type, nrows, ncols, "
         "&Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_CSR") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the matrix

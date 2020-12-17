@@ -19,7 +19,7 @@
     GB_RETURN_IF_FAULTY (M) ;                                               \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
-        A_tran, B_tran, xx) ;                                               \
+        A_tran, B_tran, xx, xx7) ;                                          \
     /* C<M> = accum (C,T) where T = A+B, A'+B, A+B', or A'+B' */            \
     info = GB_ewise (                                                       \
         C,              C_replace,  /* C and its descriptor        */       \

@@ -30,6 +30,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     const GrB_Desc_Value AxB_method,
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 )
 {
@@ -104,7 +105,8 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
         // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
         return (GB_AxB_saxpy3 (Chandle, C_sparsity, M, Mask_comp, Mask_struct,
-            A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
+            A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+            Context)) ;
 
     }
     else

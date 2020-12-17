@@ -18,6 +18,9 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void     GB_Global_mode_set (GrB_Mode mode) ;
 GrB_Mode GB_Global_mode_get (void) ;
 
+void     GB_Global_sort_set (int sort) ;
+int      GB_Global_sort_get (void) ;
+
 GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
 GB_PUBLIC   // accessed by the MATLAB interface only

@@ -37,7 +37,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // ensure the matrix is bitmap CSC

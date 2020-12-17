@@ -30,7 +30,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GB_WHERE1 ("GxB_Matrix_import_FullR (&A, type, nrows, ncols, "
         "&Ax, Ax_size, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_FullR") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the matrix

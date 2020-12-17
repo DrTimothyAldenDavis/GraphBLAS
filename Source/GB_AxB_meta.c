@@ -54,6 +54,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in-place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
+    const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Context Context
 )
 {
@@ -539,7 +540,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C = A'*B via saxpy: Gustavson + Hash method
                 GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
                 GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
-                    AT, B, semiring, flipxy, mask_applied, AxB_method,
+                    AT, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
                     Context)) ;
                 break ;
         }
@@ -623,7 +624,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C = A*B' via saxpy: Gustavson + Hash method
                 GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
                 GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
-                    A, BT, semiring, flipxy, mask_applied, AxB_method,
+                    A, BT, semiring, flipxy, mask_applied, AxB_method, do_sort,
                     Context)) ;
                 break ;
         }
@@ -668,7 +669,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C = A*B via saxpy: Gustavson + Hash method
             GBURBLE ("C%s=A*B, saxpy ", M_str) ;
             GB_OK (GB_AxB_saxpy (Chandle, M, Mask_comp, Mask_struct,
-                A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
+                A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+                Context)) ;
         }
     }
 

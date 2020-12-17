@@ -40,7 +40,7 @@ GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     // get the use_mkl flag from the descriptor
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     // delete any lingering zombies and assemble any pending tuples
     GB_MATRIX_WAIT (C) ;

@@ -1,6 +1,6 @@
 
 TODO:: check alternative/Makefile
-TODO:: check Windows, Mac, Linux, Power8
+TODO:: check port to Windows, Mac, Linux, Power8
 
 FUTURE: can handle transpose of full or bitmap input matrices just by
 changing how they are accessed
@@ -14,5 +14,6 @@ PR:
         probably coupled with lazy malloc/free of A->x when converting from
         full (non-constant) to constant-valued
 
-    need aggressive exploit of non-blocking mode, for x = sum (abs (t-r))
+    need aggressive exploit of non-blocking mode, for x = sum (abs (t-r)),
+    or GrB_vxv dot product, with PLUS_ABSDIFF semiring
 

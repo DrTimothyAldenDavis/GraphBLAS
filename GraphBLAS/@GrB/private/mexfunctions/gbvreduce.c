@@ -55,6 +55,13 @@ void mexFunction
     CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings < 1 || ncells > 0,
         USAGE) ;
 
+    // ensure the descriptor is present, and set GxB_SORT to true
+    if (desc == NULL)
+    { 
+        OK (GrB_Descriptor_new (&desc)) ;
+    }
+    OK1 (desc, GxB_Desc_set (desc, GxB_SORT, true)) ;
+
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------

@@ -42,7 +42,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
     int64_t anvec_nonempty = A->nvec_nonempty ;
-    bool jumbled = A->jumbled ;
+    bool A_jumbled = A->jumbled ;
     int sparsity = A->sparsity ;
     GrB_Type atype = A->type ;
 
@@ -72,7 +72,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     C->nvec = anvec ;
     C->nvec_nonempty = anvec_nonempty ;
     C->nvals = anvals ;             // for bitmap only
-    C->jumbled = jumbled ;          // C is jumbled if A is jumbled
+    C->jumbled = A_jumbled ;        // C is jumbled if A is jumbled
     C->sparsity = sparsity ;        // copy in the sparsity control
 
     if (Ap != NULL)

@@ -315,6 +315,7 @@ GrB_Info GB_Asaxpy3B__max_isge_fp32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 )
 { 

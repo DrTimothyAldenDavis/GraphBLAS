@@ -216,8 +216,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
             workspace [i]++ ;
         }
 
-        // C will be constructed as jumbled
-        C->jumbled = true ;
+        C->jumbled = true ; // atomic transpose leaves C jumbled
 
         // cumulative sum of the workspace, and copy back into C->p
         GB_cumsum (workspace, vlen, (&C->nvec_nonempty), nth) ;

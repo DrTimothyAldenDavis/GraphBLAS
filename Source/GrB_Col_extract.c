@@ -41,7 +41,7 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     GrB_Index ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)

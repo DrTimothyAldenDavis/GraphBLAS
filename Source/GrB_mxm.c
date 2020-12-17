@@ -40,7 +40,7 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, B_transpose, AxB_method) ;
+        A_transpose, B_transpose, AxB_method, do_sort) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,A*B) and variations, using the mxm kernel
@@ -55,7 +55,7 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
         A,          A_transpose,    // A matrix and its descriptor
         B,          B_transpose,    // B matrix and its descriptor
         false,                      // use fmult(x,y), flipxy false
-        AxB_method,                 // algorithm selector
+        AxB_method, do_sort,        // algorithm selector
         Context) ;
 
     GB_BURBLE_END ;

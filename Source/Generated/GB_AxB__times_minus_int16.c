@@ -315,6 +315,7 @@ GrB_Info GB_Asaxpy3B__times_minus_int16
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 )
 { 

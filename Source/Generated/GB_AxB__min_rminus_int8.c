@@ -315,6 +315,7 @@ GrB_Info GB_Asaxpy3B__min_rminus_int8
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 )
 { 

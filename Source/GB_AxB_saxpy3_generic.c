@@ -35,6 +35,7 @@ GrB_Info GB_AxB_saxpy3_generic
     int ntasks,                     // 0 if C is bitmap (computed below)
     int nfine,                      // 0 if C is bitmap (not used)
     int nthreads,                   // 0 if C is bitmap (computed below)
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 )
 {

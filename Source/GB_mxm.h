@@ -29,6 +29,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Context Context
 ) ;
 
@@ -69,6 +70,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in-place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
+    const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Context Context
 ) ;
 

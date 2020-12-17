@@ -33,7 +33,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // select the entries; do not transpose; assemble pending entries

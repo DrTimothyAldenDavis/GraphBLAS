@@ -36,6 +36,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Context Context
 )
 {
@@ -135,7 +136,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     bool done_in_place = false ;
     GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
         Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
-        &mask_applied, &done_in_place, AxB_method, Context)) ;
+        &mask_applied, &done_in_place, AxB_method, do_sort, Context)) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (1, ttt) ;

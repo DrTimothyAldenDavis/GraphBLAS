@@ -39,7 +39,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
         "&Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size, "
         "nvec, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the matrix

@@ -27,6 +27,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 ) ;
 
@@ -162,31 +163,9 @@ GrB_Info GB_AxB_saxpy3_generic
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 ) ;
-
-//------------------------------------------------------------------------------
-// AVX2 instructions
-//------------------------------------------------------------------------------
-
-#if defined ( __AVX2__ )
-
-    #include <x86intrin.h>
-    #include <immintrin.h>
-
-    // int64_t vector of length 4
-    typedef union i4vector64
-    {
-        // in avxintrin.h:
-        // typedef long long __v4di __attribute__ ((__vector_size__ (32)));
-        // __v4di v ;
-        int64_t i [4] ;
-        __m256i m ;
-        __m256d d ;
-    }
-    GB_vector ;
-
-#endif
 
 #endif
 

@@ -3419,10 +3419,20 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          A very specialized method that works well only if the mask is
 //          present, very sparse, and not complemented, when C is a dense
 //          vector or matrix, or when C is small.
+//
+// GxB_SORT: GrB_mxm and other methods may return a matrix a 'jumbled' state,
+//      with indices out of order.  The sort is left pending.  Some methods can
+//      tolerate jumbled matrices on input, so this can be faster.  However, in
+//      some cases, it can be faster for GrB_mxm to sort its output as it is
+//      computed.  With GxB_SORT set to 0, the sort is left pending.  With
+//      GxB_SORT set to a nonzero value, then GrB_mxm typically sorts the
+//      resulting matrix C (but not always; this is just a hint).  If GrB_init
+//      is called with GrB_BLOCKING mode, the sort will always be done, and
+//      this setting has no effect.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
-// GxB_Option_Field.  They are defined with the same integer value for both
-// enums, so the user can use them for both.
+// GxB_Option_Field for global options.  They are defined with the same integer
+// value for both enums, so the user can use them for both.
 #define GxB_NTHREADS 5
 #define GxB_CHUNK 7
 
@@ -3453,9 +3463,8 @@ typedef enum
 //  // MKL control (DRAFT: in progress, do not use)
 //  GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL (DRAFT)
 
-    // SuiteSparse:GraphBLAS extensions are given large values so they do not
-    // conflict with future enum values added to the spec:
-    GxB_AxB_METHOD = 1000   // descriptor for selecting C=A*B algorithm
+    GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
+    GxB_SORT = 35           // control sort in GrB_mxm
 }
 GrB_Desc_Field ;
 
@@ -3934,6 +3943,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GrB_Descriptor d, GxB_NTHREADS, nthreads) ;
 //      GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_SORT, sort) ;
+//      GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ;
 //
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;

@@ -60,8 +60,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
 
-    // the prior pattern of C is discarded
-    C->jumbled = false ;
+    C->jumbled = false ;        // prior contents of C are discarded
 
     // save the sparsity control of C
     int C_sparsity = C->sparsity ;

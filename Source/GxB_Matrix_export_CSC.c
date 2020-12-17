@@ -39,7 +39,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GB_BURBLE_START ("GxB_Matrix_export_CSC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     ASSERT_MATRIX_OK (*A, "A to export as CSC", GB0) ;
 
     //--------------------------------------------------------------------------

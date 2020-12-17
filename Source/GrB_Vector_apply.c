@@ -41,7 +41,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
@@ -93,7 +93,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
@@ -145,7 +145,7 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose

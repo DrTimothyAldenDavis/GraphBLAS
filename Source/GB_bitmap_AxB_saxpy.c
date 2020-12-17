@@ -119,7 +119,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         {                                                                   \
             info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
                 Mask_struct, true, A, A_is_pattern,  B,                     \
-                B_is_pattern, NULL, 0, 0, 0, Context) ;                     \
+                B_is_pattern, NULL, 0, 0, 0, 0, Context) ;                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -147,7 +147,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     { 
         info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
             true, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, NULL, 0, 0, 0, Context) ;
+            flipxy, NULL, 0, 0, 0, 0, Context) ;
     }
 
     if (info != GrB_SUCCESS)

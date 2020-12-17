@@ -62,12 +62,12 @@
 //  desc->axb                   can be:
 
 //      GxB_DEFAULT = 0         automatic selection
-
 //      GxB_AxB_GUSTAVSON       gather-scatter saxpy method
-
 //      GxB_AxB_HASH            hash-based saxpy method
-
+//      GxB_AxB_SAXPY           saxpy: either Gustavson or hash
 //      GxB_AxB_DOT             dot product
+
+//  desc->do_sort               true or false (default is false) 
 
 //  desc->nthreads_max          max # number of threads to use (auto if <= 0)
 //  desc->chunk                 chunk size for threadds
@@ -86,6 +86,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
+    int *do_sort,               // if nonzero, sort in GrB_mxm
     GB_Context Context
 )
 {
@@ -110,6 +111,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     GrB_Desc_Value AxB_desc  = GxB_DEFAULT ;
     int nthreads_desc        = GxB_DEFAULT ;
     double chunk_desc        = GxB_DEFAULT ;
+    int do_sort_desc         = GxB_DEFAULT ;
 //  bool use_mkl             = false ;
 
     // non-defaults descriptor values
@@ -121,6 +123,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         In0_desc  = desc->in0 ;   // DEFAULT or TRAN
         In1_desc  = desc->in1 ;   // DEFAULT or TRAN
         AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HASH, or DOT
+        do_sort_desc = desc->do_sort ;  // DEFAULT, or true (nonzero)
 
         // default is zero.  if descriptor->nthreads_max <= 0, GraphBLAS selects
         // automatically: any value between 1 and the global nthreads_max.  If
@@ -169,6 +172,10 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     if (AxB_method != NULL)
     { 
         *AxB_method = AxB_desc ;
+    }
+    if (do_sort != NULL)
+    { 
+        *do_sort = do_sort_desc ;
     }
 
     // The number of threads is copied from the descriptor into the Context, so

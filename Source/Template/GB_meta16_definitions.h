@@ -185,8 +185,7 @@
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
     #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-        ASSERT (!A_is_full) ;                                       \
-        ASSERT (!A_is_bitmap) ;                                     \
+        ASSERT (A_is_sparse || A_is_hyper) ;                        \
         GB_GET_B_kj_INDEX ;         /* get index k of B(k,j) */     \
         GB_GET_A_k ;                /* get A(:,k) */                \
         memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ;  \
@@ -197,8 +196,7 @@
 
     // typical semiring
     #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-        ASSERT (!A_is_full) ;                                       \
-        ASSERT (!A_is_bitmap) ;                                     \
+        ASSERT (A_is_sparse || A_is_hyper) ;                        \
         GB_GET_B_kj_INDEX ;         /* get index k of B(k,j) */     \
         GB_GET_A_k ;                /* get A(:,k) */                \
         GB_GET_B_kj ;               /* bkj = B(k,j) */              \

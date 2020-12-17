@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // select the entries and optionally transpose; assemble pending tuples

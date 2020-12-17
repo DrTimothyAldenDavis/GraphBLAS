@@ -59,7 +59,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, do_sort) ;
 
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
@@ -139,7 +139,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     GB_OK (GB_mxm (C, C_replace, M, Mask_comp, Mask_struct, accum,
-        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, Context)) ;
+        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, do_sort,
+        Context)) ;
     ASSERT_MATRIX_OK (C, "C result for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

@@ -188,7 +188,7 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
 
         case GxB_SPARSE : 
-            (*A)->jumbled = jumbled ;
+            (*A)->jumbled = jumbled ;   // import jumbled status
             (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
             (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;

@@ -304,6 +304,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 )
 {
@@ -527,6 +528,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         axbflops = total_flops - Mwork ;
         GBURBLE ("axbwork %g ", axbflops) ;
         if (Mwork > 0) GBURBLE ("mwork %g ", (double) Mwork) ;
+    }
+
+    if (do_sort)
+    {
+        GBURBLE ("sort ") ;
     }
 
 // ttt = omp_get_wtime ( ) - ttt ;
@@ -1207,7 +1213,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {                                                                   \
             info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
                 Mask_struct, M_dense_in_place, A, A_is_pattern,  B,         \
-                B_is_pattern, TaskList, ntasks, nfine, nthreads, Context) ; \
+                B_is_pattern, TaskList, ntasks, nfine, nthreads, do_sort,   \
+                Context) ;                                                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -1231,7 +1238,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
             M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, TaskList, ntasks, nfine, nthreads, Context) ;
+            flipxy, TaskList, ntasks, nfine, nthreads, do_sort, Context) ;
     }
 
     if (info != GrB_SUCCESS)

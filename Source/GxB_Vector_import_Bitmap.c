@@ -32,7 +32,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GB_WHERE1 ("GxB_Vector_import_Bitmap (&v, type, n, "
         " &vb, &vx, vb_size, vx_size, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_import_Bitmap") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the vector

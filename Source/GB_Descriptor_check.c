@@ -160,6 +160,11 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         GBPR0 ("%g\n", chunk) ;
     }
 
+    if (D->do_sort)
+    {
+        GBPR0 ("    d.sort     = true\n") ;
+    }
+
 //  if (D->use_mkl)
 //  {
 //      GBPR0 ("    d.use_mkl = true") ;

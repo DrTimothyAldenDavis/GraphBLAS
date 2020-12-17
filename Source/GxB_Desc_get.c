@@ -121,6 +121,18 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             }
             break ;
 
+        case GxB_SORT :
+
+            {
+                va_start (ap, field) ;
+                int *do_sort = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (do_sort) ;
+                int s = (desc == NULL) ? GxB_DEFAULT : desc->do_sort ;
+                (*do_sort) = s ;
+            }
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

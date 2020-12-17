@@ -904,6 +904,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
+    int *do_sort,               // if nonzero, sort in GrB_mxm
     GB_Context Context
 ) ;
 
@@ -1158,13 +1159,14 @@ void GB_cast_array              // typecast an array
 
 // check the descriptor and extract its contents; also copies
 // nthreads_max and chunk from the descriptor to the Context
-#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
+#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo,dsort)          \
     GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \
+    int dsort ;                                                              \
     GrB_Desc_Value dalgo ;                                                   \
     /* if desc is NULL then defaults are used.  This is OK */                \
     info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
-        Context) ;                                                           \
+        &dsort, Context) ;                                                   \
     if (info != GrB_SUCCESS)                                                 \
     {                                                                        \
         /* desc not NULL, but uninitialized or an invalid object */          \

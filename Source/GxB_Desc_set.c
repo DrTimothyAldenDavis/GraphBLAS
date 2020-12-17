@@ -176,15 +176,25 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
             }
             break ;
 
+        case GxB_SORT :
+
+            {
+                va_start (ap, field) ;
+                desc->do_sort = va_arg (ap, int) ;
+                va_end (ap) ;
+            }
+            break ;
+
         default : 
 
             GB_ERROR (GrB_INVALID_VALUE,
                 "invalid descriptor field [%d], must be one of:\n"
                 "GrB_OUTP [%d], GrB_MASK [%d], GrB_INP0 [%d], GrB_INP1 [%d]\n"
-                "GxB_NTHREADS [%d], GxB_CHUNK [%d], or GxB_AxB_METHOD [%d]",
+                "GxB_NTHREADS [%d], GxB_CHUNK [%d], GxB_AxB_METHOD [%d]\n"
+                "or GxB_SORT [%d]\n",
                 (int) field, (int) GrB_OUTP, (int) GrB_MASK, (int) GrB_INP0,
                 (int) GrB_INP1, (int) GxB_NTHREADS, (int) GxB_CHUNK,
-                (int) GxB_AxB_METHOD) ;
+                (int) GxB_AxB_METHOD, (int) GxB_SORT) ;
     }
 
     return (GrB_SUCCESS) ;

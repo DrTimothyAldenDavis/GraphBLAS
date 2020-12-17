@@ -48,6 +48,7 @@ void mexFunction
     GrB_Vector y = NULL ;
     GrB_Matrix T = NULL ;
     GrB_Matrix Z = NULL ;
+    GrB_Descriptor desc = NULL ;
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     GxB_Format_Value fmt ;
@@ -121,6 +122,10 @@ void mexFunction
         // get the degree of each index of X, where X is sparse or hypersparse
         //----------------------------------------------------------------------
 
+        // ensure the descriptor is present, and set GxB_SORT to true
+        OK (GrB_Descriptor_new (&desc)) ;
+        OK1 (desc, GxB_Desc_set (desc, GxB_SORT, true)) ;
+
         if (fmt == GxB_BY_COL)
         {
 
@@ -160,7 +165,7 @@ void mexFunction
                 // d = X*y using the PLUS_PAIR semiring
                 OK (GrB_Vector_new (&d, GrB_INT64, nrows)) ;
                 OK1 (d, GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y,
-                    NULL)) ;
+                    desc)) ;
             }
 
         }
@@ -203,7 +208,7 @@ void mexFunction
                 // d = y*X using the PLUS_PAIR semiring
                 OK (GrB_Vector_new (&d, GrB_INT64, ncols)) ;
                 OK1 (d, GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X,
-                    NULL)) ;
+                    desc)) ;
             }
         }
     }
@@ -215,6 +220,7 @@ void mexFunction
     OK (GrB_Vector_free (&y)) ;
     OK (GrB_Matrix_free (&T)) ;
     OK (GrB_Matrix_free (&X)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
     pargout [0] = gb_export (&d, KIND_GRB) ;
     GB_WRAPUP ;
 }

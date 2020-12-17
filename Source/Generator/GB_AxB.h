@@ -30,6 +30,7 @@ GrB_Info GB_Asaxpy3B
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 ) ;
 

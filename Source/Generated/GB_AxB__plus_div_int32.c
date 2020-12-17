@@ -315,6 +315,7 @@ GrB_Info GB_Asaxpy3B__plus_div_int32
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 )
 { 

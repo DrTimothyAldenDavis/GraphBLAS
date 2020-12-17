@@ -415,7 +415,7 @@ GrB_Info GB_selector
         A->x = Cx ; Cx = NULL ;
         A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
-        A->jumbled = A_jumbled ;
+        A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_Matrix_wait.
@@ -479,7 +479,7 @@ GrB_Info GB_selector
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
-        C->jumbled = A->jumbled ;
+        C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
 
         (*Chandle) = C ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;

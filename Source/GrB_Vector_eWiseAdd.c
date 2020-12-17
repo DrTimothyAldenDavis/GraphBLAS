@@ -23,7 +23,7 @@
     ASSERT (M == NULL || GB_VECTOR_OK (M)) ;                                \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
-        xx1, xx2, xx3) ;                                                    \
+        xx1, xx2, xx3, xx7) ;                                               \
     /* w<M> = accum (w,t) where t = u+v, u'+v, u+v', or u'+v' */            \
     info = GB_ewise (                                                       \
         (GrB_Matrix) w, C_replace,  /* w and its descriptor        */       \

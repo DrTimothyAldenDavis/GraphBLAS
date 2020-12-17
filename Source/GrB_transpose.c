@@ -46,7 +46,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, accum, A->type, Context)) ;

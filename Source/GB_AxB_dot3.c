@@ -299,7 +299,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    C->jumbled = GB_JUMBLED (M) ;
+    C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;

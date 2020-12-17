@@ -39,7 +39,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
         "&Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size, "
         "nvec, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_HyperCSR") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the matrix

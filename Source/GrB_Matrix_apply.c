@@ -39,7 +39,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -87,7 +87,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -137,7 +137,7 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, A_transpose, xx2) ;
+        xx1, A_transpose, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
