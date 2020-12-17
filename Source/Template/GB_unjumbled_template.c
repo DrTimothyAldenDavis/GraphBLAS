@@ -32,12 +32,12 @@
             //------------------------------------------------------------------
 
             bool jumbled = false ;
-            int64_t pA_start = Ap [k] ;     // ok: A is sparse
+            int64_t pA_start = Ap [k] ;
             int64_t pA_end   = Ap [k+1] ;
             int64_t ilast = -1 ;
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                int64_t i = Ai [pA] ;       // ok: A is sparse
+                int64_t i = Ai [pA] ;
                 if (i < ilast)
                 { 
                     jumbled = true ;

@@ -7,11 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DOT2 1
-#define GB_DOT3 0
-#define GB_DOT4 0
-#define GB_DOT3_PHASE1 0
-#define GB_DOT3_PHASE2 0
+#define GB_DOT2
 
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
@@ -96,7 +92,7 @@
         //----------------------------------------------------------------------
 
         #undef GB_MASK_IS_PRESENT
-        #include "GB_AxB_dot_meta16.c"
+        #include "GB_meta16_factory.c"
 
     }
     else
@@ -166,7 +162,7 @@
             const size_t msize = M->type->size ;
 
             #define GB_MASK_IS_PRESENT
-            #include "GB_AxB_dot_meta16.c"
+            #include "GB_meta16_factory.c"
             #undef GB_MASK_IS_PRESENT
 
         }
@@ -182,8 +178,4 @@
 #undef GB_DOT_SAVE_CIJ
 
 #undef GB_DOT2
-#undef GB_DOT3
-#undef GB_DOT4
-#undef GB_DOT3_PHASE1
-#undef GB_DOT3_PHASE2
 

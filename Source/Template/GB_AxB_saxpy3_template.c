@@ -42,8 +42,10 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
-    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
+    const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -51,6 +53,7 @@
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
+    const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
@@ -171,17 +174,15 @@
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
-                    if (!GBB (Bb, pB)) continue ;
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        if (!GBB (Ab, pA)) continue ;
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
-                        GB_MULT_A_ik_B_kj ;      // t = A(i,k) * B(k,j)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                        GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
                         #if GB_IS_ANY_MONOID
@@ -260,8 +261,7 @@
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
-                    if (!GBB (Bb, pB)) continue ;
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
@@ -347,15 +347,14 @@
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        if (!GBB (Ab, pA)) continue ;
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
@@ -545,8 +544,7 @@
                 GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 { 
-                    if (!GBB (Bb, pB)) continue ;
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
@@ -685,16 +683,14 @@
 
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
-                    if (!GBB (Bb, pB)) continue ;
-                    int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+                    GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                     GB_GET_A_k ;                // get A(:,k)
                     if (aknz == 0) continue ;
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        if (!GBB (Ab, pA)) continue ;
-                        int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                         GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                         int64_t i1 = i + 1 ;        // i1 = one-based index
                         int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
@@ -828,6 +824,7 @@
         #endif
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
+        bool task_C_jumbled = false ;
 
         if (taskid < nfine)
         {
@@ -908,7 +905,7 @@
                         pC++ ;
                     }
                 }
-                C_jumbled = true ;
+                task_C_jumbled = true ;
             }
 
         }
@@ -940,96 +937,13 @@
                     // phase5: coarse Gustavson task, C=A*B
                     //----------------------------------------------------------
 
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
-                        if (cjnz == 0) continue ;   // nothing to do
-                        GB_GET_B_j ;                // get B(:,j)
-                        #ifdef GB_IDENTITY
-                        if (cjnz == cvlen)          // C(:,j) is dense
-                        { 
-                            // this requires the monoid identity.  It is not
-                            // defined for the generic saxpy3.
-                            GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
-                            continue ;
-                        }
-                        #endif
-                        mark++ ;
-                        if (bjnz == 1
-                            #if GB_IS_ANY_PAIR_SEMIRING
-                            && !A_is_bitmap
-                            #endif
-                            )
-                        { 
-                            // C(:,j) = A(:,k)*B(k,j)
-                            if (!GBB (Bb, pB)) continue ;
-                            GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
-                        }
-                        else if (16 * cjnz > cvlen) // C(:,j) is not very sparse
-                        {
-                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                            {
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
-                                GB_GET_A_k ;                // get A(:,k)
-                                if (aknz == 0) continue ;
-                                GB_GET_B_kj ;               // bkj = B(k,j)
-                                // scan A(:,k)
-                                for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                                {
-                                    // get A(i,k)
-                                    if (!GBB (Ab, pA)) continue ;
-                                    int64_t i = GBI (Ai, pA, avlen) ;
-                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
-                                    if (Hf [i] != mark)
-                                    { 
-                                        // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark ;
-                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
-                                    }
-                                    else
-                                    { 
-                                        // C(i,j) += A(i,k) * B(k,j)
-                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
-                                    }
-                                }
-                            }
-                            GB_GATHER_ALL_C_j(mark) ;   // gather into C(:,j) 
-                        }
-                        else    // C(:,j) is very sparse
-                        {
-                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                            {
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
-                                GB_GET_A_k ;                // get A(:,k)
-                                if (aknz == 0) continue ;
-                                GB_GET_B_kj ;               // bkj = B(k,j)
-                                // scan A(:,k)
-                                for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                                {
-                                    // get A(i,k)
-                                    if (!GBB (Ab, pA)) continue ;
-                                    int64_t i = GBI (Ai, pA, avlen) ;
-                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
-                                    if (Hf [i] != mark)
-                                    { 
-                                        // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [i] = mark ;
-                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
-                                        Ci [pC++] = i ;      // ok: C is sparse
-                                    }
-                                    else
-                                    { 
-                                        // C(i,j) += A(i,k) * B(k,j)
-                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
-                                    }
-                                }
-                            }
-                            GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
-                        }
-                    }
+                    #if GB_IS_PERFORMANCE_CRITICAL_SEMIRING
+                    #define GB_SAXPY_COARSE_GUSTAVSON_PHASE5
+                    #include "GB_meta16_factory.c"
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_PHASE5
+                    #else
+                    #include "GB_AxB_saxpy3_coarseGus_phase5.c"
+                    #endif
 
                 }
                 else if (mask_is_M)
@@ -1070,8 +984,7 @@
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             { 
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                                GB_GET_B_kj_INDEX ;         // get k of B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
@@ -1101,8 +1014,7 @@
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             { 
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                                GB_GET_B_kj_INDEX ;         // get k of B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
@@ -1168,17 +1080,14 @@
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                                GB_GET_B_kj_INDEX ;         // get k of B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 // scan A(:,k)
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
-                                    // get A(i,k)
-                                    if (!GBB (Ab, pA)) continue ;
-                                    int64_t i = GBI (Ai, pA, avlen) ;
+                                    GB_GET_A_ik_INDEX ;     // get i of A(i,j)
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
                                     { 
@@ -1201,17 +1110,14 @@
                         {
                             for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
-                                if (!GBB (Bb, pB)) continue ;
-                                int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                                GB_GET_B_kj_INDEX ;         // get k of B(k,j)
                                 GB_GET_A_k ;                // get A(:,k)
                                 if (aknz == 0) continue ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 // scan A(:,k)
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
-                                    // get A(i,k)
-                                    if (!GBB (Ab, pA)) continue ;
-                                    int64_t i = GBI (Ai, pA, avlen) ;
+                                    GB_GET_A_ik_INDEX ;     // get i of A(i,j)
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
                                     { 
@@ -1335,8 +1241,7 @@
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         { 
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
                             GB_GET_B_kj ;               // bkj = B(k,j)
@@ -1368,8 +1273,7 @@
                             GB_SCAN_M_j_OR_A_k ;
                             #undef GB_IKJ
                         }
-                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
-                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1) ;
                     }
 
                 }
@@ -1461,16 +1365,14 @@
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;  // get B(k,j)
+                            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             if (aknz == 0) continue ;
                             GB_GET_B_kj ;               // bkj = B(k,j)
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                if (!GBB (Ab, pA)) continue ;
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
+                                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                                 for (GB_HASH (i))       // find i in hash
                                 {
                                     int64_t f = Hf [hash] ;
@@ -1497,12 +1399,12 @@
                                 }
                             }
                         }
-                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
-                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1) ;
                     }
                 }
             }
         }
+        C_jumbled = C_jumbled || task_C_jumbled ;
     }
 
     //--------------------------------------------------------------------------

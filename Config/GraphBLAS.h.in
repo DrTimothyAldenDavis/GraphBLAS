@@ -3393,16 +3393,16 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //
 // GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
 //      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
-//      SuiteSparse:GraphBLAS has three different methods, and the default
+//      SuiteSparse:GraphBLAS has four different heuristics, and the default
 //      method (GxB_DEFAULT) selects between them automatically.  The complete
 //      rule is in the User Guide.  The brief discussion here assumes all
 //      matrices are stored by column.  All methods compute the same result,
 //      except that floating-point roundoff may differ when working on
 //      floating-point data types.
 //
-//      GxB_AxB_SAXPY:  C(:,j)=A*B(:,j) is computed using a mix of Gustavson,
-//          Hash, and (in the future) the Heap method.  Each task in the
-//          parallel computation makes its own decision, via a heuristic.
+//      GxB_AxB_SAXPY:  C(:,j)=A*B(:,j) is computed using a mix of Gustavson
+//          and Hash methods.  Each task in the parallel computation makes its
+//          own decision between these two methods, via a heuristic.
 //
 //      GxB_AxB_GUSTAVSON:  This is the same as GxB_AxB_SAXPY, except that
 //          every task uses Gustavon's method, computing C(:,j)=A*B(:,j) via a
@@ -3418,9 +3418,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //      GxB_AxB_DOT: computes C(i,j) = A(:,i)'*B(:,j), for each entry C(i,j).
 //          A very specialized method that works well only if the mask is
 //          present, very sparse, and not complemented, when C is a dense
-//          vector or matrix, or when C is tiny.  It is impossibly slow if C is
-//          large and the mask is not present, since it takes Omega(m*n) time
-//          if C is m-by-n.
+//          vector or matrix, or when C is small.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field.  They are defined with the same integer value for both

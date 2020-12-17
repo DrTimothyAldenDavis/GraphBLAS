@@ -7,11 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DOT2 0
-#define GB_DOT3 1
-#define GB_DOT4 0
-#define GB_DOT3_PHASE1 0
-#define GB_DOT3_PHASE2 1
+#define GB_DOT3
+#define GB_DOT3_PHASE2
 
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
@@ -126,7 +123,7 @@
         const GB_void *GB_RESTRICT Mx = (GB_void *)
             (Mask_struct ? NULL : (M->x)) ;
         const size_t msize = M->type->size ;
-        #include "GB_AxB_dot_meta16.c"
+        #include "GB_meta16_factory.c"
     }
 
     C->nzombies = nzombies ;
@@ -135,9 +132,6 @@
 #undef GB_DOT_ALWAYS_SAVE_CIJ
 #undef GB_DOT_SAVE_CIJ
 
-#undef GB_DOT2
 #undef GB_DOT3
-#undef GB_DOT4
-#undef GB_DOT3_PHASE1
 #undef GB_DOT3_PHASE2
 

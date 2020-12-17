@@ -127,12 +127,3 @@
     }
 }
 
-#undef GB_A_IS_SPARSE
-#undef GB_A_IS_HYPER
-#undef GB_A_IS_BITMAP
-#undef GB_A_IS_FULL
-#undef GB_B_IS_SPARSE
-#undef GB_B_IS_HYPER
-#undef GB_B_IS_BITMAP
-#undef GB_B_IS_FULL
-

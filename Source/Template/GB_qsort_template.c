@@ -84,7 +84,7 @@ static inline int64_t GB_partition
 }
 
 //------------------------------------------------------------------------------
-// GB_quicksort: recursive quicksort
+// GB_quicksort: recursive single-threaded quicksort
 //------------------------------------------------------------------------------
 
 static void GB_quicksort    // sort A [0:n-1]

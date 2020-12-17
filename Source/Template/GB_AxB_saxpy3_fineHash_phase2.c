@@ -56,16 +56,14 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
-            if (!GBB (Bb, pB)) continue ;
-            int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
             GB_GET_B_kj ;               // bkj = B(k,j)
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                if (!GBB (Ab, pA)) continue ;
-                int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)
                 // is protected by the mask
@@ -109,16 +107,14 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
-            if (!GBB (Bb, pB)) continue ;
-            int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
             GB_GET_B_kj ;               // bkj = B(k,j)
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                if (!GBB (Ab, pA)) continue ;
-                int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)
                 // is protected by the mask

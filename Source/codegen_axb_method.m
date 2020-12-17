@@ -37,6 +37,11 @@ ztype_is_real = ~contains (ztype, 'FC') ;
 is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
     && ztype_is_real ;
 
+% for the 2 conventional semirings in MATLAB, which get extra optimization
+is_performance_critical = ...
+    isequal (addop, 'plus') && isequal (multop, 'times') && ...
+    (isequal (ztype, 'double') || isequal (ztype, 'GxB_FC64_t')) ;
+
 switch (ztype)
     case { 'bool' }
         ztype_ignore_overflow = false ;
@@ -145,6 +150,13 @@ else
     fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
 end
 
+if (is_performance_critical)
+    fprintf (f, 'define(`GB_is_performance_critical_semiring'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_performance_critical_semiring'', `0'')\n') ;
+end
+
+
 if (is_any)
     % the ANY monoid terminates on the first entry seen
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
@@ -157,9 +169,9 @@ elseif (~isempty (terminal))
         terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
+    % non-terminal monoids
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
-    fprintf (f, 'define(`GB_terminal_flag'', `;'')\n') ;
     op = '' ;
     if (ztype_is_real)
         switch (addop)
@@ -376,16 +388,18 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
+nprune = 40 ;
+
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +39 > Generated/GB_AxB__%s.c', ...
-name) ;
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated/GB_AxB__%s.c', ...
+nprune, name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +39 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated/GB_AxB__include.h', nprune) ;
 system (cmd) ;
 
 delete ('control.m4') ;

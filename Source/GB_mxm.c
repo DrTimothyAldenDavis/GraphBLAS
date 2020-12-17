@@ -39,6 +39,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 )
 {
+// GB_Global_timing_clear_all ( ) ;
 // double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
@@ -139,6 +140,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (1, ttt) ;
 // ttt = omp_get_wtime ( ) ;
+//  GBURBLE ("\n") ;
+//  for (int kk = 0 ; kk < 20 ; kk++)
+//  {
+//      double tttt = GB_Global_timing_get (kk) ;
+//      if (tttt > 0) GBURBLE ("phase %2d: %14.6f sec\n", kk, tttt) ;
+//  }
 
     if (done_in_place)
     { 

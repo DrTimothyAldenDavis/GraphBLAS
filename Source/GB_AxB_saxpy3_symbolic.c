@@ -68,8 +68,10 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
-    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -77,8 +79,9 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
@@ -268,46 +271,9 @@ void GB_AxB_saxpy3_symbolic
                     // Initially, Hf [...] < mark for all Hf.
                     // Hf [i] is set to mark when C(i,j) is found.
 
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        if (bjnz == 1 && !A_is_bitmap)
-                        { 
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;            // get A(:,k)
-                            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-                            continue ;
-                        }
-                        mark++ ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == cvlen && !A_is_bitmap)
-                            { 
-                                cjnz = cvlen ;  // A(:,k) is dense
-                                break ;         // so nnz(C(:,j)) = cvlen
-                            }
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                if (!GBB (Ab, pA)) continue ;
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                if (Hf [i] != mark)     // if true, i is new
-                                { 
-                                    Hf [i] = mark ; // mark C(i,j) as seen
-                                    cjnz++ ;        // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;            // ok: C is sparse
-                    }
+                    #define GB_SAXPY_COARSE_GUSTAVSON_PHASE1
+                    #include "GB_meta16_factory.c"
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_PHASE1
 
                 }
                 else if (mask_is_M)

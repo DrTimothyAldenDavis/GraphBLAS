@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot_meta16:  C=A'B, C<!M>=A'*B, or C<M>=A'*B via dot products
+// GB_meta16_factory: 16 cases of a method for A and B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // All 16 cases are handled: A and B are sparse, hyper, bitmap, or full.
-// For dot2, A and B are never hypersparse.
+
+#define GB_META16
 
 {
     if (A_is_sparse)
@@ -29,16 +30,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -56,16 +48,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -83,16 +66,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else
@@ -110,16 +84,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
     }
@@ -140,16 +105,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -167,16 +123,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -194,16 +141,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else
@@ -221,16 +159,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
     }
@@ -251,16 +180,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -278,16 +198,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -305,16 +216,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else
@@ -332,16 +234,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
     }
@@ -362,16 +255,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -389,16 +273,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -416,16 +291,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
+            #include "GB_meta16_methods.c"
 
         }
         else
@@ -443,17 +309,16 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
+            #include "GB_meta16_methods.c"
 
-            #if GB_DOT4
-            #include "GB_AxB_dot4_template.c"
-            #elif GB_DOT3_PHASE1
-            #include "GB_AxB_dot3_phase1_template.c"
-            #elif GB_DOT3_PHASE2
-            #include "GB_AxB_dot3_template.c"
-            #else
-            #include "GB_AxB_dot2_template.c"
-            #endif
         }
     }
 }
+
+//------------------------------------------------------------------------------
+// redefine macros for any sparity of A and B
+//------------------------------------------------------------------------------
+
+#undef GB_META16
+#include "GB_meta16_definitions.h"
 

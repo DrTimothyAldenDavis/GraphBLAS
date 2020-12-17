@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -96,6 +95,10 @@
 
 // 1 for the PLUS_PAIR_(real) semirings, not for the complex case
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
+    0
+
+// 1 for performance-critical semirings, which get extra optimization
+#define GB_IS_PERFORMANCE_CRITICAL_SEMIRING \
     0
 
 // declare the cij scalar

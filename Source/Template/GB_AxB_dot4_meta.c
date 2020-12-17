@@ -11,11 +11,7 @@
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.
 
-#define GB_DOT2 0
-#define GB_DOT3 0
-#define GB_DOT4 1
-#define GB_DOT3_PHASE1 0
-#define GB_DOT3_PHASE2 0
+#define GB_DOT4
 
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT
@@ -84,15 +80,11 @@
     // C += A'*B
     //--------------------------------------------------------------------------
 
-    #include "GB_AxB_dot_meta16.c"
+    #include "GB_meta16_factory.c"
 }
 
 #undef GB_DOT_ALWAYS_SAVE_CIJ
 #undef GB_DOT_SAVE_CIJ
 
-#undef GB_DOT2
-#undef GB_DOT3
 #undef GB_DOT4
-#undef GB_DOT3_PHASE1
-#undef GB_DOT3_PHASE2
 

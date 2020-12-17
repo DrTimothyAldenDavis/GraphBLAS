@@ -92,7 +92,6 @@ typedef struct
     GB_void *Hf ;       // Hf array for hash table (int8_t or int64_t)
     GB_void *Hx ;       // Hx array for hash table
     int64_t my_cjnz ;   // # entries in C(:,j) found by this fine task
-    int64_t flops ;     // # of flops in this task
     int leader ;        // leader fine task for the vector C(:,j)
     int team_size ;     // # of fine tasks in the team for vector C(:,j)
 }

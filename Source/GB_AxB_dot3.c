@@ -217,30 +217,24 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
-    #define GB_DOT2 0
-    #define GB_DOT3 1
-    #define GB_DOT4 0
-    #define GB_DOT3_PHASE1 1
-    #define GB_DOT3_PHASE2 0
+    #define GB_DOT3
+    #define GB_DOT3_PHASE1
 
     if (M_is_sparse && Mask_struct)
     {
         // special case: M is sparse and structural
         #define GB_MASK_SPARSE_AND_STRUCTURAL
-        #include "GB_AxB_dot_meta16.c"
+        #include "GB_meta16_factory.c"
         #undef GB_MASK_SPARSE_AND_STRUCTURAL
     }
     else
     {
         // general case: M sparse/hyper, structural/valued
-        #include "GB_AxB_dot_meta16.c"
+        #include "GB_meta16_factory.c"
     }
 
-    #undef GB_DOT2
     #undef GB_DOT3
-    #undef GB_DOT4
     #undef GB_DOT3_PHASE1
-    #undef GB_DOT3_PHASE2
 
     //--------------------------------------------------------------------------
     // free the current tasks and construct the tasks for the second phase
