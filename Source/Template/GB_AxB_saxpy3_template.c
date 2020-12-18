@@ -58,6 +58,8 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_jumbled = A->jumbled ;
+    const bool A_ok_for_binary_search = 
+        ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -69,6 +71,7 @@
     int64_t mvlen = 0 ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    const bool M_jumbled = GB_JUMBLED (M) ;
     if (M != NULL)
     { 
         Mp = M->p ;
@@ -323,7 +326,7 @@
 
                     #endif
 
-                    GB_SCAN_M_j_OR_A_k ;
+                    GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
                     #undef GB_IKJ
                 }
 
@@ -591,7 +594,7 @@
                             }                                                  \
                         }                                                      \
                     }
-                    GB_SCAN_M_j_OR_A_k ;
+                    GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
                     #undef GB_IKJ
                 }
 
@@ -938,11 +941,11 @@
                     //----------------------------------------------------------
 
                     #if GB_IS_PERFORMANCE_CRITICAL_SEMIRING
-                    #define GB_SAXPY_COARSE_GUSTAVSON_PHASE5
+                    #define GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE5
                     #include "GB_meta16_factory.c"
-                    #undef  GB_SAXPY_COARSE_GUSTAVSON_PHASE5
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE5
                     #else
-                    #include "GB_AxB_saxpy3_coarseGus_phase5.c"
+                    #include "GB_AxB_saxpy3_coarseGus_noM_phase5.c"
                     #endif
 
                 }
@@ -1005,7 +1008,7 @@
                                         GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
                                     }                                          \
                                 }
-                                GB_SCAN_M_j_OR_A_k ;
+                                GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
                                 #undef GB_IKJ
                             }
                             GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
@@ -1036,7 +1039,7 @@
                                         GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
                                     }                                          \
                                 }
-                                GB_SCAN_M_j_OR_A_k ;
+                                GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
                                 #undef GB_IKJ
                             }
                             GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
@@ -1213,9 +1216,9 @@
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                                 break ;
                         }
-                        // the task is finished: go to the next task
-                        continue ;
                     }
+                    else
+                    {
 
                     //----------------------------------------------------------
                     // M is sparse and scattered into Hf
@@ -1270,10 +1273,11 @@
                                     }                                          \
                                 }                                              \
                             }
-                            GB_SCAN_M_j_OR_A_k ;
+                            GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
                             #undef GB_IKJ
                         }
                         GB_SORT_AND_GATHER_HASHED_C_j (mark1) ;
+                    }
                     }
 
                 }
@@ -1338,9 +1342,9 @@
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                                 break ;
                         }
-                        // the task is finished: go to the next task
-                        continue ;
                     }
+                    else
+                    {
 
                     //----------------------------------------------------------
                     // M is sparse and scattered into Hf
@@ -1400,6 +1404,7 @@
                             }
                         }
                         GB_SORT_AND_GATHER_HASHED_C_j (mark1) ;
+                    }
                     }
                 }
             }

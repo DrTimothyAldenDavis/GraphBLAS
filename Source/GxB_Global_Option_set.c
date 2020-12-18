@@ -110,7 +110,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
-        // CUDA (in progress)
+        // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
@@ -134,12 +134,12 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
-        // Intel MKL (in progress)
+        // Intel MKL (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
-//      case GxB_GLOBAL_MKL :          // same as GxB_MKL
+//      case GxB_GLOBAL_MKL:           // same as GxB_MKL
 
-//          { 
+//          {
 //              va_start (ap, field) ;
 //              int use_mkl = va_arg (ap, int) ;
 //              va_end (ap) ;

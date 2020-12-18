@@ -95,32 +95,8 @@
 #include "GB_AxB__include.h"
 #endif
 
-//------------------------------------------------------------------------------
-// control parameters for generating parallel tasks
-//------------------------------------------------------------------------------
-
-#define GB_NTASKS_PER_THREAD 2
-#define GB_COSTLY 1.2
-#define GB_FINE_WORK 2
-#define GB_MWORK_ALPHA 0.01
-#define GB_MWORK_BETA 0.10
-
-//------------------------------------------------------------------------------
-// free workspace
-//------------------------------------------------------------------------------
-
-// This workspace is not needed in the GB_Asaxpy3B* worker functions.
-#define GB_FREE_INITIAL_WORK                                                \
-{                                                                           \
-    GB_FREE (Fine_fl) ;                                                     \
-    GB_FREE (Coarse_Work) ;                                                 \
-    GB_FREE (Coarse_initial) ;                                              \
-    GB_FREE (Fine_slice) ;                                                  \
-}
-
 #define GB_FREE_WORK                                                        \
 {                                                                           \
-    GB_FREE_INITIAL_WORK ;                                                  \
     GB_FREE (TaskList) ;                                                    \
     GB_FREE (Hi_all) ;                                                      \
     GB_FREE (Hf_all) ;                                                      \
@@ -131,160 +107,6 @@
 {                                                                           \
     GB_FREE_WORK ;                                                          \
     GB_Matrix_free (Chandle) ;                                              \
-}
-
-//------------------------------------------------------------------------------
-// GB_hash_table_size
-//------------------------------------------------------------------------------
-
-// flmax is the max flop count for computing A*B(:,j), for any vector j that
-// this task computes.  If the mask M is present, flmax also includes the
-// number of entries in M(:,j).  GB_hash_table_size determines the hash table
-// size for this task, which is twice the smallest power of 2 larger than
-// flmax.  If flmax is large enough, the hash_size is returned as cvlen, so
-// that Gustavson's method will be used instead of the Hash method.
-
-// By default, Gustavson vs Hash is selected automatically.  AxB_method can be
-// selected via the descriptor or a global setting, as the non-default
-// GxB_AxB_GUSTAVSON or GxB_AxB_HASH settings, to enforce the selection of
-// either of those methods.  However, if Hash is selected by the hash table
-// exceeds cvlen, then Gustavson's method is used instead.
-
-static inline int64_t GB_hash_table_size
-(
-    int64_t flmax,      // max flop count for any vector computed by this task
-    int64_t cvlen,      // vector length of C
-    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
-)
-{
-    // hash_size = 2 * (smallest power of 2 >= flmax)
-    double hlog = log2 ((double) flmax) ;
-    int64_t hash_size = ((int64_t) 2) << ((int64_t) floor (hlog) + 1) ;
-    bool use_Gustavson ;
-
-    if (AxB_method == GxB_AxB_GUSTAVSON)
-    { 
-        // always use Gustavson's method
-        use_Gustavson = true ;
-    }
-    else if (AxB_method == GxB_AxB_HASH)
-    { 
-        // always use Hash method, unless the hash_size >= cvlen
-        use_Gustavson = (hash_size >= cvlen) ;
-    }
-    else
-    { 
-        // default: auto selection:
-        // use Gustavson's method if hash_size is too big
-        use_Gustavson = (hash_size >= cvlen/16) ;
-    }
-
-    if (use_Gustavson)
-    { 
-        hash_size = cvlen ;
-    }
-    return (hash_size) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_create_coarse_task: create a single coarse task
-//------------------------------------------------------------------------------
-
-// Compute the max flop count for any vector in a coarse task, determine the
-// hash table size, and construct the coarse task.
-
-static inline void GB_create_coarse_task
-(
-    int64_t kfirst,     // coarse task consists of vectors kfirst:klast
-    int64_t klast,
-    GB_saxpy3task_struct *TaskList,
-    int taskid,         // taskid for this coarse task
-    int64_t *Bflops,    // size bnvec; cum sum of flop counts for vectors of B
-    int64_t cvlen,      // vector length of B and C
-    double chunk,
-    int nthreads_max,
-    int64_t *Coarse_Work,   // workspace for parallel reduction for flop count
-    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
-)
-{
-
-    //--------------------------------------------------------------------------
-    // determine the hash table size
-    //--------------------------------------------------------------------------
-
-    int64_t hsize ;
-
-    if (Bflops != NULL)
-    { 
-
-        //----------------------------------------------------------------------
-        // find the max # of flops for any vector in this task
-        //----------------------------------------------------------------------
-
-        int64_t nk = klast - kfirst + 1 ;
-        int nth = GB_nthreads (nk, chunk, nthreads_max) ;
-
-        // each thread finds the max flop count for a subset of the vectors
-        int tid ;
-        #pragma omp parallel for num_threads(nth) schedule(static)
-        for (tid = 0 ; tid < nth ; tid++)
-        {
-            int64_t my_flmax = 1, istart, iend ;
-            GB_PARTITION (istart, iend, nk, tid, nth) ;
-            for (int64_t i = istart ; i < iend ; i++)
-            { 
-                int64_t kk = kfirst + i ;
-                int64_t fl = Bflops [kk+1] - Bflops [kk] ;
-                my_flmax = GB_IMAX (my_flmax, fl) ;
-            }
-            Coarse_Work [tid] = my_flmax ;
-        }
-
-        // combine results from each thread
-        int64_t flmax = 1 ;
-        for (tid = 0 ; tid < nth ; tid++)
-        { 
-            flmax = GB_IMAX (flmax, Coarse_Work [tid]) ;
-        }
-
-        // check the parallel computation
-        #ifdef GB_DEBUG
-        int64_t flmax2 = 1 ;
-        for (int64_t kk = kfirst ; kk <= klast ; kk++)
-        {
-            int64_t fl = Bflops [kk+1] - Bflops [kk] ;
-            flmax2 = GB_IMAX (flmax2, fl) ;
-        }
-        ASSERT (flmax == flmax2) ;
-        #endif
-
-        hsize = GB_hash_table_size (flmax, cvlen, AxB_method) ;
-
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // flop count was not computed: use Gustavson
-        //----------------------------------------------------------------------
-
-        hsize = cvlen ;
-    }
-
-    //--------------------------------------------------------------------------
-    // define the coarse task
-    //--------------------------------------------------------------------------
-
-    TaskList [taskid].start   = kfirst ;
-    TaskList [taskid].end     = klast ;
-    TaskList [taskid].vector  = -1 ;
-    TaskList [taskid].hsize   = hsize ;
-    TaskList [taskid].Hi      = NULL ;      // assigned later
-    TaskList [taskid].Hf      = NULL ;      // assigned later
-    TaskList [taskid].Hx      = NULL ;      // assigned later
-    TaskList [taskid].my_cjnz = 0 ;         // unused
-    TaskList [taskid].leader  = taskid ;
-    TaskList [taskid].team_size = 1 ;
 }
 
 //------------------------------------------------------------------------------
@@ -320,6 +142,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool Mask_comp = Mask_comp_input ;
 
     (*mask_applied) = false ;
+    bool apply_mask = false ;
+
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
 
@@ -395,18 +219,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t *GB_RESTRICT Hi_all = NULL ;
     int64_t *GB_RESTRICT Hf_all = NULL ;
     GB_void *GB_RESTRICT Hx_all = NULL ;
-    int64_t *GB_RESTRICT Coarse_initial = NULL ;    // initial coarse tasks
-    int64_t *GB_RESTRICT Coarse_Work = NULL ;       // workspace for flop counts
-    GB_saxpy3task_struct *GB_RESTRICT TaskList = NULL ;
-    int64_t *GB_RESTRICT Fine_slice = NULL ;
-    int64_t *GB_RESTRICT Fine_fl = NULL ;
-
-    int ntasks = 0 ;
-    int ntasks_initial = 0 ;
-    size_t Hi_size_total = 0 ;
-    size_t Hf_size_total = 0 ;
-    size_t Hx_size_total = 0 ;
-    int64_t max_bjnz = 0 ;
+    GB_saxpy3task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -462,9 +275,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cvdim = bvdim ;
     int64_t cnvec = bnvec ;
 
-    // calloc Cp so it can be used as the Bflops workspace
     info = GB_new (Chandle, // sparse or hyper, new header
-        ctype, cvlen, cvdim, GB_Ap_calloc, true,
+        ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -496,43 +308,41 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
-    // phase0: create parallel tasks
+    // phase0: create parallel tasks and allocate workspace
     //==========================================================================
 
-    //--------------------------------------------------------------------------
-    // compute flop counts for each vector of B and C
-    //--------------------------------------------------------------------------
+    int nthreads, ntasks, nfine ;
+    bool M_dense_in_place = false ;
 
-    int64_t Mwork = 0 ;
-    int64_t *GB_RESTRICT Bflops ;
-    int64_t total_flops = -1 ;
-    double axbflops = -1 ;
-
-    if (nthreads_max == 1 && M == NULL && (GB_NNZ (A) + GB_NNZ (B) > cvlen)
-        && (AxB_method != GxB_AxB_HASH))
+    if (nthreads_max == 1 && M == NULL && (AxB_method != GxB_AxB_HASH) &&
+        (GB_NNZ (A) + GB_NNZ (B) > cvlen * nthreads_max))
     { 
-        // Skip the flopcount analysis if one thread being used, no mask is
-        // present, the # of entries in A and B is > cvlen, and the Hash method
-        // is not explicitly selected.  In this case, use Gustavson with a
-        // single thread (fine task if B has one vector, coarse otherwise).
-        // In this case, the flop count analysis is not needed.
+        // Skip the flopcount analysis if only a single thread is being used,
+        // no mask is present, the # of entries in A and B is > cvlen, and the
+        // Hash method is not explicitly selected.  In this case, use a single
+        // Gustavson task only (fine task if B has one vector, coarse
+        // otherwise).  In this case, the flop count analysis is not needed.
+        GB_OK (GB_AxB_saxpy3_slice_quick (C, A, B,
+            &TaskList, &ntasks, &nfine, &nthreads, Context)) ;
         GBURBLE ("(single-threaded Gustavson) ") ;
-        Bflops = NULL ;
     }
     else
     { 
-        Bflops = Cp ;  // Cp is used as workspace for Bflops
-        GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
-            Context)) ;
-        total_flops = Bflops [bnvec] ;
-        axbflops = total_flops - Mwork ;
-        GBURBLE ("axbwork %g ", axbflops) ;
-        if (Mwork > 0) GBURBLE ("mwork %g ", (double) Mwork) ;
+        // Do the flopcount analysis and create a set of well-balanced tasks in
+        // the general case.  This may select a single task for a single thread
+        // anyway, but this decision would be based on the analysis.
+        GB_OK (GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
+            &TaskList, &apply_mask, &M_dense_in_place, &ntasks, &nfine,
+            &nthreads, Context)) ;
     }
 
-    if (do_sort)
+    if (do_sort) GBURBLE ("sort ") ;
+
+    if (!apply_mask)
     {
-        GBURBLE ("sort ") ;
+        // disable the mask, if present
+        M = NULL ;
+        Mask_comp = false ;
     }
 
 // ttt = omp_get_wtime ( ) - ttt ;
@@ -540,414 +350,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
-    // determine if the mask M should be applied, or done later
-    //--------------------------------------------------------------------------
-
-    bool M_dense_in_place = false ;
-
-    if (M != NULL)
-    {
-
-        // If M is very large as compared to A*B, then it is too costly to
-        // apply during the computation of A*B.  In this case, compute C=A*B,
-        // ignoring the mask.  Tell the caller that the mask was not applied,
-        // so that it will be applied later in GB_mxm.
-
-        int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
-
-        if (GB_is_packed (M) 
-           && (AxB_method == GxB_DEFAULT || AxB_method == GxB_AxB_SAXPY))
-        {
-
-            // M is present but dense.  The work for M has not yet been added
-            // to Bflops.
-
-            // each vector M(:,j) has cvlen entries
-            ASSERT (M != NULL) ;
-            Mwork = cvlen * cvdim ;
-
-            if (axbflops < (double) Mwork * GB_MWORK_BETA)
-            { 
-                // Use the hash method for all tasks.  Do not scatter the mask
-                // into the Hf hash workspace.  The work for the mask is not
-                // accounted for in Bflops, so the hash tables can be small.
-                M_dense_in_place = true ;
-                AxB_method = GxB_AxB_HASH ;
-                GBURBLE ("(use dense mask in-place) ") ;
-            }
-            else
-            { 
-                // Use the Gustavson method for all tasks, and scatter M
-                // into the fine Gustavson workspace.  The work for M is not
-                // yet in the Bflops cumulative sum.  Add it now.
-                AxB_method = GxB_AxB_GUSTAVSON ;
-
-                int64_t kk ;
-                #pragma omp parallel for num_threads(nth) schedule(static)
-                for (kk = 0 ; kk <= bnvec ; kk++)
-                { 
-                    Bflops [kk] += cvlen * (kk+1) ;
-                }
-                total_flops = Bflops [bnvec] ;
-                GBURBLE ("(use dense mask) ") ;
-            }
-
-        }
-        else if (axbflops < ((double) Mwork * GB_MWORK_ALPHA))
-        {
-
-            // M is sparse but costly to use.  Do not use it during the
-            // computation of A*B.  Instead, compute C=A*B and then apply the
-            // mask later.
-
-            M = NULL ;
-            Mask_comp = false ;
-
-            int64_t kk ;
-            // GB_AxB_saxpy3_flopcount requires Bflops be set to zero here
-            #pragma omp parallel for num_threads(nth) schedule(static)
-            for (kk = 0 ; kk <= bnvec ; kk++)
-            { 
-                Bflops [kk] = 0 ;
-            }
-
-            // redo the flop count analysis, without the mask
-            GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, NULL, false, A, B,
-                Context)) ;
-            total_flops = Bflops [bnvec] ;
-            GBURBLE ("(discard mask) ") ;
-
-        }
-        else if (M != NULL)
-        { 
-            GBURBLE ("(use mask) ") ;
-        }
-    }
-
-    bool apply_mask = (M != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // determine # of threads and # of initial coarse tasks
-    //--------------------------------------------------------------------------
-
-    int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
-    ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
-
-    double target_task_size = ((double) total_flops) / ntasks_initial ;
-    target_task_size = GB_IMAX (target_task_size, chunk) ;
-    double target_fine_size = target_task_size / GB_FINE_WORK ;
-    target_fine_size = GB_IMAX (target_fine_size, chunk) ;
-
-    //--------------------------------------------------------------------------
-    // determine # of parallel tasks
-    //--------------------------------------------------------------------------
-
-    int nfine = 0 ;         // # of fine tasks
-    int ncoarse = 0 ;       // # of coarse tasks
-    max_bjnz = 0 ;          // max (nnz (B (:,j))) of fine tasks
-
-    // FUTURE: also use ultra-fine tasks that compute A(i1:i2,k)*B(k,j)
-
-    if (ntasks_initial > 1)
-    {
-
-        //----------------------------------------------------------------------
-        // construct initial coarse tasks
-        //----------------------------------------------------------------------
-
-        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial, false))
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        //----------------------------------------------------------------------
-        // split the work into coarse and fine tasks
-        //----------------------------------------------------------------------
-
-        for (int taskid = 0 ; taskid < ntasks_initial ; taskid++)
-        {
-            // get the initial coarse task
-            int64_t kfirst = Coarse_initial [taskid] ;
-            int64_t klast  = Coarse_initial [taskid+1] ;
-            int64_t task_ncols = klast - kfirst ;
-            int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
-
-            if (task_ncols == 0)
-            { 
-                // This coarse task is empty, having been squeezed out by
-                // costly vectors in adjacent coarse tasks.
-            }
-            else if (task_flops > 2 * GB_COSTLY * target_task_size)
-            {
-                // This coarse task is too costly, because it contains one or
-                // more costly vectors.  Split its vectors into a mixture of
-                // coarse and fine tasks.
-
-                int64_t kcoarse_start = kfirst ;
-
-                for (int64_t kk = kfirst ; kk < klast ; kk++)
-                {
-                    // jflops = # of flops to compute a single vector A*B(:,j)
-                    // where j == GBH (Bh, kk)
-                    double jflops = Bflops [kk+1] - Bflops [kk] ;
-                    // bjnz = nnz (B (:,j))
-                    int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]);
-
-                    if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
-                    {
-                        // A*B(:,j) is costly; split it into 2 or more fine
-                        // tasks.  First flush the prior coarse task, if any.
-                        if (kcoarse_start < kk)
-                        { 
-                            // vectors kcoarse_start to kk-1 form a single
-                            // coarse task
-                            ncoarse++ ;
-                        }
-
-                        // next coarse task (if any) starts at kk+1
-                        kcoarse_start = kk+1 ;
-
-                        // vectors kk will be split into multiple fine tasks
-                        max_bjnz = GB_IMAX (max_bjnz, bjnz) ;
-                        int team_size = ceil (jflops / target_fine_size) ;
-                        nfine += team_size ;
-                    }
-                }
-
-                // flush the last coarse task, if any
-                if (kcoarse_start < klast)
-                { 
-                    // vectors kcoarse_start to klast-1 form a single
-                    // coarse task
-                    ncoarse++ ;
-                }
-
-            }
-            else
-            { 
-                // This coarse task is OK as-is.
-                ncoarse++ ;
-            }
-        }
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // entire computation in a single fine or coarse task
-        //----------------------------------------------------------------------
-
-        if (bnvec == 1)
-        { 
-            // If B is a single vector, and is computed by a single thread,
-            // then a single fine task is used.
-            nfine = 1 ;
-            ncoarse = 0 ;
-        }
-        else
-        { 
-            // One thread uses a single coarse task if B is not a vector.
-            nfine = 0 ;
-            ncoarse = 1 ;
-        }
-    }
-
-    ntasks = ncoarse + nfine ;
-
-    //--------------------------------------------------------------------------
-    // allocate the tasks, and workspace to construct fine tasks
-    //--------------------------------------------------------------------------
-
-    TaskList    = GB_CALLOC (ntasks, GB_saxpy3task_struct) ;
-    Coarse_Work = GB_MALLOC (nthreads_max, int64_t) ;
-    if (max_bjnz > 0)
-    { 
-        // also allocate workspace to construct fine tasks
-        Fine_slice = GB_MALLOC (ntasks+1  , int64_t) ;
-        Fine_fl    = GB_MALLOC (max_bjnz+1, int64_t) ;
-    }
-
-    if (TaskList == NULL || Coarse_Work == NULL ||
-        (max_bjnz > 0 && (Fine_slice == NULL || Fine_fl == NULL)))
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // create the tasks
-    //--------------------------------------------------------------------------
-
-    if (ntasks_initial > 1)
-    {
-
-        //----------------------------------------------------------------------
-        // create the coarse and fine tasks
-        //----------------------------------------------------------------------
-
-        int nf = 0 ;        // fine tasks have task id 0:nfine-1
-        int nc = nfine ;    // coarse task ids are nfine:ntasks-1
-
-        for (int taskid = 0 ; taskid < ntasks_initial ; taskid++)
-        {
-            // get the initial coarse task
-            int64_t kfirst = Coarse_initial [taskid] ;
-            int64_t klast  = Coarse_initial [taskid+1] ;
-            int64_t task_ncols = klast - kfirst ;
-            int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
-
-            if (task_ncols == 0)
-            { 
-                // This coarse task is empty, having been squeezed out by
-                // costly vectors in adjacent coarse tasks.
-            }
-            else if (task_flops > 2 * GB_COSTLY * target_task_size)
-            {
-                // This coarse task is too costly, because it contains one or
-                // more costly vectors.  Split its vectors into a mixture of
-                // coarse and fine tasks.
-
-                int64_t kcoarse_start = kfirst ;
-
-                for (int64_t kk = kfirst ; kk < klast ; kk++)
-                {
-                    // jflops = # of flops to compute a single vector A*B(:,j)
-                    double jflops = Bflops [kk+1] - Bflops [kk] ;
-                    // bjnz = nnz (B (:,j))
-                    int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]);
-
-                    if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
-                    {
-                        // A*B(:,j) is costly; split it into 2 or more fine
-                        // tasks.  First flush the prior coarse task, if any.
-                        if (kcoarse_start < kk)
-                        { 
-                            // kcoarse_start:kk-1 form a single coarse task
-                            GB_create_coarse_task (kcoarse_start, kk-1,
-                                TaskList, nc++, Bflops, cvlen, chunk,
-                                nthreads_max, Coarse_Work, AxB_method) ;
-                        }
-
-                        // next coarse task (if any) starts at kk+1
-                        kcoarse_start = kk+1 ;
-
-                        // count the work for each entry B(k,j).  Do not
-                        // include the work to scan M(:,j), since that will
-                        // be evenly divided between all tasks in this team.
-                        int64_t pB_start = GBP (Bp, kk, bvlen) ;
-                        int nth = GB_nthreads (bjnz, chunk, nthreads_max) ;
-                        int64_t s ;
-                        #pragma omp parallel for num_threads(nth) \
-                            schedule(static)
-                        for (s = 0 ; s < bjnz ; s++)
-                        { 
-                            // get B(k,j)
-                            int64_t pB = pB_start + s ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;
-                            Fine_fl [s] = 1 ;
-                            if (!GBB (Bb, pB)) continue ;
-                            // fl = flop count for just A(:,k)*B(k,j)
-                            int64_t pA, pA_end ;
-                            int64_t pleft = 0 ;
-                            GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft,
-                                anvec-1, k, &pA, &pA_end) ;
-                            int64_t fl = pA_end - pA ;
-                            Fine_fl [s] = fl ;
-                            ASSERT (fl >= 0) ;
-                        }
-
-                        // cumulative sum of flops to compute A*B(:,j)
-                        GB_cumsum (Fine_fl, bjnz, NULL, nth) ;
-
-                        // slice B(:,j) into fine tasks
-                        int team_size = ceil (jflops / target_fine_size) ;
-                        ASSERT (Fine_slice != NULL) ;
-                        GB_pslice (&Fine_slice, Fine_fl, bjnz, team_size,
-                            false) ;
-
-                        // shared hash table for all fine tasks for A*B(:,j)
-                        int64_t hsize = 
-                            GB_hash_table_size (jflops, cvlen, AxB_method) ;
-
-                        // construct the fine tasks for C(:,j)=A*B(:,j)
-                        int leader = nf ;
-                        for (int fid = 0 ; fid < team_size ; fid++)
-                        { 
-                            int64_t pstart = Fine_slice [fid] ;
-                            int64_t pend   = Fine_slice [fid+1] ;
-                            int64_t fl = Fine_fl [pend] - Fine_fl [pstart] ;
-                            TaskList [nf].start  = pB_start + pstart ;
-                            TaskList [nf].end    = pB_start + pend - 1 ;
-                            TaskList [nf].vector = kk ;
-                            TaskList [nf].hsize  = hsize ;
-                            TaskList [nf].Hi = NULL ;   // assigned later
-                            TaskList [nf].Hf = NULL ;   // assigned later
-                            TaskList [nf].Hx = NULL ;   // assigned later
-                            TaskList [nf].my_cjnz = 0 ;
-                            TaskList [nf].leader = leader ;
-                            TaskList [nf].team_size = team_size ;
-                            nf++ ;
-                        }
-                    }
-                }
-
-                // flush the last coarse task, if any
-                if (kcoarse_start < klast)
-                { 
-                    // kcoarse_start:klast-1 form a single coarse task
-                    GB_create_coarse_task (kcoarse_start, klast-1, TaskList,
-                        nc++, Bflops, cvlen, chunk, nthreads_max,
-                        Coarse_Work, AxB_method) ;
-                }
-
-            }
-            else
-            { 
-                // This coarse task is OK as-is.
-                GB_create_coarse_task (kfirst, klast-1, TaskList, nc++, Bflops,
-                    cvlen, chunk, nthreads_max, Coarse_Work, AxB_method) ;
-            }
-        }
-
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // entire computation in a single fine or coarse task
-        //----------------------------------------------------------------------
-
-        // create a single coarse task: hash or Gustavson
-        GB_create_coarse_task (0, bnvec-1, TaskList, 0, Bflops, cvlen, 1, 1,
-            Coarse_Work, AxB_method) ;
-
-        if (bnvec == 1)
-        { 
-            // convert the single coarse task into a single fine task
-            TaskList [0].start  = 0 ;                   // first entry in B(:,0)
-            TaskList [0].end = GBP (Bp, 1, bvlen) - 1 ; // last entry in B(:,0)
-            TaskList [0].vector = 0 ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // free workspace used to create the tasks
-    //--------------------------------------------------------------------------
-
-    // Frees Fine_fl, Coarse_initial, Coarse_Work, and Fine_slice.  These do
-    // not need to be freed in the GB_Asaxpy3B worker below.
-
-    GB_FREE_INITIAL_WORK ;
-
-    // Bflops is no longer needed as an alias for Cp
-    Bflops = NULL ;
-
-    //==========================================================================
     // allocate the hash tables
-    //==========================================================================
+    //--------------------------------------------------------------------------
 
     // If Gustavson's method is used (coarse tasks):
     //
@@ -991,9 +395,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     size_t hx_pad = GB_ICEIL (64, csize) ;
     size_t hi_pad = 64 / sizeof (int64_t) ;
 
-    Hi_size_total = 0 ;
-    Hf_size_total = 0 ;
-    Hx_size_total = 0 ;
+    size_t Hi_size_total = 0 ;
+    size_t Hf_size_total = 0 ;
+    size_t Hx_size_total = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the total size of all hash tables

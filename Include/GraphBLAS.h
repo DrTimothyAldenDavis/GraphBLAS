@@ -30,7 +30,7 @@
 // Extensions with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS
 // but cannot be guaranteed to appear in all GraphBLAS implementations.
 
-// CUDA and MKL integration are in progress.
+// CUDA and MKL integration are in progress; do not use these methods.
 
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
@@ -175,7 +175,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 16, 2020 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "Dec 17, 2020 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -3411,24 +3411,24 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          be too large when many threads are used.
 //
 //      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
-//          task uses the Hash method.  Like the Heap method, it is very good
-//          for hypersparse matrices and uses very little workspace (but more
-//          workspace than the Heap method).
+//          task uses the Hash method.  It is very good for hypersparse
+//          matrices and uses very little workspace, and so it scales well to
+//          many threads.
 //
 //      GxB_AxB_DOT: computes C(i,j) = A(:,i)'*B(:,j), for each entry C(i,j).
 //          A very specialized method that works well only if the mask is
-//          present, very sparse, and not complemented, when C is a dense
+//          present, very sparse, and not complemented, or when C is a dense
 //          vector or matrix, or when C is small.
 //
-// GxB_SORT: GrB_mxm and other methods may return a matrix a 'jumbled' state,
-//      with indices out of order.  The sort is left pending.  Some methods can
-//      tolerate jumbled matrices on input, so this can be faster.  However, in
-//      some cases, it can be faster for GrB_mxm to sort its output as it is
-//      computed.  With GxB_SORT set to 0, the sort is left pending.  With
-//      GxB_SORT set to a nonzero value, then GrB_mxm typically sorts the
-//      resulting matrix C (but not always; this is just a hint).  If GrB_init
-//      is called with GrB_BLOCKING mode, the sort will always be done, and
-//      this setting has no effect.
+// GxB_SORT: GrB_mxm and other methods may return a matrix in a 'jumbled'
+//      state, with indices out of order.  The sort is left pending.  Some
+//      methods can tolerate jumbled matrices on input, so this can be faster.
+//      However, in some cases, it can be faster for GrB_mxm to sort its output
+//      as it is computed.  With GxB_SORT set to GxB_DEFAULT, the sort is left
+//      pending.  With GxB_SORT set to a nonzero value, GrB_mxm typically sorts
+//      the resulting matrix C (but not always; this is just a hint).  If
+//      GrB_init is called with GrB_BLOCKING mode, the sort will always be
+//      done, and this setting has no effect.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -3455,13 +3455,10 @@ typedef enum
     GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
                     // If <= GxB_DEFAULT, then the default is used.
 
-    // GPU control (DRAFT: in progress, do not use)
+    // MKL and GPU control (DRAFT: in progress, do not use)
     GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
-    // GxB_DESCRIPTOR_GPU_SET  = GxB_GPU_SET,       // FUTURE
-
-//  // MKL control (DRAFT: in progress, do not use)
-//  GxB_DESCRIPTOR_MKL = GxB_MKL,   // control usage of Intel MKL (DRAFT)
+//  GxB_DESCRIPTOR_MKL = GxB_MKL,
 
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35           // control sort in GrB_mxm
@@ -3618,7 +3615,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 //      GxB_Global_Option_set:  sets an option for all future matrices
 //      GxB_Global_Option_get:  queries current option for all future matrices
 
-#define GxB_HYPER 0     // (deprecated)
+#define GxB_HYPER 0     // (deprecated, use GxB_HYPER_SWITCH)
 
 typedef enum            // for global options or matrix options
 {
@@ -3648,7 +3645,7 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems.
                         // If <= GxB_DEFAULT, then the default is used.
 
-    GxB_BURBLE = 99,                // development only (bool *)
+    GxB_BURBLE = 99,    // diagnostic output (bool *)
 
     //------------------------------------------------------------
     // GxB_Global_Option_get only:
@@ -3681,17 +3678,12 @@ typedef enum            // for global options or matrix options
     GxB_SPARSITY_CONTROL = 32,      // sparsity control: 0 to 15; see below
 
     //------------------------------------------------------------
-    // DRAFT: do not use
+    // GPU and MKL options (DRAFT: do not use)
     //------------------------------------------------------------
 
-    // GPU control/status
-    GxB_GPU_COUNT = 20,             // # of GPUs (query only)
     GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
-    // GxB_GLOBAL_GPU_SET  = GxB_GPU_SET,       // FUTURE
-
-//  // MKL control
-//  GxB_GLOBAL_MKL = GxB_MKL,       // control usage of Intel MKL
+//  GxB_GLOBAL_MKL = GxB_MKL,
 
 } GxB_Option_Field ;
 
@@ -3731,7 +3723,7 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 //      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between all
 //          four sparsity structures.
 //      GxB_HYPERSPARSE: always hypersparse, taking O(nvals(A)) space.
-//      GxB_SPARSE: always in a sparse struture (compressed-sparse row/column,
+//      GxB_SPARSE: always in a sparse struture: compressed-sparse row/column,
 //          taking O(nrows+nvals(A)) space if stored by row, or
 //          O(ncols+nvals(A)) if stored by column.
 //      GxB_BITMAP: always in a bitmap struture, taking O(nrows*ncols) space.
@@ -3741,8 +3733,9 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 //
 // These options can be summed.  For example, to allow a matrix to be sparse
 // or hypersparse, but not bitmap or full, use GxB_SPARSE + GxB_HYPERSPARSE.
-// Since GxB_FULL can only be used when all entries are present, it has the
-// same effect as GxB_FULL + GxB_BITMAP.
+// Since GxB_FULL can only be used when all entries are present, matrices with
+// the just GxB_FULL control setting are stored in bitmap form if any entries
+// are not present.
 //
 // GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity) returns the
 // current data structure currently used for the matrix A (either hypersparse,
@@ -3890,7 +3883,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 
 // To get global options that can be queried but not modified:
 //
-//      GxB_get (GxB_MODE,          GrB_Mode *mode) ;
+//      GxB_get (GxB_MODE, GrB_Mode *mode) ;
 
 // To set/get a matrix option:
 //
@@ -3907,7 +3900,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
 //
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
-//      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, sparsity) ; // 0 to 15
+//      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, sparsity) ;
 //      GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *sparsity) ;
 
 // To get a matrix sparsity status (hypersparse/sparse/bitmap/full):
@@ -3944,11 +3937,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Descriptor d, GxB_NTHREADS, nthreads) ;
 //      GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
 //
-//      GxB_set (GrB_Descriptor d, GxB_SORT, sort) ;
-//      GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ;
-//
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_SORT, sort) ;
+//      GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ;
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \
@@ -7382,7 +7375,7 @@ GB_PUBLIC GrB_Semiring
     // Note that lor_pair, land_pair, and eq_pair are all identical to any_pair.
     // These 3 are marked below.
 
-    // purely boolean semirings (in the form GxB_(add monoid)_(multipy operator)_BOOL:
+    // purely boolean semirings in the form GxB_(add monoid)_(multipy operator)_BOOL:
     GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     ,
     GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , GxB_ANY_SECOND_BOOL    ,
     GxB_LOR_PAIR_BOOL/**/  , GxB_LAND_PAIR_BOOL/**/ , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL/**/   , GxB_ANY_PAIR_BOOL      ,
@@ -7524,7 +7517,7 @@ GB_PUBLIC GrB_Semiring
 // with GrB* names.  They are identical to 124 GxB* semirings defined above,
 // with the same name, except that GrB_LXNOR_LOR_SEMIRING_BOOL is identical to
 // GxB_EQ_LOR_BOOL (since GrB_EQ_BOOL == GrB_LXNOR).  The old names are listed
-// below alongside each new name; the new names are preferred.
+// below alongside each new name; the new GrB* names are preferred.
 
 // 12 kinds of GrB* semirings are available for all 10 real, non-boolean types:
 
@@ -8071,7 +8064,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
 
 // SuiteSparse:GraphBLAS supports all eight formats natively (CSR, CSC,
 // HyperCSR, and HyperCSC, BitmapR, BitmapC, FullR, FullC).  For vectors, only
-// CSC, BitmapC, and FullC formats are used).  On import, the all eight formats
+// CSC, BitmapC, and FullC formats are used.  On import, the all eight formats
 // take O(1) time and memory to import.  On export, if the GrB_Matrix or
 // GrB_Vector is already in this particular format, then the export takes O(1)
 // time and no memory copying is performed.

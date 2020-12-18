@@ -44,19 +44,19 @@
     const mask_t *GB_RESTRICT Mxx = (mask_t *) Mx ;                     \
     if (M_is_bitmap)                                                    \
     {                                                                   \
-        /* scan M(:,j) */                                               \
+        /* M is bitmap */                                               \
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
         {                                                               \
-            /* Hf [i] = M(i,j) */                                       \
+            /* if (M (i,j) == 1) mark Hf [i] */                         \
             if (Mb [pM] && Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;  \
         }                                                               \
     }                                                                   \
     else                                                                \
     {                                                                   \
-        /* scan M(:,j) */                                               \
+        /* M is hyper, sparse, or full */                               \
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
         {                                                               \
-            /* Hf [i] = M(i,j) */                                       \
+            /* if (M (i,j) == 1) mark Hf [i] */                         \
             if (Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;             \
         }                                                               \
     }                                                                   \
@@ -70,20 +70,22 @@ break ;
 #define GB_SCATTER_M_j(pMstart,pMend,mark)                                  \
     if (Mx == NULL)                                                         \
     {                                                                       \
-        /* mask is structural, not valued */                                \
+        /* M is structural, not valued */                                   \
         if (M_is_bitmap)                                                    \
         {                                                                   \
+            /* M is bitmap */                                               \
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
-                /* Hf [i] = M(i,j) */                                       \
+                /* if (M (i,j) is present) mark Hf [i] */                   \
                 if (Mb [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;              \
             }                                                               \
         }                                                                   \
         else                                                                \
         {                                                                   \
+            /* M is hyper, sparse, or full */                               \
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
-                /* Hf [i] = M(i,j) */                                       \
+                /* mark Hf [i] */                                           \
                 Hf [GBI (Mi, pM, mvlen)] = mark ;                           \
             }                                                               \
         }                                                                   \
@@ -101,9 +103,9 @@ break ;
             case 16:                                                        \
             {                                                               \
                 const uint64_t *GB_RESTRICT Mxx = (uint64_t *) Mx ;         \
-                /* scan M(:,j) */                                           \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
+                    /* if (M (i,j) == 1) mark Hf [i] */                     \
                     if (!GBB (Mb, pM)) continue ;                           \
                     if (Mxx [2*pM] || Mxx [2*pM+1])                         \
                     {                                                       \
@@ -121,7 +123,7 @@ break ;
 
 // hash M(:,j) into Hf and Hi for coarse hash task, C<M>=A*B or C<!M>=A*B
 #define GB_HASH_M_j                                                     \
-    for (int64_t pM = pM_start ; pM < pM_end ; pM++) /* scan M(:,j) */  \
+    for (int64_t pM = pM_start ; pM < pM_end ; pM++)                    \
     {                                                                   \
         GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
         if (!mij) continue ;    /* skip if M(i,j)=0 */                  \

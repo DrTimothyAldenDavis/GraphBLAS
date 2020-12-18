@@ -8,12 +8,14 @@ Version 4.0.1, TODO::, 2020
     * GrB_*_extractTuples: may return indices out of order
     * removed internal features: GBI iterator, slice and hyperslice matrices
     * bitmap/full matrices and vectors added
+    * GxB_SPARSITY_CONTROL, GxB_SPARSITY_STATUS added: for matrix get/set
     * positional operators and semirings: GxB_FIRSTI_INT32 and related ops
     * jumbled matrices: sort left pending, like zombies and pending tuples
     * GxB_get/set: added GxB_SPARSITY_* (hyper, sparse, bitmap, or full)
     * GxB_HYPER: enum renamed to GxB_HYPER_SWITCH
+    * GxB_BITMAP_SWITCH added: for matrix get/set and global get/set
     * GxB*import/export: API modified
-    * GxB_SelectOp: nrows, ncols removed from function signature
+    * GxB_SelectOp: nrows and ncols removed from function signature
     * OpenMP tasking removed from mergesort: just as fast; now ports to Windows
     * (21) bug fix: A({lo,hi})=scalar in MATLAB; A(lo:hi)=scalar was OK
 

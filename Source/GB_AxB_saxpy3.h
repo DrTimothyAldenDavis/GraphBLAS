@@ -167,5 +167,46 @@ GrB_Info GB_AxB_saxpy3_generic
     GB_Context Context
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_slice_balanced: create balanced parallel tasks for saxpy3
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AxB_saxpy3_slice_balanced
+(
+    // inputs
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix M,             // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    // outputs
+    GB_saxpy3task_struct **TaskList_handle,
+    bool *apply_mask,               // if true, apply M during sapxy3
+    bool *M_dense_in_place,         // if true, use M in-place
+    int *ntasks,                    // # of tasks created (coarse and fine)
+    int *nfine,                     // # of fine tasks created
+    int *nthreads,                  // # of threads to use
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_slice_quick: create a single sequential task for saxpy3
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AxB_saxpy3_slice_quick
+(
+    // inputs
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    // outputs
+    GB_saxpy3task_struct **TaskList_handle,
+    int *ntasks,                    // # of tasks created (coarse and fine)
+    int *nfine,                     // # of fine tasks created
+    int *nthreads,                  // # of threads to use
+    GB_Context Context
+) ;
+
 #endif
 

@@ -381,8 +381,7 @@ void mexFunction
     // CUDA
     //--------------------------------------------------------------------------
 
-    int gpu_count = -1 ;
-    OK (GxB_Global_Option_get_(GxB_GPU_COUNT, &gpu_count)) ;
+    int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("gpu count: %d\n", gpu_count) ;
 
     GrB_Desc_Value gpu_control = -99 ;

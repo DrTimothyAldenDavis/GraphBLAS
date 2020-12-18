@@ -4649,8 +4649,8 @@ void mexFunction
     dgunk->out = 999 ;
     x_bool = false ;
     Context->where = "GB_Descriptor_get" ;
-    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL,
-        Context)) ;
+    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
+        Context)) ; 
     CHECK (x_bool == false) ;
     dgunk->out = GxB_DEFAULT ;
 

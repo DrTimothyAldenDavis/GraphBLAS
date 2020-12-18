@@ -81,7 +81,9 @@ GrB_Info axb (GB_Context Context)
         false,      // flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, Context) ;
+        AxB_method,
+        true,       // do the sort
+        Context) ;
 
     GrB_Monoid_free_(&add) ;
     GrB_Semiring_free_(&semiring) ;
@@ -171,7 +173,9 @@ GrB_Info axb_complex (GB_Context Context)
         false,      // flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, Context) ;
+        AxB_method,
+        true,       // do the sort
+        Context) ;
 
     GrB_Matrix_free_(&Bconj) ;
     GrB_Matrix_free_(&Aconj) ;

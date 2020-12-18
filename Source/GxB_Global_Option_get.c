@@ -32,7 +32,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
     {
 
         //----------------------------------------------------------------------
-        // hyper_switch
+        // matrix format
         //----------------------------------------------------------------------
 
         case GxB_HYPER_SWITCH : 
@@ -46,10 +46,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // bitmap_switch
-        //----------------------------------------------------------------------
-
         case GxB_BITMAP_SWITCH : 
 
             {
@@ -60,10 +56,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 (*bitmap_switch) = (double) GB_Global_bitmap_switch_get ( ) ;
             }
             break ;
-
-        //----------------------------------------------------------------------
-        // matrix format (CSR or CSC)
-        //----------------------------------------------------------------------
 
         case GxB_FORMAT : 
 
@@ -123,7 +115,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // SuiteSparse:GraphBLAS version, etc
+        // SuiteSparse:GraphBLAS version, date, license, etc
         //----------------------------------------------------------------------
 
         case GxB_LIBRARY_NAME : 
@@ -217,7 +209,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // GraphBLAS API version, tec
+        // GraphBLAS API version, date, etc
         //----------------------------------------------------------------------
 
         case GxB_API_VERSION : 
@@ -282,7 +274,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // CUDA (in progress)
+        // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
@@ -307,22 +299,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_GPU_COUNT : 
-
-            {
-                va_start (ap, field) ;
-                int *gpu_count = va_arg (ap, int *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (gpu_count) ;
-                (*gpu_count) = GB_Global_gpu_count_get ( ) ;
-            }
-            break ;
-
         //----------------------------------------------------------------------
-        // Intel MKL (in progress)
+        // Intel MKL (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
-//      case GxB_GLOBAL_MKL :           // same as GxB_MKL
+//      case GxB_GLOBAL_MKL:            // same as GxB_MKL
 
 //          {
 //              va_start (ap, field) ;

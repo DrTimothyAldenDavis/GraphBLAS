@@ -197,6 +197,10 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     }                                                       \
 }
 
+//------------------------------------------------------------------------------
+// GB_is_dense
+//------------------------------------------------------------------------------
+
 static inline bool GB_is_dense
 (
     const GrB_Matrix A
@@ -220,6 +224,10 @@ static inline bool GB_is_dense
     bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
     return (ok && (anzmax == GB_NNZ (A))) ;
 }
+
+//------------------------------------------------------------------------------
+// GB_as_if_full
+//------------------------------------------------------------------------------
 
 static inline bool GB_as_if_full
 (
@@ -250,6 +258,10 @@ static inline bool GB_as_if_full
     return (ok && (anzmax == GB_NNZ (A))) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_is_packed
+//------------------------------------------------------------------------------
+
 static inline bool GB_is_packed
 (
     const GrB_Matrix A
@@ -263,25 +275,10 @@ static inline bool GB_is_packed
     // it cannot be converted to full unless GB_is_dense (A) is also true
     // (it must have all entries present).
 
-    if (A == NULL)
-    { 
-        return (false) ;
-    }
-    if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
-    { 
-        // A is full or bitmap
-        return (true) ;
-    }
-    if (GB_ANY_PENDING_WORK (A))
-    { 
-        // A is sparse or hypersparse with pending work
-        return (false) ;
-    }
-    // A is sparse or hypersparse: check if all entries present
-    GrB_Index anzmax ;
-    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
-    return (ok && (anzmax == GB_NNZ (A))) ;
+    return (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
 }
+
+//------------------------------------------------------------------------------
 
 GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 (

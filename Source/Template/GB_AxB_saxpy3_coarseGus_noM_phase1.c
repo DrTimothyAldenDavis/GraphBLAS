@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_coarseGus_phase1: symbolic analysis for GB_AxB_saxpy3
+// GB_AxB_saxpy3_coarseGus_noM_phase1: symbolic coarse Gustavson, no mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -9,7 +9,12 @@
 
 // This method is #include'd in GB_meta16_methods.c, via GB_meta16_factory.c,
 // and used by GB_AxB_saxpy3_symbolic.  It is selected by the #define of
-// GB_SAXPY_COARSE_GUSTAVSON_PHASE1.
+// GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE1.
+
+//------------------------------------------------------------------------------
+
+// Initially, Hf [...] < mark for all Hf.
+// Hf [i] is set to mark when C(i,j) is found.
 
 {
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
@@ -38,7 +43,7 @@
         #endif
 
         //----------------------------------------------------------------------
-        // general case: count nnz in C(:,j)
+        // count nnz in C(:,j)
         //----------------------------------------------------------------------
 
         const int64_t f = (++mark) ;

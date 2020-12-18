@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_coarseHash_phase1:
+// GB_AxB_saxpy3_coarseHash_phase1: symbolic coarse Hash, optional dense mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,7 +10,7 @@
 {
 
     //--------------------------------------------------------------------------
-    // phase1: coarse hash task, C=A*B
+    // phase1: coarse hash task, C=A*B, or C<#M>=A*B if M is dense
     //--------------------------------------------------------------------------
 
     // Initially, Hf [...] < mark for all of Hf.
@@ -26,8 +26,19 @@
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
         GB_GET_B_j ;            // get B(:,j)
-        Cp [kk] = 0 ;           // ok: C is sparse
+        Cp [kk] = 0 ;
+
+        //----------------------------------------------------------------------
+        // special case when B(:,j) is empty
+        //----------------------------------------------------------------------
+
+        #if ( GB_B_IS_SPARSE || GB_B_IS_HYPER )
         if (bjnz == 0) continue ;
+        #endif
+
+        //----------------------------------------------------------------------
+        // get M(:,j), or handle the case when B(:,j) has one entry
+        //----------------------------------------------------------------------
 
         #ifdef GB_CHECK_MASK_ij
 
@@ -35,9 +46,6 @@
             // jumbled, with all entries present in the entire matrix).  Get
             // pointers Mjb and Mjx into the M(:,j) vector.
             GB_GET_M_j
-            #ifndef M_SIZE
-            #define M_SIZE 1
-            #endif
             const M_TYPE *GB_RESTRICT Mjx = Mask_struct ? NULL :
                 ((M_TYPE *) Mx) + (M_SIZE * pM_start) ;
             const int8_t *GB_RESTRICT Mjb = M_is_bitmap ? (Mb+pM_start) : NULL ;
@@ -45,17 +53,24 @@
         #else
 
             // M is not present
-            if (bjnz == 1 && (A_is_sparse || A_is_hyper))
+            #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
+            if (bjnz == 1)
             { 
                 GB_GET_B_kj_INDEX ;     // get index k of B(k,j)
                 GB_GET_A_k ;            // get A(:,k)
                 Cp [kk] = aknz ;
                 continue ;
             }
+            #endif
 
         #endif
 
         mark++ ;
+
+        //----------------------------------------------------------------------
+        // count nnz in C(:,j)
+        //----------------------------------------------------------------------
+
         int64_t cjnz = 0 ;
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
@@ -64,7 +79,7 @@
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j) is protected by
                 // the mask
@@ -91,15 +106,11 @@
                     // empty slot found, insert C(i,j)
                     Hf [hash] = mark ;
                     Hi [hash] = i ;
-                    cjnz++ ;            // C(i,j) is a new entry.
+                    cjnz++ ;            // C(i,j) is a new entry
                 }
             }
         }
-        // count the entries in C(:,j)
-        Cp [kk] = cjnz ;        // ok: C is sparse
+        Cp [kk] = cjnz ;                // count the entries in C(:,j)
     }
 }
-
-#undef M_TYPE
-#undef M_SIZE
 

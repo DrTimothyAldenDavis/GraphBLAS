@@ -82,7 +82,9 @@ GrB_Info axb (GB_Context Context, bool cprint)
         false,      // no flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, Context) ;
+        AxB_method,
+        true,       // do the sort
+        Context) ;
 
     if (C != NULL)
     {

@@ -4,6 +4,7 @@ function test94
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+addpath ('../Demo/MATLAB') ;
 T = load ('../Demo/Matrix/west0067') ;
 n = max (max (T (:, 1:2))) + 1 ;
 A = sparse (1+T(:,1), 1+T(:,2), T(:,3), n, n) ;

@@ -258,53 +258,46 @@
 // GB_SCAN_M_j_OR_A_k: compute C(:,j) using linear scan or binary search
 //------------------------------------------------------------------------------
 
-
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #undef  GB_SCAN_M_j_OR_A_k
-#define GB_SCAN_M_j_OR_A_k                                              \
-{                                                                       \
-    if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen && aknz < avlen  \
-        && !A_jumbled)                                                  \
-    {                                                                   \
-        /* M and A are both sparse, and nnz(M(:,j)) much less than */   \
-        /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k).*/ \
-        /* This requires that A is not jumbled. */                      \
-        int64_t pA = pA_start ;                                         \
-        for (int64_t pM = pM_start ; pM < pM_end ; pM++)                \
-        {                                                               \
-            GB_GET_M_ij (pM) ;      /* get M(i,j) */                    \
-            if (!mij) continue ;    /* skip if M(i,j)=0 */              \
-            int64_t i = Mi [pM] ;                                       \
-            bool found ;            /* search for A(i,k) */             \
-            int64_t apright = pA_end - 1 ;                              \
-            /* the binary search can only be done if A is not jumbled */\
-            GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;              \
-            if (found)                                                  \
-            {                                                           \
-                /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */\
-                /* M(i,j) is now known to be equal to 1, so there are */\
-                /* cases in the GB_IKJ operation that can never */      \
-                /* occur.  This could be pruned from the GB_IKJ */      \
-                /* operation, but then this operation would differ */   \
-                /* from the GB_IKJ operation in the linear-time scan */ \
-                /* of A(:,j), below.  It's unlikely that pruning this */\
-                /* case would lead to much performance improvement. */  \
-                GB_IKJ ;                                                \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-    else                                                                \
-    {                                                                   \
-        /* A(:,j) is sparse enough relative to M(:,j) */                \
-        /* M and/or A can dense, and either can be jumbled. */          \
-        /* scan A(:,k), and lookup M(i,j) (in the hash table) */        \
-        for (int64_t pA = pA_start ; pA < pA_end ; pA++)                \
-        {                                                               \
-            GB_GET_A_ik_INDEX ;     /* get index i of A(i,j) */         \
-            /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */  \
-            /* M(i,j) may be 0 or 1, as given in the hash table */      \
-            GB_IKJ ;                                                    \
-        }                                                               \
-    }                                                                   \
+#define GB_SCAN_M_j_OR_A_k(A_ok_for_binary_search)                          \
+{                                                                           \
+    if (A_ok_for_binary_search && aknz > 256 && mjnz_much < aknz &&         \
+        mjnz < mvlen && aknz < avlen)                                       \
+    {                                                                       \
+        /* M and A are both sparse, and nnz(M(:,j)) is much less than */    \
+        /* nnz(A(:,k)); scan M(:,j), and do binary search for A(i,k).*/     \
+        /* This requires that A is not jumbled. */                          \
+        int64_t pA = pA_start ;                                             \
+        for (int64_t pM = pM_start ; pM < pM_end ; pM++)                    \
+        {                                                                   \
+            GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
+            if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
+            int64_t i = Mi [pM] ;                                           \
+            bool found ;            /* search for A(i,k) */                 \
+            if (M_jumbled) pA = pA_start ;                                  \
+            int64_t apright = pA_end - 1 ;                                  \
+            GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;                  \
+            if (found)                                                      \
+            {                                                               \
+                /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */    \
+                /* M(i,j) is always 1, as given in the hash table */        \
+                GB_IKJ ;                                                    \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* A(:,j) is sparse enough relative to M(:,j) */                    \
+        /* M and/or A can dense, and either can be jumbled. */              \
+        /* scan A(:,k), and lookup M(i,j) (in the hash table) */            \
+        for (int64_t pA = pA_start ; pA < pA_end ; pA++)                    \
+        {                                                                   \
+            GB_GET_A_ik_INDEX ;     /* get index i of A(i,j) */             \
+            /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */      \
+            /* M(i,j) may be 0 or 1, as given in the hash table */          \
+            GB_IKJ ;                                                        \
+        }                                                                   \
+    }                                                                       \
 }
 
