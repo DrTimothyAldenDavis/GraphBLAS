@@ -385,7 +385,7 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 //      By default, all GrB_Matrices are held in CSR form, unless they are
 //      n-by-1 (then they are CSC).  The GrB_vector is always CSC.
 
-// (2) If A->sparsity is GxB_AUTO_SPARSITY, then the following rules are used
+// (2) If A->sparsity is 15, then the following rules are used
 //      to control the sparsity structure:
 //
 //      (a) When a matrix is created, it is empty and starts as hypersparse,

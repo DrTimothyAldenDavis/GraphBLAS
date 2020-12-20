@@ -28,12 +28,14 @@ ops = {
     '<'
     '<=' } ;
 
-for k = 1:length(ops)
+nops = length (ops) ;
+for k = 1:nops
     GrB.selectopinfo (ops {k}) ;
 end
 
 fprintf ('\n\n') ;
 GrB.selectopinfo
 
+fprintf ('# of select ops: %d\n', nops) ;
 fprintf ('gbtest71: all tests passed\n') ;
 

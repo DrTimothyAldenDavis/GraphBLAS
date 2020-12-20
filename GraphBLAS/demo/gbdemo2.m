@@ -38,6 +38,10 @@ function gbdemo2 (bnz)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% reset to the default number of threads
+maxNumCompThreads ('automatic') ;
+GrB.clear ;
+
 nthreads = GrB.threads ;
 help gbdemo2
 fprintf ('\n# of threads used in GraphBLAS: %d\n\n', nthreads) ;

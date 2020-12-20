@@ -16,6 +16,8 @@
         // C<#M> += A*B using coarse tasks
         //----------------------------------------------------------------------
 
+        // TODO: this method is slow when bvdim is large
+
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)

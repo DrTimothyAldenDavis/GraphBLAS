@@ -42,8 +42,8 @@
 //    #define GxB_SPARSE      2   // sparse form
 //    #define GxB_BITMAP      4   // a bitmap
 //    #define GxB_FULL        8   // full (all entries must be present)
-//    // the default is to store the matrix in any form:
-//    #define GxB_AUTO_SPARSITY 15
+//    // the default is to store the matrix as hyper, sparse, or full
+//    #define GxB_AUTO_SPARSITY (GxB_HYPERSPARSE + GxB_SPARSE + GxB+FULL)
 
 #include "GB_mex.h"
 

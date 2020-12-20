@@ -13,7 +13,7 @@
 % GraphBLAS is not only useful for creating graph algorithms; it also
 % supports a wide range of sparse matrix data types and operations.
 % MATLAB can compute C=A*B with just two semirings: 'plus.times.double'
-% and 'plus.times.complex' for complex matrices.  GraphBLAS has 1,473
+% and 'plus.times.complex' for complex matrices.  GraphBLAS has 1,553
 % unique built-in semirings, such as 'max.plus'
 % (https://en.wikipedia.org/wiki/Tropical_semiring).  These semirings can
 % be used to construct a wide variety of graph algorithms, based on
@@ -25,8 +25,12 @@
 % single complex (with MATLAB matrices, these types can only be held in
 % full matrices).
 
-clear
-GrB.clear
+% reset to the default number of threads
+clear all
+maxNumCompThreads ('automatic') ;
+GrB.clear ;
+fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
+
 format compact
 rng ('default') ;
 X = 100 * rand (2) ;
@@ -165,10 +169,9 @@ GrB.type (C2)
 % The C interface for SuiteSparse:GraphBLAS allows for arbitrary types
 % and operators to be constructed.  However, the MATLAB interface to
 % SuiteSparse:GraphBLAS is restricted to pre-defined types and operators:
-% a mere 13 types, 204 unary operators, 385 binary operators, 77 monoids,
-% 16 select operators, and 2,438 semirings (1,473 of which are unique,
-% since some binary operators are equivalent: 'min.logical' and
-% '&.logical' are the same thing, for example).
+% a mere 13 types, 212 unary operators, 401 binary operators, 77 monoids,
+% 22 select operators (each of which can be used for all 13 types),
+% and 2,518 semirings.
 %
 % That gives you a lot of tools to create all kinds of interesting
 % graph algorithms.  For example:
@@ -180,6 +183,7 @@ GrB.type (C2)
 % See 'help GrB.binopinfo' for a list of the binary operators, and
 % 'help GrB.monoidinfo' for the ones that can be used as the additive
 % monoid in a semiring.  'help GrB.unopinfo' lists the unary operators.
+% 'help GrB.semiringinfo' descripts the semirings.
 
 %% 
 help GrB.binopinfo
@@ -189,6 +193,9 @@ help GrB.monoidinfo
 
 %% 
 help GrB.unopinfo
+
+%% 
+help GrB.semiringinfo
 
 %% Element-wise operations
 % Binary operators can be used in element-wise matrix operations, like

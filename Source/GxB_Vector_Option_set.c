@@ -44,10 +44,8 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                if (sparsity <= 0 || sparsity > GxB_AUTO_SPARSITY)
+                if (sparsity <= GxB_DEFAULT || sparsity > 15)
                 { 
-                    // GxB_DEFAULT is zero, so this is changed to
-                    // GxB_AUTO_SPARSITY.
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
                 // a GrB_Vector cannot be hypersparse, but v->sparsity can be

@@ -81,7 +81,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         IF (mxGetN (opaque) != 9, ".s wrong size") ;
         int64_t *s = mxGetInt64s (opaque) ;
         A->hyper_switch   = GxB_HYPER_DEFAULT ;
-        A->bitmap_switch  = 0.125 ;
+        A->bitmap_switch  = GxB_BITMAP_SWITCH_DEFAULT ;
         A->plen          = s [0] ;
         A->vlen          = s [1] ;
         A->vdim          = s [2] ;

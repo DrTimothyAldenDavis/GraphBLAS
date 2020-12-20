@@ -3,11 +3,11 @@ function test182
 %
 % This test triggers the C<M>=A assignment where C starts out as sparse with
 % has many pending tuples, and is converted to bitmap just before the
-% assignment.  In this case, C is the vector w.  If w_sparsity is
-% GxB_AUTO_SPARSITY (15) and 'wait' is false, then it starts the w<v>=sum(A)
-% reduction with many pending tuples, and converts w from sparse/hyper with
-% many pending tuples into a bitmap vector.  The outputs w, v, and A should be
-% the same, regardless of the input parameter s.
+% assignment.  In this case, C is the vector w.  If w_sparsity is 15 and 'wait'
+% is false, then it starts the w<v>=sum(A) reduction with many pending tuples,
+% and converts w from sparse/hyper with many pending tuples into a bitmap
+% vector.  The outputs w, v, and A should be the same, regardless of the input
+% parameter s.
 %
 % The internal condition is triggered if wait is false, and w_sparsity
 % is 5, 6, 7, 13, 14, or 15:

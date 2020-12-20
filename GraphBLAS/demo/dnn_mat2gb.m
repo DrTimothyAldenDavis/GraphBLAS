@@ -26,11 +26,14 @@ function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-d = struct ('format', 'by row') ;
+% fmt = 'by row' ;
+fmt = 'sparse/hyper by row' ;
+
+d = struct ('format', fmt) ;
 n = size (Y0, 2) ;
-Y0 = GrB (Y0, 'single', 'by row') ;
+Y0 = GrB (Y0, 'single', fmt) ;
 for k=1:length(W)
-    W {k} = GrB (W {k}, 'single', 'by row') ;
+    W {k} = GrB (W {k}, 'single', fmt) ;
     bias {k} = GrB.build (1:n, 1:n, bias {k}, n, n, '+', 'single', d) ;
 end
 

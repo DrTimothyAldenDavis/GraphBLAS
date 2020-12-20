@@ -9,11 +9,10 @@
 
 // This test triggers the C<M>=A assignment where C starts out as sparse with
 // has many pending tuples, and is converted to bitmap by the assignment.  In
-// this case, C is the vector w.  If w_sparsity is GxB_AUTO_SPARSITY (15) and
-// 'wait' is false, then it starts the w<v>=sum(A) reduction with many pending
-// tuples, and converts w from sparse/hyper with many pending tuples into a
-// bitmap vector.  The outputs w, v, and A should be the same, regardless of
-// the input parameter s.
+// this case, C is the vector w.  If w_sparsity is 15 and 'wait' is false, then
+// it starts the w<v>=sum(A) reduction with many pending tuples, and converts w
+// from sparse/hyper with many pending tuples into a bitmap vector.  The
+// outputs w, v, and A should be the same, regardless of the input parameter s.
 
 // s is an optional vector of length 4, containing 4 parameters:
 // s = [wait, w_sparsity, v_sparsity, A_sparsity] ;
@@ -44,9 +43,9 @@ void mexFunction
     }
 
     // get the sparsity control for w, v, and A, and the wait flag
-    int w_sparsity = GxB_AUTO_SPARSITY ;
-    int v_sparsity = GxB_AUTO_SPARSITY ;
-    int A_sparsity = GxB_AUTO_SPARSITY ;
+    int w_sparsity = 15 ;
+    int v_sparsity = 15 ;
+    int A_sparsity = 15 ;
     bool wait = false ;
 
     if (nargin > 0)

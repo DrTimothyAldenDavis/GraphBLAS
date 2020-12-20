@@ -292,6 +292,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         // (11) hypersparse, sparse, or full
         //----------------------------------------------------------------------
 
+        default:    // GxB_AUTO_SPARSITY
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
 
             if (is_full_or_dense_with_no_pending_work)
@@ -358,9 +359,6 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         // (14) sparse, bitmap, or full
         //----------------------------------------------------------------------
 
-        // This is the default case for a GrB_Matrix with one vector,
-        // a GrB_Vector, or GxB_scalar.
-
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
             if (is_full_or_dense_with_no_pending_work && !is_bitmap)
@@ -377,13 +375,10 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             break ;
 
         //----------------------------------------------------------------------
-        // (15) default: hypersparse, sparse, bitmap, or full
+        // (15) hypersparse, sparse, bitmap, or full
         //----------------------------------------------------------------------
 
-        // This is the default case for a GrB_Matrix with more than one vector.
-
-        case GxB_AUTO_SPARSITY : 
-        default:
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
             if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 

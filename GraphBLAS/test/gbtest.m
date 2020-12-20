@@ -138,6 +138,9 @@ gbtest99  % test performance of C=A'*B and C=A'
 gbtest100 % test GrB.ver and GrB.version
 gbtest00  % test GrB.bfs and plot (graph (G))
 
-fprintf ('\ngbtest: all tests passed\n') ;
+% restore default # of threads
+maxNumCompThreads ('automatic') ;
+GrB.clear
 
+fprintf ('\ngbtest: all tests passed\n') ;
 

@@ -46,6 +46,8 @@ function descriptorinfo (d)
 %            format of the GraphBLAS output matrix C.  The following rules
 %            are used to determine the format of the result, in order:
 %
+% TODO:: add sparse/bitmap/etc
+%
 %            (1) If the format is determined by the descriptor to the
 %                method, then that determines the format of C.
 %            (2) If C is a column vector then C is stored by column.

@@ -3712,14 +3712,14 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 #define GxB_BITMAP      4   // store matrix as a bitmap
 #define GxB_FULL        8   // store matrix as full; all entries must be present
 
-// the default sparsity control is to store the matrix in any form:
-#define GxB_AUTO_SPARSITY 15
+// the default sparsity control is any format but bitmap:
+#define GxB_AUTO_SPARSITY (GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL)
 
 // GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, scontrol) provides hints
 // about which data structure GraphBLAS should use for the matrix A:
 //
-//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between all
-//          four sparsity structures.
+//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between
+//          hypersparse, sparse, and full.
 //      GxB_HYPERSPARSE: always hypersparse, taking O(nvals(A)) space.
 //      GxB_SPARSE: always in a sparse struture: compressed-sparse row/column,
 //          taking O(nrows+nvals(A)) space if stored by row, or

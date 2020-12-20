@@ -25,15 +25,15 @@
 // (5) If B is present (and not a scalar), then the sparsity of C is B_sparsity.
 
 // (6) Otherwise, the global default sparsity is used for C (currently
-//      GxB_AUTO_SPARSITY.
+//      GxB_AUTO_SPARSITY).
 
 // GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 // GxB_HYPERSPARSE 1   // store matrix in hypersparse form
 // GxB_SPARSE      2   // store matrix as sparse form (compressed vector)
 // GxB_BITMAP      4   // store matrix as a bitmap
 // GxB_FULL        8   // store matrix as full; all entries must be present
-// the default is to store the matrix in any form:
-// GxB_AUTO_SPARSITY 15
+// the default is to store the matrix in hyper/sparse/full
+// GxB_AUTO_SPARSITY 11
 
 #include "gb_matlab.h"
 

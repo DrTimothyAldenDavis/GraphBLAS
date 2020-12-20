@@ -1485,12 +1485,12 @@ are \verb'*setElement', \verb'*removeElement',
 Section~\ref{operations} can return an error string in their input/output
 object, except for \verb'GrB_reduce' when reducing to a scalar.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} \verb'GrB_error' conforms to a draft of the v2.0 GraphBLAS C
 Specification.  The v1.3 version of this function has the signature \newline
 \verb'const char *GrB_error (void)', with no inputs, which is no
 longer supported in SuiteSparse:GraphBLAS v4 or later.
-\end{spec}
+\end{alert}
 
 \newpage
 %===============================================================================
@@ -1505,13 +1505,13 @@ GrB_Info GrB_wait ( ) ;         // wait for all objects: NOT SUPPORTED
 \end{verbatim}
 }\end{mdframed}
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} The v1.3 GraphBLAS C API Specification includes \verb'GrB_wait ( )'
 with no inputs, which waits for all objects, computed by any user thread.  This
-is difficult to implement and has serious performance issues and thus it is not
-implemented in SuiteSparse:GraphBLAS v4 and later.  Use
+is difficult to implement and has serious performance issues and thus it is no
+longer implemented in SuiteSparse:GraphBLAS v4 and later.  Use
 \verb'GrB_wait (&object)' instead.
-\end{spec}
+\end{alert}
 
 %===============================================================================
 \subsection{{\sf GrB\_finalize:} finish GraphBLAS} %============================
@@ -7087,10 +7087,13 @@ The sparsity format of a matrix can be controlled with \verb'GxB_set', which
 can be any mix (a sum or bitwise or) of \verb'GxB_HYPERSPARSE'
 \verb'GxB_SPARSE' \verb'GxB_BITMAP', and \verb'GxB_FULL'.  By default, a matrix
 or vector can be held in any format, with the default setting
-\verb'GxB_AUTO_SPARSITY', which is equal to the sum of all four settings.  In
-this case, SuiteSparse:GraphBLAS selects automatically.  To enable a matrix to
-take on just \verb'GxB_SPARSE' or \verb'GxB_FULL' formats, but not
-\verb'GxB_HYPERSPARSE' or \verb'GxB_BITMPAP', for example, use the following:
+\verb'GxB_AUTO_SPARSITY', which is equal to \verb'GxB_HYPERSPARSE' +
+\verb'GxB_SPARSE' + \verb'GxB_FULL'.  In this case, SuiteSparse:GraphBLAS
+selects automatically between hypersparse, sparse, and full.  The bitmap format
+is new to v4, and the heuristics need to be refined for selecting it
+automatically.  To enable a matrix to take on just \verb'GxB_SPARSE' or
+\verb'GxB_FULL' formats, but not \verb'GxB_HYPERSPARSE' or \verb'GxB_BITMPAP',
+for example, use the following:
 
 {\footnotesize
 \begin{verbatim}
@@ -7464,9 +7467,9 @@ To set/get a matrix option:
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
 
-    GxB_set (GrB_Matrix A, GxB_SPARISTY_CONTROL, GxB_AUTO_SPARSITY) ;
-    GxB_set (GrB_Matrix A, GxB_SPARISTY_CONTROL, scontrol) ;
-    GxB_get (GrB_Matrix A, GxB_SPARISTY_CONTROL, int *scontrol) ;
+    GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
+    GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, scontrol) ;
+    GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *scontrol) ;
 
     \end{verbatim} }
 
@@ -10013,17 +10016,8 @@ The generic function name \verb'GrB_reduce' may be used for all specific
 functions discussed in this section.  When the details of a specific function
 are discussed, the specific name is used for clarity.
 
-\begin{alert}
-{\bf SPEC:} 
-\verb'GrB_Matrix_reduce_BinaryOp' in the v1.3 GraphBLAS C API Specification can
-use any binary operator, including user-defined ones.  However, the efficient
-parallel implementation in SuiteSparse:GraphBLAS requires the identity value,
-and so only binary operators that correspond to known monoids are supported.
-\end{alert}
-
-
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Matrix\_reduce\_$<$op$>$:} reduce a matrix to a vector}
+\subsubsection{{\sf GrB\_Matrix\_reduce\_Monoid} reduce a matrix to a vector}
 %-------------------------------------------------------------------------------
 \label{reduce_to_vector}
 
@@ -10035,26 +10029,17 @@ GrB_Info GrB_reduce                 // w<mask> = accum (w,reduce(A))
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const <operator> reduce,        // reduce operator for t=reduce(A)
+    const GrB_Monoid monoid,        // reduce monoid for t=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_Matrix_reduce_<op>' is a generic name for two specific methods.  Both
-methods reduce a matrix to a column vector using an operator, roughly analogous
+\verb'GrB_Matrix_reduce_Monoid'
+reduces a matrix to a column vector using a monoid, roughly analogous
 to \verb"t = sum (A')" in MATLAB, in the default case, where \verb't' is a
 column vector.  By default, the method reduces across the rows to
 obtain a column vector; use \verb'GrB_TRAN' to reduce down the columns.
-
-\verb'GrB_Matrix_reduce_Monoid'
-performs reduction using a \verb'GrB_Monoid' as its fourth argument.
-
-\verb'GrB_Matrix_reduce_BinaryOp' can only be used with built-in binary
-operators that correspond to a known monoid.  Its use is discouraged in
-SuiteSparse:GraphBLAS.  Use \verb'GrB_Matrix_reduce_Moniod' instead,
-or equivalently, use \verb'GrB_reduce' with a \verb'GrB_Monoid' as
-the 4th input parameter.
 
 The input matrix \verb'A' may be transposed first.  Its entries are then
 typecast into the type of the \verb'reduce' operator or monoid.  The reduction
@@ -10070,6 +10055,42 @@ the result \verb't (i)'.
 The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_Matrix\_reduce\_BinaryOp} reduce a matrix to a vector}
+%-------------------------------------------------------------------------------
+\label{reduce_to_vector_binop}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_reduce                 // w<mask> = accum (w,reduce(A))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp op,          // reduce op for t=reduce(A)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GrB_Matrix_reduce_BinaryOp' is the same as
+\verb'GrB_Matrix_reduce_Monoid', except that a binary operator is specified
+instead.  In SuiteSparse:GraphBLAS v4, it can only be used with built-in binary
+operators that correspond to a known monoid.  Its use is discouraged in
+SuiteSparse:GraphBLAS.  Use \verb'GrB_Matrix_reduce_Monoid' instead, or
+equivalently, use \verb'GrB_reduce' with a \verb'GrB_Monoid' as the fourth
+input parameter.
+
+\begin{alert}
+{\bf SPEC:} 
+\verb'GrB_Matrix_reduce_BinaryOp' in the v1.3 GraphBLAS C API Specification can
+use any binary operator, including user-defined ones.  However, the efficient
+parallel implementation in SuiteSparse:GraphBLAS v4 requires the identity
+value, and so only binary operators that correspond to known monoids are
+supported.  Use \verb'GrB_Matrix_reduce_Monoid' instead.
+\end{alert}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_reduce\_$<$type$>$:} reduce a vector to a scalar}
