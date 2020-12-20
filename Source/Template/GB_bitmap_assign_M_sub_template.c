@@ -51,7 +51,7 @@
                 bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
                 { 
-                    int64_t iM = Mi [pM] ;          // ok: M is sparse
+                    int64_t iM = Mi [pM] ;
                     int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
                     int64_t pC = iC + pC0 ;
                     GB_MASK_WORK (pC) ;             // operate on Cx [pC]

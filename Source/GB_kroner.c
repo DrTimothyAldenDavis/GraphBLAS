@@ -267,7 +267,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                 if (!C_is_full)
                 { 
                     int64_t iC = iAblock + iB ;
-                    Ci [pC] = iC ;                  // ok: C is sparse
+                    Ci [pC] = iC ;
                 }
                 if (op_is_positional)
                 {

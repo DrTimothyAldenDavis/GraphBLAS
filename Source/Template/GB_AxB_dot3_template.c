@@ -26,7 +26,7 @@
         int64_t klast  = TaskList [tid].klast ;
         int64_t pC_first = TaskList [tid].pC ;
         int64_t pC_last  = TaskList [tid].pC_end ;
-        int64_t bpleft = 0 ;    // ok: Ch is not jumbled
+        int64_t bpleft = 0 ;            // Ch is not jumbled
         int64_t task_nzombies = 0 ;     // # of zombies found by this task
 
         //----------------------------------------------------------------------

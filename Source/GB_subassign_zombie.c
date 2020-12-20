@@ -90,7 +90,7 @@ GrB_Info GB_subassign_zombie
     {
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
         int64_t pC = Sx [pS] ;
-        int64_t i = Ci [pC] ;       // ok: C is sparse
+        int64_t i = Ci [pC] ;
         // ----[X A 0] or [X . 0]-----------------------------------------------
         // action: ( X ): still a zombie
         // ----[C A 0] or [C . 0]-----------------------------------------------
@@ -98,7 +98,7 @@ GrB_Info GB_subassign_zombie
         if (!GB_IS_ZOMBIE (i))
         { 
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+            Ci [pC] = GB_FLIP (i) ;
         }
     }
 

@@ -119,7 +119,7 @@ static inline bool GB_removeElement
         if (found && !is_zombie)
         { 
             // C(i,j) becomes a zombie
-            C->i [pleft] = GB_FLIP (i) ;        // ok: C is sparse
+            C->i [pleft] = GB_FLIP (i) ;
             C->nzombies++ ;
         }
         return (found) ;

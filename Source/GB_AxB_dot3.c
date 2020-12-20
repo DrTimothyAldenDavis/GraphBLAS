@@ -64,8 +64,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (M)) ;        // ok: dot2 used instead
-    ASSERT (!GB_IS_FULL (M)) ;          // ok: dot2 used instead
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_FULL (M)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
@@ -178,7 +178,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t *GB_RESTRICT Cwork = C->i ;    // ok: C is sparse; use as workspace
+    int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use

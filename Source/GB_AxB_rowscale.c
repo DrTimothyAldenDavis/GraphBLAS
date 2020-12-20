@@ -47,8 +47,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (GB_is_diagonal (D, Context)) ;
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
-    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: for now
-    ASSERT (!GB_IS_FULL (D)) ;          // ok: D is not full
+    ASSERT (!GB_IS_BITMAP (B)) ;
+    ASSERT (!GB_IS_FULL (D)) ;
 
     GBURBLE ("(%s=%s*%s) ",
         GB_sparsity_char_matrix (B),    // C has the sparsity structure of B

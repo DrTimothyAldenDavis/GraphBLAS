@@ -64,8 +64,8 @@ GrB_Info GB_subassign_emult_slice
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08n is not used for M bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 08n is not used for A bitmap
+    ASSERT (!GB_IS_BITMAP (M)) ;    // Method 08n is not used for M bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // Method 08n is not used for A bitmap
 
     GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;

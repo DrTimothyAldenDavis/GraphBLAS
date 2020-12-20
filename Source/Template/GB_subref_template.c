@@ -156,8 +156,8 @@
             { 
                 // The vectors of C are never sliced for a coarse task, so this
                 // task computes all of C(:,kC).
-                pC     = Cp [kC] ;      // ok: C is sparse
-                pC_end = Cp [kC+1] ;    // ok: C is sparse
+                pC     = Cp [kC] ;
+                pC_end = Cp [kC+1] ;
             }
             int64_t clen = pC_end - pC ;
             if (clen == 0) continue ;
@@ -249,7 +249,7 @@
                         int64_t inew = k + pI ;
                         ASSERT (inew == GB_ijlist (I, inew, Ikind, Icolon)) ;
                         ASSERT (inew == GB_Ai (pA + inew)) ;
-                        Ci [pC + k] = inew ;        // ok: C is sparse
+                        Ci [pC + k] = inew ;
                     }
                     GB_COPY_RANGE (pC, pA + pI, ilen) ;
                     #endif
@@ -273,7 +273,7 @@
                         int64_t inew = k + pI ;
                         int64_t i = GB_ijlist (I, inew, Ikind, Icolon) ;
                         ASSERT (i == GB_Ai (pA + i)) ;
-                        Ci [pC + k] = inew ;        // ok: C is sparse
+                        Ci [pC + k] = inew ;
                         GB_COPY_ENTRY (pC + k, pA + i) ;
                     }
                     #endif
@@ -297,7 +297,7 @@
                     #if defined ( GB_PHASE_1_OF_2 )
                     clen = 1 ;
                     #else
-                    Ci [pC] = 0 ;                       // ok: C is sparse
+                    Ci [pC] = 0 ;
                     GB_COPY_ENTRY (pC, pA) ;
                     #endif
                     break ;
@@ -326,7 +326,7 @@
                             // symbolic C(:,kC) = A(:,kA) where A has zombies
                             int64_t i = GB_Ai (pA + k) ;
                             ASSERT (i == GB_ijlist (I, i, Ikind, Icolon)) ;
-                            Ci [pC + k] = i ;           // ok: C is sparse
+                            Ci [pC + k] = i ;
                         }
                     }
                     #else
@@ -351,7 +351,7 @@
                         int64_t i = GB_Ai (pA + k) ;
                         int64_t inew = i - ibegin ;
                         ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
-                        Ci [pC + k] = inew ;        // ok: C is sparse
+                        Ci [pC + k] = inew ;
                     }
                     GB_COPY_RANGE (pC, pA, alen) ;
                     #endif
@@ -406,7 +406,7 @@
                             clen++ ;
                             #else
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pleft) ;
                             pC++ ;
                             #endif
@@ -440,7 +440,7 @@
                             #else
                             int64_t inew = i / iinc ;
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pA + k) ;
                             pC++ ;
                             #endif
@@ -474,7 +474,7 @@
                             #else
                             int64_t inew = i / inc ;
                             ASSERT (pC < pC_end) ;
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pA + k) ;
                             pC++ ;
                             #endif
@@ -501,7 +501,7 @@
                         int64_t i = GB_Ai (pA + k) ;
                         int64_t inew = (ibegin - i) ;
                         ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
-                        Ci [pC] = inew ;        // ok: C is sparse
+                        Ci [pC] = inew ;
                         GB_COPY_ENTRY (pC, pA + k) ;
                         pC++ ;
                     }
@@ -534,7 +534,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             clen++ ;
                             #else
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pA + k) ;
                             pC++ ;
                             #endif
@@ -552,7 +552,7 @@
                         // the sort can be done now.  The sort for vectors
                         // handled by multiple fine tasks must wait until all
                         // task are completed, below in the post sort.
-                        pC = Cp [kC] ;      // ok: C is sparse
+                        pC = Cp [kC] ;
                         GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
                             GB_CSIZE2, clen) ;
                     }
@@ -582,7 +582,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             clen++ ;
                             #else
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pA + k) ;
                             pC++ ;
                             #endif
@@ -617,7 +617,7 @@
                             #if defined ( GB_PHASE_1_OF_2 )
                             clen++ ;
                             #else
-                            Ci [pC] = inew ;        // ok: C is sparse
+                            Ci [pC] = inew ;
                             GB_COPY_ENTRY (pC, pA + k) ;
                             pC++ ;
                             #endif
@@ -645,7 +645,7 @@
             }
             else
             { 
-                Cp [kC] = clen ;        // ok: C is sparse
+                Cp [kC] = clen ;
             }
             #endif
         }
@@ -672,8 +672,8 @@
                 // This is the first fine task with method 10 for C(:,kC).  The
                 // vector C(:,kC) must be sorted, since method 10 left it with
                 // unsorted indices.
-                int64_t pC = Cp [kC] ;      // ok: C is sparse
-                int64_t clen = Cp [kC+1] - pC ;     // ok: C is sparse
+                int64_t pC = Cp [kC] ;
+                int64_t clen = Cp [kC+1] - pC ;
                 GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
                     GB_CSIZE2, clen) ;
             }

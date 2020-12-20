@@ -63,7 +63,7 @@ static inline GrB_Info GB_jappend
         // C is hypersparse; make sure space exists in the hyperlist
         //----------------------------------------------------------------------
 
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;    // ok: C is hypersparse
+        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
         ASSERT (C->h != NULL) ;
 
         // check if space exists
@@ -83,13 +83,13 @@ static inline GrB_Info GB_jappend
         ASSERT (C->nvec >= 0) ;
         ASSERT (C->nvec < C->plen) ;
         ASSERT (C->plen <= C->vdim) ;
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;    // ok: C is hypersparse
+        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
 
         // add j to the hyperlist
-        C->h [C->nvec] = j ;            // ok: C is hypersparse
+        C->h [C->nvec] = j ;
 
         // mark the end of C(:,j)
-        C->p [C->nvec+1] = cnz ;        // ok: C is hypersparse
+        C->p [C->nvec+1] = cnz ;
         C->nvec++ ;                     // one more vector in the hyperlist
 
     }
@@ -104,7 +104,7 @@ static inline GrB_Info GB_jappend
 
         ASSERT (C->nvec == C->plen && C->plen == C->vdim) ;
         ASSERT (C->h == NULL) ;
-        ASSERT (Cp [(*jlast)+1] == (*cnz_last)) ;   // ok: C is sparse
+        ASSERT (Cp [(*jlast)+1] == (*cnz_last)) ;
 
         // Even if C is non-hypersparse, the iteration that uses this function
         // may iterate over a hypersparse input matrix, so not every vector j
@@ -114,10 +114,10 @@ static inline GrB_Info GB_jappend
         for (int64_t jprior = (*jlast)+1 ; jprior < j ; jprior++)
         { 
             // mark the end of C(:,jprior)
-            Cp [jprior+1] = (*cnz_last) ;       // ok: C is sparse
+            Cp [jprior+1] = (*cnz_last) ;
         }
         // mark the end of C(:,j)
-        Cp [j+1] = cnz ;                        // ok: C is sparse
+        Cp [j+1] = cnz ;
     }
 
     // record the last vector added to C
@@ -158,7 +158,7 @@ static inline void GB_jwrapup
         for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)
         { 
             // mark the end of C(:,jprior)
-            Cp [jprior+1] = cnz ;           // ok: C is sparse
+            Cp [jprior+1] = cnz ;
         }
     }
 

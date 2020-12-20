@@ -60,7 +60,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;      // ok: C is sparse
+    int64_t cnz = Cp [Cnvec] ;
     (*Chandle) = NULL ;
 
     bool C_is_hyper = (Ch != NULL) ;

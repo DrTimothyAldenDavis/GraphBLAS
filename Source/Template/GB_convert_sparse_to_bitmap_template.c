@@ -47,7 +47,7 @@
                 for (int64_t p = pA_start ; p < pA_end ; p++)
                 { 
                     // A(i,j) has index i, value Ax [p]
-                    int64_t i = Ai [p] ;            // ok: A is sparse
+                    int64_t i = Ai [p] ;
                     int64_t pnew = i + pA_new ;
                     // move A(i,j) to its new place in the bitmap
                     // Ax_new [pnew] = Ax [p]
@@ -60,7 +60,7 @@
                 for (int64_t p = pA_start ; p < pA_end ; p++)
                 { 
                     // A(i,j) has index i, value Ax [p]
-                    int64_t i = Ai [p] ;            // ok: A is sparse
+                    int64_t i = Ai [p] ;
                     if (!GB_IS_ZOMBIE (i))
                     { 
                         int64_t pnew = i + pA_new ;

@@ -284,7 +284,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     }
 
     // anz1 = nnz (A1) = nnz (A (:, kA:end)), the region modified by T
-    anz0 = A->p [kA] ;                  // ok: A is sparse
+    anz0 = A->p [kA] ;
     int64_t anz1 = anz - anz0 ;
     bool ignore ;
 
@@ -347,20 +347,20 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             for (int64_t k = kA ; k < anvec ; k++)
             {
                 // get A (:,k)
-                int64_t pA_start = Ap [k] ;                 // ok: A is sparse
-                int64_t pA_end = Ap [k+1] ;                 // ok: A is sparse
+                int64_t pA_start = Ap [k] ;
+                int64_t pA_end = Ap [k+1] ;
                 if (pA_end > pA_start)
                 { 
                     // add this column to A1 if A (:,k) is not empty
                     int64_t j = GBH (Ah, k) ;
-                    A1p [a1nvec] = pA_start - anz0 ;    // ok: A1 is sparse
+                    A1p [a1nvec] = pA_start - anz0 ;
                     A1h [a1nvec] = j ;
                     a1nvec++ ;
                 }
             }
 
             // finalize A1
-            A1p [a1nvec] = anz1 ;                   // ok: A1 is sparse
+            A1p [a1nvec] = anz1 ;
             A1->nvec = a1nvec ;
             A1->nvec_nonempty = a1nvec ;
             A1->magic = GB_MAGIC ;
@@ -420,9 +420,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // append the vectors of T to the end of A
         for (int64_t k = 0 ; k < tnvec ; k++)
         { 
-            int64_t j = Th [k] ;            // ok: T is hypersparse
+            int64_t j = Th [k] ;
             ASSERT (j >= tjfirst) ;
-            anz += (Tp [k+1] - Tp [k]) ;    // ok: T is hypersparse
+            anz += (Tp [k+1] - Tp [k]) ;
             GB_OK (GB_jappend (A, j, &jlast, anz, &anz_last, Context)) ;
         }
 

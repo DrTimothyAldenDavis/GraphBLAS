@@ -298,7 +298,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             if (A_is_hyper && B_is_sparse_or_hyper && my_bjnz > 2 && !B_jumbled)
             { 
                 // trim Ah [0..pright] to remove any entries past last B(:,j)
-                int64_t ilast = Bi [pB_end-1] ;     // ok: B is sparse
+                int64_t ilast = Bi [pB_end-1] ;
                 GB_bracket_right (ilast, Ah, 0, &pright) ;
             }
 

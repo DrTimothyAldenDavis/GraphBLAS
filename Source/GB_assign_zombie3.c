@@ -41,7 +41,7 @@ void GB_assign_zombie3
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -104,7 +104,7 @@ void GB_assign_zombie3
             // get C(i,j)
             //------------------------------------------------------------------
 
-            int64_t i = Ci [pC] ;       // ok: C is sparse
+            int64_t i = Ci [pC] ;
             if (!GB_IS_ZOMBIE (i))
             {
 
@@ -131,7 +131,7 @@ void GB_assign_zombie3
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                        Ci [pC] = GB_FLIP (i) ;
                     }
                 }
             }

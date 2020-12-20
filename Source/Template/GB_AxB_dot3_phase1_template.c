@@ -25,7 +25,7 @@
             // a fine task operates on a slice of a single vector
             klast = kfirst ;
         }
-        int64_t bpleft = 0 ;    // ok: Ch is not jumbled
+        int64_t bpleft = 0 ;    // Ch is not jumbled
 
         //----------------------------------------------------------------------
         // compute all vectors in this task

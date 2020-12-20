@@ -209,7 +209,7 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
                     { 
-                        int64_t i = Bi [pB] ;               // ok: B is sparse
+                        int64_t i = Bi [pB] ;
                         int64_t p = pC + i ;
                         GB_GETB (bij, Bx, pB) ;                 // bij = B(i,j)
                         // C(i,j) += bij

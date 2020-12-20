@@ -153,7 +153,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             { 
-                int64_t i = Ai [p] ;            // ok: A is sparse
+                int64_t i = Ai [p] ;
                 Ab [p] = (!GB_IS_ZOMBIE (i)) ;
             }
         }

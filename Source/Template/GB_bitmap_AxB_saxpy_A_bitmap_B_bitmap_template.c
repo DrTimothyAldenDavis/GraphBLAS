@@ -58,7 +58,7 @@
                     #if defined ( GB_MASK_IS_SPARSE )
 
                         // M is sparse or hypersparse
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
 
                     #elif defined ( GB_MASK_IS_BITMAP )
@@ -142,7 +142,7 @@
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
                         int64_t pA = i + k * avlen ;    // get pointer to A(i,k)
-                        int8_t  ab = Ab [pA] ;          // ok: A is bitmap
+                        int8_t  ab = Ab [pA] ;
                         // Ab_cache [(i-istart) * GB_KTILE_SIZE + (k-kstart)]
                         //      = ab ;
                         Ab_any_in_row [i-istart] |= ab ;
@@ -207,7 +207,7 @@
                     #if defined ( GB_MASK_IS_SPARSE )
 
                         // M is sparse or hypersparse
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
@@ -219,12 +219,12 @@
                         GB_GET_M_ij (pC) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #else
 
                         // no mask
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #endif
 

@@ -56,8 +56,8 @@ GrB_Info GB_AxB_dot3_one_slice
     ASSERT (GB_ZOMBIES_OK (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (GB_PENDING_OK (M)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;        // ok: M is sparse or hyper
-    ASSERT (!GB_IS_FULL (M)) ;          // ok: M is sparse or hyper
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_FULL (M)) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;

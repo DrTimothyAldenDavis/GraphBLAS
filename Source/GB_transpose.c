@@ -751,7 +751,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 {
                     if (Ap [j] < Ap [j+1])
                     { 
-                        Ci [k++] = j ;      // ok: C is sparse
+                        Ci [k++] = j ;
                     }
                 }
                 ASSERT (k == anz) ;

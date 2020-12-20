@@ -30,8 +30,8 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 
     GrB_Info info = GrB_SUCCESS ;
     ASSERT_MATRIX_OK (A, "A to conform_hyper", GB0) ;
-    ASSERT (!GB_IS_FULL (A)) ;      // ok: method not called for A full
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: method not called for A bitmap
+    ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;

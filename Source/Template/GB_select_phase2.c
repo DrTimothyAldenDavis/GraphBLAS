@@ -67,11 +67,11 @@
                     // bitmap selector instead.
                     // int64_t i = GBI (Ai, pA, avlen) ;
                     ASSERT (Ai != NULL) ;
-                    int64_t i = Ai [pA] ;                        // ok: A sparse
+                    int64_t i = Ai [pA] ;
                     if (GB_TEST_VALUE_OF_ENTRY (pA))
                     { 
-                        ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ; // ok: C sparse
-                        Ci [pC] = i ;                            // ok: C sparse
+                        ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ;
+                        Ci [pC] = i ;
                         // Cx [pC] = Ax [pA] ;
                         GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
                         pC++ ;
@@ -82,7 +82,7 @@
               ||  defined ( GB_RESIZE_SELECTOR )
 
                 // keep pA_start to Zp[k]-1
-                int64_t p = GB_IMIN (Zp [k], pA_end) ;  // ok: Z is sparse
+                int64_t p = GB_IMIN (Zp [k], pA_end) ;
                 int64_t mynz = p - pA_start ;
                 if (mynz > 0)
                 { 
@@ -120,7 +120,7 @@
                 if (pA_start <= p && p < pA_end)
                 { 
                     ASSERT (pC >= Cp [k] && pC + 1 <= Cp [k+1]) ;
-                    Ci [pC] = GBI (Ai, p, avlen) ;               // ok: C sparse
+                    Ci [pC] = GBI (Ai, p, avlen) ;
                     memcpy (Cx +pC*asize, Ax +p*asize, asize) ;
                 }
 

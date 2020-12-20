@@ -107,8 +107,8 @@ GrB_Info GB_subassign_08n
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08s is used if M is bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 08s is used if A is bitmap
+    ASSERT (!GB_IS_BITMAP (M)) ;    // Method 08s is used if M is bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // Method 08s is used if A is bitmap
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 

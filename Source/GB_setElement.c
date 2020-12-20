@@ -193,7 +193,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         { 
             // bring the zombie back to life
-            C->i [pleft] = i ;      // ok: C is sparse
+            C->i [pleft] = i ;
             C->nzombies-- ;
         }
         else if (C_is_bitmap)

@@ -30,7 +30,7 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = C->p ;                // ok: C is sparse
+    int64_t *GB_RESTRICT Cp = C->p ;
     // const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
@@ -770,7 +770,7 @@
     //==========================================================================
 
     // allocate Ci and Cx
-    int64_t cnz = Cp [cnvec] ;      // ok: C is sparse
+    int64_t cnz = Cp [cnvec] ;
     GrB_Info info = GB_bix_alloc (C, cnz, false, false, true, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -840,7 +840,7 @@
             int team_size = TaskList [taskid].team_size ;
             int leader    = TaskList [taskid].leader ;
             int my_teamid = taskid - leader ;
-            int64_t pC = Cp [kk] ;      // ok: C is sparse
+            int64_t pC = Cp [kk] ;
 
             if (use_Gustavson)
             {
@@ -852,7 +852,7 @@
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
                 int8_t *GB_RESTRICT
                     Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
-                int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+                int64_t cjnz = Cp [kk+1] - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)
@@ -860,7 +860,7 @@
                     // C(:,j) is dense
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
-                        Ci [pC + i] = i ;           // ok: C is sparse
+                        Ci [pC + i] = i ;
                     }
                     #if !GB_IS_ANY_PAIR_SEMIRING
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
@@ -876,7 +876,7 @@
                         if (Hf [i] == 2)
                         { 
                             GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
-                            Ci [pC++] = i ;         // ok: C is sparse
+                            Ci [pC++] = i ;
                         }
                     }
                 }
@@ -903,7 +903,7 @@
                     if ((hf & 3) == 2)
                     { 
                         int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash
-                        Ci [pC] = i ;               // ok: C is sparse
+                        Ci [pC] = i ;
                         GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx [hash]
                         pC++ ;
                     }
@@ -964,8 +964,8 @@
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
                         #ifdef GB_IDENTITY
@@ -1061,8 +1061,8 @@
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
                         #ifdef GB_IDENTITY
@@ -1233,8 +1233,8 @@
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_M_j ;                // get M(:,j)
                         GB_GET_M_j_RANGE (64) ;     // get 1st & last in M(:,j)
@@ -1359,8 +1359,8 @@
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        int64_t pC = Cp [kk] ;      // ok: C is sparse
-                        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_M_j ;                // get M(:,j)
                         mark += 2 ;
@@ -1387,7 +1387,7 @@
                                         Hi [hash] = i ;
                                         GB_MULT_A_ik_B_kj ; // t = A(i,k)*B(k,j)
                                         GB_HX_WRITE (hash, t) ; // Hx [hash] = t
-                                        Ci [pC++] = i ;         // ok: C sparse
+                                        Ci [pC++] = i ;
                                         break ;
                                     }
                                     if (Hi [hash] == i)

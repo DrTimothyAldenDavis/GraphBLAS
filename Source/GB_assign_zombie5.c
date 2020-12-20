@@ -49,7 +49,7 @@ GrB_Info GB_assign_zombie5
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -169,7 +169,7 @@ GrB_Info GB_assign_zombie5
 
                 // C(i,j) is outside the C(I,J) submatrix if either i is
                 // not in the list I, or j is not in J, or both.
-                int64_t i = Ci [pC] ;       // ok: C is sparse
+                int64_t i = Ci [pC] ;
                 if (!GB_IS_ZOMBIE (i) &&
                     (j_outside || !GB_ij_is_in_list (I, nI, i, Ikind, Icolon)))
                 {
@@ -189,7 +189,7 @@ GrB_Info GB_assign_zombie5
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                        Ci [pC] = GB_FLIP (i) ;
                     }
                 }
             }

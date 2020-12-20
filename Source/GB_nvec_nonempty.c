@@ -65,7 +65,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
             reduction(+:nvec_nonempty)
     for (k = 0 ; k < anvec ; k++)
     { 
-        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;    // ok: A is sparse
+        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;
     }
 
     ASSERT (nvec_nonempty >= 0 && nvec_nonempty <= A->vdim) ;

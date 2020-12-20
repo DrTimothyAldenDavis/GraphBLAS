@@ -165,7 +165,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     // the case when A is bitmap is always handled above by GB_bitmap_selector
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: bitmap case handled above
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
@@ -203,7 +203,7 @@ GrB_Info GB_selector
         return (GrB_OUT_OF_MEMORY) ;
     }
     ASSERT (anvec <= cplen) ;
-    Cp [anvec] = 0 ;        // ok: C is sparse
+    Cp [anvec] = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads and tasks to use
@@ -292,7 +292,7 @@ GrB_Info GB_selector
     // Cp = cumsum (Cp)
     int64_t C_nvec_nonempty ;
     GB_cumsum (Cp, anvec, &C_nvec_nonempty, nthreads) ;
-    cnz = Cp [anvec] ;      // ok: C is sparse
+    cnz = Cp [anvec] ;
 
     //--------------------------------------------------------------------------
     // determine the slice boundaries in the new C matrix
@@ -309,7 +309,7 @@ GrB_Info GB_selector
         { 
             // Task taskid is the first one to do work on C(:,k), so it starts
             // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
-            pC = Cp [k] ;       // ok: C is sparse
+            pC = Cp [k] ;
             kprior = k ;
         }
 
@@ -321,11 +321,11 @@ GrB_Info GB_selector
         if (k < klast)
         { 
             // Task taskid is the last to contribute to C(:,k).
-            ASSERT (pC == Cp [k+1]) ;       // ok: C is sparse
+            ASSERT (pC == Cp [k+1]) ;
             // Task taskid contributes the first Wlast [taskid] entries
             // to C(:,klast), so the next task taskid+1 starts at this
             // location, if its first vector is klast of this task.
-            pC = Cp [klast] + Wlast [taskid] ;      // ok: C is sparse
+            pC = Cp [klast] + Wlast [taskid] ;
             kprior = klast ;
         }
     }
@@ -389,14 +389,14 @@ GrB_Info GB_selector
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {
-                if (Cp [k] < Cp [k+1])      // ok: C is sparse
+                if (Cp [k] < Cp [k+1])
                 { 
-                    Ah [cnvec] = Ah [k] ;       // ok: A is sparse
-                    Ap [cnvec] = Cp [k] ;       // ok: C is sparse
+                    Ah [cnvec] = Ah [k] ;
+                    Ap [cnvec] = Cp [k] ;
                     cnvec++ ;
                 }
             }
-            Ap [cnvec] = Cp [anvec] ;       // ok: A and C are sparse
+            Ap [cnvec] = Cp [anvec] ;
             A->nvec = cnvec ;
             ASSERT (A->nvec == C_nvec_nonempty) ;
             GB_FREE (Cp) ;
@@ -460,14 +460,14 @@ GrB_Info GB_selector
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {
-                if (Cp [k] < Cp [k+1])      // ok: C is hypersparse
+                if (Cp [k] < Cp [k+1])
                 { 
-                    Ch [cnvec] = Ah [k] ;       // ok: C is hypersparse
-                    Cp [cnvec] = Cp [k] ;       // ok: C is hypersparse
+                    Ch [cnvec] = Ah [k] ;
+                    Cp [cnvec] = Cp [k] ;
                     cnvec++ ;
                 }
             }
-            Cp [cnvec] = Cp [anvec] ;       // ok: C is hypersparse
+            Cp [cnvec] = Cp [anvec] ;
             C->nvec = cnvec ;
             ASSERT (C->nvec == C_nvec_nonempty) ;
         }

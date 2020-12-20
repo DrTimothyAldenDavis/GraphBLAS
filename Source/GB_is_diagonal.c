@@ -113,14 +113,14 @@ bool GB_is_diagonal             // true if A is diagonal
         GB_PARTITION (jstart, jend, n, tid, ntasks) ;
         for (int64_t j = jstart ; diag && j < jend ; j++)
         {
-            int64_t p = Ap [j] ;                // ok: A is sparse
-            int64_t ajnz = Ap [j+1] - p ;       // ok: A is sparse
+            int64_t p = Ap [j] ;
+            int64_t ajnz = Ap [j+1] - p ;
             if (ajnz != 1)
             { 
                 // A(:,j) must have exactly one entry
                 diag = false ;
             }
-            int64_t i = Ai [p] ;        // ok: A is sparse
+            int64_t i = Ai [p] ;
             if (i != j)
             { 
                 // the single entry must be A(i,i)

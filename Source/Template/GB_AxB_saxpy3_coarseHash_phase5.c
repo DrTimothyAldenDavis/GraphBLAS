@@ -21,8 +21,8 @@
 
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
-        int64_t pC = Cp [kk] ;      // ok: C is sparse
-        int64_t cjnz = Cp [kk+1] - pC ;     // ok: C is sparse
+        int64_t pC = Cp [kk] ;
+        int64_t cjnz = Cp [kk+1] - pC ;
         if (cjnz == 0) continue ;   // nothing to do
         GB_GET_B_j ;                // get B(:,j)
 
@@ -63,8 +63,8 @@
             {
                 GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                 #ifdef GB_CHECK_MASK_ij
-                // check mask condition and skip if C(i,j) is protected by
-                // the mask
+                // check mask condition and skip if C(i,j) is protected by the
+                // mask
                 GB_CHECK_MASK_ij ;
                 #endif
                 GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
@@ -87,7 +87,7 @@
                         Hf [hash] = mark ;
                         Hi [hash] = i ;
                         GB_HX_WRITE (hash, t) ;// Hx[hash]=t
-                        Ci [pC++] = i ;        // ok: C sparse
+                        Ci [pC++] = i ;
                         break ;
                     }
                 }

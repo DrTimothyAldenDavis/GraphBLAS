@@ -55,9 +55,9 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: not used if C is bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: not used if A is bitmap
-    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: not used if B is bitmap
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (B)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;

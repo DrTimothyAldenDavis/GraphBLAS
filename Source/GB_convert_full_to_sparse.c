@@ -71,14 +71,14 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (k = 0 ; k <= avdim ; k++)
     { 
-        Ap [k] = k * avlen ;        // ok: A becomes sparse
+        Ap [k] = k * avlen ;
     }
 
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     { 
-        Ai [p] = p % avlen ;        // ok: A becomes sparse
+        Ai [p] = p % avlen ;
     }
 
     //--------------------------------------------------------------------------

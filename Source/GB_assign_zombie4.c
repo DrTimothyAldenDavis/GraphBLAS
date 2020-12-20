@@ -39,7 +39,7 @@ void GB_assign_zombie4
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;      // binary search on C
     ASSERT (!GB_PENDING (C)) ;
@@ -113,8 +113,8 @@ void GB_assign_zombie4
                 // j is not in J; find C(i,j)
                 //--------------------------------------------------------------
 
-                int64_t pC = Cp [k] ;           // ok: C is sparse
-                int64_t pC_end = Cp [k+1] ;     // ok: C is sparse
+                int64_t pC = Cp [k] ;
+                int64_t pC_end = Cp [k+1] ;
                 int64_t pright = pC_end - 1 ;
                 bool found, is_zombie ;
                 GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
@@ -164,7 +164,7 @@ void GB_assign_zombie4
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                        Ci [pC] = GB_FLIP (i) ;
                     }
                 }
             }

@@ -287,8 +287,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (M != NULL) ;
             ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
             ASSERT (!whole_submatrix) ;
-            ASSERT (!GB_IS_BITMAP (C)) ;     // ok: C is not bitmap here
-            ASSERT (!GB_IS_FULL (C)) ;       // ok: C is not bitmap here
+            ASSERT (!GB_IS_BITMAP (C)) ;
+            ASSERT (!GB_IS_FULL (C)) ;
 
             ASSERT_MATRIX_OK (C, "C for C-replace-phase", GB0) ;
             ASSERT_MATRIX_OK (M, "M for C-replace-phase", GB0) ;
@@ -305,7 +305,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             // C must be sparse or hypersparse
-            GB_ENSURE_SPARSE (C) ;      // ok: bitmap skips this phase
+            GB_ENSURE_SPARSE (C) ;
 
             if (assign_kind == GB_COL_ASSIGN)
             { 
