@@ -161,16 +161,22 @@ GrB_Info GB_AxB_saxpy3_generic
         #define GB_HX(i) (&Hx [i])
 
         // Hx [i] = t
-        #define GB_HX_WRITE(i, t) Hx [i] = t
+        #define GB_HX_WRITE(i,t) Hx [i] = t
+
+        // t = Hx [i]
+        #define GB_HX_READ(i,t) GB_CTYPE t = Hx [i]
 
         // Cx [p] = Hx [i]
         #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+        // Cx [p] += Hx [i]
+        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
 
         // Cx [p] += t
         #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), &t)
 
         // Hx [i] += t
-        #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), &t)
+        #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), &t)
 
         int64_t offset = GB_positional_offset (opcode) ;
 
@@ -281,11 +287,21 @@ GrB_Info GB_AxB_saxpy3_generic
 
         // Hx [i] = t
         #undef  GB_HX_WRITE
-        #define GB_HX_WRITE(i, t) memcpy (GB_HX (i), t, csize)
+        #define GB_HX_WRITE(i,t) memcpy (GB_HX (i), t, csize)
+
+        // t = Hx [i]
+        #undef  GB_HX_READ
+        #define GB_HX_READ(i,t)                                             \
+            GB_CIJ_DECLARE (t) ;                                            \
+            memcpy (t, GB_HX (i), csize)
 
         // Cx [p] = Hx [i]
         #undef  GB_CIJ_GATHER
         #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
+
+        // Cx [p] += Hx [i]
+        #undef  GB_CIJ_GATHER_UPDATE
+        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
 
         // Cx [p] += t
         #undef  GB_CIJ_UPDATE
@@ -293,7 +309,7 @@ GrB_Info GB_AxB_saxpy3_generic
 
         // Hx [i] += t
         #undef  GB_HX_UPDATE
-        #define GB_HX_UPDATE(i, t) fadd (GB_HX (i), GB_HX (i), t)
+        #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), t)
 
         #undef  GB_CTYPE
         #define GB_CTYPE GB_void

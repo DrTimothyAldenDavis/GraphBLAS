@@ -39,7 +39,7 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH (Bh, kk) ;      // j will be in the range j1:j2-1
-            int64_t pB = Bp [kk] ;          // ok: B is sparse
+            int64_t pB = Bp [kk] ;
             int64_t pB_end = Bp [kk+1] ;
             int64_t pC_start = j * avlen ;  // get pointer to C(:,j)
             GB_GET_T_FOR_SECONDJ ;          // prepare to iterate over B(:,j)
@@ -81,7 +81,7 @@
                     #if defined ( GB_MASK_IS_SPARSE )
 
                         // M is sparse or hypersparse
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
@@ -93,12 +93,12 @@
                         GB_GET_M_ij (pC) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #else
 
                         // no mask
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #endif
 

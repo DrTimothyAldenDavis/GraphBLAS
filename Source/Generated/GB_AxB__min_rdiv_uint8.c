@@ -206,7 +206,9 @@
 
     // result is purely symbolic; no numeric work to do.  Hx is not used.
     #define GB_HX_WRITE(i,t)
+    #define GB_HX_READ(i,s)
     #define GB_CIJ_GATHER(p,i)
+    #define GB_CIJ_GATHER_UPDATE(p,i)
     #define GB_HX_UPDATE(i,t)
     #define GB_CIJ_MEMCPY(p,i,len)
 
@@ -215,8 +217,16 @@
     // Hx [i] = t
     #define GB_HX_WRITE(i,t) Hx [i] = t
 
+    // s = Hx [i]
+    #define GB_HX_READ(i,s) \
+        uint8_t s = Hx [i]
+
     // Cx [p] = Hx [i]
     #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+    // Cx [p] += Hx [i]
+    #define GB_CIJ_GATHER_UPDATE(p,i) \
+        if (Cx [p] > Hx [i]) Cx [p] = Hx [i]
 
     // Hx [i] += t
     #define GB_HX_UPDATE(i,t) \

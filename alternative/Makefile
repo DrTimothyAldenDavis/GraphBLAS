@@ -19,9 +19,9 @@
 
 default: library
 
-VER1 = 3
-VER2 = 3
-VER3 = 0
+VER1 = 4
+VER2 = 0
+VER3 = 1
 
 # pick your compiler:
   CC = gcc

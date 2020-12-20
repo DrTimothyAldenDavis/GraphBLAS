@@ -122,17 +122,9 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 // burble
 //------------------------------------------------------------------------------
 
-// GB_BURBLE is meant for development use, not production use.  To enable it,
-// set GB_BURBLE to 1, either with -DGB_BURBLE=1 as a compiler option, by
-// editting the setting above, or by adding the line
-//
-//      #define GB_BURBLE 1
-//
-// at the top of any source file, before #including any other file.  After
-// enabling it in the library, use GxB_set (GxB_BURBLE, true) to turn it on
-// at run time, and GxB_set (GxB_BURBLE, false) to turn it off.  By default,
-// the feature is not enabled when SuiteSparse:GraphBLAS is compiled, and
-// even then, the setting is set to false by GrB_init.
+// GB_BURBLE provides diagnostic output.
+// Use GxB_set (GxB_BURBLE, true) to turn it on
+// and GxB_set (GxB_BURBLE, false) to turn it off.
 
 #if GB_BURBLE
 

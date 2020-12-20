@@ -11,12 +11,24 @@
 // or C=A*B, and this template is used when C is bitmap.  C is modified
 // in-place.  The accum operator is the same as the monoid.
 
+#undef  GB_FREE_WORK
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    GB_FREE (Wf) ;                                                      \
+    GB_FREE (Wx) ;                                                      \
+    GB_FREE (A_slice) ;                                                 \
+    GB_FREE (B_slice) ;                                                 \
+    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+}
+
 {
 
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
+    int8_t  *GB_RESTRICT Wf = NULL ;
+    GB_void *GB_RESTRICT Wx = NULL ;
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t *GB_RESTRICT pstart_Mslice = NULL ;
@@ -106,6 +118,7 @@
             M, &mtasks))
         { 
             // out of memory
+            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -204,7 +217,7 @@
         if (!GB_pslice (&B_slice, Bp, bnvec, nbslice, false))
         { 
             // out of memory
-            GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;
+            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -280,46 +293,64 @@
         double work = ((double) anz) * (double) bvdim ;
         nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         int nfine_tasks_per_vector = 0 ;
-        bool use_coarse_tasks ;
+        bool use_coarse_tasks, use_atomics = false ;
 
         if (nthreads == 1 || bvdim == 0)
         { 
             // do the entire computation with a single thread, with coarse task
             ntasks = 1 ;
             use_coarse_tasks = true ;
+            GBURBLE ("(coarse, threads: 1) ") ;
+        }
+        else if (nthreads <= bvdim)
+        {
+            // All tasks are coarse, and each coarse task does 1 or more
+            // whole vectors of B
+            ntasks = GB_IMIN (bvdim, 2 * nthreads) ;
+            use_coarse_tasks = true ;
+            GBURBLE ("(coarse, threads: %d, tasks %d) ", nthreads, ntasks) ;
         }
         else
         {
-            // determine number of tasks and select coarse/fine strategies
-            ASSERT (bvdim > 0) ;
-            ntasks = 8 * nthreads ;
-            if (ntasks > bvdim)
-            {
-                // There are more tasks than vectors in B, so multiple fine
-                // task are created for each vector of B.  All tasks are fine.
-                // Determine how many fine tasks to create for each vector of
-                // B.  Each group of fine tasks works on a single vector.
-                use_coarse_tasks = false ;
-                nfine_tasks_per_vector =
-                    ceil ((double) ntasks / (double) bvdim) ;
-                ntasks = bvdim * nfine_tasks_per_vector ;
-                ASSERT (nfine_tasks_per_vector > 1) ;
+            // All tasks are fine.  Each task does a slice of a single vector
+            // of B, and each vector of B is handled by the same # of fine
+            // tasks.
+            use_coarse_tasks = false ;
 
-                // slice the matrix A for each team of fine tasks
-                if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector,
-                    false))
-                { 
-                    // out of memory
-                    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice,
-                        &klast_Mslice) ;
-                    return (GrB_OUT_OF_MEMORY) ;
-                }
+            // Select between a non-atomic method with Wf/Wx workspace,
+            // and an atomic method with no workspace.
+            double cnz = ((double) cvlen) * ((double) bvdim) ;
+            double intensity = ((double) work) / fmax (cnz, 1) ;
+            double workspace = ((double) cvlen) * ((double) nthreads) ;
+            double relwspace = workspace / fmax (anz + bnz + cnz, 1) ;
+            GBURBLE ("(fine, threads: %d, relwspace: %0.3g, intensity: %0.3g",
+                nthreads, relwspace, intensity) ;
+            if ((intensity > 64 && relwspace < 0.05) ||
+                (intensity > 16 && intensity <= 64 && relwspace < 0.50))
+            { 
+                // non-atomic method with workspace
+                use_atomics = false ;
+                ntasks = nthreads ;
+                GBURBLE (": non-atomic) ") ;
             }
             else
             { 
-                // All tasks are coarse, and each coarse task does 1 or more
-                // whole vectors of B
-                use_coarse_tasks = true ;
+                // atomic method
+                use_atomics = true ;
+                ntasks = 2 * nthreads ;
+                GBURBLE (": atomic) ") ;
+            }
+
+            nfine_tasks_per_vector = ceil ((double) ntasks / (double) bvdim) ;
+            ntasks = bvdim * nfine_tasks_per_vector ;
+            ASSERT (nfine_tasks_per_vector > 1) ;
+
+            // slice the matrix A for each team of fine tasks
+            if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector, true))
+            { 
+                // out of memory
+                GB_FREE_WORK ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
         }
 
@@ -331,9 +362,9 @@
             //------------------------------------------------------------------
 
             // Like GB_AxB_saxpy_C_sparse, except that all tasks are
-            // coarse/fine Gustavson (fine Gustavson with atomics).  No
-            // symbolic pre-analysis, and no Gustavson workspace.  C can be
-            // modified in-place.
+            // coarse/fine Gustavson (fine Gustavson with atomics, or with
+            // workspace and no atomics).  No symbolic pre-analysis, and no
+            // Gustavson workspace.  C can be modified in-place.
             #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
 
         }
@@ -356,8 +387,7 @@
             // C<M> or <!M> = A*B, M bitmap, A sparse, B bitmap
             //------------------------------------------------------------------
 
-            // As above, except use M in-place; do not scatter into the C
-            // bitmap.
+            // As above, except use M in-place; don't scatter into the C bitmap.
             #define GB_MASK_IS_BITMAP
             #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
         }
@@ -465,8 +495,8 @@
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE (A_slice) ;
-    GB_FREE (B_slice) ;
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;
+    GB_FREE_WORK ;
 }
+
+#undef GB_FREE_WORK
 

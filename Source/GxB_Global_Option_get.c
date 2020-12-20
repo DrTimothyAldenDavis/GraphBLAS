@@ -259,7 +259,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // controlling diagnostic output, for development only
+        // controlling diagnostic output
         //----------------------------------------------------------------------
 
         case GxB_BURBLE : 

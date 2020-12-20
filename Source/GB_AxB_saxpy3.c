@@ -315,12 +315,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool M_dense_in_place = false ;
 
     if (nthreads_max == 1 && M == NULL && (AxB_method != GxB_AxB_HASH) &&
-        (GB_NNZ (A) + GB_NNZ (B) > cvlen * nthreads_max))
+        GB_IMIN (GB_NNZ (A), GB_NNZ (B)) > cvlen)
     { 
         // Skip the flopcount analysis if only a single thread is being used,
-        // no mask is present, the # of entries in A and B is > cvlen, and the
-        // Hash method is not explicitly selected.  In this case, use a single
-        // Gustavson task only (fine task if B has one vector, coarse
+        // no mask is present, the min # of entries in A and B is > cvlen, and
+        // the Hash method is not explicitly selected.  In this case, use a
+        // single Gustavson task only (fine task if B has one vector, coarse
         // otherwise).  In this case, the flop count analysis is not needed.
         GB_OK (GB_AxB_saxpy3_slice_quick (C, A, B,
             &TaskList, &ntasks, &nfine, &nthreads, Context)) ;
@@ -660,6 +660,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // GB_Global_timing_add (7, ttt) ;
 // ttt = omp_get_wtime ( ) ;
 
+    C->magic = GB_MAGIC ;
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
     ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;

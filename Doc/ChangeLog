@@ -1,10 +1,10 @@
-Version 4.0.1, TODO::, 2020
+Version 4.0.1, Dec 19 (beta1), 2020     TODO:: fix date of release
 
     * GrB_wait(), with no inputs: removed
     * GrB_wait(&object): polymorphic function added
-    * GrB_*_nvals: no longer guarantees completion; use GrB_wait(&object)
-        or non-polymorphic GrB_*_wait (&object) instead
+    * GrB_*_nvals: no longer guarantees completion; use GrB_wait for that
     * GrB_error: now has two parameters: a string (char **) and an object
+    * GrB_Matrix_reduce_BinaryOp: limited to certain built-in ops
     * GrB_*_extractTuples: may return indices out of order
     * removed internal features: GBI iterator, slice and hyperslice matrices
     * bitmap/full matrices and vectors added
@@ -17,6 +17,7 @@ Version 4.0.1, TODO::, 2020
     * GxB*import/export: API modified
     * GxB_SelectOp: nrows and ncols removed from function signature
     * OpenMP tasking removed from mergesort: just as fast; now ports to Windows
+    * GxB_BURBLE added: for diagnostic output
     * (21) bug fix: A({lo,hi})=scalar in MATLAB; A(lo:hi)=scalar was OK
 
 Version 3.3.3, July 14, 2020

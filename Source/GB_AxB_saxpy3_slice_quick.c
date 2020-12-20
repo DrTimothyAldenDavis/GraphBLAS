@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_slice_quick: construct tasks for GB_AxB_saxpy3
+// GB_AxB_saxpy3_slice_quick: construct a single task for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -35,7 +35,6 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     (*nfine) = 0 ;
     (*nthreads) = 1 ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t bnvec = B->nvec ;
     const int64_t cvlen = A->vlen ;
 

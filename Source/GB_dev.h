@@ -17,10 +17,10 @@
 // to turn on Debug for a single file of GraphBLAS, add '#define GB_DEBUG'
 // just before the statement '#include "GB.h"'
 
-// set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
-// -DGB_BURBLE=1.
+// set GB_BURBLE to 0 to disable diagnostic output, or compile with
+// -DGB_BURBLE=0.
 #ifndef GB_BURBLE
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
@@ -32,6 +32,23 @@
 
 // for code development only
 // #define GB_DEVELOPER 1
+
+//------------------------------------------------------------------------------
+// notes on future work
+//------------------------------------------------------------------------------
+
+// FUTURE: can handle transpose of full or bitmap input matrices just by
+// changing how they are accessed
+// 
+// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
+// 
+// For PageRank:
+// 
+//  FUTURE: constant-valued matrices/vectors (for r(:)=teleport)
+//      probably coupled with lazy malloc/free of A->x when converting from
+//      full (non-constant) to constant-valued.
+//      need aggressive exploit of non-blocking mode, for x = sum (abs (t-r)),
+//      or GrB_vxv dot product, with PLUS_ABSDIFF semiring
 
 #endif
 

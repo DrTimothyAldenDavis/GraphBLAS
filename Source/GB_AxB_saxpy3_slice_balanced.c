@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_slice_balanced: construct tasks for GB_AxB_saxpy3
+// GB_AxB_saxpy3_slice_balanced: construct balanced tasks for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -26,6 +26,7 @@
 
 #define GB_FREE_ALL             \
 {                               \
+    GB_FREE_WORK ;              \
     GB_FREE (TaskList) ;        \
 }
 
@@ -72,7 +73,7 @@ static inline int64_t GB_hash_table_size
     { 
         // default: auto selection:
         // use Gustavson's method if hash_size is too big
-        use_Gustavson = (hash_size >= cvlen/16) ;
+        use_Gustavson = (hash_size >= cvlen/12) ;
     }
 
     if (use_Gustavson)
@@ -375,6 +376,40 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     (*nthreads) = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
     int ntasks_initial = ((*nthreads) == 1) ? 1 :
         (GB_NTASKS_PER_THREAD * (*nthreads)) ;
+
+    //--------------------------------------------------------------------------
+    // give preference to Gustavson when using few threads
+    //--------------------------------------------------------------------------
+
+    if ((*nthreads) <= 8 &&
+        (!(AxB_method == GxB_AxB_HASH || AxB_method == GxB_AxB_GUSTAVSON)))
+    {
+        // Unless a specific method has been explicitly requested, see if
+        // Gustavson should be used with a small number of threads.
+        // Matrix-vector has a maximum intensity of 1, so this heuristic only
+        // applies to GrB_mxm.
+        double abnz = GB_NNZ (A) + GB_NNZ (B) + 1 ;
+        double workspace = (double) ntasks_initial * (double) cvlen ;
+        double intensity = total_flops / abnz ;
+        GBURBLE ("(intensity: %0.3g workspace/(nnz(A)+nnz(B)): %0.3g",
+            intensity, workspace / abnz) ;
+        if (intensity >= 8 && workspace < abnz)
+        {
+            // work intensity is large, and Gustvason workspace is modest;
+            // use Gustavson for all tasks
+            AxB_method = GxB_AxB_GUSTAVSON ;
+            GBURBLE (": select Gustvason) ") ;
+        }
+        else
+        {
+            // use default task creation: mix of Hash and Gustavson
+            GBURBLE (") ") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // determine target task size
+    //--------------------------------------------------------------------------
 
     double target_task_size = ((double) total_flops) / ntasks_initial ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
