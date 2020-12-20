@@ -62,12 +62,6 @@ Demo:           a set of demos on how to use GraphBLAS
 
 Doc:            SuiteSparse:GraphBLAS User Guide and license
 
-Extras:         parallel methods: triangle counting, k-truss, and a
-                massively parallel (MPI) Kronecker product matrix generator.
-                These are stand-along package that rely on GraphBLAS.  They
-                are not compiled by the cmake script.  See Extras/README.txt
-                for more details.
-
 GraphBLAS:      the MATLAB interface.  This folder is called 'GraphBLAS' so
                 that typing 'help graphblas' or 'doc graphblas' in the MATLAB
                 Command Window can locate the Contents.m file.
