@@ -185,7 +185,7 @@ void GB_burble_assign
         if (GB_Global_burble_get ( ))                   \
         {                                               \
             t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-            GBURBLE ("%.3g sec ]\n", t_burble) ;        \
+            GBURBLE ("TODO:: sec ]\n" /*, t_burble*/) ;        \
         }                                               \
     }
 
