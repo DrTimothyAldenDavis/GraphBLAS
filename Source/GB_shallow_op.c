@@ -168,7 +168,15 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 
     // allocate new space for the numerical values of C
     C->nzmax = GB_IMAX (anz, 1) ;
-    C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
+    if (GB_IS_BITMAP (A))
+    {
+        // ensure all entries in C->x are defined
+        C->x = GB_CALLOC (C->nzmax * C->type->size, GB_void) ;
+    }
+    else
+    {
+        C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;  // ok::
+    }
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)
     { 

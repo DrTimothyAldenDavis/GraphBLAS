@@ -1,0 +1,7 @@
+TODO:: enable all generated semirings and operators, and test them.
+TODO:: MATLAB @GrB test coverage
+TODO:: rerun MATLAB demos
+TODO:: Tcov to 100%
+TODO:: check port to Windows, Mac, Power8
+TODO:: see if burble slows down BFS on road.  If yes, disable it by default
+

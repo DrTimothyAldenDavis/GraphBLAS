@@ -64,13 +64,11 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                if (sparsity <= GxB_DEFAULT || sparsity > GxB_AUTO_SPARSITY)
+                sparsity = sparsity & GxB_ANY_SPARSITY ;
+                if (sparsity <= GxB_DEFAULT)
                 { 
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
-                // If A->vdim is <= 1, it cannot be hypersparse, but
-                // A->sparsity is allowed to include the hypersparse case.
-                // This is controlled by GB_conform.
                 A->sparsity = sparsity ;
             }
             break ;

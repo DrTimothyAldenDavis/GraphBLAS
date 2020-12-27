@@ -10,7 +10,6 @@
 #ifndef GB_MXM_H
 #define GB_MXM_H
 #include "GB_AxB_saxpy.h"
-#include "GB_AxB_saxpy3.h"
 
 //------------------------------------------------------------------------------
 

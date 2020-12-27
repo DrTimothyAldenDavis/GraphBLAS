@@ -61,7 +61,7 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     if (cnz > anz + bnz)
     { 
         // The C bitmap is too big, use saxpy and construct C as sparse
-        GBURBLE ("(C huge: saxpy C=(A')*B) ") ;
+        GBURBLE ("(C large: use saxpy C=(A')*B) ") ;
         return (false) ;
     }
 

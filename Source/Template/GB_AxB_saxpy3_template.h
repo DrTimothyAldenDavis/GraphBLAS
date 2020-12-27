@@ -502,6 +502,22 @@ break ;
 
     #define GB_ATOMIC_WRITE_HX(i,t)
 
+    //--------------------------------------------------------------------------
+    // ANY_PAIR: for the bitmap case only: Hx [i] = 1
+    //--------------------------------------------------------------------------
+
+    #if GB_IS_ANY_FC32_MONOID || GB_IS_ANY_FC64_MONOID
+        #define GB_ATOMIC_SET_HX_ONE(i)             \
+            GB_ATOMIC_WRITE                         \
+            Hx_real [2*(i)] = 1 ;                   \
+            GB_ATOMIC_WRITE                         \
+            Hx_imag [2*(i)] = 0 ;
+    #else
+        #define GB_ATOMIC_SET_HX_ONE(i)             \
+            GB_ATOMIC_WRITE                         \
+            Hx [i] = 1 ;
+    #endif
+
 #elif GB_HAS_ATOMIC
 
     //--------------------------------------------------------------------------
@@ -511,26 +527,26 @@ break ;
     #if GB_IS_PLUS_FC32_MONOID
 
         // built-in PLUS_FC32 monoid
-        #define GB_ATOMIC_WRITE_HX(i,t)                             \
-            GB_ATOMIC_WRITE                                         \
-            Hx_real [2*(i)] = crealf (t) ;                          \
-            GB_ATOMIC_WRITE                                         \
+        #define GB_ATOMIC_WRITE_HX(i,t)         \
+            GB_ATOMIC_WRITE                     \
+            Hx_real [2*(i)] = crealf (t) ;      \
+            GB_ATOMIC_WRITE                     \
             Hx_imag [2*(i)] = cimagf (t) ;
 
     #elif GB_IS_PLUS_FC64_MONOID
 
         // built-in PLUS_FC64 monoid
-        #define GB_ATOMIC_WRITE_HX(i,t)                             \
-            GB_ATOMIC_WRITE                                         \
-            Hx_real [2*(i)] = creal (t) ;                           \
-            GB_ATOMIC_WRITE                                         \
+        #define GB_ATOMIC_WRITE_HX(i,t)         \
+            GB_ATOMIC_WRITE                     \
+            Hx_real [2*(i)] = creal (t) ;       \
+            GB_ATOMIC_WRITE                     \
             Hx_imag [2*(i)] = cimag (t) ;
 
     #else
 
         // all other atomic monoids
-        #define GB_ATOMIC_WRITE_HX(i,t)                             \
-            GB_ATOMIC_WRITE                                         \
+        #define GB_ATOMIC_WRITE_HX(i,t)         \
+            GB_ATOMIC_WRITE                     \
             GB_HX_WRITE (i, t)
 
     #endif
@@ -541,9 +557,9 @@ break ;
     // Hx [i] = t via critical section
     //--------------------------------------------------------------------------
 
-    #define GB_ATOMIC_WRITE_HX(i,t)     \
-        GB_OMP_FLUSH                    \
-        GB_HX_WRITE (i, t) ;            \
+    #define GB_ATOMIC_WRITE_HX(i,t)             \
+        GB_OMP_FLUSH                            \
+        GB_HX_WRITE (i, t) ;                    \
         GB_OMP_FLUSH
 
 #endif

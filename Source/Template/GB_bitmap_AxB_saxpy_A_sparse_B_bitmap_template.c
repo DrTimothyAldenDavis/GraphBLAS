@@ -12,13 +12,58 @@
     if (use_coarse_tasks)
     {
 
+        #define GB_PANEL_SIZE 4
+
         //----------------------------------------------------------------------
         // C<#M> += A*B using coarse tasks
         //----------------------------------------------------------------------
 
-        // TODO: this method is slow when bvdim is large
+        //----------------------------------------------------------------------
+        // allocate workspace for each task
+        //----------------------------------------------------------------------
 
+        jslice = GB_MALLOC (ntasks, int64_t) ;
+        if (jslice == NULL)
+        {
+            // out of memory
+            GB_FREE_WORK ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+
+        // TODO:: if jpanel is 1, do not allocate Gb and Gx
+
+        int64_t jwork = 0 ;
         int tid ;
+        for (tid = 0 ; tid < ntasks ; tid++)
+        {
+            int64_t jstart, jend ;
+            GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
+            int64_t jtask = jend - jstart ;
+            int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
+            jslice [tid] = jwork ;
+            jwork += jpanel ;
+        }
+
+        int64_t bvlenx = (B_is_pattern ? 0 : bvlen) ;
+        int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) ;
+        int64_t bvlenb = (B_is_bitmap ? bvlen : 0) ; // TODO:: use GB_B_IS_BITMAP
+        size_t wfspace = jwork * (bvlenb + cvlen) ;
+        size_t wbxspace = jwork * (bvlenx * GB_BSIZE) ;
+        size_t wcxspace = jwork * (cvlenx * GB_CSIZE) ;
+        Wf = GB_MALLOC (wfspace, int8_t) ;
+        Wbx = GB_MALLOC (wbxspace, GB_void) ;   // ok::
+        Wcx = GB_MALLOC (wcxspace, GB_void) ;   // ok::
+        if (Wf == NULL || Wcx == NULL || Wbx == NULL)
+        {
+            // out of memory
+            GB_FREE_WORK ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+
+        //----------------------------------------------------------------------
+        // C<#M> += A*B
+        //----------------------------------------------------------------------
+
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)
         for (tid = 0 ; tid < ntasks ; tid++)
@@ -30,58 +75,223 @@
 
             int64_t jstart, jend ;
             GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
+            int64_t jtask = jend - jstart ;
+            int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
             int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
-            // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1)
+            // get the workspace for this task
             //------------------------------------------------------------------
 
-            for (int64_t kA = 0 ; kA < anvec ; kA++)
+            // workspace for Gb and Hf
+            int8_t  *GB_RESTRICT Wf_task = Wf + jslice [tid] * (bvlenb + cvlen);
+
+            // workspace to copy the panel of B, into Gb and Gx:
+            int8_t   *GB_RESTRICT Gb = Wf_task ;
+            GB_BTYPE *GB_RESTRICT Gx = Wbx + jslice [tid] * bvlenx * GB_BSIZE ;
+
+            // workspace to compute the panel of C
+            int8_t   *GB_RESTRICT Hf = Wf_task + jpanel * bvlenb ;
+            GB_CTYPE *GB_RESTRICT Hx = Wcx + jslice [tid] * cvlenx * GB_CSIZE ;
+            #if GB_IS_PLUS_FC32_MONOID
+            float  *GB_RESTRICT Hx_real = (float *) Hx ;
+            float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            #elif GB_IS_PLUS_FC64_MONOID
+            double *GB_RESTRICT Hx_real = (double *) Hx ;
+            double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            #endif
+            size_t hfsize = jpanel * cvlen ;
+
+            // clear the panel
+            memset (Hf, 0, hfsize) ;
+
+            //------------------------------------------------------------------
+            // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1) by panel
+            //------------------------------------------------------------------
+
+            for (int64_t j1 = jstart ; j1 < jend ; j1 += jpanel)
             {
 
                 //--------------------------------------------------------------
-                // get A(:,k)
+                // get the panel of np vectors j1:j2-1
                 //--------------------------------------------------------------
 
-                int64_t k = GBH (Ah, kA) ;
-                int64_t pA_start = Ap [kA] ;
-                int64_t pA_end = Ap [kA+1] ;
+                int64_t j2 = GB_IMIN (jend, j1 + jpanel) ;
+                int64_t np = j2 - j1 ;
 
                 //--------------------------------------------------------------
-                // C<#M>(:,jstart:jend-1) += A(:,k) * B(k,jstart:jend-1)
+                // load and transpose B(:,j1:j2-1) for one panel
                 //--------------------------------------------------------------
 
-                for (int64_t j = jstart ; j < jend ; j++)
+                if (B_is_bitmap)        // TODO:: use GB_B_IS_BITMAP
+                {
+                    // TODO:: make this a function to reduce code size
+                    if (np == 1)
+                    {
+                        // no need to load a single vector of B
+                        Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
+                    }
+                    else
+                    {
+                        // load and transpose the bitmap of B(:,j1:j2-1)
+                        for (int64_t jj = 0 ; jj < np ; jj++)
+                        {
+                            int64_t j = j1 + jj ;
+                            for (int64_t i = 0 ; i < bvlen ; i++)
+                            { 
+                                Gb [i*np + jj] = Bb [i + j * bvlen] ;
+                            }
+                        }
+                    }
+                }
+
+                if (!B_is_pattern)
+                {
+                    if (np == 1)
+                    {
+                        // no need to load a single vector of B
+                        Gx = (GB_BTYPE *) (B->x + (j1 * bvlen) * GB_BSIZE) ;
+                    }
+                    else
+                    {
+                        // load and transpose the values of B(:,j1:j2-1)
+                        for (int64_t jj = 0 ; jj < np ; jj++)
+                        {
+                            int64_t j = j1 + jj ;
+                            for (int64_t i = 0 ; i < bvlen ; i++)
+                            { 
+                                // G(i,jj) = B(i,j), and change storage order
+                                int64_t pG = i*np + jj ;
+                                int64_t pB = i + j * bvlen ;
+                                GB_LOADB (Gx, pG, Bx, pB) ;
+                            }
+                        }
+                    }
+                }
+
+                //--------------------------------------------------------------
+                // H = A * G for one panel
+                //--------------------------------------------------------------
+
+                for (int64_t kA = 0 ; kA < anvec ; kA++)
                 {
 
                     //----------------------------------------------------------
-                    // get B(k,j)
+                    // get A(:,k)
                     //----------------------------------------------------------
 
-                    int64_t pB = k + j * bvlen ;    // get pointer to B(k,j)
-                    if (!GBB (Bb, pB)) continue ;
-                    GB_GET_B_kj ;                   // bkj = B(k,j)
-                    int64_t pC_start = j * avlen ;  // get pointer to C(:,j)
-                    GB_GET_T_FOR_SECONDJ ;          // t = j or j+1 for SECONDJ
+                    int64_t k = GBH (Ah, kA) ;
+                    int64_t pA_start = Ap [kA] ;
+                    int64_t pA_end = Ap [kA+1] ;
+                    int64_t pG = k * np ;
+                    #undef  GB_MULT_A_ik_G_kjj
+                    #if GB_IS_PAIR_MULTIPLIER
+                        // t = A(i,k) * G (k,jj) is always equal to 1
+                        #define GB_MULT_A_ik_G_kjj(jj)
+                    #else
+                        // t = A(i,k) * G (k,jj)
+                        GB_CIJ_DECLARE (t) ;
+                        #define GB_MULT_A_ik_G_kjj(jj)                      \
+                            GB_GETB (gkj, Gx, pG+jj) ;                      \
+                            GB_MULT (t, aik, gkj, i, k, j1 + jj)
+                    #endif
+
+                    // TODO:: use GB_B_IS_BITMAP
+
+                    #define GB_HX_COMPUTE(jj)                               \
+                    {                                                       \
+                        /* H (i,jj) += A(i,k)*G(k,jj) */                    \
+                        if (!B_is_bitmap || Gb [pG+jj])                     \
+                        {                                                   \
+                            GB_MULT_A_ik_G_kjj (jj) ;                       \
+                            if (Hf [pH+jj] == 0)                            \
+                            {                                               \
+                                /* H(i,jj) is a new entry */                \
+                                GB_HX_WRITE (pH+jj, t) ; /* Hx(i,jj)=t */   \
+                                Hf [pH+jj] = 1 ;                            \
+                            }                                               \
+                            else                                            \
+                            {                                               \
+                                /* H(i,jj) is already present */            \
+                                GB_HX_UPDATE (pH+jj, t) ; /* Hx(i,jj)+=t */ \
+                            }                                               \
+                        }                                                   \
+                    }
+
+                    #define GB_LOAD_A_ij                                    \
+                        int64_t i = Ai [pA] ;                               \
+                        GB_GETA (aik, Ax, pA) ;                             \
+                        int64_t pH = i * np ;
 
                     //----------------------------------------------------------
-                    // C<#M>(:,j) += A(:,k) * B(k,j)
+                    // H += A(:,k)*G(k,:)
                     //----------------------------------------------------------
 
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                    switch (np)
                     {
 
-                        //------------------------------------------------------
-                        // get A(i,k)
-                        //------------------------------------------------------
+                        case 4 :
+                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                            {
+                                GB_LOAD_A_ij ;
+                                GB_HX_COMPUTE (0) ;
+                                GB_HX_COMPUTE (1) ;
+                                GB_HX_COMPUTE (2) ;
+                                GB_HX_COMPUTE (3) ;
+                            }
+                            break ;
 
-                        int64_t i = Ai [pA] ;
+                        case 3 :
+                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                            {
+                                GB_LOAD_A_ij ;
+                                GB_HX_COMPUTE (0) ;
+                                GB_HX_COMPUTE (1) ;
+                                GB_HX_COMPUTE (2) ;
+                            }
+                            break ;
 
-                        //------------------------------------------------------
-                        // get C(i,j): pointer and bitmap status
-                        //------------------------------------------------------
+                        case 2 :
+                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                            {
+                                GB_LOAD_A_ij ;
+                                GB_HX_COMPUTE (0) ;
+                                GB_HX_COMPUTE (1) ;
+                            }
+                            break ;
 
-                        int64_t pC = pC_start + i ;
+                        case 1 :
+                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                            {
+                                GB_LOAD_A_ij ;
+                                GB_HX_COMPUTE (0) ;
+                            }
+                            break ;
+
+                        default: ;
+                    }
+                }
+
+                //--------------------------------------------------------------
+                // C<#M>(:,j1:j2-1) += H
+                //--------------------------------------------------------------
+
+                for (int64_t jj = 0 ; jj < np ; jj++)
+                {
+
+                    //----------------------------------------------------------
+                    // C<#M>(:,j) += H (:,jj)
+                    //----------------------------------------------------------
+
+                    int64_t j = j1 + jj ;
+                    int64_t pC_start = j * avlen ;  // get pointer to C(:,j)
+
+                    for (int64_t i = 0 ; i < cvlen ; i++)
+                    {
+                        int64_t pC = pC_start + i ;     // pointer to C(i,j)
+                        int64_t pH = i * np + jj ;      // pointer to H(i,jj)
+                        if (!Hf [pH]) continue ;
+                        Hf [pH] = 0 ;                   // clear the panel
                         int8_t cb = Cb [pC] ;
 
                         //------------------------------------------------------
@@ -105,27 +315,32 @@
                         #endif
 
                         //------------------------------------------------------
-                        // C(i,j) += A(i,k) * B(k,j)
+                        // C(i,j) += H(i,jj)
                         //------------------------------------------------------
 
-                        GB_MULT_A_ik_B_kj ;
                         if (cb == 0)
                         { 
-                            // C(i,j) = A(i,k) * B(k,j)
-                            GB_CIJ_WRITE (pC, t) ;
+                            // C(i,j) = H(i,jj)
+                            #if GB_IS_ANY_PAIR_SEMIRING
+                            Cx [pC] = GB_CTYPE_CAST (1, 0) ;    // C(i,j) = 1
+                            #else
+                            GB_CIJ_GATHER (pC, pH) ;
+                            #endif
                             Cb [pC] = keep ;
                             task_cnvals++ ;
                         }
                         else
                         { 
-                            // C(i,j) += A(i,k) * B(k,j)
-                            GB_CIJ_UPDATE (pC, t) ;
+                            // C(i,j) += H(i,jj)
+                            GB_CIJ_GATHER_UPDATE (pC, pH) ;
                         }
                     }
                 }
             }
             cnvals += task_cnvals ;
         }
+
+        #undef GB_PANEL_SIZE
 
     }
     else if (use_atomics)
@@ -160,10 +375,10 @@
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
             GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Cx) + (pC_start * GB_CSIZE);
-            #if GB_IS_PLUS_FC32_MONOID
+            #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
-            #elif GB_IS_PLUS_FC64_MONOID
+            #elif GB_IS_PLUS_FC64_MONOID || GB_IS_ANY_FC64_MONOID
             double *GB_RESTRICT Hx_real = (double *) Hx ;
             double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
             #endif
@@ -243,7 +458,11 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
+                            #if GB_IS_ANY_PAIR_SEMIRING
+                            GB_ATOMIC_SET_HX_ONE (i) ;      // C(i,j) = 1
+                            #else
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
+                            #endif
                             task_cnvals++ ;
                             cb = keep ;                     // keep the entry
                         }
@@ -314,7 +533,11 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
+                            #if GB_IS_ANY_PAIR_SEMIRING
+                            GB_ATOMIC_SET_HX_ONE (i) ;      // C(i,j) = 1
+                            #else
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
+                            #endif
                             task_cnvals++ ;
                         }
                         else // cb == 1
@@ -354,8 +577,9 @@
 
         size_t workspace = cvlen * ntasks ;
         Wf = GB_CALLOC (workspace, int8_t) ;
-        Wx = GB_MALLOC (workspace * GB_CSIZE, GB_void) ;
-        if (Wf == NULL || Wx == NULL)
+        size_t cxsize = (GB_IS_ANY_PAIR_SEMIRING) ? 0 : GB_CSIZE ;
+        Wcx = GB_MALLOC (workspace * cxsize, GB_void) ;   // ok::
+        if (Wf == NULL || Wcx == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
@@ -391,7 +615,7 @@
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t   *GB_RESTRICT Hf = Wf + pW_start ;
-            GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Wx) + (pW_start * GB_CSIZE);
+            GB_CTYPE *GB_RESTRICT Hx = Wcx + (pW_start * cxsize) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -453,18 +677,27 @@
                     // W<#M>(i) += A(i,k) * B(k,j)
                     //----------------------------------------------------------
 
-                    GB_MULT_A_ik_B_kj ;         // t = A(i,k)*B(k,j)
-                    if (Hf [i] == 0)
-                    { 
-                        // W(i,j) is a new entry
-                        GB_HX_WRITE (i, t) ;    // Hx(i) = t
+                    #if GB_IS_ANY_PAIR_SEMIRING
+                    {
+                        // Hx is not used; Cx [...] = 1 is done below
                         Hf [i] = 1 ;
                     }
-                    else
-                    { 
-                        // W(i) is already present
-                        GB_HX_UPDATE (i, t) ;   // Hx(i) += t
+                    #else
+                    {
+                        GB_MULT_A_ik_B_kj ;         // t = A(i,k)*B(k,j)
+                        if (Hf [i] == 0)
+                        { 
+                            // W(i,j) is a new entry
+                            GB_HX_WRITE (i, t) ;    // Hx(i) = t
+                            Hf [i] = 1 ;
+                        }
+                        else
+                        { 
+                            // W(i) is already present
+                            GB_HX_UPDATE (i, t) ;   // Hx(i) += t
+                        }
                     }
+                    #endif
                 }
             }
         }
@@ -499,8 +732,8 @@
             int64_t wend = (j + 1) * nfine_tasks_per_vector ;
             int64_t task_cnvals = 0 ;
 
-            // Hx = (typecasted) Wx workspace, use Wf as-is
-            GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Wx) ;
+            // Hx = (typecasted) Wcx workspace, use Wf as-is
+            GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Wcx) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -552,7 +785,11 @@
                     if (cb == 0)
                     { 
                         // C(i,j) = W(i,w)
+                        #if GB_IS_ANY_PAIR_SEMIRING
+                        Cx [pC] = GB_CTYPE_CAST (1, 0) ;        // C(i,j) = 1
+                        #else
                         GB_CIJ_GATHER (pC, pW) ;
+                        #endif
                         Cb [pC] = keep ;
                         task_cnvals++ ;
                     }

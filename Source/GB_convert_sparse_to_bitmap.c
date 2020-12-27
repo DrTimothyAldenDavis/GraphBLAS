@@ -57,9 +57,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // determine if the conversion can be done in-place
     //--------------------------------------------------------------------------
 
-    // if in_place is true, then A->x does not change if A is dense and not
-    // jumbled (zombies are OK).
-    bool in_place = (GB_is_dense (A) && !(A->jumbled)) ;
+    // if in_place is true, then A->x does not change if A is as-if-full
+    bool in_place = GB_as_if_full (A) ;
 
     //--------------------------------------------------------------------------
     // allocate A->b
@@ -118,7 +117,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     else
     {
         // A->x must be modified to fit the bitmap structure
-        Ax_new = GB_MALLOC (anzmax * asize, GB_void) ;
+        Ax_new = GB_CALLOC (anzmax * asize, GB_void) ;
         Ax_shallow = false ;
         if (Ax_new == NULL)
         { 
@@ -140,23 +139,9 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // the sparse A has all entries: convert in-place
         //----------------------------------------------------------------------
 
-        if (nzombies == 0)
-        { 
-            // set all of Ab [0..anz-1] to 1, in parallel
-            GB_memset (Ab, 1, anz, nthreads_max) ;
-        }
-        else
-        { 
-            int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-            const int64_t *GB_RESTRICT Ai = A->i ;
-            int64_t p ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = Ai [p] ;
-                Ab [p] = (!GB_IS_ZOMBIE (i)) ;
-            }
-        }
+        ASSERT (nzombies == 0) ;
+        // set all of Ab [0..anz-1] to 1, in parallel
+        GB_memset (Ab, 1, anz, nthreads_max) ;
 
     }
     else if (anz > 0)

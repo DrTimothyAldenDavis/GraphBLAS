@@ -118,7 +118,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         { 
             // X must be typecasted
             int64_t anzmax = GB_IMAX (anz, 1) ;
-            X_bitmap = GB_MALLOC (anzmax * asize, GB_void) ;
+            X_bitmap = GB_MALLOC (anzmax * asize, GB_void) ;    // ok::
         }
         Ap = GB_MALLOC (A->vdim+1, int64_t) ;
         if (Ap == NULL || (need_typecast && X_bitmap == NULL))

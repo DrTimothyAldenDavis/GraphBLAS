@@ -39,31 +39,11 @@ function Y = dnn (W, bias, Y0)
 
 % NOTE: this is a high-level algorithm that uses GrB objects.
 
-% d.format = 'sparse by row' ;
-d.format = 'sparse/hyper by row' ;
-
 Y = Y0 ;
 for k = 1:length(W)
-
     % Propagate through layer, apply bias, and threshold negative values.
-    % YW = Y * W {k} ;
-    Y = GrB.mxm (Y, '+.*', W {k}, d) ;
-    fprintf ('YW %0.3g\n', GrB.entries (Y) / prod (size (Y))) ;
-    % YW
-    % nnz (YW) / prod (size (YW))
-    % pause
-    Y = GrB.mxm (Y, '+.+', bias {k}, d) ;
-    fprintf ('Y  %0.3g bias\n', GrB.entries (Y) / prod (size (Y))) ;
-    Y = GrB.select (Y, '>0', d) ;
-    fprintf ('Y  %0.3g after select\n', GrB.entries (Y) / prod (size (Y))) ;
-
-    % Y = GrB.select (GrB.mxm (Y * W {k}, '+.+', bias {k}), '>0') ;
-
+    Y = GrB.select (GrB.mxm (Y * W {k}, '+.+', bias {k}), '>0') ;
     M = Y > 32 ;
-    % M
-    % nnz (M) / prod (size (M))
-    % pause
-
     if (nnz (M) > 0)
         % Y (M) = 32 ;
         Y = GrB.subassign (Y, M, 32) ;

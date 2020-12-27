@@ -344,7 +344,7 @@ GrB_Info GB_selector
     }
     else
     { 
-        Cx = GB_MALLOC (cnz * asize, GB_void) ;
+        Cx = GB_MALLOC (cnz * asize, GB_void) ;     // ok::
     }
 
     if (Ci == NULL || Cx == NULL)

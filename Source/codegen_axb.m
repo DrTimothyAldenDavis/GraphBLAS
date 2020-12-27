@@ -219,7 +219,7 @@ terms = {  1             , 0              , [ ]            , [ ]              };
 atomx = {  1             , 1              , 1              , 0                };
 
 nbits = [8 16 32 64] ;
-bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFF' } ;
+bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFFL' } ;
 
 for i = 1:4
     addop = ops {i} ;
@@ -248,8 +248,6 @@ for i = 1:4
             else
                 id = '0' ;
             end
-            % fprintf ('%s %s %s %s %s %s %s %s %s %d 0\n', ...
-            % addop, multop, add, addfunc, mult, type, type, id, tm, at) ;
             codegen_axb_method (addop, multop, add, addfunc, mult, type, ...
                 type, id, tm, at, 0) ;
         end
@@ -283,9 +281,11 @@ for j = 1:6
         id = ids {i} ;
         tm = terms {i} ;
         at = atomx {i} ;
+        fprintf ('.') ;
         codegen_axb_method (addop, multop, add, addfunc, mult, 'int64_t', ...
             'int64_t', id, tm, at, 0) ;
         id = strrep (id, '64', '32')  ;
+        fprintf ('.') ;
         codegen_axb_method (addop, multop, add, addfunc, mult, 'int32_t', ...
             'int32_t', id, tm, at, 0) ;
     end

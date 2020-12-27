@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_GENERIC_H
-#define GB_GENERIC_H
+#ifndef GB_MEX_GENERIC_H
+#define GB_MEX_GENERIC_H
 
 #if GxB_STDC_VERSION >= 201112L
 

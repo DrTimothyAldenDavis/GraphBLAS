@@ -82,7 +82,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_saxpy3_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M
-    int64_t *Bflops,            // size B->nvec+1 and all zero
+    int64_t *Bflops,            // size B->nvec+1
     const GrB_Matrix M,         // optional mask matrix
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,

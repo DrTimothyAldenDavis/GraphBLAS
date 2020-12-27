@@ -147,27 +147,6 @@ void GB_AxB_saxpy3_cumsum
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_generic: for any types and operators
-//------------------------------------------------------------------------------
-
-GrB_Info GB_AxB_saxpy3_generic
-(
-    GrB_Matrix C,
-    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
-    const bool M_dense_in_place,    // ignored if C is bitmap
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_saxpy3task_struct *GB_RESTRICT TaskList, // NULL if C is bitmap
-    int ntasks,
-    int nfine,
-    int nthreads,
-    const int do_sort,              // if nonzero, try to sort in saxpy3
-    GB_Context Context
-) ;
-
-//------------------------------------------------------------------------------
 // GB_AxB_saxpy3_slice_balanced: create balanced parallel tasks for saxpy3
 //------------------------------------------------------------------------------
 

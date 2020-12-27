@@ -32,10 +32,14 @@ is_any = isequal (addop, 'any') ;
 is_max = isequal (addop, 'max') ;
 is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
-is_any_pair   = is_any && isequal (multop, 'pair') ;
+is_any_pair = is_any && isequal (multop, 'pair') ;
 ztype_is_real = ~contains (ztype, 'FC') ;
+is_any_complex = is_any && ~ztype_is_real ;
 is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
     && ztype_is_real ;
+
+t_is_simple = isequal (multop, 'pair') || contains (multop, 'first') || contains (multop, 'second') ;
+t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
 
 % for the 2 conventional semirings in MATLAB, which get extra optimization
 is_performance_critical = ...
@@ -51,18 +55,22 @@ switch (ztype)
         ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0xffL' ;
+        xbits = '0xFF' ;
     case { 'int16_t', 'uint16_t' }
         ztype_ignore_overflow = false ;
         nbits = 16 ;
         bits = '0xffffL' ;
+        xbits = '0xFFFF' ;
     case { 'int32_t', 'uint32_t' }
         ztype_ignore_overflow = false ;
         nbits = 32 ;
         bits = '0xffffffffL' ;
+        xbits = '0xFFFFFFFF' ;
     case { 'int64_t', 'uint64_t' }
         ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
+        xbits = '0xFFFFFFFFFFFFFFFFL' ;
     case { 'float' }
         ztype_ignore_overflow = true ;
         nbits = 32 ;
@@ -250,6 +258,20 @@ else
     fprintf (f, 'define(`GB_is_plus_fc64_monoid'', `0'')\n') ;
 end
 
+% any_fc32 monoid:
+if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC32_t'))
+    fprintf (f, 'define(`GB_is_any_fc32_monoid'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_any_fc32_monoid'', `0'')\n') ;
+end
+
+% any_fc64 monoid:
+if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC64_t'))
+    fprintf (f, 'define(`GB_is_any_fc64_monoid'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_any_fc64_monoid'', `0'')\n') ;
+end
+
 % min monoids:
 if (is_min)
     if (contains (ztype, 'int'))
@@ -293,17 +315,23 @@ fprintf (f, 'define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_ato
 % to get an entry from A
 if (is_second || is_pair || is_positional)
     % value of A is ignored for the SECOND and PAIR operators
+    fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
+    fprintf (f, 'define(`GB_a_is_pattern'', `0'')\n') ;
     fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % to get an entry from B
 if (is_first || is_pair || is_positional)
     % value of B is ignored for the FIRST and PAIR operators
+    fprintf (f, 'define(`GB_b_is_pattern'', `1'')\n') ;
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
+    fprintf (f, 'define(`GB_loadb'', `;'')\n') ;
 else
+    fprintf (f, 'define(`GB_b_is_pattern'', `0'')\n') ;
     fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_loadb'', `$1 [$2] = $3 [$4]'')\n', xytype) ;
 end
 
 % type-specific IDIV
@@ -328,7 +356,11 @@ if (is_min)
         add2 = 'if ($1 > $2) $1 = $2' ;
     else
         % min monoid for float or double, with omitnan property
-        add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) $1 = $2' ;
+        if (t_is_nonnan)
+            add2 = 'if (!islessequal ($1, $2)) $1 = $2' ;
+        else
+            add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) $1 = $2' ;
+        end
     end
 elseif (is_max)
     if (contains (ztype, 'int'))
@@ -336,7 +368,11 @@ elseif (is_max)
         add2 = 'if ($1 < $2) $1 = $2' ;
     else
         % max monoid for float or double, with omitnan property
-        add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) $1 = $2' ;
+        if (t_is_nonnan)
+            add2 = 'if (!isgreaterequal ($1, $2)) $1 = $2' ;
+        else
+            add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) $1 = $2' ;
+        end
     end
 else
     % use the add function as given
@@ -352,7 +388,6 @@ fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 
 % create the multiply-add operator
 is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && contains (ztype, 'int') ;
-
 if (~is_imin_or_imax && ...
     (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
      isequal (ztype, 'bool') || is_first || is_second || is_pair || is_positional))
@@ -365,13 +400,196 @@ if (~is_imin_or_imax && ...
     multadd = strrep (multadd, 'xarg', '`$2''') ;
     multadd = strrep (multadd, 'yarg', '`$3''') ;
     fprintf (f, 'define(`GB_multiply_add'', `%s'')\n', multadd) ;
+    need_mult_typecast = false ;
 else
     % use explicit typecasting to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
     fprintf (f, 'define(`GB_multiply_add'', `%s x_op_y = %s ; %s'')\n', ...
         ztype, mult2, add2) ;
+    need_mult_typecast = true ;
 end
+
+% create the bitmap multiply-add statement:
+% The bitmap_multadd (cb,cx,exists,ax,bx) macro computes does the following.
+% The value of cx has been initialized to the identity value of the monoid, so
+% cx += ax*bx can always be used (except for the ANY monoid).
+%
+%   if (exists)
+%       if (cb == 0)
+%           cx = ax * bx
+%           cb = 1
+%       else
+%           cx += ax * bx
+
+mult2 = strrep (mult,  'xarg', 'ax') ;
+mult2 = strrep (mult2, 'yarg', 'bx') ;
+xinit = ';' ;
+xload = ';' ;
+idbyte = '' ;
+if (need_mult_typecast)
+    % the result of the multiplier must be explicitly typcasted
+    mult2 = sprintf ('((%s) (%s))', ztype, mult2) ;
+else
+    mult2 = sprintf ('(%s)', mult2) ;
+end
+
+switch (addop)
+
+    % any monoid
+    case { 'any' }
+        if (isequal (multop, 'pair'))
+            s = ' ' ;
+        else
+            s = sprintf ('if (exists && !cb) cx = %s', mult2) ;
+        end
+
+    % boolean monoids (except eq / lxnor)
+    case { 'lor' }
+        s = sprintf ('cx |= exists & %s', mult2) ;
+        idbyte = '0' ;
+    case { 'land' }
+        s = sprintf ('cx &= ~exists | %s', mult2) ;
+        idbyte = '1' ;
+    case { 'lxor' }
+        if (isequal (multop, 'pair'))
+            s = sprintf ('cx ^= exists') ;
+        else
+            s = sprintf ('cx ^= exists & %s', mult2) ;
+        end
+        idbyte = '0' ;
+
+    % min/max monoids:
+    case { 'min' }
+        if (contains (ztype, 'int'))
+            % min for signed or unsigned integers
+            if (t_is_simple)
+                s = sprintf ('if (exists && cx > %s) cx = %s', mult2, mult2) ;
+            else
+                s = sprintf ('%s t = %s ; if (exists && cx > t) cx = t', ztype, mult2) ;
+            end
+        else
+            % min for float or double, with omitnan property
+            if (t_is_simple)
+                s = sprintf ('if (exists && !isnan (%s) && !islessequal (cx, %s)) cx = %s', mult2, mult2, mult2) ;
+            elseif (t_is_nonnan)
+                s = sprintf ('%s t = %s ; if (exists && !islessequal (cx, t)) cx = t', ztype, mult2) ;
+            else
+                s = sprintf ('%s t = %s ; if (exists && !isnan (t) && !islessequal (cx, t)) cx = t', ztype, mult2) ;
+            end
+        end
+        if (contains (ztype, 'uint'))
+            idbyte = '0xFF' ;
+        end
+    case { 'max' }
+        if (contains (ztype, 'int'))
+            % max for signed or unsigned integers
+            if (t_is_simple)
+                s = sprintf ('if (exists && cx < %s) cx = %s', mult2, mult2) ;
+            else
+                s = sprintf ('%s t = %s ; if (exists && cx < t) cx = t', ztype, mult2) ;
+            end
+        else
+            % max for float or double, with omitnan property
+            if (t_is_simple)
+                s = sprintf ('if (exists && !isnan (%s) && !isgreaterequal (cx, %s)) cx = %s', mult2, mult2, mult2) ;
+            elseif (t_is_nonnan)
+                s = sprintf ('%s t = %s ; if (exists && !isgreaterequal (cx, t)) cx = t', ztype, mult2) ;
+            else
+                s = sprintf ('%s t = %s ; if (exists && !isnan (t) && !isgreaterequal (cx, t)) cx = t', ztype, mult2) ;
+            end
+        end
+        if (contains (ztype, 'uint'))
+            idbyte = '0' ;
+        end
+
+    % plus monoid: special cases for some multipliers
+    case { 'plus' }
+        idbyte = '0' ;
+        if (ztype_is_real)
+            if (isequal (multop, 'times'))
+                % X = {0,bx}
+                xinit = sprintf ('%s X [2] = {0,0}', ztype) ;
+                xload = 'X [1] = bx' ;
+                if (need_mult_typecast)
+                    s = sprintf ('cx += (%s) (ax * X [exists])', ztype) ;
+                else
+                    s = 'cx += ax * X [exists]' ;
+                end
+            elseif (isequal (multop, 'pair'))
+                s = 'cx += exists' ;
+            else
+                % X = {0,1}
+                xinit = sprintf ('%s X [2] = {0,1}', ztype) ;
+                if (need_mult_typecast)
+                    s = sprintf ('cx += (%s) (%s * X [exists])', ztype, mult2) ;
+                else
+                    s = sprintf ('cx += %s * X [exists]', mult2) ;
+                end
+            end
+        else
+            % plus monoids for complex types
+            s = '' ;
+        end
+
+    % bitwise monoids (except bxnor)
+    case { 'bor' }
+        % X = {all zeros, all ones}
+        xinit = sprintf ('%s X [2] = {0,%s}', ztype, xbits) ;
+        s = sprintf ('cx |= X [exists] & %s', mult2) ;
+        idbyte = '0' ;
+    case { 'band' }
+        % X = {all ones, all zeros}
+        xinit = sprintf ('%s X [2] = {%s,0}', ztype, xbits) ;
+        s = sprintf ('cx &= X [exists] | %s', mult2) ;
+        idbyte = '0xFF' ;
+    case { 'bxor' }
+        % X = {all zeros, all ones}
+        xinit = sprintf ('%s X [2] = {0,%s}', ztype, xbits) ;
+        s = sprintf ('cx ^= X [exists] & %s', mult2) ;
+        idbyte = '0' ;
+
+    % these monoids do not have a concise bitmap multiply-add
+    case { 'eq' }
+        s = '' ;
+        idbyte = '1' ;      % eq monoid: identity byte for memset
+    case { 'times' }
+        s = '' ;
+        idbyte = '' ;
+    case {'bxnor' }
+        s = '' ;
+        idbyte = '0xFF' ;   % bxnor monoid: identity byte for memset
+end
+
+if (isempty (idbyte))
+    fprintf (f, 'define(`GB_has_identity_byte'', `0'')\n') ;
+    fprintf (f, 'define(`GB_identity_byte'', `(none)'')\n') ;
+else
+    fprintf (f, 'define(`GB_has_identity_byte'', `1'')\n') ;
+    fprintf (f, 'define(`GB_identity_byte'', `%s'')\n', idbyte) ;
+end
+
+if (isempty (s))
+    fprintf (f, 'define(`GB_has_bitmap_multadd'', `0'')\n') ;
+    fprintf (f, 'define(`GB_bitmap_multadd'', `(none)'')\n') ;
+else
+    if (length (s) > 1)
+        s = [s ' ; cb |= exists'] ;
+    else
+        s = ['cb |= exists'] ;
+    end
+    s = strrep (s, 'cb', '$1') ;
+    s = strrep (s, 'cx', '$2') ;
+    s = strrep (s, 'exists', '$3') ;
+    s = strrep (s, 'ax', '$4') ;
+    s = strrep (s, 'bx', '$5') ;
+    fprintf (f, 'define(`GB_has_bitmap_multadd'', `1'')\n') ;
+    fprintf (f, 'define(`GB_bitmap_multadd'', `%s'')\n', s) ;
+end
+xload = strrep (xload, 'bx', '$1') ;
+fprintf (f, 'define(`GB_xload'', `%s'')\n', xload) ;
+fprintf (f, 'define(`GB_xinit'', `%s'')\n', xinit) ;
+% fprintf ('(%5s %-8s %10s): { %s } { %s } { %s }\n', addop, multop, ztype, xinit, xload, s) ;
 
 % create the disable flag
 disable  = sprintf ('GxB_NO_%s', upper (addop)) ;
@@ -388,7 +606,7 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
-nprune = 40 ;
+nprune = 51 ;
 
 % construct the *.c file
 cmd = sprintf (...

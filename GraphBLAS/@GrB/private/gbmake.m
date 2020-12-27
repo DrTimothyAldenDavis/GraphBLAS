@@ -69,7 +69,7 @@ else
                 if (~isempty (ansi))
                     cflags = [cflags(1:ansi-1) '-std=c11' cflags(ansi+5:end)] ;
                     flags = [flags ' ' cflags] ;
-                    fprintf ('compiling with -std=c11 instead of default -ansi\n') ;
+                    fprintf ('using -std=c11 instead of default -ansi\n') ;
                 end
             end
         end

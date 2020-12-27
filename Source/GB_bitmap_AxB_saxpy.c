@@ -146,7 +146,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 
     if (!done)
     { 
-        info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
+        info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             true, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, NULL, 0, 0, 0, 0, Context) ;
     }

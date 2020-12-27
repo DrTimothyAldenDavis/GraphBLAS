@@ -49,7 +49,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     const size_t asize = A->type->size ;
     int64_t *GB_RESTRICT Ap = GB_MALLOC (avdim+1, int64_t) ; 
     int64_t *GB_RESTRICT Ai = GB_MALLOC (anzmax, int64_t) ;
-    GB_void *GB_RESTRICT Ax = GB_MALLOC (anzmax * asize, GB_void) ;
+    GB_void *GB_RESTRICT Ax = GB_MALLOC (anzmax * asize, GB_void) ; // ok::
     if (Ap == NULL || Ai == NULL || Ax == NULL)
     { 
         // out of memory

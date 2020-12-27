@@ -130,12 +130,7 @@ are extensions.
 
 \begin{itemize}
 
-%% TODO:: MATLAB @GrB test coverage
-%% TODO:: rerun MATLAB demos
-%% TODO:: Tcov to 100%
-%% TODO:: check port to Windows, Mac, Power8
-%% TODO:: see if burble slows down BFS on road.  If yes, disable it by default
-\item Version 4.0.1 (Dec 19, 2020) (beta1)  % TODO:: update when released
+\item Version 4.0.1 ({\bf TODO}, 2020) (beta1)  % TODO:: update when released
 
     \begin{packed_itemize}
     \item significant performance improvements: up to 5x faster than v3.3.3
@@ -261,10 +256,6 @@ adds user-defined objects at compile-time, via user \verb'*.m4' files placed in
 \verb'GraphBLAS/User', which use the \verb'GxB_*_define' macros 
 (NOTE: feature removed in v3.2).
 The default matrix format is now \verb'GxB_BY_ROW'.
-% If you want the default format to be by column (the default in Version 2.1 and
-% earlier), just compile with \verb'-DBYCOL', or add \newline
-% \verb'GxB_set (GxB_FORMAT, GxB_BY_COL) ;'
-% after calling \verb'GrB_init'.
 Also added are the \verb'GxB_*print' methods for printing the contents of each
 GraphBLAS object (Section~\ref{fprint}).   PageRank demos have been added to
 the \verb'Demos' folder.
@@ -6677,33 +6668,161 @@ on the amount of time or memory taken.
     formats.  These are global options that modify all matrices created after
     calling this method.  The global settings also control the number of
     threads used, and the heuristic for selecting the number of threads for
-    small problems.
+    small problems (the ``chunk'').
+
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
+                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_GLOBAL_NTHREADS'  & \verb'int'    & number of threads to use \\
+\verb'GxB_NTHREADS'         & \verb'int'    & number of threads to use \\
+\verb'GxB_GLOBAL_CHUNK'     & \verb'double' & chunk size \\
+\verb'GxB_CHUNK'            & \verb'double' & chunk size \\
+\verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
+\end{tabular}
+}
 
 \item \verb'GxB_set (GrB_Matrix A, field, value)' provides hints to
-    SuiteSparse: GraphBLAS on how to store a particular matrix.  This method
-    allows SuiteSparse:GraphBLAS to transform a specific matrix from one format
-    to another.  The format has no effect on the result computed by GraphBLAS;
-    it only affects the time and memory taken to do the computations.
+    SuiteSparse: GraphBLAS on how to store a particular matrix.
 
-\item \verb'GxB_set (GrB_Descriptor desc, field, value)' is another way to
-    set the value of a field in a \verb'GrB_Descriptor'.  It is identical to \\
-    \verb'GxB_Desc_set', just with a generic name.
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
+                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\end{tabular}
+}
+
+\item \verb'GxB_set (GrB_Vector v, field, value)' provides hints to
+    SuiteSparse: GraphBLAS on how to store a particular vector.
+
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\end{tabular}
+}
+
+\item \verb'GxB_set (GrB_Descriptor desc, field, value)' sets
+    the value of a field in a \verb'GrB_Descriptor'.
+
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GrB_OUTP'     & \verb'GrB_Desc_field' & replace option \\
+\verb'GrB_MASK'     & \verb'GrB_Desc_field' & mask option \\
+\verb'GrB_INP0'     & \verb'GrB_Desc_field' & transpose input 0 \\
+\verb'GrB_INP1'     & \verb'GrB_Desc_field' & transpose input 1 \\
+\verb'GxB_DESCRIPTOR_NTHREADS'  & \verb'int' & number of threads to use \\
+\verb'GxB_NTHREADS'             & \verb'int' & number of threads to use \\
+\verb'GxB_DESCRIPTOR_CHUNK'     & \verb'double' & chunk size \\
+\verb'GxB_CHUNK'                & \verb'double' & chunk size \\
+\verb'GxB_AxB_METHOD'           & \verb'int' & method for matrix multiply \\
+\verb'GxB_SORT'                 & \verb'int' & lazy vs aggressive sort \\
+\end{tabular}
+}
 
 \end{itemize}
 
 The \verb'GxB_get' method queries a \verb'GrB_Descriptor', a \verb'GrB_Matrix',
-or the global options.
+a \verb'GrB_Vector', or the global options.
 
 \begin{itemize}
 
 \item \verb'GxB_get (field, &value)' retrieves the value of
     a global option.
 
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
+                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_GLOBAL_NTHREADS'  & \verb'int'    & number of threads to use \\
+\verb'GxB_NTHREADS'         & \verb'int'    & number of threads to use \\
+\verb'GxB_GLOBAL_CHUNK'     & \verb'double' & chunk size \\
+\verb'GxB_CHUNK'            & \verb'double' & chunk size \\
+\verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
+\hline
+\verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
+\verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
+\verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
+\verb'GxB_LIBRARY_DATE'         & \verb'char *' & release date \\
+\verb'GxB_LIBRARY_ABOUT'        & \verb'char *' & about the library \\
+\verb'GxB_LIBRARY_LICENSE'      & \verb'char *' & license \\
+\verb'GxB_LIBRARY_COMPILE_DATE' & \verb'char *' & date of compilation \\
+\verb'GxB_LIBRARY_COMPILE_TIME' & \verb'char *' & time of compilation \\
+\verb'GxB_LIBRARY_URL'          & \verb'char *' & url of library \\
+\verb'GxB_API_VERSION'          & \verb'int [3]' & C API version \\
+\verb'GxB_API_DATE'             & \verb'char *' & C API date \\
+\verb'GxB_API_ABOUT'            & \verb'char *' & about the C API \\
+\verb'GxB_API_URL'              & \verb'char *' & \verb'http://graphblas.org' \\
+\end{tabular}
+}
+
 \item \verb'GxB_get (GrB_Matrix A, field, &value)' retrieves the current
     value of an option from a particular matrix \verb'A'.
 
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
+                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\verb'GxB_SPARSITY_STATUS'  & \verb'int'    & 1, 2, 4, or 8 \\
+\end{tabular}
+}
+
+\item \verb'GxB_get (GrB_Vector A, field, &value)' retrieves the current
+    value of an option from a particular vector \verb'v'.
+
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
+                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\verb'GxB_SPARSITY_STATUS'  & \verb'int'    & 1, 2, 4, or 8 \\
+\end{tabular}
+}
+
 \item \verb'GxB_get (GrB_Descriptor desc, field, &value)' retrieves the value
     of a field in a descriptor.
+
+{\footnotesize
+\begin{tabular}{lll}
+field                       & value         & description \\
+\hline
+\verb'GrB_OUTP'     & \verb'GrB_Desc_field' & replace option \\
+\verb'GrB_MASK'     & \verb'GrB_Desc_field' & mask option \\
+\verb'GrB_INP0'     & \verb'GrB_Desc_field' & transpose input 0 \\
+\verb'GrB_INP1'     & \verb'GrB_Desc_field' & transpose input 1 \\
+\verb'GxB_DESCRIPTOR_NTHREADS'  & \verb'int' & number of threads to use \\
+\verb'GxB_NTHREADS'             & \verb'int' & number of threads to use \\
+\verb'GxB_DESCRIPTOR_CHUNK'     & \verb'double' & chunk size \\
+\verb'GxB_CHUNK'                & \verb'double' & chunk size \\
+\verb'GxB_AxB_METHOD'           & \verb'int' & method for matrix multiply \\
+\verb'GxB_SORT'                 & \verb'int' & lazy vs aggressive sort \\
+\end{tabular}
+}
 
 \end{itemize}
 
@@ -6940,10 +7059,11 @@ $m$-by-$n$ matrix $\bf A$.  If the matrix is currently in sparse or hypersparse
 format, and is modified so that $d$ exceeds the default threshold of 0.1, it is
 converted into bitmap format.  The default threshold is controlled by the
 \verb'GxB_BITMAP_SWITCH' setting, which can be set globally, or for a
-particular matrix or vector.  If the matrix is currently in bitmap format, it
-is converted to full if all entries are present, or to sparse/hypersparse if
-$d$ drops below \verb'GxB_BITMAP_SWITCH/50' (0.2\% by default).  A matrix or
-vector with $d$ between 0.2\% and 10\% (by default) remains in its current
+particular matrix or vector.  The current default value of
+\verb'GxB_BITMAP_SWITCH' is 0.10.  If the matrix is currently in bitmap format,
+it is converted to full if all entries are present, or to sparse/hypersparse if
+$d$ drops below \verb'GxB_BITMAP_SWITCH/2' (5\% by default).  A matrix or
+vector with $d$ between 5\% and 10\% (by default) remains in its current
 format.
 
 %-------------------------------------------------------------------------------
@@ -6961,6 +7081,7 @@ typedef enum
     GxB_HYPER_SWITCH = 0,    // defines switch to hypersparse (double value)
     GxB_BITMAP_SWITCH = 34,  // defines switch to hypersparse (double value)
     GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
+    GxB_SPARSITY_CONTROL = 32,  // control the sparsity of a matrix or vector
 
     // for global get/set only:
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
@@ -6969,9 +7090,6 @@ typedef enum
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
-
-    // for matrix/vector set only:
-    GxB_SPARSITY_CONTROL = 32,  // control the sparsity of a matrix or vector
 
     // for global get only:
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
@@ -6987,7 +7105,6 @@ typedef enum
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
     GxB_API_URL = 19,               // URL for the API (char *)
-
 }
 GxB_Option_Field ;
 \end{verbatim} }
@@ -7088,21 +7205,25 @@ can be any mix (a sum or bitwise or) of \verb'GxB_HYPERSPARSE'
 \verb'GxB_SPARSE' \verb'GxB_BITMAP', and \verb'GxB_FULL'.  By default, a matrix
 or vector can be held in any format, with the default setting
 \verb'GxB_AUTO_SPARSITY', which is equal to \verb'GxB_HYPERSPARSE' +
-\verb'GxB_SPARSE' + \verb'GxB_FULL'.  In this case, SuiteSparse:GraphBLAS
-selects automatically between hypersparse, sparse, and full.  The bitmap format
-is new to v4, and the heuristics need to be refined for selecting it
-automatically.  To enable a matrix to take on just \verb'GxB_SPARSE' or
-\verb'GxB_FULL' formats, but not \verb'GxB_HYPERSPARSE' or \verb'GxB_BITMPAP',
-for example, use the following:
+\verb'GxB_SPARSE' + \verb'GxB_BITMAP' + \verb'GxB_FULL'.  To enable a matrix to
+take on just \verb'GxB_SPARSE' or \verb'GxB_FULL' formats, but not
+\verb'GxB_HYPERSPARSE' or \verb'GxB_BITMAP', for example, use the following:
 
 {\footnotesize
 \begin{verbatim}
-    int sparsity ;
-    GxB_set (A, GxB_SPARSITY_STATUS, GxB_SPARSE + GxB_FULL) ; \end{verbatim}}
+    GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE + GxB_FULL) ; \end{verbatim}}
 
 In this case, SuiteSparse:GraphBLAS will hold the matrix in sparse format
 (\verb'CSC' or \verb'CSC', depending on its \verb'GxB_FORMAT'), unless all
 entries are present, in which case it will be converted to full format.
+
+Only the least 4 bits of the sparsity control are considered, so the
+formats can be bitwise negated.  For example, to allow for any format
+except full:
+
+{\footnotesize
+\begin{verbatim}
+    GxB_set (A, GxB_SPARSITY_CONTROL, ~GxB_FULL) ; \end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_BURBLE}: diagnostic output}
@@ -7287,6 +7408,8 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_MODE'                 & blocking / non-blocking \\
         \verb'GxB_NTHREADS'             & default number of threads \\
         \verb'GxB_CHUNK'                & default chunk size \\
+        \verb'GxB_BURBLE'       & burble setting \\
+        \hline
         \verb'GxB_LIBRARY_NAME'         & \verb"SuiteSparse:GraphBLAS" \\
         \verb'GxB_LIBRARY_VERSION'      & \verb'int' array of size 3 \\
         \verb'GxB_LIBRARY_DATE'         & date of release \\
@@ -7295,11 +7418,12 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_LIBRARY_COMPILE_DATE' & date of compilation \\
         \verb'GxB_LIBRARY_COMPILE_TIME' & time of compilation \\
         \verb'GxB_LIBRARY_URL'          & URL of the library \\
-        \verb'GxB_API_VERSION'          & GraphBLAS C API Specification Version \\
-        \verb'GxB_API_DATE'             & date of the C API Spec.  \\
-        \verb'GxB_API_ABOUT'            & about of the C API Spec. \\
-        \verb'GxB_API_URL'              & URL of the spec \\
-        \verb'GxB_BURBLE'               & burble setting \\
+        \hline
+        \verb'GxB_API_VERSION'  & GraphBLAS C API Specification Version \\
+        \verb'GxB_API_DATE'     & date of the C API Spec.  \\
+        \verb'GxB_API_ABOUT'    & about of the C API Spec. \\
+        \verb'GxB_API_URL'      & URL of the spec \\
+        \hline
 \end{tabular}
 }
 \vspace{0.2in}
@@ -7448,10 +7572,23 @@ To get global options that can be queried but not modified:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_get (GxB_MODE,          GrB_Mode *mode) ; \end{verbatim} }
+    GxB_get (GxB_MODE,                 GrB_Mode *mode) ;
+    GxB_get (GxB_LIBRARY_NAME,         char **) ;
+    GxB_get (GxB_LIBRARY_VERSION,      int *) ;
+    GxB_get (GxB_LIBRARY_DATE,         char **) ;
+    GxB_get (GxB_LIBRARY_ABOUT,        char **) ;
+    GxB_get (GxB_LIBRARY_LICENSE,      char **) ;
+    GxB_get (GxB_LIBRARY_COMPILE_DATE, char **) ;
+    GxB_get (GxB_LIBRARY_COMPILE_TIME, char **) ;
+    GxB_get (GxB_LIBRARY_URL,          char **) ;
+    GxB_get (GxB_API_VERSION,          int *) ;
+    GxB_get (GxB_API_DATE,             char **) ;
+    GxB_get (GxB_API_ABOUT,            char **) ;
+    GxB_get (GxB_API_URL,              char **) ;
+    \end{verbatim} }
 
 \noindent
-To set/get a matrix option:
+To set/get a matrix option or status
 
     {\footnotesize
     \begin{verbatim}
@@ -7471,14 +7608,27 @@ To set/get a matrix option:
     GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, scontrol) ;
     GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *scontrol) ;
 
+    GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ;
     \end{verbatim} }
 
 \noindent
-To get the sparsity status of a matrix:
+To set/get a vector option or status:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ; \end{verbatim} }
+    GxB_set (GrB_Vector v, GxB_BITMAP_SWITCH, double b) ;
+    GxB_get (GrB_Vector v, GxB_BITMAP_SWITCH, double *b) ;
+
+    GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_ROW) ;
+    GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_COL) ;
+    GxB_get (GrB_Vector v, GxB_FORMAT, GxB_Format_Value *s) ;
+
+    GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
+    GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, scontrol) ;
+    GxB_get (GrB_Vector v, GxB_SPARSITY_CONTROL, int *scontrol) ;
+
+    GxB_get (GrB_Vector v, GxB_SPARSITY_STATUS, int *sparsity) ;
+    \end{verbatim} }
 
 \noindent
 To set/get a descriptor field:

@@ -38,18 +38,27 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     switch (field)
     {
 
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double bitmap_switch = va_arg (ap, double) ;
+                va_end (ap) ;
+                v->bitmap_switch = (float) bitmap_switch ;
+            }
+            break ;
+
         case GxB_SPARSITY_CONTROL : 
 
             {
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                if (sparsity <= GxB_DEFAULT || sparsity > 15)
+                sparsity = sparsity & GxB_ANY_SPARSITY ;
+                if (sparsity <= GxB_DEFAULT)
                 { 
                     sparsity = GxB_AUTO_SPARSITY ;
                 }
-                // a GrB_Vector cannot be hypersparse, but v->sparsity can be
-                // set to anything.  This is handled by GB_conform.
                 v->sparsity = sparsity ;
             }
             break ;

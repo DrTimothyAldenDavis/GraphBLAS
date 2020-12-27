@@ -91,8 +91,8 @@ GrB_Info info = GrB_SUCCESS ;
 GrB_Monoid reduce = NULL ;
 GrB_BinaryOp op = NULL ;
 bool user_complex = false ;
-int C_sparsity_control = GxB_AUTO_SPARSITY ;
-int M_sparsity_control = GxB_AUTO_SPARSITY ;
+int C_sparsity_control ;
+int M_sparsity_control ;
 bool have_sparsity_control = false ;
 
 GrB_Info assign (GB_Context Context) ;

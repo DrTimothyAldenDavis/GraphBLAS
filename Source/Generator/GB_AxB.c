@@ -50,6 +50,8 @@
 #define GB_CTYPE \
     GB_ctype
 
+#define GB_ASIZE (sizeof (GB_BTYPE))
+#define GB_BSIZE (sizeof (GB_BTYPE))
 #define GB_CSIZE (sizeof (GB_CTYPE))
 
 // true for int64, uint64, float, double, float complex, and double complex 
@@ -63,6 +65,14 @@
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB) \
     GB_getb(bkj,Bx,pB)
+
+// Gx [pG] = Ax [pA]
+#define GB_LOADA(Gx,pG,Ax,pA) \
+    Gx [pG] = Ax [pA]
+
+// Gx [pG] = Bx [pB]
+#define GB_LOADB(Gx,pG,Bx,pB) \
+    GB_loadb(Gx,pG,Bx,pB)
 
 #define GB_CX(p) Cx [p]
 
@@ -81,6 +91,14 @@
 // monoid identity value
 #define GB_IDENTITY \
     GB_identity
+
+// 1 if the identity value can be assigned via memset, with all bytes the same
+#define GB_HAS_IDENTITY_BYTE \
+    GB_has_identity_byte
+
+// identity byte, for memset
+#define GB_IDENTITY_BYTE \
+    GB_identity_byte
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
@@ -170,6 +188,14 @@
 #define GB_IS_PLUS_FC64_MONOID \
     GB_is_plus_fc64_monoid
 
+// 1 if monoid is ANY_FC32
+#define GB_IS_ANY_FC32_MONOID \
+    GB_is_any_fc32_monoid
+
+// 1 if monoid is ANY_FC64
+#define GB_IS_ANY_FC64_MONOID \
+    GB_is_any_fc64_monoid
+
 // 1 if monoid is MIN for signed or unsigned integers
 #define GB_IS_IMIN_MONOID \
     GB_is_imin_monoid
@@ -206,7 +232,6 @@
 
     // result is purely symbolic; no numeric work to do.  Hx is not used.
     #define GB_HX_WRITE(i,t)
-    #define GB_HX_READ(i,s)
     #define GB_CIJ_GATHER(p,i)
     #define GB_CIJ_GATHER_UPDATE(p,i)
     #define GB_HX_UPDATE(i,t)
@@ -216,10 +241,6 @@
 
     // Hx [i] = t
     #define GB_HX_WRITE(i,t) Hx [i] = t
-
-    // s = Hx [i]
-    #define GB_HX_READ(i,s) \
-        GB_ctype s = Hx [i]
 
     // Cx [p] = Hx [i]
     #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
@@ -237,6 +258,28 @@
         memcpy (Cx +(p), Hx +(i), (len) * sizeof(GB_ctype))
 
 #endif
+
+// 1 if the semiring has a concise bitmap multiply-add
+#define GB_HAS_BITMAP_MULTADD \
+    GB_has_bitmap_multadd
+
+// concise statement(s) for the bitmap case:
+//  if (exists)
+//      if (cb == 0)
+//          cx = ax * bx
+//          cb = 1
+//      else
+//          cx += ax * bx
+#define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
+    GB_bitmap_multadd(cb,cx,exists,ax,bx)
+
+// define X for bitmap multiply-add
+#define GB_XINIT \
+    GB_xinit
+
+// load X [1] = bkj for bitmap multiply-add
+#define GB_XLOAD(bkj) \
+    GB_xload(bkj)
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

@@ -500,7 +500,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
+        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;   // ok::
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
@@ -640,7 +640,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (!done)
     { 
-        info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
+        info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, TaskList, ntasks, nfine, nthreads, do_sort, Context) ;
     }

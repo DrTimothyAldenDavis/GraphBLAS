@@ -54,8 +54,8 @@ bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
 GrB_Info assign (void) ;
-int C_sparsity_control = GxB_AUTO_SPARSITY ;
-int M_sparsity_control = GxB_AUTO_SPARSITY ;
+int C_sparsity_control ;
+int M_sparsity_control ;
 bool have_sparsity_control = false ;
 
 GrB_Info many_assign

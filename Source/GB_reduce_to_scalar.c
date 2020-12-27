@@ -129,7 +129,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // allocate workspace
         //----------------------------------------------------------------------
 
-        W = GB_MALLOC (ntasks * zsize, GB_void) ;
+        W = GB_MALLOC (ntasks * zsize, GB_void) ;       // ok::
         F = GB_MALLOC (ntasks, bool) ;
         if (W == NULL || F == NULL)
         { 

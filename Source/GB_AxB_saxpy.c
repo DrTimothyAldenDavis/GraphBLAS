@@ -67,11 +67,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B) ;
-    if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
-    {
-        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    }
+    int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B, Context) ;
 
     if (M == NULL)
     {

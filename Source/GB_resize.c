@@ -116,12 +116,12 @@ GrB_Info GB_resize              // change the size of a matrix
         else
         { 
             // allocate new space for A->x
-            Ax_new = GB_MALLOC (nzmax_new*asize, GB_void) ;
+            Ax_new = GB_MALLOC (nzmax_new*asize, GB_void) ;     // ok::
             ok = (Ax_new != NULL) ;
             if (A_is_bitmap)
             {
                 // allocate new space for A->b
-                Ab_new = GB_MALLOC (nzmax_new*asize, GB_void) ;
+                Ab_new = GB_MALLOC (nzmax_new*asize, int8_t) ;
                 ok = ok && (Ab_new != NULL) ;
             }
         }

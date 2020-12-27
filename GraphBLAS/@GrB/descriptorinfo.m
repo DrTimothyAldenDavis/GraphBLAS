@@ -42,14 +42,12 @@ function descriptorinfo (d)
 %            'zero-based', then indices are zero-based, in the range 0 to
 %            n-1, for a matrix of dimension n.
 %
-%   d.format a string, either 'by row' or 'by col', which defines the
-%            format of the GraphBLAS output matrix C.  The following rules
-%            are used to determine the format of the result, in order:
+%   d.format a string that describes the sparsity format of the output
+%            matrix C.  The following rules are used to determine the
+%            format of the result, in order:
 %
-% TODO:: add sparse/bitmap/etc
-%
-%            (1) If the format is determined by the descriptor to the
-%                method, then that determines the format of C.
+%            (1) If d.format appears in the descriptor for a method, then
+%               that determines the format of C.
 %            (2) If C is a column vector then C is stored by column.
 %            (3) If C is a row vector then C is stored by row.
 %            (4) If the method has a first matrix input (usually called A),
@@ -60,6 +58,13 @@ function descriptorinfo (d)
 %                is used for C.
 %            (6) Otherwise, the global default format is used for C.
 %                See GrB.format for details.
+%
+%           The d.format string optionally includes one or more strings
+%           'sparse', 'hypersparse' (or 'hyper' for short), 'bitmap', and
+%           'full', separated by '/', and then optionally followed by the
+%           string 'by row' or 'by col'.  For example, to allow C to be
+%           sparse or bitmap, use d.format = 'sparse/bitmap'.  To return
+%           C as hypersparse in row-oriented format, use 'hyper by row'.
 %
 % These descriptor values are scalars:
 %

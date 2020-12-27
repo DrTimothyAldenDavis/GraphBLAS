@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_generic: compute C=A*B, C<M>=A*B, or C<!M>=A*B in parallel
+// GB_AxB_saxpy_generic: compute C=A*B, C<M>=A*B, or C<!M>=A*B in parallel
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_saxpy3_generic computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel,
+// GB_AxB_saxpy_generic computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel,
 // with arbitrary types and operators.  C can have any sparsity pattern:
 // hyper, sparse, bitmap, or full.
 
@@ -22,7 +22,7 @@
 #include "GB_ek_slice.h"
 #include "GB_bitmap_assign_methods.h"
 
-GrB_Info GB_AxB_saxpy3_generic
+GrB_Info GB_AxB_saxpy_generic
 (
     GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
@@ -87,10 +87,8 @@ GrB_Info GB_AxB_saxpy3_generic
     }
 
     //--------------------------------------------------------------------------
-    // C = A*B via saxpy3 method, function pointers, and typecasting
+    // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------
-
-    #define GB_GENERIC
 
     // memcpy (&(Cx [pC]), &(Hx [i]), len*csize)
     #define GB_CIJ_MEMCPY(pC,i,len) \
@@ -99,26 +97,35 @@ GrB_Info GB_AxB_saxpy3_generic
     // atomic update not available for function pointers
     #define GB_HAS_ATOMIC 0
 
-    // 1 if monoid update can be skipped entirely (the ANY monoid)
-    #define GB_IS_ANY_MONOID 0
-
     // user-defined monoid update cannot be done with an OpenMP atomic
     #define GB_HAS_OMP_ATOMIC 0
 
-    // not an ANY_PAIR semiring
+    // no special cases
+    #define GB_IS_ANY_MONOID 0
+    #define GB_IS_ANY_FC32_MONOID 0
+    #define GB_IS_ANY_FC64_MONOID 0
+    #define GB_IS_PLUS_FC32_MONOID 0
+    #define GB_IS_PLUS_FC64_MONOID 0
     #define GB_IS_ANY_PAIR_SEMIRING 0
-
-    // not a PAIR multiply operator 
     #define GB_IS_PAIR_MULTIPLIER 0
+
+    // a generic semiring does not have a concise bitmap multiply-add statement
+    #define GB_HAS_BITMAP_MULTADD 0
+    #define GB_XINIT ;
+    #define GB_XLOAD(bkj) ;
 
     #define GB_ATYPE GB_void
     #define GB_BTYPE GB_void
+    #define GB_ASIZE asize
+    #define GB_BSIZE bsize
 
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
 
     // The monoid identity value is not used.
     #undef GB_IDENTITY
+    #define GB_HAS_IDENTITY_BYTE 0
+    #define GB_IDENTITY_BYTE (none)
 
     // definitions for GB_AxB_saxpy_template.c
     #include "GB_AxB_saxpy3_template.h"
@@ -138,15 +145,25 @@ GrB_Info GB_AxB_saxpy3_generic
             opcode = GB_binop_flip (opcode) ;
         }
 
-        // C always has type int64_t.  The monoid must be used via its function
-        // pointer.  The positional multiply operator must be hard-coded since
-        // it has no function pointer.
+        // C always has type int64_t or int32_t.  The monoid must be used via
+        // its function pointer.  The positional multiply operator must be
+        // hard-coded since it has no function pointer.  The numerical values
+        // and types of A and B are not accessed.
+
+        ASSERT (A_is_pattern) ;
+        ASSERT (B_is_pattern) ;
 
         // aik = A(i,k), located in Ax [pA], value not used
         #define GB_GETA(aik,Ax,pA) ;
 
         // bkj = B(k,j), located in Bx [pB], value not used
         #define GB_GETB(bkj,Bx,pB) ;
+
+        // Gx [pG] = A(i,k), located in Ax [pA], value not used
+        #define GB_LOADA(Gx,pG,Ax,pA) ;
+
+        // Gx [pG] = B(k,j), located in Bx [pB], value not used
+        #define GB_LOADB(Gx,pG,Bx,pB) ;
 
         // define t for each task
         #define GB_CIJ_DECLARE(t) GB_CTYPE t
@@ -162,9 +179,6 @@ GrB_Info GB_AxB_saxpy3_generic
 
         // Hx [i] = t
         #define GB_HX_WRITE(i,t) Hx [i] = t
-
-        // t = Hx [i]
-        #define GB_HX_READ(i,t) GB_CTYPE t = Hx [i]
 
         // Cx [p] = Hx [i]
         #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
@@ -269,6 +283,16 @@ GrB_Info GB_AxB_saxpy3_generic
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
 
+        // Gx [pG] = A(i,k), located in Ax [pA], no typecasting
+        #undef  GB_LOADA
+        #define GB_LOADA(Gx,pG,Ax,pA)                                       \
+            memcpy (Gx + ((pG)*asize), Ax +((pA)*asize), asize)
+
+        // Gx [pG] = B(k,j), located in Bx [pB], no typecasting
+        #undef  GB_LOADB
+        #define GB_LOADB(Gx,pG,Bx,pB)                                       \
+            memcpy (Gx + ((pG)*bsize), Bx +((pB)*bsize), bsize)
+
         // define t for each task
         #undef  GB_CIJ_DECLARE
         #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
@@ -288,12 +312,6 @@ GrB_Info GB_AxB_saxpy3_generic
         // Hx [i] = t
         #undef  GB_HX_WRITE
         #define GB_HX_WRITE(i,t) memcpy (GB_HX (i), t, csize)
-
-        // t = Hx [i]
-        #undef  GB_HX_READ
-        #define GB_HX_READ(i,t)                                             \
-            GB_CIJ_DECLARE (t) ;                                            \
-            memcpy (t, GB_HX (i), csize)
 
         // Cx [p] = Hx [i]
         #undef  GB_CIJ_GATHER

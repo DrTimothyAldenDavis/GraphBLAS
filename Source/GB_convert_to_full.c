@@ -49,7 +49,7 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     Ax_new = GB_CALLOC (anzmax * A->type->size, GB_void) ;    // BIG (debug)
     #else
     // in production mode, A->x is uninitialized
-    Ax_new = GB_MALLOC (anzmax * A->type->size, GB_void) ;
+    Ax_new = GB_MALLOC (anzmax * A->type->size, GB_void) ;      // ok::
     #endif
 
     if (Ax_new == NULL)

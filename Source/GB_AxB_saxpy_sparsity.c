@@ -11,7 +11,12 @@
 // C<!M>=A*B, based on the sparsity structures of C (on input), M, A, and B,
 // and whether or not M is complemented.
 
+// If C_sparsity is returned as GxB_HYPERSPARSE or GxB_SPARSE, then C is
+// computed by GB_AxB_saxpy3.  That method has the following restriction:  if B
+// is hypersparse, C must also be hypersparse; otherwise C must be sparse.
+
 // TODO: When A or B are bitmapped or full, they can be transposed in-place.
+// TODO: give the user control over this decision
 
 //------------------------------------------------------------------------------
 
@@ -23,7 +28,8 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input A matrix
-    const GrB_Matrix B              // input B matrix
+    const GrB_Matrix B,             // input B matrix
+    GB_Context Context
 )
 {
 
@@ -33,11 +39,12 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
     int C_sparsity ;
 
+    if (B->nvec_nonempty < 0) B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+    double bnvec = B->nvec_nonempty ;
+
     double m = (double) A->vlen ;
     double n = (double) B->vdim ;
     double anz = (double) GB_NNZ_HELD (A) ;
-    double bnz = (double) GB_NNZ_HELD (B) ;
-    bool C_is_large = (m*n) > 8 * (anz + bnz) ;
 
     int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
     int B_sparsity = GB_sparsity (B) ;
@@ -52,16 +59,15 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // C               <M>=             A     *     B
         //-----------------------------------------------------
 
-        // hyper            hyper           any         any  
         // hyper            sparse          any         hyper
+        // hyper            hyper           any         hyper
+        // sparse           hyper           any         sparse/bitmap/full
         // sparse           sparse          any         sparse/bitmap/full
 
         // The non-empty columns of C are a subset of the non-empty columns of
-        // B, so in general, if B is hypersparse, so is C.
-
-        // When M is hypersparse or sparse, and not complemented, C has the
-        // same format as M, except when B is hypersparse, in which case C is
-        // also hypersparse.
+        // B, so in general, if B is hypersparse, so is C.  If B is sparse,
+        // bitmap, or full, then C must be sparse, regardless of the sparsity
+        // of A and B.  This is a restriction of GB_AxB_saxpy3.c.
 
         if (B_sparsity == GxB_HYPERSPARSE)
         { 
@@ -69,7 +75,7 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         }
         else
         { 
-            C_sparsity = M_sparsity ;
+            C_sparsity = GxB_SPARSE ;
         }
 
     }
@@ -82,8 +88,8 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
         // hyper            .               hyper       hyper
         // hyper            .               sparse      hyper
-        // hyper/bitmap     .               bitmap      hyper
-        // hyper/bitmap     .               full        hyper
+        // hyper            .               bitmap      hyper
+        // hyper            .               full        hyper
 
         // sparse           .               hyper       sparse
         // sparse           .               sparse      sparse
@@ -98,7 +104,9 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // sparse/bitmap    .               hyper       full 
         // sparse/bitmap    .               sparse      full
         // bitmap           .               bitmap      full
-        // full             .               full        full
+        // bitmap (***)     .               full        full
+
+        //    (***): future, compute C as full
 
         //-----------------------------------------------------
         // C               <M>=             A     *     B
@@ -106,8 +114,8 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
         // hyper            any             hyper       hyper
         // hyper            any             sparse      hyper
-        // hyper/bitmap     any             bitmap      hyper
-        // hyper/bitmap     any             full        hyper
+        // hyper            any             bitmap      hyper
+        // hyper            any             full        hyper
 
         // sparse           any             hyper       sparse
         // sparse           any             sparse      sparse
@@ -132,8 +140,8 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
         // hyper            any             hyper       hyper
         // hyper            any             sparse      hyper
-        // hyper/bitmap     any             bitmap      hyper
-        // hyper/bitmap     any             full        hyper
+        // hyper            any             bitmap      hyper
+        // hyper            any             full        hyper
 
         // sparse           any             hyper       sparse
         // sparse           any             sparse      sparse
@@ -159,40 +167,66 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
         // sparse/hyper, not bitmap.   TODO: give the user control over this
         // decision.
 
+        // TODO:  for bitmap*hyper and hyper*bitmap, create a packed version
+        // of the hyper matrix (like dot does), and construct C as bitmap.
+        // Then expand into C into hyper.
+
         switch (B_sparsity)
         {
             case GxB_HYPERSPARSE : 
+
+                // H = any * H
+                C_sparsity = GxB_HYPERSPARSE ;
+                break ;
+
             case GxB_SPARSE : 
+
                 switch (A_sparsity)
                 {
                     case GxB_HYPERSPARSE : 
                     case GxB_SPARSE : 
-                        C_sparsity = B_sparsity ;
+                        // S = {S,H} * S : C has the same sparsity as B
+                        C_sparsity = GxB_SPARSE ;
                         break ;
                     case GxB_BITMAP : 
                     case GxB_FULL : 
-                        C_sparsity = C_is_large ? B_sparsity : GxB_BITMAP ;
+                        // S = {B,F} * S : if B has many empty columns
+                        // B = {B,F} * S : otherwise C is bitmap
+                        C_sparsity = (bnvec < n/2) ? GxB_SPARSE : GxB_BITMAP ;
                         break ;
                     default: ;
                 }
                 break ;
+
             case GxB_BITMAP : 
+
             case GxB_FULL : 
+
                 switch (A_sparsity)
                 {
                     case GxB_HYPERSPARSE : 
                     case GxB_SPARSE : 
-                        C_sparsity = C_is_large ? GxB_SPARSE : GxB_BITMAP ;
+                        // S = {S,H} * {B,F} : if A is very sparse
+                        // B = {S,H} * {B,F} : otherwise C is bitmap
+                        C_sparsity = (anz < m) ? GxB_SPARSE : GxB_BITMAP ;
                         break ;
                     case GxB_BITMAP : 
                     case GxB_FULL : 
+                        // B = {B,F} * {B,F} : C is bitmap
                         C_sparsity = GxB_BITMAP ;
                         break ;
                     default: ;
                 }
                 break ;
+
             default: ;
         }
+    }
+
+    if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
+    {
+        ASSERT (C_sparsity ==
+            (B_sparsity == GxB_HYPERSPARSE) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
     }
 
     return (C_sparsity) ;

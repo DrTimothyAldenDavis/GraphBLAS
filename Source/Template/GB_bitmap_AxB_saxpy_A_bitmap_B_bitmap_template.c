@@ -86,9 +86,7 @@
         // declare local storage for this task
         //----------------------------------------------------------------------
 
-//      #ifndef GB_GENERIC
 //      GB_ATYPE Ax_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
-//      #endif
 //      int8_t Ab_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
         bool Ab_any_in_row [GB_TILE_SIZE] ;
 
@@ -121,10 +119,6 @@
                     Ab_cache [i_local * GB_KTILE_SIZE ...
                 }
             }
-
-            #ifndef GB_GENERIC
-            #define Ax Ax_cache
-            #endif
 #endif
 
             //------------------------------------------------------------------
@@ -270,6 +264,7 @@
                         // C(i,j) already exists
                         //------------------------------------------------------
 
+                        #if !GB_IS_ANY_PAIR_SEMIRING
                         for (int64_t k = kstart ; k < kend ; k++)
                         { 
                             int64_t pA = i + k * avlen ;    // pointer to A(i,k)
@@ -281,6 +276,7 @@
                             // C(i,j) += A(i,k) * B(k,j)
                             GB_CIJ_UPDATE (pC, t) ;
                         }
+                        #endif
                     }
                 }
             }

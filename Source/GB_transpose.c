@@ -434,7 +434,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate the output matrix C as a full or bitmap matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // full, old or new header
+        info = GB_new (Chandle, // bitmap or full, old or new header
             ctype, avdim, avlen, GB_Ap_null, C_is_csc,
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -479,7 +479,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // is hypersparse.  This step does not allocate anything if in-place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // bitmap, full, or hyper; old or new header
+        info = GB_new (Chandle, // hyper; old or new header
             ctype, 1, avlen, GB_Ap_null, C_is_csc,
             GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -511,7 +511,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;   // ok::
             ok = ok && (Cx != NULL) ;
         }
 
@@ -626,7 +626,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // full, bitmap, or sparse; old or new header
+        info = GB_new (Chandle, // sparse; old or new header
             ctype, avdim, 1, GB_Ap_null, C_is_csc,
             GxB_SPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -664,7 +664,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;       // ok::
             ok = ok && (Cx != NULL) ;
         }
 
@@ -948,7 +948,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (op1 != NULL || op2 != NULL)
             { 
                 // allocate Swork of size anz * csize
-                Swork = GB_MALLOC (anz * csize, GB_void) ;
+                Swork = GB_MALLOC (anz * csize, GB_void) ;      // ok::
                 ok = ok && (Swork != NULL) ;
             }
 

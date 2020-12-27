@@ -3712,14 +3712,16 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 #define GxB_BITMAP      4   // store matrix as a bitmap
 #define GxB_FULL        8   // store matrix as full; all entries must be present
 
-// the default sparsity control is any format but bitmap:
-#define GxB_AUTO_SPARSITY (GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL)
+// any sparsity value:
+#define GxB_ANY_SPARSITY (GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL)
+
+// the default sparsity control is any format:
+#define GxB_AUTO_SPARSITY GxB_ANY_SPARSITY
 
 // GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, scontrol) provides hints
 // about which data structure GraphBLAS should use for the matrix A:
 //
-//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically between
-//          hypersparse, sparse, and full.
+//      GxB_AUTO_SPARSITY: GraphBLAS selects automatically.
 //      GxB_HYPERSPARSE: always hypersparse, taking O(nvals(A)) space.
 //      GxB_SPARSE: always in a sparse struture: compressed-sparse row/column,
 //          taking O(nrows+nvals(A)) space if stored by row, or
@@ -3734,6 +3736,10 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 // Since GxB_FULL can only be used when all entries are present, matrices with
 // the just GxB_FULL control setting are stored in bitmap form if any entries
 // are not present.
+//
+// Only the least 4 bits of the sparsity control are considered, so the
+// formats can be bitwise negated.  For example, to allow for any format
+// except full, use ~GxB_FULL.
 //
 // GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity) returns the
 // current data structure currently used for the matrix A (either hypersparse,

@@ -1041,7 +1041,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-        T->x = GB_MALLOC (tnz * ttype->size, GB_void) ;
+        T->x = GB_MALLOC (tnz * ttype->size, GB_void) ;     // ok::
         if (T->x == NULL)
         { 
             // out of memory

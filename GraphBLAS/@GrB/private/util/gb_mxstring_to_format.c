@@ -9,7 +9,7 @@
 
 // Valid format strings:
 
-//  'by row'            sparsity is GxB_AUTO_SPARSITY for these 2 strings
+//  'by row'            auto sparsity for these 2 strings
 //  'by col'
 
 //  'sparse by row'

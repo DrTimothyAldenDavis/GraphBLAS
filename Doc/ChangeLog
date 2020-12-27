@@ -1,4 +1,4 @@
-Version 4.0.1, Dec 19 (beta1), 2020     TODO:: fix date of release
+Version 4.0.1, TODO, 2020     TODO:: fix date of release
 
     * GrB_wait(), with no inputs: removed
     * GrB_wait(&object): polymorphic function added

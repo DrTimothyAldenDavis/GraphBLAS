@@ -34,6 +34,17 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     switch (field)
     {
 
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (bitmap_switch) ;
+                (*bitmap_switch) = (double) v->bitmap_switch ;
+            }
+            break ;
+
         case GxB_SPARSITY_CONTROL : 
 
             {
