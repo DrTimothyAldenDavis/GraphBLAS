@@ -13,7 +13,7 @@ mxArray *gb_mxclass_to_mxstring (mxClassID class, bool is_complex)
 {
     switch (class)
     {
-        // a MATLAB sparse or dense matrix, valid for G = GrB (X), or
+        // a MATLAB sparse or full matrix, valid for G = GrB (X), or
         // for inputs to any GrB.method.
         case mxLOGICAL_CLASS  : return (mxCreateString ("logical")) ;
         case mxINT8_CLASS     : return (mxCreateString ("int8")) ;

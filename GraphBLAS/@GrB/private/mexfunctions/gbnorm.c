@@ -51,7 +51,7 @@ void mexFunction
 
     if (norm_kind == INT64_MIN && !GB_is_dense (A))
     { 
-        // norm (A,-inf) is zero if A is not dense
+        // norm (A,-inf) is zero if A is not full
         s = 0 ;
     }
     else if ((atype == GrB_FP32 || atype == GrB_FP64)

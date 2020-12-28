@@ -2,8 +2,8 @@ function C = bitor (A, B, assumedtype)
 %BITOR bitwise OR.
 % C = bitor (A,B) is the bitwise OR of A and B.  If A and B are matrices,
 % the pattern of C is the set union of A and B.  If one of A or B is a
-% nonzero scalar, the scalar is expanded into a dense matrix the size of
-% the other matrix, and the result is a dense matrix.
+% nonzero scalar, the scalar is expanded into a full matrix the size of
+% the other matrix, and the result is a full matrix.
 %
 % With a third parameter, C = bitor (A,B,assumedtype) provides a data type
 % to convert A and B to if they are floating-point types.  If A or B

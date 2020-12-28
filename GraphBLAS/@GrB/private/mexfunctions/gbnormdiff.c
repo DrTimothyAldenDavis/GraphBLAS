@@ -58,7 +58,7 @@ void mexFunction
         (atype == GrB_FP32 || atype == GrB_FP64) && (atype == btype)
         && (anrows == 1 || ancols == 1 || norm_kind == 0))
     {
-        // s = norm (A-B,p) where A and B are dense FP32 or FP64 vectors,
+        // s = norm (A-B,p) where A and B are full FP32 or FP64 vectors,
         // or when p = 0 (for Frobenius norm)
         GrB_Index anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;

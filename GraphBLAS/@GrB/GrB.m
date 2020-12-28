@@ -14,8 +14,8 @@ classdef GrB
 %
 % constructs a GraphBLAS matrix G, which is the result of C<M>=A in
 % GraphBLAS notation (like C(M)=A(M) in MATLAB).  The matrices used in any
-% GrB.method may be MATLAB matrices (sparse or dense) or GraphBLAS sparse
-% matrices, in any combination.
+% GrB.method may be MATLAB matrices (sparse or full) or GraphBLAS matrices
+% (hyper, sparse, bitmap, or full, by row or column), in any combination.
 %
 % --------------------
 % The GrB constructor:
@@ -40,7 +40,7 @@ classdef GrB
 %   which creates an empty MATLAB sparse matrix A.  The type parameter is
 %   a string, which defaults to 'double' if not present.
 %
-%   For the usage C = GrB (A, type), A is either a MATLAB sparse or dense
+%   For the usage C = GrB (A, type), A is either a MATLAB sparse or full
 %   matrix, or a GraphBLAS sparse matrix object.  C is created as a
 %   GraphBLAS sparse matrix object that contains a copy of A, typecasted
 %   to the given type if the type string does not match the type of A.
@@ -321,12 +321,12 @@ classdef GrB
 %-------------------------------------------------------------------------
 %
 %   The Static Methods for the GrB class can be used on input matrices of
-%   any kind: GraphBLAS sparse matrices, MATLAB sparse matrices, or
-%   MATLAB dense matrices, in any combination.  The output matrix C is
-%   a GraphBLAS matrix, by default, but can be optionally returned as a
-%   MATLAB sparse or dense matrix.  The static methods divide into three
-%   categories: those that perform basic functions, graph algorithms,
-%   and the 12 foundational GraphBLAS operations.
+%   any kind: GraphBLAS sparse matrices, MATLAB sparse matrices, or MATLAB
+%   full matrices, in any combination.  The output matrix C is a GraphBLAS
+%   matrix, by default, but can be optionally returned as a MATLAB sparse
+%   or full matrix.  The static methods divide into three categories:
+%   those that perform basic functions, graph algorithms, and the 12
+%   foundational GraphBLAS operations.
 %
 %---------------------------
 % GraphBLAS basic functions:

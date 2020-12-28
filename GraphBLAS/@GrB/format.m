@@ -90,17 +90,17 @@ function [f,s] = format (arg)
 %       as a MATLAB full matrix.  All entries must be present (e == m*n).
 %       GraphBLAS can also store a matrix 'full by row'.
 %
-% The sparsity formats can be combined.  For example, to store a matrix
-% in either sparse or bitmap format (but not hypersparse or full) use
-% G = GrB (A, 'sparse/bitmap by col').  GraphBLAS will automatically
-% select between the 'sparse by col' and 'bitmap by col' formats,
-% choosing the latter if the matrix becomes more than 10% dense, and
-% a bitmap matrix is converted to sparse if the density is <= 0.2%.
-% A matrix between these two ranges is kept in its current format.
-% The with 'sparse/bitmap by col' format, a matrix will not be held in
-% hypersparse or full formats.  The default is 'hyper/sparse/bitmap/full
-% by col', which allows GraphBLAS to select between all 4 formats, each
-% column-oriented 'by col'.
+% The sparsity formats can be combined.  For example, to store a matrix in
+% either sparse or bitmap format (but not hypersparse or full) use G = GrB
+% (A, 'sparse/bitmap by col').  GraphBLAS will automatically select
+% between the 'sparse by col' and 'bitmap by col' formats, choosing the
+% latter if the density e/m*n exceeds a default threshold b.  A bitmap
+% matrix is converted to sparse if its density drops below the b/2.  The
+% value of b depends on min(m,n).  A matrix between these two ranges is
+% kept in its current format.  The with 'sparse/bitmap by col' format, a
+% matrix will not be held in hypersparse or full formats.  The default is
+% 'hyper/sparse/bitmap/full by col', which allows GraphBLAS to select
+% between all 4 formats, each column-oriented 'by col'.
 %
 % Examples:
 %

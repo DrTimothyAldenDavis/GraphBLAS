@@ -165,7 +165,7 @@ GB_Global_struct GB_Global =
         GB_BITSWITCH_9_to_16,
         GB_BITSWITCH_17_to_32,
         GB_BITSWITCH_33_to_64,
-        GB_BITSWITCH_gt_than_64 } 
+        GB_BITSWITCH_gt_than_64 },
 
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
@@ -223,13 +223,13 @@ GrB_Mode GB_Global_mode_get (void)
 // GrB_init_called
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_GrB_init_called_set (bool GrB_init_called)
 { 
     GB_Global.GrB_init_called = GrB_init_called ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 bool GB_Global_GrB_init_called_get (void)
 { 
     return (GB_Global.GrB_init_called) ;
@@ -239,13 +239,13 @@ bool GB_Global_GrB_init_called_get (void)
 // nthreads_max
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_nthreads_max_set (int nthreads_max)
 { 
     GB_Global.nthreads_max = GB_IMAX (nthreads_max, 1) ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 int GB_Global_nthreads_max_get (void)
 { 
     return (GB_Global.nthreads_max) ;
@@ -255,7 +255,7 @@ int GB_Global_nthreads_max_get (void)
 // OpenMP max_threads
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int GB_Global_omp_get_max_threads (void)
 { 
     return (GB_OPENMP_MAX_THREADS) ;
@@ -265,14 +265,14 @@ int GB_Global_omp_get_max_threads (void)
 // chunk
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_chunk_set (double chunk)
 { 
     if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
     GB_Global.chunk = fmax (chunk, 1) ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 double GB_Global_chunk_get (void)
 { 
     return (GB_Global.chunk) ;
@@ -282,13 +282,13 @@ double GB_Global_chunk_get (void)
 // hyper_switch
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_hyper_switch_set (float hyper_switch)
 { 
     GB_Global.hyper_switch = hyper_switch ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 float GB_Global_hyper_switch_get (void)
 { 
     return (GB_Global.hyper_switch) ;
@@ -298,7 +298,7 @@ float GB_Global_hyper_switch_get (void)
 // bitmap_switch
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_bitmap_switch_set (int k, float b)
 { 
     k = GB_IMAX (k, 0) ;
@@ -306,7 +306,7 @@ void GB_Global_bitmap_switch_set (int k, float b)
     GB_Global.bitmap_switch [k] = b ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 float GB_Global_bitmap_switch_get (int k)
 { 
     k = GB_IMAX (k, 0) ;
@@ -314,7 +314,7 @@ float GB_Global_bitmap_switch_get (int k)
     return (GB_Global.bitmap_switch [k]) ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 float GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim)
 { 
     int64_t d = GB_IMIN (vlen, vdim) ;
@@ -325,10 +325,10 @@ float GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim)
     if (d <= 16) return (GB_Global.bitmap_switch [4]) ;
     if (d <= 32) return (GB_Global.bitmap_switch [5]) ;
     if (d <= 64) return (GB_Global.bitmap_switch [6]) ;
-                 return (GB_Global.bitmap_switch [7]) ;
+    return (GB_Global.bitmap_switch [7]) ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_bitmap_switch_default (void)
 {
     GB_Global.bitmap_switch [0] = GB_BITSWITCH_1 ;
@@ -345,13 +345,13 @@ void GB_Global_bitmap_switch_default (void)
 // use_mkl
 //------------------------------------------------------------------------------
 
-// GB_PUBLIC   // accessed by the MATLAB interface only
+// GB_PUBLIC
 // void GB_Global_use_mkl_set (bool use_mkl)
 // { 
 //     GB_Global.use_mkl = use_mkl ;
 // }
 
-// GB_PUBLIC   // accessed by the MATLAB interface only
+// GB_PUBLIC
 // bool GB_Global_use_mkl_get (void)
 // { 
 //     return (GB_Global.use_mkl) ;
@@ -375,13 +375,13 @@ bool GB_Global_is_csc_get (void)
 // abort_function
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_abort_function_set (void (* abort_function) (void))
 { 
     GB_Global.abort_function = abort_function ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_abort_function (void)
 {
     GB_Global.abort_function ( ) ;
@@ -504,13 +504,13 @@ void GB_Global_free_function (void *p)
 // malloc_is_thread_safe
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe)
 { 
     GB_Global.malloc_is_thread_safe = malloc_is_thread_safe ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_Global_malloc_is_thread_safe_get (void)
 { 
     return (GB_Global.malloc_is_thread_safe) ;
@@ -520,7 +520,7 @@ bool GB_Global_malloc_is_thread_safe_get (void)
 // malloc_tracking
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_malloc_tracking_set (bool malloc_tracking)
 { 
     GB_Global.malloc_tracking = malloc_tracking ;
@@ -541,7 +541,7 @@ void GB_Global_nmalloc_clear (void)
     GB_Global.nmalloc = 0 ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int64_t GB_Global_nmalloc_get (void)
 { 
     int64_t nmalloc ;
@@ -556,7 +556,7 @@ void GB_Global_nmalloc_increment (void)
     GB_Global.nmalloc++ ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_nmalloc_decrement (void)
 { 
     GB_ATOMIC_UPDATE
@@ -567,7 +567,7 @@ void GB_Global_nmalloc_decrement (void)
 // malloc_debug
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_malloc_debug_set (bool malloc_debug)
 { 
     GB_ATOMIC_WRITE
@@ -586,7 +586,7 @@ bool GB_Global_malloc_debug_get (void)
 // malloc_debug_count
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
 { 
     GB_ATOMIC_WRITE
@@ -608,13 +608,13 @@ bool GB_Global_malloc_debug_count_decrement (void)
 // hack: for setting an internal value for development only
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_Global_hack_set (int64_t hack)
 { 
     GB_Global.hack = hack ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;
@@ -629,7 +629,7 @@ void GB_Global_burble_set (bool burble)
     GB_Global.burble = burble ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_Global_burble_get (void)
 { 
     return (GB_Global.burble) ;
@@ -639,13 +639,13 @@ bool GB_Global_burble_get (void)
 // for MATLAB interface only
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 void GB_Global_print_one_based_set (bool onebased)
 { 
     GB_Global.print_one_based = onebased ;
 }
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;

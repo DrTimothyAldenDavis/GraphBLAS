@@ -79,7 +79,7 @@ elseif (firstchar == (4 - (symmetric || hermitian)))
         d = gb_get_scalar (varargin {3}) ;
     end
     if (isinf (d))
-        % construct a dense random matrix
+        % construct a full random matrix
         e = m * n ;
         I = repmat ((int64 (0) : int64 (m-1)), 1, n) ;
         J = repmat ((int64 (0) : int64 (n-1)), m, 1) ;

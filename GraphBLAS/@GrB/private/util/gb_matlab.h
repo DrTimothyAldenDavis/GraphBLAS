@@ -293,7 +293,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     GrB_Matrix *A_handle        // matrix to export; freed on output
 ) ;
 
-mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
+mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
 (
     void **X_handle,            // pointer to array to export
     const GrB_Index nrows,      // dimensions of F

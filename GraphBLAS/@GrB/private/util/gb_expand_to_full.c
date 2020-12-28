@@ -46,7 +46,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     }
 
     //--------------------------------------------------------------------------
-    // expand the identity into a dense matrix B the same size as C
+    // expand the identity into a full matrix B the same size as C
     //--------------------------------------------------------------------------
 
     GrB_Matrix B = gb_new (type, nrows, ncols, fmt, 0) ;

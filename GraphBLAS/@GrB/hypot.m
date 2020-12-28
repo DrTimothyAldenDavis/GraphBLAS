@@ -3,7 +3,7 @@ function C = hypot (A, B)
 % C = hypot (A,B) computes sqrt (abs (A).^2 + abs (B).^2) accurately.
 % If A and B are matrices, the pattern of C is the set union of A and B.
 % If one of A or B is a nonzero scalar, the scalar is expanded into a
-% dense matrix the size of the other matrix, and the result is a full
+% full matrix the size of the other matrix, and the result is a full
 % matrix.
 %
 % See also GrB/abs, GrB/norm, GrB/sqrt, GrB/plus, GrB.eadd.

@@ -183,7 +183,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         else
         { 
-            // X is a MATLAB dense matrix; so is the GrB_Matrix
+            // X is a MATLAB full matrix; so is the GrB_Matrix
             nzmax = nrows * ncols ;
             Xp = NULL ;
             Xi = NULL ;
@@ -193,17 +193,17 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         void *Xx = NULL ;
         if (type == GrB_FP64)
         { 
-            // MATLAB sparse or dense double matrix
+            // MATLAB sparse or full double matrix
             Xx = mxGetDoubles (X) ;
         }
         else if (type == GxB_FC64)
         { 
-            // MATLAB sparse or dense double complex matrix
+            // MATLAB sparse or full double complex matrix
             Xx = mxGetComplexDoubles (X) ;
         }
         else if (type == GrB_BOOL)
         { 
-            // MATLAB sparse or dense logical matrix
+            // MATLAB sparse or full logical matrix
             Xx = mxGetData (X) ;        // OK:bool
         }
         else if (X_is_sparse)
@@ -213,52 +213,52 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         else if (type == GrB_INT8)
         { 
-            // dense int8 matrix
+            // full int8 matrix
             Xx = mxGetInt8s (X) ;
         }
         else if (type == GrB_INT16)
         { 
-            // dense int16 matrix
+            // full int16 matrix
             Xx = mxGetInt16s (X) ;
         }
         else if (type == GrB_INT32)
         { 
-            // dense int32 matrix
+            // full int32 matrix
             Xx = mxGetInt32s (X) ;
         }
         else if (type == GrB_INT64)
         { 
-            // dense int64 matrix
+            // full int64 matrix
             Xx = mxGetInt64s (X) ;
         }
         else if (type == GrB_UINT8)
         { 
-            // dense uint8 matrix
+            // full uint8 matrix
             Xx = mxGetUint8s (X) ;
         }
         else if (type == GrB_UINT16)
         { 
-            // dense uint16 matrix
+            // full uint16 matrix
             Xx = mxGetUint16s (X) ;
         }
         else if (type == GrB_UINT32)
         { 
-            // dense uint32 matrix
+            // full uint32 matrix
             Xx = mxGetUint32s (X) ;
         }
         else if (type == GrB_UINT64)
         { 
-            // dense uint64 matrix
+            // full uint64 matrix
             Xx = mxGetUint64s (X) ;
         }
         else if (type == GrB_FP32)
         { 
-            // dense single matrix
+            // full single matrix
             Xx = mxGetSingles (X) ;
         }
         else if (type == GxB_FC32)
         { 
-            // dense single complex matrix
+            // full single complex matrix
             Xx = mxGetComplexSingles (X) ;
         }
         else

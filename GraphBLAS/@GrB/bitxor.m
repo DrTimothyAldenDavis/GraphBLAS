@@ -2,8 +2,8 @@ function C = bitxor (A, B, assumedtype)
 %BITXOR bitwise XOR.
 % C = bitxor (A,B) is the bitwise XOR of A and B.  If A and B are
 % matrices, the pattern of C is the set union of A and B.  If one of A or
-% B is a nonzero scalar, the scalar is expanded into a dense matrix the
-% size of the other matrix, and the result is a dense matrix.
+% B is a nonzero scalar, the scalar is expanded into a full matrix the
+% size of the other matrix, and the result is a full matrix.
 %
 % With a third parameter, C = bitxor (A,B,assumedtype) provides a data
 % type to convert A and B to if they are floating-point types.  If A or B

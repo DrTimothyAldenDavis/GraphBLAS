@@ -157,7 +157,7 @@ void mexFunction
             else
             { 
 
-                // y = dense vector of size ncols-by-1; value is not relevant
+                // y = full vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
                 OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     ncols, NULL)) ;
@@ -200,7 +200,7 @@ void mexFunction
             else
             { 
 
-                // y = dense vector of size nrows-by-1; value is not relevant
+                // y = full vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
                 OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     nrows, NULL)) ;

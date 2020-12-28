@@ -3709,6 +3709,9 @@ GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 #define GxB_BITMAP      4   // store matrix as a bitmap
 #define GxB_FULL        8   // store matrix as full; all entries must be present
 
+// size of b array for GxB_set/get (GxB_BITMAP_SWITCH, b)
+#define GxB_NBITMAP_SWITCH 8    // size of bitmap_switch parameter array
+
 // any sparsity value:
 #define GxB_ANY_SPARSITY (GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL)
 
