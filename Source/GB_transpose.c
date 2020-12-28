@@ -511,7 +511,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;   // ok::
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
             ok = ok && (Cx != NULL) ;
         }
 
@@ -664,7 +664,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
-            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;       // ok::
+            Cx = GB_MALLOC (anz * ctype->size, GB_void) ;
             ok = ok && (Cx != NULL) ;
         }
 
@@ -948,7 +948,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             if (op1 != NULL || op2 != NULL)
             { 
                 // allocate Swork of size anz * csize
-                Swork = GB_MALLOC (anz * csize, GB_void) ;      // ok::
+                Swork = GB_MALLOC (anz * csize, GB_void) ;
                 ok = ok && (Swork != NULL) ;
             }
 

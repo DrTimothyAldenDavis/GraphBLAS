@@ -293,7 +293,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump) ;
 }
 
 //------------------------------------------------------------------------------
-// OK: call a GraphBLAS method and check the result
+// OK  call a GraphBLAS method and check the result
 //------------------------------------------------------------------------------
 
 // OK(method) is a macro that calls a GraphBLAS method and checks the status;

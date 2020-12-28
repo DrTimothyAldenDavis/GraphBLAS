@@ -304,7 +304,7 @@ GB_PUBLIC
 void complex_complex_imag (C Z, const double X) { Z = GxB_CMPLX (0, X) ; }
 
 //------------------------------------------------------------------------------
-// OK: check if a method fails
+// macro to check if a method fails
 //------------------------------------------------------------------------------
 
 #undef OK

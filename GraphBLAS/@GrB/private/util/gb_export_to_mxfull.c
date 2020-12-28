@@ -49,7 +49,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
     if (type == GrB_BOOL)
     { 
         F = mxCreateLogicalMatrix (0, 0) ;
-        mxSetData (F, X) ;      // OK:bool
+        mxSetData (F, X) ;
     }
     else if (type == GrB_FP32)
     { 

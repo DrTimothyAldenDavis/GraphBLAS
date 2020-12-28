@@ -186,9 +186,9 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // set the values
         if (type == GrB_BOOL)
         { 
-            p = mxGetData (S) ;     // OK:bool
+            p = mxGetData (S) ;
             gb_mxfree (&p) ;
-            mxSetData (S, Tx) ;     // OK:bool
+            mxSetData (S, Tx) ;
         }
         else if (type == GxB_FC64)
         { 

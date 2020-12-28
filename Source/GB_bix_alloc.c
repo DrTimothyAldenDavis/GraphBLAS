@@ -82,16 +82,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 
     if (numeric)
     { 
-// HACK
-//      if (is_bitmap)
-//      {
-//          // ensure all entries of A are initialized
-//          A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
-//      }
-//      else
-        {
-            A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;  // ok::
-        }
+        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
         ok = ok && (A->x != NULL) ;
     }
 

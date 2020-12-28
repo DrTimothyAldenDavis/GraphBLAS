@@ -141,7 +141,7 @@ static inline GrB_Info GB_info_mkl      // equivalent GrB_Info
 }
 
 //------------------------------------------------------------------------------
-// GB_MKL_OK: call an MKL_graph method and check its result
+// GB_MKL_OK    call an MKL_graph method and check its result
 //------------------------------------------------------------------------------
 
 #define GB_MKL_OK(mkl_method)                                               \

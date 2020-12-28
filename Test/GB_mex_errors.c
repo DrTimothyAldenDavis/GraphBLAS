@@ -5156,7 +5156,7 @@ void mexFunction
     for (int64_t i = 0 ; i < ((int64_t) nrows) ; i++)
     {
         printf ("exported row %lld\n", j) ;
-        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++) // ok:
+        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++)
         {
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
@@ -5539,7 +5539,7 @@ void mexFunction
     printf ("nvals %llu\n", nvals) ;
     for (int64_t p = 0 ; p < ((int64_t) nvals) ; p++)
     {
-        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ; // ok:
+        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ;
     }
     OK (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
     OK (GxB_Vector_fprint (u, "u imported", GxB_COMPLETE, stdout)) ;

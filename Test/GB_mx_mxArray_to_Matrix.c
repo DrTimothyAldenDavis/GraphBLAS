@@ -179,7 +179,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         anzmax = anz ;
     }
 
-    GB_void *Mx = mxGetData (Amatrix) ;     // OK:any type
+    GB_void *Mx = mxGetData (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // look for A.values
@@ -198,7 +198,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             }
             if (mxGetNumberOfElements (values) >= anz)
             {
-                Mx = mxGetData (values) ;       // OK:any type
+                Mx = mxGetData (values) ;
                 atype_in = GB_mx_Type (values) ;
                 atype_in_code = atype_in->code ;
                 anzmax = mxGetNumberOfElements (values) ;

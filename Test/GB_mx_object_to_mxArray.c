@@ -107,7 +107,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     if (C->x == NULL)
     {
         ASSERT (C->nzmax == 0 && cnz == 0) ;
-        C->x = GB_CALLOC (2 * sizeof (double), GB_void) ;
+        C->x = GB_MALLOC (2 * sizeof (double), GB_void) ;
+        memset (C->x, 0, 2 * sizeof (double)) ;
         C->x_shallow = false ;
     }
 
@@ -118,13 +119,15 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         if (C->i == NULL)
         {
             ASSERT (C->nzmax == 0 && cnz == 0) ;
-            C->i = GB_CALLOC (1, int64_t) ;
+            C->i = GB_MALLOC (1, int64_t) ;
+            C->i [0] = 0 ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
             ASSERT (C->nzmax == 0 && cnz == 0) ;
-            C->p = GB_CALLOC (C->vdim + 1, int64_t) ;
+            C->p = GB_MALLOC (C->vdim + 1, int64_t) ;
+            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
             C->p_shallow = false ;
         }
     }
@@ -145,7 +148,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         if (ctype == GrB_BOOL)
         { 
             A = mxCreateLogicalMatrix (0, 0) ;
-            mxSetData (A, Cx) ;      // OK:bool
+            mxSetData (A, Cx) ;
         }
         else if (ctype == GrB_FP32)
         { 

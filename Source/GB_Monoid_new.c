@@ -114,7 +114,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate the identity value
     #define GB_ALLOC_IDENTITY                                               \
     {                                                                       \
-        mon->identity = GB_CALLOC (zsize, GB_void) ;                        \
+        mon->identity = GB_MALLOC (zsize, GB_void) ;                        \
         if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
@@ -127,7 +127,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate the terminal value
     #define GB_ALLOC_TERMINAL                                               \
     {                                                                       \
-        mon->terminal = GB_CALLOC (zsize, GB_void) ;                        \
+        mon->terminal = GB_MALLOC (zsize, GB_void) ;                        \
         if (mon->terminal == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \

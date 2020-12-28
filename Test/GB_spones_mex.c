@@ -41,7 +41,7 @@ void mexFunction
     mwSize n = mxGetN (pargin [0]) ;
     mwIndex *Ap = mxGetJc (pargin [0]) ;
     mwIndex *Ai = mxGetIr (pargin [0]) ;
-    mwSize nz = Ap [n] ;        // ok: A is sparse
+    mwSize nz = Ap [n] ;
 
     //--------------------------------------------------------------------------
     // create the output matrix
@@ -52,8 +52,8 @@ void mexFunction
     mwIndex *Ci = mxGetIr (pargout [0]) ;
     double *Cx = mxGetDoubles (pargout [0]) ;
 
-    memcpy (Cp, Ap, (n+1) * sizeof (mwIndex)) ;     // ok: A and C are sparse
-    memcpy (Ci, Ai, nz    * sizeof (mwIndex)) ;     // ok: A and C are sparse
+    memcpy (Cp, Ap, (n+1) * sizeof (mwIndex)) ;
+    memcpy (Ci, Ai, nz    * sizeof (mwIndex)) ;
     for (mwSize p = 0 ; p < nz ; p++)
     {
         Cx [p] = 1 ;

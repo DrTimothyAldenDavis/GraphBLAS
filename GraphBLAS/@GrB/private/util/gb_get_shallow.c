@@ -204,7 +204,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         else if (type == GrB_BOOL)
         { 
             // MATLAB sparse or full logical matrix
-            Xx = mxGetData (X) ;        // OK:bool
+            Xx = mxGetData (X) ;
         }
         else if (X_is_sparse)
         {

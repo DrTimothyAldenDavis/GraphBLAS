@@ -118,7 +118,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     {
         // A->x must be modified to fit the bitmap structure
         Ax_new = GB_MALLOC (anzmax * asize, GB_void) ;
-// HACK Ax_new = GB_CALLOC (anzmax * asize, GB_void) ;
         Ax_shallow = false ;
         if (Ax_new == NULL)
         { 

@@ -217,7 +217,7 @@ GrB_Info GB_AxB_saxpy3_mkl          // C = A*B using MKL
         return (GrB_PANIC) ;
     }
 
-    cnvals = Tp [cnrows] ;  // ok: T is sparse
+    cnvals = Tp [cnrows] ;
 
 #if 1
     // Tp, Ti, and Tx are owned by MKL, so sadly a copy must be made.

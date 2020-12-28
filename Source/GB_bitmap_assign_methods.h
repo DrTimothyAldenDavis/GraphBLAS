@@ -105,9 +105,6 @@
     else                                                                    \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
-        /* ALIAS OK: C==A for bitmap assign/subassign only for C(:,:)=A */  \
-        /* ASSERT (GB_IMPLIES (GB_aliased (C, A), whole_C_matrix)) ; */     \
-        /* ASSERT (nI == A->vlen && nJ == A->vdim) ; */                     \
         asize = A->type->size ;                                             \
         acode = A->type->code ;                                             \
         Ap = A->p ;                                                         \

@@ -4,4 +4,3 @@ TODO:: rerun MATLAB demos
 TODO:: Tcov to 100%
 TODO:: check port to Windows, Mac, Power8
 TODO:: see if burble slows down BFS on road.  If yes, disable it by default
-TODO:: try GB_BITMAP_MULTADD in dot methods

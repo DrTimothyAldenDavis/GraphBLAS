@@ -53,8 +53,8 @@
     int64_t wcsize  = naslice * hpanel_size ;
     int64_t wcxsize = GB_IS_ANY_PAIR_SEMIRING ? 0 : (wcsize * GB_CSIZE) ;
     Wf = GB_MALLOC (wafsize + wcsize, int8_t) ;
-    Wax = GB_MALLOC (waxsize, GB_void) ;        // ok:: all assigned below
-    Wcx = GB_MALLOC (wcxsize, GB_void) ;        // ok:: cleared below
+    Wax = GB_MALLOC (waxsize, GB_void) ;
+    Wcx = GB_MALLOC (wcxsize, GB_void) ;
     if (Wf == NULL || Wax == NULL || Wcx == NULL)
     {
         // out of memory

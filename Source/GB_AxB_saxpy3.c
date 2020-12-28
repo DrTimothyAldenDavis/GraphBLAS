@@ -496,11 +496,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
+        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ; // TODO: try GB_memset
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;   // ok::
+        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||

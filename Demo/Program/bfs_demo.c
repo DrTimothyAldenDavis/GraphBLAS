@@ -219,7 +219,7 @@ int main (int argc, char **argv)
 
         // this selects the correct GrB_Monoid_new_BOOL function
         info = GrB_Monoid_new_BOOL (&Lor, GrB_LOR, (bool) false) ;        
-        printf ("\n------------------- this is OK: %d (should be"
+        printf ("\n------------------- this is OK %d (should be"
             " GrB_SUCCESS = %d)\n", info, GrB_SUCCESS) ;
         GrB_Monoid_free (&Lor) ;
     }

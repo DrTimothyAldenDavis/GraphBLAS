@@ -217,7 +217,7 @@ void mexFunction
     if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
-        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;  // OK:bool
+        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
         if (dup == NULL) dup = GrB_LOR ;
         if (expandx)
         { 
