@@ -194,24 +194,20 @@
 
 // The 'about' string the describes this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_ABOUT \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, "                   \
-"All Rights Reserved.\n"                                                     \
-"http://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University\n"
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved." \
+"\nhttp://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University.\n"
 
 // The GraphBLAS license for this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_LICENSE \
-"SuiteSparse:GraphBLAS, Copyright 2017-2020, Timothy A. Davis\n"             \
-"\n"                                                                         \
-"Licensed under the Apache License, Version 2.0 (the \"License\");\n"        \
-"you may not use SuiteSparse:GraphBLAS except in compliance with the\n"      \
-"License.  You may obtain a copy of the License at\n"                        \
-"\n"                                                                         \
-"    http://www.apache.org/licenses/LICENSE-2.0  \n"                         \
-"\n"                                                                         \
-"Unless required by applicable law or agreed to in writing, software\n"      \
-"distributed under the License is distributed on an \"AS IS\" BASIS,\n"      \
-"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" \
-"See the License for the specific language governing permissions and\n"      \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved." \
+"\nLicensed under the Apache License, Version 2.0 (the \"License\");\n"        \
+"you may not use SuiteSparse:GraphBLAS except in compliance with the\n"        \
+"License.  You may obtain a copy of the License at\n\n"                        \
+"    http://www.apache.org/licenses/LICENSE-2.0\n\n"                           \
+"Unless required by applicable law or agreed to in writing, software\n"        \
+"distributed under the License is distributed on an \"AS IS\" BASIS,\n"        \
+"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"   \
+"See the License for the specific language governing permissions and\n"        \
 "limitations under the License.\n"
 
 //------------------------------------------------------------------------------
@@ -222,10 +218,10 @@
 
 // The 'spec' string describes the GraphBLAS spec:
 #define GxB_SPEC_ABOUT \
-"GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,\n"   \
-"Jose' Moreira, Carl Yang.  Based on \"GraphBLAS Mathematics\" by\n"    \
-"Jeremy Kepner.  See also \"Graph Algorithms in the Language of\n"      \
-"Linear Algebra\", edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
+"GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,
+"Jose' Moreira, Carl Yang, and Benjamin Brock.  Based on 'GraphBLAS"           \
+"Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n"  \
+"of Linear Algebra,' edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //==============================================================================
 // GrB_Index: the GraphBLAS integer
