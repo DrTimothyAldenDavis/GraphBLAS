@@ -22,17 +22,19 @@
         // allocate workspace for each task
         //----------------------------------------------------------------------
 
-        jslice = GB_MALLOC (ntasks, int64_t) ;
-        if (jslice == NULL)
+        GH_slice = GB_MALLOC (2*ntasks, int64_t) ;
+        if (GH_slice == NULL)
         {
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        // TODO:: if jpanel is 1, do not allocate Gb and Gx
+        int64_t *GB_RESTRICT G_slice = GH_slice ;
+        int64_t *GB_RESTRICT H_slice = GH_slice + ntasks ;
 
-        int64_t jwork = 0 ;
+        int64_t gwork = 0 ;
+        int64_t hwork = 0 ;
         int tid ;
         for (tid = 0 ; tid < ntasks ; tid++)
         {
@@ -40,16 +42,23 @@
             GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
             int64_t jtask = jend - jstart ;
             int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
-            jslice [tid] = jwork ;
-            jwork += jpanel ;
+            G_slice [tid] = gwork ;
+            H_slice [tid] = hwork ;
+            if (jpanel > 1)
+            {
+                // no need to allocate workspace for Gb and Gx if jpanel == 1
+                gwork += jpanel ;
+            }
+            hwork += jpanel ;
         }
 
-        int64_t bvlenx = (B_is_pattern ? 0 : bvlen) ;
-        int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) ;
-        int64_t bvlenb = (B_is_bitmap ? bvlen : 0) ; // TODO:: use GB_B_IS_BITMAP
-        size_t wfspace = jwork * (bvlenb + cvlen) ;
-        size_t wbxspace = jwork * (bvlenx * GB_BSIZE) ;
-        size_t wcxspace = jwork * (cvlenx * GB_CSIZE) ;
+        int64_t bvlenx = (B_is_pattern ? 0 : bvlen) * GB_BSIZE ;
+        int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) * GB_CSIZE ;
+        int64_t bvlenb = (GB_B_IS_BITMAP ? bvlen : 0) ;
+        size_t wfspace = gwork * bvlenb + hwork * cvlen ;
+        size_t wbxspace = gwork * bvlenx ;
+        size_t wcxspace = hwork * cvlenx ;
+
         Wf = GB_MALLOC (wfspace, int8_t) ;
         Wbx = GB_MALLOC (wbxspace, GB_void) ;   // ok::
         Wcx = GB_MALLOC (wcxspace, GB_void) ;   // ok::
@@ -83,16 +92,13 @@
             // get the workspace for this task
             //------------------------------------------------------------------
 
-            // workspace for Gb and Hf
-            int8_t  *GB_RESTRICT Wf_task = Wf + jslice [tid] * (bvlenb + cvlen);
+            // Gb and Gx workspace to load the panel of B
+            int8_t   *GB_RESTRICT Gb = Wf  + G_slice [tid] * bvlenb ;
+            GB_BTYPE *GB_RESTRICT Gx = Wbx + G_slice [tid] * bvlenx ;
 
-            // workspace to copy the panel of B, into Gb and Gx:
-            int8_t   *GB_RESTRICT Gb = Wf_task ;
-            GB_BTYPE *GB_RESTRICT Gx = Wbx + jslice [tid] * bvlenx * GB_BSIZE ;
-
-            // workspace to compute the panel of C
-            int8_t   *GB_RESTRICT Hf = Wf_task + jpanel * bvlenb ;
-            GB_CTYPE *GB_RESTRICT Hx = Wcx + jslice [tid] * cvlenx * GB_CSIZE ;
+            // Hf and Hx workspace to compute the panel of C
+            int8_t   *GB_RESTRICT Hf = Wf  + (H_slice [tid] + gwork) * bvlenb ;
+            GB_CTYPE *GB_RESTRICT Hx = Wcx +  H_slice [tid] * cvlenx ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -100,10 +106,12 @@
             double *GB_RESTRICT Hx_real = (double *) Hx ;
             double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
             #endif
-            size_t hfsize = jpanel * cvlen ;
 
+            //------------------------------------------------------------------
             // clear the panel
-            memset (Hf, 0, hfsize) ;
+            //------------------------------------------------------------------
+
+            memset (Hf, 0, jpanel * cvlen) ;
 
             //------------------------------------------------------------------
             // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1) by panel
@@ -123,9 +131,8 @@
                 // load and transpose B(:,j1:j2-1) for one panel
                 //--------------------------------------------------------------
 
-                if (B_is_bitmap)        // TODO:: use GB_B_IS_BITMAP
+                #if GB_B_IS_BITMAP
                 {
-                    // TODO:: make this a function to reduce code size
                     if (np == 1)
                     {
                         // no need to load a single vector of B
@@ -144,6 +151,7 @@
                         }
                     }
                 }
+                #endif
 
                 if (!B_is_pattern)
                 {
@@ -170,7 +178,7 @@
                 }
 
                 //--------------------------------------------------------------
-                // H = A * G for one panel
+                // H = A*G for one panel
                 //--------------------------------------------------------------
 
                 for (int64_t kA = 0 ; kA < anvec ; kA++)
@@ -181,9 +189,10 @@
                     //----------------------------------------------------------
 
                     int64_t k = GBH (Ah, kA) ;
-                    int64_t pA_start = Ap [kA] ;
+                    int64_t pA = Ap [kA] ;
                     int64_t pA_end = Ap [kA+1] ;
                     int64_t pG = k * np ;
+
                     #undef  GB_MULT_A_ik_G_kjj
                     #if GB_IS_PAIR_MULTIPLIER
                         // t = A(i,k) * G (k,jj) is always equal to 1
@@ -193,15 +202,14 @@
                         GB_CIJ_DECLARE (t) ;
                         #define GB_MULT_A_ik_G_kjj(jj)                      \
                             GB_GETB (gkj, Gx, pG+jj) ;                      \
-                            GB_MULT (t, aik, gkj, i, k, j1 + jj)
+                            GB_MULT (t, aik, gkj, i, k, j1 + jj) ;
                     #endif
 
-                    // TODO:: use GB_B_IS_BITMAP
-
+                    #undef  GB_HX_COMPUTE
                     #define GB_HX_COMPUTE(jj)                               \
                     {                                                       \
                         /* H (i,jj) += A(i,k)*G(k,jj) */                    \
-                        if (!B_is_bitmap || Gb [pG+jj])                     \
+                        if (!GB_B_IS_BITMAP || Gb [pG+jj])                  \
                         {                                                   \
                             GB_MULT_A_ik_G_kjj (jj) ;                       \
                             if (Hf [pH+jj] == 0)                            \
@@ -218,6 +226,7 @@
                         }                                                   \
                     }
 
+                    #undef  GB_LOAD_A_ij
                     #define GB_LOAD_A_ij                                    \
                         int64_t i = Ai [pA] ;                               \
                         GB_GETA (aik, Ax, pA) ;                             \
@@ -227,49 +236,66 @@
                     // H += A(:,k)*G(k,:)
                     //----------------------------------------------------------
 
+                    #if GB_B_IS_BITMAP
+                    bool gb = false ;
                     switch (np)
                     {
-
-                        case 4 :
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                GB_LOAD_A_ij ;
-                                GB_HX_COMPUTE (0) ;
-                                GB_HX_COMPUTE (1) ;
-                                GB_HX_COMPUTE (2) ;
-                                GB_HX_COMPUTE (3) ;
-                            }
-                            break ;
-
-                        case 3 :
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                GB_LOAD_A_ij ;
-                                GB_HX_COMPUTE (0) ;
-                                GB_HX_COMPUTE (1) ;
-                                GB_HX_COMPUTE (2) ;
-                            }
-                            break ;
-
-                        case 2 :
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                GB_LOAD_A_ij ;
-                                GB_HX_COMPUTE (0) ;
-                                GB_HX_COMPUTE (1) ;
-                            }
-                            break ;
-
-                        case 1 :
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                GB_LOAD_A_ij ;
-                                GB_HX_COMPUTE (0) ;
-                            }
-                            break ;
-
+                        case 4 : gb  = Gb [pG+3] ;
+                        case 3 : gb |= Gb [pG+2] ;
+                        case 2 : gb |= Gb [pG+1] ;
+                        case 1 : gb |= Gb [pG  ] ; 
                         default: ;
                     }
+                    if (gb)
+                    #endif
+                    {
+                        switch (np)
+                        {
+
+                            case 4 :
+                                for ( ; pA < pA_end ; pA++)
+                                {
+                                    GB_LOAD_A_ij ;
+                                    GB_HX_COMPUTE (0) ;
+                                    GB_HX_COMPUTE (1) ;
+                                    GB_HX_COMPUTE (2) ;
+                                    GB_HX_COMPUTE (3) ;
+                                }
+                                break ;
+
+                            case 3 :
+                                for ( ; pA < pA_end ; pA++)
+                                {
+                                    GB_LOAD_A_ij ;
+                                    GB_HX_COMPUTE (0) ;
+                                    GB_HX_COMPUTE (1) ;
+                                    GB_HX_COMPUTE (2) ;
+                                }
+                                break ;
+
+                            case 2 :
+                                for ( ; pA < pA_end ; pA++)
+                                {
+                                    GB_LOAD_A_ij ;
+                                    GB_HX_COMPUTE (0) ;
+                                    GB_HX_COMPUTE (1) ;
+                                }
+                                break ;
+
+                            case 1 :
+                                for ( ; pA < pA_end ; pA++)
+                                {
+                                    GB_LOAD_A_ij ;
+                                    GB_HX_COMPUTE (0) ;
+                                }
+                                break ;
+                            default:;
+                        }
+                    }
+
+                    #undef  GB_MULT_A_ik_G_kjj
+                    #undef  GB_HX_COMPUTE
+                    #undef  GB_LOAD_A_ij
                 }
 
                 //--------------------------------------------------------------
@@ -804,7 +830,4 @@
         }
     }
 }
-
-#undef GB_MASK_IS_SPARSE
-#undef GB_MASK_IS_BITMAP
 

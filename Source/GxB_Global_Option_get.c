@@ -53,7 +53,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 double *bitmap_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (bitmap_switch) ;
-                (*bitmap_switch) = (double) GB_Global_bitmap_switch_get ( ) ;
+                for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+                {
+                    double b = (double) GB_Global_bitmap_switch_get (k) ;
+                    bitmap_switch [k] = b ;
+                }
             }
             break ;
 

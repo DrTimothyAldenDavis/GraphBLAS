@@ -10,15 +10,13 @@
 // Returns true if a bitmap matrix should be converted to sparse.
 // Returns false if the matrix should stay bitmap.
 
-// If A is m-by-n and A->sparsity is GxB_ANY_SPARSITY with the default
-// A->bitmap_switch: the matrix switches to bitmap if nnz(A)/(m*n) >
-// bitmap_switch, which has a default value of 0.1.  That, if the density is
-// 10% or more.  A bitmap matrix switches to sparse if nnz(A)/(m*n) <=
-// bitmap_switch/2, that is, if the matrix density is 5% or less.  A matrix
-// whose density is between 5% and 10% remains in its current state.
+// If A is m-by-n and A->sparsity is GxB_ANY_SPARSITY with b =
+// A->bitmap_switch, the matrix switches to bitmap if nnz(A)/(m*n) > b.  A
+// bitmap matrix switches to sparse if nnz(A)/(m*n) <= b/2.  A matrix whose
+// density is between b/2 and b remains in its current state.
 
-// A->bitmap_switch is normally a fraction in range 0 to 1, and is (1/10) by
-// default.  If set to 1 or more, A never becomes bitmap.
+// A->bitmap_switch is normally a fraction in range 0 to 1.  A value of 1
+// ensures that A is never converted to bitmap.
 
 // These default rules may change in future releases of SuiteSparse:GraphBLAS.
 

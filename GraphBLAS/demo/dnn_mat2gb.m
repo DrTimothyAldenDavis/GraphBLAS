@@ -27,7 +27,7 @@ function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 % SPDX-License-Identifier: Apache-2.0
 
 fmt = 'by row' ;
-prec = 'double' ;   % TODO:: make this 'single'
+prec = 'single' ;
 
 d = struct ('format', fmt) ;
 n = size (Y0, 2) ;

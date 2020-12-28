@@ -92,9 +92,32 @@ void mexFunction
     GxB_Global_Option_get_(GxB_CHUNK, &chunk) ;
     pargout [12] = mxCreateDoubleScalar (chunk) ;
 
-    double bitmap_switch ;
-    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bitmap_switch) ;
-    pargout [13] = mxCreateDoubleScalar (bitmap_switch) ;
+    double bitmap_switch [GxB_NBITMAP_SWITCH] ;
+    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bitmap_switch) ;
+    pargout [13] = mxCreateDoubleMatrix (1, GxB_NBITMAP_SWITCH, mxREAL) ;
+    double *bswitch = mxGetPr (pargout [13]) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        bswitch [k] = bitmap_switch [k] ;
+    }
+
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("bitmap_switch [%d] = %g ", k, b [k]) ;
+        if (k == 0)
+        {
+            printf ("for vectors and matrices with 1 row or column\n") ;
+        }
+        else if (k == GxB_NBITMAP_SWITCH - 1) 
+        {
+            printf ("for matrices with min dimension > %d\n", 1 << (k-1))
+        }
+        else
+        {
+            printf ("for matrices with min dimension %d to %d\n",
+                (1 << (k-1)) + 1, 1 << k) ;
+        }
+    }
 
 //  bool use_mkl ;
 //  GxB_Global_Option_get_(GxB_MKL, &use_mkl) ;

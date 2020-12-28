@@ -39,11 +39,11 @@
     // C=D*B
     //--------------------------------------------------------------------------
 
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    int ntasks = nthreads ;
     ntasks = GB_IMIN (bnz, ntasks) ;
 
     int tid ;
-    // #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         int64_t pstart, pend ;

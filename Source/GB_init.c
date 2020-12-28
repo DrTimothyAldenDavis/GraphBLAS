@@ -146,7 +146,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // can do this later as well, so there is no race condition danger.
 
     GB_Global_hyper_switch_set (GB_HYPER_SWITCH_DEFAULT) ;
-    GB_Global_bitmap_switch_set (0.2 /* TODO::GB_BITMAP_SWITCH_DEFAULT */) ;
+    GB_Global_bitmap_switch_default ( ) ;
     GB_Global_is_csc_set (GB_FORMAT_DEFAULT != GxB_BY_ROW) ;
 
     //--------------------------------------------------------------------------

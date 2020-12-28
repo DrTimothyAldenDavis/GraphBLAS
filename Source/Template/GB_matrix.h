@@ -402,10 +402,9 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 //      (d) A matrix with anz = GB_NNZ(A) entries and dimension A->vlen by
 //          A->vdim can have at most anz_dense = (A->vlen)*(A->vdim) entries.
 //          If A is sparse/hypersparse with anz > A->bitmap_switch * anz_dense,
-//          then it switches to bitmap.  A->bitmap_switch = (1/10) by default.
-//          If A is bitmap and anz = (A->bitmap_switch / 50) * anz_dense, that
-//          is, (1/500)*anz_dense, then it switches to sparse.  In between
-//          those two regions, the sparsity structure is unchanged.
+//          then it switches to bitmap.  If A is bitmap and anz =
+//          (A->bitmap_switch / 2) * anz_dense, it switches to sparse.  In
+//          between those two regions, the sparsity structure is unchanged.
 
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap

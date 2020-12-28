@@ -49,9 +49,21 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
             { 
                 va_start (ap, field) ;
-                double bitmap_switch = va_arg (ap, double) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
-                GB_Global_bitmap_switch_set ((float) bitmap_switch) ;
+                if (bitmap_switch == NULL)
+                {
+                    // set all switches to their default
+                    GB_Global_bitmap_switch_default ( ) ;
+                }
+                else
+                {
+                    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+                    {
+                        float b = (float) bitmap_switch [k] ;
+                        GB_Global_bitmap_switch_set (k, b) ;
+                    }
+                }
             }
             break ;
 

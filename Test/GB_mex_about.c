@@ -477,13 +477,16 @@ void mexFunction
     // global get/set
     //--------------------------------------------------------------------------
 
-    double h, bswitch ;
+    double h, bswitch [GxB_NBITMAP_SWITCH] ;
     GxB_Format_Value ff ;
     GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
-    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bswitch) ;
+    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch) ;
     GxB_Global_Option_get_(GxB_FORMAT, &ff) ;
-    printf ("hyper_switch %g bitmap_switch %g csc %d\n",
-        h, bswitch, (ff == GxB_BY_COL)) ;
+    printf ("hyper_switch %g csc %d\n", h, (ff == GxB_BY_COL)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("bitmap_switch [%d]: %g\n", k, bswitch [k]) ;
+    }
 
     GrB_Mode mode ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;

@@ -94,7 +94,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool A_is_hyper ;
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
-    A->bitmap_switch = GB_Global_bitmap_switch_get ( ) ;
+    A->bitmap_switch = GB_Global_bitmap_switch_matrix_get (vlen, vdim) ;
     A->sparsity = GxB_AUTO_SPARSITY ;
 
     if (sparsity == GxB_HYPERSPARSE)

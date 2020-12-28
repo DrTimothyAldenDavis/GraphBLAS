@@ -432,7 +432,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         // construct initial coarse tasks
         //----------------------------------------------------------------------
 
-        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial, false))
+        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial, true))
         { 
             // out of memory
             GB_FREE_ALL ;

@@ -41,45 +41,48 @@ is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
 t_is_simple = isequal (multop, 'pair') || contains (multop, 'first') || contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
 
-% for the 2 conventional semirings in MATLAB, which get extra optimization
-is_performance_critical = ...
-    isequal (addop, 'plus') && isequal (multop, 'times') && ...
-    (isequal (ztype, 'double') || isequal (ztype, 'GxB_FC64_t')) ;
-
 switch (ztype)
     case { 'bool' }
+        ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0x1L' ;
     case { 'int8_t', 'uint8_t' }
+        ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 8 ;
         bits = '0xffL' ;
         xbits = '0xFF' ;
     case { 'int16_t', 'uint16_t' }
+        ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 16 ;
         bits = '0xffffL' ;
         xbits = '0xFFFF' ;
     case { 'int32_t', 'uint32_t' }
+        ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 32 ;
         bits = '0xffffffffL' ;
         xbits = '0xFFFFFFFF' ;
     case { 'int64_t', 'uint64_t' }
+        ztype_is_float = false ;
         ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
         xbits = '0xFFFFFFFFFFFFFFFFL' ;
     case { 'float' }
+        ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 32 ;
         bits = '0' ;
     case { 'double', 'GxB_FC32_t' }
+        ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 64 ;
         bits = '0' ;
     case { 'GxB_FC64_t' }
+        ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 128 ;
         bits = '0' ;
@@ -158,7 +161,8 @@ else
     fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
 end
 
-if (is_performance_critical)
+% for the conventional semirings in MATLAB, which get extra optimization
+if (isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_float)
     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `0'')\n') ;
@@ -567,6 +571,12 @@ if (isempty (idbyte))
 else
     fprintf (f, 'define(`GB_has_identity_byte'', `1'')\n') ;
     fprintf (f, 'define(`GB_identity_byte'', `%s'')\n', idbyte) ;
+end
+
+% disable the bitmap multadd when using div or rdiv and any floating-point
+% type, to avoid divide-by-zero when operating on entries not in the bitmap.
+if (contains (multop, 'div') && ztype_is_float)
+    s = '' ;
 end
 
 if (isempty (s))

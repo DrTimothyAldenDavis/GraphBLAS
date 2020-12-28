@@ -300,17 +300,6 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
-    // bitmap switch get/set
-    //--------------------------------------------------------------------------
-
-    GB_Global_bitmap_switch_set (0.5) ;
-    float s = GB_Global_bitmap_switch_get ( ) ;
-    CHECK (s == 0.5) ;
-    GB_Global_bitmap_switch_set (GB_BITMAP_SWITCH_DEFAULT) ;
-    s = GB_Global_bitmap_switch_get ( ) ;
-    CHECK (fabsf (s - GB_BITMAP_SWITCH_DEFAULT) < 1e-6) ;
-
-    //--------------------------------------------------------------------------
     // reduce with positional op
     //--------------------------------------------------------------------------
 

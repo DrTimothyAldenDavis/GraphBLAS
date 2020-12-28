@@ -41,7 +41,7 @@ typedef struct
     // hypersparsity and CSR/CSC format control
     //--------------------------------------------------------------------------
 
-    float bitmap_switch ;       // default bitmap_switch for new matrices
+    float bitmap_switch [GxB_NBITMAP_SWITCH] ; // default bitmap_switch
     float hyper_switch ;        // default hyper_switch for new matrices
     bool is_csc ;               // default CSR/CSC format for new matrices
 
@@ -145,9 +145,28 @@ GB_Global_struct GB_Global =
     .nthreads_max = 1,
     .chunk = GB_CHUNK_DEFAULT,
 
+    // min dimension                density
+    #define GB_BITSWITCH_1          0.04
+    #define GB_BITSWITCH_2          0.05
+    #define GB_BITSWITCH_3_to_4     0.06
+    #define GB_BITSWITCH_5_to_8     0.08
+    #define GB_BITSWITCH_9_to_16    0.10
+    #define GB_BITSWITCH_17_to_32   0.20
+    #define GB_BITSWITCH_33_to_64   0.30
+    #define GB_BITSWITCH_gt_than_64 0.40
+
     // default format
     .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
-    .bitmap_switch = GB_BITMAP_SWITCH_DEFAULT,
+    .bitmap_switch = {
+        GB_BITSWITCH_1,
+        GB_BITSWITCH_2,
+        GB_BITSWITCH_3_to_4,
+        GB_BITSWITCH_5_to_8,
+        GB_BITSWITCH_9_to_16,
+        GB_BITSWITCH_17_to_32,
+        GB_BITSWITCH_33_to_64,
+        GB_BITSWITCH_gt_than_64 } 
+
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
     // abort function for debugging only
@@ -263,11 +282,13 @@ double GB_Global_chunk_get (void)
 // hyper_switch
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_hyper_switch_set (float hyper_switch)
 { 
     GB_Global.hyper_switch = hyper_switch ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 float GB_Global_hyper_switch_get (void)
 { 
     return (GB_Global.hyper_switch) ;
@@ -277,14 +298,47 @@ float GB_Global_hyper_switch_get (void)
 // bitmap_switch
 //------------------------------------------------------------------------------
 
-void GB_Global_bitmap_switch_set (float bitmap_switch)
+GB_PUBLIC   // accessed by the MATLAB interface only
+void GB_Global_bitmap_switch_set (int k, float b)
 { 
-    GB_Global.bitmap_switch = bitmap_switch ;
+    k = GB_IMAX (k, 0) ;
+    k = GB_IMIN (k, 7) ;
+    GB_Global.bitmap_switch [k] = b ;
 }
 
-float GB_Global_bitmap_switch_get (void)
+GB_PUBLIC   // accessed by the MATLAB interface only
+float GB_Global_bitmap_switch_get (int k)
 { 
-    return (GB_Global.bitmap_switch) ;
+    k = GB_IMAX (k, 0) ;
+    k = GB_IMIN (k, 7) ;
+    return (GB_Global.bitmap_switch [k]) ;
+}
+
+GB_PUBLIC   // accessed by the MATLAB interface only
+float GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim)
+{ 
+    int64_t d = GB_IMIN (vlen, vdim) ;
+    if (d <=  1) return (GB_Global.bitmap_switch [0]) ;
+    if (d <=  2) return (GB_Global.bitmap_switch [1]) ;
+    if (d <=  4) return (GB_Global.bitmap_switch [2]) ;
+    if (d <=  8) return (GB_Global.bitmap_switch [3]) ;
+    if (d <= 16) return (GB_Global.bitmap_switch [4]) ;
+    if (d <= 32) return (GB_Global.bitmap_switch [5]) ;
+    if (d <= 64) return (GB_Global.bitmap_switch [6]) ;
+                 return (GB_Global.bitmap_switch [7]) ;
+}
+
+GB_PUBLIC   // accessed by the MATLAB interface only
+void GB_Global_bitmap_switch_default (void)
+{
+    GB_Global.bitmap_switch [0] = GB_BITSWITCH_1 ;
+    GB_Global.bitmap_switch [1] = GB_BITSWITCH_2 ;
+    GB_Global.bitmap_switch [2] = GB_BITSWITCH_3_to_4 ;
+    GB_Global.bitmap_switch [3] = GB_BITSWITCH_5_to_8 ;
+    GB_Global.bitmap_switch [4] = GB_BITSWITCH_9_to_16 ;
+    GB_Global.bitmap_switch [5] = GB_BITSWITCH_17_to_32 ;
+    GB_Global.bitmap_switch [6] = GB_BITSWITCH_33_to_64 ;
+    GB_Global.bitmap_switch [7] = GB_BITSWITCH_gt_than_64 ;
 }
 
 //------------------------------------------------------------------------------

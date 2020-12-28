@@ -200,7 +200,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         // 15
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
+            #if GB_DEVELOPER
             GBPR0 ("  sparsity control: hyper/sparse/bitmap/full\n") ;
+            #endif
             break ;
 
         default : 

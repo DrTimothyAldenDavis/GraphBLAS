@@ -4389,12 +4389,26 @@ void mexFunction
     OK (GxB_Matrix_Option_get_(A, GxB_HYPER_SWITCH, &hratio2)) ;
     CHECK (hratio == hratio2) ;
 
-    double bratio = 0.5;
-    OK (GxB_Matrix_Option_set_(A, GxB_BITMAP_SWITCH, bratio)) ;
+    double bswitch [GxB_NBITMAP_SWITCH] ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        bswitch [k] = (double) k / 16.0
+    }
+    OK (GxB_Matrix_Option_set_(A, GxB_BITMAP_SWITCH, bswitch)) ;
 
-    double bratio2 = 0 ;
-    OK (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, &bratio2)) ;
-    CHECK (hratio == hratio2) ;
+    double bswitch2 [GxB_NBITMAP_SWITCH] ;
+    OK (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, bswitch2)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        CHECK (bswitch [k] == bswitch2 [k]) ;
+    }
+
+    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, NULL)) ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("default bswitch [%d] = %g\n", k, bswitch [k]) ;
+    }
 
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
     CHECK (GB_IS_HYPERSPARSE (A)) ;
@@ -4418,8 +4432,6 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_FORMAT, &format)) ;
     CHECK (format == 0) ;
 
-//    OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
-
     OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, 77.33f)) ;
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     printf ("%g\n", hratio) ;
@@ -4428,10 +4440,6 @@ void mexFunction
     OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT)) ;
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     CHECK (hratio == GxB_HYPER_DEFAULT) ;
-
-    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, GxB_BITMAP_SWITCH_DEFAULT)) ;
-    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, &bratio)) ;
-    CHECK (fabs (bratio - GxB_BITMAP_SWITCH_DEFAULT) < 1e-6) ;
 
     expected = GrB_NULL_POINTER ;
     GrB_Matrix O_NULL = NULL ;

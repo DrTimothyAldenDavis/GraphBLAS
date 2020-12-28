@@ -178,7 +178,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 20, 2020 (beta2)"
+#define GxB_IMPLEMENTATION_DATE "Dec 28, 2020"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -3703,9 +3703,6 @@ GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 // the default hyper_switch parameter
 GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 
-// the default bitmap_switch parameter
-GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
-
 // GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 #define GxB_HYPERSPARSE 1   // store matrix in hypersparse form
 #define GxB_SPARSE      2   // store matrix as sparse form (compressed vector)
@@ -3774,16 +3771,6 @@ GB_PUBLIC const double GxB_BITMAP_SWITCH_DEFAULT ;
 //      a matrix always stays hypersparse, or always stays non-hypersparse,
 //      respectively.
 
-// GxB_BITMAP_SWITCH:
-//      If the matrix or vector can be bitmap or sparse/hyper, the
-//      GxB_BITMAP_SWITCH determines how the matrix or vector switches between
-//      these formats.
-//
-//      If currently in bitmap form, a matrix or vector is converted to
-//      hypersparse if it has <= (bitmap_switch/50)*(nrows*ncols) entries.
-//      If currently in sparse/hypersparse form, it is converted to bitmap
-//      if it has > bitmap_switch*(nrows*ncols) entries.
-
 GB_PUBLIC const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
 
 GB_PUBLIC
@@ -3822,7 +3809,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
 // created.  GrB_init defines the following initial settings:
 //
 //      GxB_Global_Option_set (GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT) ;
-//      GxB_Global_Option_set (GxB_BITMAP_SWITCH, GxB_BITMAP_SWITCH_DEFAULT) ;
+//      GxB_Global_Option_set (GxB_BITMAP_SWITCH, NULL) ;
 //      GxB_Global_Option_set (GxB_FORMAT, GxB_FORMAT_DEFAULT) ;
 //
 // The compile-time constants GxB_HYPER_DEFAULT and GxB_FORMAT_DEFAULT are
@@ -3831,7 +3818,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
 // columns, it can be converted to hypersparse structure.  If it has more than
 // n/8 columns, it can be converted to a sparse structure.  Modifying these
 // global settings via GxB_Global_Option_set has no effect on matrices already
-// created.  GxB_BITMAP_SWITCH_DEFAULT is 0.1.
+// created.
 
 GB_PUBLIC
 GrB_Info GxB_Global_Option_set      // set a global default option
@@ -3869,8 +3856,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
 //      GxB_get (GxB_HYPER_SWITCH, double *h) ;
 //
-//      GxB_set (GxB_BITMAP_SWITCH, double b) ;
-//      GxB_get (GxB_BITMAP_SWITCH, double *b) ;
+//      double b [GxB_NBITMAP_SWITCH] ;
+//      GxB_set (GxB_BITMAP_SWITCH, b) ;
+//      GxB_set (GxB_BITMAP_SWITCH, NULL) ;     // set defaults
+//      GxB_get (GxB_BITMAP_SWITCH, b) ;
 //
 //      GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
 //      GxB_set (GxB_FORMAT, GxB_BY_COL) ;
@@ -3906,10 +3895,23 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
 //      GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, scontrol) ;
 //      GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *scontrol) ;
-
-// To get a matrix sparsity status (hypersparse/sparse/bitmap/full):
 //
 //      GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ;
+
+// To set/get a vector option or status:
+//
+//      GxB_set (GrB_Vector v, GxB_BITMAP_SWITCH, double b) ;
+//      GxB_get (GrB_Vector v, GxB_BITMAP_SWITCH, double *b) ;
+//
+//      GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_ROW) ;
+//      GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_COL) ;
+//      GxB_get (GrB_Vector v, GxB_FORMAT, GxB_Format_Value *s) ;
+//
+//      GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
+//      GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, scontrol) ;
+//      GxB_get (GrB_Vector v, GxB_SPARSITY_CONTROL, int *scontrol) ;
+//
+//      GxB_get (GrB_Vector v, GxB_SPARSITY_STATUS, int *sparsity) ;
 
 // To set/get a descriptor field:
 //

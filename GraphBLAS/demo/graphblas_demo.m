@@ -558,6 +558,7 @@ nfeatures = 30000 ;
 fprintf ('# layers:   %d\n', nlayers) ;
 fprintf ('# neurons:  %d\n', nneurons) ;
 fprintf ('# features: %d\n', nfeatures) ;
+fprintf ('# of threads used: %d\n', GrB.threads) ;
 
 tic
 Y0 = sprand (nfeatures, nneurons, 0.1) ;
@@ -745,16 +746,16 @@ C (M) = A (M) ;
 matlab_time = toc ;
 
 fprintf ('\nGraphBLAS time: %g sec (GrB.assign)\n', gb_time) ;
-fprintf ('\nGraphBLAS time: %g sec (overloading)\n', gb_time2) ;
+fprintf ('GraphBLAS time: %g sec (overloading)\n', gb_time2) ;
 fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
+fprintf ('Speedup of GraphBLAS (overloading) over MATLAB: %g\n', ...
     matlab_time / gb_time2) ;
+fprintf ('Speedup of GraphBLAS (GrB.assign)  over MATLAB: %g\n', ...
+    matlab_time / gb_time) ;
 
-% GraphBLAS computes the exact same result with both methods:
 assert (isequal (C1, C))
 assert (isequal (C2, C))
-C1 - C
-C2 - C
+fprintf ('Results of GrB and MATLAB match perfectly.\n')
 
 %% Limitations and their future solutions
 % The MATLAB interface for SuiteSparse:GraphBLAS is a work-in-progress.
@@ -856,15 +857,15 @@ C2 = GrB.mxm ('+.+', A, diag (GrB (B)))
 err = norm (C1-C2,1)
 
 %%
-% (6) Performance issues
+% (6) MATLAB object overhead.
 %
 % The GrB matrix is a MATLAB object, and there are some cases where
-% performance issues can arise.  Extracting the contents of a MATLAB
-% object (G.field) takes much more time than for a MATLAB struct with
-% the same syntax, and building an object has similar issues.  The
-% difference is small, and it does not affect large problems.  But if
-% you have many calls to GrB operations with a small amount of work,
-% then the time can be dominated by the MATLAB object-oriented overhead.
+% performance issues can arise as a result.  Extracting the contents of
+% a MATLAB object (G.field) takes much more time than for a MATLAB struct
+% with % the same syntax, and building an object has similar issues.  The
+% difference is small, and it does not affect large problems.  But if you
+% have many calls to GrB operations with a small amount of work, then the
+% time can be dominated by the MATLAB object-oriented overhead.
 
 A = rand (3,4) ;
 G = GrB (A) ;
@@ -886,12 +887,14 @@ toc
 % the initial value of the matrix C for the expression below, an optional
 % mask matrix M, and an optional accumulator operator.
 %
-%      C<#M,replace> = accum (C, T)
+%   in GrB syntax:  C<#M,replace> = accum (C, A*B)
+%
+%   in @GrB MATLAB: C = GrB.mxm (Cin, M, accum, semiring, A, B, desc) ;
 %
 % In the above expression, #M is either empty (no mask), M (with a mask
 % matrix) or ~M (with a complemented mask matrix), as determined by the
-% descriptor.  'replace' can be used to clear C after it is used in
-% accum(C,T) but before it is assigned with C<...> = Z, where
+% descriptor (desc).  'replace' can be used to clear C after it is used
+% in accum(C,T) but before it is assigned with C<...> = Z, where
 % Z=accum(C,T).  The matrix T is the result of some operation, such as
 % T=A*B for GrB.mxm, or T=op(A,B) for GrB.eadd.
 %
@@ -901,6 +904,6 @@ toc
 %
 % Thanks for watching!
 %
-% Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis
-% See also doc sparse and https://twitter.com/DocSparse
+% Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis,
+% https://twitter.com/DocSparse
 

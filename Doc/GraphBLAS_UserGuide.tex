@@ -115,12 +115,12 @@ SuiteSparse:GraphBLAS.
 All functions, objects, and macros with a name of the form \verb'GxB_*' are
 SuiteSparse-specific extensions to the spec.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} Non-obvious deviations or additions to the v1.3 GraphBLAS C API
 Specification are highlighted in a box like this one, except for \verb'GxB*'
 methods.  They are not highlighted since it is clear from their name that they
 are extensions.
-\end{spec}
+\end{alert}
 
 \newpage
 
@@ -787,11 +787,12 @@ zero, and true otherwise.  Thus \verb'NaN' converts to \verb'true'.  This is
 unlike MATLAB, which does not allow a typecast of a \verb'NaN' to the MATLAB
 logical type.
 
-\begin{spec}
-{\bf SPEC:} the GraphBLAS API states that typecasting follows the rules of ANSI
-C.  Yet C leaves some typecasting undefined.  SuiteSparse:GraphBLAS provides a
-precise definition for all typecasting as an extension to the spec.
-\end{spec}
+\begin{alert}
+{\bf SPEC:} the GraphBLAS API C Specification states that typecasting follows
+the rules of ANSI C.  Yet C leaves some typecasting undefined.  All typecasting
+between built-in types in SuiteSparse:GraphBLAS is precisely defined, as an
+extension to the spec.
+\end{alert}
 
 %===============================================================================
 \subsection{Notation and list of GraphBLAS operations} %========================
@@ -1242,13 +1243,13 @@ compile-time version check with \verb'GRB_VERSION' would be stale.
 \verb'GrB_getVersion' thus provides a runtime access of the version of the C
 API Specification supported by the library.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} 
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
 of the C API Specification, with the exception of \verb'GrB_wait' and
 \verb'GrB_error'.
-\end{spec}
+\end{alert}
 
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %================
@@ -1498,10 +1499,10 @@ GrB_Info GrB_wait ( ) ;         // wait for all objects: NOT SUPPORTED
 
 \begin{alert}
 {\bf SPEC:} The v1.3 GraphBLAS C API Specification includes \verb'GrB_wait ( )'
-with no inputs, which waits for all objects, computed by any user thread.  This
-is difficult to implement and has serious performance issues and thus it is no
-longer implemented in SuiteSparse:GraphBLAS v4 and later.  Use
-\verb'GrB_wait (&object)' instead.
+with no inputs, which waits for all objects computed by any user thread.  This
+has serious performance issues and thus it is no longer implemented in
+SuiteSparse:GraphBLAS v4 and later.  SuiteSparse:GraphBLAS only provides
+\verb'GrB_wait (&object)', to wait on a single object.
 \end{alert}
 
 %===============================================================================
@@ -1986,9 +1987,9 @@ Integer division by zero normally terminates an application, but this is
 avoided in SuiteSparse:GraphBLAS.  For details, see the binary
 \verb'GrB_DIV_'$T$ operators.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} The definition of integer division by zero is an extension to the spec.
-\end{spec}
+\end{alert}
 
 The next sections define the following methods for the \verb'GrB_UnaryOp'
 object:
@@ -2365,9 +2366,9 @@ type $T$ to Boolean and returning a value of type $T$ that is 1 for true or
 zero for false.  The set of \verb'GxB_L*_'$T$ operators are useful since they
 can be combined with non-Boolean monoids in a semiring.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} The definition of integer division by zero is an extension to the spec.
-\end{spec}
+\end{alert}
 
 Floating-point operations follow the IEEE 754 standard.  Thus, computing $x/0$
 for a floating-point $x$ results in \verb'+Inf' if $x$ is positive, \verb'-Inf'
@@ -3932,9 +3933,9 @@ to \verb'GrB_Matrix_build'.  For a vector, the list of column indices \verb'J'
 in \verb'GrB_Matrix_build' is implicitly a vector of length \verb'nvals' all
 equal to zero.  Otherwise the methods are identical.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} As an extension to the spec, results are defined even if \verb'dup' is non-associative.
-\end{spec}
+\end{alert}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
@@ -4361,10 +4362,10 @@ assembled into a matrix \verb'T' of the same type as \verb'dup', using
 typecasted into the result \verb'C'.  That is, typecasting does not occur at
 the same time as the assembly of duplicates.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} As an extension to the spec, results are defined even if \verb'dup'
 is non-associative.
-\end{spec}
+\end{alert}
 
 The GraphBLAS API requires \verb'dup' to be associative so
 that entries can be assembled in any order, and states that the result is
@@ -4609,12 +4610,12 @@ all the tuples of \verb'A', and the rest of \verb'I' \verb'J', and \verb'X' are
 left unchanged.  On output, \verb'nvals' contains the number of tuples
 extracted.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} As an extension to the spec, the arrays \verb'I', \verb'J', and/or
 \verb'X' may be passed in as \verb'NULL' pointers.  In this case,
 \verb'GrB_Matrix_extractTuples' does not return a component specified as
 \verb'NULL'.  This is not an error condition.
-\end{spec}
+\end{alert}
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -6675,7 +6676,7 @@ on the amount of time or memory taken.
 field                       & value         & description \\
 \hline
 \verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
-\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double [8]' & bitmap control \\
 \verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
                                               or \verb'GxB_BY_COL' \\
 \verb'GxB_GLOBAL_NTHREADS'  & \verb'int'    & number of threads to use \\
@@ -6748,7 +6749,7 @@ a \verb'GrB_Vector', or the global options.
 field                       & value         & description \\
 \hline
 \verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
-\verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
+\verb'GxB_BITMAP_SWITCH'    & \verb'double [8]' & bitmap control \\
 \verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
                                               or \verb'GxB_BY_COL' \\
 \verb'GxB_GLOBAL_NTHREADS'  & \verb'int'    & number of threads to use \\
@@ -7055,19 +7056,51 @@ format, hypersparsity format, and \verb'hyper_switch' from \verb'A'.
 
 By default, SuiteSparse:GraphBLAS switches between bitmap and
 sparse/hypersparse formats automatically.  Let $d = |{\bf A}|/mn$ for an
-$m$-by-$n$ matrix $\bf A$.  If the matrix is currently in sparse or hypersparse
-format, and is modified so that $d$ exceeds the default threshold of 0.1, it is
-converted into bitmap format.  The default threshold is controlled by the
-\verb'GxB_BITMAP_SWITCH' setting, which can be set globally, or for a
-particular matrix or vector.  The current default value of
-\verb'GxB_BITMAP_SWITCH' is 0.10.  If the matrix is currently in bitmap format,
-it is converted to full if all entries are present, or to sparse/hypersparse if
-$d$ drops below \verb'GxB_BITMAP_SWITCH/2' (5\% by default).  A matrix or
-vector with $d$ between 5\% and 10\% (by default) remains in its current
-format.
+$m$-by-$n$ matrix $\bf A$ with $|{\bf A}|$ entries.  If the matrix is currently
+in sparse or hypersparse format, and is modified so that $d$ exceeds a given
+threshold, it is converted into bitmap format.  The default threshold is
+controlled by the \verb'GxB_BITMAP_SWITCH' setting, which can be set globally,
+or for a particular matrix or vector.
+
+The default value of the switch to bitmap format depends on $\min(m,n)$, for a
+matrix of size $m$-by-$n$.  For the global setting, the bitmap switch is a
+\verb'double' array of size \verb'GxB_NBITMAP_SWITCH'.  The defaults are given
+below:
+
+\vspace{0.2in}
+{\small
+\begin{tabular}{lll}
+parameter & default & matrix sizes \\
+\hline
+\verb'bitmap_switch [0]' & 0.04 & $\min(m,n) = 1$ (and all vectors) \\
+\verb'bitmap_switch [1]' & 0.05 & $\min(m,n) = 2$ \\
+\verb'bitmap_switch [2]' & 0.06 & $\min(m,n) = 3$ to 4 \\
+\verb'bitmap_switch [3]' & 0.08 & $\min(m,n) = 5$ to 8 \\
+\verb'bitmap_switch [4]' & 0.10 & $\min(m,n) = 9$ to 16\\
+\verb'bitmap_switch [5]' & 0.20 & $\min(m,n) = 17$ to 32\\
+\verb'bitmap_switch [6]' & 0.30 & $\min(m,n) = 33$ to 64 \\
+\verb'bitmap_switch [7]' & 0.40 & $\min(m,n) > 64$ \\
+\end{tabular}
+}
+\vspace{0.2in}
+
+That is, by default a \verb'GrB_Vector' is held in bitmap format if its density
+exceeds 4\%.  To change the global settings, do the following:
+
+{\footnotesize
+\begin{verbatim}
+    double bswitch [GxB_NBITMAP_SWITCH] = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8 } ;
+    GxB_set (GxB_BITMAP_SWITCH, bswitch) ;
+\end{verbatim}
+}
+
+If the matrix is currently in bitmap format, it is converted to full if all
+entries are present, or to sparse/hypersparse if $d$ drops below $b/2$, if its
+bitmap switch is $b$.  A matrix or vector with $d$ between $b/2$ and $b$
+remains in its current format.
 
 %-------------------------------------------------------------------------------
-{\bf Parameter types:}
+\subsection{Parameter types}
 %-------------------------------------------------------------------------------
 The \verb'GxB_Option_Field' enumerated type gives the type of the \verb'field'
 parameter for the second argument of \verb'GxB_set' and \verb'GxB_get',
@@ -7381,6 +7414,7 @@ Sections~\ref{descriptor_set}~and~\ref{desc_set} for details.
 
 If an error occurs, \verb'GrB_error(&err,desc)' returns details about the error.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
 %===============================================================================
@@ -7436,6 +7470,26 @@ For example:
     GxB_get (GxB_HYPER_SWITCH, &h) ;
     printf ("hyper_switch = %g for all new matrices\n", h) ;
 
+    double b [GxB_BITMAP_SWITCH] ;
+    GxB_get (GxB_BITMAP_SWITCH, b) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("bitmap_switch [%d] = %g ", k, b [k]) ;
+        if (k == 0)
+        {
+            printf ("for vectors and matrices with 1 row or column\n") ;
+        }
+        else if (k == GxB_NBITMAP_SWITCH - 1) 
+        {
+            printf ("for matrices with min dimension > %d\n", 1 << (k-1))
+        }
+        else
+        {
+            printf ("for matrices with min dimension %d to %d\n",
+                (1 << (k-1)) + 1, 1 << k) ;
+        }
+    }
+
     GxB_Format_Value s ;
     GxB_get (GxB_FORMAT, &s) ;
     if (s == GxB_BY_COL) printf ("all new matrices are stored by column\n") :
@@ -7460,6 +7514,7 @@ For example:
     GxB_get (GxB_LIBRARY_VERSION, ver) ;
     printf ("Library %s, version %d.%d.%d\n", name, ver [0], ver [1], ver [2]) ; \end{verbatim} }
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_get:} retrieve a matrix option}
 %===============================================================================
@@ -7551,8 +7606,10 @@ To set/get the global options:
     GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
     GxB_get (GxB_HYPER_SWITCH, double *h) ;
 
-    GxB_set (GxB_BITMAP_SWITCH, double b) ;
-    GxB_get (GxB_BITMAP_SWITCH, double *b) ;
+    double b [GxB_NBITMAP_SWITCH] ;
+    GxB_set (GxB_BITMAP_SWITCH, b) ;
+    GxB_set (GxB_BITMAP_SWITCH, NULL) ;     // set defaults
+    GxB_get (GxB_BITMAP_SWITCH, b) ;
 
     GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
@@ -9306,13 +9363,13 @@ The output of the above program is:
 You see that the result is \verb'x(0)=7', since the \verb'y(0)=5' entry
 has been ignored because of the duplicate indices in \verb'I'.
 
-\begin{spec}
+\begin{alert}
 {\bf SPEC:} Providing a well-defined behavior for duplicate
 indices with matrix and vector assignment is an extension to the spec.
 The spec only defines the behavior when assigning a scalar into a matrix
 or vector, and states that duplicate indices otherwise lead to undefined
 results.
-\end{spec}
+\end{alert}
 
 
 \newpage
@@ -10206,6 +10263,7 @@ The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_BinaryOp} reduce a matrix to a vector}
 %-------------------------------------------------------------------------------
@@ -10242,6 +10300,7 @@ value, and so only binary operators that correspond to known monoids are
 supported.  Use \verb'GrB_Matrix_reduce_Monoid' instead.
 \end{alert}
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_reduce\_$<$type$>$:} reduce a vector to a scalar}
 %-------------------------------------------------------------------------------
@@ -10293,6 +10352,7 @@ into the final result, \verb'c'.
 Since this operation does not have a GraphBLAS input/output object, it
 cannot return an error string for \verb'GrB_error'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_$<$type$>$:} reduce a matrix to a scalar}
 %-------------------------------------------------------------------------------
@@ -10858,10 +10918,13 @@ Most of the rest of the report is self-explanatory.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
+\begin{alert}
 {\bf NOTE: the programs in the \verb'Demo' folder are not always the fastest
-methods.  They meant for illustration only, not performance.  Do not benchmark
-them.  Refer to the latest (draft) \verb'LAGraph' package for the fastest
-methods.}
+methods.  They are simple methods for illustration only, not performance.  Do
+not benchmark them.  Refer to the latest (draft) \verb'LAGraph' package for the
+fastest methods.  Be sure to use the right combination of package versions
+between LAGraph and SuiteSparse:GraphBLAS.}
+\end{alert}
 
 Several examples of how to use GraphBLAS are listed below.  They all
 appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
@@ -10888,14 +10951,12 @@ progress.
 
 The LAGraph project is a community-wide effort to create graph algorithms based
 on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
-As of Oct, 2019, the library includes the algorithms and utilities listed in
-the table below.  Many additional algorithms are planned, such as betweenness
-centrality, PageRank, single-source shortest path (via delta stepping), minimum
-spanning trees, connected components, and many more.  Refer to
+Some of the algorithms and utilities in LAGraph are listed in the table below.
+Many additional algorithms are planned.  Refer to
 \url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms
 (the one below will soon be out of date).  Most of the functions in the
-\verb'Demo/' folder in SuiteSparse:GraphBLAS will
-eventually be translated into algorithms or utilities for LAGraph.
+\verb'Demo/' folder in SuiteSparse:GraphBLAS will eventually be translated into
+algorithms or utilities for LAGraph.
 
 To use LAGraph with SuiteSparse:GraphBLAS, place the two folders \verb'LAGraph'
 and \verb'GraphBLAS' in the same parent directory.  This allows the
@@ -11501,7 +11562,7 @@ uses GraphBLAS to implement the two methods above, and two additional ones.
 %-------------------------------------------------------------------------------
 \label{read}
 
-{\bf NOTE:} see also \verb'LAGraph_mmread' and \verb'LAGraph_mmwrite', which
+See also \verb'LAGraph_mmread' and \verb'LAGraph_mmwrite', which
 can read and write any matrix in Matrix Market format, and
 \verb'LAGraph_binread' and \verb'LAGraph_binwrite', which read/write a matrix
 from a binary file.  The binary file I/O functions are much faster than
@@ -11826,12 +11887,14 @@ will still compile, but you will not have access to polymorphic functions
 such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
+\begin{alert}
 {\bf NOTE: icc is generally an excellent compiler, but it will generate slower
 code than gcc for SuiteSparse:GraphBLAS v3.2.0 and later.  This is because of
 how the two compilers treat \verb'#pragma omp atomic read' and
 \verb'#pragma omp atomic write'.  The use of gcc for SuiteSparse:GraphBLAS
 v3.2.0 and later is recommended.  Atomics are slower in icc as compared to
 gcc.}
+\end{alert}
 
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  This will be a

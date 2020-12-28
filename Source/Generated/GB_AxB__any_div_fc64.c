@@ -261,7 +261,7 @@
 
 // 1 if the semiring has a concise bitmap multiply-add
 #define GB_HAS_BITMAP_MULTADD \
-    1
+    0
 
 // concise statement(s) for the bitmap case:
 //  if (exists)
@@ -271,7 +271,7 @@
 //      else
 //          cx += ax * bx
 #define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
-    if (exists && !cb) cx = ((GxB_FC64_t) (GB_FC64_div (ax, bx))) ; cb |= exists
+    (none)
 
 // define X for bitmap multiply-add
 #define GB_XINIT \
