@@ -218,9 +218,9 @@
 
 // The 'spec' string describes the GraphBLAS spec:
 #define GxB_SPEC_ABOUT \
-"GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,
-"Jose' Moreira, Carl Yang, and Benjamin Brock.  Based on 'GraphBLAS"           \
-"Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n"  \
+"GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,\n"         \
+"Jose' Moreira, Carl Yang, and Benjamin Brock.  Based on 'GraphBLAS\n"        \
+"Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n" \
 "of Linear Algebra,' edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //==============================================================================

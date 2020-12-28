@@ -341,6 +341,7 @@ GrB_Info GB_selector
         // since Cx [0..cnz-1] is all zero, phase2 only needs to construct
         // the pattern in Ci
         Cx = GB_CALLOC (cnz * asize, GB_void) ;     // for EQ_ZERO selector
+        // TODO:: HACK: should use GB_memset here instead of GB_CALLOC
     }
     else
     { 

@@ -22,9 +22,17 @@
     // printf ("imeta %ld\n", imeta) ;
 
     // number of entries in one panel of G for A.
-    // Each panel of G is GB_PANEL_SIZE-by-avdim, held by column.  If A has
-    // fewer than GB_PANEL_SIZE rows, then the panel G is not allocated.
-    int64_t apanel_size = (avlen <= GB_PANEL_SIZE) ? 0 : (GB_PANEL_SIZE*avdim) ;
+    #if GB_HAS_BITMAP_MULTADD && !GB_IS_ANY_PAIR_SEMIRING
+    // Always load the A panel into G, since Ax [pA] has uninitialized values
+    // where Ab [pA] == 0.  The GB_BITMAP_MULTADD update will access these
+    // values, and they must be initialized.
+    const bool load_apanel = true ;
+    #else
+    // only load the A panel into G if it consists of more than one panel
+    const bool load_apanel = (avlen > GB_PANEL_SIZE) ;
+    #endif
+    // Each panel of G is GB_PANEL_SIZE-by-avdim, held by column.
+    int64_t apanel_size = load_apanel ? (GB_PANEL_SIZE * avdim) : 0 ;
     int64_t afpanel_size = GB_A_IS_BITMAP  ? (apanel_size) : 0 ;
     int64_t axpanel_size = A_is_pattern ? 0 : (apanel_size * GB_ASIZE) ;
 
@@ -59,7 +67,7 @@
     //--------------------------------------------------------------------------
 
     // for all semirings: set the bitmaps Gb and Hf to zero
-    GB_memset (Wf, 0, wafsize + wcsize, nthreads_max) ;
+    GB_memset (Wf,  0, wafsize + wcsize, nthreads_max) ;
 
     #if GB_HAS_BITMAP_MULTADD && !GB_IS_ANY_PAIR_SEMIRING
         // Initialize the Hx workspace to identity, if this semiring has a
@@ -110,15 +118,15 @@
         // load the metapanel: G = A (iouter:iouter+imeta-1,:)
         //----------------------------------------------------------------------
 
-        if ((GB_A_IS_BITMAP || !A_is_pattern) && avlen > GB_PANEL_SIZE)
+        if ((GB_A_IS_BITMAP || !A_is_pattern) && load_apanel)
         {
 
             // Loading the panel into G keeps its storage order.  A is not
             // transposed when loaded into the G panels.  However, the leading
             // dimension is reduced.  A is avlen-by-avdim with a leading
             // dimension of avlen, which can be large.  G is np-by-avdim, with
-            // np <= GB_PANEL_SIZE.  This work is skipped if avlen <=
-            // GB_PANEL_SIZE, since in that case A is used in-place.
+            // np <= GB_PANEL_SIZE.  The loading of A into G can be skipped
+            // if all of A can be used in-place.
 
             #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
             for (tid = 0 ; tid < ntasks ; tid++)
@@ -137,43 +145,85 @@
                 if (np <= 0) continue ;
                 int64_t kstart, kend ; 
                 GB_PARTITION (kstart, kend, avdim, b_tid, nbslice) ;
+                int8_t   *GB_RESTRICT Gb = Wf  + (a_tid * afpanel_size) ;
+                GB_ATYPE *GB_RESTRICT Gx = Wax + (a_tid * axpanel_size) ;
 
                 //--------------------------------------------------------------
-                // load the A bitmap for this panel
+                // load A for this panel
                 //--------------------------------------------------------------
 
                 #if ( GB_A_IS_BITMAP )
                 {
-                    int8_t   *GB_RESTRICT Gb = Wf  + (a_tid * afpanel_size) ;
-                    for (int64_t k = kstart ; k < kend ; k++)
+
+                    //----------------------------------------------------------
+                    // A is bitmap
+                    //----------------------------------------------------------
+
+                    if (!A_is_pattern)
                     {
-                        for (int64_t ii = 0 ; ii < np ; ii++)
+                        // load Ab and Ax into Gb and Gx
+                        for (int64_t k = kstart ; k < kend ; k++)
                         {
-                            // Gb (ii,k) = Ab (istart+ii,k)
-                            Gb [ii + k*np] = Ab [istart + ii + k*avlen] ;
+                            for (int64_t ii = 0 ; ii < np ; ii++)
+                            {
+                                // Gb (ii,k) = Ab (istart+ii,k)
+                                const int64_t pG = ii + k*np ;
+                                const int64_t pA = istart + ii + k*avlen ;
+                                const int8_t gb = Ab [pA] ;
+                                Gb [pG] = gb ;
+                                if (gb)
+                                {
+                                    // Gx (ii,k) = Ax (istart+ii,k)
+                                    GB_LOADA (Gx, pG, Ax, pA) ;
+                                }
+                                #if GB_HAS_BITMAP_MULTADD
+                                else
+                                {
+                                    // clear Gx (ii,k)
+                                    Gx [pG] = 0 ;
+                                }
+                                #endif
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // just load the Ab bitmap into Gb, not the values
+                        for (int64_t k = kstart ; k < kend ; k++)
+                        {
+                            for (int64_t ii = 0 ; ii < np ; ii++)
+                            {
+                                // Gb (ii,k) = Ab (istart+ii,k)
+                                const int64_t pG = ii + k*np ;
+                                const int64_t pA = istart + ii + k*avlen ;
+                                Gb [pG] = Ab [pA] ;
+                            }
+                        }
+                    }
+
+                }
+                #else
+                {
+
+                    //----------------------------------------------------------
+                    // A is full
+                    //----------------------------------------------------------
+
+                    if (!A_is_pattern)
+                    {
+                        for (int64_t k = kstart ; k < kend ; k++)
+                        {
+                            for (int64_t ii = 0 ; ii < np ; ii++)
+                            {
+                                // Gx (ii,k) = Ax (istart+ii,k)
+                                const int64_t pG = ii + k*np ;
+                                const int64_t pA = istart + ii + k*avlen ;
+                                GB_LOADA (Gx, pG, Ax, pA) ;
+                            }
                         }
                     }
                 }
                 #endif
-
-                //--------------------------------------------------------------
-                // load the values of A for this panel
-                //--------------------------------------------------------------
-
-                if (!A_is_pattern)
-                {
-                    GB_ATYPE *GB_RESTRICT Gx = Wax + (a_tid * axpanel_size) ;
-                    for (int64_t k = kstart ; k < kend ; k++)
-                    {
-                        for (int64_t ii = 0 ; ii < np ; ii++)
-                        {
-                            // Gx (ii,k) = Ax (istart+ii,k)
-                            int64_t pG = ii + k*np ;
-                            int64_t pA = istart + ii + k*avlen ;
-                            GB_LOADA (Gx, pG, Ax, pA) ;
-                        }
-                    }
-                }
             }
         }
 
@@ -203,18 +253,17 @@
             const int8_t   *GB_RESTRICT Gb ;
             const GB_ATYPE *GB_RESTRICT Gx ;
 
-            if (avlen <= GB_PANEL_SIZE)
-            {
-                // A is not loaded into the panels; use it in-place
-                ASSERT (np == avlen) ;
-                Gb = Ab ;
-                Gx = Ax ;
-            }
-            else
+            if (load_apanel)
             {
                 // A has been loaded into the G panel
                 Gb = Wf  + (a_tid * afpanel_size) ;
                 Gx = Wax + (a_tid * axpanel_size) ;
+            }
+            else
+            {
+                // use A in-place
+                Gb = Ab ;
+                Gx = Ax ;
             }
 
             int8_t   *GB_RESTRICT Hf = Wf  + (a_tid * hpanel_size) + wafsize ;

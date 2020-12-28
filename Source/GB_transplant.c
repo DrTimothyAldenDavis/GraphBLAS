@@ -244,12 +244,13 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cx)
     { 
         // allocate new C->x component
-        if (C_is_bitmap)
-        {
-            // ensure all entries in Cx are initialized if C is bitmap
-            C->x = GB_CALLOC (C->nzmax * C->type->size, GB_void) ;
-        }
-        else
+// HACK
+//      if (C_is_bitmap)
+//      {
+//          // ensure all entries in Cx are initialized if C is bitmap
+//          C->x = GB_CALLOC (C->nzmax * C->type->size, GB_void) ;
+//      }
+//      else
         {
             C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;  // ok::
         }
