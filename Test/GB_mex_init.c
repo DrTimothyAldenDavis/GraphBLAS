@@ -103,14 +103,14 @@ void mexFunction
 
     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
     {
-        printf ("bitmap_switch [%d] = %g ", k, b [k]) ;
+        printf ("bitmap_switch [%d] = %g ", k, bswitch [k]) ;
         if (k == 0)
         {
             printf ("for vectors and matrices with 1 row or column\n") ;
         }
         else if (k == GxB_NBITMAP_SWITCH - 1) 
         {
-            printf ("for matrices with min dimension > %d\n", 1 << (k-1))
+            printf ("for matrices with min dimension > %d\n", 1 << (k-1)) ;
         }
         else
         {

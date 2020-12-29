@@ -60,7 +60,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 {
                     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
                     {
-                        float b = (float) bitmap_switch [k] ;
+                        float b = (float) (bitmap_switch [k]) ;
                         GB_Global_bitmap_switch_set (k, b) ;
                     }
                 }

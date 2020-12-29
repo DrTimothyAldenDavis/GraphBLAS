@@ -51,6 +51,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_INT32, 10, 10)) ;
     OK (GrB_Vector_new (&victor, GrB_INT32, 10)) ;
+    OK (GxB_Vector_Option_set_(victor, GxB_BITMAP_SWITCH, 2.0)) ;
     OK (GxB_Scalar_new (&scalar, GrB_INT32)) ;
 
     OK (GxB_Matrix_fprint (A, "A before set", 3, NULL)) ;

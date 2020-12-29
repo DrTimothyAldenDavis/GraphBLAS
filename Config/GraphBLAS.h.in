@@ -200,9 +200,9 @@
 // The GraphBLAS license for this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_LICENSE \
 "SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved." \
-"\nLicensed under the Apache License, Version 2.0 (the \"License\");\n"        \
-"you may not use SuiteSparse:GraphBLAS except in compliance with the\n"        \
-"License.  You may obtain a copy of the License at\n\n"                        \
+"\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may\n"\
+"not use SuiteSparse:GraphBLAS except in compliance with the License.  You\n"  \
+"may obtain a copy of the License at\n\n"                                      \
 "    http://www.apache.org/licenses/LICENSE-2.0\n\n"                           \
 "Unless required by applicable law or agreed to in writing, software\n"        \
 "distributed under the License is distributed on an \"AS IS\" BASIS,\n"        \

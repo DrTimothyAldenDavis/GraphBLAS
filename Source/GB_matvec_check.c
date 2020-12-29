@@ -2,13 +2,13 @@
 // GB_matvec_check: print a GraphBLAS matrix and check if it is valid
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"

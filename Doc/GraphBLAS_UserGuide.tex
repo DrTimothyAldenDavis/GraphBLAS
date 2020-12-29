@@ -43,8 +43,11 @@
 \small
 davis@tamu.edu, Texas A\&M University. \\
 \small
-http://suitesparse.com and
-https://people.engr.tamu.edu/davis
+\url{http://suitesparse.com} \\
+\small
+\url{https://people.engr.tamu.edu/davis} \\
+\small
+\url{https://twitter.com/DocSparse}
 }
 
 % version and date are set by cmake (see GraphBLAS/CMakeLists.txt)
@@ -61,8 +64,8 @@ which defines a set of sparse matrix operations on an extended algebra of
 semirings using an almost unlimited variety of operators and types.  When
 applied to sparse adjacency matrices, these algebraic operations are equivalent
 to computations on graphs.  GraphBLAS provides a powerful and expressive
-framework for creating graph algorithms based on the elegant mathematics of
-sparse matrix operations on a semiring.
+framework for creating high-performance graph algorithms based on the elegant
+mathematics of sparse matrix operations on a semiring.
 \end{abstract}
 
 \newpage
@@ -96,15 +99,14 @@ GraphBLAS library.
 For more details on SuiteSparse:GraphBLAS, and its use in LAGraph, see
 \cite{Davis18,Davis18b,DavisAznavehKolodziej19,Davis20,Mattson19}.
 
-A full and precise
-definition of the GraphBLAS specification is provided in {\em The GraphBLAS C
-API Specification} by {Ayd\i n Bulu\c{c}, Timothy Mattson, Scott McMillan,
-Jos\'e Moreira, and Carl Yang} \cite{BulucMattsonMcMillanMoreiraYang17,spec},
-based on {\em GraphBLAS Mathematics} by Jeremy Kepner \cite{Kepner2017}.  The
-GraphBLAS C API Specification is available at \url{http://graphblas.org}.  This
-version of SuiteSparse:GraphBLAS conforms to Version
-\input{GraphBLAS_API_version.tex}
-of {\em The GraphBLAS C API specification}, with three exceptions
+A full and precise definition of the GraphBLAS specification is provided in
+{\em The GraphBLAS C API Specification} by {Ayd\i n Bulu\c{c}, Timothy Mattson,
+Scott McMillan, Jos\'e Moreira, Carl Yang, and Benjamin Brock}
+\cite{BulucMattsonMcMillanMoreiraYang17,spec}, based on {\em GraphBLAS
+Mathematics} by Jeremy Kepner \cite{Kepner2017}.  The GraphBLAS C API
+Specification is available at \url{http://graphblas.org}.  This version of
+SuiteSparse:GraphBLAS conforms to Version \input{GraphBLAS_API_version.tex} of
+{\em The GraphBLAS C API specification}, with three exceptions
 (\verb'GrB_wait', \verb'GrB_error', and \verb'GrB_Matrix_reduce_BinaryOp').
 
 In this User Guide, aspects of the GraphBLAS specification that would be true
@@ -118,8 +120,8 @@ SuiteSparse-specific extensions to the spec.
 \begin{alert}
 {\bf SPEC:} Non-obvious deviations or additions to the v1.3 GraphBLAS C API
 Specification are highlighted in a box like this one, except for \verb'GxB*'
-methods.  They are not highlighted since it is clear from their name that they
-are extensions.
+methods.  They are not highlighted since their name makes it clear that they
+are extensions to the v1.3 GraphBLAS C API.
 \end{alert}
 
 \newpage
@@ -130,7 +132,7 @@ are extensions.
 
 \begin{itemize}
 
-\item Version 4.0.1 ({\bf TODO}, 2020) (beta1)  % TODO:: update when released
+\item Version 4.0.1 ({\bf TODO}, 2020) % TODO:: update when released
 
     \begin{packed_itemize}
     \item significant performance improvements: up to 5x faster than v3.3.3
@@ -152,14 +154,16 @@ are extensions.
         \verb'GxB_FIRSTI_INT32' and related ops
     \item jumbled matrices: sort left pending, like zombies and pending tuples
     \item \verb'GxB_get/set': added \verb'GxB_SPARSITY_*'
-        (hyper, sparse, bitmap, or full)
+        (hyper, sparse, bitmap, or full) and \verb'GxB_BITMAP_SWITCH'.
     \item \verb'GxB_HYPER': enum renamed to \verb'GxB_HYPER_SWITCH'
     \item \verb'GxB*import/export': API modified
     \item \verb'GxB_SelectOp': \verb'nrows' and \verb'ncols' removed
         from function signature.
-    \item OpenMP tasking removed from mergesort:
-        just as fast; now ports to Windows
-    \item \verb'GxB_BURBLE' added as a supported feature.
+    \item OpenMP tasking removed from mergesort and replaced with parallel
+        for loops.  Just as fast on Linux/Mac; now the performance ports to
+        Windows.
+    \item \verb'GxB_BURBLE' added as a supported feature.  This was an
+        undocumented feature of prior versions.
     \item bug fix: \verb'A({lo,hi})=scalar' in MATLAB,
         \verb'A(lo:hi)=scalar' was OK
     \end{packed_itemize}
@@ -1023,10 +1027,10 @@ be used in the following manner in a user application:
     ... only use features in early specifications
     #endif
 
-    #if GxB_IMPLEMENTATION > GxB_VERSION (1,4,0)
-    ... use features from version 1.4.0 of a specific GraphBLAS implementation
+    #if GxB_IMPLEMENTATION >= GxB_VERSION (4,0,0)
+    ... use features from version 4.0.1 (or later)
+    of a specific GraphBLAS implementation
     #endif \end{verbatim}}
-
 
 SuiteSparse:GraphBLAS also defines the following strings with \verb'#define'.
 Refer to the \verb'GraphBLAS.h' file for details.
@@ -1184,13 +1188,13 @@ read them (such as \verb'GrB_Matrix_build') or write to them (such as
 \verb'GrB_Matrix_extractTuples') always finish reading them, or creating them,
 when the method or operation returns to the user application.
 
-All methods and operations that extract values from a GraphBLAS
-object and return them into non-opaque user arrays always ensure that the
-user-visible arrays are fully populated when they return:
-\verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
-and \verb'GrB_*_reduce' (to scalar).
-These functions do {\em not} guarantee that the opaque objects they depend on
-are finalized.  To do that, use \verb'GrB_wait(&object)' instead.
+All methods and operations that extract values from a GraphBLAS object and
+return them into non-opaque user arrays always ensure that the user-visible
+arrays are fully populated when they return: \verb'GrB_*_reduce' (to scalar),
+\verb'GrB_*_nvals', \verb'GrB_*_extractElement', and
+\verb'GrB_*_extractTuples'.  These functions do {\em not} guarantee that the
+opaque objects they depend on are finalized.  To do that, use
+\verb'GrB_wait(&object)' instead.
 
 SuiteSparse:GraphBLAS is multithreaded internally, via OpenMP, and it is also
 safe to use in a multithreaded user application.  See Section~\ref{sec:install}
@@ -1247,8 +1251,8 @@ API Specification supported by the library.
 {\bf SPEC:} 
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
-of the C API Specification, with the exception of \verb'GrB_wait' and
-\verb'GrB_error'.
+of the C API Specification, with the exception of changes to \verb'GrB_wait',
+\verb'GrB_error'. and \verb'GrB_Matrix_reduce_BinaryOp'.
 \end{alert}
 
 %===============================================================================
@@ -1971,9 +1975,12 @@ to the type of their inputs; they only depend on the position of the entries,
 not their values.
 User-defined positional operators cannot be defined by \verb'GrB_UnaryOp_new'.
 
-\verb'GxB_FREXPX' \verb'GxB_FREXPE' return the mantissa and exponent, respectively,
-from the ANSI C11 \verb'frexp' function.  The exponent is returned as a
-floating-point value, not an integer.
+\verb'GxB_FREXPX' \verb'GxB_FREXPE' return the mantissa and exponent,
+respectively, from the ANSI C11 \verb'frexp' function.  The exponent is
+returned as a floating-point value, not an integer.
+
+The operators \verb'GxB_EXPM1_FC*' and \verb'GxB_LOG1P_FC*' for complex
+types are currently not accurate.  They will be revised in a future version.
 
 The functions \verb'casin', \verb'casinf', \verb'casinh', and \verb'casinhf'
 provided by Microsoft Visual Studio for computing $\sin^{-1}(x)$ and
@@ -3494,7 +3501,7 @@ GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entry
 
 \verb'GxB_Scalar_new' creates a new scalar with no
 entry in it, of the given type.  This is analogous to MATLAB statement
-\verb's = sparse (0)', except that GraphBLAS can create scalars any
+\verb's = sparse(0)', except that GraphBLAS can create scalars any
 type.  The pattern of the new scalar is empty.
 
 %-------------------------------------------------------------------------------
@@ -4831,8 +4838,6 @@ known to be in ascending order.
 
 Matrices and vectors in bitmap or full format are never jumbled.
 
-The
-
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_import\_CSC} import a vector in CSC form}
@@ -4956,7 +4961,7 @@ If successful, \verb'v' is created as a \verb'n'-by-1 \verb'GrB_Vector'.
 Its entries are determined by \verb'vb', where \verb'vb[i]=1' denotes that
 the entry $v(i)$ is present with value given by \verb'vx[i]', and
 \verb'vb[i]=0' denotes that the entry $v(i)$ is not present (\verb'vx[i]' is
-ignored in this case)
+ignored in this case).
 
 The two pointers \verb'vb' and \verb'vx' are returned as \verb'NULL', which
 denotes that they are no longer owned by the user application.  They have
@@ -5726,20 +5731,22 @@ functions (by default), or by the corresponding \verb'malloc_function',
 These arrays define the pattern and values of the new matrix \verb'A':
 
 \begin{itemize}
-\item \verb'int8_t Ab [nrows*ncols] ;'  The \verb'Ab' array defines which entries of \verb'A' are present.
-If \verb'Ab[i*ncols+j]=1', then the entry $A(i,j)$ is present, with value
-\verb'Ax[i*ncols+j]'.
-If \verb'Ab[i*ncols+j]=0', then the entry $A(i,j)$ is not present.
-The \verb'Ab' array must contain only 0s and 1s.
-The \verb'nvals' input must exactly match the number of 1s in the \verb'Ab' array.
+\item \verb'int8_t Ab [nrows*ncols] ;'  The \verb'Ab' array defines which
+entries of \verb'A' are present.  If \verb'Ab[i*ncols+j]=1', then the entry
+$A(i,j)$ is present, with value \verb'Ax[i*ncols+j]'.  If
+\verb'Ab[i*ncols+j]=0', then the entry $A(i,j)$ is not present.  The \verb'Ab'
+array must contain only 0s and 1s.  The \verb'nvals' input must exactly match
+the number of 1s in the \verb'Ab' array.
 
-\item \verb'ctype Ax [nrows*ncols] ;'  The \verb'Ax' array defines the values of
-entries in the matrix.  It is passed in as a \verb'(void *)' pointer, but it must
-point to an array of size \verb'nrows*ncols' values, each of size
-\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that corresponds
-to the \verb'GrB_Type type' parameter.  That is, if \verb'type' is
-\verb'GrB_INT32', then \verb'ctype' is \verb'int32_t'.  User types
-may be used, just the same as built-in types.
+\item \verb'ctype Ax [nrows*ncols] ;'  The \verb'Ax' array defines the values
+of entries in the matrix.  It is passed in as a \verb'(void *)' pointer, but it
+must point to an array of size \verb'nrows*ncols' values, each of size
+\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that
+corresponds to the \verb'GrB_Type type' parameter.  That is, if \verb'type' is
+\verb'GrB_INT32', then \verb'ctype' is \verb'int32_t'.  User types may be used,
+just the same as built-in types.
+If \verb'Ab[p]' is zero, the value of \verb'Ax[p]' is ignored.
+
 \end{itemize}
 
 To iterate over the rows and entries of this matrix, the following code can be
@@ -5811,6 +5818,7 @@ The BitmapR format is in the two arrays \verb'Ab', and \verb'Ax'.  After a
 successful export, the user application is responsible for freeing these three
 arrays via \verb'free' (or the \verb'free' function passed to \verb'GxB_init').
 The BitmapR format is described in Section~\ref{matrix_import_bitmapr}.
+If \verb'Ab[p]' is zero, the value of \verb'Ax[p]' is undefined.
 
 This method takes $O(1)$ time if the matrix is already in BitmapR format
 internally.  Otherwise, the matrix is converted to BitmapR format and then
@@ -7293,15 +7301,15 @@ queried by \verb'GxB_get'; it cannot be modified by \verb'GxB_set'.  The mode
 is the value passed to \verb'GrB_init' (blocking or non-blocking).
 
 All threads in the same user application share the same global options,
-including hypersparsity and CSR/CSC format determined by \verb'GxB_set', and
-the blocking mode determined by \verb'GrB_init'.  Specific format and
-hypersparsity parameters of each matrix are specific to that matrix and can be
-independently changed.
+including hypersparsity, bitmap options, and CSR/CSC format determined by
+\verb'GxB_set', and the the blocking mode determined by \verb'GrB_init'.
+Specific format and hypersparsity parameters of each matrix are specific to
+that matrix and can be independently changed.
 
 The \verb'GxB_LIBRARY_*' options can be used with \verb'GxB_get' to query the
 current implementation.  For all of these, \verb'GxB_get' returns a string
 (\verb'char *'), except for \verb'GxB_LIBRARY_VERSION', which takes as input an
-\verb'int' array of size three.  The \verb 'GxB_API_*' options can be used with
+\verb'int' array of size three.  The \verb'GxB_API_*' options can be used with
 \verb'GxB_get' to query the current GraphBLAS C API Specification.  For all of
 these, \verb'GxB_get' returns a string (\verb'char *'), except for
 \verb'GxB_API_VERSION', which takes as input an \verb'int' array of size three.  
@@ -7436,6 +7444,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
 \vspace{0.2in}
 {\footnotesize
 \begin{tabular}{ll}
+        \hline
         \verb'GxB_HYPER_SWITCH'         & sparse/hyper setting \\
         \verb'GxB_BITMAP_SWITCH'        & bitmap/sparse setting \\
         \verb'GxB_FORMAT'               & by row/col setting \\
@@ -7444,7 +7453,8 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_CHUNK'                & default chunk size \\
         \verb'GxB_BURBLE'       & burble setting \\
         \hline
-        \verb'GxB_LIBRARY_NAME'         & \verb"SuiteSparse:GraphBLAS" \\
+        \verb'GxB_LIBRARY_NAME'         & the string
+                                        \verb'"SuiteSparse:GraphBLAS"' \\
         \verb'GxB_LIBRARY_VERSION'      & \verb'int' array of size 3 \\
         \verb'GxB_LIBRARY_DATE'         & date of release \\
         \verb'GxB_LIBRARY_ABOUT'        & author, copyright \\
@@ -7481,7 +7491,7 @@ For example:
         }
         else if (k == GxB_NBITMAP_SWITCH - 1) 
         {
-            printf ("for matrices with min dimension > %d\n", 1 << (k-1))
+            printf ("for matrices with min dimension > %d\n", 1 << (k-1)) ;
         }
         else
         {
@@ -7492,12 +7502,12 @@ For example:
 
     GxB_Format_Value s ;
     GxB_get (GxB_FORMAT, &s) ;
-    if (s == GxB_BY_COL) printf ("all new matrices are stored by column\n") :
+    if (s == GxB_BY_COL) printf ("all new matrices are stored by column\n") ;
     else printf ("all new matrices are stored by row\n") ;
 
     GrB_mode mode ;
     GxB_get (GxB_MODE, &mode) ;
-    if (mode == GrB_BLOCKING) printf ("GrB_init(GrB_BLOCKING) was called.\n") :
+    if (mode == GrB_BLOCKING) printf ("GrB_init(GrB_BLOCKING) was called.\n") ;
     else printf ("GrB_init(GrB_NONBLOCKING) was called.\n") ;
 
     int nthreads_max ;
@@ -7796,11 +7806,13 @@ The \verb'GrB_extract', \verb'GrB_assign', and \verb'GxB_subassign' operations
 (described in the Section~\ref{operations}) each have parameters that define a
 list of integer indices, using two parameters:
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     const GrB_Index *I ;    // an array, or a special value GrB_ALL
     GrB_Index ni ;          // the size of I, or a special value \end{verbatim}}
 
+\vspace{-0.05in}
 These two parameters define five kinds of index lists, which can be used to
 specify either an explicit or implicit list of row indices and/or column
 indices.  The length of the list of indices is denoted \verb'|I|'.  This
@@ -7835,6 +7847,7 @@ discussion applies equally to the row indices \verb'I' and the column indices
     \verb'GrB_Index' is an unsigned integer (\verb'uint64_t').  The value of
     \verb'I[GxB_INC]' is ignored.
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     // to specify I = 10:20
@@ -7842,6 +7855,7 @@ discussion applies equally to the row indices \verb'I' and the column indices
     I [GxB_BEGIN] = 10 ;      // the start of the sequence
     I [GxB_END  ] = 20 ;      // the end of the sequence \end{verbatim}}
 
+    \vspace{-0.05in}
     Let $b$ = \verb'I[GxB_BEGIN]', let $e$ = \verb'I[GxB_END]',
     The sequence has length zero if $b > e$; otherwise the length is
     $|I| = (e-b) + 1$.
@@ -7852,6 +7866,7 @@ discussion applies equally to the row indices \verb'I' and the column indices
     length 4.  Note that 10 does not appear in the list.  The end point need
     not appear if the increment goes past it.
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     // to specify I = 3:2:10
@@ -7860,9 +7875,11 @@ discussion applies equally to the row indices \verb'I' and the column indices
     I [GxB_INC   ] = 2 ;      // the increment
     I [GxB_END   ] = 10 ;     // the end of the sequence \end{verbatim}}
 
+    \vspace{-0.05in}
     The \verb'GxB_STRIDE' sequence is the same as the \verb'List' generated by
     the following for loop:
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     int64_t k = 0 ;
@@ -7873,6 +7890,7 @@ discussion applies equally to the row indices \verb'I' and the column indices
         List [k++] = i ;
     } \end{verbatim}}
 
+    \vspace{-0.05in}
     Then passing the explicit array \verb'List' and its length \verb'ni=k' has
     the same effect as passing in the array \verb'I' of size 3, with
     \verb'ni=GxB_STRIDE'.  The latter is simply much faster to produce, and
@@ -11374,9 +11392,9 @@ of which is spent in \verb'GrB_Matrix_build'.
     if (I == NULL || J == NULL || X == NULL)
     {
         // out of memory
-        if (I != NULL) free (I) :
-        if (J != NULL) free (J) :
-        if (X != NULL) free (X) :
+        if (I != NULL) free (I) ;
+        if (J != NULL) free (J) ;
+        if (X != NULL) free (X) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     int64_t ntuples = 0 ;
@@ -12134,7 +12152,7 @@ query the global option (see also Sections~\ref{gxbset} and \ref{gxbget}):
     \begin{verbatim}
     GxB_Format_Value s ;
     GxB_get (GxB_FORMAT, &s) ;
-    if (s == GxB_BY_COL) printf ("all new matrices are stored by column\n") :
+    if (s == GxB_BY_COL) printf ("all new matrices are stored by column\n") ;
     else printf ("all new matrices are stored by row\n") ; \end{verbatim} }
 
 %----------------------------------------

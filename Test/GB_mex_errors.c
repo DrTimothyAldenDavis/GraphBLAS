@@ -4392,15 +4392,15 @@ void mexFunction
     double bswitch [GxB_NBITMAP_SWITCH] ;
     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
     {
-        bswitch [k] = (double) k / 16.0
+        bswitch [k] = (double) k / 16.0 ;
     }
-    OK (GxB_Matrix_Option_set_(A, GxB_BITMAP_SWITCH, bswitch)) ;
+    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, bswitch)) ;
 
     double bswitch2 [GxB_NBITMAP_SWITCH] ;
-    OK (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, bswitch2)) ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch2)) ;
     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
     {
-        CHECK (bswitch [k] == bswitch2 [k]) ;
+        CHECK (fabs (bswitch [k] - bswitch2 [k]) < 1e-5) ;
     }
 
     OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, NULL)) ;
