@@ -32,6 +32,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
 
     ASSERT_MATRIX_OK (M, "M for bitmap scatter, whoe", GB0) ;
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
 
     //--------------------------------------------------------------------------
     // get C and M

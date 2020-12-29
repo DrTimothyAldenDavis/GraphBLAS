@@ -18,7 +18,10 @@
 // The work done by this kernel is independent of Mask_comp; both M and !M
 // do the same work by scattering their entries into the C bitmap.
 
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
 ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
+ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
+ASSERT (GB_JUMBLED_OK (M)) ;
 
 switch (assign_kind)
 {

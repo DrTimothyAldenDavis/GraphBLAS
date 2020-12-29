@@ -132,6 +132,8 @@
         // Method19(!M,sparse): C is bitmap, both A and B are bitmap or full
         //----------------------------------------------------------------------
 
+        // TODO: M may be jumbled, in which case so is C
+
         int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
             reduction(+:cnvals)

@@ -335,6 +335,8 @@
                     // Method01: A(:,j) is bitmap; B(:,j) is sparse/hyper
                     //----------------------------------------------------------
 
+                    // TODO: B can be jumbled; then so is C
+
                     ASSERT (B_is_sparse || B_is_hyper) ;
                     for ( ; pB < pB_end ; pB++)
                     { 
@@ -361,6 +363,8 @@
                     // Method02: B(:,j) is bitmap; A(:,j) is sparse/hyper
                     //----------------------------------------------------------
 
+                    // TODO: A can be jumbled; then so is C
+
                     ASSERT (A_is_sparse || A_is_hyper) ;
                     for ( ; pA < pA_end ; pA++)
                     { 
@@ -386,6 +390,9 @@
                     //----------------------------------------------------------
                     // Method03: A(:,j) and B(:,j) dense: thus C(:,j) dense
                     //----------------------------------------------------------
+
+                    // TODO: only do this if A and B are full, not just (:,j)
+                    // Then no matrix will be jumbled.
 
                     ASSERT (ajnz == bjnz) ;
                     ASSERT (iA_first == iB_first) ;
@@ -416,6 +423,9 @@
                     // Method04: A(:,j) dense, B(:,j) sparse: C(:,j) sparse
                     //----------------------------------------------------------
 
+                    // TODO: only do this if A is full, not just A(:,j)
+                    // TODO: B can be jumbled; then so is C
+
                     #if defined ( GB_PHASE_1_OF_2 )
                     cjnz = bjnz ;
                     #else
@@ -440,6 +450,9 @@
                     // Method05: A(:,j) sparse, B(:,j) dense: C(:,j) sparse
                     //----------------------------------------------------------
 
+                    // TODO: only do this if B is full, not just B(:,j)
+                    // TODO: A can be jumbled; then so is C
+
                     #if defined ( GB_PHASE_1_OF_2 )
                     cjnz = ajnz ;
                     #else
@@ -463,6 +476,8 @@
                     //----------------------------------------------------------
                     // Method06: A(:,j) is much denser than B(:,j)
                     //----------------------------------------------------------
+
+                    // A and B cannot be jumbled
 
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -497,6 +512,8 @@
                     //----------------------------------------------------------
                     // Method07: B(:,j) is much denser than A(:,j)
                     //----------------------------------------------------------
+
+                    // A and B cannot be jumbled
 
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -533,6 +550,7 @@
                     //----------------------------------------------------------
 
                     // linear-time scan of A(:,j) and B(:,j)
+                    // A and B cannot be jumbled
 
                     while (pA < pA_end && pB < pB_end)
                     {
@@ -594,6 +612,8 @@
 
                 for ( ; pM < pM_end ; pM++)
                 {
+
+                    // M can be jumbled; A and B cannot
 
                     //----------------------------------------------------------
                     // get M(i,j) for A(i,j) .* B (i,j)
@@ -726,6 +746,8 @@
                     // Method10: A(:,j) bitmap; B(:,j) sparse, M bitmap/full
                     //----------------------------------------------------------
 
+                    // TODO: B can be jumbled; then so is C
+
                     ASSERT (B_is_sparse || B_is_hyper) ;
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -757,6 +779,8 @@
                     // Method11: B(:,j) bitmap; A(:,j) sparse, M bitmap/full
                     //----------------------------------------------------------
 
+                    // TODO: A can be jumbled; then so is C
+
                     ASSERT (A_is_sparse || A_is_hyper) ;
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -787,6 +811,9 @@
                     //----------------------------------------------------------
                     // Method12: A(:,j) and B(:,j) dense, M bitmap/full
                     //----------------------------------------------------------
+
+                    // TODO: only do this if A and B are full, not just (:,j)
+                    // Then no matrix will be jumbled.
 
                     ASSERT (ajnz == bjnz) ;
                     ASSERT (iA_first == iB_first) ;
@@ -820,6 +847,9 @@
                     // Method13: A(:,j) dense, B(:,j) sparse, M bitmap/full
                     //----------------------------------------------------------
 
+                    // TODO: only do this if A is full, not just A(:,j)
+                    // TODO: B can be jumbled; then so is C
+
                     for ( ; pB < pB_end ; pB++)
                     {
                         int64_t i = Bi [pB] ;
@@ -848,6 +878,9 @@
                     // Method14: A(:,j) sparse, B(:,j) dense, M bitmap/full
                     //----------------------------------------------------------
 
+                    // TODO: only do this if B is full, not just B(:,j)
+                    // TODO: A can be jumbled; then so is C
+
                     for ( ; pA < pA_end ; pA++)
                     {
                         int64_t i = Ai [pA] ;
@@ -874,6 +907,8 @@
                     //----------------------------------------------------------
                     // Method15: A(:,j) much denser than B(:,j), M bitmap/full
                     //----------------------------------------------------------
+
+                    // A and B cannot be jumbled
 
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -913,6 +948,8 @@
                     //----------------------------------------------------------
                     // Method16: B(:,j) much denser than A(:,j), M bitmap/full
                     //----------------------------------------------------------
+
+                    // A and B cannot be jumbled
 
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -955,6 +992,7 @@
                     //----------------------------------------------------------
 
                     // linear-time scan of A(:,j) and B(:,j)
+                    // A and B cannot be jumbled
 
                     while (pA < pA_end && pB < pB_end)
                     {

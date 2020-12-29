@@ -10,6 +10,8 @@
 // M is a 1-by-(C->vdim) hypersparse or sparse matrix, not a vector, for
 // GrB_Row_assign (if C is CSC) or GrB_Col_assign (if C is CSR).
 
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
+
 { 
 
     ASSERT (mvlen == 1) ;

@@ -51,6 +51,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     GBURBLE_BITMAP_ASSIGN ("bit7:whole", M, true, accum,
         GB_ALL, GB_ALL, GB_ASSIGN) ;
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, !M, accum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, !M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, !M, accum", GB0) ;

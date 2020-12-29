@@ -12,6 +12,8 @@
 // M(iM,jM) in the mask, at location pM.  The entry C(iC,jC) is at location pC,
 // where iC = I [iM] and jC = J [jM].  The matrix C is bitmap or full.
 
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
+
 {
     int tid ;
     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \

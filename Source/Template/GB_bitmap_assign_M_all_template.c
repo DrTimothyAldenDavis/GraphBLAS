@@ -10,7 +10,8 @@
 // M is sparse or hypersparse, not bitmap or full.  C<M>(I,J) = ... is being
 // computed (or !M), and all entries in M are traversed.  For a given entry
 // M (iM,jM) in the mask, the entry C(iM,jM) is accessed at location pC.
-// The matrix C is bitmap or full.
+
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
 
 {
     int tid ;

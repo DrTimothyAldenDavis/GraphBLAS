@@ -231,6 +231,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
+    // TODO: delay the unjumbling of A1 and B1.  If either is bitmap/full,
+    // then they other can remain jumbled.
     GB_MATRIX_WAIT (M1) ;       // cannot be jumbled
     GB_MATRIX_WAIT (A1) ;       // cannot be jumbled
     GB_MATRIX_WAIT (B1) ;       // cannot be jumbled

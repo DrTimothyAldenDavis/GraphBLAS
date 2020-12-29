@@ -229,37 +229,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             }
             op2 = NULL ;
         }
-
-#if 0
-        else
-        {
-            switch (opcode)
-            {
-                // commutative operators, no need for bind1st workers:
-                case PLUS_opcode      : 
-                case TIMES_opcode     : 
-                case PAIR_opcode      : 
-                case ANY_opcode       : 
-                case ISEQ_opcode      : 
-                case ISNE_opcode      : 
-                case EQ_opcode        : 
-                case NE_opcode        : 
-                case MIN_opcode       : 
-                case MAX_opcode       : 
-                case LOR_opcode       : 
-                case LAND_opcode      : 
-                case LXOR_opcode      : 
-                case LXNOR_opcode     : 
-                case HYPOT_opcode     : 
-                case BOR_opcode       : 
-                case BAND_opcode      : 
-                case BXOR_opcode      : 
-                case BXNOR_opcode     : binop_bind1st = false ;
-                default : ;
-            }
-        }
-#endif
-
     }
 
     //--------------------------------------------------------------------------
