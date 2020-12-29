@@ -22,7 +22,7 @@ function C = prod (G, option)
 %
 % See also GrB/all, GrB/max, GrB/min, GrB/sum.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 G = G.opaque ;

@@ -1,7 +1,7 @@
 function test30b
 %TEST30B performance test GB_mex_assign, scalar expansionb
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [save_nthreads save_chunk] = nthreads_get ;

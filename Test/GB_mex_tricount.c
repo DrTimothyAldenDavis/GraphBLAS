@@ -2,7 +2,7 @@
 // GB_mex_tricount: count the number of triangles in a graph
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 // Usage: ntri = GB_mex_tricount (method, A, E, L, U) ;

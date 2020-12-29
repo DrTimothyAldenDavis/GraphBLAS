@@ -22,7 +22,7 @@ function C = bitshift (A, B, assumedtype)
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitget,
 % GrB/bitset, GrB/bitclr.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: bitshift(A,B) for two matrices A and B is slower than it could be.

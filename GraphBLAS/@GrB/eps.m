@@ -5,7 +5,7 @@ function C = eps (G)
 %
 % See also GrB/isfloat, realmax, realmin.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: GraphBLAS should have a built-in unary operator to

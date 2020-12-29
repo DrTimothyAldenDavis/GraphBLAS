@@ -4,7 +4,7 @@ function codegen_red
 % This function creates all files of the form GB_red__*.c,
 % and the include file GB_red__include.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nreduction operators:\n') ;
@@ -14,7 +14,7 @@ fprintf (f, '//-----------------------------------------------------------------
 fprintf (f, '// GB_red__include.h: definitions for GB_red__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.\n') ;
+fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.\n') ;
 fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_red.h') ;
 fprintf (f, '\n\n') ;

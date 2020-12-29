@@ -21,7 +21,7 @@ function S = struct (G)
 % will be written so that G = GrB (S) converts S into a @GrB object for
 % the then-current version of SuiteSparse:GraphBLAS.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 S = G.opaque ;

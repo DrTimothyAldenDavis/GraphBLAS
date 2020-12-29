@@ -2,7 +2,7 @@ function C = gb_spones (G, type)
 %GB_SPONES return pattern of GraphBLAS matrix.
 % Implements C = spones (G).
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)

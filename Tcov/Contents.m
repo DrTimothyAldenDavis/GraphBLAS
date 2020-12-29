@@ -6,5 +6,5 @@
 %   grbshow       - create a test coverage report in tmp_cover/
 %   grbmake       - compile the GraphBLAS library for statement coverage testing
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

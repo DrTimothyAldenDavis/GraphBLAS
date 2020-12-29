@@ -20,7 +20,7 @@ function s = norm (G, kind)
 %
 % See also GrB.reduce, GrB.normdiff.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: add the p-norm for vectors.

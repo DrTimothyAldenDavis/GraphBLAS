@@ -305,6 +305,6 @@
 %   ../Demo/MATLAB/kron_demo      - test Program/kron_demo.c and compare with MATLAB kron
 %   ../Demo/MATLAB/kron_test      - test kron_demo.m
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

@@ -7,7 +7,7 @@ function C = round (G)
 %
 % See also GrB/ceil, GrB/floor, GrB/fix.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: round (x,n) and round (x,n,type)

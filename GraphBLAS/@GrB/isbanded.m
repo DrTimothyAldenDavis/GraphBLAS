@@ -4,7 +4,7 @@ function s = isbanded (A, lo, hi)
 %
 % See also GrB/istril, GrB/istriu, GrB/bandwidth.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: this will be much faster when 'gb_bandwidth' is a mexFunction.

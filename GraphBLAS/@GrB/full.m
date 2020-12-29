@@ -25,7 +25,7 @@ function C = full (A, type, identity)
 %
 % See also GrB/issparse, sparse, cast, GrB.type, GrB, GrB.isfull.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 A_is_GrB = isobject (A) ;

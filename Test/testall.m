@@ -11,7 +11,7 @@ function testall (threads,longtests)
 % the # of threads to use and the 2nd being the chunk size.  The default is
 % {[4 1]} if empty or not present.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 GrB.init

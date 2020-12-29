@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 ../build/wildtype_demo                         > wildtype_demo.out
 ../build/simple_demo                           > simple_demo.out
 ../build/complex_demo                          > complex_demo_out.m

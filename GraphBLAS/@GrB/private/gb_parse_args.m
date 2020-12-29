@@ -9,7 +9,7 @@ function [m, n, type] = gb_parse_args (func, varargin)
 %   C = ones (... , 'like', G) ;
 %   C = ones (... , 'int8') ;
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % parse the type
