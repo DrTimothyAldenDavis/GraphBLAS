@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\batchmode
 \usepackage{url}
 \urlstyle{sf}
 \usepackage[svgnames]{xcolor}
@@ -4745,12 +4746,36 @@ GraphBLAS (\verb'bool', \verb'int*_t', \verb'uint*_t', \verb'float',
 \verb'double' \verb'float complex', \verb'double complex'), or that corresponds
 with the user-defined type.  No typecasting is done on import or export.
 
-The numerical array must be large enough to hold all the entries, but in a
-future release of SuiteSparse:GraphBLAS, it may be specified as an array of
-length one.  This will indicate that all entries in the matrix or vector being
-constructed have the same value, given by \verb'Ax[0]' for matrices and
-\verb'vx[0]' for vectors.  Likewise, on export, a future release of
-SuiteSparse:GraphBLAS may return arrays of size 1.
+\begin{alert}
+{\bf FUTURE:}
+For the import methods, the numerical array must be large enough to hold all
+the entries, but in a future release of SuiteSparse: GraphBLAS, it may be
+specified as an array of length one.  This will indicate that all entries in
+the matrix or vector being constructed have the same value, given by
+\verb'Ax[0]' for matrices and \verb'vx[0]' for vectors.  Likewise, on export, a
+future release of SuiteSparse:GraphBLAS may return arrays of size 1, where
+\verb'Ax_size' or \verb'vx_size' is returned as 1, even though there may be
+many more entries than that in the matrix or vector.  This will indicate to the
+caller that all entries in the matrix or vector have the same value.
+\end{alert}
+
+The export of a \verb'GrB_Vector' in \verb'CSC' format may return the indices
+in a jumbled state, in any order.
+
+For a \verb'GrB_Matrix' in \verb'CSR' or \verb'HyperCSR' format, if the matrix
+is returned as jumbled, the column indices in any given row may appear out of
+order.  For \verb'CSC' or \verb'HyperCSC' formats, if the matrix is returned as
+jumbled, the row indices in any given column may appear out of order.
+
+On import, if the user-provided arrays contain jumbled row or column vectors,
+then the input flag \verb'jumbled' must be passed in as \verb'true'.  On
+export, if \verb'*jumbled' is \verb'NULL', this indicates to the export method
+that the user expects the exported matrix or vector to be returned in an
+ordered, unjumbled state.  If \verb'*jumbled' is provided, then it is return as
+\verb'true' if the indices may appear out of order, or \verb'false' if they are
+known to be in ascending order.
+
+Matrices and vectors in bitmap or full format are never jumbled.
 
 The table below lists the methods presented in this section.
 
@@ -4819,24 +4844,6 @@ method & purpose & Section \\
 \end{tabular}
 }
 \vspace{0.2in}
-
-The export of a \verb'GrB_Vector' in \verb'CSC' format may return the indices
-in a jumbled state, in any order.
-
-For a \verb'GrB_Matrix' in \verb'CSR' or \verb'HyperCSR' format, if the matrix
-is returned as jumbled, the column indices in any given row may appear out of
-order.  For \verb'CSC' or \verb'HyperCSC' formats, if the matrix is returned as
-jumbled, the row indices in any given column may appear out of order.
-
-On import, if the user-provided arrays contain jumbled row or column vectors,
-then the input flag \verb'jumbled' must be passed in as \verb'true'.  On
-export, if \verb'*jumbled' is \verb'NULL', this indicates to the export method
-that the user expects the exported matrix or vector to be returned in an
-ordered, unjumbled state.  If \verb'*jumbled' is provided, then it is return as
-\verb'true' if the indices may appear out of order, or \verb'false' if they are
-known to be in ascending order.
-
-Matrices and vectors in bitmap or full format are never jumbled.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5953,7 +5960,7 @@ to \verb'GxB_Matrix_export_BitmapR', except that all entries must be present.
 
 That is, prior to export, \verb'GrB_Matrix_nvals (&nvals, A)' must return
 \verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
-exported with \verb'GxB_Matrix_export_FullR', an error is returned
+exported with \newline \verb'GxB_Matrix_export_FullR', an error is returned
 (\verb'GrB_INVALID_VALUE') and the matrix is not exported.
 
 \newpage
@@ -6025,7 +6032,7 @@ to \verb'GxB_Matrix_export_BitmapC', except that all entries must be present.
 
 That is, prior to export, \verb'GrB_Matrix_nvals (&nvals, A)' must return
 \verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
-exported with \verb'GxB_Matrix_export_FullC', an error is returned
+exported with \newline \verb'GxB_Matrix_export_FullC', an error is returned
 (\verb'GrB_INVALID_VALUE') and the matrix is not exported.
 
 \newpage
@@ -10937,11 +10944,13 @@ Most of the rest of the report is self-explanatory.
 \label{examples}
 
 \begin{alert}
-{\bf NOTE: the programs in the \verb'Demo' folder are not always the fastest
+{\bf NOTE:} The programs in the \verb'Demo' folder are not always the fastest
 methods.  They are simple methods for illustration only, not performance.  Do
 not benchmark them.  Refer to the latest (draft) \verb'LAGraph' package for the
 fastest methods.  Be sure to use the right combination of package versions
-between LAGraph and SuiteSparse:GraphBLAS.}
+between LAGraph and SuiteSparse:GraphBLAS.  Contact the author (davis@tamu.edu)
+if you have any questions about how to properly benchmark LAGraph +
+SuiteSparse:GraphBLAS.
 \end{alert}
 
 Several examples of how to use GraphBLAS are listed below.  They all
@@ -11906,12 +11915,12 @@ such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
 \begin{alert}
-{\bf NOTE: icc is generally an excellent compiler, but it will generate slower
+{\bf NOTE:} icc is generally an excellent compiler, but it will generate slower
 code than gcc for SuiteSparse:GraphBLAS v3.2.0 and later.  This is because of
 how the two compilers treat \verb'#pragma omp atomic read' and
 \verb'#pragma omp atomic write'.  The use of gcc for SuiteSparse:GraphBLAS
 v3.2.0 and later is recommended.  Atomics are slower in icc as compared to
-gcc.}
+gcc.
 \end{alert}
 
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
