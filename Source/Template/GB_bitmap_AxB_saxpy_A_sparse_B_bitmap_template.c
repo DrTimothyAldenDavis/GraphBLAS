@@ -12,11 +12,12 @@
     if (use_coarse_tasks)
     {
 
-        #define GB_PANEL_SIZE 4
-
         //----------------------------------------------------------------------
         // C<#M> += A*B using coarse tasks
         //----------------------------------------------------------------------
+
+        // number of columns in the workspace for each task
+        #define GB_PANEL_SIZE 4
 
         //----------------------------------------------------------------------
         // allocate workspace for each task
@@ -55,10 +56,10 @@
         int64_t bvlenx = (B_is_pattern ? 0 : bvlen) * GB_BSIZE ;
         int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) * GB_CSIZE ;
         int64_t bvlenb = (GB_B_IS_BITMAP ? bvlen : 0) ;
-        size_t wfspace = gwork * bvlenb + hwork * cvlen ;
+        size_t gfspace = gwork * bvlenb ;
+        size_t wfspace = gfspace + hwork * cvlen ;
         size_t wbxspace = gwork * bvlenx ;
         size_t wcxspace = hwork * cvlenx ;
-
         Wf = GB_MALLOC (wfspace, int8_t) ;
         Wbx = GB_MALLOC (wbxspace, GB_void) ;
         Wcx = GB_MALLOC (wcxspace, GB_void) ;
@@ -97,7 +98,7 @@
             GB_BTYPE *GB_RESTRICT Gx = Wbx + G_slice [tid] * bvlenx ;
 
             // Hf and Hx workspace to compute the panel of C
-            int8_t   *GB_RESTRICT Hf = Wf  + (H_slice [tid] + gwork) * bvlenb ;
+            int8_t   *GB_RESTRICT Hf = Wf  + (H_slice [tid] * cvlen) + gfspace ;
             GB_CTYPE *GB_RESTRICT Hx = Wcx +  H_slice [tid] * cvlenx ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
