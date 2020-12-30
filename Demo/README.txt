@@ -57,7 +57,6 @@ in Demo/Program:
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
     pagerank_demo.c         demo program to test dpagerank and ipagerank
     openmp_demo.c           demo program using OpenMP
-    pthread_demo.c          demo program using POSIX pthreads
 
 --------------------------------------------------------------------------------
 in Demo/Output:

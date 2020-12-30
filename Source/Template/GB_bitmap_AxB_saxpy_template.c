@@ -191,8 +191,6 @@
         // bitmap           any             bitmap      sparse
         // bitmap           any             full        sparse
 
-        // TODO:: put this in a function
-
         #undef  GB_PANEL_SIZE
         #define GB_PANEL_SIZE 64
 
@@ -349,8 +347,6 @@
         // bitmap           any             sparse      bitmap
         // bitmap           any             hyper       full 
         // bitmap           any             sparse      full
-
-        // TODO:: put the following in a function
 
         ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
         double work = ((double) anz) * (double) bvdim ;

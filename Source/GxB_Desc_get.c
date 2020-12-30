@@ -99,7 +99,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             }
             break ;
 
-//      case GxB_DESCRIPTOR_MKL :     // same as GxB_MKL
+//      case GxB_DESCRIPTOR_MKL:
 
 //          {
 //              va_start (ap, field) ;

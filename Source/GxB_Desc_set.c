@@ -144,7 +144,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
             }
             break ;
 
-//      case GxB_DESCRIPTOR_MKL :         // same as GxB_MKL
+//      case GxB_DESCRIPTOR_MKL:
 
 //          {
 //              va_start (ap, field) ;

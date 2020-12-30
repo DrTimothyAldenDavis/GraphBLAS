@@ -1,5 +1,9 @@
 Version 4.0.1, Jan TODO, 2021     TODO:: fix date of release
 
+    * substantial performance gains: compared with v3.3.3: up to 5x faster in
+        BFS (with LAGraph_bfs_parent2), 2x faster in Betweeness-Centrality (in
+        LAgraph_bc_bactch5); BC now faster than GAP for kron, urand, and
+        twitter (the 3 largest matrices in the GAP benchmark).
     * GrB_wait(), with no inputs: removed
     * GrB_wait(&object): polymorphic function added
     * GrB_*_nvals: no longer guarantees completion; use GrB_wait for that
@@ -13,7 +17,7 @@ Version 4.0.1, Jan TODO, 2021     TODO:: fix date of release
     * jumbled matrices: sort left pending, like zombies and pending tuples
     * GxB_get/set: added GxB_SPARSITY_* (hyper, sparse, bitmap, or full)
     * GxB_HYPER: enum renamed to GxB_HYPER_SWITCH
-    * GxB_BITMAP_SWITCH added: for matrix get/set and global get/set
+    * GxB_BITMAP_SWITCH added: for matrix/vector get/set and global get/set
     * GxB*import/export: API modified
     * GxB_SelectOp: nrows and ncols removed from function signature
     * OpenMP tasking removed from mergesort: just as fast; now ports to Windows

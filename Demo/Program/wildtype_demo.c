@@ -185,7 +185,7 @@ int main (void)
     char *api_url ;   GxB_Global_Option_get (GxB_API_URL,          &api_url) ;
 
     fprintf (stderr, LINE2 "%s Version %d.%d.%d, %s\n" LINE2 "%s"
-        "(%s)\n" LINE "License: %s" LINE "GraphBLAS API Version %d.%d.%d, %s"
+        "(%s)\n" LINE "License:\n%s" LINE "GraphBLAS API Version %d.%d.%d, %s"
         " (%s)\n%s" LINE2,
         library, version [0], version [1], version [2], date, about, url,
         license, api_ver [0], api_ver [1], api_ver [2], api_date, api_url,

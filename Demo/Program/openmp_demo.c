@@ -7,10 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// This demo uses OpenMP, and should work if GraphBLAS is compiled to
-// use either OpenMP or pthreads to synchronize multiple user threadds.
-// If OpenMP is not available, this program will work fine without it, in a
-// single user thread, regardless of the thread mechanism used by GraphBLAS.
+// This demo uses OpenMP, and illustrates how GraphBLAS can be called from
+// a multi-threaded user program.
 
 #include "GraphBLAS.h"
 
@@ -157,11 +155,6 @@ int main (int argc, char **argv)
         OK (GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
         GrB_Matrix_free (&A) ;
     }
-
-    // print an error message
-    printf ("\n\n---- Leader thread prints an error message:\n") ;
-    GrB_Info info = GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
-    printf ("Error: %d\n", info) ;
 
     // finish GraphBLAS
     GrB_finalize ( ) ;

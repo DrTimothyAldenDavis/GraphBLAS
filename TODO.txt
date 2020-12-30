@@ -1,7 +1,7 @@
 TODO:: enable all generated semirings and operators, and test them.
 TODO:: MATLAB @GrB test coverage
-TODO:: rerun demos and save to Demo/Output
-TODO:: rerun MATLAB demos
+TODO:: rerun MATLAB demos (and publish the html in demo/html)
 TODO:: Tcov to 100%
 TODO:: check port to Windows, Mac, Power8
 TODO:: make sure burble does not slow down BFS on road
+TODO:: test on MATLAB R2020a
