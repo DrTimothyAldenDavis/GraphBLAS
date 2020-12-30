@@ -3,5 +3,4 @@ TODO:: MATLAB @GrB test coverage
 TODO:: rerun MATLAB demos (and publish the html in demo/html)
 TODO:: Tcov to 100%
 TODO:: check port to Windows, Mac, Power8
-TODO:: make sure burble does not slow down BFS on road
 TODO:: test on MATLAB R2020a

@@ -101,9 +101,9 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library only" )
 endif ( )
 
-# select "true" to enable burble
-# set ( GB_BURBLE true )
-  set ( GB_BURBLE false )
+# select "false" to disable the burble.  It is now enabled by default.
+  set ( GB_BURBLE true )
+# set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
