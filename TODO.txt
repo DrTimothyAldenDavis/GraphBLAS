@@ -4,4 +4,3 @@ TODO:: rerun MATLAB demos (and publish the html in demo/html)
     including mxm_demo, gbdemo, gbdemo2
 TODO:: Tcov to 100%
 TODO:: check port to Windows, Mac, Power8
-TODO:: test on MATLAB R2020a
