@@ -84,14 +84,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.c | m4 | tail -n +9 > Generated/GB_unop__%s.c', ...
+'cat control.m4 Generator/GB_unop.c | m4 | tail -n +10 > Generated/GB_unop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.h | m4 | tail -n +9 >> Generated/GB_unop__include.h') ;
+'cat control.m4 Generator/GB_unop.h | m4 | tail -n +10 >> Generated/GB_unop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;
