@@ -1,4 +1,3 @@
-TODO:: enable all generated semirings and operators, and test them.
 TODO:: MATLAB @GrB test coverage
 TODO:: rerun MATLAB demos (and publish the html in demo/html)
     including mxm_demo, gbdemo, gbdemo2
