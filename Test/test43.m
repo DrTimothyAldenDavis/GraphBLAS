@@ -28,9 +28,6 @@ C0 = A (:,1) ;
 C = GB_mex_Matrix_subref (A, [ ], uint64(0)) ;
 assert (isequal (C, C0))
 
-% 'hit'
-% pause
-
 I = uint64 ([0 1]) ;
 J = uint64 ([0 1]) ;
 A = sparse (rand (4)) ;

@@ -55,13 +55,6 @@ assert (isequal (spones (S), spones (T)))
 assert (norm (S-T,1) == 0) ;
 assert (GB_spok (T) == 1) ;
 
-% for col = 1:n
-%     S (:,col)
-%     T (:,col)
-%     norm (S (:,col) - T (:,col), 1)
-%     % pause
-% end
-
 %-------------------------------------------------------------------------------
 fprintf ('----------------------- matrix from collection, no sorting:\n') ;
 Prob = ssget (939)

@@ -123,7 +123,6 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                 }
                 else
                 { 
-GB_GOTCHA ;
                     // free the bitmap or set it to all ones
                     GB_bitmap_assign_to_full (C, nthreads_max) ;
                 }
@@ -145,7 +144,6 @@ GB_GOTCHA ;
                 }
                 else
                 { 
-GB_GOTCHA ;
                     // C remains bitmap: scatter A into the C bitmap
                     GB_memset (Cb, 0, cnzmax, nthreads_max) ;
                     cnvals = 0 ;

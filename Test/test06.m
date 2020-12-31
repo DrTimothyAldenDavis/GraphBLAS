@@ -175,7 +175,6 @@ for k1 = k1_list % 1:length(mult_ops)
             catch me
                 if (~isempty (strfind (me.message, 'gotcha')))
                     semiring
-                    pause
                 end
                 continue
             end

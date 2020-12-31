@@ -206,7 +206,6 @@
                         {
                             for (int64_t ii = 0 ; ii < np ; ii++)
                             { 
-GB_GOTCHA ;
                                 // Gx (ii,k) = Ax (istart+ii,k)
                                 const int64_t pG = ii + k*np ;
                                 const int64_t pA = istart + ii + k*avlen ;

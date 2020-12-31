@@ -152,11 +152,6 @@
         }
     }
 
-    // C bitmap value for an entry to keep:
-    // if M is sparse or hypersparse, and Mask_comp is false: 3
-    // otherwise: 1
-//  const int8_t keep = M_is_sparse_or_hyper ? ((Mask_comp) ? 1 : 3) : 1 ;
-
     //--------------------------------------------------------------------------
     // select the method
     //--------------------------------------------------------------------------
@@ -201,7 +196,6 @@
 
         if (nthreads == 1 || bnvec == 0)
         { 
-GB_GOTCHA ;
             // do the entire computation with a single thread
             naslice = 1 ;
             nbslice = 1 ;

@@ -21,9 +21,9 @@ semiring.class = 'double' ;
 [mult_op add_op id] = GB_spec_semiring (semiring) ;
 
 dnn = struct ('axb', 'dot') ;
-dtn = struct ('axb', 'dot', 'in0', 'tran') ;
-dnt = struct ('axb', 'dot', 'in1', 'tran') ;
-dtt = struct ('axb', 'dot', 'in0', 'tran', 'in1', 'tran') ;
+dtn = struct ('axb', 'dot', 'inp0', 'tran') ;
+dnt = struct ('axb', 'dot', 'inp1', 'tran') ;
+dtt = struct ('axb', 'dot', 'inp0', 'tran', 'inp1', 'tran') ;
 
 C2 = GB_mex_mxm  (C, [ ], add_op, semiring, A, B, dnn) ;
 C1 = GB_spec_mxm (C, [ ], add_op, semiring, A, B, dnn) ;

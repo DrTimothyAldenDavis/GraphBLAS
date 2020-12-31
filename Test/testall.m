@@ -68,6 +68,10 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test187',t) ; % test dup/assign for all sparsity formats
+logstat ('test186',t) ; % test saxpy for all sparsity formats
+logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
+logstat ('test185',t) ; % test dot4, saxpy for all sparsity formats
 logstat ('test184',t) ; % test special cases for mxm, transpose, and build
 logstat ('test183',s) ; % test eWiseMult with hypersparse mask
 logstat ('test182',s) ; % test for internal wait

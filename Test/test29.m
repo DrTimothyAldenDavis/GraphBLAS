@@ -49,13 +49,7 @@ for m = [1 5 10]
                     GB_builtin_complex_set (1) ;
                     cin = GB_spec_identity (op, atype) ;
                     GB_builtin_complex_set (builtin) ;
-                catch % me
-                    % me
-                    % op
-                    % atype
-                    % if (contains (me.message, 'assert'))
-                    %    pause
-                    % end
+                catch
                     continue
                 end
 

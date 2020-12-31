@@ -103,11 +103,7 @@ for k1 = 1:length(mult_ops)
                 [mult_opname mult_optype ztype xtype ytype] = GB_spec_operator (mult_op) ;
                 [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                 identity = GB_spec_identity (semiring.add, add_optype) ;
-            catch me
-                if (~isempty (strfind (me.message, 'gotcha')))
-                    semiring
-                    pause
-                end
+            catch
                 continue
             end
 

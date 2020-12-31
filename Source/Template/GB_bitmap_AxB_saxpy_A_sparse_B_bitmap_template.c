@@ -451,7 +451,7 @@
 
                     #if defined ( GB_MASK_IS_SPARSE )
                     { 
-GB_GOTCHA ;
+
                         //------------------------------------------------------
                         // M is sparse, and scattered into the C bitmap
                         //------------------------------------------------------
@@ -615,7 +615,6 @@ GB_GOTCHA ;
         Wcx = GB_MALLOC (workspace * cxsize, GB_void) ;
         if (Wf == NULL || Wcx == NULL)
         { 
-GB_GOTCHA ;
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;

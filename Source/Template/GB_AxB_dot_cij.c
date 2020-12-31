@@ -9,7 +9,7 @@
 
 // computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
 // used for all three cases: C=A'*B, C<M>=A'*B, and C<!M>=A'*B in dot2 when C
-// is bitmap, and for C<M>=A'*B when C is sparse or hyper.
+// is bitmap, and for C<M>=A'*B when C and M are sparse or hyper in dot3.
 
 // When used as the multiplicative operator, the PAIR operator provides some
 // useful special cases.  Its output is always one, for any matching pair of
@@ -46,7 +46,6 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
-GB_GOTCHA ;
             #if GB_IS_ANY_MONOID
             // ANY monoid: take the first entry found; this sets cij = 1
             GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
@@ -206,7 +205,6 @@ GB_GOTCHA ;
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
-GB_GOTCHA ;
             #if GB_IS_ANY_MONOID
             // ANY monoid: take the first entry found; this sets cij = 1
             GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
