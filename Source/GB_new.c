@@ -150,7 +150,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-//  A->mkl = NULL ;             // no analysis from MKL yet (in progress)
+    // #include "GB_new_mkl_template.c"
 
     A->logger = NULL ;          // no error logged yet
 

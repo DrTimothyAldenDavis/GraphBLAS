@@ -2,12 +2,9 @@
 %
 % The gbcov script compiles the MATLAB interface with statement coverage
 % enabled, and then runs the full test suite (../gbtest).  Next, it uses
-% gbcovshow to create the statement coverage report in tmp/cover.  To remove
-% all temporary files, use 'make distclean' or remove the tmp/* files and
-% folders.
-%
-% To run these tests, if GraphBLAS/@GrB is initialized, first use
-% GrB.finalize.  Then gbcov can load the modified MATLAB interface.
+% gbcovshow to create the statement coverage report in tmp/cover (one for
+% each file).  To remove all temporary files, use 'make distclean' or
+% remove the tmp/* files and folders manually.
 %
 %   gbcov      - run all GraphBLAS tests, with statement coverage
 %

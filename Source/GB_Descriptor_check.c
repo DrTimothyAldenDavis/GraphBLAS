@@ -165,10 +165,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         GBPR0 ("    d.sort     = true\n") ;
     }
 
-//  if (D->use_mkl)
-//  {
-//      GBPR0 ("    d.use_mkl = true") ;
-//  }
+    // #include "GB_Descriptor_check_mkl_template.c"
 
     return (GrB_SUCCESS) ;
 }

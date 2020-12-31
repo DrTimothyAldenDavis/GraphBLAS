@@ -11,7 +11,6 @@
 // M has any format.
 
 {
-// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task
@@ -19,7 +18,6 @@
 
     // imeta = total number of rows of A and H in all panels
     int64_t imeta = naslice * GB_PANEL_SIZE ;
-    // printf ("imeta %ld\n", imeta) ;
 
     // number of entries in one panel of G for A.
     #if GB_HAS_BITMAP_MULTADD && !GB_IS_ANY_PAIR_SEMIRING
@@ -56,7 +54,7 @@
     Wax = GB_MALLOC (waxsize, GB_void) ;
     Wcx = GB_MALLOC (wcxsize, GB_void) ;
     if (Wf == NULL || Wax == NULL || Wcx == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -70,6 +68,7 @@
     GB_memset (Wf,  0, wafsize + wcsize, nthreads_max) ;
 
     #if GB_HAS_BITMAP_MULTADD && !GB_IS_ANY_PAIR_SEMIRING
+    { 
         // Initialize the Hx workspace to identity, if this semiring has a
         // concise bitmap multiply-add expression.  For the any_pair semiring,
         // the numerical values are not needed so Hx is not allocated.
@@ -88,25 +87,17 @@
                 Hx [pH] = GB_IDENTITY ;
             }
         #endif
+    }
     #endif
 
     //--------------------------------------------------------------------------
     // C<#M>=A*B, one metapanel at a time
     //--------------------------------------------------------------------------
 
-// ttt = omp_get_wtime ( ) - ttt ; printf ("init: %g\n", ttt) ;
-// ttt = omp_get_wtime ( ) - ttt ;
-
-// double tt [3] = {0,0,0} ;
-
     int tid ;
 
     for (int64_t iouter = 0 ; iouter < avlen ; iouter += imeta)
     {
-
-// ttt = omp_get_wtime ( ) ;
-
-    // printf ("\n========================= iouter: %ld\n", iouter) ;
 
         //----------------------------------------------------------------------
         // C<#M>(metapanel,:) += A (metapanel,:)*B
@@ -172,13 +163,13 @@
                                 const int8_t gb = Ab [pA] ;
                                 Gb [pG] = gb ;
                                 if (gb)
-                                {
+                                { 
                                     // Gx (ii,k) = Ax (istart+ii,k)
                                     GB_LOADA (Gx, pG, Ax, pA) ;
                                 }
                                 #if GB_HAS_BITMAP_MULTADD
                                 else
-                                {
+                                { 
                                     // clear Gx (ii,k)
                                     Gx [pG] = 0 ;
                                 }
@@ -192,7 +183,7 @@
                         for (int64_t k = kstart ; k < kend ; k++)
                         {
                             for (int64_t ii = 0 ; ii < np ; ii++)
-                            {
+                            { 
                                 // Gb (ii,k) = Ab (istart+ii,k)
                                 const int64_t pG = ii + k*np ;
                                 const int64_t pA = istart + ii + k*avlen ;
@@ -214,7 +205,8 @@
                         for (int64_t k = kstart ; k < kend ; k++)
                         {
                             for (int64_t ii = 0 ; ii < np ; ii++)
-                            {
+                            { 
+GB_GOTCHA ;
                                 // Gx (ii,k) = Ax (istart+ii,k)
                                 const int64_t pG = ii + k*np ;
                                 const int64_t pA = istart + ii + k*avlen ;
@@ -226,9 +218,6 @@
                 #endif
             }
         }
-
-
-// ttt = omp_get_wtime ( ) - ttt ; tt [0] += ttt ; ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // H = G*B
@@ -254,13 +243,13 @@
             const GB_ATYPE *GB_RESTRICT Gx ;
 
             if (load_apanel)
-            {
+            { 
                 // A has been loaded into the G panel
                 Gb = Wf  + (a_tid * afpanel_size) ;
                 Gx = Wax + (a_tid * axpanel_size) ;
             }
             else
-            {
+            { 
                 // use A in-place
                 Gb = Ab ;
                 Gx = Ax ;
@@ -321,8 +310,9 @@
                     GB_XLOAD (bkj) ;            // X [1] = bkj (plus_times only)
                     // H_panel (:,j) = G_panel (:,k) * B(k,j)
                     for (int64_t ii = 0 ; ii < np ; ii++)
-                    {
+                    { 
                         #if GB_HAS_BITMAP_MULTADD
+                        { 
                             // if (Gb (ii,k))
                             //      if (Hf (ii,j) == 0)
                             //          Hx (ii,j) = G (ii,k) * B(k,j) ;
@@ -341,7 +331,9 @@
                                     Hf [pH+ii], Hx [pH+ii],
                                     1,          Gx [pG+ii], bkj) ;
                             #endif
+                        }
                         #else
+                        { 
                             #if GB_A_IS_BITMAP
                             if (Gb [pG+ii])
                             #endif
@@ -349,25 +341,24 @@
                                 // t = G(ii,k) * B(k,j)
                                 GB_MULT_G_iik_B_kj (ii) ;
                                 if (Hf [pH+ii] == 0)
-                                {
+                                { 
                                     // H (ii,j) is a new entry
                                     GB_HX_WRITE (pH+ii, t) ;    // Hx (ii,j)=t
                                     Hf [pH+ii] = 1 ;
                                 }
                                 else
-                                {
+                                { 
                                     // H (ii,j) is already present
                                     GB_HX_UPDATE (pH+ii, t) ;   // Hx (ii,j)+=t
                                 }
                             }
+                        }
                         #endif
                     }
                 }
                 #undef GB_MULT_G_iik_B_kj
             }
         }
-
-// ttt = omp_get_wtime ( ) - ttt ; tt [1] += ttt ; ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // C (metapanel,:) += H
@@ -390,27 +381,12 @@
             int64_t np = iend - istart ;
             if (np <= 0) continue ;
             int64_t task_cnvals = 0 ;
-//            printf ("\na_tid %d b_tid %d np %ld\n", a_tid, b_tid, np) ;
 
             int64_t kstart, kend ; 
             GB_PARTITION (kstart, kend, bnvec, b_tid, nbslice) ;
-            //printf ("kstart %ld kend %ld\n", kstart, kend) ;
 
             int8_t   *GB_RESTRICT Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
             GB_CTYPE *GB_RESTRICT Hx = Wcx + (a_tid * hpanel_size) * GB_CSIZE ;
-            // printf ("Hf %p Hx %p\n", Hf, Hx) ;
-
-#if 0
-            for (int64_t k = 0 ; k < bnvec ; k++)
-            {
-                for (int64_t ii = 0 ; ii < np ; ii++)
-                {
-                    printf ("H (%ld,%ld): %d ", ii, k,  Hf [ii + k*np]) ;
-                    if (Hf [ii + k*np]) printf (" %g ", Hx [ii + k*np]) ;
-                    printf ("\n") ;
-                }
-            }
-#endif
 
             //------------------------------------------------------------------
             // C<#M>(metapanel,j1:j2-1) += H (:,kstart:kend-1)
@@ -424,8 +400,6 @@
                 int64_t j = GBH (Bh, kk) ;      // j is the range j1:j2-1
                 int64_t pC_start = istart + j * avlen ; // get C(istart,j)
                 int64_t pH_start = kk * np ;            // get H(:,kk)
-//              printf ("kk %ld pH_start %ld\n", kk, pH_start) ;
-//              printf ("j %ld pC_start %ld\n", j, pC_start) ;
 
                 for (int64_t ii = 0 ; ii < np ; ii++)
                 {
@@ -433,10 +407,6 @@
                     int64_t pH = pH_start + ii ;    // get H(ii,kk)
                     if (!Hf [pH]) continue ;
                     Hf [pH] = 0 ;                   // clear the panel
-//                  printf ("Hf %p Hx %p : ", Hf, Hx) ;
- //                 printf ("Got pH %ld H(%ld,%ld) = %g\n",
-//                      pH, ii, kk, Hx [pH]) ;
-
                     int8_t cb = Cb [pC] ;
 
                     //----------------------------------------------------------
@@ -482,7 +452,13 @@
                             task_cnvals++ ;
                         }
                         else
-                        { 
+                        {
+                            // Currently, the matrix C is a newly allocated
+                            // matrix, not the C_in input matrix to GrB_mxm.
+                            // As a result, this condition is not used.  It
+                            // will be in the future when this method is
+                            // modified to modify C in-place.
+                            ASSERT (GB_DEAD_CODE) ;
                             // C(i,j) += H(ii,kk)
                             GB_CIJ_GATHER_UPDATE (pC, pH) ;
                         }
@@ -493,18 +469,16 @@
                     //----------------------------------------------------------
 
                     #if GB_HAS_BITMAP_MULTADD && !GB_IS_ANY_PAIR_SEMIRING
+                    { 
                         // H(ii,kk) = identity
                         Hx [pH] = GB_IDENTITY ;
+                    }
                     #endif
                 }
             }
             cnvals += task_cnvals ;
         }
-// ttt = omp_get_wtime ( ) - ttt ; tt [2] += ttt ; ttt = omp_get_wtime ( ) ;
     }
-    // printf ("load  %g\n", tt [0]) ;
-    // printf ("H=H*B %g\n", tt [1]) ;
-    // printf ("save  %g\n", tt [2]) ;
 }
 
 #undef GB_IF_MIJ

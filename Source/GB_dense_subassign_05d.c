@@ -73,7 +73,7 @@ GrB_Info GB_dense_subassign_05d
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

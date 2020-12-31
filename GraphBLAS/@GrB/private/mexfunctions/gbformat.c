@@ -88,11 +88,11 @@ void mexFunction
 
             // get the current sparsity status of the input matrix G
             switch (mxGetNumberOfFields (pargin [0]))
-            { 
-                case 3: sparsity = GxB_FULL ;        break ;
-                case 4: sparsity = GxB_BITMAP ;      break ;
-                case 5: sparsity = GxB_SPARSE ;      break ;
-                case 6: sparsity = GxB_HYPERSPARSE ; break ;
+            {
+                case 3 : sparsity = GxB_FULL ;        break ;
+                case 4 : sparsity = GxB_BITMAP ;      break ;
+                case 5 : sparsity = GxB_SPARSE ;      break ;
+                case 6 : sparsity = GxB_HYPERSPARSE ; break ;
                 default: ERROR ("invalid GraphBLASv4 struct") ;
             }
 

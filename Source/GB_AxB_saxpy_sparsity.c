@@ -225,6 +225,11 @@ int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
 
     if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
     {
+        // If C is sparse or hypersparse, then it will be computed by
+        // GB_AxB_saxpy3.  For that method, the sparsity of C must follow from
+        // B.  If B is hypersparse, C must also be hypersparse.  Otherwise C
+        // must be sparse.  This is a requirement of GB_AxB_saxpy3, and is also
+        // asserted there.
         ASSERT (C_sparsity ==
             (B_sparsity == GxB_HYPERSPARSE) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
     }

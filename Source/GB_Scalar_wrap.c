@@ -56,7 +56,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->i_shallow = false ;
     s->x_shallow = true ;
     s->is_csc = true ;
-//  s->mkl = NULL ;
+    // #include "GB_Scalar_wrap_mkl_template.c"
 
     //--------------------------------------------------------------------------
     // return result

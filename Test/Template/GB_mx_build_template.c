@@ -191,8 +191,6 @@ GrB_Info builder
             mexErrMsgTxt ("xtype not supported")  ;
     }
 
-    // printf ("info %d\n", info) ;
-
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C built", GB0) ;

@@ -253,7 +253,7 @@
                         switch (np)
                         {
 
-                            case 4 :
+                            case 4 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
                                     GB_LOAD_A_ij ;
@@ -264,7 +264,7 @@
                                 }
                                 break ;
 
-                            case 3 :
+                            case 3 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
                                     GB_LOAD_A_ij ;
@@ -274,7 +274,7 @@
                                 }
                                 break ;
 
-                            case 2 :
+                            case 2 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
                                     GB_LOAD_A_ij ;
@@ -283,7 +283,7 @@
                                 }
                                 break ;
 
-                            case 1 :
+                            case 1 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
                                     GB_LOAD_A_ij ;
@@ -357,7 +357,13 @@
                             task_cnvals++ ;
                         }
                         else
-                        { 
+                        {
+                            // Currently, the matrix C is a newly allocated
+                            // matrix, not the C_in input matrix to GrB_mxm.
+                            // As a result, this condition is not used.  It
+                            // will be in the future when this method is
+                            // modified to modify C in-place.
+                            ASSERT (GB_DEAD_CODE) ;
                             // C(i,j) += H(i,jj)
                             GB_CIJ_GATHER_UPDATE (pC, pH) ;
                         }
@@ -444,7 +450,8 @@
                     //----------------------------------------------------------
 
                     #if defined ( GB_MASK_IS_SPARSE )
-
+                    { 
+GB_GOTCHA ;
                         //------------------------------------------------------
                         // M is sparse, and scattered into the C bitmap
                         //------------------------------------------------------
@@ -457,7 +464,7 @@
                         // 7:   cij is locked
 
                         #if GB_HAS_ATOMIC
-
+                        { 
                             // if C(i,j) is already present and can be modified
                             // (cb==keep), and the monoid can be done
                             // atomically, then do the atomic update.  No need
@@ -472,7 +479,7 @@
                                 #endif
                                 continue ;          // C(i,j) has been updated
                             }
-
+                        }
                         #endif
 
                         do  // lock the entry
@@ -504,7 +511,9 @@
                         GB_ATOMIC_WRITE
                         Cb [pC] = cb ;                  // unlock the entry
 
+                    }
                     #else
+                    { 
 
                         //------------------------------------------------------
                         // M is not present, or present as bitmap/full form
@@ -516,16 +525,13 @@
                         // 7:   cij is locked
 
                         #if defined ( GB_MASK_IS_BITMAP )
-
-                            //--------------------------------------------------
-                            // M is bitmap or full, and not in C bitmap
-                            //--------------------------------------------------
-
-                            // do not modify C(i,j) if not permitted by the mask
+                        { 
+                            // M is bitmap or full, and not in C bitmap.
+                            // Do not modify C(i,j) if not permitted by the mask
                             GB_GET_M_ij (pC) ;
                             mij = mij ^ Mask_comp ;
                             if (!mij) continue ;
-
+                        }
                         #endif
 
                         //------------------------------------------------------
@@ -533,7 +539,7 @@
                         //------------------------------------------------------
 
                         #if GB_HAS_ATOMIC
-
+                        { 
                             // if C(i,j) is already present (cb==1), and the
                             // monoid can be done atomically, then do the
                             // atomic update.  No need to modify Cb [pC].
@@ -547,7 +553,7 @@
                                 #endif
                                 continue ;          // C(i,j) has been updated
                             }
-
+                        }
                         #endif
 
                         do  // lock the entry
@@ -578,6 +584,7 @@
                         GB_ATOMIC_WRITE
                         Cb [pC] = 1 ;               // unlock the entry
 
+                    }
                     #endif
 
                 }
@@ -608,6 +615,7 @@
         Wcx = GB_MALLOC (workspace * cxsize, GB_void) ;
         if (Wf == NULL || Wcx == NULL)
         { 
+GB_GOTCHA ;
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -683,21 +691,21 @@
                     //----------------------------------------------------------
 
                     #if defined ( GB_MASK_IS_SPARSE )
-
+                    { 
                         // M is sparse or hypersparse
                         int64_t pC = pC_start + i ;
                         int8_t cb = Cb [pC] ;
                         bool mij = ((cb & 2) != 0) ^ Mask_comp ;
                         if (!mij) continue ;
-
+                    }
                     #elif defined ( GB_MASK_IS_BITMAP )
-
+                    { 
                         // M is bitmap or full
                         int64_t pC = pC_start + i ;
                         GB_GET_M_ij (pC) ;
                         mij = mij ^ Mask_comp ;
                         if (!mij) continue ;
-
+                    }
                     #endif
 
                     //----------------------------------------------------------
@@ -705,7 +713,7 @@
                     //----------------------------------------------------------
 
                     #if GB_IS_ANY_PAIR_SEMIRING
-                    {
+                    { 
                         // Hx is not used; Cx [...] = 1 is done below
                         Hf [i] = 1 ;
                     }
@@ -799,10 +807,10 @@
                     //----------------------------------------------------------
 
                     #if defined ( GB_MASK_IS_SPARSE )
-
+                    { 
                         // M is sparse or hypersparse
                         cb = (cb & 1) ;
-
+                    }
                     #endif
 
                     //----------------------------------------------------------

@@ -68,6 +68,7 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test184',t) ; % test special cases for mxm, transpose, and build
 logstat ('test183',s) ; % test eWiseMult with hypersparse mask
 logstat ('test182',s) ; % test for internal wait
 logstat ('test181',s) ; % test transpose with explicit zeros in the mask
@@ -185,7 +186,6 @@ logstat ('test28',t) ;  % mxm with aliased inputs, C<C> = accum(C,C*C)
 
 logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
-logstat ('test171',t) ; % test conversion and GB_memset
 logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
 logstat ('test88',t) ;  % hypersparse matrices with hash-based method
 logstat ('test76',s) ;  % GxB_resize (single threaded)
@@ -193,7 +193,6 @@ logstat ('test107',t) ; % monoids with terminal values
 logstat ('test69',t) ;  % assign and subassign with alias
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test17',t) ;  % quick test of GrB_*_extractElement
-logstat ('test93',t) ;  % pagerank
 logstat ('test143',t) ; % mxm, special cases
 logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
@@ -321,6 +320,7 @@ logstat ('test89',t) ;     %      % performance test of complex A*B
 
 logstat ('test90',t) ;     %    1 % test user-defined semirings
 logstat ('test91',t) ;     %      % test subref performance on dense vectors
+logstat ('test93',t) ;     %    3 % pagerank
 logstat ('test93b',t) ;    %      % dpagerank and ipagerank
 logstat ('test95',t) ;     %      % performance test for GrB_transpose
 logstat ('test96',t) ;     %   16 % A*B using dot product
@@ -351,6 +351,8 @@ logstat ('test126',t) ;    %    7 % test GrB_reduce to vector on a very sparse m
 
 logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
+
+logstat ('test171',t) ;     %   1 % test conversion and GB_memset
 
 % tested via test16:
 logstat ('testc1',t) ;     %      % test complex operators

@@ -14,7 +14,7 @@
 
 GrB_Info GB_bitmap_selector
 (
-    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GrB_Matrix *Chandle,        // output matrix, never NULL
     GB_Select_Opcode opcode,    // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
@@ -34,6 +34,11 @@ GrB_Info GB_bitmap_selector
     ASSERT (GB_is_packed (A)) ;
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
+
+    // Only GB_Matrix_wait and GB_resize pass in Chandle as NULL, and they
+    // do not operate on bitmap matrices.  So for the bitmap case, Chandle
+    // is never NULL.
+    ASSERT (Chandle != NULL) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -60,9 +65,13 @@ GrB_Info GB_bitmap_selector
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
+    //--------------------------------------------------------------------------
+    // clear C for the EQ_ZERO opcode
+    //--------------------------------------------------------------------------
+
+    // All other opcodes set C->x in the worker below
     if (opcode == GB_EQ_ZERO_opcode)
     { 
-        // clear C->x; all other opcodes set C->x in the worker below
         GB_memset (C->x, 0, anz * A->type->size, nthreads_max) ;
     }
 
@@ -81,45 +90,13 @@ GrB_Info GB_bitmap_selector
     #include "GB_select_factory.c"
 
     //--------------------------------------------------------------------------
-    // create the result
-    //--------------------------------------------------------------------------
-
-    if (Chandle == NULL)
-    { 
-
-        //----------------------------------------------------------------------
-        // transplant C back into A
-        //----------------------------------------------------------------------
-
-        GB_phbix_free (A) ;
-        A->b = C->b ;
-        C->b = NULL ;
-        A->x = C->x ;
-        C->x = NULL ;
-        A->nvals = cnvals ;
-        A->nzmax = C->nzmax ;
-        A->magic = GB_MAGIC ;
-        GB_Matrix_free (&C) ;
-        ASSERT_MATRIX_OK (A, "A in-place from bitmap selector", GB0) ;
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // return C as (*Chandle)
-        //----------------------------------------------------------------------
-
-        (*Chandle) = C ;
-        C->nvals = cnvals ;
-        C->magic = GB_MAGIC ;
-        ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;
-    }
-
-    //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    (*Chandle) = C ;
+    C->nvals = cnvals ;
+    C->magic = GB_MAGIC ;
+    ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

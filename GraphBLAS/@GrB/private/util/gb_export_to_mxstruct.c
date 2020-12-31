@@ -122,7 +122,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,
-    // queue_next, queue_head, enqueued, *_shallow, jumbled, logger, mkl,
+    // queue_next, queue_head, enqueued, *_shallow, jumbled, logger,
     // hyper_switch, bitmap_switch.
 
     if (sparsity == GxB_SPARSE || sparsity == GxB_HYPERSPARSE)

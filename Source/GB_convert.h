@@ -29,7 +29,14 @@
 // true if A is sparse (but not hypersparse)
 #define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
-// GB_sparsity: determine the current sparsity structure of a matrix
+// determine the sparsity control for a matrix
+int GB_sparsity_control     // revised sparsity
+(
+    int sparsity,           // sparsity control
+    int64_t vdim            // A->vdim, or -1 to ignore this condition
+) ;
+
+// GB_sparsity: determine the current sparsity status of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {
     if (A == NULL)
@@ -186,15 +193,15 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     }                                                       \
 }
 
-#define GB_ENSURE_FULL(C)                                   \
-{                                                           \
-    ASSERT (GB_is_dense (C)) ;                              \
-    if (C->sparsity & GxB_FULL)                             \
-    {                                                       \
-        /* convert C from any structure to full, */         \
-        /* if permitted by C->sparsity */                   \
-        GB_convert_any_to_full (C) ;                        \
-    }                                                       \
+#define GB_ENSURE_FULL(C)                                       \
+{                                                               \
+    ASSERT (GB_is_dense (C)) ;                                  \
+    if (GB_sparsity_control (C->sparsity, C->vdim) & GxB_FULL)  \
+    {                                                           \
+        /* convert C from any structure to full, */             \
+        /* if permitted by C->sparsity */                       \
+        GB_convert_any_to_full (C) ;                            \
+    }                                                           \
 }
 
 //------------------------------------------------------------------------------

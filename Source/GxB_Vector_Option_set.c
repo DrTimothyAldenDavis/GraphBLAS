@@ -54,12 +54,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                sparsity = sparsity & GxB_ANY_SPARSITY ;
-                if (sparsity <= GxB_DEFAULT)
-                { 
-                    sparsity = GxB_AUTO_SPARSITY ;
-                }
-                v->sparsity = sparsity ;
+                v->sparsity = GB_sparsity_control (sparsity, (int64_t) (-1)) ;
             }
             break ;
 

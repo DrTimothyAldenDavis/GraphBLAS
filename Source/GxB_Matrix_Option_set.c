@@ -64,12 +64,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                sparsity = sparsity & GxB_ANY_SPARSITY ;
-                if (sparsity <= GxB_DEFAULT)
-                { 
-                    sparsity = GxB_AUTO_SPARSITY ;
-                }
-                A->sparsity = sparsity ;
+                A->sparsity = GB_sparsity_control (sparsity, (int64_t) (-1)) ;
             }
             break ;
 

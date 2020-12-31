@@ -30,10 +30,9 @@ typedef struct
     bool GrB_init_called ;      // true if GrB_init already called
 
     //--------------------------------------------------------------------------
-    // threading and MKL control
+    // threading control
     //--------------------------------------------------------------------------
 
-//  bool use_mkl ;              // control usage of Intel MKL (in progress)
     int nthreads_max ;          // max number of threads to use
     double chunk ;              // chunk size for determining # threads to use
 
@@ -124,6 +123,8 @@ typedef struct
     //--------------------------------------------------------------------------
 
     double timing [20] ;
+
+    // #include "GB_Global_struct_mkl_template.c"
 }
 GB_Global_struct ;
 
@@ -137,9 +138,6 @@ GB_Global_struct GB_Global =
 
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
-
-    // Intel MKL control (DRAFT: in progress)
-//  .use_mkl = false,           // if true, exploit the Intel MKL
 
     // max number of threads and chunk size
     .nthreads_max = 1,
@@ -193,6 +191,8 @@ GB_Global_struct GB_Global =
 
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
+
+    // #include "GB_Global_init_mkl_template.c'
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
@@ -340,22 +340,6 @@ void GB_Global_bitmap_switch_default (void)
     GB_Global.bitmap_switch [6] = GB_BITSWITCH_33_to_64 ;
     GB_Global.bitmap_switch [7] = GB_BITSWITCH_gt_than_64 ;
 }
-
-//------------------------------------------------------------------------------
-// use_mkl
-//------------------------------------------------------------------------------
-
-// GB_PUBLIC
-// void GB_Global_use_mkl_set (bool use_mkl)
-// { 
-//     GB_Global.use_mkl = use_mkl ;
-// }
-
-// GB_PUBLIC
-// bool GB_Global_use_mkl_get (void)
-// { 
-//     return (GB_Global.use_mkl) ;
-// }
 
 //------------------------------------------------------------------------------
 // is_csc
@@ -816,4 +800,6 @@ double GB_Global_timing_get (int k)
 {
     return (GB_Global.timing [k]) ;
 }
+
+// #include "GB_Global_mkl_template.c
 

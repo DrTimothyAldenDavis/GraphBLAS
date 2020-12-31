@@ -122,6 +122,7 @@
                     GB_GETC (cij, pC) ;             // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
+GB_GOTCHA ;
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
                         GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
@@ -172,6 +173,7 @@
                     {
                         if (Bb [pB+k])
                         { 
+GB_GOTCHA ;
                             GB_DOT (k, pA+k, pB+k) ;
                         }
                     }
@@ -188,6 +190,7 @@
                     GB_GETC (cij, pC) ;                 // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
+GB_GOTCHA ;
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
                         // cij = 1, or CMPLX(1,0) for complex ANY
@@ -239,6 +242,7 @@
                     {
                         if (Ab [pA+k])
                         { 
+GB_GOTCHA ;
                             GB_DOT (k, pA+k, pB+k) ;
                         }
                     }
@@ -256,6 +260,7 @@
                     {
                         if (Ab [pA+k] && Bb [pB+k])
                         { 
+GB_GOTCHA ;
                             GB_DOT (k, pA+k, pB+k) ;
                         }
                     }
@@ -274,6 +279,7 @@
                         int64_t k = Bi [p] ;
                         if (Ab [pA+k])
                         { 
+GB_GOTCHA ;
                             GB_DOT (k, pA+k, p) ;
                         }
                     }
@@ -290,6 +296,7 @@
                     GB_GETC (cij, pC) ;             // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
+GB_GOTCHA ;
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
                         GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
@@ -341,6 +348,7 @@
                         int64_t k = Ai [p] ;
                         if (Bb [pB+k])
                         { 
+GB_GOTCHA ;
                             GB_DOT (k, p, pB+k) ;
                         }
                     }
@@ -356,6 +364,7 @@
 
                     if (Ai [pA_end-1] < ib_first || ib_last < Ai [pA])
                     { 
+GB_GOTCHA ;
 
                         //------------------------------------------------------
                         // pattern of A(:,i) and B(:,j) don't overlap

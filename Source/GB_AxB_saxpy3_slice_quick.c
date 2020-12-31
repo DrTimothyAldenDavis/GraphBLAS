@@ -24,7 +24,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     int *nthreads,                  // # of threads to use
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get inputs

@@ -411,7 +411,8 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
 
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
-    bool C_may_be_bitmap = (C->sparsity & GxB_BITMAP) ;
+    int C_sparsity = GB_sparsity_control (C->sparsity, C->vdim) ;
+    bool C_may_be_bitmap = (C_sparsity & GxB_BITMAP) ;
     bool use_bitmap_assign = (C_is_bitmap ||
         ((*C_replace) && GB_IS_FULL (C) && C_may_be_bitmap)) ;
 

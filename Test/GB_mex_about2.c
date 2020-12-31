@@ -133,13 +133,26 @@ void mexFunction
     CHECK (Slice [0] == 0) ;
     GB_FREE (Slice) ;
 
+    int64_t Ap [11] = { 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1 } ;
+    bool ok = GB_pslice (&Slice, Ap, 10, 10, false) ;
+    printf ("Slice: ") ;
+    for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
+    printf ("\n") ;
+    GB_FREE (Slice) ;
+
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
     // GrB_Matrix_check
     //--------------------------------------------------------------------------
 
+    double bswitch = 1 ;
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_BITMAP_SWITCH, 0.125)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, &bswitch)) ;
+    CHECK (fabsf (bswitch - 0.125) < 1e-5) ;
+
     OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GrB_Matrix_assign_INT32 (A, NULL, NULL, 3, GrB_ALL, n, GrB_ALL, n,
         NULL)) ;
@@ -277,8 +290,17 @@ void mexFunction
     // invalid descriptor
     //--------------------------------------------------------------------------
 
+    int method ;
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Descriptor_fprint (desc, "descriptor", GxB_COMPLETE, NULL)) ;
+
+    OK (GxB_Desc_get (NULL, GxB_AxB_METHOD, &method)) ;
+    CHECK (method == GxB_DEFAULT) ;
+    OK (GxB_Desc_set (desc, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+    OK (GxB_Descriptor_fprint (desc, "descriptor", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Desc_get (desc, GxB_AxB_METHOD, &method)) ;
+    CHECK (method == GxB_AxB_GUSTAVSON) ;
+
     desc->mask = GrB_REPLACE ;
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Descriptor_fprint (desc, "invalid", GxB_COMPLETE, NULL)) ;
@@ -291,6 +313,7 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Matrix_build_INT32 (A, I, I, I, 0, GrB_PLUS_INT32)) ;
     OK (GxB_Matrix_fprint (A, "empty", GxB_COMPLETE, NULL)) ;
+    CHECK (!GB_is_shallow (A)) ;
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
@@ -306,6 +329,9 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Vector_new (&victor, GrB_INT32, n)) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_BITMAP_SWITCH, &bswitch)) ;
+    printf ("vector bitmap switch: %g\n\n", bswitch) ;
+
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GrB_Matrix_reduce_BinaryOp (victor, NULL, NULL, GxB_FIRSTI_INT32,
         A, NULL)) ;
@@ -352,7 +378,7 @@ void mexFunction
     // malloc/realloc wrappers
     //--------------------------------------------------------------------------
 
-    bool ok = false ;
+    ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int)) ;
     CHECK (p != NULL) ;
     p = GB_realloc_memory (4, 4, sizeof (int), p, &ok) ;

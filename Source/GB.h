@@ -47,6 +47,7 @@
 #include "GB_nnz.h"
 #include "GB_zombie.h"
 #include "GB_partition.h"
+// #include "GB_mkl.h"
 
 //------------------------------------------------------------------------------
 // internal definitions
@@ -289,7 +290,7 @@ typedef struct
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char **logger ;             // error report
-//  bool use_mkl ;              // control usage of Intel MKL (in progress)
+    // #include "GB_Context_struct_mkl_template.h"
 }
 GB_Context_struct ;
 
@@ -316,9 +317,10 @@ typedef GB_Context_struct *GB_Context ;
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
-    /* Context->use_mkl = GB_Global_use_mkl_get ( ) ; */            \
     /* get the pointer to where any error will be logged */         \
     Context->logger = NULL ;
+
+// #include "GB_CONTEXT_mkl_template.h"
 
 #define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \

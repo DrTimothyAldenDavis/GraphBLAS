@@ -10,8 +10,6 @@
 // Get the variable 'GraphBLAS_debug' from the MATLAB global workspace.
 // If it doesn't exist, create it and set it to false.
 
-// GxB_MKL is not controllable via MATLAB.
-
 #include "GB_mex.h"
 
 bool GB_mx_get_global       // true if doing malloc_debug

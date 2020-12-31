@@ -68,7 +68,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (B->vlen == C->vlen) ;
     ASSERT (B->vdim == C->vdim) ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full
 
     //--------------------------------------------------------------------------
     // get the operator

@@ -34,8 +34,8 @@ GrB_Info prefix ## Matrix_reduce_ ## T    /* c = accum (c, reduce (A))  */     \
     GB_WHERE1 ("Matrix_reduce_" GB_STR(T) " (&c, accum, monoid, A, desc)") ;   \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
-    GrB_Info info = GB_reduce_to_scalar (c, prefix ## T,                       \
-        accum, monoid, A, Context) ;                                           \
+    GrB_Info info = GB_reduce_to_scalar (c, prefix ## T, accum, monoid,        \
+        A, Context) ;                                                          \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
 }
@@ -74,8 +74,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    GrB_Info info = GB_reduce_to_scalar (c, monoid->op->ztype,
-        accum, monoid, A, Context) ;
+    GrB_Info info = GB_reduce_to_scalar (c, monoid->op->ztype, accum, monoid,
+        A, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }
@@ -94,7 +94,7 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
     const GrB_Descriptor desc       // descriptor for w, M, and A
 )
 { 
-    GB_WHERE (w, "GrB_Matrix_reduce_Monoid (w, M, accum, reduce, A, desc)") ;
+    GB_WHERE (w, "GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
         accum, monoid, A, desc, Context) ;
@@ -106,17 +106,19 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
 // GrB_Matrix_reduce_BinaryOp: reduce a matrix to a vector via a binary op
 //------------------------------------------------------------------------------
 
-// This method should not be in the GraphBLAS C API Specification.  All other
-// case of reduction in the C API, including all other uses of GrB_reduce,
-// GrB_vxm, GrB_mxv, and GrB_mxm, require a monoid with an identity value.
-// This function is an outlier.  To implement it in SuiteSparse:GraphBLAS, the
+// In my opinion, GrB_Matrix_reduce_BinaryOp should not be in the GraphBLAS C
+// API Specification.  All other case of reduction in the C API, including all
+// other uses of GrB_reduce, GrB_vxm, GrB_mxv, and GrB_mxm, require a monoid
+// with an identity value.  This function is an outlier.  Obtaining good
+// performance in a parallel implementation requires knowledge of the monoid
+// identity value.  To implement this method in SuiteSparse:GraphBLAS, the
 // binary operator "op_in" is promoted to the corresponding monoid, for
 // built-in operators:
 //
 //      operator                data-types (all built-in)
 //      ----------------------  ---------------------------
 //      MIN, MAX                int*, uint*, fp*
-//      TIMES PLUS              int*, uint*, fp*, fc*
+//      TIMES, PLUS             int*, uint*, fp*, fc*
 //      ANY                     int*, uint*, fp*, fc*, bool
 //      LOR, LAND, LXOR, EQ     bool
 //      BOR, BAND, BXOR, BXNOR  uint*
@@ -124,7 +126,7 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
 // No other cases are supported.  In particular, user-defined types and
 // operators are not supported, since in those cases the identity value cannot
 // be inferred.  Use GrB_Matrix_reduce_Monoid with a user-defined monoid
-// instead.
+// instead.  The use of this function in SuiteSparse:GraphBLAS is discouraged.
 
 GrB_Info GrB_Matrix_reduce_BinaryOp
 (
@@ -326,17 +328,16 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
             }
             break ;
 
-        default : ;
+        default : 
+
+            // op_in binary operator does not correspond to a known monoid
+            GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
+                " z=%s(x,y) has no equivalent monoid\n", op_in->name) ;
     }
 
-    if (monoid == NULL)
-    { 
-        // op_in binary operator does not correspond to a known monoid
-        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
-            " z=%s(x,y) has no equivalent monoid\n", op_in->name) ;
-    }
-
-    ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
+    //--------------------------------------------------------------------------
+    // w<M> = reduce (A) via the monoid
+    //--------------------------------------------------------------------------
 
     GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
         accum, monoid, A, desc, Context) ;

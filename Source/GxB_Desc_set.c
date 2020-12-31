@@ -144,15 +144,6 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
             }
             break ;
 
-//      case GxB_DESCRIPTOR_MKL:
-
-//          {
-//              va_start (ap, field) ;
-//              desc->use_mkl = va_arg (ap, int) ;
-//              va_end (ap) ;
-//          }
-//          break ;
-
         case GxB_AxB_METHOD : 
 
             {
@@ -184,6 +175,8 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                 va_end (ap) ;
             }
             break ;
+
+        // #include "GxB_Desc_set_mkl_template.c"
 
         default : 
 

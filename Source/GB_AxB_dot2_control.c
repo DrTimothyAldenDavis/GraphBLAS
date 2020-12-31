@@ -40,12 +40,6 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 
     double anz = GB_NNZ (A) ;       // # of entries in A
     double bnz = GB_NNZ (B) ;       // # of entries in B
-    if (anz == 0)
-    { 
-        // C is empty, so use saxpy and compute it as a sparse empty matrix
-        return (false) ;
-    }
-
     if (A->nvec_nonempty < 0) A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     if (B->nvec_nonempty < 0) B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
     double anvec = A->nvec_nonempty ;
@@ -53,10 +47,8 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     double avlen = A->vlen ;
     ASSERT (avlen == B->vlen) ;
     double cnz = (anvec * bnvec) ;  // size of the C bitmap
-    double row_degree = anz / avlen ;
-    double col_degree = anz / anvec ;
-//  GBURBLE ("(rowdeg %g coldeg %g ", row_degree, col_degree) ;
-//  GBURBLE ("anz+bnz %g cnz %g) ", anz+bnz, cnz) ;
+    double row_degree = anz / GB_IMAX (avlen, 1) ;
+    double col_degree = anz / GB_IMAX (anvec, 1) ;
 
     if (cnz > anz + bnz)
     { 
@@ -81,7 +73,7 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
         // populated vectors in AT is very low (< 0.0625 by default), then AT
         // will become hypersparse, and this slows down the saxpy method.  If
         // the vectors (col_degree) have lots of entries, then dot2 is
-        // efficient in this case.  If both conditions how, use dot2 and
+        // efficient in this case.  If both conditions hold, use dot2 and
         // compute C as bitmap.
         GBURBLE ("(A' implicit: dot) ") ;
         return (true) ;

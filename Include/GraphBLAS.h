@@ -33,8 +33,6 @@
 // Extensions with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS
 // but cannot be guaranteed to appear in all GraphBLAS implementations.
 
-// CUDA and MKL integration are in progress; do not use these methods.
-
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
 
@@ -178,7 +176,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 29, 2020"
+#define GxB_IMPLEMENTATION_DATE "Dec 31, 2020"
 #define GxB_IMPLEMENTATION_MAJOR 4
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -3435,8 +3433,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 #define GxB_NTHREADS 5
 #define GxB_CHUNK 7
 
-// MKL and GPU control (DRAFT: in progress, do not use)
-// #define GxB_MKL 31
+// GPU control (DRAFT: in progress, do not use)
 #define GxB_GPU_CONTROL 21
 #define GxB_GPU_CHUNK   22
 
@@ -3454,10 +3451,9 @@ typedef enum
     GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
                     // If <= GxB_DEFAULT, then the default is used.
 
-    // MKL and GPU control (DRAFT: in progress, do not use)
+    // GPU control (DRAFT: in progress, do not use)
     GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
-//  GxB_DESCRIPTOR_MKL = GxB_MKL,
 
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35           // control sort in GrB_mxm
@@ -3672,12 +3668,11 @@ typedef enum            // for global options or matrix options
     GxB_SPARSITY_CONTROL = 32,      // sparsity control: 0 to 15; see below
 
     //------------------------------------------------------------
-    // GPU and MKL options (DRAFT: do not use)
+    // GPU and options (DRAFT: do not use)
     //------------------------------------------------------------
 
     GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
-//  GxB_GLOBAL_MKL = GxB_MKL,
 
 } GxB_Option_Field ;
 
@@ -8632,26 +8627,6 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
 void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
 void  GxB_cuda_free (void *p) ;                 // standard free signature
-
-#if 0
-
-//==============================================================================
-// MKL optimization (DRAFT: in progress, do not use)
-//==============================================================================
-
-GrB_Info GxB_mxv_optimize           // analyze C for subsequent use in mxv
-(
-    GrB_Matrix C,                   // input/output matrix
-    int64_t ncalls,                 // estimate # of future calls to GrB_mxv
-    const GrB_Descriptor desc       // currently unused
-) ;
-
-GrB_Info GxB_mxv_optimize_free      // analyze A for subsequent use in mxv
-(
-    GrB_Matrix C                    // input/output matrix
-) ;
-
-#endif
 
 #endif
 

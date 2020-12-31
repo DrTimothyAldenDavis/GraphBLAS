@@ -119,9 +119,7 @@ void mexFunction
         }
     }
 
-//  bool use_mkl ;
-//  GxB_Global_Option_get_(GxB_MKL, &use_mkl) ;
-//  pargout [14] = mxCreateLogicalScalar (use_mkl) ;
+    // #include "GB_Test_init_mkl_template.c"
 
     GrB_finalize ( ) ;
 }

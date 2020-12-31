@@ -85,8 +85,6 @@ build:          build directory for CMake, initially empty
 alternative:    an alternative to CMake; edit the alternative/Makefile and do
                 "make" or "make run" in the 'alternative' directory.
 
-CUDA, MKL:      work in progress
-
 --------------------------------------------------------------------------------
 
 ## GraphBLAS C API Specification:

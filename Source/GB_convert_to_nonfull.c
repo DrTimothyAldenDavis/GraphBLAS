@@ -30,18 +30,19 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     // convert to bitmap, sparse, or hypersparse
     //--------------------------------------------------------------------------
 
-    if (A->sparsity & GxB_BITMAP)
+    int sparsity = GB_sparsity_control (A->sparsity, A->vdim) ;
+
+    if (sparsity & GxB_BITMAP)
     { 
         // C can become bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
     }
-    else if (A->sparsity & GxB_SPARSE
-        || (A->vdim <= 1 & (A->sparsity & GxB_HYPERSPARSE)))
+    else if (sparsity & GxB_SPARSE)
     { 
         // C can become sparse
         return (GB_convert_full_to_sparse (A, Context)) ;
     }
-    else if (A->vdim > 1 && A->sparsity & GxB_HYPERSPARSE)
+    else if (sparsity & GxB_HYPERSPARSE)
     { 
         // C can become hypersparse
         return (GB_convert_any_to_hyper (A, Context)) ;

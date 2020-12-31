@@ -113,7 +113,6 @@ GB_PUBLIC void     GB_Global_timing_set (int k, double t) ;
 GB_PUBLIC void     GB_Global_timing_add (int k, double t) ;
 GB_PUBLIC double   GB_Global_timing_get (int k) ;
 
-//        void     GB_Global_use_mkl_set (bool use_mkl) ;
-//        bool     GB_Global_use_mkl_get (void) ;
+// #include "GB_Global_mkl_template.h"
 #endif
 

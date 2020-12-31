@@ -110,6 +110,7 @@
         }
         else if (B_is_hyper)
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // both A and B are hyper
@@ -128,6 +129,7 @@
         }
         else if (B_is_bitmap)
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // A is hyper and B is bitmap

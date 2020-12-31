@@ -46,6 +46,7 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
+GB_GOTCHA ;
             #if GB_IS_ANY_MONOID
             // ANY monoid: take the first entry found; this sets cij = 1
             GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
@@ -205,6 +206,7 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
+GB_GOTCHA ;
             #if GB_IS_ANY_MONOID
             // ANY monoid: take the first entry found; this sets cij = 1
             GB_MULT (cij, ignore, ignore, 0, 0, 0) ;

@@ -201,6 +201,7 @@
 
         if (nthreads == 1 || bnvec == 0)
         { 
+GB_GOTCHA ;
             // do the entire computation with a single thread
             naslice = 1 ;
             nbslice = 1 ;

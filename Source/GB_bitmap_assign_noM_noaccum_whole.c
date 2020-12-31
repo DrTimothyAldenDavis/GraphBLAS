@@ -123,6 +123,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                 }
                 else
                 { 
+GB_GOTCHA ;
                     // free the bitmap or set it to all ones
                     GB_bitmap_assign_to_full (C, nthreads_max) ;
                 }
@@ -135,17 +136,16 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                 // C = A where C is bitmap and A is sparse or hyper
                 //--------------------------------------------------------------
 
-                if ((GB_IS_SPARSE (A) && (C->sparsity & GxB_SPARSE)) ||
-                    (GB_IS_HYPERSPARSE (A) && (C->sparsity & GxB_HYPERSPARSE)))
+                int sparsity = GB_sparsity_control (C->sparsity, C->vdim) ;
+                if ((GB_IS_SPARSE (A) && (sparsity & GxB_SPARSE)) ||
+                    (GB_IS_HYPERSPARSE (A) && (sparsity & GxB_HYPERSPARSE)))
                 { 
-
                     // C becomes sparse or hypersparse, the same as A
                     GB_OK (GB_subassign_24 (C, A, Context)) ;
-
                 }
                 else
                 { 
-
+GB_GOTCHA ;
                     // C remains bitmap: scatter A into the C bitmap
                     GB_memset (Cb, 0, cnzmax, nthreads_max) ;
                     cnvals = 0 ;

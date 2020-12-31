@@ -29,7 +29,7 @@ void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
     // free the bitmap or set it to all ones
     //--------------------------------------------------------------------------
 
-    if (C->sparsity & GxB_FULL)
+    if (GB_sparsity_control (C->sparsity, C->vdim) & GxB_FULL)
     { 
         // C is bitmap but can become full; convert it to full
         GB_FREE (C->b) ;
@@ -37,6 +37,7 @@ void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
     }
     else
     { 
+GB_GOTCHA ;
         // all entries in C are now present; C remains bitmap
         int64_t cnzmax = C->vlen * C->vdim ;
         GB_memset (C->b, 1, cnzmax, nthreads_max) ;

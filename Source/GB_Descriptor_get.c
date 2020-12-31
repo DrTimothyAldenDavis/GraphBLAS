@@ -112,7 +112,6 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     int nthreads_desc        = GxB_DEFAULT ;
     double chunk_desc        = GxB_DEFAULT ;
     int do_sort_desc         = GxB_DEFAULT ;
-//  bool use_mkl             = false ;
 
     // non-defaults descriptor values
     if (desc != NULL)
@@ -131,7 +130,6 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         // threads to use in the current GraphBLAS operation.
         nthreads_desc = desc->nthreads_max ;
         chunk_desc = desc->chunk ;
-//      use_mkl = desc->use_mkl ;
     }
 
     // check for valid values of each descriptor field
@@ -182,7 +180,8 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     // it is available to any internal function that needs it.
     Context->nthreads_max = nthreads_desc ;
     Context->chunk = chunk_desc ;
-//  Context->use_mkl = use_mkl ;
+
+    // #include "GB_Descriptor_get_mkl_template.c"
 
     return (GrB_SUCCESS) ;
 }

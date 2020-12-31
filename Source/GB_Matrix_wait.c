@@ -194,8 +194,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         #ifdef GB_DEBUG
         int64_t anz_orig = GB_NNZ (A) ;
         #endif
-        GB_OK (GB_selector (NULL, GB_NONZOMBIE_opcode, NULL, false, A,
-            0, NULL, Context)) ;
+        GB_OK (GB_selector (NULL /* A in-place */, GB_NONZOMBIE_opcode, NULL,
+            false, A, 0, NULL, Context)) ;
         ASSERT (A->nzombies == (anz_orig - GB_NNZ (A))) ;
         A->nzombies = 0 ;
     }

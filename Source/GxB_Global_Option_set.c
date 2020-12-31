@@ -145,23 +145,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // Intel MKL (DRAFT: in progress, do not use)
-        //----------------------------------------------------------------------
-
-//      case GxB_GLOBAL_MKL:           // same as GxB_MKL
-
-//          {
-//              va_start (ap, field) ;
-//              int use_mkl = va_arg (ap, int) ;
-//              va_end (ap) ;
-//              GB_Global_use_mkl_set (use_mkl != 0) ;
-//          }
-//          break ;
-
-        //----------------------------------------------------------------------
-        // invalid option
-        //----------------------------------------------------------------------
+        // #include "GxB_Global_Option_set_mkl_template.c"
 
         default : 
 

@@ -338,12 +338,6 @@ GB_Pending Pending ;        // list of pending tuples
 uint64_t nzombies ;     // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
-// MKL analysis (in progress)
-//------------------------------------------------------------------------------
-
-// void *mkl ;
-
-//------------------------------------------------------------------------------
 // sparsity control
 //------------------------------------------------------------------------------
 
@@ -385,8 +379,8 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 //      By default, all GrB_Matrices are held in CSR form, unless they are
 //      n-by-1 (then they are CSC).  The GrB_vector is always CSC.
 
-// (2) If A->sparsity is 15, then the following rules are used
-//      to control the sparsity structure:
+// (2) If A->sparsity is GxB_AUTO_SPARSITY (15), then the following rules are
+//      used to control the sparsity structure:
 //
 //      (a) When a matrix is created, it is empty and starts as hypersparse,
 //          except that a GrB_Vector is never hypersparse.
@@ -545,4 +539,6 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
         }
 
 #endif
+
+// #include "GB_matrix_mkl_template.h"
 

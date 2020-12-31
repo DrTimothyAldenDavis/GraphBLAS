@@ -1,5 +1,4 @@
 TODO:: MATLAB @GrB test coverage
-TODO:: rerun MATLAB demos (and publish the html in demo/html)
-    including mxm_demo, gbdemo, gbdemo2
+TODO:: publish Windows10 MATLAB demos in demo/html, and mxm_demo 
 TODO:: Tcov to 100%
 TODO:: check port to Windows, Mac, Power8

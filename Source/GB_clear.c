@@ -22,7 +22,7 @@
 
 // A is first converted to sparse or hypersparse, and then conformed via
 // GB_conform.  If A->sparsity disables the sparse and hypersparse structures,
-// this will convert A to bitmap.
+// A is converted bitmap instead.
 
 #include "GB.h"
 
@@ -49,8 +49,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // clear the content of A if bitmap
     //--------------------------------------------------------------------------
 
-    if (((A->sparsity & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0)
-        && GB_IS_BITMAP (A))
+    int sparsity = GB_sparsity_control (A->sparsity, A->vdim) ;
+    if (((sparsity & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0) && GB_IS_BITMAP (A))
     { 
         // A should remain bitmap
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;

@@ -391,7 +391,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     double chunk ;          // chunk size for # of threads for small problems
     bool predefined ;       // if true, descriptor is predefined
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
-//  bool use_mkl ;          // if true, use the Intel MKL (in progress)
+    // #include "GB_Descriptor_opaque_mkl_template.h"
 } ;
 
 //------------------------------------------------------------------------------
