@@ -355,7 +355,28 @@
 // Type punning is used to extend these signed integer types to unsigned
 // integers of the same number of bytes, and to float and double.
 
-#if GB_MICROSOFT
+#if ( ~GB_X86_64 )
+
+    //--------------------------------------------------------------------------
+    // only use atomic compare/exchange on the x86
+    //--------------------------------------------------------------------------
+
+    // any attempt to use atomic compare/exchange on non-x86 architectures
+    // will result in a compile-time error.  This is intentional, to safe
+    // guard against their use.
+    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)    \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)    \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
+        (undefined)
+
+#elif GB_MICROSOFT
 
     //--------------------------------------------------------------------------
     // GB_PUN: type punning

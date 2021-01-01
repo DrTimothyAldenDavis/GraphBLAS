@@ -453,9 +453,9 @@ break ;
 
     #else
 
-        // all other atomic monoids (boolean EQ, bitwise monoids, etc)
-        // on boolean, signed and unsigned integers, float, and double
-        // (not used for single and double complex).
+        // all other atomic monoids (EQ, XNOR) on boolean, signed and unsigned
+        // integers, float, and double (not used for single and double
+        // complex).
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
         {                                                           \
             GB_CTYPE xold, xnew, *px = Hx + (i) ;                   \

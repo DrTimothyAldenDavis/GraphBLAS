@@ -216,8 +216,16 @@ else
 end
 
 if (ztype_is_real)
-    % all built-in real monoids are atomic
-    fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+    if (omp_atomic || is_any)
+        % on x86: all built-in real monoids are atomic.
+        % The ANY monoid is atomic on any architecture.
+        % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
+        fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+    else
+        % no built-in omp atomic for this monoid.
+        % Do not use atomic compare/exchange unless on the x86.
+        fprintf (f, 'define(`GB_has_atomic'', `GB_X86_64'')\n') ;
+    end
 else
     % complex monoids are not atomic, except for 'plus'
     if (isequal (addop, 'plus'))

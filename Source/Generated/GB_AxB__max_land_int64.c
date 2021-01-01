@@ -35,7 +35,7 @@
 // Multiply: z = ((aik != 0) && (bkj != 0))
 // Add:      if (cij < z) cij = z
 //           'any' monoid?  0
-//           atomic?        1
+//           atomic?        GB_X86_64
 //           OpenMP atomic? 0
 // MultAdd:  int64_t x_op_y = ((aik != 0) && (bkj != 0)) ; cij = GB_IMAX (cij, x_op_y)
 // Identity: INT64_MIN
@@ -161,7 +161,7 @@
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
-    1
+    GB_X86_64
 
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
 #if GB_MICROSOFT

@@ -180,7 +180,6 @@ logstat ('test134',t) ; % quick test of GxB_select
 logstat ('test00',s);   % GB_mex_mis (single threaded)
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
-logstat ('test102',t);  % GB_AxB_saxpy3_flopcount
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
 logstat ('test28',t) ;  % mxm with aliased inputs, C<C> = accum(C,C*C)
 
@@ -333,6 +332,7 @@ logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
 logstat ('test99',t) ;     %   20 % GB_mex_transpose w/ explicit 0s in the Mask
 
 logstat ('test100',t) ;    %    5 % GB_mex_isequal
+logstat ('test102',t);     %    1 % GB_AxB_saxpy3_flopcount
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
 logstat ('test106',t) ;    %    4 % GxB_subassign with alias
