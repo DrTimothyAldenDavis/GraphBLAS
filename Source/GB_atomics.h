@@ -22,6 +22,20 @@
 #endif
 
 //------------------------------------------------------------------------------
+// determine the architecture
+//------------------------------------------------------------------------------
+
+#if __x86_64__
+// on the x86, atomic updates can be more aggresive.  Atomic compare/exchange
+// is used to implement the MIN, MAX, EQ, XNOR, and ANY monoids.
+#define GB_X86_64 1
+#else
+// on the ARM, Power8/9, and others, only use built-in omp atomic.  Do not use
+// atomic compare/exchange.
+#define GB_X86_64 0
+#endif
+
+//------------------------------------------------------------------------------
 // atomic updates
 //------------------------------------------------------------------------------
 
@@ -87,7 +101,7 @@
 
 #else
 
-    #if __x86_64__
+    #if GB_X86_64
 
         // No need for atomic read/write on x86_64.  gcc already treats atomic
         // read/write as plain read/write, so these definitions only affect icc.
