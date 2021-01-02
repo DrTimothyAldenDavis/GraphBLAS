@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_ZOMBIIE_H
-#define GB_ZOMBIIE_H
+#ifndef GB_ZOMBIE_H
+#define GB_ZOMBIE_H
 
 // GB_FLIP is a kind of "negation" about (-1) of a zero-based index.
 // If i >= 0 then it is not flipped.

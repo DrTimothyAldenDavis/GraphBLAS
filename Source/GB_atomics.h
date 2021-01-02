@@ -416,29 +416,7 @@
 
 // TODO:: need macros for when OpenMP is not used at all
 
-#if ( ~GB_X86_64 )
-
-    //--------------------------------------------------------------------------
-    // only use atomic compare/exchange on the x86
-    //--------------------------------------------------------------------------
-
-    // any attempt to use atomic compare/exchange on non-x86 architectures will
-    // result in a compile-time error.  This is intentional, to safe-guard
-    // against their use.
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)    \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)    \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
-        (undefined)
-
-#elif GB_MICROSOFT
+#if GB_MICROSOFT
 
     //--------------------------------------------------------------------------
     // GB_PUN: type punning
@@ -488,7 +466,7 @@
             GB_PUN (int64_t, desired), GB_PUN (int64_t, expected))          \
     )
 
-#else
+#elif GB_X86_64
 
     //--------------------------------------------------------------------------
     // compare/exchange for gcc, icc, and clang on x86
@@ -519,6 +497,31 @@
     // double, int64_t, and uint64_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
             GB_ATOMIC_COMPARE_EXCHANGE_X (target, expected, desired)
+
+#else
+
+    //--------------------------------------------------------------------------
+    // only use atomic compare/exchange on the x86
+    //--------------------------------------------------------------------------
+
+    // any attempt to use atomic compare/exchange on non-x86 architectures will
+    // result in a compile-time error.  This is intentional, to safe-guard
+    // against their use.
+
+    #error "huh?"
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)    \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)    \
+        (undefined)
+
+    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
+        (undefined)
+
 
 #endif
 

@@ -458,15 +458,18 @@ switch (addop)
 
     % boolean monoids (except eq / lxnor)
     case { 'lor' }
+        % TODO: should this be: cx ||= exists && %s ?
         s = sprintf ('cx |= exists & %s', mult2) ;
         idbyte = '0' ;
     case { 'land' }
+        % TODO: should this be: cx &&= !exists || %s ?
         s = sprintf ('cx &= ~exists | %s', mult2) ;
         idbyte = '1' ;
     case { 'lxor' }
         if (isequal (multop, 'pair'))
             s = sprintf ('cx ^= exists') ;
         else
+            % TODO: should this be: cx ^= exists && %s ?
             s = sprintf ('cx ^= exists & %s', mult2) ;
         end
         idbyte = '0' ;
