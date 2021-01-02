@@ -466,7 +466,7 @@
             GB_PUN (int64_t, desired), GB_PUN (int64_t, expected))          \
     )
 
-#elif GB_X86_64
+#elif 1 // GB_X86_64
 
     //--------------------------------------------------------------------------
     // compare/exchange for gcc, icc, and clang on x86
@@ -480,7 +480,7 @@
     // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
         __atomic_compare_exchange (target, &expected, &desired,         \
-            true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)                   \
+            true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)                   \
 
     // bool, int8_t, and uint8_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
@@ -497,6 +497,7 @@
     // double, int64_t, and uint64_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
             GB_ATOMIC_COMPARE_EXCHANGE_X (target, expected, desired)
+
 
 #else
 

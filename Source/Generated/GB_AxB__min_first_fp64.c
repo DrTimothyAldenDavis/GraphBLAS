@@ -35,7 +35,7 @@
 // Multiply: z = aik
 // Add:      if (!isnan (z) && !islessequal (cij, z)) cij = z
 //           'any' monoid?  0
-//           atomic?        GB_X86_64
+//           atomic?        1
 //           OpenMP atomic? 0
 // MultAdd:  cij = fmin (cij, aik)
 // Identity: ((double) INFINITY)
@@ -161,7 +161,7 @@
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
-    GB_X86_64
+    1
 
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
 #if GB_MICROSOFT
