@@ -36,7 +36,7 @@
         // check if any entry in the M(I,J) mask permits any change to C(I,J)
         //----------------------------------------------------------------------
 
-        #if defined ( GB_MASK_IS_SPARSE ) || defined ( GB_MASK_IS_BITMAP )
+        #if GB_MASK_IS_SPARSE_OR_HYPER || GB_MASK_IS_BITMAP_OR_FULL
 
             bool any_update_allowed = false ;
 
@@ -55,13 +55,13 @@
                     // check M(i,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
 
                         // M is sparse or hypersparse
                         int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
 
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
 
                         // M is bitmap or full
                         GB_GET_M_ij (pC) ;
@@ -198,7 +198,7 @@
                     // check M(i,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
 
                         // M is sparse or hypersparse
                         int8_t cb = Cb [pC] ;
@@ -207,7 +207,7 @@
                         if (!mij) continue ;
                         cb = (cb & 1) ;
 
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
 
                         // M is bitmap or full
                         GB_GET_M_ij (pC) ;
@@ -284,7 +284,4 @@
         cnvals += task_cnvals ;
     }
 }
-
-#undef GB_MASK_IS_SPARSE
-#undef GB_MASK_IS_BITMAP
 

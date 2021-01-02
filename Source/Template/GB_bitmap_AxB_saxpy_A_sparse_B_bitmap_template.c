@@ -325,14 +325,14 @@
                         // check M(i,j)
                         //------------------------------------------------------
 
-                        #if defined ( GB_MASK_IS_SPARSE )
+                        #if GB_MASK_IS_SPARSE_OR_HYPER
 
                             // M is sparse or hypersparse
                             bool mij = ((cb & 2) != 0) ^ Mask_comp ;
                             if (!mij) continue ;
                             cb = (cb & 1) ;
 
-                        #elif defined ( GB_MASK_IS_BITMAP )
+                        #elif GB_MASK_IS_BITMAP_OR_FULL
 
                             // M is bitmap or full
                             GB_GET_M_ij (pC) ;
@@ -449,7 +449,7 @@
                     // C<#M>(i,j) += A(i,k) * B(k,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
                     { 
 
                         //------------------------------------------------------
@@ -516,7 +516,7 @@
                     { 
 
                         //------------------------------------------------------
-                        // M is not present, or present as bitmap/full form
+                        // M is not present, or bitmap/full
                         //------------------------------------------------------
 
                         // finite-state machine in Cb [pC]:
@@ -524,7 +524,7 @@
                         // 1:   cij present; can be updated
                         // 7:   cij is locked
 
-                        #if defined ( GB_MASK_IS_BITMAP )
+                        #if GB_MASK_IS_BITMAP_OR_FULL
                         { 
                             // M is bitmap or full, and not in C bitmap.
                             // Do not modify C(i,j) if not permitted by the mask
@@ -689,7 +689,7 @@
                     // check M(i,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
                     { 
                         // M is sparse or hypersparse
                         int64_t pC = pC_start + i ;
@@ -697,7 +697,7 @@
                         bool mij = ((cb & 2) != 0) ^ Mask_comp ;
                         if (!mij) continue ;
                     }
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
                     { 
                         // M is bitmap or full
                         int64_t pC = pC_start + i ;
@@ -805,7 +805,7 @@
                     // M(i,j) already checked, but adjust Cb if M is sparse
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
                     { 
                         // M is sparse or hypersparse
                         cb = (cb & 1) ;

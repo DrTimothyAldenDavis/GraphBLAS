@@ -222,7 +222,7 @@ if (ztype_is_real)
         % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
         fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
     else
-        % no built-in omp atomic for this monoid.
+        % no built-in OpenMP atomic pragma for this monoid.
         % Do not use atomic compare/exchange unless on the x86.
         fprintf (f, 'define(`GB_has_atomic'', `GB_X86_64'')\n') ;
     end

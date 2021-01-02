@@ -7044,16 +7044,16 @@ GB_PUBLIC GrB_Monoid
 // 300 semirings with a comparison operator TxT -> bool, where T is
 // non-Boolean, from the complete cross product of:
 
-//      5 Boolean monoids: LAND, LOR, LXOR, EQ, ANY
+//      5 Boolean monoids: LAND, LOR, LXOR, EQ (=LXNOR), ANY
 //      6 multiply operators: EQ, NE, GT, LT, GE, LE
 //      10 non-Boolean real types, T
 
 // 55 semirings with purely Boolean types, bool x bool -> bool, from the
 // complete cross product of:
 
-//      5 Boolean monoids LAND, LOR, LXOR, EQ, ANY
+//      5 Boolean monoids LAND, LOR, LXOR, EQ (=LXNOR), ANY
 //      11 multiply operators:
-//          FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE, PAIR
+//          FIRST, SECOND, LOR, LAND, LXOR, EQ (=LXNOR), GT, LT, GE, LE, PAIR
 //
 //      Note that lor_pair, land_pair, and eq_pair are all identical to
 //      any_pair.  These 3 semirings are named below, but are internally
@@ -7361,6 +7361,10 @@ GB_PUBLIC GrB_Semiring
 // 300 semirings with a comparison operator TxT -> bool, where T is non-Boolean
 //------------------------------------------------------------------------------
 
+    // In the 4th column the GxB_EQ_*_* semirings could also be called
+    // GxB_LXNOR_*_*, since the EQ and LXNOR boolean operators are identical
+    // but those names are not included.
+
     // semirings with multiply op: z = EQ (x,y), where z is boolean and x,y are given by the suffix:
     GxB_LOR_EQ_INT8        , GxB_LAND_EQ_INT8       , GxB_LXOR_EQ_INT8       , GxB_EQ_EQ_INT8         , GxB_ANY_EQ_INT8        ,
     GxB_LOR_EQ_INT16       , GxB_LAND_EQ_INT16      , GxB_LXOR_EQ_INT16      , GxB_EQ_EQ_INT16        , GxB_ANY_EQ_INT16       ,
@@ -7438,7 +7442,9 @@ GB_PUBLIC GrB_Semiring
 //------------------------------------------------------------------------------
 
     // Note that lor_pair, land_pair, and eq_pair are all identical to any_pair.
-    // These 3 are marked below.
+    // These 3 are marked below.  GxB_EQ_*_BOOL could be called
+    // GxB_LXNOR_*_BOOL, and GxB_*_EQ_BOOL could be called GxB_*_LXNOR_BOOL,
+    // but those names are not included.
 
     // purely boolean semirings in the form GxB_(add monoid)_(multipy operator)_BOOL:
     GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     ,

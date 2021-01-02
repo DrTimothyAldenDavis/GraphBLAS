@@ -413,14 +413,14 @@
                     //----------------------------------------------------------
 
                     #undef GB_IF_MIJ
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
 
                         // M is sparse or hypersparse
                         bool mij = ((cb & 2) != 0) ^ Mask_comp ;
                         cb = (cb & 1) ;
                         #define GB_IF_MIJ if (mij)
 
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
 
                         // M is bitmap or full
                         GB_GET_M_ij (pC) ;

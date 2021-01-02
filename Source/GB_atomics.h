@@ -8,8 +8,9 @@
 //------------------------------------------------------------------------------
 
 // All atomic operations used by SuiteSparse:GraphBLAS appear in this file.
+
 // These atomic operations assume either an ANSI C11 compiler that supports
-// OpenMP 4.0 or later, or Microsoft Visual Studio on 64-bit Windows (which
+// OpenMP 3.1 or later, or Microsoft Visual Studio on 64-bit Windows (which
 // only supports OpenMP 2.0).  SuiteSparse:GraphBLAS is not supported on 32-bit
 // Windows.
 
@@ -17,22 +18,24 @@
 #define GB_ATOMICS_H
 #include "GB.h"
 
-#if GB_MICROSOFT
-#include <intrin.h>
-#endif
-
 //------------------------------------------------------------------------------
 // determine the architecture
 //------------------------------------------------------------------------------
 
 #if __x86_64__
-// on the x86, atomic updates can be more aggresive.  Atomic compare/exchange
-// is used to implement the MIN, MAX, EQ, XNOR, and ANY monoids.
-#define GB_X86_64 1
+
+    // on the x86, atomic updates can be more aggresive.  The MIN, MAX, EQ,
+    // XNOR, and ANY monoids are implemented with atomic compare/exchange.
+
+    #define GB_X86_64 1
+
 #else
-// on the ARM, Power8/9, and others, only use built-in omp atomic.  Do not use
-// atomic compare/exchange.
-#define GB_X86_64 0
+
+    // on the ARM, Power8/9, and others, only use built-in #pragma omp atomic
+    // updates.  Do not use atomic compare/exchange.
+
+    #define GB_X86_64 0
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -40,7 +43,7 @@
 //------------------------------------------------------------------------------
 
 // Whenever possible, the OpenMP pragma is used with a clause (as introduced in
-// OpenMP 3.0), as follow:
+// OpenMP 3.1), as follow:
 //
 //      #pragma omp atomic [clause]
 //
@@ -72,54 +75,74 @@
 //
 // As a result, the atomic updates are the same for gcc and icc (which support
 // OpenMP 3.0 or later) with the "update" clause.  For MS Visual Studio, the
-// "update" clause is removed.
+// "update" clause is removed since it supports OpenMP 2.0.
 
-#if GB_MICROSOFT
-    // MS Visual Studio does not support the "update" clause
-    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic)
-#else
-    // assume OpenMP 3.0 or later
+#if ( _OPENMP >= 201307 )
+
+    // OpenMP 4.0 or later
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update seq_cst)
+
+#elif ( _OPENMP >= 201107 )
+
+    // OpenMP 3.1
     #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update)
+
+#elif ( _OPENMP >= 199810 )
+
+    // OpenMP 1.0 to 3.0: no optional clauses, "update" is assumed
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic)
+
+#else
+
+    // no OpenMP at all
+    #define GB_ATOMIC_UPDATE
+
 #endif
 
 //------------------------------------------------------------------------------
-// atomic reads and writes
+// atomic read and write
 //------------------------------------------------------------------------------
 
-#if GB_MICROSOFT
+// In Microsoft Visual Studio, simple reads and writes to properly aligned
+// 64-bit values are already atomic on 64-bit Windows for any architecture
+// supported by Windows (any Intel or ARM architecture). See:
+// https://docs.microsoft.com/en-us/windows/win32/sync/interlocked-variable-access
+// SuiteSparse:GraphBLAS is not supported on 32-bit Windows.  Thus, there
+// is no need for atomic reads/writes when compiling GraphBLAS on Windows
+// with MS Visual Studio.
 
-    // In Microsoft Visual Studio, simple reads and writes to properly aligned
-    // 64-bit values are already atomic on 64-bit Windows for any architecture
-    // supported by Windows (any Intel or ARM architecture). See:
-    // https://docs.microsoft.com/en-us/windows/win32/sync/interlocked-variable-access
-    // SuiteSparse:GraphBLAS is not supported on 32-bit Windows.  Thus, there
-    // is no need for atomic reads/writes when compiling GraphBLAS on Windows
-    // with MS Visual Studio.
+// ARM, Power8/9, and others need the explicit atomic read/write.
+// x86: no atomic read/write is needed.
 
+#if GB_X86_64
+
+    // x86: no atomic read/write is needed.
     #define GB_ATOMIC_READ
     #define GB_ATOMIC_WRITE
 
+#elif ( _OPENMP >= 201811 )
+
+    // OpenMP 5.0 or later
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
+
+#elif ( _OPENMP >= 201307 )
+
+    // OpenMP 4.0 and 4.5
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read seq_cst)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write seq_cst)
+
+#elif ( _OPENMP >= 201107 )
+
+    // OpenMP 3.1
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
+
 #else
 
-    #if GB_X86_64
-
-        // No need for atomic read/write on x86_64.  gcc already treats atomic
-        // read/write as plain read/write, so these definitions only affect icc.
-        #define GB_ATOMIC_READ
-        #define GB_ATOMIC_WRITE
-
-    #else
-
-        // ARM, Power8/9, and others need the explicit atomic read/write
-        #if ( _OPENMP > 201811 )
-            // acquire/release clauses require OpenMP 5.0 (version 201811)
-            #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
-            #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
-        #else
-            #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-            #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
-        #endif
-    #endif
+    // OpenMP 3.0 or earlier, or no OpenMP at all
+    #define GB_ATOMIC_READ
+    #define GB_ATOMIC_WRITE
 
 #endif
 
@@ -127,7 +150,17 @@
 // flush
 //------------------------------------------------------------------------------
 
-#define GB_OMP_FLUSH GB_PRAGMA (omp flush)
+#if defined ( _OPENMP )
+
+    // All versions of OpenMP have the #pragma omp flush
+    #define GB_OMP_FLUSH GB_PRAGMA (omp flush)
+
+#else
+
+    // no OpenMP at all
+    #define GB_OMP_FLUSH
+
+#endif
 
 //------------------------------------------------------------------------------
 // atomic capture
@@ -136,13 +169,14 @@
 // An atomic capture loads the prior value of the target into a thread-local
 // result, and then overwrites the target with the new value.  The target is a
 // value that is shared between threads.  The value and result arguments are
-// thread-local.  SuiteSparse:GraphBLAS uses three atomic captures,
+// thread-local.  SuiteSparse:GraphBLAS uses four atomic capture methods,
 // defined below, of the form:
 //
 //      { result = target ; target = value ; }      for int64_t and int8_t
 //      { result = target ; target |= value ; }     for int64_t
+//      { result = target++ ; }                     for int64_t
 //
-// OpenMP 4.0 and later supports atomic captures with a "capture" clause: 
+// OpenMP 3.1 and later supports atomic captures with a "capture" clause: 
 //
 //      #pragma omp atomic capture
 //      { result = target ; target = value ; }
@@ -158,6 +192,29 @@
 //
 // https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedexchange-intrinsic-functions
 // https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedor-intrinsic-functions
+
+#if ( _OPENMP >= 201307 )
+
+    // OpenMP 4.0 or later
+    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture seq_cst)
+
+#elif ( _OPENMP >= 201107 )
+
+    // OpenMP 3.1
+    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture)
+
+#elif ( _OPENMP >= 199810 )
+
+    // OpenMP 1.0 to 3.0: generate an intentional compile-time error if any
+    // attempt is made to use the atomic capture.
+    #define GB_ATOMIC_CAPTURE atomic capture not available
+
+#else
+
+    // no OpenMP at all
+    #define GB_ATOMIC_CAPTURE
+
+#endif
 
     //--------------------------------------------------------------------------
     // atomic capture for int64_t
@@ -178,7 +235,7 @@
 
         #define GB_ATOMIC_CAPTURE_INT64(result, target, value)          \
         {                                                               \
-            GB_PRAGMA (omp atomic capture)                              \
+            GB_ATOMIC_CAPTURE                                           \
             {                                                           \
                 result = target ;                                       \
                 target = value ;                                        \
@@ -206,7 +263,7 @@
 
         #define GB_ATOMIC_CAPTURE_INT8(result, target, value)           \
         {                                                               \
-            GB_PRAGMA (omp atomic capture)                              \
+            GB_ATOMIC_CAPTURE                                           \
             {                                                           \
                 result = target ;                                       \
                 target = value ;                                        \
@@ -234,7 +291,7 @@
 
         #define GB_ATOMIC_CAPTURE_INT64_OR(result, target, value)       \
         {                                                               \
-            GB_PRAGMA (omp atomic capture)                              \
+            GB_ATOMIC_CAPTURE                                           \
             {                                                           \
                 result = target ;                                       \
                 target |= value ;                                       \
@@ -243,17 +300,19 @@
 
     #endif
 
-//------------------------------------------------------------------------------
-// atomic post-increment
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // atomic post-increment
+    //--------------------------------------------------------------------------
 
-// Increment an int64_t value and return the value prior to being incremented:
-//
-//      int64_t result = target++ ;
-//
-// See https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedincrement-intrinsic-functions?view=msvc-160
-// The MS Visual Studio version computes result = ++target, so result must be
-// decremented by one.
+    // Increment an int64_t value and return the value prior to being
+    // incremented:
+    //
+    //      int64_t result = target++ ;
+    //
+    // See
+    // https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedincrement-intrinsic-functions?view=msvc-160
+    // The MS Visual Studio version computes result = ++target, so result must
+    // be decremented by one.
 
     #if GB_MICROSOFT
 
@@ -267,7 +326,7 @@
 
         #define GB_ATOMIC_CAPTURE_INC64(result,target)                  \
         {                                                               \
-            GB_PRAGMA (omp atomic capture)                              \
+            GB_ATOMIC_CAPTURE                                           \
             result = (target)++ ;                                       \
         }
 
@@ -355,15 +414,18 @@
 // Type punning is used to extend these signed integer types to unsigned
 // integers of the same number of bytes, and to float and double.
 
+// TODO:: need macros for when OpenMP is not used at all
+
 #if ( ~GB_X86_64 )
 
     //--------------------------------------------------------------------------
     // only use atomic compare/exchange on the x86
     //--------------------------------------------------------------------------
 
-    // any attempt to use atomic compare/exchange on non-x86 architectures
-    // will result in a compile-time error.  This is intentional, to safe
-    // guard against their use.
+    // any attempt to use atomic compare/exchange on non-x86 architectures will
+    // result in a compile-time error.  This is intentional, to safe-guard
+    // against their use.
+
     #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
         (undefined)
 
@@ -429,8 +491,13 @@
 #else
 
     //--------------------------------------------------------------------------
-    // compare/exchange for gcc, icc, and clang
+    // compare/exchange for gcc, icc, and clang on x86
     //--------------------------------------------------------------------------
+
+    // TODO:: check performance of __ATOMIC_SEQ_CST and use it if it is just
+    // as fast on the GAP benchmarks.
+
+    // TODO:: try this on Power8
 
     // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
