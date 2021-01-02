@@ -89,8 +89,12 @@
 
 #endif
 
+// disable warnings for clang
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wpointer-sign"
+#endif
+
 #if ( _MSC_VER && !__INTEL_COMPILER )
 // disable MS Visual Studio warnings
 #pragma warning(disable:4146)
 #endif
-
