@@ -508,8 +508,6 @@
     // result in a compile-time error.  This is intentional, to safe-guard
     // against their use.
 
-    #error "huh?"
-
     #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
         (undefined)
 
