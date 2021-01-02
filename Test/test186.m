@@ -8,7 +8,7 @@ fprintf ('test186 --------------- C<!M>A*B for all sparsity formats\n') ;
 
 rng ('default') ;
 
-GrB.burble (0) ;
+GrB.burble (1) ;
 
 load west0479 ;
 A.matrix = west0479 ;
@@ -33,7 +33,6 @@ for A_sparsity = [1 2 4 8]
     for B_sparsity = [1 2 4 8]
         A.sparsity = A_sparsity ;
         B.sparsity = B_sparsity ;
-        fprintf ('.') ;
         % C2<!M> = A*B
         C3 = double (~M) .* (A.matrix * B.matrix) ;
         C2 = GB_mex_mxm  (C0, M, [ ], semiring, A, B, desc) ;

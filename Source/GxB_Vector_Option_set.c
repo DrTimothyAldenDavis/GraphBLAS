@@ -67,9 +67,9 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     // conform the vector to its new desired sparsity structure
     //--------------------------------------------------------------------------
 
-    info = GB_conform ((GrB_Matrix) v, Context) ;
+    GB_OK (GB_conform ((GrB_Matrix) v, Context)) ;
     GB_BURBLE_END ;
-    if (info == GrB_SUCCESS) ASSERT_VECTOR_OK (v, "v set", GB0) ;
+    ASSERT_VECTOR_OK (v, "v set", GB0) ;
     return (info) ;
 }
 

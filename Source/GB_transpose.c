@@ -230,7 +230,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
     GrB_UnaryOp  op1 = NULL ;
     GrB_BinaryOp op2 = NULL ;
-    GB_Opcode opcode = GB_ignore_code ;
+    GB_Opcode opcode = GB_NOP_opcode ;
 
     if (op1_in != NULL)
     {

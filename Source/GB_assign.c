@@ -149,7 +149,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if ((GB_IS_BITMAP (C) || GB_IS_FULL (C)) && C_replace_phase)
     { 
         // GB_subassigner_method might not select the bitmap assignment
-        subassign_method == GB_SUBASSIGN_METHOD_BITMAP ;
+        subassign_method = GB_SUBASSIGN_METHOD_BITMAP ;
     }
 
     //--------------------------------------------------------------------------

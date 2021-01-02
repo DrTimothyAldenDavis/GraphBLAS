@@ -109,7 +109,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
-    GB_Opcode opcode = (op == NULL) ? GB_ignore_code : op->opcode ;
+    GB_Opcode opcode = (op == NULL) ? GB_NOP_opcode : op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_opcode) ;
     bool op_is_second = (opcode == GB_SECOND_opcode) ;

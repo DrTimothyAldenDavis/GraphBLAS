@@ -1,4 +1,4 @@
-% function test185
+function test185
 %TEST185 test dot4 for all sparsity formats
 % GB_AxB_dot4 computes C+=A'*B when C is dense.
 

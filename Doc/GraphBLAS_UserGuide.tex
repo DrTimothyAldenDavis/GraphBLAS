@@ -11906,10 +11906,9 @@ instead.
 \begin{alert}
 {\bf NOTE:} icc is generally an excellent compiler, but it will generate slower
 code than gcc for SuiteSparse:GraphBLAS v3.2.0 and later.  This is because of
-how the two compilers treat \verb'#pragma omp atomic read' and
-\verb'#pragma omp atomic write'.  The use of gcc for SuiteSparse:GraphBLAS
-v3.2.0 and later is recommended.  Atomics are slower in icc as compared to
-gcc.
+how the two compilers treat \verb'#pragma omp atomic' The use of gcc for
+SuiteSparse:GraphBLAS v3.2.0 and later is recommended.  Atomics are slower in
+icc as compared to gcc.
 \end{alert}
 
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'

@@ -387,18 +387,8 @@
             double relwspace = workspace / fmax (anz + bnz + cnz, 1) ;
             GBURBLE ("(fine, threads: %d, relwspace: %0.3g, intensity: %0.3g",
                 nthreads, relwspace, intensity) ;
-
-            bool non_atomic =
-               ((intensity > 64 && relwspace < 0.05) ||
-                (intensity > 16 && intensity <= 64 && relwspace < 0.50)) ;
-
-            // HACK
-            if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
-            {
-                non_atomic = true ;
-            }
-
-            if (non_atomic)
+            if ((intensity > 64 && relwspace < 0.05) ||
+                (intensity > 16 && intensity <= 64 && relwspace < 0.50))
             { 
                 // non-atomic method with workspace
                 use_atomics = false ;

@@ -199,7 +199,6 @@ logstat ('test17',t) ;  % quick test of GrB_*_extractElement
 logstat ('test143',t) ; % mxm, special cases
 logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
-logstat ('test12',t) ;  % Wathen finite-element matrices (short test)
 logstat ('test77',t) ;  % quick tests of GrB_kronecker
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 
@@ -247,6 +246,7 @@ logstat ('test08',t) ;     %   35 % quick test GB_mex_subassign
 logstat ('test08b',t) ;    %      % quick test GB_mex_assign
 logstat ('test09b',t) ;    %      % duplicate I,J test of GB_mex_assign
 
+logstat ('test12',t) ;     %      % Wathen finite-element matrices (short test)
 logstat ('test12(0)',t) ;  %      % Wathen finite-element matrices (full test)
 logstat ('test13',t) ;     %      % simple tests of GB_mex_transpose
 logstat ('test18(1)',t) ;  %      % lengthy tests of GrB_eWiseAdd and eWiseMult
