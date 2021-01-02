@@ -341,7 +341,7 @@
 // OpenMP would be used for these atomic operation, but they are not supported.
 // So compiler-specific functions are used instead.
 
-// In gcc and icc, the atomic compare-and-exchange function
+// In gcc, icc, and clang, the atomic compare-and-exchange function
 // __atomic_compare_exchange computes the following, as a single atomic
 // operation, where type_t is any 8, 16, 32, or 64 bit scalar type.  In
 // SuiteSparse:GraphBLAS, type_t can be bool, int8_t, uint8_t, int16_t,
@@ -353,8 +353,8 @@
 //          type_t *expected,       // input/output
 //          type_t *desired,        // input only, even though it is a pointer
 //          bool weak,              // true, for SuiteSparse:GraphBLAS
-//          int success_memorder,   // __ATOMIC_RELAXED for SuiteSparse:GrB
-//          int failure_memorder    // __ATOMIC_RELAXED for SuiteSparse:GrB
+//          int success_memorder,   // __ATOMIC_SEQ_CST for SuiteSparse:GrB
+//          int failure_memorder    // __ATOMIC_SEQ_CST for SuiteSparse:GrB
 //      )
 //      {
 //          bool result ;
@@ -377,11 +377,6 @@
 // 'expected = target' assignment if the result is false.  It ignores the
 // value of 'expected' after the operation completes.   The target, expected,
 // and desired parameters are all provided as pointers:
-//
-// __atomic_compare_exchange also includes parameters that define the memory
-// model.  SuiteSparse:GraphBLAS can use the most relaxed settings for these
-// parameters (weak is true, and the memorder parameters are both
-// __ATOMIC_RELAXED).
 //
 // See https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
 
@@ -413,8 +408,6 @@
 //
 // Type punning is used to extend these signed integer types to unsigned
 // integers of the same number of bytes, and to float and double.
-
-// TODO:: need macros for when OpenMP is not used at all
 
 #if GB_MICROSOFT
 
@@ -466,16 +459,16 @@
             GB_PUN (int64_t, desired), GB_PUN (int64_t, expected))          \
     )
 
-#elif 1 // GB_X86_64
+#else
 
     //--------------------------------------------------------------------------
-    // compare/exchange for gcc, icc, and clang on x86
+    // compare/exchange for gcc, icc, and clang on x86 and Power8/9
     //--------------------------------------------------------------------------
 
     // TODO:: check performance of __ATOMIC_SEQ_CST and use it if it is just
     // as fast on the GAP benchmarks.
 
-    // TODO:: try this on Power8
+    // TODO:: try this on the Mac, with clang and gcc
 
     // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
@@ -497,29 +490,6 @@
     // double, int64_t, and uint64_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
             GB_ATOMIC_COMPARE_EXCHANGE_X (target, expected, desired)
-
-
-#else
-
-    //--------------------------------------------------------------------------
-    // only use atomic compare/exchange on the x86
-    //--------------------------------------------------------------------------
-
-    // any attempt to use atomic compare/exchange on non-x86 architectures will
-    // result in a compile-time error.  This is intentional, to safe-guard
-    // against their use.
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_16(target, expected, desired)    \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_32(target, expected, desired)    \
-        (undefined)
-
-    #define GB_ATOMIC_COMPARE_EXCHANGE_64(target, expected, desired)    \
-        (undefined)
 
 
 #endif
