@@ -140,7 +140,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             }
         }
         info = GB_apply_op (C->x, op1,      // positional unary op only
-            NULL, NULL, NULL, B, Context) ;
+            NULL, NULL, false, B, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

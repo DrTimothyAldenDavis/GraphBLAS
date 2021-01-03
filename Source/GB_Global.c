@@ -144,14 +144,14 @@ GB_Global_struct GB_Global =
     .chunk = GB_CHUNK_DEFAULT,
 
     // min dimension                density
-    #define GB_BITSWITCH_1          0.04
-    #define GB_BITSWITCH_2          0.05
-    #define GB_BITSWITCH_3_to_4     0.06
-    #define GB_BITSWITCH_5_to_8     0.08
-    #define GB_BITSWITCH_9_to_16    0.10
-    #define GB_BITSWITCH_17_to_32   0.20
-    #define GB_BITSWITCH_33_to_64   0.30
-    #define GB_BITSWITCH_gt_than_64 0.40
+    #define GB_BITSWITCH_1          ((float) 0.04)
+    #define GB_BITSWITCH_2          ((float) 0.05)
+    #define GB_BITSWITCH_3_to_4     ((float) 0.06)
+    #define GB_BITSWITCH_5_to_8     ((float) 0.08)
+    #define GB_BITSWITCH_9_to_16    ((float) 0.10)
+    #define GB_BITSWITCH_17_to_32   ((float) 0.20)
+    #define GB_BITSWITCH_33_to_64   ((float) 0.30)
+    #define GB_BITSWITCH_gt_than_64 ((float) 0.40)
 
     // default format
     .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
@@ -725,14 +725,14 @@ int GB_Global_gpu_sm_get (int device)
 bool GB_Global_gpu_device_pool_size_set( int device, size_t size)
 {
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
-    GB_Global.gpu_properties[device].pool_size = size;
+    GB_Global.gpu_properties [device].pool_size = (int) size ;
     return( true); 
 }
 
 bool GB_Global_gpu_device_max_pool_size_set( int device, size_t size)
 {
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
-    GB_Global.gpu_properties[device].max_pool_size = size;
+    GB_Global.gpu_properties[device].max_pool_size = (int) size ;
     return( true); 
 }
 

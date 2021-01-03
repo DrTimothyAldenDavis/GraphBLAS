@@ -45,8 +45,8 @@ typedef struct
     int  compute_capability_major;
     int  compute_capability_minor;
     bool use_memory_pool;
-    int  pool_size;
-    int  max_pool_size;
+    int  pool_size;             // TODO: should this be size_t?
+    int  max_pool_size;         // TODO: should this be size_t?
     void *memory_resource;
 }
 GB_cuda_device ;

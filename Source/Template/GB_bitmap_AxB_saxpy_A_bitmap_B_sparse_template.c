@@ -79,7 +79,7 @@
             // an explicit loop is required to set Hx to identity
             // TODO: should each task initialize its own Hf and Hx,
             // and use a static schedule here and for H=G*B?
-            GB_CTYPE *GB_RESTRICT Hx = Wcx ;
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) Wcx ;
             int64_t pH ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pH = 0 ; pH < wcsize ; pH++)
@@ -137,7 +137,8 @@
                 int64_t kstart, kend ; 
                 GB_PARTITION (kstart, kend, avdim, b_tid, nbslice) ;
                 int8_t   *GB_RESTRICT Gb = Wf  + (a_tid * afpanel_size) ;
-                GB_ATYPE *GB_RESTRICT Gx = Wax + (a_tid * axpanel_size) ;
+                GB_ATYPE *GB_RESTRICT Gx = (GB_ATYPE *)
+                    (Wax + (a_tid * axpanel_size)) ;
 
                 //--------------------------------------------------------------
                 // load A for this panel
@@ -255,7 +256,8 @@
             }
 
             int8_t   *GB_RESTRICT Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
-            GB_CTYPE *GB_RESTRICT Hx = Wcx + (a_tid * hpanel_size) * GB_CSIZE ;
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+                (Wcx + (a_tid * hpanel_size) * GB_CSIZE) ;
             GB_XINIT ;  // for plus, bor, band, and bxor monoids only
 
             //------------------------------------------------------------------
@@ -385,7 +387,8 @@
             GB_PARTITION (kstart, kend, bnvec, b_tid, nbslice) ;
 
             int8_t   *GB_RESTRICT Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
-            GB_CTYPE *GB_RESTRICT Hx = Wcx + (a_tid * hpanel_size) * GB_CSIZE ;
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+                (Wcx + (a_tid * hpanel_size) * GB_CSIZE) ;
 
             //------------------------------------------------------------------
             // C<#M>(metapanel,j1:j2-1) += H (:,kstart:kend-1)

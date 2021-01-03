@@ -30,7 +30,6 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     (*ntasks) = 1 ;
     (*nfine) = 0 ;
     (*nthreads) = 1 ;

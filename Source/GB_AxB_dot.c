@@ -64,7 +64,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
 

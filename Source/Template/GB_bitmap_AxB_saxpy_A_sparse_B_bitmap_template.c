@@ -99,7 +99,8 @@
 
             // Hf and Hx workspace to compute the panel of C
             int8_t   *GB_RESTRICT Hf = Wf  + (H_slice [tid] * cvlen) + gfspace ;
-            GB_CTYPE *GB_RESTRICT Hx = Wcx +  H_slice [tid] * cvlenx ;
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+                ((GB_void *) Wcx +  H_slice [tid] * cvlenx) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -159,7 +160,8 @@
                     if (np == 1)
                     {
                         // no need to load a single vector of B
-                        Gx = (GB_BTYPE *) (B->x + (j1 * bvlen) * GB_BSIZE) ;
+                        GB_void *GB_RESTRICT Bx = B->x ;
+                        Gx = (GB_BTYPE *) (Bx + (j1 * bvlen) * GB_BSIZE) ;
                     }
                     else
                     {
@@ -407,7 +409,8 @@
             int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
-            GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Cx) + (pC_start * GB_CSIZE);
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+                (((GB_void *) Cx) + (pC_start * GB_CSIZE)) ;
             #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -649,7 +652,8 @@
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t   *GB_RESTRICT Hf = Wf + pW_start ;
-            GB_CTYPE *GB_RESTRICT Hx = Wcx + (pW_start * cxsize) ;
+            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) 
+                ((GB_void *) Wcx + (pW_start * cxsize)) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -767,7 +771,7 @@
             int64_t task_cnvals = 0 ;
 
             // Hx = (typecasted) Wcx workspace, use Wf as-is
-            GB_CTYPE *GB_RESTRICT Hx = ((GB_void *) Wcx) ;
+            GB_CTYPE *GB_RESTRICT Hx = ((GB_CTYPE *) Wcx) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;

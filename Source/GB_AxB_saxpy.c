@@ -39,8 +39,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
     (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
