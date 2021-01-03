@@ -24,6 +24,7 @@
 
 #include "GB_mask.h"
 #include "GB_ek_slice.h"
+#include "GB_unused.h"
 
 #undef  GB_FREE_WORK
 #define GB_FREE_WORK                                                    \

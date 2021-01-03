@@ -84,6 +84,10 @@
 #define GB_CTYPE_CAST(x,y) \
     ((double) x)
 
+// cast from a real scalar (or 2, if A is complex) to the type of A
+#define GB_ATYPE_CAST(x,y) \
+    ((double) x)
+
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     z = fmax (z, x)

@@ -171,8 +171,8 @@
                                 #if GB_HAS_BITMAP_MULTADD
                                 else
                                 { 
-                                    // clear Gx (ii,k)
-                                    Gx [pG] = 0 ;
+                                    // Gx (ii,k) = 0
+                                    Gx [pG] = GB_ATYPE_CAST (0, 0) ;
                                 }
                                 #endif
                             }

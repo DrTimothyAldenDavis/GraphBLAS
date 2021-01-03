@@ -84,6 +84,10 @@
 #define GB_CTYPE_CAST(x,y) \
     GB_ctype_cast(x,y)
 
+// cast from a real scalar (or 2, if A is complex) to the type of A
+#define GB_ATYPE_CAST(x,y) \
+    GB_atype_cast(x,y)
+
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     GB_multiply_add(z, x, y, i, k, j)

@@ -134,6 +134,16 @@ switch (ztype)
         fprintf (f, 'define(`GB_ctype_cast'', `((GB_ctype) $1)'')\n') ;
 end
 
+% simple typecast from 1 (or 2) real scalars to any other type
+switch (xytype)
+    case { 'GxB_FC32_t' }
+        fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
+    case { 'GxB_FC64_t' }
+        fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_atype_cast'', `((GB_atype) $1)'')\n') ;
+end
+
 % identity and terminal values for the monoid
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
@@ -628,7 +638,7 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
-nprune = 51 ;
+nprune = 52 ;
 
 % construct the *.c file
 cmd = sprintf (...

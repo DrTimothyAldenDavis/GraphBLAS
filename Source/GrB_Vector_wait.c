@@ -30,7 +30,6 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     // finish all pending work on the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     GB_MATRIX_WAIT (*v) ;
 
     //--------------------------------------------------------------------------

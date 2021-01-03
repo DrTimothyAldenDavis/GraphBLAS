@@ -84,6 +84,10 @@
 #define GB_CTYPE_CAST(x,y) \
     GxB_CMPLX (((double) x), ((double) y))
 
+// cast from a real scalar (or 2, if A is complex) to the type of A
+#define GB_ATYPE_CAST(x,y) \
+    GxB_CMPLX (((double) x), ((double) y))
+
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     GxB_FC64_t x_op_y = GB_FC64_mul (x, y) ; z = GB_FC64_add (z, x_op_y)

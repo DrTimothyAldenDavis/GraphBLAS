@@ -67,7 +67,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
 {
     
     GrB_Type type ;
-    GrB_Index nrows, ncols, nvals, nvec ;
+    GrB_Index nrows, ncols, nvec ;
     GrB_Index *Ap = NULL, *Ah = NULL, *Ai = NULL, *Aj = NULL ;
     GrB_Index Ap_size = 0 ;
     GrB_Index Ah_size = 0 ;
@@ -75,7 +75,6 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
     GrB_Index Ai_size = 0 ;
     GrB_Index Aj_size = 0 ;
     GrB_Index Ax_size = 0 ;
-    int64_t ignore ;
     bool jumbled ;
 
     void *Ax = NULL ;

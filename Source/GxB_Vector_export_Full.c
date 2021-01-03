@@ -40,7 +40,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT (*v) ;
-    if (!GB_is_dense (*v))
+    if (!GB_is_dense ((GrB_Matrix) (*v)))
     { 
         // v must be dense or full
         return (GrB_INVALID_VALUE) ;

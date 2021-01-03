@@ -84,6 +84,10 @@
 #define GB_CTYPE_CAST(x,y) \
     ((int8_t) x)
 
+// cast from a real scalar (or 2, if A is complex) to the type of A
+#define GB_ATYPE_CAST(x,y) \
+    ((int8_t) x)
+
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     int8_t x_op_y = (x - y) ; z += x_op_y
