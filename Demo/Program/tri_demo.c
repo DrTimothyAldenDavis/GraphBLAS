@@ -229,7 +229,6 @@ int main (int argc, char **argv)
 
         double t_mark [2] = { 0, 0 } ;
         OK (tricount (&ntri1 [nthreads], 3, NULL, NULL, L, NULL, t_mark)) ;
-        printf ("triangles, method 3: %0.16g\n", (double) ntri1 [nthreads]) ;
         if (ntri1 [nthreads] != nt)
         {
             printf ("error 3!\n") ;
