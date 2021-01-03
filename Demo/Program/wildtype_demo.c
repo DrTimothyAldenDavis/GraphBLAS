@@ -355,7 +355,7 @@ int main (void)
     if (info != GrB_SUCCESS)
     {
         char *s ;
-        GrB_error (&s, C) ;
+        GrB_Matrix_error (&s, C) ;
         printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n", s);
     }
 

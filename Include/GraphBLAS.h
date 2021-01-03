@@ -8117,6 +8117,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 // GxB_Matrix_import_CSC: import a CSC matrix
 //------------------------------------------------------------------------------
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 (
     GrB_Matrix *A,      // handle of matrix to create
