@@ -1,5 +1,5 @@
 TODO:: MATLAB @GrB test coverage
 TODO:: publish Windows10 MATLAB demos in demo/html, and mxm_demo 
 TODO:: Tcov to 100%
-TODO:: check port to Windows, Mac, Power8
+TODO:: check port to Windows
 TODO:: test with no OpenMP at all

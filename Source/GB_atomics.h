@@ -465,11 +465,6 @@
     // compare/exchange for gcc, icc, and clang on x86 and Power8/9
     //--------------------------------------------------------------------------
 
-    // TODO:: check performance of __ATOMIC_SEQ_CST and use it if it is just
-    // as fast on the GAP benchmarks.
-
-    // TODO:: try this on the Mac, with clang and gcc
-
     // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
         __atomic_compare_exchange (target, &expected, &desired,         \
