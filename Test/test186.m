@@ -20,6 +20,10 @@ semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
 semiring.class = 'double' ;
 
+any_pair.add = 'any' ;
+any_pair.multiply = 'pair' ;
+any_pair.class = 'double' ;
+
 C0 = sparse (m, 1) ;
 maxerr = 0 ;
 
@@ -33,9 +37,17 @@ for A_sparsity = [1 2 4 8]
     for B_sparsity = [1 2 4 8]
         A.sparsity = A_sparsity ;
         B.sparsity = B_sparsity ;
-        % C2<!M> = A*B
+
+        % C2<!M> = A*B using the conventional semiring
         C3 = double (~M) .* (A.matrix * B.matrix) ;
         C2 = GB_mex_mxm  (C0, M, [ ], semiring, A, B, desc) ;
+        err = norm (C3 - C2.matrix, 1) / norm (C3, 1) ;
+        maxerr = max (maxerr, err) ;
+        assert (err < 1e-12) ;
+
+        % C2<!M> = A*B using the any-pair semiring
+        C3 = spones (C3) ;
+        C2 = GB_mex_mxm  (C0, M, [ ], any_pair, A, B, desc) ;
         err = norm (C3 - C2.matrix, 1) / norm (C3, 1) ;
         maxerr = max (maxerr, err) ;
         assert (err < 1e-12) ;
@@ -50,9 +62,17 @@ for A_sparsity = [1 2 4 8]
         A.sparsity = A_sparsity ;
         B.sparsity = B_sparsity ;
         fprintf ('.') ;
-        % C2<!M> = A*B
+
+        % C2<!M> = A*B using the conventional semiring
         C3 = double (~M) .* (A.matrix * B.matrix) ;
         C2 = GB_mex_mxm  (C0, M, [ ], semiring, A, B, desc) ;
+        err = norm (C3 - C2.matrix, 1) / norm (C3, 1) ;
+        maxerr = max (maxerr, err) ;
+        assert (err < 1e-12) ;
+
+        % C2<!M> = A*B using the any-pair semiring
+        C3 = spones (C3) ;
+        C2 = GB_mex_mxm  (C0, M, [ ], any_pair, A, B, desc) ;
         err = norm (C3 - C2.matrix, 1) / norm (C3, 1) ;
         maxerr = max (maxerr, err) ;
         assert (err < 1e-12) ;
