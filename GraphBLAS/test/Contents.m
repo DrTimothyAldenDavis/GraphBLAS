@@ -103,6 +103,7 @@
 %  gbtest98  - test row/col degree for hypersparse matrices
 %  gbtest99  - test performance of C=A'*B and C=A'
 %  gbtest00  - test GrB.bfs and plot (graph (G))
+%  gbtest100 - test GrB.ver and GrB.version
 %
 % Utilities and other tests:
 %

@@ -4,6 +4,8 @@ function gbtest100
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+GrB.MATLAB_vs_GrB ;
+
 fprintf ('v = ver (''matlab'')\n') ;
 v = ver ('matlab') ;
 display (v) ;

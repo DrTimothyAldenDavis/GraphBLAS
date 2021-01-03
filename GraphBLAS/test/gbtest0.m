@@ -21,6 +21,8 @@ try
     GrB.burble (rand (2)) ;
     ok = false ;
 catch me
+    fprintf ('expected error:\n') ;
+    disp (me) ;
 end
 assert (ok) ;
 

@@ -39,13 +39,11 @@ function Y = dnn (W, bias, Y0)
 
 % NOTE: this is a high-level algorithm that uses GrB objects.
 
-[f,s] = GrB.format (Y0) ;
+[f,~] = GrB.format (Y0) ;
+desc.format = '' ;
 if (isequal (f, 'by row'))
     % hypersparse-by-row is fastest, since entire rows drop out of Y
     desc.format = 'hyper by row' ;
-else
-    % use defaults
-    desc.format = '' ;
 end
 tol = single (32) ;
 

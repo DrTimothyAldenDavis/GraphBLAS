@@ -36,7 +36,7 @@ x2 = nonzeros (G) ;
 assert (isequal (x1, x2)) ;
 
 [i1,j1,x1] = GrB.extracttuples (G) ;
-[i2,j2,x2] = GrB.extracttuples (A) ;
+[~ ,~ ,x2] = GrB.extracttuples (A) ;
 assert (isequal (x1, x2)) ;
 
 assert (isequal (class (i1), 'int64')) ;

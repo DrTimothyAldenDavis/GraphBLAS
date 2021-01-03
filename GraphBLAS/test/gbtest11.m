@@ -91,5 +91,22 @@ G = GrB (X)
 assert (gbtest_eq (X, full (complex (G))))
 assert (gbtest_eq (X, complex (full (G))))
 
+X = rand (4) ;
+Y = GrB (X) ;
+Z = sparse (Y) ;
+W = sparse (Z) ;
+assert (gbtest_eq (X, Z)) ;
+assert (gbtest_eq (X, Y)) ;
+assert (gbtest_eq (X, W)) ;
+
+S = struct (Y) ;
+Z = GrB (S) ;
+assert (gbtest_eq (Z, Y)) ;
+
+assert (GrB.isfull (Z)) ;
+assert (GrB.isfull (double (Z))) ;
+assert (~GrB.isfull (speye (3))) ;
+assert (~GrB.isfull (GrB (speye (3)))) ;
+
 fprintf ('gbtest11: all tests passed\n') ;
 

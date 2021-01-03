@@ -60,9 +60,9 @@ for kk = 1:length (kset)
     % with burble, to see what GraphBLAS is doing
     GrB.burble (1) ;
     fprintf ('\nGrB with mxm and descriptor transpose:\n') ;
-    C2 = GrB.mxm (A, '+.*', B, d) ;
+    C2 = GrB.mxm (A, '+.*', B, d) ; %#ok<NASGU>
     fprintf ('\nGrB with A''*B syntax and explicit transpose:\n') ;
-    C2 = A'*B ;
+    C2 = A'*B ; %#ok<NASGU>
     GrB.burble (0) ;
 
     % MATLAB transpose time

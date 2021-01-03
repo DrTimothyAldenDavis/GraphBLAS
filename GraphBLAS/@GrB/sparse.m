@@ -9,7 +9,7 @@ function C = sparse (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[fmt, sparsity] = gbformat (G.opaque) ;
+[~, sparsity] = gbformat (G.opaque) ;
 
 switch (sparsity)
     case { 'hypersparse', 'sparse' }

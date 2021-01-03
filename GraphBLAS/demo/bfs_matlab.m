@@ -1,5 +1,5 @@
 function v = bfs_matlab (A, s)
-%BFS_MATLAB a simple breadth-first-search in MATLAB
+%BFS_MATLAB breadth-first-search in MATLAB
 %
 % v = bfs_matlab (A, s)
 %
@@ -51,4 +51,5 @@ for level = 1:n
     end
 
 end
+
 
