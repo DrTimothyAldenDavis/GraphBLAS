@@ -72,7 +72,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GrB_Index *I2  = NULL ;
     GrB_Index *J2  = NULL ;
 
-    GrB_Type *atype = NULL ;
+    GrB_Type atype = NULL ;
     bool done = false ;
     int64_t ni, nj, nI, nJ, Icolon [3], Jcolon [3] ;
     int Ikind, Jkind ;

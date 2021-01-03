@@ -372,8 +372,9 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     //--------------------------------------------------------------------------
 
     GB_eslice (Slice, n, ntasks) ;
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
@@ -403,7 +404,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         }
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        for (tid = 0 ; tid < ntasks ; tid++)
         { 
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;
@@ -432,7 +433,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         }
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        for (tid = 0 ; tid < ntasks ; tid++)
         { 
             // merge A [pL...pL+nL-1] and A [pR...pR+nR-1] into W [pS..]
             int64_t pL = L_task [tid], nL = L_len [tid] ;

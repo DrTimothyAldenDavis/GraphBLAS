@@ -23,7 +23,6 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     GB_RETURN_IF_NULL (nvals) ;
 
     // leave zombies alone, and leave jumbled, but assemble any pending tuples

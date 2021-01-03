@@ -16,8 +16,8 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int8_t   *GB_RESTRICT Ab = (GB_ATYPE *) A->b ;
-    const int64_t  *GB_RESTRICT Ai = (GB_ATYPE *) A->i ;
+    const int8_t   *GB_RESTRICT Ab = A->b ;
+    const int64_t  *GB_RESTRICT Ai = A->i ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     int64_t anz = GB_NNZ_HELD (A) ;
     ASSERT (anz > 0) ;

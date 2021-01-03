@@ -45,7 +45,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A to duplicate", GB0) ;
 
