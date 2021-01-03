@@ -711,7 +711,6 @@
                     // W<#M>(i) += A(i,k) * B(k,j)
                     //----------------------------------------------------------
 
-GB_GOTCHA ;
                     #if GB_IS_ANY_PAIR_SEMIRING
                     { 
                         // Hx is not used; Cx [...] = 1 is done below

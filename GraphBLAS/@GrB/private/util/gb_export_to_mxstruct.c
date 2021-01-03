@@ -52,7 +52,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 
     GrB_Matrix T = NULL ;
     if (GB_is_shallow (*A_handle))
-    { 
+    {
         // A is shallow so make a deep copy
         OK (GrB_Matrix_dup (&T, *A_handle)) ;
         OK (GrB_Matrix_free (A_handle)) ;
