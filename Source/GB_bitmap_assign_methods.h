@@ -14,6 +14,7 @@
 #include "GB_partition.h"
 #include "GB_ij.h"
 #include "GB_subassign_IxJ_slice.h"
+#include "GB_unused.h"
 
 //------------------------------------------------------------------------------
 // burble

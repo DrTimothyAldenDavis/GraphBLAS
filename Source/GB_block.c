@@ -23,7 +23,6 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (A != NULL) ;
 
     //--------------------------------------------------------------------------

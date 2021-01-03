@@ -131,8 +131,8 @@ GrB_Info GB_Cdense_25__fp32
 GrB_Info GB_convert_s2b__fp32
 (
     GrB_Matrix A,
-    float *GB_RESTRICT Ax_new,
-    int8_t *GB_RESTRICT Ab,
+    GB_void *GB_RESTRICT Ax_new_void,
+    int8_t  *GB_RESTRICT Ab,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
     const int64_t *GB_RESTRICT pstart_slice,
@@ -143,6 +143,7 @@ GrB_Info GB_convert_s2b__fp32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    float *GB_RESTRICT Ax_new = (float *) Ax_new_void ;
     #include "GB_convert_sparse_to_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
