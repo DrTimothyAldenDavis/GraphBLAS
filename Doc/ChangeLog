@@ -1,4 +1,4 @@
-Version 4.0.1, Jan TODO, 2021     TODO:: fix date of release
+Version 4.0.1, Jan 4, 2021
 
     * substantial performance gains: compared with v3.3.3: up to 5x faster in
         BFS (with LAGraph_bfs_parent2), 2x faster in Betweeness-Centrality (in
