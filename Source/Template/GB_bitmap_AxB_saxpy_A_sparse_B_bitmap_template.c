@@ -95,12 +95,13 @@
 
             // Gb and Gx workspace to load the panel of B
             int8_t   *GB_RESTRICT Gb = Wf  + G_slice [tid] * bvlenb ;
-            GB_BTYPE *GB_RESTRICT Gx = Wbx + G_slice [tid] * bvlenx ;
+            GB_BTYPE *GB_RESTRICT Gx = (GB_BTYPE *)
+                (Wbx + G_slice [tid] * bvlenx) ;
 
             // Hf and Hx workspace to compute the panel of C
             int8_t   *GB_RESTRICT Hf = Wf  + (H_slice [tid] * cvlen) + gfspace ;
             GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
-                ((GB_void *) Wcx +  H_slice [tid] * cvlenx) ;
+                (Wcx +  H_slice [tid] * cvlenx) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
@@ -653,7 +654,7 @@
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t   *GB_RESTRICT Hf = Wf + pW_start ;
             GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) 
-                ((GB_void *) Wcx + (pW_start * cxsize)) ;
+                (Wcx + (pW_start * cxsize)) ;
             #if GB_IS_PLUS_FC32_MONOID
             float  *GB_RESTRICT Hx_real = (float *) Hx ;
             float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;

@@ -246,13 +246,13 @@
             { 
                 // A has been loaded into the G panel
                 Gb = Wf  + (a_tid * afpanel_size) ;
-                Gx = Wax + (a_tid * axpanel_size) ;
+                Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
             }
             else
             { 
                 // use A in-place
                 Gb = Ab ;
-                Gx = Ax ;
+                Gx = (GB_ATYPE *) Ax ;
             }
 
             int8_t   *GB_RESTRICT Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
