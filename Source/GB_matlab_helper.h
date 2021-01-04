@@ -56,6 +56,7 @@ bool GB_matlab_helper4              // return true if OK, false on error
     GrB_Index *List_max             // find max (I) + 1
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper5              // construct pattern of S
 (
     GrB_Index *GB_RESTRICT Si,         // array of size anz
