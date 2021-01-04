@@ -12299,12 +12299,13 @@ matrix computations, and sparse matrices in MATLAB in particular.
 
 I would like to thank Cleve Moler, Penny Anderson, Pat Quillen, and Bobby Cheng
 (MathWorks) for our many discussions on MATLAB, and for creating MATLAB in the
-first place.  Without MATLAB, SuiteSparse:GraphBLAS would have been impossible
-to implement and test.  I've also appreciated the opportunity to contribute so
-much code to MATLAB over the years: AMD, COLAMD, UMFPACK, CHOLMOD,
-SuiteSparseQR, dmperm (in CSparse), etree, sparse-times-sparse matrix multiply,
-and probably more (I've lost count!).  Most of these appear in \verb'x=A\b'
-when \verb'A' is sparse.
+first place.  I would like to thank Lucas Jarman, MathWorks, for his help in
+porting GraphBLAS to Microsoft Windows.  Without MATLAB, SuiteSparse:GraphBLAS
+would have been impossible to implement and test.  I've also appreciated the
+opportunity to contribute so much code to MATLAB over the years: AMD, COLAMD,
+UMFPACK, CHOLMOD, SuiteSparseQR, dmperm (in CSparse), etree,
+sparse-times-sparse matrix multiply, and probably more (I've lost count!).
+Most of these appear in \verb'x=A\b' when \verb'A' is sparse.
 
 I would like to thank S\'ebastien Villemot (Debian Developer,
 \url{http://sebastien.villemot.name}) for helping me with various build issues
@@ -12318,9 +12319,6 @@ database module for Redis.  Based on SuiteSparse:GraphBLAS, RedisGraph is up
 600x faster than the fastest graph databases ({\footnotesize
 \url{https://youtu.be/9h3Qco_x0QE} \newline
 \url{https://redislabs.com/blog/new-redisgraph-1-0-achieves-600x-faster-performance-graph-databases/}}).
-
-I would like to thank Lucas Jarman, MathWorks (\url{http://mathworks.com}),
-for his help in porting GraphBLAS to Microsoft Windows.
 
 SuiteSparse:GraphBLAS was developed with support from
 NVIDIA, Intel, MIT Lincoln Lab, Redis Labs, IBM,
