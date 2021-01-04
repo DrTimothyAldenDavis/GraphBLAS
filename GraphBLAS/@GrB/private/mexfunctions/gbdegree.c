@@ -124,7 +124,7 @@ void mexFunction
 
         // ensure the descriptor is present, and set GxB_SORT to true
         OK (GrB_Descriptor_new (&desc)) ;
-        OK1 (desc, GxB_Desc_set (desc, GxB_SORT, true)) ;
+        OK (GxB_Desc_set (desc, GxB_SORT, true)) ;
 
         if (fmt == GxB_BY_COL)
         {
@@ -141,7 +141,7 @@ void mexFunction
                 // instead.
 
                 OK (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
-                OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_ROW)) ;
+                OK (GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_ROW)) ;
                 OK1 (T, GrB_Matrix_apply (T, NULL, NULL, GxB_ONE_BOOL, X,
                     NULL)) ;
 
@@ -159,13 +159,12 @@ void mexFunction
 
                 // y = full vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
-                OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     ncols, NULL)) ;
 
                 // d = X*y using the PLUS_PAIR semiring
                 OK (GrB_Vector_new (&d, GrB_INT64, nrows)) ;
-                OK1 (d, GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y,
-                    desc)) ;
+                OK (GrB_mxv (d, NULL, NULL, GxB_PLUS_PAIR_INT64, X, y, desc)) ;
             }
 
         }
@@ -184,7 +183,7 @@ void mexFunction
                 // instead.
 
                 OK (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
-                OK1 (T, GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
+                OK (GxB_Matrix_Option_set (T, GxB_FORMAT, GxB_BY_COL)) ;
                 OK1 (T, GrB_Matrix_apply (T, NULL, NULL, GxB_ONE_BOOL, X,
                     NULL)) ;
 
@@ -202,13 +201,12 @@ void mexFunction
 
                 // y = full vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
-                OK1 (y, GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
                     nrows, NULL)) ;
 
                 // d = y*X using the PLUS_PAIR semiring
                 OK (GrB_Vector_new (&d, GrB_INT64, ncols)) ;
-                OK1 (d, GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X,
-                    desc)) ;
+                OK (GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X, desc)) ;
             }
         }
     }

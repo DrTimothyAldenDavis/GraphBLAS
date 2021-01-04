@@ -179,7 +179,7 @@ double gb_norm              // compute norm (A,kind)
                 // t = zeros (ncols,1)
                 OK (GrB_Vector_new (&t, xtype, ncols)) ;
                 // t(j) = sum of the ith column, X(:,j)
-                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
+                OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
                     GrB_DESC_T0)) ;
                 // s = max (t)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
@@ -192,8 +192,7 @@ double gb_norm              // compute norm (A,kind)
                 // t = zeros (nrows,1)
                 OK (GrB_Vector_new (&t, xtype, nrows)) ;
                 // t(i) = sum of the ith row, X(i,:)
-                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
-                    NULL)) ;
+                OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X, NULL)) ;
                 // s = max (t)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
                 break ;

@@ -58,8 +58,8 @@ GrB_Matrix gb_typecast          // C = (type) A, where C is deep
     else
     { 
         // C = (type) A, with GraphBLAS typecasting if needed.
-        OK1 (C, GrB_assign (C, NULL, NULL, A, GrB_ALL, nrows, GrB_ALL, ncols,
-            NULL)) ;
+        OK1 (C, GrB_Matrix_assign (C, NULL, NULL, A,
+            GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     }
 
     //--------------------------------------------------------------------------

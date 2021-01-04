@@ -31,20 +31,20 @@ GrB_Matrix gb_new               // create and empty matrix C
 
     // set the desired format
     GxB_Format_Value fmt_current ;
-    OK1 (C, GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt_current)) ;
+    OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt_current)) ;
     if (fmt != fmt_current)
     {
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
+        OK (GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
     }
 
     // set the desired sparsity structure
     if (sparsity != 0)
     {
         int current ;
-        OK1 (C, GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &current)) ;
+        OK (GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &current)) ;
         if (current != sparsity)
         {
-            OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
+            OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
         }
     }
 

@@ -31,10 +31,6 @@
 #include "gb_matlab.h"
 #include "GB_ij.h"
 
-#ifndef OK1
-#define OK1(C,method) OK(method)
-#endif
-
 void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction

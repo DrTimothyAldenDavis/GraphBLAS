@@ -60,7 +60,7 @@ void mexFunction
     { 
         OK (GrB_Descriptor_new (&desc)) ;
     }
-    OK1 (desc, GxB_Desc_set (desc, GxB_SORT, true)) ;
+    OK (GxB_Desc_set (desc, GxB_SORT, true)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices

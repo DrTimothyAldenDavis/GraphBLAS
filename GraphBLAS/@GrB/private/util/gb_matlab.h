@@ -54,7 +54,7 @@ void gbcov_put (void) ;
     if ((method) != GrB_SUCCESS)                            \
     {                                                       \
         char *message ;                                     \
-        GrB_error (&message, C) ;                           \
+        GrB_Matrix_error (&message, C) ;                    \
         ERROR (message) ;                                   \
     }                                                       \
 }
