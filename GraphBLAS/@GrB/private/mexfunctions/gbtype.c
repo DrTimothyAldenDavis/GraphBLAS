@@ -2,8 +2,8 @@
 // gbtype: type of a GraphBLAS matrix struct, or any MATLAB variable
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ void mexFunction
 
     if (class == mxSTRUCT_CLASS)
     {
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
         if (mx_type != NULL)
         { 
             // X is a GraphBLAS G.opaque struct; get its type

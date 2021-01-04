@@ -2,8 +2,8 @@
 // GrB_Vector_wait: wait for a vector to complete
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_wait (&v)") ;
+    GB_WHERE ((*v), "GrB_Vector_wait (&v)") ;
     GB_BURBLE_START ("GrB_Vector_wait") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
@@ -30,8 +30,7 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     // finish all pending work on the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-    GB_VECTOR_WAIT (*v) ;
+    GB_MATRIX_WAIT (*v) ;
 
     //--------------------------------------------------------------------------
     // return result

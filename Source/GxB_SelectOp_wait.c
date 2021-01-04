@@ -2,8 +2,8 @@
 // GxB_SelectOp_wait: wait for a user-defined GxB_SelectOp to complete
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ GrB_Info GxB_SelectOp_wait   // no work, just check if the GxB_SelectOp is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_SelectOp_wait (&op)") ;
+    GB_WHERE1 ("GxB_SelectOp_wait (&op)") ;
     GB_RETURN_IF_NULL (op) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*op) ;
 
