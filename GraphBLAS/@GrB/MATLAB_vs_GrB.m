@@ -119,8 +119,8 @@
 %
 %     In MATLAB, the default is to round to the nearest integer.  If the
 %     fractional part is exactly 0.5: the integer with larger magnitude is
-%     selected.  In GraphBLAS, typecasting matchs the MATLAB behavior when
-%     explicitly converting matrices:
+%     selected.  In GraphBLAS, typecasting matches the MATLAB behavior
+%     when explicitly converting matrices:
 %
 %       G = 100 * rand (4)
 %       G = GrB (G, 'int8')

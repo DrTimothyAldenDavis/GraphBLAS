@@ -170,7 +170,6 @@ are extensions to the v1.3 GraphBLAS C API.
         \verb'A(lo:hi)=scalar' was OK
     \end{packed_itemize}
 
-\newpage
 \item Version 3.3.3 (July 14, 2020).
     Bug fix: \verb'w<m>=A*u' with mask non-empty and u empty.
 
@@ -12260,7 +12259,19 @@ MATLAB interface test (\verb'gbtest') works on all platforms; see the
 To remove all compiled files, type \verb'make' \verb'distclean' in the top-level
 GraphBLAS folder.
 
-\newpage
+%-------------------------------------------------------------------------------
+\section{About NUMA systems}
+%-------------------------------------------------------------------------------
+
+I have tested this package extensively on multicore single-socket systems, but
+have not yet optimized it for multi-socket systems with a NUMA architecture.
+That will be done in a future release.  If you publish benchmark comparisons
+with this package, please state the SuiteSparse:GraphBLAS version, and a caveat
+if appropriate.  If you see significant performance issues when going from a
+single-socket to multi-socket system, I would like to hear from you so I can
+look into it.
+
+% \newpage
 %-------------------------------------------------------------------------------
 \section{Acknowledgments}
 %-------------------------------------------------------------------------------

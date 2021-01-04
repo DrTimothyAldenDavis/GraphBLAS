@@ -39,20 +39,20 @@ function binopinfo (op, optype)
 %
 %   operator name(s) f(x,y)         |   operator names(s) f(x,y)
 %   ---------------- ------         |   ----------------- ------
-%   1st first        x              |   iseq             x == y
-%   2nd second       y              |   isne             x ~= y
-%   min              min(x,y)       |   isgt             x > y
-%   max              max(x,y)       |   islt             x < y
-%   +   plus         x+y            |   isge             x >= y
-%   -   minus        x-y            |   isle             x <= y
-%   rminus           y-x            |   ==  eq           x == y
-%   *   times        x*y            |   ~=  ne           x ~= y
-%   /   div          x/y            |   >   gt           x > y
-%   \   rdiv         y/x            |   <   lt           x < y
-%   |   || or  lor   x | y          |   >=  ge           x >= y
-%   &   && and land  x & y          |   <=  le           x <= y
-%   xor lxor         xor(x,y)       |   .^  pow          x .^ y
-%   pair             1              |   any              pick x or y
+%   1st first        x              |   iseq              x == y
+%   2nd second       y              |   isne              x ~= y
+%   min              min(x,y)       |   isgt              x > y
+%   max              max(x,y)       |   islt              x < y
+%   +   plus         x+y            |   isge              x >= y
+%   -   minus        x-y            |   isle              x <= y
+%   rminus           y-x            |   ==  eq            x == y
+%   *   times        x*y            |   ~=  ne            x ~= y
+%   /   div          x/y            |   >   gt            x > y
+%   \   rdiv         y/x            |   <   lt            x < y
+%   |   || or  lor   x | y          |   >=  ge            x >= y
+%   &   && and land  x & y          |   <=  le            x <= y
+%   xor lxor         xor(x,y)       |   .^  pow           x .^ y
+%   pair             1              |   any               pick x or y
 %
 % All of the above operators are defined for logical operands, but many
 % are redundant. 'min.logical' is the same as 'and.logical', for example.
@@ -66,8 +66,8 @@ function binopinfo (op, optype)
 %   1-based postional ops:          in a semiring:     in ewise operators:
 %   operator name(s)                f(A(i,k)*B(k,j))   f(A(i,j),B(i,j))
 %   ----------------                ----------------   ----------------
-%   firsti1  1sti1 firsti 1sti      i                  i
-%   firstj1  1stj1 firstj 1stj      k                  j
+%   firsti1  1sti1 firsti  1sti     i                  i
+%   firstj1  1stj1 firstj  1stj     k                  j
 %   secondi1 2ndi1 secondi 2ndi     k                  i
 %   secondj1 2ndj1 secondj 2ndj     j                  j
 %
@@ -78,9 +78,6 @@ function binopinfo (op, optype)
 %   firstj0  1stj0                  k-1                j-1
 %   secondi0 2ndi0                  k-1                i-1
 %   secondj0 2ndj0                  j-1                j-1
-%
-% If the digit is left off, 1-based operators are used, since MATLAB
-% matrix indices are 1-based.
 %
 % Comparators (*lt, *gt, *le, *ge) and min/max are not available for
 % complex types.

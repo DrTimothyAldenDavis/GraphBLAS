@@ -10,6 +10,7 @@ type = gbtype (G) ;
 if (~contains (type, 'complex'))
 
     % determine if any entries are outside the domain for the real case
+    noutside = 0 ;
     switch (op)
 
         case { 'asin', 'acos', 'atanh' }
@@ -20,9 +21,6 @@ if (~contains (type, 'complex'))
                     noutside = gbnvals (gbselect (gbapply ('abs', G), '>', 1)) ;
                 case { 'uint8', 'uint16', 'uint32', 'uint64' }
                     noutside = gbnvals (gbselect (G, '>', 1)) ;
-                otherwise
-                    % G is logical
-                    noutside = 0 ;
             end
 
         case { 'log', 'log10', 'sqrt', 'log2' }
@@ -31,9 +29,6 @@ if (~contains (type, 'complex'))
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
                     noutside = gbnvals (gbselect (G, '<', 0)) ;
-                otherwise
-                    % G is unsigned or logical
-                    noutside = 0 ;
             end
 
         case { 'log1p' }
@@ -42,9 +37,6 @@ if (~contains (type, 'complex'))
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
                     noutside = gbnvals (gbselect (G, '<', -1)) ;
-                otherwise
-                    % G is unsigned or logical
-                    noutside = 0 ;
             end
 
         case { 'acosh' }

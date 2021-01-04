@@ -97,3 +97,14 @@ All functions, objects, and macros with the prefix GxB are extensions to
 the spec.  Functions, objects, and macros with prefix GB must not be accessed
 by user code.  They are for internal use in GraphBLAS only.
 
+--------------------------------------------------------------------------------
+
+## About NUMA systems
+
+I have tested this package extensively on multicore single-socket systems, but
+have not yet optimized it for multi-socket systems with a NUMA architecture.
+That will be done in a future release.  If you publish benchmark comparisons
+with this package, please state the SuiteSparse:GraphBLAS version, and a caveat
+if appropriate.  If you see significant performance issues when going from a
+single-socket to multi-socket system, I would like to hear from you so I can
+look into it.

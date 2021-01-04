@@ -39,8 +39,17 @@ G = GrB (X)              % GraphBLAS copy of a matrix X, same type
 %% Sparse integer matrices
 % Here's an int8 version of the same matrix:
 
-S = int8 (G)            % convert G to a full MATLAB int8 matrix
-G = GrB (X, 'int8')      % a GraphBLAS sparse int8 matrix
+S = int8 (G)             % convert G to a full MATLAB int8 matrix
+S (1,1) = 0              % add an explicit zero to S
+G = GrB (X, 'int8')      % a GraphBLAS full int8 matrix
+G (1,1) = 0              % add an explicit zero to G
+G = GrB.prune (G)        % a GraphBLAS sparse int8 matrix
+
+try
+    S = sparse (S) ;     % MATLAB can't create sparse int8 matrices
+catch me
+    display (me)
+end
 
 %% Sparse single-precision matrices
 % Matrix operations in GraphBLAS are typically as fast, or faster than
@@ -620,7 +629,7 @@ err = norm (Y1-Y2,1)
 % as { start, inc, fini }, instead of start:inc:fini. See
 % 'help GrB.extract', 'help GrB.assign' for the functional form.
 % For the overloaded syntax C(I,J)=A and C=A(I,J), see
-% 'help GrB/subsasgn' and 'help GrB/subsfref'.  The cell array
+% 'help GrB/subsasgn' and 'help GrB/subsref'.  The cell array
 % syntax isn't conventional, but it is far faster than the MATLAB
 % colon notation for objects, and takes far less memory when I is huge.
 
@@ -804,9 +813,9 @@ fprintf ('Results of GrB and MATLAB match perfectly.\n')
 % the equivalent built-in operators and functions in MATLAB.
 %
 % There are few notable exceptions; these will be addressed in the future.
-% Full matrices and vectors held as GraphBLAS objects are slower than
-% their MATLAB counterparts.  horzcat and vertcat, for [A B] and [A;B]
-% when either A or B are GraphBLAS matrices, are also slow, as
+% Full matrices and vectors held as GraphBLAS objects can be slightly
+% slower than their MATLAB counterparts.  horzcat and vertcat, for [A B]
+% and [A;B] when either A or B are GraphBLAS matrices, are also slow, as
 % illustrated below in the next example.
 %
 % Other methods that will be faster in the future include bandwidth,
