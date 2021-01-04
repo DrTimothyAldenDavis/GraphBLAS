@@ -11,7 +11,8 @@ Version 4.0.1, Jan 4, 2021
     * GrB_Matrix_reduce_BinaryOp: limited to certain built-in ops
     * GrB_*_extractTuples: may return indices out of order
     * removed internal features: GBI iterator, slice and hyperslice matrices
-    * bitmap/full matrices and vectors added
+    * bitmap/full matrices and vectors added: faster and lower memory usage
+        when many entries present in a matrix or vector
     * GxB_SPARSITY_CONTROL, GxB_SPARSITY_STATUS added: for matrix get/set
     * positional operators and semirings: GxB_FIRSTI_INT32 and related ops
     * jumbled matrices: sort left pending, like zombies and pending tuples

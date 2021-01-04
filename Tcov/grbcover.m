@@ -1,5 +1,5 @@
 function grbcover (what)
-%GBCOVER compile the ../Test mexFunctions for statement coverage testing
+%GBCOVER compile ../Test/* for statement coverage testing
 %
 % This function compiles just the mexFunctions in ../Test.
 % It does not compile the GraphBLAS library itself.

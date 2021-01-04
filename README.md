@@ -107,4 +107,5 @@ That will be done in a future release.  If you publish benchmark comparisons
 with this package, please state the SuiteSparse:GraphBLAS version, and a caveat
 if appropriate.  If you see significant performance issues when going from a
 single-socket to multi-socket system, I would like to hear from you so I can
-look into it.
+look into it.  Contact me at davis@tamu.edu.
+

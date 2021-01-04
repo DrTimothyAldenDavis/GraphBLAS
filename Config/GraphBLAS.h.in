@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
-// which defines a set of sparse matrix operations on an extended algebra of
-// semirings, using an almost unlimited variety of operators and types.  When
-// applied to sparse adjacency matrices, these algebraic operations are
-// equivalent to computations on graphs.  GraphBLAS provides a powerful and
-// expressive framework creating graph algorithms based on the elegant
-// mathematics of sparse matrix operations on a semiring.
+// SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS
+// standard, which defines a set of sparse matrix operations on an extended
+// algebra of semirings, using an almost unlimited variety of operators and
+// types.  When applied to sparse adjacency matrices, these algebraic
+// operations are equivalent to computations on graphs.  GraphBLAS provides a
+// powerful and expressive framework creating graph algorithms based on the
+// elegant mathematics of sparse matrix operations on a semiring.
 
 // This GraphBLAS.h file contains GraphBLAS definitions for user applications
 // to #include.  Functions and variables with the prefix GB_ need to be defined
@@ -23,9 +23,9 @@
 // example GrB_free is a macro that uses _Generic to select the right method,
 // depending on the type of its argument.
 
-// This implementation (nearly) fully conforms to the GraphBLAS API Specification
-// (see the notes in the User Guide regarding GrB_wait, GrB_error, and
-// GrB_Matrix_reduce_BinaryOp).
+// This implementation (nearly) fully conforms to the GraphBLAS API
+// Specification (see the notes in the User Guide regarding GrB_wait,
+// GrB_error, and GrB_Matrix_reduce_BinaryOp).
 
 // It also includes functions and features that are extensions to the spec,
 // which are given names of the form GxB_* for functions, built-in objects, and

@@ -94,9 +94,8 @@ function binopinfo (op, optype)
 % z = cmplx(x,y) can be computed for x and y as single and double; z is
 % single complex or double complex, respectively.
 %
-% The following bitwise operators are available for any signed or
-% unsigned integer types:  bitor, bitand, bitxor, bitxnor, bitget, bitset,
-% bitclr, and bitshift.
+% The bitwise ops bitor, bitand, bitxor, bitxnor, bitget, bitset, bitclr,
+% and bitshift are available for any signed or unsigned integer type.
 %
 % Typecasting:  If the optype is omitted from the string (for example,
 % GrB.eadd (A, '+', B) or simply C = A+B), then the optype is inferred

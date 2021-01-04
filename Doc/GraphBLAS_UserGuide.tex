@@ -51,7 +51,7 @@ davis@tamu.edu, Texas A\&M University. \\
 \url{https://twitter.com/DocSparse}
 }
 
-% version and date are set by cmake (see GraphBLAS/CMakeLists.txt)
+% version and date are set by cmake
 \input{GraphBLAS_version.tex}
 
 %-------------------------------------------------------------------------------
@@ -126,7 +126,6 @@ are extensions to the v1.3 GraphBLAS C API.
 \end{alert}
 
 \newpage
-
 %-------------------------------------------------------------------------------
 \subsection{Release Notes}
 %-------------------------------------------------------------------------------
@@ -12298,9 +12297,14 @@ I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
 matrix computations, and sparse matrices in MATLAB in particular.
 
-I would like to thank Cleve Moler (MathWorks) for our many discussions on
-MATLAB, and for creating MATLAB in the first place.  Without MATLAB,
-SuiteSparse:GraphBLAS would have been impossible to implement and test.
+I would like to thank Cleve Moler, Penny Anderson, Pat Quillen, and Bobby Cheng
+(MathWorks) for our many discussions on MATLAB, and for creating MATLAB in the
+first place.  Without MATLAB, SuiteSparse:GraphBLAS would have been impossible
+to implement and test.  I've also appreciated the opportunity to contribute so
+much code to MATLAB over the years: AMD, COLAMD, UMFPACK, CHOLMOD,
+SuiteSparseQR, dmperm (in CSparse), etree, sparse-times-sparse matrix multiply,
+and probably more (I've lost count!).  Most of these appear in \verb'x=A\b'when
+\verb'A' is sparse.
 
 I would like to thank S\'ebastien Villemot (Debian Developer,
 \url{http://sebastien.villemot.name}) for helping me with various build issues

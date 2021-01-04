@@ -217,9 +217,8 @@
 %         ./  ldivide
 %         .\  rdivide
 %         .^  power
-%
 %         sum, prod:  MATLAB converts to double; GraphBLAS keeps the type
-%         of the input
+%                     of the input
 %
 %     It does not affect the following:
 %
@@ -263,7 +262,6 @@
 %         GrB.semiringinfo ('bitor.bitand.uint8')
 %
 %% For more details, see the GraphBLAS user guide in GraphBLAS/Doc.
-%
 % See also GrB, sparse.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

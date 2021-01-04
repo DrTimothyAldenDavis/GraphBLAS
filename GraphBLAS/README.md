@@ -116,3 +116,9 @@ These features are supported, but are not as fast as they could be:
     concatenation: [A B], [A;B], and the built-in functions: bandwidth, eps,
     isbanded, isdiag, ishermitian, issymmetric, istril, istriu, spfun.
 
+A GrB matrix object can be saved to a mat-file and loaded back in, but
+must be loaded in with the same major version of SuiteSparse:GraphBLAS.
+v4.0.1. cannot load mat-files saved from v3.3.3 for example.  In the
+future, I will consider GrB.load and GrB.save methods that would work
+across different versions.
+

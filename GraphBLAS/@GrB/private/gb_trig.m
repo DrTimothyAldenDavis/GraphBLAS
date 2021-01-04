@@ -10,7 +10,7 @@ type = gbtype (G) ;
 if (~contains (type, 'complex'))
 
     % determine if any entries are outside the domain for the real case
-    noutside = 0 ;
+    noutside = 0 ;  % default if no switch cases apply
     switch (op)
 
         case { 'asin', 'acos', 'atanh' }
