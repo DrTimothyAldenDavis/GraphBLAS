@@ -132,6 +132,14 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 4.0.2 (Jan 11, 2021)
+
+    \begin{packed_itemize}
+    \item ability to load \verb'*.mat' files saved with the v3 \verb'GrB'
+        MATLAB interface.
+    \item added \verb'#pragma omp flush' after all uses of \verb'GrB_wait'
+    \end{packed_itemize}
+
 \item Version 4.0.1 (Jan 4, 2021)
 
     \begin{packed_itemize}
@@ -6169,7 +6177,7 @@ GrB_Desc_Value ;
 
     \item \verb'GxB_AxB_SAXPY': select any saxpy-based method:
         \verb'GxB_AxB_GUSTAVSON', and/or
-        \verb'GxB_AxB_HASH', or any mix of the three,
+        \verb'GxB_AxB_HASH', or any mix of the two,
         in contrast to the dot-product method.
 
     \item \verb'GxB_AxB_GUSTAVSON':  an extended version of Gustavson's method
@@ -6194,8 +6202,6 @@ GrB_Desc_Value ;
         method, in which groups of threads share a single hash workspace,
         as concurrent data structure, using atomics.
 
-    \end{itemize}
-
 % [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
 % High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
 % Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
@@ -6216,6 +6222,8 @@ GrB_Desc_Value ;
     $m$-by-$n$ in that case.  It does not use any workspace at all.  Since it
     uses no workspace, it can work very well for extremely sparse or
     hypersparse matrices, when the mask is present and not complemented.
+
+    \end{itemize}
 
 \item \verb'GxB_NTHREADS' controls how many threads a method uses.
     By default (if set to zero, or \verb'GxB_DEFAULT'), all available threads

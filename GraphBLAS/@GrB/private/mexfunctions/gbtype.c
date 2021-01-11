@@ -44,8 +44,18 @@ void mexFunction
         mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
         if (mx_type != NULL)
         { 
-            // X is a GraphBLAS G.opaque struct; get its type
+            // X is a GraphBLASv4 G.opaque struct; get its type
             c = mxDuplicateArray (mx_type) ;
+        }
+        else
+        {
+            // check if it is a GraphBLASv3 struct
+            mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+            if (mx_type != NULL)
+            {
+                // X is a GraphBLASv3 G.opaque struct; get its type
+                c = mxDuplicateArray (mx_type) ;
+            }
         }
     }
 

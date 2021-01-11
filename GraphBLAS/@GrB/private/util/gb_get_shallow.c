@@ -22,7 +22,7 @@
 #include "gb_matlab.h"
 
 #define IF(error,message) \
-    CHECK_ERROR (error, "invalid GraphBLASv4 struct (" message ")" ) ;
+    CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
 GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 (
@@ -61,9 +61,19 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
 
+        bool GraphBLASv3 = false ;
+        mxArray *mx_type = NULL ;
+
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv4") ;
-        CHECK_ERROR (mx_type == NULL, "not a GraphBLASv4 struct") ;
+        mx_type = mxGetField (X, 0, "GraphBLASv4") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv3 struct
+            mx_type = mxGetField (X, 0, "GraphBLAS") ;
+            CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
+            GraphBLASv3 = true ;
+        }
+
         GrB_Type type = gb_mxstring_to_type (mx_type) ;
 
         // allocate the header, with no content
@@ -78,7 +88,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *opaque = mxGetField (X, 0, "s") ;
         IF (opaque == NULL, ".s missing") ;
         IF (mxGetM (opaque) != 1, ".s wrong size") ;
-        IF (mxGetN (opaque) != 9, ".s wrong size") ;
+        IF (mxGetN (opaque) != (GraphBLASv3 ? 8 : 9), ".s wrong size") ;
         int64_t *s = mxGetInt64s (opaque) ;
         A->hyper_switch  = GB_Global_hyper_switch_get ( ) ;
         A->plen          = s [0] ;
@@ -86,11 +96,24 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         A->vdim          = s [2] ;
         A->nvec          = s [3] ;
         A->nvec_nonempty = s [4] ;
-        A->sparsity      = (int) (s [5]) ;
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
-        A->nvals         = s [8] ;
-        A->bitmap_switch = GB_Global_bitmap_switch_matrix_get (A->vlen, A->vdim) ;
+
+        if (GraphBLASv3)
+        {
+            // GraphBLASv3 struct: sparse or hypersparse only
+            A->sparsity      = GxB_AUTO_SPARSITY ;
+            A->nvals         = 0 ;
+        }
+        else
+        {
+            // GraphBLASv4 struct: sparse, hypersparse, bitmap, or full
+            A->sparsity      = (int) (s [5]) ;
+            A->nvals         = s [8] ;
+        }
+
+        A->bitmap_switch = GB_Global_bitmap_switch_matrix_get
+            (A->vlen, A->vdim) ;
 
         int nfields = mxGetNumberOfFields (X) ;
 

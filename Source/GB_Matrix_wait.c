@@ -30,6 +30,8 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
+// If the method is successful, it does an OpenMP flush just before returning.
+
 #include "GB_select.h"
 #include "GB_add.h"
 #include "GB_Pending.h"
@@ -67,6 +69,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (!GB_JUMBLED (A)) ;
         ASSERT (!GB_PENDING (A)) ;
+        // ensure the matrix is written to memory
+        #pragma omp flush
         return (GrB_SUCCESS) ;
     }
 
@@ -224,7 +228,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     if (npending == 0)
     { 
         // conform A to its desired sparsity structure and return result
-        return (GB_conform (A, Context)) ;
+        info = GB_conform (A, Context) ;
+        #pragma omp flush
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -236,7 +242,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     { 
         // A has no entries so just transplant T into A, then free T and
         // conform A to its desired hypersparsity.
-        return (GB_transplant_conform (A, A->type, &T, Context)) ;
+        info = GB_transplant_conform (A, A->type, &T, Context) ;
+        #pragma omp flush
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -437,7 +445,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         GB_Matrix_free (&T) ;
 
         // conform A to its desired sparsity structure
-        return (GB_conform (A, Context)) ;
+        info = GB_conform (A, Context) ;
 
     }
     else
@@ -459,7 +467,14 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             Context)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
-        return (GB_transplant_conform (A, A->type, &S, Context)) ;
+        info = GB_transplant_conform (A, A->type, &S, Context) ;
     }
+
+    //--------------------------------------------------------------------------
+    // flush the matrix and return result
+    //--------------------------------------------------------------------------
+
+    #pragma omp flush
+    return (info) ;
 }
 
