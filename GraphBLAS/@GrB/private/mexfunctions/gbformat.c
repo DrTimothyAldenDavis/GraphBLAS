@@ -77,11 +77,16 @@ void mexFunction
 
             // get the type
             mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-            CHECK_ERROR (mx_type == NULL, "invalid GraphBLASv4 struct") ;
+            if (mx_type == NULL)
+            {
+                // check if it is a GraphBLASv3 struct
+                mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+                CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
+            }
 
             // get the row/column format of the input matrix G
             mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-            CHECK_ERROR (opaque == NULL, "invalid GraphBLASv4 struct") ;
+            CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
             int64_t *s = mxGetInt64s (opaque) ;
             bool is_csc = (bool) (s [6]) ;
             fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
@@ -93,7 +98,7 @@ void mexFunction
                 case 4 : sparsity = GxB_BITMAP ;      break ;
                 case 5 : sparsity = GxB_SPARSE ;      break ;
                 case 6 : sparsity = GxB_HYPERSPARSE ; break ;
-                default: ERROR ("invalid GraphBLASv4 struct") ;
+                default: ERROR ("invalid GraphBLAS struct") ;
             }
 
         }

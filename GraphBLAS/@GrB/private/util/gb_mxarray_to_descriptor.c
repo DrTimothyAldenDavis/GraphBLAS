@@ -132,12 +132,13 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     (*sparsity) = 0 ;
 
     if (desc_matlab == NULL || !mxIsStruct (desc_matlab)
-        || mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
+        || (mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
+        || (mxGetField (desc_matlab, 0, "GraphBLAS") != NULL))
     {
         // If present, the descriptor is a struct whose first field is not
         // "desc.GraphBLASv4" (since that is a GrB matrix struct, not a
-        // descriptor).  If not present, the GraphBLAS descriptor is NULL.
-        // This is not an error.
+        // descriptor), or "desc.GraphBLAS" (a v3 GraphBLAS struct).  If not
+        // present, the GraphBLAS descriptor is NULL.  This is not an error.
         return (NULL) ;
     }
 

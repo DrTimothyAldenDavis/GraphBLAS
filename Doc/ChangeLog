@@ -1,3 +1,8 @@
+Version 4.0.2, Jan 11, 2021
+
+    * added ability to load *.mat files saved with GraphBLAS v3.
+    * GrB_wait: added #pragma omp flush after any GrB_wait
+
 Version 4.0.1, Jan 4, 2021
 
     * substantial performance gains: compared with v3.3.3: up to 5x faster in
