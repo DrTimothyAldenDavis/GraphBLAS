@@ -52,7 +52,10 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_void *Ax = (GB_void *) A->x ;  // A->x has type A->type
+    // A->x is not const since the operator might be applied in-place, if
+    // C is aliased to C.
+
+    GB_void *Ax = (GB_void *) A->x ;        // A->x has type A->type
     const int8_t  *Ab = A->b ;              // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_NNZ_HELD (A) ;   // size of A->x and Cx
