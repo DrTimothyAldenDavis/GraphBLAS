@@ -1,3 +1,8 @@
+Version 4.0.3, Jan 19, 2021
+
+    * faster min/max monoids
+    * MATLAB: G=GrB(G) converts G from v3 object to v4
+
 Version 4.0.2, Jan 11, 2021
 
     * added ability to load *.mat files saved with GraphBLAS v3.

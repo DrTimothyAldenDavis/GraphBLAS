@@ -598,8 +598,8 @@ methods
                 % GraphBLAS mexFunction into a GrB matrix object.
                 C.opaque = arg1 ;
             elseif (isobject (arg1))
-                % arg1 is already a GrB matrix; nothing to do
-                C = arg1 ;
+                % arg1 is already a GrB matrix; make a deep copy
+                C.opaque = gbnew (arg1.opaque) ;
             else
                 % arg1 is a MATLAB matrix; convert to a GrB matrix
                 C.opaque = gbnew (arg1) ;

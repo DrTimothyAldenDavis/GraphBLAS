@@ -384,19 +384,19 @@ break ;
         while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;      \
     }
 
-    #if GB_IS_IMIN_ATOMIC
+    #if GB_IS_IMIN_MONOID
 
         // built-in MIN monoids for signed and unsigned integers
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_MINMAX (i, t, xold <= t)
 
-    #elif GB_IS_IMAX_ATOMIC
+    #elif GB_IS_IMAX_MONOID
 
         // built-in MAX monoids for signed and unsigned integers
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_MINMAX (i, t, xold >= t)
 
-    #elif GB_IS_FMIN_ATOMIC
+    #elif GB_IS_FMIN_MONOID
 
         // built-in MIN monoids for float and double, with omitnan behavior.
         // The update is skipped entirely if t is NaN.  Otherwise, if t is not
@@ -414,7 +414,7 @@ break ;
             }                                                       \
         }
 
-    #elif GB_IS_FMAX_ATOMIC
+    #elif GB_IS_FMAX_MONOID
 
         // built-in MAX monoids for float and double, with omitnan behavior.
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
