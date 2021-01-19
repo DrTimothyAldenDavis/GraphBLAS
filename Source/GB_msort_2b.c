@@ -438,7 +438,7 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return resulte
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     GB_FREE (W) ;

@@ -448,7 +448,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return resulte
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     GB_FREE (W) ;
