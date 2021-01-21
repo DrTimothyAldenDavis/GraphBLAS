@@ -184,7 +184,7 @@
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
@@ -357,7 +357,7 @@
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         int8_t f ;
 
@@ -693,7 +693,7 @@
                     // scan A(:,k)
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
-                        GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                        GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                         GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                         int64_t i1 = i + 1 ;        // i1 = one-based index
                         int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
@@ -1090,7 +1090,7 @@
                                 // scan A(:,k)
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
-                                    GB_GET_A_ik_INDEX ;     // get i of A(i,j)
+                                    GB_GET_A_ik_INDEX ;     // get i of A(i,k)
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
                                     { 
@@ -1120,7 +1120,7 @@
                                 // scan A(:,k)
                                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                                 {
-                                    GB_GET_A_ik_INDEX ;     // get i of A(i,j)
+                                    GB_GET_A_ik_INDEX ;     // get i of A(i,k)
                                     int64_t hf = Hf [i] ;
                                     if (hf < mark)
                                     { 
@@ -1376,7 +1376,7 @@
                             // scan A(:,k)
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             {
-                                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
+                                GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                                 for (GB_HASH (i))       // find i in hash
                                 {
                                     int64_t f = Hf [hash] ;

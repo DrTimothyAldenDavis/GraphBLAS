@@ -61,7 +61,18 @@ void GB_cuda_stringify_binop
     // input:
     const char *macro_name,   // name of macro to construct
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
+    GB_Type_code zcode, // op->ztype->code of the operator
+    bool for_semiring   // if true: op is a multiplier in a semiring
+) ;
+
+void GB_cuda_enumify_binop
+(
+    // output:
+    int *ecode,         // enumerated operator, in range 0 to ... (-1 on failure)
+    // input:
+    GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code zcode  // op->ztype->code of the operator
+    bool for_semiring   // true for A*B, false for A+B or A.*B (not needed)
 ) ;
 
 void GB_cuda_stringify_load    // return a string to load/typecast macro
@@ -73,6 +84,15 @@ void GB_cuda_stringify_load    // return a string to load/typecast macro
     bool is_pattern         // if true, load/cast does nothing
 ) ;
 
+void GB_cuda_charify_binop
+(
+    // output:
+    char **op_string,   // string defining the operator
+    // input:
+    int ecode,          // from GB_cuda_enumify_binop
+    bool for_semiring   // true for A*B, false for A+B or A.*B (not needed)
+) ;
+
 void GB_cuda_stringify_identity        // return string for identity value
 (
     // output:
@@ -80,6 +100,15 @@ void GB_cuda_stringify_identity        // return string for identity value
     // input:
     GB_Opcode opcode,     // must be a built-in binary operator from a monoid
     GB_Type_code zcode
+) ;
+
+void GB_cuda_macrofy_binop
+(
+    // output:
+    char *code_string,  // string with the #define macro
+    // input:
+    const char *macro_name,   // name of macro to construct
+    char *op_string     // string defining the operator
 ) ;
 
 const char *GB_cuda_stringify_opcode

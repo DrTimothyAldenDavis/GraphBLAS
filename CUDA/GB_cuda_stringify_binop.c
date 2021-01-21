@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 
 #include "GB.h"
 #include "GB_cuda_stringify.h"
@@ -16,7 +16,8 @@ void GB_cuda_stringify_binop
     // input:
     const char *macro_name,   // name of macro to construct
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
-    GB_Type_code zcode  // op->ztype->code of the operator
+    GB_Type_code zcode, // op->ztype->code of the operator
+    bool for_semiring   // if true: op is a multiplier in a semiring
 )
 {
     const char *op_string ;
@@ -33,9 +34,10 @@ void GB_cuda_enumify_binop
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code zcode  // op->ztype->code of the operator
-//  bool for_semiring   // true for A*B, false for A+B or A.*B (not needed)
+    bool for_semiring   // true for A*B, false for A+B or A.*B (not needed)
 )
 {
+
     int e = -1 ;
 
     switch (opcode)
@@ -109,13 +111,13 @@ void GB_cuda_enumify_binop
             switch (zcode)
             {
                 case GB_INT8_code   : e = 21 ; break ; // GB_IDIV_SIGNED(y,x,8)
-                case GB_INT16_code  : e = 22 ; break ; // GB_IDIV_SIGNED(y,x,16)"
-                case GB_INT32_code  : e = 23 ; break ; // GB_IDIV_SIGNED(y,x,32)"
-                case GB_INT64_code  : e = 24 ; break ; // GB_IDIV_SIGNED(y,x,64)"
-                case GB_UINT8_code  : e = 25 ; break ; // GB_IDIV_UNSIGNED(y,x,8)"
-                case GB_UINT16_code : e = 26 ; break ; // GB_IDIV_UNSIGNED(y,x,16)"
-                case GB_UINT32_code : e = 27 ; break ; // GB_IDIV_UNSIGNED(y,x,32)"
-                case GB_UINT64_code : e = 28 ; break ; // GB_IDIV_UNSIGNED(y,x,64)"
+                case GB_INT16_code  : e = 22 ; break ; // GB_IDIV_SIGNED(y,x,16)
+                case GB_INT32_code  : e = 23 ; break ; // GB_IDIV_SIGNED(y,x,32)
+                case GB_INT64_code  : e = 24 ; break ; // GB_IDIV_SIGNED(y,x,64)
+                case GB_UINT8_code  : e = 25 ; break ; // GB_IDIV_UNSIGNED(y,x,8)
+                case GB_UINT16_code : e = 26 ; break ; // GB_IDIV_UNSIGNED(y,x,16)
+                case GB_UINT32_code : e = 27 ; break ; // GB_IDIV_UNSIGNED(y,x,32)
+                case GB_UINT64_code : e = 28 ; break ; // GB_IDIV_UNSIGNED(y,x,64)
                 default             : e = 29 ; break ; // (y) / (x)
             }
             break ;
@@ -379,31 +381,31 @@ void GB_cuda_enumify_binop
 
         case GB_FIRSTI1_opcode   :  // z = first_i1(A(i,j),y) == i+1
 
-            e = 106 ; break ;       // z = i+1
+            e = 108 ; break ;       // z = i+1
 
         case GB_FIRSTJ_opcode    :  // z = first_j(A(i,j),y) == j
 
-            e = 107 ; break ;       // z = for_semiring ? (k) : (j)
+            e = for_semiring ? 106 : 107 ; break ; // z = for_semiring ? (k) : (j)
 
         case GB_FIRSTJ1_opcode   :  // z = first_j1(A(i,j),y) == j+1
 
-            e = 108 ; break ;       // z = for_semiring ? (k+1) : (j+1)
+            e = for_semiring ? 109 : 110 ; break ; // z = for_semiring ? (k+1) : (j+1)
 
         case GB_SECONDI_opcode   :  // z = second_i(x,B(i,j)) == i
 
-            e = 109 ; break ;       // z = for_semiring ? (k) : (i)
+            e = for_semiring ? 106 : 105 ; break ; // z = for_semiring ? (k) : (i)
 
         case GB_SECONDI1_opcode  :  // z = second_i1(x,B(i,j)) == i+1
 
-            e = 110 ; break ;       // z = for_semiring ? (k) : ()
+            e = for_semiring ? 109 : 108 ; break ; // z = for_semiring ? (k+1) : (i+1)
 
         case GB_SECONDJ_opcode   :  // z = second_j(x,B(i,j)) == j
 
-            e = 111 ; break ;       // z = j
+            e = 107 ; break ;       // z = j
 
         case GB_SECONDJ1_opcode  :  // z = second_j1(x,B(i,j)) == j+1
 
-            e = 112 ; break ;       // z = j+1
+            e = 110 ; break ;       // z = j+1
 
         default : break ;
     }
@@ -420,6 +422,7 @@ void GB_cuda_charify_binop
     bool for_semiring   // true for A*B, false for A+B or A.*B (not needed)
 )
 {
+
     const char *f ;
 
     switch (ecode)
@@ -602,29 +605,22 @@ void GB_cuda_charify_binop
         // pair
         case 104 : f = "(1)"                            ; break ;
 
-        // firsti
+        //-----------------------------------------------------------
+        // positional ops
+        //-----------------------------------------------------------
+
+        // in a semiring:  cij += aik * bkj
+        //      firsti is i, firstj is k, secondi k, secondj is j
+
+        // in an ewise operation:  cij = aij + bij
+        //      firsti is i, firstj is j, secondi i, secondj is j
+
         case 105 : f = "(i)"                            ; break ;
-
-        // firsti1
-        case 106 : f = "(i+1)"                          ; break ;
-
-        // firstj
-        case 107 : f = for_semiring ? "(k)" : "(j)"     ; break ;
-
-        // firstj1
-        case 108 : f = for_semiring ? "(k+1)" : "(j+1)" ; break ;
-
-        // secondi
-        case 109 : f = for_semiring ? "(k)" : "(i)"     ; break ;
-
-        // secondi1
-        case 110 : f = for_semiring ? "(k+1)" : "(i+1)" ; break ;
-
-        // secondj
-        case 111 : f = "(j)"                            ; break ;
-
-        // secondj1
-        case 112 : f = "(j+1)"                          ; break ;
+        case 106 : f = "(k)"                            ; break ;
+        case 107 : f = "(j)"                            ; break ;
+        case 108 : f = "(i+1)"                          ; break ;
+        case 109 : f = "(k+1)"                          ; break ;
+        case 110 : f = "(j+1)"                          ; break ;
 
         default : f = NULL ;                            ; break ;
     }
