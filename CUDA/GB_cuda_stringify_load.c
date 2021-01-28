@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: the typecast should be handled better.  See ../Source/GB_casting.h,
+// and note the inline functions to cast from double to integer.
+
 // Construct a macro to load and typecast.  For example:
 //  
 //  #define GB_GETA(blob) blob

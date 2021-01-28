@@ -94,10 +94,6 @@ GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
         case GB_TIMES_opcode        :
         case GB_ISEQ_opcode         :
         case GB_ISNE_opcode         :
-        case GB_ISGT_opcode         :
-        case GB_ISLT_opcode         :
-        case GB_ISGE_opcode         :
-        case GB_ISLE_opcode         :
         case GB_LOR_opcode          :
         case GB_LAND_opcode         :
         case GB_LXOR_opcode         :

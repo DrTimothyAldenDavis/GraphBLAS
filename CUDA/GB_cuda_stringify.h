@@ -55,21 +55,59 @@ void GB_cuda_macrofy_mask       // return enum to define mask macros
 
 void GB_cuda_stringify_semiring     // build a semiring (name and code)
 (
+    // output: (all of size at least GB_CUDA_STRLEN+1)
+    char *semiring_name,    // name of the semiring
+    char *semiring_code,    // List of types and macro defs
+    char *mask_name,        // definition of mask data load     // TODO: FIXME
     // input:
     GrB_Semiring semiring,  // the semiring to stringify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
     GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
     GrB_Type atype,         // the type of A
     GrB_Type btype,         // the type of B
-    GrB_Type mtype,         // the type of M, or NULL if no mask
     bool Mask_struct,       // mask is structural
-    bool mask_in_semiring_name, // if true, then the semiring_name includes
-                                // the mask_name.  If false, then semiring_name
-                                // is independent of the mask_name
-    // output: (all of size at least GB_CUDA_LEN+1)
+    bool Mask_comp,         // mask is complemented
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
+) ;
+
+void GB_cuda_enumify_semiring   // enumerate a semiring
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire semiring
+    // input:
+    GrB_Semiring semiring,  // the semiring to enumify
+    bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+    GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
+    GrB_Type atype,         // the type of A
+    GrB_Type btype,         // the type of B
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
+) ;
+
+void GB_cuda_macrofy_semiring   // construct all macros for a semiring
+(
+    // output:
+    char *semiring_macros,      // all macros that define the semiring
+    char *mask_name,            // definition of mask data load TODO: FIXME
+    // input:
+    uint64_t scode
+) ;
+
+void GB_semiring_name       // construct the name of a semiring
+(
+    // output:
     char *semiring_name,    // name of the semiring
-    char *semiring_code,    // List of types and macro defs
-    char *mask_name         // definition of mask data load
+    // input:
+    uint64_t scode
 ) ;
 
 //------------------------------------------------------------------------------
@@ -242,27 +280,27 @@ const char *GB_cuda_stringify_opcode    // name of unary/binary opcode
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_stringify_sparsity: define macros for sparsity structure
+// GB_cuda_stringify_sparsity: define macros for sparsity structure
 //------------------------------------------------------------------------------
 
-void GB_stringify_sparsity  // construct macros for sparsity structure
+void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
     // intput:
     char *matrix_name,      // "C", "M", "A", or "B"
-    GrB_Matrix A
+    int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 ) ;
 
-void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
+void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
 (
     // output:
     int *ecode,             // enumerated sparsity structure
     // input:
-    GrB_Matrix A
+    int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 ) ;
 
-void GB_macrofy_sparsity    // construct macros for sparsity structure
+void GB_cuda_macrofy_sparsity    // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure

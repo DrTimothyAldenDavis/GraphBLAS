@@ -13,8 +13,8 @@
 #include "GB.h"
 #include "GB_cuda_stringify.h"
 
-// TODO: need the actual C, M, A and B matrices, or at least something to
-// determine their sparsity structures for GB_cuda_enumify_sparsity.
+// TODO: do we need 3 methods (enumify, charify, macrofy)?
+// or just enumify and macrofy?
 
 //------------------------------------------------------------------------------
 // GB_cuda_stringify_semiring: build strings for a semiring
@@ -22,27 +22,32 @@
 
 void GB_cuda_stringify_semiring     // build a semiring (name and code)
 (
+    // output: (all of size at least GB_CUDA_STRLEN+1)
+    char *semiring_name,    // name of the semiring
+    char *semiring_macros,  // List of types and macro defs
+    char *mask_name,        // definition of mask data load     // TODO: FIXME
     // input:
     GrB_Semiring semiring,  // the semiring to stringify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
     GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
     GrB_Type atype,         // the type of A
     GrB_Type btype,         // the type of B
-    GrB_Type mtype,         // the type of M, or NULL if no mask
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
-
-    // output: (all of size at least GB_CUDA_STRLEN+1)
-    char *semiring_name,    // name of the semiring
-    char *semiring_code,    // List of types and macro defs
-    char *mask_name         // definition of mask data load
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
 )
 {
-    uint64_t scode ;
 
+    uint64_t scode ;
     GB_cuda_enumify_semiring (&scode,
-        semiring, flipxy, ctype, atype, btype, mtype, Mask_struct, Mask_comp) ;
-    GB_cuda_macrofy_semiring (semiring_name, semiring_code, mask_name, scode) ;
+        semiring, flipxy, ctype, mtype, atype, btype, Mask_struct, Mask_comp,
+        C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
+    GB_cuda_macrofy_semiring (semiring_macros, mask_name, scode) ;
+    GB_semiring_name (semiring_name, scode) ;
 }
 
 //------------------------------------------------------------------------------
@@ -57,19 +62,17 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
     GrB_Semiring semiring,  // the semiring to enumify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
     GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
     GrB_Type atype,         // the type of A
     GrB_Type btype,         // the type of B
-    GrB_Type mtype,         // the type of M, or NULL if no mask
     bool Mask_struct,       // mask is structural
-    bool Mask_comp          // mask is complemented
+    bool Mask_comp,         // mask is complemented
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (semiring->object_kind == GB_BUILTIN) ;
 
     //--------------------------------------------------------------------------
     // get the semiring
@@ -134,7 +137,7 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
 
         if (handled)
         {
-            // the flip is now handled completely.
+            // the flip is now handled completely, so discard flipxy
             flipxy = false ;
         }
     }
@@ -193,8 +196,20 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
     GB_cuda_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
 
     //--------------------------------------------------------------------------
+    // enumify the sparsity structures of C, M, A, and B
+    //--------------------------------------------------------------------------
+
+    int csparsity, msparsity, asparsity, bsparsity ;
+    GB_cuda_enumify_sparsity (&csparsity, C_sparsity) ;
+    GB_cuda_enumify_sparsity (&msparsity, M_sparsity) ;
+    GB_cuda_enumify_sparsity (&asparsity, A_sparsity) ;
+    GB_cuda_enumify_sparsity (&bsparsity, B_sparsity) ;
+
+    //--------------------------------------------------------------------------
     // construct the semiring scode
     //--------------------------------------------------------------------------
+
+    // total scode bits: 60
 
     #define LSHIFT(x,k) (((uint64_t) x) << k)
 
@@ -220,22 +235,22 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
                 LSHIFT (acode      , 12) |  // 0 to 14      4
                 LSHIFT (bcode      ,  8) |  // 0 to 14      4
 
-                // formats of C, A, and B (sparse, hyper, bitmap, or full)
+                // sparsity structures of C, A, and B
                 LSHIFT (csparsity  ,  6) |  // 0 to 3       2
                 LSHIFT (msparsity  ,  4) |  // 0 to 3       2
                 LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
-
-    // total scode bits: 60
 }
 
+//------------------------------------------------------------------------------
+// GB_cuda_macrofy_semiring: construct all macros for a semiring
+//------------------------------------------------------------------------------
 
 void GB_cuda_macrofy_semiring   // construct all macros for a semiring
 (
     // output:
-    char *semiring_name,    // name of the semiring
-    char *semiring_code,    // List of types and macro defs
-    char *mask_name,        // definition of mask data load
+    char *semiring_macros,      // all macros that define the semiring
+    char *mask_name,            // definition of mask data load TODO: FIXME
     // input:
     uint64_t scode
 )
@@ -251,7 +266,7 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     int add_ecode   = RSHIFT (scode, 55, 5) ;
     int id_ecode    = RSHIFT (scode, 50, 5) ;
     int term_ecode  = RSHIFT (scode, 45, 5) ;
-    bool is_term    = (term_ecode == 31) ;
+    bool is_term    = (term_ecode != 30) ;
 
     // multiplier
     int mult_ecode  = RSHIFT (scode, 37, 8) ;
@@ -360,26 +375,41 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     // determine the sparsity formats of C, M, A, and B
     //--------------------------------------------------------------------------
 
+    const char *csparsity_macros = "" ;
+    const char *msparsity_macros = "" ;
+    const char *asparsity_macros = "" ;
+    const char *bsparsity_macros = "" ;
+    GB_cuda_macrofy_sparsity (&csparsity_macros, "C", csparsity) ;
+    GB_cuda_macrofy_sparsity (&msparsity_macros, "M", csparsity) ;
+    GB_cuda_macrofy_sparsity (&asparsity_macros, "A", csparsity) ;
+    GB_cuda_macrofy_sparsity (&bsparsity_macros, "B", csparsity) ;
+
     //--------------------------------------------------------------------------
-    // build the final semiring code
+    // build the final string that defines all semiring macros
     //--------------------------------------------------------------------------
 
-    snprintf (semiring_code, GB_CUDA_STRLEN,
-        "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+    snprintf (semiring_macros, GB_CUDA_STRLEN,
+        "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n"
+        "%s\n" "%s\n" "%s\n",
         acast_macro, bcast_macro, mult_macro, add_macro, identity_macro,
-        terminal_expression_macro, terminal_statement_macro,
-        ccast_macro, mask_macros,
-        // TODO: C, M, A, and B sparsity formats
-        ) ;
+        terminal_expression_macro, terminal_statement_macro, ccast_macro,
+        mask_macros, csparsity_macros, msparsity_macros, asparsity_macros,
+        bsparsity_macros) ;
+}
 
-    //--------------------------------------------------------------------------
-    // build the final semiring name
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// GB_semiring_name: construct the name of a semiring
+//------------------------------------------------------------------------------
 
-    snprintf (semiring_name, "semiring_%0.16X", scode) ;
+void GB_semiring_name       // construct the name of a semiring
+(
+    // output:
+    char *semiring_name,    // name of the semiring
+    // input:
+    uint64_t scode
+)
+{
 
-    printf ("semiring_name:\n%s\n", semiring_name) ;
-    //printf ("semiring_code:\n%s\n", semiring_code) ;
-    //printf ("mask_name:    \n%s\n", mask_name) ;
+    snprintf (semiring_name, GB_CUDA_STRLEN, "semiring_%0.16X", scode) ;
 }
 

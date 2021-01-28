@@ -44,7 +44,8 @@ void GB_cuda_stringify_terminal         // return strings to check terminal
     int ecode ;
 
     // get ecode and bool (is_monoid_terminal) from the opcode and zcode
-    GB_cuda_enumify_terminal (is_monoid_terminal, &ecode, opcode, zcode) ;
+    GB_cuda_enumify_terminal (&ecode, opcode, zcode) ;
+    (*is_monoid_terminal) = (ecode <= 29) ;
 
     // convert ecode and is_monoid_terminal to strings
     GB_cuda_charify_identity_or_terminal (&terminal_value, ecode) ;
@@ -67,15 +68,13 @@ void GB_cuda_stringify_terminal         // return strings to check terminal
 void GB_cuda_enumify_terminal       // return enum of terminal value
 (
     // output:
-    bool *is_monoid_terminal,   // true if monoid is terminal
-    int *ecode,                 // enumerated terminal, 0 to 18 (-1 if fail)
+    int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
     // input:
     GB_Opcode opcode,           // built-in binary opcode of a monoid
     GB_Type_code zcode          // type code used in the opcode we want
 )
 {
 
-    bool t = false ;
     int e = -1 ;
 
     switch (opcode)
@@ -86,12 +85,10 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
             if (zcode == GB_BOOL_code)
             {
                 e = 2 ;                 // true (boolean OR)
-                t = true ;
             }
             else
             {
-                e = 18 ;                // no terminal value
-                t = false ;
+                e = 31 ;                // builtin with no terminal value
             }
             break ;
 
@@ -101,7 +98,6 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
             {
                 case GB_BOOL_code   : 
                     e = 3 ;             // false (boolean AND)
-                    t = true ;
                     break ;
                 case GB_INT8_code   :
                 case GB_INT16_code  :
@@ -112,11 +108,9 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
                 case GB_UINT32_code :
                 case GB_UINT64_code :
                     e = 0 ;             // 0
-                    t = true ;
                     break ;
                 default :
-                    e = 18 ;            // no terminal value
-                    t = false ;
+                    e = 31 ;            // builtin with no terminal value
                     break ;
             }
             break ;
@@ -124,18 +118,15 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
         case GB_LOR_opcode      : 
 
                 e = 2 ;                 // true
-                t = true  ;
                 break ;
 
         case GB_LAND_opcode     : 
 
                 e = 3 ;                 // false
-                t = true  ;
                 break ;
 
         case GB_MIN_opcode :
 
-            t = true ;                  // all MIN monoids are terminal
             switch (zcode)
             {
                 case GB_BOOL_code   : e =  3 ; break ; // false
@@ -155,7 +146,6 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
 
         case GB_MAX_opcode :
 
-            t = true ;                  // all MAX monoids are terminal
             switch (zcode)
             {
                 case GB_BOOL_code   : e =  2 ; break ; // true
@@ -176,7 +166,6 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
         case GB_ANY_opcode :
 
             e = 18 ;                    // no specific terminal value
-            t = true ;                  // the ANY monoid is always terminal
             break ;
 
         case GB_LXOR_opcode     :
@@ -184,12 +173,13 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
         case GB_EQ_opcode       :
         default                 :
 
-            e = 18                      // no terminal value
-            t = false ;                 // the monoid is not terminal
+            e = 31 ;                    // builtin with no terminal value
             break ;
+
+        case GB_USER_opcode :
+
     }
 
-    (*is_terminal) = t ;
     (*ecode) = e ;
 }
 

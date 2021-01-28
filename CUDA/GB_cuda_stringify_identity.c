@@ -137,6 +137,11 @@ void GB_cuda_charify_identity_or_terminal
 
     switch (ecode)
     {
+
+        //----------------------------------------------------------------------
+        // for terminal monoids
+        //----------------------------------------------------------------------
+
         case  0 : f = "0"           ; break ;
         case  1 : f = "1"           ; break ;
         case  2 : f = "true"        ; break ;
@@ -155,13 +160,23 @@ void GB_cuda_charify_identity_or_terminal
         case 15 ; f = "INT32_MIN"   ; break ;
         case 16 ; f = "INT64_MIN"   ; break ;
         case 17 : f = "-INFINITY"   ; break ;
+        case 18 : f = "0"           ; break ;       // for the ANY monoid only
 
-        // ecodes 18 to 29 are reserved for future use
+        // ecodes 19 to 28 are reserved for future use
 
-        // 30 is a place-holder; the user-provide string must be used instead
-        case 30 : f = "other"       ; break ;   // for user-defined monoids
+        // user-defined terminal monoid
+        case 29 : f = "(user provided, terminal)" ; break ;
 
-        case 31 : f = "(none)"      ; break ;   // for non-terminal monoids
+        //----------------------------------------------------------------------
+        // for non-terminal monoids
+        //----------------------------------------------------------------------
+
+        // user-defined non-terminal monoids
+        case 30 : f = "(user provided, not terminal)" ; break ;
+
+        // built-in non-terminal monoids
+        case 31 : f = "(built in, not terminal)" ; break ;
+
         default : f = NULL ;        ; break ;
     }
 

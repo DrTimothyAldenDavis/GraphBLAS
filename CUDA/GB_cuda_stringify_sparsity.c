@@ -11,66 +11,65 @@
 #include "GB_cuda_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_stringify_sparsity: define macros for sparsity structure
+// GB_cuda_stringify_sparsity: define macros for sparsity structure
 //------------------------------------------------------------------------------
 
-void GB_stringify_sparsity  // construct macros for sparsity structure
+void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
     // intput:
     char *matrix_name,      // "C", "M", "A", or "B"
-    GrB_Matrix A
+    int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 )
 {
 
     int ecode ;
-    GB_enumify_sparsity (&ecode, A) ;
-    GB_macrofy_sparsity (sparsity_macros, matrix_name, ecode) ;
+    GB_cuda_enumify_sparsity (&ecode, A_sparsity) ;
+    GB_cuda_macrofy_sparsity (sparsity_macros, matrix_name, ecode) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_enumify_sparsity: enumerate the sparsity structure of a matrix
+// GB_cuda_enumify_sparsity: enumerate the sparsity structure of a matrix
 //------------------------------------------------------------------------------
 
-void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
+void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
 (
     // output:
     int *ecode,             // enumerated sparsity structure
     // input:
-    GrB_Matrix A
+    int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 )
 {
 
-    if (A == NULL)
+    if (A_sparsity == GxB_SPARSE || A_sparsity == 0)
     {
-        // if A is NULL, pretend it is sparse
-        e = 0 ; // (GxB_SPARSE) ;
+        e = 0 ;
     }
-    else if (GB_IS_HYPERSPARSE (A))
+    else if (A_sparsity == GxB_HYPERSPARSE)
     { 
-        e = 1 ; // (GxB_HYPERSPARSE) ;
+        e = 1 ;
     }
-    else if (GB_IS_FULL (A))
+    else if (A_sparsity == GxB_BITMAP)
     { 
-        e = 3 ; // (GxB_FULL) ;
+        e = 2 ;
     }
-    else if (GB_IS_BITMAP (A))
+    else if (A_sparsity == GxB_FULL)
     { 
-        e = 2 ; // (GxB_BITMAP) ;
+        e = 3 ;
     }
     else
     { 
-        e = 0 ; // (GxB_SPARSE) ;
+        e = 0 ; // if A is NULL, pretend it's sparse
     }
     (*ecode) = e ;
 }
 
 //------------------------------------------------------------------------------
-// GB_macrofy_sparsity: define a macro for the sparsity structure of a matrix
+// GB_cuda_macrofy_sparsity: define macro for the sparsity structure of a matrix
 //------------------------------------------------------------------------------
 
-void GB_macrofy_sparsity    // construct macros for sparsity structure
+void GB_cuda_macrofy_sparsity    // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
@@ -83,39 +82,39 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     switch (ecode)
     {
 
-        case 0 :
+        case 0 :    // sparse
             snprintf (sparsity_macros, GB_CUDA_STRLEN,
-                "#define %s_IS_SPARSE 1\n"
-                "#define %s_IS_HYPER  0\n"
-                "#define %s_IS_BITMAP 0\n"
-                "#define %s_IS_FULL   0\n",
+                "#define GB_%s_IS_SPARSE 1\n"
+                "#define GB_%s_IS_HYPER  0\n"
+                "#define GB_%s_IS_BITMAP 0\n"
+                "#define GB_%s_IS_FULL   0\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
-        case 1 :
+        case 1 :    // hypersparse
             snprintf (sparsity_macros, GB_CUDA_STRLEN,
-                "#define %s_IS_SPARSE 0\n"
-                "#define %s_IS_HYPER  1\n"
-                "#define %s_IS_BITMAP 0\n"
-                "#define %s_IS_FULL   0\n",
+                "#define GB_%s_IS_SPARSE 0\n"
+                "#define GB_%s_IS_HYPER  1\n"
+                "#define GB_%s_IS_BITMAP 0\n"
+                "#define GB_%s_IS_FULL   0\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
-        case 2 :
+        case 2 :    // bitmap
             snprintf (sparsity_macros, GB_CUDA_STRLEN,
-                "#define %s_IS_SPARSE 0\n"
-                "#define %s_IS_HYPER  0\n"
-                "#define %s_IS_BITMAP 1\n"
-                "#define %s_IS_FULL   0\n",
+                "#define GB_%s_IS_SPARSE 0\n"
+                "#define GB_%s_IS_HYPER  0\n"
+                "#define GB_%s_IS_BITMAP 1\n"
+                "#define GB_%s_IS_FULL   0\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
-        case 3 :
+        case 3 :    // full
             snprintf (sparsity_macros, GB_CUDA_STRLEN,
-                "#define %s_IS_SPARSE 0\n"
-                "#define %s_IS_HYPER  0\n"
-                "#define %s_IS_BITMAP 0\n"
-                "#define %s_IS_FULL   1\n",
+                "#define GB_%s_IS_SPARSE 0\n"
+                "#define GB_%s_IS_HYPER  0\n"
+                "#define GB_%s_IS_BITMAP 0\n"
+                "#define GB_%s_IS_FULL   1\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
