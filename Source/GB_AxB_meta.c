@@ -269,7 +269,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // them, transpose M, negate flipxy, and transpose M and C.
         A = B_in ; atrans = !B_transpose ;
         B = A_in ; btrans = !A_transpose ;
-        flipxy = !flipxy ;
+        flipxy = !flipxy ;              // flipxy is modified here
         M_transpose = !M_transpose ;
         C_transpose = !C_transpose ;
     }

@@ -1,4 +1,11 @@
+//------------------------------------------------------------------------------
+// GB_cuda_stringify.h: prototype definitions for using C helpers 
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 // Construct a macro to load and typecast.  For example:
 //  
@@ -19,23 +26,25 @@
 #include "GB.h"
 #include "GB_cuda_stringify.h"
 
-void GB_cuda_stringify_load    // return a string to load/typecast macro
+void GB_cuda_stringify_load         // return a string to load/typecast macro
 (
     // output:
-    char *result,
+    char *load_macro,               // string with #define macro to load value
     // input:
-    const char *macro_name,       // name of macro to construct
-    bool is_pattern         // if true, load/cast does nothing
+    const char *load_macro_name,    // name of macro to construct
+    bool is_pattern                 // if true, load/cast does nothing
 )
 {
 
     if (is_pattern)
     {
-        snprintf (result, GB_CUDA_STRLEN, "#define %s(blob)", macro_name) ;
+        snprintf (load_macro, GB_CUDA_STRLEN, "#define %s(blob)",
+            load_macro_name) ;
     }
     else
     {
-        snprintf (result, GB_CUDA_STRLEN, "#define %s(blob) blob", macro_name) ;
+        snprintf (load_macro, GB_CUDA_STRLEN, "#define %s(blob) blob",
+            load_macro_name) ;
     }
 }
 

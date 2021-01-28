@@ -142,7 +142,9 @@ GrB_Info GB_AxB_saxpy_generic
         if (flipxy)
         { 
             // flip a positional multiplicative operator
-            opcode = GB_binop_flip (opcode) ;
+            bool handled ;
+            opcode = GB_binop_flip (opcode, &handle) ;  // for positional ops
+            ASSERT (handled) ;      // all positional ops can be flipped
         }
 
         // C always has type int64_t or int32_t.  The monoid must be used via
@@ -341,7 +343,9 @@ GrB_Info GB_AxB_saxpy_generic
             if (flipxy)
             { 
                 // flip first and second
-                opcode = GB_binop_flip (opcode) ;
+                bool handled ;
+                opcode = GB_binop_flip (opcode, &handled) ; // for 1st and 2nd
+                ASSERT (handled) ;      // FIRST and SECOND can be flipped
             }
             if (opcode == GB_FIRST_opcode)
             { 

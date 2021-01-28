@@ -16,7 +16,7 @@
 
 // Using built-in types and operators, many unique semirings can be built.  Not
 // all possible semirings that can be constructed from built-in types and
-// operators are pre-defined.  Below is a list of the 1513 pre-defined
+// operators are pre-defined.  Below is a list of the 1553 pre-defined
 // semirings.
 
 // 1000 semirings with a multiply operator TxT -> T where T is non-Boolean, from

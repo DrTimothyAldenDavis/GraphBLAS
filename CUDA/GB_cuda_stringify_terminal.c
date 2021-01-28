@@ -1,98 +1,97 @@
-// SPDX-License-Identifier: Apache-2.0
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_terminal: string to check terminal condition
+// GB_cuda_stringify_terminal: convert terminal condition into a string or enum
 //------------------------------------------------------------------------------
 
-// The macro_condition_name(cij) should return true if the value of cij has
-// reached its terminal value, or false otherwise.  If the monoid is not
-// terminal, then the macro should always return false.  The ANY monoid
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// The terminal_expression_macro(cij) should return true if the value of
+// cij has reached its terminal value, or false otherwise.  If the monoid is
+// not terminal, then the macro should always return false.  The ANY monoid
 // should always return true.
 
-// The macro_statement_name is a macro containing a full statement.  If the
-// monoid is never terminal, it becomes the empty statement (";").  Otherwise,
-// it checks the terminal condition and does a "break" if true.
+// The terminal_statement_macro is a macro containing a full statement.  If the
+// monoid is never terminal, it becomes the empty statement.  Otherwise,
+// it checks the terminal condition and does a "break" if true.  The statement
+// has no trailing semicolon.
 
 #include "GB.h"
 #include "GB_cuda_stringify.h"
 
-void GB_cuda_stringify_terminal // return strings to check terminal
+//------------------------------------------------------------------------------
+// GB_cuda_stringify_terminal: macros for terminal value and condition
+//------------------------------------------------------------------------------
+
+void GB_cuda_stringify_terminal         // return strings to check terminal
 (
     // outputs:
-    bool *is_monoid_terminal,
-    char *terminal_condition,
-    char *terminal_statement,
+    bool *is_monoid_terminal,           // true if monoid is terminal
+    char *terminal_expression_macro,    // #define for terminal expression macro
+    char *terminal_statement_macro,     // #define for terminal statement macro
     // inputs:
-    const char *macro_condition_name,
-    const char *macro_statement_name,
+    const char *terminal_expression_macro_name,     // name of expression macro
+    const char *terminal_statement_macro_name,      // name of statement macro
     GB_Opcode opcode,    // must be a built-in binary operator from a monoid
-    GB_Type_code zcode   // op->ztype->code
+    GB_Type_code zcode   // type code of the binary operator
 )
 {
 
-    //--------------------------------------------------------------------------
-    // determine if the monoid is terminal, and find its terminal value
-    //--------------------------------------------------------------------------
+    char *terminal_value ;
+    char terminal_expression [GB_CUDA_STRLEN+1] ;
+    char terminal_statement  [GB_CUDA_STRLEN+1] ;
+    int ecode ;
 
-    bool is_terminal = false ;
-    const char *f = NULL ;
+    // get ecode and bool (is_monoid_terminal) from the opcode and zcode
+    GB_cuda_enumify_terminal (is_monoid_terminal, &ecode, opcode, zcode) ;
+
+    // convert ecode and is_monoid_terminal to strings
+    GB_cuda_charify_identity_or_terminal (&terminal_value, ecode) ;
+    GB_cuda_charify_terminal_expression (terminal_expression,
+        terminal_value, is_monoid_terminal, ecode) ;
+    GB_cuda_charify_terminal_statement (terminal_statement,
+        terminal_value, is_monoid_terminal, ecode) ;
+
+    // convert strings to macros
+    GB_cuda_macrofy_terminal_expression (terminal_expression_macro,
+        terminal_expression_macro_name, terminal_expression) ;
+    GB_cuda_macrofy_terminal_statement (terminal_statement_macro,
+        terminal_statement_macro_name, terminal_statement) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_cuda_enumify_terminal: return enum of terminal value
+//------------------------------------------------------------------------------
+
+void GB_cuda_enumify_terminal       // return enum of terminal value
+(
+    // output:
+    bool *is_monoid_terminal,   // true if monoid is terminal
+    int *ecode,                 // enumerated terminal, 0 to 18 (-1 if fail)
+    // input:
+    GB_Opcode opcode,           // built-in binary opcode of a monoid
+    GB_Type_code zcode          // type code used in the opcode we want
+)
+{
+
+    bool t = false ;
+    int e = -1 ;
 
     switch (opcode)
     {
-
-        #if 0
-        case GB_ANY_opcode :
-            f = NULL ;
-            is_terminal = true ;
-            break ;
-        #endif
-
-        case GB_MIN_opcode :
-
-            is_terminal = true ;
-            switch (zcode)
-            {
-                case GB_BOOL_code   : f = "false" ;         break ;
-                case GB_INT8_code   : f = "INT8_MIN" ;      break ;
-                case GB_INT16_code  : f = "INT16_MIN" ;     break ;
-                case GB_INT32_code  : f = "INT32_MIN" ;     break ;
-                case GB_INT64_code  : f = "INT64_MIN" ;     break ;
-                case GB_UINT8_code  : f = "0" ;             break ;
-                case GB_UINT16_code : f = "0" ;             break ;
-                case GB_UINT32_code : f = "0" ;             break ;
-                case GB_UINT64_code : f = "0" ;             break ;
-                default             : f = "(-INFINITY)" ;   break ;
-            }
-            break ;
-
-        case GB_MAX_opcode :
-
-            is_terminal = true ;
-            switch (zcode)
-            {
-                case GB_BOOL_code   : f = "true" ;          break ;
-                case GB_INT8_code   : f = "INT8_MAX" ;      break ;
-                case GB_INT16_code  : f = "INT16_MAX" ;     break ;
-                case GB_INT32_code  : f = "INT32_MAX" ;     break ;
-                case GB_INT64_code  : f = "INT64_MAX" ;     break ;
-                case GB_UINT8_code  : f = "UINT8_MAX" ;     break ;
-                case GB_UINT16_code : f = "UINT16_MAX" ;    break ;
-                case GB_UINT32_code : f = "UINT32_MAX" ;    break ;
-                case GB_UINT64_code : f = "UINT64_MAX" ;    break ;
-                default             : f = "INFINITY" ;      break ;
-            }
-            break ;
 
         case GB_PLUS_opcode :
 
             if (zcode == GB_BOOL_code)
             {
-                f = "true" ;      // boolean OR
-                is_terminal = true ;
+                e = 2 ;                 // true (boolean OR)
+                t = true ;
             }
             else
             {
-                f = NULL ;
-                is_terminal = false ;
+                e = 18 ;                // no terminal value
+                t = false ;
             }
             break ;
 
@@ -100,7 +99,10 @@ void GB_cuda_stringify_terminal // return strings to check terminal
 
             switch (zcode)
             {
-                case GB_BOOL_code   :   // boolean AND
+                case GB_BOOL_code   : 
+                    e = 3 ;             // false (boolean AND)
+                    t = true ;
+                    break ;
                 case GB_INT8_code   :
                 case GB_INT16_code  :
                 case GB_INT32_code  :
@@ -109,64 +111,199 @@ void GB_cuda_stringify_terminal // return strings to check terminal
                 case GB_UINT16_code :
                 case GB_UINT32_code :
                 case GB_UINT64_code :
-                    f = "0" ;
-                    is_terminal = true ;
+                    e = 0 ;             // 0
+                    t = true ;
                     break ;
-                default             :
-                    f = NULL ;
-                    is_terminal = false ;
+                default :
+                    e = 18 ;            // no terminal value
+                    t = false ;
                     break ;
             }
             break ;
 
-        case GB_LOR_opcode      : f = "true"  ; is_terminal = true  ; break ;
-        case GB_LAND_opcode     : f = "false" ; is_terminal = true  ; break ; 
+        case GB_LOR_opcode      : 
+
+                e = 2 ;                 // true
+                t = true  ;
+                break ;
+
+        case GB_LAND_opcode     : 
+
+                e = 3 ;                 // false
+                t = true  ;
+                break ;
+
+        case GB_MIN_opcode :
+
+            t = true ;                  // all MIN monoids are terminal
+            switch (zcode)
+            {
+                case GB_BOOL_code   : e =  3 ; break ; // false
+                case GB_INT8_code   : e = 13 ; break ; // INT8_MIN
+                case GB_INT16_code  : e = 14 ; break ; // INT16_MIN
+                case GB_INT32_code  : e = 15 ; break ; // INT32_MIN
+                case GB_INT64_code  : e = 16 ; break ; // INT64_MIN
+                case GB_UINT8_code  :
+                case GB_UINT16_code : 
+                case GB_UINT32_code : 
+                case GB_UINT64_code : e =  0 ; break ; // 0
+                case GB_FP32_code   : 
+                case GB_FP64_code   : e = 17 ; break ; // -INFINITY
+                default             : e = -1 ; break ;
+            }
+            break ;
+
+        case GB_MAX_opcode :
+
+            t = true ;                  // all MAX monoids are terminal
+            switch (zcode)
+            {
+                case GB_BOOL_code   : e =  2 ; break ; // true
+                case GB_INT8_code   : e =  4 ; break ; // INT8_MAX
+                case GB_INT16_code  : e =  5 ; break ; // INT16_MAX
+                case GB_INT32_code  : e =  6 ; break ; // INT32_MAX
+                case GB_INT64_code  : e =  7 ; break ; // INT64_MAX
+                case GB_UINT8_code  : e =  8 ; break ; // UINT8_MAX
+                case GB_UINT16_code : e =  9 ; break ; // UINT16_MAX
+                case GB_UINT32_code : e = 10 ; break ; // UINT32_MAX
+                case GB_UINT64_code : e = 11 ; break ; // UINT64_MAX
+                case GB_FP32_code   : 
+                case GB_FP64_code   : e = 12 ; break ; // INFINITY
+                default             : e = -1 ; break ;
+            }
+            break ;
+
+        case GB_ANY_opcode :
+
+            e = 18 ;                    // no specific terminal value
+            t = true ;                  // the ANY monoid is always terminal
+            break ;
 
         case GB_LXOR_opcode     :
         // case GB_LXNOR_opcode :
         case GB_EQ_opcode       :
         default                 :
-            // the monoid is not terminal
-            f = NULL ;
-            is_terminal = false ;
+
+            e = 18                      // no terminal value
+            t = false ;                 // the monoid is not terminal
             break ;
     }
 
-    //--------------------------------------------------------------------------
-    // construct the macro to test the terminal condition
-    //--------------------------------------------------------------------------
+    (*is_terminal) = t ;
+    (*ecode) = e ;
+}
 
-    if (is_terminal)
+//------------------------------------------------------------------------------
+// GB_cuda_charify_terminal_expression: string to evaluate terminal expression
+//------------------------------------------------------------------------------
+
+void GB_cuda_charify_terminal_expression    // string for terminal expression
+(
+    // output:
+    char *terminal_expression,          // string with terminal expression
+    // input:
+    char *terminal_string,              // string with terminal value
+    bool is_monoid_terminal,            // true if monoid is terminal
+    int ecode                           // ecode of monoid operator
+)
+{
+
+    if (is_monoid_terminal)
     {
         // the monoid is terminal
-        if (f == NULL)
+        if (ecode == 18)
         {
-            // ANY monoid
-            snprintf (terminal_condition, GB_CUDA_STRLEN,
-                "#define %s(cij) true", macro_condition_name) ;
-            snprintf (terminal_statement, GB_CUDA_STRLEN,
-                "#define %s break", macro_statement_name) ;
+            // ANY monoid: terminal expression is always true
+            snprintf (terminal_expression, GB_CUDA_STRLEN, "(true)") ;
         }
         else
         {
             // typical terminal monoids: check if C(i,j) has reached its
             // terminal value
-            snprintf (terminal_condition, GB_CUDA_STRLEN,
-                "#define %s(cij) ((cij) == %s)", macro_condition_name, f) ;
-            snprintf (terminal_statement, GB_CUDA_STRLEN,
-                "#define %s if (%s (cij)) break",
-                macro_statement_name, macro_condition_name) ;
+            snprintf (terminal_expression, GB_CUDA_STRLEN,
+                "((cij) == %s)", terminal_string) ;
         }
     }
     else
     {
-        // the monoid is not terminal: the condition is always false
-        snprintf (terminal_condition, GB_CUDA_STRLEN, "#define %s(cij) false",
-            macro_condition_name) ;
-        snprintf (terminal_statement, GB_CUDA_STRLEN, "#define %s",
-            macro_statement_name) ;
+        // the monoid is not terminal: the expression is always false
+        snprintf (terminal_expression, GB_CUDA_STRLEN, "(false)") ;
     }
+}
 
-    (*is_monoid_terminal) = is_terminal ;
+//------------------------------------------------------------------------------
+// GB_cuda_charify_terminal_statement: string for terminal statement
+//------------------------------------------------------------------------------
+
+void GB_cuda_charify_terminal_statement // string for terminal statement
+(
+    // output:
+    char *terminal_statement,           // string with terminal statement
+    // input:
+    char *terminal_string,              // string with terminal value
+    bool is_monoid_terminal,            // true if monoid is terminal
+    int ecode                           // ecode of monoid operator
+)
+{
+
+    if (is_monoid_terminal)
+    {
+        // the monoid is terminal
+        if (ecode == 18)
+        {
+            // ANY monoid: always break
+            snprintf (terminal_statement, GB_CUDA_STRLEN, "break") ;
+        }
+        else
+        {
+            // typical terminal monoids: break if C(i,j) has reached its
+            // terminal value
+            snprintf (terminal_statement, GB_CUDA_STRLEN,
+                "if ((cij) == %s) break", terminal_string) ;
+        }
+    }
+    else
+    {
+        // the monoid is not terminal: the terminal statement is empty
+        snprintf (terminal_statement, GB_CUDA_STRLEN, "") ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_cuda_macrofy_terminal_expression: macro for terminal expression
+//------------------------------------------------------------------------------
+
+void GB_cuda_macrofy_terminal_expression    // macro for terminal expression
+(
+    // output:
+    char *terminal_expression_macro,
+    // intput:
+    const char *terminal_expression_macro_name,
+    const char *terminal_expression
+)
+{
+
+    snprintf (terminal_expression_macro, GB_CUDA_STRLEN,
+        "#define %s(cij) %s",
+        terminal_expression_macro_name, terminal_expression) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_cuda_macrofy_terminal_statement: macro for terminal statement
+//------------------------------------------------------------------------------
+
+void GB_cuda_macrofy_terminal_statement     // macro for terminal statement
+(
+    // output:
+    char *terminal_statement_macro,
+    // intput:
+    const char *terminal_statement_macro_name,
+    const char *terminal_statement
+)
+{
+
+    snprintf (terminal_statement_macro, GB_CUDA_STRLEN,
+        "#define %s %s",
+        terminal_statement_macro_name, terminal_statement) ;
 }
 
