@@ -48,11 +48,16 @@ void mexFunction
 
         // get the type
         mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-        CHECK_ERROR (mx_type == NULL, "invalid GraphBLASv4 struct") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv3 struct
+            mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+            CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
+        }
 
         // get the scalar info
         mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-        CHECK_ERROR (opaque == NULL, "invalid GraphBLASv4 struct") ;
+        CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
         int64_t *s = mxGetInt64s (opaque) ;
         int64_t vlen = s [1] ;
         int64_t vdim = s [2] ;
