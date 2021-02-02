@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_sparsity: determine the sparsity status of a matrix
+// GB_stringify_sparsity: determine the sparsity status of a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -8,13 +8,13 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_sparsity: define macros for sparsity structure
+// GB_stringify_sparsity: define macros for sparsity structure
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
+void GB_stringify_sparsity  // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
@@ -25,15 +25,15 @@ void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
 {
 
     int ecode ;
-    GB_cuda_enumify_sparsity (&ecode, A_sparsity) ;
-    GB_cuda_macrofy_sparsity (sparsity_macros, matrix_name, ecode) ;
+    GB_enumify_sparsity (&ecode, A_sparsity) ;
+    GB_macrofy_sparsity (sparsity_macros, matrix_name, ecode) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_sparsity: enumerate the sparsity structure of a matrix
+// GB_enumify_sparsity: enumerate the sparsity structure of a matrix
 //------------------------------------------------------------------------------
 
-void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
+void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
 (
     // output:
     int *ecode,             // enumerated sparsity structure
@@ -66,10 +66,10 @@ void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_sparsity: define macro for the sparsity structure of a matrix
+// GB_macrofy_sparsity: define macro for the sparsity structure of a matrix
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_sparsity    // construct macros for sparsity structure
+void GB_macrofy_sparsity    // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure

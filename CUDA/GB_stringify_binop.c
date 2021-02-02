@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_binop: convert a binary op into a string or enum
+// GB_stringify_binop: convert a binary op into a string or enum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -13,13 +13,13 @@
 // #define GB_MULT(x,y) ((x) * (y))
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_binop: construct the binop macro
+// GB_stringify_binop: construct the binop macro
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_binop
+void GB_stringify_binop
 (
     // output:
     char *binop_macro,  // string with the #define macro
@@ -36,23 +36,23 @@ void GB_cuda_stringify_binop
     int ecode ;
 
     // get ecode from opcode, xcode, and for_semiring
-    GB_cuda_enumify_binop (&ecode, opcode, xcode, for_semiring) ;
+    GB_enumify_binop (&ecode, opcode, xcode, for_semiring) ;
 
     // convert ecode to string
-    GB_cuda_charify_binop (&op_string, ecode) ;
+    GB_charify_binop (&op_string, ecode) ;
 
     // convert string to macro
-    GB_cuda_macrofy_binop (binop_macro, macro_name, op_string, flipxy) ;
+    GB_macrofy_binop (binop_macro, macro_name, op_string, flipxy) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_binop: convert binary opcode and xcode into a single enum
+// GB_enumify_binop: convert binary opcode and xcode into a single enum
 //------------------------------------------------------------------------------
 
 // ecodes 0 to 31 can be used as a monoid, but only 0:22 are currently in use.
 // ecodes 32 and up are not valid for use in a monoid; only 32:139 are in use.
 
-void GB_cuda_enumify_binop
+void GB_enumify_binop
 (
     // output:
     int *ecode,         // enumerated operator, range 0 to 139; -1 on failure
@@ -519,15 +519,15 @@ void GB_cuda_enumify_binop
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_charify_binop: convert an ecode into a string
+// GB_charify_binop: convert an ecode into a string
 //------------------------------------------------------------------------------
 
-void GB_cuda_charify_binop
+void GB_charify_binop
 (
     // output:
     char **op_string,   // string defining the operator (NULL if failure)
     // input:
-    int ecode           // from GB_cuda_enumify_binop
+    int ecode           // from GB_enumify_binop
 )
 {
 
@@ -787,10 +787,10 @@ void GB_cuda_charify_binop
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_binop: convert an opstring into a macro
+// GB_macrofy_binop: convert an opstring into a macro
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_binop
+void GB_macrofy_binop
 (
     // output:
     char *binop_macro,          // string with the #define macro

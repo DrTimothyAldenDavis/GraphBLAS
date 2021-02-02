@@ -262,7 +262,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     int add_ecode   = RSHIFT (scode, 55, 5) ;
     int id_ecode    = RSHIFT (scode, 50, 5) ;
     int term_ecode  = RSHIFT (scode, 45, 5) ;
-    bool is_term    = (term_ecode != 30) ;
+    bool is_term    = (term_ecode < 30) ;
 
     // multiplier
     int mult_ecode  = RSHIFT (scode, 37, 8) ;

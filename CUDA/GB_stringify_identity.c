@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_identity: return string or enum for identity value
+// GB_stringify_identity: return string or enum for identity value
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -8,13 +8,13 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_identity: macro for identity value
+// GB_stringify_identity: macro for identity value
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_identity     // return string for identity value
+void GB_stringify_identity     // return string for identity value
 (
     // output:
     char *identity_macro,   // string with the #define macro
@@ -28,20 +28,20 @@ void GB_cuda_stringify_identity     // return string for identity value
     int ecode ;
 
     // get ecode from the opcode and zcode
-    GB_cuda_enumify_identity (&ecode, opcode, zcode) ;
+    GB_enumify_identity (&ecode, opcode, zcode) ;
 
     // convert ecode to string
-    GB_cuda_charify_identity_or_terminal (&identity_value, ecode) ;
+    GB_charify_identity_or_terminal (&identity_value, ecode) ;
 
     // convert string to macro
-    GB_cuda_macrofy_identity (identity_macro, identity_value) ;
+    GB_macrofy_identity (identity_macro, identity_value) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_identity: return ecode for identity value of an operator 
+// GB_enumify_identity: return ecode for identity value of an operator 
 //------------------------------------------------------------------------------
 
-void GB_cuda_enumify_identity       // return enum of identity value
+void GB_enumify_identity       // return enum of identity value
 (
     // output:
     int *ecode,             // enumerated identity, 0 to 17 (-1 if fail)
@@ -121,10 +121,10 @@ void GB_cuda_enumify_identity       // return enum of identity value
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_charify_identity_or_terminal: string for identity/terminal value
+// GB_charify_identity_or_terminal: string for identity/terminal value
 //------------------------------------------------------------------------------
 
-void GB_cuda_charify_identity_or_terminal
+void GB_charify_identity_or_terminal
 (
     // output:
     char **value_string,        // string encoding the value
@@ -139,7 +139,7 @@ void GB_cuda_charify_identity_or_terminal
     {
 
         //----------------------------------------------------------------------
-        // for terminal monoids
+        // for identity values and terminal values for terminal monoids
         //----------------------------------------------------------------------
 
         case  0 : f = "0"           ; break ;
@@ -162,7 +162,7 @@ void GB_cuda_charify_identity_or_terminal
         case 17 : f = "-INFINITY"   ; break ;
         case 18 : f = "0"           ; break ;       // for the ANY monoid only
 
-        // ecodes 19 to 28 are reserved for future use
+        // ecodes 19 to 28 are reserved for future use, for terminal values
 
         // user-defined terminal monoid
         case 29 : f = "(user provided, terminal)" ; break ;
@@ -184,10 +184,10 @@ void GB_cuda_charify_identity_or_terminal
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_identity: convert a value string to a macro
+// GB_macrofy_identity: convert a value string to a macro
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_identity
+void GB_macrofy_identity
 (
     // output:
     char *identity_macro,        // string with #define macro

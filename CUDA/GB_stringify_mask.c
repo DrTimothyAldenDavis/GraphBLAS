@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_mask: construct macros to access the mask
+// GB_stringify_mask: construct macros to access the mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -11,13 +11,13 @@
 // as structural masks.
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_mask: return string to define mask macros
+// GB_stringify_mask: return string to define mask macros
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_mask     // return string to define mask macros
+void GB_stringify_mask     // return string to define mask macros
 (
     // output:
     char **mask_macros,         // string that defines the mask macros
@@ -30,15 +30,19 @@ void GB_cuda_stringify_mask     // return string to define mask macros
 {
 
     int mask_ecode ;
-    GB_cuda_enumify_mask (&mask_ecode, mcode, Mask_struct, Mask_comp) ;
-    GB_cuda_macrofy_mask (mask_macros, mask_ecode) ;
+
+    // get mask_ecode from mask type (mask_ecode) and mask descriptor
+    GB_enumify_mask (&mask_ecode, mcode, Mask_struct, Mask_comp) ;
+
+    // convert ecode to string containing mask macros
+    GB_macrofy_mask (mask_macros, mask_ecode) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_mask: return mask_ecode to define mask macros
+// GB_enumify_mask: return mask_ecode to define mask macros
 //------------------------------------------------------------------------------
 
-void GB_cuda_enumify_mask       // return enum to define mask macros
+void GB_enumify_mask       // return enum to define mask macros
 (
     // output:
     int *mask_ecode,            // enumified mask
@@ -94,12 +98,14 @@ void GB_cuda_enumify_mask       // return enum to define mask macros
             case GB_INT8_code:
             case GB_UINT8_code:
 
+                // valued mask, values are 1 byte in size
                 e = (!Mask_comp) ? 4 : 5 ;
                 break ;
 
             case GB_INT16_code:
             case GB_UINT16_code:
 
+                // valued mask, values are 2 bytes in size
                 e = (!Mask_comp) ? 6 : 7 ;
                 break ;
 
@@ -107,6 +113,7 @@ void GB_cuda_enumify_mask       // return enum to define mask macros
             case GB_UINT32_code:
             case GB_FP32_code:
 
+                // valued mask, values are 4 bytes in size
                 e = (!Mask_comp) ? 8 : 9 ;
                 break ;
 
@@ -115,11 +122,13 @@ void GB_cuda_enumify_mask       // return enum to define mask macros
             case GB_FC32_code:
             case GB_FP64_code:
 
+                // valued mask, values are 8 bytes in size
                 e = (!Mask_comp) ? 10 : 11 ;
                 break ;
 
             case GB_FC64_code:
 
+                // valued mask, values are 16 bytes in size
                 e = (!Mask_comp) ? 12 : 13 ;
                 break ;
 
@@ -134,10 +143,10 @@ void GB_cuda_enumify_mask       // return enum to define mask macros
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_mask: return string to define mask macros
+// GB_macrofy_mask: return string to define mask macros
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_mask       // return enum to define mask macros
+void GB_macrofy_mask       // return enum to define mask macros
 (
     // output:
     char **mask_macros,         // string that defines the mask macros

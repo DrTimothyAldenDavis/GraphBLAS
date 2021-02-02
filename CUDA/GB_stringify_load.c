@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify.h: prototype definitions for using C helpers 
+// GB_stringify_load: return a string to load/save a value
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -27,9 +27,9 @@
 // or, if is_pattern is true, the macro becomes the empty string.
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
-void GB_cuda_stringify_load         // return a string to load/typecast macro
+void GB_stringify_load         // return a string to load/typecast macro
 (
     // output:
     char *load_macro,               // string with #define macro to load value
