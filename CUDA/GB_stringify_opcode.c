@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_opcode: convert unary or binary opcode to its name
+// GB_stringify_opcode: convert unary or binary opcode to its name
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
-const char *GB_cuda_stringify_opcode    // name of unary/binary opcode
+const char *GB_stringify_opcode    // name of unary/binary opcode
 (
     GB_Opcode opcode    // opcode of GraphBLAS unary or binary operator
 )

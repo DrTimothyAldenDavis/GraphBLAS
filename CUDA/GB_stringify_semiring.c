@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_semiring: build strings for a semiring
+// GB_stringify_semiring: build strings for a semiring
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -11,21 +11,18 @@
 // User-defined types are not handled.
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
-
-// TODO: do we need 3 methods (enumify, charify, macrofy)?
-// or just enumify and macrofy?
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_semiring: build strings for a semiring
+// GB_stringify_semiring: build strings for a semiring
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_semiring     // build a semiring (name and code)
+void GB_stringify_semiring     // build a semiring (name and code)
 (
     // output: (all of size at least GB_CUDA_STRLEN+1)
     char *semiring_name,    // name of the semiring
     char *semiring_macros,  // List of types and macro defs
-    char *mask_name,        // definition of mask data load     // TODO: FIXME
+//  char *mask_name,        // definition of mask data load     // TODO: FIXME
     // input:
     GrB_Semiring semiring,  // the semiring to stringify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
@@ -43,18 +40,18 @@ void GB_cuda_stringify_semiring     // build a semiring (name and code)
 {
 
     uint64_t scode ;
-    GB_cuda_enumify_semiring (&scode,
+    GB_enumify_semiring (&scode,
         semiring, flipxy, ctype, mtype, atype, btype, Mask_struct, Mask_comp,
         C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
-    GB_cuda_macrofy_semiring (semiring_macros, mask_name, scode) ;
+    GB_macrofy_semiring (semiring_macros, scode) ;
     GB_semiring_name (semiring_name, scode) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_semiring: enumerate a semiring
+// GB_enumify_semiring: enumerate a semiring
 //------------------------------------------------------------------------------
 
-void GB_cuda_enumify_semiring   // enumerate a semiring
+void GB_enumify_semiring   // enumerate a semiring
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire semiring
@@ -162,22 +159,22 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
 
     int mult_ecode ;
-    GB_cuda_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
+    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
 
     //--------------------------------------------------------------------------
     // enumify the monoid
     //--------------------------------------------------------------------------
 
     int add_ecode ;
-    GB_cuda_enumify_binop (&add_ecode, add_opcode, zcode, false) ;
+    GB_enumify_binop (&add_ecode, add_opcode, zcode, false) ;
     ASSERT (add_ecode < 32) ;
 
     int id_ecode ;
-    GB_cuda_enumify_identity (&id_ecode, add_opcode, zcode) ;
+    GB_enumify_identity (&id_ecode, add_opcode, zcode) ;
 
     int term_ecode ;
     bool is_term ;
-    GB_cuda_enumify_terminal (&is_term, &term_ecode, add_opcode, zcode) ;
+    GB_enumify_terminal (&is_term, &term_ecode, add_opcode, zcode) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -193,17 +190,17 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
 
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
-    GB_cuda_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
+    GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
 
     //--------------------------------------------------------------------------
     // enumify the sparsity structures of C, M, A, and B
     //--------------------------------------------------------------------------
 
     int csparsity, msparsity, asparsity, bsparsity ;
-    GB_cuda_enumify_sparsity (&csparsity, C_sparsity) ;
-    GB_cuda_enumify_sparsity (&msparsity, M_sparsity) ;
-    GB_cuda_enumify_sparsity (&asparsity, A_sparsity) ;
-    GB_cuda_enumify_sparsity (&bsparsity, B_sparsity) ;
+    GB_enumify_sparsity (&csparsity, C_sparsity) ;
+    GB_enumify_sparsity (&msparsity, M_sparsity) ;
+    GB_enumify_sparsity (&asparsity, A_sparsity) ;
+    GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
     // construct the semiring scode
@@ -243,14 +240,13 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_semiring: construct all macros for a semiring
+// GB_macrofy_semiring: construct all macros for a semiring
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_semiring   // construct all macros for a semiring
+void GB_macrofy_semiring   // construct all macros for a semiring
 (
     // output:
     char *semiring_macros,      // all macros that define the semiring
-    char *mask_name,            // definition of mask data load TODO: FIXME
     // input:
     uint64_t scode
 )
@@ -266,7 +262,7 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     int add_ecode   = RSHIFT (scode, 55, 5) ;
     int id_ecode    = RSHIFT (scode, 50, 5) ;
     int term_ecode  = RSHIFT (scode, 45, 5) ;
-    bool is_term    = (term_ecode != 30) ;
+    bool is_term    = (term_ecode < 30) ;
 
     // multiplier
     int mult_ecode  = RSHIFT (scode, 37, 8) ;
@@ -302,8 +298,8 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
 
     char acast_macro [GB_CUDA_STRLEN+1] ;
     char bcast_macro [GB_CUDA_STRLEN+1] ;
-    GB_cuda_stringify_load (acast_macro, "GB_GETA", A_is_pattern) ;
-    GB_cuda_stringify_load (bcast_macro, "GB_GETB", B_is_pattern) ;
+    GB_stringify_load (acast_macro, "GB_GETA", A_is_pattern) ;
+    GB_stringify_load (bcast_macro, "GB_GETB", B_is_pattern) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply
@@ -312,28 +308,28 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     char s [GB_CUDA_STRLEN+1] ;
 
     char mult_macro [GB_CUDA_STRLEN+1] ;
-//  GB_cuda_stringify_binop (mult_macro, "GB_MULT", mult_opcode, zcode, true) ;
-    GB_cuda_charify_binop (&s, mult_ecode) ;
-    GB_cuda_macrofy_binop (mult_macro, "GB_MULT", s, flipxy) ;
+//  GB_stringify_binop (mult_macro, "GB_MULT", mult_opcode, zcode, true) ;
+    GB_charify_binop (&s, mult_ecode) ;
+    GB_macrofy_binop (mult_macro, "GB_MULT", s, flipxy) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
     char add_macro [GB_CUDA_STRLEN+1] ;
-//  GB_cuda_stringify_binop (add_macro, "GB_ADD", add_opcode, zcode, false) ;
-    GB_cuda_charify_binop (&s, add_ecode) ;
-    GB_cuda_macrofy_binop (add_macro, "GB_ADD", s) ;
+//  GB_stringify_binop (add_macro, "GB_ADD", add_opcode, zcode, false) ;
+    GB_charify_binop (&s, add_ecode) ;
+    GB_macrofy_binop (add_macro, "GB_ADD", s) ;
 
     char identity_macro [GB_CUDA_STRLEN+1] ;
-//  GB_cuda_stringify_identity (identity_macro, add_opcode, zcode) ;
-    GB_cuda_charify_identity_or_terminal (&s, id_ecode) ;
-    GB_cuda_macrofy_identity (identity_macro, s) ;
+//  GB_stringify_identity (identity_macro, add_opcode, zcode) ;
+    GB_charify_identity_or_terminal (&s, id_ecode) ;
+    GB_macrofy_identity (identity_macro, s) ;
 
     char terminal_expression_macro [GB_CUDA_STRLEN+1] ;
     char terminal_statement_macro  [GB_CUDA_STRLEN+1] ;
 
-//  GB_cuda_stringify_terminal (&is_term,
+//  GB_stringify_terminal (&is_term,
 //      terminal_expression_macro, terminal_statement_macro,
 //      "GB_TERMINAL_CONDITION", "GB_IF_TERMINAL_BREAK", add_opcode, zcode) ;
 
@@ -341,14 +337,14 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     char tstmt [GB_CUDA_STRLEN+1] ;
 
     // convert ecode and is_term to strings
-    GB_cuda_charify_identity_or_terminal (&s, ecode) ;
-    GB_cuda_charify_terminal_expression (texpr, s, is_term, ecode) ;
-    GB_cuda_charify_terminal_statement  (tstmt, s, is_term, ecode) ;
+    GB_charify_identity_or_terminal (&s, ecode) ;
+    GB_charify_terminal_expression (texpr, s, is_term, ecode) ;
+    GB_charify_terminal_statement  (tstmt, s, is_term, ecode) ;
 
     // convert strings to macros
-    GB_cuda_macrofy_terminal_expression (terminal_expression_macro,
+    GB_macrofy_terminal_expression (terminal_expression_macro,
         "GB_TERMINAL_CONDITION", texpr) ;
-    GB_cuda_macrofy_terminal_statement (terminal_statement_macro,
+    GB_macrofy_terminal_statement (terminal_statement_macro,
         "GB_IF_TERMINAL_BREAK", tstmt) ;
 
     //--------------------------------------------------------------------------
@@ -361,15 +357,14 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     // TODO:
     // (add_ecode == GB_ANY_opcode && mult_opcode == GB_PAIR_opcode) ;
     char ccast_macro [GB_CUDA_STRLEN+1] ;
-    GB_cuda_stringify_load (ccast_macro, "GB_PUTC", c_is_one) ;
+    GB_stringify_load (ccast_macro, "GB_PUTC", c_is_one) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
     const char *mask_macros = "" ;
-    GB_cuda_macrofy_mask (&mask_macros, mask_ecode) ;
-    snprintf (mask_name, GB_CUDA_STRLEN, "mask_%d", mask_ecode) ;
+    GB_macrofy_mask (&mask_macros, mask_ecode) ;
 
     //--------------------------------------------------------------------------
     // determine the sparsity formats of C, M, A, and B
@@ -379,10 +374,10 @@ void GB_cuda_macrofy_semiring   // construct all macros for a semiring
     const char *msparsity_macros = "" ;
     const char *asparsity_macros = "" ;
     const char *bsparsity_macros = "" ;
-    GB_cuda_macrofy_sparsity (&csparsity_macros, "C", csparsity) ;
-    GB_cuda_macrofy_sparsity (&msparsity_macros, "M", csparsity) ;
-    GB_cuda_macrofy_sparsity (&asparsity_macros, "A", csparsity) ;
-    GB_cuda_macrofy_sparsity (&bsparsity_macros, "B", csparsity) ;
+    GB_macrofy_sparsity (&csparsity_macros, "C", csparsity) ;
+    GB_macrofy_sparsity (&msparsity_macros, "M", csparsity) ;
+    GB_macrofy_sparsity (&asparsity_macros, "A", csparsity) ;
+    GB_macrofy_sparsity (&bsparsity_macros, "B", csparsity) ;
 
     //--------------------------------------------------------------------------
     // build the final string that defines all semiring macros

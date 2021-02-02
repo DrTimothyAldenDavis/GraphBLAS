@@ -8,7 +8,7 @@
 #pragma once
 #include <iostream>
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 // Define function pointer we will use later
 //std::istream* (*file_callback)(std::string, std::iostream&);

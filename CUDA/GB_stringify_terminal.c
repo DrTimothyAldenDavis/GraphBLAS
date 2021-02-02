@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_terminal: convert terminal condition into a string or enum
+// GB_stringify_terminal: convert terminal condition into a string or enum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -18,13 +18,13 @@
 // has no trailing semicolon.
 
 #include "GB.h"
-#include "GB_cuda_stringify.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_terminal: macros for terminal value and condition
+// GB_stringify_terminal: macros for terminal value and condition
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_terminal         // return strings to check terminal
+void GB_stringify_terminal         // return strings to check terminal
 (
     // outputs:
     bool *is_monoid_terminal,           // true if monoid is terminal
@@ -44,28 +44,28 @@ void GB_cuda_stringify_terminal         // return strings to check terminal
     int ecode ;
 
     // get ecode and bool (is_monoid_terminal) from the opcode and zcode
-    GB_cuda_enumify_terminal (&ecode, opcode, zcode) ;
+    GB_enumify_terminal (&ecode, opcode, zcode) ;
     (*is_monoid_terminal) = (ecode <= 29) ;
 
     // convert ecode and is_monoid_terminal to strings
-    GB_cuda_charify_identity_or_terminal (&terminal_value, ecode) ;
-    GB_cuda_charify_terminal_expression (terminal_expression,
+    GB_charify_identity_or_terminal (&terminal_value, ecode) ;
+    GB_charify_terminal_expression (terminal_expression,
         terminal_value, is_monoid_terminal, ecode) ;
-    GB_cuda_charify_terminal_statement (terminal_statement,
+    GB_charify_terminal_statement (terminal_statement,
         terminal_value, is_monoid_terminal, ecode) ;
 
     // convert strings to macros
-    GB_cuda_macrofy_terminal_expression (terminal_expression_macro,
+    GB_macrofy_terminal_expression (terminal_expression_macro,
         terminal_expression_macro_name, terminal_expression) ;
-    GB_cuda_macrofy_terminal_statement (terminal_statement_macro,
+    GB_macrofy_terminal_statement (terminal_statement_macro,
         terminal_statement_macro_name, terminal_statement) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_enumify_terminal: return enum of terminal value
+// GB_enumify_terminal: return enum of terminal value
 //------------------------------------------------------------------------------
 
-void GB_cuda_enumify_terminal       // return enum of terminal value
+void GB_enumify_terminal       // return enum of terminal value
 (
     // output:
     int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
@@ -184,10 +184,10 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_charify_terminal_expression: string to evaluate terminal expression
+// GB_charify_terminal_expression: string to evaluate terminal expression
 //------------------------------------------------------------------------------
 
-void GB_cuda_charify_terminal_expression    // string for terminal expression
+void GB_charify_terminal_expression    // string for terminal expression
 (
     // output:
     char *terminal_expression,          // string with terminal expression
@@ -222,10 +222,10 @@ void GB_cuda_charify_terminal_expression    // string for terminal expression
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_charify_terminal_statement: string for terminal statement
+// GB_charify_terminal_statement: string for terminal statement
 //------------------------------------------------------------------------------
 
-void GB_cuda_charify_terminal_statement // string for terminal statement
+void GB_charify_terminal_statement // string for terminal statement
 (
     // output:
     char *terminal_statement,           // string with terminal statement
@@ -260,10 +260,10 @@ void GB_cuda_charify_terminal_statement // string for terminal statement
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_terminal_expression: macro for terminal expression
+// GB_macrofy_terminal_expression: macro for terminal expression
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_terminal_expression    // macro for terminal expression
+void GB_macrofy_terminal_expression    // macro for terminal expression
 (
     // output:
     char *terminal_expression_macro,
@@ -279,10 +279,10 @@ void GB_cuda_macrofy_terminal_expression    // macro for terminal expression
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_macrofy_terminal_statement: macro for terminal statement
+// GB_macrofy_terminal_statement: macro for terminal statement
 //------------------------------------------------------------------------------
 
-void GB_cuda_macrofy_terminal_statement     // macro for terminal statement
+void GB_macrofy_terminal_statement     // macro for terminal statement
 (
     // output:
     char *terminal_statement_macro,

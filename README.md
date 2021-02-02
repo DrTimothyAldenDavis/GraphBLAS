@@ -1,6 +1,7 @@
 # SuiteSparse:GraphBLAS
 
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+
 SPDX-License-Identifier: Apache-2.0
 
 VERSION 4.0.3, Jan 19, 2021

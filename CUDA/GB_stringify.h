@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_stringify.h: prototype definitions for using C helpers 
+// GB_stringify.h: prototype definitions for using C helpers 
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -7,19 +7,28 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd only in the GraphBLAS/CUDA/GB_cuda*.cu source files.
+// This file is #include'd only in the GraphBLAS/CUDA/GB*.cu source files.
 
 #ifndef GB_CUDA_STRINGIFY_H
 #define GB_CUDA_STRINGIFY_H
 
+//------------------------------------------------------------------------------
+// for GB_binop_flip and related methods
+//------------------------------------------------------------------------------
+
+#include "GB_binop.h"
+
+//------------------------------------------------------------------------------
 // length of strings for building semiring code and names
+//------------------------------------------------------------------------------
+
 #define GB_CUDA_STRLEN 2048
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_mask: define macros that access the mask matrix M
+// GB_stringify_mask: define macros that access the mask matrix M
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_mask     // return string to define mask macros
+void GB_stringify_mask     // return string to define mask macros
 (
     // output:
     char **mask_macros,         // string that defines the mask macros
@@ -30,7 +39,7 @@ void GB_cuda_stringify_mask     // return string to define mask macros
     bool Mask_comp              // true if M complemented
 ) ;
 
-void GB_cuda_enumify_mask       // return enum to define mask macros
+void GB_enumify_mask       // return enum to define mask macros
 (
     // output:
     int *mask_ecode,            // enumified mask
@@ -41,7 +50,7 @@ void GB_cuda_enumify_mask       // return enum to define mask macros
     bool Mask_comp              // true if M complemented
 ) :
 
-void GB_cuda_macrofy_mask       // return enum to define mask macros
+void GB_macrofy_mask       // return enum to define mask macros
 (
     // output:
     char **mask_macros,         // string that defines the mask macros
@@ -50,10 +59,10 @@ void GB_cuda_macrofy_mask       // return enum to define mask macros
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_semiring: build all strings for a semiring
+// GB_stringify_semiring: build all strings for a semiring
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_semiring     // build a semiring (name and code)
+void GB_stringify_semiring     // build a semiring (name and code)
 (
     // output: (all of size at least GB_CUDA_STRLEN+1)
     char *semiring_name,    // name of the semiring
@@ -74,7 +83,7 @@ void GB_cuda_stringify_semiring     // build a semiring (name and code)
     int B_sparsity          // sparsity structure of B
 ) ;
 
-void GB_cuda_enumify_semiring   // enumerate a semiring
+void GB_enumify_semiring   // enumerate a semiring
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire semiring
@@ -93,7 +102,7 @@ void GB_cuda_enumify_semiring   // enumerate a semiring
     int B_sparsity          // sparsity structure of B
 ) ;
 
-void GB_cuda_macrofy_semiring   // construct all macros for a semiring
+void GB_macrofy_semiring   // construct all macros for a semiring
 (
     // output:
     char *semiring_macros,      // all macros that define the semiring
@@ -111,10 +120,10 @@ void GB_semiring_name       // construct the name of a semiring
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_binop and supporting methods
+// GB_stringify_binop and supporting methods
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_binop
+void GB_stringify_binop
 (
     // output:
     char *binop_macro,  // string with the #define macro
@@ -126,7 +135,7 @@ void GB_cuda_stringify_binop
     bool flipxy         // if true, use mult(y,x) else mult(x,y)
 ) ;
 
-void GB_cuda_enumify_binop
+void GB_enumify_binop
 (
     // output:
     int *ecode,         // enumerated operator, range 0 to 110; -1 on failure
@@ -136,15 +145,15 @@ void GB_cuda_enumify_binop
     bool for_semiring   // true for A*B, false for A+B or A.*B
 ) ;
 
-void GB_cuda_charify_binop
+void GB_charify_binop
 (
     // output:
     char **op_string,   // string defining the operator (NULL if failure)
     // input:
-    int ecode           // from GB_cuda_enumify_binop
+    int ecode           // from GB_enumify_binop
 ) ;
 
-void GB_cuda_macrofy_binop
+void GB_macrofy_binop
 (
     // output:
     char *binop_macro,          // string with the #define macro
@@ -155,10 +164,10 @@ void GB_cuda_macrofy_binop
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_identity and supporting methods
+// GB_stringify_identity and supporting methods
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_identity     // return string for identity value
+void GB_stringify_identity     // return string for identity value
 (
     // output:
     char *identity_macro,    // string with the #define macro
@@ -167,7 +176,7 @@ void GB_cuda_stringify_identity     // return string for identity value
     GB_Type_code zcode      // type code of the binary operator
 ) ;
 
-void GB_cuda_enumify_identity       // return enum of identity value
+void GB_enumify_identity       // return enum of identity value
 (
     // output:
     int *ecode,             // enumerated identity, 0 to 17 (-1 if fail)
@@ -176,7 +185,7 @@ void GB_cuda_enumify_identity       // return enum of identity value
     GB_Type_code zcode      // type code used in the opcode we want
 ) ;
 
-void GB_cuda_charify_identity_or_terminal
+void GB_charify_identity_or_terminal
 (
     // output:
     char **value_string,        // string encoding the value
@@ -184,7 +193,7 @@ void GB_cuda_charify_identity_or_terminal
     int ecode                   // enumerated identity/terminal value
 ) ;
 
-void GB_cuda_macrofy_identity
+void GB_macrofy_identity
 (
     // output:
     char *identity_macro,       // string with #define macro
@@ -193,10 +202,10 @@ void GB_cuda_macrofy_identity
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_terminal and supporting methods
+// GB_stringify_terminal and supporting methods
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_terminal         // return strings to check terminal
+void GB_stringify_terminal         // return strings to check terminal
 (
     // outputs:
     bool *is_monoid_terminal,           // true if monoid is terminal
@@ -209,7 +218,7 @@ void GB_cuda_stringify_terminal         // return strings to check terminal
     GB_Type_code zcode   // type code of the binary operator
 ) ;
 
-void GB_cuda_enumify_terminal       // return enum of terminal value
+void GB_enumify_terminal       // return enum of terminal value
 (
     // output:
     bool *is_monoid_terminal,   // true if monoid is terminal
@@ -219,7 +228,7 @@ void GB_cuda_enumify_terminal       // return enum of terminal value
     GB_Type_code zcode          // type code used in the opcode we want
 ) ;
 
-void GB_cuda_charify_terminal_expression    // string for terminal expression
+void GB_charify_terminal_expression    // string for terminal expression
 (
     // output:
     char *terminal_expression,          // string with terminal expression
@@ -229,7 +238,7 @@ void GB_cuda_charify_terminal_expression    // string for terminal expression
     int ecode                           // ecode of monoid operator
 ) ;
 
-void GB_cuda_charify_terminal_statement // string for terminal statement
+void GB_charify_terminal_statement // string for terminal statement
 (
     // output:
     char *terminal_statement,           // string with terminal statement
@@ -239,7 +248,7 @@ void GB_cuda_charify_terminal_statement // string for terminal statement
     int ecode                           // ecode of monoid operator
 ) ;
 
-void GB_cuda_macrofy_terminal_expression    // macro for terminal expression
+void GB_macrofy_terminal_expression    // macro for terminal expression
 (
     // output:
     char *terminal_expression_macro,
@@ -248,7 +257,7 @@ void GB_cuda_macrofy_terminal_expression    // macro for terminal expression
     const char *terminal_expression
 ) ;
 
-void GB_cuda_macrofy_terminal_statement     // macro for terminal statement
+void GB_macrofy_terminal_statement     // macro for terminal statement
 (
     // output:
     char *terminal_statement_macro,
@@ -258,10 +267,10 @@ void GB_cuda_macrofy_terminal_statement     // macro for terminal statement
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_load: return a string to load/typecast macro
+// GB_stringify_load: return a string to load/typecast macro
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_load         // return a string to load/typecast macro
+void GB_stringify_load         // return a string to load/typecast macro
 (
     // output:
     char *load_macro,               // string with #define macro to load value
@@ -271,19 +280,19 @@ void GB_cuda_stringify_load         // return a string to load/typecast macro
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_opcode: name of unary/binary opcode
+// GB_stringify_opcode: name of unary/binary opcode
 //------------------------------------------------------------------------------
 
-const char *GB_cuda_stringify_opcode    // name of unary/binary opcode
+const char *GB_stringify_opcode    // name of unary/binary opcode
 (
     GB_Opcode opcode    // opcode of GraphBLAS unary or binary operator
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_stringify_sparsity: define macros for sparsity structure
+// GB_stringify_sparsity: define macros for sparsity structure
 //------------------------------------------------------------------------------
 
-void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
+void GB_stringify_sparsity  // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
@@ -292,7 +301,7 @@ void GB_cuda_stringify_sparsity  // construct macros for sparsity structure
     int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 ) ;
 
-void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
+void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
 (
     // output:
     int *ecode,             // enumerated sparsity structure
@@ -300,7 +309,7 @@ void GB_cuda_enumify_sparsity    // enumerate the sparsity structure of a matrix
     int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 ) ;
 
-void GB_cuda_macrofy_sparsity    // construct macros for sparsity structure
+void GB_macrofy_sparsity    // construct macros for sparsity structure
 (
     // output:
     char *sparsity_macros,  // macros that define the sparsity structure
@@ -308,12 +317,6 @@ void GB_cuda_macrofy_sparsity    // construct macros for sparsity structure
     char *matrix_name,      // "C", "M", "A", or "B"
     int ecode
 ) ;
-
-//------------------------------------------------------------------------------
-// for GB_binop_flip and related methods
-//------------------------------------------------------------------------------
-
-#include "GB_binop.h"
 
 #endif
 
