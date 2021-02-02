@@ -143,7 +143,7 @@ GrB_Info GB_AxB_saxpy_generic
         { 
             // flip a positional multiplicative operator
             bool handled ;
-            opcode = GB_binop_flip (opcode, &handle) ;  // for positional ops
+            opcode = GB_binop_flip (opcode, &handled) ;  // for positional ops
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
