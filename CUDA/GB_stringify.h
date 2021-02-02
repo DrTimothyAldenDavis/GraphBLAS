@@ -12,7 +12,16 @@
 #ifndef GB_CUDA_STRINGIFY_H
 #define GB_CUDA_STRINGIFY_H
 
+//------------------------------------------------------------------------------
+// for GB_binop_flip and related methods
+//------------------------------------------------------------------------------
+
+#include "GB_binop.h"
+
+//------------------------------------------------------------------------------
 // length of strings for building semiring code and names
+//------------------------------------------------------------------------------
+
 #define GB_CUDA_STRLEN 2048
 
 //------------------------------------------------------------------------------
@@ -308,12 +317,6 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     char *matrix_name,      // "C", "M", "A", or "B"
     int ecode
 ) ;
-
-//------------------------------------------------------------------------------
-// for GB_binop_flip and related methods
-//------------------------------------------------------------------------------
-
-#include "GB_binop.h"
 
 #endif
 
