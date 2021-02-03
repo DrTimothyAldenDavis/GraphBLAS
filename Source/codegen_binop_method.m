@@ -18,6 +18,7 @@ name = sprintf ('%s_%s', binop, fname) ;
 % function names
 fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB_01'', `GB_AemultB_01__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumB'', `GB_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumb'', `GB_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
@@ -219,9 +220,17 @@ if (~isempty (strfind (op, 'IDIV')))
 end
 
 % create the binary operator
-op = strrep (op, 'xarg', '`$2''') ;
+op = strrep (op,  'xarg', '`$2''') ;
 op = strrep (op, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_binaryop'', `$1 = %s'')\n', op) ;
+
+% handle the flip
+switch (binop)
+    case { 'pow', 'bget', 'bset', 'bclr', 'bshift', 'atan2', 'fmod', 'remainder', 'copysign', 'ldexp'}
+        fprintf (f, 'define(`GB_binaryop_flip'', `1'')\n') ;
+    otherwise
+        fprintf (f, 'define(`GB_binaryop_flip'', `0'')\n') ;
+end
 
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (binop)) ;

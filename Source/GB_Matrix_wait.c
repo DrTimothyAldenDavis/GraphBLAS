@@ -40,6 +40,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
+    GB_FREE (W) ;                       \
     GB_phbix_free (A) ;                 \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
@@ -58,6 +59,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_void *W = NULL ;
     GrB_Matrix T = NULL, S = NULL, A1 = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
@@ -98,6 +100,75 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    //--------------------------------------------------------------------------
+    // ensure A is not shallow
+    //--------------------------------------------------------------------------
+
+    int64_t anz_orig = GB_NNZ (A) ;
+    int64_t asize = A->type->size ;
+
+    if (GB_is_shallow (A))
+    {
+        // shallow matrices will never have any pending tuples
+        ASSERT (npending == 0) ;
+
+        if (A->p_shallow)
+        { 
+            int64_t len = A->plen * sizeof (int64_t) ;
+            W = GB_MALLOC (len, GB_void) ;
+            GB_memcpy (W, A->p, len, nthreads_max) ;
+            A->p = (int64_t *) W ;
+            A->p_shallow = false ;
+            W = NULL ;
+        }
+
+        if (A->h_shallow)
+        { 
+            int64_t len = A->nvec * sizeof (int64_t) ;
+            W = GB_MALLOC (len, GB_void) ;
+            GB_memcpy (W, A->h, len, nthreads_max) ;
+            A->h = W ;
+            A->h_shallow = false ;
+            W = NULL ;
+        }
+
+        if (A->i_shallow)
+        { 
+            int64_t len = anz_orig * sizeof (int64_t) ;
+            W = GB_MALLOC (len, GB_void) ;
+            GB_memcpy (W, A->i, len, nthreads_max) ;
+            A->i = (int64_t *) W ;
+            A->i_shallow = false ;
+            W = NULL ;
+        }
+
+        if (A->x_shallow)
+        { 
+            int64_t len = anz_orig * asize ;
+            W = GB_MALLOC (len, GB_void) ;
+            GB_memcpy (W, A->x, len, nthreads_max) ;
+            A->x = (GB_void *) W ;
+            A->x_shallow = false ;
+            W = NULL ;
+        }
+
+        ASSERT (!GB_is_shallow (A)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check if A only needs to be unjumbled
+    //--------------------------------------------------------------------------
+
+    if (npending == 0 && nzombies == 0)
+    { 
+        // A is not conformed, so the sparsity structure of A is not modified.
+        // That is, if A has no pending tuples and no zombies, but is just
+        // jumbled, then it stays sparse or hypersparse.
+        printf ("\njust unjumble\n") ;
+        GB_OK (GB_unjumble (A, Context)) ;
+        return (info) ;
+    }
 
     //--------------------------------------------------------------------------
     // assemble the pending tuples into T
@@ -195,9 +266,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     if (nzombies > 0)
     { 
         // remove all zombies from A
-        #ifdef GB_DEBUG
-        int64_t anz_orig = GB_NNZ (A) ;
-        #endif
         GB_OK (GB_selector (NULL /* A in-place */, GB_NONZOMBIE_opcode, NULL,
             false, A, 0, NULL, Context)) ;
         ASSERT (A->nzombies == (anz_orig - GB_NNZ (A))) ;
@@ -269,7 +337,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
 
     int64_t anvec = A->nvec ;
-    int64_t asize = A->type->size ;
 
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
     if (A->h != NULL)

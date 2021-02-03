@@ -47,7 +47,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
     GrB_Type ztype, op_intype = NULL ;
@@ -104,6 +104,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
+    C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;               // if A bitmap 
     C->magic = GB_MAGIC ;
 
@@ -121,6 +122,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->b_shallow = false ;
         C->i_shallow = false ;
         C->x_shallow = false ;
+        C->jumbled = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         (*Chandle) = C ;
         return (GrB_SUCCESS) ;
@@ -130,11 +132,11 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // make a shallow copy of the pattern
     //--------------------------------------------------------------------------
 
-    C->i = A->i ;               // of size A->nzmax
-    C->i_shallow = (A->i != NULL) ; // C->i will not be freed when freeing C
-
     C->b = A->b ;               // of size A->nzmax
     C->b_shallow = (A->b != NULL) ;  // C->b will not be freed when freeing C
+
+    C->i = A->i ;               // of size A->nzmax
+    C->i_shallow = (A->i != NULL) ; // C->i will not be freed when freeing C
 
     //--------------------------------------------------------------------------
     // make a shallow copy of the values, if possible

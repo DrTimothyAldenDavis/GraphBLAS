@@ -79,7 +79,7 @@ doc: jitify.hpp Doxyfile
 test: $(cOBJ)
 	@echo $(cOBJ)
 
-$(cOBJ): %.o: %.c GB_cuda_stringify.h 
+$(cOBJ): %.o: %.c GB_stringify.h 
 	$(GCC) $(I) -o $@ -c $< -O2 -Wall
 
 $(SO_NAME): $(OBJ) $(cOBJ) $(JIT_TEMP) GB_AxB_dot3_cuda.o

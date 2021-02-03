@@ -96,6 +96,20 @@ GrB_Info GB_AemultB
     GB_Context Context
 ) ;
 
+void GB_AemultB_01
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT pstart_Aslice,
+    const int64_t *GB_RESTRICT kfirst_Aslice,
+    const int64_t *GB_RESTRICT klast_Aslice,
+    const int64_t *GB_RESTRICT C_pstart_slice,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
 if_binop_bind1st_is_enabled
 GrB_Info GB_bind1st
 (

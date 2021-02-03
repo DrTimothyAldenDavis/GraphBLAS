@@ -20,7 +20,8 @@
 // On input, ntasks is the # of tasks requested.  On output, it may be
 // modified if too large or too small.
 
-// A can have any sparsity structure (sparse, hyper, bitmap, or full)
+// A can have any sparsity structure (sparse, hyper, bitmap, or full).
+// A may be jumbled.
 
 #include "GB_ek_slice.h"
 

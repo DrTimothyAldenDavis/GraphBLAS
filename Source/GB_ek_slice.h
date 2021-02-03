@@ -61,6 +61,23 @@ void GB_ek_slice_free
     int64_t *GB_RESTRICT *klast_slice_handle
 ) ;
 
+void GB_ek_slice_merge          // compute cumsum(Cp) and C_pstart_slice
+(
+    // output
+    int64_t *C_nvec_nonempty,           // # of nonempty vectors in C
+    int64_t *C_pstart_slice,            // size ntasks
+    // input/output
+    int64_t *GB_RESTRICT Cp,            // size cnvec
+    // input
+    int64_t cnvec,                      // # of vectors in C
+    int64_t *GB_RESTRICT Wfirst,        // size ntasks
+    int64_t *GB_RESTRICT Wlast,         // size ntasks
+    int64_t *GB_RESTRICT kfirst_slice,  // size ntasks
+    int64_t *GB_RESTRICT klast_slice,   // size ntasks
+    int ntasks,                         // # of tasks used to construct Cp
+    int nthreads                        // # of threads to use
+) ;
+
 // define the static inline function GB_search_for_vector
 #include "GB_search_for_vector_template.c"
 

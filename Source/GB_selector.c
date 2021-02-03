@@ -286,54 +286,17 @@ GrB_Info GB_selector
     #undef  GB_SEL_WORKER
 
     //--------------------------------------------------------------------------
-    // compute the new vector pointers
+    // cumulative sum of Cp and compute C_pstart_slice
     //--------------------------------------------------------------------------
 
-    // Cp = cumsum (Cp)
-    int64_t C_nvec_nonempty ;
-    GB_cumsum (Cp, anvec, &C_nvec_nonempty, nthreads) ;
-    cnz = Cp [anvec] ;
-
-    //--------------------------------------------------------------------------
-    // determine the slice boundaries in the new C matrix
-    //--------------------------------------------------------------------------
-
-    int64_t kprior = -1 ;
-    int64_t pC = 0 ;
-
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        int64_t k = kfirst_slice [taskid] ;
-
-        if (kprior < k)
-        { 
-            // Task taskid is the first one to do work on C(:,k), so it starts
-            // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
-            pC = Cp [k] ;
-            kprior = k ;
-        }
-
-        // Task taskid contributes Wfirst [taskid] entries to C(:,k)
-        C_pstart_slice [taskid] = pC ;
-        pC += Wfirst [taskid] ;
-
-        int64_t klast = klast_slice [taskid] ;
-        if (k < klast)
-        { 
-            // Task taskid is the last to contribute to C(:,k).
-            ASSERT (pC == Cp [k+1]) ;
-            // Task taskid contributes the first Wlast [taskid] entries
-            // to C(:,klast), so the next task taskid+1 starts at this
-            // location, if its first vector is klast of this task.
-            pC = Cp [klast] + Wlast [taskid] ;
-            kprior = klast ;
-        }
-    }
+    GB_ek_slice_merge (&C_nvec_nonempty, C_pstart_slice, Cp, anvec,
+        Wfirst, Wlast, kfirst_slice, klast_slice, ntasks, nthreads) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx
     //--------------------------------------------------------------------------
 
+    cnz = Cp [anvec] ;
     Ci = GB_MALLOC (cnz, int64_t) ;
     Cx = GB_MALLOC (cnz * asize, GB_void) ;
     if (Ci == NULL || Cx == NULL)

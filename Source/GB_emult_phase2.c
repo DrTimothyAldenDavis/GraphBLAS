@@ -233,40 +233,38 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
 
+        // C = A .* B with optional typecasting
+        fmult = op->function ;      // NULL if op is positional
+        csize = ctype->size ;
+        asize = A->type->size ;
+        bsize = B->type->size ;
+
+        if (op_is_second || op_is_pair || op_is_positional)
         { 
-            // C = A .* B with optional typecasting
-            fmult = op->function ;      // NULL if op is positional
-            csize = ctype->size ;
-            asize = A->type->size ;
-            bsize = B->type->size ;
-
-            if (op_is_second || op_is_pair || op_is_positional)
-            { 
-                // the op does not depend on the value of A(i,j)
-                xsize = 1 ;
-                cast_A_to_X = NULL ;
-            }
-            else
-            { 
-                xsize = op->xtype->size ;
-                cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
-            }
-
-            if (op_is_first || op_is_pair || op_is_positional)
-            { 
-                // the op does not depend on the value of B(i,j)
-                ysize = 1 ;
-                cast_B_to_Y = NULL ;
-            }
-            else
-            { 
-                ysize = op->ytype->size ;
-                cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-            }
-
-            zsize = op->ztype->size ;
-            cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
+            // the op does not depend on the value of A(i,j)
+            xsize = 1 ;
+            cast_A_to_X = NULL ;
         }
+        else
+        { 
+            xsize = op->xtype->size ;
+            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+        }
+
+        if (op_is_first || op_is_pair || op_is_positional)
+        { 
+            // the op does not depend on the value of B(i,j)
+            ysize = 1 ;
+            cast_B_to_Y = NULL ;
+        }
+        else
+        { 
+            ysize = op->ytype->size ;
+            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
+        }
+
+        zsize = op->ztype->size ;
+        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
 
         // aij = (xtype) A(i,j), located in Ax [pA]
         #define GB_GETA(aij,Ax,pA)                                          \

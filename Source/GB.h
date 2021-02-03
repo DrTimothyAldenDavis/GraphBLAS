@@ -1216,6 +1216,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
+        printf ("wait: %s %d\n", __FILE__, __LINE__) ; \
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
     }                                                                   \
 }

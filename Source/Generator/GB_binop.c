@@ -22,6 +22,7 @@
 
 // A+B function (eWiseAdd):         GB_AaddB
 // A.*B function (eWiseMult):       GB_AemultB
+// A.*B function (eWiseMult):       GB_AemultB_01
 // A*D function (colscale):         GB_AxD
 // D*A function (rowscale):         GB_DxB
 // C+=B function (dense accum):     GB_Cdense_accumB
@@ -84,6 +85,10 @@
 // binary operator
 #define GB_BINOP(z, x, y, i, j) \
     GB_binaryop(z, x, y, i, j) ;
+
+// true if the binop must be flipped
+#define GB_BINOP_FLIP \
+    GB_binaryop_flip
 
 // op is second
 #define GB_OP_IS_SECOND \
@@ -332,6 +337,49 @@ GrB_Info GB_AemultB
     int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
     #include "GB_emult_template.c"
     GB_FREE_ALL ;
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// eWiseMult: C = A.*B when A is sparse/hyper and B is bitmap/full
+//------------------------------------------------------------------------------
+
+void GB_AemultB_01
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT pstart_Aslice,
+    const int64_t *GB_RESTRICT kfirst_Aslice,
+    const int64_t *GB_RESTRICT klast_Aslice,
+    const int A_ntasks,
+    const int A_nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #if GB_BINOP_FLIP
+    if (flipxy)
+    {
+        // use fmult(y,x)
+        #undef  GB_FLIPPED
+        #define GB_FLIPPED 1
+        #include "GB_emult_01_template.c"
+    }
+    else
+    {
+        // use fmult(x,y)
+        #undef  GB_FLIPPED
+        #define GB_FLIPPED 0
+        #include "GB_emult_01_template.c"
+    }
+    #else
+    // no need to handle the flip
+    #include "GB_emult_01_template.c"
+    #endif
     return (GrB_SUCCESS) ;
     #endif
 }
