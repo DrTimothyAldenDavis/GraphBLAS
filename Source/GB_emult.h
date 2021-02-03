@@ -99,9 +99,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
     // output:
     bool *apply_mask,       // if true then mask will be applied by GB_emult
     bool *use_add_instead,  // if true then use GB_add instead of GB_emult
-    bool *C_is_jumbled,     // if true then C is computed as jumbled
-    bool *A_must_be_unjumbled,  // if true then A must be unjumbled first
-    bool *B_must_be_unjumbled,  // if true then B must be unjumbled first
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
     const bool Mask_comp,   // if true, use !M

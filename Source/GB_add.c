@@ -84,7 +84,6 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    // TODO: some cases can allow M, A, and/or B to be jumbled
     GB_MATRIX_WAIT (M) ;        // cannot be jumbled
     GB_MATRIX_WAIT (A) ;        // cannot be jumbled
     GB_MATRIX_WAIT (B) ;        // cannot be jumbled

@@ -28,10 +28,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
     // output:
     bool *apply_mask,       // if true then mask will be applied by GB_emult
     bool *use_add_instead,  // if true then use GB_add instead of GB_emult
-    bool *C_is_jumbled,     // if true then C is computed as jumbled
-    bool *M_must_be_unjumbled,  // if true then M must be unjumbled first
-    bool *A_must_be_unjumbled,  // if true then A must be unjumbled first
-    bool *B_must_be_unjumbled,  // if true then B must be unjumbled first
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
     const bool Mask_comp,   // if true, use !M
@@ -48,9 +44,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
     (*apply_mask) = (M != NULL) ;
 
     int C_sparsity ;
-    (*C_is_jumbled) = false ;
-    (*A_must_be_unjumbled) = false ;
-    (*B_must_be_unjumbled) = false ;
 
     // In the table below, sparse/hypersparse are listed as "sparse".  If C is
     // listed as sparse: it is hypersparse if M is hypersparse (and not
@@ -60,16 +53,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
     bool M_is_sparse_or_hyper = GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M) ;
     bool A_is_sparse_or_hyper = GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) ;
     bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B) ;
-
-    bool A_is_bitmap_or_full = !A_is_sparse_or_hyper ;
-    bool B_is_bitmap_or_full = !B_is_sparse_or_hyper ;
-
     bool A_is_full = GB_as_if_full (A) ;
     bool B_is_full = GB_as_if_full (B) ;
-
-    bool M_is_jumbled = GB_JUMBLED (M) ;
-    bool A_is_jumbled = GB_JUMBLED (A) ;
-    bool B_is_jumbled = GB_JUMBLED (B) ;
 
     // Methods labeled as "use GB_add" give the same results with GB_add and
     // GB_emult, when A and B are both full.  For those cases, GB_ewise should
@@ -96,25 +81,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
         { 
             // C=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
-
-            // determine if A and B must be unjumbled
-            if (A_is_bitmap_or_full)
-            {
-                // B can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = B_is_jumbled ;
-            }
-            else if (B_is_bitmap_or_full)
-            {
-                // A can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = A_is_jumbled ;
-            }
-            else
-            {
-                // A and B must be unjumbled first
-                (*A_must_be_unjumbled) = A_is_jumbled ;
-                (*B_must_be_unjumbled) = B_is_jumbled ;
-            }
-
         }
         else if (A_is_full && B_is_full)
         { 
@@ -124,7 +90,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
         else
         { 
             // C=A.*B, otherwise, C bitmap
-            // A and B can be left jumbled
             C_sparsity = GxB_BITMAP ;
         }
 
@@ -152,11 +117,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
 
             // C<M>=A.*B with M sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
-
-            // M can be jumbled; A and B cannot; if M jumbled then so is C
-            (*A_must_be_unjumbled) = A_is_jumbled ;
-            (*B_must_be_unjumbled) = B_is_jumbled ;
-            (*C_is_jumbled) = M_is_jumbled ;
 
         }
         else
@@ -194,25 +154,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
             { 
                 // C<M>=A.*B with A or B sparse/hyper, M bitmap/full, C sparse
                 C_sparsity = GxB_SPARSE ;
-
-                // determine if A and B must be unjumbled
-                if (A_is_bitmap_or_full)
-                {
-                    // B can be left jumbled; then C is jumbled on output
-                    (*C_is_jumbled) = B_is_jumbled ;
-                }
-                else if (B_is_bitmap_or_full)
-                {
-                    // A can be left jumbled; then C is jumbled on output
-                    (*C_is_jumbled) = A_is_jumbled ;
-                }
-                else
-                {
-                    // A and B must be unjumbled first
-                    (*A_must_be_unjumbled) = A_is_jumbled ;
-                    (*B_must_be_unjumbled) = B_is_jumbled ;
-                }
-
             }
             else
             { 
@@ -272,25 +213,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
             // C<!M>=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
-
-            // determine if A and B must be unjumbled
-            if (A_is_bitmap_or_full)
-            {
-                // B can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = B_is_jumbled ;
-            }
-            else if (B_is_bitmap_or_full)
-            {
-                // A can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = A_is_jumbled ;
-            }
-            else
-            {
-                // A and B must be unjumbled first
-                (*A_must_be_unjumbled) = A_is_jumbled ;
-                (*B_must_be_unjumbled) = B_is_jumbled ;
-            }
-
         }
         else
         { 
@@ -298,10 +220,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
             C_sparsity = GxB_BITMAP ;
         }
     }
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
 
     return (C_sparsity) ;
 }

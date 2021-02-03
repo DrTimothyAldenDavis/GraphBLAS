@@ -21,8 +21,6 @@
 
 #include "GB_transpose.h"
 
-#define GB_FREE_ALL ;
-
 GB_PUBLIC                   // used by GraphBLAS MATLAB interface
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
@@ -39,9 +37,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for shallow copy", GB0) ;
-    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     ASSERT (!GB_PENDING (A)) ;
-    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     (*Chandle) = NULL ;
 
@@ -75,8 +72,6 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->plen = A->plen ;                 // C and A have the same hyperlist size
     C->nvec = A->nvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
-    C->nvals = A->nvals ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -93,7 +88,6 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
         C->b_shallow = false ;
         C->i_shallow = false ;
         C->x_shallow = false ;
-        C->jumbled = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         (*Chandle) = C ;
         return (GrB_SUCCESS) ;
@@ -105,6 +99,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 
     C->b = A->b ;                   // of size A->nzmax
     C->b_shallow = (A->b != NULL) ; // C->b will not be freed when freeing C
+    C->nvals = A->nvals ;
 
     C->i = A->i ;                   // of size A->nzmax
     C->i_shallow = (A->i != NULL) ; // C->i will not be freed when freeing C

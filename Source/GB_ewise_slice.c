@@ -12,8 +12,9 @@
 // C=op(A,B).  The mask is ignored for computing where to slice the work, but
 // it is sliced once the location has been found.
 
-// M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
-// C: constructed as sparse or hypersparse in the caller.
+// M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full) This
+// function should work if A or B are bitmap, but it is not needed in that
+// case.  C: constructed as sparse or hypersparse in the caller.
 
 #define GB_FREE_WORK    \
 {                       \

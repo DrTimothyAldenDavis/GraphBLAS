@@ -12,7 +12,7 @@
 
 // If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
 // initialized, and A->magic is set to GB_MAGIC to denote a valid matrix.
-// Otherwise, the matrix has not yet been completelyinitialized, and A->magic
+// Otherwise, the matrix has not yet been completely initialized, and A->magic
 // is set to GB_MAGIC2 to denote this.  This case only occurs internally in
 // GraphBLAS.  The internal function that calls GB_new must then allocate or
 // initialize A->p itself, and then set A->magic = GB_MAGIC when it does so.
