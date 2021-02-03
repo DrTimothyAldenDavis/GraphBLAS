@@ -391,7 +391,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T)
             //------------------------------------------------------------------
 
-            // GB_add_sparsity needs the final sparsity pattern of C and T.
+            // GB_add_sparsity needs the final sparsity pattern of C and T,
+            // so wait on C and T first.
             GB_MATRIX_WAIT (C) ;
             GB_MATRIX_WAIT (T) ;
 

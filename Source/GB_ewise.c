@@ -233,9 +233,15 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     // TODO: delay the unjumbling of A1 and B1.  If either is bitmap/full,
     // then they other can remain jumbled.
-    GB_MATRIX_WAIT (M1) ;       // cannot be jumbled
-    GB_MATRIX_WAIT (A1) ;       // cannot be jumbled
-    GB_MATRIX_WAIT (B1) ;       // cannot be jumbled
+//  GB_MATRIX_WAIT (M1) ;       // cannot be jumbled
+//  GB_MATRIX_WAIT (A1) ;       // cannot be jumbled
+//  GB_MATRIX_WAIT (B1) ;       // cannot be jumbled
+
+    bool M_has_pending_work = GB_ANY_PENDING_WORK (M1) ;
+    bool A_has_pending_work = GB_ANY_PENDING_WORK (A1) ;
+    bool B_has_pending_work = GB_ANY_PENDING_WORK (B1) ;
+    bool any_pending_work =
+        M_has_pending_work || A_has_pending_work || B_has_pending_work ;
 
     //--------------------------------------------------------------------------
     // special cases
@@ -278,7 +284,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && no_typecast                      // no typecasting
         && (opcode < GB_USER_opcode)        // not a user-defined operator
         && (!op_is_positional)              // op is not positional
-        && !any_bitmap)
+        && !any_bitmap 
+        && !any_pending_work)               // no matrix has pending work
     {
 
         if (C_is_dense                      // C is dense
@@ -346,6 +353,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         GB_OK (GB_add (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
+
     }
     else
     { 
@@ -415,6 +423,13 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         {
             // T->h is shallow and T is hypersparse
             ASSERT (GB_IS_HYPERSPARSE (T)) ;
+
+            // GB_emult finishes all pending work in M1, A1, B1 if T
+            // is constructed as hypersparse
+            ASSERT (!GB_ANY_PENDING_WORK (M1)) ;
+            ASSERT (!GB_ANY_PENDING_WORK (A1)) ;
+            ASSERT (!GB_ANY_PENDING_WORK (B1)) ;
+
             // one of A1, B1, or M1 is hypersparse
             ASSERT (GB_IS_HYPERSPARSE (A1) || GB_IS_HYPERSPARSE (B1) ||
                     GB_IS_HYPERSPARSE (M1))

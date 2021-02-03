@@ -55,30 +55,34 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     (*Chandle) = NULL ;
 
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
-
     ASSERT_MATRIX_OK (B, "B for emult phased", GB0) ;
-    ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT (!GB_JUMBLED (B)) ;
-    ASSERT (!GB_PENDING (B)) ;
-
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phased", GB0) ;
-    ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (!GB_JUMBLED (M)) ;
-    ASSERT (!GB_PENDING (M)) ;
-
     ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
 
     //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    // some cases can allow M, A, and/or B to be jumbled
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
+
+    //--------------------------------------------------------------------------
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    bool apply_mask, use_add_instead ;
+    bool apply_mask ;           // if true, mask is applied during emult
+    bool use_add_instead ;      // if true, GB_add is used instead
+    bool C_is_jumbled ;         // if true then C is computed as jumbled
+    bool M_must_be_unjumbled ;  // if true then M must be unjumbled first
+    bool A_must_be_unjumbled ;  // if true then A must be unjumbled first
+    bool B_must_be_unjumbled ;  // if true then B must be unjumbled first
     int C_sparsity = GB_emult_sparsity (&apply_mask, &use_add_instead,
+        &C_is_jumbled,
+        &M_must_be_unjumbled, &A_must_be_unjumbled, &B_must_be_unjumbled,
         M, Mask_comp, A, B) ;
 
     //--------------------------------------------------------------------------
@@ -93,6 +97,36 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         return (GB_add (Chandle, ctype, C_is_csc, M, Mask_struct, Mask_comp,
             mask_applied, A, B, op, Context)) ;
     }
+
+    //--------------------------------------------------------------------------
+    // unjumbled M, A, and/or B, if required
+    //--------------------------------------------------------------------------
+
+    // M, A, and B have no pending tuples and no zombies, but may be jumbled.
+    // If they are unjumbled below, their sparsity structures do not change.
+    // C_sparse = GB_emult_sparsity (...) will not return a different choice
+    // of C_sparsity.
+
+    if (M_must_be_unjumbled)
+    {
+        GB_MATRIX_WAIT (M) ;
+    }
+
+    if (A_must_be_unjumbled)
+    {
+        GB_MATRIX_WAIT (A) ;
+    }
+
+    if (B_must_be_unjumbled)
+    {
+        GB_MATRIX_WAIT (B) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C<M or !M> = A.*B
+    //--------------------------------------------------------------------------
+
+    if (M == NULL)
 
     //--------------------------------------------------------------------------
     // initializations
