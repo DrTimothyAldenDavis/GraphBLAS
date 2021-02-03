@@ -2,8 +2,8 @@
 // GB_dense_subassign_23_template: C += B where C is dense; B is sparse or dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
                     { 
-                        int64_t i = Bi [pB] ;               // ok: B is sparse
+                        int64_t i = Bi [pB] ;
                         int64_t p = pC + i ;
                         GB_GETB (bij, Bx, pB) ;                 // bij = B(i,j)
                         // C(i,j) += bij

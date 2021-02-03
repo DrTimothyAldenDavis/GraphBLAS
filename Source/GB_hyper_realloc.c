@@ -2,8 +2,8 @@
 // GB_hyper_realloc: reallocate a matrix hyperlist
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ GrB_Info GB_hyper_realloc
     //--------------------------------------------------------------------------
 
     if (GB_IS_HYPERSPARSE (A))
-    { 
+    {
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;
 
@@ -43,8 +43,8 @@ GrB_Info GB_hyper_realloc
 
         // change the size of A->h and A->p
         bool ok1 = true, ok2 = true ;
-        A->p = GB_REALLOC (A->p, plen_new+1, plen_old+1, int64_t, &ok1) ;
-        A->h = GB_REALLOC (A->h, plen_new,   plen_old,   int64_t, &ok2) ;
+        GB_REALLOC (A->p, plen_new+1, plen_old+1, int64_t, &ok1) ;
+        GB_REALLOC (A->h, plen_new,   plen_old,   int64_t, &ok2) ;
         bool ok = ok1 && ok2 ;
 
         // always succeeds if the space shrinks
@@ -52,7 +52,6 @@ GrB_Info GB_hyper_realloc
 
         if (!ok)
         { 
-GB_GOTCHA ;
             // out of memory
             GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;

@@ -2,8 +2,8 @@
 // GB_subref_phase2: C=A(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;      // ok: C is sparse
+    int64_t cnz = Cp [Cnvec] ;
     (*Chandle) = NULL ;
 
     bool C_is_hyper = (Ch != NULL) ;
@@ -72,7 +72,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, new header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -105,13 +105,13 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     #define GB_PHASE_2_OF_2
     if (symbolic)
-    {
+    { 
         #define GB_SYMBOLIC
         #include "GB_subref_template.c"
         #undef  GB_SYMBOLIC
     }
     else
-    {
+    { 
         #define GB_NUMERIC
         #include "GB_subref_template.c"
         #undef  GB_NUMERIC

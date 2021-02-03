@@ -2,8 +2,8 @@
 // GB_bitmap_assign_M_noaccum:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 // C<M>(I,J) = A       assign
@@ -57,7 +57,8 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit4", M, false, NULL) ;
+    GBURBLE_BITMAP_ASSIGN ("bit4", M, false, NULL,
+        Ikind, Jkind, assign_kind) ;
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M, noaccum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, noaccum", GB0) ;
@@ -69,7 +70,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A
+    GB_GET_A_AND_SCALAR
 
     //--------------------------------------------------------------------------
     // C<M,repl or !repl>(I,J) = A or scalar
@@ -79,11 +80,11 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // scatter M into C
     //--------------------------------------------------------------------------
 
-    // for each entry mij == 1
-    //      Cb (i,j) += 2
-    #undef  GB_MASK_WORK
-    #define GB_MASK_WORK(pC) Cb [pC] += 2
-    #include "GB_bitmap_assign_M_template.c"
+    // Cb [pC] += 2 for each entry M(i,j) in the mask
+    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+        pstart_Mslice, kfirst_Mslice, klast_Mslice,
+        M_nthreads, M_ntasks, Context) ;
 
     //    Cb (i,j) = 0:  mij == 0, cij not present
     //    Cb (i,j) = 1:  mij == 0, cij present
@@ -104,8 +105,11 @@ GrB_Info GB_bitmap_assign_M_noaccum
         // scalar assignment: C<M>(I,J) = scalar or C(I,J)<M> = scalar
         //----------------------------------------------------------------------
 
+        // if C FULL:  if C_replace false, no deletion occurs
+        // otherwise: convert C to bitmap
+
         if (assign_kind == GB_SUBASSIGN)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar subassign: C(I,J)<M,repl or !repl> = scalar
@@ -121,20 +125,20 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = 1 ;                   \
-                    cnvals += (cb == 2) ;           \
+                    task_cnvals += (cb == 2) ;      \
                 }                                   \
                 else if (C_replace && cb == 1)      \
                 {                                   \
                     /* delete this entry */         \
                     Cb [pC] = 0 ;                   \
-                    cnvals-- ;                      \
+                    task_cnvals-- ;                 \
                 }                                   \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
         }
         else // assign_kind == GB_ASSIGN
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assign: C<M,repl or !repl>(I,J) = scalar
@@ -152,29 +156,32 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = keep ;                \
-                    cnvals += (cb == 2) ;           \
+                    task_cnvals += (cb == 2) ;      \
                 }                                   \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
             if (C_replace)
-            {
+            { 
                 // for all of C
                 #undef  GB_CIJ_WORK
                 #define GB_CIJ_WORK(pC)                 \
                 {                                       \
                     int8_t cb = Cb [pC] ;               \
                     Cb [pC] = (cb == 4 || cb == 3) ;    \
-                    cnvals -= (cb == 1) ;               \
+                    task_cnvals -= (cb == 1) ;          \
                 }
                 #include "GB_bitmap_assign_C_template.c"
             }
             else
-            {
+            { 
                 // clear the mask
-                #undef  GB_MASK_WORK
-                #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;
-                #include "GB_bitmap_assign_M_all_template.c"
+                // Cb [pC] %= 2 for each entry M(i,j) in the mask
+                GB_bitmap_M_scatter (C,
+                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                    M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
+                    pstart_Mslice, kfirst_Mslice, klast_Mslice,
+                    M_nthreads, M_ntasks, Context) ;
             }
         }
 
@@ -191,7 +198,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
         //  if Cb(p) == 2
         //      Cx(p) = aij     // C(iC,jC) is now present, insert
         //      Cb(p) = 4       // keep it
-        //      cnvals++ ;
+        //      task_cnvals++ ;
         //  if Cb(p) == 3
         //      Cx(p) = aij     // C(iC,jC) is present, update it
         //      Cb(p) = 4       // keep it
@@ -204,7 +211,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 /* Cx [pC] = Ax [pA] ; */       \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
                 Cb [pC] = 4 ;                   \
-                cnvals += (cb == 2) ;           \
+                task_cnvals += (cb == 2) ;      \
             }                                   \
         }
         #include "GB_bitmap_assign_A_template.c"
@@ -221,27 +228,27 @@ GrB_Info GB_bitmap_assign_M_noaccum
             //------------------------------------------------------------------
 
             if (C_replace)
-            {
+            { 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
-                #define GB_IXJ_WORK(pC,ignore)          \
-                {                                       \
-                    int8_t cb = Cb [pC] ;               \
-                    Cb [pC] = (cb == 4) ;               \
-                    cnvals -= (cb == 1 || cb == 3) ;    \
+                #define GB_IXJ_WORK(pC,ignore)              \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    Cb [pC] = (cb == 4) ;                   \
+                    task_cnvals -= (cb == 1 || cb == 3) ;   \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
 
             }
             else
-            {
+            { 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
-                #define GB_IXJ_WORK(pC,ignore)          \
-                {                                       \
-                    int8_t cb = Cb [pC] ;               \
-                    Cb [pC] = (cb == 4 || cb == 1) ;    \
-                    cnvals -= (cb == 3) ;               \
+                #define GB_IXJ_WORK(pC,ignore)              \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    Cb [pC] = (cb == 4 || cb == 1) ;        \
+                    task_cnvals -= (cb == 3) ;              \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
             }
@@ -257,46 +264,49 @@ GrB_Info GB_bitmap_assign_M_noaccum
             #define GB_NO_SUBASSIGN_CASE
 
             if (C_replace)
-            {
+            { 
 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
-                #define GB_IXJ_WORK(pC,ignore)          \
-                {                                       \
-                    int8_t cb = Cb [pC] ;               \
-                    Cb [pC] = (cb == 4) ? 3 : 0 ;       \
-                    cnvals -= (cb == 1 || cb == 3) ;    \
+                #define GB_IXJ_WORK(pC,ignore)              \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    Cb [pC] = (cb == 4) ? 3 : 0 ;           \
+                    task_cnvals -= (cb == 1 || cb == 3) ;   \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
 
                 // for all of C
                 #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                 \
-                {                                       \
-                    int8_t cb = Cb [pC] ;               \
-                    ASSERT (cb != 4) ;                  \
-                    Cb [pC] = (cb == 3) ;               \
-                    cnvals -= (cb == 1) ;               \
+                #define GB_CIJ_WORK(pC)                     \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    ASSERT (cb != 4) ;                      \
+                    Cb [pC] = (cb == 3) ;                   \
+                    task_cnvals -= (cb == 1) ;              \
                 }
                 #include "GB_bitmap_assign_C_template.c"
             }
             else
-            {
+            { 
 
                 // for all IxJ
                 #undef  GB_IXJ_WORK
-                #define GB_IXJ_WORK(pC,ignore)          \
-                {                                       \
-                    int8_t cb = Cb [pC] ;               \
-                    Cb [pC] = (cb == 4 || cb == 1) ;    \
-                    cnvals -= (cb == 3) ;               \
+                #define GB_IXJ_WORK(pC,ignore)              \
+                {                                           \
+                    int8_t cb = Cb [pC] ;                   \
+                    Cb [pC] = (cb == 4 || cb == 1) ;        \
+                    task_cnvals -= (cb == 3) ;              \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
 
                 // clear M from C 
-                #undef  GB_MASK_WORK
-                #define GB_MASK_WORK(pC) Cb [pC] = (Cb [pC] % 2) ;
-                #include "GB_bitmap_assign_M_template.c"
+                // Cb [pC] %= 2 for each entry M(i,j) in the mask
+                GB_bitmap_M_scatter (C,
+                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                    M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
+                    pstart_Mslice, kfirst_Mslice, klast_Mslice,
+                    M_nthreads, M_ntasks, Context) ;
             }
         }
     }

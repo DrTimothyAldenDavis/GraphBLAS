@@ -2,8 +2,8 @@
 // GB_new_bix: create a matrix and allocate space
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -37,8 +37,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
@@ -74,7 +74,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     // allocate the bitmap (A->b), indices (A->i), and values (A->x)
     //--------------------------------------------------------------------------
 
-    info = GB_bix_alloc (A, anz, sparsity == GxB_BITMAP,
+    info = GB_bix_alloc (A, anz, sparsity == GxB_BITMAP, bitmap_calloc,
         ! (sparsity == GxB_FULL || sparsity == GxB_BITMAP),
         numeric, Context) ;
     if (info != GrB_SUCCESS)

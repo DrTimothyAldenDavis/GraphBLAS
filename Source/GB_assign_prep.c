@@ -2,8 +2,8 @@
 // GB_assign_prep: check and prepare inputs for GB_assign and GB_subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -64,8 +64,7 @@ GrB_Info GB_assign_prep
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results
     bool *C_replace,                // descriptor for C
-    int *assign_kind,               // row assign, col assign, assign, or
-                                    // subassign
+    int *assign_kind,               // row/col assign, assign, or subassign
 
     // input
     const GrB_Matrix M_in,          // optional mask for C
@@ -100,6 +99,7 @@ GrB_Info GB_assign_prep
     GrB_Matrix A = A_in ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_assign/subassign", GB0) ;
+    ASSERT (!GB_is_shallow (C)) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign/subassign", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign/subassign", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
@@ -404,26 +404,33 @@ GrB_Info GB_assign_prep
     // J is now a list of vectors in the range 0:C->vdim-1
     // I is now a list of indices in the range 0:C->vlen-1
 
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+
     //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented
     //--------------------------------------------------------------------------
 
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
-    bool C_may_be_bitmap = (C->sparsity & GxB_BITMAP) ;
+    int C_sparsity = GB_sparsity_control (C->sparsity, C->vdim) ;
+    bool C_may_be_bitmap = (C_sparsity & GxB_BITMAP) ;
     bool use_bitmap_assign = (C_is_bitmap ||
         ((*C_replace) && GB_IS_FULL (C) && C_may_be_bitmap)) ;
 
     // an empty mask occurs when M is not present, but complemented
-    bool empty_mask = (M == NULL && Mask_comp) ;
 
-    if (empty_mask)
+    if (M == NULL && Mask_comp)
     {
+
+        //----------------------------------------------------------------------
+        // C<!,replace or !replace>(I,J) = anything
+        //----------------------------------------------------------------------
+
         // The mask M is empty, and complemented, and thus M(i,j)=0 for all i
-        // and j.  The result does not depend on A, Rows, Cols, or accum.  The
-        // output C is either untouched (if C_replace is false) or cleared (if
-        // C_replace is true).  However, the GrB_Row_assign and GrB_Col_assign
-        // only clear their specific row or column of C, respectively.
-        // GB_subassign only clears C(I,J).  GrB_assign clears all of C.
+        // and j.  The result does not depend on A or accum.  The output C is
+        // either untouched (if C_replace is false) or cleared (if C_replace is
+        // true).  However, the GrB_Row_assign and GrB_Col_assign only clear
+        // their specific row or column of C, respectively.  GB_subassign only
+        // clears C(I,J).  GrB_assign clears all of C.
 
         // M is NULL so C and M cannot be the same, and A is ignored so
         // it doesn't matter whether or not C == A.  Thus C is not aliased
@@ -435,9 +442,16 @@ GrB_Info GB_assign_prep
 
         if (*C_replace)
         {
+
+            //------------------------------------------------------------------
+            // C<!,replace>(I,J) = anything
+            //------------------------------------------------------------------
+
             ASSERT_MATRIX_OK (C, "C for quick mask", GB0) ;
 
-            switch (*assign_kind)
+            // to clear the whole C matrix: assign and subassign are the same
+
+            switch (whole_C_matrix ? GB_ASSIGN : (*assign_kind))
             {
 
                 //--------------------------------------------------------------
@@ -449,9 +463,10 @@ GrB_Info GB_assign_prep
                     // delete all entries in each vector with index i
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    {
+                    { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(i,:)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             I,    1, GB_LIST, NULL, // I
@@ -465,7 +480,7 @@ GrB_Info GB_assign_prep
                             GB_ROW_ASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
@@ -482,9 +497,10 @@ GrB_Info GB_assign_prep
                 {
                     GB_MATRIX_WAIT_IF_PENDING (C) ;
                     if (use_bitmap_assign)
-                    {
+                    { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(:,j)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             NULL, 0, GB_ALL,  NULL, // I
@@ -498,7 +514,7 @@ GrB_Info GB_assign_prep
                             GB_COL_ASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_assign_zombie1 (C, J [0], Context) ;
@@ -512,9 +528,12 @@ GrB_Info GB_assign_prep
 
                 case GB_ASSIGN : 
                 {
-                    // C<!NULL>=NULL since result does not depend on computing
+                    // C<!>=anything since result does not depend on computing
                     // Z.  Since C_replace is true, all of C is cleared.  This
                     // is the same as the GB_RETURN_IF_QUICK_MASK macro.
+                    // GB_clear either converts C to an empty sparse/hyper
+                    // matrix, or to a bitmap matrix with no entries, depending
+                    // on its sparsity control setting.
                     GBURBLE ("clear C ") ;
                     GB_OK (GB_clear (C, Context)) ;
                 }
@@ -531,6 +550,7 @@ GrB_Info GB_assign_prep
                     { 
                         // neither A nor the scalar are used, so convert this
                         // to a scalar assignment (the scalar is not used)
+                        GBURBLE ("bitmap C(I,J)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
                             I, nI, Ikind, Icolon,
@@ -544,7 +564,7 @@ GrB_Info GB_assign_prep
                             GB_SUBASSIGN, Context)) ;
                     }
                     else
-                    {
+                    { 
                         // Method 00: C(I,J) = empty, using S
                         GBURBLE ("C(I,J)=zombie ") ;
                         GB_ENSURE_SPARSE (C) ;
@@ -566,7 +586,8 @@ GrB_Info GB_assign_prep
         ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
         (*done) = true ;
         GB_FREE_ALL ;
-        (*Chandle) = C ;            // C is C_in or C2
+        ASSERT (C == C_in) ;
+        (*Chandle) = C ;
         return (GB_block (C, Context)) ;
     }
 
@@ -592,16 +613,15 @@ GrB_Info GB_assign_prep
     // delete pending tuples for C(:,:) = x and C(:,:) = A
     //--------------------------------------------------------------------------
 
-    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (whole_C_matrix)
-    {
+    { 
         // If the assignment is C<M>(:,:) = ... then convert the assignment
         // into a subassign.
         (*assign_kind) = GB_SUBASSIGN ;
     }
 
     if (whole_C_matrix && no_mask && accum == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C(:,:) = x or A:  whole matrix assignment with no mask
@@ -609,6 +629,20 @@ GrB_Info GB_assign_prep
 
         // C_replace is already effectively false (see no_mask condition above)
         ASSERT ((*C_replace) == false) ;
+
+        if (GB_aliased (C, A) && !A_transpose && !scalar_expansion)
+        { 
+            // C = C, with C and A aliased, no transpose, no mask, no accum
+            // operator, both I and J are ":", Mask_comp false.  C is not
+            // modified at all, and there's no work to do except to check for
+            // blocking mode.
+            GBURBLE ("(no-op) ") ;
+            (*done) = true ;
+            GB_FREE_ALL ;
+            ASSERT (C == C_in) ;
+            (*Chandle) = C ;
+            return (GB_block (C, Context)) ;
+        }
 
         // free pending tuples early but do not clear C.  If it is
         // already dense then its pattern can be reused.
@@ -628,9 +662,12 @@ GrB_Info GB_assign_prep
     { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in-place
+        // TODO: if accum is present and it does not depend on the values of
+        // A,  only construct the pattern of AT, not the values.
         GBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
+        GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
     }
 
@@ -657,9 +694,11 @@ GrB_Info GB_assign_prep
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             // transpose: typecast, no op, not in-place
+            // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
+            GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
         }
     }
@@ -731,10 +770,10 @@ GrB_Info GB_assign_prep
     // matches the behavior in MATLAB, so the following holds:
 
     /*
-        C2 = C ;
-        C2 (I,J) = A ;
+        C4 = C ;
+        C4 (I,J) = A ;
         C3 = subassign (C, I, J, A) ;
-        assert (isequal (C2, C3)) ;
+        assert (isequal (C4, C3)) ;
     */
 
     // That is, the pre-sort of I, J, and A has no effect on the final C, in
@@ -940,7 +979,7 @@ GrB_Info GB_assign_prep
 
     bool C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    {
+    { 
         // C is completely empty.  C_replace is irrelevant so set it to false.
         (*C_replace) = false ;
     }
@@ -996,7 +1035,7 @@ GrB_Info GB_assign_prep
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // prior pending tuples exist: check if action: ( delete ) can occur
@@ -1007,29 +1046,26 @@ GrB_Info GB_assign_prep
         // Thus all prior pending tuples must be assembled first if
         // action: ( delete ) can occur.
 
-        if (C_replace)
+        if (*C_replace)
         { 
             // C_replace must use the action: ( delete )
             wait = true ;
         }
         else if (accum == NULL)
-        {
+        { 
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
-            // A is completely dense and if there is no mask M, then C(I,J)=A
-            // cannot delete any entries from C.
+            // A is completely dense, then C(I,J)=A cannot delete any entries
+            // from C.
 
-            if (M == NULL && GB_is_dense (A))
+            if (scalar_expansion || GB_is_dense (A))
             { 
-GB_GOTCHA ;
-                // A is a dense matrix, so entries cannot be deleted
+                // A is a scalar or dense matrix, so entries cannot be deleted
                 wait = false ;
             }
             else
             { 
-GB_GOTCHA ;
-                // A is sparse or M is present.
-                // In this case, action: ( delete ) might occur
+                // A is sparse.  action: ( delete ) might occur.
                 wait = true ;
             }
         }
@@ -1039,7 +1075,7 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         if (!wait)
-        {
+        { 
 
             // ( delete ) will not occur, but new pending tuples may be added
             // via the action: ( insert ).  Check if the accum operator is the
@@ -1051,7 +1087,6 @@ GB_GOTCHA ;
 
             if (atype != C->Pending->type)
             { 
-GB_GOTCHA ;
                 // entries in A are copied directly into the list of pending
                 // tuples for C, with no typecasting.  The type of the prior
                 // pending tuples must match the type of A.  Since the types
@@ -1070,7 +1105,6 @@ GB_GOTCHA ;
                   )
             )
             { 
-GB_GOTCHA ;
                 wait = true ;
             }
         }
@@ -1097,7 +1131,7 @@ GB_GOTCHA ;
 
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
     if (C_is_empty)
-    {
+    { 
         // C is completely empty.  C_replace is irrelevant so set it to false.
         GBURBLE ("(C empty) ") ;
         (*C_replace) = false ;
@@ -1123,7 +1157,7 @@ GB_GOTCHA ;
     // explicit SECOND_Ctype operator.
 
     if (C->Pending != NULL)
-    {
+    { 
         C->Pending->op = accum ;
     }
 

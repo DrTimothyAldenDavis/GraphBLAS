@@ -2,8 +2,8 @@
 // GB_builder: build a matrix from tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -56,13 +56,6 @@
 // all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
 // does O(e/p) reads/writes per thread.
 
-// For GrB_reduce_to_vector: like GrB_Vector_build, but many duplicates are
-// likely, and the indices will not be sorted.  The input is always a single
-// vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
-// I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
-// does O(e/p) read/writes.  Step 4 takes no time.  Step 5 does O(e/p)
-// read/writes per thread.
-
 // For GB_Matrix_wait:  the pending tuples are provided as I_work, J_work, and
 // S_work, so Step 1 is skipped (no need to check for invalid indices).  The
 // input J_work may be null (vdim can be anything, since GB_Matrix_wait is used
@@ -112,9 +105,6 @@
     GB_FREE (*J_work_handle) ;      \
     GB_FREE (*S_work_handle) ;      \
     GB_FREE (K_work) ;              \
-    GB_FREE (W0) ;                  \
-    GB_FREE (W1) ;                  \
-    GB_FREE (W1) ;                  \
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +125,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool known_no_duplicates,       // true if tuples known to not have dupl
     int64_t ijslen,                 // size of I_work and J_work arrays
     const bool is_matrix,           // true if T a GrB_Matrix, false if vector
-    const bool ijcheck,             // true if I_input,J_input must be checked
     const int64_t *GB_RESTRICT I_input,// original indices, size nvals
     const int64_t *GB_RESTRICT J_input,// original indices, size nvals
     const GB_void *GB_RESTRICT S_input,// array of values of tuples, size nvals
@@ -195,9 +184,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
     int64_t *GB_RESTRICT K_work = NULL ;
-    int64_t *GB_RESTRICT W0 = NULL ;
-    int64_t *GB_RESTRICT W1 = NULL ;
-    int64_t *GB_RESTRICT W2 = NULL ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -312,7 +298,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         if (nvals == 0)
         { 
-GB_GOTCHA ;
+
             // nothing to do
 
         }
@@ -435,7 +421,7 @@ GB_GOTCHA ;
             }
 
         }
-        else if (ijcheck)
+        else
         {
 
             //------------------------------------------------------------------
@@ -497,26 +483,6 @@ GB_GOTCHA ;
                         i, vlen) ;
                 }
             }
-
-        }
-        else
-        { 
-            ASSERT (0) ;    // TODO: dead code
-GB_GOTCHA ;
-
-            //------------------------------------------------------------------
-            // GB_reduce_to_vector: do not check I_input, assume not sorted
-            //------------------------------------------------------------------
-
-            // Many duplicates are possible, since the tuples are being used to
-            // construct a single vector.  For a CSC format, each entry A(i,j)
-            // becomes an (i,aij) tuple, with the vector index j discarded.  All
-            // entries in a single row i are reduced to a single entry in the
-            // vector.  The input is unlikely to be sorted, so do not bother to
-            // check.
-
-            GB_memcpy (I_work, I_input, nvals * sizeof (int64_t), nthreads) ;
-            known_sorted = false ;
         }
 
         //----------------------------------------------------------------------
@@ -565,59 +531,18 @@ GB_GOTCHA ;
         { 
             K_work [k] = k ;
         }
-    
-        // determine # of threads to use in the parallel mergesort
-        int nth = GB_MSORT_NTHREADS (nthreads) ;
 
         // sort all the tuples
         if (vdim > 1)
         {
-
-            //------------------------------------------------------------------
             // sort a set of (j,i,k) tuples
-            //------------------------------------------------------------------
-
-            if (nth > 1)
-            {
-                W0 = GB_MALLOC (nvals, int64_t) ;
-                W1 = GB_MALLOC (nvals, int64_t) ;
-                W2 = GB_MALLOC (nvals, int64_t) ;
-                if (W0 == NULL || W1 == NULL || W2 == NULL)
-                { 
-                    // out of memory
-                    GB_FREE_WORK ;
-                    return (GrB_OUT_OF_MEMORY) ;
-                }
-            }
-
-            GB_msort_3 (J_work, I_work, K_work, W0, W1, W2, nvals, nth) ;
-
+            GB_msort_3b (J_work, I_work, K_work, nvals, nthreads) ;
         }
         else
         {
-
-            //------------------------------------------------------------------
             // sort a set of (i,k) tuples
-            //------------------------------------------------------------------
-
-            if (nth > 1)
-            { 
-                W0 = GB_MALLOC (nvals, int64_t) ;
-                W1 = GB_MALLOC (nvals, int64_t) ;
-                if (W0 == NULL || W1 == NULL)
-                { 
-                    // out of memory
-                    GB_FREE_WORK ;
-                    return (GrB_OUT_OF_MEMORY) ;
-                }
-            }
-
-            GB_msort_2 (I_work, K_work, W0, W1, nvals, nth) ;
+            GB_msort_2b (I_work, K_work, nvals, nthreads) ;
         }
-
-        GB_FREE (W0) ;
-        GB_FREE (W1) ;
-        GB_FREE (W2) ;
     }
 
     //--------------------------------------------------------------------------
@@ -789,7 +714,7 @@ GB_GOTCHA ;
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
 
-    // [ allocate T; allocate T->p and T->h but do not initialize them.
+    // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
     info = GB_new (&T, // always hyper (even vectors), new header
         ttype, vlen, vdim, GB_Ap_malloc, is_csc,
@@ -801,10 +726,12 @@ GB_GOTCHA ;
         return (info) ;
     }
 
+    ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
     ASSERT (T->nzmax == 0) ;        // T->i and T->x not yet allocated
-    ASSERT (T->x == NULL) ;
+    ASSERT (T->b == NULL) ;
     ASSERT (T->i == NULL) ;
+    ASSERT (T->x == NULL) ;
 
     (*Thandle) = T ;
 
@@ -814,8 +741,8 @@ GB_GOTCHA ;
 
     // Step 4 scans the J_work indices and constructs T->h and T->p.
 
-    int64_t *GB_RESTRICT Th = T->h ;    // ok: T is hypersparse
-    int64_t *GB_RESTRICT Tp = T->p ;    // ok: T is hypersparse
+    int64_t *GB_RESTRICT Th = T->h ;
+    int64_t *GB_RESTRICT Tp = T->p ;
 
     if (vdim <= 1)
     {
@@ -827,8 +754,8 @@ GB_GOTCHA ;
         ASSERT (tnvec == 0 || tnvec == 1) ;
         if (tnvec > 0)
         { 
-            Th [0] = 0 ;    // ok: T is hypersparse
-            Tp [0] = 0 ;    // ok: T is hypersparse
+            Th [0] = 0 ;
+            Tp [0] = 0 ;
         }
 
     }
@@ -856,8 +783,8 @@ GB_GOTCHA ;
                 if (j > jlast)
                 { 
                     // vector j starts in this slice
-                    Th [my_tnvec] = j ; // ok: T is hypersparse
-                    Tp [my_tnvec] = t ; // ok: T is hypersparse
+                    Th [my_tnvec] = j ;
+                    Tp [my_tnvec] = t ;
                     my_tnvec++ ;
                     jlast = j ;
                 }
@@ -894,8 +821,8 @@ GB_GOTCHA ;
                     if (j > jlast)
                     { 
                         // vector j starts in this slice 
-                        Th [my_tnvec] = j ;         // ok: T is hypersparse
-                        Tp [my_tnvec] = my_tnz ;    // ok: T is hypersparse
+                        Th [my_tnvec] = j ;
+                        Tp [my_tnvec] = my_tnz ;
                         my_tnvec++ ;
                         jlast = j ;
                     }
@@ -908,9 +835,9 @@ GB_GOTCHA ;
     // log the end of the last vector
     T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
-    Tp [tnvec] = tnz ;  // ok: T is hypersparse
+    Tp [tnvec] = tnz ;
     ASSERT (T->nvec == T->plen) ;
-    T->magic = GB_MAGIC ;                      // T->p and T->h are now valid ]
+    T->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // free J_work if it exists
@@ -933,7 +860,7 @@ GB_GOTCHA ;
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            I_work = GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
+            GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
@@ -1008,7 +935,7 @@ GB_GOTCHA ;
     GB_Type_code tcode = ttype->code ;
     bool op_2nd ;
 
-    ASSERT_TYPE_OK (ttype, "ttype for build_factorize", GB0) ;
+    ASSERT_TYPE_OK (ttype, "ttype for build_factory", GB0) ;
 
     if (dup == NULL)
     { 
@@ -1099,8 +1026,8 @@ GB_GOTCHA ;
         // S_work.  The transplant can be used by GB_Matrix_wait (whenever the
         // tuples are already sorted, with no duplicates, and no typecasting is
         // needed, since S_work is always A->Pending->x).  This transplant can
-        // rarely be used for GB_transpose (when op is NULL and the transposed
-        // tuples happen to be sorted, which is unlikely).
+        // rarely be used for GB_transpose, in the case when op is NULL and the
+        // transposed tuples happen to be sorted (which is unlikely).
 
         T->x = S_work ;
         S_work = NULL ;
@@ -1129,7 +1056,7 @@ GB_GOTCHA ;
 
         if (nvals == 0)
         { 
-GB_GOTCHA ;
+
             // nothing to do
 
         }
@@ -1145,7 +1072,7 @@ GB_GOTCHA ;
             // copy S into Tx.  S cannot be transplanted into T->x since
             // S_work is NULL and S_input cannot be modified by GB_builder.
 
-            GBURBLE ("(memcpy S into T) ") ;
+            GBURBLE ("(build:memcpy) ") ;
             ASSERT (S_work == NULL) ;
             ASSERT (S == S_input) ;
             GB_memcpy (Tx, S, nvals * tsize, nthreads) ;
@@ -1175,7 +1102,7 @@ GB_GOTCHA ;
 
             // Early exit cannot be exploited, so the terminal is ignored.
 
-            GBURBLE ("(assemble S into T, no casting) ") ;
+            GBURBLE ("(build:assemble) ") ;
             bool done = false ;
 
             #ifndef GBCOMPACT
@@ -1213,7 +1140,7 @@ GB_GOTCHA ;
 
             if (!done)
             {
-                GB_BURBLE_N (nvals, "(generic build) ") ;
+                GB_BURBLE_N (nvals, "(generic) ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1265,7 +1192,7 @@ GB_GOTCHA ;
             // assemble the values S into T, typecasting as needed
             //------------------------------------------------------------------
 
-            GB_BURBLE_N (nvals, "(generic build with typecast) ") ;
+            GB_BURBLE_N (nvals, "(generic with typecast) ") ;
 
             // S (either S_work or S_input) must be permuted and copied into
             // T->x, since the tuples had to be sorted, or duplicates appear.

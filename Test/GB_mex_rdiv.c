@@ -2,8 +2,8 @@
 // GB_mex_rdiv: compute C=A*B with the rdiv operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -82,7 +82,9 @@ GrB_Info axb (GB_Context Context, bool cprint)
         false,      // no flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
-        AxB_method, Context) ;
+        AxB_method,
+        true,       // do the sort
+        Context) ;
 
     if (C != NULL)
     {
@@ -144,7 +146,6 @@ void mexFunction
     // get the axb_method
     // 0 or not present: default
     // 1001: Gustavson
-    // 1002: heap
     // 1003: dot
     // 1004: hash
     // 1005: saxpy
@@ -155,7 +156,6 @@ void mexFunction
 
     if (! ((AxB_method == GxB_DEFAULT) ||
         (AxB_method == GxB_AxB_GUSTAVSON) ||
-        (AxB_method == GxB_AxB_HEAP) ||
         (AxB_method == GxB_AxB_HASH) ||
         (AxB_method == GxB_AxB_SAXPY) ||
         (AxB_method == GxB_AxB_DOT)))

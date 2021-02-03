@@ -2,8 +2,8 @@
 // GB_assign_zombie1: delete all entries in C(:,j) for GB_assign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -59,12 +59,12 @@ void GB_assign_zombie1
         reduction(+:nzombies)
     for (pC = pC_start ; pC < pC_end ; pC++)
     {
-        int64_t i = Ci [pC] ;       // ok: C is sparse
+        int64_t i = Ci [pC] ;
         if (!GB_IS_ZOMBIE (i))
         { 
             // delete C(i,j) by marking it as a zombie
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+            Ci [pC] = GB_FLIP (i) ;
         }
     }
 

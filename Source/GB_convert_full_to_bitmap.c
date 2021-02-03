@@ -2,8 +2,8 @@
 // GB_convert_full_to_bitmap: convert a matrix from full to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -43,7 +43,6 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     if (A->b == NULL)
     { 
         // out of memory
-        GB_phbix_free (A) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

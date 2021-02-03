@@ -9,8 +9,8 @@ function test06 (A,B,fulltests,method_list)
 % matrix id number from the SuiteSparse collection otherwise A is the sparse
 % matrix to use in the test
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test06: GrB_mxm on all semirings\n') ;
 
@@ -175,7 +175,6 @@ for k1 = k1_list % 1:length(mult_ops)
             catch me
                 if (~isempty (strfind (me.message, 'gotcha')))
                     semiring
-                    pause
                 end
                 continue
             end

@@ -2,8 +2,8 @@
 // GB_mex_mxm_flops: compute flops to do C=A*B, C<M>=A*B or C<!M>=A*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -50,7 +50,6 @@ void mexFunction
 
     // get Mask_comp
     bool GET_SCALAR (1, bool, Mask_comp, 0) ;
-    // printf ("complement: %d\n", Mask_comp) ;
 
     // get A (shallow copy)
     A = GB_mx_mxArray_to_Matrix (pargin [2], "A", false, true) ;

@@ -2,8 +2,8 @@
 // GB_mex_mxm: C<Mask> = accum(C,A*B)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -58,8 +58,6 @@ void mexFunction
     GxB_FC64_t zero = GxB_CMPLX (0,0) ;
 
     // create the monoid
-    // GxB_print (Complex_times, 5) ;
-
     if (Complex == GxB_FC64)
     {
         Times_terminal = GxB_TIMES_FC64_MONOID ;

@@ -2,8 +2,8 @@
 // GB_convert_sparse_to_bitmap_template: convert A from sparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@
                 for (int64_t p = pA_start ; p < pA_end ; p++)
                 { 
                     // A(i,j) has index i, value Ax [p]
-                    int64_t i = Ai [p] ;            // ok: A is sparse
+                    int64_t i = Ai [p] ;
                     int64_t pnew = i + pA_new ;
                     // move A(i,j) to its new place in the bitmap
                     // Ax_new [pnew] = Ax [p]
@@ -60,7 +60,7 @@
                 for (int64_t p = pA_start ; p < pA_end ; p++)
                 { 
                     // A(i,j) has index i, value Ax [p]
-                    int64_t i = Ai [p] ;            // ok: A is sparse
+                    int64_t i = Ai [p] ;
                     if (!GB_IS_ZOMBIE (i))
                     { 
                         int64_t pnew = i + pA_new ;

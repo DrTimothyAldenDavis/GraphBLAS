@@ -2,8 +2,8 @@
 // GB_sparse_add_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -188,7 +188,7 @@
             // get the first and last indices in B(:,j) for this vector
             int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
-            {
+            { 
                 iB_first = GBI (Bi, pB, vlen) ;
                 iB_last  = GBI (Bi, pB_end-1, vlen) ;
             }
@@ -753,10 +753,10 @@
                 // designed to be very efficient when M is very sparse compared
                 // with A and/or B.  It traverses all entries in the sparse M,
                 // and (for sparse A or B) does a binary search for entries in
-                // A or B.  In that case, the mask M should be ignored, and
-                // C=A+B should be computed without any mask.  The test for
-                // when to use M here should ignore A or B if they are bitmap
-                // or full.
+                // A or B.  In that case, if M has many entries, the mask M
+                // should be ignored, and C=A+B should be computed without any
+                // mask.  The test for when to use M here should ignore A or B
+                // if they are bitmap or full.
 
                 // A and B can have any sparsity pattern (hypersparse,
                 // sparse, bitmap, or full).
@@ -812,7 +812,6 @@
                     }
                     else if (B == M)
                     { 
-// GB_GOTCHA ;
                         // B is aliased to M
                         pB = pM ;
                         bfound = true ;
@@ -924,13 +923,13 @@
                     ASSERT (iA_first == iB_first) ;
                     ASSERT (iA_last  == iB_last ) ;
                     for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
+                    {
                         int64_t i = p + iA_first ;
                         ASSERT (Ai [pA + p] == i) ;
                         ASSERT (Bi [pB + p] == i) ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -953,11 +952,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -978,11 +977,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1003,11 +1002,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1020,11 +1019,11 @@
                     }
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1045,11 +1044,11 @@
                     //----------------------------------------------------------
 
                     for ( ; pB < pB_end ; pB++)
-                    { 
+                    {
                         int64_t i = Bi [pB] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1062,11 +1061,11 @@
                     }
 
                     for ( ; pA < pA_end ; pA++)
-                    { 
+                    {
                         int64_t i = Ai [pA] ;
                         GB_GET_MIJ (i) ;
                         if (mij)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1091,10 +1090,10 @@
                         int64_t iA = Ai [pA] ;
                         int64_t iB = Bi [pB] ;
                         if (iA < iB)
-                        { 
+                        {
                             GB_GET_MIJ (iA) ;
                             if (mij)
-                            {
+                            { 
                                 // C (iA,j) = A (iA,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1107,10 +1106,10 @@
                             pA++ ;
                         }
                         else if (iA > iB)
-                        { 
+                        {
                             GB_GET_MIJ (iB) ;
                             if (mij)
-                            {
+                            { 
                                 // C (iB,j) = B (iB,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1123,10 +1122,10 @@
                             pB++ ;
                         }
                         else
-                        { 
+                        {
                             GB_GET_MIJ (iB) ;
                             if (mij)
-                            {
+                            { 
                                 // C (i,j) = A (i,j) + B (i,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
@@ -1152,7 +1151,7 @@
                         int64_t iA = Ai [pA] ;
                         GB_GET_MIJ (iA) ;
                         if (mij)
-                        {
+                        { 
                             // C (iA,j) = A (iA,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -1169,7 +1168,7 @@
                         int64_t iB = Bi [pB] ;
                         GB_GET_MIJ (iB) ;
                         if (mij)
-                        {
+                        { 
                             // C (iB,j) = B (iB,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;

@@ -2,12 +2,13 @@
 // GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap: C<#M>+=A*B, C bitmap, M any format
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 {
+
     int64_t tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
@@ -29,11 +30,13 @@
         int64_t jstart = J_tid * GB_TILE_SIZE ;
         int64_t jend   = GB_IMIN (bvdim, jstart + GB_TILE_SIZE) ;
 
+        int64_t task_cnvals = 0 ;
+
         //----------------------------------------------------------------------
         // check if any entry in the M(I,J) mask permits any change to C(I,J)
         //----------------------------------------------------------------------
 
-        #if defined ( GB_MASK_IS_SPARSE ) || defined ( GB_MASK_IS_BITMAP )
+        #if GB_MASK_IS_SPARSE_OR_HYPER || GB_MASK_IS_BITMAP_OR_FULL
 
             bool any_update_allowed = false ;
 
@@ -52,13 +55,13 @@
                     // check M(i,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
 
                         // M is sparse or hypersparse
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
 
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
 
                         // M is bitmap or full
                         GB_GET_M_ij (pC) ;
@@ -73,7 +76,6 @@
 
             if (!any_update_allowed)
             { 
-// GB_GOTCHA ;
                 // C(I,J) cannot be modified at all; skip it
                 continue ;
             }
@@ -84,9 +86,7 @@
         // declare local storage for this task
         //----------------------------------------------------------------------
 
-//      #ifndef GB_GENERIC
 //      GB_ATYPE Ax_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
-//      #endif
 //      int8_t Ab_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
         bool Ab_any_in_row [GB_TILE_SIZE] ;
 
@@ -119,10 +119,6 @@
                     Ab_cache [i_local * GB_KTILE_SIZE ...
                 }
             }
-
-            #ifndef GB_GENERIC
-            #define Ax Ax_cache
-            #endif
 #endif
 
             //------------------------------------------------------------------
@@ -140,7 +136,7 @@
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
                         int64_t pA = i + k * avlen ;    // get pointer to A(i,k)
-                        int8_t  ab = Ab [pA] ;          // ok: A is bitmap
+                        int8_t  ab = Ab [pA] ;
                         // Ab_cache [(i-istart) * GB_KTILE_SIZE + (k-kstart)]
                         //      = ab ;
                         Ab_any_in_row [i-istart] |= ab ;
@@ -202,27 +198,27 @@
                     // check M(i,j)
                     //----------------------------------------------------------
 
-                    #if defined ( GB_MASK_IS_SPARSE )
+                    #if GB_MASK_IS_SPARSE_OR_HYPER
 
                         // M is sparse or hypersparse
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
                         bool mij = (cb & 2) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
                         cb = (cb & 1) ;
 
-                    #elif defined ( GB_MASK_IS_BITMAP )
+                    #elif GB_MASK_IS_BITMAP_OR_FULL
 
                         // M is bitmap or full
                         GB_GET_M_ij (pC) ;
                         if (Mask_comp) mij = !mij ;
                         if (!mij) continue ;
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #else
 
                         // no mask
-                        int8_t cb = Cb [pC] ;           // ok: C is bitmap
+                        int8_t cb = Cb [pC] ;
 
                     #endif
 
@@ -251,7 +247,7 @@
                                 GB_CIJ_WRITE (pC, t) ;
                                 Cb [pC] = keep ;
                                 cb = keep ;
-                                cnvals++ ;
+                                task_cnvals++ ;
                             }
                             else
                             { 
@@ -268,6 +264,7 @@
                         // C(i,j) already exists
                         //------------------------------------------------------
 
+                        #if !GB_IS_ANY_PAIR_SEMIRING
                         for (int64_t k = kstart ; k < kend ; k++)
                         { 
                             int64_t pA = i + k * avlen ;    // pointer to A(i,k)
@@ -279,13 +276,12 @@
                             // C(i,j) += A(i,k) * B(k,j)
                             GB_CIJ_UPDATE (pC, t) ;
                         }
+                        #endif
                     }
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
-
-#undef GB_MASK_IS_SPARSE
-#undef GB_MASK_IS_BITMAP
 

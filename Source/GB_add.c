@@ -2,8 +2,8 @@
 // GB_add: C = A+B, C<M>=A+B, and C<!M>=A+B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -181,7 +181,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap or full: only determine how many threads to use
@@ -229,6 +229,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*Chandle) = C ;
+    (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;
 }
 

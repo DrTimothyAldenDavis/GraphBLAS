@@ -2,8 +2,8 @@
 // GrB_Matrix_new: create a new matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -45,9 +45,6 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     GrB_Info info ;
     int64_t vlen, vdim ;
 
-    // A is created with auto hypersparsity (typically hypersparse unless
-    // vdim <= 1 or hyper_switch < 0) and default CSR/CSC format.
-
     bool A_is_csc = GB_Global_is_csc_get ( ) ;
 
     if (A_is_csc)
@@ -61,10 +58,9 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-    info = GB_new (A, // new matrix (auto sparse or hyper), new header
+    info = GB_new (A, // auto sparsity, new header
         type, vlen, vdim, GB_Ap_calloc, A_is_csc,
-        GxB_SPARSE + GxB_HYPERSPARSE,
-        GB_Global_hyper_switch_get ( ), 1, Context) ;
+        GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context) ;
     return (info) ;
 }
 

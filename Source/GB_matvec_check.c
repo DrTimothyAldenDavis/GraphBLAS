@@ -2,8 +2,8 @@
 // GB_matvec_check: print a GraphBLAS matrix and check if it is valid
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -83,22 +83,27 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (is_full)
     { 
+        // A->p, A->h, A->i, and A->b all null
         GBPR0 (", full") ;
     }
     else if (is_bitmap)
     { 
+        // A->b not null
         GBPR0 (", bitmap") ;
     }
     else if (is_sparse)
     { 
+        // A->h null, A->p not null
         GBPR0 (", sparse") ;
     }
     else if (is_hyper)
     { 
+        // A->h not null
         GBPR0 (", hypersparse") ;
     }
     else
-    {
+    { 
+        // A is not hyper, sparse, bitmap, or full
         GBPR0 (" invalid structure\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -115,8 +120,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         GBPR0 (" nvec_nonempty: " GBd , A->nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd " hyper_switch %g\n",
-        A->nvec, A->plen, A->vdim, A->hyper_switch) ;
+    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd "\n  hyper_switch %g "
+        "bitmap_switch %g\n",
+        A->nvec, A->plen, A->vdim, A->hyper_switch, A->bitmap_switch) ;
     #endif
 
     switch (A->sparsity)
@@ -124,87 +130,86 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         // 1
         case GxB_HYPERSPARSE : 
-            GBPR0 ("  sparsity: hypersparse only\n") ;
+            GBPR0 ("  sparsity control: hypersparse only\n") ;
             break ;
 
         // 2
         case GxB_SPARSE : 
-            GBPR0 ("  sparsity: sparse only\n") ;
+            GBPR0 ("  sparsity control: sparse only\n") ;
             break ;
 
         // 3
         case GxB_HYPERSPARSE + GxB_SPARSE : 
-            GBPR0 ("  sparsity: sparse/hypersparse\n") ;
+            GBPR0 ("  sparsity control: sparse/hypersparse\n") ;
             break ;
 
         // 4
         case GxB_BITMAP : 
-            GBPR0 ("  sparsity: bitmap only\n") ;
+            GBPR0 ("  sparsity control: bitmap only\n") ;
             break ;
 
         // 5
         case GxB_HYPERSPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: hypersparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: hypersparse/bitmap\n") ;
             break ;
 
         // 6
         case GxB_SPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: sparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: sparse/bitmap\n") ;
             break ;
 
         // 7
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP : 
-            GBPR0 ("  sparsity: hypersparse/sparse/bitmap\n") ;
+            GBPR0 ("  sparsity control: hypersparse/sparse/bitmap\n") ;
             break ;
 
-        // 8 and 12: these options are treated the same
+        // 8
         case GxB_FULL : 
-        case GxB_FULL + GxB_BITMAP : 
-            GBPR0 ("  sparsity: bitmap/full\n") ;
+            GBPR0 ("  sparsity control: full\n") ;
             break ;
 
         // 9
         case GxB_HYPERSPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/full\n") ;
             break ;
 
         // 10
         case GxB_SPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: sparse/full\n") ;
+            GBPR0 ("  sparsity control: sparse/full\n") ;
             break ;
 
         // 11
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/sparse/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/sparse/full\n") ;
+            break ;
+
+        // 12
+        case GxB_FULL + GxB_BITMAP : 
+            GBPR0 ("  sparsity control: bitmap/full\n") ;
             break ;
 
         // 13
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
-            GBPR0 ("  sparsity: hypersparse/bitmap/full\n") ;
+            GBPR0 ("  sparsity control: hypersparse/bitmap/full\n") ;
             break ;
 
         // 14
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
-            GBPR0 ("  sparsity: sparse/bitmap/full\n") ;
+            GBPR0 ("  sparsity control: sparse/bitmap/full\n") ;
             break ;
 
         // 15
-        case GxB_AUTO_SPARSITY : 
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
             #if GB_DEVELOPER
-            GBPR0 ("  sparsity: auto\n") ;
+            GBPR0 ("  sparsity control: hyper/sparse/bitmap/full\n") ;
             #endif
             break ;
 
         default : 
-            GBPR0 (" unknown\n") ;
+            // invalid sparsity control
+            GBPR0 ("  sparsity control: invalid\n") ;
+            return (GrB_INVALID_OBJECT) ;
             break ;
-    }
-
-    if (A->sparsity <= 0 || A->sparsity > GxB_AUTO_SPARSITY)
-    { 
-GB_GOTCHA ;
-        GBPR0 (" invalid sparsity structure\n") ;
-        return (GrB_INVALID_OBJECT) ;
     }
 
     //--------------------------------------------------------------------------
@@ -228,7 +233,6 @@ GB_GOTCHA ;
         // A is full
         if (! (A->nvec == A->vdim && A->plen == -1))
         { 
-GB_GOTCHA ;
             GBPR0 ("  invalid full %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -239,7 +243,6 @@ GB_GOTCHA ;
         if (! (A->nvec == A->vdim && A->plen == -1 &&
                A->h == NULL && A->p == NULL && A->i == NULL))
         { 
-GB_GOTCHA ;
             GBPR0 ("  invalid bitmap %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -253,7 +256,7 @@ GB_GOTCHA ;
             return (GrB_INVALID_OBJECT) ;
         }
     }
-    else // if (is_hyper)
+    else
     {
         // A is hypersparse
         if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
@@ -272,10 +275,10 @@ GB_GOTCHA ;
     #if GB_DEVELOPER
     // a matrix contains 1 to 9 different allocated blocks
     int64_t nallocs = 1 +                       // header
-        (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
-        (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
+        (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow
+        (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
         (A->x != NULL && !A->x_shallow) +       // A->x, if not shallow
         (Pending != NULL) +
         (Pending != NULL && Pending->i != NULL) +
@@ -283,7 +286,7 @@ GB_GOTCHA ;
         (Pending != NULL && Pending->x != NULL) ;
     if (pr_short || pr_complete)
     {
-        GBPR ("  A %p number of memory blocks: " GBd "\n", A, nallocs) ;
+        GBPR ("  header %p number of memory blocks: " GBd "\n", A, nallocs) ;
     }
     #endif
 
@@ -392,7 +395,7 @@ GB_GOTCHA ;
     }
 
     // # of entries cannot be computed until all the tests above are OK
-    int64_t anz = is_full ? GB_NNZ_FULL (A) : GB_NNZ (A) ;   // TODO
+    int64_t anz = is_full ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
     if (anz == 0)
     { 
         GBPR0 ("no entries\n") ;
@@ -429,21 +432,21 @@ GB_GOTCHA ;
     {
         if (A->nzombies != 0)
         { 
-GB_GOTCHA ;
+            // full/bitmap cannot have zombies
             GBPR0 ("  %s %s cannot have zombies\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (Pending != NULL)
         { 
-GB_GOTCHA ;
+            // full/bitmap cannot have pending tuples
             GBPR0 ("  %s %s cannot have pending tuples\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
         if (A->jumbled)
         { 
-GB_GOTCHA ;
+            // full/bitmap jumbled
             GBPR0 ("  %s %s cannot be jumbled\n",
                 is_full ? "full" : "bitmap", kind) ;
             return (GrB_INVALID_OBJECT) ;
@@ -482,8 +485,9 @@ GB_GOTCHA ;
             {
                 int8_t ab = A->b [p2] ;
                 if (ab < 0 || ab > 1)
-                {
-                    GBPR0 ("invalid bitmap\n") ;
+                { 
+                    // bitmap with value other than 0, 1
+                    GBPR0 ("    invalid bitmap %d\n", ab) ;
                     return (GrB_INVALID_OBJECT) ;
                 }
                 ajnz += (ab != 0)  ;
@@ -586,8 +590,7 @@ GB_GOTCHA ;
 
     if (is_bitmap && anz != anz_actual)
     { 
-GB_GOTCHA ;
-        // this case can only occur for bitmapped matrices
+        // bitmap with invalid nvals
         GBPR0 ("  invalid bitmap count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;
         return (GrB_INVALID_OBJECT) ;
@@ -651,7 +654,7 @@ GB_GOTCHA ;
         info = GB_Type_check (Pending->type, "", pr, f) ;
         if (info != GrB_SUCCESS || (Pending->type->size != Pending->size))
         { 
-GB_GOTCHA ;
+            // invalid Pending->type
             GBPR0 ("  %s has an invalid Pending->type\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
@@ -728,10 +731,8 @@ GB_GOTCHA ;
     if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||
            (A->nvec_nonempty == -1)))
     { 
-GB_GOTCHA ;
-        GBPR0 ("  invalid count of non-empty vectors\n"
-            "A->nvec_nonempty = " GBd " actual " GBd "\n",
-            A->nvec_nonempty, actual_nvec_nonempty) ;
+        // invalid nvec_nonempty
+        GBPR0 ("  invalid count of non-empty vectors\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 

@@ -2,14 +2,16 @@
 // GB_convert_bitmap_worker: construct triplets or CSC/CSR from bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// TODO allow this function to do typecasting
+// TODO allow this function to do typecasting.  Create 169 different versions
+// for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
 
 #include "GB.h"
+#include "GB_partition.h"
 
 #define GB_FREE_ALL     \
 {                       \
@@ -53,15 +55,16 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     bool by_vector = (nthreads <= avdim) ;
 
     if (by_vector)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // compute all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
-        { 
+        for (j = 0 ; j < avdim ; j++)
+        {
             // ajnz = nnz (A (:,j))
             int64_t ajnz = 0 ;
             int64_t pA_start = j * avlen ;
@@ -77,7 +80,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // compute blocks of rows in parallel
@@ -94,12 +97,12 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (taskid = 0 ; taskid < nthreads ; taskid++)
-        { 
+        {
             int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
             for (int64_t j = 0 ; j < avdim ; j++)
-            { 
+            {
                 // ajnz = nnz (A (istart:iend-1,j))
                 int64_t ajnz = 0 ;
                 int64_t pA_start = j * avlen ;
@@ -115,12 +118,13 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         }
 
         // cumulative sum to compute nnz(A(:,j)) for each vector j
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
+        for (j = 0 ; j < avdim ; j++)
         {
             int64_t ajnz = 0 ;
             for (int taskid = 0 ; taskid < nthreads ; taskid++)
-            {
+            { 
                 int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
                 int64_t c = Wtask [j] ;
                 Wtask [j] = ajnz ;
@@ -148,23 +152,24 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     const GB_void *GB_RESTRICT Ax = A->x ;
 
     if (by_vector)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // construct all vectors in parallel (no workspace)
         //----------------------------------------------------------------------
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < avdim ; j++)
-        { 
+        for (j = 0 ; j < avdim ; j++)
+        {
             // gather from the bitmap into the new A (:,j)
             int64_t pnew = Ap [j] ;
             int64_t pA_start = j * avlen ;
             for (int64_t i = 0 ; i < avlen ; i++)
-            { 
+            {
                 int64_t p = i + pA_start ;
                 if (Ab [p])
-                { 
+                {
                     // A(i,j) is in the bitmap
                     if (Ai != NULL) Ai [pnew] = i ;
                     if (Aj != NULL) Aj [pnew] = j ;
@@ -181,7 +186,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // compute blocks of rows in parallel
@@ -190,21 +195,21 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (taskid = 0 ; taskid < nthreads ; taskid++)
-        { 
+        {
             int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
             for (int64_t j = 0 ; j < avdim ; j++)
-            { 
+            {
                 // gather from the bitmap into the new A (:,j)
                 int64_t pnew = Ap [j] + Wtask [j] ;
                 int64_t pA_start = j * avlen ;
                 for (int64_t i = istart ; i < iend ; i++)
-                { 
+                {
                     // see if A(i,j) is present in the bitmap
                     int64_t p = i + pA_start ;
                     if (Ab [p])
-                    { 
+                    {
                         // A(i,j) is in the bitmap
                         if (Ai != NULL) Ai [pnew] = i ;
                         if (Aj != NULL) Aj [pnew] = j ;

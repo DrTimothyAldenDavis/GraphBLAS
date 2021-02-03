@@ -2,8 +2,8 @@
 // GB_apply_op: typecast and apply a unary or binary operator to an array
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -15,7 +15,8 @@
 // it is in CSC format.  The caller has already modified the op if A is in CSR
 // format.
 
-// TODO can this function return anything but GrB_SUCCESS?
+// Template/GB_positional_op_ijp can return GrB_OUT_OF_MEMORY.
+// Otherwise, this function only returns GrB_SUCCESS.
 
 #include "GB_apply.h"
 #include "GB_binop.h"
@@ -45,14 +46,16 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     ASSERT (Cx != NULL) ;
     ASSERT (op1 != NULL || op2 != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
-
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
 
     //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_void *Ax = (GB_void *) A->x ;  // A->x has type A->type
+    // A->x is not const since the operator might be applied in-place, if
+    // C is aliased to C.
+
+    GB_void *Ax = (GB_void *) A->x ;        // A->x has type A->type
     const int8_t  *Ab = A->b ;              // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_NNZ_HELD (A) ;   // size of A->x and Cx
@@ -78,12 +81,12 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
         bool is64 ;
         if (op1 != NULL)
-        {
+        { 
             ASSERT_UNARYOP_OK (op1, "positional op1 for GB_apply_op", GB0) ;
             is64 = (op1->ztype == GrB_INT64) ;
         }
         else // if (op2 != NULL)
-        {
+        { 
             ASSERT_BINARYOP_OK (op2, "positional op2 for GB_apply_op", GB0) ;
             is64 = (op2->ztype == GrB_INT64) ;
         }
@@ -170,7 +173,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // built-in unary operator
+        // unary operator
         //----------------------------------------------------------------------
 
         ASSERT_UNARYOP_OK (op1, "op1 for GB_apply_op", GB0) ;
@@ -180,19 +183,14 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         GrB_UnaryOp op = op1 ;
 
         #ifndef GBCOMPACT
-        bool no_typecasting = (Atype == op->xtype)
-            || (opcode == GB_IDENTITY_opcode)
-            || (opcode == GB_ONE_opcode) ;
-
-        if (no_typecasting)
+        if ((Atype == op->xtype)
+            || (opcode == GB_IDENTITY_opcode) || (opcode == GB_ONE_opcode))
         { 
 
-            // only two workers are allowed to do their own typecasting from
-            // the Atype to the xtype of the operator: IDENTITY and ONE.  For
-            // all others, the input type Atype must match the op->xtype of the
-            // operator.  If this check isn't done, abs.fp32 with fc32 input
-            // will map to abs.fc32, based on the type of the input Ax, which is
-            // the wrong operator.
+            // The switch factory is used if the op is IDENTITY or ONE, or if
+            // no typecasting is being done.  The ONE operator ignores the type
+            // of its input and just produces a 1 of op->ztype == op->xtype.
+            // The IDENTITY operator can do arbitrary typecasting.
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -247,7 +245,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // built-in binary operator
+        // binary operator
         //----------------------------------------------------------------------
 
         ASSERT_BINARYOP_OK (op2, "standard op2 for GB_apply_op", GB0) ;
@@ -381,13 +379,13 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         GxB_binary_function fop = op2->function ;
 
         if (binop_bind1st)
-        { 
+        {
             // Cx = op (scalar,Ax)
             GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
-            {
+            { 
                 if (!GBB (Ab, p)) continue ;
                 // ywork = (ytype) Ax [p]
                 GB_void ywork [GB_VLA(ysize)] ;
@@ -397,13 +395,13 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             }
         }
         else
-        { 
+        {
             // Cx = op (Ax,scalar)
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
-            {
+            { 
                 if (!GBB (Ab, p)) continue ;
                 // xwork = (xtype) Ax [p]
                 GB_void xwork [GB_VLA(xsize)] ;

@@ -2,8 +2,8 @@
 // GraphBLAS/Demo/Program/wildtype_demo: an arbitrary user-defined type
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ int main (void)
     char *api_url ;   GxB_Global_Option_get (GxB_API_URL,          &api_url) ;
 
     fprintf (stderr, LINE2 "%s Version %d.%d.%d, %s\n" LINE2 "%s"
-        "(%s)\n" LINE "License: %s" LINE "GraphBLAS API Version %d.%d.%d, %s"
+        "(%s)\n" LINE "License:\n%s" LINE "GraphBLAS API Version %d.%d.%d, %s"
         " (%s)\n%s" LINE2,
         library, version [0], version [1], version [2], date, about, url,
         license, api_ver [0], api_ver [1], api_ver [2], api_date, api_url,
@@ -355,7 +355,7 @@ int main (void)
     if (info != GrB_SUCCESS)
     {
         char *s ;
-        GrB_error (&s, C) ;
+        GrB_Matrix_error (&s, C) ;
         printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n", s);
     }
 

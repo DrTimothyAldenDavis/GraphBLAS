@@ -2,8 +2,8 @@
 // GB_bitmap_emult_template: C = A.*B, C<M>=A.*B, and C<!M>=A.*B, C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -18,7 +18,9 @@
     ASSERT (A_is_bitmap || A_is_full) ;
     ASSERT (B_is_bitmap || B_is_full) ;
 
-    int64_t p, cnvals = 0 ;
+    // TODO modify this method so it can modify C in-place, and also use the
+    // accum operator.
+    int64_t cnvals = 0 ;
 
     if (M == NULL)
     {
@@ -38,24 +40,31 @@
         // Method18: C bitmap, A and B are bitmap or full
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
             reduction(+:cnvals)
-        for (p = 0 ; p < cnz ; p++)
+        for (tid = 0 ; tid < C_nthreads ; tid++)
         {
-            if (GBB (Ab, p) && GBB (Bb,p))
+            int64_t pstart, pend, task_cnvals = 0 ;
+            GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+            for (int64_t p = pstart ; p < pend ; p++)
             {
-                // C (i,j) = A (i,j) + B (i,j)
-                GB_GETA (aij, Ax, p) ;
-                GB_GETB (bij, Bx, p) ;
-                GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                Cb [p] = 1 ;
-                cnvals++ ;
+                if (GBB (Ab, p) && GBB (Bb,p))
+                { 
+                    // C (i,j) = A (i,j) + B (i,j)
+                    GB_GETA (aij, Ax, p) ;
+                    GB_GETB (bij, Bx, p) ;
+                    GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                    Cb [p] = 1 ;
+                    task_cnvals++ ;
+                }
             }
+            cnvals += task_cnvals ;
         }
 
     }
     else if (M_is_sparse_or_hyper)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap, M is sparse or hyper
@@ -81,7 +90,11 @@
         //----------------------------------------------------------------------
 
         GB_SLICE_MATRIX (M, 8) ;
+        GB_bitmap_M_scatter_whole (C, M, Mask_struct, GB_BITMAP_M_SCATTER_SET_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            M_nthreads, M_ntasks, Context) ;
 
+#if 0
         #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
         {
@@ -101,7 +114,7 @@
                     // mark C(i,j) if M(i,j) is true
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
                         int64_t i = Mi [pM] ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 2 ;
@@ -109,6 +122,7 @@
                 }
             }
         }
+#endif
 
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only
@@ -118,28 +132,37 @@
         // Method19(!M,sparse): C is bitmap, both A and B are bitmap or full
         //----------------------------------------------------------------------
 
+        // TODO: M may be jumbled, in which case so is C
+
+        int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
             reduction(+:cnvals)
-        for (p = 0 ; p < cnz ; p++)
+        for (tid = 0 ; tid < C_nthreads ; tid++)
         {
-            if (Cb [p] == 0)
+            int64_t pstart, pend, task_cnvals = 0 ;
+            GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+            for (int64_t p = pstart ; p < pend ; p++)
             {
-                // M(i,j) is zero, so C(i,j) can be computed
-                if (GBB (Ab, p) && GBB (Bb, p))
+                if (Cb [p] == 0)
                 {
-                    // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
-                    GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                    Cb [p] = 1 ;
-                    cnvals++ ;
+                    // M(i,j) is zero, so C(i,j) can be computed
+                    if (GBB (Ab, p) && GBB (Bb, p))
+                    { 
+                        // C (i,j) = A (i,j) + B (i,j)
+                        GB_GETA (aij, Ax, p) ;
+                        GB_GETB (bij, Bx, p) ;
+                        GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                        Cb [p] = 1 ;
+                        task_cnvals++ ;
+                    }
+                }
+                else
+                { 
+                    // M(i,j) == 1, so C(i,j) is not computed
+                    Cb [p] = 0 ;
                 }
             }
-            else
-            {
-                // M(i,j) == 1, so C(i,j) is not computed
-                Cb [p] = 0 ;
-            }
+            cnvals += task_cnvals ;
         }
 
     }
@@ -189,29 +212,36 @@
         // Method20: C is bitmap; M, A, and B are bitmap or full
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
             reduction(+:cnvals)
-        for (p = 0 ; p < cnz ; p++)
+        for (tid = 0 ; tid < C_nthreads ; tid++)
         {
-            GB_GET_MIJ (p) ;
-            if (mij)
+            int64_t pstart, pend, task_cnvals = 0 ;
+            GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+            for (int64_t p = pstart ; p < pend ; p++)
             {
-                // M(i,j) is true, so C(i,j) can be computed
-                if (GBB (Ab, p) && GBB (Bb, p))
+                GB_GET_MIJ (p) ;
+                if (mij)
                 {
-                    // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
-                    GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                    Cb [p] = 1 ;
-                    cnvals++ ;
+                    // M(i,j) is true, so C(i,j) can be computed
+                    if (GBB (Ab, p) && GBB (Bb, p))
+                    {
+                        // C (i,j) = A (i,j) + B (i,j)
+                        GB_GETA (aij, Ax, p) ;
+                        GB_GETB (bij, Bx, p) ;
+                        GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                        Cb [p] = 1 ;
+                        task_cnvals++ ;
+                    }
+                }
+                else
+                {
+                    // M(i,j) == 1, so C(i,j) is not computed
+                    Cb [p] = 0 ;
                 }
             }
-            else
-            {
-                // M(i,j) == 1, so C(i,j) is not computed
-                Cb [p] = 0 ;
-            }
+            cnvals += task_cnvals ;
         }
     }
 

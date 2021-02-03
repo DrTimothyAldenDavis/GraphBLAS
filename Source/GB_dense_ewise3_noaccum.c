@@ -2,8 +2,8 @@
 // GB_dense_ewise3_noaccum: C = A+B where A and B are dense, C is anything
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -51,8 +51,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: method not used if A bitmap
-    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: method not used if B bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (B)) ;
 
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
@@ -76,8 +76,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    // TODO: construct C according to C->sparsity, or conform it when done.
-
     if (!C_is_dense)
     { 
         // convert C to full; just allocate C->x.  Keep the dimensions of C.
@@ -86,7 +84,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     else if (!GB_IS_FULL (C))
     {
         // C is dense, but not full; convert to full
-        C->jumbled = false ;    // existing pattern is discarded
         GB_convert_any_to_full (C) ;
     }
     ASSERT (GB_IS_FULL (C)) ;

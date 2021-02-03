@@ -2,8 +2,8 @@
 // GB_subassign.h: definitions for GB_subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -152,7 +152,7 @@ GrB_Info GB_assign_prep
 #define GB_SUBASSIGN_METHOD_05   5     // C(I,J)<M> = scalar
 #define GB_SUBASSIGN_METHOD_05d 51     // C(:,:)<M> = scalar ; C is dense
 #define GB_SUBASSIGN_METHOD_05e 52     // C(:,:)<M,struct> = scalar
-#define GB_SUBASSIGN_METHOD_06d 61     // C(:,:<A> = A ; C is dense
+#define GB_SUBASSIGN_METHOD_06d 61     // C(:,:)<A> = A ; C is dense/bitmap
 #define GB_SUBASSIGN_METHOD_06n 62     // C(I,J)<M> = A ; no S
 #define GB_SUBASSIGN_METHOD_06s 63     // C(I,J)<M> = A ; using S
 #define GB_SUBASSIGN_METHOD_07   7     // C(I,J)<M> += scalar

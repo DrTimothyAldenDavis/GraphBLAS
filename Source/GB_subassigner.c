@@ -2,8 +2,8 @@
 // GB_subassigner: C(I,J)<#M> = accum (C(I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -113,6 +113,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // C is dense or full
         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     }
+
+    GBURBLE ("(pending: "GBd") ", GB_Pending_n (C)) ;
 
     //==========================================================================
     // submatrix assignment C(I,J)<M> = accum (C(I,J),A): meta-algorithm
@@ -340,7 +342,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         case GB_SUBASSIGN_METHOD_07 : 
         {
             // Method 07: C(I,J)<M> += scalar ; no S
-            GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S",
+            GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_07 (C,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,

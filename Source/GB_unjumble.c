@@ -2,8 +2,8 @@
 // GB_unjumble: unjumble the vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -67,8 +67,8 @@ GrB_Info GB_unjumble        // unjumble a matrix
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT A_slice = NULL ;   // size ntasks + 1
-    if (!GB_pslice (&A_slice, Ap, anvec, ntasks))
-    {
+    if (!GB_pslice (&A_slice, Ap, anvec, ntasks, false))
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -80,7 +80,6 @@ GrB_Info GB_unjumble        // unjumble a matrix
     switch (asize)
     {
         case 1 : 
-GB_GOTCHA ;
             // GrB_BOOL, GrB_UINT8, GrB_INT8, and user defined types of size 1
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size1 (Ai+pA_start, Ax1+pA_start, aknz) ;
@@ -88,7 +87,6 @@ GB_GOTCHA ;
             break ;
 
         case 2 : 
-GB_GOTCHA ;
             // GrB_UINT16, GrB_INT16, and user-defined types of size 2
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size2 (Ai+pA_start, Ax2+pA_start, aknz) ;
@@ -96,7 +94,6 @@ GB_GOTCHA ;
             break ;
 
         case 4 : 
-GB_GOTCHA ;
             // GrB_UINT32, GrB_INT32, GrB_FP32, and user-defined types of size 4
             #define GB_QSORT_WORKER \
                 GB_qsort_1b_size4 (Ai+pA_start, Ax4+pA_start, aknz) ;
@@ -119,7 +116,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
             // user-defined types of arbitrary size
             #define GB_QSORT_WORKER \
                 GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
@@ -132,7 +128,7 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     GB_FREE (A_slice) ;
-    A->jumbled = false ;
+    A->jumbled = false ;        // A has been unjumbled
     ASSERT_MATRIX_OK (A, "A unjumbled", GB0) ;
     return (GrB_SUCCESS) ;
 }

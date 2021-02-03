@@ -1,8 +1,8 @@
 function test75
 %TEST75 test GrB_mxm and GrB_vxm on all semirings
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 % mult_ops = binops.positional ;
@@ -103,11 +103,7 @@ for k1 = 1:length(mult_ops)
                 [mult_opname mult_optype ztype xtype ytype] = GB_spec_operator (mult_op) ;
                 [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                 identity = GB_spec_identity (semiring.add, add_optype) ;
-            catch me
-                if (~isempty (strfind (me.message, 'gotcha')))
-                    semiring
-                    pause
-                end
+            catch
                 continue
             end
 

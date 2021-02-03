@@ -2,8 +2,8 @@
 // GB_AxB_pattern: determine if the values of A and B will be used by C=A*B 
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ void GB_AxB_pattern
     bool op_is_pair   = (mult_opcode == GB_PAIR_opcode) ;
 
     if (op_is_positional || op_is_pair)
-    {
+    { 
         // mult (x,y) does not depend on the values of x or y
         (*A_is_pattern) = true ;
         (*B_is_pattern) = true ;

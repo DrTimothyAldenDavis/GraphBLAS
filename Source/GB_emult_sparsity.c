@@ -2,8 +2,8 @@
 // GB_emult_sparsity: determine the sparsity structure for C<M or !M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
     bool M_is_sparse_or_hyper = GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M) ;
     bool A_is_sparse_or_hyper = GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) ;
     bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B) ;
-    bool A_is_full = GB_IS_FULL (A) ;
-    bool B_is_full = GB_IS_FULL (B) ;
+    bool A_is_full = GB_as_if_full (A) ;
+    bool B_is_full = GB_as_if_full (B) ;
 
     // Methods labeled as "use GB_add" give the same results with GB_add and
     // GB_emult, when A and B are both full.  For those cases, GB_ewise should
@@ -78,15 +78,18 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      full    .           full            full    (use GB_add)
 
         if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        {
+        { 
+            // C=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
         }
         else if (A_is_full && B_is_full)
-        {
+        { 
+            // C=A.*B with A and B full, C full
             C_sparsity = GxB_FULL ;
         }
         else
-        {
+        { 
+            // C=A.*B, otherwise, C bitmap
             C_sparsity = GxB_BITMAP ;
         }
 
@@ -95,7 +98,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
     {
 
         if (M_is_sparse_or_hyper)
-        {
+        { 
 
             //      ------------------------------------------
             //      C       <M>=        A       .*      B
@@ -112,7 +115,9 @@ int GB_emult_sparsity       // return the sparsity structure for C
 
             // TODO: check same condition as GB_add, for very sparse mask M.
 
+            // C<M>=A.*B with M sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
+
         }
         else
         {
@@ -146,11 +151,13 @@ int GB_emult_sparsity       // return the sparsity structure for C
             // The mask is very efficient to use in the case, when C is sparse.
 
             if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-            {
+            { 
+                // C<M>=A.*B with A or B sparse/hyper, M bitmap/full, C sparse
                 C_sparsity = GxB_SPARSE ;
             }
             else
-            {
+            { 
+                // C<M>=A.*B with A, B, and M bitmap/full, C bitmap
                 C_sparsity = GxB_BITMAP ;
             }
         }
@@ -202,12 +209,14 @@ int GB_emult_sparsity       // return the sparsity structure for C
         // Do not use a complemented mask in this case.  Do it later.
 
         if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        {
+        { 
+            // C<!M>=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
             (*apply_mask) = !M_is_sparse_or_hyper ;
         }
         else
-        {
+        { 
+            // C<!M>=A.*B with A and B bitmap/full, C bitmap
             C_sparsity = GxB_BITMAP ;
         }
     }

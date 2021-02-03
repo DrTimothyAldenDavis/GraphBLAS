@@ -2,8 +2,8 @@
 // GB_bitmap_assign_A_template: traverse over A for bitmap assignment into C
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -41,6 +41,7 @@
         // if kfirst > klast then task tid does no work at all
         int64_t kfirst = kfirst_slice [tid] ;
         int64_t klast  = klast_slice  [tid] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // traverse over A (:,kfirst:klast)
@@ -79,6 +80,7 @@
                 GB_AIJ_WORK (pC, pA) ;
             }
         }
+        cnvals += task_cnvals ;
     }
 
     //--------------------------------------------------------------------------

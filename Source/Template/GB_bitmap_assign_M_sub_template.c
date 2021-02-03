@@ -2,8 +2,8 @@
 // GB_bitmap_assign_M_sub_template:  traverse M for GB_SUBASSIGN
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -12,14 +12,17 @@
 // M(iM,jM) in the mask, at location pM.  The entry C(iC,jC) is at location pC,
 // where iC = I [iM] and jC = J [jM].  The matrix C is bitmap or full.
 
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
+
 {
     int tid ;
-    #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
-    for (tid = 0 ; tid < mtasks ; tid++)
+    for (tid = 0 ; tid < M_ntasks ; tid++)
     {
         int64_t kfirst = kfirst_Mslice [tid] ;
         int64_t klast  = klast_Mslice  [tid] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // traverse over M (:,kfirst:klast)
@@ -50,13 +53,14 @@
                 bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
                 { 
-                    int64_t iM = Mi [pM] ;          // ok: M is sparse
+                    int64_t iM = Mi [pM] ;
                     int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
                     int64_t pC = iC + pC0 ;
                     GB_MASK_WORK (pC) ;             // operate on Cx [pC]
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

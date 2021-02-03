@@ -2,8 +2,8 @@
 // GB_mex_op: apply a built-in GraphBLAS operator to MATLAB arrays
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -195,14 +195,11 @@ void mexFunction
         {
             cast_X (xwork, X +(k*X_size), X_size) ;
             cast_Y (ywork, Y +(k*Y_size), Y_size) ;
-            // printf ("x: ") ;
-            // GB_code_check (op_xtype->code, xwork, 3, NULL) ;
-            // printf ("\ny: ") ;
-            // GB_code_check (op_ytype->code, ywork, 3, NULL) ;
-            // printf ("\nz: ") ;
+            // printf ("x: ")   ; GB_code_check (op_xtype->code,xwork,3,NULL) ;
+            // printf ("\ny: ") ; GB_code_check (op_ytype->code,ywork,3,NULL) ;
             f_binary (Z +(k*op_zsize), xwork, ywork) ;
-            // GB_code_check (op_ztype->code, Z +(k*op_zsize), 3, NULL) ;
-            // printf ("\n") ;
+            // printf ("\nz: ") ; GB_code_check (op_ztype->code,
+            //                    Z +(k*op_zsize), 3, NULL) ; printf ("\n") ;
         }
 
     }

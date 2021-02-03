@@ -2,8 +2,8 @@
 // GB_mex.h: definitions for the MATLAB interface to GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -383,10 +383,9 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
             else                                                            \
             {                                                               \
                 /* another error has occurred */                            \
-                printf ("error: %s %d: %d\n", __FILE__, __LINE__, info) ;   \
                 FREE_ALL ;                                                  \
                 if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;            \
-                mexErrMsgTxt ("unexpected error") ;                         \
+                mexErrMsgTxt ("unexpected error in mex brutal malloc debug") ; \
             }                                                               \
         }                                                                   \
     }

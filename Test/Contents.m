@@ -153,7 +153,7 @@
 %   test85   - test GrB_transpose: 1-by-n with typecasting
 %   test86   - performance test of of GrB_Matrix_extract
 %   test87   - performance test of GrB_mxm
-%   test88   - test hypersparse matrices with heap-based method
+%   test88   - test hypersparse matrices with hash-based method
 %   test89   - performance test of complex A*B
 %   test90   - test AxB with user-defined semirings: plus_rdiv and plus_rdiv2
 %   test91   - test subref performance on dense vectors
@@ -305,5 +305,6 @@
 %   ../Demo/MATLAB/kron_demo      - test Program/kron_demo.c and compare with MATLAB kron
 %   ../Demo/MATLAB/kron_test      - test kron_demo.m
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+

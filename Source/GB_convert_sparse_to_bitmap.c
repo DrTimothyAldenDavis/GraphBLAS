@@ -2,8 +2,8 @@
 // GB_convert_sparse_to_bitmap: convert from sparse/hypersparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -20,7 +20,6 @@
     GB_FREE_WORK ;                      \
     if (!in_place) GB_FREE (Ax_new) ;   \
     GB_FREE (Ab) ;                      \
-    GB_phbix_free (A) ;                 \
 }
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -58,44 +57,48 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // determine if the conversion can be done in-place
     //--------------------------------------------------------------------------
 
-    // if in_place is true, then A->x does not change if A is dense and not
-    // jumbled (zombies are OK).
-    bool in_place = (GB_is_dense (A) && !(A->jumbled)) ;
+    // if in_place is true, then A->x does not change if A is as-if-full
+    bool in_place = GB_as_if_full (A) ;
 
     //--------------------------------------------------------------------------
     // allocate A->b
     //--------------------------------------------------------------------------
 
+    const int64_t anz = GB_NNZ (A) ;
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     int64_t anzmax ;
     if (!GB_Index_multiply (&anzmax, avdim, avlen))
     { 
-GB_GOTCHA ;
         // problem too large
-        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     anzmax = GB_IMAX (anzmax, 1) ;
-    Ab = GB_MALLOC (anzmax, int8_t) ;
+
+    if (in_place)
+    { 
+        // if done in-place, malloc is fine since all of Ab will be set below
+        Ab = GB_MALLOC (anzmax, int8_t) ;
+    }
+    else if (anz > 0)
+    { 
+        // malloc Ab and set it to 0, in parallel.  This is faster than
+        // calloc since most of Ab will be set below.
+        Ab = GB_MALLOC (anzmax, int8_t) ;
+    }
+    else
+    { 
+        // calloc Ab so all bitmap entries are zero; no need to touch them.
+        // This case occurs when setting the GxB_SPARSITY_CONTROL of a new
+        // matrix to GxB_BITMAP, with no entries.
+        Ab = GB_CALLOC (anzmax, int8_t) ;       // anz is zero
+    }
+
     if (Ab == NULL)
     { 
         // out of memory
-        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // clear A->b
-    //--------------------------------------------------------------------------
-
-    if (!in_place)
-    { 
-        // if done in-place, this work is skipped since all of Ab will
-        // be set below
-        int nthreads = GB_nthreads (anzmax + anvec, chunk, nthreads_max) ;
-        GB_memset (Ab, 0, anzmax, nthreads) ;
     }
 
     //--------------------------------------------------------------------------
@@ -107,12 +110,9 @@ GB_GOTCHA ;
 
     if (in_place)
     { 
-        // keep the existing A->x, so remove it from the matrix for now so
-        // that it is not freed by GB_phbix_free
+        // keep the existing A->x
         Ax_new = A->x ;
         Ax_shallow = A->x_shallow ;
-        A->x = NULL ;
-        A->x_shallow = false ;
     }
     else
     {
@@ -131,10 +131,7 @@ GB_GOTCHA ;
     // scatter the pattern and values into the new bitmap
     //--------------------------------------------------------------------------
 
-    // A retains its CSR/CSC format.
-    int64_t anz = GB_NNZ (A) ;
     int64_t nzombies = A->nzombies ;
-
     if (in_place)
     { 
 
@@ -142,27 +139,19 @@ GB_GOTCHA ;
         // the sparse A has all entries: convert in-place
         //----------------------------------------------------------------------
 
-        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-        if (nzombies == 0)
-        { 
-            // set all of Ab [0..anz-1] to 1, in parallel
-            GB_memset (Ab, 1, anz, nthreads) ;
-        }
-        else
-        { 
-            const int64_t *GB_RESTRICT Ai = A->i ;
-            int64_t p ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = Ai [p] ;            // ok: A is sparse
-                Ab [p] = (!GB_IS_ZOMBIE (i)) ;
-            }
-        }
+        ASSERT (nzombies == 0) ;
+        // set all of Ab [0..anz-1] to 1, in parallel
+        GB_memset (Ab, 1, anz, nthreads_max) ;
 
     }
-    else
+    else if (anz > 0)
     {
+
+        //----------------------------------------------------------------------
+        // set all of Ab to zero
+        //----------------------------------------------------------------------
+
+        GB_memset (Ab, 0, anzmax, nthreads_max) ;
 
         //----------------------------------------------------------------------
         // scatter the values and pattern of A into the bitmap
@@ -224,7 +213,7 @@ GB_GOTCHA ;
         #endif
 
         if (!done)
-        {
+        { 
             // Ax_new [pnew] = Ax [p]
             #define GB_COPY_A_TO_C(Ax_new,pnew,Ax,p) \
                 memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize)
@@ -237,7 +226,13 @@ GB_GOTCHA ;
     // free prior content of A and transplant the new content
     //--------------------------------------------------------------------------
 
-    // if done in-place, A->x has been removed from A and is thus not freed
+    if (in_place)
+    {
+        // if done in-place, remove A->x from A so it is not freed
+        A->x = NULL ;
+        A->x_shallow = false ;
+    }
+
     GB_phbix_free (A) ;
 
     A->b = Ab ;

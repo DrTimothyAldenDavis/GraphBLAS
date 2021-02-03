@@ -2,8 +2,8 @@
 // GB_transplant_conform: transplant T into C, then conform C
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     ASSERT_TYPE_OK (ctype, "ctype for transplant into C", GB0) ;
     ASSERT (GB_ZOMBIES_OK (*Thandle)) ;
     ASSERT (GB_JUMBLED_OK (*Thandle)) ;
-    ASSERT (!GB_PENDING (*Thandle)) ;
+    ASSERT (GB_PENDING_OK (*Thandle)) ;
 
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, and free T

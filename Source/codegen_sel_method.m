@@ -3,6 +3,9 @@ function codegen_sel_method (opname, func, atype, kind)
 %
 % codegen_sel_method (opname, func, atype, kind)
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 f = fopen ('control.m4', 'w') ;
 
 [aname, unsigned, ~] = codegen_type (atype) ;

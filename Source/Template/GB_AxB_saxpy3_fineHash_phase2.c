@@ -2,8 +2,8 @@
 // GB_AxB_saxpy3_fineHash_phase2_template: no mask, or dense mask
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -28,9 +28,9 @@
 
     #ifdef GB_CHECK_MASK_ij
 
-        // The mask M is dense (full, bitmap, or sparse/hyper with all
-        // entries present in the entire matrix).  Get pointers Mjb and
-        // Mjx into the M(:,j) vector.
+        // The mask M is packed (full, bitmap, or sparse/hyper and not
+        // jumbled, with all entries present in the entire matrix).  Get
+        // pointers Mjb and Mjx into the M(:,j) vector.
         GB_GET_M_j
         #ifndef M_SIZE
         #define M_SIZE 1
@@ -56,16 +56,14 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
-            if (!GBB (Bb, pB)) continue ;
-            int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
             GB_GET_B_kj ;               // bkj = B(k,j)
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                if (!GBB (Ab, pA)) continue ;
-                int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)
                 // is protected by the mask
@@ -86,7 +84,6 @@
                 }
                 if (hf_unlocked)    // if true, update C(i,j)
                 { 
-// TODO: GB_GOTCHA
                     // hash entry occuppied by C(i,j): update it
                     GB_HX_UPDATE (hash, t) ;    // Hx [hash] += t
                 }
@@ -110,16 +107,14 @@
 
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
         {
-            if (!GBB (Bb, pB)) continue ;
-            int64_t k = GBI (Bi, pB, bvlen) ;       // get B(k,j)
+            GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
             GB_GET_B_kj ;               // bkj = B(k,j)
             // scan A(:,k)
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                if (!GBB (Ab, pA)) continue ;
-                int64_t i = GBI (Ai, pA, avlen) ;  // get A(i,k)
+                GB_GET_A_ik_INDEX ;     // get index i of A(i,j)
                 #ifdef GB_CHECK_MASK_ij
                 // check mask condition and skip if C(i,j)
                 // is protected by the mask
@@ -135,7 +130,7 @@
                     hf = Hf [hash] ;        // grab the entry
                     #if GB_HAS_ATOMIC
                     if (hf == i_unlocked)  // if true, update C(i,j)
-                    {
+                    { 
                         GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
                         break ;         // C(i,j) has been updated
                     }
@@ -145,15 +140,11 @@
                     {
                         // h=0: unoccupied, h=i1: occupied by i
                         do  // lock the entry
-                        {
+                        { 
                             // do this atomically:
                             // { hf = Hf [hash] ; Hf [hash] |= 3 ; }
                             GB_ATOMIC_CAPTURE_INT64_OR (hf, Hf [hash], 3) ;
                         } while ((hf & 3) == 3) ; // owner: f=0 or 2
-
-                        // TODO: this can be simplified by combining the
-                        // 2 actions below into a single update, if Hx [..]
-                        // is initialized with the monoid identity value.
 
                         if (hf == 0) // f == 0
                         { 
@@ -182,9 +173,6 @@
             }
         }
     }
-
-    // this task is done; go to the next one
-    continue ;
 }
 
 #undef M_TYPE

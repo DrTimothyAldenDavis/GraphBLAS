@@ -2,8 +2,8 @@
 // GB_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -30,6 +30,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     const GrB_Desc_Value AxB_method,
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 )
 {
@@ -37,8 +38,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
 
     (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
@@ -66,27 +65,46 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B) ;
+    int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B, Context) ;
+
+    if (M == NULL)
+    {
+        GBURBLE ("(%s=%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            GB_sparsity_char_matrix (A),
+            GB_sparsity_char_matrix (B)) ;
+    }
+    else
+    {
+        GBURBLE ("(%s%s%s%s%s=%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            Mask_struct ? "{" : "<",
+            Mask_comp ? "!" : "",
+            GB_sparsity_char_matrix (M),
+            Mask_struct ? "}" : ">",
+            GB_sparsity_char_matrix (A),
+            GB_sparsity_char_matrix (B)) ;
+    }
 
     //--------------------------------------------------------------------------
     // select the method to use
     //--------------------------------------------------------------------------
 
     if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C=A*B, C<M>=A*B or C<!M>=A*B: sparse Gustavson/Hash method
         //----------------------------------------------------------------------
 
         // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
-        C_sparsity = GB_IS_HYPERSPARSE (B) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         return (GB_AxB_saxpy3 (Chandle, C_sparsity, M, Mask_comp, Mask_struct,
-            A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
+            A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+            Context)) ;
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 

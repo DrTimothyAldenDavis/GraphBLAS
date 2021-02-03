@@ -1,8 +1,8 @@
 function gbtest15
 %GBTEST15 list all unary operators
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 types = gbtest_types ;
 ops = { 'identity', '~', '-', '1', 'minv', 'abs',  'sqrt', 'log', ...
@@ -11,7 +11,7 @@ ops = { 'identity', '~', '-', '1', 'minv', 'abs',  'sqrt', 'log', ...
     'signum', 'ceil', 'floor', 'round', 'trunc', 'pow2', ...
     'expm1', 'log10', 'log1p', 'log2', 'lgamma', 'tgamma', 'erf', ...
     'erfc', 'conj', 'creal', 'cimag', 'carg', 'isinf', 'isnan', ...
-    'isinfinite', 'frexpx', 'frexpe', 'i', 'i1', 'j', 'j1' } ;
+    'isinfinite', 'frexpx', 'frexpe', 'i0', 'i1', 'j0', 'j1' } ;
 
 nops = 0 ;
 for k1 = 1:length (ops)

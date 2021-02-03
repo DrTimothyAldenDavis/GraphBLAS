@@ -2,8 +2,8 @@
 // GB_is_diagonal: check if A is a diagonal matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -113,14 +113,14 @@ bool GB_is_diagonal             // true if A is diagonal
         GB_PARTITION (jstart, jend, n, tid, ntasks) ;
         for (int64_t j = jstart ; diag && j < jend ; j++)
         {
-            int64_t p = Ap [j] ;                // ok: A is sparse
-            int64_t ajnz = Ap [j+1] - p ;       // ok: A is sparse
+            int64_t p = Ap [j] ;
+            int64_t ajnz = Ap [j+1] - p ;
             if (ajnz != 1)
             { 
                 // A(:,j) must have exactly one entry
                 diag = false ;
             }
-            int64_t i = Ai [p] ;        // ok: A is sparse
+            int64_t i = Ai [p] ;
             if (i != j)
             { 
                 // the single entry must be A(i,i)
@@ -143,11 +143,6 @@ bool GB_is_diagonal             // true if A is diagonal
     // return result
     //--------------------------------------------------------------------------
 
-    if (diagonal)
-    { 
-        A->nvec_nonempty = n ;
-        A->jumbled = false ;        // a diagonal matrix is never jumbled
-    }
     return ((bool) diagonal) ;
 }
 

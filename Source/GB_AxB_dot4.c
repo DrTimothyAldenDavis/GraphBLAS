@@ -2,8 +2,8 @@
 // GB_AxB_dot4: compute C+=A'*B in-place
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -14,7 +14,6 @@
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
-#include "GB_mkl.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -55,9 +54,9 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: not used if C is bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: not used if A is bitmap
-    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: not used if B is bitmap
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (B)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
@@ -65,57 +64,21 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
 
+    GBURBLE ("(%s+=%s'*%s) ",
+        GB_sparsity_char_matrix (C),
+        GB_sparsity_char_matrix (A),
+        GB_sparsity_char_matrix (B)) ;
+
     //--------------------------------------------------------------------------
-    // determine the number of threads to use, and the use_mkl flag
+    // determine the number of threads to use
     //--------------------------------------------------------------------------
 
     int64_t anz = GB_NNZ_HELD (A) ;
     int64_t bnz = GB_NNZ_HELD (B) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
-    bool use_mkl = (Context == NULL) ? false : Context->use_mkl ;
 
-    //--------------------------------------------------------------------------
-    // use MKL_graph if it available and has this semiring
-    //--------------------------------------------------------------------------
-
-    // Note that GB_AxB_dot4 computes C+=A'*B where A and B treated as if CSC,
-    // but MKL views the matrices as CSR.  MKL only handles the case when B
-    // is a dense vector in mkl_graph_mxv, and A' in CSC format is the same
-    // as A in CSR.
-
-    #if GB_HAS_MKL_GRAPH
-
-    if (use_mkl &&
-        (semiring == GrB_PLUS_TIMES_SEMIRING_FP32 ||
-         semiring == GxB_PLUS_SECOND_FP32) && GB_VECTOR_OK (C)
-        && GB_is_dense (C) && GB_is_dense (B) && GB_VECTOR_OK (B) && !flipxy
-        && !GB_IS_HYPERSPARSE (A)
-        && !GB_IS_BITMAP (C) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
-    {
-
-        info = // GrB_NO_VALUE ;
-        #if 1
-        GB_AxB_dot4_mkl (
-            (GrB_Vector) C,     // input/output (now a vector)
-            A,                  // first input matrix
-            (GrB_Vector) B,     // second input (now a vector)
-            semiring,           // semiring that defines C=A*B
-            Context) ;
-        #endif
-
-        if (info != GrB_NO_VALUE)
-        {
-            // MKL_graph supports this semiring, and has ether computed C=A*B,
-            // C<M>=A*B, or C<!M>=A*B, or has failed.
-            return (info) ;
-        }
-
-        // If MKL_graph doesn't support this semiring, it returns GrB_NO_VALUE,
-        // so fall through to use GraphBLAS, below.
-    }
-    #endif
-
+    // #include "GB_AxB_dot4_mkl_template.c
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -170,8 +133,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     naslice = GB_IMIN (naslice, anvec) ;
     nbslice = GB_IMIN (nbslice, bnvec) ;
 
-    if (!GB_pslice (&A_slice, A->p, anvec, naslice)  ||
-        !GB_pslice (&B_slice, B->p, bnvec, nbslice))
+    if (!GB_pslice (&A_slice, A->p, anvec, naslice, false)  ||
+        !GB_pslice (&B_slice, B->p, bnvec, nbslice, false))
     { 
         // out of memory
         GB_FREE_WORK ;

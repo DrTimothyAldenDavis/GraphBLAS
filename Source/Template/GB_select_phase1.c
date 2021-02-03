@@ -2,8 +2,8 @@
 // GB_select_phase1: count entries in each vector for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -300,8 +300,8 @@
         // log the result for the kth vector
         //----------------------------------------------------------------------
 
-        Zp [k] = p ;        // ok: Z is sparse
-        Cp [k] = cjnz ;     // ok: C is sparse
+        Zp [k] = p ;
+        Cp [k] = cjnz ;
     }
 
     //--------------------------------------------------------------------------

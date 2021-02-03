@@ -2,8 +2,8 @@
 // GrB_Matrix_removeElement: remove a single entry from a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ static inline bool GB_removeElement
         if (found && !is_zombie)
         { 
             // C(i,j) becomes a zombie
-            C->i [pleft] = GB_FLIP (i) ;        // ok: C is sparse
+            C->i [pleft] = GB_FLIP (i) ;
             C->nzombies++ ;
         }
         return (found) ;
@@ -160,7 +160,6 @@ GrB_Info GrB_Matrix_removeElement
         }
         else
         { 
-GB_GOTCHA ;
             // C is sparse or hypersparse, and jumbled
             GB_OK (GB_Matrix_wait (C, Context)) ;
         }

@@ -2,8 +2,8 @@
 // GB_subassign_08n: C(I,J)<M> += A ; no S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@
 // S:           none
 
 // C not bitmap; C can be full since no zombies are inserted in that case.
-// If C is bitmap: GB_bitmap_assign_M_accum is used instead.
+// If C is bitmap, then GB_bitmap_assign_M_accum is used instead.
 // M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
@@ -107,8 +107,8 @@ GrB_Info GB_subassign_08n
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 08s is used if M is bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 08s is used if A is bitmap
+    ASSERT (!GB_IS_BITMAP (M)) ;    // Method 08s is used if M is bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // Method 08s is used if A is bitmap
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 

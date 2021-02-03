@@ -2,8 +2,8 @@
 // GrB_transpose: transpose a sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, accum, A->type, Context)) ;
@@ -67,14 +67,6 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;        // TODO: postpone until accum/mask phase
-    GB_MATRIX_WAIT (A) ;        // TODO: allow A to be left jumbled
-
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-
     //--------------------------------------------------------------------------
     // T = A or A', where T can have the type of C or the type of A
     //--------------------------------------------------------------------------
@@ -91,7 +83,6 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
         // T = A', the default behavior.  This step may seem counter-intuitive,
         // but method computes C<M>=A' by default when A_transpose is false.
-        GBURBLE ("(transpose) ") ;
 
         // Precasting:
         if (accum == NULL)
@@ -128,6 +119,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         // differ.  That can be postponed at no cost since the following step
         // is free.
         GBURBLE ("(cheap) ") ;
+        GB_MATRIX_WAIT (A) ;
         GB_OK (GB_shallow_copy (&T, C_is_csc, A, Context)) ;
     }
 

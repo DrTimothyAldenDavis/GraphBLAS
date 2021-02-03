@@ -2,8 +2,8 @@
 // GB_mx_isequal: check if two matrices are equal
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -26,7 +26,6 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     int A_sparsity = GB_sparsity (A) ;
     if (A_sparsity != GB_sparsity (B))
     {
-        // TODO: allow A and B to differ in sparsity structure
         return (false) ;
     }
 
@@ -44,7 +43,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     if ((A->h != NULL) != (B->h != NULL)) return (false) ;
     if (A->is_csc   != B->is_csc  ) return (false) ;
 
-    // these differences are OK:
+    // these differences are OK
     // if (A->plen  != B->plen ) return (false) ;
     // if (A->nzmax != B->nzmax) return (false) ;
     // if (AP->nmax != BP->nmax) return (false) ;
@@ -53,6 +52,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
 //  if (A->h_shallow        != B->h_shallow        ) return (false) ;
 //  if (A->i_shallow        != B->i_shallow        ) return (false) ;
 //  if (A->x_shallow        != B->i_shallow        ) return (false) ;
+
     if (A->nzombies         != B->nzombies         ) return (false) ;
 
     if ((AP != NULL) != (BP != NULL)) return (false) ;

@@ -2,8 +2,8 @@
 // GB_BinaryOp_new: create a new user-defined binary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ GrB_Info GB_BinaryOp_new
     GrB_Type ytype,                 // type of input y
     const char *name                // name of the function (may be NULL)
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

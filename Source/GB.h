@@ -2,240 +2,38 @@
 // GB.h: definitions visible only inside GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// These defintions are not visible to the user.  They are used only inside
-// GraphBLAS itself.
-
-// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 
 #ifndef GB_H
 #define GB_H
 
 //------------------------------------------------------------------------------
-// code development settings
+// defintions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
-// to turn on Debug for a single file of GraphBLAS, add '#define GB_DEBUG'
-// just before the statement '#include "GB.h"'
-
-// set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
-// -DGB_BURBLE=1.
-#ifndef GB_BURBLE
-#define GB_BURBLE 0
-#endif
-
-// to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
-
-// to reduce code size and for faster time to compile, uncomment this line;
-// GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// #define GBCOMPACT 1
-
-// for code development only
-// #define GB_DEVELOPER 1
-
-// manage compiler warnings
 #include "GB_warnings.h"
-
-//------------------------------------------------------------------------------
-// include GraphBLAS.h (depends on user threading model)
-//------------------------------------------------------------------------------
-
 #ifndef MATLAB_MEX_FILE
 #define GB_LIBRARY
 #endif
 
+//------------------------------------------------------------------------------
+// user-visible GraphBLAS.h
+//------------------------------------------------------------------------------
+
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
-// compiler variations
+// internal #include files
 //------------------------------------------------------------------------------
 
-// Determine the restrict keyword, and whether or not variable-length arrays
-// are supported.
-
-#if ( _MSC_VER && !__INTEL_COMPILER )
-
-    // Microsoft Visual Studio does not have the restrict keyword, but it does
-    // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.  OpenMP tasks are not available.
-
-    #define GB_MICROSOFT 1
-    #define GB_RESTRICT __restrict
-    #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 0
-
-#elif GxB_STDC_VERSION >= 199901L
-
-    // ANSI C99 and later have the restrict keyword and variable-length arrays.
-    #define GB_MICROSOFT 0
-    #define GB_RESTRICT restrict
-    #define GB_HAS_VLA  1
-    #define GB_HAS_OPENMP_TASKS 1
-
-#else
-
-    // ANSI C95 and earlier have neither
-    #define GB_MICROSOFT 0
-    #define GB_RESTRICT
-    #define GB_HAS_VLA  0
-    #define GB_HAS_OPENMP_TASKS 1
-
-#endif
-
-//------------------------------------------------------------------------------
-// Microsoft specific include files
-//------------------------------------------------------------------------------
-
-#if GB_MICROSOFT
-#include <malloc.h>
-#endif
-
-//------------------------------------------------------------------------------
-// OpenMP pragmas and tasks
-//------------------------------------------------------------------------------
-
-// GB_PRAGMA(x) becomes "#pragma x", but the way to do this depends on the
-// compiler:
-#if GB_MICROSOFT
-    // MS Visual Studio is not ANSI C11 compliant, and uses __pragma:
-    #define GB_PRAGMA(x) __pragma (x)
-#else
-    // ANSI C11 compilers use _Pragma:
-    #define GB_PRAGMA(x) _Pragma (#x)
-#endif
-
-// construct pragmas for loop vectorization:
-#if GB_MICROSOFT
-
-    // no #pragma omp simd is available in MS Visual Studio
-    #define GB_PRAGMA_SIMD
-    #define GB_PRAGMA_SIMD_REDUCTION(op,s)
-
-#else
-
-    // create two kinds of SIMD pragmas:
-    // GB_PRAGMA_SIMD becomes "#pragma omp simd"
-    // GB_PRAGMA_SIMD_REDUCTION (+,cij) becomes
-    // "#pragma omp simd reduction(+:cij)"
-    #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
-    #define GB_PRAGMA_SIMD_REDUCTION(op,s) GB_PRAGMA (omp simd reduction(op:s))
-
-#endif
-
-// construct pragmas for OpenMP tasks, if available:
-#if GB_HAS_OPENMP_TASKS
-
-    // Use OpenMP tasks
-    #define GB_TASK(func, ...)                          \
-        GB_PRAGMA(omp task firstprivate(__VA_ARGS__))   \
-        func (__VA_ARGS__)
-    #define GB_TASK_WAIT GB_PRAGMA (omp taskwait)
-    #define GB_TASK_LEADER(nthreads)                    \
-        GB_PRAGMA (omp parallel num_threads (nthreads)) \
-        GB_PRAGMA (omp master)
-
-#else
-
-    // OpenMP tasks not available
-    #define GB_TASK(func, ...) func (__VA_ARGS__)
-    #define GB_TASK_WAIT
-    #define GB_TASK_LEADER(nthreads)
-
-#endif
-
-#define GB_PRAGMA_IVDEP GB_PRAGMA(ivdep)
-
-//------------------------------------------------------------------------------
-// PGI_COMPILER_BUG
-//------------------------------------------------------------------------------
-
-// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
-// enabled for a bug in the PGI compiler.  The compiler does not correctly
-// handle automatic arrays of variable size.
-
-#ifdef PGI_COMPILER_BUG
-
-    // override the ANSI C compiler to turn off variable-length arrays
-    #undef  GB_HAS_VLA
-    #define GB_HAS_VLA  0
-
-#endif
-
-//------------------------------------------------------------------------------
-// variable-length arrays
-//------------------------------------------------------------------------------
-
-// If variable-length arrays are not supported, user-defined types are limited
-// in size to 128 bytes or less.  Many of the type-generic routines allocate
-// workspace for a single scalar of variable size, using a statement:
-//
-//      GB_void aij [xsize] ;
-//
-// To support non-variable-length arrays in ANSI C95 or earlier, this is used:
-//
-//      GB_void aij [GB_VLA(xsize)] ;
-//
-// GB_VLA(xsize) is either defined as xsize (for ANSI C99 or later), or a fixed
-// size of 128, in which case user-defined types are limited to a max of 128
-// bytes.
-
-typedef unsigned char GB_void ;
-
-#if ( GB_HAS_VLA )
-
-    // variable-length arrays are allowed
-    #define GB_VLA(s) s
-
-#else
-
-    // variable-length arrays are not allowed
-    #define GB_VLA_MAXSIZE 128
-    #define GB_VLA(s) GB_VLA_MAXSIZE
-
-#endif
-
-//------------------------------------------------------------------------------
-// for coverage tests in Tcov/
-//------------------------------------------------------------------------------
-
-#ifdef GBCOVER
-#define GBCOVER_MAX 20000
-GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
-GB_PUBLIC int GB_cover_max ;
-#endif
-
-//------------------------------------------------------------------------------
-// Accessing the pattern of a matrix or vector
-//------------------------------------------------------------------------------
-
-#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
-#define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
-#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
-
-//------------------------------------------------------------------------------
-// kind of index list, Ikind and Jkind:
-//------------------------------------------------------------------------------
-
-#define GB_ALL 0
-#define GB_RANGE 1
-#define GB_STRIDE 2
-#define GB_LIST 4
-
-#define GB_ASSIGN 0
-#define GB_SUBASSIGN 1
-#define GB_ROW_ASSIGN 2
-#define GB_COL_ASSIGN 3
-
-//------------------------------------------------------------------------------
-// GraphBLAS include files
-//------------------------------------------------------------------------------
-
+#include "GB_dev.h"
+#include "GB_defaults.h"
+#include "GB_compiler.h"
+#include "GB_coverage.h"
+#include "GB_index.h"
 #include "GB_cplusplus.h"
 #include "GB_Global.h"
 #include "GB_printf.h"
@@ -246,71 +44,15 @@ GB_PUBLIC int GB_cover_max ;
 #include "GB_bitwise.h"
 #include "GB_binary_search.h"
 #include "GB_check.h"
+#include "GB_nnz.h"
+#include "GB_zombie.h"
+#include "GB_partition.h"
+#include "GB_omp.h"
+// #include "GB_mkl.h"
 
 //------------------------------------------------------------------------------
-// default options
+// internal definitions
 //------------------------------------------------------------------------------
-
-// These parameters define the content of values that can be
-// used as inputs to GxB_*Option_set.
-
-// The default format is by row (CSR), with a hyper_switch of 1/16,
-// and a bitmap_switch of 1/8.
-
-#define GB_HYPER_SWITCH_DEFAULT (0.0625)
-#define GB_BITMAP_SWITCH_DEFAULT (0.125)
-
-// compile SuiteSparse:GraphBLAS with "-DBYCOL" to make GxB_BY_COL the default
-// format
-#ifdef BYCOL
-#define GB_FORMAT_DEFAULT GxB_BY_COL
-#else
-#define GB_FORMAT_DEFAULT GxB_BY_ROW
-#endif
-
-//------------------------------------------------------------------------------
-// macros for matrices and vectors
-//------------------------------------------------------------------------------
-
-// If A->nzmax is zero, then A->p might not be allocated.  Note that this
-// function does not count pending tuples; use GB_MATRIX_WAIT(A) first, if
-// needed.  For both sparse and hypersparse matrices Ap [0] == 0,
-// and nnz(A) = Ap [nvec].  For full matrices, Ap is NULL.
-
-// nnz(A) if A is sparse or hypersparse
-#define GB_NNZ_SPARSE(A) ((A)->p [(A)->nvec])
-
-// nnz(A) if A is full
-#define GB_NNZ_FULL(A) ((A)->vlen * (A)->vdim)
-
-// nnz(A) if A is bitmap
-#define GB_NNZ_BITMAP(A) ((A)->nvals)
-
-// nnz(A) if A is full or bitmap
-#define GB_NNZ_FULL_OR_BITMAP(A) \
-    (((A)->b == NULL) ? GB_NNZ_FULL (A) : GB_NNZ_BITMAP (A))
-
-// nnz(A) for all non-empty matrices
-#define GB_NNZ_NONEMPTY(A) \
-    (((A)->p == NULL) ? GB_NNZ_FULL_OR_BITMAP (A) : GB_NNZ_SPARSE (A))
-
-// nnz(A) for any matrix: includes zombies for hypersparse and sparse,
-// but excluding entries flagged as not present in a bitmap.
-#define GB_NNZ(A) (((A)->nzmax <= 0) ? 0 : GB_NNZ_NONEMPTY (A))
-
-// nnz_held(A) is the number of entries held in the data structure, including
-// zombies and all entries in a bitmap.  For hypersparse, sparse, and full,
-// nnz(A) and nnz_held(A) are the same.  For bitmap, nnz_held(A) is the
-// same as the # of entries in a full matrix (# rows times # columns).
-#define GB_NNZ_HELD(A) (((A)->nzmax <= 0) ? 0 : GB_NNZ_HELD_NONEMPTY (A))
-
-// nnz_held(A) for all non-empty matrices
-#define GB_NNZ_HELD_NONEMPTY(A) \
-    (((A)->p == NULL) ? GB_NNZ_FULL (A) : GB_NNZ_SPARSE (A))
-
-// Upper bound on nnz(A) when the matrix has zombies and pending tuples;
-// does not need GB_MATRIX_WAIT(A) first.
-#define GB_NNZ_UPPER_BOUND(A) ((GB_NNZ (A) - (A)->nzombies) + GB_Pending_n (A))
 
 int64_t GB_Pending_n        // return # of pending tuples in A
 (
@@ -349,7 +91,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #define GB_SCALAR_OK(v) (GB_VECTOR_OK(v) && ((v)->vlen == 1))
 
 //------------------------------------------------------------------------------
-// aliased objects
+// aliased and shallow objects
 //------------------------------------------------------------------------------
 
 // GraphBLAS allows all inputs to all user-accessible objects to be aliased, as
@@ -364,22 +106,16 @@ bool GB_aliased             // determine if A and B are aliased
     GrB_Matrix B            // input B matrix
 ) ;
 
+// matrices returned to the user are never shallow; internal matrices may be
+GB_PUBLIC                       // used by the MATLAB interface
+bool GB_is_shallow              // true if any component of A is shallow
+(
+    GrB_Matrix A                // matrix to query
+) ;
+
 //------------------------------------------------------------------------------
-// internal GraphBLAS type and operator codes
+// internal GraphBLAS type
 //------------------------------------------------------------------------------
-
-// GB_MAGIC is an arbitrary number that is placed inside each object when it is
-// initialized, as a way of detecting uninitialized objects.
-#define GB_MAGIC  0x72657473786f62ULL
-
-// The magic number is set to GB_FREED when the object is freed, as a way of
-// helping to detect dangling pointers.
-#define GB_FREED  0x6c6c756e786f62ULL
-
-// The value is set to GB_MAGIC2 when the object has been allocated but cannot
-// yet be used in most methods and operations.  Currently this is used only for
-// when A->p array is allocated but not initialized.
-#define GB_MAGIC2 0x7265745f786f62ULL
 
 // predefined type objects
 GB_PUBLIC struct GB_Type_opaque
@@ -555,7 +291,7 @@ typedef struct
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char **logger ;             // error report
-    bool use_mkl ;              // control usage of Intel MKL
+    // #include "GB_Context_struct_mkl_template.h"
 }
 GB_Context_struct ;
 
@@ -582,9 +318,10 @@ typedef GB_Context_struct *GB_Context ;
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
-    Context->use_mkl = GB_Global_use_mkl_get ( ) ;                  \
     /* get the pointer to where any error will be logged */         \
     Context->logger = NULL ;
+
+// #include "GB_CONTEXT_mkl_template.h"
 
 #define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -746,8 +483,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
     const int64_t anz,          // number of nonzeros the matrix must hold
@@ -822,6 +559,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     GrB_Matrix A,           // matrix to allocate space for
     const GrB_Index nzmax,  // number of entries the matrix can hold
     const bool is_bitmap,   // if true, allocate A->b, otherwise A->b is NULL
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
     GB_Context Context
@@ -830,9 +568,9 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
-    GrB_Matrix A,           // matrix to allocate space for (sparse or hyper)
-    const GrB_Index nzmax,  // new number of entries the matrix can hold
-    const bool numeric,     // if true, reallocate A->x, otherwise A->x is NULL
+    GrB_Matrix A,               // matrix to allocate space for
+    const int64_t nzmax_new,    // new number of entries the matrix can hold
+    const bool numeric,         // if true, reallocate A->x, else A->x is NULL
     GB_Context Context
 ) ;
 
@@ -861,7 +599,7 @@ void GB_phbix_free              // free all content of a matrix
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-bool GB_Type_compatible         // check if two types can be typecast
+bool GB_Type_compatible             // check if two types can be typecast
 (
     const GrB_Type atype,
     const GrB_Type btype
@@ -949,7 +687,7 @@ GB_task_struct ;
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        TaskList = GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ; \
+        GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ;            \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -1106,10 +844,10 @@ void GB_free_memory
     void *p                 // pointer to allocated block of memory to free
 ) ;
 
-#define GB_FREE(p)                                                            \
-{                                                                             \
-    GB_free_memory ((void *) p) ;                                             \
-    (p) = NULL ;                                                              \
+#define GB_FREE(p)                                          \
+{                                                           \
+    GB_free_memory ((void *) p) ;                           \
+    (p) = NULL ;                                            \
 }
 
 #define GB_CALLOC(n,type) (type *) GB_calloc_memory (n, sizeof (type))
@@ -1137,7 +875,8 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
     int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
     const int64_t *GB_RESTRICT Ap,         // array of size n+1
     const int64_t n,
-    const int ntasks                    // # of tasks
+    const int ntasks,                       // # of tasks
+    const bool perfectly_balanced
 ) ;
 
 void GB_eslice
@@ -1168,6 +907,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
+    int *do_sort,               // if nonzero, sort in GrB_mxm
     GB_Context Context
 ) ;
 
@@ -1199,11 +939,6 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     const GB_Type_code bcode,       // B may not have a type, just a code
     GB_Context Context
 ) ;
-
-// Several methods can use choose between a qsort-based method that takes
-// O(anz*log(anz)) time, or a bucket-sort method that takes O(anz+n) time.
-// The qsort method is choosen if the following condition is true:
-#define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
 
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Index_multiply      // true if ok, false if overflow
@@ -1257,38 +992,6 @@ GrB_Info GB_Semiring_new            // create a semiring
     GrB_Monoid add,                 // additive monoid of the semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
-
-//------------------------------------------------------------------------------
-// OpenMP definitions
-//------------------------------------------------------------------------------
-
-// GB_PART and GB_PARTITION:  divide the index range 0:n-1 uniformly
-// for nthreads.  GB_PART(tid,n,nthreads) is the first index for thread tid.
-#define GB_PART(tid,n,nthreads)  \
-    (((tid) * ((double) (n))) / ((double) (nthreads)))
-
-// thread tid will operate on the range k1:(k2-1)
-#define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
-    k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
-    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads)
-
-#if defined ( _OPENMP )
-
-    #include <omp.h>
-    #define GB_OPENMP_MAX_THREADS       omp_get_max_threads ( )
-    #define GB_OPENMP_GET_NUM_THREADS   omp_get_num_threads ( )
-    #define GB_OPENMP_GET_WTIME         omp_get_wtime ( )
-
-#else
-
-    #define GB_OPENMP_MAX_THREADS       (1)
-    #define GB_OPENMP_GET_NUM_THREADS   (1)
-    #define GB_OPENMP_GET_WTIME         (0)
-
-#endif
-
-// by default, give each thread at least 64K units of work to do
-#define GB_CHUNK_DEFAULT (64*1024)
 
 //------------------------------------------------------------------------------
 
@@ -1437,14 +1140,15 @@ void GB_cast_array              // typecast an array
 }
 
 // check the descriptor and extract its contents; also copies
-// nthreads_max, chunk, and use_mkl from the descriptor to the Context
-#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
+// nthreads_max and chunk from the descriptor to the Context
+#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo,dsort)          \
     GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \
+    int dsort ;                                                              \
     GrB_Desc_Value dalgo ;                                                   \
     /* if desc is NULL then defaults are used.  This is OK */                \
     info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
-        Context) ;                                                           \
+        &dsort, Context) ;                                                   \
     if (info != GrB_SUCCESS)                                                 \
     {                                                                        \
         /* desc not NULL, but uninitialized or an invalid object */          \
@@ -1468,30 +1172,6 @@ void GB_cast_array              // typecast an array
 // Pending upddate and zombies
 //------------------------------------------------------------------------------
 
-// GB_FLIP is a kind of "negation" about (-1) of a zero-based index.
-// If i >= 0 then it is not flipped.
-// If i < 0 then it has been flipped.
-// Like negation, GB_FLIP is its own inverse: GB_FLIP (GB_FLIP (i)) == i.
-// The "nil" value, -1, doesn't change when flipped: GB_FLIP (-1) = -1.
-// GB_UNFLIP(i) is like taking an absolute value, undoing any GB_FLIP(i).
-
-// An entry A(i,j) in a matrix can be marked as a "zombie".  A zombie is an
-// entry that has been marked for deletion, but hasn't been deleted yet because
-// it's more efficient to delete all zombies all at once, instead of one at a
-// time.  Zombies are created by submatrix assignment, C(I,J)=A which copies
-// not only new entries into C, but it also deletes entries already present in
-// C.  If an entry appears in A but not C(I,J), it is a new entry; new entries
-// placed in the pending tuple lists to be added later.  If an entry appear in
-// C(I,J) but NOT in A, then it is marked for deletion by flipping its row
-// index, marking it as a zombie.
-
-// Zombies can be restored as regular entries by GrB_*assign.  If an assignment
-// C(I,J)=A finds an entry in A that is a zombie in C, the zombie becomes a
-// regular entry, taking on the value from A.  The row index is unflipped.
-
-// Zombies are deleted and pending tuples are added into the matrix all at
-// once, by GB_Matrix_wait.
-
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Matrix_wait         // finish all pending computations
 (
@@ -1504,15 +1184,6 @@ GrB_Info GB_unjumble        // unjumble a matrix
     GrB_Matrix A,           // matrix to unjumble
     GB_Context Context
 ) ;
-
-#define GB_FLIP(i)             (-(i)-2)
-#define GB_IS_FLIPPED(i)       ((i) < 0)
-#define GB_IS_ZOMBIE(i)        ((i) < 0)
-#define GB_IS_NOT_FLIPPED(i)   ((i) >= 0)
-#define GB_IS_NOT_ZOMBIE(Ai,p) ((Ai == NULL) ? true : (Ai [p] >= 0))
-#define GB_UNFLIP(i)           (((i) < 0) ? GB_FLIP(i) : (i))
-#define GBI_UNFLIP(Ai,p,avlen)      \
-    ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
 
 // true if a matrix has pending tuples
 #define GB_PENDING(A) ((A) != NULL && (A)->Pending != NULL)
@@ -1535,45 +1206,32 @@ GrB_Info GB_unjumble        // unjumble a matrix
 // true if a matrix is allowed to be jumbled
 #define GB_JUMBLED_OK(A) (GB_JUMBLED (A) || !GB_JUMBLED (A))
 
-// do all pending work:  zombies, pending tuples, and unjumble
-#define GB_MATRIX_WAIT(A)                                               \
+// true if a matrix has pending tuples, zombies, or is jumbled
+#define GB_ANY_PENDING_WORK(A) \
+    (GB_PENDING (A) || GB_ZOMBIES (A) || GB_JUMBLED (A))
+
+// wait if condition holds
+#define GB_WAIT_IF(condition,A)                                         \
 {                                                                       \
-    if (GB_PENDING_OR_ZOMBIES (A) || GB_JUMBLED (A))                    \
+    if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
         GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
     }                                                                   \
 }
 
+// do all pending work:  zombies, pending tuples, and unjumble
+#define GB_MATRIX_WAIT(A) GB_WAIT_IF (GB_ANY_PENDING_WORK (A), A)
+
 // do all pending work if pending tuples; zombies and jumbled are OK
-#define GB_MATRIX_WAIT_IF_PENDING(A)                                    \
-{                                                                       \
-    if (GB_PENDING (A))                                                 \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+#define GB_MATRIX_WAIT_IF_PENDING(A) GB_WAIT_IF (GB_PENDING (A), A)
 
 // delete zombies and assemble any pending tuples; jumbled is O
 #define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
-{                                                                       \
-    if (GB_PENDING_OR_ZOMBIES (A))                                      \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+    GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A)
 
 // ensure A is not jumbled
-#define GB_MATRIX_WAIT_IF_JUMBLED(A)                                    \
-{                                                                       \
-    if (GB_JUMBLED (A))                                                 \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
-    }                                                                   \
-}
+#define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A)
 
 // true if a matrix has no entries; zombies OK
 #define GB_IS_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))

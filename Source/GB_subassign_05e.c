@@ -2,8 +2,8 @@
 // GB_subassign_05e: C(:,:)<M,struct> = scalar ; no S, C empty, M structural
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ GrB_Info GB_subassign_05e
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    C->jumbled = M->jumbled ;
+    C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     return (GrB_SUCCESS) ;

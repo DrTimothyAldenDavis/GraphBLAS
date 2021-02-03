@@ -1,8 +1,8 @@
 function test29
 %TEST29 GrB_reduce with zombies
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 [~, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 types = types.all ;
@@ -49,13 +49,7 @@ for m = [1 5 10]
                     GB_builtin_complex_set (1) ;
                     cin = GB_spec_identity (op, atype) ;
                     GB_builtin_complex_set (builtin) ;
-                catch % me
-                    % me
-                    % op
-                    % atype
-                    % if (contains (me.message, 'assert'))
-                    %    pause
-                    % end
+                catch
                     continue
                 end
 

@@ -2,8 +2,8 @@
 // GB_mex_subassign: C(I,J)<M> = accum (C (I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 // This function is a wrapper for all GxB_*_subassign functions.
 // For these uses, the mask M must always be the same size as C(I,J) and A.
@@ -56,7 +56,11 @@
 #define GET_DEEP_COPY                                                   \
 {                                                                       \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
-    if (nargin > 2 && mxIsChar (pargin [1]))                            \
+    if (have_sparsity_control)                                          \
+    {                                                                   \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C_sparsity_control) ; \
+    }                                                                   \
+    if (nargin > 3 && mxIsChar (pargin [1]))                            \
     {                                                                   \
         M = GB_mx_alias ("M", pargin [1], "C", C, "A", A) ;             \
     }                                                                   \
@@ -87,6 +91,9 @@ GrB_Info info = GrB_SUCCESS ;
 GrB_Monoid reduce = NULL ;
 GrB_BinaryOp op = NULL ;
 bool user_complex = false ;
+int C_sparsity_control ;
+int M_sparsity_control ;
+bool have_sparsity_control = false ;
 
 GrB_Info assign (GB_Context Context) ;
 
@@ -355,22 +362,27 @@ GrB_Info many_subassign
         bool save = GB_Global_malloc_debug_get ( ) ;
         GB_Global_malloc_debug_set (false) ;
 
-        // get M (shallow copy)
+        // get M (deep copy)
         M = NULL ;
         if (fM >= 0)
         {
             p = mxGetFieldByNumber (pargin [1], k, fM) ;
-            M = GB_mx_mxArray_to_Matrix (p, "Mask", false, false) ;
+            M = GB_mx_mxArray_to_Matrix (p, "Mask", true, false) ;
             if (M == NULL && !mxIsEmpty (p))
             {
                 FREE_ALL ;
                 mexErrMsgTxt ("M failed") ;
             }
+            if (have_sparsity_control)
+            {
+                GxB_Matrix_Option_set (M, GxB_SPARSITY_CONTROL,
+                    M_sparsity_control) ;
+            }
         }
 
-        // get A (shallow copy)
+        // get A (true copy)
         p = mxGetFieldByNumber (pargin [1], k, fA) ;
-        A = GB_mx_mxArray_to_Matrix (p, "A", false, true) ;
+        A = GB_mx_mxArray_to_Matrix (p, "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;
@@ -456,6 +468,24 @@ void mexFunction
 )
 {
 
+    C = NULL ;
+    M = NULL ;
+    A = NULL ;
+    mask = NULL ;
+    u = NULL ;
+    desc = NULL ;
+    accum = NULL ;
+    I = NULL ; ni = 0 ;
+    J = NULL ; nj = 0 ;
+    malloc_debug = false ;
+    info = GrB_SUCCESS ;
+    reduce = NULL ;
+    op = NULL ;
+    user_complex = false ;
+    C_sparsity_control = GxB_AUTO_SPARSITY ;
+    M_sparsity_control = GxB_AUTO_SPARSITY ;
+    have_sparsity_control = false ;
+
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -470,14 +500,27 @@ void mexFunction
     reduce = NULL ;
 
     GB_CONTEXT (USAGE) ;
-    if (!((nargout == 1 && (nargin == 2 || nargin == 6 || nargin == 7)) ||
+    if (!((nargout == 1 && (nargin == 2 || nargin == 3 ||
+            nargin == 6 || nargin == 7)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    if (nargin == 2)
+    if (nargin == 2 || nargin == 3)
     {
+
+        // get sparsity control if present
+        if (nargin == 3)
+        {
+            int n = mxGetNumberOfElements (pargin [2]) ;
+            if (n != 2) mexErrMsgTxt ("invalid sparsity control") ;
+            have_sparsity_control = true ;
+            double *p = mxGetDoubles (pargin [2]) ;
+            C_sparsity_control = (int) p [0] ;
+            M_sparsity_control = (int) p [1] ;
+        }
+
         // get C (deep copy)
         GET_DEEP_COPY ;
         if (C == NULL)
@@ -530,11 +573,10 @@ void mexFunction
         // C(I,J)<M> = A, with a single assignment
         //----------------------------------------------------------------------
 
-
-        // get M (shallow copy)
+        // get M (deep copy)
         if (!mxIsChar (pargin [1]))
         {
-            M = GB_mx_mxArray_to_Matrix (pargin [1], "M", false, false) ;
+            M = GB_mx_mxArray_to_Matrix (pargin [1], "M", true, false) ;
             if (M == NULL && !mxIsEmpty (pargin [1]))
             {
                 FREE_ALL ;
@@ -542,10 +584,10 @@ void mexFunction
             }
         }
 
-        // get A (shallow copy)
+        // get A (deep copy)
         if (!mxIsChar (pargin [3]))
         {
-            A = GB_mx_mxArray_to_Matrix (pargin [3], "A", false, true) ;
+            A = GB_mx_mxArray_to_Matrix (pargin [3], "A", true, true) ;
             if (A == NULL)
             {
                 FREE_ALL ;

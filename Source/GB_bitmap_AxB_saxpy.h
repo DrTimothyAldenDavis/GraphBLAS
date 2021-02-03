@@ -2,8 +2,8 @@
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,6 +11,7 @@
 #define GB_AXB_BITMAP_SAXPY_H
 #include "GB_mxm.h"
 
+GB_PUBLIC                           // for testing only
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
     GrB_Matrix *Chandle,            // output matrix (not computed in-place)

@@ -8,6 +8,9 @@ function codegen_unop_method (unop, op, fcast, ztype, xtype)
 %   ztype: the type of z for z=f(x)
 %   xtype: the type of x for z=f(x)
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 f = fopen ('control.m4', 'w') ;
 
 [zname, zunsigned, zbits] = codegen_type (ztype) ;
@@ -15,8 +18,14 @@ f = fopen ('control.m4', 'w') ;
 
 name = sprintf ('%s_%s_%s', unop, zname, xname) ;
 
+% determine if the op is identity with no typecast
 is_identity = isequal (unop, 'identity') ;
 no_typecast = isequal (ztype, xtype) ;
+if (is_identity && no_typecast)
+    fprintf (f, 'define(`GB_op_is_identity_with_no_typecast'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_op_is_identity_with_no_typecast'', `0'')\n') ;
+end
 
 % function names
 fprintf (f, 'define(`GB_unop_apply'', `GB_unop_apply__%s'')\n', name) ;
@@ -75,14 +84,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.c | m4 | tail -n +9 > Generated/GB_unop__%s.c', ...
+'cat control.m4 Generator/GB_unop.c | m4 | tail -n +10 > Generated/GB_unop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.h | m4 | tail -n +9 >> Generated/GB_unop__include.h') ;
+'cat control.m4 Generator/GB_unop.h | m4 | tail -n +10 >> Generated/GB_unop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

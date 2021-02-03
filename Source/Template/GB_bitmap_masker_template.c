@@ -2,8 +2,8 @@
 // GB_bitmap_masker_template:  phase2 for R = masker (C, M, Z), R is bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@
             int64_t pR_start = j * vlen ;
             // traverse over C(:,j), the kth vector of C
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
-            {
+            { 
                 // R(i,j) = C(i,j)
                 int64_t i = Ci [pC] ;
                 int64_t pR = pR_start + i ;
@@ -132,7 +132,7 @@
                     // mark R(i,j) if M(i,j) is true
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
                         int64_t i = Mi [pM] ;
                         int64_t p = pR_start + i ;
                         Rb [p] += 2 ;
@@ -174,7 +174,7 @@
             {
                 case 0 :    // R(i,j) not present, M(i,j) false
                     if (z)
-                    {
+                    { 
                         // R(i,j) = Z(i,j), insert new value
                         memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
                         Rb [p] = 1 ;
@@ -184,12 +184,12 @@
 
                 case 1 :    // R(i,j) present, M(i,j) false
                     if (z)
-                    {
+                    { 
                         // R(i,j) = Z(i,j), update prior value
                         memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
                     }
                     else
-                    {
+                    { 
                         // delete R(i,j)
                         Rb [p] = 0 ;
                         rnvals-- ;
@@ -210,7 +210,7 @@
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Method06: M and Z are bitmap or full, R is bitmap
@@ -261,19 +261,19 @@
                 if (r)
                 {
                     if (z)
-                    {
+                    { 
                         // R(i,j) = Z(i,j), update, no change to rnvals
                         memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
                     }
                     else
-                    {
+                    { 
                         // delete R(i,j)
                         Rb [p] = 0 ;
                         rnvals-- ;
                     }
                 }
                 else if (z)
-                {
+                { 
                     // R(i,j) = Z(i,j), new entry
                     memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
                     Rb [p] = 1 ;

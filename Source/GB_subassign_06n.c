@@ -2,8 +2,8 @@
 // GB_subassign_06n: C(I,J)<M> = A ; no S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ GrB_Info GB_subassign_06n
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;    // ok: Method 06n is not used for M bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: Method 06n is not used for A bitmap
+    ASSERT (!GB_IS_BITMAP (M)) ;    // Method 06n is not used for M bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;    // Method 06n is not used for A bitmap
     ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
@@ -204,7 +204,7 @@ GrB_Info GB_subassign_06n
                     //----------------------------------------------------------
 
                     if (GB_mcast (Mx, pM, msize))
-                    { 
+                    {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
@@ -407,13 +407,13 @@ GrB_Info GB_subassign_06n
 
                         // find iA in A(:,j)
                         if (ajdense)
-                        {
+                        { 
                             // A(:,j) is dense; no need for binary search
                             pA = pA_start + iA ;
                             ASSERT (GBI (Ai, pA, Avlen) == iA) ;
                         }
                         else
-                        {
+                        { 
                             // A(:,j) is sparse; use binary search
                             int64_t apright = pA_end - 1 ;
                             bool aij_found ;

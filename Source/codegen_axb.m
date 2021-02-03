@@ -4,6 +4,9 @@ function codegen_axb
 % This function creates all files of the form GB_AxB__*.[ch], including all
 % built-in semirings (GB_AxB__*.c) and one include file, GB_AxB__include.h.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % The ANY operator is not used as a multiplicative operator in the generated
 % functions.  It can be used as the multiplicative op in a semiring, but is
 % renamed to SECOND before calling the generated function.
@@ -15,9 +18,8 @@ fprintf (f, '//-----------------------------------------------------------------
 fprintf (f, '// GB_AxB__include.h: definitions for GB_AxB__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.\n') ;
-fprintf (f, '// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.\n') ;
-fprintf (f, '\n') ;
+fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.\n') ;
+fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
 fprintf (f, '\n\n') ;
 fclose (f) ;
@@ -217,7 +219,7 @@ terms = {  1             , 0              , [ ]            , [ ]              };
 atomx = {  1             , 1              , 1              , 0                };
 
 nbits = [8 16 32 64] ;
-bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFF' } ;
+bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFFL' } ;
 
 for i = 1:4
     addop = ops {i} ;
@@ -246,8 +248,6 @@ for i = 1:4
             else
                 id = '0' ;
             end
-            % fprintf ('%s %s %s %s %s %s %s %s %s %d 0\n', ...
-            % addop, multop, add, addfunc, mult, type, type, id, tm, at) ;
             codegen_axb_method (addop, multop, add, addfunc, mult, type, ...
                 type, id, tm, at, 0) ;
         end
@@ -281,9 +281,11 @@ for j = 1:6
         id = ids {i} ;
         tm = terms {i} ;
         at = atomx {i} ;
+        fprintf ('.') ;
         codegen_axb_method (addop, multop, add, addfunc, mult, 'int64_t', ...
             'int64_t', id, tm, at, 0) ;
         id = strrep (id, '64', '32')  ;
+        fprintf ('.') ;
         codegen_axb_method (addop, multop, add, addfunc, mult, 'int32_t', ...
             'int32_t', id, tm, at, 0) ;
     end

@@ -2,8 +2,8 @@
 // GB_mex_Matrix_subref: C=A(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ void mexFunction
         mexErrMsgTxt ("J failed") ;
     }
 
-    // C = A(I,J)
+    // C = A(I,J), numeric not symbolic
     METHOD (GB_subref (&C, true, A, I, ni, J, nj, false, Context)) ;
 
     // return C to MATLAB

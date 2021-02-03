@@ -2,8 +2,8 @@
 // GB_ewise: C<M> = accum (C, A+B) or A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -117,16 +117,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // quick return if an empty mask M is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;        // cannot be jumbled
-    GB_MATRIX_WAIT (A) ;        // cannot be jumbled
-    GB_MATRIX_WAIT (B) ;        // cannot be jumbled
-
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-    GB_BURBLE_DENSE (B, "(B %s) ") ;
-
     //--------------------------------------------------------------------------
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
@@ -195,8 +185,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     GrB_Matrix M1 = M ;
-    if (T_is_csc != M_is_csc)
+    bool M_transpose = (T_is_csc != M_is_csc) ;
+    if (M_transpose)
     { 
+        // MT = M'
+        // transpose: no typecast, no op, not in-place
         GBURBLE ("(M transpose) ") ;
         GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
             NULL, NULL, NULL, false, Context)) ;
@@ -216,6 +209,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
+        ASSERT_MATRIX_OK (AT, "AT from transpose", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -234,6 +228,16 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    // TODO: delay the unjumbling of A1 and B1.  If either is bitmap/full,
+    // then they other can remain jumbled.
+    GB_MATRIX_WAIT (M1) ;       // cannot be jumbled
+    GB_MATRIX_WAIT (A1) ;       // cannot be jumbled
+    GB_MATRIX_WAIT (B1) ;       // cannot be jumbled
+
+    //--------------------------------------------------------------------------
     // special cases
     //--------------------------------------------------------------------------
 
@@ -247,12 +251,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // C<M>+=A+B when C, A, and B are dense.  M can be sparse.
     // In all cases above, C remains dense and can be updated in-place
     // C_replace must be false.  M can be valued or structural.
-
-//  if (A_is_dense && B_is_dense)
-//  { 
-//      // no need to use eWiseAdd if both A and B are dense
-//      eWiseAdd = false ;
-//  }
 
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
@@ -331,6 +329,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     if (eWiseAdd)
     { 
 
+        //----------------------------------------------------------------------
+        // T<any mask> = A+B
+        //----------------------------------------------------------------------
+
         // TODO: check the mask condition in GB_add_sparsity.
         // Only exploit the mask in GB_add if it's more efficient than
         // exploiting it later, probably this condition:
@@ -347,6 +349,17 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
     else
     { 
+
+        //----------------------------------------------------------------------
+        // T<any mask> = A.*B
+        //----------------------------------------------------------------------
+
+        // T can be returned with shallow components derived from its inputs A1
+        // and/or B1.  In particular, if T is hypersparse, T->h may be a
+        // shallow copy of A1->h, B1->h, or M1->h.  T is hypersparse if any
+        // matrix A1, B1, or M1 are hypersparse.  Internally, T->h always
+        // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
+        // pruned by GB_hypermatrix_prune, and thus no longer shallow.
 
 #if 0
         // TODO: check whether or not to exploit the mask in GB_emult_sparsity.
@@ -382,6 +395,62 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
+
+        //----------------------------------------------------------------------
+        // transplant shallow content from AT, BT, or MT
+        //----------------------------------------------------------------------
+
+        // If T is hypersparse, T->h is always a shallow copy of A1->h, B1->h,
+        // or M1->h.  Any of the three matrices A1, B1, or M1 may be temporary
+        // transposes, AT, BT, and MT respectively.  If T->h is a shallow cpoy
+        // of a temporary matrix, then flip the ownership of the T->h array,
+        // from the temporary matrix into T, so that T->h is not freed when AT,
+        // BT, and MT are freed.
+
+        // GB_tranpose can return all kinds of shallow components, particularly
+        // when transposing vectors.  It can return AT->h as shallow copy of
+        // A->i, for example.
+
+        if (T->h_shallow)
+        {
+            // T->h is shallow and T is hypersparse
+            ASSERT (GB_IS_HYPERSPARSE (T)) ;
+            // one of A1, B1, or M1 is hypersparse
+            ASSERT (GB_IS_HYPERSPARSE (A1) || GB_IS_HYPERSPARSE (B1) ||
+                    GB_IS_HYPERSPARSE (M1))
+            if (A_transpose && T->h == A1->h)
+            { 
+                // A1 is the temporary matrix AT.  AT->h might itself be a
+                // shallow copy of A->h or A->i, from GB_transpose.
+                ASSERT (A1 == AT) ;
+                T->h_shallow = AT->h_shallow ;
+                AT->h_shallow = true ;
+            }
+            else if (B_transpose && T->h == B1->h)
+            { 
+                // B1 is the temporary matrix BT.  BT->h might itself be a
+                // shallow copy of B->h or B->i, from GB_transpose.
+                ASSERT (B1 == BT) ;
+                T->h_shallow = BT->h_shallow ;
+                BT->h_shallow = true ;
+            }
+            else if (M_transpose && T->h == M1->h)
+            { 
+                // M1 is the temporary matrix MT.  MT->h might itself be a
+                // shallow copy of M->h or M->i, from GB_transpose.
+                ASSERT (M1 == MT) ;
+                T->h_shallow = MT->h_shallow ;
+                MT->h_shallow = true ;
+            }
+
+            // T->h may still be shallow, but if so, it is a shallow copy of
+            // some component of the user input matrices A, B, or M, and must
+            // remain shallow.  A deep copy of it will be made when T->h is
+            // transplanted into the result C.
+            ASSERT (GB_IMPLIES (T->h_shallow,
+                (T->h == A1->h || T->h == B1->h ||
+                 (M1 != NULL && T->h == M1->h)))) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -407,7 +476,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
         GB_Matrix_free (&MT) ;
-        return (GB_transplant_conform (C, C->type, &T, Context)) ;
+        GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
+        return (GB_block (C, Context)) ;
     }
     else
     { 

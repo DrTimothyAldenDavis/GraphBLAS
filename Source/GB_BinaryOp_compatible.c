@@ -2,8 +2,8 @@
 // GB_BinaryOp_compatible: check binary operator for type compatibility
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     // result of binary operator of op->ztype is cast to C
     //--------------------------------------------------------------------------
 
-    if (ctype != NULL && !GB_Type_compatible (ctype, op->ztype))
+    if (!GB_Type_compatible (ctype, op->ztype))
     { 
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Incompatible type for z=%s(x,y):\n"

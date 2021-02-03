@@ -2,8 +2,8 @@
 // GB_mx_mxArray_to_Matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -34,16 +34,14 @@
 // Like GB_mx_Matrix_to_mxArray, this could be done using only user-callable
 // GraphBLAS functions, but the method used here is faster.
 
-// A.sparsity sets the GxB_SPARSITY option: 0 to 15 (see GB_conform.c),
+// A.sparsity sets the GxB_SPARSITY_CONTROL option: 0 to 15 (see GB_conform.c),
 // which is any sum of these 4 flags:
 //
-//    // for GxB_SPARSITY can be any sum or bitwise OR of these 4 values:
+//    // GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 //    #define GxB_HYPERSPARSE 1   // hypersparse form
 //    #define GxB_SPARSE      2   // sparse form
 //    #define GxB_BITMAP      4   // a bitmap
 //    #define GxB_FULL        8   // full (all entries must be present)
-//    // the default is to store the matrix in any form:
-//    #define GxB_AUTO_SPARSITY 15
 
 #include "GB_mex.h"
 
@@ -181,7 +179,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         anzmax = anz ;
     }
 
-    GB_void *Mx = mxGetData (Amatrix) ;     // OK:any type
+    GB_void *Mx = mxGetData (Amatrix) ;
 
     //--------------------------------------------------------------------------
     // look for A.values
@@ -200,7 +198,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             }
             if (mxGetNumberOfElements (values) >= anz)
             {
-                Mx = mxGetData (values) ;       // OK:any type
+                Mx = mxGetData (values) ;
                 atype_in = GB_mx_Type (values) ;
                 atype_in_code = atype_in->code ;
                 anzmax = mxGetNumberOfElements (values) ;
@@ -230,7 +228,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (deep_copy)
     {
-        // TODO use GB_new_bix here instead
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
@@ -244,7 +241,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_bix_alloc (A, anz, false, sparsity != GxB_FULL, true,
+        info = GB_bix_alloc (A, anz, false, false, sparsity != GxB_FULL, true,
             Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -401,7 +398,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     if (sparsity != GxB_FULL)
     {
-        A->nvec_nonempty = -1 ; // compute when needed; see GxB_Matrix_import
+        A->nvec_nonempty = -1 ;
     }
 
     ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;
@@ -449,7 +446,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
         // this forces the matrix to be always hypersparse
         ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_SPARSITY, GxB_HYPERSPARSE) ;
+        GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE) ;
         ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
     }
 
@@ -460,7 +457,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     if (has_sparsity_control)
     {
         ASSERT_MATRIX_OK (A, "setting sparsity", GB0) ;
-        GxB_Matrix_Option_set_(A, GxB_SPARSITY, sparsity_control) ;
+        GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, sparsity_control) ;
         ASSERT_MATRIX_OK (A, "set sparsity", GB0) ;
     }
 
@@ -472,7 +469,15 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // return the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "got A from MATLAB", GB3) ;
+    info = GrB_Matrix_wait (&A) ;
+    if (info != GrB_SUCCESS)
+    {
+        FREE_ALL ;
+        mexWarnMsgIdAndTxt ("GB:warn", "matrix wait failed") ;
+        return (NULL) ;
+    }
+
+    ASSERT_MATRIX_OK (A, "got A from MATLAB", GB0) ;
     return (A) ;
 }
 

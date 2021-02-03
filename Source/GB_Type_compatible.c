@@ -2,8 +2,8 @@
 // GB_Type_compatible: return true if domains are compatible
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
 // types (of any kind) or if both are the same user-defined type.
 
 #include "GB.h"
- 
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 bool GB_Type_compatible             // check if two types can be typecast
 (
@@ -19,12 +19,9 @@ bool GB_Type_compatible             // check if two types can be typecast
     const GrB_Type btype
 )
 {
-
     if (atype == NULL || btype == NULL)
     { 
-GB_GOTCHA ;
-        // built-in positional ops have null op->[xy]type, and are compatible
-        // with anything.  TODO: FIXME.
+        // the op ignores its inputs
         return (true) ;
     }
     else if (atype->code == GB_UDT_code || btype->code == GB_UDT_code)

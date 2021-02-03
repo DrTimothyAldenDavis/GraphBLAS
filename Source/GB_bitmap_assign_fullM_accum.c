@@ -2,8 +2,8 @@
 // GB_bitmap_assign_fullM_accum:  assign to C bitmap, M is bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 // C<M>(I,J) += A           assign
@@ -62,7 +62,8 @@ GrB_Info GB_bitmap_assign_fullM_accum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit1", M, Mask_comp, accum) ;
+    GBURBLE_BITMAP_ASSIGN ("bit1", M, Mask_comp, accum,
+        Ikind, Jkind, assign_kind) ;
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, accum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, accum", GB0) ;
@@ -74,16 +75,15 @@ GrB_Info GB_bitmap_assign_fullM_accum
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_GET_M
-    GB_GET_A
-    GB_GET_ACCUM
+    GB_GET_A_AND_SCALAR
+    GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // to get the effective value of the mask entry mij
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;   \
-        if (Mask_comp) mij = !mij ;
+        bool mij = (GBB (Mb, pM) && GB_mcast (Mx, pM, msize)) ^ Mask_comp ;
 
     //--------------------------------------------------------------------------
     // assignment phase
@@ -110,6 +110,8 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //      else // if Cb(p) == 1:
         //          Cx(p) += scalar // C(iC,jC) still present, updated
 
+        // if C FULL: no change, just cb = GBB (Cb,pC)
+
         #undef  GB_IXJ_WORK
         #define GB_IXJ_WORK(pC,pA)                  \
         {                                           \
@@ -123,7 +125,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else /* (cb == 1) */                \
                 {                                   \
@@ -171,9 +173,11 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //         if Cb(p) == 0
         //             Cx(p) = aij
         //             Cb(p) = 1       // C(iC,jC) is now present, insert
-        //             cnvals++
+        //             task_cnvals++
         //         else // if Cb(p) == 1:
         //             Cx(p) += aij    // C(iC,jC) still present, updated
+
+        // if C FULL: no change, just cb = GBB (Cb,pC)
 
         #define GB_AIJ_WORK(pC,pA)                  \
         {                                           \
@@ -187,7 +191,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                     /* Cx [pC] = Ax [pA] */         \
                     GB_ASSIGN_AIJ (pC, pA) ;        \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else /* (cb == 1) */                \
                 {                                   \
@@ -206,7 +210,6 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 #include "GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN : 
-GB_GOTCHA ;
                 // C<m>(I,j) += A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC
@@ -233,7 +236,11 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     if (C_replace)
-    {
+    { 
+        // if C FULL: use two passes: first pass checks if any
+        // entry must be deleted.  If none: do nothing.  Else:  change C
+        // to full and do 2nd pass as below.
+
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)
         // for assign: for all entries in C(:,:)
@@ -246,7 +253,7 @@ GB_GOTCHA ;
             {                               \
                 int8_t cb = Cb [pC] ;       \
                 Cb [pC] = 0 ;               \
-                cnvals -= (cb == 1) ;       \
+                task_cnvals -= (cb == 1) ;  \
             }                               \
         }
         #include "GB_bitmap_assign_C_template.c"

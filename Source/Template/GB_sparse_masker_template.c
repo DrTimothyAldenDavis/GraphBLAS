@@ -2,8 +2,8 @@
 // GB_sparse_masker_template:  R = masker (C, M, Z) where R is sparse/hyper
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@
 #else
     #define GB_COPY_Z                                           \
     {                                                           \
-        Ri [pR] = i ;    /* ok: R is sparse */                  \
+        Ri [pR] = i ;                                           \
         memcpy (Rx +(pR)*rsize, Zx +(pZ)*rsize, rsize) ;        \
         pR++ ;                                                  \
     }
@@ -74,7 +74,7 @@
         int64_t pZ = pZ_start + i - iZ_first ;                  \
         if (GBB (Zb, pZ))                                       \
         {                                                       \
-            Ri [pR] = i ;    /* ok: R is sparse */              \
+            Ri [pR] = i ;                                       \
             memcpy (Rx +(pR)*rsize, Zx +(pZ)*rsize, rsize) ;    \
             pR++ ;                                              \
         }                                                       \
@@ -93,7 +93,7 @@
 #else
     #define GB_COPY_C                                           \
     {                                                           \
-        Ri [pR] = i ;    /* ok: R is sparse */                  \
+        Ri [pR] = i ;                                           \
         memcpy (Rx +(pR)*rsize, Cx +(pC)*rsize, rsize) ;        \
         pR++ ;                                                  \
     }
@@ -163,8 +163,8 @@
             else
             { 
                 // The vectors of R are never sliced for a coarse task.
-                pR     = Rp [k] ;       // ok: R i ssparse
-                pR_end = Rp [k+1] ;     // ok: R i ssparse
+                pR     = Rp [k] ;
+                pR_end = Rp [k+1] ;
             }
             int64_t rjnz = pR_end - pR ;
             if (rjnz == 0)
@@ -191,8 +191,8 @@
                 int64_t kC = (R_to_C == NULL) ? j : R_to_C [k] ;
                 if (kC >= 0)
                 { 
-                    pC     = Cp [kC] ;          // ok: C is sparse
-                    pC_end = Cp [kC+1] ;        // ok: C is sparse
+                    pC     = Cp [kC] ;
+                    pC_end = Cp [kC+1] ;
                 }
             }
 
@@ -202,12 +202,12 @@
             #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DEBUG )
             // get the first index in C(:,j) for this vector
             int64_t iC_first = -1 ;
-            if (cjnz > 0) iC_first = Ci [pC] ;          // ok: C is sparse
+            if (cjnz > 0) iC_first = Ci [pC] ;
             #endif
 
             #ifdef GB_DEBUG
             int64_t iC_last = -1 ;
-            if (cjnz > 0) iC_last  = Ci [pC_end-1] ;    // ok: C is sparse
+            if (cjnz > 0) iC_last  = Ci [pC_end-1] ;
             #endif
 
             //------------------------------------------------------------------
@@ -305,11 +305,11 @@
                 while (pC < pC_end && pM < pM_end)
                 {
                     
-                    int64_t iC = Ci [pC] ;      // ok: C is sparse
-                    int64_t iM = Mi [pM] ;      // ok: M is sparse
+                    int64_t iC = Ci [pC] ;
+                    int64_t iM = Mi [pM] ;
 
                     if (iC < iM)
-                    {
+                    { 
                         // C(i,j) is present but M(i,j) is not
                         // R(i,j) = C(i,j)
                         int64_t i = iC ;
@@ -317,7 +317,7 @@
                         pC++ ;
                     }
                     else if (iC > iM)
-                    {
+                    { 
                         // M(i,j) is present but C(i,j) is not
                         int64_t i = iM ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
@@ -334,12 +334,12 @@
                         int64_t i = iM ;
                         bool mij = GB_mcast (Mx, pM, msize) ;
                         if (mij)
-                        {
+                        { 
                             // R(i,j) = Z(i,j)
                             GB_COPY_Z_BITMAP_OR_FULL ;
                         }
                         else
-                        {
+                        { 
                             // R(i,j) = C(i,j)
                             GB_COPY_C ;
                         }
@@ -353,9 +353,9 @@
                 rjnz += (pC_end - pC) ;
                 #else
                 for ( ; pC < pC_end ; pC++)
-                {
+                { 
                     // C(i,j) is present but M(i,j) is not
-                    int64_t i = Ci [pC] ;       // ok: C is sparse
+                    int64_t i = Ci [pC] ;
                     GB_COPY_C ;
                 }
                 #endif
@@ -364,10 +364,10 @@
                 for ( ; pM < pM_end ; pM++)
                 {
                     // M(i,j) is present but C(i,j) is not
-                    int64_t i = Mi [pM] ;       // ok: M is sparse
+                    int64_t i = Mi [pM] ;
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
                         // R(i,j) = Z(i,j)
                         GB_COPY_Z_BITMAP_OR_FULL ;
                     }
@@ -470,7 +470,7 @@
                 for (int64_t p = 0 ; p < cjnz ; p++)
                 {
                     int64_t i = p + iC_first ;
-                    Ri [pR + p] = i ;               // ok: R is sparse
+                    Ri [pR + p] = i ;
                     int64_t iM = (pM < pM_end) ? GBI (Mi, pM, vlen) : INT64_MAX;
                     bool mij = false ;
                     if (i == iM)
@@ -530,8 +530,8 @@
                     // get the next i for R(:,j)
                     //----------------------------------------------------------
 
-                    int64_t iC = Ci [pC] ;          // ok: C is sparse
-                    int64_t iZ = Zi [pZ] ;          // ok: Z is sparse
+                    int64_t iC = Ci [pC] ;
+                    int64_t iZ = Zi [pZ] ;
                     int64_t i = GB_IMIN (iC, iZ) ;
 
                     //----------------------------------------------------------
@@ -575,7 +575,7 @@
                         GB_SPLIT_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                         if (found)
                         { 
-                            ASSERT (i == Mi [pM]) ;     // ok: M is sparse
+                            ASSERT (i == Mi [pM]) ;
                             mij = GB_mcast (Mx, pM, msize) ;
                             // increment pM for the wrapup phase below
                             pM++ ;
@@ -648,7 +648,7 @@
 
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;       // ok: Z is sparse
+                                int64_t i = Zi [pZ] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
                                 ASSERT (i == GBI (Mi, pM, vlen)) ;
@@ -692,7 +692,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;       // ok: Z is sparse
+                                int64_t i = Zi [pZ] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
@@ -712,8 +712,8 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             while (pM < pM_end && pZ < pZ_end)
                             {
-                                int64_t iM = Mi [pM] ;      // ok: M is sparse
-                                int64_t i = Zi [pZ] ;       // ok: Z is sparse
+                                int64_t iM = Mi [pM] ;
+                                int64_t i = Zi [pZ] ;
                                 if (iM < i)
                                 { 
                                     // M(i,j) exists but not Z(i,j)
@@ -751,7 +751,7 @@
 
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;       // ok: Z is sparse
+                                int64_t i = Zi [pZ] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
                                 ASSERT (i == GBI (Mi, pM, vlen)) ;
@@ -770,7 +770,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;       // ok: Z is sparse
+                                int64_t i = Zi [pZ] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
@@ -805,7 +805,7 @@
 
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;       // ok: C is sparse
+                                int64_t i = Ci [pC] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
                                 ASSERT (i == GBI (Mi, pM, vlen)) ;
@@ -827,7 +827,7 @@
                             {
                                 if (GB_mcast (Mx, pM, msize))
                                 { 
-                                    int64_t i = Mi [pM] ;   // ok: M is sparse
+                                    int64_t i = Mi [pM] ;
                                     int64_t pright = pC_end - 1 ;
                                     bool found ;
                                     GB_BINARY_SEARCH (i, Ci, pC, pright, found);
@@ -846,7 +846,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;       // ok: C is sparse
+                                int64_t i = Ci [pC] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
@@ -866,8 +866,8 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             while (pM < pM_end && pC < pC_end)
                             {
-                                int64_t iM = Mi [pM] ;      // ok: M is sparse
-                                int64_t i = Ci [pC] ;       // ok: C is sparse
+                                int64_t iM = Mi [pM] ;
+                                int64_t i = Ci [pC] ;
                                 if (iM < i)
                                 { 
                                     // M(i,j) exists but not C(i,j)
@@ -905,7 +905,7 @@
 
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;       // ok: C is sparse
+                                int64_t i = Ci [pC] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
                                 ASSERT (i == GBI (Mi, pM, vlen)) ;
@@ -924,7 +924,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;       // ok: C is sparse
+                                int64_t i = Ci [pC] ;
                                 // M(i,j) false if not present
                                 bool mij = false ; 
                                 int64_t pright = pM_end - 1 ;
@@ -953,7 +953,7 @@
             }
             else
             { 
-                Rp [k] = rjnz ;     // ok: R is sparse
+                Rp [k] = rjnz ;
             }
             #endif
         }

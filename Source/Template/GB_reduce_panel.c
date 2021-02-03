@@ -2,8 +2,8 @@
 // GB_reduce_panel: s=reduce(A), reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@
                     panel_count = 256 ;
                     int count = 0 ;
                     for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                    {
+                    { 
                         count += (Panel [k] == GB_TERMINAL_VALUE) ;
                     }
                     if (count > 0)
@@ -205,7 +205,7 @@
                             panel_count = 256 ;
                             int count = 0 ;
                             for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                            {
+                            { 
                                 count += (Panel [k] == GB_TERMINAL_VALUE) ;
                             }
                             if (count > 0)

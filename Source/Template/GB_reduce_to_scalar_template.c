@@ -2,8 +2,8 @@
 // GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -16,8 +16,8 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int8_t   *GB_RESTRICT Ab = (GB_ATYPE *) A->b ;
-    const int64_t  *GB_RESTRICT Ai = (GB_ATYPE *) A->i ;
+    const int8_t   *GB_RESTRICT Ab = A->b ;
+    const int64_t  *GB_RESTRICT Ai = A->i ;
     const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
     int64_t anz = GB_NNZ_HELD (A) ;
     ASSERT (anz > 0) ;
@@ -100,7 +100,7 @@
         //----------------------------------------------------------------------
 
         for (int tid = 0 ; tid < ntasks ; tid++)
-        { 
+        {
             if (F [tid])
             { 
                 // s = op (s, W [tid]), no typecast

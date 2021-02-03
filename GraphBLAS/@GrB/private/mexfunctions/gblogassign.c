@@ -2,8 +2,8 @@
 // gblogassign: logical assignment: C(M) = A
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -100,11 +100,8 @@ void mexFunction
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
-    GrB_Matrix M ;
-    OK (GrB_Matrix_new (&M, GrB_BOOL, nrows, ncols)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_FORMAT, GxB_BY_COL)) ;
-    OK1 (M, GxB_Matrix_Option_set (M, GxB_SPARSITY,
-        GxB_SPARSE + GxB_HYPERSPARSE)) ;
+    GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL,
+        GxB_SPARSE + GxB_HYPERSPARSE) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
@@ -126,7 +123,7 @@ void mexFunction
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GrB_Matrix_nvals (&anz, A)) ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY, &A_sparsity)) ;
+    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &A_sparsity)) ;
 
     GrB_Matrix A_copy = NULL ;
     GrB_Matrix A_copy2 = NULL ;
@@ -135,7 +132,7 @@ void mexFunction
     if (A_sparsity == GxB_BITMAP)
     {
         OK (GrB_Matrix_dup (&A_copy2, A)) ;
-        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY,
+        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY_CONTROL,
             GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
         A = A_copy2 ;
     }
@@ -155,11 +152,8 @@ void mexFunction
         if (fmt == GxB_BY_COL)
         { 
             // A is 1-by-ancols and held by column: transpose it
-            OK (GrB_Matrix_new (&A_copy, atype, mnz, 1)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
-                GxB_BY_COL)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            A_copy = gb_new (atype, mnz, 1, GxB_BY_COL, 
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
@@ -173,11 +167,8 @@ void mexFunction
         if (fmt == GxB_BY_ROW)
         { 
             // A is anrows-by-1 and held by row: transpose it
-            OK (GrB_Matrix_new (&A_copy, atype, 1, mnz)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_FORMAT,
-                GxB_BY_ROW)) ;
-            OK1 (A_copy, GxB_Matrix_Option_set (A_copy, GxB_SPARSITY,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+            A_copy = gb_new (atype, 1, mnz, GxB_BY_ROW,
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
             A = A_copy ;
@@ -210,9 +201,7 @@ void mexFunction
 
     GB_matlab_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
 
-    GrB_Matrix S ;
-    OK (GrB_Matrix_new (&S, atype, nrows, ncols)) ;
-    OK1 (S, GxB_Matrix_Option_set (S, GxB_FORMAT, GxB_BY_COL)) ;
+    GrB_Matrix S = gb_new (atype, nrows, ncols, GxB_BY_COL, 0) ;
 
     if (atype == GrB_BOOL)
     { 
@@ -292,7 +281,7 @@ void mexFunction
     OK (GrB_Matrix_free (&M_input)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C back to MATLAB as a GraphBLAS matrix
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, KIND_GRB) ;

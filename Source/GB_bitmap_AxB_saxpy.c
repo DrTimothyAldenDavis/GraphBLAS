@@ -2,8 +2,8 @@
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -21,8 +21,10 @@
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
-// TODO: also pass in the user's C and the accum operator
+// TODO: also pass in the user's C and the accum operator, and done_in_place,
+// like GB_AxB_dot4.
 
+GB_PUBLIC                           // for testing only
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
     GrB_Matrix *Chandle,            // output matrix (not computed in-place)
@@ -80,13 +82,14 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     int64_t cnzmax ;
     bool ok = GB_Index_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
     if (!ok)
-    {
+    { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_OK (GB_new_bix (Chandle, ctype, A->vlen, B->vdim, GB_Ap_null, true,
-        C_sparsity, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context)) ;
+        C_sparsity, true, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context)) ;
     GrB_Matrix C = *Chandle ;
+    C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -117,7 +120,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         {                                                                   \
             info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
                 Mask_struct, true, A, A_is_pattern,  B,                     \
-                B_is_pattern, NULL, 0, 0, 0, Context) ;                     \
+                B_is_pattern, NULL, 0, 0, 0, 0, Context) ;                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -143,9 +146,9 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 
     if (!done)
     { 
-        info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
+        info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             true, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, NULL, 0, 0, 0, Context) ;
+            flipxy, NULL, 0, 0, 0, 0, Context) ;
     }
 
     if (info != GrB_SUCCESS)

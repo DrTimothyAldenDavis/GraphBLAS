@@ -1,8 +1,8 @@
 function test42
 %TEST42 test GrB_Matrix_build
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n----------------------- performance tests for GrB_Matrix_build\n') ;
 
@@ -54,13 +54,6 @@ S = S.matrix ;
 assert (isequal (spones (S), spones (T)))
 assert (norm (S-T,1) == 0) ;
 assert (GB_spok (T) == 1) ;
-
-% for col = 1:n
-%     S (:,col)
-%     T (:,col)
-%     norm (S (:,col) - T (:,col), 1)
-%     % pause
-% end
 
 %-------------------------------------------------------------------------------
 fprintf ('----------------------- matrix from collection, no sorting:\n') ;

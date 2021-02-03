@@ -2,8 +2,8 @@
 // GB_dense_subassign_06d_template: C<A> = A where C is dense or bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -36,7 +36,6 @@
     // C<A> = A
     //--------------------------------------------------------------------------
 
-    int64_t p ;
     int64_t cnvals = C->nvals ;     // for C bitmap
 
     if (A_is_dense)
@@ -47,7 +46,7 @@
         //----------------------------------------------------------------------
 
         if (C_is_bitmap)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C is bitmap, A is dense
@@ -55,30 +54,38 @@
 
             if (Mask_struct)
             {
-GB_GOTCHA ;
+                // C<A,struct>=A with C bitmap, A dense
+                int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
                     GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                    Cb [p] = 1 ;
                 }
+                GB_memset (Cb, 1, anz, nthreads) ;
                 cnvals = anz ;
             }
             else
             {
-GB_GOTCHA ;
+                // C<A>=A with C bitmap, A dense
+                int tid ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
-                for (p = 0 ; p < anz ; p++)
+                for (tid = 0 ; tid < nthreads ; tid++)
                 {
-                    if (GB_AX_MASK (Ax, p, asize))
-                    { 
-                        // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                        cnvals += (Cb [p] == 0) ;
-                        Cb [p] = 1 ;
+                    int64_t pA_start, pA_end, task_cnvals = 0 ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    for (int64_t p = pA_start ; p < pA_end ; p++)
+                    {
+                        if (GB_AX_MASK (Ax, p, asize))
+                        { 
+                            // Cx [p] = Ax [p]
+                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                            task_cnvals += (Cb [p] == 0) ;
+                            Cb [p] = 1 ;
+                        }
                     }
+                    cnvals += task_cnvals ;
                 }
             }
 
@@ -92,7 +99,8 @@ GB_GOTCHA ;
 
             if (Mask_struct)
             {
-GB_GOTCHA ;
+                // C<A,struct>=A with C sparse/hyper/full
+                int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
@@ -102,6 +110,8 @@ GB_GOTCHA ;
             }
             else
             {
+                // C<A>=A with C sparse/hyper/full
+                int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -117,7 +127,6 @@ GB_GOTCHA ;
     }
     else if (A_is_bitmap)
     {
-
         //----------------------------------------------------------------------
         // A is bitmap
         //----------------------------------------------------------------------
@@ -131,34 +140,49 @@ GB_GOTCHA ;
 
             if (Mask_struct)
             {
-GB_GOTCHA ;
+                // C<A,struct>=A with A and C bitmap
+                int tid ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
-                for (p = 0 ; p < anz ; p++)
+                for (tid = 0 ; tid < nthreads ; tid++)
                 {
-                    if (Ab [p])
-                    { 
-                        // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                        cnvals += (Cb [p] == 0) ;
-                        Cb [p] = 1 ;
+                    int64_t pA_start, pA_end, task_cnvals = 0 ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    for (int64_t p = pA_start ; p < pA_end ; p++)
+                    {
+                        if (Ab [p])
+                        { 
+                            // Cx [p] = Ax [p]
+                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                            task_cnvals += (Cb [p] == 0) ;
+                            Cb [p] = 1 ;
+                        }
                     }
+                    cnvals += task_cnvals ;
                 }
+
             }
             else
             {
-GB_GOTCHA ;
+                // C<A>=A with A and C bitmap
+                int tid ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)\
                     reduction(+:cnvals)
-                for (p = 0 ; p < anz ; p++)
+                for (tid = 0 ; tid < nthreads ; tid++)
                 {
-                    if (Ab [p] && GB_AX_MASK (Ax, p, asize))
-                    { 
-                        // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                        cnvals += (Cb [p] == 0) ;
-                        Cb [p] = 1 ;
+                    int64_t pA_start, pA_end, task_cnvals = 0 ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    for (int64_t p = pA_start ; p < pA_end ; p++)
+                    {
+                        if (Ab [p] && GB_AX_MASK (Ax, p, asize))
+                        { 
+                            // Cx [p] = Ax [p]
+                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                            task_cnvals += (Cb [p] == 0) ;
+                            Cb [p] = 1 ;
+                        }
                     }
+                    cnvals += task_cnvals ;
                 }
             }
 
@@ -172,9 +196,10 @@ GB_GOTCHA ;
 
             if (Mask_struct)
             {
-GB_GOTCHA ;
+                // C<A,struct>=A with A bitmap, and C hyper/sparse/full
                 // this method is used by LAGraph_bfs_parent when q is
                 // a bitmap and pi is full.
+                int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -187,7 +212,8 @@ GB_GOTCHA ;
             }
             else
             {
-GB_GOTCHA ;
+                // C<A>=A with A bitmap, and C hyper/sparse/full
+                int64_t p ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
@@ -217,6 +243,7 @@ GB_GOTCHA ;
             // if kfirst > klast then taskid does no work at all
             int64_t kfirst = kfirst_slice [taskid] ;
             int64_t klast  = klast_slice  [taskid] ;
+            int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
             // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
@@ -234,7 +261,7 @@ GB_GOTCHA ;
                 GB_get_pA (&pA_start, &pA_end, taskid, k,
                     kfirst, klast, pstart_slice, Ap, avlen) ;
 
-                // pC points to the start of C(:,j) if C is dense
+                // pC points to the start of C(:,j) if C is dense or bitmap
                 int64_t pC = j * cvlen ;
 
                 //--------------------------------------------------------------
@@ -245,21 +272,23 @@ GB_GOTCHA ;
                 {
                     if (C_is_bitmap)
                     {
+                        // C<A,struct>=A with C bitmap, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        {
+                        { 
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
-                            cnvals += (Cb [p] == 0) ;
+                            task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
                     }
                     else
                     {
+                        // C<A,struct>=A with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                        {
+                        { 
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -270,28 +299,28 @@ GB_GOTCHA ;
                 {
                     if (C_is_bitmap)
                     {
+                        // C<A,struct>=A with C bitmap, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
-GB_GOTCHA ;
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
-                                cnvals += (Cb [p] == 0) ;
+                                task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
                         }
                     }
                     else
                     {
+                        // C<A,struct>=A with C dense, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
-GB_GOTCHA ;
                                 int64_t p = pC + GBI (Ai, pA, avlen) ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
@@ -300,6 +329,7 @@ GB_GOTCHA ;
                     }
                 }
             }
+            cnvals += task_cnvals ;
         }
     }
 
@@ -309,7 +339,6 @@ GB_GOTCHA ;
 
     if (C_is_bitmap)
     { 
-GB_GOTCHA ;
         C->nvals = cnvals ;
     }
 }

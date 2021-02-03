@@ -2,8 +2,8 @@
 // GB_emult: C = A.*B, C<M>=A.*B, or C<!M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -90,9 +90,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // A and B are both full.  The mask M may be present or not, and may be
         // complemented or not.  GB_add computes the same thing in this case,
         // so use it instead, to reduce the code needed for GB_emult.
-        info = GB_add (Chandle, ctype, C_is_csc, M, Mask_struct, Mask_comp,
-            mask_applied, A, B, op, Context) ;
-        return (info) ;
+        return (GB_add (Chandle, ctype, C_is_csc, M, Mask_struct, Mask_comp,
+            mask_applied, A, B, op, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -125,7 +124,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         return (info) ;
     }
 
-    GBURBLE ("emult:(%s<%s>=%s+%s) ",
+    GBURBLE ("emult:(%s<%s>=%s.*%s) ",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),
         GB_sparsity_char_matrix (A),
@@ -181,7 +180,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap or full: only determine how many threads to use

@@ -2,8 +2,8 @@
 // GxB_Matrix_import_BitmapR: import a matrix in bitmap format, held by row
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -15,28 +15,39 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
+    GrB_Index Ab_size,  // size of Ab
+    GrB_Index Ax_size,  // size of Ax
+
     GrB_Index nvals,    // # of entries in bitmap
-    int8_t **Ab,        // bitmap, size nrows*ncols
-    void **Ax,          // values, size nrows*ncols entries
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_import_BitmapR (&A, type, nrows, ncols, nvals,"
-        " &Ab, &Ax, desc)") ;
+    GB_WHERE1 ("GxB_Matrix_import_BitmapR (&A, type, nrows, ncols, "
+        "&Ab, &Ax, Ab_size, Ax_size, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_BitmapR") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, ncols, nrows, 0, nvals, false, 0, 0,
-        NULL, NULL, Ab, NULL, Ax, GxB_BITMAP, false, Context) ;
+    info = GB_import (A, type, ncols, nrows,
+        NULL, 0,        // Ap
+        NULL, 0,        // Ah
+        Ab,   Ab_size,  // Ab
+        NULL, 0,        // Ai
+        Ax,   Ax_size,  // Ax
+        nvals, false, 0,                    // nvals for bitmap
+        GxB_BITMAP, false, Context) ;       // bitmap by row
+
     GB_BURBLE_END ;
     return (info) ;
 }

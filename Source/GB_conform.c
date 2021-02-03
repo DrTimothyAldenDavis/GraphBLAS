@@ -2,8 +2,8 @@
 // GB_conform: conform any matrix to its desired sparsity structure
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 
 #include "GB.h"
 
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // GB_hyper_or_bitmap: ensure a matrix is either hypersparse or bitmap
@@ -142,7 +142,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     // select the sparsity structure
     //--------------------------------------------------------------------------
 
-    switch (A->sparsity)
+    switch (GB_sparsity_control (A->sparsity, A->vdim))
     {
 
         //----------------------------------------------------------------------
@@ -221,11 +221,10 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             break ;
 
         //----------------------------------------------------------------------
-        // (8), (12): bitmap or full
+        // (8): full
         //----------------------------------------------------------------------
 
-        case GxB_FULL:
-        case GxB_FULL + GxB_BITMAP : 
+        case GxB_FULL : 
 
             if (is_full_or_dense_with_no_pending_work)
             { 
@@ -288,7 +287,6 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             }
             else if (is_bitmap)
             { 
-GB_GOTCHA ;
                 // if bitmap: to sparse
                 GB_OK (GB_convert_bitmap_to_sparse (A, Context)) ;
                 // conform between sparse and hypersparse
@@ -302,14 +300,36 @@ GB_GOTCHA ;
             break ;
 
         //----------------------------------------------------------------------
+        // (12): bitmap or full
+        //----------------------------------------------------------------------
+
+        case GxB_FULL + GxB_BITMAP : 
+
+            if (is_bitmap)
+            { 
+                // leave in bitmap form, even if it can be converted to full
+            }
+            else if (is_full_or_dense_with_no_pending_work)
+            { 
+                // if full or all entries present: to full
+                GB_convert_any_to_full (A) ;
+            }
+            else
+            { 
+                // otherwise: to bitmap
+                GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // (13) hypersparse, bitmap, or full
         //----------------------------------------------------------------------
 
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else
@@ -326,9 +346,9 @@ GB_GOTCHA ;
 
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else
@@ -340,15 +360,15 @@ GB_GOTCHA ;
             break ;
 
         //----------------------------------------------------------------------
-        // (15) default: hypersparse, sparse, bitmap, or full
+        // (15) hypersparse, sparse, bitmap, or full
         //----------------------------------------------------------------------
 
-        case GxB_AUTO_SPARSITY : 
         default:
+        case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
             { 
-                // if full or all entries present: to full
+                // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
             }
             else

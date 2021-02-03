@@ -2,8 +2,8 @@
 // GB_mex_apply: C<Mask> = accum(C,op(A)) or op(A')
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -15,9 +15,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GrB_Matrix_free_(&C) ;               \
-    GrB_Matrix_free_(&Mask) ;            \
-    GrB_Matrix_free_(&A) ;               \
+    GrB_Matrix_free_(&C) ;              \
+    GrB_Matrix_free_(&Mask) ;           \
+    GrB_Matrix_free_(&A) ;              \
     GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true) ;           \
 }

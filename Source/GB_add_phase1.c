@@ -2,8 +2,8 @@
 // GB_add_phase1: # entries in C=A+B, C<M or !M>=A+B (C is sparse/hyper)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -20,6 +20,7 @@
 // Cp is constructed here, and either freed by phase2, or transplanted into C.
 
 #include "GB_add.h"
+#include "GB_unused.h"
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (

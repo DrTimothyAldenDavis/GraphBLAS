@@ -2,8 +2,8 @@
 // gb_export_to_mxstruct: export a GrB_Matrix to a MATLAB struct
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -49,8 +49,17 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     CHECK_ERROR (A_handle == NULL, "matrix missing") ;
+
+    GrB_Matrix T = NULL ;
+    if (GB_is_shallow (*A_handle))
+    {
+        // A is shallow so make a deep copy
+        OK (GrB_Matrix_dup (&T, *A_handle)) ;
+        OK (GrB_Matrix_free (A_handle)) ;
+        (*A_handle) = T ;
+    }
+
     GrB_Matrix A = (*A_handle) ;
-    CHECK_ERROR (gb_is_shallow (A), "internal error 4") ;
 
     //--------------------------------------------------------------------------
     // make sure the matrix is finished
@@ -63,7 +72,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     int sparsity ;
-    GxB_Matrix_Option_get (A, GxB_SPARSITY, &sparsity) ;
+    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity)) ;
     mxArray *G ;
 
     switch (sparsity)
@@ -113,7 +122,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,
-    // queue_next, queue_head, enqueued, *_shallow, jumbled, logger, mkl,
+    // queue_next, queue_head, enqueued, *_shallow, jumbled, logger,
     // hyper_switch, bitmap_switch.
 
     if (sparsity == GxB_SPARSE || sparsity == GxB_HYPERSPARSE)

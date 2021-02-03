@@ -2,8 +2,8 @@
 // GB_AxB_dot3_slice: slice the entries and vectors for C<M>=A'*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ GrB_Info GB_AxB_dot3_slice
 
     // C is always constructed as sparse or hypersparse, not full, since it
     // must accomodate zombies
-    ASSERT (!GB_IS_FULL (C)) ;          // ok: C is sparse
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: C is sparse
+    ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
@@ -83,8 +83,8 @@ GrB_Info GB_AxB_dot3_slice
     // get C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Cp = C->p ;  // ok: C is sparse
-    int64_t *GB_RESTRICT Cwork = C->i ;     // ok: C is sparse
+    const int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Cwork = C->i ;
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnz = GB_NNZ_HELD (C) ;
@@ -143,7 +143,7 @@ GrB_Info GB_AxB_dot3_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1))
+    if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;

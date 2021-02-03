@@ -2,8 +2,8 @@
 // GB_mex_setElement: MATLAB interface for A(i,j) = x
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -132,10 +132,7 @@ void mexFunction
 
     // get A (deep copy)
     #define GET_DEEP_COPY \
-    A = GB_mx_mxArray_to_Matrix (pargin [0], "A input", true, true) ; \
-    /* HACK: */ \
-    if (A != NULL && A->vlen <= 100 && A->vdim <= 100) \
-        GxB_Matrix_Option_set_(A, GxB_SPARSITY, GxB_BITMAP) ;
+    A = GB_mx_mxArray_to_Matrix (pargin [0], "A input", true, true) ;
     #define FREE_DEEP_COPY GrB_Matrix_free_(&A) ;
     GET_DEEP_COPY ;
     if (A == NULL)

@@ -2,8 +2,8 @@
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -14,7 +14,8 @@
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
-#include "GB_mkl.h"
+#include "GB_atomics.h"
+#include "GB_bitmap_assign_methods.h"
 #include "GB_binop__include.h"
 
 // C=binop(A,B) is defined by the following types and operators:
@@ -426,9 +427,9 @@ GrB_Info GB_bind1st_tran__max_int64
     GrB_Matrix C,
     const GB_void *x_input,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 )
 { 
@@ -441,7 +442,6 @@ GrB_Info GB_bind1st_tran__max_int64
     return (GrB_NO_VALUE) ;
     #else
     int64_t x = (*((const int64_t *) x_input)) ;
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -471,9 +471,9 @@ GrB_Info GB_bind2nd_tran__max_int64
     GrB_Matrix C,
     const GrB_Matrix A,
     const GB_void *y_input,
-    int64_t *GB_RESTRICT *Rowcounts,
+    int64_t *GB_RESTRICT *Workspaces,
     const int64_t *GB_RESTRICT A_slice,
-    int naslice,
+    int nworkspaces,
     int nthreads
 )
 { 
@@ -481,7 +481,6 @@ GrB_Info GB_bind2nd_tran__max_int64
     return (GrB_NO_VALUE) ;
     #else
     int64_t y = (*((const int64_t *) y_input)) ;
-    #define GB_PHASE_2_OF_2
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif

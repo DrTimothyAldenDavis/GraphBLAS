@@ -2,8 +2,8 @@
 // gbformat: get/set the matrix format to use in GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 1 && nargout <= 2,
-        "usage: f = GrB.format, GrB.format (f), GrB.format (G)") ;
+        "usage: [f,s] = GrB.format, GrB.format (f), GrB.format (G)") ;
 
     //--------------------------------------------------------------------------
     // get/set the format
@@ -61,7 +61,8 @@ void mexFunction
             //------------------------------------------------------------------
 
             // parse the format string
-            bool ok = gb_mxstring_to_format (pargin [0], &fmt, &sparsity) ;
+            int ignore ;
+            bool ok = gb_mxstring_to_format (pargin [0], &fmt, &ignore) ;
             CHECK_ERROR (!ok, "invalid format") ;
             // set the global format
             OK (GxB_Global_Option_set (GxB_FORMAT, fmt)) ;
@@ -76,23 +77,28 @@ void mexFunction
 
             // get the type
             mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-            CHECK_ERROR (mx_type == NULL, "invalid GraphBLASv4 struct") ;
+            if (mx_type == NULL)
+            {
+                // check if it is a GraphBLASv3 struct
+                mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+                CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
+            }
 
             // get the row/column format of the input matrix G
             mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-            CHECK_ERROR (opaque == NULL, "invalid GraphBLASv4 struct") ;
+            CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
             int64_t *s = mxGetInt64s (opaque) ;
             bool is_csc = (bool) (s [6]) ;
             fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
 
-            // get the current sparsity structure of the input matrix G
+            // get the current sparsity status of the input matrix G
             switch (mxGetNumberOfFields (pargin [0]))
-            { 
-                case 3: sparsity = GxB_FULL ;        break ;
-                case 4: sparsity = GxB_BITMAP ;      break ;
-                case 5: sparsity = GxB_SPARSE ;      break ;
-                case 6: sparsity = GxB_HYPERSPARSE ; break ;
-                default: ERROR ("invalid GraphBLASv4 struct") ;
+            {
+                case 3 : sparsity = GxB_FULL ;        break ;
+                case 4 : sparsity = GxB_BITMAP ;      break ;
+                case 5 : sparsity = GxB_SPARSE ;      break ;
+                case 6 : sparsity = GxB_HYPERSPARSE ; break ;
+                default: ERROR ("invalid GraphBLAS struct") ;
             }
 
         }
@@ -120,11 +126,11 @@ void mexFunction
         char *s ;
         switch (sparsity)
         {
-            case GxB_FULL :        s = "full"        ; break ;
-            case GxB_BITMAP :      s = "bitmap"      ; break ;
-            case GxB_SPARSE :      s = "sparse"      ; break ;
             case GxB_HYPERSPARSE : s = "hypersparse" ; break ;
-            default :              s = "auto"        ; break ;
+            case GxB_SPARSE :      s = "sparse"      ; break ;
+            case GxB_BITMAP :      s = "bitmap"      ; break ;
+            case GxB_FULL :        s = "full"        ; break ;
+            default :              s = ""            ; break ;
         }
         pargout [1] = mxCreateString (s) ;
     }

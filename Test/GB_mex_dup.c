@@ -2,8 +2,8 @@
 // GB_mex_dup: copy a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_dup (A, type, method)"
+#define USAGE "C = GB_mex_dup (A, type, method, sparsity)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -35,7 +35,7 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
 
     // check inputs
-    if (nargout > 1 || nargin < 1 || nargin > 3)
+    if (nargout > 1 || nargin < 1 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -57,12 +57,14 @@ void mexFunction
     // get method
     int GET_SCALAR (2, int, method, 0) ;
 
+    // get sparsity
+    int GET_SCALAR (3, int, sparsity, GxB_DEFAULT) ;
+
     if (ctype == A->type)
     {
-        // copy C with the same type as A
-        if (method == 0)
+        // copy C with the same type as A, with default sparsity
+        if (method == 0 && sparsity == GxB_DEFAULT)
         {
-            // printf ("dup\n") ;
             METHOD (GrB_Matrix_dup (&C, A)) ;
         }
         else
@@ -70,7 +72,6 @@ void mexFunction
             // try another method, just for testing (see User Guide)
 
             // C = create an exact copy of A, just like GrB_Matrix_dup
-            // printf ("tran dup\n") ;
             GrB_Type type ;
             GrB_Index nrows, ncols ;
 
@@ -84,6 +85,10 @@ void mexFunction
                 GrB_Matrix_ncols (&ncols, A) ;                  \
                 GrB_Matrix_new (&C, type, nrows, ncols) ;       \
                 GrB_Descriptor_new (&desc) ;                    \
+                if (sparsity != GxB_DEFAULT)                    \
+                {                                               \
+                    GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity) ;\
+                }                                               \
                 GxB_Desc_set (desc, GrB_INP0, GrB_TRAN) ;       \
             }
             #define FREE_DEEP_COPY                              \
@@ -93,7 +98,18 @@ void mexFunction
             }
 
             GET_DEEP_COPY ;
-            METHOD (GrB_transpose (C, NULL, NULL, A, desc)) ;
+
+            if (method == 1)
+            {
+                // C = A using GrB_transpose with a desc.inp0 = transpose
+                METHOD (GrB_transpose (C, NULL, NULL, A, desc)) ;
+            }
+            else
+            {
+                // C = A using GrB_assign
+                METHOD (GrB_assign (C, NULL, NULL, A,
+                    GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
+            }
 
             #undef GET_DEEP_COPY
             #undef FREE_DEEP_COPY
@@ -109,14 +125,18 @@ void mexFunction
         }
 
         // C = (ctype) A
-        // printf ("cast\n") ;
         GrB_Index nrows, ncols ;
+
         #define GET_DEEP_COPY                               \
         {                                                   \
             GrB_Matrix_nrows (&nrows, A) ;                  \
             GrB_Matrix_ncols (&ncols, A) ;                  \
             GrB_Matrix_new (&C, ctype, nrows, ncols) ;      \
             GrB_Descriptor_new (&desc) ;                    \
+            if (sparsity != GxB_DEFAULT)                    \
+            {                                               \
+                GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity) ; \
+            }                                               \
             GxB_Desc_set (desc, GrB_INP0, GrB_TRAN) ;       \
         }
         #define FREE_DEEP_COPY                              \
@@ -126,7 +146,18 @@ void mexFunction
         }
 
         GET_DEEP_COPY ;
-        METHOD (GrB_transpose (C, NULL, NULL, A, desc)) ;
+
+        if (method == 1)
+        {
+            // C = A using GrB_transpose with a desc.inp0 = transpose
+            METHOD (GrB_transpose (C, NULL, NULL, A, desc)) ;
+        }
+        else
+        {
+            // C = A using GrB_assign
+            METHOD (GrB_assign (C, NULL, NULL, A,
+                GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
+        }
 
         #undef GET_DEEP_COPY
         #undef FREE_DEEP_COPY

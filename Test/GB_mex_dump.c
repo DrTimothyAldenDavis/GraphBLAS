@@ -2,8 +2,8 @@
 // GB_mex_dump: copy and print a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 {                                       \
     GrB_Matrix_free_(&A) ;              \
     Complex_finalize ( ) ;              \
-    GB_mx_put_global (false) ;          \
+    GB_mx_put_global (true) ;           \
 }
 
 void mexFunction

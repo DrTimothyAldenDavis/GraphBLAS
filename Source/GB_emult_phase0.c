@@ -2,8 +2,8 @@
 // GB_emult_phase0: find vectors of C to compute for C=A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -288,7 +288,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                     // (8) A sparse, B sparse, M sparse: C sparse
                     //----------------------------------------------------------
 
-                    ;
+                    Ch = NULL ;
                 }
             }
         }
@@ -354,7 +354,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                 // (4) A sparse, B sparse: C sparse
                 //--------------------------------------------------------------
 
-                ;
+                Ch = NULL ;
             }
         }
     }
@@ -366,14 +366,15 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t Cnvec ;
 
     if (Ch == NULL)
-    {
+    { 
         // C is sparse
         (*C_sparsity) = GxB_SPARSE ;
         Cnvec = n ;
     }
     else
     {
-        // C is hypersparse
+        // C is hypersparse; one of A, B, or M are hypersparse
+        ASSERT (A_is_hyper || B_is_hyper || M_is_hyper) ;
         (*C_sparsity) = GxB_HYPERSPARSE ;
         if (Ch == Ah)
         { 

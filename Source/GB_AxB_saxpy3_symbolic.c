@@ -2,8 +2,8 @@
 // GB_AxB_saxpy3_symbolic: symbolic analysis for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -20,7 +20,6 @@
 #include "GB_AxB_saxpy3_template.h"
 #include "GB_atomics.h"
 #include "GB_bracket.h"
-// GB_GET_A_k and GB_GET_M_j declare aknz and mjnz, but these are unused here.
 #include "GB_unused.h"
 
 void GB_AxB_saxpy3_symbolic
@@ -68,8 +67,10 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
-    const bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B);
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+    const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -77,8 +78,9 @@ void GB_AxB_saxpy3_symbolic
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_hyper = GB_IS_HYPER (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_jumbled = A->jumbled ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
@@ -91,6 +93,7 @@ void GB_AxB_saxpy3_symbolic
     int64_t mvlen = 0 ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    const bool M_jumbled = GB_JUMBLED (M) ;
     if (M != NULL)
     { 
         Mp = M->p ;
@@ -177,12 +180,8 @@ void GB_AxB_saxpy3_symbolic
                 // the mask if M(:,j) is a dense vector, since in that case
                 // the numeric phase accesses M(:,j) directly, not via Hf.
 
-                // M_dense_in_place is true only if M is dense, and all tasks
-                // are fine or coarse hash tasks (no Gustvason tasks).
-                ASSERT (!M_dense_in_place) ;
-
                 if (mjnz > 0)
-                {
+                { 
                     int8_t *GB_RESTRICT
                         Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                     GB_SCATTER_M_j (mystart, myend, 1) ;
@@ -250,7 +249,6 @@ void GB_AxB_saxpy3_symbolic
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast  = TaskList [taskid].end ;
             int64_t mark = 0 ;
-            // int64_t nk = klast - kfirst + 1 ;
 
             if (use_Gustavson)
             {
@@ -266,49 +264,9 @@ void GB_AxB_saxpy3_symbolic
                     // phase1: coarse Gustavson task, C=A*B
                     //----------------------------------------------------------
 
-                    // Initially, Hf [...] < mark for all Hf.
-                    // Hf [i] is set to mark when C(i,j) is found.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        if (bjnz == 1 && !A_is_bitmap)
-                        { 
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;            // get A(:,k)
-                            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-                            continue ;
-                        }
-                        mark++ ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == cvlen && !A_is_bitmap)
-                            { 
-                                cjnz = cvlen ;  // A(:,k) is dense
-                                break ;         // so nnz(C(:,j)) = cvlen
-                            }
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                if (!GBB (Ab, pA)) continue ;
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                if (Hf [i] != mark)     // if true, i is new
-                                { 
-                                    Hf [i] = mark ; // mark C(i,j) as seen
-                                    cjnz++ ;        // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;            // ok: C is sparse
-                    }
+                    #define GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE1
+                    #include "GB_meta16_factory.c"
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE1
 
                 }
                 else if (mask_is_M)
@@ -318,44 +276,9 @@ void GB_AxB_saxpy3_symbolic
                     // phase1: coarse Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    // Initially, Hf [...] < mark for all of Hf.
-
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
-                    // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0) continue ;
-                        GB_GET_M_j_RANGE (64) ;
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ; // scatter Mj
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        { 
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == 0) continue ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
-                                {                                              \
-                                    Hf [i] = mark1 ;  /* mark C(i,j) as seen */\
-                                    cjnz++ ;          /* C(i,j) is new */      \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
+                    #define GB_SAXPY_COARSE_GUSTAVSON_M_PHASE1
+                    #include "GB_meta16_factory.c"
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_M_PHASE1
 
                 }
                 else
@@ -365,42 +288,10 @@ void GB_AxB_saxpy3_symbolic
                     // phase1: coarse Gustavson task, C<!M>=A*B
                     //----------------------------------------------------------
 
-                    // Initially, Hf [...] < mark for all of Hf.
+                    #define GB_SAXPY_COARSE_GUSTAVSON_NOTM_PHASE1
+                    #include "GB_meta16_factory.c"
+                    #undef  GB_SAXPY_COARSE_GUSTAVSON_NOTM_PHASE1
 
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
-                    // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
-                    // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ; // scatter Mj
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                if (!GBB (Ab, pA)) continue ;
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                if (Hf [i] < mark)      // if true, M(i,j) is 0
-                                { 
-                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
-                                    cjnz++ ;            // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
-                    }
                 }
 
             }
@@ -415,7 +306,7 @@ void GB_AxB_saxpy3_symbolic
                 int64_t hash_bits = (hash_size-1) ;
 
                 if (M == NULL || ignore_mask)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // phase1: coarse hash task, C=A*B
@@ -423,7 +314,8 @@ void GB_AxB_saxpy3_symbolic
 
                     // no mask present, or mask ignored
                     #undef GB_CHECK_MASK_ij
-                    #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                    #define GB_SAXPY_COARSE_HASH_PHASE1
+                    #include "GB_meta16_factory.c"
 
                 }
                 else if (mask_is_M)
@@ -436,7 +328,9 @@ void GB_AxB_saxpy3_symbolic
                     if (M_dense_in_place)
                     { 
 
+                        //------------------------------------------------------
                         // M(:,j) is dense.  M is not scattered into Hf.
+                        //------------------------------------------------------
 
                         ASSERT (!Mask_struct || M_is_bitmap) ;
                         #define GB_CHECK_MASK_ij                        \
@@ -448,29 +342,32 @@ void GB_AxB_saxpy3_symbolic
                         switch (msize)
                         {
                             default:
-                            case 1:
-                            {
+                            case 1 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint8_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 2:
-                            {
+                                #undef  M_SIZE
+                                #define M_SIZE 1
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 2 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 4:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 4 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 8:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 8 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 16:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 16 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint64_t
+                                #undef  M_SIZE
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
                                 #define GB_CHECK_MASK_ij                    \
@@ -480,60 +377,22 @@ void GB_AxB_saxpy3_symbolic
                                             (Mjx [2*i] != 0) ||             \
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (!mij) continue ;
-
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
+                                #include "GB_meta16_factory.c"
+                                break ;
                         }
+                        #undef GB_SAXPY_COARSE_HASH_PHASE1
+
                     }
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, C(i,j) ignored if
-                    //           this case occurs while scanning A(:,k)
-                    // h == i, f == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // h == i, f == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                    else
                     {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0) continue ;
-                        GB_GET_M_j_RANGE (64) ;
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        { 
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == 0) continue ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                for (GB_HASH (i))       /* find i in hash */   \
-                                {                                              \
-                                    int64_t f = Hf [hash] ;                    \
-                                    if (f < mark) break ; /* M(i,j)=0; ignore*/\
-                                    if (Hi [hash] == i)   /* if true, i found*/\
-                                    {                                          \
-                                        if (f == mark)  /* if true, i is new */\
-                                        {                                      \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            cjnz++ ;    /* C(i,j) is new */    \
-                                        }                                      \
-                                        break ;                                \
-                                    }                                          \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
+
+                        //------------------------------------------------------
+                        // M is sparse and scattered into Hf
+                        //------------------------------------------------------
+
+                        #define GB_SAXPY_COARSE_HASH_M_PHASE1
+                        #include "GB_meta16_factory.c"
+                        #undef  GB_SAXPY_COARSE_HASH_M_PHASE1
                     }
 
                 }
@@ -545,23 +404,24 @@ void GB_AxB_saxpy3_symbolic
                     //----------------------------------------------------------
 
                     if (M_dense_in_place)
-                    { 
+                    {
 
+                        //------------------------------------------------------
                         // M(:,j) is dense.  M is not scattered into Hf.
+                        //------------------------------------------------------
 
                         if (Mask_struct && !M_is_bitmap)
                         { 
-GB_GOTCHA ;
                             // structural mask, complemented, not bitmap.
-                            // No work to do.
-                            #ifdef GB_DEBUG
+                            // No work to do; C is empty.
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)
                             {
-                                ASSERT (Cp [kk] == 0) ;
+                                Cp [kk] = 0 ;
                             }
-                            #endif
                             continue ;
                         }
+
+                        #define GB_SAXPY_COARSE_HASH_PHASE1
 
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \
@@ -573,29 +433,32 @@ GB_GOTCHA ;
                         switch (msize)
                         {
                             default:
-                            case 1:
-                            {
+                            case 1 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint8_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 2:
-                            {
+                                #undef  M_SIZE
+                                #define M_SIZE 1
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 2 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 4:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 4 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 8:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 8 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
-                            case 16:
-                            {
+                                #include "GB_meta16_factory.c"
+                                break ;
+                            case 16 : 
+                                #undef  M_TYPE
                                 #define M_TYPE uint64_t
+                                #undef  M_SIZE
                                 #define M_SIZE 2
                                 #undef  GB_CHECK_MASK_ij
                                 #define GB_CHECK_MASK_ij                    \
@@ -605,54 +468,22 @@ GB_GOTCHA ;
                                             (Mjx [2*i] != 0) ||             \
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (mij) continue ;
-
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
-                            }
+                                #include "GB_meta16_factory.c"
+                                break ;
                         }
+                        #undef GB_SAXPY_COARSE_HASH_PHASE1
+
                     }
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, and C(i,j) not yet seen.
-                    // h == i, f == mark   : M(i,j)=1. C(i,j) ignored.
-                    // h == i, f == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                    else
                     {
-                        GB_GET_B_j ;            // get B(:,j)
-                        Cp [kk] = 0 ;           // ok: C is sparse
-                        if (bjnz == 0) continue ;
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            if (!GBB (Bb, pB)) continue ;
-                            int64_t k = GBI (Bi, pB, bvlen) ;   // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                if (!GBB (Ab, pA)) continue ;
-                                int64_t i = GBI (Ai, pA, avlen) ; // get A(i,k)
-                                for (GB_HASH (i))       // find i in hash
-                                {
-                                    if (Hf [hash] < mark)   // if true, i is new
-                                    { 
-                                        Hf [hash] = mark1 ; // mark C(i,j) seen
-                                        Hi [hash] = i ;
-                                        cjnz++ ;        // C(i,j) is a new entry
-                                        break ;
-                                    }
-                                    if (Hi [hash] == i) break ;
-                                }
-                            }
-                        }
-                        // count the entries in C(:,j)
-                        Cp [kk] = cjnz ;        // ok: C is sparse
+
+                        //------------------------------------------------------
+                        // M is sparse and scattered into Hf
+                        //------------------------------------------------------
+
+                        #define GB_SAXPY_COARSE_HASH_NOTM_PHASE1
+                        #include "GB_meta16_factory.c"
+                        #undef  GB_SAXPY_COARSE_HASH_NOTM_PHASE1
                     }
                 }
             }

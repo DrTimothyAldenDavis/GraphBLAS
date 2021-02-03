@@ -2,8 +2,8 @@
 // GB_AxB_dot3_one_slice: slice the entries and vectors of a single matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -56,8 +56,8 @@ GrB_Info GB_AxB_dot3_one_slice
     ASSERT (GB_ZOMBIES_OK (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (GB_PENDING_OK (M)) ;
-    ASSERT (!GB_IS_BITMAP (M)) ;        // ok: M is sparse or hyper
-    ASSERT (!GB_IS_FULL (M)) ;          // ok: M is sparse or hyper
+    ASSERT (!GB_IS_BITMAP (M)) ;
+    ASSERT (!GB_IS_FULL (M)) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
@@ -121,7 +121,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1))
+    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;

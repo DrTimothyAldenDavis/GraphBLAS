@@ -2,8 +2,8 @@
 // GxB_Vector_export_Bitmap: export a bitmap vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -16,23 +16,27 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    GrB_Index *nvals,   // # of entries
-    int8_t **vb,        // bitmap, size n
-    void **vx,          // values, size n entries
+
+    int8_t **vb,        // bitmap, vb_size >= n
+    void **vx,          // values, vx_size 1, or >= n
+    GrB_Index *vb_size, // size of vb
+    GrB_Index *vx_size, // size of vx
+
+    GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_Bitmap (&v, &type, &n, &nvals,"
-        " &vb, &vx, desc)") ;
+    GB_WHERE1 ("GxB_Vector_export_Bitmap (&v, &type, &n, "
+        " &vb, &vx, &vb_size, &vx_size, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_Bitmap") ;
     GB_RETURN_IF_NULL (v) ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -46,16 +50,36 @@ GB_GOTCHA ;
 
     ASSERT ((*v)->is_csc) ;
     GB_OK (GB_convert_any_to_bitmap ((GrB_Matrix) *v, Context)) ;
-    ASSERT (GB_IS_BITMAP (*v)) ;
 
     //--------------------------------------------------------------------------
     // export the vector
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_IS_BITMAP (*v)) ;
+    ASSERT ((*v)->is_csc) ;
+    ASSERT (!GB_ZOMBIES (*v)) ;
+    ASSERT (!GB_JUMBLED (*v)) ;
+    ASSERT (!GB_PENDING (*v)) ;
+
+    int sparsity ;
+    bool is_csc ;
     GrB_Index vdim ;
+
     info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
-        NULL, nvals, NULL, NULL, NULL,
-        NULL, NULL, vb, NULL, vx, NULL, NULL, Context) ;
+        NULL, NULL,     // Ap
+        NULL, NULL,     // Ah
+        vb,   vb_size,  // Ab
+        NULL, NULL,     // Ai
+        vx,   vx_size,  // Ax
+        nvals, NULL, NULL,                  // nvals for bitmap
+        &sparsity, &is_csc, Context) ;      // bitmap by col
+
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT (sparsity == GxB_BITMAP) ;
+        ASSERT (is_csc) ;
+        ASSERT (vdim == 1) ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -2,8 +2,8 @@
 // GrB_Vector_extract: w<M> = accum (w, u(I))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // extract entries

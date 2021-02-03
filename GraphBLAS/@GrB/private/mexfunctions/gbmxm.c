@@ -2,8 +2,8 @@
 // gbmxm: sparse matrix-matrix multiplication
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -47,12 +47,19 @@ void mexFunction
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    int nmatrices, nstrings, ncells ;
+    int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
     CHECK_ERROR (nmatrices < 2 || nstrings < 1 || ncells > 0, USAGE) ;
+
+    // ensure the descriptor is present, and set GxB_SORT to true
+    if (desc == NULL)
+    { 
+        OK (GrB_Descriptor_new (&desc)) ;
+    }
+    OK (GxB_Desc_set (desc, GxB_SORT, true)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
@@ -141,13 +148,9 @@ void mexFunction
         OK (GxB_BinaryOp_ztype (&ctype, add)) ;
 
         // create the matrix C and set its format and sparsity
-        OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_FORMAT, fmt)) ;
-        int sparsity = gb_get_sparsity (A, B, 0) ;
-printf ("sparsity: %d\n", sparsity) ;
-        OK1 (C, GxB_Matrix_Option_set (C, GxB_SPARSITY, sparsity)) ;
-    GxB_print (C, 3) ;
+        sparsity = gb_get_sparsity (A, B, sparsity) ;
+        C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
     }
 
     //--------------------------------------------------------------------------
@@ -169,7 +172,6 @@ printf ("sparsity: %d\n", sparsity) ;
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    GxB_print (C, 3) ;
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;

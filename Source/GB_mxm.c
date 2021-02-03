@@ -2,8 +2,8 @@
 // GB_mxm: matrix-matrix multiply for GrB_mxm, GrB_mxv, and GrB_vxm
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -36,9 +36,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Context Context
 )
 {
+// GB_Global_timing_clear_all ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -105,11 +108,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-    GB_BURBLE_DENSE (B, "(B %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-
     //--------------------------------------------------------------------------
     // T = A*B, A'*B, A*B', or A'*B', also using the mask if present
     //--------------------------------------------------------------------------
@@ -130,11 +128,25 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (0, ttt) ;
+// ttt = omp_get_wtime ( ) ;
+
     bool mask_applied = false ;
     bool done_in_place = false ;
     GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
         Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
-        &mask_applied, &done_in_place, AxB_method, Context)) ;
+        &mask_applied, &done_in_place, AxB_method, do_sort, Context)) ;
+
+// ttt = omp_get_wtime ( ) - ttt ;
+// GB_Global_timing_add (1, ttt) ;
+// ttt = omp_get_wtime ( ) ;
+//  GBURBLE ("\n") ;
+//  for (int kk = 0 ; kk < 20 ; kk++)
+//  {
+//      double tttt = GB_Global_timing_get (kk) ;
+//      if (tttt > 0) GBURBLE ("phase %2d: %14.6f sec\n", kk, tttt) ;
+//  }
 
     if (done_in_place)
     { 
@@ -157,7 +169,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     if ((accum == NULL) && (C->is_csc == T->is_csc)
         && (M == NULL || (M != NULL && mask_applied))
         && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
-    { 
+    {
         // C = 0 ; C = (ctype) T ; with the same CSR/CSC format.  The mask M
         // (if any) has already been applied.  If C is also empty, or to be
         // cleared anyway, and if accum is not present, then T can be
@@ -179,16 +191,13 @@ GrB_Info GB_mxm                     // C<M> = A*B
             GBURBLE ("(wait, so zombies are not typecasted) ") ;
             GB_OK (GB_Matrix_wait (T, Context)) ;
         }
-        info = GB_transplant_conform (C, C->type, &T, Context) ;
-        #ifdef GB_DEBUG
-        if (info == GrB_SUCCESS)
-        {
-            // C may be returned with zombies, but no pending tuples
-            ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB0) ;
-            ASSERT (GB_ZOMBIES_OK (C)) ;
-            ASSERT (!GB_PENDING (C)) ;
-        }
-        #endif
+        GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
+        // C may be returned with zombies and jumbled, but no pending tuples
+        ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB0) ;
+        ASSERT (GB_ZOMBIES_OK (C)) ;
+        ASSERT (GB_JUMBLED_OK (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+        return (GB_block (C, Context)) ;
     }
     else
     { 
@@ -200,18 +209,14 @@ GrB_Info GB_mxm                     // C<M> = A*B
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)
         {
-            // C may be returned with zombies and pending tuples
+            // C may be returned jumbled, with zombies and pending tuples
             ASSERT_MATRIX_OK (C, "Final C from GB_mxm (accum_mask)", GB0) ;
             ASSERT (GB_ZOMBIES_OK (C)) ;
+            ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (GB_PENDING_OK (C)) ;
         }
         #endif
+        return (info) ;
     }
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    return (info) ;
 }
 

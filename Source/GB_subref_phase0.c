@@ -2,8 +2,8 @@
 // GB_subref_phase0: find vectors of C = A(I,J) and determine I,J properties
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -317,7 +317,7 @@ GrB_Info GB_subref_phase0
 
     Count = GB_CALLOC (max_ntasks+1, int64_t) ;
     if (Count == NULL)
-    {
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }

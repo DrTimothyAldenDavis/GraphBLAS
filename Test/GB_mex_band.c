@@ -2,8 +2,8 @@
 // GB_mex_band: C = tril (triu (A,lo), hi), or with A'
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -40,11 +40,11 @@ typedef struct
     int64_t hi ;
 } LoHi_type ; 
 
-bool LoHi_band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk) ;
+bool LoHi_band (GrB_Index i, GrB_Index j,
+    /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
-bool LoHi_band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk)
+bool LoHi_band (GrB_Index i, GrB_Index j,
+    /* x is unused: */ const void *x, const LoHi_type *thunk)
 {
     int64_t i2 = (int64_t) i ;
     int64_t j2 = (int64_t) j ;

@@ -2,8 +2,8 @@
 // GB_masker_template:  R = masker (C, M, Z)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -98,12 +98,12 @@
 
         // phase2
         if (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE)
-        {
+        { 
             // R is sparse or hypersparse (phase1 and phase2)
             #include "GB_sparse_masker_template.c"
         }
         else // R_sparsity == GxB_BITMAP
-        {
+        { 
             // R is bitmap (phase2 only)
             ASSERT (R_sparsity == GxB_BITMAP) ;
             #include "GB_bitmap_masker_template.c"

@@ -2,8 +2,8 @@
 // GB_mex_select: C<M> = accum(C,select(A,k)) or select(A',k)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -19,8 +19,17 @@
     GrB_Matrix_free_(&C) ;              \
     GrB_Matrix_free_(&M) ;              \
     GrB_Matrix_free_(&A) ;              \
+    GxB_SelectOp_free_(&isnanop) ;      \
     GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true) ;           \
+}
+
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
+{ 
+    double aij = * ((double *) x) ;
+    return (isnan (aij)) ;
 }
 
 void mexFunction
@@ -38,9 +47,10 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
     GxB_Scalar Thunk = NULL ;
+    GxB_SelectOp isnanop = NULL ;
 
     // check inputs
-    if (nargout > 1 || nargin < 6 || nargin > 8)
+    if (nargout > 1 || nargin < 5 || nargin > 8)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -92,9 +102,15 @@ void mexFunction
         mexErrMsgTxt ("SelectOp failed") ;
     }
 
-    // get Thunk (shallow copy)
-    if (nargin > 5)
+    if (op == NULL)
     {
+        // user-defined isnan operator, with no Thunk
+        GxB_SelectOp_new (&isnanop, isnan64, GrB_FP64, NULL) ;
+        op = isnanop ;
+    }
+    else if (nargin > 5)
+    {
+        // get Thunk (shallow copy)
         if (mxIsSparse (pargin [5]))
         {
             Thunk = (GxB_Scalar) GB_mx_mxArray_to_Matrix (pargin [5],
@@ -187,7 +203,7 @@ void mexFunction
             }
             else
             {
-                mexErrMsgTxt ("unknown type") ;
+                mexErrMsgTxt ("unknown thunk type") ;
             }
             GxB_Scalar_wait_(&Thunk) ;
         }

@@ -2,8 +2,8 @@
 // GB_subassign_08s_and_16: C(I,J)<M or !M> += A ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -94,12 +94,12 @@ GrB_Info GB_subassign_08s_and_16
     //--------------------------------------------------------------------------
 
     if (A_is_bitmap)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }
@@ -395,7 +395,7 @@ GrB_Info GB_subassign_08s_and_16
                         }
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }
@@ -465,7 +465,7 @@ GrB_Info GB_subassign_08s_and_16
                         GB_NEXT (S) ;
                     }
                     else if (iA < iS)
-                    { 
+                    {
                         // S (i,j) is not present, A (i,j) is present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                         if (Mask_comp) mij = !mij ;

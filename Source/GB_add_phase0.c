@@ -2,8 +2,8 @@
 // GB_add_phase0: find vectors of C to compute for C=A+B or C<M>=A+B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -187,12 +187,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
     if (p_Ch_is_Mh != NULL)
-    {
+    { 
         (*p_Ch_is_Mh) = false ;
     }
 
     if ((*C_sparsity) == GxB_BITMAP || (*C_sparsity) == GxB_FULL)
-    {
+    { 
         // nothing to do in phase0 for C bitmap or full
         (*p_Cnvec) = A->vdim ;  // not needed; to be consistent with GB_emult
         return (GrB_SUCCESS) ;
@@ -332,7 +332,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         kB_start = GB_MALLOC (ntasks+1, int64_t) ;
         kC_start = GB_MALLOC (ntasks+1, int64_t) ;
         if (kA_start == NULL || kB_start == NULL || kC_start == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -629,14 +629,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         //----------------------------------------------------------------------
 
         // C will be sparse
-
         Cnvec = n ;
         nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
         if (!GB_allocate_result (Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
         { 
-GB_GOTCHA ;
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;

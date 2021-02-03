@@ -2,8 +2,8 @@
 // GB_matrix.h: definitions for GrB_Matrix and GrB_Vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -338,12 +338,6 @@ GB_Pending Pending ;        // list of pending tuples
 uint64_t nzombies ;     // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
-// MKL analysis, if available
-//------------------------------------------------------------------------------
-
-void *mkl ;
-
-//------------------------------------------------------------------------------
 // sparsity control
 //------------------------------------------------------------------------------
 
@@ -385,8 +379,8 @@ void *mkl ;
 //      By default, all GrB_Matrices are held in CSR form, unless they are
 //      n-by-1 (then they are CSC).  The GrB_vector is always CSC.
 
-// (2) If A->sparsity is GxB_DEFAULT, then the following rules are used to
-//      control the sparsity structure:
+// (2) If A->sparsity is GxB_AUTO_SPARSITY (15), then the following rules are
+//      used to control the sparsity structure:
 //
 //      (a) When a matrix is created, it is empty and starts as hypersparse,
 //          except that a GrB_Vector is never hypersparse.
@@ -402,16 +396,14 @@ void *mkl ;
 //      (d) A matrix with anz = GB_NNZ(A) entries and dimension A->vlen by
 //          A->vdim can have at most anz_dense = (A->vlen)*(A->vdim) entries.
 //          If A is sparse/hypersparse with anz > A->bitmap_switch * anz_dense,
-//          then it switches to bitmap.  A->bitmap_switch = (1/8) by default.
-//          If A is bitmap and anz = (A->bitmap_switch / 64) * anz_dense, that
-//          is, (1/512)*anz_dense, then it switches to sparse.  In between
-//          those two regions, the sparsity structure is unchanged.
-
+//          then it switches to bitmap.  If A is bitmap and anz =
+//          (A->bitmap_switch / 2) * anz_dense, it switches to sparse.  In
+//          between those two regions, the sparsity structure is unchanged.
 
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
-int sparsity ;          // controls sparsity structure: default, hypersparse,
-                        // sparse, bitmap, or full.
+int sparsity ;          // controls sparsity structure: hypersparse,
+                        // sparse, bitmap, or full, or any combination.
 
 //------------------------------------------------------------------------------
 // shallow matrices
@@ -547,4 +539,6 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
         }
 
 #endif
+
+// #include "GB_matrix_mkl_template.h"
 

@@ -2,8 +2,8 @@
 // GB_clear: clears the content of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 
 // A is first converted to sparse or hypersparse, and then conformed via
 // GB_conform.  If A->sparsity disables the sparse and hypersparse structures,
-// this will convert A to bitmap.
+// A is converted bitmap instead.
 
 #include "GB.h"
 
@@ -44,6 +44,21 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
+
+    //--------------------------------------------------------------------------
+    // clear the content of A if bitmap
+    //--------------------------------------------------------------------------
+
+    int sparsity = GB_sparsity_control (A->sparsity, A->vdim) ;
+    if (((sparsity & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0) && GB_IS_BITMAP (A))
+    { 
+        // A should remain bitmap
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_memset (A->b, 0, GB_NNZ_HELD (A), nthreads_max) ;
+        A->nvals = 0 ;
+        A->magic = GB_MAGIC ;
+        return (GrB_SUCCESS) ;
+    }
 
     //--------------------------------------------------------------------------
     // clear the content of A

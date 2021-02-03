@@ -2,8 +2,8 @@
 // GB_subassign_06s_and_14: C(I,J)<M or !M> = A ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -100,12 +100,12 @@ GrB_Info GB_subassign_06s_and_14
     //--------------------------------------------------------------------------
 
     if (A_is_bitmap)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }
@@ -118,7 +118,7 @@ GrB_Info GB_subassign_06s_and_14
     {
 
         //----------------------------------------------------------------------
-        // phase1: A is bitmap
+        // phase1: A is bitmap TODO: this is SLOW! for method 06s
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -423,7 +423,7 @@ GrB_Info GB_subassign_06s_and_14
                         }
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

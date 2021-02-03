@@ -2,8 +2,8 @@
 // GxB_Desc_get: get a field in a descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -99,17 +99,6 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             }
             break ;
 
-        case GxB_DESCRIPTOR_MKL :     // same as GxB_MKL
-
-            {
-                va_start (ap, field) ;
-                int *use_mkl = va_arg (ap, int *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (use_mkl) ;
-                (*use_mkl) = (desc == NULL) ? false : desc->use_mkl ;
-            }
-            break ;
-
         case GxB_AxB_METHOD : 
 
             {
@@ -120,6 +109,20 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->axb ;
             }
             break ;
+
+        case GxB_SORT :
+
+            {
+                va_start (ap, field) ;
+                int *do_sort = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (do_sort) ;
+                int s = (desc == NULL) ? GxB_DEFAULT : desc->do_sort ;
+                (*do_sort) = s ;
+            }
+            break ;
+
+        // #include "GxB_Desc_get_mkl_template.c"
 
         default : 
 

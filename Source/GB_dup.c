@@ -2,8 +2,8 @@
 // GB_dup: make a deep copy of a sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -45,7 +45,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A to duplicate", GB0) ;
 
@@ -54,7 +53,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT (A) ;        // TODO: allow C and A to be jumbled
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
 
     //--------------------------------------------------------------------------
     // C = A

@@ -2,8 +2,8 @@
 // GB_ops.c: built-in types, functions, operators, and other externs
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -462,7 +462,7 @@ GxB_SelectOp GxB_LE_THUNK = & GB_opaque_GxB_LE_THUNK ;
 GrB_Index GB_opaque_GrB_ALL = 0 ;
 const GrB_Index *GrB_ALL = & GB_opaque_GrB_ALL ;
 
-// the default hyper_switch is (1/16)
+// the default hyper_switch is defined in GB_defaults.h
 const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
 
 // set GxB_HYPER_SWITCH to either of these to ensure matrix is always, or never,

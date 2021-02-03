@@ -2,8 +2,8 @@
 // GB_printf.c: printing for GraphBLAS *check functions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -125,7 +125,7 @@ void GB_burble_assign
         case GB_COL_ASSIGN:
             // C(I,j) = A
             snprintf (IJ, GB_LEN, "(%s,j)", Istr) ;
-            GBURBLE ("C%s(%s,j) %s= A ", Mask, IJ, Op) ;
+            GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
         case GB_ASSIGN:

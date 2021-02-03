@@ -2,8 +2,8 @@
 // GB_Type_new: create a new user-defined type
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -29,6 +29,11 @@ GrB_Info GB_Type_new
     (*type) = NULL ;
 
     #if ( ! GB_HAS_VLA )
+
+        // Microsoft Visual Studio does not support variable-length arrays
+        // allocating automatically on the stack.  These arrays are used for
+        // scalar values for a given type.  If VLA is not supported,
+        // user-defined types can be no larger than GB_VLA_MAXSIZE.
 
         if (sizeof_ctype > GB_VLA_MAXSIZE)
         {

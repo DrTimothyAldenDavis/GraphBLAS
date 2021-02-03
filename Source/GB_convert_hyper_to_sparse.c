@@ -2,8 +2,8 @@
 // GB_convert_hyper_to_sparse: convert a matrix from hypersparse to sparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -36,6 +36,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     ASSERT_MATRIX_OK (A, "A being converted from hyper to sparse", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A from hypersparse to sparse
@@ -43,13 +44,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
     if (GB_IS_HYPERSPARSE (A))
     { 
-
-        //----------------------------------------------------------------------
-        // matrix is hypersparse (not sparse, bitmap, or full)
-        //----------------------------------------------------------------------
-
-        ASSERT (!GB_IS_FULL (A)) ;
-        ASSERT (!GB_IS_BITMAP (A)) ;
 
         //----------------------------------------------------------------------
         // determine the number of threads to use
@@ -73,7 +67,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         if (Ap_new == NULL)
         { 
             // out of memory
-            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -87,8 +80,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         //----------------------------------------------------------------------
 
         int64_t nvec = A->nvec ;                // # of vectors in Ah_old
-        int64_t *GB_RESTRICT Ap_old = A->p ;       // size nvec+1
-        int64_t *GB_RESTRICT Ah_old = A->h ;       // size nvec
+        int64_t *GB_RESTRICT Ap_old = A->p ;    // size nvec+1
+        int64_t *GB_RESTRICT Ah_old = A->h ;    // size nvec
         int64_t nvec_nonempty = 0 ;             // recompute A->nvec_nonempty
         int64_t anz = GB_NNZ (A) ;
 
@@ -218,7 +211,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->h_shallow = false ;
         A->magic = GB_MAGIC ;
         ASSERT (anz == GB_NNZ (A)) ;
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
 
         //----------------------------------------------------------------------
         // A is now sparse
@@ -228,11 +220,14 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // A is now in sparse form (or left as full or bitmap)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converted to sparse (or left as-is)", GB0) ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

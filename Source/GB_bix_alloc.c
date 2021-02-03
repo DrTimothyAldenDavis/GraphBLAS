@@ -2,8 +2,8 @@
 // GB_bix_alloc: allocate a matrix to hold a given number of entries
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -22,6 +22,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     GrB_Matrix A,           // matrix to allocate space for
     const GrB_Index nzmax,  // number of entries the matrix can hold
     const bool is_bitmap,   // if true, allocate A->b, otherwise A->b is NULL
+    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
     GB_Context Context
@@ -53,33 +54,35 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     bool ok = true ;
     if (is_sparse)
     { 
-        A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        if (A->nzmax <= 1)
+        {
+            A->i = GB_CALLOC (1, int64_t) ;
+        }
+        else
+        { 
+            A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        }
         ok = (A->i != NULL) ;
     }
     else if (is_bitmap)
     { 
-        // TODO: provide control to the caller to select calloc or malloc:
-        A->b = GB_CALLOC (A->nzmax, int8_t) ;
-        A->magic = GB_MAGIC ;
+        if (bitmap_calloc)
+        { 
+            // content is fully defined
+            A->b = GB_CALLOC (A->nzmax, int8_t) ;
+            A->magic = GB_MAGIC ;
+        }
+        else
+        { 
+            // bitmap is not defined and will be computed by the caller
+            A->b = GB_MALLOC (A->nzmax, int8_t) ;
+        }
         ok = (A->b != NULL) ;
     }
 
     if (numeric)
     { 
-        #ifdef GB_DEBUG
-        // Use calloc when debugging, so a newly allocated matrix can be
-        // printed.  This will affect valgrind results, however.  Accessing the
-        // values of this matrix will not result in warnings of uninitialized
-        // values.
-        A->x = GB_CALLOC (A->nzmax * A->type->size, GB_void) ;
-        #else
-        // Use malloc in production.  Accessing the values of the matrix will
-        // result in valgrind errors, but the matrix should not be accessed
-        // anyway.  TODO: valgrind will complain about GrB_Matrix_dup, which
-        // copies all of A->x with a memcpy.  So if A is a bitmap perhaps
-        // calloc should always be used.
         A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
-        #endif
         ok = ok && (A->x != NULL) ;
     }
 

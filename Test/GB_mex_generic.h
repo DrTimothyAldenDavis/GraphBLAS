@@ -2,13 +2,13 @@
 // GB_mex_generic.h: testing _Generic methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, _(c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_GENERIC_H
-#define GB_GENERIC_H
+#ifndef GB_MEX_GENERIC_H
+#define GB_MEX_GENERIC_H
 
 #if GxB_STDC_VERSION >= 201112L
 
@@ -235,12 +235,14 @@
 // GxB_set:
 #define GxB_Global_Option_set_(...)                 GxB_set (__VA_ARGS__)
 #define GxB_Matrix_Option_set_(...)                 GxB_set (__VA_ARGS__)
+#define GxB_Vector_Option_set_(...)                 GxB_set (__VA_ARGS__)
 #define GrB_Descriptor_set_(...)                    GxB_set (__VA_ARGS__)
 #define GxB_Desc_set_(...)                          GxB_set (__VA_ARGS__)
 
 // GxB_get:
 #define GxB_Global_Option_get_(...)                 GxB_get (__VA_ARGS__)
 #define GxB_Matrix_Option_get_(...)                 GxB_get (__VA_ARGS__)
+#define GxB_Vector_Option_get_(...)                 GxB_get (__VA_ARGS__)
 #define GxB_Descriptor_get_(...)                    GxB_get (__VA_ARGS__)
 #define GxB_Desc_get_(...)                          GxB_get (__VA_ARGS__)
 
@@ -691,11 +693,13 @@
 // GxB_Desc_set:
 #define GxB_Global_Option_set_(...)                 GxB_Global_Option_set (__VA_ARGS__)
 #define GxB_Matrix_Option_set_(...)                 GxB_Matrix_Option_set (__VA_ARGS__)
+#define GxB_Vector_Option_set_(...)                 GxB_Vector_Option_set (__VA_ARGS__)
 #define GrB_Descriptor_set_(...)                    GrB_Descriptor_set (__VA_ARGS__)
 
 // GxB_Desc_get:
 #define GxB_Global_Option_get_(...)                 GxB_Global_Option_get (__VA_ARGS__)
 #define GxB_Matrix_Option_get_(...)                 GxB_Matrix_Option_get (__VA_ARGS__)
+#define GxB_Vector_Option_get_(...)                 GxB_Vector_Option_get (__VA_ARGS__)
 #define GxB_Descriptor_get_(...)                    GxB_Descriptor_get (__VA_ARGS__)
 
 // GrB_wait:

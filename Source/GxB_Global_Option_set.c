@@ -2,8 +2,8 @@
 // GxB_Global_Option_set: set a global default option for all future matrices
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -42,6 +42,28 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 double hyper_switch = va_arg (ap, double) ;
                 va_end (ap) ;
                 GB_Global_hyper_switch_set ((float) hyper_switch) ;
+            }
+            break ;
+
+        case GxB_BITMAP_SWITCH : 
+
+            { 
+                va_start (ap, field) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
+                va_end (ap) ;
+                if (bitmap_switch == NULL)
+                {
+                    // set all switches to their default
+                    GB_Global_bitmap_switch_default ( ) ;
+                }
+                else
+                {
+                    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+                    {
+                        float b = (float) (bitmap_switch [k]) ;
+                        GB_Global_bitmap_switch_set (k, b) ;
+                    }
+                }
             }
             break ;
 
@@ -100,7 +122,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
-        // CUDA (in progress)
+        // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
@@ -123,23 +145,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // Intel MKL (in progress)
-        //----------------------------------------------------------------------
-
-        case GxB_GLOBAL_MKL :          // same as GxB_MKL
-
-            { 
-                va_start (ap, field) ;
-                int use_mkl = va_arg (ap, int) ;
-                va_end (ap) ;
-                GB_Global_use_mkl_set (use_mkl != 0) ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // invalid option
-        //----------------------------------------------------------------------
+        // #include "GxB_Global_Option_set_mkl_template.c"
 
         default : 
 

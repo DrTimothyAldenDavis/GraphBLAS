@@ -2,14 +2,15 @@
 // GB_emult.h: definitions for GB_emult
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #ifndef GB_EMULT_H
 #define GB_EMULT_H
 #include "GB.h"
+#include "GB_bitmap_assign_methods.h"
 
 GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (

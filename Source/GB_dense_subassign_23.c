@@ -2,8 +2,8 @@
 // GB_dense_subassign_23: C += B where C is dense and B is sparse or dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (B->vlen == C->vlen) ;
     ASSERT (B->vdim == C->vdim) ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full
 
     //--------------------------------------------------------------------------
     // get the operator

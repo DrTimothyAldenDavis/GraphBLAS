@@ -2,8 +2,8 @@
 // GB_AxB_saxpy3.h: definitions for C=A*B saxpy3 method
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
 ) ;
 
@@ -48,7 +49,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 // The hash functions and their parameters are modified from this paper:
 
-// [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
+// [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydin Buluc. 2018.
 // High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
 // Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
 // Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
@@ -92,7 +93,6 @@ typedef struct
     GB_void *Hf ;       // Hf array for hash table (int8_t or int64_t)
     GB_void *Hx ;       // Hx array for hash table
     int64_t my_cjnz ;   // # entries in C(:,j) found by this fine task
-    int64_t flops ;     // # of flops in this task
     int leader ;        // leader fine task for the vector C(:,j)
     int team_size ;     // # of fine tasks in the team for vector C(:,j)
 }
@@ -147,47 +147,45 @@ void GB_AxB_saxpy3_cumsum
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_generic: for any types and operators
+// GB_AxB_saxpy3_slice_balanced: create balanced parallel tasks for saxpy3
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxB_saxpy3_generic      // TODO rename GB_AxB_saxpy_generic
+GrB_Info GB_AxB_saxpy3_slice_balanced
 (
-    GrB_Matrix C,
-    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
-    const bool M_dense_in_place,    // ignored if C is bitmap
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_saxpy3task_struct *GB_RESTRICT TaskList, // NULL if C is bitmap
-    int ntasks,
-    int nfine,
-    int nthreads,
+    // inputs
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix M,             // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    // outputs
+    GB_saxpy3task_struct **TaskList_handle,
+    bool *apply_mask,               // if true, apply M during sapxy3
+    bool *M_dense_in_place,         // if true, use M in-place
+    int *ntasks,                    // # of tasks created (coarse and fine)
+    int *nfine,                     // # of fine tasks created
+    int *nthreads,                  // # of threads to use
     GB_Context Context
 ) ;
 
 //------------------------------------------------------------------------------
-// AVX2 instructions
+// GB_AxB_saxpy3_slice_quick: create a single sequential task for saxpy3
 //------------------------------------------------------------------------------
 
-#if defined ( __AVX2__ )
-
-    #include <x86intrin.h>
-    #include <immintrin.h>
-
-    // int64_t vector of length 4
-    typedef union i4vector64
-    {
-        // in avxintrin.h:
-        // typedef long long __v4di __attribute__ ((__vector_size__ (32)));
-        // __v4di v ;
-        int64_t i [4] ;
-        __m256i m ;
-        __m256d d ;
-    }
-    GB_vector ;
-
-#endif
+GrB_Info GB_AxB_saxpy3_slice_quick
+(
+    // inputs
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    // outputs
+    GB_saxpy3task_struct **TaskList_handle,
+    int *ntasks,                    // # of tasks created (coarse and fine)
+    int *nfine,                     // # of fine tasks created
+    int *nthreads,                  // # of threads to use
+    GB_Context Context
+) ;
 
 #endif
 

@@ -2,8 +2,8 @@
 // GB_bitmap_assign_notM_accum:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 // C<!M>(I,J) += A       assign
@@ -57,7 +57,8 @@ GrB_Info GB_bitmap_assign_notM_accum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit7", M, true, accum) ;
+    GBURBLE_BITMAP_ASSIGN ("bit7", M, true, accum,
+        Ikind, Jkind, assign_kind) ;
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, !M, accum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, !M, accum", GB0) ;
@@ -69,18 +70,18 @@ GrB_Info GB_bitmap_assign_notM_accum
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A
-    GB_GET_ACCUM
+    GB_GET_A_AND_SCALAR
+    GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // scatter the mask M into C
     //--------------------------------------------------------------------------
 
-    // for each entry mij == 1
-    //      Cb (i,j) += 2
-    #undef  GB_MASK_WORK
-    #define GB_MASK_WORK(pC) Cb [pC] += 2 ;
-    #include "GB_bitmap_assign_M_template.c"
+    // Cb [pC] += 2 for each entry M(i,j) in the mask
+    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+        pstart_Mslice, kfirst_Mslice, klast_Mslice,
+        M_nthreads, M_ntasks, Context) ;
 
     //--------------------------------------------------------------------------
     // do the assignment
@@ -102,7 +103,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 /* Cx [pC] = scalar  */         \
                 GB_ASSIGN_SCALAR (pC) ;         \
                 Cb [pC] = 1 ;                   \
-                cnvals++ ;                      \
+                task_cnvals++ ;                 \
             }                                   \
             else if (cb == 1)                   \
             {                                   \
@@ -114,7 +115,7 @@ GrB_Info GB_bitmap_assign_notM_accum
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // matrix assignment: C<!M>(I,J) += A
@@ -124,7 +125,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         //     if Cb(p) == 0
         //         Cx(p) = aij
         //         Cb(p) = 1       // C(iC,jC) is now present, insert
-        //         cnvals++
+        //         task_cnvals++
         //     if Cb(p) == 1
         //         Cx(p) += aij    // C(iC,jC) still present, updated
         //         Cb(p) still 1
@@ -139,7 +140,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 /* Cx [pC] = Ax [pA] */         \
                 GB_ASSIGN_AIJ (pC, pA) ;        \
                 Cb [pC] = 1 ;                   \
-                cnvals++ ;                      \
+                task_cnvals++ ;                 \
             }                                   \
             else if (cb == 1)                   \
             {                                   \
@@ -155,16 +156,18 @@ GrB_Info GB_bitmap_assign_notM_accum
     //--------------------------------------------------------------------------
 
     if (!C_replace)
-    {
+    { 
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 1       keep this entry
-        #undef  GB_MASK_WORK
-        #define GB_MASK_WORK(pC) Cb [pC] -= 2 ;
-        #include "GB_bitmap_assign_M_template.c"
+        // Cb [pC] -= 2 for each entry M(i,j) in the mask
+        GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+            M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MINUS_2,
+            pstart_Mslice, kfirst_Mslice, klast_Mslice,
+            M_nthreads, M_ntasks, Context) ;
     }
     else
-    {
+    { 
         // for each entry mij == 1
                 // 2 -> 0
                 // 3 -> 0       delete this entry
@@ -172,7 +175,7 @@ GrB_Info GB_bitmap_assign_notM_accum
         #define GB_MASK_WORK(pC)                \
         {                                       \
             int8_t cb = Cb [pC] ;               \
-            cnvals -= (cb == 3) ;               \
+            task_cnvals -= (cb == 3) ;          \
             Cb [pC] = 0 ;                       \
         }
         #include "GB_bitmap_assign_M_template.c"

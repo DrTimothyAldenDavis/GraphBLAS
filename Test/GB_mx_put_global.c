@@ -2,8 +2,8 @@
 // GB_mx_put_global: put the GraphBLAS status in MATLAB workspace
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -48,8 +48,8 @@ void GB_mx_put_global
     int64_t nmalloc = GB_Global_nmalloc_get ( ) ;
     if (nmalloc != 0)
     {
-        printf ("GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
-        mexErrMsgTxt ("memory leak!") ;
+        printf ("in GB_mx_put_global: GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
+        mexErrMsgTxt ("memory leak in test!") ;
     }
 }
 

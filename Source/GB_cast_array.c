@@ -2,8 +2,8 @@
 // GB_cast_array: typecast or copy an array
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -46,16 +46,6 @@ void GB_cast_array              // typecast an array
     ASSERT (GB_code_compatible (code1, code2)) ;
 
     //--------------------------------------------------------------------------
-    // quick memcpy if no typecast is needed
-    //--------------------------------------------------------------------------
-
-    if (code1 == code2 && Ab == NULL)
-    { 
-        GB_memcpy (Cx, Ax, anz * GB_code_size (code2, user_size), nthreads) ;
-        return ;
-    }
-
-    //--------------------------------------------------------------------------
     // typecast the array
     //--------------------------------------------------------------------------
 
@@ -80,7 +70,6 @@ void GB_cast_array              // typecast an array
         // launch the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_EXCLUDE_SAME_TYPES
         #include "GB_2type_factory.c"
 
     #endif
@@ -96,7 +85,7 @@ void GB_cast_array              // typecast an array
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
-    {
+    { 
         if (!GBB (Ab, p)) continue ;
         // Cx [p] = Ax [p]
         cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize) ;

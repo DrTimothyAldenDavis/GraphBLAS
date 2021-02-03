@@ -1,8 +1,8 @@
-% function gbtest65
+function gbtest65
 %GBTEST65 test GrB.mis
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
 load west0479 ; %#ok<LOAD>
@@ -14,8 +14,6 @@ maxisize = 0 ;
 n = size (A, 1) ;
 
 for trial = 1:100
-
-save gunk A trial
 
     if (mod (trial, 4) == 1)
         iset  = GrB.mis (A, 'check') ;

@@ -2,8 +2,8 @@
 // GrB_kronecker: Kronecker product
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_tran, B_tran, xx) ;
+        A_tran, B_tran, xx, xx7) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -82,7 +82,7 @@ GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_tran, B_tran, xx) ;
+        A_tran, B_tran, xx, xx7) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -129,7 +129,7 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_tran, B_tran, xx) ;
+        A_tran, B_tran, xx, xx7) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)

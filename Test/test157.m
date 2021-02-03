@@ -1,8 +1,8 @@
 function test157
 %TEST157 test sparsity formats
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
 
@@ -15,7 +15,6 @@ for k1 = 1:length(types)
 
     for sparsity_control = 0:15
         A.sparsity = sparsity_control ;
-        A
         C = GB_mex_dump (A, 2) ;
         GB_spec_compare (C, A) ;
     end
@@ -26,7 +25,6 @@ for k1 = 1:length(types)
 
     for sparsity_control = 0:15
         A.sparsity = sparsity_control ;
-        A
         C = GB_mex_dump (A, 2) ;
         GB_spec_compare (C, A) ;
     end
@@ -37,7 +35,6 @@ for k1 = 1:length(types)
         A.is_hyper = is_hyper ;
         for sparsity_control = 0:15
             A.sparsity = sparsity_control ;
-            A
             C = GB_mex_dump (A, 2) ;
             GB_spec_compare (C, A) ;
         end

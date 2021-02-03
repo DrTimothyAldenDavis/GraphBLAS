@@ -2,8 +2,8 @@
 // GB_mex_reduce_terminal: [c,flag] = sum(A), reduce to scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -71,16 +71,12 @@ void mexFunction
     // get the terminal value, if present.  Default is 1.
     double GET_SCALAR (1, double, terminal, 1) ;
 
-    // printf ("\nterminal %g\n", terminal) ;
-
     // create the Max operator
     info = GrB_BinaryOp_new (&Max, maxdouble, GrB_FP64, GrB_FP64, GrB_FP64);
     if (info != GrB_SUCCESS)
     {
         mexErrMsgTxt ("Max failed") ;
     }
-
-    // printf ("create the monoid:\n") ;
 
     // create the Max monoid
     info = GxB_Monoid_terminal_new_FP64_(&Max_Terminal, Max, (double) 0,
@@ -95,7 +91,7 @@ void mexFunction
     info = GrB_Matrix_reduce_FP64_(&c, NULL, Max_Terminal, A, NULL) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("error: %d %s\n", info) ;
+        printf ("error: %d\n", info) ;
         mexErrMsgTxt ("reduce failed") ;
     }
 

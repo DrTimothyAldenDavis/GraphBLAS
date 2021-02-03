@@ -2,8 +2,8 @@
 // gb_norm: compute the norm of a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ double gb_norm              // compute norm (A,kind)
     { 
         // if A is FP32, use the FP32 type and operators
         xtype = GrB_FP32 ;
-        absop = GxB_ABS_FP32 ;
+        absop = GrB_ABS_FP32 ;
         sumop = GrB_PLUS_MONOID_FP32 ;
         maxop = GrB_MAX_MONOID_FP32 ;
         minop = GrB_MIN_MONOID_FP32 ;
@@ -69,7 +69,7 @@ double gb_norm              // compute norm (A,kind)
         // otherwise, use FP64 type and operators; this will typecast the 
         // input matrix to FP64 if A is not of that type.
         xtype = GrB_FP64 ;
-        absop = GxB_ABS_FP64 ;
+        absop = GrB_ABS_FP64 ;
         sumop = GrB_PLUS_MONOID_FP64 ;
         maxop = GrB_MAX_MONOID_FP64 ;
         minop = GrB_MIN_MONOID_FP64 ;
@@ -179,7 +179,7 @@ double gb_norm              // compute norm (A,kind)
                 // t = zeros (ncols,1)
                 OK (GrB_Vector_new (&t, xtype, ncols)) ;
                 // t(j) = sum of the ith column, X(:,j)
-                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
+                OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
                     GrB_DESC_T0)) ;
                 // s = max (t)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
@@ -192,8 +192,7 @@ double gb_norm              // compute norm (A,kind)
                 // t = zeros (nrows,1)
                 OK (GrB_Vector_new (&t, xtype, nrows)) ;
                 // t(i) = sum of the ith row, X(i,:)
-                OK1 (t, GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
-                    NULL)) ;
+                OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X, NULL)) ;
                 // s = max (t)
                 OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
                 break ;

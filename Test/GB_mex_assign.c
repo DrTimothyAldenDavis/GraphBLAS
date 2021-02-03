@@ -2,8 +2,8 @@
 // GB_mex_assign: C<Mask>(I,J) = accum (C (I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 // This function is a wrapper for GrB_Matrix_assign, GrB_Matrix_assign_T
 // GrB_Vector_assign, and GrB_Vector_assign_T (when kind=0 or by default).  For
@@ -34,7 +34,11 @@
 }
 
 #define GET_DEEP_COPY \
-    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;
+    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;         \
+    if (have_sparsity_control)                                                \
+    {                                                                         \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C_sparsity_control) ; \
+    }
 
 #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
@@ -50,6 +54,9 @@ bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
 GrB_Info assign (void) ;
+int C_sparsity_control ;
+int M_sparsity_control ;
+bool have_sparsity_control = false ;
 
 GrB_Info many_assign
 (
@@ -90,39 +97,6 @@ GrB_Info assign ( )
     ASSERT_MATRIX_OK (A, "A for GB_mex_assign", pr) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mex_assign", pr) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for GB_mex_assign", pr) ;
-
-    /*
-    if (I == NULL)
-    {
-        printf ("I is NULL\n") ;
-    }
-    else if (I == GrB_ALL)
-    {
-        printf ("I is ALL\n") ;
-    }
-    else
-    {
-        for (int64_t k = 0 ; k < ni ; k++)
-        {
-            printf ("I [%lld] = %lld\n", k, I [k]) ;
-        }
-    }
-    if (J == NULL)
-    {
-        printf ("J is NULL\n") ;
-    }
-    else if (J == GrB_ALL)
-    {
-        printf ("J is ALL\n") ;
-    }
-    else
-    {
-        for (int64_t k = 0 ; k < nj ; k++)
-        {
-            printf ("J [%lld] = %lld\n", k, J [k]) ;
-        }
-    }
-    */
 
     if (kind == 1)
     {
@@ -318,22 +292,27 @@ GrB_Info many_assign
         bool save = GB_Global_malloc_debug_get ( ) ;
         GB_Global_malloc_debug_set (false) ;
 
-        // get Mask (shallow copy)
+        // get Mask (deep copy)
         Mask = NULL ;
         if (fMask >= 0)
         {
             p = mxGetFieldByNumber (pargin [1], k, fMask) ;
-            Mask = GB_mx_mxArray_to_Matrix (p, "Mask", false, false) ;
+            Mask = GB_mx_mxArray_to_Matrix (p, "Mask", true, false) ;
             if (Mask == NULL && !mxIsEmpty (p))
             {
                 FREE_ALL ;
                 mexErrMsgTxt ("Mask failed") ;
             }
+            if (have_sparsity_control)
+            {
+                GxB_Matrix_Option_set (Mask, GxB_SPARSITY_CONTROL,
+                    M_sparsity_control) ;
+            }
         }
 
-        // get A (shallow copy)
+        // get A (deep copy)
         p = mxGetFieldByNumber (pargin [1], k, fA) ;
-        A = GB_mx_mxArray_to_Matrix (p, "A", false, true) ;
+        A = GB_mx_mxArray_to_Matrix (p, "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;
@@ -370,11 +349,6 @@ GrB_Info many_assign
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
         }
-
-        /*
-        printf ("many assign: fI %d fJ %d ni %lld nj %lld\n", fI, fJ, ni, nj) ;
-        for (int kk = 0 ; kk < nj ; kk++) printf ("J[%d]=%lld\n", kk, J[kk]) ;
-        */
 
         // get desc
         desc = NULL ;
@@ -433,6 +407,20 @@ void mexFunction
 )
 {
 
+    C = NULL ;
+    Mask = NULL ;
+    A = NULL ;
+    desc = NULL ;
+    accum = NULL ;
+    I = NULL ; ni = 0 ;
+    J = NULL ; nj = 0 ;
+    malloc_debug = false ;
+    info = GrB_SUCCESS ;
+    kind = 0 ;
+    C_sparsity_control = GxB_AUTO_SPARSITY ;
+    M_sparsity_control = GxB_AUTO_SPARSITY ;
+    have_sparsity_control = false ;
+
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -445,9 +433,21 @@ void mexFunction
 
     // check inputs
     if (nargout > 1 || !
-        (nargin == 2 || nargin == 6 || nargin == 7 || nargin == 8))
+        (nargin == 2 || nargin == 3 || nargin == 6 || nargin == 7 ||
+         nargin == 8))
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
+    }
+
+    // get sparsity control if present
+    if (nargin == 3)
+    {
+        int n = mxGetNumberOfElements (pargin [2]) ;
+        if (n != 2) mexErrMsgTxt ("invalid sparsity control") ;
+        have_sparsity_control = true ;
+        double *p = mxGetDoubles (pargin [2]) ;
+        C_sparsity_control = (int) p [0] ;
+        M_sparsity_control = (int) p [1] ;
     }
 
     //--------------------------------------------------------------------------
@@ -461,7 +461,7 @@ void mexFunction
         mexErrMsgTxt ("C failed") ;
     }
 
-    if (nargin == 2)
+    if (nargin == 2 || nargin == 3)
     {
 
         //----------------------------------------------------------------------
@@ -509,16 +509,16 @@ void mexFunction
         // C<Mask>(I,J) = A, with a single assignment
         //----------------------------------------------------------------------
 
-        // get Mask (shallow copy)
-        Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", false, false) ;
+        // get Mask (deep copy)
+        Mask = GB_mx_mxArray_to_Matrix (pargin [1], "Mask", true, false) ;
         if (Mask == NULL && !mxIsEmpty (pargin [1]))
         {
             FREE_ALL ;
             mexErrMsgTxt ("Mask failed") ;
         }
 
-        // get A (shallow copy)
-        A = GB_mx_mxArray_to_Matrix (pargin [3], "A", false, true) ;
+        // get A (deep copy)
+        A = GB_mx_mxArray_to_Matrix (pargin [3], "A", true, true) ;
         if (A == NULL)
         {
             FREE_ALL ;

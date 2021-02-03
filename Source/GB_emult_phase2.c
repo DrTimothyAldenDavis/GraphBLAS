@@ -2,8 +2,8 @@
 // GB_emult_phase2: C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -134,7 +134,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     GrB_Matrix C = NULL ;
     GrB_Info info = GB_new_bix (&C,     // any sparsity, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -145,7 +145,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     // transplant Cp into C as the vector pointers, from GB_emult_phase1.
     if (C_is_sparse_or_hyper)
-    {
+    { 
         C->nvec_nonempty = Cnvec_nonempty ;
         C->p = (int64_t *) Cp ;
     }
@@ -213,7 +213,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         }
 
         if (info == GrB_OUT_OF_MEMORY)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (info) ;
@@ -241,7 +241,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             bsize = B->type->size ;
 
             if (op_is_second || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of A(i,j)
                 xsize = 1 ;
                 cast_A_to_X = NULL ;
@@ -253,7 +253,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
             }
 
             if (op_is_first || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of B(i,j)
                 ysize = 1 ;
                 cast_B_to_Y = NULL ;
@@ -362,7 +362,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // standard binary operator
@@ -385,8 +385,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     if (C_is_hyper)
-    {
-        C->nvec_nonempty = -1 ;
+    { 
+        C->nvec_nonempty = -1 ;     // recomputed just below
         GB_OK (GB_hypermatrix_prune (C, Context)) ;
     }
 

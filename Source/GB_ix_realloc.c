@@ -2,8 +2,8 @@
 // GB_ix_realloc: reallocate a matrix to hold a given number of entries
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -16,9 +16,9 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
-    GrB_Matrix A,           // matrix to allocate space for
-    const GrB_Index nzmax,  // new number of entries the matrix can hold
-    const bool numeric,     // if true, reallocate A->x, otherwise A->x is NULL
+    GrB_Matrix A,               // matrix to allocate space for
+    const int64_t nzmax_new,    // new number of entries the matrix can hold
+    const bool numeric,         // if true, reallocate A->x, else A->x is NULL
     GB_Context Context
 )
 {
@@ -45,7 +45,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
 
-    if (nzmax > GxB_INDEX_MAX)
+    if (nzmax_new > GxB_INDEX_MAX)
     { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
@@ -55,13 +55,13 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // reallocate the space
     //--------------------------------------------------------------------------
 
-    size_t nzmax1 = GB_IMAX (nzmax, 1) ;
+    size_t nzmax_new1 = GB_IMAX (nzmax_new, 1) ;
     bool ok1 = true, ok2 = true ;
-    A->i = GB_REALLOC (A->i, nzmax1, A->nzmax, int64_t, &ok1) ;
+    GB_REALLOC (A->i, nzmax_new1, A->nzmax, int64_t, &ok1) ;
     if (numeric)
     { 
         size_t asize = A->type->size ;
-        A->x = GB_REALLOC (A->x, nzmax1*asize, (A->nzmax)*asize, GB_void, &ok2);
+        GB_REALLOC (A->x, nzmax_new1*asize, (A->nzmax)*asize, GB_void, &ok2) ;
     }
     else
     { 
@@ -70,11 +70,11 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     bool ok = ok1 && ok2 ;
 
     // always succeeds if the space shrinks
-    ASSERT (GB_IMPLIES (nzmax1 <= A->nzmax, ok)) ;
+    ASSERT (GB_IMPLIES (nzmax_new1 <= A->nzmax, ok)) ;
 
     if (ok)
     { 
-        A->nzmax = nzmax1 ;
+        A->nzmax = nzmax_new1 ;
     }
 
     // The matrix is always left in a valid state.  If the reallocation fails

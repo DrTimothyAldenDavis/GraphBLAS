@@ -2,8 +2,8 @@
 // GB_mex_rdiv2: compute C=A*B with the rdiv2 operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -114,13 +114,14 @@ GrB_Info axb (GB_Context Context)
         flipxy,
         &ignore,    // mask_applied
         &done_in_place,
-        AxB_method, Context) ;
+        AxB_method,
+        true,       // do the sort
+        Context) ;
 
     if (info == GrB_SUCCESS)
     {
         if (done_in_place != do_in_place)
         {
-            printf ("done in place: %d %d\n", do_in_place, done_in_place) ;
             mexErrMsgTxt ("failure: not in place as expected\n") ;
         }
         if (!done_in_place)
@@ -198,7 +199,6 @@ void mexFunction
     // get the axb_method
     // 0 or not present: default
     // 1001: Gustavson
-    // 1002: heap
     // 1003: dot
     // 1004: hash
     // 1005: saxpy
@@ -206,7 +206,6 @@ void mexFunction
 
     if (! ((AxB_method == GxB_DEFAULT) ||
         (AxB_method == GxB_AxB_GUSTAVSON) ||
-        (AxB_method == GxB_AxB_HEAP) ||
         (AxB_method == GxB_AxB_HASH) ||
         (AxB_method == GxB_AxB_SAXPY) ||
         (AxB_method == GxB_AxB_DOT)))
@@ -219,7 +218,6 @@ void mexFunction
 
     // get the C_scalar
     GET_SCALAR (6, double, C_scalar, 0) ;
-    // printf ("C scalar: %g\n", C_scalar) ;
 
     // determine the dimensions
     anrows = (atranspose) ? GB_NCOLS (A) : GB_NROWS (A) ;
@@ -234,7 +232,6 @@ void mexFunction
 
     if (atranspose && btranspose && C_scalar != 0)
     {
-        printf ("C=A'*B'; ignoring C_scalar!\n") ;
         C_scalar = 0 ;
     }
 

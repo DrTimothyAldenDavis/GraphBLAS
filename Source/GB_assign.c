@@ -2,8 +2,8 @@
 // GB_assign: submatrix assignment: C<M>(Rows,Cols) = accum (C(Rows,Cols),A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -102,8 +102,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (done)
     { 
         // GB_assign_prep has handled the entire assignment itself
-        ASSERT_MATRIX_OK (C, "QUICK : Final C for assign", GB0) ;
-        return (GB_block (C, Context)) ;
+        ASSERT_MATRIX_OK (C_in, "QUICK : Final C for assign", GB0) ;
+        ASSERT (C == C_in) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -121,20 +122,21 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // all of C), or all that the operation can modify for row/col assign.
 
     bool whole_submatrix ;
+    bool whole_C_matrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
     if (assign_kind == GB_ROW_ASSIGN)
     { 
-        // row assignment to the entire row
+        // C(i,:) = ... row assignment to the entire row
         whole_submatrix = (Jkind == GB_ALL) ;
     }
     else if (assign_kind == GB_COL_ASSIGN)
     { 
-        // col assignment to the entire column
+        // C(:,j) = ... col assignment to the entire column
         whole_submatrix = (Ikind == GB_ALL) ;
     }
     else
     { 
-        // matrix assignment to the entire matrix
-        whole_submatrix = (Ikind == GB_ALL && Jkind == GB_ALL) ;
+        // C(:,:) = ... matrix assignment to the entire matrix
+        whole_submatrix = whole_C_matrix ;
     }
 
     // Mask_is_same is true if SubMask == M (:,:)
@@ -143,12 +145,11 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // C_replace_phase is true if a final pass over all of C is required
     // to delete entries outside the C(I,J) submatrix.
     bool C_replace_phase = (C_replace && !Mask_is_same) ;
-    ASSERT (!Mask_is_same == (M != NULL && !whole_submatrix)) ;
 
     if ((GB_IS_BITMAP (C) || GB_IS_FULL (C)) && C_replace_phase)
     { 
         // GB_subassigner_method might not select the bitmap assignment
-        subassign_method == GB_SUBASSIGN_METHOD_BITMAP ;
+        subassign_method = GB_SUBASSIGN_METHOD_BITMAP ;
     }
 
     //--------------------------------------------------------------------------
@@ -156,23 +157,22 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     if (subassign_method == GB_SUBASSIGN_METHOD_BITMAP)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // use GB_bitmap_assign directly
         //----------------------------------------------------------------------
 
         // GB_bitmap_assign does not need to create the SubMask, and it also
-        // handles the C_replace_phase itself.  C is bitmap, or is converted
-        // to bitmap by GB_bitmap_assign, before the assignment.
+        // handles the C_replace_phase itself.  C is bitmap, or is converted to
+        // bitmap by GB_bitmap_assign, before the assignment.  For the C = A
+        // and C = scalar assignment, C may be returned in any sparsity
+        // structure, but otherwise C is returned as bitmap.
 
         GB_OK (GB_bitmap_assign (C, C_replace,
             I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
             M, Mask_comp, Mask_struct, accum, A,
             scalar, atype, assign_kind, Context)) ;
-
-        // C was bitmap on input and stays that way, or has now become bitmap
-        ASSERT (GB_IS_BITMAP (C)) ;
 
     }
     else
@@ -218,28 +218,28 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             const GrB_Index *J_SubMask = J ; int64_t nj_SubMask = nj ;
 
             if (assign_kind == GB_ROW_ASSIGN)
-            {
+            { 
                 // SubMask = M (:,J)
                 ASSERT (M->vlen == 1 && M->vdim == C->vdim) ;
                 I_SubMask = GrB_ALL ;
                 ni_SubMask = 1 ;
             }
             else if (assign_kind == GB_COL_ASSIGN)
-            {
+            { 
                 // SubMask = M (I,:)
                 ASSERT (M->vlen == C->vlen && M->vdim == 1) ;
                 J_SubMask = GrB_ALL ;
                 nj_SubMask = 1 ;
             }
             else // assign_kind == GB_ASSIGN
-            {
+            { 
                 // SubMask = M (I,J)
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
             }
 
             GB_OK (GB_subref (&SubMask, true, M,
                 I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
-                false, Context));
+                false, Context)) ;
 
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (SubMask)) ;
@@ -287,8 +287,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (M != NULL) ;
             ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
             ASSERT (!whole_submatrix) ;
-            ASSERT (!GB_IS_BITMAP (C)) ;     // ok: C is not bitmap here
-            ASSERT (!GB_IS_FULL (C)) ;       // ok: C is not bitmap here
+            ASSERT (!GB_IS_BITMAP (C)) ;
+            ASSERT (!GB_IS_FULL (C)) ;
 
             ASSERT_MATRIX_OK (C, "C for C-replace-phase", GB0) ;
             ASSERT_MATRIX_OK (M, "M for C-replace-phase", GB0) ;
@@ -305,7 +305,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             // C must be sparse or hypersparse
-            GB_ENSURE_SPARSE (C) ;      // ok: bitmap skips this phase
+            GB_ENSURE_SPARSE (C) ;
 
             if (assign_kind == GB_COL_ASSIGN)
             { 
@@ -366,10 +366,10 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     if (C == C2)
-    {
-        // zombies can be transplanted into C_in but pending tuples cannot
-        GB_MATRIX_WAIT_IF_PENDING (C2) ;
-        // transplants the content of C2 into C_in and frees C2
+    { 
+        // Transplant the content of C2 into C_in and free C2.  Zombies and
+        // pending tuples can be transplanted from C2 into C_in, and if C2 is
+        // jumbled, C_in becomes jumbled too.
         GB_OK (GB_transplant (C_in, C_in->type, &C2, Context)) ;
     }
 
@@ -377,6 +377,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C_in, "C to conform", GB0) ;
     GB_OK (GB_conform (C_in, Context)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for assign", GB0) ;
     GB_FREE_ALL ;

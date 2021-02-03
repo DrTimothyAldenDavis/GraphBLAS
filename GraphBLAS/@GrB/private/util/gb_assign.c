@@ -2,8 +2,8 @@
 // gb_assign: assign entries into a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -31,10 +31,6 @@
 #include "gb_matlab.h"
 #include "GB_ij.h"
 
-#ifndef OK1
-#define OK1(C,method) OK(method)
-#endif
-
 void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction
@@ -60,10 +56,10 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    int nmatrices, nstrings, ncells ;
+    int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, usage, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
     CHECK_ERROR (nmatrices < 2 || nmatrices > 3 || nstrings > 1, usage) ;
 
@@ -88,7 +84,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
-    GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -160,13 +155,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         GB_ijlength (I, ni, cnrows, &nI, &Ikind, Icolon) ;
         GB_ijlength (J, nj, cncols, &nJ, &Jkind, Jcolon) ;
         OK (GrB_Matrix_free (&A)) ;
-        OK (GrB_Matrix_new (&A, ctype, nI, nJ)) ;
         OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;
-        OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
+        OK (GxB_Matrix_Option_get (C, GxB_SPARSITY_CONTROL, &sparsity)) ;
+        A = gb_new (ctype, nI, nJ, fmt, sparsity) ;
         scalar_assignment = false ;
     }
-
-    GxB_print (A, 3) ;
 
     //--------------------------------------------------------------------------
     // compute C(I,J)<M> += A or C<M>(I,J) += A

@@ -2,8 +2,8 @@
 // GB_assign_scalar:    C<M>(Rows,Cols) = accum (C(Rows,Cols),x)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3) ;
+        xx1, xx2, xx3, xx7) ;
 
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), scalar)

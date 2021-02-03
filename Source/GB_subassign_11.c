@@ -2,8 +2,8 @@
 // GB_subassign_11: C(I,J)<M,repl> += scalar ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -89,12 +89,12 @@ GrB_Info GB_subassign_11
     //--------------------------------------------------------------------------
 
     if (M_is_bitmap)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all M+S
         GB_SUBASSIGN_TWO_SLICE (M, S) ;
     }
@@ -157,14 +157,14 @@ GrB_Info GB_subassign_11
                         GB_NEXT (S) ;
                     }
                     else if (!Sfound && mij)
-                    {
+                    { 
                         // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
                         task_pending++ ;
                     }
                     else if (Sfound && mij)
-                    {
+                    { 
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -351,7 +351,7 @@ GrB_Info GB_subassign_11
                     bool mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;
 
                     if (!Sfound && mij)
-                    {
+                    { 
                         // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
@@ -359,7 +359,7 @@ GrB_Info GB_subassign_11
                         GB_PENDING_INSERT (scalar) ;
                     }
                     else if (Sfound)
-                    {
+                    { 
                         // S (i,j) present
                         GB_NEXT (S) ;
                     }

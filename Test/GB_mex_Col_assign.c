@@ -2,8 +2,8 @@
 // GB_mex_assign: C<Mask>(I,J) = accum (C (I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 // This function is a wrapper for GrB_Matrix_assign, GrB_Matrix_assign_T
 // GrB_Vector_assign, and GrB_Vector_assign_T.  For these uses, the Mask must
@@ -77,7 +77,6 @@ GrB_Info assign ( )
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
 
-    // printf ("\n--- assign:\n") ;
     ASSERT_MATRIX_OK (C, "C", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Mask, "Mask", GB0) ;
     ASSERT_MATRIX_OK (A, "A", GB0) ;
@@ -169,7 +168,6 @@ GrB_Info assign ( )
         {
 
             // test Matrix_assign_scalar functions
-            // printf ("scalar assign to matrix\n") ;
             #undef  ASSIGN
             #define ASSIGN(prefix,suffix,type)                          \
             {                                                           \
@@ -371,8 +369,6 @@ void mexFunction
     C = NULL ;
     Mask = NULL ;
     desc = NULL ;
-
-    // printf ("\n========================= GB_mex_assign:\n") ;
 
     if (nargout > 1 || ! (nargin == 2 || nargin == 6 || nargin == 7))
     {

@@ -2,8 +2,8 @@
 // GB_Matrix_free: free a GrB_Matrix or GrB_Vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,9 +11,7 @@
 // NULL.
 
 #include "GB.h"
-#include "GB_mkl.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *matrix          // handle of matrix to free
@@ -27,10 +25,7 @@ void GB_Matrix_free             // free a matrix
         { 
             // free all content of A
             GB_phbix_free (A) ;
-            // free the MKL optimization, if it exists
-            #if GB_HAS_MKL
-            GB_MKL_GRAPH_MATRIX_DESTROY (A->mkl) ;
-            #endif
+            // #include "GB_Matrix_free_mkl_template.c
             // free the error logger string
             GB_FREE (A->logger) ;
             // free the header of A itself

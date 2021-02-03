@@ -2,8 +2,8 @@
 // GB_AxB_rowscale_meta: C=D*B where D is a square diagonal matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -32,18 +32,18 @@
     const GB_ATYPE *GB_RESTRICT Dx = (GB_ATYPE *) (D_is_pattern ? NULL : D->x) ;
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t  *GB_RESTRICT Bi = B->i ;
-    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // FIXME
+    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
     const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------
     // C=D*B
     //--------------------------------------------------------------------------
 
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    int ntasks = nthreads ;
     ntasks = GB_IMIN (bnz, ntasks) ;
 
     int tid ;
-    // #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         int64_t pstart, pend ;

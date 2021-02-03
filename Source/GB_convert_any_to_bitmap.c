@@ -2,8 +2,8 @@
 // GB_convert_any_to_bitmap: convert any matrix to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
 // to a bitmap.
 
 #include "GB.h"
-#define GB_FREE_ALL GB_phbix_free (A) ;
+#define GB_FREE_ALL ;
 
 GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
 (

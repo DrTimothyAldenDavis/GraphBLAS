@@ -2,8 +2,8 @@
 // GB_apply: apply a unary operator; optionally transpose a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -134,7 +134,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         }
     }
     else
-    {
+    { 
         GB_ERROR (GrB_NULL_POINTER,
             "Required argument is null: [%s]", "op") ;
     }
@@ -172,10 +172,9 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_BURBLE_DENSE (A, "(A %s) ") ;
 
     if (op2 != NULL && GB_NNZ (scalar) != 1)
-    {
+    { 
         // the scalar entry must be present
-        GB_ERROR (GrB_INVALID_VALUE,
-            "Scalar is missing; it must contain %d entry", 1) ;
+        GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
     }
 
     //--------------------------------------------------------------------------
@@ -230,37 +229,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             }
             op2 = NULL ;
         }
-
-#if 0
-        else
-        {
-            switch (opcode)
-            {
-                // commutative operators, no need for bind1st workers:
-                case PLUS_opcode      : 
-                case TIMES_opcode     : 
-                case PAIR_opcode      : 
-                case ANY_opcode       : 
-                case ISEQ_opcode      : 
-                case ISNE_opcode      : 
-                case EQ_opcode        : 
-                case NE_opcode        : 
-                case MIN_opcode       : 
-                case MAX_opcode       : 
-                case LOR_opcode       : 
-                case LAND_opcode      : 
-                case LXOR_opcode      : 
-                case LXNOR_opcode     : 
-                case HYPOT_opcode     : 
-                case BOR_opcode       : 
-                case BAND_opcode      : 
-                case BXOR_opcode      : 
-                case BXNOR_opcode     : binop_bind1st = false ;
-                default : ;
-            }
-        }
-#endif
-
     }
 
     //--------------------------------------------------------------------------
@@ -278,12 +246,12 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     {
         // positional ops must be flipped, with i and j swapped
         if (op1 != NULL)
-        {
+        { 
             op1 = GB_positional_unop_ijflip (op1) ;
             opcode = op1->opcode ;
         }
         else if (op2 != NULL)
-        {
+        { 
             op2 = GB_positional_binop_ijflip (op2) ;
             opcode = op2->opcode ;
         }
@@ -298,12 +266,13 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBURBLE ("(transpose-op) ") ;
         info = GB_transpose (&T, T_type, T_is_csc, A,
             op1, op2, scalar, binop_bind1st, Context) ;
+        ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
         // using the T_is_csc format.  The ijflip is handled
         // above.
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
-    { 
+    {
         GBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.
@@ -313,8 +282,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         { 
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_void *Cx = (GB_void *) C->x ;
-            info = GB_apply_op (Cx, op1, op2, scalar, binop_bind1st, C,
-                Context) ;
+            info = GB_apply_op (Cx, op1, op2,   // op1 != identity
+                scalar, binop_bind1st, C, Context) ;
         }
         return (info) ;
     }

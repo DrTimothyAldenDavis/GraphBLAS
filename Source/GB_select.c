@@ -2,8 +2,8 @@
 // GB_select: apply a select operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -80,15 +80,16 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 "Operator %s not defined for user-defined types", op->name) ;
         }
         else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
-        {
+        { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for complex types", op->name) ;
         }
     }
 
     // C = op (A) must be compatible, already checked in GB_compatible
-    // A must also be compatible with op->xtype, unless op->xtype is NULL
-    if (op->xtype != NULL && !GB_Type_compatible (A->type, op->xtype))
+
+    // A must also be compatible with op->xtype
+    if (!GB_Type_compatible (A->type, op->xtype))
     { 
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Incompatible type for C=%s(A,Thunk):\n"
@@ -132,7 +133,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
         // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be
         // compatible with GrB_INT64
-        if (op_is_positional && !GB_Type_compatible (GrB_INT64, Thunk_in->type))
+        if (op_is_positional &&
+            !GB_Type_compatible (GrB_INT64, Thunk_in->type))
         { 
             // Thunk not a built-in type, for a built-in select operator
             GB_ERROR (GrB_DOMAIN_MISMATCH,

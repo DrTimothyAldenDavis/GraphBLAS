@@ -2,6 +2,11 @@
 // GB_spones_mex: like spones(A) in MATLAB but do not drop zeros on input
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 // The MATLAB built-in function spones(A) has changed, of MATLAB R2019b.
 // It now drops zeros on input.  Prior versions converted them to 1 on output.
 // The tests here use the old behavior, so this function replaces spones(A)
@@ -36,7 +41,7 @@ void mexFunction
     mwSize n = mxGetN (pargin [0]) ;
     mwIndex *Ap = mxGetJc (pargin [0]) ;
     mwIndex *Ai = mxGetIr (pargin [0]) ;
-    mwSize nz = Ap [n] ;        // ok: A is sparse
+    mwSize nz = Ap [n] ;
 
     //--------------------------------------------------------------------------
     // create the output matrix
@@ -47,8 +52,8 @@ void mexFunction
     mwIndex *Ci = mxGetIr (pargout [0]) ;
     double *Cx = mxGetDoubles (pargout [0]) ;
 
-    memcpy (Cp, Ap, (n+1) * sizeof (mwIndex)) ;     // ok: A and C are sparse
-    memcpy (Ci, Ai, nz    * sizeof (mwIndex)) ;     // ok: A and C are sparse
+    memcpy (Cp, Ap, (n+1) * sizeof (mwIndex)) ;
+    memcpy (Ci, Ai, nz    * sizeof (mwIndex)) ;
     for (mwSize p = 0 ; p < nz ; p++)
     {
         Cx [p] = 1 ;

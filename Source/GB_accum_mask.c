@@ -2,8 +2,8 @@
 // GB_accum_mask: accumulate results via the mask and accum operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -172,14 +172,13 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
     //--------------------------------------------------------------------------
-    // remove zombies and pending tuples from T
+    // remove zombies and pending tuples from T, but leave it jumbled
     //--------------------------------------------------------------------------
 
-    if (GB_PENDING_OR_ZOMBIES (T))
-    { 
-        // if this fails, *Thandle must be freed
-        GB_OK (GB_Matrix_wait (T, Context)) ;
-    }
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (T) ;
+    ASSERT (!GB_PENDING (T)) ;
+    ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
@@ -202,7 +201,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         T_transposed = true ;
         #endif
         T = (*Thandle) ;
-        ASSERT (!GB_JUMBLED (T)) ;
+        ASSERT (GB_JUMBLED_OK (T)) ;
         ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
 
@@ -214,20 +213,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // MT = M' to conform M to the same CSR/CSC format as C.
         // transpose: typecast, no op, not in-place
         if (MT_in == NULL)
-        {
-            if (GB_PENDING_OR_ZOMBIES (M))
-            { 
-GB_GOTCHA ;
-                // remove zombies and pending tuples from M.
-                // M can be jumbled.
-                GB_OK (GB_Matrix_wait (M, Context)) ;
-            }
+        { 
+            // remove zombies and pending tuples from M.  M can be jumbled.
+            GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
             // use the transpose mask
             M = MT ;
-            ASSERT (!GB_JUMBLED (M)) ;
+            ASSERT (GB_JUMBLED_OK (M)) ;
             #if GB_BURBLE
             M_transposed = true ;
             #endif
@@ -254,10 +248,9 @@ GB_GOTCHA ;
     ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
-    // apply the accumulator and the mask
+    // decide on the method
     //--------------------------------------------------------------------------
 
-    // decide on the method
     int64_t cnz = GB_NNZ (C) ;          // includes live entries and zombies
     int64_t cnpending = GB_Pending_n (C) ;  // # pending tuples in C
     int64_t tnz = GB_NNZ (T) ;
@@ -269,7 +262,7 @@ GB_GOTCHA ;
     // then use subassign.  It will be fast when T is very sparse and C has
     // many nonzeros.  If the # of pending tuples in C is growing, however,
     // then it would be better to finish the work now, and leave C completed.
-    // In this case, GB_transplant (if no accum) or GB_add with accum, and
+    // In this case, GB_transplant if no accum or GB_add with accum, and
     // GB_mask are used for the accum/mask step.
 
     // If there is no mask M, and no accum, then C=T is fast (just
@@ -293,9 +286,9 @@ GB_GOTCHA ;
         }
         else
         { 
-            // C is sparse or hypersparse: use GB_subassign if the update
-            // is small (resuling in a small number of pending tuples),
-            // and if C is not aliased with M or T.
+            // C is sparse or hypersparse (at least for now, before any wait on
+            // C): use GB_subassign if the update is small (resuling in a small
+            // number of pending tuples), and if C is not aliased with M or T.
             use_subassign = (tnz + cnpending <= cnz)
                 && !GB_aliased (C, M) && !GB_aliased (C, T) ;
         }
@@ -304,16 +297,46 @@ GB_GOTCHA ;
     bool use_transplant = (!use_subassign)
         && (accum == NULL || (cnz + cnpending) == 0) ;
 
+    if (!use_subassign && (!use_transplant || (M != NULL && !C_replace)))
+    {
+        // GB_accum_mask will be used instead of GB_subassign, or so it
+        // appears.  GB_subassign does not require the pending work in C to be
+        // finished, but GB_accum_mask does in most cases.  Finish the work on
+        // C now.  This may change C to bitmap/full, so recheck the bitmap/full
+        // condition on C after doing the GB_MATRIX_WAIT (C).
+        GB_MATRIX_WAIT (C) ;
+        if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+        { 
+            // See Test/test182 for a test that triggers this condition.
+            // GB_MATRIX_WAIT (C) has changed C from sparse/hyper to
+            // bitmap/full.  GB_mask does not handle the case where M is
+            // present, C_replace is false, and C is bitmap/full, so switch to
+            // GB_subassign.
+            use_subassign = true ;
+        }
+    }
+
+    // use_subassign has been reconsidered and the pending work on C may now
+    // be finished, which changes cnz and cnpending.  Recompute use_transplant.
+    cnz = GB_NNZ (C) ;              // includes live entries and zombies
+    cnpending = GB_Pending_n (C) ;  // # pending tuples in C
+    use_transplant = (!use_subassign)
+        && (accum == NULL || (cnz + cnpending) == 0) ;
+
+    // burble the decision on which method to use
     if (!use_transplant)
     { 
         GBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),
-            ((use_subassign) ? "assign" :
-                ((use_transplant) ? "transplant" : "add")),
+            ((use_subassign) ? "assign" : "add"),
             (M_transposed ? "(M transposed)" : ""),
             (T_transposed ? "(result transposed)" : "")) ;
     }
+
+    //--------------------------------------------------------------------------
+    // apply the accumulator and the mask
+    //--------------------------------------------------------------------------
 
     if (use_subassign)
     { 
@@ -341,11 +364,12 @@ GB_GOTCHA ;
         { 
  
             //------------------------------------------------------------------
-            // Z = (ctype) T ;
+            // Z = (ctype) T
             //------------------------------------------------------------------
 
-            // [ Z is just the header; the rest can be allocated by the
-            // transplant if needed.  Z has the same hypersparsity as T.
+            // GB_new allocates just the header for Z; the rest can be
+            // allocated by the transplant if needed.  Z has the same
+            // hypersparsity as T.
 
             info = GB_new (&Z, // sparse or hyper, new header
                 C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
@@ -358,41 +382,32 @@ GB_GOTCHA ;
 
             // Z and T have same vlen, vdim, is_csc, hypersparsity
             GB_OK (GB_transplant (Z, C->type, Thandle, Context)) ;
-            // Z initialized, and Z->p, Z->h, Z->i, and Z->x are allocated ]
 
         }
         else
         { 
 
             //------------------------------------------------------------------
-            // Z = (ctype) accum (C,T) ;
+            // Z = (ctype) accum (C,T)
             //------------------------------------------------------------------
 
+            // GB_add_sparsity needs the final sparsity pattern of C and T.
+            GB_MATRIX_WAIT (C) ;
+            GB_MATRIX_WAIT (T) ;
+
             bool apply_mask ;
-            int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, C, T) ;
+            int Z_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, C, T) ;
 
-            GrB_Matrix M1 = NULL ;
-            if (apply_mask)
-            {
-                if (C_sparsity == GxB_BITMAP || C_sparsity == GxB_FULL)
-                {
-                    // always apply the mask in GB_add if C is bitmap or full
-                    M1 = M ;
-                }
-                else if (!Mask_comp /* && GB_MASK_VERY_SPARSE (M, C, T) */ )
-                {
-                    // if C is sparse or hypersparse, apply the mask
-                    // not complemented and very sparse
-                    M1 = M ;
-                }
-            }
-
-            bool mask_applied ;
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, Mask_comp,
-                &mask_applied, C, T, accum, Context)) ;
+            // whether or not GB_add chooses to exploit the mask, it must still
+            // be used in GB_mask, below.  So ignore the mask_applied return
+            // flag from GB_add.
+            bool ignore ;
+            GB_OK (GB_add (&Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
+                Mask_struct, Mask_comp, &ignore, C, T, accum, Context)) ;
             GB_Matrix_free (Thandle) ;
         }
 
+        // T has been transplanted into Z or freed after Z=C+T
         ASSERT (*Thandle == NULL) ;
 
         // C and Z have the same type
@@ -400,20 +415,12 @@ GB_GOTCHA ;
         ASSERT (Z->type == C->type) ;
 
         //----------------------------------------------------------------------
-        // apply the mask (C<M> = Z)
+        // apply the mask (C<M>=Z) and free Z
         //----------------------------------------------------------------------
 
-        // see GB_spec_mask.m for a description of this step.
-
-        // C->hyper_switch is not modified by GB_mask, which conforms
-        // the hypersparsity of C to that parameter.
-
-        // apply the mask, storing the results back into C, and free Z.
         ASSERT_MATRIX_OK (C, "C<M>=Z input", GB0) ;
         GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Mask_struct, Context)) ;
         ASSERT (Z == NULL) ;
-        ASSERT (!C->p_shallow && !C->h_shallow) ;
-        ASSERT (!C->i_shallow && !C->x_shallow) ;
     }
 
     //--------------------------------------------------------------------------
@@ -422,6 +429,6 @@ GB_GOTCHA ;
 
     GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
-    return (GrB_SUCCESS) ;
+    return (GB_block (C, Context)) ;
 }
 

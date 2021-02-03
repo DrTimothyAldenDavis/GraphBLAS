@@ -2,8 +2,8 @@
 // GB_SelectOp_check: check and print a select operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     }
 
     if (op->xtype != NULL)
-    { 
+    {
         GrB_Info info = GB_Type_check (op->xtype, "xtype", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
@@ -71,7 +71,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     }
 
     if (op->ttype != NULL)
-    { 
+    {
         GrB_Info info = GB_Type_check (op->ttype, "ttype", pr, f) ;
         if (info != GrB_SUCCESS)
         { 

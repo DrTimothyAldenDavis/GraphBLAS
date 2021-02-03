@@ -2,23 +2,26 @@
 // GB_bitmap_assign_M_col_template:  traverse M for GB_COL_ASSIGN
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // M is a (C->vlen)-by-1 hypersparse or sparse matrix, for
 // GrB_Row_assign (if C is CSR) or GrB_Col_assign (if C is CSC).
 
+// C is bitmap/full.  M is sparse/hyper, and can be jumbled.
+
 {
     int64_t jC = J [0] ;
     int tid ;
-    #pragma omp parallel for num_threads(mthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
-    for (tid = 0 ; tid < mtasks ; tid++)
+    for (tid = 0 ; tid < M_ntasks ; tid++)
     {
         int64_t kfirst = kfirst_Mslice [tid] ;
         int64_t klast  = klast_Mslice  [tid] ;
+        int64_t task_cnvals = 0 ;
 
         //----------------------------------------------------------------------
         // traverse over M (:,kfirst:klast)
@@ -46,13 +49,14 @@
             {
                 bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
-                {
-                    int64_t iC = Mi [pM] ;          // ok: M is sparse
+                { 
+                    int64_t iC = Mi [pM] ;
                     int64_t pC = iC + jC * cvlen ;
                     GB_MASK_WORK (pC) ;
                 }
             }
         }
+        cnvals += task_cnvals ;
     }
 }
 

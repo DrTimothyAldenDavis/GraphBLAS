@@ -6,8 +6,8 @@ function test12 (cover)
 % if cover=1, do quick statement coverage tests
 % if cover=0, run larger problems
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 1)
     cover = 1 ;

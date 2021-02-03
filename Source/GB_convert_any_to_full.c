@@ -2,8 +2,8 @@
 // GB_convert_any_to_full: convert any matrix to full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -65,5 +65,8 @@ void GB_convert_any_to_full     // convert any matrix to full
 
     ASSERT_MATRIX_OK (A, "A converted from any to full", GB0) ;
     ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 }
 

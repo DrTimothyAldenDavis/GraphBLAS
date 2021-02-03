@@ -2,8 +2,8 @@
 // GB_assert.h: assertions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -58,12 +58,12 @@
 
 // for finding tests that trigger statement coverage.  If running a test
 // in GraphBLAS/Tcov, the test does not terminate.
-#if 0
+#if 1
 #ifdef GBTESTCOV
 #define GB_GOTCHA                                                   \
 {                                                                   \
-    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+    fprintf (stderr, "Gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
+    GBDUMP ("Gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
 }
 #else
 #define GB_GOTCHA                                                   \
@@ -75,8 +75,9 @@
 #endif
 #endif
 
-// TODO GOTCHA disabled
+#ifndef GB_GOTCHA
 #define GB_GOTCHA
+#endif
 
 #define GB_HERE GBDUMP ("%2d: Here: " __FILE__ "\n", __LINE__) ;
 

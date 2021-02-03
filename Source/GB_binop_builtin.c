@@ -2,8 +2,8 @@
 // GB_binop_builtin:  determine if a binary operator is built-in
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -17,8 +17,6 @@
 #include "GB.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
-
-#ifndef GBCOMPACT
 
 bool GB_binop_builtin               // true if binary operator is builtin
 (
@@ -131,7 +129,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // functions rminus (z=y-x)and rdiv (z=y/x).
 
     if (flipxy)
-    {
+    { 
         // All built-in semirings use either commutative multiplicative
         // operators (PLUS, TIMES, ANY, ...), or operators that have flipped
         // versions (DIV vs RDIV, ...).
@@ -140,6 +138,4 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
     return (true) ;
 }
-
-#endif
 

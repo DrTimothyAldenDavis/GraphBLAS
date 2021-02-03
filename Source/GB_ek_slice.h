@@ -2,8 +2,8 @@
 // GB_ek_slice.h: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GB_SLICE_MATRIX: slice a single single sparse or hypersparse matrix
+// GB_SLICE_MATRIX: slice a single matrix using GB_ek_slice
 //------------------------------------------------------------------------------
 
 #define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                   \

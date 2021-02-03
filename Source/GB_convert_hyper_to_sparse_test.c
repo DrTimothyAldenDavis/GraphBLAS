@@ -2,8 +2,8 @@
 // GB_convert_hyper_to_sparse_test: test conversion of hypersparse to sparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -18,11 +18,10 @@
 bool GB_convert_hyper_to_sparse_test    // test for hypersparse to sparse
 (
     float hyper_switch,     // A->hyper_switch
-    int64_t k,              // # of non-empty vectors of A, an estimate is OK,
-                            // but normally A->nvec_nonempty
+    int64_t k,              // # of non-empty vectors of A (estimate is OK)
     int64_t vdim            // A->vdim
 )
-{
+{ 
 
     // get the vector dimension of this matrix
     float n = (float) vdim ;

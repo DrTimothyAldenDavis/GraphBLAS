@@ -2,15 +2,13 @@
 // GraphBLAS/Demo/Program/openmp_demo: example of user multithreading
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// This demo uses OpenMP, and should work if GraphBLAS is compiled to
-// use either OpenMP or pthreads to synchronize multiple user threadds.
-// If OpenMP is not available, this program will work fine without it, in a
-// single user thread, regardless of the thread mechanism used by GraphBLAS.
+// This demo uses OpenMP, and illustrates how GraphBLAS can be called from
+// a multi-threaded user program.
 
 #include "GraphBLAS.h"
 
@@ -65,7 +63,7 @@ int worker (GrB_Matrix *Ahandle, int id)
         // critical section
         printf ("\n----------------- worker %d intentional error:\n", id) ;
         char *s ;
-        GrB_error (&s, A) ;
+        GrB_Matrix_error (&s, A) ;
         printf ("%s\n", s) ;
     }
 
@@ -109,7 +107,7 @@ int worker (GrB_Matrix *Ahandle, int id)
         // critical section
         printf ("\n----------------- worker %d error should be same:\n", id) ;
         char *s ;
-        GrB_error (&s, A) ;
+        GrB_Matrix_error (&s, A) ;
         printf ("%s\n", s) ;
     }
     return (0) ;
@@ -157,11 +155,6 @@ int main (int argc, char **argv)
         OK (GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout)) ;
         GrB_Matrix_free (&A) ;
     }
-
-    // print an error message
-    printf ("\n\n---- Leader thread prints an error message:\n") ;
-    GrB_Info info = GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
-    printf ("Error: %d\n", info) ;
 
     // finish GraphBLAS
     GrB_finalize ( ) ;

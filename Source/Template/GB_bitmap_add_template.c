@@ -2,8 +2,8 @@
 // GB_bitmap_add_template: C = A+B, C<M>=A+B, and C<!M>=A+B, C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -13,7 +13,8 @@
 
 {
 
-    int64_t p, cnvals = 0 ;
+    // TODO: the input C can be modified in-place, if it is also bitmap
+    int64_t cnvals = 0 ;
 
     if (M == NULL)
     {
@@ -40,33 +41,40 @@
             // Method21: C, A, and B are all bitmap
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                int8_t c = 0 ;
-                if (Ab [p] && Bb [p])
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
-                    GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                    c = 1 ;
+                    int8_t c = 0 ;
+                    if (Ab [p] && Bb [p])
+                    { 
+                        // C (i,j) = A (i,j) + B (i,j)
+                        GB_GETA (aij, Ax, p) ;
+                        GB_GETB (bij, Bx, p) ;
+                        GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                        c = 1 ;
+                    }
+                    else if (Bb [p])
+                    { 
+                        // C (i,j) = B (i,j)
+                        GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        c = 1 ;
+                    }
+                    else if (Ab [p])
+                    { 
+                        // C (i,j) = A (i,j)
+                        GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        c = 1 ;
+                    }
+                    Cb [p] = c ;
+                    task_cnvals += c ;
                 }
-                else if (Bb [p])
-                {
-                    // C (i,j) = B (i,j)
-                    GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
-                    c = 1 ;
-                }
-                else if (Ab [p])
-                {
-                    // C (i,j) = A (i,j)
-                    GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
-                    c = 1 ;
-                }
-                Cb [p] = c ;
-                cnvals += c ;
+                cnvals += task_cnvals ;
             }
 
         }
@@ -77,9 +85,10 @@
             // Method22: C and A are bitmap; B is sparse or hypersparse
             //------------------------------------------------------------------
 
+            int64_t p ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 // C (i,j) = A (i,j)
                 int8_t a = Ab [p] ;
                 if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
@@ -95,6 +104,7 @@
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
                 int64_t klast  = klast_Bslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
@@ -109,21 +119,22 @@
                         int64_t i = Bi [pB] ;
                         int64_t p = pC_start + i ;
                         if (Cb [p])
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, p) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
                             Cb [p] = 1 ;
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
 
         }
@@ -134,9 +145,10 @@
             // Method23: C and B are bitmap; A is sparse or hypersparse
             //------------------------------------------------------------------
 
+            int64_t p ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 // C (i,j) = B (i,j)
                 int8_t b = Bb [p] ;
                 if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
@@ -146,12 +158,13 @@
 
             GB_SLICE_MATRIX (A, 8) ;
 
-            #pragma omp parallel for num_threads(C_nthreads) \
+            #pragma omp parallel for num_threads(A_nthreads) \
                 schedule(dynamic,1) reduction(+:cnvals)
             for (taskid = 0 ; taskid < A_ntasks ; taskid++)
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
                 int64_t klast  = klast_Aslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
@@ -166,27 +179,28 @@
                         int64_t i = Ai [pA] ;
                         int64_t p = pC_start + i ;
                         if (Cb [p])
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, p) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
                             Cb [p] = 1 ;
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
         }
 
     }
     else if (M_is_sparse_or_hyper)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap, M is sparse or hyper and complemented
@@ -237,7 +251,7 @@
                     // mark C(i,j) if M(i,j) is true
                     bool mij = GB_mcast (Mx, pM, msize) ;
                     if (mij)
-                    {
+                    { 
                         int64_t i = Mi [pM] ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 2 ;
@@ -263,44 +277,51 @@
             // Method24(!M,sparse): C is bitmap, both A and B are bitmap or full
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                int8_t c = Cb [p] ;
-                if (c == 0)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // M(i,j) is zero, so C(i,j) can be computed
-                    int8_t a = GBB (Ab, p) ;
-                    int8_t b = GBB (Bb, p) ;
-                    if (a && b)
+                    int8_t c = Cb [p] ;
+                    if (c == 0)
                     {
-                        // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
-                        GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                        c = 1 ;
+                        // M(i,j) is zero, so C(i,j) can be computed
+                        int8_t a = GBB (Ab, p) ;
+                        int8_t b = GBB (Bb, p) ;
+                        if (a && b)
+                        { 
+                            // C (i,j) = A (i,j) + B (i,j)
+                            GB_GETA (aij, Ax, p) ;
+                            GB_GETB (bij, Bx, p) ;
+                            GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                            c = 1 ;
+                        }
+                        else if (b)
+                        { 
+                            // C (i,j) = B (i,j)
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                            c = 1 ;
+                        }
+                        else if (a)
+                        { 
+                            // C (i,j) = A (i,j)
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                            c = 1 ;
+                        }
+                        Cb [p] = c ;
+                        task_cnvals += c ;
                     }
-                    else if (b)
-                    {
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
-                        c = 1 ;
+                    else
+                    { 
+                        // M(i,j) == 1, so C(i,j) is not computed
+                        Cb [p] = 0 ;
                     }
-                    else if (a)
-                    {
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
-                        c = 1 ;
-                    }
-                    Cb [p] = c ;
-                    cnvals += c ;
                 }
-                else
-                {
-                    // M(i,j) == 1, so C(i,j) is not computed
-                    Cb [p] = 0 ;
-                }
+                cnvals += task_cnvals ;
             }
             M_cleared = true ;      // M has also been cleared from C
 
@@ -312,18 +333,25 @@
             // Method25(!M,sparse): C bitmap, A bitmap or full, B sparse/hyper
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                if (Cb [p] == 0)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // C (i,j) = A (i,j)
-                    int8_t a = GBB (Ab, p) ;
-                    if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
-                    Cb [p] = a ;
-                    cnvals += a ;
+                    if (Cb [p] == 0)
+                    { 
+                        // C (i,j) = A (i,j)
+                        int8_t a = GBB (Ab, p) ;
+                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        Cb [p] = a ;
+                        task_cnvals += a ;
+                    }
                 }
+                cnvals += task_cnvals ;
             }
 
             GB_SLICE_MATRIX (B, 8) ;
@@ -334,6 +362,7 @@
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
                 int64_t klast  = klast_Bslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
@@ -349,21 +378,22 @@
                         int64_t p = pC_start + i ;
                         int8_t c = Cb [p] ;
                         if (c == 1)
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, p) ;
                             GB_GETB (bij, Bx, pB) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else if (c == 0)
-                        {
+                        { 
                             // C (i,j) = B (i,j)
                             GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
                             Cb [p] = 1 ;
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
 
         }
@@ -374,18 +404,25 @@
             // Method26: C bitmap, A sparse or hypersparse, B bitmap or full
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                if (Cb [p] == 0)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // C (i,j) = B (i,j)
-                    int8_t b = GBB (Bb, b) ;
-                    if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
-                    Cb [p] = b ;
-                    cnvals += b ;
+                    if (Cb [p] == 0)
+                    { 
+                        // C (i,j) = B (i,j)
+                        int8_t b = GBB (Bb, p) ;
+                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        Cb [p] = b ;
+                        task_cnvals += b ;
+                    }
                 }
+                cnvals += task_cnvals ;
             }
 
             GB_SLICE_MATRIX (A, 8) ;
@@ -396,6 +433,7 @@
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
                 int64_t klast  = klast_Aslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
@@ -411,21 +449,22 @@
                         int64_t p = pC_start + i ;
                         int8_t c = Cb [p] ;
                         if (c == 1)
-                        {
+                        { 
                             // C (i,j) = A (i,j) + B (i,j)
                             GB_GETA (aij, Ax, pA) ;
                             GB_GETB (bij, Bx, p) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else if (c == 0)
-                        {
+                        { 
                             // C (i,j) = A (i,j)
                             GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
                             Cb [p] = 1 ;
-                            cnvals++ ;
+                            task_cnvals++ ;
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
         }
 
@@ -437,7 +476,7 @@
         {
             // This step is required if either A or B are sparse/hyper (if
             // one is sparse/hyper, the other must be bitmap).  It requires
-            // extra pass over the mask M, so this might be slower than
+            // an extra pass over the mask M, so this might be slower than
             // postponing the application of the mask, and doing it later.
 
             #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
@@ -459,7 +498,7 @@
                         // mark C(i,j) if M(i,j) is true
                         bool mij = GB_mcast (Mx, pM, msize) ;
                         if (mij)
-                        {
+                        { 
                             int64_t i = Mi [pM] ;
                             int64_t p = pC_start + i ;
                             Cb [p] = 0 ;
@@ -543,45 +582,52 @@
             // Method27: C is bitmap; M, A, and B are bitmap or full
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                GB_GET_MIJ (p) ;
-                if (mij)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // M(i,j) is true, so C(i,j) can be computed
-                    int8_t a = GBB (Ab, p) ;
-                    int8_t b = GBB (Bb, p) ;
-                    int8_t c = 0 ;
-                    if (a && b)
+                    GB_GET_MIJ (p) ;
+                    if (mij)
                     {
-                        // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
-                        GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
-                        c = 1 ;
+                        // M(i,j) is true, so C(i,j) can be computed
+                        int8_t a = GBB (Ab, p) ;
+                        int8_t b = GBB (Bb, p) ;
+                        int8_t c = 0 ;
+                        if (a && b)
+                        { 
+                            // C (i,j) = A (i,j) + B (i,j)
+                            GB_GETA (aij, Ax, p) ;
+                            GB_GETB (bij, Bx, p) ;
+                            GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                            c = 1 ;
+                        }
+                        else if (b)
+                        { 
+                            // C (i,j) = B (i,j)
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                            c = 1 ;
+                        }
+                        else if (a)
+                        { 
+                            // C (i,j) = A (i,j)
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                            c = 1 ;
+                        }
+                        Cb [p] = c ;
+                        task_cnvals += c ;
                     }
-                    else if (b)
-                    {
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
-                        c = 1 ;
+                    else
+                    { 
+                        // M(i,j) == 1, so C(i,j) is not computed
+                        Cb [p] = 0 ;
                     }
-                    else if (a)
-                    {
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
-                        c = 1 ;
-                    }
-                    Cb [p] = c ;
-                    cnvals += c ;
                 }
-                else
-                {
-                    // M(i,j) == 1, so C(i,j) is not computed
-                    Cb [p] = 0 ;
-                }
+                cnvals += task_cnvals ;
             }
 
         }
@@ -592,23 +638,30 @@
             // Method28: C bitmap; M and A bitmap or full; B sparse or hyper
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                GB_GET_MIJ (p) ;
-                if (mij)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // C (i,j) = A (i,j)
-                    int8_t a = GBB (Ab, p) ;
-                    if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
-                    Cb [p] = a ;
-                    cnvals += a ;
+                    GB_GET_MIJ (p) ;
+                    if (mij)
+                    { 
+                        // C (i,j) = A (i,j)
+                        int8_t a = GBB (Ab, p) ;
+                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        Cb [p] = a ;
+                        task_cnvals += a ;
+                    }
+                    else
+                    { 
+                        Cb [p] = 0 ;
+                    }
                 }
-                else
-                {
-                    Cb [p] = 0 ;
-                }
+                cnvals += task_cnvals ;
             }
 
             GB_SLICE_MATRIX (B, 8) ;
@@ -619,6 +672,7 @@
             {
                 int64_t kfirst = kfirst_Bslice [taskid] ;
                 int64_t klast  = klast_Bslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
@@ -637,22 +691,23 @@
                         {
                             int8_t c = Cb [p] ;
                             if (c == 1)
-                            {
+                            { 
                                 // C (i,j) = A (i,j) + B (i,j)
                                 GB_GETA (aij, Ax, p) ;
                                 GB_GETB (bij, Bx, pB) ;
                                 GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                             }
                             else
-                            {
+                            { 
                                 // C (i,j) = B (i,j)
                                 GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
                                 Cb [p] = 1 ;
-                                cnvals++ ;
+                                task_cnvals++ ;
                             }
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
 
         }
@@ -663,23 +718,30 @@
             // Method29: C bitmap; M and B bitmap or full; A sparse or hyper
             //------------------------------------------------------------------
 
+            int tid ;
             #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
                 reduction(+:cnvals)
-            for (p = 0 ; p < cnz ; p++)
+            for (tid = 0 ; tid < C_nthreads ; tid++)
             {
-                GB_GET_MIJ (p) ;
-                if (mij)
+                int64_t pstart, pend, task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // C (i,j) = B (i,j)
-                    int8_t b = GBB (Bb, p) ;
-                    if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
-                    Cb [p] = b ;
-                    cnvals += b ;
+                    GB_GET_MIJ (p) ;
+                    if (mij)
+                    { 
+                        // C (i,j) = B (i,j)
+                        int8_t b = GBB (Bb, p) ;
+                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        Cb [p] = b ;
+                        task_cnvals += b ;
+                    }
+                    else
+                    { 
+                        Cb [p] = 0 ;
+                    }
                 }
-                else
-                {
-                    Cb [p] = 0 ;
-                }
+                cnvals += task_cnvals ;
             }
 
             GB_SLICE_MATRIX (A, 8) ;
@@ -690,6 +752,7 @@
             {
                 int64_t kfirst = kfirst_Aslice [taskid] ;
                 int64_t klast  = klast_Aslice  [taskid] ;
+                int64_t task_cnvals = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
@@ -708,22 +771,23 @@
                         {
                             int8_t c = Cb [p] ;
                             if (c == 1)
-                            {
+                            { 
                                 // C (i,j) = A (i,j) + B (i,j)
                                 GB_GETA (aij, Ax, pA) ;
                                 GB_GETB (bij, Bx, p) ;
                                 GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                             }
                             else
-                            {
+                            { 
                                 // C (i,j) = A (i,j)
                                 GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
                                 Cb [p] = 1 ;
-                                cnvals++ ;
+                                task_cnvals++ ;
                             }
                         }
                     }
                 }
+                cnvals += task_cnvals ;
             }
         }
     }

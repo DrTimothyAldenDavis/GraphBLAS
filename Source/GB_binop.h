@@ -2,8 +2,8 @@
 // GB_binop.h: definitions for binary operators
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -35,6 +35,11 @@ GB_PUBLIC   // accessed by the MATLAB interface only
 GB_Opcode GB_boolean_rename     // renamed opcode
 (
     const GB_Opcode opcode      // opcode to rename
+) ;
+
+GrB_BinaryOp GB_boolean_rename_op   // return renamed op
+(
+    const GrB_BinaryOp op           // op to rename
 ) ;
 
 GrB_Info GB_binop_new

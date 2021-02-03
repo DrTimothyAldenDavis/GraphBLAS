@@ -2,8 +2,8 @@
 // GB_transplant: replace contents of one matrix with another
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C
     ASSERT (GB_JUMBLED_OK (A)) ;    // if A is jumbled, then C is jumbled
-    ASSERT (!GB_PENDING (A)) ;      // pending tuples may not appear in A
+    ASSERT (GB_PENDING_OK (A)) ;    // pending tuples n A transplanted into C
 
     // C is about to be cleared, any pending work is OK
     ASSERT (C != NULL) ;
@@ -62,7 +62,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // clear C and transplant the type, size, and hypersparsity
+    // clear C and transplant the type, size, format, and pending tuples
     //--------------------------------------------------------------------------
 
     // free all content of C
@@ -73,26 +73,34 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (C->nzmax == 0) ;
 
-    // It is now safe to change the type, dimension, and hypersparsity of C
+    // It is now safe to change the type and dimension of C
     C->type = ctype ;
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
-    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
-            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
 
-    // C->hyper_switch is not modified by the transplant
+    // C is not shallow, and has no content yet
+    ASSERT (!GB_is_shallow (C)) ;
+    ASSERT (C->p == NULL) ;
+    ASSERT (C->h == NULL) ;
+    ASSERT (C->b == NULL) ;
+    ASSERT (C->i == NULL) ;
+    ASSERT (C->x == NULL) ;
+    ASSERT (C->Pending == NULL) ;
 
-    // C is not shallow, and has no content
-    ASSERT (!C->p_shallow && !C->h_shallow && !C->i_shallow && !C->x_shallow) ;
-    ASSERT (!C->b_shallow && C->b == NULL) ;
-    ASSERT (C->h == NULL && C->p == NULL && C->i == NULL && C->x == NULL) ;
+    // C->hyper_switch and C->bitmap_switch are not modified by the transplant
 
     // determine if C should be constructed as a bitmap or full matrix
     bool C_is_bitmap = GB_IS_BITMAP (A) ;
-    bool C_is_full = GB_is_dense (A) && !GB_ZOMBIES (A) && !(A->jumbled) 
-        && !C_is_bitmap ;
+    bool C_is_full = GB_as_if_full (A) && !C_is_bitmap ;
+
+    //--------------------------------------------------------------------------
+    // transplant pending tuples from A to C
+    //--------------------------------------------------------------------------
+
+    C->Pending = A->Pending ;
+    A->Pending = NULL ;
 
     //--------------------------------------------------------------------------
     // transplant A->p vector pointers and A->h hyperlist
@@ -315,7 +323,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     }
     else if (A->i_shallow)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // A->i is a shallow copy of another matrix, so we need a deep copy

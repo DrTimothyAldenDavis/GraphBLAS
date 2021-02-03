@@ -2,8 +2,8 @@
 // GB_masker: R = masker (C, M, Z) constructs R for C<M>=Z
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -86,9 +86,8 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     ASSERT (!GB_JUMBLED (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
 
-    // this function is not used if C matrix is bitmap or full
-    ASSERT (!GB_IS_BITMAP (C)) ;        // GB_masker used if C is bitmap or full
-    ASSERT (!GB_IS_FULL (C)) ;
+    ASSERT (!GB_IS_BITMAP (C)) ;    // GB_masker not used if C is bitmap
+    ASSERT (!GB_IS_FULL (C)) ;      // GB_masker not used if C is full
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
@@ -189,7 +188,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // R is bitmap or full: only determine how many threads to use

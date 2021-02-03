@@ -2,8 +2,8 @@
 // GB_mex_AdotB: compute C=spones(Mask).*(A'*B)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -191,6 +191,12 @@ void mexFunction
     {
         FREE_ALL ;
         mexErrMsgTxt ("inner dimensions of A'*B do not match") ;
+    }
+
+    if (anrows == 0)
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("inner dimensions of A'*B must be > 0") ;
     }
 
     // get flipxy

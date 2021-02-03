@@ -2,8 +2,8 @@
 // GB_resize: change the size of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -111,8 +111,7 @@ GrB_Info GB_resize              // change the size of a matrix
         if (in_place)
         { 
             // reallocate A->x in-place; no data movement needed
-            A->x = GB_REALLOC (A->x, nzmax_new*asize, nzmax_old*asize,
-                GB_void, &ok) ;
+            GB_REALLOC (A->x, nzmax_new*asize, nzmax_old*asize, GB_void, &ok) ;
         }
         else
         { 
@@ -122,7 +121,7 @@ GrB_Info GB_resize              // change the size of a matrix
             if (A_is_bitmap)
             {
                 // allocate new space for A->b
-                Ab_new = GB_MALLOC (nzmax_new*asize, GB_void) ;
+                Ab_new = GB_MALLOC (nzmax_new*asize, int8_t) ;
                 ok = ok && (Ab_new != NULL) ;
             }
         }
@@ -153,7 +152,6 @@ GrB_Info GB_resize              // change the size of a matrix
         
             GB_void *GB_RESTRICT Ax_old = A->x ;
 
-            // TODO if A is bitmap, this might cause valgrind to complain
             int64_t j ;
             if (vdim_new <= 4*nthreads)
             {
@@ -166,13 +164,11 @@ GrB_Info GB_resize              // change the size of a matrix
                 }
             }
             else
-            { 
-GB_GOTCHA ;
+            {
                 // use a single thread for each vector
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (j = 0 ; j < vdim_new ; j++)
                 { 
-// GB_GOTCHA ;
                     GB_void *pdest = Ax_new + j * vlen_new * asize ;
                     GB_void *psrc  = Ax_old + j * vlen_old * asize ;
                     memcpy (pdest, psrc, vlen_new * asize) ;
@@ -229,6 +225,7 @@ GB_GOTCHA ;
 
         // convert to hypersparse
         GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+        ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
         // resize the number of sparse vectors
         int64_t *GB_RESTRICT Ah = A->h ;
@@ -258,8 +255,8 @@ GB_GOTCHA ;
         if (vdim_new < vdim_old)
         { 
             // number of vectors is decreasing, need to count the new number of
-            // non-empty vectors, unless it is done during pruning, just below.
-            A->nvec_nonempty = -1 ;         // compute when needed
+            // non-empty vectors: done during pruning or by selector, below.
+            A->nvec_nonempty = -1 ;     // recomputed just below
         }
 
         //----------------------------------------------------------------------
@@ -269,8 +266,8 @@ GB_GOTCHA ;
         // if vlen is shrinking, delete entries outside the new matrix
         if (vlen_new < vlen_old)
         { 
-            GB_OK (GB_selector (NULL, GB_RESIZE_opcode, NULL, false, A,
-                vlen_new-1, NULL, Context)) ;
+            GB_OK (GB_selector (NULL /* A in-place */, GB_RESIZE_opcode, NULL,
+                false, A, vlen_new-1, NULL, Context)) ;
         }
 
         //----------------------------------------------------------------------

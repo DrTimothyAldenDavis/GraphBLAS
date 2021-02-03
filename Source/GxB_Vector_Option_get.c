@@ -2,8 +2,8 @@
 // GxB_Vector_Option_get: get an option in a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -34,39 +34,40 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     switch (field)
     {
 
-        case GxB_SPARSITY : 
-GB_GOTCHA ;
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (bitmap_switch) ;
+                (*bitmap_switch) = (double) v->bitmap_switch ;
+            }
+            break ;
+
+        case GxB_SPARSITY_CONTROL : 
 
             {
                 va_start (ap, field) ;
                 int *sparsity = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (sparsity) ;
-                if (GB_IS_HYPERSPARSE (v))
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_HYPERSPARSE ;
-                }
-                else if (GB_IS_FULL (v))
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_FULL ;
-                }
-                else if (GB_IS_BITMAP (v))
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_BITMAP ;
-                }
-                else
-                { 
-GB_GOTCHA ;
-                    (*sparsity) = GxB_SPARSE ;
-                }
+                (*sparsity) = v->sparsity ;
+            }
+            break ;
+
+        case GxB_SPARSITY_STATUS : 
+
+            {
+                va_start (ap, field) ;
+                int *sparsity = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (sparsity) ;
+                (*sparsity) = GB_sparsity ((GrB_Matrix) v) ;
             }
             break ;
 
         case GxB_FORMAT : 
-GB_GOTCHA ;
 
             {
                 // a GrB_Vector is always stored by-column
@@ -78,8 +79,7 @@ GB_GOTCHA ;
             }
             break ;
 
-        case GxB_IS_HYPER : 
-GB_GOTCHA ;
+        case GxB_IS_HYPER : // deprecated; use GxB_SPARSITY_STATUS instead
 
             {
                 // a GrB_Vector is never hypersparse
@@ -92,7 +92,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
 

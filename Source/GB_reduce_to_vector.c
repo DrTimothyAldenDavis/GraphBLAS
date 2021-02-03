@@ -1,9 +1,9 @@
 //------------------------------------------------------------------------------
-// GB_reduce_to_vector: reduce a matrix to a vector using a binary op
+// GB_reduce_to_vector: reduce a matrix to a vector using a monoid
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -19,7 +19,6 @@
     GB_Matrix_free (&B) ;               \
     /* cannot use GrB_BinaryOp_free: */ \
     GB_FREE (first_op) ;                \
-    GrB_Monoid_free (&monoid2) ;        \
     GrB_Semiring_free (&semiring) ;     \
 }
 
@@ -28,8 +27,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GrB_Matrix C,                   // input/output for results, size n-by-1
     const GrB_Matrix M,             // optional M for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(C,T)
-    const GrB_BinaryOp reduce_op,   // reduce operator for T=reduce(A)
-    const GrB_Monoid reduce_monoid, // reduce monoid for T=reduce(A)
+    const GrB_Monoid monoid,        // reduce monoid for T=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
@@ -42,68 +40,43 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     GrB_Matrix B = NULL ;
     GrB_BinaryOp first_op = NULL ;
-    GrB_Monoid monoid2 = NULL ;
     GrB_Semiring semiring = NULL ;
-
-    // get the reduce operator and monoid
-    GrB_Monoid monoid = reduce_monoid ;
-    GrB_BinaryOp reduce = (monoid != NULL) ? monoid->op : reduce_op ;
 
     // C may be aliased with M and/or A
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    if (GB_OP_IS_POSITIONAL (reduce))
-    { 
-GB_GOTCHA ;
-        // reduce operator cannot be a positional op
-        GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "Positional op z=%s(x,y) not supported as reduce op\n",
-                reduce->name) ;
-    }
-
-    ASSERT_MATRIX_OK (C, "C input for reduce_BinaryOp", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for reduce_BinaryOp", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_BinaryOp", GB0) ;
-    ASSERT_BINARYOP_OK (reduce, "reduce for reduce_BinaryOp", GB0) ;
-    ASSERT_MATRIX_OK (A, "A input for reduce_BinaryOp", GB0) ;
-    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for reduce_BinaryOp", GB0) ;
+    ASSERT_MATRIX_OK (C, "C input for reduce-to-vector", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for reduce-to-vector", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce-to-vector", GB0) ;
+    ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for reduce-to-vector", GB0) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for reduce-to-vector", GB0) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, do_sort) ;
 
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
-    GrB_Type ztype = reduce->ztype ;
+    GrB_Type ztype = monoid->op->ztype ;
     GB_OK (GB_compatible (C->type, C, M, accum, ztype, Context)) ;
-
-    // check types of reduce
-    if (reduce->xtype != ztype || reduce->ytype != ztype)
-    { 
-        // all 3 types of z = reduce (x,y) must be the same.  reduce must also
-        // be associative but there is no way to check this in general.
-        GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "All domains of reduction operator must be identical;\n"
-            "operator is: [%s] = %s ([%s],[%s])", ztype->name,
-            reduce->name, reduce->xtype->name, reduce->ytype->name) ;
-    }
 
     // T = reduce (T,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
     { 
         GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "Incompatible type for reduction operator z=%s(x,y):\n"
+            "Incompatible type for reduction monoid z=%s(x,y):\n"
             "input matrix A of type [%s]\n"
-            "cannot be typecast to reduction operator of type [%s]",
-            reduce->name, A->type->name, ztype->name) ;
+            "cannot be typecast to reduction monoid of type [%s]",
+            monoid->op->name, A->type->name, ztype->name) ;
     }
 
     // check the dimensions
@@ -138,8 +111,8 @@ GB_GOTCHA ;
 
     // B is constructed in O(1) time and space, even though it is m-by-1
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    GB_OK (GB_new (&B, ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER,
-        1, Context)) ;
+    GB_OK (GB_new (&B,  // full, new header
+        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Context)) ;
     B->nzmax = m ;
     B->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (B, "temp vector for reduce-to-vector", GB0) ;
@@ -147,15 +120,6 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
     // create the REDUCE_FIRST_ZTYPE semiring
     //--------------------------------------------------------------------------
-
-    if (monoid == NULL)
-    {
-        // GrB_Matrix_reduce_BinaryOp does not pass in a monoid; construct it
-        GB_OK (GB_Monoid_new (&monoid2, reduce_op, NULL, NULL, ztype->code,
-            Context)) ;
-        monoid = monoid2 ;
-    }
-    ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
 
     // create the FIRST_ZTYPE operator; note the function pointer is NULL.
     // first_op must be freed with GB_FREE, not GrB_BinaryOp_free, because the
@@ -175,7 +139,8 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     GB_OK (GB_mxm (C, C_replace, M, Mask_comp, Mask_struct, accum,
-        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, Context)) ;
+        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, do_sort,
+        Context)) ;
     ASSERT_MATRIX_OK (C, "C result for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

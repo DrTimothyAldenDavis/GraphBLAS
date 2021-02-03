@@ -2,8 +2,8 @@
 // GB_bitmap_assign_IxJ_template: iterate over all of C(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -42,15 +42,13 @@
 
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
+        int64_t task_cnvals = 0 ;
         bool fine_task = (klast == -1) ;
-        if (fine_task)
-        {
-            // a fine task operates on a slice of a single vector
-            klast = kfirst ;
-        }
         int64_t iA_start = 0, iA_end = nI ;
         if (fine_task)
-        {
+        { 
+            // a fine task operates on a slice of a single vector
+            klast = kfirst ;
             iA_start = TaskList [taskid].pA ;
             iA_end   = TaskList [taskid].pA_end ;
         }
@@ -75,7 +73,7 @@
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
-            {
+            { 
                 int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                 int64_t pC = iC + pC0 ;
                 int64_t pA = iA + pA0 ;
@@ -86,6 +84,7 @@
                 GB_IXJ_WORK (pC, pA) ;
             }
         }
+        cnvals += task_cnvals ;
     }
 
     //--------------------------------------------------------------------------

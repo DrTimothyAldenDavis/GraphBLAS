@@ -2,8 +2,8 @@
 // GB_selector:  select entries from a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -124,16 +124,15 @@ GrB_Info GB_selector
 
     bool use_bitmap_selector ;
     if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
-    {
+    { 
         // GB_bitmap_selector does not support these opcodes.  For the RESIZE
-        // and NONZOMBIE operators, A will never be bitmap.  Full matrices
-        // should use another method, but for now the sparse case works fine.
-        // If A is sparse or hypersparse, but packed, then it has no zombies
-        // anyway.
+        // and NONZOMBIE operators, A will never be bitmap.  A is converted to
+        // hypersparse first for RESIZE, and a full/bitmap matrix never has
+        // zombies.
         use_bitmap_selector = false ;
     }
     else if (opcode == GB_DIAG_opcode)
-    {
+    { 
         // GB_bitmap_selector supports the DIAG operator, but it is currently
         // not efficient (GB_bitmap_selector should return a sparse diagonal
         // matrix, not bitmap).  So use the sparse case if A is not bitmap,
@@ -141,7 +140,7 @@ GrB_Info GB_selector
         use_bitmap_selector = GB_IS_BITMAP (A) ;
     }
     else
-    {
+    { 
         // For bitmap, full, or packed matrices (sparse/hypersparse with all
         // entries present, not jumbled, no zombies, and no pending tuples),
         // use the bitmap selector for all other operators (TRIL, TRIU,
@@ -166,7 +165,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     // the case when A is bitmap is always handled above by GB_bitmap_selector
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: bitmap case handled above
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     int64_t *GB_RESTRICT Ap = A->p ;
     int64_t *GB_RESTRICT Ah = A->h ;
@@ -204,7 +203,7 @@ GrB_Info GB_selector
         return (GrB_OUT_OF_MEMORY) ;
     }
     ASSERT (anvec <= cplen) ;
-    Cp [anvec] = 0 ;        // ok: C is sparse
+    Cp [anvec] = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads and tasks to use
@@ -293,7 +292,7 @@ GrB_Info GB_selector
     // Cp = cumsum (Cp)
     int64_t C_nvec_nonempty ;
     GB_cumsum (Cp, anvec, &C_nvec_nonempty, nthreads) ;
-    cnz = Cp [anvec] ;      // ok: C is sparse
+    cnz = Cp [anvec] ;
 
     //--------------------------------------------------------------------------
     // determine the slice boundaries in the new C matrix
@@ -310,7 +309,7 @@ GrB_Info GB_selector
         { 
             // Task taskid is the first one to do work on C(:,k), so it starts
             // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
-            pC = Cp [k] ;       // ok: C is sparse
+            pC = Cp [k] ;
             kprior = k ;
         }
 
@@ -322,11 +321,11 @@ GrB_Info GB_selector
         if (k < klast)
         { 
             // Task taskid is the last to contribute to C(:,k).
-            ASSERT (pC == Cp [k+1]) ;       // ok: C is sparse
+            ASSERT (pC == Cp [k+1]) ;
             // Task taskid contributes the first Wlast [taskid] entries
             // to C(:,klast), so the next task taskid+1 starts at this
             // location, if its first vector is klast of this task.
-            pC = Cp [klast] + Wlast [taskid] ;      // ok: C is sparse
+            pC = Cp [klast] + Wlast [taskid] ;
             kprior = klast ;
         }
     }
@@ -336,23 +335,19 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     Ci = GB_MALLOC (cnz, int64_t) ;
-
-    if (opcode == GB_EQ_ZERO_opcode)
-    { 
-        // since Cx [0..cnz-1] is all zero, phase2 only needs to construct
-        // the pattern in Ci
-        Cx = GB_CALLOC (cnz * asize, GB_void) ;
-    }
-    else
-    { 
-        Cx = GB_MALLOC (cnz * asize, GB_void) ;
-    }
-
+    Cx = GB_MALLOC (cnz * asize, GB_void) ;
     if (Ci == NULL || Cx == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    if (opcode == GB_EQ_ZERO_opcode)
+    { 
+        // Set Cx [0..cnz-1] to all zero, so that phase2 only needs to
+        // construct the pattern in Ci.
+        GB_memset (Cx, 0, cnz * asize, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -383,21 +378,21 @@ GrB_Info GB_selector
         // transplant C back into A
         //----------------------------------------------------------------------
 
-        // TODO: this is not parallel, and should be its own utility function
+        // TODO: this is not parallel: use GB_hyper_prune
         if (A->h != NULL && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {
-                if (Cp [k] < Cp [k+1])      // ok: C is sparse
+                if (Cp [k] < Cp [k+1])
                 { 
-                    Ah [cnvec] = Ah [k] ;       // ok: A is sparse
-                    Ap [cnvec] = Cp [k] ;       // ok: C is sparse
+                    Ah [cnvec] = Ah [k] ;
+                    Ap [cnvec] = Cp [k] ;
                     cnvec++ ;
                 }
             }
-            Ap [cnvec] = Cp [anvec] ;       // ok: A and C are sparse
+            Ap [cnvec] = Cp [anvec] ;
             A->nvec = cnvec ;
             ASSERT (A->nvec == C_nvec_nonempty) ;
             GB_FREE (Cp) ;
@@ -416,7 +411,7 @@ GrB_Info GB_selector
         A->x = Cx ; Cx = NULL ;
         A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
-        A->jumbled = A_jumbled ;
+        A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_Matrix_wait.
@@ -443,29 +438,32 @@ GrB_Info GB_selector
         GB_OK (info) ;
 
         if (A->h != NULL)
-        {
+        { 
+
+            //------------------------------------------------------------------
+            // A and C are hypersparse: copy non-empty vectors from Ah to Ch
+            //------------------------------------------------------------------
+
             Ch = GB_MALLOC (aplen, int64_t) ;
             if (Ch == NULL)
             { 
-GB_GOTCHA ;
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
-            // copy non-empty vectors from Ah to Ch
+            // TODO: do in parallel: use GB_hyper_prune
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {
-                if (Cp [k] < Cp [k+1])      // ok: C is hypersparse
+                if (Cp [k] < Cp [k+1])
                 { 
-GB_GOTCHA ;
-                    Ch [cnvec] = Ah [k] ;       // ok: C is hypersparse
-                    Cp [cnvec] = Cp [k] ;       // ok: C is hypersparse
+                    Ch [cnvec] = Ah [k] ;
+                    Cp [cnvec] = Cp [k] ;
                     cnvec++ ;
                 }
             }
-            Cp [cnvec] = Cp [anvec] ;       // ok: C is hypersparse
+            Cp [cnvec] = Cp [anvec] ;
             C->nvec = cnvec ;
             ASSERT (C->nvec == C_nvec_nonempty) ;
         }
@@ -477,7 +475,7 @@ GB_GOTCHA ;
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
-        C->jumbled = A->jumbled ;
+        C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
 
         (*Chandle) = C ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;

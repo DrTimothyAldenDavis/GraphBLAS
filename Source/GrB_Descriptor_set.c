@@ -2,8 +2,8 @@
 // GrB_Descriptor_set: set a field in a descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -104,16 +104,15 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
         case GxB_AxB_METHOD : 
 
             if (! (value == GxB_DEFAULT  || value == GxB_AxB_GUSTAVSON
-                || value == GxB_AxB_HEAP || value == GxB_AxB_DOT
+                || value == GxB_AxB_DOT
                 || value == GxB_AxB_HASH || value == GxB_AxB_SAXPY))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                     "invalid descriptor value [%d] for GrB_AxB_METHOD field;\n"
                     "must be GxB_DEFAULT [%d], GxB_AxB_GUSTAVSON [%d]\n"
-                    "GxB_AxB_HEAP [%d],\nGxB_AxB_DOT [%d], "
-                    "GxB_AxB_HASH [%d] or GxB_AxB_SAXPY [%d]",
+                    "GxB_AxB_DOT [%d], GxB_AxB_HASH [%d] or GxB_AxB_SAXPY [%d]",
                     (int) value, (int) GxB_DEFAULT, (int) GxB_AxB_GUSTAVSON,
-                    (int) GxB_AxB_HEAP, (int) GxB_AxB_DOT,
+                    (int) GxB_AxB_DOT,
                     (int) GxB_AxB_HASH, (int) GxB_AxB_SAXPY) ;
             }
             desc->axb = value ;

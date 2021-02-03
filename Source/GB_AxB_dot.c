@@ -2,8 +2,8 @@
 // GB_AxB_dot: C<M>=A'*B using dot products
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -64,7 +64,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
 
@@ -87,59 +86,51 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
 
-    if (B->nvec_nonempty < 0)
-    { 
-        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-    }
-
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // prototype bitmap case:
-    //--------------------------------------------------------------------------
-
-    info = GB_AxB_dot5 (Chandle, C_in, M, Mask_comp, Mask_struct, NULL,
-        A, B, semiring, flipxy, Context) ;
-    if (info != GrB_NO_VALUE)
-    {
-        (*done_in_place) = false ;
-        (*mask_applied) = (M != NULL) ; // mask applied if present
-        return (info) ;
-    }
-
     //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (C_in != NULL && M == NULL && !Mask_comp
-        && !GB_IS_BITMAP (C_in) && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+    if (GB_AxB_dot4_control (C_in, M, Mask_comp))
     { 
-        GBURBLE ("dense, C+=A'*B in-place ") ;
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
         return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
     }
 
     //--------------------------------------------------------------------------
-    // C<M>=A'*B where C and M are sparse or hypersparse
+    // check the empty case
     //--------------------------------------------------------------------------
 
-    if (M != NULL && !Mask_comp && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
+    if (A->vlen == 0)
+    { 
+        // no work to do; C is an empty matrix, normally hypersparse
+        if (C_in != NULL) return (GrB_SUCCESS) ;
+        return (GB_new (Chandle, // auto sparsity, new header
+            semiring->add->op->ztype, A->vdim, B->vdim, GB_Ap_calloc, true,
+            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // C<M>=A'*B: general case
+    //--------------------------------------------------------------------------
+
+    if (GB_AxB_dot3_control (M, Mask_comp))
     { 
 
         // use dot3 if M is present and not complemented, and either sparse or
         // hypersparse
         GBURBLE ("dot3 ") ;
         (*mask_applied) = true ;    // mask is always applied
+        (*done_in_place) = false ;
 
         #if defined ( GBCUDA )
 
+// [ replace this with:
+// if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
+
         // very rough estimate of the work to do
-        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ; // TODO
-        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ; // TODO
+        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
+        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
         int64_t mnz = GB_NNZ (M) ;
 
         double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;
@@ -150,10 +141,12 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // ops) then the type of A can be user-defined here, for CUDA.
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
-        if (ngpus_to_use > 0 && semiring->semiring_is_builtin &&
+        GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
+        if (ngpus_to_use > 0 && semiring->semiring_is_builtin
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+// to here ... ]
         {
             // use "the" GPU (TODO for GPU: could use multiple GPUs too)
             return (GB_AxB_dot3_cuda (Chandle, M, Mask_struct, A, B, semiring,
@@ -161,7 +154,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         }
         else
         #endif
-        {
+        { 
             // use the CPU
             return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring,
                 flipxy, Context)) ;
@@ -173,6 +166,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     //--------------------------------------------------------------------------
 
     (*mask_applied) = (M != NULL) ; // mask applied if present
+    (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
     return (GB_AxB_dot2 (Chandle, M, Mask_comp, Mask_struct, A, B, semiring,
         flipxy, Context)) ;
 }

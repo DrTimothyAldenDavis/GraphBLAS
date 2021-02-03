@@ -2,8 +2,8 @@
 // GB_setElement: C(row,col) = scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -75,7 +75,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             GB_code_string (scalar_code), ctype->name) ;
     }
 
-    // pending tuples and zombies are expected
+    // pending tuples and zombies are expected, and C might be jumbled too
+    ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
 
@@ -87,15 +88,23 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     #endif
 
     //--------------------------------------------------------------------------
-    // sort C if needed
+    // sort C if needed; do not assemble pending tuples or kill zombies yet
     //--------------------------------------------------------------------------
 
     if (C->jumbled)
     { 
-GB_GOTCHA ;
-        // C must not be jumbled
-        GB_MATRIX_WAIT (C) ;
+        // C must not be jumbled; this also kills zombies and assembles
+        // pending tuples
+        GB_OK (GB_Matrix_wait (C, Context)) ;
+        ASSERT (!GB_JUMBLED (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+        ASSERT (!GB_ZOMBIES (C)) ;
     }
+
+    // zombies and pending tuples are still OK, but C is no longer jumbled
+    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_PENDING_OK (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -121,7 +130,7 @@ GB_GOTCHA ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
     if (GB_IS_FULL (C) || C_is_bitmap)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is bitmap or full
@@ -182,13 +191,13 @@ GB_GOTCHA ;
             (GB_void *) scalar, scalar_code, NULL, csize, 1, 1) ;
 
         if (is_zombie)
-        {
+        { 
             // bring the zombie back to life
-            C->i [pleft] = i ;      // ok: C is sparse
+            C->i [pleft] = i ;
             C->nzombies-- ;
         }
         else if (C_is_bitmap)
-        {
+        { 
             // set the entry in the C bitmap
             int8_t cb = C->b [pleft] ;
             C->nvals += (cb == 0) ;
@@ -260,7 +269,7 @@ GB_GOTCHA ;
             #endif
 
             // delete any lingering zombies and assemble the pending tuples
-            GB_MATRIX_WAIT (C) ;
+            GB_OK (GB_Matrix_wait (C, Context)) ;
 
             #if GB_BURBLE
             if (burble)
@@ -291,7 +300,6 @@ GB_GOTCHA ;
         if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
             stype, NULL, i, j, C->vdim > 1))
         { 
-GB_GOTCHA ;
             // out of memory
             GB_phbix_free (C) ;
             return (GrB_OUT_OF_MEMORY) ;

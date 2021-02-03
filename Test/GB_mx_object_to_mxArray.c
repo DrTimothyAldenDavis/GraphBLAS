@@ -2,8 +2,8 @@
 // GB_mx_object_to_mxArray
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -48,35 +48,40 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT_MATRIX_OK (C, name, GB0) ;
 
     // C must not be shallow
-    ASSERT (!C->i_shallow && !C->x_shallow && !C->p_shallow && !C->h_shallow) ;
+    ASSERT (!C->p_shallow) ;
+    ASSERT (!C->h_shallow) ;
+    ASSERT (!C->b_shallow) ;
+    ASSERT (!C->i_shallow) ;
+    ASSERT (!C->x_shallow) ;
 
     // make sure there are no pending computations
-    bool C_is_full = GB_IS_FULL (C) ;
-    if (C_is_full)
+    if (GB_IS_FULL (C) || GB_IS_BITMAP (C))
     {
+        ASSERT (!GB_JUMBLED (C)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
     }
     else
     {
         // this may convert C to full
-        GB_Matrix_wait (C, Context) ;
+        GrB_Matrix_wait (&C) ;
+        C = (*handle) ;
     }
 
-    // must be done after GB_Matrix_wait:
+    // must be done after GrB_Matrix_wait:
     int64_t cnz = GB_NNZ (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
     // ensure C is sparse or full, not hypersparse or bitmap
-    GxB_Matrix_Option_set_(C, GxB_SPARSITY, GxB_FULL + GxB_SPARSE) ;
+    GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_FULL + GxB_SPARSE) ;
     ASSERT_MATRIX_OK (C, "TO MATLAB, sparse or full", GB0) ;
     ASSERT (!GB_IS_HYPERSPARSE (C)) ;
     ASSERT (!GB_IS_BITMAP (C)) ;
 
     // get the current sparsity
     int sparsity ;
-    GxB_Matrix_Option_get_(C, GxB_SPARSITY, &sparsity) ;
+    GxB_Matrix_Option_get_(C, GxB_SPARSITY_STATUS, &sparsity) ;
     ASSERT (sparsity == GxB_FULL || sparsity == GxB_SPARSE) ;
 
     // make sure it's CSC
@@ -85,33 +90,44 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         GxB_Matrix_Option_set_(C, GxB_FORMAT, GxB_BY_COL) ;
     }
 
+    // setting to CSC may have transposed the matrix
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    GrB_Matrix_wait (&C) ;
+    ASSERT (!GB_JUMBLED (C)) ;
+    cnz = GB_NNZ (C) ;
+
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
+    ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_IS_HYPERSPARSE (C)) ;
     ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (GB_IS_SPARSE (C) || GB_IS_FULL (C)) ;
     ASSERT (C->is_csc) ;
 
     // MATLAB doesn't want NULL pointers in its empty matrices
     if (C->x == NULL)
     {
         ASSERT (C->nzmax == 0 && cnz == 0) ;
-        C->x = GB_CALLOC (2 * sizeof (double), GB_void) ;
+        C->x = GB_MALLOC (2 * sizeof (double), GB_void) ;
+        memset (C->x, 0, 2 * sizeof (double)) ;
         C->x_shallow = false ;
     }
 
-    C_is_full = (sparsity == GxB_FULL) ;
+    bool C_is_full = (sparsity == GxB_FULL) ;
     if (!C_is_full)
     {
         // MATLAB doesn't want NULL pointers in its empty sparse matrices
         if (C->i == NULL)
         {
             ASSERT (C->nzmax == 0 && cnz == 0) ;
-            C->i = GB_CALLOC (1, int64_t) ;
+            C->i = GB_MALLOC (1, int64_t) ;
+            C->i [0] = 0 ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
             ASSERT (C->nzmax == 0 && cnz == 0) ;
-            C->p = GB_CALLOC (C->vdim + 1, int64_t) ;
+            C->p = GB_MALLOC (C->vdim + 1, int64_t) ;
+            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
             C->p_shallow = false ;
         }
     }
@@ -132,7 +148,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         if (ctype == GrB_BOOL)
         { 
             A = mxCreateLogicalMatrix (0, 0) ;
-            mxSetData (A, Cx) ;      // OK:bool
+            mxSetData (A, Cx) ;
         }
         else if (ctype == GrB_FP32)
         { 

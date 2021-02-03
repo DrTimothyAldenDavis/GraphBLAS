@@ -1,8 +1,8 @@
 function test15
 %TEST15 test AxB and AdotB internal functions
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n --------------------- GB_mex_AxB, GB_mex_AdotB tests\n') ;
 
@@ -16,7 +16,6 @@ C1 = A*B ;
 C = GB_mex_AxB (A, B) ;
 assert (GB_spok (C) == 1) ;
 assert (norm (C-C1,1) / norm (C,1)< 1e-12) ;
-
 
 A = A' ;
 C1 = A'*B ;

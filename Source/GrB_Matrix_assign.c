@@ -2,8 +2,8 @@
 // GrB_Matrix_assign: C<M>(Rows,Cols) = accum (C(Rows,Cols),A) or A'
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2) ;
+        A_transpose, xx1, xx2, xx7) ;
 
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), A) and variations

@@ -2,8 +2,8 @@
 // GB_masker_phase2: phase2 for R = masker (C,M,Z)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -24,6 +24,7 @@
 
 #include "GB_mask.h"
 #include "GB_ek_slice.h"
+#include "GB_unused.h"
 
 #undef  GB_FREE_WORK
 #define GB_FREE_WORK                                                    \
@@ -111,7 +112,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Matrix R = NULL ;
     GrB_Info info = GB_new_bix (&R, // any sparsity, new header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
-        R_sparsity, C->hyper_switch, Rnvec, rnz, true, Context) ;
+        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
@@ -122,7 +123,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     // add Rp as the vector pointers for R, from GB_masker_phase1
     if (R_is_sparse_or_hyper)
-    {
+    { 
         R->nvec_nonempty = Rnvec_nonempty ;
         R->p = (int64_t *) Rp ;
     }

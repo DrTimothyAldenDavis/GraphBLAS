@@ -2,8 +2,8 @@
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -19,6 +19,7 @@
 #include "GB_AxB_saxpy3.h"
 #include "GB_AxB__include.h"
 #include "GB_unused.h"
+#include "GB_bitmap_assign_methods.h"
 
 // The C=A*B semiring is defined by the following types and operators:
 
@@ -49,6 +50,8 @@
 #define GB_CTYPE \
     GB_ctype
 
+#define GB_ASIZE (sizeof (GB_BTYPE))
+#define GB_BSIZE (sizeof (GB_BTYPE))
 #define GB_CSIZE (sizeof (GB_CTYPE))
 
 // true for int64, uint64, float, double, float complex, and double complex 
@@ -63,6 +66,14 @@
 #define GB_GETB(bkj,Bx,pB) \
     GB_getb(bkj,Bx,pB)
 
+// Gx [pG] = Ax [pA]
+#define GB_LOADA(Gx,pG,Ax,pA) \
+    Gx [pG] = Ax [pA]
+
+// Gx [pG] = Bx [pB]
+#define GB_LOADB(Gx,pG,Bx,pB) \
+    GB_loadb(Gx,pG,Bx,pB)
+
 #define GB_CX(p) Cx [p]
 
 // multiply operator
@@ -73,6 +84,10 @@
 #define GB_CTYPE_CAST(x,y) \
     GB_ctype_cast(x,y)
 
+// cast from a real scalar (or 2, if A is complex) to the type of A
+#define GB_ATYPE_CAST(x,y) \
+    GB_atype_cast(x,y)
+
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     GB_multiply_add(z, x, y, i, k, j)
@@ -80,6 +95,14 @@
 // monoid identity value
 #define GB_IDENTITY \
     GB_identity
+
+// 1 if the identity value can be assigned via memset, with all bytes the same
+#define GB_HAS_IDENTITY_BYTE \
+    GB_has_identity_byte
+
+// identity byte, for memset
+#define GB_IDENTITY_BYTE \
+    GB_identity_byte
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
@@ -95,6 +118,10 @@
 // 1 for the PLUS_PAIR_(real) semirings, not for the complex case
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     GB_is_plus_pair_real_semiring
+
+// 1 for performance-critical semirings, which get extra optimization
+#define GB_IS_PERFORMANCE_CRITICAL_SEMIRING \
+    GB_is_performance_critical_semiring
 
 // declare the cij scalar
 #if GB_IS_PLUS_PAIR_REAL_SEMIRING
@@ -165,6 +192,30 @@
 #define GB_IS_PLUS_FC64_MONOID \
     GB_is_plus_fc64_monoid
 
+// 1 if monoid is ANY_FC32
+#define GB_IS_ANY_FC32_MONOID \
+    GB_is_any_fc32_monoid
+
+// 1 if monoid is ANY_FC64
+#define GB_IS_ANY_FC64_MONOID \
+    GB_is_any_fc64_monoid
+
+// 1 if monoid is MIN for signed or unsigned integers
+#define GB_IS_IMIN_MONOID \
+    GB_is_imin_monoid
+
+// 1 if monoid is MAX for signed or unsigned integers
+#define GB_IS_IMAX_MONOID \
+    GB_is_imax_monoid
+
+// 1 if monoid is MIN for float or double
+#define GB_IS_FMIN_MONOID \
+    GB_is_fmin_monoid
+
+// 1 if monoid is MAX for float or double
+#define GB_IS_FMAX_MONOID \
+    GB_is_fmax_monoid
+
 // 1 for the FIRSTI or FIRSTI1 multiply operator
 #define GB_IS_FIRSTI_MULTIPLIER \
     GB_is_firsti_multiplier
@@ -186,6 +237,7 @@
     // result is purely symbolic; no numeric work to do.  Hx is not used.
     #define GB_HX_WRITE(i,t)
     #define GB_CIJ_GATHER(p,i)
+    #define GB_CIJ_GATHER_UPDATE(p,i)
     #define GB_HX_UPDATE(i,t)
     #define GB_CIJ_MEMCPY(p,i,len)
 
@@ -197,6 +249,10 @@
     // Cx [p] = Hx [i]
     #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
 
+    // Cx [p] += Hx [i]
+    #define GB_CIJ_GATHER_UPDATE(p,i) \
+        GB_add_update(Cx [p], Hx [i])
+
     // Hx [i] += t
     #define GB_HX_UPDATE(i,t) \
         GB_add_update(Hx [i], t)
@@ -207,12 +263,34 @@
 
 #endif
 
+// 1 if the semiring has a concise bitmap multiply-add
+#define GB_HAS_BITMAP_MULTADD \
+    GB_has_bitmap_multadd
+
+// concise statement(s) for the bitmap case:
+//  if (exists)
+//      if (cb == 0)
+//          cx = ax * bx
+//          cb = 1
+//      else
+//          cx += ax * bx
+#define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
+    GB_bitmap_multadd(cb,cx,exists,ax,bx)
+
+// define X for bitmap multiply-add
+#define GB_XINIT \
+    GB_xinit
+
+// load X [1] = bkj for bitmap multiply-add
+#define GB_XLOAD(bkj) \
+    GB_xload(bkj)
+
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
 
 //------------------------------------------------------------------------------
-// C=A'*B or C<!M>=A'*B: dot product (phase 2)
+// C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method where C is bitmap
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot2B
@@ -221,23 +299,19 @@ GrB_Info GB_Adot2B
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A, bool A_is_pattern, int64_t *GB_RESTRICT A_slice,
     const GrB_Matrix B, bool B_is_pattern, int64_t *GB_RESTRICT B_slice,
-    int64_t *GB_RESTRICT *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 
-    // C<M>=A'*B now uses dot3
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #define GB_PHASE_2_OF_2
     #include "GB_AxB_dot2_meta.c"
-    #undef GB_PHASE_2_OF_2
     return (GrB_SUCCESS) ;
     #endif
 }
 
 //------------------------------------------------------------------------------
-// C<M>=A'*B: masked dot product method (phase 2)
+// C<M>=A'*B: masked dot product method (phase 2) where C is sparse or hyper
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot3B
@@ -254,7 +328,7 @@ GrB_Info GB_Adot3B
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot3_template.c"
+    #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -276,7 +350,7 @@ GrB_Info GB_Adot4B
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot4_template.c"
+    #include "GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -298,6 +372,7 @@ GrB_Info GB_Asaxpy3B
     int ntasks,
     int nfine,
     int nthreads,
+    const int do_sort,
     GB_Context Context
 )
 { 

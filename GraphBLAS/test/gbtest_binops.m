@@ -9,8 +9,8 @@ function [binops, synonyms] = gbtest_binops
 %
 % See also GrB.binopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights
-% Reserved. http://suitesparse.com.  See GraphBLAS/Doc/License.txt.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 binops = {
     '1st'
@@ -53,13 +53,13 @@ binops = {
     'bitand'
     'bitxor'
     'bitxnor'
-    'firsti'
+    'firsti0'
     'firsti1'
-    'firstj'
+    'firstj0'
     'firstj1'
-    'secondi'
+    'secondi0'
     'secondi1'
-    'secondj'
+    'secondj0'
     'secondj1'
     } ;
 

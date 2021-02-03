@@ -2,8 +2,8 @@
 // GB_AxB_saxpy3_cumsum: finalize nnz(C(:,j)) and find cumulative sum of Cp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -26,8 +26,8 @@ void GB_AxB_saxpy3_cumsum
     // get C
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: C is sparse or hypersparse
-    ASSERT (!GB_IS_FULL (C)) ;          // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_FULL (C)) ;
     int64_t *GB_RESTRICT Cp = C->p ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
@@ -114,14 +114,14 @@ void GB_AxB_saxpy3_cumsum
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = TaskList [taskid].vector ;
-        Cp [kk] = 0 ;       // ok: C is sparse
+        Cp [kk] = 0 ;
     }
 
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = TaskList [taskid].vector ;
         int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        Cp [kk] += my_cjnz ;        // ok: C is sparse
+        Cp [kk] += my_cjnz ;
         ASSERT (my_cjnz <= cvlen) ;
     }
 
@@ -151,7 +151,7 @@ void GB_AxB_saxpy3_cumsum
             if (!use_Gustavson)
             { 
                 int64_t kk = TaskList [taskid].vector ;
-                int64_t cjnz = Cp [kk+1] - Cp [kk] ;        // ok: C is sparse
+                int64_t cjnz = Cp [kk+1] - Cp [kk] ;
             }
         }
         int64_t my_cjnz = TaskList [taskid].my_cjnz ;

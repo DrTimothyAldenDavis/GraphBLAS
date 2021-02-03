@@ -2,8 +2,8 @@
 // GB_ewise_slice: slice the entries and vectors for an ewise operation
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -277,7 +277,7 @@ GrB_Info GB_ewise_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1))
+    if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -430,7 +430,7 @@ GrB_Info GB_ewise_slice
                     kM = C_to_M [k] ;
                 }
                 else if (Ch_is_Mh)
-                {
+                { 
                     // M is hypersparse, but Ch is a copy of Mh
                     ASSERT (GB_IS_HYPERSPARSE (M)) ;
                     // Ch is a deep or shallow copy of Mh

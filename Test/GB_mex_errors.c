@@ -2,8 +2,8 @@
 // GB_mex_errors: test error handling
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -66,10 +66,14 @@
 
 #include "GB_mex_errors.h"
 
+#define G3 GxB_COMPLETE
+#define G2 GxB_SHORT
+#define G1 GxB_SUMMARY
+#define G0 GxB_SILENT
+
 void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
-bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *k) ;
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k) ;
 
 void f1 (double *z, const uint32_t *x)
 { 
@@ -87,8 +91,7 @@ void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
     (*z) = GB_FC64_add ((*x), GxB_CMPLX (0,(*y))) ;
 }
 
-bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *k)
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k)
 {
     // select entries in triu(A) that are greater than k
     int64_t i2 = (int64_t) i ;
@@ -126,9 +129,9 @@ void mexFunction
     fprintf (f,"========================================================\n") ;
     fprintf (f,"many errors are expected\n") ;
 
-    OK (GxB_Type_fprint_(GrB_BOOL, GB3, ff)) ;
+    OK (GxB_Type_fprint_(GrB_BOOL, G3, ff)) ;
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Type_fprint_(GrB_BOOL, GB3, stdin)) ;
+    ERR (GxB_Type_fprint_(GrB_BOOL, G3, stdin)) ;
 
     int64_t nmalloc ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
@@ -274,8 +277,8 @@ void mexFunction
     #define GET_DEEP_COPY ;
 
     METHOD (GrB_Type_new (&T, sizeof (int))) ;
-    OK (GB_Type_check (T, "new type", GB3, NULL)) ;
-    OK (GxB_Type_fprint (T, "new type", GB3, ff)) ;
+    OK (GB_Type_check (T, "new type", G3, NULL)) ;
+    OK (GxB_Type_fprint (T, "new type", G3, ff)) ;
     OK (GrB_Type_free_(&T)) ;
     CHECK (T == NULL) ;
 
@@ -287,8 +290,8 @@ void mexFunction
         GrB_Type utype = Complex ;
         GrB_Type ttype = GB_code_type (tcode, utype) ;
         printf ("\n----------------------------------tcode: %d\n", tcode) ;
-        OK (GB_Type_check (ttype, "GB_code_type:", GB3, NULL)) ;
-        OK (GxB_Type_fprint_(ttype, GB3, ff)) ;
+        OK (GB_Type_check (ttype, "GB_code_type:", G3, NULL)) ;
+        OK (GxB_Type_fprint_(ttype, G3, ff)) ;
     }
 
     // Tgunk is allocated but uninitialized
@@ -382,8 +385,8 @@ void mexFunction
 
     GrB_UnaryOp opzz ;
     METHOD (GrB_UnaryOp_new (&opzz, f1, GrB_FP64, GrB_UINT32)) ;
-    OK (GB_UnaryOp_check (opzz, "new unary opzz", GB3, NULL)) ;
-    OK (GxB_UnaryOp_fprint (opzz, "new unary opzz", GB3, ff)) ;
+    OK (GB_UnaryOp_check (opzz, "new unary opzz", G3, NULL)) ;
+    OK (GxB_UnaryOp_fprint (opzz, "new unary opzz", G3, ff)) ;
     OK (GrB_UnaryOp_free_(&opzz)) ;
     CHECK (opzz == NULL) ;
 
@@ -471,9 +474,9 @@ void mexFunction
 
     GrB_BinaryOp opxx ;
     METHOD (GrB_BinaryOp_new (&opxx, f2, GrB_INT32, GrB_UINT8, GrB_INT16)) ;
-    OK (GB_BinaryOp_check (opxx, "new binary opxx", GB3, NULL)) ;
-    OK (GxB_BinaryOp_fprint (opxx, "new binary opxx", GB3, ff)) ;
-    OK (GxB_BinaryOp_fprint_(opxx, GB3, ff)) ;
+    OK (GB_BinaryOp_check (opxx, "new binary opxx", G3, NULL)) ;
+    OK (GxB_BinaryOp_fprint (opxx, "new binary opxx", G3, ff)) ;
+    OK (GxB_BinaryOp_fprint_(opxx, G3, ff)) ;
     OK (GrB_BinaryOp_free_(&opxx)) ;
     CHECK (opxx == NULL) ;
 
@@ -945,8 +948,8 @@ void mexFunction
     OK (GrB_Vector_setElement_UINT64 (v, 8, 26)) ;
     OK (GrB_Vector_setElement_FP32   (v, 9, 27)) ;
     OK (GrB_Vector_setElement_FP64   (v, 10, 28)) ;
-    GB_Vector_check (v, "vector 18:28", GB3, NULL) ;
-    GxB_Vector_fprint (v, "v", GB3, ff) ;
+    GB_Vector_check (v, "vector 18:28", G3, NULL) ;
+    GxB_Vector_fprint (v, "v", G3, ff) ;
 
     expected = GrB_NULL_POINTER ;
 
@@ -960,16 +963,16 @@ void mexFunction
     OK (GrB_Vector_nvals (&nvals, v)) ;
     OK (GrB_Vector_wait (&v)) ;
     printf ("nvals "GBd"\n", nvals) ;
-    GB_Vector_check (v, "vector 18:28", GB3, NULL) ;
-    GxB_Vector_fprint (v, "v", GB3, ff) ;
+    GB_Vector_check (v, "vector 18:28", G3, NULL) ;
+    GxB_Vector_fprint (v, "v", G3, ff) ;
     CHECK (nvals == 12) ;
 
     expected = GrB_INVALID_OBJECT ;
     GrB_Vector zz ;
     OK (GrB_Vector_dup (&zz, v)) ;
-    OK (GB_Vector_check (zz, "zz ok vector", GB3, NULL)) ;
+    OK (GB_Vector_check (zz, "zz ok vector", G3, NULL)) ;
     GB_convert_any_to_hyper ((GrB_Matrix) zz, Context) ;
-    ERR (GB_Vector_check (zz, "zz mangled: vectors cannot be hyper", GB3, ff)) ;
+    ERR (GB_Vector_check (zz, "zz mangled: vectors cannot be hyper", G3, ff)) ;
     OK (GrB_Vector_free_(&zz)) ;
 
     OK (GrB_Vector_clear (v)) ;
@@ -1057,9 +1060,9 @@ void mexFunction
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X, 5, GrB_LE_FP64)) ;
     ERR1 (v, GrB_Vector_build_UDT_(v, I, (void *) X, 5, GrB_PLUS_FP64)) ;
 
-    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", GB3, f)) ;
-    OK (GxB_Type_fprint (Complex, "Complex user type", GB3, f)) ;
-    OK (GxB_Type_fprint (GxB_FC64, "Complex built-in type", GB3, f)) ;
+    OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", G3, f)) ;
+    OK (GxB_Type_fprint (Complex, "Complex user type", G3, f)) ;
+    OK (GxB_Type_fprint (GxB_FC64, "Complex built-in type", G3, f)) ;
     if (Complex == GxB_FC64)
     {
         OK (GrB_Vector_build_FP64_(v, I, X, 5, Complex_plus)) ;
@@ -1080,8 +1083,8 @@ void mexFunction
     OK  (GrB_Vector_clear (v)) ;
     OK  (GrB_Vector_build_FP64_(v, I, X, 5, GrB_PLUS_FP64)) ;
     OK  (GrB_Vector_clear (v)) ;
-    GB_Vector_check (v, "v clear", GB3, NULL) ;
-    GxB_Vector_fprint (v, "v", GB3, ff) ;
+    GB_Vector_check (v, "v clear", G3, NULL) ;
+    GxB_Vector_fprint (v, "v", G3, ff) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X, GxB_RANGE, GrB_PLUS_FP64)) ;
@@ -1095,8 +1098,8 @@ void mexFunction
     GrB_Vector_error_(&err, v) ;
     printf ("expected error, index out of bounds:\n%s\n", err) ;
 
-    GB_Vector_check (v, "v bad", GB3, NULL) ;
-    GxB_Vector_fprint (v, "v", GB3, ff) ;
+    GB_Vector_check (v, "v bad", G3, NULL) ;
+    GxB_Vector_fprint (v, "v", G3, ff) ;
 
     expected = GrB_INVALID_OBJECT ;
     ERR (GrB_Vector_nvals (&nvals, v)) ;
@@ -1854,58 +1857,52 @@ void mexFunction
 
     GrB_Descriptor d7 ;
     METHOD (GrB_Descriptor_new (&d7)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "new descriptor", GB3, ff)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    OK (GB_Descriptor_check (d7, "new descriptor", G3, NULL)) ;
+    OK (GxB_Descriptor_fprint (d7, "new descriptor", G3, ff)) ;
+    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
 
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
 
     OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_DEFAULT)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (default)", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
-
-    OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_AxB_HEAP)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (heap)", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
-    OK (GxB_Desc_get (d7, GxB_AxB_METHOD, &dval)) ;
-    CHECK (dval == GxB_AxB_HEAP) ;
+    OK (GB_Descriptor_check (d7, "new descriptor (default)", G3, NULL)) ;
+    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
 
     OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (dot)", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    OK (GB_Descriptor_check (d7, "new descriptor (dot)", G3, NULL)) ;
+    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     OK (GxB_Descriptor_get (&dval, d7, GxB_AxB_METHOD)) ;
     CHECK (dval == GxB_AxB_DOT) ;
 
     OK (GxB_Desc_set (d7, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (Gustavson)", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    OK (GB_Descriptor_check (d7, "new descriptor (Gustavson)", G3, NULL)) ;
+    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR1 (d7, GxB_Desc_set (d7, GxB_AxB_METHOD, 911911)) ;
-    OK (GB_Descriptor_check (d7, "new descriptor (still Gustavson)", GB3, NULL)) ;
-    OK (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    OK (GB_Descriptor_check (d7, "new descriptor (still Gustavson)", G3, NULL)) ;
+    OK (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
 
     expected = GrB_INVALID_OBJECT ;
 
     d7->axb = 99 ;
-    ERR (GB_Descriptor_check (d7, "invalid", GB3, NULL)) ;
-    ERR (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    ERR (GB_Descriptor_check (d7, "invalid", G3, NULL)) ;
+    ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->axb = GxB_DEFAULT ;
 
     d7->out = 99 ;
-    ERR (GB_Descriptor_check (d7, "invalid", GB3, NULL)) ;
-    ERR (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    ERR (GB_Descriptor_check (d7, "invalid", G3, NULL)) ;
+    ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->out = GxB_DEFAULT ;
 
-    d7->out = GxB_AxB_HEAP ;
-    ERR (GB_Descriptor_check (d7, "invalid", GB3, NULL)) ;
-    ERR (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    d7->out = GxB_AxB_HASH ;
+    ERR (GB_Descriptor_check (d7, "invalid", G3, NULL)) ;
+    ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->out = GxB_DEFAULT ;
 
     d7->axb = GrB_TRAN ;
-    ERR (GB_Descriptor_check (d7, "invalid", GB3, NULL)) ;
-    ERR (GxB_Descriptor_fprint (d7, "d7", GB3, ff)) ;
+    ERR (GB_Descriptor_check (d7, "invalid", G3, NULL)) ;
+    ERR (GxB_Descriptor_fprint (d7, "d7", G3, ff)) ;
     d7->out = GxB_DEFAULT ;
 
     OK (GrB_Descriptor_free_(&d7)) ;
@@ -2039,13 +2036,13 @@ void mexFunction
     GrB_Index huge = GxB_INDEX_MAX ;
     GrB_Matrix HugeRow, HugeMatrix = NULL ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
-    GB_Matrix_check (HugeRow, "huge row", GB3, NULL) ;
-    GxB_Matrix_fprint (HugeRow, "HugeRow", GB3, ff) ;
+    GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
+    GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
     OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
         GxB_PLUS_TIMES_FP64, false, Context)) ;
 
-    GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", GB3, ff) ;
+    GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;
     GrB_Matrix_free_(&HugeRow) ;
 
@@ -3154,9 +3151,9 @@ void mexFunction
 
     GrB_Vector v5 ;
     OK (GrB_Vector_new (&v5, GrB_BOOL, 5)) ;
-    GxB_Matrix_fprint_(A, GB3, NULL) ;
-    GxB_Vector_fprint_(v5, GB3, NULL) ;
-    GxB_Vector_fprint_(v, GB3, NULL) ;
+    GxB_Matrix_fprint_(A, G3, NULL) ;
+    GxB_Vector_fprint_(v5, G3, NULL) ;
+    GxB_Vector_fprint_(v, G3, NULL) ;
     ERR1 (A,  GrB_Col_assign_(A, v5 , NULL, v, GrB_ALL, 0, 0, NULL)) ; // column assign
     GrB_Matrix_error_(&err, A) ;
     printf ("mask wrong size:\n%s\n", err) ;
@@ -3165,8 +3162,8 @@ void mexFunction
     // matrix assign, mask wrong size
     GrB_Matrix A5 ;
     OK (GrB_Matrix_new (&A5, GrB_BOOL, 5, 5)) ;
-    GB_Matrix_check (A, "A", GB3, NULL) ;
-    GB_Matrix_check (A5, "A5", GB3, NULL) ;
+    GB_Matrix_check (A, "A", G3, NULL) ;
+    GB_Matrix_check (A5, "A5", G3, NULL) ;
     ERR1 (A,  GrB_Matrix_assign_(A, A5, NULL, A, GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("mask wrong size:\n%s\n", err) ;
@@ -3179,14 +3176,14 @@ void mexFunction
     OK (GrB_Matrix_new (&A5, GrB_FP32, 5, 5)) ;
     OK (GrB_Matrix_assign_FP32 (A5, NULL, GrB_SECOND_FP32, 42,
         GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
-    GB_Matrix_check (A5, "A5 with 2nd:fp32", GB3, NULL) ;
+    GB_Matrix_check (A5, "A5 with 2nd:fp32", G3, NULL) ;
     OK (GrB_Matrix_assign_FP32 (A5, NULL, GrB_SECOND_BOOL, 42,
         GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
-    GB_Matrix_check (A5, "A5 with 2nd:bool", GB3, NULL) ;
+    GB_Matrix_check (A5, "A5 with 2nd:bool", G3, NULL) ;
     OK (GrB_Matrix_nvals (&nvals, A5)) ;
     OK (GrB_Matrix_wait_(&A5)) ;
     CHECK (nvals == 25) ;
-    GB_Matrix_check (A5, "A5 done", GB3, NULL) ;
+    GB_Matrix_check (A5, "A5 done", G3, NULL) ;
 
     OK (GrB_Matrix_free_(&A5)) ;
 
@@ -3270,7 +3267,7 @@ void mexFunction
     CHECK (selectop == NULL) ;
     OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop != NULL) ;
-    OK (GB_SelectOp_check (selectop, "select op OK", GB3, NULL)) ;
+    OK (GB_SelectOp_check (selectop, "select op OK", G3, NULL)) ;
 
     expected = GrB_NULL_POINTER ;
 
@@ -3287,7 +3284,7 @@ void mexFunction
     CHECK (selectopgunk != NULL) ;
     selectopgunk->magic = 22309483 ;
     expected = GrB_UNINITIALIZED_OBJECT ;
-    ERR (GB_SelectOp_check (selectopgunk, "select gunk", GB3, NULL)) ;
+    ERR (GB_SelectOp_check (selectopgunk, "select gunk", G3, NULL)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -3729,12 +3726,12 @@ void mexFunction
 
     Context->where = "GB_Type_check" ;
 
-    info = GB_Type_check (NULL, "null type", GB1, ff) ;
+    info = GB_Type_check (NULL, "null type", G1, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GB_Type_check (Tgunk, "Tgunk", GB1, ff)) ;
+    ERR (GB_Type_check (Tgunk, "Tgunk", G1, ff)) ;
 
     CHECK (T == NULL) ;
     // test the function instead of the macro:
@@ -3742,27 +3739,27 @@ void mexFunction
     OK (GrB_Type_new (&T, sizeof (int))) ;
 
     Context->where = "GB_Type_check" ;
-    OK (GB_Type_check (T, "T ok (via function)", GB3, ff)) ;
+    OK (GB_Type_check (T, "T ok (via function)", G3, ff)) ;
 
     T->magic = GB_FREED ;
-    ERR (GB_Type_check (T, "T freed", GB1, ff)) ;
+    ERR (GB_Type_check (T, "T freed", G1, ff)) ;
     T->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     T->code = 99 ;
-    ERR (GB_Type_check (T, "T bad code", GB1, ff)) ;
+    ERR (GB_Type_check (T, "T bad code", G1, ff)) ;
     T->code = GB_UDT_code ;
     T->magic = GB_MAGIC ;
     T->size = 0 ;
-    ERR (GB_Type_check (T, "T bad size", GB1, ff)) ;
+    ERR (GB_Type_check (T, "T bad size", G1, ff)) ;
     T->size = sizeof (int) ;
 
     char *e = GB_code_string (9999) ;
     printf ("unknown code: [%s]\n", e) ;
     CHECK (strcmp (e, "unknown!") == 0) ;
 
-    OK (GB_Type_check (T, "type ok", GB1, ff)) ;
+    OK (GB_Type_check (T, "type ok", G1, ff)) ;
     printf ("\nAll GB_Type_check tests passed (errors expected)\n") ;
 
     //--------------------------------------------------------------------------
@@ -3773,7 +3770,7 @@ void mexFunction
 
     Context->where = "GB_UnaryOp_check" ;
 
-    info = GB_UnaryOp_check (NULL, "null unary op", GB3, ff) ;
+    info = GB_UnaryOp_check (NULL, "null unary op", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (op1b == NULL) ;
@@ -3784,30 +3781,30 @@ void mexFunction
     OK (GrB_UnaryOp_wait_(&op1b)) ;
 
     Context->where = "GB_UnaryOp_check" ;
-    OK (GB_UnaryOp_check (op1b, "op1b ok (via function)", GB3, ff)) ;
+    OK (GB_UnaryOp_check (op1b, "op1b ok (via function)", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     op1b->magic = GB_FREED ;
-    ERR (GB_UnaryOp_check (op1b, "op1b freed", GB1, ff)) ;
+    ERR (GB_UnaryOp_check (op1b, "op1b freed", G1, ff)) ;
     op1b->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     op1b->function = NULL ;
-    ERR (GB_UnaryOp_check (op1b, "op1b null func", GB1, ff)) ;
+    ERR (GB_UnaryOp_check (op1b, "op1b null func", G1, ff)) ;
     op1b->function = f1 ;
 
     op1b->opcode = 1024 ;
-    ERR (GB_UnaryOp_check (op1b, "op1b invalid opcode", GB1, ff)) ;
+    ERR (GB_UnaryOp_check (op1b, "op1b invalid opcode", G1, ff)) ;
     op1b->opcode = GB_USER_opcode ;
 
     op1b->ztype = NULL ;
-    ERR (GB_UnaryOp_check (op1b, "op1b invalid ztype", GB1, ff)) ;
+    ERR (GB_UnaryOp_check (op1b, "op1b invalid ztype", G1, ff)) ;
     op1b->ztype = GrB_FP64 ;
 
     op1b->xtype = NULL ;
-    ERR (GB_UnaryOp_check (op1b, "op1b invalid xtype", GB1, ff)) ;
+    ERR (GB_UnaryOp_check (op1b, "op1b invalid xtype", G1, ff)) ;
     op1b->xtype = GrB_UINT32 ;
 
     printf ("\nAll GB_UnaryOp_check tests passed (errors expected)\n") ;
@@ -3820,7 +3817,7 @@ void mexFunction
 
     Context->where = "GB_BinaryOp_check" ;
 
-    info = GB_BinaryOp_check (NULL, "null unary op", GB3, ff) ;
+    info = GB_BinaryOp_check (NULL, "null unary op", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (op2b == NULL) ;
@@ -3830,34 +3827,34 @@ void mexFunction
     CHECK (op2b != NULL) ;
 
     Context->where = "GB_BinaryOp_check" ;
-    OK (GB_BinaryOp_check (op2b, "op2b ok (via function)", GB3, ff)) ;
+    OK (GB_BinaryOp_check (op2b, "op2b ok (via function)", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     op2b->magic = GB_FREED ;
-    ERR (GB_BinaryOp_check (op2b, "op2b freed", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b freed", G1, ff)) ;
     op2b->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     op2b->function = NULL ;
-    ERR (GB_BinaryOp_check (op2b, "op2b null func", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b null func", G1, ff)) ;
     op2b->function = f2 ;
 
     op2b->opcode = 1024 ;
-    ERR (GB_BinaryOp_check (op2b, "op2b invalid opcode", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b invalid opcode", G1, ff)) ;
     op2b->opcode = GB_USER_opcode ;
 
     op2b->ztype = NULL ;
-    ERR (GB_BinaryOp_check (op2b, "op2b invalid ztype", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b invalid ztype", G1, ff)) ;
     op2b->ztype = GrB_INT32 ;
 
     op2b->xtype = NULL ;
-    ERR (GB_BinaryOp_check (op2b, "op2b invalid xtype", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b invalid xtype", G1, ff)) ;
     op2b->xtype = GrB_UINT8 ;
 
     op2b->ytype = NULL ;
-    ERR (GB_BinaryOp_check (op2b, "op2b invalid ytype", GB1, ff)) ;
+    ERR (GB_BinaryOp_check (op2b, "op2b invalid ytype", G1, ff)) ;
     op2b->ytype = GrB_UINT16 ;
 
     printf ("\nAll GB_BinaryOp_check tests passed (errors expected)\n") ;
@@ -3870,7 +3867,7 @@ void mexFunction
 
     Context->where = "GB_SelectOp_check" ;
 
-    info = GB_SelectOp_check (NULL, "null selectop", GB3, ff) ;
+    info = GB_SelectOp_check (NULL, "null selectop", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (selectop == NULL) ;
@@ -3880,30 +3877,30 @@ void mexFunction
     CHECK (selectop != NULL) ;
 
     Context->where = "GB_SelectOp_check" ;
-    OK (GB_SelectOp_check (selectop, "user selectop ok (via function)", GB3,
+    OK (GB_SelectOp_check (selectop, "user selectop ok (via function)", G3,
         ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     selectop->magic = GB_FREED ;
-    ERR (GB_SelectOp_check (selectop, "selectop freed", GB1, ff)) ;
+    ERR (GB_SelectOp_check (selectop, "selectop freed", G1, ff)) ;
     selectop->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     selectop->function = NULL ;
-    ERR (GB_SelectOp_check (selectop, "selectop invalid function", GB1, ff)) ;
+    ERR (GB_SelectOp_check (selectop, "selectop invalid function", G1, ff)) ;
     selectop->function = fselect ;
 
     selectop->opcode = 9999 ;
-    ERR (GB_SelectOp_check (selectop, "selectop invalid opcode", GB1, ff)) ;
+    ERR (GB_SelectOp_check (selectop, "selectop invalid opcode", G1, ff)) ;
     selectop->opcode = GB_USER_SELECT_opcode ;
 
     selectop->xtype = Tgunk ;
-    ERR (GB_SelectOp_check (selectop, "selectop invalid xtype", GB1, ff)) ;
+    ERR (GB_SelectOp_check (selectop, "selectop invalid xtype", G1, ff)) ;
     selectop->xtype = GrB_FP64 ;
 
-    OK (GB_SelectOp_check (selectop, "user selectop ok", GB3, ff)) ;
+    OK (GB_SelectOp_check (selectop, "user selectop ok", G3, ff)) ;
 
     printf ("\nAll GB_SelectOp_check tests passed (errors expected)\n") ;
 
@@ -3915,7 +3912,7 @@ void mexFunction
 
     Context->where = "GB_Monoid_check" ;
 
-    info = GB_Monoid_check (NULL, "null monoid", GB3, ff) ;
+    info = GB_Monoid_check (NULL, "null monoid", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (monoidb == NULL) ;
@@ -3923,26 +3920,26 @@ void mexFunction
     CHECK (monoidb != NULL) ;
 
     Context->where = "GB_Monoid_check" ;
-    OK (GB_Monoid_check (monoidb, "monoidb ok", GB3, ff)) ;
+    OK (GB_Monoid_check (monoidb, "monoidb ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     monoidb->magic = GB_FREED ;
-    ERR (GB_Monoid_check (monoidb, "monoidb freed", GB1, ff)) ;
+    ERR (GB_Monoid_check (monoidb, "monoidb freed", G1, ff)) ;
     monoidb->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     monoidb->op = NULL ;
-    ERR (GB_Monoid_check (monoidb, "monoidb invalid op", GB1, ff)) ;
+    ERR (GB_Monoid_check (monoidb, "monoidb invalid op", G1, ff)) ;
     monoidb->op = GrB_TIMES_INT32 ;
 
     monoidb->op = GrB_EQ_INT32 ;
-    ERR (GB_Monoid_check (monoidb, "monoidb invalid op domains", GB1, ff)) ;
+    ERR (GB_Monoid_check (monoidb, "monoidb invalid op domains", G1, ff)) ;
     monoidb->op = GrB_TIMES_INT32 ;
 
-    OK (GB_Monoid_check (Complex_plus_monoid, "complex plus monoid", GB3, ff)) ;
-    OK (GB_Monoid_check (Complex_times_monoid, "complex times monoid", GB3, ff)) ;
+    OK (GB_Monoid_check (Complex_plus_monoid, "complex plus monoid", G3, ff)) ;
+    OK (GB_Monoid_check (Complex_times_monoid, "complex times monoid", G3, ff)) ;
 
     printf ("\nAll GB_Monoid_check tests passed (errors expected)\n") ;
 
@@ -3954,7 +3951,7 @@ void mexFunction
 
     Context->where = "GB_Semiring_check" ;
 
-    info = GB_Semiring_check (NULL, "null semiring", GB3, ff) ;
+    info = GB_Semiring_check (NULL, "null semiring", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (semiring2 == NULL) ;
@@ -3962,26 +3959,26 @@ void mexFunction
     CHECK (semiring2 != NULL) ;
 
     Context->where = "GB_Semiring_check" ;
-    OK (GB_Semiring_check (semiring2, "semiring2 ok", GB3, ff)) ;
+    OK (GB_Semiring_check (semiring2, "semiring2 ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     semiring2->magic = GB_FREED ;
-    ERR (GB_Semiring_check (semiring2, "semiring2 freed", GB1, ff)) ;
+    ERR (GB_Semiring_check (semiring2, "semiring2 freed", G1, ff)) ;
     semiring2->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     semiring2->add = NULL ;
-    ERR (GB_Semiring_check (semiring2, "semiring2 invalid add monoid", GB1, ff)) ;
+    ERR (GB_Semiring_check (semiring2, "semiring2 invalid add monoid", G1, ff)) ;
     semiring2->add = GxB_MAX_FP32_MONOID ;
 
     semiring2->multiply = NULL ;
-    ERR (GB_Semiring_check (semiring2, "semiring2 invalid mult", GB1, ff)) ;
+    ERR (GB_Semiring_check (semiring2, "semiring2 invalid mult", G1, ff)) ;
     semiring2->multiply = GrB_TIMES_FP32 ;
 
     semiring2->multiply = GrB_TIMES_INT32 ;
-    ERR (GB_Semiring_check (semiring2, "semiring2 invalid mix", GB1, ff)) ;
+    ERR (GB_Semiring_check (semiring2, "semiring2 invalid mix", G1, ff)) ;
     semiring2->multiply = GrB_TIMES_FP32 ;
 
     printf ("\nAll GB_Semiring_check tests passed (errors expected)\n") ;
@@ -3994,7 +3991,7 @@ void mexFunction
 
     Context->where = "GB_Descriptor_check" ;
 
-    info = GB_Descriptor_check (NULL, "null descriptor", GB3, ff) ;
+    info = GB_Descriptor_check (NULL, "null descriptor", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (descb == NULL) ;
@@ -4002,18 +3999,18 @@ void mexFunction
     CHECK (descb != NULL) ;
 
     Context->where = "GB_Descriptor_check" ;
-    OK (GB_Descriptor_check (descb, "descb ok", GB3, ff)) ;
+    OK (GB_Descriptor_check (descb, "descb ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     descb->magic = GB_FREED ;
-    ERR (GB_Descriptor_check (descb, "descb freed", GB1, ff)) ;
+    ERR (GB_Descriptor_check (descb, "descb freed", G1, ff)) ;
     descb->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     descb->out = 42 ;
-    ERR (GB_Descriptor_check (descb, "descb invalid", GB1, ff)) ;
+    ERR (GB_Descriptor_check (descb, "descb invalid", G1, ff)) ;
     descb->out = GxB_DEFAULT ;
 
     printf ("\nAll GB_Descriptor_check tests passed (errors expected)\n") ;
@@ -4029,7 +4026,7 @@ void mexFunction
 
     Context->where = "GB_Vector_check" ;
 
-    info = GB_Vector_check (NULL, "null vector", GB3, ff) ;
+    info = GB_Vector_check (NULL, "null vector", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (v == NULL) ;
@@ -4038,30 +4035,30 @@ void mexFunction
     CHECK (v->h == NULL) ;
 
     Context->where = "GB_Vector_check" ;
-    OK (GB_Vector_check (v, "v ok", GB3, ff)) ;
+    OK (GB_Vector_check (v, "v ok", G3, ff)) ;
 
     OK (GrB_Vector_setElement_INT32 (v, 990, 0)) ;
     OK (GrB_Vector_setElement_INT32 (v, 991, 1)) ;
     OK (GrB_Vector_nvals (&nvals, v)) ;
     OK (GrB_Vector_wait_(&v)) ;
     CHECK (nvals == 2) ;
-    OK (GxB_Vector_fprint (v, "v ok (might be bitmap)", GB3, ff)) ;
-    OK (GxB_Vector_Option_set (v, GxB_SPARSITY, GxB_SPARSE)) ;
-    OK (GxB_Vector_fprint (v, "v ok (sparse)", GB3, ff)) ;
+    OK (GxB_Vector_fprint (v, "v ok (might be bitmap)", G3, ff)) ;
+    OK (GxB_Vector_Option_set (v, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GxB_Vector_fprint (v, "v ok (sparse)", G3, ff)) ;
 
     expected = GrB_INVALID_OBJECT ;
     CHECK (!GB_IS_FULL (v)) ;
     v->i [0] = 1 ;
     v->i [1] = 0 ;
-    ERR (GxB_Vector_fprint (v, "v jumbled", GB3, ff)) ;
+    ERR (GxB_Vector_fprint (v, "v jumbled", G3, ff)) ;
     v->i [0] = 0 ;
     v->i [1] = 1 ;
-    OK (GxB_Vector_fprint (v, "v fixed", GB3, ff)) ;
+    OK (GxB_Vector_fprint (v, "v fixed", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     v->magic = GB_FREED ;
-    ERR (GB_Vector_check (v, "v freed", GB1, ff)) ;
+    ERR (GB_Vector_check (v, "v freed", G1, ff)) ;
     v->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
@@ -4069,12 +4066,12 @@ void mexFunction
     v->vdim = 2 ;
     int64_t *psave = v->p ;
     v->p = mxCalloc (3, sizeof (int64_t)) ;
-    ERR (GB_Vector_check (v, "v invalid", GB1, ff)) ;
+    ERR (GB_Vector_check (v, "v invalid", G1, ff)) ;
     v->vdim = 1 ;
 
     CHECK (!GB_IS_FULL (v)) ;
     v->p [0] = 1 ;
-    ERR (GB_Vector_check (v, "v p[0] invalid", GB1, ff)) ;
+    ERR (GB_Vector_check (v, "v p[0] invalid", G1, ff)) ;
 
     mxFree (v->p) ;
     v->p = psave ;
@@ -4093,7 +4090,7 @@ void mexFunction
 
     Context->where = "GB_Matrix_check" ;
 
-    info = GB_Matrix_check (NULL, "null matrix", GB3, ff) ;
+    info = GB_Matrix_check (NULL, "null matrix", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
 
     CHECK (A == NULL) ;
@@ -4101,33 +4098,33 @@ void mexFunction
     CHECK (A != NULL) ;
 
     Context->where = "GB_Matrix_check" ;
-    OK (GB_Matrix_check (A, "A ok", GB3, ff)) ;
+    OK (GB_Matrix_check (A, "A ok", G3, ff)) ;
     CHECK (A->h != NULL) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     A->magic = GB_FREED ;
-    ERR (GB_Matrix_check (A, "A freed", GB1, ff)) ;
+    ERR (GB_Matrix_check (A, "A freed", G1, ff)) ;
     A->magic = GB_MAGIC ;
 
     expected = GrB_INVALID_OBJECT ;
 
     CHECK (!GB_IS_FULL (A)) ;
     A->p [0] = 1 ;
-    ERR (GB_Matrix_check (A, "p[0] invalid", GB1, ff)) ;
+    ERR (GB_Matrix_check (A, "p[0] invalid", G1, ff)) ;
     A->p [0] = 0 ;
 
     A->vlen = -1 ;
-    ERR (GB_Matrix_check (A, "invalid dimensions", GB1, ff)) ;
+    ERR (GB_Matrix_check (A, "invalid dimensions", G1, ff)) ;
     A->vlen = 10 ;
 
     A->type = NULL ;
-    ERR (GB_Matrix_check (A, "invalid type", GB1, ff)) ;
+    ERR (GB_Matrix_check (A, "invalid type", G1, ff)) ;
     A->type = GrB_FP64 ;
 
     psave = A->p ;
     A->p = NULL ;
-    ERR (GB_Matrix_check (A, "NULL Ap", GB1, ff)) ;
+    ERR (GB_Matrix_check (A, "NULL Ap", G1, ff)) ;
     A->p = psave ;
 
     CHECK (A->i == NULL) ;
@@ -4139,34 +4136,27 @@ void mexFunction
     GrB_Index J00 [1] = { 0 } ;
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 0, 0)) ;
     OK (GrB_Matrix_assign_BOOL (A, NULL, GrB_SECOND_FP64, true, I00, 1, J00, 1, NULL)) ;
-    OK (GB_Matrix_check (A, "valid pending pi", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending pi", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
     CHECK (nvals == 1) ;
 
     printf ("\n========================================== valid pi\n") ;
-    OK (GB_Matrix_check (A, "valid pi", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pi", G3, NULL)) ;
     printf ("\n===================================================\n") ;
 
     OK (GrB_Matrix_free_(&A)) ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 4)) ;
-    OK (GB_Matrix_check (A, "A empty", GB3, NULL)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GB_Matrix_check (A, "A empty", G3, NULL)) ;
 
     // change the type of the pending tuples, forcing a wait
     OK (GrB_Matrix_assign_BOOL (A, NULL, GrB_SECOND_FP64, (bool) true,
         I00, 1, J00, 1, NULL)) ;
-    OK (GB_Matrix_check (A, "with bool pending", GB3, NULL)) ;
-
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1) ;
-    CHECK (AP->type == GrB_BOOL) ;
-#endif
+    OK (GB_Matrix_check (A, "with bool pending", G3, NULL)) ;
 
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 3, 3)) ;
-    OK (GB_Matrix_check (A, "with pi pending", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "with pi pending", G3, NULL)) ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
@@ -4180,7 +4170,7 @@ void mexFunction
     CHECK (AP->n == 2) ;
     CHECK (AP->type == GrB_FP64) ;
 
-    OK (GB_Matrix_check (A, "with pi and 9.0909 pending", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "with pi and 9.0909 pending", G3, NULL)) ;
 
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
@@ -4190,43 +4180,43 @@ void mexFunction
 
     psave = A->i ;
     A->i = NULL ;
-    ERR (GB_Matrix_check (A, "NULL Ai", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "NULL Ai", G1, NULL)) ;
     A->i = psave ;
-    OK (GB_Matrix_check (A, "valid pi", GB0, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pi", G0, NULL)) ;
 
     CHECK (!GB_IS_FULL (A)) ;
     A->p [0] = 1 ;
-    ERR (GB_Matrix_check (A, "Ap[0] invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "Ap[0] invalid", G1, NULL)) ;
     A->p [0] = 0 ;
 
     int64_t isave = A->p [1] ;
     A->p [1] = -1 ;
-    ERR (GB_Matrix_check (A, "Ap[1] invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "Ap[1] invalid", G1, NULL)) ;
     A->p [1] = isave ;
 
     isave = A->p [4] ;
     A->p [4] += 999 ;
-    ERR (GB_Matrix_check (A, "Ap[ncols] invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "Ap[ncols] invalid", G1, NULL)) ;
     A->p [4] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = -1 ;
-    ERR (GB_Matrix_check (A, "negative zombies", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "negative zombies", G1, NULL)) ;
     A->nzombies = isave ;
 
     isave = A->nzombies ;
     A->nzombies = 1000 ;
-    ERR (GB_Matrix_check (A, "too many zombies", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "too many zombies", G1, NULL)) ;
     A->nzombies = isave ;
 
     isave = A->i [0] ;
     A->i [0] = -1 ;
-    ERR (GB_Matrix_check (A, "row index invalid", GB3, NULL)) ;
+    ERR (GB_Matrix_check (A, "row index invalid", G3, NULL)) ;
     A->i [0] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = 1 ;
-    ERR (GB_Matrix_check (A, "bad zombies", GB3, NULL)) ;
+    ERR (GB_Matrix_check (A, "bad zombies", G3, NULL)) ;
     A->nzombies = isave ;
 
     AP = A->Pending ;
@@ -4234,7 +4224,7 @@ void mexFunction
 
     printf ("\n========================================== valid [pi 7.1]\n") ;
     OK (GrB_Matrix_setElement_FP64 (A, 7.1, 1, 0)) ;
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G3, NULL)) ;
     printf ("\n===================================================\n") ;
 
     Context->where = "GB_Matrix_check" ;
@@ -4243,30 +4233,30 @@ void mexFunction
     CHECK (AP != NULL) ;
     isave = AP->n ;
     AP->n = -1 ;
-    ERR (GB_Matrix_check (A, "negative pending", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "negative pending", G1, NULL)) ;
     AP->n = isave ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     psave = AP->i ;
     AP->i = NULL ;
-    ERR (GB_Matrix_check (A, "missing pending", GB3, NULL)) ;
+    ERR (GB_Matrix_check (A, "missing pending", G3, NULL)) ;
     AP->i = psave ;
 
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", GB0, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     CHECK (AP->j != NULL) ;
     isave = AP->j [0] ;
     AP->j [0] = 1070 ;
-    ERR (GB_Matrix_check (A, "bad pending tuple", GB3, NULL)) ;
+    ERR (GB_Matrix_check (A, "bad pending tuple", G3, NULL)) ;
     AP->j [0] = isave ;
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", GB0, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
     printf ("\n====================================== valid [pi 7.1 11.4]\n") ;
     OK (GrB_Matrix_setElement_FP64 (A, 11.4, 0, 1)) ;
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
 
     Context->where = "GB_Matrix_check" ;
@@ -4275,19 +4265,19 @@ void mexFunction
     CHECK (AP != NULL) ;
     isave = AP->j [0] ;
     AP->j [0] = 2 ;
-    ERR (GB_Matrix_check (A, "jumbled pending tuples", GB3, ff)) ;
-    ERR (GxB_Matrix_fprint (A, "jumbled pending tuples", GB3, ff)) ;
+    ERR (GB_Matrix_check (A, "jumbled pending tuples", G3, ff)) ;
+    ERR (GxB_Matrix_fprint (A, "jumbled pending tuples", G3, ff)) ;
     AP->j [0] = isave ;
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", GB0, ff)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G0, ff)) ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     CHECK (AP->op == NULL) ;
     AP->op = op2gunk ;
-    ERR (GB_Matrix_check (A, "invalid operator", GB3, NULL)) ;
+    ERR (GB_Matrix_check (A, "invalid operator", G3, NULL)) ;
     AP->op = NULL ;
 
-    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
 
     printf ("\n###### get nvals; assemble the pending tuples ##### \n") ;
@@ -4297,28 +4287,30 @@ void mexFunction
 
     Context->where = "GB_Matrix_check" ;
     printf ("\n====================================== valid [pi 7.1 11.4]\n") ;
-    OK (GB_Matrix_check (A, "valid [pi 7 11.4]", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid [pi 7 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
     CHECK (nvals == 5) ;
 
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
     CHECK (!GB_IS_FULL (A)) ;
+    CHECK (!GB_IS_BITMAP (A)) ;
     A->i [0] = 1 ;
     A->i [1] = 0 ;
 
-    info = GB_Matrix_check (A, "jumbled", GB3, NULL) ;
+    info = GB_Matrix_check (A, "jumbled", G3, NULL) ;
     printf ("jumbled info %d\n", info) ;
     CHECK (info == GrB_INDEX_OUT_OF_BOUNDS) ;
 
-    info = GxB_Matrix_fprint (A, "jumbled", GB3, ff) ;
+    info = GxB_Matrix_fprint (A, "jumbled", G3, ff) ;
     printf ("jumbled info %d\n", info) ;
     CHECK (info == GrB_INVALID_OBJECT) ;
 
     CHECK (!GB_IS_FULL (A)) ;
+    CHECK (!GB_IS_BITMAP (A)) ;
     A->i [0] = 0 ;
     A->i [1] = 1 ;
-    OK (GB_Matrix_check (A, "OK", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "OK", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
     CHECK (nvals == 5) ;
@@ -4330,71 +4322,65 @@ void mexFunction
     I [0] = 0 ;
     J [0] = 0 ;
     OK (GxB_Matrix_subassign (A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
-    OK (GB_Matrix_check (A, "valid zombie", GB3, NULL)) ;
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    CHECK (A->Pending == NULL && A->nzombies == 1) ;
-#endif
+    OK (GB_Matrix_check (A, "valid zombie", G3, NULL)) ;
     OK (GrB_Matrix_setElement_INT32 (A, 99099, 0, 0)) ;
-    OK (GB_Matrix_check (A, "no more zombie", GB3, NULL)) ;
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    CHECK (A->Pending == NULL)
-    CHECK (A->nzombies == 0) ;
-#endif
+    OK (GB_Matrix_check (A, "no more zombie", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
     CHECK (nvals == 5) ;
 
     OK (GxB_Matrix_subassign (A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
-    OK (GB_Matrix_check (A, "valid zombie", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid zombie", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(&A)) ;
     CHECK (nvals == 4) ;
-    OK (GB_Matrix_check (A, "again no more zombie", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "again no more zombie", G3, NULL)) ;
     OK (A->Pending == NULL && A->nzombies == 0) ;
 
     expected = GrB_INVALID_OBJECT ;
 
-    OK (GB_Matrix_check (A, "valid, no pending", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "valid, no pending", G3, NULL)) ;
 
     // #define FREE_DEEP_COPY ;
     // #define GET_DEEP_COPY ;
 
-    CHECK (!GB_IS_FULL (A)) ;
-    OK (GB_convert_sparse_to_hyper (A, Context)) ;
-    CHECK (!GB_IS_FULL (A)) ;
-    OK (GB_Matrix_check (A, "A now hyper", GB3, NULL)) ;
+    CHECK (GB_IS_SPARSE (A)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
+    OK (GB_Matrix_check (A, "A now hyper", G3, NULL)) ;
     CHECK (A->h != NULL) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     CHECK (A->h == NULL) ;
     bool A_is_hyper ;
-    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (!A_is_hyper) ;
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
     CHECK (A->h != NULL) ;
-    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ;
+    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // deprecated
     CHECK (A_is_hyper) ;
 
     // make sure A->nvec_nonempty is valid
-    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     if (A->nvec_nonempty < 0)
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
-    CHECK (!GB_IS_FULL (A)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     isave = A->p [1] ;
     A->p [1] = 0 ;
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
-    ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", G1, NULL)) ;
     expected = GrB_INVALID_OBJECT ;
-    ERR (GxB_Matrix_fprint (A, "A", GB1, ff)) ;
+    ERR (GxB_Matrix_fprint (A, "A", G1, ff)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     A->p [1] = isave ;
-    OK (GB_Matrix_check (A, "A fixed", GB0, NULL)) ;
+    OK (GB_Matrix_check (A, "A fixed", G0, NULL)) ;
 
     double hratio = 0.5;
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, hratio)) ;
@@ -4403,7 +4389,29 @@ void mexFunction
     OK (GxB_Matrix_Option_get_(A, GxB_HYPER_SWITCH, &hratio2)) ;
     CHECK (hratio == hratio2) ;
 
+    double bswitch [GxB_NBITMAP_SWITCH] ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        bswitch [k] = (double) k / 16.0 ;
+    }
+    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, bswitch)) ;
+
+    double bswitch2 [GxB_NBITMAP_SWITCH] ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch2)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        CHECK (fabs (bswitch [k] - bswitch2 [k]) < 1e-5) ;
+    }
+
+    OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, NULL)) ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("default bswitch [%d] = %g\n", k, bswitch [k]) ;
+    }
+
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
+    CHECK (GB_IS_HYPERSPARSE (A)) ;
     CHECK (A->is_csc) ;
 
     GxB_Format_Value format = 0;
@@ -4423,8 +4431,6 @@ void mexFunction
     format = 99 ;
     OK (GxB_Global_Option_get_(GxB_FORMAT, &format)) ;
     CHECK (format == 0) ;
-
-//    OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
     OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, 77.33f)) ;
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
@@ -4452,8 +4458,13 @@ void mexFunction
     GrB_Matrix_error_(&err, A) ;
     printf ("error expected:%s\n", err) ;
 
+    ERR (GxB_Matrix_Option_get_(A, GxB_BITMAP_SWITCH, NULL)) ;
+    GrB_Matrix_error_(&err, A) ;
+    printf ("error expected:%s\n", err) ;
+
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Global_Option_get_(GxB_HYPER_SWITCH, NULL)) ;
+    ERR (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_get_(-1, NULL)) ;
@@ -4485,46 +4496,35 @@ void mexFunction
     // #undef FREE_DEEP_COPY
     // #undef GET_DEEP_COPY
 
+    OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+
     expected = GrB_INVALID_OBJECT ;
 
     int64_t *Ah_save = A->h ;
     A->h = NULL ;
-    ERR (GB_Matrix_check (A, "h invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "h invalid", G3, NULL)) ;
     A->h = Ah_save ;
-    OK (GB_Matrix_check (A, "h restored", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "h restored", G1, NULL)) ;
 
     int64_t nvec = A->nvec ;
     A->nvec = -1 ;
-    ERR (GB_Matrix_check (A, "nvec invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "nvec invalid", G1, NULL)) ;
     A->nvec = nvec ;
-    OK (GB_Matrix_check (A, "nvec restored", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "nvec restored", G1, NULL)) ;
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (A->h != NULL) ;
     int64_t jsave = A->h [0] ;
     A->h [0] = -1 ;
-    ERR (GB_Matrix_check (A, "h[0] invalid", GB1, NULL)) ;
+    ERR (GB_Matrix_check (A, "h[0] invalid", G1, NULL)) ;
     A->h [0] = jsave ;
-    OK (GB_Matrix_check (A, "h[0] restored", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "h[0] restored", G1, NULL)) ;
 
     GrB_Matrix Eleven ;
     OK (GrB_Matrix_new (&Eleven, GrB_BOOL, 11, 11)) ;
     I [0] = 0 ;
     OK (GrB_Matrix_assign_BOOL (Eleven, NULL, NULL, (bool) true, I, 1, GrB_ALL, 0, NULL)) ;
-
-#if 0
-    // TODO HACK (bitmap changes these tests)
-    AP = Eleven->Pending ;
-    CHECK (AP != NULL) ;
-    GrB_Type tsave = AP->type ;
-
-    OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL)) ;
-    AP->type = NULL ;
-    ERR (GB_Matrix_check (Eleven, "Eleven invalid pending type", GB2, NULL)) ;
-    ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid pending type", GB2, ff)) ;
-    AP->type = tsave ;
-#endif
-    OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL)) ;
+    OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
 
     if (!GB_IS_FULL (Eleven)) GB_Matrix_wait (Eleven, Context) ;
 
@@ -4538,9 +4538,9 @@ void mexFunction
     OK (GB_convert_hyper_to_sparse (Eleven, Context)) ;
     int64_t nothing = 42 ;
     Eleven->h = &nothing ;
-    ERR (GB_Matrix_check (Eleven, "Eleven invalid", GB2, NULL)) ;
-    ERR (GxB_Matrix_fprint (Eleven, "Eleven", GB2, NULL)) ;
-    ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid", GB2, ff)) ;
+    ERR (GB_Matrix_check (Eleven, "Eleven invalid", G2, NULL)) ;
+    ERR (GxB_Matrix_fprint (Eleven, "Eleven", G2, NULL)) ;
+    ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid", G2, ff)) ;
     Eleven->h = NULL ;
 
     OK (GrB_Matrix_free_(&Eleven)) ;
@@ -4556,7 +4556,7 @@ void mexFunction
     OK (GrB_Matrix_nvals (&nvals, Eleven)) ;
     OK (GrB_Matrix_wait_(&Eleven)) ;
     CHECK (nvals == 121) ;
-    OK (GB_Matrix_check (Eleven, "Eleven", GB2, NULL)) ;
+    OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
     OK (GrB_Matrix_free_(&Eleven)) ;
 
     printf ("\nAll GB_Matrix_check tests passed (errors expected)\n") ;
@@ -4566,18 +4566,18 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_setElement_FP64 (A, 32.4, 3, 2)) ;
-    OK (GB_Matrix_check (A, "A with one pending", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A with one pending", G3, NULL)) ;
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     CHECK (AP->n == 1 && A->nzombies == 0) ;
     GB_Global_mode_set (GrB_BLOCKING) ;
     OK (GB_block (A, Context)) ;
-    OK (GB_Matrix_check (A, "A with no pending", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A with no pending", G3, NULL)) ;
     AP = A->Pending ;
     CHECK (AP == NULL) ;
     CHECK (A->nzombies == 0) ;
     OK (GrB_Matrix_setElement_FP64 (A, 99.4, 3, 3)) ;
-    OK (GB_Matrix_check (A, "A blocking mode", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A blocking mode", G3, NULL)) ;
     GB_Global_mode_set (GrB_NONBLOCKING) ;
     AP = A->Pending ;
     CHECK (AP == NULL) ;
@@ -4595,27 +4595,27 @@ void mexFunction
 
     Context->where = "GB *_check" ;
 
-    ERR (GB_Type_check (Tgunk, "", GB0, NULL)) ;
-    ERR (GB_UnaryOp_check (op1gunk, "", GB0, NULL)) ;
-    ERR (GB_BinaryOp_check (op2gunk, "", GB0, NULL)) ;
-    ERR (GB_Monoid_check (monoid_gunk, "", GB0, NULL)) ;
-    ERR (GB_Semiring_check (semigunk, "", GB0, NULL)) ;
-    ERR (GB_Vector_check (vgunk, "", GB0, NULL)) ;
-    ERR (GB_Matrix_check (Agunk, "", GB0, NULL)) ;
-    ERR (GB_Descriptor_check (dgunk, "", GB0, NULL)) ;
-    GB_SelectOp_check (selectopgunk, "", GB3, NULL) ;
-    ERR (GB_SelectOp_check (selectopgunk, "", GB0, NULL)) ;
+    ERR (GB_Type_check (Tgunk, "", G0, NULL)) ;
+    ERR (GB_UnaryOp_check (op1gunk, "", G0, NULL)) ;
+    ERR (GB_BinaryOp_check (op2gunk, "", G0, NULL)) ;
+    ERR (GB_Monoid_check (monoid_gunk, "", G0, NULL)) ;
+    ERR (GB_Semiring_check (semigunk, "", G0, NULL)) ;
+    ERR (GB_Vector_check (vgunk, "", G0, NULL)) ;
+    ERR (GB_Matrix_check (Agunk, "", G0, NULL)) ;
+    ERR (GB_Descriptor_check (dgunk, "", G0, NULL)) ;
+    GB_SelectOp_check (selectopgunk, "", G3, NULL) ;
+    ERR (GB_SelectOp_check (selectopgunk, "", G0, NULL)) ;
 
-    ERR (GxB_Type_fprint (Tgunk, "crud", GB0, ff)) ;
-    ERR (GxB_UnaryOp_fprint (op1gunk, "crud", GB0, ff)) ;
-    ERR (GxB_BinaryOp_fprint (op2gunk, "crud", GB0, ff)) ;
-    ERR (GxB_Monoid_fprint (monoid_gunk, "crud", GB0, ff)) ;
-    ERR (GxB_Semiring_fprint (semigunk, "crud", GB0, ff)) ;
-    ERR (GxB_Vector_fprint (vgunk, "crud", GB0, ff)) ;
-    ERR (GxB_Matrix_fprint (Agunk, "crud", GB0, ff)) ;
-    ERR (GxB_Descriptor_fprint (dgunk, "crud", GB0, ff)) ;
-    GxB_SelectOp_fprint (selectopgunk, "crud", GB3, ff) ;
-    ERR (GxB_SelectOp_fprint (selectopgunk, "crud", GB0, ff)) ;
+    ERR (GxB_Type_fprint (Tgunk, "crud", G0, ff)) ;
+    ERR (GxB_UnaryOp_fprint (op1gunk, "crud", G0, ff)) ;
+    ERR (GxB_BinaryOp_fprint (op2gunk, "crud", G0, ff)) ;
+    ERR (GxB_Monoid_fprint (monoid_gunk, "crud", G0, ff)) ;
+    ERR (GxB_Semiring_fprint (semigunk, "crud", G0, ff)) ;
+    ERR (GxB_Vector_fprint (vgunk, "crud", G0, ff)) ;
+    ERR (GxB_Matrix_fprint (Agunk, "crud", G0, ff)) ;
+    ERR (GxB_Descriptor_fprint (dgunk, "crud", G0, ff)) ;
+    GxB_SelectOp_fprint (selectopgunk, "crud", G3, ff) ;
+    ERR (GxB_SelectOp_fprint (selectopgunk, "crud", G0, ff)) ;
 
     #define REMAGIC(p) if (p != NULL) p->magic = GB_MAGIC ;
     REMAGIC (Tgunk)
@@ -4629,25 +4629,25 @@ void mexFunction
     REMAGIC (selectopgunk)
     #undef REMAGIC
 
-    OK (GB_Type_check (Tgunk, "", GB0, NULL)) ;
-    OK (GB_UnaryOp_check (op1gunk, "", GB0, NULL)) ;
-    OK (GB_BinaryOp_check (op2gunk, "", GB0, NULL)) ;
-    OK (GB_Monoid_check (monoid_gunk, "", GB0, NULL)) ;
-    OK (GB_Semiring_check (semigunk, "", GB0, NULL)) ;
-    OK (GB_Vector_check (vgunk, "", GB0, NULL)) ;
-    OK (GB_Matrix_check (Agunk, "", GB0, NULL)) ;
-    OK (GB_Descriptor_check (dgunk, "", GB0, NULL)) ;
-    OK (GB_SelectOp_check (selectopgunk, "", GB0, NULL)) ;
+    OK (GB_Type_check (Tgunk, "", G0, NULL)) ;
+    OK (GB_UnaryOp_check (op1gunk, "", G0, NULL)) ;
+    OK (GB_BinaryOp_check (op2gunk, "", G0, NULL)) ;
+    OK (GB_Monoid_check (monoid_gunk, "", G0, NULL)) ;
+    OK (GB_Semiring_check (semigunk, "", G0, NULL)) ;
+    OK (GB_Vector_check (vgunk, "", G0, NULL)) ;
+    OK (GB_Matrix_check (Agunk, "", G0, NULL)) ;
+    OK (GB_Descriptor_check (dgunk, "", G0, NULL)) ;
+    OK (GB_SelectOp_check (selectopgunk, "", G0, NULL)) ;
 
-    OK (GxB_Type_fprint_(Tgunk, GB0, ff)) ;
-    OK (GxB_UnaryOp_fprint_(op1gunk, GB0, ff)) ;
-    OK (GxB_BinaryOp_fprint_(op2gunk, GB0, ff)) ;
-    OK (GxB_Monoid_fprint_(monoid_gunk, GB0, ff)) ;
-    OK (GxB_Semiring_fprint_(semigunk, GB0, ff)) ;
-    OK (GxB_Vector_fprint_(vgunk, GB0, ff)) ;
-    OK (GxB_Matrix_fprint_(Agunk, GB0, ff)) ;
-    OK (GxB_Descriptor_fprint_(dgunk, GB0, ff)) ;
-    OK (GxB_SelectOp_fprint_(selectopgunk, GB0, ff)) ;
+    OK (GxB_Type_fprint_(Tgunk, G0, ff)) ;
+    OK (GxB_UnaryOp_fprint_(op1gunk, G0, ff)) ;
+    OK (GxB_BinaryOp_fprint_(op2gunk, G0, ff)) ;
+    OK (GxB_Monoid_fprint_(monoid_gunk, G0, ff)) ;
+    OK (GxB_Semiring_fprint_(semigunk, G0, ff)) ;
+    OK (GxB_Vector_fprint_(vgunk, G0, ff)) ;
+    OK (GxB_Matrix_fprint_(Agunk, G0, ff)) ;
+    OK (GxB_Descriptor_fprint_(dgunk, G0, ff)) ;
+    OK (GxB_SelectOp_fprint_(selectopgunk, G0, ff)) ;
 
     //--------------------------------------------------------------------------
     // GB_Descriptor_get
@@ -4657,8 +4657,8 @@ void mexFunction
     dgunk->out = 999 ;
     x_bool = false ;
     Context->where = "GB_Descriptor_get" ;
-    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL,
-        Context)) ;
+    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
+        Context)) ; 
     CHECK (x_bool == false) ;
     dgunk->out = GxB_DEFAULT ;
 
@@ -4750,7 +4750,7 @@ void mexFunction
 
     CHECK (A != NULL) ;
     Context->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, false, true, true, Context) ;
+    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, true, true, true, true, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     Context->where = "GB_ix_realloc" ;
@@ -4759,10 +4759,10 @@ void mexFunction
     info = GB_ix_realloc (A, GxB_INDEX_MAX+1, true, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
-    OK (GB_Matrix_check (A, "A pattern 1", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A pattern 1", G3, NULL)) ;
     OK (GB_ix_realloc (A, 20, false, Context)) ;
     CHECK (info == GrB_SUCCESS) ;
-    OK (GB_Matrix_check (A, "A pattern 2", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A pattern 2", G3, NULL)) ;
 
     GB_bix_free (NULL) ;
     GB_ph_free (NULL) ;
@@ -4772,12 +4772,12 @@ void mexFunction
     CHECK (C == NULL) ;
     CHECK (B == NULL) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 1, 1)) ;
-    OK (GB_Matrix_check (A, "A for shallow op", GB3, NULL)) ;
+    OK (GB_Matrix_check (A, "A for shallow op", G3, NULL)) ;
     Context->where = "GB_shallow_op" ;
     OK (GB_shallow_op (&B, true,
         GrB_AINV_FP32, NULL, NULL, false,
         C, Context)) ;
-    OK (GB_Matrix_check (B, "B empty, float", GB3, NULL)) ;
+    OK (GB_Matrix_check (B, "B empty, float", G3, NULL)) ;
     GrB_Matrix_free_(&B) ;
 
     bool b1, b2 ;
@@ -4832,7 +4832,7 @@ void mexFunction
             OK (random_matrix (&Amask, false, false, n, n, nvals, 0, false)) ;
             OK (random_matrix (&F,     false, false, n, 1, uvals, 0, false)) ;
             // vectors cannot be hypersparse
-            OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY, GxB_SPARSE)) ;
+            OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
             // vectors cannot be CSC: this is a hack just for brutal testing
             OK (GxB_Matrix_Option_set_(F, GxB_FORMAT, GxB_BY_COL)) ;
             umask = (GrB_Vector) F ;
@@ -4850,11 +4850,11 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_mxm (B, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
         OK (GrB_mxm (A, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
-        OK (GxB_Matrix_fprint (A, "A ok", GB3, ff)) ;
-        OK (GxB_Matrix_fprint (B, "B ok", GB3, ff)) ;
+        OK (GxB_Matrix_fprint (A, "A ok", G3, ff)) ;
+        OK (GxB_Matrix_fprint (B, "B ok", G3, ff)) ;
         if (Amask != NULL)
         {
-            OK (GxB_Matrix_fprint (Amask, "Amask ok", GB3, ff)) ;
+            OK (GxB_Matrix_fprint (Amask, "Amask ok", G3, ff)) ;
         }
 
         CHECK (GB_mx_isequal (A, B, 1e-14)) ;
@@ -4864,11 +4864,11 @@ void mexFunction
         OK (GrB_vxm (v, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
 
         OK (GrB_vxm (u, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
-        OK (GxB_Vector_fprint (u, "u ok", GB3, ff)) ;
-        OK (GxB_Vector_fprint (v, "v ok", GB3, ff)) ;
+        OK (GxB_Vector_fprint (u, "u ok", G3, ff)) ;
+        OK (GxB_Vector_fprint (v, "v ok", G3, ff)) ;
         if (umask != NULL)
         {
-            OK (GxB_Vector_fprint (umask, "umask ok", GB3, ff)) ;
+            OK (GxB_Vector_fprint (umask, "umask ok", G3, ff)) ;
         }
 
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
@@ -4961,99 +4961,19 @@ void mexFunction
         GrB_Matrix_free_(&B) ;
 
         //----------------------------------------------------------------------
-        // GrB_eWiseMult (misnamed)
-        //----------------------------------------------------------------------
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseMult_Vector_Semiring (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        OK (GrB_eWiseMult_Vector_Semiring (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseMult_Vector_Monoid (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        OK (GrB_eWiseMult_Vector_Monoid (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseMult_Vector_BinaryOp (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        OK (GrB_eWiseMult_Vector_BinaryOp (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseMult_Matrix_Semiring (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        OK (GrB_eWiseMult_Matrix_Semiring (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseMult_Matrix_Monoid (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        OK (GrB_eWiseMult_Matrix_Monoid (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseMult_Matrix_BinaryOp (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        OK (GrB_eWiseMult_Matrix_BinaryOp (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        //----------------------------------------------------------------------
-        // GrB_eWiseAdd (misnamed)
-        //----------------------------------------------------------------------
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseAdd_Vector_Semiring (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        OK (GrB_eWiseAdd_Vector_Semiring (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseAdd_Vector_Monoid (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        OK (GrB_eWiseAdd_Vector_Monoid (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Vector_dup (&v, u)) ;
-        OK (GrB_eWiseAdd_Vector_BinaryOp  (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        OK (GrB_eWiseAdd_Vector_BinaryOp  (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
-        GrB_Vector_free_(&v) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseAdd_Matrix_Semiring (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        OK (GrB_eWiseAdd_Matrix_Semiring (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseAdd_Matrix_Monoid (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        OK (GrB_eWiseAdd_Matrix_Monoid (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GrB_eWiseAdd_Matrix_BinaryOp (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        OK (GrB_eWiseAdd_Matrix_BinaryOp (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
-        GrB_Matrix_free_(&B) ;
-
-        //----------------------------------------------------------------------
         // GrB_extract
         //----------------------------------------------------------------------
 
         printf ("\nGrB_extract ============================================\n");
 
         OK (GrB_Vector_dup (&v, u)) ;
-        GB_Vector_check (u, "start u ", GB3, NULL) ;
-        GB_Vector_check (v, "start v ", GB3, NULL) ;
+        GB_Vector_check (u, "start u ", G3, NULL) ;
+        GB_Vector_check (v, "start v ", G3, NULL) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
 
         OK (GrB_Vector_extract_(u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        GB_Vector_check (u, "u to check", GB3, NULL) ;
-        GB_Vector_check (v, "v to check", GB3, NULL) ;
+        GB_Vector_check (u, "u to check", G3, NULL) ;
+        GB_Vector_check (v, "v to check", G3, NULL) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5104,8 +5024,8 @@ void mexFunction
         GB_Matrix_wait ((GrB_Matrix) v, Context) ;
         GB_Matrix_wait ((GrB_Matrix) u, Context) ;
 
-        OK (GxB_Vector_fprint_(v, GB3, NULL)) ;
-        OK (GxB_Vector_fprint_(u, GB3, NULL)) ;
+        OK (GxB_Vector_fprint_(v, G3, NULL)) ;
+        OK (GxB_Vector_fprint_(u, G3, NULL)) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5154,8 +5074,8 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_Vector_apply_(v, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
         OK (GrB_Vector_apply_(u, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
-        OK (GxB_Vector_fprint_(v, GB3, NULL)) ;
-        OK (GxB_Vector_fprint_(u, GB3, NULL)) ;
+        OK (GxB_Vector_fprint_(v, G3, NULL)) ;
+        OK (GxB_Vector_fprint_(u, G3, NULL)) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_Vector_free_(&v) ;
 
@@ -5225,234 +5145,387 @@ void mexFunction
     GrB_Index *Ap, *Ai, *Aj, *Ah, nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;
-    int64_t nonempty = -1 ;
     bool jumbled ;
-    int64_t nzmax ;
-    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax, &jumbled,
-        &nonempty, &Ap, &Aj, &Ax, desc)) ;
+    int64_t Ap_size, Aj_size, Ai_size, Ax_size, Ah_size, Ab_size ;
+
+    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
     OK (GxB_Type_fprint (atype, "type of A", GxB_COMPLETE, stdout)) ;
-    printf ("nzmax %llu\n", nzmax) ;
+    printf ("Ax_size %llu\n", Ax_size) ;
     for (int64_t i = 0 ; i < ((int64_t) nrows) ; i++)
     {
         printf ("exported row %lld\n", j) ;
-        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++) // ok:
+        for (int64_t p = Ap [i] ; p < ((int64_t) (Ap [i+1])) ; p++)
         {
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
     }
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax, jumbled,
-        nonempty, &Ap, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
     OK (GxB_Matrix_fprint (A, "A imported", GxB_COMPLETE, stdout)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GxB_Matrix_export_CSR (NULL, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, NULL, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, NULL, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, NULL, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, NULL,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, NULL, desc)) ;
 
-    ERR (GxB_Matrix_export_CSC (NULL, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, NULL, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, NULL, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, NULL, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, NULL,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, NULL, desc)) ;
 
-    ERR (GxB_Matrix_export_HyperCSR (NULL, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, NULL, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, NULL, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, NULL, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, NULL,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, NULL, &Ah, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, NULL, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, NULL, desc)) ;
 
-    ERR (GxB_Matrix_export_HyperCSC (NULL, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, NULL, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, NULL, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, NULL, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, NULL,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, NULL, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, NULL, &Ah, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, NULL, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, NULL, desc)) ;
+    ERR (GxB_Matrix_export_CSR (NULL, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
 
-    OK (GB_Matrix_check (A, "A still OK", GB1, NULL)) ;
+    ERR (GxB_Matrix_export_CSR (&A, NULL, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
 
-    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_export_CSR (&A, &atype, NULL, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
 
-    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, NULL, desc)) ;
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, NULL,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        NULL, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, NULL, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, NULL, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, NULL, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, NULL, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, NULL, &jumbled, desc)) ;
+
+
+    ERR (GxB_Matrix_export_CSC (NULL, &atype, &nrows, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, NULL, &nrows, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, NULL, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, NULL,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        NULL, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, NULL, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ai, NULL, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ai, &Ax, NULL, &Ai_size, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, NULL, &Ax_size, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, NULL, &jumbled, desc)) ;
+
+
+
+    ERR (GxB_Matrix_export_HyperCSR (NULL, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, NULL, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, NULL, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, NULL,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        NULL, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, NULL, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, NULL, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, NULL, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, NULL, &Ah_size, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, NULL, &Aj_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, NULL, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, NULL,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        NULL, &jumbled, desc)) ;
+
+
+
+
+
+    ERR (GxB_Matrix_export_HyperCSC (NULL, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, NULL, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, NULL, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, NULL,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        NULL, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, NULL, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, NULL, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, NULL, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, NULL, &Ah_size, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, NULL, &Ai_size, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, NULL, &Ax_size,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, NULL,
+        &nvec, &jumbled, desc)) ;
+
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        NULL, &jumbled, desc)) ;
+
+
+    OK (GB_Matrix_check (A, "A still OK", G1, NULL)) ;
+
+    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &jumbled, desc)) ;
+
+
+
+    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        NULL, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, NULL, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, INT64_MAX, jumbled, desc)) ;
+
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols,
+        &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
 
-    OK (GB_Matrix_check (A, "A also OK", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "A also OK", G1, NULL)) ;
 
-    OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &Ap, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)) ;
 
-    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, NULL, desc)) ;
+
+
+    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        NULL, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, NULL, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, Ap_size, Ai_size, INT64_MAX, jumbled, desc)) ;
+
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, &Ap, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols,
+        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
 
-    OK (GB_Matrix_check (A, "A here too OK", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "A here too OK", G1, NULL)) ;
 
-    OK (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+        &nvecs, &jumbled, desc)) ;
 
-    ERR (GxB_Matrix_import_HyperCSR (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, NULL, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, NULL, desc)) ;
+
+
+    ERR (GxB_Matrix_import_HyperCSR (NULL, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, NULL, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        NULL, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, NULL, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, NULL, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, NULL, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, INT64_MAX,
+        nvecs, jumbled, desc)) ;
+
+
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Aj, &Ax, desc)) ;
+    OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+        nvecs, jumbled, desc)) ;
 
-    OK (GB_Matrix_check (A, "A yet still OK", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "A yet still OK", G1, NULL)) ;
 
-    OK (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nzmax,
-        &jumbled, &nonempty, &nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols,
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &nvecs, &jumbled, desc)) ;
 
-    ERR (GxB_Matrix_import_HyperCSC (NULL, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, NULL, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, NULL, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, NULL, desc)) ;
+
+
+    ERR (GxB_Matrix_import_HyperCSC (NULL, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, NULL, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        NULL, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, NULL, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, NULL, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, NULL, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, INT64_MAX, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, INT64_MAX, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, INT64_MAX,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, INT64_MAX, ncols,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, INT64_MAX,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
+
+    ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, INT64_MAX,
+        nvecs, jumbled, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nzmax,
-        jumbled, nonempty, nvecs, &Ap, &Ah, &Ai, &Ax, desc)) ;
+    OK (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols,
+        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+        nvecs, jumbled, desc)) ;
 
-    OK (GB_Matrix_check (A, "A yet again OK", GB1, NULL)) ;
+    OK (GB_Matrix_check (A, "A yet again OK", G1, NULL)) ;
 
     //--------------------------------------------------------------------------
     // vector import/export
@@ -5460,44 +5533,47 @@ void mexFunction
 
     OK (GxB_Vector_fprint (u, "u to import/export", GxB_COMPLETE, stdout)) ;
     GrB_Type utype ;
-    OK (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, &nvals, &jumbled,
-        &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+
     OK (GxB_Type_fprint (utype, "type of u", GxB_COMPLETE, stdout)) ;
     printf ("nvals %llu\n", nvals) ;
     for (int64_t p = 0 ; p < ((int64_t) nvals) ; p++)
     {
-        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ; // ok:
+        printf ("   col %lld value %g\n", Ai [p], Ax [p]) ;
     }
-    OK (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
     OK (GxB_Vector_fprint (u, "u imported", GxB_COMPLETE, stdout)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GxB_Vector_export_CSC (NULL, &utype, &n, &nzmax, &nvals, &jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, NULL, &n, &nzmax, &nvals, &jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, &utype, NULL, &nzmax, &nvals, &jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, &utype, &n, NULL, &nvals, &jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, NULL, &jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, &nvals, &jumbled, NULL, &Ax, desc)) ;
-    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, &nvals, &jumbled, &Ai, NULL, desc)) ;
+    ERR (GxB_Vector_export_CSC (NULL, &utype, &n, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, NULL, &n, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, NULL, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, &n, NULL, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, NULL, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, NULL, &Ax_size, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, &Ai_size, NULL, &nvals, &jumbled, desc)) ;
+    ERR (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, &Ai_size, &Ax_size, NULL, &jumbled, desc)) ;
+//  ERR (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, NULL, desc)) ;
 
-    OK (GB_Vector_check (u, "u still OK", GB1, NULL)) ;
+    OK (GB_Vector_check (u, "u still OK", G1, NULL)) ;
 
-    OK (GxB_Vector_export_CSC (&u, &utype, &n, &nzmax, &nvals, &jumbled, &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_export_CSC (&u, &utype, &n, &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
 
-    ERR (GxB_Vector_import_CSC (NULL, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, NULL, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, NULL, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, NULL, desc)) ;
+    ERR (GxB_Vector_import_CSC (NULL, utype, n, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, NULL, n, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, NULL, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, &Ai, NULL, Ai_size, Ax_size, nvals, jumbled, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Vector_import_CSC (&u, utype, INT64_MAX, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
-    ERR (GxB_Vector_import_CSC (&u, utype, n, INT64_MAX, nvals, jumbled, &Ai, &Ax, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, INT64_MAX, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
+    ERR (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, INT64_MAX, Ax_size, nvals, jumbled, desc)) ;
+
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Vector_import_CSC (&u, utype, n, nzmax, nvals, jumbled, &Ai, &Ax, desc)) ;
+    OK (GxB_Vector_import_CSC (&u, utype, n, &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
 
-    OK (GB_Vector_check (u, "u still OK", GB3, NULL)) ;
+    OK (GB_Vector_check (u, "u still OK", G3, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free all

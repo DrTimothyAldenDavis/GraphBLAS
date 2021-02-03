@@ -2,8 +2,8 @@
 // GxB_Global_Option_get: get a global default option for all future matrices
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
     {
 
         //----------------------------------------------------------------------
-        // hyper_switch
+        // matrix format
         //----------------------------------------------------------------------
 
         case GxB_HYPER_SWITCH : 
@@ -46,9 +46,20 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // matrix format (CSR or CSC)
-        //----------------------------------------------------------------------
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double *bitmap_switch = va_arg (ap, double *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (bitmap_switch) ;
+                for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+                {
+                    double b = (double) GB_Global_bitmap_switch_get (k) ;
+                    bitmap_switch [k] = b ;
+                }
+            }
+            break ;
 
         case GxB_FORMAT : 
 
@@ -108,7 +119,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // SuiteSparse:GraphBLAS version, etc
+        // SuiteSparse:GraphBLAS version, date, license, etc
         //----------------------------------------------------------------------
 
         case GxB_LIBRARY_NAME : 
@@ -202,7 +213,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // GraphBLAS API version, tec
+        // GraphBLAS API version, date, etc
         //----------------------------------------------------------------------
 
         case GxB_API_VERSION : 
@@ -252,7 +263,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // controlling diagnostic output, for development only
+        // controlling diagnostic output
         //----------------------------------------------------------------------
 
         case GxB_BURBLE : 
@@ -267,7 +278,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // CUDA (in progress)
+        // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------
 
         case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
@@ -292,36 +303,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        case GxB_GPU_COUNT : 
-
-            {
-                va_start (ap, field) ;
-                int *gpu_count = va_arg (ap, int *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (gpu_count) ;
-                (*gpu_count) = GB_Global_gpu_count_get ( ) ;
-            }
-            break ;
-
-
-        //----------------------------------------------------------------------
-        // Intel MKL (in progress)
-        //----------------------------------------------------------------------
-
-        case GxB_GLOBAL_MKL :           // same as GxB_MKL
-
-            {
-                va_start (ap, field) ;
-                int *use_mkl = va_arg (ap, int *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (use_mkl) ;
-                (*use_mkl) = GB_Global_use_mkl_get ( ) ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // invalid option
-        //----------------------------------------------------------------------
+        // #include "GxB_Global_Option_get_mkl_template.c"
 
         default : 
 

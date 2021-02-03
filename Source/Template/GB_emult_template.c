@@ -2,8 +2,8 @@
 // GB_emult_template:  phase1 and phase2 for C=A.*B, C<M>=A.*B, C<!M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_full = GB_IS_FULL (A) ;
+    const bool A_is_full = GB_as_if_full (A) ;
     int A_nthreads, A_ntasks ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
@@ -48,7 +48,7 @@
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    const bool B_is_full = GB_IS_FULL (B) ;
+    const bool B_is_full = GB_as_if_full (B) ;
     int B_nthreads, B_ntasks ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
@@ -59,7 +59,7 @@
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    const bool M_is_full = GB_IS_FULL (M) ;
+    const bool M_is_full = GB_as_if_full (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
     int M_nthreads, M_ntasks ;
     size_t msize = 0 ;
@@ -92,19 +92,20 @@
 
     #if defined ( GB_PHASE_1_OF_2 )
 
-        // phase1
+        // phase1: symbolic phase
+        // C is sparse or hypersparse (never bitmap or full)
         #include "GB_sparse_emult_template.c"
 
     #else
 
-        // phase2
+        // phase2: numerical phase
         if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        {
-            // C is sparse or hypersparse (phase1 and phase2)
+        { 
+            // C is sparse or hypersparse
             #include "GB_sparse_emult_template.c"
         }
         else // C_sparsity == GxB_BITMAP
-        {
+        { 
             // C is bitmap (phase2 only)
             ASSERT (C_sparsity == GxB_BITMAP) ;
             #include "GB_bitmap_emult_template.c"

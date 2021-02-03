@@ -2,8 +2,8 @@
 // GB_masker_phase1: find # of entries in R = masker (C,M,Z)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -20,6 +20,7 @@
 // Rp is either freed by phase2, or transplanted into R.
 
 #include "GB_mask.h"
+#include "GB_unused.h"
 
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (
@@ -104,7 +105,6 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     (*Rp_handle) = Rp ;
-    GBURBLE ("masker_phase1 done\n") ;
     return (GrB_SUCCESS) ;
 }
 

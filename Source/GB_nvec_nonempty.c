@@ -2,8 +2,8 @@
 // GB_nvec_nonempty: count the number of non-empty vectors
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
             reduction(+:nvec_nonempty)
     for (k = 0 ; k < anvec ; k++)
     { 
-        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;    // ok: A is sparse
+        if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;
     }
 
     ASSERT (nvec_nonempty >= 0 && nvec_nonempty <= A->vdim) ;

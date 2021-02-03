@@ -2,8 +2,8 @@
 // GB_qsort_1b: sort a 2-by-n list, using A [0][ ] as the sort key
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -107,7 +107,6 @@ void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
     const int64_t n
 )
 { 
-GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -134,7 +133,6 @@ void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
     const int64_t n
 )
 { 
-GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -162,7 +160,6 @@ void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
     const int64_t n
 )
 { 
-GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }

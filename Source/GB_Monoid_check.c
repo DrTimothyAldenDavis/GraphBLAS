@@ -2,8 +2,8 @@
 // GB_Monoid_check: check and print a monoid
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -52,17 +52,21 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
         return (GrB_INVALID_OBJECT) ;
     }
 
+    if (monoid->identity == NULL)
+    {
+        GBPR0 ("    Identity value is missing\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
     // print the identity and terminal values
     if (pr != GxB_SILENT)
     { 
         // print the identity value, if present
-        if (monoid->identity != NULL)
-        {
-            GBPR ("    identity: [ ") ;
-            info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f) ;
-            if (info != GrB_SUCCESS) return (info) ;
-            GBPR (" ] ") ;
-        }
+        GBPR ("    identity: [ ") ;
+        info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f) ;
+        if (info != GrB_SUCCESS) return (info) ;
+        GBPR (" ] ") ;
+
         // print the terminal value, if present
         if (monoid->terminal != NULL)
         { 

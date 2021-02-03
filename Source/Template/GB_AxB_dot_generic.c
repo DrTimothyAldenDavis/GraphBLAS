@@ -2,8 +2,8 @@
 // GB_AxB_dot_generic: generic template for all dot-product methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -68,14 +68,14 @@
     #define GB_PRAGMA_SIMD_DOT(cij) ;
 
     if (op_is_positional)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // generic semirings with positional multiply operators
         //----------------------------------------------------------------------
 
         if (flipxy)
-        {
+        { 
             // flip a positional multiplicative operator
             opcode = GB_binop_flip (opcode) ;
         }
@@ -115,13 +115,11 @@
 
         if (mult->ztype == GrB_INT64)
         {
-GB_GOTCHA ;
             #define GB_CTYPE int64_t
             int64_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int64_t)) ;
             }
             switch (opcode)
@@ -133,11 +131,10 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
@@ -148,11 +145,10 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
@@ -161,25 +157,22 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 default: ;
             }
         }
         else
         {
-GB_GOTCHA ;
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
             int32_t cij_terminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-GB_GOTCHA ;
                 memcpy (&cij_terminal, terminal, sizeof (int32_t)) ;
             }
             switch (opcode)
@@ -191,11 +184,10 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 case GB_FIRSTJ_opcode   :   // z = first_j(A'(i,k),y) == k
                 case GB_FIRSTJ1_opcode  :   // z = first_j1(A'(i,k),y) == k+1
@@ -206,11 +198,10 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
                 case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
@@ -219,11 +210,10 @@ GB_GOTCHA ;
                     #if defined ( GB_DOT2_GENERIC )
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "GB_AxB_dot3_template.c"
+                    #include "GB_AxB_dot3_meta.c"
                     #else
-                    #include "GB_AxB_dot4_template.c"
+                    #include "GB_AxB_dot4_meta.c"
                     #endif
-GB_GOTCHA ;
                     break ;
                 default: ;
             }
@@ -288,7 +278,6 @@ GB_GOTCHA ;
             // fmult is not used and can be NULL (for user-defined types)
             if (flipxy)
             { 
-GB_GOTCHA ;
                 // flip first and second
                 opcode = GB_binop_flip (opcode) ;
             }
@@ -301,14 +290,13 @@ GB_GOTCHA ;
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else // opcode == GB_SECOND_opcode
             { 
-GB_GOTCHA ;
                 // t = B(i,k)
                 ASSERT (A_is_pattern) ;
                 #undef  GB_MULT
@@ -316,9 +304,9 @@ GB_GOTCHA ;
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }
@@ -332,9 +320,9 @@ GB_GOTCHA ;
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else
@@ -345,9 +333,9 @@ GB_GOTCHA ;
                 #if defined ( GB_DOT2_GENERIC )
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
-                #include "GB_AxB_dot3_template.c"
+                #include "GB_AxB_dot3_meta.c"
                 #else
-                #include "GB_AxB_dot4_template.c"
+                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }

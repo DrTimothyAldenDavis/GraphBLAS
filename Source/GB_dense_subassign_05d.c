@@ -2,8 +2,8 @@
 // GB_dense_subassign_05d: C(:,:)<M> = scalar where C is dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ GrB_Info GB_dense_subassign_05d
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

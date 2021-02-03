@@ -2,8 +2,8 @@
 // GB_Vector_extractElement: x = V(i)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -33,17 +33,17 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
     GB_RETURN_IF_NULL (x) ;
 
-    // delete any lingering zombies and assemble any pending tuples
-    if (GB_PENDING_OR_ZOMBIES (V))
+    // delete any lingering zombies, assemble any pending tuples, and unjumble
+    if (GB_ANY_PENDING_WORK (V))
     { 
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_extractElement") ;
         GB_OK (GB_Matrix_wait ((GrB_Matrix) V, Context)) ;
-        ASSERT (!GB_ZOMBIES (V)) ;
-        ASSERT (!GB_PENDING (V)) ;
         GB_BURBLE_END ;
     }
+
+    ASSERT (!GB_ANY_PENDING_WORK (V)) ;
 
     // check index
     if (i >= V->vlen)
@@ -90,12 +90,12 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         pleft = i ;
         const int8_t *GB_RESTRICT Vb = V->b ;
         if (Vb != NULL)
-        {
+        { 
             // V is bitmap
             found = (Vb [pleft] == 1) ;
         }
         else
-        {
+        { 
             // V is full
             found = true ;
         }

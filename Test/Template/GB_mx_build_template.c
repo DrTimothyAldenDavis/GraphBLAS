@@ -2,8 +2,8 @@
 // GB_mx_build_template: build a sparse vector or matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -190,8 +190,6 @@ GrB_Info builder
             FREE_ALL ;
             mexErrMsgTxt ("xtype not supported")  ;
     }
-
-    // printf ("info %d\n", info) ;
 
     if (info == GrB_SUCCESS)
     {

@@ -2,8 +2,8 @@
 // GB_new: create a new GraphBLAS matrix, but do not allocate A->{b,i,x}
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -44,8 +44,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const float hyper_switch,   // A->hyper_switch
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
@@ -95,7 +94,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool A_is_hyper ;
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
-    A->bitmap_switch = GB_BITMAP_SWITCH_DEFAULT ;
+    A->bitmap_switch = GB_Global_bitmap_switch_matrix_get (vlen, vdim) ;
     A->sparsity = GxB_AUTO_SPARSITY ;
 
     if (sparsity == GxB_HYPERSPARSE)
@@ -116,7 +115,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // auto selection:  sparse if one vector or less or
         // if the global hyper_switch is negative; hypersparse otherwise.
         // Never select A to be full or bitmap for this case.
-        ASSERT (sparsity == GxB_SPARSE + GxB_HYPERSPARSE) ;
         A_is_hyper = !(vdim <= 1 || 0 > hyper_switch) ;
     }
 
@@ -137,23 +135,22 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     { 
         // A is hypersparse
         A->plen = GB_IMIN (plen, vdim) ;
-        A->nvec = 0 ;           // no vectors present
-        A->nvec_nonempty = 0 ;      // all vectors are empty
+        A->nvec = 0 ;                   // no vectors present
+        A->nvec_nonempty = 0 ;
     }
     else
     { 
         // A is sparse
         A->plen = vdim ;
-        A->nvec = vdim ;        // all vectors present in the data structure
-                                // (but all are currently empty)
-        A->nvec_nonempty = 0 ;      // all vectors are empty
+        A->nvec = vdim ;                // all vectors present
+        A->nvec_nonempty = 0 ;
     }
 
     A->p = NULL ;
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    A->mkl = NULL ;             // no analysis from MKL yet
+    // #include "GB_new_mkl_template.c"
 
     A->logger = NULL ;          // no error logged yet
 

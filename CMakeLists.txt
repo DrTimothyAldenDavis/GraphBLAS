@@ -2,8 +2,8 @@
 # GraphBLAS/CMakeLists.txt:  cmake script for GraphBLAS
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-# http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
 
 # CMakeLists.txt: instructions for cmake to build GraphBLAS.
 # An ANSI C11 compiler is required.
@@ -59,10 +59,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Oct 29, 2020 (DRAFT)" )
+set ( GraphBLAS_DATE "Jan 19, 2021")
 set ( GraphBLAS_VERSION_MAJOR 4 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   0 )
+set ( GraphBLAS_VERSION_SUB   3 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
@@ -84,7 +84,7 @@ endif ( )
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-set ( CMAKE_BUILD_TYPE Debug )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -101,13 +101,14 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library only" )
 endif ( )
 
-# select "true" to enable burble, for GraphBLAS development only
-# TODO burble is on
+# select "false" to disable the burble.  It is now enabled by default.
   set ( GB_BURBLE true )
 # set ( GB_BURBLE false )
 
 if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
+else ( )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=0 " )
 endif ( )
 
 if ( GBCOMPACT )
@@ -160,7 +161,7 @@ if ( CMAKE_CUDA )
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
-    link_directories ( "CUDA" "/usr/local/cuda/lib64" )
+    link_directories ( "CUDA" "/usr/local/cuda/lib64" "/usr/local/cuda/lib64/stubs" )
 else ( )
     message ( STATUS "CUDA not enabled" )
     set ( CMAKE_CUDA_FLAG " " )
@@ -275,6 +276,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     # options for clang
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wno-pointer-sign " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 3.3 )
         message ( FATAL_ERROR "clang version must be at least 3.3" )
     endif ( )
@@ -397,12 +399,13 @@ if ( CMAKE_THREAD_LIBS_INIT )
     endif ( )
 endif ( )
 
-if ( BLAS_FOUND )
-    # use the dense CBLAS
-    message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
-    target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
-endif ( )
+# FUTURE:
+# if ( BLAS_FOUND )
+#   # use the dense CBLAS
+#   message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
+#   target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
+# endif ( )
 
 #-------------------------------------------------------------------------------
 # determine the default matrix format
@@ -449,7 +452,6 @@ endif ( )
 add_executable ( pagerank_demo "Demo/Program/pagerank_demo.c" )
 add_executable ( bfs_demo      "Demo/Program/bfs_demo.c" )
 add_executable ( tri_demo      "Demo/Program/tri_demo.c" )
-add_executable ( pthread_demo  "Demo/Program/pthread_demo.c" )
 add_executable ( openmp_demo   "Demo/Program/openmp_demo.c" )
 add_executable ( mis_demo      "Demo/Program/mis_demo.c" )
 add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
@@ -463,7 +465,6 @@ add_executable ( import_demo   "Demo/Program/import_demo.c" )
 target_link_libraries ( pagerank_demo graphblas graphblasdemo ${GB_CUDA} )
 target_link_libraries ( bfs_demo      graphblas graphblasdemo ${GB_CUDA} )
 target_link_libraries ( tri_demo      graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( pthread_demo  graphblas graphblasdemo ${GB_CUDA} )
 target_link_libraries ( openmp_demo   graphblas graphblasdemo ${GB_CUDA} )
 target_link_libraries ( mis_demo      graphblas graphblasdemo ${GB_CUDA} )
 target_link_libraries ( complex_demo  graphblas graphblasdemo ${GB_CUDA} )

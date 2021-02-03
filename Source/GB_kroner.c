@@ -2,8 +2,8 @@
 // GB_kroner: Kronecker product, C = kron (A,B)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -60,16 +60,15 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix B2 = NULL ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (A_in)) ; 
-    ASSERT (!GB_JUMBLED (A_in)) ;
-    ASSERT (!GB_PENDING (A_in)) ; 
-
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
-    ASSERT (!GB_ZOMBIES (B_in)) ; 
-    ASSERT (!GB_JUMBLED (B_in)) ;
-    ASSERT (!GB_PENDING (B_in)) ; 
-
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
+    GB_MATRIX_WAIT (A_in) ;
+    GB_MATRIX_WAIT (B_in) ;
 
     //--------------------------------------------------------------------------
     // bitmap case: create sparse copies of A and B if they are bitmap
@@ -77,7 +76,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix A = A_in ;
     if (GB_IS_BITMAP (A))
-    {
+    { 
         GBURBLE ("A:") ;
         GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
@@ -86,7 +85,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Matrix B = B_in ;
     if (GB_IS_BITMAP (B))
-    {
+    { 
         GBURBLE ("B:") ;
         GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
@@ -150,7 +149,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; new header
         op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
+        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
     (*Chandle) = C ;
 
     //--------------------------------------------------------------------------
@@ -260,7 +259,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             int64_t iAblock = iA * bvlen ;
             if (!A_is_pattern) cast_A (awork, Ax +(pA*asize), asize) ;
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
-            { 
+            {
                 // bwork = B(iB,jB), typecasted to op->ytype
                 int64_t iB = GBI (Bi, pB, bvlen) ;
                 if (!B_is_pattern) cast_B (bwork, Bx +(pB*bsize), bsize) ;
@@ -268,10 +267,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                 if (!C_is_full)
                 { 
                     int64_t iC = iAblock + iB ;
-                    Ci [pC] = iC ;                  // ok: C is sparse
+                    Ci [pC] = iC ;
                 }
                 if (op_is_positional)
-                { 
+                {
                     // positional binary operator
                     switch (opcode)
                     {
@@ -302,7 +301,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                             }
                             break ;
                         case GB_SECONDI_opcode  : 
-GB_GOTCHA ;
                             // z = second_i(x,B(iB,jB)) == iB
                         case GB_SECONDI1_opcode : 
                             // z = second_i1(x,B(iB,jB)) == iB+1
@@ -316,7 +314,6 @@ GB_GOTCHA ;
                             }
                             break ;
                         case GB_SECONDJ_opcode  : 
-GB_GOTCHA ;
                             // z = second_j(x,B(iB,jB)) == jB
                         case GB_SECONDJ1_opcode : 
                             // z = second_j1(x,B(iB,jB)) == jB+1
@@ -347,7 +344,6 @@ GB_GOTCHA ;
     //--------------------------------------------------------------------------
 
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;
 
     //--------------------------------------------------------------------------
     // return result

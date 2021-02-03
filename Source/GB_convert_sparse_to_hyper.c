@@ -2,8 +2,8 @@
 // GB_convert_sparse_to_hyper: convert a matrix from sparse to hyperspasre
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -70,7 +70,6 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         if (Count == NULL)
         { 
             // out of memory
-            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -107,7 +106,6 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
             GB_FREE (Count) ;
             GB_FREE (Ap_new) ;
             GB_FREE (Ah_new) ;
-            GB_phbix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -146,7 +144,6 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         Ap_new [nvec_nonempty] = anz ;
         A->magic = GB_MAGIC ;
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
 
         //----------------------------------------------------------------------
         // free workspace, and free the old A->p unless it's shallow
@@ -172,6 +169,9 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
     ASSERT (anz == GB_NNZ (A)) ;
     ASSERT_MATRIX_OK (A, "A conv to hypersparse (or left full/bitmap)", GB0) ;
     ASSERT (!GB_IS_SPARSE (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ;
     return (GrB_SUCCESS) ;
 }
 

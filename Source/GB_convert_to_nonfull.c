@@ -2,8 +2,8 @@
 // GB_convert_to_nonfull: ensure a matrix is not full (hyper, sparse, or bitmap)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -20,32 +20,35 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
 )
 {
 
-    if (!GB_IS_FULL (A))
-    { 
-GB_GOTCHA ;
-        // matrix is already nonfull (hypersparse, sparse, or bitmap);
-        // nothing to do
-        return (GrB_SUCCESS) ;
-    }
-    else if (A->sparsity & GxB_BITMAP)
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_FULL (A)) ;
+
+    //--------------------------------------------------------------------------
+    // convert to bitmap, sparse, or hypersparse
+    //--------------------------------------------------------------------------
+
+    int sparsity = GB_sparsity_control (A->sparsity, A->vdim) ;
+
+    if (sparsity & GxB_BITMAP)
     { 
         // C can become bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
     }
-    else if (A->sparsity & GxB_SPARSE)
-    {
+    else if (sparsity & GxB_SPARSE)
+    { 
         // C can become sparse
         return (GB_convert_full_to_sparse (A, Context)) ;
     }
-    else if (A->sparsity & GxB_HYPERSPARSE)
+    else if (sparsity & GxB_HYPERSPARSE)
     { 
-GB_GOTCHA ;
         // C can become hypersparse
         return (GB_convert_any_to_hyper (A, Context)) ;
     }
     else
     { 
-GB_GOTCHA ;
         // none of the above conditions hold so make A bitmap
         return (GB_convert_full_to_bitmap (A, Context)) ;
     }

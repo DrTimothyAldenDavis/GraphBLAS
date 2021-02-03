@@ -2,8 +2,8 @@
 // GB_assign_zombie4: delete entries in C(i,:) for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ void GB_assign_zombie4
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;    // ok: C is sparse or hypersparse
+    ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;      // binary search on C
     ASSERT (!GB_PENDING (C)) ;
@@ -113,8 +113,8 @@ void GB_assign_zombie4
                 // j is not in J; find C(i,j)
                 //--------------------------------------------------------------
 
-                int64_t pC = Cp [k] ;           // ok: C is sparse
-                int64_t pC_end = Cp [k+1] ;     // ok: C is sparse
+                int64_t pC = Cp [k] ;
+                int64_t pC_end = Cp [k+1] ;
                 int64_t pright = pC_end - 1 ;
                 bool found, is_zombie ;
                 GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
@@ -134,20 +134,14 @@ void GB_assign_zombie4
                     // Check the mask M to see if it should be deleted.
                     bool mij = false ;
 
-                    if (M_is_bitmap)
+                    if (M_is_bitmap || M_is_full)
                     { 
-                        // M is bitmap, no need for GB_lookup
+                        // M is bitmap/full, no need for GB_lookup
                         int64_t pM = j ;
-                        mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;
-                    }
-                    else if (M_is_full)
-                    {
-                        // M is full, no need for GB_lookup
-                        int64_t pM = j ;
-                        mij = GB_mcast (Mx, pM, msize) ;
+                        mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
                     }
                     else
-                    {
+                    { 
                         // M is sparse or hypersparse
                         int64_t pM, pM_end ;
                         int64_t pleft = 0 ;
@@ -156,7 +150,6 @@ void GB_assign_zombie4
                             j, &pM, &pM_end) ;
                         if (pM < pM_end)
                         { 
-GB_GOTCHA ;
                             // found it
                             mij = GB_mcast (Mx, pM, msize) ;
                         }
@@ -171,7 +164,7 @@ GB_GOTCHA ;
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;     // ok: C is sparse
+                        Ci [pC] = GB_FLIP (i) ;
                     }
                 }
             }

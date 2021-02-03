@@ -2,8 +2,8 @@
 // GB_add_phase2: C=A+B or C<M>=A+B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
-    GB_Opcode opcode = (op == NULL) ? GB_ignore_code : op->opcode ;
+    GB_Opcode opcode = (op == NULL) ? GB_NOP_opcode : op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_opcode) ;
     bool op_is_second = (opcode == GB_SECOND_opcode) ;
@@ -151,7 +151,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix C = NULL ;
     GrB_Info info = GB_new_bix (&C, // any sparsity, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -228,7 +228,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
 
         if (info == GrB_OUT_OF_MEMORY)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (info) ;
@@ -275,7 +275,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             bsize = B->type->size ;
 
             if (op_is_second || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of A(i,j)
                 xsize = 1 ;
                 cast_A_to_X = NULL ;
@@ -287,7 +287,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             }
 
             if (op_is_first || op_is_pair || op_is_positional)
-            {
+            { 
                 // the op does not depend on the value of B(i,j)
                 ysize = 1 ;
                 cast_B_to_Y = NULL ;
@@ -406,7 +406,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // standard binary operator

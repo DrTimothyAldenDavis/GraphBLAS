@@ -1,8 +1,8 @@
 function test10
 %TEST10 test GrB_apply
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest10: GrB_apply tests\n') ;
 
@@ -11,7 +11,6 @@ types = types.all ;
 unary_ops = unary_ops.all ;
 
 rng ('default') ;
-GrB.burble (0) ;
 
 m = 8 ;
 n = 4 ;
@@ -159,7 +158,22 @@ for k1 = 1:length(types)
                 tol = 1e-12 ;
             end
 
-            for A_is_hyper = hrange
+            for A_sparsity = [hrange 2]
+
+            if (A_sparsity == 0)
+                A_is_hyper = 0 ;
+                A_is_bitmap = 0 ;
+                A_sparsity_control = 2 ;    % sparse
+            elseif (A_sparsity == 1)
+                A_is_hyper = 1 ;
+                A_is_bitmap = 0 ;
+                A_sparsity_control = 1 ;    % hypersparse
+            else
+                A_is_hyper = 0 ;
+                A_is_bitmap = 1 ;
+                A_sparsity_control = 4 ;    % bitmap
+            end
+
             for A_is_csc   = crange
 
             if (longer_tests)
@@ -174,6 +188,9 @@ for k1 = 1:length(types)
             Cin.is_csc  = C_is_csc ; Cin.is_hyper  = C_is_hyper ;
             B.is_csc    = A_is_csc ; B.is_hyper    = A_is_hyper ;
             Mask.is_csc = M_is_csc ; Mask.is_hyper = M_is_hyper ;
+
+            A.sparsity = A_sparsity_control ;
+            B.sparsity = A_sparsity_control ;
 
             % no mask
             C1 = GB_spec_apply (Cin, [], [], op, A, []) ;

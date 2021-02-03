@@ -2,8 +2,8 @@
 // GB_dense_ewise3_accum: C += A+B where all 3 matries are dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -44,9 +44,9 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (GB_is_dense (B)) ;
 
-    ASSERT (!GB_IS_BITMAP (C)) ;        // ok: method not used if C bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;        // ok: method not used if A bitmap
-    ASSERT (!GB_IS_BITMAP (B)) ;        // ok: method not used if B bitmap
+    ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_BITMAP (B)) ;
 
     ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
@@ -58,7 +58,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     ASSERT (op->opcode >= GB_MIN_opcode) ;
     ASSERT (op->opcode <= GB_RDIV_opcode) ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full, if C->sparsity allows it
+    GB_ENSURE_FULL (C) ;        // convert C to full
 
     // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 

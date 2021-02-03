@@ -2,8 +2,8 @@
 // GxB_Vector_Option_set: set an option in a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
 
     GrB_Info info = GrB_SUCCESS ;
     GB_WHERE (v, "GxB_Vector_Option_set (v, field, value)") ;
-    GB_BURBLE_START ("GxB_set") ;
+    GB_BURBLE_START ("GxB_set (vector option)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
@@ -38,49 +38,38 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     switch (field)
     {
 
-        case GxB_SPARSITY : 
+        case GxB_BITMAP_SWITCH : 
+
+            {
+                va_start (ap, field) ;
+                double bitmap_switch = va_arg (ap, double) ;
+                va_end (ap) ;
+                v->bitmap_switch = (float) bitmap_switch ;
+            }
+            break ;
+
+        case GxB_SPARSITY_CONTROL : 
 
             {
                 va_start (ap, field) ;
                 int sparsity = va_arg (ap, int) ;
                 va_end (ap) ;
-                if (sparsity <= 0 || sparsity > GxB_AUTO_SPARSITY)
-                { 
-GB_GOTCHA ;
-                    // GxB_DEFAULT is zero, so this is changed to
-                    // GxB_AUTO_SPARSITY.
-                    sparsity = GxB_AUTO_SPARSITY ;
-                }
-
-                // a GrB_Vector cannot be hypersparse
-                if (sparsity & GxB_HYPERSPARSE)
-                {
-                    // disable the hypersparsity flag
-                    sparsity &= (GxB_FULL + GxB_BITMAP + GxB_SPARSE) ;
-                    // enable the sparse flag instead
-                    sparsity |= (GxB_SPARSE) ;
-                }
-
-                v->sparsity = sparsity ;
+                v->sparsity = GB_sparsity_control (sparsity, (int64_t) (-1)) ;
             }
             break ;
 
         default : 
 
-GB_GOTCHA ;
-            GB_ERROR (GrB_INVALID_VALUE,
-                "invalid option field [%d], can only be GxB_SPARSITY [%d]",
-                (int) field, (int) GxB_SPARSITY) ;
-
+            return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------
     // conform the vector to its new desired sparsity structure
     //--------------------------------------------------------------------------
 
-    info = GB_conform ((GrB_Matrix) v, Context) ;
+    GB_OK (GB_conform ((GrB_Matrix) v, Context)) ;
     GB_BURBLE_END ;
-    if (info == GrB_SUCCESS) ASSERT_VECTOR_OK (v, "v set", GB0) ;
+    ASSERT_VECTOR_OK (v, "v set", GB0) ;
     return (info) ;
 }
 

@@ -2,8 +2,8 @@
 // GB_AxB_saxpy3_flopcount:  compute flops for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_saxpy3_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M
-    int64_t *Bflops,            // size B->nvec+1 and all zero
+    int64_t *Bflops,            // size B->nvec+1
     const GrB_Matrix M,         // optional mask matrix
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
@@ -124,13 +124,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
 
-    #ifdef GB_DEBUG
-    // Bflops must be set to zero in the caller
-    for (int64_t kk = 0 ; kk <= bnvec ; kk++)
-    {
-        ASSERT (Bflops [kk] == 0) ;
-    }
-    #endif
+    // clear Bflops
+    GB_memset (Bflops, 0, (bnvec+1) * sizeof (int64_t), nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get the mask, if present: any sparsity structure
@@ -256,7 +251,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // if M(:,j) is full, bitmap, or dense, do not add mjnz to bjflops
             // or task_MWork.
 
-            int64_t bjflops = 0 ;
+            int64_t bjflops = (B_is_bitmap) ? my_bjnz : 0 ;
             int64_t mjnz = 0 ;
             if (M != NULL && !M_is_dense)
             {
@@ -303,7 +298,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             if (A_is_hyper && B_is_sparse_or_hyper && my_bjnz > 2 && !B_jumbled)
             { 
                 // trim Ah [0..pright] to remove any entries past last B(:,j)
-                int64_t ilast = Bi [pB_end-1] ;     // ok: B is sparse
+                int64_t ilast = Bi [pB_end-1] ;
                 GB_bracket_right (ilast, Ah, 0, &pright) ;
             }
 
@@ -321,7 +316,11 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
                 // B(k,j) is nonzero
 
-                // find A(:,k), reusing pleft since Bi [...] is sorted
+                // find A(:,k), reusing pleft if B is not jumbled
+                if (B_jumbled)
+                { 
+                    pleft = 0 ;
+                }
                 int64_t pA, pA_end ;
                 GB_lookup (A_is_hyper, Ah, Ap, avlen, &pleft, pright, k,
                     &pA, &pA_end) ;
@@ -340,7 +339,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
                     if (aknz > 256 && mjnz_much < aknz && mjnz < mvlen &&
                         aknz < avlen && !(A->jumbled))
                     { 
-GB_GOTCHA ;
                         // scan M(:j), and do binary search for A(i,j)
                         bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;
                     }

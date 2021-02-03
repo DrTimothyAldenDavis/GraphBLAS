@@ -2,8 +2,8 @@
 // GB_convert.h: converting between sparsity structures
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -29,11 +29,14 @@
 // true if A is sparse (but not hypersparse)
 #define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
-// if A is hypersparse but all vectors are present, then
-// treat A as if it were non-hypersparse
-#define GB_IS_HYPER(A) (GB_IS_HYPERSPARSE (A) && ((A)->nvec < (A)->vdim))
+// determine the sparsity control for a matrix
+int GB_sparsity_control     // revised sparsity
+(
+    int sparsity,           // sparsity control
+    int64_t vdim            // A->vdim, or -1 to ignore this condition
+) ;
 
-// GB_sparsity: determine the current sparsity structure of a matrix
+// GB_sparsity: determine the current sparsity status of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {
     if (A == NULL)
@@ -41,7 +44,7 @@ static inline int GB_sparsity (GrB_Matrix A)
         // if A is NULL, pretend it is sparse
         return (GxB_SPARSE) ;
     }
-    else if (A->h != NULL)
+    else if (GB_IS_HYPERSPARSE (A))
     { 
         return (GxB_HYPERSPARSE) ;
     }
@@ -76,16 +79,14 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 bool GB_convert_hyper_to_sparse_test    // test for hypersparse to sparse
 (
     float hyper_switch,     // A->hyper_switch
-    int64_t k,              // # of non-empty vectors of A, an estimate is OK,
-                            // but normally A->nvec_nonempty
+    int64_t k,              // # of non-empty vectors of A (an estimate is OK)
     int64_t vdim            // A->vdim
 ) ;
 
 bool GB_convert_sparse_to_hyper_test  // test sparse to hypersparse conversion
 (
     float hyper_switch,     // A->hyper_switch
-    int64_t k,              // # of non-empty vectors of A, an estimate is OK,
-                            // but normally A->nvec_nonempty
+    int64_t k,              // # of non-empty vectors of A (an estimate is OK)
     int64_t vdim            // A->vdim
 ) ;
 
@@ -192,16 +193,20 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     }                                                       \
 }
 
-#define GB_ENSURE_FULL(C)                                   \
-{                                                           \
-    ASSERT (GB_is_dense (C)) ;                              \
-    if (C->sparsity & GxB_FULL)                             \
-    {                                                       \
-        /* convert C from any structure to full, */         \
-        /* if permitted by C->sparsity */                   \
-        GB_convert_any_to_full (C) ;                        \
-    }                                                       \
+#define GB_ENSURE_FULL(C)                                       \
+{                                                               \
+    ASSERT (GB_is_dense (C)) ;                                  \
+    if (GB_sparsity_control (C->sparsity, C->vdim) & GxB_FULL)  \
+    {                                                           \
+        /* convert C from any structure to full, */             \
+        /* if permitted by C->sparsity */                       \
+        GB_convert_any_to_full (C) ;                            \
+    }                                                           \
 }
+
+//------------------------------------------------------------------------------
+// GB_is_dense
+//------------------------------------------------------------------------------
 
 static inline bool GB_is_dense
 (
@@ -227,6 +232,10 @@ static inline bool GB_is_dense
     return (ok && (anzmax == GB_NNZ (A))) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_as_if_full
+//------------------------------------------------------------------------------
+
 static inline bool GB_as_if_full
 (
     const GrB_Matrix A
@@ -245,7 +254,7 @@ static inline bool GB_as_if_full
         // A is full; the pattern is not present
         return (true) ;
     }
-    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
+    if (GB_ANY_PENDING_WORK (A))
     {
         // A has pending work and so cannot be treated as if full.
         return (false) ;
@@ -255,6 +264,10 @@ static inline bool GB_as_if_full
     bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
     return (ok && (anzmax == GB_NNZ (A))) ;
 }
+
+//------------------------------------------------------------------------------
+// GB_is_packed
+//------------------------------------------------------------------------------
 
 static inline bool GB_is_packed
 (
@@ -269,25 +282,10 @@ static inline bool GB_is_packed
     // it cannot be converted to full unless GB_is_dense (A) is also true
     // (it must have all entries present).
 
-    if (A == NULL)
-    { 
-        return (false) ;
-    }
-    if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
-    { 
-        // A is full or bitmap
-        return (true) ;
-    }
-    if (A->jumbled || GB_PENDING (A) || GB_ZOMBIES (A))
-    { 
-        // A is sparse or hypersparse with pending work
-        return (false) ;
-    }
-    // A is sparse or hypersparse: check if all entries present
-    GrB_Index anzmax ;
-    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
-    return (ok && (anzmax == GB_NNZ (A))) ;
+    return (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
 }
+
+//------------------------------------------------------------------------------
 
 GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 (
@@ -316,6 +314,12 @@ static inline char *GB_sparsity_char_matrix (GrB_Matrix A)
     if (GB_IS_FULL (A))        return ("F") ;
     ASSERT (0) ;               return ("?") ;
 }
+
+GrB_Matrix GB_hyper_pack            // return C
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix A              // input matrix
+) ;
 
 #endif
 

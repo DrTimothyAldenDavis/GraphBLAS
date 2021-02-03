@@ -2,8 +2,8 @@
 // GB_transpose:  C=A' or C=op(A'), with typecasting
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 
 // If the input matrix has a single vector, it must be already sorted on input.
 // The input matrix may have shallow components (even if in-place), and the
-// output may also have shallow components (even in the input matrix is not
+// output may also have shallow components (even if the input matrix is not
 // shallow).
 
 // This function is CSR/CSC agnostic; it sets the output matrix format from
@@ -29,17 +29,12 @@
 // the A_in matrix is not freed when done.
 
 // The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
-// m-by-n, then at most O(e/n) threads are used.  The qsort method is more
+// m-by-n, then at most O(e/n) threads are used.  The GB_builder method is more
 // scalable, but not as fast with a modest number of threads.
 
 #include "GB_transpose.h"
 #include "GB_build.h"
 #include "GB_apply.h"
-
-#define GB_FREE_WORK    \
-{                       \
-    GB_FREE (Count) ;   \
-}                       \
 
 #define GB_FREE_ALL ;
 
@@ -106,9 +101,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    bool in_place_C, in_place_A ;
-
+    GBURBLE ("(transpose) ") ;
     GrB_Matrix A, C ;
+    bool in_place_C, in_place_A ;
 
     if (A_in == NULL)
     { 
@@ -177,7 +172,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
 
-    // get the current sparsity structure of A
+    // get the current sparsity control of A
     float A_hyper_switch = A->hyper_switch ;
     int A_sparsity = A->sparsity ;
 
@@ -209,7 +204,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool A_is_bitmap  = GB_IS_BITMAP (A) ;
     bool A_is_packed  = GB_is_packed (A) ;
     bool A_is_hyper   = GB_IS_HYPERSPARSE (A) ;
-    bool A_is_jumbled = A->jumbled ;
 
     bool Ap_shallow = A->p_shallow ;
     bool Ah_shallow = A->h_shallow ;
@@ -218,39 +212,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool Ab_shallow = A->b_shallow ;
 
     int64_t anz = GB_NNZ (A) ;
-    int64_t anz_held = GB_NNZ_HELD (A) ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use here
+    // determine the max number of threads to use
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
-
-    //--------------------------------------------------------------------------
-    // allocate workspace
-    //--------------------------------------------------------------------------
-
-    int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-
-    int ntasks = (nth == 1) ? 1 : (8 * nth) ;
-    ntasks = GB_IMIN (ntasks, avdim) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
-    int64_t *GB_RESTRICT Count = NULL ;    // size ntasks+1, if allocated
-
-    if (anz > 0 && avdim != 1 && avlen == 1 && !A_is_packed)
-    {
-        // Count is only used in one case below
-        Count = GB_CALLOC (ntasks+1, int64_t) ;
-        if (Count == NULL)
-        { 
-            // out of memory
-            GB_FREE_C ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-    }
 
     //--------------------------------------------------------------------------
     // determine the type of C and get the unary or binary operator
@@ -259,9 +228,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     // If a unary or binary operator is present, C is always returned as
     // the ztype of the operator.  The input ctype is ignored.
 
-    GrB_UnaryOp op1 = NULL, save_op1 ;
-    GrB_BinaryOp op2 = NULL, save_op2 ;
-    GB_Opcode opcode = GB_ignore_code ;
+    GrB_UnaryOp  op1 = NULL ;
+    GrB_BinaryOp op2 = NULL ;
+    GB_Opcode opcode = GB_NOP_opcode ;
 
     if (op1_in != NULL)
     {
@@ -270,7 +239,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (atype == op1_in->xtype && opcode == GB_IDENTITY_opcode)
         { 
             // op1 is a built-in identity operator, with the same type as A, so
-            // do not apply the operator and do not typecast.
+            // do not apply the operator and do not typecast.  op1 is NULL.
             ctype = atype ;
         }
         else
@@ -281,7 +250,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
     }
     else if (op2_in != NULL)
-    {
+    { 
         // get the binary operator
         GrB_Type op2_intype = binop_bind1st ? op2_in->xtype : op2_in->ytype ;
         opcode = op2_in->opcode ;
@@ -298,7 +267,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     }
     else
     {
-        // no operator
+        // no operator.  both op1 and op2 are NULL
         if (ctype == NULL)
         { 
             // no typecasting if ctype is NULL
@@ -314,10 +283,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    save_op1 = op1 ;
-    save_op2 = op2 ;
+    GrB_UnaryOp  save_op1 = op1 ;
+    GrB_BinaryOp save_op2 = op2 ;
     if (op_is_positional)
-    {
+    { 
         // do not apply the op until after the transpose
         op1 = NULL ;
         op2 = NULL ;
@@ -341,6 +310,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // quick return if A is empty
         //======================================================================
 
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
 
         // A is empty; create a new empty matrix C, with the new type and
@@ -348,12 +318,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // returned.
         info = GB_new_bix (Chandle, // hyper, old or new header
             ctype, avdim, avlen, GB_Ap_calloc, C_is_csc,
-            GxB_HYPERSPARSE, A_hyper_switch, 1, 1, true, Context) ;
+            GxB_HYPERSPARSE, true, A_hyper_switch, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
             GB_FREE_C ;
-            GB_FREE_WORK ;
             return (info) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "C transpose empty", GB0) ;
@@ -369,7 +338,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // A is packed if it is either: (a) bitmap, (b) full, or (c) sparse or
         // hypersparse with all entries present, no zombies, no pending tuples,
-        // and not jumbled.
+        // and not jumbled.  For (c), the matrix A can be treated as if it was
+        // full, and the pattern (A->p, A->h, and A->i) can be ignored.
 
         int sparsity = (A_is_bitmap) ? GxB_BITMAP : GxB_FULL ;
         bool T_cheap =                  // T can be done quickly if:
@@ -391,14 +361,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // allocate all of T, including T->b and T->x
             info = GB_new_bix (&T,  // bitmap or full, new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                sparsity, A_hyper_switch, 1, anzmax, true, Context) ;
+                sparsity, true, A_hyper_switch, 1, anzmax, true, Context) ;
         }
 
         if (info != GrB_SUCCESS)
         { 
             // out of memory
             GB_FREE_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -413,7 +382,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         //----------------------------------------------------------------------
 
         // Since A is full, # threads to use is nthreads, and the
-        // naslice parameter is not used
+        // nworkspaces parameter is not used
+
+        int64_t anz_held = GB_NNZ_HELD (A) ;
+        int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
 
         if (T_cheap)
         {
@@ -453,16 +425,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
         ASSERT (!GB_JUMBLED (T)) ;
 
-        //----------------------------------------------------------------------
-        // free prior space and transplant T into C
-        //----------------------------------------------------------------------
-
-        // Free the prior content of the input matrix, if done in-place.
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
+
+        //----------------------------------------------------------------------
+        // transplace T into C
+        //----------------------------------------------------------------------
 
         // allocate the output matrix C as a full or bitmap matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // full, old or new header
+        info = GB_new (Chandle, // bitmap or full, old or new header
             ctype, avdim, avlen, GB_Ap_null, C_is_csc,
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -471,7 +443,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
             GB_Matrix_free (&T) ;
-            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -481,13 +452,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
 
     }
-    else if (avdim == 1 && !A_is_jumbled)
+    else if (avdim == 1)
     {
 
         //======================================================================
@@ -495,8 +465,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         //======================================================================
 
         // transpose a vector (avlen-by-1) into a "row" matrix (1-by-avlen).
-        // A must be already sorted on input
+        // A must be sorted first.
         ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB0) ;
+        GB_MATRIX_WAIT (A) ;
         ASSERT (!GB_JUMBLED (A)) ;
 
         //----------------------------------------------------------------------
@@ -508,7 +479,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // is hypersparse.  This step does not allocate anything if in-place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // bitmap, full, or hyper; old or new header
+        info = GB_new (Chandle, // hyper; old or new header
             ctype, 1, avlen, GB_Ap_null, C_is_csc,
             GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -516,8 +487,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;    // cannot fail if in-place
             GB_FREE_C ;
-            GB_FREE_WORK ;
-            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -526,7 +495,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             C = (*Chandle) ;
         }
         else
-        { 
+        {
             ASSERT (A == C && A == (*Chandle)) ;
         }
 
@@ -553,7 +522,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -565,19 +533,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op (A)
-            info = GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st, A, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-GB_GOTCHA ;
-                // out of memory
-                GB_FREE (Cp) ;
-                GB_FREE (Ci) ;
-                GB_FREE (Cx) ;
-                GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
-                return (info) ;
-            }
+            info = GB_apply_op ( // op1 != identity of same types
+                (GB_void *) Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
+            // GB_apply_op can only fail if op1/op2 are positional
+            ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+            ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+            ASSERT (info == GrB_SUCCESS) ;
             C->x = Cx ;
             C->x_shallow = false ;
             // prior Ax will be freed
@@ -610,6 +571,7 @@ GB_GOTCHA ;
         C->i = Ci ;
         C->p = Cp ;
         // fill the vector pointers C->p
+        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (k = 0 ; k <= anz ; k++)
@@ -620,10 +582,7 @@ GB_GOTCHA ;
         C->nzmax = anz ;
         C->magic = GB_MAGIC ;
 
-        //----------------------------------------------------------------------
-        // free prior space
-        //----------------------------------------------------------------------
-
+        // free prior space of A, if transpose is done in-place
         GB_FREE_IN_PLACE_A ;
 
     }
@@ -639,8 +598,26 @@ GB_GOTCHA ;
         ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB0) ;
 
         //----------------------------------------------------------------------
-        // allocate space
+        // allocate workspace, if needed
         //----------------------------------------------------------------------
+
+        int ntasks = 0 ;
+        int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
+        int64_t *GB_RESTRICT Count = NULL ;
+        if (nth > 1 && !A_is_hyper)
+        {
+            // ntasks and Count are not needed if nth == 1
+            ntasks = 8 * nth ;
+            ntasks = GB_IMIN (ntasks, avdim) ;
+            ntasks = GB_IMAX (ntasks, 1) ;
+            Count = GB_CALLOC (ntasks+1, int64_t) ;
+            if (Count == NULL)
+            { 
+                // out of memory
+                GB_FREE_C ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+        }
 
         // Allocate the header of C, with no C->p, C->h, C->i, or C->x content,
         // and initialize the type and dimension of C.   If in-place, A->p,
@@ -649,7 +626,7 @@ GB_GOTCHA ;
         // place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // full, bitmap, or sparse; old or new header
+        info = GB_new (Chandle, // sparse; old or new header
             ctype, avdim, 1, GB_Ap_null, C_is_csc,
             GxB_SPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -657,7 +634,7 @@ GB_GOTCHA ;
             // out of memory
             ASSERT (!in_place) ;        // cannot fail if in-place
             GB_FREE_C ;
-            GB_FREE_WORK ;
+            GB_FREE (Count) ;
             return (info) ;
         }
 
@@ -666,7 +643,7 @@ GB_GOTCHA ;
             C = (*Chandle) ;
         }
         else
-        { 
+        {
             ASSERT (A == C && A == (*Chandle)) ;
         }
 
@@ -698,7 +675,7 @@ GB_GOTCHA ;
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
             GB_FREE_A_AND_C ;
-            GB_FREE_WORK ;
+            GB_FREE (Count) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -710,19 +687,12 @@ GB_GOTCHA ;
         if (op1 != NULL || op2 != NULL)
         { 
             // Cx = op (A)
-            info = GB_apply_op ((GB_void *) Cx,
-                op1, op2, scalar, binop_bind1st, A, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-GB_GOTCHA ;
-                // out of memory
-                GB_FREE (Cp) ;
-                GB_FREE (Ci) ;
-                GB_FREE (Cx) ;
-                GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
-                return (info) ;
-            }
+            info = GB_apply_op ( // op1 != identity of same types
+                (GB_void *) Cx, op1, op2, scalar, binop_bind1st, A, Context) ;
+            // GB_apply_op can only fail if op1/op2 are positional
+            ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+            ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+            ASSERT (info == GrB_SUCCESS) ;
             C->x = Cx ;
             C->x_shallow = false ;
             // prior Ax will be freed
@@ -761,7 +731,7 @@ GB_GOTCHA ;
 
         }
         else
-        { 
+        {
 
             //------------------------------------------------------------------
             // find the non-empty vectors of A, which become entries in C
@@ -781,7 +751,7 @@ GB_GOTCHA ;
                 {
                     if (Ap [j] < Ap [j+1])
                     { 
-                        Ci [k++] = j ;      // ok: C is sparse
+                        Ci [k++] = j ;
                     }
                 }
                 ASSERT (k == anz) ;
@@ -863,11 +833,9 @@ GB_GOTCHA ;
         C->magic = GB_MAGIC ;
         ASSERT (!GB_JUMBLED (C)) ;
 
-        //----------------------------------------------------------------------
-        // free prior space
-        //----------------------------------------------------------------------
-
+        // free prior space of A, if transpose done in-place, and free workspace
         GB_FREE_IN_PLACE_A ;
+        GB_FREE (Count) ;
 
     }
     else
@@ -885,42 +853,19 @@ GB_GOTCHA ;
         // select the method
         //----------------------------------------------------------------------
 
-        // for the qsort method, if the transpose is done in-place and A->i is
-        // not shallow, A->i can be used and then freed.  Otherwise, A->i is
-        // not modified at all.
-        bool recycle_Ai = (in_place && !Ai_shallow) ;
-        bool use_qsort ;
-
-        if (A_is_hyper)
-        { 
-
-            //------------------------------------------------------------------
-            // always use qsort for hypersparse matrices
-            //------------------------------------------------------------------
-
-            use_qsort = true ;
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // select qsort if the transpose will likely be hypersparse
-            //------------------------------------------------------------------
-
-            use_qsort = GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET (anz, avlen) ;
-
-        }
+        int nworkspaces_bucket, nthreads_bucket ;
+        bool use_builder = GB_transpose_method (A,
+            &nworkspaces_bucket, &nthreads_bucket, Context) ;
 
         //----------------------------------------------------------------------
         // transpose the matrix with the selected method
         //----------------------------------------------------------------------
 
-        if (use_qsort)
+        if (use_builder)
         {
 
             //==================================================================
-            // transpose via quicksort
+            // transpose via GB_builder
             //==================================================================
 
             //------------------------------------------------------------------
@@ -933,7 +878,6 @@ GB_GOTCHA ;
             { 
                 // out of memory
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -942,6 +886,7 @@ GB_GOTCHA ;
             // must be done before Chandle is created below, since that step
             // destroys A.
 
+            int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
             GB_extract_vector_list (iwork, A, nthreads) ;
 
             //------------------------------------------------------------------
@@ -964,7 +909,6 @@ GB_GOTCHA ;
                 ASSERT (!in_place) ;        // cannot fail if in-place
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -989,7 +933,11 @@ GB_GOTCHA ;
             GB_void *S = NULL ;
             GB_void *Swork = NULL ;
 
+            // for the GB_builder method, if the transpose is done in-place and
+            // A->i is not shallow, A->i can be used and then freed.
+            // Otherwise, A->i is not modified at all.
             bool ok = true ;
+            bool recycle_Ai = (in_place && !Ai_shallow) ;
             if (!recycle_Ai)
             { 
                 // allocate jwork of size anz
@@ -1011,7 +959,6 @@ GB_GOTCHA ;
                 GB_FREE (jwork) ;
                 GB_FREE (Swork) ;
                 GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -1040,19 +987,13 @@ GB_GOTCHA ;
             if (op1 != NULL || op2 != NULL)
             { 
                 // Swork = op (A)
-                info = GB_apply_op ((GB_void *) Swork,
-                    op1, op2, scalar, binop_bind1st, A, Context) ;
-                if (info != GrB_SUCCESS)
-                { 
-GB_GOTCHA ;
-                    // out of memory
-                    GB_FREE (iwork) ;
-                    GB_FREE (jwork) ;
-                    GB_FREE (Swork) ;
-                    GB_FREE_A_AND_C ;
-                    GB_FREE_WORK ;
-                    return (info) ;
-                }
+                info = GB_apply_op ( // op1 != identity of same types
+                    (GB_void *) Swork, op1, op2, scalar, binop_bind1st,
+                    A, Context) ;
+                // GB_apply_op can only fail if op1/op2 are positional
+                ASSERT (!GB_OP_IS_POSITIONAL (op1)) ;
+                ASSERT (!GB_OP_IS_POSITIONAL (op2)) ;
+                ASSERT (info == GrB_SUCCESS) ;
                 // GB_builder will not need to typecast Swork to T->x, and it
                 // may choose to transplant it into T->x
                 scode = ccode ;
@@ -1105,7 +1046,6 @@ GB_GOTCHA ;
                 true,       // tuples have no duplicates
                 anz,        // size of iwork, jwork, and Swork
                 true,       // is_matrix: unused
-                false,      // ijcheck: unused
                 NULL, NULL, // original I,J indices: not used here
                 S,          // array of values of type scode, not modified
                 anz,        // number of tuples
@@ -1131,7 +1071,6 @@ GB_GOTCHA ;
             { 
                 // out of memory in GB_builder
                 GB_FREE_A_AND_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -1153,13 +1092,11 @@ GB_GOTCHA ;
             // create a temporary matrix T.  Then the input matrix is freed and
             // replaced with the new matrix T.
 
-            ASSERT (!A_is_hyper) ;
-
             // T is also typecasted to ctype, if not NULL
             GrB_Matrix T = NULL ;
             info = GB_transpose_bucket (&T, ctype, C_is_csc, A,
                 op1, op2, scalar, binop_bind1st,
-                Context) ;
+                nworkspaces_bucket, nthreads_bucket, Context) ;
 
             // free prior content, if C=A' is being done in-place
             if (in_place_A)
@@ -1177,12 +1114,11 @@ GB_GOTCHA ;
             { 
                 // out of memory in GB_transpose_bucket
                 GB_FREE_C ;
-                GB_FREE_WORK ;
                 return (info) ;
             }
 
             ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
-            ASSERT (!GB_JUMBLED (T)) ;
+            ASSERT (GB_JUMBLED_OK (T)) ;
 
             if (in_place_A)
             { 
@@ -1204,17 +1140,11 @@ GB_GOTCHA ;
     }
 
     //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    GB_FREE_WORK ;
-
-    //--------------------------------------------------------------------------
     // get the output matrix
     //--------------------------------------------------------------------------
 
     C = (*Chandle) ;
-    ASSERT (!GB_JUMBLED (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // apply a positional operator, after transposing the matrix
@@ -1226,7 +1156,8 @@ GB_GOTCHA ;
         op1 = save_op1 ;
         op2 = save_op2 ;
         // Cx = op (C)
-        info = GB_apply_op (C->x, op1, op2, scalar, binop_bind1st, C, Context) ;
+        info = GB_apply_op (C->x, op1,  // positional unary/binary op only
+            op2, scalar, binop_bind1st, C, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -1241,7 +1172,7 @@ GB_GOTCHA ;
 
     // transplant the hyper_switch and sparsity structure from A to C
     C->hyper_switch = A_hyper_switch ;
-    C->sparsity = A_sparsity ;
+    C->sparsity = A_sparsity ;  // transplant sparsity control into C
 
     ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
 

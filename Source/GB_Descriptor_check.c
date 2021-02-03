@@ -2,8 +2,8 @@
 // GB_Descriptor_check: check and print a Descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -38,7 +38,6 @@ static GrB_Info GB_dc
         case GrB_REPLACE            : GBPR0 ("replace   ") ; break ;
         case GxB_AxB_SAXPY          : GBPR0 ("saxpy     ") ; break ;
         case GxB_AxB_GUSTAVSON      : GBPR0 ("Gustavson ") ; break ;
-        case GxB_AxB_HEAP           : GBPR0 ("heap      ") ; break ;
         case GxB_AxB_HASH           : GBPR0 ("hash      ") ; break ;
         case GxB_AxB_DOT            : GBPR0 ("dot       ") ; break ;
         default                     : GBPR0 ("unknown   ") ;
@@ -51,8 +50,8 @@ static GrB_Info GB_dc
     {
         if (kind == 0)
         {
-            // descriptor field can be set to the default,
-            // or one non-default value
+            // most descriptor fields can be set to the default,
+            // or just one non-default value
             if (! (v == GxB_DEFAULT || v == nondefault))
             { 
                 ok = false ;
@@ -60,10 +59,10 @@ static GrB_Info GB_dc
         }
         else if (kind == 1)
         {
-            // mask
+            // mask: can only be one of 4 different values
             if (! (v == GxB_DEFAULT || v == GrB_COMP || v == GrB_STRUCTURE ||
                    v == (GrB_COMP + GrB_STRUCTURE)))
-            {
+            { 
                 ok = false ;
             }
         }
@@ -71,8 +70,7 @@ static GrB_Info GB_dc
         {
             // GxB_AxB_METHOD:
             if (! (v == GxB_DEFAULT || v == GxB_AxB_GUSTAVSON
-                || v == GxB_AxB_HEAP || v == GxB_AxB_DOT
-                || v == GxB_AxB_HASH || v == GxB_AxB_SAXPY))
+                || v == GxB_AxB_DOT || v == GxB_AxB_HASH || v == GxB_AxB_SAXPY))
             { 
                 ok = false ;
             }
@@ -162,10 +160,12 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         GBPR0 ("%g\n", chunk) ;
     }
 
-    if (D->use_mkl)
+    if (D->do_sort)
     {
-        GBPR0 ("    d.use_mkl = true") ;
+        GBPR0 ("    d.sort     = true\n") ;
     }
+
+    // #include "GB_Descriptor_check_mkl_template.c"
 
     return (GrB_SUCCESS) ;
 }

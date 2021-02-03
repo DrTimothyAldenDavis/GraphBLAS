@@ -2,8 +2,8 @@
 // gbbuild: build a GraphBLAS matrix or a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -50,12 +50,13 @@ void mexFunction
     // get the descriptor
     //--------------------------------------------------------------------------
 
-    // TODO add sparsity to descriptor
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
+    int sparsity ;
     GrB_Descriptor desc = NULL ;
-    desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
+        &sparsity, &base) ;
 
     // if present, remove the descriptor from consideration
     if (desc != NULL) nargin-- ;
@@ -205,12 +206,9 @@ void mexFunction
     // build the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A ;
-    OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
-    OK1 (A, GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
-    int sparsity = gb_get_sparsity (NULL, NULL, 0) ;
-    OK1 (A, GxB_Matrix_Option_set (A, GxB_SPARSITY, sparsity)) ;
+    sparsity = gb_get_sparsity (NULL, NULL, sparsity) ;
+    GrB_Matrix A = gb_new (type, nrows, ncols, fmt, sparsity) ;
 
     // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;
@@ -219,7 +217,7 @@ void mexFunction
     if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
-        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;  // OK:bool
+        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
         if (dup == NULL) dup = GrB_LOR ;
         if (expandx)
         { 

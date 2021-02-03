@@ -2,8 +2,8 @@
 // GB_matvec_build: check inputs and build a matrix or vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -68,7 +68,6 @@ GrB_Info GB_matvec_build        // check inputs then build matrix or vector
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;
     if (GB_OP_IS_POSITIONAL (dup))
     { 
-GB_GOTCHA ;
         // dup operator cannot be a positional op
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Positional op z=%s(x,y) not supported as dup op\n", dup->name) ;
@@ -138,6 +137,7 @@ GB_GOTCHA ;
 
     // GB_build treats I, J, and X as read-only; they must not be modified
 
-    return (GB_build (C, I, J, X, nvals, dup, scode, is_matrix, true, Context));
+    return (GB_build (C, I, J, X, nvals, dup, scode, is_matrix,
+        /* true, */ Context)) ;
 }
 

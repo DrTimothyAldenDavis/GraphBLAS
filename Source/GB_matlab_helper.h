@@ -2,8 +2,8 @@
 // GB_matlab_helper.h: helper functions for MATLAB interface
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -56,6 +56,7 @@ bool GB_matlab_helper4              // return true if OK, false on error
     GrB_Index *List_max             // find max (I) + 1
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper5              // construct pattern of S
 (
     GrB_Index *GB_RESTRICT Si,         // array of size anz

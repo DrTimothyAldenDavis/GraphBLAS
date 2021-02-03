@@ -1,5 +1,5 @@
-SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
 
 This is the GraphBLAS/Demo folder.  It contains a set of simple demo programs
 that illustrate the use of GraphBLAS.  To compile and run the demos, see
@@ -57,7 +57,6 @@ in Demo/Program:
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
     pagerank_demo.c         demo program to test dpagerank and ipagerank
     openmp_demo.c           demo program using OpenMP
-    pthread_demo.c          demo program using POSIX pthreads
 
 --------------------------------------------------------------------------------
 in Demo/Output:

@@ -2,8 +2,8 @@
 // GB_warnings.h: turn off compiler warnings
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -89,8 +89,12 @@
 
 #endif
 
+// disable warnings for clang
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wpointer-sign"
+#endif
+
 #if ( _MSC_VER && !__INTEL_COMPILER )
 // disable MS Visual Studio warnings
 #pragma warning(disable:4146)
 #endif
-

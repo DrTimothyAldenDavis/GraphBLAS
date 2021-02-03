@@ -2,8 +2,8 @@
 // GB_printf.h: definitions for printing from GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -103,17 +103,17 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
-            GBPR0 (" already freed!\n") ;                               \
+            GBPR0 (" object already freed!\n") ;                        \
             return (GrB_UNINITIALIZED_OBJECT) ;                         \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
-            GBPR0 (" invalid\n") ;                                      \
+            GBPR0 (" invalid object\n") ;                               \
             return (GrB_INVALID_OBJECT) ;                               \
                                                                         \
         default :                                                       \
             /* uninitialized */                                         \
-            GBPR0 (" uninititialized\n") ;                              \
+            GBPR0 (" uninititialized object\n") ;                       \
             return (GrB_UNINITIALIZED_OBJECT) ;                         \
     }                                                                   \
 }
@@ -122,17 +122,9 @@ GB_PUBLIC int (* GB_flush_function  ) ( void ) ;
 // burble
 //------------------------------------------------------------------------------
 
-// GB_BURBLE is meant for development use, not production use.  To enable it,
-// set GB_BURBLE to 1, either with -DGB_BURBLE=1 as a compiler option, by
-// editting the setting above, or by adding the line
-//
-//      #define GB_BURBLE 1
-//
-// at the top of any source file, before #including any other file.  After
-// enabling it in the library, use GxB_set (GxB_BURBLE, true) to turn it on
-// at run time, and GxB_set (GxB_BURBLE, false) to turn it off.  By default,
-// the feature is not enabled when SuiteSparse:GraphBLAS is compiled, and
-// even then, the setting is set to false by GrB_init.
+// GB_BURBLE provides diagnostic output.
+// Use GxB_set (GxB_BURBLE, true) to turn it on
+// and GxB_set (GxB_BURBLE, false) to turn it off.
 
 #if GB_BURBLE
 
@@ -193,7 +185,7 @@ void GB_burble_assign
         if (GB_Global_burble_get ( ))                   \
         {                                               \
             t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-            GBURBLE ("%.3g sec ]\n", t_burble) ;        \
+            GBURBLE ("\n   %.3g sec ]\n", t_burble) ;   \
         }                                               \
     }
 

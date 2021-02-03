@@ -2,18 +2,18 @@
 // GB_bitmap_assign_noM_noaccum:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// C<>(I,J) = A       assign
-// C(I,J)<> = A       subassign
+// C<>(I,J) = A             assign
+// C(I,J)<> = A             subassign
 
-// C<repl>(I,J) = A       assign
-// C(I,J)<repl> = A       subassign
+// C<repl>(I,J) = A         assign
+// C(I,J)<repl> = A         subassign
 
-// C<!>(I,J) = A       assign
-// C(I,J)<!> = A       subassign
+// C<!>(I,J) = A            assign
+// C(I,J)<!> = A            subassign
 
 // C<!,repl>(I,J) = A       assign
 // C(I,J)<!,repl> = A       subassign
@@ -22,11 +22,17 @@
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false
-// Mask_struct: true or false
+// Mask_struct: true or false (ignored)
 // C_replace:   true or false
 // accum:       not present
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign, row assign, col assign, or subassign
+
+// If M is not present and Mask_comp is true, then an empty mask is
+// complemented.  This case is handled by GB_assign_prep by calling this
+// method with no matrix A, but with a scalar (which is unused).  However,
+// for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
+// I and J.  In that case, GB_assign_prep calls GB_clear instead.
 
 #include "GB_bitmap_assign_methods.h"
 
@@ -62,7 +68,8 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit6", NULL, Mask_comp, NULL) ;
+    GBURBLE_BITMAP_ASSIGN ("bit6", NULL, Mask_comp, NULL,
+        Ikind, Jkind, assign_kind) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
@@ -71,25 +78,34 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_A
+    GB_GET_A_AND_SCALAR
 
     //--------------------------------------------------------------------------
     // C_replace phase
     //--------------------------------------------------------------------------
 
     if (C_replace)
-    {
-        // for row assign: set Cb(i,:) to zero
-        // for col assign: set Cb(:,j) to zero
-        // for assign: set all Cb(:,:) to zero
-        // for subassign: set all Cb(I,J) to zero
-        #define GB_CIJ_WORK(pC)                 \
-        {                                       \
-            int8_t cb = Cb [pC] ;               \
-            Cb [pC] = 0 ;                       \
-            cnvals -= (cb == 1) ;               \
+    { 
+        if (assign_kind == GB_ASSIGN)
+        {
+            // for assign: set all Cb(:,:) to zero
+            GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+            cnvals = 0 ;
         }
-        #include "GB_bitmap_assign_C_template.c"
+        else
+        {
+            // for row assign: set Cb(i,:) to zero
+            // for col assign: set Cb(:,j) to zero
+            // for subassign: set all Cb(I,J) to zero
+            #define NO_ASSIGN_CASE
+            #define GB_CIJ_WORK(pC)                 \
+            {                                       \
+                int8_t cb = Cb [pC] ;               \
+                Cb [pC] = 0 ;                       \
+                task_cnvals -= (cb == 1) ;          \
+            }
+            #include "GB_bitmap_assign_C_template.c"
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -100,7 +116,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     {
 
         if (A == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assignment: C(I,J) = scalar
@@ -114,27 +130,27 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 /* Cx [pC] = scalar */              \
                 GB_ASSIGN_SCALAR (pC) ;             \
                 Cb [pC] = 1 ;                       \
-                cnvals += (cb == 0) ;               \
+                task_cnvals += (cb == 0) ;          \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // matrix assignment: C(I,J) = A
             //------------------------------------------------------------------
 
             if (!C_replace)
-            {
+            { 
                 // delete all entries in C(I,J)
                 #undef  GB_IXJ_WORK
                 #define GB_IXJ_WORK(pC,ignore)          \
                 {                                       \
                     int8_t cb = Cb [pC] ;               \
                     Cb [pC] = 0 ;                       \
-                    cnvals -= (cb == 1) ;               \
+                    task_cnvals -= (cb == 1) ;          \
                 }
                 #include "GB_bitmap_assign_IxJ_template.c"
             }

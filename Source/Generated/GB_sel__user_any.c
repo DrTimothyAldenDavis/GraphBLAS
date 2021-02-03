@@ -2,8 +2,8 @@
 // GB_sel:  hard-coded functions for selection operators
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    user_select ( flipij ? j : GBI (Ai, p, avlen),  flipij ? GBI (Ai, p, avlen) : j,  flipij ? avdim : avlen,  flipij ? avlen : avdim, Ax +((p)*asize), xthunk)
+    user_select (flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, Ax +((p)*asize), xthunk)
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \

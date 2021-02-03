@@ -2,8 +2,8 @@
 // GB_matlab_helper.c: helper functions for MATLAB interface
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -339,7 +339,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 )
 {
     ASSERT_MATRIX_OK (A, "A for matlab helper9", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // ok: method not used for A bitmap
+    ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
 
     int64_t anvec = A->nvec ;

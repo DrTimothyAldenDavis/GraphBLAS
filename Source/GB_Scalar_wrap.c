@@ -2,8 +2,8 @@
 // GB_Scalar_wrap: wrap a C scalar inside a GraphBLAS scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -33,8 +33,8 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 
     s->magic = GB_MAGIC ;
     s->type = (type == NULL) ? GrB_BOOL : type ;
-    s->hyper_switch = GB_HYPER_SWITCH_DEFAULT ;
-    s->bitmap_switch = GB_BITMAP_SWITCH_DEFAULT ;
+    s->hyper_switch  = GxB_NEVER_HYPER ;
+    s->bitmap_switch = 0.5 ;
     s->sparsity = GxB_FULL ;
     s->plen = -1 ;
     s->vlen = 1 ;
@@ -56,7 +56,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->i_shallow = false ;
     s->x_shallow = true ;
     s->is_csc = true ;
-    s->mkl = NULL ;
+    // #include "GB_Scalar_wrap_mkl_template.c"
 
     //--------------------------------------------------------------------------
     // return result

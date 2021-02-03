@@ -2,21 +2,21 @@
 // GB_bitmap_assign_noM_accum:  assign to C bitmap, mask M is not present
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// C<>(I,J) += A       assign
-// C(I,J)<> += A       subassign
+// C<>(I,J) += A            assign
+// C(I,J)<> += A            subassign
 
-// C<repl>(I,J) += A       assign
-// C(I,J)<repl> += A       subassign
+// C<repl>(I,J) += A        assign
+// C(I,J)<repl> += A        subassign
 
-// C<!>(I,J) += A       assign: no work to do
-// C(I,J)<!> += A       subassign: no work to do
+// C<!>(I,J) += A           assign: no work to do
+// C(I,J)<!> += A           subassign: no work to do
 
-// C<!,repl>(I,J) += A       assign: just clear C(I,J) of all entries
-// C(I,J)<!,repl> += A       subassign: just clear C(I,J) of all entries
+// C<!,repl>(I,J) += A      assign: just clear C(I,J) of all entries
+// C(I,J)<!,repl> += A      subassign: just clear C(I,J) of all entries
 //------------------------------------------------------------------------------
 
 // C:           bitmap
@@ -26,7 +26,11 @@
 // C_replace:   true or false
 // accum:       present
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
-// kind:        assign, row assign, col assign, or subassign
+// kind:        assign, row assign, col assign, or subassign (all the same)
+
+// If Mask_comp is true, then an empty mask is complemented.  This case has
+// already been handled by GB_assign_prep, which calls
+// GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
 
 #include "GB_bitmap_assign_methods.h"
 
@@ -62,7 +66,8 @@ GrB_Info GB_bitmap_assign_noM_accum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit5", NULL, Mask_comp, accum) ;
+    GBURBLE_BITMAP_ASSIGN ("bit5", NULL, Mask_comp, accum,
+        Ikind, Jkind, assign_kind) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
 
@@ -70,9 +75,9 @@ GrB_Info GB_bitmap_assign_noM_accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_A
-    GB_GET_ACCUM
+    GB_GET_C_BITMAP ;           // C must be bitmap TODO: C full is OK
+    GB_GET_A_AND_SCALAR
+    GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // do the assignment
@@ -86,7 +91,7 @@ GrB_Info GB_bitmap_assign_noM_accum
         //----------------------------------------------------------------------
 
         if (A == NULL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // scalar assignment: C(I,J) += scalar
@@ -101,7 +106,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     /* Cx [pC] = scalar */          \
                     GB_ASSIGN_SCALAR (pC) ;         \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
@@ -113,7 +118,7 @@ GrB_Info GB_bitmap_assign_noM_accum
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // matrix assignment: C(I,J) += A
@@ -125,7 +130,7 @@ GrB_Info GB_bitmap_assign_noM_accum
             //            Cb(p) = 1       // C(iC,jC) is now present, insert
             //        else // if Cb(p) == 1:
             //            Cx(p) += aij    // C(iC,jC) still present, updated
-            //            cnvals++
+            //            task_cnvals++
 
             #define GB_AIJ_WORK(pC,pA)              \
             {                                       \
@@ -135,7 +140,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     /* Cx [pC] = Ax [pA] */         \
                     GB_ASSIGN_AIJ (pC, pA) ;        \
                     Cb [pC] = 1 ;                   \
-                    cnvals++ ;                      \
+                    task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
@@ -147,12 +152,16 @@ GrB_Info GB_bitmap_assign_noM_accum
         }
 
     }
+
+#if 0
     else if (C_replace)
     {
 
         //----------------------------------------------------------------------
-        // mask not present yet complemented: C_replace phase only
+        // This case is handled by GB_assign_prep and is thus not needed here.
         //----------------------------------------------------------------------
+
+        // mask not present yet complemented: C_replace phase only
 
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)
@@ -165,10 +174,11 @@ GrB_Info GB_bitmap_assign_noM_accum
         {                               \
             int8_t cb = Cb [pC] ;       \
             Cb [pC] = 0 ;               \
-            cnvals -= (cb == 1) ;       \
+            task_cnvals -= (cb == 1) ;  \
         }
         #include "GB_bitmap_assign_C_template.c"
     }
+#endif
 
     //--------------------------------------------------------------------------
     // return result

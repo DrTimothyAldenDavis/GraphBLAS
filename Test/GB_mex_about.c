@@ -2,8 +2,8 @@
 // GB_mex_about: print the 'about' information
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -11,6 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "GB_bitmap_AxB_saxpy.h"
 
 #define USAGE "GB_mex_about"
 
@@ -23,21 +24,21 @@ GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
     return (GrB_SUCCESS) ;
 }
 
-bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *thunk) ;
+bool select_plus_one (GrB_Index i, GrB_Index j, 
+    const double *x, const double *thunk) ;
 
-bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *thunk) ;
+bool select_nothing (GrB_Index i, GrB_Index j,
+    const void *x, const void *thunk) ;
 
-bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const double *x, const double *thunk)
+bool select_plus_one (GrB_Index i, GrB_Index j,
+    const double *x, const double *thunk)
 {
     // return true if x >= thunk+1
     return ((*x) >= ((*thunk)+1)) ;
 }
 
-bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *thunk)
+bool select_nothing (GrB_Index i, GrB_Index j,
+    const void *x, const void *thunk)
 {
     return (false) ;
 }
@@ -380,8 +381,7 @@ void mexFunction
     // CUDA
     //--------------------------------------------------------------------------
 
-    int gpu_count = -1 ;
-    OK (GxB_Global_Option_get_(GxB_GPU_COUNT, &gpu_count)) ;
+    int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("gpu count: %d\n", gpu_count) ;
 
     GrB_Desc_Value gpu_control = -99 ;
@@ -408,22 +408,6 @@ void mexFunction
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CHUNK, gpu_chunk_42)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
     CHECK (gpu_chunk == 42e6) ;
-
-    //--------------------------------------------------------------------------
-    // MKL
-    //--------------------------------------------------------------------------
-
-    int use_mkl = -99 ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_MKL, &use_mkl)) ;
-    printf ("MKL control: %d\n", use_mkl) ;
-
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_MKL, true)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_MKL, &use_mkl)) ;
-    CHECK (use_mkl == true) ;
-
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_MKL, false)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_MKL, &use_mkl)) ;
-    CHECK (use_mkl == false) ;
 
     //--------------------------------------------------------------------------
     // types
@@ -477,11 +461,16 @@ void mexFunction
     // global get/set
     //--------------------------------------------------------------------------
 
-    double h ;
+    double h, bswitch [GxB_NBITMAP_SWITCH] ;
     GxB_Format_Value ff ;
     GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
+    GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch) ;
     GxB_Global_Option_get_(GxB_FORMAT, &ff) ;
     printf ("hyper_switch %g csc %d\n", h, (ff == GxB_BY_COL)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        printf ("bitmap_switch [%d]: %g\n", k, bswitch [k]) ;
+    }
 
     GrB_Mode mode ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;
@@ -494,9 +483,6 @@ void mexFunction
     double chunk ;
     GxB_Global_Option_get_(GxB_CHUNK, &chunk) ;
     printf ("chunk: %g\n", chunk) ;
-
-    GxB_Global_Option_get_(GxB_MKL, &use_mkl) ;
-    printf ("use mkl: %d\n", use_mkl) ;
 
     //--------------------------------------------------------------------------
     // check A and B aliased
@@ -528,15 +514,12 @@ void mexFunction
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Desc_set (desc, GxB_NTHREADS, 42)) ;
     OK (GxB_Desc_set (desc, GxB_CHUNK, (double) 12345)) ;
-    OK (GxB_Desc_set (desc, GxB_MKL, false)) ;
-    OK (GxB_Desc_get (desc, GxB_MKL, &use_mkl)) ;
     OK (GxB_Desc_get (desc, GxB_CHUNK, &chunk)) ;
     OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
     OK (GrB_Descriptor_wait_(&desc)) ;
     OK (GxB_Descriptor_fprint_(desc, GxB_COMPLETE, NULL)) ;
     CHECK (chunk == 12345) ;
     CHECK (nthreads == 42) ;
-    CHECK (use_mkl == false) ;
     GrB_Descriptor_free_(&desc) ;
 
     //--------------------------------------------------------------------------
@@ -587,7 +570,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t *Slice = NULL ;
-    GB_pslice (&Slice, NULL, 0, 4) ;
+    GB_pslice (&Slice, NULL, 0, 4, true) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
     GB_FREE (Slice) ;
 
@@ -763,6 +746,35 @@ void mexFunction
     GrB_Vector_new (&victor, GrB_FP64, 43) ;
     OK (GrB_Vector_setElement_FP64 (victor, 99, 0)) ;
     OK (GrB_Vector_wait_(&victor)) ;
+
+    //--------------------------------------------------------------------------
+    // GxB_get
+    //--------------------------------------------------------------------------
+
+    int sparsity ;
+    OK (GxB_Matrix_Option_get_(A, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_STATUS, &sparsity)) ;
+    CHECK (sparsity == GxB_SPARSE) ;
+    GxB_Format_Value fmt ;
+    OK (GxB_Vector_Option_get_(victor, GxB_FORMAT, &fmt)) ;
+    CHECK (fmt == GxB_BY_COL) ;
+    bool is_hyper ;
+    OK (GxB_Vector_Option_get_(victor, GxB_IS_HYPER, &is_hyper)) ;
+    CHECK (!is_hyper) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Vector_Option_get_(victor, -999, &is_hyper)) ;
+
+    //--------------------------------------------------------------------------
+    // GxB_set
+    //--------------------------------------------------------------------------
+
+    ERR (GxB_Vector_Option_set_(victor, -999, &is_hyper)) ;
+    OK (GxB_Vector_Option_set_(victor, GxB_SPARSITY_CONTROL, 9999)) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
 
     //--------------------------------------------------------------------------
     // removeElement errors
@@ -993,8 +1005,6 @@ void mexFunction
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_HASH)) ;
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
-    OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_HEAP)) ;
-    OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
     OK (GxB_Descriptor_fprint_(Duh, GxB_COMPLETE, NULL)) ;
     OK (GxB_Desc_set (Duh, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
@@ -1129,9 +1139,25 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
+    // test for problem too large in GB_bitmap_AxB_saxpy
+    //--------------------------------------------------------------------------
+
+    n = INT32_MAX ;
+    OK (GrB_Matrix_new (&A, GrB_FP32, n, 0)) ;
+    OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
+    expected = GrB_OUT_OF_MEMORY ;
+    bool ignore ;
+    ERR (GB_bitmap_AxB_saxpy (&C, GxB_BITMAP, NULL, false, false, A, B,
+        GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&B) ;
+    CHECK (C == NULL) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
+    // #include "GB_Test_about_mkl_template.c"
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nAll errors printed above were expected.\n") ;

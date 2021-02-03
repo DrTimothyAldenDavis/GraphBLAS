@@ -2,8 +2,8 @@
 // GB_subassign_one_slice: slice the entries and vectors for subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -154,7 +154,7 @@ GrB_Info GB_subassign_one_slice
     //--------------------------------------------------------------------------
 
     // M may be hypersparse, sparse, bitmap, or full
-    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1))
+    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1, false))
     { 
         // out of memory
         GB_FREE_ALL ;

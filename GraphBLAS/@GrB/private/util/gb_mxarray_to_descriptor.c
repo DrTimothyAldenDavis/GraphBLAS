@@ -2,8 +2,8 @@
 // gb_mxarray_to_descriptor: get the contents of a GraphBLAS Descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ static void get_descriptor
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
                 "d.nthreads must be a scalar") ;
             int nthreads_max = (int) mxGetScalar (value) ;
-            OK1 (desc, GxB_Desc_set (desc, GxB_NTHREADS, nthreads_max)) ;
+            OK (GxB_Desc_set (desc, GxB_NTHREADS, nthreads_max)) ;
 
         }
         else if (MATCH (fieldname, "chunk"))
@@ -47,7 +47,7 @@ static void get_descriptor
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
                 "d.chunk must be a scalar") ;
             double chunk = mxGetScalar (value) ;
-            OK1 (desc, GxB_Desc_set (desc, GxB_CHUNK, chunk)) ;
+            OK (GxB_Desc_set (desc, GxB_CHUNK, chunk)) ;
 
         }
         else
@@ -60,47 +60,43 @@ static void get_descriptor
             // convert the string to a Descriptor value, and set the value
             if (MATCH (s, "default"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
+                OK (GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
             }
             else if (MATCH (s, "transpose"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_TRAN)) ;
+                OK (GxB_Desc_set (desc, field, GrB_TRAN)) ;
             }
             else if (MATCH (s, "complement"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP)) ;
+                OK (GxB_Desc_set (desc, field, GrB_COMP)) ;
             }
             else if (MATCH (s, "structure") || MATCH (s, "structural"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
+                OK (GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "structural complement"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_COMP + GrB_STRUCTURE)) ;
+                OK (GxB_Desc_set (desc, field, GrB_COMP+GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "replace"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GrB_REPLACE)) ;
+                OK (GxB_Desc_set (desc, field, GrB_REPLACE)) ;
             }
             else if (MATCH (s, "gustavson"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
+                OK (GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
             }
             else if (MATCH (s, "dot"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
+                OK (GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
             }
             else if (MATCH (s, "saxpy"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
-            }
-            else if (MATCH (s, "heap"))
-            { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HEAP)) ;
+                OK (GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
             }
             else if (MATCH (s, "hash"))
             { 
-                OK1 (desc, GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
+                OK (GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
             }
             else
             { 
@@ -120,6 +116,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     const mxArray *desc_matlab, // MATLAB struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
     GxB_Format_Value *fmt,      // by row or by col
+    int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 )
 {
@@ -132,14 +129,16 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     (*kind) = KIND_GRB ;
     (*fmt) = GxB_NO_FORMAT ;
     (*base) = BASE_DEFAULT ;
+    (*sparsity) = 0 ;
 
     if (desc_matlab == NULL || !mxIsStruct (desc_matlab)
-        || mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
+        || (mxGetField (desc_matlab, 0, "GraphBLASv4") != NULL)
+        || (mxGetField (desc_matlab, 0, "GraphBLAS") != NULL))
     {
         // If present, the descriptor is a struct whose first field is not
         // "desc.GraphBLASv4" (since that is a GrB matrix struct, not a
-        // descriptor).  If not present, the GraphBLAS descriptor is NULL.
-        // This is not an error.
+        // descriptor), or "desc.GraphBLAS" (a v3 GraphBLAS struct).  If not
+        // present, the GraphBLAS descriptor is NULL.  This is not an error.
         return (NULL) ;
     }
 
@@ -171,15 +170,19 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
         gb_mxstring_to_string (s, LEN, mxkind, "kind") ;
         if (MATCH (s, "grb") || MATCH (s, "default"))
         { 
-            (*kind) = KIND_GRB ;
+            (*kind) = KIND_GRB ;        // @GrB matrix
         }
         else if (MATCH (s, "sparse"))
         { 
-            (*kind) = KIND_SPARSE ;
+            (*kind) = KIND_SPARSE ;     // MATLAB sparse matrix
         }
         else if (MATCH (s, "full"))
         { 
-            (*kind) = KIND_FULL ;
+            (*kind) = KIND_FULL ;       // MATLAB full matrix
+        }
+        else if (MATCH (s, "matlab"))
+        {
+            (*kind) = KIND_MATLAB ;     // MATLAB sparse or full matrix
         }
         else
         { 
@@ -194,9 +197,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     mxArray *mxfmt = mxGetField (desc_matlab, 0, "format") ;
     if (mxfmt != NULL)
     {
-        // TODO: add sparsity to the descriptor
-        int sparsity ;
-        bool ok = gb_mxstring_to_format (mxfmt, &fmt, &sparsity) ;
+        bool ok = gb_mxstring_to_format (mxfmt, fmt, sparsity) ;
         if (!ok)
         { 
             ERROR ("unknown format") ;

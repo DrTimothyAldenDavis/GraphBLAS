@@ -2,8 +2,8 @@
 // gb_get_shallow: create a shallow copy of a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 #include "gb_matlab.h"
 
 #define IF(error,message) \
-    CHECK_ERROR (error, "invalid GraphBLASv4 struct (" message ")" ) ;
+    CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
 GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 (
@@ -61,9 +61,19 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
 
+        bool GraphBLASv3 = false ;
+        mxArray *mx_type = NULL ;
+
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv4") ;
-        CHECK_ERROR (mx_type == NULL, "not a GraphBLASv4 struct") ;
+        mx_type = mxGetField (X, 0, "GraphBLASv4") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv3 struct
+            mx_type = mxGetField (X, 0, "GraphBLAS") ;
+            CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
+            GraphBLASv3 = true ;
+        }
+
         GrB_Type type = gb_mxstring_to_type (mx_type) ;
 
         // allocate the header, with no content
@@ -78,19 +88,32 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *opaque = mxGetField (X, 0, "s") ;
         IF (opaque == NULL, ".s missing") ;
         IF (mxGetM (opaque) != 1, ".s wrong size") ;
-        IF (mxGetN (opaque) != 9, ".s wrong size") ;
+        IF (mxGetN (opaque) != (GraphBLASv3 ? 8 : 9), ".s wrong size") ;
         int64_t *s = mxGetInt64s (opaque) ;
-        A->hyper_switch   = GxB_HYPER_DEFAULT ;
-        A->bitmap_switch  = 0.125 ;
+        A->hyper_switch  = GB_Global_hyper_switch_get ( ) ;
         A->plen          = s [0] ;
         A->vlen          = s [1] ;
         A->vdim          = s [2] ;
         A->nvec          = s [3] ;
         A->nvec_nonempty = s [4] ;
-        A->sparsity      = (int) (s [5]) ;
         A->is_csc        = (bool) (s [6]) ;
         A->nzmax         = s [7] ;
-        A->nvals         = s [8] ;
+
+        if (GraphBLASv3)
+        {
+            // GraphBLASv3 struct: sparse or hypersparse only
+            A->sparsity      = GxB_AUTO_SPARSITY ;
+            A->nvals         = 0 ;
+        }
+        else
+        {
+            // GraphBLASv4 struct: sparse, hypersparse, bitmap, or full
+            A->sparsity      = (int) (s [5]) ;
+            A->nvals         = s [8] ;
+        }
+
+        A->bitmap_switch = GB_Global_bitmap_switch_matrix_get
+            (A->vlen, A->vdim) ;
 
         int nfields = mxGetNumberOfFields (X) ;
 
@@ -183,8 +206,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         else
         { 
-            // X is a MATLAB dense matrix; so is the GrB_Matrix
-            nzmax = MAX (nrows * ncols, 1) ;
+            // X is a MATLAB full matrix; so is the GrB_Matrix
+            nzmax = nrows * ncols ;
             Xp = NULL ;
             Xi = NULL ;
         }
@@ -193,18 +216,18 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         void *Xx = NULL ;
         if (type == GrB_FP64)
         { 
-            // MATLAB sparse or dense double matrix
+            // MATLAB sparse or full double matrix
             Xx = mxGetDoubles (X) ;
         }
         else if (type == GxB_FC64)
         { 
-            // MATLAB sparse or dense double complex matrix
+            // MATLAB sparse or full double complex matrix
             Xx = mxGetComplexDoubles (X) ;
         }
         else if (type == GrB_BOOL)
         { 
-            // MATLAB sparse or dense logical matrix
-            Xx = mxGetData (X) ;        // OK:bool
+            // MATLAB sparse or full logical matrix
+            Xx = mxGetData (X) ;
         }
         else if (X_is_sparse)
         {
@@ -213,52 +236,52 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         else if (type == GrB_INT8)
         { 
-            // dense int8 matrix
+            // full int8 matrix
             Xx = mxGetInt8s (X) ;
         }
         else if (type == GrB_INT16)
         { 
-            // dense int16 matrix
+            // full int16 matrix
             Xx = mxGetInt16s (X) ;
         }
         else if (type == GrB_INT32)
         { 
-            // dense int32 matrix
+            // full int32 matrix
             Xx = mxGetInt32s (X) ;
         }
         else if (type == GrB_INT64)
         { 
-            // dense int64 matrix
+            // full int64 matrix
             Xx = mxGetInt64s (X) ;
         }
         else if (type == GrB_UINT8)
         { 
-            // dense uint8 matrix
+            // full uint8 matrix
             Xx = mxGetUint8s (X) ;
         }
         else if (type == GrB_UINT16)
         { 
-            // dense uint16 matrix
+            // full uint16 matrix
             Xx = mxGetUint16s (X) ;
         }
         else if (type == GrB_UINT32)
         { 
-            // dense uint32 matrix
+            // full uint32 matrix
             Xx = mxGetUint32s (X) ;
         }
         else if (type == GrB_UINT64)
         { 
-            // dense uint64 matrix
+            // full uint64 matrix
             Xx = mxGetUint64s (X) ;
         }
         else if (type == GrB_FP32)
         { 
-            // dense single matrix
+            // full single matrix
             Xx = mxGetSingles (X) ;
         }
         else if (type == GxB_FC32)
         { 
-            // dense single complex matrix
+            // full single complex matrix
             Xx = mxGetComplexSingles (X) ;
         }
         else
@@ -270,8 +293,9 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
             // NULL, but it does not change the MATLAB matrix they came from.
-            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, false,
-                -1, &Xp, &Xi, &Xx, NULL)) ;
+            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols,
+                &Xp, &Xi, &Xx, ncols+1, nzmax, nzmax, false, NULL)) ;
+
             // tell GraphBLAS the matrix is shallow
             A->p_shallow = true ;
             A->i_shallow = (A->i != NULL) ;
@@ -279,7 +303,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         else
         { 
             // import a full matrix
-            OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols, &Xx, NULL)) ;
+            OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols, &Xx,
+                nzmax, NULL)) ;
         }
 
         // tell GraphBLAS the matrix is shallow

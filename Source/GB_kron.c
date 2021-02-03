@@ -2,8 +2,8 @@
 // GB_kron: C<M> = accum (C, kron(A,B))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // delete any lingering zombies and assemble any pending tuples in A and B,
     // so that cnz = nnz(A) * nnz(B) can be computed.  Updates of C and M are
     // done after this check.
-    GB_MATRIX_WAIT (A) ;    // TODO: could allow A and B to be jumbled
+    GB_MATRIX_WAIT (A) ;
     GB_MATRIX_WAIT (B) ;
 
     // check the dimensions of C
@@ -98,14 +98,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
-
-    // delete any lingering zombies and assemble any pending tuples
-    GB_MATRIX_WAIT (M) ;    // TODO: can postpone until accum/mask phase
-
-    GB_BURBLE_DENSE (C, "(C %s) ") ;
-    GB_BURBLE_DENSE (M, "(M %s) ") ;
-    GB_BURBLE_DENSE (A, "(A %s) ") ;
-    GB_BURBLE_DENSE (B, "(B %s) ") ;
 
     //--------------------------------------------------------------------------
     // transpose A and B if requested
