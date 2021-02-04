@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// for additional diagnostics, use:
+// for code development only:
 // #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"

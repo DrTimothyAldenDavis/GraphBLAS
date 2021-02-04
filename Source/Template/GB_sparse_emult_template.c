@@ -22,93 +22,6 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    if (M == NULL)
-    {
-
-        // A or B are sparse/hyper, or both
-        ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper) ;
-
-        if (A_is_bitmap)
-        else if (A_is_full)
-        {
-
-            //----------------------------------------------------------
-            // Method04: A(:,j) full, B(:,j) sparse: C(:,j) sparse
-            //----------------------------------------------------------
-
-            // B can be jumbled; then so is C
-            ASSERT (B_is_sparse || B_is_hyper) ;
-
-            int tid ;
-            #pragma omp parallel for num_threads(B_nthreads) \
-                schedule(dynamic,1)
-            for (tid = 0 ; tid < B_ntasks ; tid++)
-            {
-                int64_t kfirst = kfirst_B_slice [tid] ;
-                int64_t klast  = klast_B_slice  [tid] ;
-                for (int64_t k = kfirst ; k <= klast ; k++)
-                {
-                    int64_t j = GBH (Bh, k) ;
-                    int64_t pA_start = j * vlen ;
-                    int64_t pB, pB_end ;
-                    GB_get_pA (&pB, &pB_end, tid, k,
-                        kfirst, klast, pstart_B_slice, Bp, vlen) ;
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = (pB_end - pB) ;
-                    #else
-                    for ( ; pB < pB_end ; pB++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = Bi [pB + p] ;
-                        Ci [pC + p] = i ;
-                        GB_GETA (aij, Ax, pA + i - iA_first) ;
-                        GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-                }
-            }
-
-        }
-        else if (B_is_bitmap)
-        {
-
-            //----------------------------------------------------------
-            // Method02: B(:,j) is bitmap; A(:,j) is sparse/hyper
-            //----------------------------------------------------------
-
-            // A can be jumbled; then so is C
-            ASSERT (A_is_sparse || A_is_hyper) ;
-
-        }
-        else if (B_is_full)
-        {
-
-            //----------------------------------------------------------
-            // Method05: A(:,j) sparse, B(:,j) dense: C(:,j) sparse
-            //----------------------------------------------------------
-
-            // A can be jumbled; then so is C
-
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = ajnz ;
-                    #else
-                    ASSERT (cjnz == ajnz) ;
-                    GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = Ai [pA + p] ;
-                        Ci [pC + p] = i ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + i - iB_first) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-
-        }
-
-
     #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
@@ -321,70 +234,12 @@
             if (M == NULL)
             {
 
-                if (A_is_bitmap)
-                {
-
-                    //----------------------------------------------------------
-                    // Method01: A(:,j) is bitmap; B(:,j) is sparse/hyper
-                    //----------------------------------------------------------
-
-                }
-                else if (B_is_bitmap)
-                {
-
-                    //----------------------------------------------------------
-                    // Method02: B(:,j) is bitmap; A(:,j) is sparse/hyper
-                    //----------------------------------------------------------
-
-                }
-                else if (adense && bdense)
-                {
-
-                    //----------------------------------------------------------
-                    // Method03: A(:,j) and B(:,j) dense: thus C(:,j) dense
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if A and B are full, not just (:,j)
-                    // Then no matrix will be jumbled.
-
-                    ASSERT (ajnz == bjnz) ;
-                    ASSERT (iA_first == iB_first) ;
-                    ASSERT (iA_last  == iB_last ) ;
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = ajnz ;
-                    #else
-                    ASSERT (cjnz == ajnz) ;
-                    GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = p + iA_first ;
-                        Ci [pC + p] = i ;
-                        ASSERT (GBI (Ai, pA + p, vlen) == i) ;
-                        ASSERT (GBI (Bi, pB + p, vlen) == i) ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-
-                }
-                else if (adense)
-                {
-
-                }
-                else if (bdense)
-                {
-
-                }
-                else if (ajnz > 32 * bjnz)
+                if (ajnz > 32 * bjnz)
                 {
 
                     //----------------------------------------------------------
                     // Method06: A(:,j) is much denser than B(:,j)
                     //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -419,8 +274,6 @@
                     //----------------------------------------------------------
                     // Method07: B(:,j) is much denser than A(:,j)
                     //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -457,7 +310,6 @@
                     //----------------------------------------------------------
 
                     // linear-time scan of A(:,j) and B(:,j)
-                    // A and B cannot be jumbled
 
                     while (pA < pA_end && pB < pB_end)
                     {

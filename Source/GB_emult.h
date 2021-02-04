@@ -100,6 +100,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
     bool *apply_mask,       // if true then mask will be applied by GB_emult
     bool *use_add_instead,  // if true then use GB_add instead of GB_emult
     bool *C_is_jumbled,     // if true then C is computed as jumbled
+    bool *M_must_be_unjumbled,  // if true then M must be unjumbled first
     bool *A_must_be_unjumbled,  // if true then A must be unjumbled first
     bool *B_must_be_unjumbled,  // if true then B must be unjumbled first
     // input:
@@ -109,17 +110,17 @@ int GB_emult_sparsity       // return the sparsity structure for C
     const GrB_Matrix B      // input B matrix
 ) ;
 
-GrB_Info GB_emult_01        // C=A.*B where A is sparse/hyper, B is bitmap/full
+GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const int C_sparsity,   // GxB_SPARSE or GxB_HYPERSPARSE
-    const GrB_Matrix A,     // input A matrix (sparse or hyper)
-    const GrB_Matrix B,     // input B matrix (bitmap or full)
+    const GrB_Matrix A,     // input A matrix (sparse/hyper)
+    const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    bool flipxy,            // if true use fmult(y,x), else fmult(x,y)
+    bool flipxy,            // if true use fmult(y,x) else fmult(x,y)
     GB_Context Context
 ) ;
 
 #endif
+

@@ -125,6 +125,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // C<M or !M> = A.*B
     //--------------------------------------------------------------------------
 
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_full   = GB_IS_FULL   (A) ;
+    bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    bool B_is_full   = GB_IS_FULL   (B) ;
+
     if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
     {
 
@@ -152,37 +157,25 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      bitmap          sparse  (mask later)
             //      sparse  sparse      full            sparse  (mask later)
 
-            // A or B are sparse/hyper, or both
-            ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper) ;
+            // A or B are sparse/hyper, or both are sparse/hyper
 
-            if (B_is_bitmap)
+            if (B_is_bitmap || B_is_full)
             {
-                // Method01: A is sparse/hyper, B is bitmap
-                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc,
-                    C_sparsity, C_is_jumbled, A, B, op, false, Context)) ;
+                // Method01: A is sparse/hyper, B is bitmap/full
+                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc, A, B, op, false,
+                    Context)) ;
 return (GrB_SUCCESS) ;
             }
-            else if (A_is_bitmap)
+            else if (A_is_bitmap || A_is_full)
             {
-                // Method01: A is bitmap, B is sparse/hyper
-                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc,
-                    C_sparsity, C_is_jumbled, B, A, op, true, Context)) ;
+                // Method01: A is bitmap/full, B is sparse/hyper
+                // A and B are swapped, and binary operator must be flipped.
+                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc, B, A, op, true,
+                    Context)) ;
 return (GrB_SUCCESS) ;
             }
 
 #if 0
-            else if (B_is_full)
-            {
-                // Method02: A sparse/hyper, B full
-                GB_OK (GB_emult_02 (Chandle, ctype, C_is_csc,
-                    C_sparsity, C_is_jumbled, A, B, op, false, Context)) ;
-            }
-            else if (A_is_full)
-            {
-                // Method02: A full, B sparse/hyper
-                GB_OK (GB_emult_02 (Chandle, ctype, C_is_csc,
-                    C_sparsity, C_is_jumbled, B, A, op, true, Context)) ;
-            }
             else
             {
                 // Method03: A and B are both sparse/hyper
@@ -190,6 +183,7 @@ return (GrB_SUCCESS) ;
                     C_sparsity, C_is_jumbled, A, B, op, Context)) ;
             }
 #endif
+
         }
         else if (M_is_sparse_or_hyper)
         {

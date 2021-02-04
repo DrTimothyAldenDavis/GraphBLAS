@@ -110,73 +110,8 @@
     // reduce the first and last vector of each slice using a single thread
     //--------------------------------------------------------------------------
 
-    // This step is sequential, but it takes only O(ntasks) time.  The only
-    // case where this could be a problem is if a user-defined operator was
-    // a very costly one.
-
-    int64_t kprior = -1 ;
-
-    for (int tid = 0 ; tid < ntasks ; tid++)
-    {
-
-        //----------------------------------------------------------------------
-        // sum up the partial result that thread tid computed for kfirst
-        //----------------------------------------------------------------------
-
-        int64_t kfirst = kfirst_slice [tid] ;
-        int64_t klast  = klast_slice  [tid] ;
-
-        if (kfirst <= klast)
-        {
-            int64_t pA_start = pstart_slice [tid] ;
-            int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
-            pA_end = GB_IMIN (pA_end, pstart_slice [tid+1]) ;
-            if (pA_start < pA_end)
-            {
-                if (kprior < kfirst)
-                { 
-                    // This thread is the first one that did work on
-                    // A(:,kfirst), so use it to start the reduction.
-                    Cp [kfirst] = Wfirst [tid] ;
-                }
-                else
-                { 
-                    Cp [kfirst] += Wfirst [tid] ;
-                }
-                kprior = kfirst ;
-            }
-        }
-
-        //----------------------------------------------------------------------
-        // sum up the partial result that thread tid computed for klast
-        //----------------------------------------------------------------------
-
-        if (kfirst < klast)
-        {
-            int64_t pA_start = GBP (Ap, klast, avlen) ;
-            int64_t pA_end   = pstart_slice [tid+1] ;
-            if (pA_start < pA_end)
-            {
-                /* if */ ASSERT (kprior < klast) ;
-                { 
-                    // This thread is the first one that did work on
-                    // A(:,klast), so use it to start the reduction.
-                    Cp [klast] = Wlast [tid] ;
-                }
-                /*
-                else
-                {
-                    // If kfirst < klast and A(:,klast is not empty, then this
-                    // task is always the first one to do work on A(:,klast),
-                    // so this case is never used.
-                    ASSERT (GB_DEAD_CODE) ;
-                    Cp [klast] += Wlast [tid] ;
-                }
-                */
-                kprior = klast ;
-            }
-        }
-    }
+    GB_ek_slice_merge1 (Cp, Ap, avlen,
+        Wfirst, Wlast, pstart_slice, kfirst_slice, klast_slice, ntasks) ;
 
 #else
 

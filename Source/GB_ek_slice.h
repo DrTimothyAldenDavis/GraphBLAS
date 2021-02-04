@@ -61,21 +61,36 @@ void GB_ek_slice_free
     int64_t *GB_RESTRICT *klast_slice_handle
 ) ;
 
-void GB_ek_slice_merge          // compute cumsum(Cp) and C_pstart_slice
+void GB_ek_slice_merge1     // merge column counts for the matrix C
+(
+    // input/output:
+    int64_t *GB_RESTRICT Cp,                    // column counts
+    // input:
+    const int64_t *GB_RESTRICT Ap,              // A->p
+    const int64_t avlen,                        // A->vlen
+    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
+    const int64_t *GB_RESTRICT Wlast,           // size ntasks
+    const int64_t *GB_RESTRICT pstart_Aslice,   // size ntasks
+    const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
+    const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
+    const int ntasks                            // # of tasks
+) ;
+
+void GB_ek_slice_merge2     // merge final results for matrix C
 (
     // output
-    int64_t *C_nvec_nonempty,           // # of nonempty vectors in C
-    int64_t *C_pstart_slice,            // size ntasks
+    int64_t *C_nvec_nonempty,           // # of non-empty vectors in C
+    int64_t *GB_RESTRICT Cp_kfirst,     // size ntasks
     // input/output
-    int64_t *GB_RESTRICT Cp,            // size cnvec
+    int64_t *GB_RESTRICT Cp,            // size cnvec+1
     // input
-    int64_t cnvec,                      // # of vectors in C
-    int64_t *GB_RESTRICT Wfirst,        // size ntasks
-    int64_t *GB_RESTRICT Wlast,         // size ntasks
-    int64_t *GB_RESTRICT kfirst_slice,  // size ntasks
-    int64_t *GB_RESTRICT klast_slice,   // size ntasks
-    int ntasks,                         // # of tasks used to construct Cp
-    int nthreads                        // # of threads to use
+    const int64_t cnvec,
+    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
+    const int64_t *GB_RESTRICT Wlast,           // size ntasks
+    const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
+    const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
+    const int ntasks,                   // # of tasks used to construct C
+    const int nthreads                  // # of threads to use
 ) ;
 
 // define the static inline function GB_search_for_vector
@@ -99,7 +114,7 @@ static inline void GB_get_pA_and_pC
     int64_t kfirst,     // first vector for this slice
     int64_t klast,      // last vector for this slice
     const int64_t *GB_RESTRICT pstart_slice,   // start of each slice in A
-    const int64_t *GB_RESTRICT C_pstart_slice, // start of each slice in C
+    const int64_t *GB_RESTRICT Cp_kfirst,      // start of each slice in C
     const int64_t *GB_RESTRICT Cp,             // vector pointers for C
     int64_t cvlen,                             // C->vlen
     const int64_t *GB_RESTRICT Ap,             // vector pointers for A
@@ -115,7 +130,7 @@ static inline void GB_get_pA_and_pC
         // First vector for task tid; may only be partially owned.
         (*pA_start) = pstart_slice [tid] ;
         (*pA_end  ) = GB_IMIN (p1, pstart_slice [tid+1]) ;
-        (*pC) = C_pstart_slice [tid] ;
+        (*pC) = Cp_kfirst [tid] ;
     }
     else if (k == klast)
     { 
@@ -179,3 +194,4 @@ static inline void GB_get_pA
 }
 
 #endif
+

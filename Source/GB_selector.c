@@ -28,7 +28,7 @@
     GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ; \
     GB_FREE (Wfirst) ;              \
     GB_FREE (Wlast) ;               \
-    GB_FREE (C_pstart_slice) ;      \
+    GB_FREE (Cp_kfirst) ;           \
     GB_FREE (Zp) ;                  \
     GB_FREE (Cp) ;                  \
     GB_FREE (Ch) ;                  \
@@ -184,7 +184,7 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Zp = NULL ;
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
+    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
@@ -236,10 +236,11 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
+    // TODO: use one calloc
     Wfirst = GB_CALLOC (ntasks, int64_t) ;
     Wlast  = GB_CALLOC (ntasks, int64_t) ;
-    C_pstart_slice = GB_CALLOC (ntasks, int64_t) ;
-    if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
+    Cp_kfirst = GB_CALLOC (ntasks, int64_t) ;
+    if (Wfirst == NULL || Wlast  == NULL || Cp_kfirst == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -286,10 +287,10 @@ GrB_Info GB_selector
     #undef  GB_SEL_WORKER
 
     //--------------------------------------------------------------------------
-    // cumulative sum of Cp and compute C_pstart_slice
+    // cumulative sum of Cp and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
-    GB_ek_slice_merge (&C_nvec_nonempty, C_pstart_slice, Cp, anvec,
+    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
         Wfirst, Wlast, kfirst_slice, klast_slice, ntasks, nthreads) ;
 
     //--------------------------------------------------------------------------
@@ -322,7 +323,7 @@ GrB_Info GB_selector
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
         GB_sel2 (opname, aname) (Ci, (atype *) Cx,                      \
-            Zp, Cp, C_pstart_slice,                                     \
+            Zp, Cp, Cp_kfirst,                                          \
             A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
             (atype *) xthunk, user_select, ntasks, nthreads) ;          \
     }                                                                   \

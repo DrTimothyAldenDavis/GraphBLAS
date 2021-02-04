@@ -52,7 +52,7 @@
 
             int64_t pA_start, pA_end, pC ;
             GB_get_pA_and_pC (&pA_start, &pA_end, &pC, tid, k, kfirst, klast,
-                pstart_slice, C_pstart_slice, Cp, avlen, Ap, avlen) ;
+                pstart_slice, Cp_kfirst, Cp, avlen, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // compact Ai and Ax [pA_start ... pA_end-1] into Ci and Cx

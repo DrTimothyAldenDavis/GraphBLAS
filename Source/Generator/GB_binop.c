@@ -354,6 +354,7 @@ void GB_AemultB_01
     const int64_t *GB_RESTRICT pstart_Aslice,
     const int64_t *GB_RESTRICT kfirst_Aslice,
     const int64_t *GB_RESTRICT klast_Aslice,
+    const int64_t *GB_RESTRICT Cp_kfirst,
     const int A_ntasks,
     const int A_nthreads
 )
@@ -362,23 +363,29 @@ void GB_AemultB_01
     return (GrB_NO_VALUE) ;
     #else
     #if GB_BINOP_FLIP
-    if (flipxy)
-    {
-        // use fmult(y,x)
-        #undef  GB_FLIPPED
-        #define GB_FLIPPED 1
-        #include "GB_emult_01_template.c"
-    }
-    else
-    {
-        // use fmult(x,y)
+        // The operator is not commutative, and does not have a flipped
+        // variant.  For example z=atan2(y,x) is not handled by GB_binop_flip.
+        if (flipxy)
+        {
+            // use fmult(y,x)
+            #undef  GB_FLIPPED
+            #define GB_FLIPPED 1
+            #include "GB_emult_01_template.c"
+        }
+        else
+        {
+            // use fmult(x,y)
+            #undef  GB_FLIPPED
+            #define GB_FLIPPED 0
+            #include "GB_emult_01_template.c"
+        }
+    #else
+        // No need to handle the flip: the operator is either commutative, or
+        // has been handled by GB_binop_flip (changing z=div(y,x) to
+        // z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
         #define GB_FLIPPED 0
         #include "GB_emult_01_template.c"
-    }
-    #else
-    // no need to handle the flip
-    #include "GB_emult_01_template.c"
     #endif
     return (GrB_SUCCESS) ;
     #endif

@@ -25,7 +25,7 @@ void GB_sel_phase2
     GB_atype *GB_RESTRICT Cx,
     const int64_t *GB_RESTRICT Zp,
     const int64_t *GB_RESTRICT Cp,
-    const int64_t *GB_RESTRICT C_pstart_slice,
+    const int64_t *GB_RESTRICT Cp_kfirst,
     const GrB_Matrix A,
     const int64_t *GB_RESTRICT kfirst_slice,
     const int64_t *GB_RESTRICT klast_slice,
