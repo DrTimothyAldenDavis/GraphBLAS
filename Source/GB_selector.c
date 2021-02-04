@@ -290,6 +290,7 @@ GrB_Info GB_selector
     // cumulative sum of Cp and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
+    int64_t C_nvec_nonempty ;
     GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
         Wfirst, Wlast, kfirst_slice, klast_slice, ntasks, nthreads) ;
 
@@ -377,7 +378,7 @@ GrB_Info GB_selector
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
 
-        // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
+        // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_Matrix_wait.
         ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
 

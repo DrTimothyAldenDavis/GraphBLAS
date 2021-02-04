@@ -11,13 +11,14 @@
 // the same sparsity structure as A.
 
 #include "GB_emult.h"
+#include "GB_binop.h"
 
-#define GB_FREE_WORK                                                \
-{                                                                   \
-    GB_FREE (Wfirst) ;                                              \
-    GB_FREE (Wlast) ;                                               \
-    GB_FREE (Cp_kfirst) ;                                           \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ; \
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    GB_FREE (Wfirst) ;                                                  \
+    GB_FREE (Wlast) ;                                                   \
+    GB_FREE (Cp_kfirst) ;                                               \
+    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
 }
 
 #define GB_FREE_ALL             \
@@ -61,6 +62,9 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *GB_RESTRICT pstart_Aslice = NULL ;
+    int64_t *GB_RESTRICT kfirst_Aslice = NULL ;
+    int64_t *GB_RESTRICT klast_Aslice  = NULL ;
 
     //--------------------------------------------------------------------------
     // get A and B
@@ -73,7 +77,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t vdim = A->vdim ;
     int64_t nvec = A->nvec ;
 
-    const int8_t *GB_RESTRICT Bp = B->b ;
+    const int8_t *GB_RESTRICT Bb = B->b ;
     bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     //--------------------------------------------------------------------------
@@ -89,9 +93,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // slice the input matrix A
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT pstart_Aslice = NULL ;
-    int64_t *GB_RESTRICT kfirst_Aslice = NULL ;
-    int64_t *GB_RESTRICT klast_Aslice  = NULL ;
     int A_nthreads, A_ntasks ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     GB_SLICE_MATRIX (A, 8) ;
@@ -99,6 +100,8 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
     // phase1: count entries in C
     //--------------------------------------------------------------------------
+
+    C->nvec_nonempty = A->nvec_nonempty ;
 
     if (B_is_bitmap)
     {
@@ -126,8 +129,8 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
         for (tid = 0 ; tid < A_ntasks ; tid++)
         {
-            int64_t kfirst = kfirst_slice [tid] ;
-            int64_t klast  = klast_slice  [tid] ;
+            int64_t kfirst = kfirst_Aslice [tid] ;
+            int64_t klast  = klast_Aslice  [tid] ;
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
                 // count the entries in C(:,j)
@@ -162,7 +165,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
             A_ntasks) ;
 
         // cumulative sum of Cp and compute Cp_kfirst
-        GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, nvec,
+        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
             Wfirst, Wlast, kfirst_Aslice, klast_Aslice,
             A_ntasks, A_nthreads) ;
     }
@@ -180,7 +183,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     // TODO: could make these components of C shallow instead
 
-    if (A_is_hyper)
+    if (GB_IS_HYPERSPARSE (A))
     {
         GB_memcpy (C->h, Ah, nvec * sizeof (int64_t), A_nthreads) ;
     }
@@ -428,8 +431,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // construct the final C->h
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = C_nvec_nonmempty ;
-    if (Ch != NULL)
+    if (C->h != NULL)
     { 
         // TODO: allow C->h to be shallow; if modified, make a copy
         GB_OK (GB_hypermatrix_prune (C, Context)) ;

@@ -88,8 +88,8 @@
         #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
         for (tid = 0 ; tid < A_ntasks ; tid++)
         {
-            int64_t kfirst = kfirst_slice [tid] ;
-            int64_t klast  = klast_slice  [tid] ;
+            int64_t kfirst = kfirst_Aslice [tid] ;
+            int64_t klast  = klast_Aslice  [tid] ;
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
                 int64_t j = GBH (Ah, k) ;

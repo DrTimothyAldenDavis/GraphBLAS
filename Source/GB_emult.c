@@ -129,6 +129,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     bool A_is_full   = GB_IS_FULL   (A) ;
     bool B_is_bitmap = GB_IS_BITMAP (B) ;
     bool B_is_full   = GB_IS_FULL   (B) ;
+    bool M_is_sparse_or_hyper = GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M) ;
 
     if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
     {
