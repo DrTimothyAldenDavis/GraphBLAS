@@ -25,49 +25,13 @@
 #define GB_CUDA_STRLEN 2048
 
 //------------------------------------------------------------------------------
-// GB_stringify_mask: define macros that access the mask matrix M
-//------------------------------------------------------------------------------
-
-void GB_stringify_mask     // return string to define mask macros
-(
-    // output:
-    char **mask_macros,         // string that defines the mask macros
-    // input:
-    const GB_Type_code mcode,   // typecode of the mask matrix M,
-                                // or 0 if M is not present
-    bool Mask_struct,           // true if M structural, false if valued
-    bool Mask_comp              // true if M complemented
-) ;
-
-void GB_enumify_mask       // return enum to define mask macros
-(
-    // output:
-    int *mask_ecode,            // enumified mask
-    // input
-    const GB_Type_code mcode,   // typecode of the mask matrix M,
-                                // or 0 if M is not present
-    bool Mask_struct,           // true if M structural, false if valued
-    bool Mask_comp              // true if M complemented
-) :
-
-void GB_macrofy_mask       // return enum to define mask macros
-(
-    // output:
-    char **mask_macros,         // string that defines the mask macros
-    // input
-    int mask_ecode              // enumified mask
-) ;
-
-//------------------------------------------------------------------------------
 // GB_stringify_semiring: build all strings for a semiring
 //------------------------------------------------------------------------------
 
 void GB_stringify_semiring     // build a semiring (name and code)
 (
     // output: (all of size at least GB_CUDA_STRLEN+1)
-    char *semiring_name,    // name of the semiring
-    char *semiring_code,    // List of types and macro defs
-    char *mask_name,        // definition of mask data load     // TODO: FIXME
+    char *semiring_macros,  // List of types and macro defs
     // input:
     GrB_Semiring semiring,  // the semiring to stringify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
@@ -106,17 +70,70 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 (
     // output:
     char *semiring_macros,      // all macros that define the semiring
-    char *mask_name,            // definition of mask data load TODO: FIXME
     // input:
     uint64_t scode
 ) ;
 
-void GB_semiring_name       // construct the name of a semiring
+//------------------------------------------------------------------------------
+// GB_stringify_mask: define macros that access the mask matrix M
+//------------------------------------------------------------------------------
+
+void GB_stringify_mask     // return string to define mask macros
 (
     // output:
-    char *semiring_name,    // name of the semiring
+    char **mask_macros,         // string that defines the mask macros
     // input:
-    uint64_t scode
+    const GB_Type_code mcode,   // typecode of the mask matrix M,
+                                // or 0 if M is not present
+    bool Mask_struct,           // true if M structural, false if valued
+    bool Mask_comp              // true if M complemented
+) ;
+
+void GB_enumify_mask       // return enum to define mask macros
+(
+    // output:
+    int *mask_ecode,            // enumified mask
+    // input
+    const GB_Type_code mcode,   // typecode of the mask matrix M,
+                                // or 0 if M is not present
+    bool Mask_struct,           // true if M structural, false if valued
+    bool Mask_comp              // true if M complemented
+) :
+
+void GB_macrofy_mask       // return enum to define mask macros
+(
+    // output:
+    char **mask_macros,         // string that defines the mask macros
+    // input
+    int mask_ecode              // enumified mask
+) ;
+
+//------------------------------------------------------------------------------
+// GB_stringify_monoid and supporting methods
+//------------------------------------------------------------------------------
+
+void GB_enumify_monoid  // enumerate a monoid
+(
+    // outputs:
+    int *add_ecode,     // binary op as an enum
+    int *id_ecode,      // identity value as an enum
+    int *term_ecode,    // terminal value as an enum
+    // inputs:
+    int add_opcode,     // must be a built-in binary operator from a monoid
+    int zcode           // type of the monoid (x, y, and z)
+) ;
+
+void GB_macrofy_monoid  // construct the macros for a monoid
+(
+    // outputs:
+    char *add_macro,                    // additive binary operator
+    char *identity_macro,               // identity value
+    char *terminal_expression_macro,    // terminal expr for "if (expr) ..."
+    char *terminal_statement_macro,     // break statement
+    // inputs:
+    int add_ecode,      // binary op as an enum
+    int id_ecode,       // identity value as an enum
+    int term_ecode      // terminal value as an enum (< 30 is terminal)
 ) ;
 
 //------------------------------------------------------------------------------
