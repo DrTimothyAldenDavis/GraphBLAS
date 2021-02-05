@@ -49,7 +49,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-
     ASSERT (Chandle != NULL) ;
     GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;

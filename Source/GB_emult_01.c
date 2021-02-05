@@ -26,10 +26,10 @@
         //      ------------------------------------------
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          bitmap  (01: mask later)
-        //      sparse  sparse      sparse          full    (01: mask later)
-        //      sparse  sparse      bitmap          sparse  (01: mask later)
-        //      sparse  sparse      full            sparse  (01: mask later)
+        //      sparse  sparse      sparse          bitmap  (mask later)
+        //      sparse  sparse      sparse          full    (mask later)
+        //      sparse  sparse      bitmap          sparse  (mask later)
+        //      sparse  sparse      full            sparse  (mask later)
 
 // TODO: this method could also take a mask M that is bitmap/full, with
 // very little change.  Mask_struct and Mask_comp can be handled too:
