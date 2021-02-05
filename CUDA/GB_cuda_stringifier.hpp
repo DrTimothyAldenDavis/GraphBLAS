@@ -8,6 +8,7 @@
 #pragma once
 #include <iostream>
 #include "GB.h"
+#include "GB_binop.h"
 #include "GB_cuda_stringify.h"
 
 // Define function pointer we will use later
@@ -112,7 +113,7 @@ class GB_cuda_stringifier {
     }
 
     
-    const char *GB_cuda_stringify_opcode
+    const char *stringify_opcode
     (
     GB_Opcode opcode    // opcode of GraphBLAS operator
     )
@@ -604,7 +605,7 @@ class GB_cuda_stringifier {
 //
 // or, if is_pattern is true, the macro becomes the empty string.
 
-    void stringify_load {}
+    void stringify_load 
     (
         // output:
         char *result,
@@ -624,8 +625,9 @@ class GB_cuda_stringifier {
         }
     }
 
-    void stringify_semiring {}
+    void stringify_monoid() {}
 
+    void stringify_semiring 
     // Construct a string defining a semiring.
     // User-defined types are not handled.
     // build a semiring (name and code)
@@ -733,31 +735,31 @@ class GB_cuda_stringifier {
 
         char acast [GB_CUDA_STRLEN+1] ;
         char bcast [GB_CUDA_STRLEN+1] ;
-        GB_cuda_stringify_load (acast, "GB_GETA", A_is_pattern) ;
-        GB_cuda_stringify_load (bcast, "GB_GETB", B_is_pattern) ;
+        stringify_load (acast, "GB_GETA", A_is_pattern) ;
+        stringify_load (bcast, "GB_GETB", B_is_pattern) ;
 
         //--------------------------------------------------------------------------
         // construct macros for the multiply
         //--------------------------------------------------------------------------
 
         char mult_function [GB_CUDA_STRLEN+1] ;
-        GB_cuda_stringify_binop (mult_function, "GB_MULT", mult_opcode, zcode) ;
+        stringify_binop (mult_function, "GB_MULT", mult_opcode, zcode) ;
 
         //--------------------------------------------------------------------------
         // construct the monoid macros
         //--------------------------------------------------------------------------
 
         char add_function [GB_CUDA_STRLEN+1] ;
-        GB_cuda_stringify_binop (add_function, "GB_ADD", add_opcode, zcode) ;
+        stringify_binop (add_function, "GB_ADD", add_opcode, zcode) ;
 
         char identity_definition [GB_CUDA_STRLEN+1] ;
-        GB_cuda_stringify_identity ( identity_definition, add_opcode, zcode) ;
+        stringify_identity ( identity_definition, add_opcode, zcode) ;
 
         bool is_terminal ;
         char terminal_condition [GB_CUDA_STRLEN+1] ;
         char terminal_statement [GB_CUDA_STRLEN+1] ;
 
-        GB_cuda_stringify_terminal (
+        stringify_terminal (
             &is_terminal, terminal_condition, terminal_statement,
             "GB_TERMINAL_CONDITION", "GB_IF_TERMINAL_BREAK", add_opcode, zcode) ;
 
@@ -771,7 +773,7 @@ class GB_cuda_stringifier {
         // TODO:
         // (add_opcode == GB_ANY_opcode && mult_opcode == GB_PAIR_opcode) ;
         char ccast [GB_CUDA_STRLEN+1] ;
-        GB_cuda_stringify_load (ccast, "GB_PUTC", c_is_one) ;
+        stringify_load (ccast, "GB_PUTC", c_is_one) ;
 
         //--------------------------------------------------------------------------
         // construct the macros to access the mask (if any), and its name
@@ -782,7 +784,7 @@ class GB_cuda_stringifier {
         const char *struct_str = "struct";
         if (mtype != NULL)
         {
-            mask_string = GB_cuda_stringify_mask (mtype->code, Mask_struct) ;
+            mask_string = stringify_mask (mtype->code, Mask_struct) ;
             mask_type_name = mtype->name ;
         }
         else
@@ -819,8 +821,8 @@ class GB_cuda_stringifier {
         const char *add_name;
         const char *mult_name;
 
-        add_name  = GB_cuda_stringify_opcode (add_opcode) ;
-        mult_name = GB_cuda_stringify_opcode (mult_opcode) ;
+        add_name  = stringify_opcode (add_opcode) ;
+        mult_name = stringify_opcode (mult_opcode) ;
 
     //  these are not needed: they are template parameters to the CUDA kernel:
     //  ztype->name, xtype->name, ytype->name,

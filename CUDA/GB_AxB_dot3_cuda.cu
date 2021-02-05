@@ -30,7 +30,10 @@ extern "C"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
 #include "GB_jit_launcher.h"
+#include "GB_cuda_stringifier.hpp"
+#include "GB_cuda_global.h"
 
+GB_cuda_stringifier *SR_callback_ptr;
 
 const std::vector<std::string> header_names ={};
 
@@ -196,9 +199,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     char semiring_code [GB_CUDA_STRLEN+2] ;
     char mask_name [GB_CUDA_STRLEN+2] ;
 
-    GB_cuda_stringify_semiring (semiring, flipxy,
+    GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
+
+    mysemiring.stringify_semiring (semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         true, semiring_name, semiring_code, mask_name) ;
+
+    const char *header_name = (const char *)"mySemiRing.h";
+    mysemiring.load_string(header_name, semiring_code ) ;
+
+    SR_callback_ptr = &mysemiring;
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
@@ -336,11 +346,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // The work to compute C(i,j) is held in Ci [p], if C(i,j) appears in
     // as the pth entry in C.
-    GB_callback mysemiring;
-    const char *header_name = (const char *)"mySemiRing.h";
-    mysemiring.load_string(header_name, semiring_code ) ;
-    SR_callback_ptr = &mysemiring;
-
+    
 
     //cudaStream_t stream_AxB;
     //cudaStreamCreate ( &stream_AxB);
