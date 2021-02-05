@@ -66,11 +66,8 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
     // input/output:
     int64_t *GB_RESTRICT Cp,                    // column counts
     // input:
-    const int64_t *GB_RESTRICT Ap,              // A->p
-    const int64_t avlen,                        // A->vlen
     const int64_t *GB_RESTRICT Wfirst,          // size ntasks
     const int64_t *GB_RESTRICT Wlast,           // size ntasks
-    const int64_t *GB_RESTRICT pstart_Aslice,   // size ntasks
     const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
     const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
     const int ntasks                            // # of tasks

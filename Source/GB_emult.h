@@ -117,7 +117,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix A,     // input A matrix (sparse/hyper)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
-    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    GrB_BinaryOp op,        // op to perform C = op (A,B)
     bool flipxy,            // if true use fmult(y,x) else fmult(x,y)
     GB_Context Context
 ) ;

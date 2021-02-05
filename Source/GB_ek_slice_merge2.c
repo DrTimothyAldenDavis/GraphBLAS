@@ -66,25 +66,26 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 
     for (int tid = 0 ; tid < ntasks ; tid++)
     {
-        int64_t k = kfirst_Aslice [tid] ;
+        int64_t kfirst = kfirst_Aslice [tid] ;
 
-        if (kprior < k)
+        if (kprior < kfirst)
         { 
-            // Task tid is the first one to do work on C(:,k), so it starts at
-            // Cp [k], and it contributes Wfirst [tid] entries to C(:,k).
-            pC = Cp [k] ;
-            kprior = k ;
+            // Task tid is the first one to do work on C(:,kfirst), so it
+            // starts at Cp [kfirst], and it contributes Wfirst [tid] entries
+            // to C(:,kfirst).
+            pC = Cp [kfirst] ;
+            kprior = kfirst ;
         }
 
-        // Task tid contributes Wfirst [tid] entries to C(:,k)
+        // Task tid contributes Wfirst [tid] entries to C(:,kfirst)
         Cp_kfirst [tid] = pC ;
         pC += Wfirst [tid] ;
 
         int64_t klast = klast_Aslice [tid] ;
-        if (k < klast)
+        if (kfirst < klast)
         { 
-            // Task tid is the last to contribute to C(:,k).
-            ASSERT (pC == Cp [k+1]) ;
+            // Task tid is the last to contribute to C(:,kfirst).
+            ASSERT (pC == Cp [kfirst+1]) ;
             // Task tid contributes the first Wlast [tid] entries to
             // C(:,klast), so the next task tid+1 starts at location Cp [klast]
             // + Wlast [tid], if its first vector is klast of this task.

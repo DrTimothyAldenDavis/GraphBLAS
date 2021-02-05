@@ -1,5 +1,3 @@
-
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -347,7 +345,7 @@ GrB_Info GB_AemultB__second_uint8
 // eWiseMult: C = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-void GB_AemultB_01__second_uint8
+GrB_Info GB_AemultB_01__second_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -366,7 +364,7 @@ void GB_AemultB_01__second_uint8
     #else
     #if GB_BINOP_FLIP
         // The operator is not commutative, and does not have a flipped
-        // variant.  For example z=atan2(y,x) is not handled by GB_binop_flip.
+        // variant.  For example z=atan2(y,x).
         if (flipxy)
         {
             // use fmult(y,x)
@@ -383,8 +381,7 @@ void GB_AemultB_01__second_uint8
         }
     #else
         // No need to handle the flip: the operator is either commutative, or
-        // has been handled by GB_binop_flip (changing z=div(y,x) to
-        // z=rdiv(x,y) for example.
+        // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
         #define GB_FLIPPED 0
         #include "GB_emult_01_template.c"

@@ -244,7 +244,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 40 ;
+trim = 42 ;
 
 % construct the *.c file
 cmd = sprintf (...

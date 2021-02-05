@@ -171,7 +171,6 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Ah = A->h ;
     int64_t *GB_RESTRICT Ai = A->i ;
     GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
-    int64_t aplen = A->plen ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
@@ -191,8 +190,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
-    int64_t cplen = (GB_IS_FULL (A)) ? avdim : aplen ;
-    int64_t *GB_RESTRICT Cp = GB_CALLOC (cplen+1, int64_t) ;
+    int64_t *GB_RESTRICT Cp = GB_CALLOC (anvec+1, int64_t) ;
     int64_t *GB_RESTRICT Ch = NULL ;
     int64_t *GB_RESTRICT Ci = NULL ;
     GB_void *GB_RESTRICT Cx = NULL ;
@@ -202,8 +200,6 @@ GrB_Info GB_selector
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    ASSERT (anvec <= cplen) ;
-    Cp [anvec] = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads and tasks to use
@@ -236,10 +232,10 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    // TODO: use one calloc
-    Wfirst = GB_CALLOC (ntasks, int64_t) ;
-    Wlast  = GB_CALLOC (ntasks, int64_t) ;
-    Cp_kfirst = GB_CALLOC (ntasks, int64_t) ;
+    // TODO: use one malloc
+    Wfirst = GB_MALLOC (ntasks, int64_t) ;
+    Wlast  = GB_MALLOC (ntasks, int64_t) ;
+    Cp_kfirst = GB_MALLOC (ntasks, int64_t) ;
     if (Wfirst == NULL || Wlast  == NULL || Cp_kfirst == NULL)
     { 
         // out of memory
@@ -258,7 +254,7 @@ GrB_Info GB_selector
     if (opcode <= GB_RESIZE_opcode)
     {
         // allocate Zp
-        Zp = GB_MALLOC (cplen, int64_t) ;
+        Zp = GB_MALLOC (anvec, int64_t) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -268,9 +264,10 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // phase1: launch the switch factory to count the entries
+    // phase1: count the entries
     //--------------------------------------------------------------------------
 
+    // define the worker for the switch factory
     #define GB_SELECT_PHASE1
     #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
     #define GB_SEL_WORKER(opname,aname,atype)                           \
@@ -281,6 +278,7 @@ GrB_Info GB_selector
     }                                                                   \
     break ;
 
+    // launch the switch factory
     #include "GB_select_factory.c"
 
     #undef  GB_SELECT_PHASE1
@@ -316,9 +314,10 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // phase2: launch the switch factory to select the entries
+    // phase2: select the entries
     //--------------------------------------------------------------------------
 
+    // define the worker for the switch factory
     #define GB_SELECT_PHASE2
     #define GB_sel2(opname,aname) GB_sel_phase2_ ## opname ## aname
     #define GB_SEL_WORKER(opname,aname,atype)                           \
@@ -330,6 +329,7 @@ GrB_Info GB_selector
     }                                                                   \
     break ;
 
+    // launch the switch factory
     #include "GB_select_factory.c"
 
     //--------------------------------------------------------------------------
@@ -399,7 +399,7 @@ GrB_Info GB_selector
         int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         info = GB_new (&C, // sparse or hyper (from A), new header
             A->type, avlen, avdim, GB_Ap_null, true,
-            sparsity, A->hyper_switch, aplen, Context) ;
+            sparsity, A->hyper_switch, anvec, Context) ;
         GB_OK (info) ;
 
         if (A->h != NULL)
@@ -409,7 +409,7 @@ GrB_Info GB_selector
             // A and C are hypersparse: copy non-empty vectors from Ah to Ch
             //------------------------------------------------------------------
 
-            Ch = GB_MALLOC (aplen, int64_t) ;
+            Ch = GB_MALLOC (anvec, int64_t) ;
             if (Ch == NULL)
             { 
                 // out of memory

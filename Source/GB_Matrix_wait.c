@@ -165,7 +165,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // A is not conformed, so the sparsity structure of A is not modified.
         // That is, if A has no pending tuples and no zombies, but is just
         // jumbled, then it stays sparse or hypersparse.
-        printf ("\njust unjumble\n") ;
         GB_OK (GB_unjumble (A, Context)) ;
         return (info) ;
     }
@@ -262,6 +261,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // replacing its index i with GB_FLIP(i).
 
     // TODO: pass tnz to GB_selector, to pad the reallocated A matrix
+    ASSERT_MATRIX_OK (A, "A before zombies removed", GB0) ;
 
     if (nzombies > 0)
     { 

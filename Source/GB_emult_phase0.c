@@ -58,7 +58,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    // M, A, and B can be jumbled for this phase, but not phase1 or phase2
+    // M, A, and B can be jumbled for this phase
 
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;

@@ -11,6 +11,8 @@
 // This function is only used for semirings, for matrix-matrix multiply.
 // It is not used for GrB_apply or GrB_eWise*.
 
+// TODO: rename this to GB_flip_opcode
+
 #include "GB.h"
 #include "GB_binop.h"
 

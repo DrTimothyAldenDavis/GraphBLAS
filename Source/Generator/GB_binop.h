@@ -96,7 +96,7 @@ GrB_Info GB_AemultB
     GB_Context Context
 ) ;
 
-void GB_AemultB_01
+GrB_Info GB_AemultB_01
 (
     GrB_Matrix C,
     const GrB_Matrix A,

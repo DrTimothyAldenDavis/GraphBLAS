@@ -49,8 +49,9 @@ int GB_emult_sparsity       // return the sparsity structure for C
 
     int C_sparsity ;
     (*C_is_jumbled) = false ;
-    (*A_must_be_unjumbled) = false ;
-    (*B_must_be_unjumbled) = false ;
+    (*M_must_be_unjumbled) = GB_JUMBLED (M) ;
+    (*A_must_be_unjumbled) = GB_JUMBLED (A) ;
+    (*B_must_be_unjumbled) = GB_JUMBLED (B) ;
 
     // In the table below, sparse/hypersparse are listed as "sparse".  If C is
     // listed as sparse: it is hypersparse if M is hypersparse (and not
@@ -72,8 +73,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
     bool B_is_jumbled = GB_JUMBLED (B) ;
 
     // Methods labeled as "use GB_add" give the same results with GB_add and
-    // GB_emult, when A and B are both full.  For those cases, GB_ewise should
-    // call GB_add instead of GB_add.
+    // GB_emult, when A and B are both full.  For those cases, GB_ewise
+    // calls GB_add instead of an emult method.
     (*use_add_instead) = A_is_full && B_is_full ;
 
     if (M == NULL)
@@ -83,12 +84,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      C       =           A       .*      B
         //      ------------------------------------------
         //      sparse  .           sparse          sparse
-        //      sparse  .           sparse          bitmap
-        //      sparse  .           sparse          full  
-        //      sparse  .           bitmap          sparse
+        //      sparse  .           sparse          bitmap  (method 01)
+        //      sparse  .           sparse          full    (method 01)
+        //      sparse  .           bitmap          sparse  (method 01)
         //      bitmap  .           bitmap          bitmap
         //      bitmap  .           bitmap          full  
-        //      sparse  .           full            sparse
+        //      sparse  .           full            sparse  (method 01)
         //      bitmap  .           full            bitmap
         //      full    .           full            full    (use GB_add)
 
@@ -153,10 +154,11 @@ int GB_emult_sparsity       // return the sparsity structure for C
             // C<M>=A.*B with M sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
 
-            // M can be jumbled; A and B cannot; if M jumbled then so is C
+            // no matrix can be jumbled
+            (*M_must_be_unjumbled) = M_is_jumbled ;
             (*A_must_be_unjumbled) = A_is_jumbled ;
             (*B_must_be_unjumbled) = B_is_jumbled ;
-            (*C_is_jumbled) = M_is_jumbled ;
+            (*C_is_jumbled) = false ;
 
         }
         else
@@ -166,12 +168,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
             //      C      <M> =        A       .*      B
             //      ------------------------------------------
             //      sparse  bitmap      sparse          sparse
-            //      sparse  bitmap      sparse          bitmap
-            //      sparse  bitmap      sparse          full  
-            //      sparse  bitmap      bitmap          sparse
+            //      sparse  bitmap      sparse          bitmap  (method 01)
+            //      sparse  bitmap      sparse          full    (method 01)
+            //      sparse  bitmap      bitmap          sparse  (method 01)
             //      bitmap  bitmap      bitmap          bitmap
             //      bitmap  bitmap      bitmap          full  
-            //      sparse  bitmap      full            sparse
+            //      sparse  bitmap      full            sparse  (method 01)
             //      bitmap  bitmap      full            bitmap
             //      bitmap  bitmap      full            full    (use GB_add)
 
@@ -179,12 +181,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
             //      C      <M> =        A       .*      B
             //      ------------------------------------------
             //      sparse  full        sparse          sparse
-            //      sparse  full        sparse          bitmap
-            //      sparse  full        sparse          full  
-            //      sparse  full        bitmap          sparse
+            //      sparse  full        sparse          bitmap  (method 01)
+            //      sparse  full        sparse          full    (method 01)
+            //      sparse  full        bitmap          sparse  (method 01)
             //      bitmap  full        bitmap          bitmap
             //      bitmap  full        bitmap          full  
-            //      sparse  full        full            sparse
+            //      sparse  full        full            sparse  (method 01)
             //      bitmap  full        full            bitmap
             //      bitmap  full        full            full    (use GB_add)
 
@@ -229,12 +231,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
         //      sparse  sparse      sparse          sparse  (mask later)
-        //      sparse  sparse      sparse          bitmap  (mask later)
-        //      sparse  sparse      sparse          full    (mask later)
-        //      sparse  sparse      bitmap          sparse  (mask later)
+        //      sparse  sparse      sparse          bitmap  (01: mask later)
+        //      sparse  sparse      sparse          full    (01: mask later)
+        //      sparse  sparse      bitmap          sparse  (01: mask later)
         //      bitmap  sparse      bitmap          bitmap
         //      bitmap  sparse      bitmap          full  
-        //      sparse  sparse      full            sparse  (mask later)
+        //      sparse  sparse      full            sparse  (01: mask later)
         //      bitmap  sparse      full            bitmap
         //      bitmap  sparse      full            full    (use GB_add)
 
@@ -242,12 +244,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
         //      sparse  bitmap      sparse          sparse
-        //      sparse  bitmap      sparse          bitmap
-        //      sparse  bitmap      sparse          full  
-        //      sparse  bitmap      bitmap          sparse
+        //      sparse  bitmap      sparse          bitmap  (method 01)
+        //      sparse  bitmap      sparse          full    (method 01)
+        //      sparse  bitmap      bitmap          sparse  (method 01)
         //      bitmap  bitmap      bitmap          bitmap
         //      bitmap  bitmap      bitmap          full  
-        //      sparse  bitmap      full            sparse
+        //      sparse  bitmap      full            sparse  (method 01)
         //      bitmap  bitmap      full            bitmap
         //      bitmap  bitmap      full            full    (use GB_add)
 
@@ -255,12 +257,12 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
         //      sparse  full        sparse          sparse
-        //      sparse  full        sparse          bitmap
-        //      sparse  full        sparse          full  
-        //      sparse  full        bitmap          sparse
+        //      sparse  full        sparse          bitmap  (method 01)
+        //      sparse  full        sparse          full    (method 01)
+        //      sparse  full        bitmap          sparse  (method 01)
         //      bitmap  full        bitmap          bitmap
         //      bitmap  full        bitmap          full  
-        //      sparse  full        full            sparse
+        //      sparse  full        full            sparse  (method 01)
         //      bitmap  full        full            bitmap
         //      bitmap  full        full            full    (use GB_add)
 
@@ -271,6 +273,9 @@ int GB_emult_sparsity       // return the sparsity structure for C
         { 
             // C<!M>=A.*B with A or B sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
+
+            // the mask is only applied in GB_emult if it is sparse or hyper,
+            // so it does not (yet) have to be unjumbled.
             (*apply_mask) = !M_is_sparse_or_hyper ;
 
             // determine if A and B must be unjumbled
@@ -302,6 +307,21 @@ int GB_emult_sparsity       // return the sparsity structure for C
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
+
+    if ((C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) &&
+        (M == NULL || !(*apply_mask)) &&
+        (A_is_bitmap_or_full || B_is_bitmap_or_full))
+    {
+        (*M_must_be_unjumbled) = false ;
+        (*A_must_be_unjumbled) = false ;
+        (*B_must_be_unjumbled) = false ;
+    }
+    else
+    {
+        (*M_must_be_unjumbled) = GB_JUMBLED (M) ;
+        (*A_must_be_unjumbled) = GB_JUMBLED (A) ;
+        (*B_must_be_unjumbled) = GB_JUMBLED (B) ;
+    }
 
     return (C_sparsity) ;
 }

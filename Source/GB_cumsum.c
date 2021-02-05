@@ -14,8 +14,8 @@
 
 //      count = cumsum ([0 count[0:n-1]]) ;
 
-// That is, count [j] on input is overwritten with the value of
-// sum (count [0..j-1]).  count [n] is implicitly zero on input.
+// That is, count [j] on input is overwritten with sum (count [0..j-1]).
+// On input, count [n] is not accessed and is implicitly zero on input.
 // On output, count [n] is the total sum.
 
 #include "GB.h"

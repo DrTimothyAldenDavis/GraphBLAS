@@ -25,8 +25,8 @@
     const GB_BTYPE *GB_RESTRICT Ax = (GB_BTYPE *) A->x ;
     const GB_ATYPE *GB_RESTRICT Bx = (GB_ATYPE *) B->x ;
     #else
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_BTYPE *) A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_ATYPE *) B->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
     #endif
 
     const int64_t  *GB_RESTRICT Cp = C->p ;

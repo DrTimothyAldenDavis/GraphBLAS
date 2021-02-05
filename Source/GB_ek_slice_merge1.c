@@ -29,11 +29,8 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
     // input/output:
     int64_t *GB_RESTRICT Cp,                    // column counts
     // input:
-    const int64_t *GB_RESTRICT Ap,              // A->p
-    const int64_t avlen,                        // A->vlen
     const int64_t *GB_RESTRICT Wfirst,          // size ntasks
     const int64_t *GB_RESTRICT Wlast,           // size ntasks
-    const int64_t *GB_RESTRICT pstart_Aslice,   // size ntasks
     const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
     const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
     const int ntasks                            // # of tasks
@@ -54,23 +51,17 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
 
         if (kfirst <= klast)
         {
-            int64_t pA_start = pstart_Aslice [tid] ;
-            int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
-            pA_end = GB_IMIN (pA_end, pstart_Aslice [tid+1]) ;
-            if (pA_start < pA_end)
-            {
-                if (kprior < kfirst)
-                { 
-                    // This thread is the first one that did work on
-                    // A(:,kfirst), so use it to start the reduction.
-                    Cp [kfirst] = Wfirst [tid] ;
-                }
-                else
-                { 
-                    Cp [kfirst] += Wfirst [tid] ;
-                }
-                kprior = kfirst ;
+            if (kprior < kfirst)
+            { 
+                // This thread is the first one that did work on
+                // A(:,kfirst), so use it to start the reduction.
+                Cp [kfirst] = Wfirst [tid] ;
             }
+            else
+            { 
+                Cp [kfirst] += Wfirst [tid] ;
+            }
+            kprior = kfirst ;
         }
 
         //----------------------------------------------------------------------
@@ -79,28 +70,11 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
 
         if (kfirst < klast)
         {
-            int64_t pA_start = GBP (Ap, klast, avlen) ;
-            int64_t pA_end   = pstart_Aslice [tid+1] ;
-            if (pA_start < pA_end)
-            {
-                /* if */ ASSERT (kprior < klast) ;
-                { 
-                    // This thread is the first one that did work on
-                    // A(:,klast), so use it to start the reduction.
-                    Cp [klast] = Wlast [tid] ;
-                }
-                /*
-                else
-                {
-                    // If kfirst < klast and A(:,klast is not empty, then this
-                    // task is always the first one to do work on A(:,klast),
-                    // so this case is never used.
-                    ASSERT (GB_DEAD_CODE) ;
-                    Cp [klast] += Wlast [tid] ;
-                }
-                */
-                kprior = klast ;
-            }
+            ASSERT (kprior < klast) ;
+            // This thread is the first one that did work on
+            // A(:,klast), so use it to start the reduction.
+            Cp [klast] = Wlast [tid] ;
+            kprior = klast ;
         }
     }
 }

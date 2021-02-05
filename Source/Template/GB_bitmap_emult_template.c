@@ -94,36 +94,6 @@
             pstart_Mslice, kfirst_Mslice, klast_Mslice,
             M_nthreads, M_ntasks, Context) ;
 
-#if 0
-        #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
-        for (taskid = 0 ; taskid < M_ntasks ; taskid++)
-        {
-            int64_t kfirst = kfirst_Mslice [taskid] ;
-            int64_t klast  = klast_Mslice  [taskid] ;
-            for (int64_t k = kfirst ; k <= klast ; k++)
-            {
-                // find the part of M(:,k) for this task
-                int64_t j = GBH (Mh, k) ;
-                int64_t pM_start, pM_end ;
-                GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
-                    klast, pstart_Mslice, Mp, vlen) ;
-                int64_t pC_start = j * vlen ;
-                // traverse over M(:,j), the kth vector of M
-                for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                {
-                    // mark C(i,j) if M(i,j) is true
-                    bool mij = GB_mcast (Mx, pM, msize) ;
-                    if (mij)
-                    { 
-                        int64_t i = Mi [pM] ;
-                        int64_t p = pC_start + i ;
-                        Cb [p] = 2 ;
-                    }
-                }
-            }
-        }
-#endif
-
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only
         // be modified where Cb [p] is zero.

@@ -84,6 +84,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         &C_is_jumbled, &M_must_be_unjumbled, &A_must_be_unjumbled,
         &B_must_be_unjumbled, M, Mask_comp, A, B) ;
 
+//  printf ("unjumble: A %d %d   B %d %d  M %d %d\n",
+//      GB_JUMBLED (A), A_must_be_unjumbled,
+//      GB_JUMBLED (B), B_must_be_unjumbled,
+//      GB_JUMBLED (M), M_must_be_unjumbled) ;
+
     //--------------------------------------------------------------------------
     // use GB_add instead, as determined by GB_emult_sparsity
     //--------------------------------------------------------------------------
@@ -163,17 +168,15 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             if (B_is_bitmap || B_is_full)
             {
                 // Method01: A is sparse/hyper, B is bitmap/full
-                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc, A, B, op, false,
+                return (GB_emult_01 (Chandle, ctype, C_is_csc, A, B, op, false,
                     Context)) ;
-return (GrB_SUCCESS) ;
             }
             else if (A_is_bitmap || A_is_full)
             {
                 // Method01: A is bitmap/full, B is sparse/hyper
                 // A and B are swapped, and binary operator must be flipped.
-                GB_OK (GB_emult_01 (Chandle, ctype, C_is_csc, B, A, op, true,
+                return (GB_emult_01 (Chandle, ctype, C_is_csc, B, A, op, true,
                     Context)) ;
-return (GrB_SUCCESS) ;
             }
 
 #if 0
@@ -200,6 +203,7 @@ return (GrB_SUCCESS) ;
             //      sparse  sparse      bitmap          full  
             //      sparse  sparse      full            sparse
             //      sparse  sparse      full            bitmap
+
 
         }
         else
@@ -243,6 +247,12 @@ return (GrB_SUCCESS) ;
 
         }
     }
+
+    GBURBLE ("emult:(%s<%s>=%s.*%s) ",
+        GB_sparsity_char (C_sparsity),
+        GB_sparsity_char_matrix (M),
+        GB_sparsity_char_matrix (A),
+        GB_sparsity_char_matrix (B)) ;
 
     //--------------------------------------------------------------------------
     // initializations

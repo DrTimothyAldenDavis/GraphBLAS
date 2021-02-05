@@ -32,6 +32,12 @@ GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
     bool *handled           // true if opcode is handled by flipping the opcode
 ) ;
 
+GrB_BinaryOp GB_flip_op     // flip a binary operator, or NULL on error
+(
+    GrB_BinaryOp op,        // binary operator to flip
+    bool *handled           // true if operator is handled
+) ;
+
 GB_PUBLIC   // accessed by the MATLAB interface only
 GB_Opcode GB_boolean_rename     // renamed opcode
 (

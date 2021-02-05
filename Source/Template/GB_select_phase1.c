@@ -52,6 +52,8 @@
         // if kfirst > klast then thread tid does no work at all
         int64_t kfirst = kfirst_slice [tid] ;
         int64_t klast  = klast_slice  [tid] ;
+        Wfirst [tid] = 0 ;
+        Wlast  [tid] = 0 ;
 
         //----------------------------------------------------------------------
         // reduce vectors kfirst to klast
@@ -65,43 +67,30 @@
             //------------------------------------------------------------------
 
             GB_GET_J ; // int64_t j = GBH (Ah, k) ; but for user selectop only
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k,
+            int64_t pA, pA_end ;
+            GB_get_pA (&pA, &pA_end, tid, k,
                 kfirst, klast, pstart_slice, Ap, avlen) ;
 
             //------------------------------------------------------------------
-            // count entries in Ax [pA_start ... pA_end-1], if non-empty
+            // count entries in Ax [pA ... pA_end-1]
             //------------------------------------------------------------------
 
-            if (pA_start < pA_end)
-            {
-
-                //--------------------------------------------------------------
-                // count the live entries in Ax [pA_start ... pA_end-1]
-                //--------------------------------------------------------------
-
-                int64_t s = 0 ;
-                for (int64_t p = pA_start ; p < pA_end ; p++)
-                { 
-                    if (GB_TEST_VALUE_OF_ENTRY (p)) s++ ;
-                }
-
-                //--------------------------------------------------------------
-                // save the result s
-                //--------------------------------------------------------------
-
-                if (k == kfirst)
-                { 
-                    Wfirst [tid] = s ;
-                }
-                else if (k == klast)
-                { 
-                    Wlast [tid] = s ;
-                }
-                else
-                { 
-                    Cp [k] = s ; 
-                }
+            int64_t cjnz = 0 ;
+            for ( ; pA < pA_end ; pA++)
+            { 
+                if (GB_TEST_VALUE_OF_ENTRY (pA)) cjnz++ ;
+            }
+            if (k == kfirst)
+            { 
+                Wfirst [tid] = cjnz ;
+            }
+            else if (k == klast)
+            { 
+                Wlast [tid] = cjnz ;
+            }
+            else
+            { 
+                Cp [k] = cjnz ; 
             }
         }
     }
@@ -110,8 +99,7 @@
     // reduce the first and last vector of each slice using a single thread
     //--------------------------------------------------------------------------
 
-    GB_ek_slice_merge1 (Cp, Ap, avlen,
-        Wfirst, Wlast, pstart_slice, kfirst_slice, klast_slice, ntasks) ;
+    GB_ek_slice_merge1 (Cp, Wfirst, Wlast, kfirst_slice, klast_slice, ntasks) ;
 
 #else
 
@@ -252,6 +240,8 @@
         // if kfirst > klast then task tid does no work at all
         int64_t kfirst = kfirst_slice [tid] ;
         int64_t klast  = klast_slice  [tid] ;
+        Wfirst [tid] = 0 ;
+        Wlast  [tid] = 0 ;
 
         if (kfirst <= klast)
         {
@@ -291,7 +281,6 @@
 
                 #endif
             }
-
         }
 
         if (kfirst < klast)
