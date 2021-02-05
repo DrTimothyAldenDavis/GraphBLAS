@@ -98,7 +98,7 @@ void GB_enumify_mask       // return enum to define mask macros
                                 // or 0 if M is not present
     bool Mask_struct,           // true if M structural, false if valued
     bool Mask_comp              // true if M complemented
-) :
+) ;
 
 void GB_macrofy_mask       // return enum to define mask macros
 (
