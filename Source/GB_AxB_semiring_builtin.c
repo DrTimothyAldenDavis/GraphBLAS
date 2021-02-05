@@ -10,6 +10,10 @@
 // Determine if A*B uses a built-in semiring, and if so, determine the
 // opcodes and type codes of the semiring.
 
+// This function is not used by the CUDA jitified kernels, since they can
+// typecast the entries in the matrices A and B to the types of x and y of the
+// operator, as needed.
+
 #include "GB_mxm.h"
 #include "GB_binop.h"
 

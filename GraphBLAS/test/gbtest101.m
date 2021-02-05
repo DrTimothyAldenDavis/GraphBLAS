@@ -16,6 +16,13 @@ G2_struct = struct (G2)
 assert (isequal (G, A)) ;
 assert (isequal (G2, A)) ;
 
+assert (isfield (G_struct, 'GraphBLAS')) ;
+assert (isfield (G2_struct, 'GraphBLASv4')) ;
+G3 = GrB (G) ;
+G3_struct = struct (G3) ;
+assert (isfield (G3_struct, 'GraphBLASv4')) ;
+assert (isequal (G3, A)) ;
+
 [m1, n1] = size (G) ;
 [m2, n2] = size (A) ;
 assert (m1 == m2) ;
@@ -35,6 +42,14 @@ fprintf ('================== v3 hypersparse struct:\n') ;
 H_struct = struct (H)
 fprintf ('================== v4 hypersparse struct:\n') ;
 H2_struct = struct (H2)
+
+assert (isfield (H_struct, 'GraphBLAS')) ;
+assert (isfield (H2_struct, 'GraphBLASv4')) ;
+H3 = GrB (H) ;
+H3_struct = struct (H3) ;
+assert (isfield (H3_struct, 'GraphBLASv4')) ;
+assert (isequal (H3, H)) ;
+
 H3 = GrB (n,n) ;
 H3 (1:4, 1:4) = magic (4) ;
 assert (isequal (H2, H)) ;
@@ -53,9 +68,20 @@ R2 = GrB (R) ;
 assert (isequal (R2, R)) ;
 assert (isequal (R2, A')) ;
 
+assert (isfield (struct (R), 'GraphBLAS')) ;
+assert (isfield (struct (R2), 'GraphBLASv4')) ;
+
 X2 = GrB (X) ;
 assert (isequal (magic (4), X)) ;
 assert (isequal (magic (4), X2)) ;
+
+assert (isfield (struct (X), 'GraphBLAS')) ;
+assert (isfield (struct (X2), 'GraphBLASv4')) ;
+
+fprintf ('================== v3 dense struct (held in sparse format):\n') ;
+X_struct = struct (X)
+fprintf ('================== v4 dense struct (no integers in struct):\n') ;
+X2_struct = struct (X2)
 
 fprintf ('gbtest101: all tests passed\n') ;
 

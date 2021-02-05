@@ -90,7 +90,9 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         if (flipxy)
         { 
             // the multiplicative operator is fmult(y,x), so flip the opcode
-            opcode = GB_binop_flip (opcode) ;
+            bool handled ;
+            opcode = GB_binop_flip (opcode, &handled) ; // for positional ops
+            ASSERT (handled) ;      // all positional ops can be flipped
         }
         // determine unary operator to compute C=A*D
         GrB_UnaryOp op1 = NULL ;
